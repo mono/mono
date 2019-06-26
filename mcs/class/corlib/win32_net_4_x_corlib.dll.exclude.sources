@@ -1,9 +1,21 @@
+#include win32_build_corlib.dll.exclude.sources
+
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Number.Unix.cs
-../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
 
-corefx/Interop.GetRandomBytes.Mono.cs
-corefx/Mono.SafePasswordHandle.Unix.cs
-../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
+Microsoft.Win32/IRegistryApi.cs
+Microsoft.Win32/Registry.cs
+Microsoft.Win32/RegistryKey.cs
+Microsoft.Win32/Win32RegistryApi.cs
+Microsoft.Win32/Win32ResultCode.cs
+Microsoft.Win32/UnixRegistryApi.cs
+System.Security.AccessControl/RegistryAccessRule.cs	
+System.Security.AccessControl/RegistryAuditRule.cs
+System.Security.AccessControl/RegistrySecurity.cs
+../referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
 
+../referencesource/mscorlib/system/timezoneinfo.cs
+corefx/TimeZoneInfo.cs
+System/TimeZoneInfo.cs
+System/TimeZoneInfo.Serialization.cs
+System/TimeZoneInfo.WinRT.cs

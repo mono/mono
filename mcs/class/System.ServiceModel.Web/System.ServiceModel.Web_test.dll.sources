@@ -1,4 +1,5 @@
 ../../test-helpers/NetworkHelpers.cs
+../../test-helpers/TestResourceHelper.cs
 System.ServiceModel.Activation/WebScriptServiceHostFactoryTest.cs
 System.ServiceModel.Channels/WebBodyFormatMessagePropertyTest.cs
 System.ServiceModel.Channels/WebMessageEncodingBindingElementTest.cs

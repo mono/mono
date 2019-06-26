@@ -17,7 +17,7 @@
 ** 
 =============================================================================*/
 
-#if FEATURE_EXCEPTIONDISPATCHINFO
+#if FEATURE_EXCEPTIONDISPATCHINFO || MONO
 namespace System.Runtime.ExceptionServices {
     using System;
     
@@ -150,8 +150,10 @@ namespace System.Runtime.ExceptionServices {
 #endif
         public void Throw()
         {
+#if FEATURE_EXCEPTIONDISPATCHINFO
             // Restore the exception dispatch details before throwing the exception.
             m_Exception.RestoreExceptionDispatchInfo(this);
+#endif
             throw m_Exception; 
         }
 

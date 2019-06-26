@@ -9,7 +9,13 @@ namespace MonoTests.Runtime {
 
 [TestFixture]
 public class JitTests {
-	static string[] args = new string[] { "--exclude", "!FULLAOT", "--verbose" };
+#if MONOTOUCH
+	static string[] args = new string[] { "--verbose", "--exclude", "!FULLAOT" };
+#elif MONODROID
+	static string[] args = new string[] { "--verbose" };
+#else
+	static string[] args = new string[] { "--verbose", "--exclude", "!FULLAOT" };
+#endif
 
 	[Test]
 	public void Basic () {

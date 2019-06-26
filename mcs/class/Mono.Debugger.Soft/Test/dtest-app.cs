@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Collections.Concurrent;
+using System.Collections;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -82,6 +84,31 @@ public class Tests2 {
 	}
 
 	public void invoke () {
+	}
+}
+
+public struct TestEnumeratorInsideGenericStruct<TKey, TValue>
+{
+	private KeyValuePair<TKey, TValue> _bucket;
+	private Position _currentPosition;
+	internal TestEnumeratorInsideGenericStruct(KeyValuePair<TKey, TValue> bucket)
+	{
+		_bucket = bucket;
+		_currentPosition = Position.BeforeFirst;
+	}
+
+	public KeyValuePair<TKey, TValue> Current
+	{
+		get
+		{
+			if (_currentPosition == Position.BeforeFirst)
+				return _bucket;
+			return _bucket;
+		}
+	}
+	private enum Position
+	{
+		BeforeFirst
 	}
 }
 
@@ -166,6 +193,19 @@ public class GClass<T> {
 	}
 }
 
+public struct MySpan<T> {
+	internal class Pinnable<J> {
+		public J Data;
+	}
+	Pinnable<T> _pinnable;
+	public MySpan(T[] array) {
+		_pinnable = Unsafe.As<Pinnable<T>>(array);
+	}
+	public override string ToString() {
+		return "abc";
+	}
+}
+
 public struct GStruct<T> {
 	public T i;
 
@@ -218,6 +258,65 @@ class TestIfaces : ITest
 
 	TestIfaces<int> Baz () {
 		return null;
+	}
+}
+
+public sealed class DebuggerTaskScheduler : TaskScheduler, IDisposable
+{
+	private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
+	private readonly List<Thread> _threads;
+	private readonly Thread mainThread = null;
+	public DebuggerTaskScheduler(int countThreads)
+	{
+		_threads = Enumerable.Range(0, countThreads).Select(i =>
+		{
+			Thread t = new Thread(() =>
+			{
+				foreach (var task in _tasks.GetConsumingEnumerable())
+				{
+					TryExecuteTask(task);
+				}
+			});
+			//the new task will be executed by a foreground thread ensuring that it will be executed ultil the end.
+			t.IsBackground = false;
+			t.Start();
+			return t;
+
+		}).ToList();
+	}
+
+	/// <inheritdoc />
+	protected override void QueueTask(Task task)
+	{
+		_tasks.Add(task);
+	}
+
+	/// <inheritdoc />
+	public override int MaximumConcurrencyLevel
+	{
+		get
+		{
+			return _threads.Count;
+		}
+	}
+
+	/// <inheritdoc />
+	public void Dispose()
+	{	
+		// Indicate that no new tasks will be coming in
+		_tasks.CompleteAdding();
+	}
+
+	/// <inheritdoc />
+	protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
+	{
+		return false;
+	}
+
+	/// <inheritdoc />
+	protected override IEnumerable<Task> GetScheduledTasks()
+	{
+		return _tasks;
 	}
 }
 
@@ -315,8 +414,16 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-wrapper") {
+			unhandled_exception_wrapper ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "crash-vm") {
+			crash ();
 			return 0;
 		}
 		if (args.Length >0 && args [0] == "unhandled-exception-user") {
@@ -340,9 +447,7 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		if (args.Length > 0 && args [0] == "step-out-void-async") {
-			var wait = new ManualResetEvent (false);
-			step_out_void_async (wait);
-			wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+			run_step_out_void_async();
 			return 0;
 		}
 		assembly_load ();
@@ -369,6 +474,7 @@ public class Tests : TestsBase, ITest2
 		set_ip ();
 		step_filters ();
 		pointers ();
+		ref_return ();
 		if (args.Length > 0 && args [0] == "local-reflect")
 			local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
@@ -384,9 +490,28 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		Bug59649 ();
+		elapsed_time();
+		field_with_unsafe_cast_value();
+		inspect_enumerator_in_generic_struct();
+		if_property_stepping();
 		return 3;
 	}
 
+	private class TestClass {
+		private string oneLineProperty = "";
+		public string OneLineProperty {
+			get { return oneLineProperty; }
+			set { oneLineProperty = value; }
+		}
+	}
+
+	public static void if_property_stepping() {
+		var test = new TestClass();
+		if (test.OneLineProperty == "someInvalidValue6049e709-7271-41a1-bc0a-f1f1b80d4125")
+			return;
+		Console.Write("");
+	}
+	
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
@@ -465,6 +590,8 @@ public class Tests : TestsBase, ITest2
 		ss_fp_clobber ();
 		ss_no_frames ();
 		ss_await ();
+		ss_nested_with_three_args_wrapper();
+		ss_nested_twice_with_two_args_wrapper();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -565,6 +692,15 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void field_with_unsafe_cast_value() {
+		var arr = new char[3];
+		arr[0] = 'a';
+		arr[1] = 'b';
+		arr[2] = 'c';
+		MySpan<char> bytes = new MySpan<char>(arr);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested () {
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_1 (ss_nested_2 ());
@@ -577,12 +713,55 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_with_three_args_wrapper () {
+		ss_nested_with_three_args(ss_nested_arg1 (), ss_nested_arg2 (), ss_nested_arg3 ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_twice_with_two_args_wrapper () {
+		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
+	}
+  
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void elapsed_time () {
+		Thread.Sleep(200);
+		Thread.Sleep(00);
+		Thread.Sleep(100);
+		Thread.Sleep(300);
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void inspect_enumerator_in_generic_struct() {
+		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_with_three_args (int a1, int a2, int a3) {
+		return a1 + a2 + a3;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_arg () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg1 () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg2 () {
+		return 0;
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg3 () {
 		return 0;
 	}
 
@@ -1309,6 +1488,10 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_wrapper () {
+		 throw new ArgumentException("test");
+	}
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke_2 () {
 	}
 
@@ -1327,6 +1510,11 @@ public class Tests : TestsBase, ITest2
 			}, null);
 		Thread.Sleep (1000);
 		unhandled_exception_endinvoke_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void crash () {
+		unsafe { Console.WriteLine("{0}", *(int*) -1); }
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1772,6 +1960,15 @@ public class Tests : TestsBase, ITest2
 	{
 		UninitializedClass.Call();//Breakpoint here and step in
 	}
+	
+	public static void run_step_out_void_async()
+	{
+		DebuggerTaskScheduler dts = new DebuggerTaskScheduler(2);
+		var wait =  new ManualResetEvent (false);
+		step_out_void_async (wait);
+		wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+		dts.Dispose();
+	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static async void step_out_void_async (ManualResetEvent wait)
@@ -1796,6 +1993,27 @@ public class Tests : TestsBase, ITest2
 		BlittableStruct s = new BlittableStruct () { i = 2, d = 3.0 };
 		fixed (int* pa = a)
 			pointer_arguments (pa, &s);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ref_return () {
+
+	}
+
+	static int ret_val = 1;
+	public static ref int get_ref_int() {
+		return ref ret_val;
+	}
+
+	static string ref_return_string = "byref";
+	public static ref string get_ref_string() {
+		return ref ref_return_string;
+	}
+
+
+	static BlittableStruct ref_return_struct = new BlittableStruct () { i = 1, d = 2.0 };
+	public static ref BlittableStruct get_ref_struct() {
+		return ref ref_return_struct;
 	}
 }
 

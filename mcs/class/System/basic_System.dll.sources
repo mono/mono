@@ -1,4 +1,0 @@
-#include net_4_x_System.dll.sources
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
-../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.Unix.cs
-Internal.Cryptography/OidLookup.Managed.cs

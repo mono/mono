@@ -6,7 +6,7 @@ LIBRARY = System.Xml.Linq.dll
 LIB_REFS = System System.Core System.Xml
 LIB_MCS_FLAGS = -unsafe -nowarn:436
 
-NO_SERIALIZATION_PROFILE := $(filter basic build, $(PROFILE))
+NO_SERIALIZATION_PROFILE := $(filter build, $(PROFILE))
 ifndef NO_SERIALIZATION_PROFILE
 LIB_REFS += System.Runtime.Serialization
 LIB_MCS_FLAGS += -d:FEATURE_SERIALIZATION

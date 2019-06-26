@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Resources;
@@ -45,6 +45,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Threading;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
@@ -207,11 +208,51 @@ namespace System.Reflection.Emit
 	}
 
 
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_AssemblyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class AssemblyBuilder :  _AssemblyBuilder
+	{
+		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
+	public sealed partial class AssemblyBuilder : Assembly
+	{
+		//
+		// AssemblyBuilder inherits from Assembly, but the runtime thinks its layout inherits from RuntimeAssembly
+		//
+		#region Sync with RuntimeAssembly.cs and ReflectionAssembly in object-internals.h
+#pragma warning disable 649
+		internal IntPtr _mono_assembly;
+#pragma warning restore 649
+#if !MOBILE
+		internal Evidence _evidence;
+#else
+		object _evidence;
+#endif
+		#endregion
+
 #pragma warning disable 169, 414, 649
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_assembly; /* GC-tracked */
@@ -241,7 +282,17 @@ namespace System.Reflection.Emit
 		byte[] pktoken;
 		#endregion
 #pragma warning restore 169, 414, 649
-		
+
+#if !MOBILE
+		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
+		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
+		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
+		internal PermissionSet _granted;		// for the resolved assembly granted permissions
+		internal PermissionSet _denied;		// for the resolved assembly denied permissions
+#else
+		object _minimum, _optional, _refuse, _granted, _denied;
+#endif
+		string assemblyName;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -263,6 +314,7 @@ namespace System.Reflection.Emit
 		/* Keep this in sync with codegen.cs in mcs */
 		private const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
 
+		[PreserveDependency ("RuntimeResolve", "System.Reflection.Emit.ModuleBuilder")]
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
 			/* This is obsolete now, as mcs doesn't use SRE any more */
@@ -324,9 +376,11 @@ namespace System.Reflection.Emit
 		}
 
 		public override string CodeBase {
-			get {
-				throw not_supported ();
-			}
+			get { throw not_supported (); }
+		}
+
+		public override string EscapedCodeBase {
+			get { return RuntimeAssembly.GetCodeBase (this, true); }
 		}
 		
 		public override MethodInfo EntryPoint {
@@ -344,13 +398,14 @@ namespace System.Reflection.Emit
 		/* This is to keep signature compatibility with MS.NET */
 		public override string ImageRuntimeVersion {
 			get {
-				return base.ImageRuntimeVersion;
+				return RuntimeAssembly.InternalImageRuntimeVersion (this);
 			}
 		}
 
-		[MonoTODO]
 		public override bool ReflectionOnly {
-			get { return base.ReflectionOnly; }
+			get {
+				return access == (uint)AssemblyBuilderAccess.ReflectionOnly;
+			}
 		}
 
 		public void AddResourceFile (string name, string fileName)
@@ -863,7 +918,7 @@ namespace System.Reflection.Emit
 			ModuleBuilder mainModule = null;
 			if (modules != null) {
 				foreach (ModuleBuilder module in modules)
-					if (module.FullyQualifiedName == assemblyFileName)
+					if (module.FileName == assemblyFileName)
 						mainModule = module;
 			}
 			if (mainModule == null)
@@ -1063,26 +1118,6 @@ namespace System.Reflection.Emit
 			return new TypeBuilderInstantiation (gtd, typeArguments);
 		}
 
-		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
@@ -1154,15 +1189,19 @@ namespace System.Reflection.Emit
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-			return GetSatelliteAssembly (culture, null, true);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, null, true, ref stackMark);
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			return GetSatelliteAssembly (culture, version, true);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, version, true, ref stackMark);
 		}
 
 		public override Module ManifestModule {
@@ -1191,23 +1230,59 @@ namespace System.Reflection.Emit
 			return base.GetHashCode ();
 		}
 
+		public override string ToString ()
+		{
+			if (assemblyName != null)
+				return assemblyName;
+
+			assemblyName = FullName;
+			return assemblyName;
+		}
+
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			return base.IsDefined (attributeType, inherit);
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		public override string FullName {
-			get { return base.FullName; }
+			get { return RuntimeAssembly.get_fullname (this); }
+		}
+
+		internal override IntPtr MonoAssembly {
+			get {
+				return _mono_assembly;
+			}
+		}
+
+		public override Evidence Evidence {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			get { return UnprotectedGetEvidence (); }
+		}
+
+		internal override Evidence UnprotectedGetEvidence ()
+		{
+#if MOBILE || DISABLE_SECURITY
+			return null;
+#else
+			// if the host (runtime) hasn't provided it's own evidence...
+			if (_evidence == null) {
+				// ... we will provide our own
+				lock (this) {
+					_evidence = Evidence.GetDefaultHostEvidence (this);
+				}
+			}
+			return _evidence;
+#endif
 		}
 	}
 }

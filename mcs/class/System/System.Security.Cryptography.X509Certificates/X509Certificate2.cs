@@ -43,32 +43,53 @@ using System.Text;
 using System.Collections;
 using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
+using Internal.Cryptography;
 using Mono;
 
-namespace System.Security.Cryptography.X509Certificates {
-
+namespace System.Security.Cryptography.X509Certificates
+{
 	[Serializable]
-	public class X509Certificate2 : X509Certificate {
-	
-		new internal X509Certificate2Impl Impl {
-			get {
-				var impl2 = base.Impl as X509Certificate2Impl;
-				X509Helper.ThrowIfContextInvalid (impl2);
-				return impl2;
-			}
+	public class X509Certificate2 : X509Certificate
+	{
+		volatile byte[] lazyRawData;
+		volatile Oid lazySignatureAlgorithm;
+		volatile int lazyVersion;
+		volatile X500DistinguishedName lazySubjectName;
+		volatile X500DistinguishedName lazyIssuerName;
+		volatile PublicKey lazyPublicKey;
+		volatile AsymmetricAlgorithm lazyPrivateKey;
+		volatile X509ExtensionCollection lazyExtensions;
+
+		public override void Reset ()
+		{
+			lazyRawData = null;
+			lazySignatureAlgorithm = null;
+			lazyVersion = 0;
+			lazySubjectName = null;
+			lazyIssuerName = null;
+			lazyPublicKey = null;
+			lazyPrivateKey = null;
+			lazyExtensions = null;
+
+			base.Reset ();
 		}
 
-		string friendlyName = string.Empty;
-
-		// constructors
-
 		public X509Certificate2 ()
+			: base ()
 		{
 		}
 
 		public X509Certificate2 (byte[] rawData)
 			: base (rawData)
 		{
+			// MONO: temporary hack until `X509CertificateImplApple` derives from
+			//       `X509Certificate2Impl`.
+			if (rawData != null && rawData.Length != 0) {
+				using (var safePasswordHandle = new SafePasswordHandle ((string)null)) {
+					var impl = X509Helper.Import (rawData, safePasswordHandle, X509KeyStorageFlags.DefaultKeySet);
+					ImportHandle (impl);
+				}
+			}
 		}
 
 		public X509Certificate2 (byte[] rawData, string password)
@@ -76,6 +97,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
+		[CLSCompliantAttribute (false)]
 		public X509Certificate2 (byte[] rawData, SecureString password)
 			: base (rawData, password)
 		{
@@ -86,8 +108,19 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
+		[CLSCompliantAttribute (false)]
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags)
+		{
+		}
+
+		public X509Certificate2 (IntPtr handle)
+		    : base (handle)
+		{
+		}
+
+		internal X509Certificate2 (X509Certificate2Impl impl)
+		    : base (impl)
 		{
 		}
 
@@ -116,107 +149,408 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
-		public X509Certificate2 (IntPtr handle) : base (handle) 
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
 		public X509Certificate2 (X509Certificate certificate) 
 			: base (certificate)
 		{
 		}
 
-		protected X509Certificate2 (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected X509Certificate2 (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
+			throw new PlatformNotSupportedException ();
 		}
-
-		internal X509Certificate2 (X509Certificate2Impl impl)
-			: base (impl)
-		{
-		}
-
-		// properties
 
 		public bool Archived {
-			get { return Impl.Archived; }
-			set { Impl.Archived = true; }
+			get {
+				ThrowIfInvalid ();
+				return Impl.Archived;
+			}
+
+			set {
+				ThrowIfInvalid ();
+				Impl.Archived = value;
+			}
 		}
 
 		public X509ExtensionCollection Extensions {
-			get { return Impl.Extensions; }
+			get {
+				ThrowIfInvalid ();
+
+				X509ExtensionCollection extensions = lazyExtensions;
+				if (extensions == null) {
+					extensions = new X509ExtensionCollection ();
+					foreach (X509Extension extension in Impl.Extensions) {
+						X509Extension customExtension = CreateCustomExtensionIfAny (extension.Oid);
+						if (customExtension == null) {
+							extensions.Add (extension);
+						} else {
+							customExtension.CopyFrom (extension);
+							extensions.Add (customExtension);
+						}
+					}
+					lazyExtensions = extensions;
+				}
+				return extensions;
+			}
 		}
 
 		public string FriendlyName {
 			get {
 				ThrowIfInvalid ();
-				return friendlyName;
+				return Impl.FriendlyName;
 			}
+
 			set {
 				ThrowIfInvalid ();
-				friendlyName = value;
+				Impl.FriendlyName = value;
 			}
 		}
 
 		public bool HasPrivateKey {
-			get { return Impl.HasPrivateKey; }
-		}
-
-		public X500DistinguishedName IssuerName {
-			get { return Impl.IssuerName; }
-		} 
-
-		public DateTime NotAfter {
-			get { return Impl.NotAfter.ToLocalTime (); }
-		}
-
-		public DateTime NotBefore {
-			get { return Impl.NotBefore.ToLocalTime (); }
+			get {
+				ThrowIfInvalid ();
+				return Impl.HasPrivateKey;
+			}
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
-			get { return Impl.PrivateKey; }
+			get {
+				ThrowIfInvalid ();
+
+				if (!HasPrivateKey)
+					return null;
+
+				if (lazyPrivateKey == null) {
+					switch (GetKeyAlgorithm ()) {
+					case Oids.RsaRsa:
+						lazyPrivateKey = Impl.GetRSAPrivateKey ();
+						break;
+					case Oids.DsaDsa:
+						lazyPrivateKey = Impl.GetDSAPrivateKey ();
+						break;
+					default:
+						// This includes ECDSA, because an Oids.Ecc key can be
+						// many different algorithm kinds, not necessarily with mutual exclusion.
+						//
+						// Plus, .NET Framework only supports RSA and DSA in this property.
+						throw new NotSupportedException (SR.NotSupported_KeyAlgorithm);
+					}
+				}
+
+				return lazyPrivateKey;
+			}
 			set {
 				throw new PlatformNotSupportedException ();
 			}
 		}
 
+		public X500DistinguishedName IssuerName {
+			get {
+				ThrowIfInvalid ();
+
+				X500DistinguishedName issuerName = lazyIssuerName;
+				if (issuerName == null)
+					issuerName = lazyIssuerName = Impl.IssuerName;
+				return issuerName;
+			}
+		}
+
+		public DateTime NotAfter {
+			get { return GetNotAfter (); }
+		}
+
+		public DateTime NotBefore {
+			get { return GetNotBefore (); }
+		}
+
 		public PublicKey PublicKey {
-			get { return Impl.PublicKey; }
-		} 
+			get {
+				ThrowIfInvalid ();
+
+				PublicKey publicKey = lazyPublicKey;
+				if (publicKey == null) {
+					string keyAlgorithmOid = GetKeyAlgorithm ();
+					byte[] parameters = GetKeyAlgorithmParameters ();
+					byte[] keyValue = GetPublicKey ();
+					Oid oid = new Oid (keyAlgorithmOid);
+					publicKey = lazyPublicKey = new PublicKey (oid, new AsnEncodedData (oid, parameters), new AsnEncodedData (oid, keyValue));
+				}
+				return publicKey;
+			}
+		}
 
 		public byte[] RawData {
-			get { return GetRawCertData (); }
+			get {
+				ThrowIfInvalid ();
+
+				byte[] rawData = lazyRawData;
+				if (rawData == null)
+					rawData = lazyRawData = Impl.RawData;
+				return rawData.CloneByteArray ();
+			}
 		}
 
 		public string SerialNumber {
-			get { return GetSerialNumberString (); }
-		} 
-
-		public Oid SignatureAlgorithm {
-			get { return Impl.SignatureAlgorithm; }
-		} 
-
-		public X500DistinguishedName SubjectName {
-			get { return Impl.SubjectName; }
-		} 
-
-		public string Thumbprint {
-			get { return GetCertHashString (); }
-		} 
-
-		public int Version {
-			get { return Impl.Version; }
+			get {
+				return GetSerialNumberString ();
+			}
 		}
 
-		// methods
+		public Oid SignatureAlgorithm {
+			get {
+				ThrowIfInvalid ();
 
-		[MonoTODO ("always return String.Empty for UpnName, DnsFromAlternativeName and UrlName")]
-		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
+				Oid signatureAlgorithm = lazySignatureAlgorithm;
+				if (signatureAlgorithm == null) {
+					string oidValue = Impl.SignatureAlgorithm;
+					signatureAlgorithm = lazySignatureAlgorithm = Oid.FromOidValue (oidValue, OidGroup.SignatureAlgorithm);
+				}
+				return signatureAlgorithm;
+			}
+		}
+
+		public X500DistinguishedName SubjectName {
+			get {
+				ThrowIfInvalid ();
+
+				X500DistinguishedName subjectName = lazySubjectName;
+				if (subjectName == null)
+					subjectName = lazySubjectName = Impl.SubjectName;
+				return subjectName;
+			}
+		}
+
+		public string Thumbprint {
+			get {
+				byte[] thumbPrint = GetCertHash ();
+				return thumbPrint.ToHexStringUpper ();
+			}
+		}
+
+		public int Version {
+			get {
+				ThrowIfInvalid ();
+
+				int version = lazyVersion;
+				if (version == 0)
+					version = lazyVersion = Impl.Version;
+				return version;
+			}
+		}
+
+		public static X509ContentType GetCertContentType (byte[] rawData)
+		{
+			if (rawData == null || rawData.Length == 0)
+				throw new ArgumentException (SR.Arg_EmptyOrNullArray, nameof (rawData));
+
+			return X509Pal.Instance.GetCertContentType (rawData);
+		}
+
+		public static X509ContentType GetCertContentType (string fileName)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException (nameof (fileName));
+
+			// Desktop compat: The desktop CLR expands the filename to a full path for the purpose of performing a CAS permission check. While CAS is not present here,
+			// we still need to call GetFullPath() so we get the same exception behavior if the fileName is bad.
+			string fullPath = Path.GetFullPath (fileName);
+
+			return X509Pal.Instance.GetCertContentType (fileName);
+		}
+
+		public string GetNameInfo (X509NameType nameType, bool forIssuer)
 		{
 			return Impl.GetNameInfo (nameType, forIssuer);
 		}
 
-		public override void Import (byte[] rawData) 
+		public override string ToString ()
+		{
+			return base.ToString (fVerbose: true);
+		}
+
+		public override string ToString (bool verbose)
+		{
+			if (verbose == false || !IsValid)
+				return ToString ();
+
+			StringBuilder sb = new StringBuilder ();
+
+			// Version
+			sb.AppendLine ("[Version]");
+			sb.Append ("  V");
+			sb.Append (Version);
+
+			// Subject
+			sb.AppendLine ();
+			sb.AppendLine ();
+			sb.AppendLine ("[Subject]");
+			sb.Append ("  ");
+			sb.Append (SubjectName.Name);
+			string simpleName = GetNameInfo (X509NameType.SimpleName, false);
+			if (simpleName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Simple Name: ");
+				sb.Append (simpleName);
+			}
+			string emailName = GetNameInfo (X509NameType.EmailName, false);
+			if (emailName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Email Name: ");
+				sb.Append (emailName);
+			}
+			string upnName = GetNameInfo (X509NameType.UpnName, false);
+			if (upnName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("UPN Name: ");
+				sb.Append (upnName);
+			}
+			string dnsName = GetNameInfo (X509NameType.DnsName, false);
+			if (dnsName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("DNS Name: ");
+				sb.Append (dnsName);
+			}
+
+			// Issuer
+			sb.AppendLine ();
+			sb.AppendLine ();
+			sb.AppendLine ("[Issuer]");
+			sb.Append ("  ");
+			sb.Append (IssuerName.Name);
+			simpleName = GetNameInfo (X509NameType.SimpleName, true);
+			if (simpleName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Simple Name: ");
+				sb.Append (simpleName);
+			}
+			emailName = GetNameInfo (X509NameType.EmailName, true);
+			if (emailName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Email Name: ");
+				sb.Append (emailName);
+			}
+			upnName = GetNameInfo (X509NameType.UpnName, true);
+			if (upnName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("UPN Name: ");
+				sb.Append (upnName);
+			}
+			dnsName = GetNameInfo (X509NameType.DnsName, true);
+			if (dnsName.Length > 0) {
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("DNS Name: ");
+				sb.Append (dnsName);
+			}
+
+			// Serial Number
+			sb.AppendLine ();
+			sb.AppendLine ();
+			sb.AppendLine ("[Serial Number]");
+			sb.Append ("  ");
+			sb.AppendLine (SerialNumber);
+
+			// NotBefore
+			sb.AppendLine ();
+			sb.AppendLine ("[Not Before]");
+			sb.Append ("  ");
+			sb.AppendLine (FormatDate (NotBefore));
+
+			// NotAfter
+			sb.AppendLine ();
+			sb.AppendLine ("[Not After]");
+			sb.Append ("  ");
+			sb.AppendLine (FormatDate (NotAfter));
+
+			// Thumbprint
+			sb.AppendLine ();
+			sb.AppendLine ("[Thumbprint]");
+			sb.Append ("  ");
+			sb.AppendLine (Thumbprint);
+
+			// Signature Algorithm
+			sb.AppendLine ();
+			sb.AppendLine ("[Signature Algorithm]");
+			sb.Append ("  ");
+			sb.Append (SignatureAlgorithm.FriendlyName);
+			sb.Append ('(');
+			sb.Append (SignatureAlgorithm.Value);
+			sb.AppendLine (")");
+
+			// Public Key
+			sb.AppendLine ();
+			sb.Append ("[Public Key]");
+			// It could throw if it's some user-defined CryptoServiceProvider
+			try {
+				PublicKey pubKey = PublicKey;
+
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Algorithm: ");
+				sb.Append (pubKey.Oid.FriendlyName);
+				// So far, we only support RSACryptoServiceProvider & DSACryptoServiceProvider Keys
+				try {
+					sb.AppendLine ();
+					sb.Append ("  ");
+					sb.Append ("Length: ");
+
+					using (RSA pubRsa = this.GetRSAPublicKey ()) {
+						if (pubRsa != null) {
+							sb.Append (pubRsa.KeySize);
+						}
+					}
+				} catch (NotSupportedException) {
+				}
+
+				sb.AppendLine ();
+				sb.Append ("  ");
+				sb.Append ("Key Blob: ");
+				sb.AppendLine (pubKey.EncodedKeyValue.Format (true));
+
+				sb.Append ("  ");
+				sb.Append ("Parameters: ");
+				sb.Append (pubKey.EncodedParameters.Format (true));
+			} catch (CryptographicException) {
+			}
+
+			// Private key
+			Impl.AppendPrivateKeyInfo (sb);
+
+			// Extensions
+			X509ExtensionCollection extensions = Extensions;
+			if (extensions.Count > 0) {
+				sb.AppendLine ();
+				sb.AppendLine ();
+				sb.Append ("[Extensions]");
+				foreach (X509Extension extension in extensions) {
+					try {
+						sb.AppendLine ();
+						sb.Append ("* ");
+						sb.Append (extension.Oid.FriendlyName);
+						sb.Append ('(');
+						sb.Append (extension.Oid.Value);
+						sb.Append ("):");
+
+						sb.AppendLine ();
+						sb.Append ("  ");
+						sb.Append (extension.Format (true));
+					} catch (CryptographicException) {
+					}
+				}
+			}
+
+			sb.AppendLine ();
+			return sb.ToString ();
+		}
+
+		public override void Import (byte[] rawData)
 		{
 			base.Import (rawData);
 		}
@@ -226,165 +560,72 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Import (rawData, password, keyStorageFlags);
 		}
 
+		[CLSCompliantAttribute (false)]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			base.Import (rawData, password, keyStorageFlags);
 		}
 
-		public override void Import (string fileName) 
+		public override void Import (string fileName)
 		{
 			base.Import (fileName);
 		}
 
-		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
+		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			base.Import (fileName, password, keyStorageFlags);
 		}
 
-		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
+		[CLSCompliantAttribute (false)]
+		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			base.Import (fileName, password, keyStorageFlags);
 		}
 
-		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
-		public override byte[] Export (X509ContentType contentType, string password)
-		{
-			X509Helper.ThrowIfContextInvalid (Impl);
-			using (var handle = new SafePasswordHandle (password)) {
-				return Impl.Export (contentType, handle);
-			}
-		}
+		#region Mono Implementation
 
-		public override void Reset () 
-		{
-			friendlyName = string.Empty;
-			base.Reset ();
-		}
-
-		public override string ToString ()
-		{
-			if (!IsValid)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-			return base.ToString (true);
-		}
-
-		public override string ToString (bool verbose)
-		{
-			if (!IsValid)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
-			// the non-verbose X509Certificate2 == verbose X509Certificate
-			if (!verbose)
-				return base.ToString (true);
-
-			string nl = Environment.NewLine;
-			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Version]{0}  V{1}{0}{0}", nl, Version);
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
-			sb.AppendFormat ("[Serial Number]{0}  {1}{0}{0}", nl, SerialNumber);
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, NotBefore);
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, NotAfter);
-			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}{0}", nl, Thumbprint);
-			sb.AppendFormat ("[Signature Algorithm]{0}  {1}({2}){0}{0}", nl, SignatureAlgorithm.FriendlyName, 
-				SignatureAlgorithm.Value);
-
-			AsymmetricAlgorithm key = PublicKey.Key;
-			sb.AppendFormat ("[Public Key]{0}  Algorithm: ", nl);
-			if (key is RSA)
-				sb.Append ("RSA");
-			else if (key is DSA)
-				sb.Append ("DSA");
-			else
-				sb.Append (key.ToString ());
-			sb.AppendFormat ("{0}  Length: {1}{0}  Key Blob: ", nl, key.KeySize);
-			AppendBuffer (sb, PublicKey.EncodedKeyValue.RawData);
-			sb.AppendFormat ("{0}  Parameters: ", nl);
-			AppendBuffer (sb, PublicKey.EncodedParameters.RawData);
-			sb.Append (nl);
-
-			return sb.ToString ();
-		}
-
-		private static void AppendBuffer (StringBuilder sb, byte[] buffer)
-		{
-			if (buffer == null)
-				return;
-			for (int i=0; i < buffer.Length; i++) {
-				sb.Append (buffer [i].ToString ("x2"));
-				if (i < buffer.Length - 1)
-					sb.Append (" ");
-			}
-		}
-
-		[MonoTODO ("by default this depends on the incomplete X509Chain")]
 		public bool Verify ()
 		{
 			return Impl.Verify (this);
 		}
 
-		// static methods
+		#endregion
 
-		private static byte[] signedData = new byte[] { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02 };
-
-		[MonoTODO ("Detection limited to Cert, Pfx/Pkcs12, Pkcs7 and Unknown")]
-		public static X509ContentType GetCertContentType (byte[] rawData)
+		static X509Extension CreateCustomExtensionIfAny (Oid oid)
 		{
-			if ((rawData == null) || (rawData.Length == 0))
-				throw new ArgumentException ("rawData");
+			string oidValue = oid.Value;
+			switch (oidValue) {
+			case Oids.BasicConstraints:
+				return X509Pal.Instance.SupportsLegacyBasicConstraintsExtension ?
+				    new X509BasicConstraintsExtension () :
+				    null;
 
-			if (rawData[0] == 0x30) {
-				// ASN.1 SEQUENCE
-				try {
-					ASN1 data = new ASN1 (rawData);
+			case Oids.BasicConstraints2:
+				return new X509BasicConstraintsExtension ();
 
-					// SEQUENCE / SEQUENCE / BITSTRING
-					if (data.Count == 3 && data [0].Tag == 0x30 && data [1].Tag == 0x30 && data [2].Tag == 0x03)
-						return X509ContentType.Cert;
+			case Oids.KeyUsage:
+				return new X509KeyUsageExtension ();
 
-					// INTEGER / SEQUENCE / SEQUENCE
-					if (data.Count == 3 && data [0].Tag == 0x02 && data [1].Tag == 0x30 && data [2].Tag == 0x30)
-						return X509ContentType.Pkcs12; // note: Pfx == Pkcs12
+			case Oids.EnhancedKeyUsage:
+				return new X509EnhancedKeyUsageExtension ();
 
-					// check for PKCS#7 (count unknown but greater than 0)
-					// SEQUENCE / OID (signedData)
-					if (data.Count > 0 && data [0].Tag == 0x06 && data [0].CompareValue (signedData))
-						return X509ContentType.Pkcs7;
-					
-					return X509ContentType.Unknown;
-				}
-				catch (Exception) {
-					return X509ContentType.Unknown;
-				}
-			} else {
-				string pem = Encoding.ASCII.GetString (rawData);
-				int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
-				if (start >= 0)
-					return X509ContentType.Cert;
+			case Oids.SubjectKeyIdentifier:
+				return new X509SubjectKeyIdentifierExtension ();
+
+			default:
+				return null;
 			}
-
-			return X509ContentType.Unknown;
 		}
 
-		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]
-		public static X509ContentType GetCertContentType (string fileName)
-		{
-			if (fileName == null)
-				throw new ArgumentNullException ("fileName");
-			if (fileName.Length == 0)
-				throw new ArgumentException ("fileName");
+		//
+		// MARTIN CHECK POINT
+		//
 
-			byte[] data = File.ReadAllBytes (fileName);
-			return GetCertContentType (data);
-		}
-
-		// internal stuff because X509Certificate2 isn't complete enough
-		// (maybe X509Certificate3 will be better?)
-
-		[MonoTODO ("See comment in X509Helper2.GetMonoCertificate().")]
-		internal MX.X509Certificate MonoCertificate {
+		new internal X509Certificate2Impl Impl {
 			get {
-				return X509Helper2.GetMonoCertificate (this);
+				var impl2 = base.Impl as X509Certificate2Impl;
+				X509Helper.ThrowIfContextInvalid (impl2);
+				return impl2;
 			}
 		}
 	}

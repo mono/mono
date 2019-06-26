@@ -179,6 +179,23 @@ namespace System.Net.Security
 			}
 		}
 
+		MNS.MonoSslServerAuthenticationOptions CreateAuthenticationOptions (SslServerAuthenticationOptions sslServerAuthenticationOptions)
+		{
+			if (sslServerAuthenticationOptions.ServerCertificate == null && sslServerAuthenticationOptions.ServerCertificateSelectionCallback == null && selectionCallback == null)
+				throw new ArgumentNullException (nameof (sslServerAuthenticationOptions.ServerCertificate));
+
+			if ((sslServerAuthenticationOptions.ServerCertificate != null || selectionCallback != null) && sslServerAuthenticationOptions.ServerCertificateSelectionCallback != null)
+				throw new InvalidOperationException (SR.Format (SR.net_conflicting_options, nameof (ServerCertificateSelectionCallback)));
+
+			var options = new MNS.MonoSslServerAuthenticationOptions (sslServerAuthenticationOptions);
+
+			var serverSelectionCallback = sslServerAuthenticationOptions.ServerCertificateSelectionCallback;
+			if (serverSelectionCallback != null)
+				options.ServerCertSelectionDelegate = (x) => serverSelectionCallback (this, x);
+
+			return options;
+		}
+
 		public virtual void AuthenticateAsClient (string targetHost)
 		{
 			Impl.AuthenticateAsClient (targetHost);
@@ -290,7 +307,7 @@ namespace System.Net.Security
 
 		public Task AuthenticateAsServerAsync (SslServerAuthenticationOptions sslServerAuthenticationOptions, CancellationToken cancellationToken)
 		{
-			return Impl2.AuthenticateAsServerAsync (new MNS.MonoSslServerAuthenticationOptions (sslServerAuthenticationOptions), cancellationToken);
+			return Impl2.AuthenticateAsServerAsync (CreateAuthenticationOptions (sslServerAuthenticationOptions), cancellationToken);
 		}
 
 		public virtual Task ShutdownAsync ()
@@ -356,6 +373,12 @@ namespace System.Net.Security
 
 		public virtual int KeyExchangeStrength {
 			get { return Impl.KeyExchangeStrength; }
+		}
+
+		public SslApplicationProtocol NegotiatedApplicationProtocol {
+			get {
+				throw new PlatformNotSupportedException ("https://github.com/mono/mono/issues/12880");
+			}
 		}
 
 		public override bool CanSeek {
@@ -629,6 +652,10 @@ namespace System.Net.Security
 		}
 
 		public virtual int KeyExchangeStrength {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public SslApplicationProtocol NegotiatedApplicationProtocol {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 

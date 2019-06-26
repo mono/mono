@@ -35,12 +35,14 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Claims
 {
 	[TestFixture]
 	public class X509CertificateClaimSetTest
 	{
-		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+		static X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 		[Test]
 		[Ignore ("not up to date")] // X509Chain

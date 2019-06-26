@@ -280,6 +280,38 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
+		static TcpState UnixTcpStateToTcpState (int unixState)
+		{
+			//The values of these states in Linux are listed here:
+			//https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/net/tcp_states.h?id=HEAD
+			switch (unixState) {
+			case 1:
+				return TcpState.Established;
+			case 2:
+				return TcpState.SynSent;
+			case 3:
+				return TcpState.SynReceived;
+			case 4:
+				return TcpState.FinWait1;
+			case 5:
+				return TcpState.FinWait2;
+			case 6:
+				return TcpState.TimeWait;
+			case 7:
+				return TcpState.Closed;
+			case 8:
+				return TcpState.CloseWait;
+			case 9:
+				return TcpState.LastAck;
+			case 10:
+				return TcpState.Listen;
+			case 11:
+				return TcpState.Closing;
+			default:
+				return TcpState.Unknown;
+			}
+		}
+
 		public override TcpConnectionInformation [] GetActiveTcpConnections ()
 		{
 			List<string []> list = new List<string []> ();
@@ -291,7 +323,7 @@ namespace System.Net.NetworkInformation {
 				// sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
 				IPEndPoint local = ToEndpoint (list [i] [1]);
 				IPEndPoint remote = ToEndpoint (list [i] [2]);
-				TcpState state = (TcpState) int.Parse (list [i] [3], NumberStyles.HexNumber);
+				TcpState state = UnixTcpStateToTcpState (int.Parse (list [i] [3], NumberStyles.HexNumber));
 				ret [i] = new SystemTcpConnectionInformation (local, remote, state);
 			}
 			return ret;

@@ -29,6 +29,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -292,6 +293,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 	[Test]
 	[Category ("MultiThreaded")]
+	[Category ("NotWorkingRuntimeInterpreter")] // Flaky due to false pinning
 	public void OldGenStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");
@@ -485,6 +487,20 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			foreach (var key in keys)
 				Assert.IsTrue (table.Remove (key), "#2-" + i + "-k-" + key);
 		}
+	}
+
+	[Test]
+	public void ConditionalWeakTableEnumerable()
+	{
+		var cwt = new ConditionalWeakTable<string, string>();
+		Assert.AreEqual(0, cwt.ToArray().Length);
+		cwt.Add("test1", "foo1");
+		cwt.Add("test2", "foo2");
+		Assert.AreEqual(2, cwt.ToArray().Length);
+		cwt.Remove("test1");
+		Assert.AreEqual(1, cwt.ToArray().Length);
+		cwt.Remove("test2");
+		Assert.AreEqual(0, cwt.ToArray().Length);
 	}
 	}
 }

@@ -73,8 +73,8 @@ namespace MonoCasTests.System.Web.Mail {
 			msg.Priority = MailPriority.High;
 			msg.Subject = "Monkey business";
 			msg.To = "to@localhost.com";
-			msg.UrlContentBase = "http://www.mono-project.com";
-			msg.UrlContentLocation = "http://www.go-mono.com";
+			msg.UrlContentBase = "http://www.example.org";
+			msg.UrlContentLocation = "http://www.example.com";
 		}
 
 		// LinkDemand tests

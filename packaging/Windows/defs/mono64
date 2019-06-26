@@ -49,22 +49,24 @@ install()
 		${INSTALLDIR}/bin/mono \
 		${INSTALLDIR}/bin/pedump \
 		${INSTALLDIR}/bin/mono-package-runtime \
-		${INSTALLDIR}/bin/monodis* \
-		${INSTALLDIR}/bin/monograph*
+		${INSTALLDIR}/bin/monodis*
 	pushd ${REPODIR}
 	cp -a msvc/build/sgen/x64/bin/Release/monodis-sgen.exe	${INSTALLDIR}/bin/monodis.exe
 	cp -a msvc/build/sgen/x64/bin/Release/monodis-sgen.pdb	${INSTALLDIR}/bin/monodis.pdb
-	cp -a msvc/build/sgen/x64/bin/Release/monograph-sgen.exe	${INSTALLDIR}/bin/monograph.exe
-	cp -a msvc/build/sgen/x64/bin/Release/monograph-sgen.pdb	${INSTALLDIR}/bin/monograph.pdb
 	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.exe		${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.pdb		${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.dll	${INSTALLDIR}/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.pdb	${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/lib/Release/mono-2.0-sgen.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.pdb	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/lib/Release/libmono-static-sgen.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.dll	${INSTALLDIR}/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.pdb	${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/lib/Release/MonoPosixHelper.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.pdb	${INSTALLDIR}/lib/
+        if [ -e msvc/build/sgen/x64/bin/Release/libmono-btls-shared.dll ]; then
+                cp -a msvc/build/sgen/x64/bin/Release/libmono-btls-shared.dll ${INSTALLDIR}/bin/
+        fi
 	cp -a ${INSTALLDIR}/bin/mono-sgen.exe	${INSTALLDIR}/bin/mono.exe
 	cp -a ${INSTALLDIR}/bin/mono-sgen.pdb	${INSTALLDIR}/bin/mono.pdb
 	popd

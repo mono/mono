@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using System;
 using System.CodeDom;
@@ -57,8 +57,8 @@ namespace MonoTests.System.Runtime.Serialization
 		[SetUp]
 		public void Setup ()
 		{
-			collectionsMetadata = WsdlHelper.GetMetadataSet ("collections.wsdl");
-			customCollectionsMetadata = WsdlHelper.GetMetadataSet ("custom-collections.wsdl");
+			collectionsMetadata = WsdlHelper.GetMetadataSet ("Test/Resources/WSDL/collections.wsdl");
+			customCollectionsMetadata = WsdlHelper.GetMetadataSet ("Test/Resources/WSDL/custom-collections.wsdl");
 		}
 		
 		[Test]

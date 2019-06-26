@@ -1,0 +1,418 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{97305421-3071-4175-AA3C-9A432CC28121}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System</RootNamespace>
+    <AssemblyName>System.Data.Linq</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\DbLinq.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\build.dbg\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO_STRICT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\build\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO_STRICT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug - Mono Strict|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\build.dbg.mono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO_STRICT</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DbLinq.Firebird\FirebirdExpressionTranslator.cs">
+      <Link>Vendors\DbLinq.FirebirdSql\FirebirdExpressionTranslator.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Firebird\FirebirdSqlProvider.cs">
+      <Link>Vendors\DbLinq.FirebirdSql\FirebirdSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Firebird\FirebirdVendor.cs">
+      <Link>Vendors\DbLinq.FirebirdSql\FirebirdVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Ingres\IngresSqlProvider.cs">
+      <Link>Vendors\DbLinq.Ingres\IngresSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Ingres\IngresVendor.cs">
+      <Link>Vendors\DbLinq.Ingres\IngresVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.MySql\MySqlSqlProvider.cs">
+      <Link>Vendors\DbLinq.MySql\MySqlSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.MySql\MySqlVendor.cs">
+      <Link>Vendors\DbLinq.MySql\MySqlVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Oracle\OracleSqlProvider.cs">
+      <Link>Vendors\DbLinq.Oracle\OracleSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Oracle\OracleVendor.cs">
+      <Link>Vendors\DbLinq.Oracle\OracleVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.PostgreSql\PgsqlSqlProvider.cs">
+      <Link>Vendors\DbLinq.PostgreSql\PgsqlSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.PostgreSql\PgsqlVendor.cs">
+      <Link>Vendors\DbLinq.PostgreSql\PgsqlVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\Schema\DataCommand.cs">
+      <Link>Vendors\DbLinq.Sqlite\DataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteDataContext.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteDataContext.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSchemaLoader.Columns.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSchemaLoader.Columns.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSchemaLoader.Constraints.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSchemaLoader.Constraints.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSchemaLoader.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSchemaLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSchemaLoader.Tables.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSchemaLoader.Tables.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSqlProvider.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteVendor.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.SqlServer\SqlServerExpressionTranslator.cs">
+      <Link>Vendors\DbLinq.SqlServer\SqlServerExpressionTranslator.cs</Link>
+    </Compile>
+    <Compile Include="Data\Linq\ChangeAction.cs" />
+    <Compile Include="Data\Linq\ChangeSet.cs" />
+    <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\TransactionalCommand.cs" />
+    <Compile Include="Data\Linq\Database\ITransactionalCommand.cs" />
+    <Compile Include="Data\Linq\DataContext.cs" />
+    <Compile Include="Data\Linq\DataLoadOptions.cs" />
+    <Compile Include="Data\Linq\DBLinqExtendedAttributte.cs" />
+    <Compile Include="Data\Linq\EntitySet.cs" />
+    <Compile Include="Data\Linq\Identity\IdentityKey.cs" />
+    <Compile Include="Data\Linq\Identity\IIdentityProvider.cs" />
+    <Compile Include="Data\Linq\Identity\IIdentityReader.cs" />
+    <Compile Include="Data\Linq\Identity\IIdentityReaderFactory.cs" />
+    <Compile Include="Data\Linq\Identity\Implementation\IdentityProviderReader.cs" />
+    <Compile Include="Data\Linq\Identity\Implementation\IdentityReader.cs" />
+    <Compile Include="Data\Linq\Identity\Implementation\IdentityReaderFactory.cs" />
+    <Compile Include="Data\Linq\IExecuteResult.cs" />
+    <Compile Include="Data\Linq\IMemberModificationHandler.cs" />
+    <Compile Include="Data\Linq\Implementation\DisabledEntityTracker.cs" />
+    <Compile Include="Data\Linq\Implementation\EntityState.cs" />
+    <Compile Include="Data\Linq\Implementation\EntityTrack.cs" />
+    <Compile Include="Data\Linq\Implementation\EntityTracker.cs" />
+    <Compile Include="Data\Linq\Implementation\IEntityTracker.cs" />
+    <Compile Include="Data\Linq\Implementation\MemberModificationHandler.cs" />
+    <Compile Include="Data\Linq\Implementation\QueryProvider.cs" />
+    <Compile Include="Data\Linq\Implementation\VendorProvider.cs" />
+    <Compile Include="Data\Linq\ITable.cs" />
+    <Compile Include="Data\Linq\IVendorProvider.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedAbstractMetaDataMember.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedAssociationMetaDataMember.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedColumnMetaDataMember.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedMetaAssociation.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedMetaFunction.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedMetaModel.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedMetaTable.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributedMetaType.cs" />
+    <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
+    <Compile Include="Data\Linq\Mapping\LambdaMetaAccessor.cs" />
+    <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
+    <Compile Include="Data\Linq\Mapping\XmlMappingSource.cs" />
+    <Compile Include="Data\Linq\RefreshMode.cs" />
+    <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\IngresProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\MySqlProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\OracleProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\PostgreSqlProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\SqliteProvider.cs" />
+    <Compile Include="Data\Linq\SqlClient\SqlServerProvider.cs" />
+    <Compile Include="Data\Linq\Sql\SqlLiteralPart.cs" />
+    <Compile Include="Data\Linq\Sql\SqlParameterPart.cs" />
+    <Compile Include="Data\Linq\Sql\SqlPart.cs" />
+    <Compile Include="Data\Linq\Sql\SqlStatement.cs" />
+    <Compile Include="Data\Linq\Sql\SqlStatementBuilder.cs" />
+    <Compile Include="Data\Linq\Sugar\BuilderContext.cs" />
+    <Compile Include="Data\Linq\Sugar\DeleteQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\DirectQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\Error.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionChain.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\ExpressionMutatorExtensions.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\ExpressionMutatorFactory.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\BinaryExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\ConditionalExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\ConstantExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\IMemberBindingMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\InvocationExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\LambdaExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\ListInitExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberAssignmentMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberBindingMutatorFactory.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberInitExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberListBindingMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MemberMemberBindingMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\MethodCallExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\NewArrayExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\NewExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\ParameterExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\TypeBinaryExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\UnaryExpressionMutator.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionPrecedence.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ColumnExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\EntitySetExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ExpressionTranslator.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ObjectInputParameterExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ObjectOutputParameterExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\CustomExpressionType.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\InputParameterExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\GroupExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\IExecutableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\IMutableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\MetaTableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\MutableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\OperandsMutableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\OrderByExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SelectExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SelectOperatorType.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpressionType.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\StartIndexOffsetExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SubSelectExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\TableExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\TableJoinType.cs" />
+    <Compile Include="Data\Linq\Sugar\ExpressionTier.cs" />
+    <Compile Include="Data\Linq\Sugar\IDataMapper.cs" />
+    <Compile Include="Data\Linq\Sugar\IDataRecordReader.cs" />
+    <Compile Include="Data\Linq\Sugar\IExpressionDispatcher.cs" />
+    <Compile Include="Data\Linq\Sugar\IExpressionLanguageParser.cs" />
+    <Compile Include="Data\Linq\Sugar\IExpressionOptimizer.cs" />
+    <Compile Include="Data\Linq\Sugar\IExpressionQualifier.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\DataMapper.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\DataRecordReader.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionDispatcher.Analyzer.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionDispatcher.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionDispatcher.Registrar.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionLanguageParser.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionOptimizer.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\ExpressionQualifier.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\QueryBuilder.Upsert.cs" />
+    <Compile Include="Data\Linq\Sugar\IQueryCache.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\LineGrouping.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\PrequelAnalyzer.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\QueryBuilder.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\QueryCache.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\QueryRunner.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\SpecialExpressionTranslator.cs" />
+    <Compile Include="Data\Linq\Sugar\Implementation\SqlBuilder.cs" />
+    <Compile Include="Data\Linq\Sugar\IPrequelAnalyzer.cs" />
+    <Compile Include="Data\Linq\Sugar\IQueryBuilder.cs" />
+    <Compile Include="Data\Linq\Sugar\IQueryRunner.cs" />
+    <Compile Include="Data\Linq\Sugar\ISpecialExpressionTranslator.cs" />
+    <Compile Include="Data\Linq\Sugar\ISqlBuilder.cs" />
+    <Compile Include="Data\Linq\Sugar\AbstractQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\ParameterizedQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\SelectQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\QueryContext.cs" />
+    <Compile Include="Data\Linq\Sugar\UpsertQuery.cs" />
+    <Compile Include="Data\Linq\Table.cs" />
+    <Compile Include="DbLinqToDoAttribute.cs" />
+    <Compile Include="Factory\DbLinqAttribute.cs" />
+    <Compile Include="Factory\Implementation\ReflectionObjectFactory.cs" />
+    <Compile Include="Factory\IObjectFactory.cs" />
+    <Compile Include="Factory\ObjectFactory.cs" />
+    <Compile Include="MonoTODOAttribute.cs" />
+    <Compile Include="Schema\Case.cs" />
+    <Compile Include="Schema\Dbml\Adapter\ArrayAdapter.cs" />
+    <Compile Include="Schema\Dbml\Adapter\CsvArrayAdapter.cs" />
+    <Compile Include="Schema\Dbml\Adapter\EnumType.cs" />
+    <Compile Include="Schema\Dbml\Adapter\INamedType.cs" />
+    <Compile Include="Schema\Dbml\Adapter\ISimpleList.cs" />
+    <Compile Include="Schema\Dbml\Adapter\SpecifiedPropertyUpdater.cs" />
+    <Compile Include="Schema\Dbml\DatabaseSerializer.cs" />
+    <Compile Include="Schema\WordsExtraction.cs" />
+    <Compile Include="Schema\NameFormat.cs" />
+    <Compile Include="Schema\AssociationName.cs" />
+    <Compile Include="Schema\ColumnName.cs" />
+    <Compile Include="Schema\ParameterName.cs" />
+    <Compile Include="Schema\Dbml\DbmlSchema.Adapter.cs" />
+    <Compile Include="Schema\Dbml\DbmlSchema.cs">
+      <DependentUpon>DbmlSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\Dbml\DbmlSerializer.cs" />
+    <Compile Include="Schema\ProcedureName.cs" />
+    <Compile Include="Schema\Name.cs" />
+    <Compile Include="Schema\SchemaName.cs" />
+    <Compile Include="Schema\TableName.cs" />
+    <Compile Include="System.Data.Linq\Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Data.Linq\Binary.cs" />
+    <Compile Include="System.Data.Linq\ChangeConflictCollection.cs" />
+    <Compile Include="System.Data.Linq\ChangeConflictException.cs" />
+    <Compile Include="System.Data.Linq\CompiledQuery.cs" />
+    <Compile Include="System.Data.Linq\ConflictMode.cs" />
+    <Compile Include="System.Data.Linq\DBConvert.cs" />
+    <Compile Include="System.Data.Linq\DuplicateKeyException.cs" />
+    <Compile Include="Data\Linq\EntityRef.cs" />
+    <Compile Include="System.Data.Linq\ForeignKeyReferenceAlreadyHasValueException.cs" />
+    <Compile Include="System.Data.Linq\IFunctionResult.cs" />
+    <Compile Include="System.Data.Linq\IMultipleResults.cs" />
+    <Compile Include="System.Data.Linq\ISingleResult.cs" />
+    <Compile Include="System.Data.Linq\Link.cs" />
+    <Compile Include="System.Data.Linq\MemberChangeConflict.cs" />
+    <Compile Include="System.Data.Linq\ModifiedMemberInfo.cs" />
+    <Compile Include="System.Data.Linq\ObjectChangeConflict.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\AssociationAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\AutoSync.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\ColumnAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\DataAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\DatabaseAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\FunctionAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\InheritanceMappingAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MappingSource.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaAccessor.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaAccessor_2.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaAssociation.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaDataMember.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaFunction.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaModel.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaParameter.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaTable.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\MetaType.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\ParameterAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\ProviderAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\ResultTypeAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\TableAttribute.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\UpdateCheck.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient.Implementation\ObjectMaterializer.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\Sql2000Provider.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\Sql2005Provider.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlHelpers.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlMethods.cs" />
+    <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlProvider.cs" />
+    <Compile Include="Util\DbmlExtensions.cs" />
+    <Compile Include="Util\ExpressionChainEqualityComparer.cs" />
+    <Compile Include="Util\ExpressionEqualityComparer.cs" />
+    <Compile Include="Util\IDataRecordExtensions.cs" />
+    <Compile Include="Util\IDataTypeExtensions.cs" />
+    <Compile Include="Language\ILanguages.cs" />
+    <Compile Include="Language\ILanguageWords.cs" />
+    <Compile Include="Util\IDbDataParameterExtensions.cs" />
+    <Compile Include="Util\IThreadSafeDictionary.cs" />
+    <Compile Include="Util\LambdaComparer.cs" />
+    <Compile Include="Util\DataCommand.cs" />
+    <Compile Include="Schema\INameFormatter.cs" />
+    <Compile Include="Language\Implementation\AbstractEndPluralWords.cs" />
+    <Compile Include="Language\Implementation\AbstractWords.cs" />
+    <Compile Include="Language\Implementation\Languages.cs" />
+    <Compile Include="Language\Implementation\NoLanguageWords.cs" />
+    <Compile Include="Schema\Implementation\NameFormatter.cs" />
+    <Compile Include="Util\MemberInfoExtensions.cs" />
+    <Compile Include="Util\Output.cs" />
+    <Compile Include="Util\OutputLevel.cs" />
+    <Compile Include="Util\Profiler.cs" />
+    <Compile Include="Util\ReflectionExtensions.cs" />
+    <Compile Include="Util\ReflectionUtility.cs" />
+    <Compile Include="Util\StringExtensions.cs" />
+    <Compile Include="Util\TextWriterExtension.cs" />
+    <Compile Include="Util\ThreadSafeDictionary.cs" />
+    <Compile Include="Util\TypeConvert.cs" />
+    <Compile Include="Util\QuotesHelper.cs" />
+    <Compile Include="Util\ReferenceEqualityComparer.cs" />
+    <Compile Include="Util\Page.cs" />
+    <Compile Include="Util\TypeExtensions.cs" />
+    <Compile Include="Util\TypeLoader.cs" />
+    <Compile Include="Vendor\DbSchemaLoader.cs" />
+    <Compile Include="Vendor\IDataTableColumn.cs" />
+    <Compile Include="Vendor\IDataName.cs" />
+    <Compile Include="Vendor\IDataType.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.Name.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.Columns.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.DataTableColumn.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.DataName.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.ForeignKey.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.StoredProcedures.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.Tables.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.TypeMapping.cs" />
+    <Compile Include="Vendor\Implementation\Vendor.ProcedureResult.cs" />
+    <Compile Include="Vendor\INameAliases.cs" />
+    <Compile Include="Vendor\ISchemaLoader.cs" />
+    <Compile Include="Vendor\ISqlProvider.cs" />
+    <Compile Include="Vendor\IVendor.cs" />
+    <Compile Include="Vendor\Implementation\SchemaLoader.cs" />
+    <Compile Include="Vendor\Implementation\Vendor.cs" />
+    <Compile Include="Vendor\Implementation\SqlProvider.cs" />
+    <Compile Include="..\DbLinq.SqlServer\SqlServerSqlProvider.cs">
+      <Link>Vendors\DbLinq.SqlServer\SqlServerSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.SqlServer\SqlServerTypeConversions.cs">
+      <Link>Vendors\DbLinq.SqlServer\SqlServerTypeConversions.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.SqlServer\SqlServerVendor.cs">
+      <Link>Vendors\DbLinq.SqlServer\SqlServerVendor.cs</Link>
+    </Compile>
+    <Compile Include="Vendor\VendorAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DbLinq.snk">
+      <Link>Properties\DbLinq.snk</Link>
+    </None>
+    <None Include="Schema\Dbml\DbmlSchema.bat" />
+    <None Include="Schema\Dbml\DbmlSchema.bat" />
+    <None Include="System.Data.Linq\Assembly\ChangeLog" />
+    <None Include="System.Data.Linq\ChangeLog" />
+    <None Include="System.Data.Linq\Makefile" />
+    <None Include="System.Data.Linq\System.Data.Linq.dll.sources" />
+    <None Include="System.Data.Linq\System.Data.Linq.Mapping\ChangeLog" />
+    <None Include="System.Data.Linq\System.Data.Linq.SqlClient.Implementation\ChangeLog" />
+    <None Include="System.Data.Linq\System.Data.Linq.SqlClient\ChangeLog" />
+    <EmbeddedResource Include="Schema\Dbml\DbmlSchema.xsd">
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\Linq\Sugar\Notes.txt" />
+    <Content Include="Data\Linq\ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

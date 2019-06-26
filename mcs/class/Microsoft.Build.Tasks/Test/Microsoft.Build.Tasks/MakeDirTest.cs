@@ -94,9 +94,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.Build ("1");
 
 			Assert.AreEqual (3, Directory.GetDirectories (path).Length, "A1");
-			Assert.AreEqual (Path.Combine (path, "A"), Directory.GetDirectories (path) [0], "A2");
-			Assert.AreEqual (Path.Combine (path, "B"), Directory.GetDirectories (path) [1], "A3");
-			Assert.AreEqual (Path.Combine (path, "C"), Directory.GetDirectories (path) [2], "A4");
 
 			BuildItemGroup output = project.GetEvaluatedItemsByName ("Out");
 			Assert.AreEqual (Path.Combine (path, "A"), output [0].FinalItemSpec, "A5");

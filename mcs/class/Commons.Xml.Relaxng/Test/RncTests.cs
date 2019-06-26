@@ -15,6 +15,8 @@ using Commons.Xml.Relaxng;
 using Commons.Xml.Relaxng.Rnc;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
@@ -43,19 +45,19 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void TestRelaxngRnc ()
 		{
-			Compile ("Test/XmlFiles/relaxng.rnc");
+			Compile (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/relaxng.rnc"));
 		}
 
 		[Test]
 		public void TestAtomRnc ()
 		{
-			Compile ("Test/XmlFiles/atom.rnc");
+			Compile (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/atom.rnc"));
 		}
 
 		[Test]
 		public void TestInfocardRnc ()
 		{
-			Compile ("Test/XmlFiles/schemas-xmlsoap-or-ws-2005-05-identity.rnc");
+			Compile (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/schemas-xmlsoap-or-ws-2005-05-identity.rnc"));
 		}
 
 		[Test]
@@ -85,8 +87,8 @@ start = mine";
 		[Test]
 		public void InheritDefaultNamespace ()
 		{
-			RelaxngPattern g = Compile ("Test/XmlFiles/include-default-namespace.rnc");
-			XmlReader xtr = new XmlTextReader ("Test/XmlFiles/include-default-namespace.xml");
+			RelaxngPattern g = Compile (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/include-default-namespace.rnc"));
+			XmlReader xtr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/include-default-namespace.xml"));
 			RelaxngValidatingReader r = new RelaxngValidatingReader (xtr, g);
 			try {
 				while (!r.EOF)

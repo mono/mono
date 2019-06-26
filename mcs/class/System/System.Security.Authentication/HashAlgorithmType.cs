@@ -36,7 +36,10 @@ namespace System.Security.Authentication
 	{
 		None,
 		Md5 = 0x8003,
-		Sha1 = 0x8004
+		Sha1 = 0x8004,
+		Sha256 = 0x800C,
+		Sha384 = 0x800D,
+		Sha512 = 0x800E,
 	}
 }
 

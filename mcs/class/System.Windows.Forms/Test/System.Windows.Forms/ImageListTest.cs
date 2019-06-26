@@ -18,6 +18,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -40,7 +42,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.IntPtr", myimagelist.Handle.GetType ().FullName, "#H3");
 		
 			// I
-			Image myImage =	Image.FromFile("M.gif");
+			Image myImage =	Image.FromFile(TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			myimagelist.Images.Add (myImage);
 			Assert.AreEqual (1, myimagelist.Images.Count, "#I1");
 			Assert.AreEqual (16, myimagelist.ImageSize.Height, "#I2");
@@ -86,7 +88,7 @@ namespace MonoTests.System.Windows.Forms
 
 			// create an ImageList containing an image
 			il = new ImageList ();
-			il.Images.Add (Image.FromFile ("M.gif"));
+			il.Images.Add (Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif")));
 
 			Assert.IsFalse (colordepth_prop.ShouldSerializeValue (il), "13");
 			Assert.IsFalse (colordepth_prop.CanResetValue (il), "14");
@@ -125,7 +127,7 @@ namespace MonoTests.System.Windows.Forms
 			ImageList imgList = new ImageList ();
 			ImageList.ImageCollection coll = imgList.Images;
 
-			Image gif = Image.FromFile ("M.gif");
+			Image gif = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			coll.Add (gif);
 			Bitmap bmp = new Bitmap (10, 10);
 			coll.Add (bmp);
@@ -170,7 +172,7 @@ namespace MonoTests.System.Windows.Forms
 				myform.ShowInTaskbar = false;
 				Graphics mygraphics = null;
 				ImageList myimagelist = new ImageList ();
-				Image myImage =	Image.FromFile("M.gif");
+				Image myImage =	Image.FromFile(TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 				myimagelist.Images.Add (myImage);
 				myimagelist.ColorDepth = ColorDepth.Depth8Bit;
 				myimagelist.ImageSize = new Size (50,50);

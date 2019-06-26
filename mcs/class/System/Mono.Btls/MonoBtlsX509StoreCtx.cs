@@ -142,6 +142,11 @@ namespace Mono.Btls
 			return mono_btls_x509_store_ctx_get_error (Handle.DangerousGetHandle (), out error_string_ptr);
 		}
 
+		public int GetErrorDepth ()
+		{
+			return mono_btls_x509_store_ctx_get_error_depth (Handle.DangerousGetHandle ());
+		}
+
 		public MonoBtlsX509Exception GetException ()
 		{
 			IntPtr error_string_ptr;

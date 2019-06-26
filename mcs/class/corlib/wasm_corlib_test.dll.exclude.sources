@@ -1,3 +1,7 @@
+#include testing_aot_common_corlib_test.dll.exclude.sources
+Mono/NativePlatformTest.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 Microsoft.Win32/RegistryKeyTest.cs
 System.Diagnostics.Contracts/ContractAssertTest.cs
 System.Diagnostics.Contracts/ContractAssumeTest.cs

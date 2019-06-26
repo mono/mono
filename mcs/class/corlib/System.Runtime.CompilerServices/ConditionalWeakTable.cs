@@ -31,6 +31,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace System.Runtime.CompilerServices
 {
@@ -173,6 +175,45 @@ namespace System.Runtime.CompilerServices
 			data = tmp;
 		}
 
+		// the whole method is just a copy of `public void Add (TKey key, TValue value)`
+		// the only difference it doesn't throw exceptions if the given key exists
+		// both methods will be merged once a wierd issue (broken acceptence test dev10_535767.cs) is resolved
+		public void AddOrUpdate (TKey key, TValue value)
+		{
+			if (key == default (TKey))
+				throw new ArgumentNullException ("Null key", "key");
+
+			lock (_lock) {
+				if (size >= data.Length * LOAD_FACTOR)
+					Rehash ();
+
+				int len = data.Length;
+				int idx,initial_idx;
+				int free_slot = -1;
+
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+				do {
+					object k = data [idx].key;
+
+					if (k == null) {
+						if (free_slot == -1)
+							free_slot = idx;
+						break;
+					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
+						free_slot = idx;
+					} else if (k == key) {
+						free_slot = idx; 
+					}
+
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
+
+				data [free_slot].key = key;
+				data [free_slot].value = value;
+				++size;
+			}
+		}
 
 		public void Add (TKey key, TValue value)
 		{
@@ -197,7 +238,7 @@ namespace System.Runtime.CompilerServices
 						break;
 					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
 						free_slot = idx;
-					} else if (k == key) { 
+					} else if (k == key) {
 						throw new ArgumentException ("Key already in the list", "key");
 					}
 
@@ -225,7 +266,6 @@ namespace System.Runtime.CompilerServices
 					if (k == key) {
 						data [idx].key = GC.EPHEMERON_TOMBSTONE;
 						data [idx].value = null;
-						--size;
 						return true;
 					}
 					if (k == null)
@@ -294,8 +334,10 @@ namespace System.Runtime.CompilerServices
 		// if you know for sure that either you won't run into dead locks or you need to live with the
 		// possiblity
 		//--------------------------------------------------------------------------------------------
+#if !MONO
 		[System.Security.SecuritySafeCritical]
 		[FriendAccessAllowed]
+#endif
 		internal TKey FindEquivalentKeyUnsafe(TKey key, out TValue value)
 		{
 			lock (_lock)
@@ -319,13 +361,13 @@ namespace System.Runtime.CompilerServices
 		// Clear all the key/value pairs
 		//--------------------------------------------------------------------------------------------
 		[System.Security.SecuritySafeCritical]
-		internal void Clear()
+		public void Clear()
 		{
 			lock (_lock)
 			{
 				for (int i = 0; i < data.Length; i++)
 				{
-					data[i].key = GC.EPHEMERON_TOMBSTONE;
+					data[i].key = null;
 					data[i].value = null;
 				}
 
@@ -375,11 +417,112 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
+		// IEnumerable implementation was copied from CoreCLR
 		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			lock (_lock)
+			{
+				return size == 0 ?
+					((IEnumerable<KeyValuePair<TKey, TValue>>)Array.Empty<KeyValuePair<TKey, TValue>>()).GetEnumerator() :
+					new Enumerator(this);
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator () => ((IEnumerable<KeyValuePair<TKey, TValue>>)this).GetEnumerator ();
+		
+		/// <summary>Provides an enumerator for the table.</summary>
+		private sealed class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+		{
+			// The enumerator would ideally hold a reference to the Container and the end index within that
+			// container.  However, the safety of the CWT depends on the only reference to the Container being
+			// from the CWT itself; the Container then employs a two-phase finalization scheme, where the first
+			// phase nulls out that parent CWT's reference, guaranteeing that the second time it's finalized there
+			// can be no other existing references to it in use that would allow for concurrent usage of the
+			// native handles with finalization.  We would break that if we allowed this Enumerator to hold a
+			// reference to the Container.  Instead, the Enumerator holds a reference to the CWT rather than to
+			// the Container, and it maintains the CWT._activeEnumeratorRefCount field to track whether there
+			// are outstanding enumerators that have yet to be disposed/finalized.  If there aren't any, the CWT
+			// behaves as it normally does.  If there are, certain operations are affected, in particular resizes.
+			// Normally when the CWT is resized, it enumerates the contents of the table looking for indices that
+			// contain entries which have been collected or removed, and it frees those up, effectively moving
+			// down all subsequent entries in the container (not in the existing container, but in a replacement).
+			// This, however, would cause the enumerator's understanding of indices to break.  So, as long as
+			// there is any outstanding enumerator, no compaction is performed.
+
+			private ConditionalWeakTable<TKey, TValue> _table; // parent table, set to null when disposed
+			private int _currentIndex = -1;                    // the current index into the container
+			private KeyValuePair<TKey, TValue> _current;       // the current entry set by MoveNext and returned from Current
+
+			public Enumerator(ConditionalWeakTable<TKey, TValue> table)
+			{
+				Debug.Assert(table != null, "Must provide a valid table");
+				Debug.Assert(Monitor.IsEntered(table._lock), "Must hold the _lock lock to construct the enumerator");
+
+				// Store a reference to the parent table and increase its active enumerator count.
+				_table = table;
+				_currentIndex = -1;
+			}
+
+			~Enumerator() { Dispose(); }
+
+			public void Dispose()
+			{
+				// Use an interlocked operation to ensure that only one thread can get access to
+				// the _table for disposal and thus only decrement the ref count once.
+				ConditionalWeakTable<TKey, TValue> table = Interlocked.Exchange(ref _table, null);
+				if (table != null)
+				{
+					// Ensure we don't keep the last current alive unnecessarily
+					_current = default;
+
+					// Finalization is purely to decrement the ref count.  We can suppress it now.
+					GC.SuppressFinalize(this);
+				}
+			}
+
+			public bool MoveNext()
+			{
+				// Start by getting the current table.  If it's already been disposed, it will be null.
+				ConditionalWeakTable<TKey, TValue> table = _table;
+				if (table != null)
+				{
+					// Once have the table, we need to lock to synchronize with other operations on
+					// the table, like adding.
+					lock (table._lock)
+					{
+						var tombstone = GC.EPHEMERON_TOMBSTONE;
+						while (_currentIndex < table.data.Length - 1)
+						{
+							_currentIndex++;
+							var currentDataItem = table.data[_currentIndex];
+							if (currentDataItem.key != null && currentDataItem.key != tombstone)
+							{
+								_current = new KeyValuePair<TKey, TValue>((TKey)currentDataItem.key, (TValue)currentDataItem.value);
+								return true;
+							}
+						}
+					}
+				}
+
+				// Nothing more to enumerate.
+				return false;
+			}
+
+			public KeyValuePair<TKey, TValue> Current
+			{
+				get
+				{
+					if (_currentIndex < 0)
+					{
+						ThrowHelper.ThrowInvalidOperationException_InvalidOperation_EnumOpCantHappen();
+					}
+					return _current;
+				}
+			}
+
+			object IEnumerator.Current => Current;
+
+			public void Reset() { }
+		}
 	}
 }

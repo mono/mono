@@ -59,7 +59,7 @@ namespace MonoCasTests.System.Xml {
 		public void EmptyEvidenceDeniedAccess ()
 		{
 			XmlSecureResolver r = new XmlSecureResolver (new XmlUrlResolver (), (Evidence)null);
-			Uri uri = r.ResolveUri (null, "http://www.go-mono.com");
+			Uri uri = r.ResolveUri (null, "http://www.example.com");
 			r.GetEntity (uri, null, typeof (Stream));
 		}
 

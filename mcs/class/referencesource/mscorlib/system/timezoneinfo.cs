@@ -2073,7 +2073,7 @@ namespace System {
 
                 // As we get the associated rule using the adjusted targetTime, we should use the adjusted year (targetTime.Year) too as after adding the baseOffset, 
                 // sometimes the year value can change if the input datetime was very close to the beginning or the end of the year. Examples of such cases:
-                //      ìLibya Standard Timeî when used with the date 2011-12-31T23:59:59.9999999Z
+                //      ‚ÄúLibya Standard Time‚Äù when used with the date 2011-12-31T23:59:59.9999999Z
                 //      "W. Australia Standard Time" used with date 2005-12-31T23:59:00.0000000Z
                 year = targetTime.Year;
 
@@ -3281,16 +3281,25 @@ namespace System {
 #else
         [TypeForwardedFrom("System.Core, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=b77a5c561934e089")]
 #endif
-        public struct TransitionTime : IEquatable<TransitionTime>, ISerializable, IDeserializationCallback {
+        public readonly struct TransitionTime : IEquatable<TransitionTime>, ISerializable, IDeserializationCallback {
 
             // ---- SECTION:  members supporting exposed properties -------------*
-            private DateTime m_timeOfDay;
-            private byte m_month;
-            private byte m_week;
-            private byte m_day;
-            private DayOfWeek m_dayOfWeek;
-            private Boolean m_isFixedDateRule;
+            private readonly DateTime m_timeOfDay;
+            private readonly byte m_month;
+            private readonly byte m_week;
+            private readonly byte m_day;
+            private readonly DayOfWeek m_dayOfWeek;
+            private readonly Boolean m_isFixedDateRule;
 
+            internal TransitionTime(bool isFixedDateRule, DateTime timeOfDay, DayOfWeek dayOfWeek, byte day, byte week, byte month)
+            {
+                m_isFixedDateRule = isFixedDateRule;
+                m_timeOfDay = timeOfDay;
+                m_dayOfWeek = dayOfWeek;
+                m_day = (byte)day;
+                m_week = (byte)week;
+                m_month = (byte)month;
+            }
 
             // ---- SECTION: public properties --------------*
             public DateTime TimeOfDay {
@@ -3417,13 +3426,13 @@ namespace System {
 
                 ValidateTransitionTime(timeOfDay, month, week, day, dayOfWeek);
                 
-                TransitionTime t = new TransitionTime();
-                t.m_isFixedDateRule = isFixedDateRule;
-                t.m_timeOfDay = timeOfDay;
-                t.m_dayOfWeek = dayOfWeek;
-                t.m_day = (byte)day;
-                t.m_week = (byte)week;
-                t.m_month = (byte)month;
+                TransitionTime t = new TransitionTime(
+                    isFixedDateRule,
+                    timeOfDay,
+                    dayOfWeek,
+                    (byte)day,
+                    (byte)week,
+                    (byte)month);
 
                 return t;
             }

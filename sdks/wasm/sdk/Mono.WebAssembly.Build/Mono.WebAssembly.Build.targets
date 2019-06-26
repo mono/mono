@@ -1,0 +1,97 @@
+<Project>
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)Mono.WebAssembly.Build.dll" TaskName="WasmLinkAssemblies" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)Mono.WebAssembly.Build.dll" TaskName="WasmCreateRuntimeJs" />
+
+	<PropertyGroup>
+		<EnableDefaultWebContentItems Condition="'$(EnableDefaultWebContentItems)' == ''">True</EnableDefaultWebContentItems>
+		<MonoWasmManagedOutputDirName Condition="'$(MonoWasmManagedOutputDirName)'==''">managed</MonoWasmManagedOutputDirName>
+		<_MonoWasmManagedOutputDir>$(OutputPath)$(MonoWasmManagedOutputDirName)\</_MonoWasmManagedOutputDir>
+		<MonoWasmIntermediateDir>$(IntermediateOutputPath)monowasm\</MonoWasmIntermediateDir>
+		<MonoWasmLinkMode Condition="'$(MonoWasmLinkMode)'==''">SdkOnly</MonoWasmLinkMode>
+		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
+		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<CleanDependsOn>
+			$(CleanDependsOn);
+			_CleanManagedOutputDir;
+		</CleanDependsOn>
+	</PropertyGroup>
+
+	<!-- suppress local copy for now, we don't want any local copied dlls -->
+	<Target Name="CopyFilesToOutputDirectory" DependsOnTargets="MonoWasmCopyOutput" />
+
+	<Target Name="MonoWasmCopyOutput" DependsOnTargets="_MonoWasmAssemblyCollectOutput;_MonoWasmLink">
+		<Copy
+				SourceFiles="@(_WasmOutput)"
+				DestinationFiles="@(_WasmOutput->'$(OutputPath)%(TargetPath)')"
+				SkipUnchangedFiles="True" />
+	</Target>
+
+	<Target Name="_MonoWasmAssemblyCollectOutput"
+					AfterTargets="_CheckForCompileOutputs">
+
+		<PropertyGroup>
+			<!-- FIXME should this be decoupled from whether managed symbols are produced? -->
+			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js" TargetPath="mono.js" />
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm" TargetPath="mono.wasm" />
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm.map" TargetPath="mono.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
+		</ItemGroup>
+
+		<AssignTargetPath
+			Files="@(Content)"
+			RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_WasmOutput" />
+		</AssignTargetPath>
+
+		<ItemGroup>
+			<FileWrites Include="$(_MonoWasmRuntimeJs)" />
+			<FileWrites Include="@(_WasmOutput->'$(OutputPath)%(TargetPath)')" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="_MonoWasmLink"
+					Inputs="@(IntermediateAssembly);@(ReferencePath);$(MSBuildAllProjects)"
+					Outputs="$(_MonoWasmRuntimeJs);@(IntermediateAssembly->'$(_MonoWasmManagedOutputDir)%(Filename)%(Extension)')">
+		<WasmLinkAssemblies
+			RootAssembly="@(IntermediateAssembly)"
+			Assemblies="@(ReferencePath)"
+			FrameworkDir="$(MonoWasmFrameworkPath)"
+			OutputDir="$(_MonoWasmManagedOutputDir)"
+			LinkMode="$(MonoWasmLinkMode)"
+			LinkSkip="$(MonoWasmLinkSkip)"
+			Debug="$(_DebugSymbolsProduced)"
+			I18n="$(MonoWasmI18n)"
+		/>
+
+		<PropertyGroup>
+			<_WasmHasBindingReference>@(ReferencePath->AnyHaveMetadataValue("Filename","WebAssembly.Bindings"))</_WasmHasBindingReference>
+		</PropertyGroup>
+		<!-- HACK this list should really come from the linker -->
+		<ItemGroup>
+			<_WasmOutputFiles Include="$(_MonoWasmManagedOutputDir)*.dll" />
+			<_WasmOutputFiles Include="$(_MonoWasmManagedOutputDir)*.pdb" />
+		</ItemGroup>
+		<WasmCreateRuntimeJs
+			DeployPrefix="$(MonoWasmManagedOutputDirName)"
+			VfsPrefix="$(MonoWasmManagedOutputDirName)"
+			InitBindings="$(_WasmHasBindingReference)"
+			EnableDebugging="$(_DebugSymbolsProduced)"
+			FileList="@(_WasmOutputFiles)"
+			OutputFile="$(_MonoWasmRuntimeJs)"
+		/>
+  </Target>
+	<Target Name = "_CleanManagedOutputDir">
+		<ItemGroup>
+			<FilesToDelete Include="$(_MonoWasmManagedOutputDir)**\*"/>
+		</ItemGroup>   
+    	<Delete Files="@(FilesToDelete)" />
+	</Target>
+</Project>

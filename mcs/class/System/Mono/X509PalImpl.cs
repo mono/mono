@@ -23,6 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security;
+#else
+using Mono.Security;
+#endif
+
 using System;
 using System.IO;
 using System.Text;
@@ -72,17 +79,66 @@ namespace Mono
 		{
 			data = ConvertData (data);
 
-			var impl = new X509Certificate2ImplMono ();
 			using (var handle = new SafePasswordHandle ((string)null))
-				impl.Import (data, handle, X509KeyStorageFlags.DefaultKeySet);
-			return impl;
+				return new X509Certificate2ImplMono (data, handle, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		internal X509Certificate2Impl ImportFallback (byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
-			var impl = new X509Certificate2ImplMono ();
-			impl.Import (data, password, keyStorageFlags);
-			return impl;
+			return new X509Certificate2ImplMono (data, password, keyStorageFlags);
 		}
+
+		public bool SupportsLegacyBasicConstraintsExtension => false;
+
+		static byte[] signedData = new byte[] { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02 };
+
+		public X509ContentType GetCertContentType (byte[] rawData)
+		{
+			if ((rawData == null) || (rawData.Length == 0))
+				throw new ArgumentException ("rawData");
+
+			if (rawData[0] == 0x30) {
+				// ASN.1 SEQUENCE
+				try {
+					ASN1 data = new ASN1 (rawData);
+
+					// SEQUENCE / SEQUENCE / BITSTRING
+					if (data.Count == 3 && data[0].Tag == 0x30 && data[1].Tag == 0x30 && data[2].Tag == 0x03)
+						return X509ContentType.Cert;
+
+					// INTEGER / SEQUENCE / SEQUENCE
+					if (data.Count == 3 && data[0].Tag == 0x02 && data[1].Tag == 0x30 && data[2].Tag == 0x30)
+						return X509ContentType.Pkcs12; // note: Pfx == Pkcs12
+
+					// check for PKCS#7 (count unknown but greater than 0)
+					// SEQUENCE / OID (signedData)
+					if (data.Count > 0 && data[0].Tag == 0x06 && data[0].CompareValue (signedData))
+						return X509ContentType.Pkcs7;
+
+					return X509ContentType.Unknown;
+				} catch (Exception) {
+					return X509ContentType.Unknown;
+				}
+			} else {
+				string pem = Encoding.ASCII.GetString (rawData);
+				int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
+				if (start >= 0)
+					return X509ContentType.Cert;
+			}
+
+			return X509ContentType.Unknown;
+		}
+
+		public X509ContentType GetCertContentType (string fileName)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+			if (fileName.Length == 0)
+				throw new ArgumentException ("fileName");
+
+			byte[] data = File.ReadAllBytes (fileName);
+			return GetCertContentType (data);
+		}
+
 	}
 }

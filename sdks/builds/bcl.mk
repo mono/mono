@@ -1,71 +1,70 @@
 
-
-# $(BCL_PROFILES) controls, essentially, which profiles get nunitlite built (maybe more later)
-# $(BCL_TEST_PROFILES) controls which profiles get test suites built. Right now it's only nunit-based corlib, System and System.Core. To be expanded.
-
-ifndef DISABLE_ANDROID
-BCL_PROFILES += monodroid
-endif
-
-ifndef DISABLE_IOS
-BCL_PROFILES += monotouch
-endif
-
-ifndef DISABLE_DESKTOP
-BCL_PROFILES += net_4_x
-endif
-
-ifndef DISABLE_WASM
-BCL_PROFILES += wasm
-BCL_TEST_PROFILES += wasm
-endif
-
-.stamp-bcl-toolchain:
-	touch $@
-
-bcl-ios_CONFIGURE_FLAGS = \
-       --with-monotouch=yes \
-       --with-monotouch_tv=yes \
-       --with-xammac=yes \
-       --with-monotouch_watch=yes
-
-bcl_CONFIGURE_FLAGS = \
-       $(if $(DISABLE_DESKTOP),--with-profile4_x=no,--with-profile4_x=yes) \
-       $(if $(DISABLE_ANDROID),,--with-monodroid=yes) \
-       $(if $(DISABLE_IOS),,$(bcl-ios_CONFIGURE_FLAGS)) \
-       $(if $(DISABLE_WASM),,--with-wasm=yes) \
-       --with-mcs-docs=no \
-       --disable-nls \
-       --disable-btls-lib \
-       --disable-support-build \
-       --disable-boehm
+_bcl_CONFIGURE_FLAGS = \
+	$(if $(filter $(UNAME),Windows),--host=$(HOST_ARCH_MINGW32)-w64-mingw32) \
+	--disable-boehm \
+	--disable-btls-lib \
+	--disable-nls \
+	--disable-support-build \
+	--with-mcs-docs=no
 
 .stamp-bcl-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/bcl
-	cd $(TOP)/sdks/builds/bcl && $(TOP)/configure $(bcl_CONFIGURE_FLAGS)
+	./wrap-configure.sh $(TOP)/sdks/builds/bcl $(abspath $<) $(_bcl_CONFIGURE_FLAGS)
 	touch $@
 
-$(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/wasm $(TOP)/sdks/out/bcl/net_4_x:
-	mkdir -p $@
-
-build-custom-bcl:
-	$(MAKE) -C bcl
-	@for the_profile in $(BCL_PROFILES); do $(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=$$the_profile; done
-	@for the_profile in $(BCL_TEST_PROFILES); do \
-		$(MAKE) -C $(TOP)/mcs/class/corlib test-local PROFILE=$$the_profile; \
-		$(MAKE) -C $(TOP)/mcs/class/System test-local PROFILE=$$the_profile; \
-		$(MAKE) -C $(TOP)/mcs/class/System.Core test-local PROFILE=$$the_profile; \
-	done
-
-.PHONY: package-bcl
-package-bcl: | $(TOP)/sdks/out/bcl/net_4_x $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/wasm
-	if [ -d $(TOP)/mcs/class/lib/monodroid ]; then cp -R $(TOP)/mcs/class/lib/monodroid/* $(TOP)/sdks/out/bcl/monodroid; fi
-	if [ -d $(TOP)/mcs/class/lib/monotouch ]; then cp -R $(TOP)/mcs/class/lib/monotouch/* $(TOP)/sdks/out/bcl/monotouch; fi
-	if [ -d $(TOP)/mcs/class/lib/wasm ]; then cp -R $(TOP)/mcs/class/lib/wasm/* $(TOP)/sdks/out/bcl/wasm; fi
-	if [ -d $(TOP)/mcs/class/lib/net_4_x ]; then cp -R $(TOP)/mcs/class/lib/net_4_x/* $(TOP)/sdks/out/bcl/net_4_x; fi
+.PHONY: build-bcl
+build-bcl: .stamp-bcl-configure
+	$(MAKE) -C bcl -C mono
 
 .PHONY: clean-bcl
 clean-bcl:
-	rm -rf .stamp-bcl-toolchain .stamp-bcl-configure $(TOP)/sdks/builds/bcl $(TOP)/sdks/out/bcl
+	rm -rf .stamp-bcl-configure $(TOP)/sdks/builds/bcl
 
-TARGETS += bcl
+##
+# Parameters
+#  $(1): product
+#  $(2): build profiles
+#  $(3): test profiles
+define BclTemplate
+
+.stamp-$(1)-bcl-toolchain:
+	touch $$@
+
+.stamp-$(1)-bcl-configure: .stamp-bcl-configure
+	touch $$@
+
+.PHONY: setup-custom-$(1)-bcl
+setup-custom-$(1)-bcl:
+	mkdir -p $$(TOP)/sdks/out/$(1)-bcl $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)-bcl/$$(profile))
+
+.PHONY: build-$(1)-bcl
+build-$(1)-bcl: build-bcl
+
+.PHONY: build-custom-$(1)-bcl
+build-custom-$(1)-bcl:
+	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)" $$(_bcl_$(1)_BUILD_FLAGS)
+	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)" $$(_bcl_$(1)_BUILD_FLAGS))
+
+.PHONY: package-$(1)-bcl
+package-$(1)-bcl:
+	$$(foreach profile,$(2), \
+		cp -R $$(TOP)/mcs/class/lib/$$(profile)/* $$(TOP)/sdks/out/$(1)-bcl/$$(profile);)
+
+.PHONY: clean-$(1)-bcl
+clean-$(1)-bcl: clean-bcl
+	rm -rf $$(TOP)/sdks/out/$(1)-bcl $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)-bcl/$$(profile))
+
+$$(eval $$(call TargetTemplate,$(1),bcl))
+
+.PHONY: configure-$(1)
+configure-$(1): configure-$(1)-bcl
+
+.PHONY: build-$(1)
+build-$(1): build-$(1)-bcl
+
+.PHONY: archive-$(1)
+archive-$(1): package-$(1)-bcl
+
+$(1)_ARCHIVE += $(1)-bcl
+
+endef

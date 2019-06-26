@@ -1473,7 +1473,8 @@ typedef struct _SCHANNEL_CRED
 
 #endif // !FEATURE_PAL
 
-    [StructLayout(LayoutKind.Sequential)]
+#if false
+	[StructLayout(LayoutKind.Sequential)]
     internal unsafe struct SecurityBufferStruct {
         public int          count;
         public BufferType   type;
@@ -1547,6 +1548,7 @@ typedef struct _SCHANNEL_CRED
             GlobalLog.Print("    securityBufferArray = 0x" + (new IntPtr(UnmanagedPointer)).ToString("x"));
         }
     } // SecurityBufferDescriptor
+#endif
 
     internal  enum    CertificateEncoding {
         Zero                     = 0,

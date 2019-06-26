@@ -6,12 +6,14 @@
 	<dllmap dll="libintl" name="bind_textdomain_codeset" target="@LIBC@" os="solaris"/>
 	<dllmap dll="libintl" target="@INTL@" os="!windows"/>
 	<dllmap dll="i:libxslt.dll" target="libxslt@libsuffix@" os="!windows"/>
-	<dllmap dll="i:odbc32.dll" target="libodbc@libsuffix@" os="!windows"/>
+	<dllmap dll="i:odbc32.dll" target="@ODBC@" os="!windows"/>
 	<dllmap dll="i:odbc32.dll" target="libiodbc.dylib" os="osx"/>
 	<dllmap dll="oci" target="libclntsh@libsuffix@" os="!windows"/>
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@" os="!windows"/>
 	<dllmap dll="MonoPosixHelper" target="$mono_libdir/libMonoPosixHelper@libsuffix@" os="!windows" />
-	<dllmap dll="System.Native" target="$mono_libdir/libmono-system-native@libsuffix@" os="!windows" />
+	<dllmap dll="System.Native" target="$mono_libdir/@MONO_NATIVE_LIBRARY_NAME@@libsuffix@" os="!windows" />
+	<dllmap dll="System.Net.Security.Native" target="$mono_libdir/@MONO_NATIVE_LIBRARY_NAME@@libsuffix@" os="!windows" />
+	<dllmap dll="System.Security.Cryptography.Native.Apple" target="$mono_libdir/@MONO_NATIVE_LIBRARY_NAME@@libsuffix@" os="osx" />
 	<dllmap dll="libmono-btls-shared" target="$mono_libdir/libmono-btls-shared@libsuffix@" os="!windows" />
 	<dllmap dll="i:msvcrt" target="@LIBC@" os="!windows"/>
 	<dllmap dll="i:msvcrt.dll" target="@LIBC@" os="!windows"/>

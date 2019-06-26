@@ -3963,7 +3963,10 @@ namespace Mono.CSharp
 					Report.Error (4013, Location,
 						"Local variables of type `{0}' cannot be used inside anonymous methods, lambda expressions or query expressions",
 						MemberType.GetSignatureForError ());
-				} else if (MemberType.IsByRefLike) {
+				} else if (MemberType.IsSpecialRuntimeType) {
+					Report.Error (610, Location,
+						"Field or property cannot be of type `{0}'", MemberType.GetSignatureForError ());
+				} else {
 					if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 						return;
 
@@ -3976,9 +3979,6 @@ namespace Mono.CSharp
 					Report.Error (8345, Location,
 						"Field or auto-implemented property cannot be of type `{0}' unless it is an instance member of a ref struct",
 						MemberType.GetSignatureForError ());
-				} else {
-					Report.Error (610, Location, 
-						"Field or property cannot be of type `{0}'", MemberType.GetSignatureForError ());
 				}
 			}
 		}

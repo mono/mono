@@ -177,6 +177,7 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void DynamicStatement ()
 		{
 			Evaluator.Run ("dynamic d = 1;");

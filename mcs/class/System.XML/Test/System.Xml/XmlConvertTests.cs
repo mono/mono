@@ -966,7 +966,7 @@ namespace MonoTests.System.Xml
 		public void XmlDateTimeSerializationModeUnspecified ()
 		{
 			Assert.AreEqual (27, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc), XmlDateTimeSerializationMode.Unspecified).Length, "#1");
-			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+02:00", XmlDateTimeSerializationMode.Unspecified);
+			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000-01:00", XmlDateTimeSerializationMode.Unspecified);
 			DateTime dt2 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", XmlDateTimeSerializationMode.Unspecified);
 			Assert.AreEqual (false, dt1 == dt2, "#2");
 			XmlConvert.ToDateTime ("2006-05-30T09:48:32.0Z", XmlDateTimeSerializationMode.Unspecified);

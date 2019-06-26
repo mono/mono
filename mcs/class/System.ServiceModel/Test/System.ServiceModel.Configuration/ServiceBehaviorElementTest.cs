@@ -37,13 +37,15 @@ using System.ServiceModel;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Security;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
 	public class ServiceBehaviorElementTest
 	{
 		ServiceBehaviorElement OpenConfig () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/serviceBehaviors").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/serviceBehaviors")).GetSectionGroup ("system.serviceModel");
 			return config.Behaviors.ServiceBehaviors [0];
 		}
 

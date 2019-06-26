@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Mono.Options;
@@ -161,7 +163,7 @@ public class AppBuilder
 			aot_args += ",soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args += ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
+			aot_args += ",llvm-path=$mono_sdkdir/llvm-llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -228,10 +230,11 @@ public class AppBuilder
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
 		ninja.WriteLine ("rule gen-exe");
 		ninja.WriteLine ("  command = mkdir $appdir");
-		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -o $appdir/{bundle_executable} $in -liconv");
+		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -framework GSS -o $appdir/{bundle_executable} $in -liconv -lz $forcelibs");
 	
 		var ofiles = "";
 		var assembly_names = new List<string> ();
+		var cultures = CultureInfo.GetCultures (CultureTypes.AllCultures).Where (x => !String.IsNullOrEmpty (x.IetfLanguageTag)).Select (x => x.IetfLanguageTag);
 		foreach (var assembly in assemblies) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
@@ -242,6 +245,17 @@ public class AppBuilder
 				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
+
+			var assembly_dir = Path.GetDirectoryName (assembly);
+			var resource_filename = filename.Replace (".dll", ".resources.dll");
+			foreach (var culture in cultures) {
+				var resource_assembly = Path.Combine (assembly_dir, culture, resource_filename);
+				if (!File.Exists(resource_assembly)) continue;
+
+				Directory.CreateDirectory (Path.Combine (builddir, culture));
+				File.Copy (resource_assembly, Path.Combine (builddir, culture, resource_filename), true);
+				ninja.WriteLine ($"build $appdir/{culture}/{resource_filename}: cpifdiff $builddir/{culture}/{resource_filename}");
+			}
 
 			if (isinterpany && filename_noext != "mscorlib")
 				continue;
@@ -295,6 +309,7 @@ public class AppBuilder
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
 			}
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o " + libs + " $monoios_dir/libmonoios.a");
+			ninja.WriteLine ("    forcelibs = -force_load $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");

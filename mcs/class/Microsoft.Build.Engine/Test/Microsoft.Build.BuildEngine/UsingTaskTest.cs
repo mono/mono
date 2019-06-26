@@ -32,6 +32,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class UsingTaskTest {
@@ -45,7 +47,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='SimpleTask'
 						Condition='true'
 					/>
@@ -61,7 +63,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			UsingTask ut = (UsingTask) en.Current;
 			
-			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ut.AssemblyFile, "A1");
 			Assert.IsNull (ut.AssemblyName, "A2");
 			Assert.AreEqual ("true", ut.Condition, "A3");
 			Assert.AreEqual (false, ut.IsImported, "A4");
@@ -74,7 +76,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='SimpleTask'
 					/>
 				</Project>
@@ -89,7 +91,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			UsingTask ut = (UsingTask) en.Current;
 			
-			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ut.AssemblyFile, "A1");
 			Assert.IsNull (ut.AssemblyName, "A2");
 			Assert.AreEqual (null, ut.Condition, "A3");
 			Assert.AreEqual (false, ut.IsImported, "A4");
@@ -133,7 +135,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 					/>
 				</Project>
 			";
@@ -208,11 +210,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 
@@ -238,7 +240,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (2, project.UsingTasks.Count, "A0");
 
 			foreach (UsingTask ut in project.UsingTasks) {
-				Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+				Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ut.AssemblyFile, "A1");
 				Assert.IsNull (ut.AssemblyName, "A2");
 				Assert.AreEqual (null, ut.Condition, "A3");
 				Assert.AreEqual (false, ut.IsImported, "A4");
@@ -301,11 +303,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='Another.SameTask'
 					/>
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='Other.SameTask'
 					/>
 
@@ -343,7 +345,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='Another.SameTask'
 						Condition='false'
 					/>
@@ -367,7 +369,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			UsingTask ut = (UsingTask) en.Current;
 
-			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ut.AssemblyFile, "A1");
 			Assert.IsNull (ut.AssemblyName, "A2");
 			Assert.AreEqual ("false", ut.Condition, "A3");
 			Assert.AreEqual (false, ut.IsImported, "A4");

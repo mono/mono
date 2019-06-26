@@ -872,7 +872,7 @@ namespace MonoTests.System.Net.Sockets {
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
-			IPAddress local_addr = Dns.GetHostEntry (string.Empty).AddressList [0];
+			IPAddress local_addr = Dns.GetHostEntry ("localhost").AddressList [0];
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
@@ -885,7 +885,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void CloseInReceive ()
 		{
-			UdpClient client = new UdpClient (NetworkHelpers.FindFreePort ());
+			UdpClient client = new UdpClient (0);
 
 			ManualResetEvent ready = new ManualResetEvent (false);
 			bool got_exc = false;
@@ -980,7 +980,7 @@ namespace MonoTests.System.Net.Sockets {
 						 "BeginSend #4");
 			}
 
-			IPAddress[] addresses = Dns.GetHostEntry (string.Empty).AddressList;
+			IPAddress[] addresses = Dns.GetHostEntry ("localhost").AddressList;
 			IPEndPoint ep = null;
 			foreach (IPAddress a in addresses) {
 				if (a.AddressFamily == AddressFamily.InterNetwork) {
@@ -1024,8 +1024,8 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void BeginReceive ()
 		{
-			var port = NetworkHelpers.FindFreePort ();
-			UdpClient client = new UdpClient (port);
+			UdpClient client = new UdpClient (0);
+			var port = ((IPEndPoint) client.Client.LocalEndPoint).Port;
 			
 			BRCalledBack.Reset ();
 			
@@ -1053,8 +1053,8 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void Available ()
 		{
-			var port = NetworkHelpers.FindFreePort ();
-			using (UdpClient client = new UdpClient (port)) {
+			using (UdpClient client = new UdpClient (0)) {
+				var port = ((IPEndPoint) client.Client.LocalEndPoint).Port;
 				IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, port);
 				byte[] bytes = new byte[] {10, 11, 12, 13};
 				
@@ -1149,10 +1149,9 @@ namespace MonoTests.System.Net.Sockets {
 			if (!Socket.OSSupportsIPv6)
 				Assert.Ignore ("IPv6 not enabled.");
 
-			int port1 = NetworkHelpers.FindFreePort ();
-			int port2 = NetworkHelpers.FindFreePort ();
-			using(var udpClient = new UdpClient (port1, AddressFamily.InterNetworkV6))
-			using(var udpClient2 = new UdpClient (port2, AddressFamily.InterNetworkV6))
+			using(var udpClient = new UdpClient (0, AddressFamily.InterNetworkV6)) {
+			var port1 = ((IPEndPoint) udpClient.Client.LocalEndPoint).Port;
+			using(var udpClient2 = new UdpClient (0, AddressFamily.InterNetworkV6))
 			{
 				var dataSent = new byte [] {1,2,3};
 				udpClient2.SendAsync (dataSent, dataSent.Length, "::1", port1);
@@ -1161,6 +1160,7 @@ namespace MonoTests.System.Net.Sockets {
 				var data = udpClient.Receive (ref endPoint);
 
 				Assert.AreEqual (dataSent.Length, data.Length);
+			}
 			}
 		}
 		

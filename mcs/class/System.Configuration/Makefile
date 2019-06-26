@@ -17,7 +17,7 @@ LIBRARY_WARN_AS_ERROR = yes
 include ../../build/library.make
 
 test-local:
-	cp Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/Test-appSettings.config
+	cp -f Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/System.Configuration-appSettings.config
 
 run-test:
 	$(MAKE) -C Test/standalone

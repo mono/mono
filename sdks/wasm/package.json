@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jsvu": "1.3.1"
+    "jsvu": "git+https://github.com/kjpou1/jsvu.git#mono-wasm",
+    "lite-server": "^2.5.3",
+    "puppeteer": "^1.17.0"
   }
 }

@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO
 {
 [TestFixture]
@@ -780,7 +782,7 @@ public class StreamReaderTest
 	[Category ("MobileNotWorking")]
 	public void EndOfBufferIsCR ()
 	{
-		using (StreamReader reader = new StreamReader ("Test/resources/Fergie.GED")) {
+		using (StreamReader reader = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/resources/Fergie.GED"))) {
 			string line;
 			int count = 0;
 			while ((line = reader.ReadLine ()) != null) {

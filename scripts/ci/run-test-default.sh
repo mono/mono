@@ -1,17 +1,31 @@
 #!/bin/bash -e
 
+source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
-if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
-then ${TESTCMD} --label=aot-test --skip;
-else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j4 -k test-aot
+if [[ ${CI_TAGS} == *'win-i386'* ]]
+then ${TESTCMD} --label=mini-aotcheck --skip;
+else ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
 fi
-${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j4 test xunit-test
-${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4 tests
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
+if [[ ${CI_TAGS} == *'win-i386'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
+then ${TESTCMD} --label=aot-test --skip;
+else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j ${CI_CPU_COUNT} -k test-aot
+fi
+# workaround some races in the tests build
+for dir in mcs/tools/nunit-lite mcs/class/Microsoft.Build*; do
+    ${TESTCMD} --label=compile-$(basename $dir) --timeout=5m make -w -C $dir test xunit-test
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_12 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_12
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_14 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_14
+done
+${TESTCMD} --label=compile-bcl-tests --timeout=40m make -w -C runtime -j ${CI_CPU_COUNT} test xunit-test
+${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+if [[ ${CI_TAGS} == *'linux'* ]]; then ${TESTCMD} --label=fullaot-mixed --timeout=10m make -w -C mono/tests/fullaot-mixed -j ${CI_CPU_COUNT} check; fi
+if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=llvmonly-mixed --timeout=10m make -w -C mono/tests/llvmonly-mixed -j ${CI_CPU_COUNT} check; fi
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
-${TESTCMD} --label=corlib-xunit --timeout=10m make -w -C mcs/class/corlib run-xunit-test
+${TESTCMD} --label=corlib-xunit --timeout=60m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
@@ -37,6 +51,7 @@ else
     then ${TESTCMD} --label=Windows.Forms --timeout=5m xvfb-run -a -- make -w -C mcs/class/System.Windows.Forms run-test
     else echo "The simple test failed (maybe because of missing X server), skipping test suite." && ${TESTCMD} --label=Windows.Forms --skip; fi
 fi
+${TESTCMD} --label=System.Windows.Forms.DataVisualization --timeout=5m make -w -C mcs/class/System.Windows.Forms.DataVisualization run-test
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 ${TESTCMD} --label=System.Data-xunit --timeout=5m make -w -C mcs/class/System.Data run-xunit-test
 if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=Mono.Data.Sqlite --skip; else ${TESTCMD} --label=Mono.Data.Sqlite --timeout=5m make -w -C mcs/class/Mono.Data.Sqlite run-test; fi
@@ -86,9 +101,14 @@ ${TESTCMD} --label=System.Web.Extensions-standalone --timeout=5m make -w -C mcs/
 ${TESTCMD} --label=System.ComponentModel.DataAnnotations --timeout=5m make -w -C mcs/class/System.ComponentModel.DataAnnotations run-test
 ${TESTCMD} --label=System.ComponentModel.Composition-xunit --timeout=5m make -w -C mcs/class/System.ComponentModel.Composition.4.5 run-xunit-test
 ${TESTCMD} --label=Mono.CodeContracts --timeout=5m make -w -C mcs/class/Mono.CodeContracts run-test
+# needs RabbitMQ installed and hangs on process exit
+# ${TESTCMD} --label=System.Messaging --timeout=5m make -w -C mcs/class/System.Messaging run-test
+${TESTCMD} --label=Mono.Messaging --timeout=5m make -w -C mcs/class/Mono.Messaging run-test
+${TESTCMD} --label=Mono.Messaging.RabbitMQ --timeout=5m make -w -C mcs/class/Mono.Messaging.RabbitMQ run-test
 ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-test
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
 ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
+if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=WebMatrix.Data --skip; else ${TESTCMD} --label=WebMatrix.Data --timeout=5m make -w -C mcs/class/WebMatrix.Data run-test; fi
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
@@ -97,6 +117,8 @@ ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
 ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run-test
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
+${TESTCMD} --label=System.Net.Http-xunit --timeout=15m make -w -C mcs/class/System.Net.Http run-xunit-test
+${TESTCMD} --label=System.Net.Http.WebRequest --timeout=5m make -w -C mcs/class/System.Net.Http.WebRequest run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Json-xunit --timeout=5m make -w -C mcs/class/System.Json run-xunit-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
@@ -105,7 +127,9 @@ ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m mak
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.CSharp-xunit --timeout=5m make -w -C mcs/class/Microsoft.CSharp run-xunit-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test
-if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=monodoc --skip; else ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
+# fails one test and needs to get rid of CallerFilePath to locate test resources
+# ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/class/monodoc run-test
+if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=mdoc --skip; else ${TESTCMD} --label=mdoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
 ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Engine-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Engine run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Framework-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_12
@@ -117,6 +141,7 @@ ${TESTCMD} --label=Microsoft.Build.Framework-14 --timeout=60m make -w -C mcs/cla
 ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Tasks run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
+${TESTCMD} --label=System.IO.Compression-xunit --timeout=5m make -w -C mcs/class/System.IO.Compression run-xunit-test
 if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 ${TESTCMD} --label=csi --timeout=10m make -w -C mcs/packages run-test
@@ -128,21 +153,6 @@ fi
 
 ${TESTCMD} --label=bundle-test-results --timeout=2m find . -name "TestResult*.xml" -exec tar -rvf TestResults.tar {} \;
 
-if [[ $CI_TAGS == *'apidiff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j4 mono-api-diff
-    then report_github_status "success" "API Diff" "No public API changes found." || true
-    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_20API_20Diff/" || true
-    fi
-else ${TESTCMD} --label=apidiff --skip
-fi
-if [[ $CI_TAGS == *'csprojdiff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    make update-solution-files
-    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
-    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
-    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
-    fi
-else ${TESTCMD} --label=csprojdiff --skip
-fi
 rm -fr /tmp/jenkins-temp-aspnet*
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

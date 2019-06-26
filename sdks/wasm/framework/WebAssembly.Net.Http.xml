@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebAssembly.Net.Http</name>
+    </assembly>
+    <members>
+        <member name="P:WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler.DefaultCredentials">
+            <summary>
+            Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
+            Defaults to <see cref="F:WebAssembly.Net.Http.HttpClient.FetchCredentialsOption.SameOrigin"/>.
+            </summary>
+        </member>
+        <member name="P:WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler.StreamingSupported">
+            <summary>
+            Gets whether the current Browser supports streaming responses
+            </summary>
+        </member>
+        <member name="P:WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler.StreamingEnabled">
+            <summary>
+            Gets or sets whether responses should be streamed if supported
+            </summary>
+        </member>
+        <member name="T:WebAssembly.Net.Http.HttpClient.FetchCredentialsOption">
+            <summary>
+            Specifies a value for the 'credentials' option on outbound HTTP requests.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.FetchCredentialsOption.Omit">
+            <summary>
+            Advises the browser never to send credentials (such as cookies or HTTP auth headers).
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.FetchCredentialsOption.SameOrigin">
+            <summary>
+            Advises the browser to send credentials (such as cookies or HTTP auth headers)
+            only if the target URL is on the same origin as the calling application.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.FetchCredentialsOption.Include">
+            <summary>
+            Advises the browser to send credentials (such as cookies or HTTP auth headers)
+            even for cross-origin requests.
+            </summary>
+        </member>
+        <member name="T:WebAssembly.Net.Http.HttpClient.RequestCache">
+            <summary>
+            The cache mode of the request. It controls how the request will interact with the browser's HTTP cache.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.Default">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.NoStore">
+            <summary>
+            The browser fetches the resource from the remote server without first looking in the cache,
+            and will not update the cache with the downloaded resource.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.Reload">
+            <summary>
+            The browser fetches the resource from the remote server without first looking in the cache,
+            but then will update the cache with the downloaded resource.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.NoCache">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.ForceCache">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestCache.OnlyIfCached">
+            <summary>
+            The browser looks for a matching request in its HTTP cache.
+            Mode can only be used if the request's mode is "same-origin"
+            </summary>
+        </member>
+        <member name="T:WebAssembly.Net.Http.HttpClient.RequestMode">
+            <summary>
+            The mode of the request. This is used to determine if cross-origin requests lead to valid responses
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestMode.SameOrigin">
+            <summary>
+            If a request is made to another origin with this mode set, the result is simply an error
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestMode.NoCors">
+            <summary>
+            Prevents the method from being anything other than HEAD, GET or POST, and the headers from
+            being anything other than simple headers.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestMode.Cors">
+            <summary>
+            Allows cross-origin requests, for example to access various APIs offered by 3rd party vendors.
+            </summary>
+        </member>
+        <member name="F:WebAssembly.Net.Http.HttpClient.RequestMode.Navigate">
+            <summary>
+            A mode for supporting navigation.
+            </summary>
+        </member>
+    </members>
+</doc>

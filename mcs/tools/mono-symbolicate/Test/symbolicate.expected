@@ -154,18 +154,18 @@ Stacktrace:
 System.AggregateException: One or more errors occurred. (Error in the application.) ---> System.ApplicationException: Error in the application.
   at StackTraceDumper.TestAsync () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:138
    --- End of inner exception stack trace ---
-  at System.Threading.Tasks.Task.ThrowIfExceptional (System.Boolean includeTaskCanceledExceptions) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2051
-  at System.Threading.Tasks.Task.Wait (System.Int32 millisecondsTimeout, System.Threading.CancellationToken cancellationToken) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2783
-  at System.Threading.Tasks.Task.Wait () in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2649
+  at System.Threading.Tasks.Task.ThrowIfExceptional (System.Boolean includeTaskCanceledExceptions) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2027
+  at System.Threading.Tasks.Task.Wait (System.Int32 millisecondsTimeout, System.Threading.CancellationToken cancellationToken) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2759
+  at System.Threading.Tasks.Task.Wait () in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2625
   at StackTraceDumper+<>c.<Main>b__0_16 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:59
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:78
 ---> (Inner Exception #0) System.ApplicationException: Error in the application.
   at StackTraceDumper.TestAsync () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:138
 
 Stacktrace:
-  at System.Threading.Tasks.Task.ThrowIfExceptional (System.Boolean includeTaskCanceledExceptions) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2051
-  at System.Threading.Tasks.Task.Wait (System.Int32 millisecondsTimeout, System.Threading.CancellationToken cancellationToken) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2783
-  at System.Threading.Tasks.Task.Wait () in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2649
+  at System.Threading.Tasks.Task.ThrowIfExceptional (System.Boolean includeTaskCanceledExceptions) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2027
+  at System.Threading.Tasks.Task.Wait (System.Int32 millisecondsTimeout, System.Threading.CancellationToken cancellationToken) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2759
+  at System.Threading.Tasks.Task.Wait () in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2625
   at StackTraceDumper+<>c.<Main>b__0_16 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:59
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:78
 

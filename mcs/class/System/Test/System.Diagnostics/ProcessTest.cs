@@ -734,6 +734,53 @@ namespace MonoTests.System.Diagnostics
 
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnvironmentVariablesClearedDoNotInherit ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("env not available on Windows");
+
+			var stdout = new StringBuilder ();
+
+			Process p = new Process ();
+			p.StartInfo = new ProcessStartInfo ("/usr/bin/env");
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.OutputDataReceived += (s, e) => { if (e.Data != null) stdout.AppendLine (e.Data); };
+			p.StartInfo.Environment.Clear (); // i.e. don't inherit
+			p.StartInfo.Environment["HELLO"] = "123";
+
+			p.Start ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual ("HELLO=123\n", stdout.ToString ());
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnvironmentVariablesClearedDoNotInheritEmpty ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("env not available on Windows");
+
+			var stdout = new StringBuilder ();
+
+			Process p = new Process ();
+			p.StartInfo = new ProcessStartInfo ("/usr/bin/env");
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.OutputDataReceived += (s, e) => { if (e.Data != null)	stdout.AppendLine (e.Data); };
+			p.StartInfo.Environment.Clear (); // i.e. don't inherit
+
+			p.Start ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual ("", stdout.ToString ());
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		// This was for bug #459450
 		public void TestEventRaising ()
 		{
@@ -988,6 +1035,12 @@ namespace MonoTests.System.Diagnostics
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void StandardInputWrite ()
 		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
+			{
+				// This test is broken on AIX because the fork child seems to become comatose.
+				Assert.Ignore ("Skipping on AIX/i");
+			}
+
 			var psi = GetEchoCrossPlatformStartInfo ();
 			psi.RedirectStandardInput = true;
 			psi.RedirectStandardOutput = true;

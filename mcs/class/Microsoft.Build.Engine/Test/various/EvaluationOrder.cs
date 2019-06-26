@@ -30,6 +30,8 @@ using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class EvaluationOrder {
@@ -242,7 +244,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<PropertyGroup>
-						<Property>Test/resources/Import.csproj</Property>
+						<Property>" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"</Property>
 					</PropertyGroup>
 
 					<Import Project='$(Property)'/>
@@ -268,7 +270,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<Import Project='$(Property)'/>
 
 					<PropertyGroup>
-						<Property>Test/resources/Import.csproj</Property>
+						<Property>" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"</Property>
 					</PropertyGroup>
 				</Project>
 			";
@@ -290,7 +292,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<Item Include='Test/resources/Import.csproj' />
+						<Item Include='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"' />
 					</ItemGroup>
 
 					<Import Project='@(Item)'/>
@@ -316,7 +318,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<Import Project='@(Item)'/>
 
 					<ItemGroup>
-						<Item Include='Test/resources/Import.csproj' />
+						<Item Include='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"' />
 					</ItemGroup>
 				</Project>
 			";
@@ -340,7 +342,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						<ImportedProperty>AnotherValue</ImportedProperty>
 					</PropertyGroup>
 
-					<Import Project='Test/resources/Import.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"'/>
 				</Project>
 			";
 
@@ -359,7 +361,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/Import.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"'/>
 
 					<PropertyGroup>
 						<ImportedProperty>AnotherValue</ImportedProperty>
@@ -382,7 +384,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/Import.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"'/>
 
 					<PropertyGroup>
 						<ImportedProperty>Another$(ImportedProperty)</ImportedProperty>
@@ -405,7 +407,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<PropertyGroup>
-						<Property>Test\resources\TestTasks.dll</Property>
+						<Property>" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"</Property>
 					</PropertyGroup>
 
 					<UsingTask AssemblyFile='$(Property)' TaskName='TrueTestTask' />

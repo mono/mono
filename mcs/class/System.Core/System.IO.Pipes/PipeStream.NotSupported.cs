@@ -52,7 +52,10 @@ namespace System.IO.Pipes
 
 		internal virtual void DisposeCore(bool disposing)
 		{
-			throw new PlatformNotSupportedException();
+			// It's incorrect to throw PNSE here because the finalizer will invoke DisposeCore.
+			// The finalizer can be hit if someone attempts to construct a PipeStream
+			//  because the failed constructor invocation still creates an instance and registers
+			//  it for finalization.
 		}
 
 		private unsafe int ReadCore(Span<byte> buffer)

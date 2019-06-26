@@ -61,6 +61,8 @@ namespace System.Net
 		bool disposed;
 		Stream stream;
 		
+		public HttpWebResponse() { } // Added for NS2.1, it's empty in CoreFX too
+
 		// Constructors
 
 		internal HttpWebResponse (Uri uri, string method, HttpStatusCode status, WebHeaderCollection headers)

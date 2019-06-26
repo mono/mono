@@ -13,17 +13,19 @@ namespace System {
     using System.Globalization;
     using System.Diagnostics.Contracts;
     using System.Security;
+#if !MONO
     using System.Security.Permissions;
+#endif
 
     [Serializable]
     [AttributeUsageAttribute(AttributeTargets.All, Inherited = true, AllowMultiple=false)] 
-#if !MOBILE
+#if !MOBILE && !NETCORE
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Attribute))]
     [System.Runtime.InteropServices.ComVisible(true)]
 #endif
     public abstract partial class Attribute
-#if !MOBILE
+#if !MOBILE && !NETCORE
         : _Attribute
 #endif
     {
@@ -68,7 +70,7 @@ namespace System {
                     custom_attributes.Add (param_attribute);
                 }
 
-                var base_method = method.GetBaseMethod ();
+                var base_method = ((RuntimeMethodInfo)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 
@@ -103,14 +105,17 @@ namespace System {
             if (member.MemberType != MemberTypes.Method)
                 return false;
 
-            var method = ((MethodInfo) member).GetBaseMethod ();
+            var method = ((RuntimeMethodInfo)(MethodInfo) member).GetBaseMethod ();
 
             while (true) {
-                var param = method.GetParametersInternal () [parameter.Position];
+                var parameters = method.GetParametersInternal ();
+                if (parameters?.Length == 0 || parameter.Position < 0)
+                    return false;
+                var param = parameters [parameter.Position];
                 if (param.IsDefined (attributeType, false))
                     return true;
 
-                var base_method = method.GetBaseMethod ();
+                var base_method = ((RuntimeMethodInfo)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 
@@ -1045,7 +1050,7 @@ namespace System {
         public virtual bool IsDefaultAttribute() { return false; }
         #endregion
 
-#if !FEATURE_CORECLR && !MOBILE
+#if !FEATURE_CORECLR && !MOBILE && !NETCORE
         void _Attribute.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();

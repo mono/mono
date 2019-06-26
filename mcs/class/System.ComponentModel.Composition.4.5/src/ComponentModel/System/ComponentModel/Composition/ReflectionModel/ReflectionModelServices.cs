@@ -110,14 +110,6 @@ namespace System.ComponentModel.Composition.ReflectionModel
         {
             Requires.NotNull(importDefinition, "importDefinition");
 
-            ReflectionImportDefinition reflectionImportDefinition = importDefinition as ReflectionImportDefinition;
-            if (reflectionImportDefinition == null)
-            {
-                throw new ArgumentException(
-                    string.Format(CultureInfo.CurrentCulture, Strings.ReflectionModel_InvalidImportDefinition, importDefinition.GetType()),
-                    "importDefinition");
-            }
-
             return (importDefinition is IPartCreatorImportDefinition);
         }
 

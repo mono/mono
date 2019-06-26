@@ -1,0 +1,16 @@
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericArguments.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericMethodDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetHashCode.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderIsGenericMethod.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderSetReturnType.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderSetSignature.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderDeclaringMethod.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGenericParameterAttributes.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGenericParameterPosition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGetGenericTypeDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderIsGenericTypeDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderMakeGenericType.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderName.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderNamespace.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderPackingSize.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderSize.cs

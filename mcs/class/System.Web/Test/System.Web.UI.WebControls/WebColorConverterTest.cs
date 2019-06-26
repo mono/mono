@@ -104,7 +104,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest1 () 
 		{
 			WebColorConverter	conv;
@@ -114,7 +114,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest2 () 
 		{
 			WebColorConverter	conv;
@@ -125,7 +125,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest3 () 
 		{
 			WebColorConverter	conv;
@@ -135,7 +135,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest4 () 
 		{
 			WebColorConverter	conv;
@@ -156,7 +156,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest6 () 
 		{
 			WebColorConverter	conv;
@@ -166,7 +166,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void MalformatTest7 () 
 		{
 			WebColorConverter	conv;

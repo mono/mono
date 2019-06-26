@@ -1,19 +1,12 @@
 
 all: harness.exe appbuilder.exe test-runner.exe
 
-BCL_DIR = ../../mcs/class/lib/monotouch
+BCL_DIR = ../out/ios-bcl/monotouch
 XCODE_ROOT=$(shell xcode-select -p)
 SYSROOT=$(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
-NINJA_PATH:=$(shell which ninja)
-ifeq ($(NINJA_PATH),)
-$(error "ninja not found, install it using 'brew install ninja'.")
-endif
-
-IOS_DEPLOY_PATH:=$(shell which ios-deploy)
-ifeq ($(IOS_DEPLOY_PATH),)
-$(error "ios-deploy not found, install it using 'brew install ios-deploy'.")
-endif
+NINJA_PATH:=$(or $(shell which ninja),$(error "ninja not found, install it using 'brew install ninja'."))
+IOS_DEPLOY_PATH:=$(or $(shell which ios-deploy),$(error "ios-deploy not found, install it using 'brew install ios-deploy'."))
 
 # Default to add-hoc signing
 IOS_SIGNING_IDENTITY ?= -
@@ -62,10 +55,10 @@ test-runner.exe: test-runner/runner.cs
 	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll -r:$(BCL_DIR)/Mono.Security.dll test-runner/runner.cs
 
 runtime/runtime:
-	make -C runtime
+	$(MAKE) -C runtime
 
 runtime/libmonoios.a:
-	make -C runtime
+	$(MAKE) -C runtime
 
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
@@ -84,9 +77,8 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 	test-runner.exe
 
 build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
-	if test "x$($*_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
+	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-sim/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-sim/test-$*.app) --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-sim/test-$*.app
 	ninja -C obj/ios-sim/test-$*.app -v
 
 ifdef LLVM
@@ -112,14 +104,13 @@ endif
 # targets.
 #
 ifdef ENABLE_AOT_CACHE
-APPBUILDER_ARGS += --aot-cachedir $(PWD)/aot-cache
+APPBUILDER_ARGS += --aot-cachedir $(abspath aot-cache)
 endif
 
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
-	mkdir -p $(PWD)/aot-cache
-	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
-	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
+	mkdir -p aot-cache
+	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-dev/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-dev/test-$*.app) --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-dev/test-$*.app
 	ninja -C obj/ios-dev/test-$*.app -v
 
 # Clean %
@@ -142,31 +133,27 @@ clean:
 	$(MAKE) -C runtime clean
 	$(RM) -rf bin obj *.exe *.log aot-cache
 
-# Compile all the test assemblies
-compile-tests:
-	for suite in $(TEST_SUITES) $(TEST_SUITES_COMPILING); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || exit 1; done
-
 run-ios-sim-all:
-	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) build-ios-sim-$$suite || exit 1; $(MAKE) run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-llvm-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-only-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-mixed-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 run-ios-dev-all:
-	for suite in $(TEST_SUITES); do make run-ios-dev-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) run-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
@@ -190,21 +177,19 @@ stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
 
 # CONNSTR will be replace by the harness with the real connection string
-NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
+NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test
 Mono.Runtime.Tests_ASSEMBLIES = $(TESTDIR)/monotouch_Mono.Runtime.Tests_test.dll
 Mono.Runtime.Tests_ARGS = $(NUNIT) monotouch_Mono.Runtime.Tests_test.dll
 corlib_ASSEMBLIES = $(TESTDIR)/monotouch_corlib_test.dll
-corlib_EXTRA_FILES = ../../mcs/class/corlib/{es-ES,nn-NO}
 corlib_ARGS = $(NUNIT) monotouch_corlib_test.dll
 System.Core_ASSEMBLIES = $(TESTDIR)/monotouch_System.Core_test.dll
 System.Core_ARGS = $(NUNIT) monotouch_System.Core_test.dll
 System_ASSEMBLIES = $(TESTDIR)/monotouch_System_test.dll $(BCL_DIR)/Mono.Security.dll
 System_ARGS = $(NUNIT) monotouch_System_test.dll
 System.Data_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Data_test.dll
-System.Data_EXTRA_FILES = ../../mcs/class/System.Data/Test
 System.Data_ARGS = $(NUNIT) monotouch_System.Data_test.dll
 System.Net.Http_ASSEMBLIES = $(BCL_DIR)/System.Net.Http.dll $(TESTDIR)/monotouch_System.Net.Http_test.dll
 System.Net.Http_ARGS = $(NUNIT) monotouch_System.Net.Http_test.dll
@@ -216,10 +201,8 @@ System.Transactions_ASSEMBLIES = $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/m
 System.Transactions_ARGS = $(NUNIT) monotouch_System.Transactions_test.dll
 System.IO.Compression_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression_test.dll
 System.IO.Compression_ARGS = $(NUNIT) monotouch_System.IO.Compression_test.dll
-System.IO.Compression_EXTRA_FILES = ../../mcs/class/System.IO.Compression/{archive.zip,test.nupkg}
 System.IO.Compression.FileSystem_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.FileSystem.dll $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression.FileSystem_test.dll
 System.IO.Compression.FileSystem_ARGS = $(NUNIT) monotouch_System.IO.Compression.FileSystem_test.dll
-System.IO.Compression.FileSystem_EXTRA_FILES = ../../mcs/class/System.IO.Compression.FileSystem/foo
 Mono.CSharp_ASSEMBLIES = $(BCL_DIR)/Mono.CSharp.dll $(TESTDIR)/monotouch_Mono.CSharp_test.dll
 Mono.CSharp_ARGS = $(NUNIT) monotouch_Mono.CSharp_test.dll
 System.Json_ASSEMBLIES = $(BCL_DIR)/System.Json.dll $(TESTDIR)/monotouch_System.Json_test.dll

@@ -39,6 +39,8 @@ using NUnit.Framework;
 using Authenticator = System.IdentityModel.Selectors.X509SecurityTokenAuthenticator;
 using PolicyCollection = System.Collections.ObjectModel.ReadOnlyCollection<System.IdentityModel.Policy.IAuthorizationPolicy>;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Selectors
 {
 	[TestFixture]
@@ -54,7 +56,7 @@ namespace MonoTests.System.IdentityModel.Selectors
 		[Test]
 		public void Validation ()
 		{
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			Authenticator a = new Authenticator (
 				X509CertificateValidator.None);
 			PolicyCollection pl = a.ValidateToken (new X509SecurityToken (cert));

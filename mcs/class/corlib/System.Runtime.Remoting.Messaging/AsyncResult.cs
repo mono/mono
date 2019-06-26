@@ -56,8 +56,10 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	long add_time;
 #pragma warning restore 169, 414, 649
 
+#if !DISABLE_REMOTING
 	// not part of MonoAsyncResult...
 	MonoMethodMessage call_message;
+#endif
 #pragma warning disable 0414
 	IMessageCtrl message_ctrl;
 #pragma warning restore
@@ -66,32 +68,6 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	
 	internal AsyncResult ()
 	{
-	}
-
-	internal AsyncResult (WaitCallback cb, object state, bool capture_context)
-	{
-		orig_cb = cb;
-		if (capture_context) {
-			var stackMark = default (StackCrawlMark);
-			current = ExecutionContext.Capture (
-				ref stackMark,
-				ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
-			cb = delegate {
-				ExecutionContext.Run(current, ccb, this, true);
-			};
-		}
-
-		async_state = state;
-		async_delegate = cb;
-	}
-
-	static internal ContextCallback ccb = new ContextCallback(WaitCallback_Context);
-
-	static private void WaitCallback_Context(Object state)
-	{
-		AsyncResult obj = (AsyncResult)state;
-		WaitCallback wc = obj.orig_cb as WaitCallback;
-		wc(obj.async_state);
 	}
 
 	public virtual object AsyncState
@@ -199,11 +175,13 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 		return null;
 	}
 	
+#if !DISABLE_REMOTING
 	internal MonoMethodMessage CallMessage
 	{
 		get { return call_message; }
 		set { call_message = value; }
 	}
+#endif
 
 	void IThreadPoolWorkItem.ExecuteWorkItem()
 	{

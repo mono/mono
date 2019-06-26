@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
+	[Category ("MultiThreaded")]
 	public class TaskTests
 	{
 		class MockScheduler : TaskScheduler

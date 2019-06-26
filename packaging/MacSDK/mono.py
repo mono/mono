@@ -65,10 +65,10 @@ class MonoMasterPackage(Package):
     def arch_build(self, arch):
         Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit build pass
-            self.local_configure_flags.extend (['--build=x86_64-apple-darwin11.2.0', '--disable-boehm'])
+            self.local_configure_flags.extend (['--build=x86_64-apple-darwin13.0.0', '--disable-boehm'])
 
         if arch == 'darwin-32':  # 32-bit build pass
-            self.local_configure_flags.extend (['--build=i386-apple-darwin11.2.0'])
+            self.local_configure_flags.extend (['--build=i386-apple-darwin13.0.0'])
 
         self.local_configure_flags.extend(
             ['--cache-file=%s/%s-%s.cache' % (self.profile.bockbuild.build_root, self.name, arch)])
@@ -83,6 +83,13 @@ class MonoMasterPackage(Package):
             "registry",
             "LocalMachine")
         ensure_dir(registry_dir)
+
+        # LLVM build installs itself under the source tree; move tools to mono's install path
+        llvm_tools_path = os.path.join(self.workspace, 'llvm/usr/bin')
+        target = os.path.join(self.staged_prefix, 'bin')
+        ensure_dir(target)
+        for tool in ['opt','llc']:
+            shutil.move(os.path.join(llvm_tools_path, tool), target)
 
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':

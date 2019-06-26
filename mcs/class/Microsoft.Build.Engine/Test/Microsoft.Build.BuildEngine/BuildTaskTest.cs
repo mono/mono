@@ -33,6 +33,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class BuildTaskTest {
@@ -321,7 +323,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<UsingTask
-						AssemblyFile='Test\resources\TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='OutputTestTask'
 					/>
 					<Target Name='T'>
@@ -356,7 +358,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
             string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<UsingTask
-						AssemblyFile='Test\resources\TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='NamespacedOutputTestTask'
 					/>
 					<Target Name='T'>
@@ -416,7 +418,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<UsingTask
-						AssemblyFile='Test\resources\TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='OutputTestTask'
 					/>
 					<Target Name='T'>
@@ -449,7 +451,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<UsingTask
-						AssemblyFile='Test\resources\TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='OutputTestTask'
 					/>
 					<Target Name='T'>

@@ -1271,6 +1271,7 @@ namespace Mono.CSharp {
 			case "/highentropyva+":
 			case "/highentropyva-":
 			case "/link":
+			case "/sourcelink":
 			case "/moduleassemblyname":
 			case "/nowin32manifest":
 			case "/pdb":

@@ -5,6 +5,14 @@
 
 #define GC_PTHREAD_REDIRECTS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void * GC_dlopen(const char *path, int mode);
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #if defined(GC_SOLARIS_THREADS)
 /* We need to intercept calls to many of the threads primitives, so 	*/
 /* that we can locate thread stacks and stop the world.			*/
@@ -26,7 +34,6 @@ extern "C" {
   int GC_thr_join(thread_t wait_for, thread_t *departed, void **status);
   int GC_thr_suspend(thread_t target_thread);
   int GC_thr_continue(thread_t target_thread);
-  void * GC_dlopen(const char *path, int mode);
 # define thr_create GC_thr_create
 # define thr_join GC_thr_join
 # define thr_suspend GC_thr_suspend
@@ -65,7 +72,6 @@ extern "C" {
 #if defined(GC_SOLARIS_PTHREADS) || defined(GC_SOLARIS_THREADS)
 # define dlopen GC_dlopen
 #endif /* SOLARIS_THREADS || SOLARIS_PTHREADS */
-
 
 #if !defined(GC_USE_LD_WRAP) && (defined(GC_PTHREADS) || defined(GC_DARWIN_THREADS) || defined(GC_MACOSX_THREADS)) && !defined(GC_SOLARIS_PTHREADS)
 /* We treat these similarly. */

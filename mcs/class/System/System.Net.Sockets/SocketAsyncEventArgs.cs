@@ -61,6 +61,8 @@ namespace System.Net.Sockets
 			private set;
 		}
 
+		public Memory<byte> MemoryBuffer => Buffer;
+
 		internal IList<ArraySegment<byte>> m_BufferList;
 		public IList<ArraySegment<byte>> BufferList {
 			get { return m_BufferList; }
@@ -234,6 +236,11 @@ namespace System.Net.Sockets
 			}
 
 			Buffer = buffer;
+		}
+
+		public void SetBuffer(Memory<byte> buffer)
+		{
+			SetBuffer(buffer.ToArray(), 0, buffer.Length);
 		}
 
 		internal void StartOperationCommon (Socket socket)

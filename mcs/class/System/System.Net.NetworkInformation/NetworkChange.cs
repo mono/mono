@@ -30,6 +30,7 @@
 
 using System;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -326,7 +327,7 @@ namespace System.Net.NetworkInformation {
 
 	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]
-		enum EventType {
+		enum EventType : int {
 			Availability = 1 << 0,
 			Address = 1 << 1,
 		}
@@ -485,20 +486,25 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-#if MONOTOUCH || MONODROID
-		const string LIBNAME = "__Internal";
-#else
-		const string LIBNAME = "MonoPosixHelper";
-#endif
-
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
+#if MONODROID
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern IntPtr CreateNLSocket ();
 
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern EventType ReadEvents (IntPtr sock, IntPtr buffer, int count, int size);
 
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern IntPtr CloseNLSocket (IntPtr sock);
+#else
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern IntPtr CreateNLSocket ();
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern EventType ReadEvents (IntPtr sock, IntPtr buffer, int count, int size);
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern IntPtr CloseNLSocket (IntPtr sock);
+#endif
 	}
 
 #endif

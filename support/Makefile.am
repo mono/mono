@@ -99,12 +99,17 @@ ZLIB_SOURCES = \
 	zlib.h  	\
 	zutil.h
 
+if HAVE_STATIC_ZLIB
+Z_SOURCE = zlib-helper.c
+Z_LIBS = $(STATIC_ZLIB_PATH)
+else
 if HAVE_ZLIB
 Z_SOURCE = zlib-helper.c
 Z_LIBS= -lz
 else
 Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
+endif
 endif
 
 libMonoPosixHelper_la_SOURCES =			\
@@ -128,6 +133,10 @@ libMonoSupportW_la_SOURCES =			\
 
 libMonoSupportW_la_LIBADD =			\
 		$(glib_libs)
+
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)
+	cp -L .libs/libMonoPosixHelper$(libsuffix) $(TEST_BUNDLE_PATH)/
 
 # 
 # Use this target to refresh the values in map.[ch]

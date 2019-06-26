@@ -77,7 +77,7 @@ namespace Mono.Net.Security
 			Settings = settings;
 			Provider = provider;
 
-			readBuffer = new BufferOffsetSize2 (16834);
+			readBuffer = new BufferOffsetSize2 (16500);
 			writeBuffer = new BufferOffsetSize2 (16384);
 			operation = Operation.None;
 		}
@@ -115,14 +115,16 @@ namespace Mono.Net.Security
 
 		internal static Exception GetSSPIException (Exception e)
 		{
-			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException ||
+			    e is AuthenticationException || e is NotSupportedException)
 				return e;
 			return new AuthenticationException (SR.net_auth_SSPI, e);
 		}
 
 		internal static Exception GetIOException (Exception e, string message)
 		{
-			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException ||
+			    e is AuthenticationException || e is NotSupportedException)
 				return e;
 			return new IOException (message, e);
 		}
@@ -178,7 +180,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -231,7 +237,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
@@ -341,7 +351,7 @@ namespace Mono.Net.Security
 		async Task ProcessAuthentication (bool runSynchronously, MonoSslAuthenticationOptions options, CancellationToken cancellationToken)
 		{
 			if (options.ServerMode) {
-				if (options.ServerCertificate == null)
+				if (options.ServerCertificate == null && options.ServerCertSelectionDelegate == null)
 					throw new ArgumentException (nameof (options.ServerCertificate));
 			} else {
 				if (options.TargetHost == null)
@@ -818,10 +828,16 @@ namespace Mono.Net.Security
 				 * to take care of I/O and call it again.
 				*/
 				var newStatus = AsyncOperationStatus.Continue;
-				if (xobileTlsContext.ProcessHandshake ()) {
-					xobileTlsContext.FinishHandshake ();
-					operation = Operation.Authenticated;
-					newStatus = AsyncOperationStatus.Complete;
+				try {
+					if (xobileTlsContext.ProcessHandshake ()) {
+						xobileTlsContext.FinishHandshake ();
+						operation = Operation.Authenticated;
+						newStatus = AsyncOperationStatus.Complete;
+					}
+				} catch (Exception ex) {
+					SetException (GetSSPIException (ex));
+					Dispose ();
+					throw;
 				}
 
 				if (lastException != null)
@@ -912,7 +928,7 @@ namespace Mono.Net.Security
 			try {
 				lock (ioLock) {
 					Debug ("Dispose: {0}", xobileTlsContext != null);
-					lastException = ExceptionDispatchInfo.Capture (new ObjectDisposedException ("MobileAuthenticatedStream"));
+					SetException (new ObjectDisposedException ("MobileAuthenticatedStream"));
 					if (xobileTlsContext != null) {
 						xobileTlsContext.Dispose ();
 						xobileTlsContext = null;
@@ -1094,29 +1110,64 @@ namespace Mono.Net.Security
 			}
 		}
 
-#region Need to Implement
 		public int CipherStrength {
 			get {
-				throw new NotImplementedException ();
+				CheckThrow (true);
+				var info = GetConnectionInfo ();
+				if (info == null)
+					return 0;
+				switch (info.CipherAlgorithmType) {
+				case MSI.CipherAlgorithmType.None:
+				case MSI.CipherAlgorithmType.Aes128:
+				case MSI.CipherAlgorithmType.AesGcm128:
+					return 128;
+				case MSI.CipherAlgorithmType.Aes256:
+				case MSI.CipherAlgorithmType.AesGcm256:
+					return 256;
+				default:
+					throw new ArgumentOutOfRangeException (nameof (info.CipherAlgorithmType));
+				}
 			}
 		}
+
 		public int HashStrength {
 			get {
-				throw new NotImplementedException ();
+				CheckThrow (true);
+				var info = GetConnectionInfo ();
+				if (info == null)
+					return 0;
+				switch (info.HashAlgorithmType) {
+				case MSI.HashAlgorithmType.Md5:
+				case MSI.HashAlgorithmType.Md5Sha1:
+					return 128;
+				case MSI.HashAlgorithmType.Sha1:
+					return 160;
+				case MSI.HashAlgorithmType.Sha224:
+					return 224;
+				case MSI.HashAlgorithmType.Sha256:
+					return 256;
+				case MSI.HashAlgorithmType.Sha384:
+					return 384;
+				case MSI.HashAlgorithmType.Sha512:
+					return 512;
+				default:
+					throw new ArgumentOutOfRangeException (nameof (info.HashAlgorithmType));
+				}
 			}
 		}
+
 		public int KeyExchangeStrength {
 			get {
-				throw new NotImplementedException ();
+				// FIXME: CoreFX returns 0 on non-Windows platforms.
+				return 0;
 			}
 		}
+
 		public bool CheckCertRevocationStatus {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-
-#endregion
 	}
 }
 #endif

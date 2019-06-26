@@ -26,7 +26,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Apple;
 using Microsoft.Win32.SafeHandles;
-using Mono.Net;
+using Mono;
 
 namespace System.Security.Cryptography.X509Certificates
 {

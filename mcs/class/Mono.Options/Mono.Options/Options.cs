@@ -1782,6 +1782,53 @@ namespace Mono.Options
 			return false;
 		}
 
+		public IEnumerable<string> GetCompletions (string prefix = null)
+		{
+			string rest;
+			ExtractToken (ref prefix, out rest);
+
+			foreach (var command in this) {
+				if (command.Name.StartsWith (prefix, StringComparison.OrdinalIgnoreCase)) {
+					yield return command.Name;
+				}
+			}
+
+			if (NestedCommandSets == null)
+				yield break;
+
+			foreach (var subset in NestedCommandSets) {
+				if (subset.Suite.StartsWith (prefix, StringComparison.OrdinalIgnoreCase)) {
+					foreach (var c in subset.GetCompletions (rest)) {
+						yield return $"{subset.Suite} {c}";
+					}
+				}
+			}
+		}
+
+		static void ExtractToken (ref string input, out string rest)
+		{
+			rest      = "";
+			input     = input ?? "";
+
+			int top   = input.Length;
+			for (int i = 0; i < top; i++) {
+				if (char.IsWhiteSpace (input [i]))
+					continue;
+
+				for (int j = i; j < top; j++) {
+					if (char.IsWhiteSpace (input [j])) {
+						rest  = input.Substring (j).Trim ();
+						input = input.Substring (i, j).Trim ();
+						return;
+					}
+				}
+				rest  = "";
+				if (i != 0)
+					input = input.Substring (i).Trim ();
+				return;
+			}
+		}
+
 		public int Run (IEnumerable<string> arguments)
 		{
 			if (arguments == null)
@@ -1879,7 +1926,6 @@ namespace Mono.Options
 		public override int Invoke (IEnumerable<string> arguments)
 		{
 			var extra   = new List<string> (arguments ?? new string [0]);
-			Console.WriteLine ($"# HelpCommand.Invoke: arguments={string.Join (" ", arguments)}");
 			var _       = CommandSet.Options.MessageLocalizer;
 			if (extra.Count == 0) {
 				CommandSet.Options.WriteOptionDescriptions (CommandSet.Out);

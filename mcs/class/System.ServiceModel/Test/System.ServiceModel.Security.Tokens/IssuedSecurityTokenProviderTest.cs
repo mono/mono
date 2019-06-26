@@ -44,6 +44,8 @@ using NUnit.Framework;
 
 using MonoTests.System.ServiceModel.Channels;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Security.Tokens
 {
 	[TestFixture]
@@ -303,7 +305,7 @@ namespace MonoTests.System.ServiceModel.Security.Tokens
 //*
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<Response>RESPONSE</Response>");
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			SignedXml sxml = new SignedXml (doc);
 			MemoryStream ms = new MemoryStream (new byte [] {1, 2, 3});
 			sxml.AddReference (new Reference (ms));
@@ -466,7 +468,7 @@ Console.Error.Flush ();
 			PaddingMode mode = PaddingMode.PKCS7; // not sure which is correct ... ANSIX923, ISO10126, PKCS7, Zeros, None.
 			EncryptedXml encXml = new EncryptedXml (doc);
 			encXml.Padding = mode;
-			X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
 			nsmgr.AddNamespace ("s", "http://www.w3.org/2003/05/soap-envelope");
 			nsmgr.AddNamespace ("c", "http://schemas.xmlsoap.org/ws/2005/02/sc");
@@ -603,7 +605,7 @@ Console.Error.WriteLine ("============= Decrypted Body End ===========");
 		{
 			return new EndpointAddress (new Uri (uri),
 				new X509CertificateEndpointIdentity (
-					new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
+					new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono")));
 		}
 
 		IssuedSecurityTokenProvider SetupProvider (Binding binding)

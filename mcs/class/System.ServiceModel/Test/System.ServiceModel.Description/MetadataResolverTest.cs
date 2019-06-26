@@ -52,7 +52,7 @@ namespace MonoTests.System.ServiceModel.Description
 		IAsyncResult current_request;
 		int remaining, port;
 
-		static readonly string mex = File.ReadAllText ("Test/System.ServiceModel.Description/dump.xml");
+		static readonly string mex = File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/Resources/dump.xml"));
 
 		[SetUp]
 		public void StartupServer ()

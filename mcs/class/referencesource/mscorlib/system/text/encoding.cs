@@ -6,7 +6,6 @@
 namespace System.Text
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Runtime;
     using System.Runtime.Remoting;
@@ -18,6 +17,8 @@ namespace System.Text
     using System.Text;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
+    using System.Diagnostics;
+    using System.Runtime.InteropServices;
 #if FEATURE_CODEPAGES_FILE            
     using Win32Native = Microsoft.Win32.Win32Native;
 #endif
@@ -105,7 +106,7 @@ namespace System.Text
 #if FEATURE_LATIN1
         private static volatile Encoding latin1Encoding;
 #endif
-        static volatile Hashtable encodings;
+        static volatile Dictionary<int, Encoding> encodings;
 
         //
         // The following values are from mlang.idl.  These values
@@ -438,9 +439,8 @@ namespace System.Text
             // Our Encoding
 
             // See if we have a hash table with our encoding in it already.
-            if (encodings != null) {
-                result = (Encoding)encodings[codepage];
-            }
+            if (encodings != null)
+                encodings.TryGetValue (codepage, out result);
 
             if (result == null)
             {
@@ -449,12 +449,11 @@ namespace System.Text
                 {
                     // Need a new hash table
                     // in case another thread beat us to creating the Dictionary
-                    if (encodings == null) {
-                        encodings = new Hashtable();
-                    }
+                    if (encodings == null)
+                        encodings = new Dictionary<int, Encoding> ();
 
                     // Double check that we don't have one in the table (in case another thread beat us here)
-                    if ((result = (Encoding)encodings[codepage]) != null)
+                    if (encodings.TryGetValue (codepage, out result))
                         return result;
 
                     // Special case the commonly used Encoding classes here, then call
@@ -550,8 +549,8 @@ namespace System.Text
                                 break;
                             default:
                                 result = (Encoding)(EncodingHelper.InvokeI18N ("GetEncoding", codepage));
-								if (result == null)
-									throw new NotSupportedException(string.Format("Encoding {0} data could not be found. Make sure you have correct international codeset assembly installed and enabled.", codepage));
+                                if (result == null)
+                                    throw new NotSupportedException(string.Format("Encoding {0} data could not be found. Make sure you have correct international codeset assembly installed and enabled.", codepage));
                                 break;
                             }
 #else
@@ -1698,6 +1697,67 @@ namespace System.Text
             // If we didn't throw, we are in convert and have to remember our flushing
             decoder.ClearMustFlush();
         }
+
+#if MONO
+        public virtual unsafe int GetCharCount(ReadOnlySpan<byte> bytes)
+        {
+            fixed (byte* bytesPtr = &MemoryMarshal.GetNonNullPinnableReference(bytes))
+            {
+                return GetCharCount(bytesPtr, bytes.Length);
+            }
+        }
+
+        public virtual unsafe int GetByteCount(ReadOnlySpan<char> chars)
+        {
+            fixed (char* charsPtr = &MemoryMarshal.GetNonNullPinnableReference(chars))
+            {
+                return GetByteCount(charsPtr, chars.Length);
+            }
+        }
+
+        public virtual unsafe int GetBytes(ReadOnlySpan<char> chars, Span<byte> bytes)
+        {
+            fixed (char* charsPtr = &MemoryMarshal.GetNonNullPinnableReference(chars))
+            fixed (byte* bytesPtr = &MemoryMarshal.GetNonNullPinnableReference(bytes))
+            {
+                return GetBytes(charsPtr, chars.Length, bytesPtr, bytes.Length);
+            }
+        }
+
+        public byte[] GetBytes(string s, int index, int count)
+        {
+            if (s == null)
+                throw new ArgumentNullException(nameof(s),
+                    SR.ArgumentNull_String);
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                      SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count),
+                      SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (index > s.Length - count)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                      SR.ArgumentOutOfRange_IndexCount);
+
+            unsafe
+            {
+                fixed (char* pChar = s)
+                {
+                    int byteCount = GetByteCount(pChar + index, count);
+                    if (byteCount == 0)
+                        return Array.Empty<byte>();
+
+                    byte[] bytes = new byte[byteCount];
+                    fixed (byte* pBytes = &bytes[0])
+                    {
+                        int bytesReceived = GetBytes(pChar + index, count, pBytes, byteCount);
+                        Debug.Assert(byteCount == bytesReceived);
+                    }
+                    return bytes;
+                }
+            }
+        }
+#endif
 
         [Serializable]
         internal class DefaultEncoder : Encoder, ISerializable, IObjectReference

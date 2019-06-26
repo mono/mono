@@ -151,10 +151,10 @@ namespace System {
 		public static string CurrentDirectory
 		{
 			get {
-				return Directory.GetCurrentDirectory ();
+				return Directory.InsecureGetCurrentDirectory ();
 			}
 			set {
-				Directory.SetCurrentDirectory (value);
+				Directory.InsecureSetCurrentDirectory  (value);
 			}
 		}
 		
@@ -563,10 +563,12 @@ namespace System {
 
 			string dir = null;
 
+#pragma warning disable 162
 			if (Environment.IsRunningOnWindows)
 				dir = GetWindowsFolderPath ((int) folder);
 			else
 				dir = UnixGetFolderPath (folder, option);
+#pragma warning restore 162
 
 #if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
@@ -904,26 +906,36 @@ namespace System {
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
+		internal unsafe static extern void InternalSetEnvironmentVariable (char *variable, int variable_length,
+									    char *value, int value_length);
+
+		internal unsafe static void InternalSetEnvironmentVariable (string variable, string value)
+		{
+			fixed (char *fixed_variable = variable)
+			fixed (char *fixed_value = value)
+			InternalSetEnvironmentVariable (fixed_variable, variable?.Length ?? 0,
+							fixed_value,    value?.Length ?? 0);
+		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{
-			throw new NotImplementedException ();
+			FailFast (message, null, null);
 		}
 
 		internal static void FailFast (String message, uint exitCode)
 		{
-			throw new NotImplementedException ();
+			FailFast (message, null, null);
 		}
 
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
-#pragma warning disable 618
-			throw new ExecutionEngineException (message, exception);
-#pragma warning restore
+			FailFast (message, exception, null);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void FailFast (string message, Exception exception, string errorSource);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static bool GetIs64BitOperatingSystem ();
@@ -948,7 +960,7 @@ namespace System {
 		}
 
 		// private methods
-#if (MONOTOUCH || MONODROID || XAMMAC)
+#if (MONOTOUCH || MONODROID || XAMMAC || WASM) && !MOBILE_DESKTOP_HOST
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
@@ -977,7 +989,7 @@ namespace System {
 		internal extern static string internalGetGacPath ();
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string [] GetLogicalDrivesInternal ();
+		internal extern static string [] GetLogicalDrivesInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();

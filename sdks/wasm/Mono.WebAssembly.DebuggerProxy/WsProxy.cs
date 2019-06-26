@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace WsProxy {
 
-	internal struct Result {
+	public struct Result {
 		public JObject Value { get; private set; }
 		public JObject Error { get; private set; }
 
@@ -205,7 +205,7 @@ namespace WsProxy {
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
-			Debug ($"sending command {method}: {args}");
+			// Debug ($"sending command {method}: {args}");
 			return await SendCommandInternal (method, args, token);
 		}
 
@@ -276,7 +276,7 @@ namespace WsProxy {
 
 					try {
 						while (!x.IsCancellationRequested) {
-							var task = await Task.WhenAny (pending_ops);
+							var task = await Task.WhenAny (pending_ops.ToArray ());
 							//Console.WriteLine ("pump {0} {1}", task, pending_ops.IndexOf (task));
 							if (task == pending_ops [0]) {
 								var msg = ((Task<string>)task).Result;

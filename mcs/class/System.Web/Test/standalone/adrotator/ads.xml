@@ -7,11 +7,11 @@
 	<Keyword>novell</Keyword>
 </Ad>
 <Ad>
-	<ImageUrl>~/images/google.jpg</ImageUrl>
-	<NavigateUrl>http://www.google.com</NavigateUrl>
-	<AlternateText>Google</AlternateText>
+	<ImageUrl>~/images/example.jpg</ImageUrl>
+	<NavigateUrl>http://www.example.com</NavigateUrl>
+	<AlternateText>Example</AlternateText>
 	<Impressions>80</Impressions>
-	<Keyword>google</Keyword>
+	<Keyword>example</Keyword>
 </Ad>
 <Ad>
 	<ImageUrl>~/images/ibm.jpg</ImageUrl>

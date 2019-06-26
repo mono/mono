@@ -14,7 +14,9 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Security.Cryptography;
+#if HAS_MONO_SECURITY
 using Mono.Security;
+#endif
 
 namespace Mono.ILASM {
 
@@ -52,7 +54,9 @@ namespace Mono.ILASM {
                         private CodeGen codegen;
 			private bool keycontainer = false;
 			private string keyname;
+#if HAS_MONO_SECURITY
 			private StrongName sn;
+#endif
                         bool noautoinherit;
 
                         public DriverMain (string[] args)
@@ -84,9 +88,13 @@ namespace Mono.ILASM {
 
 					// if we have a key and aren't assembling a netmodule
 					if ((keyname != null) && !codegen.IsThisAssembly (null)) {
+#if HAS_MONO_SECURITY
 						LoadKey ();
 						// this overrides any attribute or .publickey directive in the source
 						codegen.ThisAssembly.SetPublicKey (sn.PublicKey);
+#else
+                                                throw new NotSupportedException ();
+#endif
 					}
 
                                         try {
@@ -103,6 +111,7 @@ namespace Mono.ILASM {
                                         return false;
                                 } 
 
+#if HAS_MONO_SECURITY
                                 try {
 					if (sn != null) {
 						Report.Message ("Signing assembly with the specified strongname keypair");
@@ -111,6 +120,7 @@ namespace Mono.ILASM {
                                 } catch {
                                         return false;
                                 }
+#endif
 
                                 return true;
                         }
@@ -121,6 +131,7 @@ namespace Mono.ILASM {
                                 Console.WriteLine ("***** FAILURE *****\n");
                         }
 
+#if HAS_MONO_SECURITY
 			private void LoadKey ()
 			{
 				if (keycontainer) {
@@ -146,6 +157,7 @@ namespace Mono.ILASM {
 				// exists
 				return sn.Sign (filename);
 			}
+#endif
 
                         private void ProcessFile (string file_path)
                         {
@@ -359,7 +371,7 @@ namespace Mono.ILASM {
                         {
                                 Console.WriteLine (
                                         "For more information on Mono, visit the project Web site\n" +
-                                        "   http://www.go-mono.com\n\n");
+                                        "   http://www.mono-project.com\n\n");
                                 Environment.Exit (0);
                         }
 

@@ -39,6 +39,8 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -1570,7 +1572,7 @@ namespace MonoTests.System.Data
 		public void Merge_ConstraintsFromReadXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/TestMerge1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/TestMerge1.xml"));
 			DataSet ds2 = new DataSet ();
 			ds2.Merge (ds, true, MissingSchemaAction.AddWithKey);
 			DataRelation c = ds2.Tables [0].ChildRelations [0];
@@ -3370,7 +3372,7 @@ namespace MonoTests.System.Data
 			//when Relation.Nested = false, and the schema is nested, create new relations on <table>_Id
 			//columns.
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test017.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test017.xsd"));
 			Assert.AreEqual (2, ds.Relations.Count, "#1");
 			Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#2");
 			Assert.AreEqual (3, ds.Tables [1].Columns.Count, "#3");
@@ -3382,7 +3384,7 @@ namespace MonoTests.System.Data
 		public void ReadXmlSchema_TableOrder ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/Items.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/Items.xsd"));
 			Assert.AreEqual ("category", ds.Tables [0].TableName, "#1");
 			Assert.AreEqual ("childItemId", ds.Tables [1].TableName, "#2");
 			Assert.AreEqual ("item", ds.Tables [2].TableName, "#3");

@@ -1,4 +1,5 @@
 #include mobile_System.dll.sources
+#include apple-certificates.sources
 #include appletls.sources
 
 Mono.AppleTls/MonoCertificatePal.Mobile.cs

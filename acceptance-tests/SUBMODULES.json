@@ -2,7 +2,7 @@
   {
     "name": "roslyn", 
     "url": "git://github.com/mono/roslyn.git",
-    "rev": "380eec412868464a132cdcd3a45ef457fab6e060",
+    "rev": "7a840bd5697ef6ea41f554a09d837636fba9d88d",
     "remote-branch": "origin/mono-testing",
     "branch": "mono-testing",
     "directory": "roslyn"
@@ -10,7 +10,7 @@
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "aa62c0382ae79562293f3ea1a94ef0f16f80f498", 
+    "rev": "90f7060935732bb624e1f325d23f63072433725f",
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"
@@ -18,7 +18,7 @@
   {
     "name": "ms-test-suite", 
     "url": "git@github.com:xamarin/ms-test-suite.git", 
-    "rev": "67f29dfc0741b5311dd746c75760963a2915e648", 
+    "rev": "39b1b222e8a3690a1b8ea018ce54d2a826f5246e", 
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "ms-test-suite"
@@ -30,5 +30,13 @@
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "benchmarker"
+  },
+  {
+    "name": "DebianShootoutMono", 
+    "url": "https://github.com/alexanderkyte/DebianShootoutMono.git",
+    "rev": "3fde2ced806c1fe7eed81120a40d99474fa009f0",
+    "remote-branch": "origin/release_11_15_2018",
+    "branch": "release_11_15_2018",
+    "directory": "DebianShootoutMono"
   }
 ]

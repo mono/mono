@@ -26,7 +26,7 @@ namespace System.Security.Cryptography {
 
         public DSASignatureDeformatter() {
             // The hash algorithm is always SHA1
-            _oid = CryptoConfig.MapNameToOID("SHA1", OidGroup.HashAlgorithm);
+            _oid = CryptoConfig.MapNameToOID("SHA1");
         }
 
         public DSASignatureDeformatter(AsymmetricAlgorithm key) : this() {
@@ -48,7 +48,7 @@ namespace System.Security.Cryptography {
         }
 
         public override void SetHashAlgorithm(string strName) {
-            if (CryptoConfig.MapNameToOID(strName, OidGroup.HashAlgorithm) != _oid)
+            if (CryptoConfig.MapNameToOID(strName) != _oid)
                 throw new CryptographicUnexpectedOperationException(Environment.GetResourceString("Cryptography_InvalidOperation"));
         }
 

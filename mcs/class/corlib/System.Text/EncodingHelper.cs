@@ -71,7 +71,7 @@ internal static partial class EncodingHelper
 	[MethodImpl (MethodImplOptions.InternalCall)]
 	extern internal static string InternalCodePage (ref int code_page);
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !WASM
 	internal static Encoding GetDefaultEncoding ()
 	{
 		Encoding enc = null;

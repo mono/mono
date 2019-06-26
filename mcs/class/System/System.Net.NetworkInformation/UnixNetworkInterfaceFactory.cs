@@ -41,8 +41,16 @@ namespace System.Net.NetworkInformation {
 			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
 
 			if (runningOnUnix) {
-				if (Platform.IsMacOS || Platform.IsFreeBSD)
+				// XXX: OpenBSD and NetBSD too? It seems other platforms map closer to the Mac OS version than Linux,
+				// even if not exactly; it seems Linux and/or glibc are the different ones.
+				if (Platform.IsMacOS || Platform.IsOpenBSD)
 					return new MacOsNetworkInterfaceAPI ();
+				if (Platform.IsFreeBSD)
+					return new FreeBSDNetworkInterfaceAPI ();
+
+				// XXX: IBM i would be better with its own API targetting Qp2getifaddrs
+				if (Platform.IsAix || Platform.IsIBMi)
+					return new AixNetworkInterfaceAPI ();
 
 				return new LinuxNetworkInterfaceAPI ();
 			}

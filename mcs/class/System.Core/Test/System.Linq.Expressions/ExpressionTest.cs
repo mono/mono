@@ -38,6 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Linq.Expressions {
 
 	[TestFixture]
+	[Category("SRE")]
 	public class ExpressionTest {
 
 		[Test]

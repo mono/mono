@@ -18,6 +18,8 @@ using System.Reflection;
 using ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
 using AssertType = NUnit.Framework.Assert;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -150,7 +152,7 @@ namespace MonoTests.System.Xml
 		public void CreateAndSettings ()
 		{
 			Assert.IsNotNull (XmlReader.Create (CreateStream ("<xml/>")).Settings);
-			Assert.IsNotNull (XmlReader.Create ("Test/XmlFiles/simple.xml").Settings);
+			Assert.IsNotNull (XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml")).Settings);
 		}
 
 		[Test]
@@ -297,7 +299,7 @@ namespace MonoTests.System.Xml
 		public void CreateValidatorFromNonIXmlNamespaceResolver ()
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
-			settings.Schemas.Add (null, "Test/XmlFiles/xsd/xml.xsd");
+			settings.Schemas.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/xml.xsd"));
 			settings.ValidationType = ValidationType.Schema;
 			XmlReader xr = XmlReader.Create (new StringReader ("<root/>"));
 			XmlReader dr = new Commons.Xml.XmlDefaultReader (xr);
@@ -311,7 +313,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.XmlResolver = null;
-			using (XmlReader xr = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+			using (XmlReader xr = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml"), settings)) {
 				while (!xr.EOF)
 					xr.Read ();
 			}
@@ -335,7 +337,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.XmlResolver = new ThrowExceptionResolver ();
-			using (XmlReader xr = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+			using (XmlReader xr = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml"), settings)) {
 				while (!xr.EOF)
 					xr.Read ();
 			}
@@ -367,7 +369,7 @@ namespace MonoTests.System.Xml
 			XmlSchema xs = new XmlSchema ();
 			settings.Schemas.Add (xs);
 			settings.ValidationType = ValidationType.Schema;
-			using (XmlReader r = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+			using (XmlReader r = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml"), settings)) {
 				r.Read ();
 			}
 		}

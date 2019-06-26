@@ -2006,7 +2006,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridView grid = new DataGridView();
 			Assert.AreEqual (SystemColors.Control, grid.ColumnHeadersDefaultCellStyle.BackColor, "#A1");
-			Assert.AreEqual (SystemColors.WindowText,  grid.ColumnHeadersDefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.ControlText,  grid.ColumnHeadersDefaultCellStyle.ForeColor, "#A2");
 			Assert.AreEqual (SystemColors.Highlight, grid.ColumnHeadersDefaultCellStyle.SelectionBackColor, "#A3");
 			Assert.AreEqual (SystemColors.HighlightText, grid.ColumnHeadersDefaultCellStyle.SelectionForeColor, "#A4");
 			Assert.AreSame (grid.Font, grid.ColumnHeadersDefaultCellStyle.Font, "#A5");
@@ -2019,7 +2019,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridView grid = new DataGridView();
 			Assert.AreEqual (SystemColors.Window, grid.DefaultCellStyle.BackColor, "#A1");
-			Assert.AreEqual (SystemColors.ControlText,  grid.DefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.WindowText,  grid.DefaultCellStyle.ForeColor, "#A2");
 			Assert.AreEqual (SystemColors.Highlight, grid.DefaultCellStyle.SelectionBackColor, "#A3");
 			Assert.AreEqual (SystemColors.HighlightText, grid.DefaultCellStyle.SelectionForeColor, "#A4");
 			Assert.AreSame (grid.Font, grid.DefaultCellStyle.Font, "#A5");
@@ -2075,7 +2075,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridView grid = new DataGridView();
 			Assert.AreEqual (SystemColors.Control, grid.RowHeadersDefaultCellStyle.BackColor, "#A1");
-			Assert.AreEqual (SystemColors.WindowText, grid.RowHeadersDefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.ControlText, grid.RowHeadersDefaultCellStyle.ForeColor, "#A2");
 			Assert.AreEqual (SystemColors.Highlight, grid.RowHeadersDefaultCellStyle.SelectionBackColor, "#A3");
 			Assert.AreEqual (SystemColors.HighlightText, grid.RowHeadersDefaultCellStyle.SelectionForeColor, "#A4");
 			Assert.AreSame (grid.Font, grid.RowHeadersDefaultCellStyle.Font, "#A5");

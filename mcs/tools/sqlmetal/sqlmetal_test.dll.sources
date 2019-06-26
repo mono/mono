@@ -1,4 +1,4 @@
 AssemblyInfo.cs
-../../../class/System.Data.Linq/src/DbMetal/Test/EnglishWordsTest.cs
-../../../class/System.Data.Linq/src/DbMetal/Test/FrenchWordsTest.cs
-../../../class/System.Data.Linq/src/DbMetal/Test/NameFormatterTest.cs
+src/DbMetal/Test/EnglishWordsTest.cs
+src/DbMetal/Test/FrenchWordsTest.cs
+src/DbMetal/Test/NameFormatterTest.cs

@@ -29,7 +29,6 @@ bin_SCRIPTS = \
 	$(scripts_defaults)	\
 	$(scripts_2_0)		\
 	$(scripts_service)	\
-	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
@@ -37,7 +36,6 @@ bin_SCRIPTS = \
 	peverify		\
 	mcs			\
 	csc			\
-	csc-dim		\
 	vbc			\
 	csi			\
 	mono-package-runtime	\
@@ -140,11 +138,10 @@ scripts_defaults = 		\
 	wsdl$(SCRIPT_SUFFIX)
 
 scripts_service = mono-service mono-service2
-scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX) nunit-console4$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 scripts_mono_configuration_crypto = mono-configuration-crypto$(SCRIPT_SUFFIX)
 
-CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 nunit-console4 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -161,7 +158,6 @@ EXTRA_DIST =			\
 	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
-	csc-dim.in				\
 	vbc.in				\
 	dmcs.in				\
 	csi.in			\
@@ -213,10 +209,6 @@ csc: csc.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
 	mv -f $@.tmp $@
 
-csc-dim: csc-dim.in Makefile
-	$(REWRITE_COMMON) $(srcdir)/csc-dim.in > $@.tmp
-	mv -f $@.tmp $@
-
 vbc: vbc.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/vbc.in > $@.tmp
 	mv -f $@.tmp $@
@@ -235,18 +227,6 @@ mono-service: mono-service.in Makefile
 
 mono-service2: mono-service.in Makefile
 	$(REWRITE4) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
-	mv -f $@.tmp $@
-
-nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv -f $@.tmp $@
-
-nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv -f $@.tmp $@
-
-nunit-console4$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 xbuild: xbuild.in Makefile

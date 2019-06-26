@@ -1,4 +1,6 @@
 #include monotouch_System.dll.sources
+#include apple-certificates.sources
+
 System.Net.Mail/SmtpClient.platformnotsupported.cs
 System.Net.Security/SslStream.platformnotsupported.cs
 System.Net.Sockets/TcpClient.platformnotsupported.cs
@@ -39,3 +41,6 @@ System.Net.WebSockets/HttpListenerWebSocketContext.platformnotsupported.cs
 ../Mono.Security/Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
 ../Mono.Security/Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ../Mono.Security/Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
+System.Net.Security/SslApplicationProtocol.pns.cs
+System.Net.Security/SslClientAuthenticationOptions.pns.cs
+System.Net.Security/SslServerAuthenticationOptions.pns.cs

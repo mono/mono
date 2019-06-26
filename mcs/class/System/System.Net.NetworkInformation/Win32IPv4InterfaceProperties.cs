@@ -36,13 +36,13 @@ namespace System.Net.NetworkInformation {
 		[DllImport ("iphlpapi.dll")]
 		static extern int GetPerAdapterInfo (int IfIndex, Win32_IP_PER_ADAPTER_INFO pPerAdapterInfo, ref int pOutBufLen);
 
-		Win32_IP_ADAPTER_INFO ainfo;
+		Win32_IP_ADAPTER_ADDRESSES addr;
 		Win32_IP_PER_ADAPTER_INFO painfo;
 		Win32_MIB_IFROW mib;
 
-		public Win32IPv4InterfaceProperties (Win32_IP_ADAPTER_INFO ainfo, Win32_MIB_IFROW mib)
+		public Win32IPv4InterfaceProperties (Win32_IP_ADAPTER_ADDRESSES addr, Win32_MIB_IFROW mib)
 		{
-			this.ainfo = ainfo;
+			this.addr = addr;
 			this.mib = mib;
 
 			// get per-adapter info.
@@ -67,7 +67,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override bool IsDhcpEnabled {
-			get { return ainfo.DhcpEnabled != 0; }
+			get { return addr.DhcpEnabled; }
 		}
 
 		public override bool IsForwardingEnabled {
@@ -80,7 +80,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override bool UsesWins {
-			get { return ainfo.HaveWins; }
+			get { return addr.FirstWinsServerAddress != IntPtr.Zero; }
 		}
 	}
 

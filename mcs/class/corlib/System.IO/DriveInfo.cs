@@ -55,11 +55,11 @@ namespace System.IO {
 			}
 
 			DriveInfo [] drives = GetDrives ();
+			Array.Sort (drives, (DriveInfo di1, DriveInfo di2) => String.Compare (di2.path, di1.path, true));
 			foreach (DriveInfo d in drives){
-				if (d.path == driveName){
+				if (driveName.StartsWith (d.path, StringComparison.OrdinalIgnoreCase)){
 					this.path = d.path;
 					this.drive_format = d.drive_format;
-					this.path = d.path;
 					return;
 				}
 			}
@@ -169,14 +169,42 @@ namespace System.IO {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool GetDiskFreeSpaceInternal (string pathName, out ulong freeBytesAvail,
+		unsafe extern static bool GetDiskFreeSpaceInternal (char *pathName, int pathName_length, out ulong freeBytesAvail,
 							     out ulong totalNumberOfBytes, out ulong totalNumberOfFreeBytes,
 							     out MonoIOError error);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static uint GetDriveTypeInternal (string rootPathName);
+		unsafe static bool GetDiskFreeSpaceInternal (string pathName, out ulong freeBytesAvail,
+						     out ulong totalNumberOfBytes, out ulong totalNumberOfFreeBytes,
+						     out MonoIOError error)
+		{
+			// FIXME Check for embedded nuls here or in native.
+			fixed (char *fixed_pathName = pathName) {
+				return GetDiskFreeSpaceInternal (fixed_pathName, pathName?.Length ?? 0,
+								 out freeBytesAvail, out totalNumberOfBytes, out totalNumberOfFreeBytes,
+								 out error);
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static string GetDriveFormat (string rootPathName);
+		unsafe extern static uint GetDriveTypeInternal (char *rootPathName, int rootPathName_length);
+
+		unsafe static uint GetDriveTypeInternal (string rootPathName)
+		{
+			// FIXME Check for embedded nuls here or in native.
+			fixed (char *fixed_rootPathName = rootPathName) {
+				return GetDriveTypeInternal (fixed_rootPathName, rootPathName?.Length ?? 0);
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		unsafe extern static string GetDriveFormatInternal (char *rootPathName, int rootPathName_length);
+
+		unsafe static string GetDriveFormat (string rootPathName)
+		{
+			// FIXME Check for embedded nuls here or in native.
+			fixed (char *fixed_rootPathName = rootPathName) {
+				return GetDriveFormatInternal (fixed_rootPathName, rootPathName?.Length ?? 0);
+			}
+		}
 	}
 }

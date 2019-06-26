@@ -13,9 +13,11 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
 using System.Runtime.Remoting;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Messaging;
+#endif
 using System.Collections;
 using NUnit.Framework;
 using System.Text;
@@ -30,7 +32,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 #if FEATURE_REMOTING
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();
@@ -201,7 +202,7 @@ namespace MonoTests.System.Runtime.Serialization
 			return list;
 		}
 
-
+#if !DISABLE_REMOTING
 		object[][] ProcessMessages (Stream stream, IMessage[] messages)
 		{
 			object[][] results = new object[9][];
@@ -251,6 +252,7 @@ namespace MonoTests.System.Runtime.Serialization
 
 			return results;
 		}
+#endif
 
 		void CheckMessages (string label, object[][] original, object[][] serialized)
 		{
@@ -760,6 +762,7 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 	}
 
+#if !DISABLE_REMOTING
 	class AuxProxy: RealProxy
 	{
 		public static bool useHeaders = false;
@@ -829,6 +832,7 @@ namespace MonoTests.System.Runtime.Serialization
 			return hs;
 		}
 	}
+#endif
 
 	public class TestBinder : SerializationBinder
 	{

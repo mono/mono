@@ -31,6 +31,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Reflection;
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
@@ -657,6 +658,15 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (10, pi2.GetGetMethod ().Invoke (10, null));
 		}
 
+		[Test]
+		public void NullableTestsStatic ()
+		{
+			Nullable<Double> val = new Nullable<Double>(new Double());
+			MethodInfo mi = typeof (Nullable<Double>).GetMethod ("op_Implicit");
+			object obj = val;
+			mi.Invoke(null, new[] { obj });
+		}
+
 		public static void foo_generic<T> ()
 		{
 		}
@@ -888,6 +898,60 @@ namespace MonoTests.System.Reflection
 				Console.WriteLine (var0);
 				Console.WriteLine (var1);
 			}
+		}
+
+		static void EnsureMethodExists (Type type, string name, params Type[] parameterTypes)
+		{
+			var method = type.GetTypeInfo ().GetDeclaredMethods (name)
+				.SingleOrDefault (m => m.GetParameters ().Select (p => p.ParameterType).SequenceEqual (parameterTypes));
+			Assert.IsNotNull (method, $"{type}.{name}");
+		}
+
+		public void EnsureEntityFrameworkMethodsExist ()
+		{
+			// EntityFramework6 relies on the following methods
+			// see https://github.com/aspnet/EntityFramework6/blob/master/src/EntityFramework/Core/Objects/ELinq/MethodCallTranslator.cs#L846
+			// also https://github.com/mono/mono/pull/10452
+			EnsureMethodExists (typeof (Math), "Ceiling", typeof (decimal));
+			EnsureMethodExists (typeof (Math), "Ceiling", typeof (double));
+			EnsureMethodExists (typeof (Math), "Floor", typeof (decimal));
+			EnsureMethodExists (typeof (Math), "Floor", typeof (double));
+			EnsureMethodExists (typeof (Math), "Round", typeof (decimal));
+			EnsureMethodExists (typeof (Math), "Round", typeof (double));
+			EnsureMethodExists (typeof (Math), "Round", typeof (decimal), typeof (int));
+			EnsureMethodExists (typeof (Math), "Round", typeof (double), typeof (int));
+			EnsureMethodExists (typeof (Decimal), "Floor", typeof (decimal));
+			EnsureMethodExists (typeof (Decimal), "Ceiling", typeof (decimal));
+			EnsureMethodExists (typeof (Decimal), "Round", typeof (decimal));
+			EnsureMethodExists (typeof (Decimal), "Round", typeof (decimal), typeof (int));
+			EnsureMethodExists (typeof (String), "Replace", typeof (String), typeof (String));
+			EnsureMethodExists (typeof (String), "ToLower");
+			EnsureMethodExists (typeof (String), "ToUpper");
+			EnsureMethodExists (typeof (String), "Trim");
+			EnsureMethodExists (typeof (Math), "Truncate", typeof (decimal));
+			EnsureMethodExists (typeof (Math), "Truncate", typeof (double));
+			EnsureMethodExists (typeof (Math), "Pow", typeof (double), typeof (double));
+			EnsureMethodExists (typeof (Guid), "NewGuid");
+			EnsureMethodExists (typeof (String), "Contains", typeof (string));
+			EnsureMethodExists (typeof (String), "IndexOf", typeof (string));
+			EnsureMethodExists (typeof (String), "StartsWith", typeof (string));
+			EnsureMethodExists (typeof (String), "EndsWith", typeof (string));
+			EnsureMethodExists (typeof (String), "Substring", typeof (int));
+			EnsureMethodExists (typeof (String), "Substring", typeof (int), typeof (int));
+			EnsureMethodExists (typeof (String), "Remove", typeof (int));
+			EnsureMethodExists (typeof (String), "Remove", typeof (int), typeof (int));
+			EnsureMethodExists (typeof (String), "IsNullOrEmpty", typeof (string));
+			EnsureMethodExists (typeof (String), "Concat", typeof (string), typeof (string));
+			EnsureMethodExists (typeof (String), "Concat", typeof (string), typeof (string), typeof (string));
+			EnsureMethodExists (typeof (String), "Concat", typeof (string), typeof (string), typeof (string), typeof (string));
+			EnsureMethodExists (typeof (String), "Concat", typeof (object), typeof (object));
+			EnsureMethodExists (typeof (String), "Concat", typeof (object), typeof (object), typeof (object));
+			EnsureMethodExists (typeof (String), "Concat", typeof (object), typeof (object), typeof (object), typeof (object));
+			EnsureMethodExists (typeof (String), "Concat", typeof (object[]));
+			EnsureMethodExists (typeof (String), "Concat", typeof (string[]));
+			EnsureMethodExists (typeof (String), "Trim", typeof (Char[]));
+			EnsureMethodExists (typeof (String), "TrimStart", typeof (Char[]));
+			EnsureMethodExists (typeof (String), "TrimEnd", typeof (Char[]));
 		}
 
 		[Test]

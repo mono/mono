@@ -87,7 +87,6 @@ monodocs2slashdoc
 mono-find-provides
 mono-find-requires
 mono-gdb.py
-monograph
 mono-heapviz
 monolinker
 monop
@@ -104,9 +103,6 @@ mprof-report
 msbuild
 nant
 nuget
-nunit-console
-nunit-console2
-nunit-console4
 pdb2mdb
 pedump
 permview

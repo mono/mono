@@ -35,6 +35,8 @@ using Microsoft.Build.Tasks;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.Tasks {
 	
 	[TestFixture]
@@ -67,7 +69,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\test.dll"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/test.dll")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -80,7 +82,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\FancyStuff.dll"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/FancyStuff.dll")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -97,7 +99,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\SimpleWrite.dll"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/SimpleWrite.dll")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -113,7 +115,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\Testing.dll"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/Testing.dll")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -129,7 +131,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\XbuildReferenceBugTest.exe"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/XbuildReferenceBugTest.exe")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -148,7 +150,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\FancyStuff.dll", @"Test\resources\binary\XbuildReferenceBugTest.exe"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/FancyStuff.dll"), TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/XbuildReferenceBugTest.exe")));
 			
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
@@ -167,7 +169,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\XbuildReferenceBugTest.exe", @"Test\resources\binary\XbuildReferenceBugTest2.exe"));
+			project.LoadXml (ResolveAssembly (null, TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/XbuildReferenceBugTest.exe"), TestResourceHelper.GetFullPathOfResource ("Test/resources/binary/XbuildReferenceBugTest2.exe")));
 
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");

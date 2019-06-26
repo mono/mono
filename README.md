@@ -3,7 +3,7 @@ create cross platform applications.  It is an open source
 implementation of Microsoft's .NET Framework based on the ECMA
 standards for C# and the Common Language Runtime.
 
-The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.org/)
+The Mono project is part of the [.NET Foundation](https://www.dotnetfoundation.org/)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mono/mono?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -66,15 +66,15 @@ Building the Software
 ---------------------
 
 Please see our guides for building Mono on
-[Mac OS X](http://www.mono-project.com/docs/compiling-mono/mac/),
-[Linux](http://www.mono-project.com/docs/compiling-mono/linux/) and 
-[Windows](http://www.mono-project.com/docs/compiling-mono/windows/).
+[Mac OS X](https://www.mono-project.com/docs/compiling-mono/mac/),
+[Linux](https://www.mono-project.com/docs/compiling-mono/linux/) and 
+[Windows](https://www.mono-project.com/docs/compiling-mono/windows/).
 
 Note that building from Git assumes that you already have Mono installed,
-so please download and [install the latest Mono release](http://www.mono-project.com/download/)
+so please download and [install the latest Mono release](https://www.mono-project.com/download/)
 before trying to build from Git. This is required because the Mono build
 relies on a working Mono C# compiler to compile itself
-(also known as [bootstrapping](http://en.wikipedia.org/wiki/Bootstrapping_(compilers))).
+(also known as [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(compilers))).
 
 If you don't have a working Mono installation
 ---------------------------------------------
@@ -203,9 +203,9 @@ Contributing to Mono
 ====================
 
 Before submitting changes to Mono, please review the [contribution
-guidelines](http://www.mono-project.com/community/contributing/).
+guidelines](https://www.mono-project.com/community/contributing/).
 Please pay particular attention to the [Important
-Rules](http://www.mono-project.com/community/contributing/#important-rules)
+Rules](https://www.mono-project.com/community/contributing/#important-rules)
 section.
 
 Reporting bugs
@@ -215,7 +215,7 @@ To submit bug reports, please [open an issue on the mono GitHub repo](https://gi
 
 Please use the search facility to ensure the same bug hasn't already
 been submitted and follow our
-[guidelines](http://www.mono-project.com/community/bugs/make-a-good-bug-report/)
+[guidelines](https://www.mono-project.com/community/bugs/make-a-good-bug-report/)
 on how to make a good bug report.
 
 Configuration Options
@@ -305,6 +305,9 @@ faster under the Xen virtualization system.
   * This defaults to `yes`.
 
 * `--with-large-heap=yes,no` - Enable support for GC heaps larger than 3GB.
+
+  * This only applies only to the Boehm garbage collector, the SGen garbage
+collector does not use this configuration option.
 
   * This defaults to `no`.
 
@@ -435,7 +438,7 @@ for Mono.  The LLVM code generator and optimizer will be
 used instead of Mono's built-in code generator for both
 Just in Time and Ahead of Time compilations.
 
-  * See http://www.mono-project.com/docs/advanced/mono-llvm/ for the 
+  * See https://www.mono-project.com/docs/advanced/mono-llvm/ for the 
 full details and up-to-date information on this feature.
 
   * You will need to have an LLVM built that Mono can link
@@ -504,7 +507,7 @@ also, see the man page.
 
   * This configures the Mono compiler to generate code
 suitable to be used by Google's Native Client:
-http://code.google.com/p/nativeclient/
+https://code.google.com/p/nativeclient/
 
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
@@ -578,7 +581,7 @@ file for information about Microsoft's patent grant.
 Mono Trademark Use Policy
 =========================
 
-The use of trademarks and logos for Mono can be found [here](http://www.dotnetfoundation.org/legal/mono-tm). 
+The use of trademarks and logos for Mono can be found [here](https://www.dotnetfoundation.org/legal/mono-tm). 
 
 Maintaining the Class Library Solution Files
 ============================================

@@ -82,8 +82,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public override bool Expandable {
 			get {
 				TypeConverter converter = GetConverter ();
-				if (converter == null || !converter.GetPropertiesSupported ((ITypeDescriptorContext)this))
-					return false;
+				if (converter != null)
+					return converter.GetPropertiesSupported ((ITypeDescriptorContext)this);
 
 				if (GetChildGridItemsCached ().Count > 0)
 					return true;
@@ -249,12 +249,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		#region ITypeDescriptorContext
-		void ITypeDescriptorContext.OnComponentChanged () 
-		{
+
+		void ITypeDescriptorContext.OnComponentChanged () {
 		}
 
-		bool ITypeDescriptorContext.OnComponentChanging () 
-		{
+		bool ITypeDescriptorContext.OnComponentChanging () {
 			return false;
 		}
 
@@ -271,20 +270,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		object ITypeDescriptorContext.Instance {
-			get {
-				if (ParentEntry != null && ParentEntry.PropertyOwner != null)
-					return ParentEntry.PropertyOwner;
-				return PropertyOwner;
-			}
+			get { return PropertyOwner; }
 		}
 
 		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
-			get {
-				if (ParentEntry != null && ParentEntry.PropertyDescriptor != null)
-					return ParentEntry.PropertyDescriptor; 
-				return PropertyDescriptor;
-			}
+			get { return PropertyDescriptor; }
 		}
+
 		#endregion
 
 		#region IServiceProvider Members
@@ -792,7 +784,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			if (property == null)
 				return false;
-				
+
 			MergablePropertyAttribute attrib = property.Attributes [typeof (MergablePropertyAttribute)] as MergablePropertyAttribute;
 			if (attrib != null && !attrib.AllowMerge)
 				return false;
@@ -827,7 +819,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			string[] propertyNames = new string [intersection.Count];
 			for (int i=0; i < intersection.Count; i++)
 				propertyNames[i] = ((PropertyDescriptor)intersection[i]).Name;
-				
+
 			return propertyNames;
 		}
 
@@ -849,8 +841,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			Attribute[] atts = new Attribute[attributes.Count];
 			attributes.CopyTo (atts, 0);
+
+			TypeConverter converter = GetConverter ();
+			if (converter != null)
+			{
+				PropertyDescriptorCollection properties = converter.GetProperties ((ITypeDescriptorContext)this, propertyOwner, atts);
+				return properties ?? new PropertyDescriptorCollection (null);
+			}
+
 			return property_grid.SelectedTab.GetProperties ((ITypeDescriptorContext)this, propertyOwner, atts);
 		}
-#endregion
+#endregion  // Population
 	}
 }

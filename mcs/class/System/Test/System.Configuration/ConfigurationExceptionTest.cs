@@ -33,27 +33,27 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Configuration
 {
 	[TestFixture]
 	public class ConfigurationExceptionTest
 	{
+		private TempDirectory temp;
 		private string foldername;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			foldername = Path.Combine (Path.GetTempPath (),
-				this.GetType ().FullName);
-			if (!Directory.Exists (foldername))
-				Directory.CreateDirectory (foldername);
+			temp = new TempDirectory ();
+			foldername = temp.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (foldername))
-				Directory.Delete (foldername, true);
+			temp.Dispose ();
 		}
 
 		[Test] // ctor ()

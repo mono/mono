@@ -1,6 +1,10 @@
 ../../build/common/SR.cs
 
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
+
+# System.Linq
+# TODO: ../../../external/corefx/src/System.Linq/tests/*.cs
 
 # System.Linq.Queryable
 ../../../external/corefx/src/System.Linq.Queryable/tests/*.cs
@@ -55,7 +59,7 @@
 # System.Linq.Expressions
 ../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
-#../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs:DefaultIfEmptyTests.cs,SingleSingleOrDefaultTests.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/*.cs:WithCancellationTests.cs,PlinqModesTests.cs,ExchangeTests.cs,EtwTests.cs,ParallelEnumerableTests.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
@@ -69,7 +73,7 @@
 corefx/SR.tests.cs
 
 # System.IO.Pipes
-#../../../external/corefx/src/System.IO.Pipes/tests/Interop.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/tests/Interop.Unix.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.Read.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.Write.cs
@@ -80,11 +84,17 @@ corefx/SR.tests.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Specific.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Write.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTestBase.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.CreateClient.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Read.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Specific.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Write.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Simple.cs
-#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs
-../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTestBase.cs
+
+../../../external/corefx/src/Common/tests/System/Security/Cryptography/ByteUtils.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/tests/IncrementalHashTests.cs
+
+../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestBase.Generic.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
+../../../external/corefx/src/Common/tests/System/Collections/ICollection.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/ISet.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestingTypes.cs
+../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 

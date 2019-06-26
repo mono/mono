@@ -8,3 +8,7 @@ if test -e .git; then \
 	|| (echo 'Git submodules could not be updated. Compilation will fail') \
 fi
 
+if ! test -e external/corefx/README.md; then
+	echo "Error: Couldn't find the required submodules. This usually happens when using an archive from GitHub instead of https://download.mono-project.com/sources/mono/, or something went wrong while updating submodules."
+	exit 1
+fi

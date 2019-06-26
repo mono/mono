@@ -41,5 +41,11 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public static X509Certificate2 CopyWithPrivateKey(this X509Certificate2 certificate, ECDsa privateKey)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

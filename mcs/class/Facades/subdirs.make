@@ -28,48 +28,36 @@ System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Refle
 System.Threading.AccessControl System.ValueTuple \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
 System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes \
-System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp
+System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp \
+System.Runtime.InteropServices.RuntimeInformation System.Xml.XPath.XDocument System.Threading.Overlapped System.Security.SecureString \
+System.Diagnostics.StackTrace System.Data.Common System.Globalization.Extensions System.Runtime.Serialization.Xml System.ServiceModel.Primitives \
+System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primitives System.Security.Cryptography.Algorithms netstandard System.Drawing.Primitives
 
 # common_SUBDIRS dependencies
-common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives \
-System.Runtime.Serialization.Xml System.Security.Cryptography.Algorithms System.Globalization.Extensions System.Data.Common \
-System.Diagnostics.StackTrace System.Security.SecureString System.Threading.Overlapped System.Xml.XPath.XDocument System.Runtime.InteropServices.RuntimeInformation
+common_DEPS_SUBDIRS :=
 
-netstandard_drawing_SUBDIRS = System.Drawing.Primitives netstandard
-
-monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-# We don't build netstandard/System.Drawing.Primitives on monotouch etc. profiles by default,
-# except when EXTERNAL_FACADE_DRAWING_REFERENCE is defined which allows us to build it in Mono CI
-# (since the dependent drawing types are normally built in the product repos).
-ifdef EXTERNAL_FACADE_DRAWING_REFERENCE
-monotouch_SUBDIRS += $(netstandard_drawing_SUBDIRS)
-endif
+monodroid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+monodroid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
-testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
-
-net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS)
+net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS)
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc
 
-basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
+build_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
 System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
 System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Tasks.Parallel System.Xml.ReaderWriter \
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
 System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System.IO.FileSystem.Primitives System.IO.FileSystem \
 System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple \
-System.Text.Encoding.CodePages
-
-build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS) System.Text.RegularExpressions System.Diagnostics.Contracts
-
-monodroid_SUBDIRS = $(monotouch_SUBDIRS)
-monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
+System.Text.Encoding.CodePages System.Text.RegularExpressions System.Diagnostics.Contracts \
+System.Diagnostics.Tracing System.Net.Primitives netstandard
 
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-xammac_net_4_5_SUBDIRS = $(net_4_x_SUBDIRS)
+xammac_net_4_5_SUBDIRS = $(net_4_x_SUBDIRS) System.Drawing.Common
 xammac_net_4_5_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
 
 monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
@@ -78,21 +66,32 @@ monotouch_watch_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-winaot_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+winaot_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-orbis_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+testing_winaot_interp_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_winaot_interp_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
+orbis_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-unreal_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+unreal_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-wasm_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+wasm_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Threading.Tasks.Extensions \
-System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory System.Drawing.Common
+testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.OpenSsl
+testing_aot_full_interp_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_aot_full_interp_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
+testing_aot_hybrid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_aot_hybrid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
+mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
+System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \
+System.Buffers
 
 PROFILE_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)

@@ -12,6 +12,8 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.I18N.West
 {
 	[TestFixture]
@@ -66,145 +68,145 @@ namespace MonoTests.I18N.West
 		[Test]
 		public void CP437_Encode ()
 		{
-			AssertEncode ("Test/texts/box-utf8.txt", "Test/texts/box-437.txt", 437);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/box-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/box-437.txt"), 437);
 		}
 
 		[Test]
 		public void CP437_Decode ()
 		{
-			AssertDecode ("Test/texts/box-utf8.txt", "Test/texts/box-437.txt", 437);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/box-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/box-437.txt"), 437);
 		}
 
 		[Test]
 		public void CP850_Encode ()
 		{
-			AssertEncode ("Test/texts/latin-utf8.txt", "Test/texts/latin-850.txt", 850);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-850.txt"), 850);
 		}
 
 		[Test]
 		public void CP850_Decode ()
 		{
-			AssertDecode ("Test/texts/latin-utf8.txt", "Test/texts/latin-850.txt", 850);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-850.txt"), 850);
 		}
 
 		[Test]
 		public void CP860_Encode ()
 		{
-			AssertEncode ("Test/texts/portguese-utf8.txt", "Test/texts/portguese-860.txt", 860);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/portguese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/portguese-860.txt"), 860);
 		}
 
 		[Test]
 		public void CP860_Decode ()
 		{
-			AssertDecode ("Test/texts/portguese-utf8.txt", "Test/texts/portguese-860.txt", 860);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/portguese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/portguese-860.txt"), 860);
 		}
 
 		[Test]
 		public void CP861_Encode ()
 		{
-			AssertEncode ("Test/texts/icelandic2-utf8.txt", "Test/texts/icelandic2-861.txt", 861);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic2-861.txt"), 861);
 		}
 
 		[Test]
 		public void CP861_Decode ()
 		{
-			AssertDecode ("Test/texts/icelandic2-utf8.txt", "Test/texts/icelandic2-861.txt", 861);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic2-861.txt"), 861);
 		}
 
 		[Test]
 		public void CP863_Encode ()
 		{
-			AssertEncode ("Test/texts/french2-utf8.txt", "Test/texts/french2-863.txt", 863);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/french2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/french2-863.txt"), 863);
 		}
 
 		[Test]
 		public void CP863_Decode ()
 		{
-			AssertDecode ("Test/texts/french2-utf8.txt", "Test/texts/french2-863.txt", 863);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/french2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/french2-863.txt"), 863);
 		}
 
 		[Test]
 		public void CP865_Encode ()
 		{
-			AssertEncode ("Test/texts/nordic-utf8.txt", "Test/texts/nordic-865.txt", 865);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/nordic-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/nordic-865.txt"), 865);
 		}
 
 		[Test]
 		public void CP865_Decode ()
 		{
-			AssertDecode ("Test/texts/nordic-utf8.txt", "Test/texts/nordic-865.txt", 865);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/nordic-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/nordic-865.txt"), 865);
 		}
 
 		[Test]
 		public void CP1250_Encode ()
 		{
-			AssertEncode ("Test/texts/polish-utf8.txt", "Test/texts/polish-1250.txt", 1250);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/polish-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/polish-1250.txt"), 1250);
 		}
 
 		[Test]
 		public void CP1250_Decode ()
 		{
-			AssertDecode ("Test/texts/polish-utf8.txt", "Test/texts/polish-1250.txt", 1250);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/polish-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/polish-1250.txt"), 1250);
 		}
 
 		[Test]
 		public void CP1252_Encode ()
 		{
-			AssertEncode ("Test/texts/norwegian-utf8.txt", "Test/texts/norwegian-1252.txt", 1252);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/norwegian-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/norwegian-1252.txt"), 1252);
 		}
 
 		[Test]
 		public void CP1252_Decode ()
 		{
-			AssertDecode ("Test/texts/norwegian-utf8.txt", "Test/texts/norwegian-1252.txt", 1252);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/norwegian-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/norwegian-1252.txt"), 1252);
 		}
 
 		[Test]
 		public void CP1253_Encode ()
 		{
-			AssertEncode ("Test/texts/greek-utf8.txt", "Test/texts/greek-1253.txt", 1253);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-1253.txt"), 1253);
 		}
 
 		[Test]
 		public void CP1253_Decode ()
 		{
-			AssertDecode ("Test/texts/greek-utf8.txt", "Test/texts/greek-1253.txt", 1253);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-1253.txt"), 1253);
 		}
 
 		[Test]
 		public void CP10000_Encode ()
 		{
-			AssertEncode ("Test/texts/french-utf8.txt", "Test/texts/french-10000.txt", 10000);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/french-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/french-10000.txt"), 10000);
 		}
 
 		[Test]
 		public void CP10000_Decode ()
 		{
-			AssertDecode ("Test/texts/french-utf8.txt", "Test/texts/french-10000.txt", 10000);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/french-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/french-10000.txt"), 10000);
 		}
 
 		[Test]
 		public void CP10079_Encode ()
 		{
-			AssertEncode ("Test/texts/icelandic-utf8.txt", "Test/texts/icelandic-10079.txt", 10079);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic-10079.txt"), 10079);
 		}
 
 		[Test]
 		public void CP10079_Decode ()
 		{
-			AssertDecode ("Test/texts/icelandic-utf8.txt", "Test/texts/icelandic-10079.txt", 10079);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/icelandic-10079.txt"), 10079);
 		}
 
 		[Test]
 		public void CP28592_Encode ()
 		{
-			AssertEncode ("Test/texts/hungarian-utf8.txt", "Test/texts/hungarian-28592.txt", 28592);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/hungarian-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/hungarian-28592.txt"), 28592);
 		}
 
 		[Test]
 		public void CP28592_Decode ()
 		{
-			AssertDecode ("Test/texts/hungarian-utf8.txt", "Test/texts/hungarian-28592.txt", 28592);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/hungarian-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/hungarian-28592.txt"), 28592);
 		}
 
 		// FIXME: Which language is good enough to test 28593 ???
@@ -212,26 +214,26 @@ namespace MonoTests.I18N.West
 		[Test]
 		public void CP28597_Encode ()
 		{
-			AssertEncode ("Test/texts/greek-utf8.txt", "Test/texts/greek-28597.txt", 28597);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-28597.txt"), 28597);
 		}
 
 		[Test]
 		public void CP28597_Decode ()
 		{
-			AssertDecode ("Test/texts/greek-utf8.txt", "Test/texts/greek-28597.txt", 28597);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/greek-28597.txt"), 28597);
 		}
 
 		// FIXME: Which language is good enough to test 28605 ???
 		[Test]
 		public void CP28605_Encode ()
 		{
-			AssertEncode ("Test/texts/latin-utf8.txt", "Test/texts/latin-28605.txt", 28605);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-28605.txt"), 28605);
 		}
 
 		[Test]
 		public void CP28605_Decode ()
 		{
-			AssertDecode ("Test/texts/latin-utf8.txt", "Test/texts/latin-28605.txt", 28605);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/latin-28605.txt"), 28605);
 		}
 
 		[Test]

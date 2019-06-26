@@ -135,6 +135,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContextTest ()
 		{
 			TaskAwaiter awaiter;

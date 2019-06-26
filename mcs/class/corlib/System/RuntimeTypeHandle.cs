@@ -37,7 +37,6 @@ using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Reflection;
-using System.Diagnostics.Contracts;
 
 namespace System
 {
@@ -65,7 +64,7 @@ namespace System
 			RuntimeType mt = ((RuntimeType) info.GetValue ("TypeObj", typeof (RuntimeType)));
 			value = mt.TypeHandle.Value;
 			if (value == IntPtr.Zero)
-				throw new SerializationException (Locale.GetText ("Insufficient state."));
+				throw new SerializationException ("Insufficient state.");
 		}
 
 		public IntPtr Value {
@@ -157,36 +156,63 @@ namespace System
 			return GetGenericTypeDefinition_impl (type);
 		}
 
-		internal static bool HasElementType (RuntimeType type)
-		{
-			return IsArray (type) || IsByRef (type) || IsPointer (type);
-		}
-
 		internal static bool HasProxyAttribute (RuntimeType type)
 		{
 			throw new NotImplementedException ("HasProxyAttribute");
 		}
 
+		internal static bool IsPrimitive (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType (type);
+			return (corElemType >= CorElementType.ELEMENT_TYPE_BOOLEAN && corElemType <= CorElementType.ELEMENT_TYPE_R8) ||
+				corElemType == CorElementType.ELEMENT_TYPE_I ||
+				corElemType == CorElementType.ELEMENT_TYPE_U;
+		}
+
+		internal static bool IsByRef (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType (type);
+			return corElemType == CorElementType.ELEMENT_TYPE_BYREF;
+		}
+
+		internal static bool IsPointer (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType (type);
+			return corElemType == CorElementType.ELEMENT_TYPE_PTR;
+		}
+
+		internal static bool IsArray (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType (type);
+			return corElemType == CorElementType.ELEMENT_TYPE_ARRAY || corElemType == CorElementType.ELEMENT_TYPE_SZARRAY;
+		}
+
+		internal static bool IsSzArray (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType (type);
+			return corElemType == CorElementType.ELEMENT_TYPE_SZARRAY;
+		}
+
+		internal static bool HasElementType (RuntimeType type)
+		{
+			CorElementType corElemType = GetCorElementType(type);
+
+			return ((corElemType == CorElementType.ELEMENT_TYPE_ARRAY || corElemType == CorElementType.ELEMENT_TYPE_SZARRAY) // IsArray
+				   || (corElemType == CorElementType.ELEMENT_TYPE_PTR)											// IsPointer
+				   || (corElemType == CorElementType.ELEMENT_TYPE_BYREF));										// IsByRef
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern CorElementType GetCorElementType (RuntimeType type);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool HasInstantiation (RuntimeType type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool IsArray(RuntimeType type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool IsByRef (RuntimeType type);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool IsComObject (RuntimeType type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool IsInstanceOfType (RuntimeType type, Object o);		
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool IsPointer (RuntimeType type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool IsPrimitive (RuntimeType type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool HasReferences (RuntimeType type);
@@ -198,7 +224,11 @@ namespace System
 
 		internal static bool IsContextful (RuntimeType type)
 		{
+#if NETCORE
+			return false;
+#else
 			return typeof (ContextBoundObject).IsAssignableFrom (type);
+#endif
 		}
 
 		internal static bool IsEquivalentTo (RuntimeType rtType1, RuntimeType rtType2)
@@ -206,12 +236,6 @@ namespace System
 			// refence check is done earlier and we don't recognize anything else
 			return false;
 		}		
-
-		internal static bool IsSzArray(RuntimeType type)
-		{
-			// TODO: Better check
-			return IsArray (type) && type.GetArrayRank () == 1;
-		}
 
 		internal static bool IsInterface (RuntimeType type)
 		{
@@ -258,5 +282,81 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool is_subclass_of (IntPtr childType, IntPtr baseType);
 
+		[PreserveDependency (".ctor()", "System.Runtime.CompilerServices.IsByRefLikeAttribute")]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsByRefLike (RuntimeType type);
+
+		internal static bool IsTypeDefinition (RuntimeType type)
+		{
+			// That's how it has been done on CoreFX but we have no GetCorElementType method implementation
+			// see https://github.com/dotnet/coreclr/pull/11355
+
+			// CorElementType corElemType = GetCorElementType (type);
+			// if (!((corElemType >= CorElementType.Void && corElemType < CorElementType.Ptr) ||
+			// 		corElemType == CorElementType.ValueType ||
+			// 		corElemType == CorElementType.Class ||
+			// 		corElemType == CorElementType.TypedByRef ||
+			// 		corElemType == CorElementType.I ||
+			// 		corElemType == CorElementType.U ||
+			// 		corElemType == CorElementType.Object))
+			// 	return false;
+			// if (HasInstantiation (type) && !IsGenericTypeDefinition (type))
+			// 	return false;
+			// return true;
+
+			// It's like a workaround mentioned in https://github.com/dotnet/corefx/issues/17345
+			return !type.HasElementType && !type.IsConstructedGenericType && !type.IsGenericParameter;
+		}		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern RuntimeType internal_from_name (string name, ref StackCrawlMark stackMark, Assembly callerAssembly, bool throwOnError, bool ignoreCase, bool reflectionOnly);
+
+		internal static RuntimeType GetTypeByName(string typeName, bool throwOnError, bool ignoreCase, bool reflectionOnly, ref StackCrawlMark stackMark,
+												  bool loadTypeFromPartialName)
+		{
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			if (typeName == String.Empty)
+				if (throwOnError)
+					throw new TypeLoadException ("A null or zero length string does not represent a valid Type.");
+				else
+					return null;
+
+			if (reflectionOnly) {
+				int idx = typeName.IndexOf (',');
+				if (idx < 0 || idx == 0 || idx == typeName.Length - 1)
+					throw new ArgumentException ("Assembly qualifed type name is required", "typeName");
+				string an = typeName.Substring (idx + 1);
+				Assembly a;
+				try {
+					a = Assembly.ReflectionOnlyLoad (an);
+				} catch {
+					if (throwOnError)
+						throw;
+					return null;
+				}
+				return (RuntimeType)a.GetType (typeName.Substring (0, idx), throwOnError, ignoreCase);
+			}
+
+			var t = internal_from_name (typeName, ref stackMark, null, throwOnError, ignoreCase, false);
+			if (throwOnError && t == null)
+				throw new TypeLoadException ("Error loading '" + typeName + "'");
+			return t;
+		}
+
+		internal static IntPtr[] CopyRuntimeTypeHandles (RuntimeTypeHandle[] inHandles, out int length)
+		{
+			if (inHandles == null || inHandles.Length == 0) {
+				length = 0;
+				return null;
+			}
+
+			IntPtr[] outHandles = new IntPtr [inHandles.Length];
+			for (int i = 0; i < inHandles.Length; i++)
+				outHandles [i] = inHandles [i].Value;
+			length = outHandles.Length;
+			return outHandles;
+		}
 	}
 }

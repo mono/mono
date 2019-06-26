@@ -15,6 +15,7 @@ using System.Collections;
 
 namespace MonoTests.System.Threading {
 	[TestFixture]
+	[Category ("MultiThreaded")]
 	public class TimerTest {
 		// this bucket is used to avoid non-theadlocal issues
 		class Bucket {

@@ -1,1 +1,15 @@
-#include testing_aot_full_System.Core.dll.sources
+#include common_System.Core.dll.sources
+#include dynamic_System.Core.dll.sources
+#include pipes_pns.sources
+
+System.Security.Cryptography/AesCryptoServiceProvider.cs
+System.Security.Cryptography/AesTransform.cs
+System.Security.Cryptography/MD5Cng.cs
+System.Security.Cryptography/SHA1Cng.cs
+System.Security.Cryptography/SHA256Cng.cs
+System.Security.Cryptography/SHA384Cng.cs
+System.Security.Cryptography/SHA512Cng.cs
+
+../referencesource/System.Core/System/Security/Cryptography/AesManaged.cs
+../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
+../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs

@@ -31,8 +31,9 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+#if FEATURE_REMOTING
 using System.Runtime.Remoting.Contexts;
-using System.Security.Permissions;
+#endif
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.ConstrainedExecution;
@@ -41,7 +42,6 @@ namespace System.Threading
 {
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract partial class WaitHandle
-		: MarshalByRefObject, IDisposable
 	{
 		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
 
@@ -61,7 +61,7 @@ namespace System.Threading
 			try {
 				waitableSafeHandle.DangerousAddRef (ref release);
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
@@ -94,7 +94,7 @@ namespace System.Threading
 				if (release)
 					waitableSafeHandle.DangerousRelease ();
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 #endif
@@ -111,7 +111,7 @@ namespace System.Threading
 			var context = SynchronizationContext.Current;
 
 			try {
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
@@ -151,7 +151,7 @@ namespace System.Threading
 					waitHandles [i].SafeWaitHandle.DangerousRelease ();
 				}
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 #endif

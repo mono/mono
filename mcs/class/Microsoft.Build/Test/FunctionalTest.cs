@@ -36,6 +36,8 @@ using Microsoft.Build.Evaluation;
 using System.IO;
 using System.Globalization;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build
 {
         [TestFixture]
@@ -55,29 +57,27 @@ namespace MonoTests.Microsoft.Build
                         
                         project.Save (projectFileName);
                         Assert.AreEqual (projectGuid, GetProjectId (project), "#01");
-                        FileAssert.AreEqual (String.Format ("Test{0}FunctionalTestReferenceProject.csproj",
-                                Path.DirectorySeparatorChar), String.Format ("Test{0}FunctionalTestProject.csproj",
-                                Path.DirectorySeparatorChar), "#02");
+                        FileAssert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/FunctionalTestReferenceProject.csproj"),
+                                String.Format ("Test{0}FunctionalTestProject.csproj", Path.DirectorySeparatorChar), "#02");
                 }
 
                 [Test]
                 public void TestLoadAndSave ()
                 {
-                        var project = ProjectRootElement.Open (Path.Combine ("Test", "Microsoft.Build.csproj"));
+                        var project = ProjectRootElement.Open (TestResourceHelper.GetFullPathOfResource ("Test/resources/Microsoft.Build.csproj"));
                         var projectFileName = String.Format ("Test{0}FunctionalTestProject2.csproj",
                                 Path.DirectorySeparatorChar);
                         project.Save (projectFileName);
                         
                         Assert.AreEqual (new Guid ("{B2012E7F-8F8D-4908-8045-413F2BD1022D}"), GetProjectId (project),
                                 "#03");
-                        FileAssert.AreEqual (Path.Combine ("Test", "Microsoft.Build.csproj"), projectFileName, "#04");
+                        FileAssert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/Microsoft.Build.csproj"), projectFileName, "#04");
                 }
 
                 [Test]
                 public void TestLoadAndSave3 ()
                 {
-                        var referenceProject = String.Format (
-                                "Test{0}FunctionalTestReferenceProject3.csproj", Path.DirectorySeparatorChar);
+                        var referenceProject = TestResourceHelper.GetFullPathOfResource ("Test/resources/FunctionalTestReferenceProject3.csproj");
                         var project = ProjectRootElement.Open (referenceProject);
                         var projectFileName = String.Format ("Test{0}FunctionalTestProject3.csproj",
                                 Path.DirectorySeparatorChar);

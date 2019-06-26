@@ -7,7 +7,7 @@
 ../../../external/corefx/src/Common/src/Interop/Linux/System.Native/Interop.INotify.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.Linux.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.OpenFlags.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.ReadDir.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.FLock.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Poll.cs

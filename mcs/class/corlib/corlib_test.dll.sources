@@ -1,6 +1,11 @@
+../../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
+../corefx/GlobalizationMode.cs
 Microsoft.Win32/RegistryKeyTest.cs
 Mono/DataConvertTest.cs
 ../Mono/DataConverter.cs
+Mono/NativePlatformTest.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 System/ActivatorTest.cs
 System/AppDomainManagerTest.cs
 System/AppDomainSetupTest.cs
@@ -543,4 +548,5 @@ System.Threading/ThreadLocalTests.cs
 System.Threading/SpinLockTests.cs
 ../../../../mono/mini/TestHelpers.cs
 ../../test-helpers/NunitHelpers.cs
+../../test-helpers/TestResourceHelper.cs
 System.Threading/ThreadPrincipalTests.cs

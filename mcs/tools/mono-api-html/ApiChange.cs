@@ -69,9 +69,9 @@ namespace Mono.ApiTools {
 				if (!change.HasIgnoredChanges) {
 					var isField = source.Name.LocalName == "field";
 					if (isField) {
-						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetFieldAttributes ()} dst: {target.GetFieldAttributes ()}) :\n{source}\n{target}\n\n");
+						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetFieldAttributes ()} dst: {target.GetFieldAttributes ()}) :{Environment.NewLine}{source}{Environment.NewLine}{target}{Environment.NewLine}{Environment.NewLine}");
 					} else {
-						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetMethodAttributes ()} dst: {target.GetMethodAttributes ()}) :\n{source}\n{target}\n\n");
+						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetMethodAttributes ()} dst: {target.GetMethodAttributes ()}) :{Environment.NewLine}{source}{Environment.NewLine}{target}{Environment.NewLine}{Environment.NewLine}");
 					}
 				}
 				return;

@@ -1,9 +1,12 @@
 using System;
 using System.Reflection;
 using Mono.Debugger;
-using Mono.Cecil;
 using System.Collections.Generic;
 using System.IO;
+
+#if ENABLE_CECIL
+using Mono.Cecil;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -14,15 +17,19 @@ namespace Mono.Debugger.Soft
 		bool entry_point_set;
 		ModuleMirror main_module;
 		AssemblyName aname;
-		AssemblyDefinition meta;
 		AppDomainMirror domain;
 		byte[] metadata_blob;
 		bool? isDynamic;
 		byte[] pdb_blob;
+		bool? has_debug_info;
 		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
 		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
 		Dictionary<uint, long> tokenTypeCache = new Dictionary<uint, long> ();
 		Dictionary<uint, long> tokenMethodCache = new Dictionary<uint, long> ();
+
+#if ENABLE_CECIL
+		AssemblyDefinition meta;
+#endif
 
 		internal AssemblyMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -118,6 +125,7 @@ namespace Mono.Debugger.Soft
 			return GetType (name, false, false);
 		}
 
+#if ENABLE_CECIL
 		/* 
 		 * An optional Cecil assembly which could be used to access metadata instead
 		 * of reading it from the debuggee.
@@ -146,6 +154,7 @@ namespace Mono.Debugger.Soft
 			using (var ms = new MemoryStream (GetMetadataBlob ()))
 				return meta = AssemblyDefinition.ReadAssembly (ms);
 		}
+#endif
 
 		public byte[] GetMetadataBlob () {
 			if (metadata_blob != null)
@@ -214,5 +223,17 @@ namespace Mono.Debugger.Soft
 			}
 			return vm.GetMethod (methodId);
 		}
-    }
+
+		public bool HasDebugInfo {
+			get {
+				if (has_debug_info.HasValue)
+					return has_debug_info.Value;
+
+				vm.CheckProtocolVersion (2, 51);
+
+				has_debug_info = vm.conn.Assembly_HasDebugInfo (id);
+				return has_debug_info.Value;
+			}
+		}
+	}
 }

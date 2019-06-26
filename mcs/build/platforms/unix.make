@@ -34,3 +34,6 @@ platform-check:
 #	    echo "*** You need to build MCS with GNU make. Try \`gmake'" ; \
 #	    exit 1 ; \
 #	fi
+
+
+PLATFORM_UNIX=1

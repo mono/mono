@@ -88,6 +88,13 @@ namespace System
 			return -1;
 		}
 
+		[CLSCompliant(false)] 
+		public static String Concat(Object arg0, Object arg1, Object arg2, Object arg3, __arglist) 
+		{
+			// Added to maintain backward compatibility, see https://github.com/mono/mono/issues/9996
+			throw new PlatformNotSupportedException();
+		}
+
 		internal unsafe int IndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
 		{
 			int valueLen = value.Length;
@@ -233,25 +240,6 @@ namespace System
 				bp++;
 			}
 			return countA - countB;
-		}
-
-		internal static unsafe void CharCopy (char *dest, char *src, int count) {
-			// Same rules as for memcpy, but with the premise that 
-			// chars can only be aligned to even addresses if their
-			// enclosing types are correctly aligned
-			if ((((int)(byte*)dest | (int)(byte*)src) & 3) != 0) {
-				if (((int)(byte*)dest & 2) != 0 && ((int)(byte*)src & 2) != 0 && count > 0) {
-					((short*)dest) [0] = ((short*)src) [0];
-					dest++;
-					src++;
-					count--;
-				}
-				if ((((int)(byte*)dest | (int)(byte*)src) & 2) != 0) {
-					Buffer.memcpy2 ((byte*)dest, (byte*)src, count * 2);
-					return;
-				}
-			}
-			Buffer.memcpy4 ((byte*)dest, (byte*)src, count * 2);
 		}
 
 		#region Runtime method-to-ir dependencies

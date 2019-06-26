@@ -14,6 +14,7 @@ namespace MonoTests.System.Threading.Tasks
 
 #if !MONOTOUCH // Uses LogicalCallContext
         [Test]
+		[Category ("MultiThreaded")]
         public void PrincipalFlowsToAsyncTask ()
         {
             /* run in different thread to work around problems on platforms

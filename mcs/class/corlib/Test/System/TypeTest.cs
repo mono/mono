@@ -2792,7 +2792,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
 		}
 
@@ -2806,7 +2806,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
 		}
 
@@ -2820,7 +2820,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
 		}
 
@@ -3294,11 +3294,9 @@ namespace MonoTests.System
 			Type t = Type.ReflectionOnlyGetType (typeof (int).AssemblyQualifiedName.ToString (), true, true);
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
-
+/*
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -3313,9 +3311,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_NestedUserDefinedType ()
 		{
 			Type ut = new UserType (new UserType (typeof (int)));
@@ -3330,9 +3326,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
 		{
 			Type ut = new UserType(typeof(int));
@@ -3343,9 +3337,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
@@ -3353,7 +3345,7 @@ namespace MonoTests.System
 			var g0 = t.GetGenericArguments () [0];
 			Assert.AreSame (g0, ut, "#1");
 		}
-
+*/
 		[Test]
 		public void MakeGenericType_WrongNumOfArguments ()
 		{
@@ -3393,6 +3385,7 @@ namespace MonoTests.System
 		}
 
 		[Test] //bug #471255
+		[Category("StackWalks")]
 		public void GetTypeCalledUsingReflection ()
 		{
 			Type expectedType = Type.GetType ("NoNamespaceClass");
@@ -3548,8 +3541,9 @@ namespace MonoTests.System
 		}
 #endif
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		[Test]
+		[Category("SRE")]
 		public void Bug506757 ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -3594,6 +3588,7 @@ namespace MonoTests.System
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
 #endif
+
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{
@@ -4564,7 +4559,7 @@ namespace MonoTests.System
 
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
@@ -5027,6 +5022,49 @@ namespace MonoTests.System
 
 		class Bug59738Derived<U> : Bug59738Class<U> {
 		}
+
+		ref struct UserByRefLikeStruct {
+			object u;
+			IntPtr i;
+		}
+
+		[Test]
+		public void IsByRefLike_positive ()
+		{
+			Assert.IsTrue (typeof(Span<int>).IsByRefLike, "#1");
+			Assert.IsTrue (typeof(RuntimeArgumentHandle).IsByRefLike, "#2");
+			Assert.IsTrue (typeof(TypedReference).IsByRefLike, "#3");
+			Assert.IsTrue (typeof(UserByRefLikeStruct).IsByRefLike, "#4");
+		}
+
+		[Test]
+		public void IsByRefLike_negative ()
+		{
+			Assert.IsFalse (typeof (int).IsByRefLike, "#1");
+			Assert.IsFalse (typeof (object).IsByRefLike, "#2");
+			Assert.IsFalse (typeof (int).MakeByRefType ().IsByRefLike, "#3");
+			Assert.IsFalse (typeof (string).MakeByRefType ().IsByRefLike, "#4");
+			Assert.IsFalse (typeof (Span<int>).MakeByRefType ().IsByRefLike, "#5");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakeByRefType ().IsByRefLike, "#6");
+			Assert.IsFalse (typeof (int).MakePointerType ().IsByRefLike, "#7");
+			Assert.IsFalse (typeof (Span<int>).MakePointerType ().IsByRefLike, "#8");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakePointerType ().IsByRefLike, "#9");
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfSpan_TLE ()
+		{
+			typeof(Span<int>).MakeArrayType ();
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfByrefLike_TLE ()
+		{
+			typeof(UserByRefLikeStruct).MakeArrayType ();
+		}
+
 	}
 
 	class UserType : Type

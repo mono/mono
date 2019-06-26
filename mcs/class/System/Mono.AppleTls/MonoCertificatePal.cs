@@ -33,13 +33,14 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.Apple;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
-using Mono.Net;
 
 namespace Mono.AppleTls
 {
 	static partial class MonoCertificatePal
 	{
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		const string SecurityLibrary = OSX509Certificates.SecurityLibrary;
+
+		[DllImport (SecurityLibrary)]
 		extern static IntPtr SecCertificateCreateWithData (IntPtr allocator, IntPtr cfData);
 
 		public static SafeSecCertificateHandle FromOtherCertificate (X509Certificate certificate)
@@ -66,7 +67,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static IntPtr SecIdentityGetTypeID ();
 
 		public static bool IsSecIdentity (IntPtr ptr)
@@ -76,7 +77,7 @@ namespace Mono.AppleTls
 			return CFType.GetTypeID (ptr) == SecIdentityGetTypeID ();
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		public extern static IntPtr SecKeyGetTypeID ();
 		
 		public static bool IsSecKey (IntPtr ptr)
@@ -86,7 +87,7 @@ namespace Mono.AppleTls
 			return CFType.GetTypeID (ptr) == SecKeyGetTypeID ();
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SecStatusCode SecIdentityCopyCertificate (/* SecIdentityRef */ IntPtr identityRef,  /* SecCertificateRef* */ out IntPtr certificateRef);
 
 		public static SafeSecCertificateHandle GetCertificate (SafeSecIdentityHandle identity)
@@ -99,7 +100,7 @@ namespace Mono.AppleTls
 			return new SafeSecCertificateHandle (cert, true);
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static IntPtr SecCertificateCopySubjectSummary (IntPtr cert);
 
 		public static string GetSubjectSummary (SafeSecCertificateHandle certificate)
@@ -117,7 +118,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static /* CFDataRef */ IntPtr SecCertificateCopyData (/* SecCertificateRef */ IntPtr cert);
 
 		public static byte[] GetRawData (SafeSecCertificateHandle certificate)

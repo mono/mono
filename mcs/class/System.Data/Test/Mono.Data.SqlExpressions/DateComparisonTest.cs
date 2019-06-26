@@ -2,6 +2,8 @@ using System;
 using System.Data;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace Monotests_Mono.Data.SqlExpressions
 {
 	[TestFixture]	
@@ -13,7 +15,7 @@ namespace Monotests_Mono.Data.SqlExpressions
 		public void SetUp()
 		{
 			dataSet = new DataSet();
-			dataSet.ReadXml("Test/Mono.Data.SqlExpressions/dateComparisonTest.xml", XmlReadMode.InferSchema);
+			dataSet.ReadXml(TestResourceHelper.GetFullPathOfResource ("Test/Mono.Data.SqlExpressions/dateComparisonTest.xml"), XmlReadMode.InferSchema);
 		}
 
 		[Test]

@@ -26,12 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !MONO_FEATURE_SRE
 
 namespace System.Reflection.Emit
 {
 	public class EventBuilder
 	{		
+		private EventBuilder () {}
+
 		public void AddOtherMethod (MethodBuilder mdBuilder)
 		{
 			throw new PlatformNotSupportedException ();
@@ -61,6 +63,8 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public EventToken GetEventToken () => throw new PlatformNotSupportedException ();
 	}
 }
 

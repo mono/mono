@@ -34,7 +34,9 @@ namespace System.Threading
 {
     using System.Security;
     using System.Runtime.Remoting;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
@@ -48,6 +50,7 @@ namespace System.Threading
     using Microsoft.Win32;
 #endif
 
+#if !NETCORE
     //
     // Interface to something that can be queued to the TP.  This is implemented by
     // QueueUserWorkItemCallback, Task, and potentially other internal types.
@@ -64,6 +67,7 @@ namespace System.Threading
         [SecurityCritical]
         void MarkAborted(ThreadAbortException tae);
     }
+#endif
 
     [System.Runtime.InteropServices.ComVisible(true)]
     public delegate void WaitCallback(Object state);
@@ -78,6 +82,35 @@ namespace System.Threading
 
     internal static class ThreadPoolGlobals
     {
+#if MONO
+        public const uint tpQuantum = 30U;
+
+        public static int processorCount => Environment.ProcessorCount;
+
+        public static bool tpHosted => ThreadPool.IsThreadPoolHosted(); 
+
+        public static volatile bool vmTpInitialized;
+        public static bool enableWorkerTracking;
+
+        [SecurityCritical]
+        public static readonly ThreadPoolWorkQueue workQueue = new ThreadPoolWorkQueue();
+
+
+#if NETCORE
+        /// <summary>Shim used to invoke <see cref="IAsyncStateMachineBox.MoveNext"/> of the supplied <see cref="IAsyncStateMachineBox"/>.</summary>
+        internal static readonly Action<object> s_invokeAsyncStateMachineBox = state =>
+        {
+            if (!(state is IAsyncStateMachineBox box))
+            {
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.state);
+                return;
+            }
+
+            box.MoveNext();
+        };
+#endif        
+
+#else
         //Per-appDomain quantum (in ms) for which the thread keeps processing
         //requests in the current domain.
         public static uint tpQuantum = 30U;
@@ -96,6 +129,7 @@ namespace System.Threading
         static ThreadPoolGlobals()
         {
         }
+#endif
     }
 
     internal sealed class ThreadPoolWorkQueue
@@ -844,7 +878,11 @@ namespace System.Threading
                                     ThreadPool.ReportThreadStatus(true);
                                     reportedStatus = true;
                                 }
+#if NETCORE
+                                workItem.Execute();
+#else
                                 workItem.ExecuteWorkItem();
+#endif
                                 workItem = null;
                             }
                             finally
@@ -855,7 +893,11 @@ namespace System.Threading
                         }
                         else
                         {
+#if NETCORE
+                            workItem.Execute();
+#else
                             workItem.ExecuteWorkItem();
+#endif
                             workItem = null;
                         }
 
@@ -878,8 +920,10 @@ namespace System.Threading
                 // it was executed or not (in debug builds only).  Task uses this to communicate the ThreadAbortException to anyone
                 // who waits for the task to complete.
                 //
+#if !NETCORE
                 if (workItem != null)
                     workItem.MarkAborted(tae);
+#endif
                 
                 //
                 // In this case, the VM is going to request another thread on our behalf.  No need to do it twice.
@@ -961,7 +1005,11 @@ namespace System.Threading
             // if we're in the process of shutting down or unloading the AD.  In those cases, the work won't
             // execute anyway.  And there are subtle ----s involved there that would lead us to do the wrong
             // thing anyway.  So we'll only clean up if this is a "normal" finalization.
-            if (!(Environment.HasShutdownStarted || AppDomain.CurrentDomain.IsFinalizingForUnload()))
+            if (!(Environment.HasShutdownStarted
+#if !NETCORE
+                || AppDomain.CurrentDomain.IsFinalizingForUnload()
+#endif
+                ))
                 CleanUp();
         }
     }
@@ -1001,8 +1049,8 @@ namespace System.Threading
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
+//        [ResourceExposure(ResourceScope.None)]
+//        [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         internal void SetWaitObject(WaitHandle waitObject)
         {
@@ -1107,8 +1155,8 @@ namespace System.Threading
             // This will result in a "leak" of sorts (since the handle will not be cleaned up)
             // but the process is exiting anyway.
             //
-            // During AD-unload, we don’t finalize live objects until all threads have been 
-            // aborted out of the AD.  Since these locked regions are CERs, we won’t abort them 
+            // During AD-unload, we donï¿½t finalize live objects until all threads have been 
+            // aborted out of the AD.  Since these locked regions are CERs, we wonï¿½t abort them 
             // while the lock is held.  So there should be no leak on AD-unload.
             //
             if (Interlocked.CompareExchange(ref m_lock, 1, 0) == 0)
@@ -1216,8 +1264,10 @@ namespace System.Threading
 
     internal sealed class QueueUserWorkItemCallback : IThreadPoolWorkItem
     {
+#if !MONO
         [System.Security.SecuritySafeCritical]
         static QueueUserWorkItemCallback() {}
+#endif
 
         private WaitCallback callback;
         private ExecutionContext context;
@@ -1249,10 +1299,12 @@ namespace System.Threading
             state = stateObj;
             if (compressStack && !ExecutionContext.IsFlowSuppressed())
             {
+#if !NETCORE
                 // clone the exection context
                 context = ExecutionContext.Capture(
                     ref stackMark,
                     ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
+#endif
             }
         }
 
@@ -1267,7 +1319,11 @@ namespace System.Threading
         }
 
         [SecurityCritical]
+#if NETCORE
+        void IThreadPoolWorkItem.Execute()
+#else
         void IThreadPoolWorkItem.ExecuteWorkItem()
+#endif
         {
 #if DEBUG
             MarkExecuted(false);
@@ -1282,10 +1338,15 @@ namespace System.Threading
             }
             else
             {
-                ExecutionContext.Run(context, ccb, this, true);
+                ExecutionContext.Run(context, ccb, this
+#if !NETCORE
+                    , true
+#endif
+                );
             }
         }
 
+#if !NETCORE
         [SecurityCritical]
         void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
         {
@@ -1295,6 +1356,7 @@ namespace System.Threading
             MarkExecuted(true);
 #endif
         }
+#endif
 
         [System.Security.SecurityCritical]
         static internal ContextCallback ccb = new ContextCallback(WaitCallback_Context);
@@ -1330,10 +1392,12 @@ namespace System.Threading
 
             if (compressStack && !ExecutionContext.IsFlowSuppressed())
             {
+#if !NETCORE
                 // capture the exection context
                 _executionContext = ExecutionContext.Capture(
                     ref stackMark,
                     ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
+#endif
             }
         }
         
@@ -1372,16 +1436,24 @@ namespace System.Threading
                 using (ExecutionContext executionContext = helper._executionContext.CreateCopy())
                 {
                 if (timedOut)
-                        ExecutionContext.Run(executionContext, _ccbt, helper, true);
+                        ExecutionContext.Run(executionContext, _ccbt, helper
+#if !NETCORE
+                            , true
+#endif
+                            );
                 else
-                        ExecutionContext.Run(executionContext, _ccbf, helper, true);
+                        ExecutionContext.Run(executionContext, _ccbf, helper
+#if !NETCORE
+                            , true
+#endif
+                            );
                 }
             }
         }    
 
     }
 
-    [HostProtection(Synchronization=true, ExternalThreading=true)]
+//    [HostProtection(Synchronization=true, ExternalThreading=true)]
     public static partial class ThreadPool
     {
         #if FEATURE_CORECLR
@@ -1389,9 +1461,9 @@ namespace System.Threading
         #else
         [System.Security.SecuritySafeCritical]
         #endif
-#pragma warning disable 618
-        [SecurityPermissionAttribute(SecurityAction.Demand, ControlThread = true)]
-#pragma warning restore 618
+//#pragma warning disable 618
+//        [SecurityPermissionAttribute(SecurityAction.Demand, ControlThread = true)]
+//#pragma warning restore 618
         public static bool SetMaxThreads(int workerThreads, int completionPortThreads)
         {
             return SetMaxThreadsNative(workerThreads, completionPortThreads);
@@ -1408,9 +1480,9 @@ namespace System.Threading
         #else
         [System.Security.SecuritySafeCritical]
         #endif
-#pragma warning disable 618
-        [SecurityPermissionAttribute(SecurityAction.Demand, ControlThread = true)]
-#pragma warning restore 618
+//#pragma warning disable 618
+//        [SecurityPermissionAttribute(SecurityAction.Demand, ControlThread = true)]
+//#pragma warning restore 618
         public static bool SetMinThreads(int workerThreads, int completionPortThreads)
         {
             return SetMinThreadsNative(workerThreads, completionPortThreads);
@@ -1657,11 +1729,36 @@ namespace System.Threading
             return QueueUserWorkItemHelper(callBack,state,ref stackMark,false);
         }
 
+        public static bool QueueUserWorkItem<TState>(Action<TState> callBack, TState state, bool preferLocal)
+        {
+            if (callBack == null)
+            {
+                throw new ArgumentNullException(nameof(callBack));
+            }
+
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+            WaitCallback waitCallback = x => callBack((TState)x);
+            return QueueUserWorkItemHelper(waitCallback,state,ref stackMark,true,!preferLocal);
+        }
+
+        public static bool UnsafeQueueUserWorkItem<TState>(Action<TState> callBack, TState state, bool preferLocal)
+        {
+            if (callBack == null)
+            {
+                throw new ArgumentNullException(nameof(callBack));
+            }
+
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+            WaitCallback waitCallback = x => callBack((TState)x);
+            return QueueUserWorkItemHelper(waitCallback,state,ref stackMark,false,!preferLocal);
+        }
+
+
         //ThreadPool has per-appdomain managed queue of work-items. The VM is
         //responsible for just scheduling threads into appdomains. After that
         //work-items are dispatched from the managed queue.
         [System.Security.SecurityCritical]  // auto-generated
-        private static bool QueueUserWorkItemHelper(WaitCallback callBack, Object state, ref StackCrawlMark stackMark, bool compressStack )
+        private static bool QueueUserWorkItemHelper(WaitCallback callBack, Object state, ref StackCrawlMark stackMark, bool compressStack, bool forceGlobal = true)
         {
             bool success =  true;
 
@@ -1682,7 +1779,7 @@ namespace System.Threading
                 finally
                 {
                     QueueUserWorkItemCallback tpcallBack = new QueueUserWorkItemCallback(callBack, state, compressStack, ref stackMark);
-                    ThreadPoolGlobals.workQueue.Enqueue(tpcallBack, true);
+                    ThreadPoolGlobals.workQueue.Enqueue(tpcallBack, forceGlobal);
                     success = true;
                 }
             }
@@ -1817,12 +1914,12 @@ namespace System.Threading
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool RequestWorkerThread();
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         unsafe private static extern bool PostQueuedCompletionStatus(NativeOverlapped* overlapped);
 
@@ -1835,8 +1932,7 @@ namespace System.Threading
                 throw new NotSupportedException(Environment.GetResourceString("Arg_NotSupportedException"));
             Contract.EndContractBlock();
 #endif
-
-            return PostQueuedCompletionStatus(overlapped);
+            throw new NotImplementedException("");
         }
 
         [SecurityCritical]
@@ -1852,67 +1948,68 @@ namespace System.Threading
         // Native methods: 
     
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool SetMinThreadsNative(int workerThreads, int completionPortThreads);
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool SetMaxThreadsNative(int workerThreads, int completionPortThreads);
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void GetMinThreadsNative(out int workerThreads, out int completionPortThreads);
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void GetMaxThreadsNative(out int workerThreads, out int completionPortThreads);
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void GetAvailableThreadsNative(out int workerThreads, out int completionPortThreads);
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool NotifyWorkItemComplete();
 
         [System.Security.SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void ReportThreadStatus(bool isWorking);
 
         [System.Security.SecuritySafeCritical]
         internal static void NotifyWorkItemProgress()
         {
-            if (!ThreadPoolGlobals.vmTpInitialized)
-                ThreadPool.InitializeVMTp(ref ThreadPoolGlobals.enableWorkerTracking);
+            EnsureVMInitialized();
             NotifyWorkItemProgressNative();
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemProgressNative();
 
 #if MONO
         [System.Security.SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemQueued();
 #endif
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern bool IsThreadPoolHosted();
+//        [ResourceExposure(ResourceScope.None)]
+        internal static bool IsThreadPoolHosted()
+        {
+            return false;
+        }
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
+//        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void InitializeVMTp(ref bool enableWorkerTracking);
 
@@ -1934,7 +2031,7 @@ namespace System.Threading
 #if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
         [Obsolete("ThreadPool.BindHandle(IntPtr) has been deprecated.  Please use ThreadPool.BindHandle(SafeHandle) instead.", false)]
-        [SecurityPermissionAttribute( SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+//        [SecurityPermissionAttribute( SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public static bool BindHandle(
              IntPtr osHandle
              )
@@ -1948,9 +2045,9 @@ namespace System.Threading
         #else
         [System.Security.SecuritySafeCritical]
         #endif        
-#pragma warning disable 618
-        [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#pragma warning restore 618
+//#pragma warning disable 618
+//        [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+//#pragma warning restore 618
         public static bool BindHandle(SafeHandle osHandle)
         {
             #if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
@@ -1977,9 +2074,11 @@ namespace System.Threading
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+//        [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern bool BindIOCompletionCallbackNative(IntPtr fileHandle);
+        private static bool BindIOCompletionCallbackNative(IntPtr fileHandle)
+        {
+            return true;
+        }
     }
 }

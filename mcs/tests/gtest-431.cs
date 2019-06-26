@@ -1,4 +1,4 @@
-// Compiler options: -r:gtest-431-lib-1.dll -r:gtest-431-lib-2.dll -noconfig
+// Compiler options: -r:gtest-431-1-lib.dll -r:gtest-431-2-lib.dll -noconfig
 
 using System;
 

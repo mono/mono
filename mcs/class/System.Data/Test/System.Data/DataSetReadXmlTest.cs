@@ -37,6 +37,8 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -781,7 +783,7 @@ namespace MonoTests.System.Data
 			}
 			
 			DataSet dataSet2 = new DataSet();
-			dataSet2.ReadXml("Test/System.Data/schemas/b582732.xml", XmlReadMode.ReadSchema);
+			dataSet2.ReadXml(TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/b582732.xml"), XmlReadMode.ReadSchema);
 			Assert.AreEqual (dataSet1.ExtendedProperties["DS1"], dataSet2.ExtendedProperties["DS1"],
 			                 "DSExtProp#1: DS extended properties mismatch");
 						

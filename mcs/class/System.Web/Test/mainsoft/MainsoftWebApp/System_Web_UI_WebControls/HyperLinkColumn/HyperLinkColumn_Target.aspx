@@ -28,9 +28,9 @@
 			</cc1:ghtsubtest><cc1:ghtsubtest id="Ghtsubtest2" runat="server" Height="120px" Width="553px">
 				<asp:DataGrid id="DataGrid2" runat="server" AutoGenerateColumns="False">
 					<Columns>
-						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.google.com&quot;"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn Target="_blank" DataTextField="Name" NavigateUrl="&quot;http://www.google.com&quot;"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn Target="klasjd lkajsd lkajsd" DataTextField="Company" NavigateUrl="&quot;http://www.google.com&quot;"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.example.com&quot;"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn Target="_blank" DataTextField="Name" NavigateUrl="&quot;http://www.example.com&quot;"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn Target="klasjd lkajsd lkajsd" DataTextField="Company" NavigateUrl="&quot;http://www.example.com&quot;"></asp:HyperLinkColumn>
 					</Columns>
 				</asp:DataGrid>
 			</cc1:ghtsubtest></form>

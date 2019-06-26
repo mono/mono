@@ -1,0 +1,6 @@
+Mono.AppleTls/Enums.cs
+Mono.AppleTls/X509CertificateImplApple.cs
+Mono.AppleTls/X509PalImpl.Apple.cs
+
+Mono.AppleTls/MonoCertificatePal.cs
+Mono.AppleTls/SafeHandles.Mono.cs

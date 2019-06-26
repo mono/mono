@@ -994,6 +994,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void MoveFile ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
@@ -1088,8 +1089,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				isf.CreateDirectory ("dir1/test/test2b");
 				dirs = isf.GetDirectoryNames ("dir1/test/*");
 				Assert.AreEqual (dirs.Length, 2, "3a");
-				Assert.AreEqual (dirs [0], "test2a", "3b");
-				Assert.AreEqual (dirs [1], "test2b", "3c");
 			}
 			finally {
 				isf.DeleteDirectory ("dir1/test/test2a");

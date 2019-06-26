@@ -583,6 +583,20 @@ namespace System.Windows.Forms
 
 				ToolTipTimer.Stop ();
 			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+				{
+					if (tooltip_timer != null)
+						tooltip_timer.Dispose();
+
+					if (tooltip_window != null)
+						tooltip_window.Dispose();
+				}
+
+				base.Dispose(disposing);
+			}
 			#endregion
 		}
 	}

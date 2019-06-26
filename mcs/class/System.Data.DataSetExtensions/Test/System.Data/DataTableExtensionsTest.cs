@@ -34,6 +34,8 @@ using System.Data;
 using System.Linq;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -77,7 +79,7 @@ namespace MonoTests.System.Data
 		public void AsEnumerable ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			DataTable dt = ds.Tables [0];
 			Assert.AreEqual ("ScoreList", dt.TableName, "TableName");
 			var dv = dt.AsEnumerable ();
@@ -94,7 +96,7 @@ namespace MonoTests.System.Data
 		public void AsDataView ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			DataTable dt = ds.Tables [0];
 			var dv = dt.AsEnumerable ().Where<DataRow> ((DataRow r) => (int) r ["Score"] > 60).AsDataView<DataRow> ();
 			Assert.AreEqual (1, dv [0] ["ID"], "#1");

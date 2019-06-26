@@ -28,7 +28,7 @@ to it.  The
 .I file
 is an ECMA assembly.  They typically have a .exe or .dll extension.
 .PP
-These executables can reference additionaly functionality in the form
+These executables can reference additional functionality in the form
 of assembly references.  By default those assembly references are
 resolved as follows: the \fBmscorlib.dll\fR is resolved from the
 system profile that is configured by Mono, and other assemblies are
@@ -37,8 +37,8 @@ loaded from the Global Assembly Cache (GAC).
 The runtime contains a native code generator that transforms the
 Common Intermediate Language into native code.
 .PP
-The code generator can operate in two modes: just in time compilation
-(JIT) or ahead of time compilation (AOT).  Since code can be
+The code generator can operate in two modes: Just-in-time compilation
+(JIT) or Ahead-of-time compilation (AOT).  Since code can be
 dynamically loaded, the runtime environment and the JIT are always
 present, even if code is compiled ahead of time.
 .PP
@@ -215,11 +215,36 @@ and
 options. This feature is experimental.
 .TP
 .I llvmopts=[options]
-Use this option to override the built-in set of flags passed to the
-LLVM optimizer.   The list of possible flags that can be passed can be
-obtained by calling the bundled 
+Use this option to add more flags to the built-in set of flags passed to the
+LLVM optimizer.   When you invoke the 
+.I mono
+command with the 
+.I --aot=llvm 
+it displays the current list of flags that are being passed to the 
 .I opt
-program that comes with Mono.
+command.  
+.I The list of possible flags that can be passed can be
+obtained by calling the bundled 
+.I opt 
+program that comes with Mono, and calling it like this:
+.nf
+
+	opt --help
+
+.fi
+
+.TP
+.I llvmllc=[options]
+Use this option to add more flags to the built-in set of flags passed to the
+LLVM static compiler (llc).   The list of possible flags that can be passed can be
+obtained by calling the bundled 
+.I llc
+program that comes with Mono, and calling it like this:
+.nf
+
+	llc --help
+
+.fi
 .TP
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
@@ -242,6 +267,9 @@ Print the architecture the AOT in this copy of Mono targets and quit.
 Generates all required wrappers, so that it is possible to run --interpreter without
 any code generation at runtime.  This option only makes sense with \fBmscorlib.dll\fR.
 Embedders can set
+.TP
+.I depfile=[filename]
+Outputs a gcc -M style dependency file.
 
 .nf
 mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
@@ -374,6 +402,9 @@ Prints additional information about type loading failures.
 .TP
 .I write-symbols,no-write-symbols
 Instructs the AOT compiler to emit (or not emit) debug symbol information.
+.TP
+.I no-opt
+Instructs the AOT compiler tot no call opt when compiling with LLVM.
 .PP
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
@@ -608,46 +639,13 @@ running a 1.1 program on a 2.0 version:
          mono --runtime=v2.0.50727 program.exe
 .fi
 .TP
-\fB--security\fR, \fB--security=mode\fR
-Activate the security manager, a currently experimental feature in
-Mono and it is OFF by default. The new code verifier can be enabled
-with this option as well.
-.RS
-.ne 8
-.PP
-Using security without parameters is equivalent as calling it with the
-"cas" parameter.  
-.PP
-The following modes are supported:
-.TP 
-.I core-clr
-Enables the core-clr security system, typically used for
-Moonlight/Silverlight applications.  It provides a much simpler
-security system than CAS, see http://www.mono-project.com/docs/web/moonlight/
-for more details and links to the descriptions of this new system. 
-.TP
-.I validil
-Enables the new verifier and performs basic verification for code
-validity.  In this mode, unsafe code and P/Invoke are allowed. This
-mode provides a better safety guarantee but it is still possible
-for managed code to crash Mono. 
-.TP
-.I verifiable
-Enables the new verifier and performs full verification of the code
-being executed.  It only allows verifiable code to be executed.
-Unsafe code is not allowed but P/Invoke is.  This mode should
-not allow managed code to crash mono.  The verification is not as
-strict as ECMA 335 standard in order to stay compatible with the MS
-runtime.
-.PP
-The security system acts on user code: code contained in mscorlib or
-the global assembly cache is always trusted.
-.ne
-.RE
-.TP
 \fB--server\fR
 Configures the virtual machine to be better suited for server
 operations (currently, allows a heavier threadpool initialization).
+.TP
+\fB--use-map-jit\fR
+Instructs Mono to generate code using MAP_JIT on MacOS.  Necessary for
+bundled applications.
 .TP
 \fB--verify-all\fR 
 Verifies mscorlib and assemblies in the global
@@ -661,6 +659,9 @@ mscorlib and assemblies located on the global assembly cache.
 \fB-V\fR, \fB--version\fR
 Prints JIT version information (system configuration, release number
 and branch names if available). 
+.TP
+\fB--version=number\fR
+Print version number only.
 
 
 .SH DEVELOPMENT OPTIONS
@@ -820,7 +821,7 @@ This compiles a method (namespace.name:methodname), this is used for
 testing the compiler performance or to examine the output of the code
 generator. 
 .TP
-\fB--compileall\fR
+\fB--compile-all\fR
 Compiles all the methods in an assembly.  This is used to test the
 compiler performance or to examine the output of the code generator
 .TP 
@@ -844,7 +845,7 @@ on.
 .TP
 \fB--ncompile\fR
 Instruct the runtime on the number of times that the method specified
-by --compile (or all the methods if --compileall is used) to be
+by --compile (or all the methods if --compile-all is used) to be
 compiled.  This is used for testing the code generator performance. 
 .TP 
 \fB--stats\fR
@@ -1627,6 +1628,32 @@ home directories that might be shared over the network.
 \fBMONO_STRICT_IO_EMULATION\fR
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
+.TP
+\fBMONO_TLS_PROVIDER\fR
+This environment variable controls which TLS/SSL provider Mono will
+use.  The options are usually determined by the operating system where
+Mono was compiled and the configuration options that were used for
+it.   
+.RS
+.ne 8
+.TP
+.I default
+Uses the default TLS stack that the Mono runtime was configured with.
+Usually this is configured to use Apple's SSL stack on Apple
+platforms, and Boring SSL on other platforms.
+.TP
+.I apple
+Forces the use of the Apple SSL stack, only works on Apple platforms.
+.TP
+.I btls
+Forces the use of the BoringSSL stack.    See
+https://opensource.google.com/projects/boringssl for more information
+about this stack.
+.TP
+.I legacy
+This is the old Mono stack, which only supports SSL and TLS up to
+version 1.0.   It is deprecated and will be removed in the future.
+.RE
 .TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to

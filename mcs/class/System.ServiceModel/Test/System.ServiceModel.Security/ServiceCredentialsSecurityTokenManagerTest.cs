@@ -41,6 +41,8 @@ using NUnit.Framework;
 
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Security
 {
 	[TestFixture]
@@ -253,7 +255,7 @@ namespace MonoTests.System.ServiceModel.Security
 			SecurityTokenRequirement r =
 				new RecipientServiceModelSecurityTokenRequirement ();
 			r.TokenType = SecurityTokenTypes.X509Certificate;
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			def_c.ServiceCredentials.ServiceCertificate.Certificate = cert;
 			def_c.CreateSecurityTokenProvider (r);
 		}
@@ -265,7 +267,7 @@ namespace MonoTests.System.ServiceModel.Security
 				new RecipientServiceModelSecurityTokenRequirement ();
 			r.TokenType = SecurityTokenTypes.X509Certificate;
 			def_c.ServiceCredentials.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			X509SecurityTokenProvider p =
 				def_c.CreateSecurityTokenProvider (r)
 				as X509SecurityTokenProvider;
@@ -282,7 +284,7 @@ namespace MonoTests.System.ServiceModel.Security
 			r.KeyUsage = SecurityKeyUsage.Exchange;
 			// ClientCredential is somehow required ...
 			def_c.ServiceCredentials.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 			X509SecurityTokenProvider p =
 				def_c.CreateSecurityTokenProvider (r)

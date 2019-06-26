@@ -1,2 +1,3 @@
-#include System.Net.Http.dll.sources
+#include legacy.sources
 System.Net.Http/HttpClientHandler.platformnotsupported.cs
+System.Net.Http/HttpClient.macios.cs

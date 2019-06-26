@@ -12,6 +12,8 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.I18N.CJK
 {
 	[TestFixture]
@@ -81,19 +83,19 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP936_Encode ()
 		{
-			AssertEncode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-936.txt"), 936);
 		}
 
 		[Test]
 		public void CP936_Encode3 ()
 		{
-			AssertEncode("Test/texts/chinese3-utf8.txt", "Test/texts/chinese3-936.txt", 936);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese3-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese3-936.txt"), 936);
 		}
 
 		[Test]
 		public void CP936_Decode ()
 		{
-			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-936.txt"), 936);
 		}
 
 		[Test]
@@ -114,19 +116,19 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP950_Encode ()
 		{
-			AssertEncode ("Test/texts/chinese2-utf8.txt", "Test/texts/chinese2-950.txt", 950);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese2-950.txt"), 950);
 		}
 
 		[Test]
 		public void CP950_Encode4 ()
 		{
-			AssertEncode("Test/texts/chinese4-utf8.txt", "Test/texts/chinese4-950.txt", 950);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese4-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese4-950.txt"), 950);
 		}
 
 		[Test]
 		public void CP950_Decode ()
 		{
-			AssertDecode ("Test/texts/chinese2-utf8.txt", "Test/texts/chinese2-950.txt", 950);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese2-950.txt"), 950);
 		}
 
 		// GB18030
@@ -134,13 +136,13 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP54936_Encode ()
 		{
-			AssertEncode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-54936.txt", 54936);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-54936.txt"), 54936);
 		}
 
 		[Test]
 		public void CP54936_Decode ()
 		{
-			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-54936.txt", 54936);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/chinese-54936.txt"), 54936);
 		}
 
 		#endregion
@@ -152,13 +154,13 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP932_Encode ()
 		{
-			AssertEncode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-932.txt", 932);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-932.txt"), 932);
 		}
 
 		[Test]
 		public void CP932_Decode ()
 		{
-			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-932.txt", 932);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-932.txt"), 932);
 		}
 
 		[Test]
@@ -175,13 +177,13 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP51932_Encode ()
 		{
-			AssertEncode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-51932.txt", 51932);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-51932.txt"), 51932);
 		}
 
 		[Test]
 		public void CP51932_Decode ()
 		{
-			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-51932.txt", 51932);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-51932.txt"), 51932);
 		}
 
 		// ISO-2022-JP
@@ -189,49 +191,49 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP50220_Encode ()
 		{
-			AssertEncode ("Test/texts/japanese2-utf8.txt", "Test/texts/japanese2-50220.txt", 50220);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese2-50220.txt"), 50220);
 		}
 
 		[Test]
 		public void CP50220_Encode_3 ()
 		{
-			AssertEncode("Test/texts/japanese3-utf8.txt", "Test/texts/japanese3-50220.txt", 50220);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese3-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese3-50220.txt"), 50220);
 		}
 
 		[Test]
 		public void CP50220_Decode ()
 		{
-			AssertDecode ("Test/texts/japanese2-utf8.txt", "Test/texts/japanese2-50220.txt", 50220);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese2-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese2-50220.txt"), 50220);
 		}
 
 		[Test]
 		public void CP50221_Encode ()
 		{
-			AssertEncode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50221.txt", 50221);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-50221.txt"), 50221);
 		}
 
 		[Test]
 		public void CP50221_Encode_3()
 		{
-			AssertEncode("Test/texts/japanese3-utf8.txt", "Test/texts/japanese3-50221.txt", 50221);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese3-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese3-50221.txt"), 50221);
 		}
 
 		[Test]
 		public void CP50221_Decode ()
 		{
-			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50221.txt", 50221);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-50221.txt"), 50221);
 		}
 
 		[Test]
 		public void CP50222_Encode ()
 		{
-			AssertEncode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50222.txt", 50222);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-50222.txt"), 50222);
 		}
 
 		[Test]
 		public void CP50222_Decode ()
 		{
-			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50222.txt", 50222);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/japanese-50222.txt"), 50222);
 		}
 
 		[Test]
@@ -585,15 +587,23 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void CP949_Encode ()
 		{
-			AssertEncode ("Test/texts/korean-utf8.txt", "Test/texts/korean-949.txt", 949);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/korean-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/korean-949.txt"), 949);
 		}
 
 		[Test]
 		public void CP949_Decode ()
 		{
-			AssertDecode ("Test/texts/korean-utf8.txt", "Test/texts/korean-949.txt", 949);
+			AssertDecode (TestResourceHelper.GetFullPathOfResource ("Test/texts/korean-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/korean-949.txt"), 949);
 		}
 
 		#endregion
+
+		[Test]
+		public void Bug13144 ()
+		{
+			var encoding = Encoding.GetEncoding ("GB18030");
+			var str = encoding.GetString (new byte[] { 0x84, 0x32, 0x81, 0x30 });
+			Assert.AreEqual ("?", str);
+		}
 	}
 }

@@ -6,7 +6,7 @@
 
 namespace System.Net
 {
-    [Obsolete("This class has been deprecated. Please use WebRequest.DefaultWebProxy instead to access and set the global default proxy. Use 'null' instead of GetEmptyWebProxy. http://go.microsoft.com/fwlink/?linkid=14202")]
+    [Obsolete("This class has been deprecated. Please use WebRequest.DefaultWebProxy instead to access and set the global default proxy. Use 'null' instead of GetEmptyWebProxy. https://go.microsoft.com/fwlink/?linkid=14202")]
     public class GlobalProxySelection
     {
         // This just wraps WebRequest.DefaultWebProxy and modifies it to be compatible with Everett.

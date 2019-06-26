@@ -24,7 +24,7 @@ public class MyListener : ITestListener
 		else
 			++count;
 		if (!test.IsSuite)
-			Console.WriteLine ("{0} {1}/{2}", test.Name, scount, count);
+			Console.WriteLine ("{0} {1}/{2}", test.FullName, scount, count);
 	}
 
     public void TestFinished(ITestResult result)

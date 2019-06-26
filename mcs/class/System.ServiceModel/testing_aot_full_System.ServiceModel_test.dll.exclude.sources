@@ -110,8 +110,6 @@ System.ServiceModel.Security.Tokens/SecureConversationSecurityTokenParametersTes
 System.ServiceModel.Security.Tokens/SecurityContextSecurityTokenTest.cs
 System.ServiceModel.Security.Tokens/SecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/ServiceModelSecurityTokenTypesTest.cs
-System.ServiceModel.Security.Tokens/SslSecurityTokenParametersTest.cs
-System.ServiceModel.Security.Tokens/SspiSecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/UserNameSecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/WrappedKeySecurityTokenTest.cs
 System.ServiceModel.Security.Tokens/X509ListedCertificateValidator.cs

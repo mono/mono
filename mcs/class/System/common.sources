@@ -139,10 +139,15 @@ System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtecti
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerEncoder.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerSequenceReader.cs
+
 System.Security.Cryptography/AsnEncodedData.cs
 ../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataEnumerator.cs
 
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Oids.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Pal.OSX/CertificateData.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs
@@ -156,6 +161,7 @@ System.Security.Cryptography.X509Certificates/X509Certificate2Collection.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2ImplUnix.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs
@@ -183,6 +189,10 @@ System.Security.Cryptography.X509Certificates/X509Store.cs
 System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509SubjectKeyIdentifierHashAlgorithm.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509VerificationFlags.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/SubjectAlternativeNameBuilder.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/GeneralNameEncoder.cs
+corefx/X509SignatureGenerator.cs
+corefx/CertificateRequest.cs
 
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
@@ -191,6 +201,7 @@ System.Timers/ElapsedEventArgs.cs
 
 System.Windows.Input/ICommand.cs
 
+Mono/AppleTypes.cs
 Mono/SystemCertificateProvider.cs
 Mono/SystemDependencyProvider.cs
 Mono/X509Pal.cs
@@ -555,8 +566,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/diagnostics/traceutils.cs
 
 ../referencesource/System/net/System/_DomainName.cs
-../referencesource/System/net/System/_IPv4Address.cs
-../referencesource/System/net/System/_IPv6Address.cs
 ../referencesource/System/net/System/_UncName.cs
 ../referencesource/System/net/System/_UriSyntax.cs
 ../referencesource/System/net/System/GenericUriParser.cs
@@ -607,15 +616,22 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
 ../referencesource/System/net/System/Net/HttpResponseHeader.cs
-../referencesource/System/net/System/Net/HttpStatusCode.cs
-../referencesource/System/net/System/Net/HttpVersion.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/HttpStatusCode.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/HttpVersion.cs
 ../referencesource/System/net/System/Net/IAuthenticationModule.cs
 ../referencesource/System/net/System/Net/ICertificatePolicy.cs
 ../referencesource/System/net/System/Net/ICredentials.cs
 ../referencesource/System/net/System/Net/ICredentialsByHost.cs
 ../referencesource/System/net/System/Net/Internal.cs
-../referencesource/System/net/System/Net/IPAddress.cs
-../referencesource/System/net/System/Net/IPEndPoint.cs
+../../../external/corefx/src/Common/src/System/Net/IPAddressParserStatics.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPAddressParser.cs
+../../../external/corefx/src/Common/src/System/Net/IPv6AddressHelper.Common.cs
+../../../external/corefx/src/Common/src/System/Net/IPv4AddressHelper.Common.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPAddress.cs
+../../../external/corefx/src/System.Private.Uri/src/System/IPv4AddressHelper.cs
+../../../external/corefx/src/System.Private.Uri/src/System/IPv6AddressHelper.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPEndPoint.cs
+../../../external/corefx/src/Common/src/System/Net/TcpValidationHelpers.cs
 ../referencesource/System/net/System/Net/IPHostEntry.cs
 ../referencesource/System/net/System/Net/iwebproxy.cs
 ../referencesource/System/net/System/Net/IWebProxyFinder.cs
@@ -762,6 +778,7 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/Process.cs
+../../../external/corefx/src/Common/src/System/PasteArguments.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
@@ -785,22 +802,29 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
 
-../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
-
 ../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
 ../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
 ../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+../../../external/corefx/src/Common/src/System/IO/ReadOnlyMemoryStream.cs
 
+../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
+../../../external/corefx/src/Common/src/System/Net/DebugSafeHandle.cs
+../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleMinusOneIsInvalid.cs
+../../../external/corefx/src/Common/src/System/Net/ExceptionCheck.cs
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
+../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
+../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
-
-../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
+../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.cs
+../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SecurityBufferType.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SecurityBuffer.cs
+
+../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
 
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
@@ -810,15 +834,11 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/LinkedList.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedDictionary.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedList.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.TreeSubSet.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSetEqualityComparer.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/BlockingCollection.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs
@@ -859,7 +879,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
 
-../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 
 # Everything except compiled

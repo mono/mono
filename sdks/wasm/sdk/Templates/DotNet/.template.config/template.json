@@ -1,0 +1,19 @@
+{
+    "author": "Mono",
+    "classifications": [ "Mono/WebAssembly" ],
+    "name": "Mono WebAssembly Starter",
+    "identity": "WasmTemplate.1",        
+    "shortName": "wasm",                 
+    "tags": {
+        "language": "C#"                       
+    },
+    "sourceName": "WasmTemplate.1",      
+    "preferNameDirectory" : "true",
+    "symbols": {
+        "wasm_sdk": {
+            "type": "parameter",
+            "defaultValue": "",
+            "replaces":"MONO_SDK"
+        }
+    }    
+}

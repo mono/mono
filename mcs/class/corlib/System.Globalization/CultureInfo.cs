@@ -34,14 +34,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Diagnostics.Contracts;
 
 namespace System.Globalization
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public class CultureInfo : ICloneable, IFormatProvider
+	public partial class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
@@ -112,6 +111,10 @@ namespace System.Globalization
 		[NonSerialized]internal CultureData m_cultureData;
  		[NonSerialized]internal bool m_isInherited;
 		
+		// adapters for .NET Core sources (DateTimeFormatInfo) to reduce diff in mono/corefx repository
+		internal CultureData _cultureData => m_cultureData;
+		internal bool _isInherited => m_isInherited;
+
 		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
@@ -146,26 +149,17 @@ namespace System.Globalization
 			}
 		}
 
-		private static string current_culture_name;
-
 		internal static CultureInfo ConstructCurrentCulture ()
 		{
 			if (default_current_culture != null)
 				return default_current_culture;
 
-			string locale_name;
-			if (current_culture_name != null)
-				locale_name = current_culture_name;
-			else
-				locale_name = get_current_locale_name ();
-
+			var locale_name = get_current_locale_name ();
 			CultureInfo ci = null;
 
 			if (locale_name != null) {
 				try {
 					ci = CreateSpecificCulture (locale_name);
-					if (current_culture_name == null)
-						current_culture_name = locale_name;
 				} catch {
 				}
 			}
@@ -316,7 +310,9 @@ namespace System.Globalization
 			}
 		}
 
+#if !NETCORE
 		[MonoLimitation ("Optional calendars are not supported only default calendar is returned")]
+#endif
 		public virtual Calendar[] OptionalCalendars {
 			get {
 				return new[] { Calendar };
@@ -559,8 +555,12 @@ namespace System.Globalization
 				if (!constructed) Construct ();
 				CheckNeutral ();
 
-				var temp = new DateTimeFormatInfo (m_cultureData, Calendar);
-				temp.m_isReadOnly = m_isReadOnly;
+				DateTimeFormatInfo temp;
+				if (GlobalizationMode.Invariant)
+					temp = new DateTimeFormatInfo();
+				else
+					temp = new DateTimeFormatInfo(m_cultureData, Calendar);
+				temp._isReadOnly = m_isReadOnly;
 				System.Threading.Thread.MemoryBarrier();
 				dateTimeInfo = temp;
 				return dateTimeInfo;
@@ -785,7 +785,9 @@ namespace System.Globalization
 			}
 		}
 
+#if !NETCORE
 		[MonoTODO ("Currently it ignores the altName parameter")]
+#endif
 		public static CultureInfo GetCultureInfo (string name, string altName) {
 			if (name == null)
 				throw new ArgumentNullException ("null");
@@ -1139,7 +1141,6 @@ namespace System.Globalization
                                 obj.GetType(),
                                 container.GetType()));
             }
-            Contract.EndContractBlock();
         }
 
         // For resource lookup, we consider a culture the invariant culture by name equality.
@@ -1172,8 +1173,6 @@ namespace System.Globalization
         }
 
         internal static bool VerifyCultureName(CultureInfo culture, bool throwException) {
-            Contract.Assert(culture!=null, "[CultureInfo.VerifyCultureName]culture!=null");
-
             //If we have an instance of one of our CultureInfos, the user can't have changed the
             //name and we know that all names are valid in files.
             if (!culture.m_isInherited) {

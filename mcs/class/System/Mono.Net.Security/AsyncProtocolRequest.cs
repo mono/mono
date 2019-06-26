@@ -187,7 +187,8 @@ namespace Mono.Net.Security
 				await ProcessOperation (cancellationToken).ConfigureAwait (false);
 				return new AsyncProtocolResult (UserResult);
 			} catch (Exception ex) {
-				var info = Parent.SetException (MobileAuthenticatedStream.GetSSPIException (ex));
+				// Any exceptions thrown by the underlying stream will be propagated.
+				var info = Parent.SetException (ex);
 				return new AsyncProtocolResult (info);
 			}
 		}
@@ -218,7 +219,12 @@ namespace Mono.Net.Security
 				case AsyncOperationStatus.Initialize:
 				case AsyncOperationStatus.Continue:
 				case AsyncOperationStatus.ReadDone:
-					newStatus = Run (status);
+					try {
+						newStatus = Run (status);
+					} catch (Exception ex) {
+						// We only want to wrap exceptions that are thrown by the TLS code.
+						throw MobileAuthenticatedStream.GetSSPIException (ex);
+					}
 					break;
 				default:
 					throw new InvalidOperationException ();

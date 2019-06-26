@@ -33,6 +33,8 @@ using NUnit.Framework;
 using System.ServiceModel.Configuration;
 using System.Configuration;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -40,7 +42,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 	{
 		[Test]
 		public void ReadConfiguration () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/service").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/service")).GetSectionGroup ("system.serviceModel");
 			ServiceElement service = config.Services.Services [0];
 
 			Assert.AreEqual ("ServiceType", service.Name, "Name");
@@ -76,7 +78,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void ServiceEndpointCollection () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/service").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/service")).GetSectionGroup ("system.serviceModel");
 			ServiceElement service = config.Services.Services [1];
 
 			Assert.AreEqual (3, service.Endpoints.Count, "Count");

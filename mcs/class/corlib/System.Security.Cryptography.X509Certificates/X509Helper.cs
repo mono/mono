@@ -70,6 +70,11 @@ namespace System.Security.Cryptography.X509Certificates
 			return new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 		}
 
+		public static X509CertificateImpl Import (byte[] rawData)
+		{
+			return CertificateProvider.Import (rawData);
+		}
+
 		public static X509CertificateImpl Import (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			return CertificateProvider.Import (rawData, password, keyStorageFlags);

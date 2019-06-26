@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Text;
+using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Security.Cryptography.X509Certificates
@@ -35,12 +37,12 @@ namespace System.Security.Cryptography.X509Certificates
 			get; set;
 		}
 
-		public abstract X509ExtensionCollection Extensions {
+		public abstract IEnumerable<X509Extension> Extensions {
 			get;
 		}
 
-		public abstract bool HasPrivateKey {
-			get;
+		public abstract string FriendlyName {
+			get; set;
 		}
 
 		public abstract X500DistinguishedName IssuerName {
@@ -55,7 +57,7 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
-		public abstract Oid SignatureAlgorithm {
+		public abstract string SignatureAlgorithm {
 			get;
 		}
 
@@ -77,9 +79,21 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract string GetNameInfo (X509NameType nameType, bool forIssuer);
 
-		public abstract void Import (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags);
-
 		public abstract bool Verify (X509Certificate2 thisCertificate);
+
+		public abstract void AppendPrivateKeyInfo (StringBuilder sb);
+
+		public sealed override X509CertificateImpl CopyWithPrivateKey (RSA privateKey)
+		{
+			var impl = (X509Certificate2Impl)Clone ();
+			impl.PrivateKey = privateKey;
+			return impl;
+		}
+
+		public sealed override X509Certificate CreateCertificate ()
+		{
+			return new X509Certificate2 (this);
+		}
 
 		public abstract void Reset ();
 	}

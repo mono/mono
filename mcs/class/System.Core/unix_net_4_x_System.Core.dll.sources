@@ -35,5 +35,8 @@ System.IO.Pipes/AnonymousPipeServerStream.Unix.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.Pipe.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetPeerID.cs
+
+# FIXME: the native side is not there yet.
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetEUid.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SetEUid.cs
+# corefx/Interop.cs

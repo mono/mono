@@ -195,8 +195,13 @@ namespace System.Windows.Forms.Layout
 		{
 			IArrangedContainer parent = (IArrangedContainer)container;
 
-			LayoutDockedChildren (parent, parent.Controls);
-			LayoutAnchoredChildren (parent, parent.Controls);
+			if (parent.Controls is Control.ControlCollection controlCollection) {
+				LayoutDockedChildren (parent, controlCollection.GetAllControls());
+				LayoutAnchoredChildren (parent, controlCollection.GetAllControls());
+			} else {
+				LayoutDockedChildren (parent, parent.Controls);
+				LayoutAnchoredChildren (parent, parent.Controls);
+			}
 
 			return parent.AutoSize;
 		}

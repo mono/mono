@@ -22,8 +22,13 @@ namespace System {
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
     using System.Security;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Diagnostics.Contracts;
+#if NETCORE
+    using __HResults = System.HResults;
+#endif
 
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]

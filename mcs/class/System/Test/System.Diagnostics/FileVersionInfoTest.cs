@@ -19,26 +19,27 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
 	public class FileVersionInfoTest
 	{
+		private TempDirectory _tempDir;
 		private string tempDir;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			tempDir = Path.Combine (Path.GetTempPath (), Environment.UserName);
-			tempDir = Path.Combine (tempDir, "MonoTests.System.Diagnostics.AppDomainTest");
-			if (!Directory.Exists (tempDir))
-				Directory.CreateDirectory (tempDir);
+			_tempDir = new TempDirectory ();
+			tempDir = _tempDir.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			Directory.Delete (tempDir, true);
+			_tempDir.Dispose ();
 		}
 
 		[Test]

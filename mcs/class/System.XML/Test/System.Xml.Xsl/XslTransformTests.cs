@@ -16,6 +16,8 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
@@ -40,8 +42,8 @@ namespace MonoTests.System.Xml.Xsl
 		{
 			string output = Path.Combine (Path.GetTempPath (), "result.xml");
 			doc.LoadXml ("<root/>");
-			xslt.Load ("Test/XmlFiles/xsl/empty.xsl");
-			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", output);
+			xslt.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/empty.xsl"));
+			xslt.Transform (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/empty.xsl"), output);
 			result.Load (output);
 			Assert.AreEqual (2, result.ChildNodes.Count, "count");
 		}
@@ -90,6 +92,7 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
 		}
 
+#if !DISABLE_SECURITY
 		[Test]
 	    [Category ("MobileNotWorking")]
 		public void MsxslTest() {
@@ -113,7 +116,7 @@ xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-s
 			
 			XslTransform transform = new XslTransform();
 			XmlTextReader reader = new XmlTextReader(stringReader);
-			transform.Load(reader, new XmlUrlResolver(), AppDomain.CurrentDomain.Evidence);
+			transform.Load(reader, new XmlUrlResolver());
 
 			StringBuilder sb = new StringBuilder();
 			StringWriter writer = new StringWriter(sb, CultureInfo.InvariantCulture);
@@ -127,6 +130,7 @@ xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-s
 
 			Assert.AreEqual ("test".PadRight(20), sb.ToString());
 		}
+#endif
 
 		[Test]
 		public void MSXslNodeSet ()
@@ -380,10 +384,10 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
     ";
 
 			XmlDocument d = new XmlDocument ();
-			d.Load ("Test/XmlFiles/xsl/91834.xml");
+			d.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/91834.xml"));
 
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/91834.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/91834.xsl"));
 
 			StringWriter sw_raw = new StringWriter ();
 			t.Transform (d, null, sw_raw);
@@ -427,7 +431,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			XmlTextReader xsltRdr = new XmlTextReader (new StringReader (xsltFragment));
 
 			XslTransform stylesheet = new XslTransform ();
-			stylesheet.Load (xsltRdr, new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			stylesheet.Load (xsltRdr, new XmlUrlResolver ());
 
 			StringWriter sw = new StringWriter ();
 
@@ -465,7 +469,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 
 			StringWriter sw = new StringWriter ();
 
@@ -497,7 +501,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format(xsltFragment, "standalone=\"yes\""))), 
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -507,7 +511,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "standalone=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -517,7 +521,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -535,7 +539,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -558,7 +562,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			// standalone is "Yes"
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "Yes"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -569,7 +573,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -587,7 +591,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -611,7 +615,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "omit-xml-declaration=\"yes\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual ("<root />", sw.ToString (), "#1");
@@ -619,7 +623,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "omit-xml-declaration=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -637,7 +641,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -650,7 +654,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -673,7 +677,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			// omit-xml-declaration is "Yes"
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "Yes"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -684,7 +688,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -716,7 +720,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -738,7 +742,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -760,7 +764,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -783,7 +787,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -806,7 +810,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -827,7 +831,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -862,7 +866,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -885,7 +889,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -908,7 +912,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -931,7 +935,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -954,7 +958,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -977,7 +981,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1013,7 +1017,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"yes\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
@@ -1029,7 +1033,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1042,7 +1046,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1081,7 +1085,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"yes\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1097,7 +1101,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1109,7 +1113,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1148,7 +1152,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"yes\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1163,7 +1167,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1175,7 +1179,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1220,7 +1224,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"yes\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1244,7 +1248,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "indent=\"no\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1256,7 +1260,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1287,7 +1291,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -1300,7 +1304,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -1323,7 +1327,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			// indent is "Yes"
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "Yes"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1334,7 +1338,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, ""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1362,7 +1366,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1392,7 +1396,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, string.Empty))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1403,7 +1407,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format(xsltFragment, "encoding=\"iso-8859-1\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1414,7 +1418,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "encoding=\"doesnotexist\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1425,7 +1429,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "encoding=\"\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1456,7 +1460,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, string.Empty))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1471,7 +1475,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "encoding=\"iso-8859-1\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1486,7 +1490,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "encoding=\"doesnotexist\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1501,7 +1505,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "encoding=\"\""))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1535,7 +1539,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "1.0"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1546,7 +1550,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "2.0"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1557,7 +1561,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "BLABLA"))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1595,7 +1599,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw = new StringWriter ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, string.Empty))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
@@ -1614,7 +1618,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, options))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1634,7 +1638,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, options))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1680,7 +1684,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, string.Empty))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1703,7 +1707,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, options))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1727,7 +1731,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			ms = new MemoryStream ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, options))),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, ms, new XmlUrlResolver ());
 			ms.Position = 0;
 			using (StreamReader sr = new StreamReader (ms, true)) {
@@ -1756,7 +1760,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		[Test]
@@ -1777,7 +1781,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (
@@ -1794,7 +1798,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				</xsl:stylesheet>";
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 		}
 
 		// http://support.microsoft.com/kb/832757/en-us
@@ -1820,7 +1824,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, new XsltArgumentList (), sw, 
 				new XmlUrlResolver ());
 
@@ -1859,7 +1863,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw = new StringWriter ();
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
-				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+				new XmlUrlResolver ());
 			xsltProcessor.Transform (xmlDoc, new XsltArgumentList (), sw,
 				new XmlUrlResolver ());
 
@@ -1912,9 +1916,9 @@ Services
 ";
 
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/stripspace.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/stripspace.xsl"));
 			XPathDocument d = new XPathDocument (
-				"Test/XmlFiles/xsl/stripspace.xml", XmlSpace.Preserve);
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/stripspace.xml"), XmlSpace.Preserve);
 			StringWriter sw = new StringWriter ();
 			t.Transform (d, null, sw);
 			Assert.AreEqual (result, sw.ToString ());
@@ -1924,13 +1928,13 @@ Services
 		public void CurrentInSelect ()
 		{
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/current-in-select.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.xsl"));
 			XPathDocument d = new XPathDocument (
-				"Test/XmlFiles/xsl/current-in-select.xml", XmlSpace.Preserve);
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.xml"), XmlSpace.Preserve);
 			StringWriter sw = new StringWriter ();
 			t.Transform (d, null, sw);
 			using (StreamReader sr = File.OpenText (
-			       "Test/XmlFiles/xsl/current-in-select.ref")) {
+			       TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.ref"))) {
 				string s = sr.ReadToEnd ();
 				Assert.AreEqual (s, sw.ToString ());
 			}
@@ -1959,9 +1963,9 @@ Services
 		public void Bug82493 ()
 		{
 			XslTransform transformationObj = new XslTransform ();
-			transformationObj.Load ("Test/XmlFiles/xsl/82493.xsl");
+			transformationObj.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/82493.xsl"));
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/xsl/82493.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/82493.xml"));
 			XslExtensionClass GetCalculation = new XslExtensionClass ("a4");
 			XsltArgumentList xslExtensionArgList = new XsltArgumentList ();
 			xslExtensionArgList.AddExtensionObject ("urn:e", GetCalculation);
@@ -1974,9 +1978,9 @@ Services
 		public void BugNovell325482 ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/xsl/325482.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/325482.xml"));
 			XslTransform xt = new XslTransform ();
-			xt.Load ("Test/XmlFiles/xsl/325482.xsl");
+			xt.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/325482.xsl"));
 			xt.Transform (doc, null, TextWriter.Null);
 		}
 
@@ -2167,8 +2171,8 @@ Services
 		[Test] // bug #316238
 		public void ResolveVariableInXsltArgumentList ()
 		{
-			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-1.xsl");
-			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-2.xsl");
+			ResolveVariableInXsltArgumentList (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/316238-1.xsl"));
+			ResolveVariableInXsltArgumentList (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/316238-2.xsl"));
 		}
 
 		void ResolveVariableInXsltArgumentList (string file)
@@ -2360,9 +2364,9 @@ NO
 			XslCompiledTransform xslTransform = new XslCompiledTransform ();
 			XsltSettings settings = new XsltSettings ();
 			settings.EnableDocumentFunction = true;
-			xslTransform.Load ("Test/XmlFiles/xsl/391424.xsl", settings, new XmlUrlResolver ());
+			xslTransform.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/391424.xsl"), settings, new XmlUrlResolver ());
 			StringWriter sw = new StringWriter ();
-			xslTransform.Transform (new XPathDocument ("Test/XmlFiles/xsl/391424.xml", XmlSpace.Preserve), null, sw);
+			xslTransform.Transform (new XPathDocument (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/391424.xml"), XmlSpace.Preserve), null, sw);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>Document found", sw.ToString ());
 		}
 

@@ -657,18 +657,20 @@ public class TimeSpanTest {
 		ParseHelper ("10:11:12:13", false, false, "10.11:12:13"); // Days using : instead of . as separator
 		ParseHelper ("10.11", true, false, "dontcare"); // days+hours is invalid
 
-		// Force the use of french culture -which is using a non common NumberDecimalSeparator-
-		// as current culture, to show that the Parse method is *actually* being culture sensitive
-		// *and* also keeping the compatibility with '.'
-		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
-		CultureInfo prev_culture = CultureInfo.CurrentCulture;
-		try {
-			Thread.CurrentThread.CurrentCulture = french_culture;
-			ParseHelper ("10:10:10,006", false, false, "10:10:10.0060000");
-			ParseHelper ("10:10:10.006", false, false, "10:10:10.0060000");
-		} finally {
-			// restore culture
-			Thread.CurrentThread.CurrentCulture = prev_culture;
+		if (!GlobalizationMode.Invariant) {
+			// Force the use of french culture -which is using a non common NumberDecimalSeparator-
+			// as current culture, to show that the Parse method is *actually* being culture sensitive
+			// *and* also keeping the compatibility with '.'
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			CultureInfo prev_culture = CultureInfo.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = french_culture;
+				ParseHelper ("10:10:10,006", false, false, "10:10:10.0060000");
+				ParseHelper ("10:10:10.006", false, false, "10:10:10.0060000");
+			} finally {
+				// restore culture
+				Thread.CurrentThread.CurrentCulture = prev_culture;
+			}
 		}
 
 		ParseHelper ("00:00:00", false, false, "00:00:00");
@@ -812,18 +814,20 @@ public class TimeSpanTest {
 		Assert.AreEqual (true, TimeSpan.TryParse ("-10675199.02:48:05.4775808", out result), "MinValue#1");
 		Assert.AreEqual (TimeSpan.MinValue, result, "MinValue#2");
 
-		// Force the use of french culture -which is using a non common NumberDecimalSeparator-
-		// as current culture, to show that the Parse method is *actually* being culture sensitive
-		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
-		CultureInfo prev_culture = CultureInfo.CurrentCulture;
-		result = new TimeSpan (0, 10, 10, 10, 6);
-		try {
-			Thread.CurrentThread.CurrentCulture = french_culture;
-			Assert.AreEqual (true, TimeSpan.TryParse ("10:10:10,006", out result), "#CultureSensitive1");
-			Assert.AreEqual ("10:10:10.0060000", result.ToString (), "#CultureSensitive2");
-		} finally {
-			// restore culture
-			Thread.CurrentThread.CurrentCulture = prev_culture;
+		if (!GlobalizationMode.Invariant) {
+			// Force the use of french culture -which is using a non common NumberDecimalSeparator-
+			// as current culture, to show that the Parse method is *actually* being culture sensitive
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			CultureInfo prev_culture = CultureInfo.CurrentCulture;
+			result = new TimeSpan (0, 10, 10, 10, 6);
+			try {
+				Thread.CurrentThread.CurrentCulture = french_culture;
+				Assert.AreEqual (true, TimeSpan.TryParse ("10:10:10,006", out result), "#CultureSensitive1");
+				Assert.AreEqual ("10:10:10.0060000", result.ToString (), "#CultureSensitive2");
+			} finally {
+				// restore culture
+				Thread.CurrentThread.CurrentCulture = prev_culture;
+			}
 		}
 	}
 
@@ -842,10 +846,12 @@ public class TimeSpanTest {
 	{ 
 		TimeSpan result;
 
-		// We use fr-FR culture since its NumericDecimalSeparator is not the same used by
-		// most cultures - including the invariant one.
-		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
-		Assert.AreEqual (true, TimeSpan.TryParse ("11:50:50,006", french_culture, out result), "#A1");
+		if (!GlobalizationMode.Invariant) {
+			// We use fr-FR culture since its NumericDecimalSeparator is not the same used by
+			// most cultures - including the invariant one.
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			Assert.AreEqual (true, TimeSpan.TryParse ("11:50:50,006", french_culture, out result), "#A1");
+		}
 
 		// LAMESPEC - msdn states that an instance of DateTimeFormatInfo is retrieved to
 		// obtain culture sensitive information, but at least in the betas that's false
@@ -858,9 +864,6 @@ public class TimeSpanTest {
 	[Test]
 	public void ParseExact ()
 	{
-		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
-		CultureInfo us_culture = CultureInfo.GetCultureInfo ("en-US");
-
 		// At this point we are only missing the style bites and then we are
 		// pretty much done with the standard formats.
 
@@ -876,16 +879,21 @@ public class TimeSpanTest {
 		ParseExactHelper ("11:12:13", g_format, false, false, "11:12:13");
 		ParseExactHelper ("-11:12:13", g_format, false, false, "-11:12:13");
 		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare"); // this should work as well
-		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare", us_culture);
 		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare", CultureInfo.InvariantCulture);
 		ParseExactHelper ("10:11:12:66", g_format, true, false, "dontcare");
 		ParseExactHelper ("10:11:12:13", g_format, false, false, "10.11:12:13");
 		ParseExactHelper ("11:12:13.6", g_format, false, false, "11:12:13.6000000", CultureInfo.InvariantCulture);
-		ParseExactHelper ("11:12:13,6", g_format, false, false, "11:12:13.6000000", french_culture);
-		ParseExactHelper ("10:11:12:13.6", g_format, false, false, "10.11:12:13.6000000", us_culture);
-		ParseExactHelper (" 10:11:12:13.6 ", g_format, false, false, "10.11:12:13.6000000", us_culture);
 		ParseExactHelper ("10:11", g_format, false, false, "10:11:00", null, TimeSpanStyles.None);
 		ParseExactHelper ("10:11", g_format, false, false, "10:11:00", null, TimeSpanStyles.AssumeNegative); // no effect
+
+		if (!GlobalizationMode.Invariant) {
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			CultureInfo us_culture = CultureInfo.GetCultureInfo ("en-US");
+			ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare", us_culture);
+			ParseExactHelper ("11:12:13,6", g_format, false, false, "11:12:13.6000000", french_culture);
+			ParseExactHelper ("10:11:12:13.6", g_format, false, false, "10.11:12:13.6000000", us_culture);
+			ParseExactHelper (" 10:11:12:13.6 ", g_format, false, false, "10.11:12:13.6000000", us_culture);
+		}
 
 		// 
 		// G format
@@ -895,15 +903,20 @@ public class TimeSpanTest {
 		ParseExactHelper ("9:10:12.6", G_format, true, false, "dontcare");
 		ParseExactHelper ("3.9:10:12", G_format, true, false, "dontcare");
 		ParseExactHelper ("3.9:10:12.153", G_format, true, false, "dontcare"); // this should be valid...
-		ParseExactHelper ("3:9:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
-		ParseExactHelper ("0:9:10:12.153", G_format, false, false, "09:10:12.1530000", us_culture);
-		ParseExactHelper ("03:09:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
-		ParseExactHelper ("003:009:0010:0012.00153", G_format, false, false, "3.09:10:12.0015300", us_culture);
 		ParseExactHelper ("3:9:10:66.153", G_format, true, false, "dontcare"); // seconds out of range
-		ParseExactHelper ("3:9:10:12.153", G_format, true, false, "dontcare", french_culture); // fr-FR uses ',' as decimal separator
-		ParseExactHelper ("3:9:10:12,153", G_format, false, false, "3.09:10:12.1530000", french_culture);
-		ParseExactHelper ("  3:9:10:12.153  ", G_format, false, false, "3.09:10:12.1530000", us_culture);
-		ParseExactHelper ("3:9:10:13.153", G_format, false, false, "3.09:10:13.1530000", us_culture, TimeSpanStyles.AssumeNegative);
+
+		if (!GlobalizationMode.Invariant) {
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			CultureInfo us_culture = CultureInfo.GetCultureInfo ("en-US");
+			ParseExactHelper ("3:9:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
+			ParseExactHelper ("0:9:10:12.153", G_format, false, false, "09:10:12.1530000", us_culture);
+			ParseExactHelper ("03:09:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
+			ParseExactHelper ("003:009:0010:0012.00153", G_format, false, false, "3.09:10:12.0015300", us_culture);
+			ParseExactHelper ("3:9:10:12.153", G_format, true, false, "dontcare", french_culture); // fr-FR uses ',' as decimal separator
+			ParseExactHelper ("3:9:10:12,153", G_format, false, false, "3.09:10:12.1530000", french_culture);
+			ParseExactHelper ("  3:9:10:12.153  ", G_format, false, false, "3.09:10:12.1530000", us_culture);
+			ParseExactHelper ("3:9:10:13.153", G_format, false, false, "3.09:10:13.1530000", us_culture, TimeSpanStyles.AssumeNegative);
+		}
 
 		// c format
 		string [] c_format = new string [] { "c" };
@@ -915,7 +928,6 @@ public class TimeSpanTest {
 		ParseExactHelper ("10:11:12:13", c_format, true, false, "dontcare"); // this is normally accepted in the Parse method
 		ParseExactHelper ("10.11:12:13.6", c_format, false, false, "10.11:12:13.6000000");
 		ParseExactHelper ("10:11:12,6", c_format, true, false, "dontcare");
-		ParseExactHelper ("10:11:12,6", c_format, true, false, "dontcare", french_culture);
 		ParseExactHelper ("  10:11:12.6  ", c_format, false, false, "10:11:12.6000000");
 		ParseExactHelper ("10:12", c_format, false, false, "10:12:00", null, TimeSpanStyles.AssumeNegative);
 		ParseExactHelper ("10:123456789999", c_format, true, false, "dontcare");
@@ -923,6 +935,11 @@ public class TimeSpanTest {
 		ParseExactHelper ("10:12", new string [0], true, false, "dontcare");
 		ParseExactHelper ("10:12", new string [] { String.Empty }, true, false, "dontcare");
 		ParseExactHelper ("10:12", new string [] { null }, true, false, "dontcare");
+
+		if (!GlobalizationMode.Invariant) {
+			CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			ParseExactHelper ("10:11:12,6", c_format, true, false, "dontcare", french_culture);
+		}
 	}
 
 	[Test]
@@ -1072,6 +1089,7 @@ public class TimeSpanTest {
 
 	// 'Ported' the ParseExact test to use TryParseExact instead.
 	[Test]
+	[Category ("Calendars")]
 	public void TryParseExact ()
 	{
 		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
@@ -1158,13 +1176,13 @@ public class TimeSpanTest {
 		try {
 			TimeSpan.ParseExact (null, "g", null);
 			Assert.Fail ("#A1");
-		} catch (FormatException) {
+		} catch (ArgumentNullException) {
 		}
 
 		try {
 			TimeSpan.ParseExact ("10:12", (string)null, null);
 			Assert.Fail ("#A2");
-		} catch (FormatException) {
+		} catch (ArgumentNullException) {
 		}
 
 		try {
@@ -1185,21 +1203,23 @@ public class TimeSpanTest {
 		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString (null), "#A3");
 		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString (String.Empty), "#A4");
 
-		//
-		// IFormatProvider ones - use a culture changing numeric format.
-		// Also, we use fr-FR as culture, since it uses some elements different to invariant culture
-		//
-		CultureInfo culture = CultureInfo.GetCultureInfo ("fr-FR");
+		if (!GlobalizationMode.Invariant) {
+			//
+			// IFormatProvider ones - use a culture changing numeric format.
+			// Also, we use fr-FR as culture, since it uses some elements different to invariant culture
+			//
+			CultureInfo culture = CultureInfo.GetCultureInfo ("fr-FR");
 
-		Assert.AreEqual ("1:2:03:04,006", ts.ToString ("g", culture), "#B1");
-		Assert.AreEqual ("1:02:03:04,0060000", ts.ToString ("G", culture), "#B2");
-		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("c", culture), "#B3"); // 'c' format ignores CultureInfo
-		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("t", culture), "#B4"); // 't' and 'T' are the same as 'c'
-		Assert.AreEqual("1.02:03:04.0060000", ts.ToString("T", culture), "#B5");
+			Assert.AreEqual ("1:2:03:04,006", ts.ToString ("g", culture), "#B1");
+			Assert.AreEqual ("1:02:03:04,0060000", ts.ToString ("G", culture), "#B2");
+			Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("c", culture), "#B3"); // 'c' format ignores CultureInfo
+			Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("t", culture), "#B4"); // 't' and 'T' are the same as 'c'
+			Assert.AreEqual("1.02:03:04.0060000", ts.ToString("T", culture), "#B5");
 
-		ts = new TimeSpan (4, 5, 6);
-		Assert.AreEqual ("4:05:06", ts.ToString ("g", culture), "#C1");
-		Assert.AreEqual ("0:04:05:06,0000000", ts.ToString ("G", culture), "#C2");
+			ts = new TimeSpan (4, 5, 6);
+			Assert.AreEqual ("4:05:06", ts.ToString ("g", culture), "#C1");
+			Assert.AreEqual ("0:04:05:06,0000000", ts.ToString ("G", culture), "#C2");
+		}
 	}
 
 	[Test]

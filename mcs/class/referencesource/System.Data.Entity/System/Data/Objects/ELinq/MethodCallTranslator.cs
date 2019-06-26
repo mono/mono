@@ -21,6 +21,9 @@ namespace System.Data.Objects.ELinq
     using System.Reflection;
     using CqtExpression = System.Data.Common.CommandTrees.DbExpression;
     using LinqExpression = System.Linq.Expressions.Expression;
+#if MONO
+    using System.Globalization;
+#endif
 
     internal sealed partial class ExpressionConverter
     {
@@ -1324,7 +1327,11 @@ namespace System.Data.Objects.ELinq
                 // Supported only if the argument is an empty array.
                 internal override CqtExpression Translate(ExpressionConverter parent, MethodCallExpression call)
                 {
+#if MONO
+                    if (call.Arguments.Count > 0 && !IsEmptyArray(call.Arguments[0]))
+#else
                     if (!IsEmptyArray(call.Arguments[0]))
+#endif
                     {
                         throw EntityUtil.NotSupported(System.Data.Entity.Strings.ELinq_UnsupportedTrimStartTrimEndCase(call.Method));
                     }
@@ -1373,6 +1380,9 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+#endif
                 }
             }
             private sealed class TrimEndTranslator : TrimBaseTranslator
@@ -1383,6 +1393,9 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+#endif
                 }
             }
             #endregion

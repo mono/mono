@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 [TestFixture]
 public class JitTests {
-	static string[] args = new string[] { "--verbose", "--exclude", "!FULLAOT", "--exclude", "!WASM", "--exclude", "!INTERPRETER"};
+	static string[] args = new string[] { "--verbose", "--exclude", "!WASM", "--exclude", "!INTERPRETER"};
 
 	[Test]
 	public static void Basic () {

@@ -309,7 +309,7 @@ namespace System.Net
 						break;
 					ms.Write (buffer, 0, ret);
 				}
-				return ms.GetBuffer ();
+				return ms.ToArray ();
 			}
 		}
 
@@ -400,6 +400,8 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} CLOSE #1: read_eof={read_eof} bufferedEntireContent={bufferedEntireContent}");
 				if (read_eof || bufferedEntireContent) {
 					disposed = true;
+					innerStream?.Dispose ();
+					innerStream = null;
 					Operation.Finish (true);
 				} else {
 					// If we have not read all the contents

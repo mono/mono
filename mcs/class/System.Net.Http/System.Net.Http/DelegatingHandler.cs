@@ -73,6 +73,9 @@ namespace System.Net.Http
 
 		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			if (InnerHandler == null) {
+				throw new InvalidOperationException (SR.net_http_handler_not_assigned);
+			}
 			return InnerHandler.SendAsync (request, cancellationToken);
 		}
 	}

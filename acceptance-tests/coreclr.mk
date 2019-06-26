@@ -3175,7 +3175,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/inattribute/inattributector.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/layoutkind/layoutkindauto.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/layoutkind/layoutkindsequential.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalgetlastwin32error.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalreadint641.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalsizeof1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshalasattribute/marshalasattributearraysubtype.cs	\
@@ -3689,9 +3688,8 @@ CORECLR_STRESSTEST_RUNNER_CS_SRC=	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/RFLogging.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/DetourHelpers.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/LoaderClass.cs	\
-	GCStressTests/AssemblyLoadContext.cs	\
-	GCStressTests/AssemblyExtensions.cs
-
+	GCStressTests/AssemblyLoadContext.cs
+	
 CORECLR_TESTLIBRARY_CS_SRC = 	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/TestFramework.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Utilities.cs	\

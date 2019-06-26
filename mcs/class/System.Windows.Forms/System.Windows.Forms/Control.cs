@@ -428,10 +428,12 @@ namespace System.Windows.Forms
 			#endregion // ControlCollection Local Variables
 
 			#region ControlCollection Public Constructor
+
 			public ControlCollection (Control owner)
 			{
 				this.owner = owner;
 			}
+
 			#endregion
 
 			#region ControlCollection Public Instance Properties
@@ -601,6 +603,19 @@ namespace System.Windows.Forms
 				while (list.Count > 0) {
 					Remove((Control)list[list.Count - 1]);
 				}
+			}
+
+			internal void DisposeChildrenAndSilentClearContainer ()
+			{
+				var children = this.GetAllControls ();
+				for (int i = 0; i < children.Length; ++i) {
+					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
+					children[i].Dispose ();
+				}
+
+				all_controls = null;
+				ClearImplicit ();
+				base.Clear ();
 			}
 
 			internal virtual void ClearImplicit ()
@@ -977,11 +992,7 @@ namespace System.Windows.Forms
 				if (parent != null)
 					parent.Controls.Remove(this);
 
-				Control [] children = child_controls.GetAllControls ();
-				for (int i=0; i<children.Length; i++) {
-					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
-					children[i].Dispose();
-				}
+				child_controls.DisposeChildrenAndSilentClearContainer ();
 
 				ResumeLayout (false);
 				is_disposing = false;
@@ -1020,8 +1031,8 @@ namespace System.Windows.Forms
 		// Control is currently selected, like Focused, except maintains state
 		// when Form loses focus
 		internal bool InternalSelected {
-		        get {
-		        	IContainerControl container;
+			get {
+				IContainerControl container;
 			
 				container = GetContainerControl();
 				
@@ -1550,27 +1561,23 @@ namespace System.Windows.Forms
 		}
 
 		private static Control FindControlForward(Control container, Control start) {
-			Control found;
+			Control found = null;
 
-			found = null;
-
-			if (start == null) {
+			if (start == null)
 				return FindFlatForward(container, start);
-			}
 
 			if (start.child_controls != null && start.child_controls.Count > 0 && 
-				(start == container || !((start is IContainerControl) &&  start.GetStyle(ControlStyles.ContainerControl)))) {
+				(start == container || !((start is IContainerControl) &&  start.GetStyle(ControlStyles.ContainerControl))))
 				return FindControlForward(start, null);
-			}
-			else {
-				while (start != container) {
-					found = FindFlatForward(start.parent, start);
-					if (found != null) {
-						return found;
-					}
-					start = start.parent;
+
+			while (start != container) {
+				found = FindFlatForward(start.parent, start);
+				if (found != null) {
+					return found;
 				}
+				start = start.parent;
 			}
+
 			return null;
 		}
 
@@ -3534,7 +3541,7 @@ namespace System.Windows.Forms
 
 		public bool Contains(Control ctl) {
 			while (ctl != null) {
-				ctl = ctl.parent;
+				ctl = ctl.Parent;
 				if (ctl == this) {
 					return true;
 				}
@@ -3625,6 +3632,7 @@ namespace System.Windows.Forms
 			}
 			return null;
 		}
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool Focus() {
 			return FocusInternal (false);
@@ -3709,22 +3717,19 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public Control GetNextControl(Control ctl, bool forward) {
-
-			if (!this.Contains(ctl)) {
+		public Control GetNextControl(Control ctl, bool forward)
+		{
+			if (!this.Contains(ctl))
 				ctl = this;
-			}
 
-			if (forward) {
+			if (forward)
 				ctl = FindControlForward(this, ctl);
-			}
-			else {
+			else
 				ctl = FindControlBackward(this, ctl);
-			}
 
-			if (ctl != this) {
+			if (ctl != this)
 				return ctl;
-			}
+
 			return null;
 		}
 
@@ -4068,7 +4073,7 @@ namespace System.Windows.Forms
 					layout_pending_event_args = null;
 					// Reproduce the weird behavior, where ResumeLayout(false) resets the anchors
 					foreach (Control c in Controls)
-                        LayoutEngine.InitLayout(c, BoundsSpecified.All);
+						LayoutEngine.InitLayout(c, BoundsSpecified.All);
 				}
 			}
 		}
@@ -4140,25 +4145,25 @@ namespace System.Windows.Forms
 			}
 		}
 #endif
-		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
-			Control c;
-
+		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap)
+		{
 #if DebugFocus
 			Console.WriteLine("{0}", this.FindForm());
 			printTree(this, "\t");
 #endif
-
-			if (!this.Contains(ctl) || (!nested && (ctl.parent != this))) {
+			if (!this.Contains(ctl) || (!nested && (ctl.parent != this)))
 				ctl = null;
-			}
-			c = ctl;
+
+			Control c = ctl;
 			do {
 				c = GetNextControl(c, forward);
+
 				if (c == null) {
 					if (wrap) {
 						wrap = false;
 						continue;
 					}
+
 					break;
 				}
 
@@ -4166,7 +4171,7 @@ namespace System.Windows.Forms
 				Console.WriteLine("{0} {1}", c, c.CanSelect);
 #endif
 				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
-					c.Select (true, true);
+					c.Select(true, true);
 					return true;
 				}
 			} while (c != ctl); // If we wrap back to ourselves we stop

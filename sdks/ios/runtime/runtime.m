@@ -204,6 +204,13 @@ log_callback (const char *log_domain, const char *log_level, const char *message
 	}
 }
 
+static void
+register_dllmap (void)
+{
+	mono_dllmap_insert (NULL, "System.Native", NULL, "__Internal", NULL);
+	mono_dllmap_insert (NULL, "System.Security.Cryptography.Native.Apple", NULL, "__Internal", NULL);
+}
+
 /* Implemented by generated code */
 void mono_ios_register_modules (void);
 void mono_ios_setup_execution_mode (void);
@@ -283,6 +290,8 @@ mono_ios_runtime_init (void)
 
 	const char *bundle = get_bundle_path ();
 	chdir (bundle);
+
+	register_dllmap ();
 
 #ifdef DEVICE
 	mono_ios_register_modules ();

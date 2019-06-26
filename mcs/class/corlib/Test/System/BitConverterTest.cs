@@ -47,7 +47,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -111,7 +111,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -231,7 +231,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -295,7 +295,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -361,7 +361,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -426,7 +426,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -492,7 +492,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -557,7 +557,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -623,7 +623,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			try {
@@ -868,7 +868,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
+				Assert.IsNotNull (ex.ParamName, "#5");
 			}
 		}
 

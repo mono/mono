@@ -29,6 +29,8 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace Microsoft.Build.Utilities
 {
@@ -270,5 +272,26 @@ namespace Microsoft.Build.Utilities
 			return Path.Combine (lib_mono_dir, "xbuild", toolsVersion, "bin");
 		}
 #endif
+
+		// These have no meaning in mono except to exist, so return empty lists for each.
+		public static IList<string> GetPathToReferenceAssemblies(string targetFrameworkIdentifier, string targetFrameworkVersion, string targetFrameworkProfile)
+		{
+			return new List<string>();
+		}
+
+		public static IList<string> GetPathToReferenceAssemblies(FrameworkName frameworkName)
+		{
+			return new List<string>();
+		}
+
+		public static IList<string> GetPathToReferenceAssemblies(string targetFrameworkRootPath, FrameworkName frameworkName)
+		{
+			return new List<string>();
+		}
+
+		public static IList<string> GetSupportedTargetFrameworks()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -8,7 +8,7 @@
 // (C) 2006 Novell
 // 
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using System;
 using System.CodeDom;
@@ -27,6 +27,8 @@ using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
@@ -43,10 +45,11 @@ namespace MonoTests.System.XmlSerialization
 			ICodeGenerator generator = provider.CreateGenerator ();
 			generator.GenerateCodeFromNamespace (codeNamespace, sw, new CodeGeneratorOptions ());
 
+			var currentAssembly = Assembly.GetEntryAssembly ().GetName ();
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"nunit-lite-console\", \"0.0.0.0\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"{1}\", \"{2}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -64,7 +67,7 @@ namespace MonoTests.System.XmlSerialization
 				"            this.namesField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+				"}}{0}", Environment.NewLine, currentAssembly.Name, currentAssembly.Version), sw.ToString (), "#2");
 
 
 			codeNamespace = ExportCode (typeof (ArrayClass[]));
@@ -931,7 +934,7 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void DuplicateIdentifiers ()
 		{
-			XmlSchema xs = XmlSchema.Read (File.OpenText ("Test/XmlFiles/xsd/82078.xsd"), null);
+			XmlSchema xs = XmlSchema.Read (File.OpenText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/82078.xsd")), null);
 
 			XmlSchemas xss = new XmlSchemas ();
 			xss.Add (xs);

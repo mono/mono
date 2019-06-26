@@ -37,6 +37,7 @@ using System.IO;
 namespace MonoTests.System.Globalization
 {
 	[TestFixture]
+	[Category ("Calendars")]
 	public class EastAsianLunisolarCalendarTest
 	{
 		static ChineseLunisolarCalendar cn = new ChineseLunisolarCalendar ();
@@ -48,30 +49,30 @@ namespace MonoTests.System.Globalization
 		public void ToDateTime ()
 		{
 			Assert.AreEqual (new DateTime (2000, 2, 5), cn.ToDateTime (2000, 1, 1, 0, 0, 0, 0), "cn1");
-			Assert.AreEqual (new DateTime (2000, 2, 5), jp.ToDateTime (12, 1, 1, 0, 0, 0, 0), "jp1"); // since 1988 (current epoch)
+			Assert.AreEqual (new DateTime (2000, 2, 5), jp.ToDateTime (12, 1, 1, 0, 0, 0, 0, 4), "jp1"); // since 1988 (current epoch)
 			Assert.AreEqual (new DateTime (2000, 2, 5), tw.ToDateTime (89, 1, 1, 0, 0, 0, 0), "tw1"); // since 1912 (current epoch)
 			Assert.AreEqual (new DateTime (2000, 2, 5), kr.ToDateTime (2000, 1, 1, 0, 0, 0, 0), "kr1");
 
 			Assert.AreEqual (new DateTime (2001, 1, 24), cn.ToDateTime (2001, 1, 1, 0, 0, 0, 0), "cn2");
-			Assert.AreEqual (new DateTime (2001, 1, 24), jp.ToDateTime (13, 1, 1, 0, 0, 0, 0), "jp2");
+			Assert.AreEqual (new DateTime (2001, 1, 24), jp.ToDateTime (13, 1, 1, 0, 0, 0, 0, 4), "jp2");
 			Assert.AreEqual (new DateTime (2001, 1, 24), tw.ToDateTime (90, 1, 1, 0, 0, 0, 0), "tw2");
 			Assert.AreEqual (new DateTime (2001, 1, 24), kr.ToDateTime (2001, 1, 1, 0, 0, 0, 0), "kr2");
 
 			Assert.AreEqual (new DateTime (2002, 2, 12), cn.ToDateTime (2002, 1, 1, 0, 0, 0, 0), "cn3");
-			Assert.AreEqual (new DateTime (2002, 2, 12), jp.ToDateTime (14, 1, 1, 0, 0, 0, 0), "jp3");
+			Assert.AreEqual (new DateTime (2002, 2, 12), jp.ToDateTime (14, 1, 1, 0, 0, 0, 0, 4), "jp3");
 			Assert.AreEqual (new DateTime (2002, 2, 12), tw.ToDateTime (91, 1, 1, 0, 0, 0, 0), "tw3");
 			Assert.AreEqual (new DateTime (2002, 2, 12), kr.ToDateTime (2002, 1, 1, 0, 0, 0, 0), "kr3");
 
 			// actually it is 5th month which is leap, but that
 			// does not afffect on resulting DateTime
 			Assert.AreEqual (new DateTime (2001, 5, 23), cn.ToDateTime (2001, 5, 1, 0, 0, 0, 0), "cn4");
-			Assert.AreEqual (new DateTime (2001, 5, 23), jp.ToDateTime (13, 5, 1, 0, 0, 0, 0), "jp4");
+			Assert.AreEqual (new DateTime (2001, 5, 23), jp.ToDateTime (13, 5, 1, 0, 0, 0, 0, 4), "jp4");
 			Assert.AreEqual (new DateTime (2001, 5, 23), tw.ToDateTime (90, 5, 1, 0, 0, 0, 0), "tw4");
 			Assert.AreEqual (new DateTime (2001, 5, 23), kr.ToDateTime (2001, 5, 1, 0, 0, 0, 0), "kr4");
 
 			// here the leap month works.
 			Assert.AreEqual (new DateTime (2002, 2, 11), cn.ToDateTime (2001, 13, 30, 0, 0, 0, 0), "cn5");
-			Assert.AreEqual (new DateTime (2002, 2, 11), jp.ToDateTime (13, 13, 30, 0, 0, 0, 0), "jp5");
+			Assert.AreEqual (new DateTime (2002, 2, 11), jp.ToDateTime (13, 13, 30, 0, 0, 0, 0, 4), "jp5");
 			Assert.AreEqual (new DateTime (2002, 2, 11), tw.ToDateTime (90, 13, 30, 0, 0, 0, 0), "tw5");
 			Assert.AreEqual (new DateTime (2002, 2, 11), kr.ToDateTime (2001, 13, 30, 0, 0, 0, 0), "kr5");
 
@@ -114,7 +115,7 @@ namespace MonoTests.System.Globalization
 			for (int i = 0; i < 60; i++)
 				Assert.AreEqual (leapYears [i % 19], cn.IsLeapYear (2000 + i), "cn" + i);
 			for (int i = 0; i < 48; i++) // only 1-to-61 are allowed
-				Assert.AreEqual (leapYears [i % 19], jp.IsLeapYear (12 + i), "jp" + i);
+				Assert.AreEqual (leapYears [i % 19], jp.IsLeapYear (12 + i, 4), "jp" + i);
 			for (int i = 0; i < 50; i++)
 				Assert.AreEqual (leapYears [i % 19], tw.IsLeapYear (89 + i), "tw" + i);
 			for (int i = 0; i < 50; i++)
@@ -177,7 +178,7 @@ namespace MonoTests.System.Globalization
 			d [29] = 6;
 			for (int y = 12; y < 32; y++)
 				for (int m = 1; m <= 12; m++)
-					Assert.AreEqual (d.ContainsKey (y) && d [y] == m, jp.IsLeapMonth (y, m), "jp" + y + "/" + m);
+					Assert.AreEqual (d.ContainsKey (y) && d [y] == m, jp.IsLeapMonth (y, m, 4), "jp" + y + "/" + m);
 
 			d = new Dictionary<int,int> ();
 			d [2001] = 5;

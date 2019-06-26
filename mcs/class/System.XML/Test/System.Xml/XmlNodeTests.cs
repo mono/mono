@@ -16,6 +16,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -448,7 +450,7 @@ namespace MonoTests.System.Xml
 		{
 			// See bug #64120.
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/simple.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml"));
 			XmlElement el = doc.CreateElement ("foo");
 			Assert.AreEqual (String.Empty, el.BaseURI);
 			doc.DocumentElement.AppendChild (el);

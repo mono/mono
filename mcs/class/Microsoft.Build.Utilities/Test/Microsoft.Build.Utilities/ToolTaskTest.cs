@@ -42,35 +42,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 	[TestFixture]
 	public class ToolTaskTest {
 
-//NUnit 2.6 gives much better reporting of individual failures, but Mono currently uses 2.4.x
-#if !NUNIT_2_6
-		[Test]
-		public void LogEventsFromTextOutput ()
-		{
-			foreach (var test in GetErrorParsingTestData ()) {
-				LogEventsFromTextOutput (test.Raw, test.ExpectedResult);
-			}
-		}
-
-		class TestCaseData
-		{
-			public TestCaseData (string raw, LogEvent expectedResult)
-			{
-				Raw = raw;
-				ExpectedResult = expectedResult;
-			}
-
-			public string Raw { get; private set; }
-			public LogEvent ExpectedResult { get; private set; }
-
-			public TestCaseData SetName (string name)
-			{
-				return this;
-			}
-		}
-#else
-		[Test, TestCaseSource ("GetErrorParsingTestData")]
-#endif
+		[Test, TestCaseSource (nameof (GetErrorParsingTestData))]
 		public void LogEventsFromTextOutput (string lineText, LogEvent expected)
 		{
 			var task = new LogEventsFromTextOutputToolTask ();
@@ -443,11 +415,12 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		{
 			var t = new TestExecuteToolTask ();
 			t.BuildEngine = new MockBuildEngine ();
-			t.ToolPath = Directory.GetCurrentDirectory ();
-			t.ToolExe = "Makefile";
+			var monoProcess = Process.GetCurrentProcess ().MainModule.FileName;
+			t.ToolPath = Path.GetDirectoryName (monoProcess);
+			t.ToolExe = Path.GetFileName (monoProcess);
 
 			t.OnExecuteTool = (pathToTool, responseFileCommands, commandLineCommands) => {
-				Assert.AreEqual (Path.Combine (Directory.GetCurrentDirectory (), "Makefile"), pathToTool, "#1");
+				Assert.AreEqual (monoProcess, pathToTool, "#1");
 				Assert.AreEqual ("", responseFileCommands, "#2");
 				Assert.AreEqual ("", commandLineCommands, "#3");
 

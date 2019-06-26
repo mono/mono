@@ -107,7 +107,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Ftpx ()
 		{
-			Uri uri = new Uri ("ftpx://go-mono.com/download/");
+			Uri uri = new Uri ("ftpx://example.com/download/");
 			Assert.AreEqual (2121, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -116,7 +116,7 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void Ftpx_Methods ()
 		{
-			Uri uri = new Uri ("ftpx://go-mono.com/download/");
+			Uri uri = new Uri ("ftpx://example.com/download/");
 			Assert.AreEqual ("download/", uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -126,7 +126,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureFtpx ()
 		{
-			Uri uri = new Uri ("sftpx://www.mono-project.com/CAS");
+			Uri uri = new Uri ("sftpx://www.example.com/CAS");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

@@ -15,6 +15,8 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -203,8 +205,8 @@ type=""xsd:string"" use=""required""/>
 			//    complexContent schema conformance check, and
 			// 3) the included schema is already added to XmlSchemaSet.
 			XmlSchemaSet xss = new XmlSchemaSet ();
-			xss.Add (null, "Test/XmlFiles/xsd/import-subst-dbr-base.xsd");
-			xss.Add (null, "Test/XmlFiles/xsd/import-subst-dbr-ext.xsd");
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/import-subst-dbr-base.xsd"));
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/import-subst-dbr-ext.xsd"));
 			// should not result in lack of substitutionGroup
 			// (and conformance error as its result)
 			xss.Compile ();

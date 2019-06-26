@@ -2,6 +2,10 @@
 r='@mono_build_root@'
 MONO_CFG_DIR='@mono_cfg_dir@'
 PATH="$r/runtime/_tmpinst/bin:$PATH"
+if [ -z "$MONO_EXECUTABLE_WRAPPER" ]
+then
+    MONO_EXECUTABLE_WRAPPER=${MONO_EXECUTABLE:-"$r/@mono_runtime_wrapper@"}
+fi
 MONO_EXECUTABLE=${MONO_EXECUTABLE:-"$r/@mono_runtime@"}
 export MONO_CFG_DIR PATH
-exec "$r/libtool" --mode=execute "${MONO_EXECUTABLE}" --config "@mono_cfg_dir@/mono/config" "$@"
+exec "$r/libtool" --mode=execute "${MONO_EXECUTABLE_WRAPPER}" --config "@mono_cfg_dir@/mono/config" "$@"

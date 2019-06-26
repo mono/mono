@@ -30,6 +30,7 @@ curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.1.0 -o nuge
 curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.0.0 -o nugets/system.io.compression.4.0.0.nupkg
 
 #System.Net.Http
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.4 -o nugets/system.net.http.4.3.4.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.3 -o nugets/system.net.http.4.3.3.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.2 -o nugets/system.net.http.4.3.2.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.1 -o nugets/system.net.http.4.3.1.nupkg
@@ -39,6 +40,8 @@ curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.1.0 -o nugets/sys
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.0.0 -o nugets/system.net.http.4.0.0.nupkg
 
 #System.Text.Encoding.CodePages
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.5.1 -o nugets/system.text.encoding.codepages.4.5.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.5.0 -o nugets/system.text.encoding.codepages.4.5.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.4.0 -o nugets/system.text.encoding.codepages.4.4.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.3.0 -o nugets/system.text.encoding.codepages.4.3.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.1 -o nugets/system.text.encoding.codepages.4.0.1.nupkg
@@ -61,6 +64,11 @@ for ver in $MS_EXTN_VERSIONS; do
 	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
 done
 
-curl https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer/microsoft.net.build.extensions/2.1.300-preview3-62804-06/microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg -o nugets//microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg
+MS_EXTN_VERSIONS_DOTNETFEED="2.1.300-preview3-62804-06" 			    # https://github.com/dotnet/cli/blob/8c937a0db08e56660aca456ac088f2d0e70735ab/build/DependencyVersions.props
+MS_EXTN_VERSIONS_DOTNETFEED="$MS_EXTN_VERSIONS_DOTNETFEED 2.1.600-preview-63821-02" # https://github.com/dotnet/cli/blob/4b9d6502f8061db4a56b730d3d4e65262c72ad5c/build/DependencyVersions.props
+
+for ver in $MS_EXTN_VERSIONS_DOTNETFEED; do
+	curl https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer/microsoft.net.build.extensions/${ver}/microsoft.net.build.extensions.${ver}.nupkg -o nugets//microsoft.net.build.extensions.${ver}.nupkg
+done
 
 touch .download_stamp_file

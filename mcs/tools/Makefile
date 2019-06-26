@@ -47,18 +47,25 @@ net_4_5_dirs := \
 	mdb2ppdb	\
 	ikdasm		\
 	mono-symbolicate	\
-	linker-analyzer
+	linker-analyzer \
+	gacutil
 
-build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
-monodroid_tools_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate
+build_SUBDIRS =
+build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
+monodroid_tools_SUBDIRS =
+monodroid_tools_PARALLEL_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate corcompare mono-api-diff mono-api-html pdb2mdb nunit-lite
 monodroid_SUBDIRS = nunit-lite
 monotouch_SUBDIRS = nunit-lite
-net_4_5_SUBDIRS = gacutil
-net_4_x_SUBDIRS = gacutil
-net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
+monotouch_tv_SUBDIRS = nunit-lite
+monotouch_watch_SUBDIRS = nunit-lite
+monotouch_tools_SUBDIRS =
+monotouch_tools_PARALLEL_SUBDIRS = corcompare mono-api-html
+net_4_x_SUBDIRS =
 net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
+wasm_tools_SUBDIRS =
+wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip
 
-SUBDIRS = $(build_SUBDIRS) $(net_4_5_dirs)
+DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 
 include ../build/rules.make
 

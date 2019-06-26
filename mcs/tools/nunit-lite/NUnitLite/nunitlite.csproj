@@ -9,18 +9,21 @@
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AssemblyName>nunitlite</AssemblyName>
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../../class/mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
@@ -28,10 +31,15 @@
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monodroid</IntermediateOutputPath>
     <DefineConstants>__MOBILE__;TRACE;DEBUG;NET_4_0;CLR_4_0;NUNITLITE;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <OutputPath>./../../../class/lib/monodroid_tools</OutputPath>
+    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
+    <DefineConstants>__MOBILE__;TRACE;DEBUG;NET_4_0;CLR_4_0;NUNITLITE;NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>__MOBILE__;TRACE;DEBUG;NET_4_0;CLR_4_0;NUNITLITE;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME</DefineConstants>
+    <DefineConstants>__MOBILE__;TRACE;DEBUG;NET_4_0;CLR_4_0;NUNITLITE;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -308,6 +316,7 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit2XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit3XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\OutputWriter.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\XunitXmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultReporter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultSummary.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\TcpWriter.cs" />
@@ -317,8 +326,47 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\TestContext.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Throws.cs" />
     <Compile Include="BabysitterSupport.cs" />
+    <Compile Include="Test.cs" />
+    <Compile Include="TestMessage.cs" />
+    <Compile Include="TestResult.cs" />
   </ItemGroup>
   <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="AndroidTestAssemblyRunner.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../../class/System/System.csproj" />
@@ -326,6 +374,34 @@
     <ProjectReference Include="../../../class/System.Core/System.Core.csproj" />
     <ProjectReference Include="../../../class/corlib/corlib.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <Reference Include="./../../../../external/binary-reference-assemblies/v4.6/System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../../external/binary-reference-assemblies/v4.6/System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../../external/binary-reference-assemblies/v4.6/System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../../external/binary-reference-assemblies/v4.6/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../../external/binary-reference-assemblies/v4.6/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../../external/binary-reference-assemblies/v4.6/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../../external/binary-reference-assemblies/v4.6/mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../../external/binary-reference-assemblies/v4.6/mscorlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

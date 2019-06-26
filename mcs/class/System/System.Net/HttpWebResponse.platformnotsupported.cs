@@ -35,6 +35,8 @@ namespace System.Net
 	public class HttpWebResponse : WebResponse, ISerializable, IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpWebResponse is not supported on the current platform.";
+		
+		public HttpWebResponse() { } // Added for NS2.1, it's empty in CoreFX too
 
 		[Obsolete ("Serialization is obsoleted for this type", false)]
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)

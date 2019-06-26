@@ -25,7 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[Serializable]
 	[ComVisible (true)]
-	public struct TypeToken {
+	public readonly struct TypeToken : IEquatable<TypeToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly TypeToken Empty = new TypeToken ();
 

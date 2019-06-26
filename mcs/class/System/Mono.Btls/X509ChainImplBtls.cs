@@ -31,6 +31,7 @@ using MX = MonoSecurity::Mono.Security.X509;
 using MX = Mono.Security.X509;
 #endif
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Security;
 using System.Security.Cryptography;
@@ -47,6 +48,7 @@ namespace Mono.Btls
 		X509Certificate2Collection untrusted;
 		X509Certificate2[] certificates;
 		X509ChainPolicy policy;
+		List<X509ChainStatus> chainStatusList;
 
 		internal X509ChainImplBtls (MonoBtlsX509Chain chain)
 		{
@@ -129,7 +131,16 @@ namespace Mono.Btls
 		}
 
 		public override X509ChainStatus[] ChainStatus {
-			get { throw new NotImplementedException (); }
+			get { 
+				return chainStatusList?.ToArray() ?? new X509ChainStatus[0];
+			}
+		}
+
+		public override void AddStatus (X509ChainStatusFlags errorCode)
+		{
+			if (chainStatusList == null)
+				chainStatusList = new List<X509ChainStatus>();
+			chainStatusList.Add (new X509ChainStatus(errorCode));
 		}
 
 		public override bool Build (X509Certificate2 certificate)

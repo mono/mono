@@ -295,6 +295,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Signal_Concurrent ()
 		{
 			for (int r = 0; r < 100; ++r) {

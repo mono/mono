@@ -22,14 +22,16 @@ using SimpleType = System.Xml.Schema.XmlSchemaSimpleType;
 using SimpleRest = System.Xml.Schema.XmlSchemaSimpleTypeRestriction;
 using AssertType = NUnit.Framework.Assert;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
 	public class XmlSchemaDatatypeTests
 	{
-		private XmlSchema GetSchema (string path)
+		private XmlSchema GetSchema (string resourceName)
 		{
-			return XmlSchema.Read (new XmlTextReader (path), null);
+			return XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource (resourceName)), null);
 		}
 
 		private XmlQualifiedName QName (string name, string ns)

@@ -6,3 +6,16 @@ Mono.Btls/MonoBtlsX509LookupAndroid.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs
+
+../../../external/corefx/src/Common/src/Interop/Linux/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeFileHandle.Unix.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeDirectoryHandle.Unix.cs
+../../../external/corefx/src/Common/src/Interop/Linux/System.Native/Interop.INotify.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.Linux.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.OpenFlags.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.FLock.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Poll.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Open.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Close.cs

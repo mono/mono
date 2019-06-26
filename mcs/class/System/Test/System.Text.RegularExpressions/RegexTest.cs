@@ -120,16 +120,16 @@ namespace MonoTests.System.Text.RegularExpressions
 			                         AddOptions( RegexOptions.None ));
 			Match m;
 
-			m = email.Match ("mono@go-mono.com");
+			m = email.Match ("mono@example.com");
 
 			Assert.IsTrue (m.Success, "#m01");
 			Assert.AreEqual ("mono", m.Groups ["user"].Value, "#m02");
-			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m03");
+			Assert.AreEqual ("example.com", m.Groups ["domain"].Value, "#m03");
 
-			m = email.Match ("mono.bugs@go-mono.com");
+			m = email.Match ("mono.bugs@example.com");
 			Assert.IsTrue (m.Success, "m04");
 			Assert.AreEqual ("mono.bugs", m.Groups ["user"].Value, "#m05");
-			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m06");
+			Assert.AreEqual ("example.com", m.Groups ["domain"].Value, "#m06");
 		}
 
 		[Test]

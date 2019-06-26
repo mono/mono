@@ -7,25 +7,68 @@ CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
-CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
-NINJA:=$(shell which ninja)
+lowercase=$(shell echo "$(1)" | tr '[:upper:]' '[:lower:]')
 
 UNAME=$(shell uname)
-ifneq ($(UNAME),Darwin)
-# iOS requires Xcode to be available, and Xcode is only available on macOS
-DISABLE_IOS=1
+
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+UNAME=Windows
 endif
+
+ifeq ($(UNAME),Linux)
+UNAME_WSL_CHECK=$(shell uname -a)
+ifneq (,$(findstring Microsoft,$(UNAME_WSL_CHECK)))
+UNAME=Windows
+endif
+endif
+
+ifneq ($(UNAME),Darwin)
+ifneq ($(UNAME),Linux)
+ifneq ($(UNAME),Windows)
+$(error "Unsupported UNAME=$(UNAME)")
+endif
+endif
+endif
+
+ifeq ($(UNAME),Windows)
+# x86_64 or i686
+HOST_ARCH_MINGW32=$(shell uname -m)
+endif
+
+ifneq ($(UNAME),Darwin)
+# iOS and Mac requires Xcode to be available, and Xcode is only available on macOS
+DISABLE_IOS=1
+DISABLE_MAC=1
+endif
+
+# On Windows, we will just trigger LLVM and Android builds using this Makefile.
+ifeq ($(UNAME),Windows)
+DISABLE_IOS=1
+DISABLE_MAC=1
+DISABLE_WASM=1
+DISABLE_WASM_CROSS=1
+DISABLE_DESKTOP=1
+DISABLE_CCACHE=1
+DISABLE_LIBTOOLIZE=1
+IGNORE_PROVISION_MXE=1
+endif
+
+CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
+NINJA:=$(shell which ninja)
 
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
+ifndef DISABLE_LIBTOOLIZE
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
 ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
+endif
 
-all: package
+.PHONY: all
+all:
 
 ## Common Mono targets
 
@@ -33,28 +76,124 @@ all: package
 configure-mono: $(TOP)/configure
 
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
-	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh $(if $(wildcard $(TOP)/../mono-extensions),--enable-extension-module=xamarin --enable-extension-module)
 
-$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
-	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
+## Archive targets
 
-TARGETS=
+ifndef DISABLE_ANDROID
+android_ARCHIVE=
+endif
+
+ifndef DISABLE_IOS
+ios_ARCHIVE=
+endif
+
+ifndef DISABLE_MAC
+mac_ARCHIVE=
+endif
+
+ifndef DISABLE_WASM
+wasm_ARCHIVE=
+endif
+
+##
+# Parameters:
+#  $(1): target (android, ios, mac, wasm)
+#  $(2): compression format (7z, zip)
+define ArchiveTemplate
+_$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
+_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).$(2)
+
+ifeq ($(2),7z)
+_$(1)_COMPRESSION_ARGS = -t7z -mx=9
+endif
+
+.PHONY: archive-$(1)
+archive-$(1):
+	cd $$(TOP)/sdks/out && 7z a $$(_$(1)_COMPRESSION_ARGS) $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$($(1)_ARCHIVE))
+endef
+
+ifndef DISABLE_ANDROID
+$(eval $(call ArchiveTemplate,android,7z))
+endif
+
+ifndef DISABLE_IOS
+$(eval $(call ArchiveTemplate,ios,7z))
+endif
+
+ifndef DISABLE_MAC
+$(eval $(call ArchiveTemplate,mac,7z))
+endif
+
+ifndef DISABLE_WASM
+$(eval $(call ArchiveTemplate,wasm,zip))
+endif
+
+## Targets
+
+.PHONY: build-custom-%
+build-custom-%:
+	$(MAKE) -C $*
+
+.PHONY: setup-custom-%
+setup-custom-%:
+	mkdir -p $(TOP)/sdks/out/$*
+
+##
+# Parameters:
+# $(1): product
+# $(2): target
+define TargetTemplate
+
+.PHONY: toolchain-$(1)-$(2)
+toolchain-$(1)-$(2): .stamp-$(1)-$(2)-toolchain
+
+.PHONY: toolchain
+toolchain: toolchain-$(1)-$(2)
+
+.stamp-$(1)-$(2)-configure: .stamp-$(1)-$(2)-toolchain
+
+.PHONY: configure-$(1)-$(2)
+configure-$(1)-$(2): .stamp-$(1)-$(2)-configure
+
+.PHONY: configure
+configure: configure-$(1)-$(2)
+
+.PHONY: build-$(1)-$(2)
+build-$(1)-$(2): .stamp-$(1)-$(2)-configure
+	$$(MAKE) build-custom-$(1)-$(2)
+
+.PHONY: build
+build: build-$(1)-$(2)
+
+.PHONY: setup-$(1)-$(2)
+setup-$(1)-$(2):
+	$$(MAKE) setup-custom-$(1)-$(2)
+
+.PHONY: package-$(1)-$(2)
+package-$(1)-$(2): setup-$(1)-$(2) build-$(1)-$(2)
+
+.PHONY: clean-$(1)-$(2)
+clean-$(1)-$(2):
+
+.PHONY: clean
+clean: clean-$(1)-$(2)
+
+endef
+
+## Products
+
+include runtime.mk
+include bcl.mk
 
 ## MXE targets
-ifndef DISABLE_ANDROID
+ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
 # FIXME add iOS support(?)
 include mxe.mk
 endif
 
 ## LLVM targets
-ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)
 include llvm.mk
-endif
-
-## BCL targets
-ifndef DISABLE_BCL
-include bcl.mk
-endif
 
 ## Android targets
 ifndef DISABLE_ANDROID
@@ -64,6 +203,11 @@ endif
 ## iOS targets
 ifndef DISABLE_IOS
 include ios.mk
+endif
+
+## Mac targets
+ifndef DISABLE_MAC
+include mac.mk
 endif
 
 ## Desktop targets
@@ -76,52 +220,3 @@ endif
 ifndef DISABLE_WASM
 include wasm.mk
 endif
-
-## Generic targets
-.PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
-$(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
-
-$(foreach target,$(TARGETS),.stamp-$(target)-configure): .stamp-%-configure: .stamp-%-toolchain
-
-.PHONY: $(foreach target,$(TARGETS),configure-$(target))
-$(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
-
-.PHONY: build-custom-%
-build-custom-%:
-	$(MAKE) -C $*
-
-.PHONY: $(foreach target,$(TARGETS),build-$(target))
-$(foreach target,$(TARGETS),build-$(target)): build-%: .stamp-%-configure
-	$(MAKE) build-custom-$*
-
-.PHONY: setup-custom-%
-setup-custom-%:
-	mkdir -p $(TOP)/sdks/out/$*
-
-.PHONY: $(foreach target,$(TARGETS),setup-$(target))
-$(foreach target,$(TARGETS),setup-$(target)): setup-%:
-	$(MAKE) setup-custom-$*
-
-.PHONY: $(foreach target,$(TARGETS),package-$(target))
-$(foreach target,$(TARGETS),package-$(target)): package-%: setup-% build-%
-
-.PHONY: $(foreach target,$(TARGETS),clean-$(target))
-$(foreach target,$(TARGETS),clean-$(target)): clean-%:
-
-## Global targets
-.PHONY: toolchain
-toolchain: $(foreach target,$(TARGETS),toolchain-$(target))
-
-.PHONY: configure
-configure: $(foreach target,$(TARGETS),configure-$(target))
-
-.PHONY: build
-build: $(foreach target,$(TARGETS),build-$(target))
-
-.PHONY: package
-package: $(foreach target,$(TARGETS),package-$(target))
-
-.PHONY: clean
-clean: $(foreach target,$(TARGETS),clean-$(target))
-
-all: package

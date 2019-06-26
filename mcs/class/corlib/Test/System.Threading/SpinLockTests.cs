@@ -135,7 +135,7 @@ namespace MonoTests.System.Threading
 				}, 4);
 
 				Assert.IsFalse (fail);
-			}, 200);
+			}, 5);
 		}
 
 		[Test]

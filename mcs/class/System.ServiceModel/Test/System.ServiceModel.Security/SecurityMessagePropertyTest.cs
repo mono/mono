@@ -50,8 +50,8 @@ namespace MonoTests.System.ServiceModel.Security
 	[TestFixture]
 	public class SecurityMessagePropertyTest
 	{
-		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		static X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test2.pfx", "mono");
+		static X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		static X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test2.pfx"), "mono");
 
 		[ServiceContract]
 		public interface ICalc

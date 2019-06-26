@@ -1,3 +1,4 @@
+../../test-helpers/TestResourceHelper.cs
 System.IdentityModel.Claims/ClaimSetTest.cs
 System.IdentityModel.Claims/ClaimTest.cs
 System.IdentityModel.Claims/ClaimTypesTest.cs

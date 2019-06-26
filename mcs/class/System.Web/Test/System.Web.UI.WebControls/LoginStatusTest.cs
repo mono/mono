@@ -218,8 +218,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestLoginStatus ls = new TestLoginStatus ();
 			Assert.AreEqual ("a", ls.Tag, "TagName");
 
-			ls.LoginImageUrl = "http://www.go-mono.com";
-			ls.LogoutImageUrl = "http://www.mono-project.com";
+			ls.LoginImageUrl = "http://www.example.com";
+			ls.LogoutImageUrl = "http://www.example.org";
 			Assert.AreEqual ("a", ls.Tag, "TagName");
 		}
 

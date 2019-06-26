@@ -75,10 +75,11 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs
 ../referencesource/System.Core/System/Security/Cryptography/NCryptNative.cs
 ../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
-../referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskExtensions.cs
 
 System.Runtime.InteropServices/ComAwareEventInfo.cs
 
@@ -294,3 +295,11 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.net46.cs
+
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Unix.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+
+../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxyGenerator.cs
+../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxy.cs

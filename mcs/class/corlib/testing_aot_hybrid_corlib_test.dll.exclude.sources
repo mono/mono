@@ -1,3 +1,4 @@
+#include testing_aot_common_corlib_test.dll.exclude.sources
 Microsoft.Win32/RegistryKeyTest.cs
 System.Reflection/VisibilityTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs

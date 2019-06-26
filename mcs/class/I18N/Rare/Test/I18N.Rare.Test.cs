@@ -31,6 +31,8 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.I18N.Rare
 {
 	[TestFixture]
@@ -68,7 +70,7 @@ namespace MonoTests.I18N.Rare
 		[TestCaseSource (nameof (cps))]
 		public void Ascii_Test_All(int cp)
 		{
-			AssertDecode("Test/texts/ascii-test.txt", "Test/texts/ascii-test.txt", cp);
+			AssertDecode(TestResourceHelper.GetFullPathOfResource ("Test/texts/ascii-test.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/ascii-test.txt"), cp);
 		}
 	}
 }

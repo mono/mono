@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Threading;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -33,7 +35,7 @@ namespace MonoTests.System.Windows.Forms
 			Control c = new Control ();
 			// Test BackgroundImageChanged Event
 			c.BackgroundImageChanged += new EventHandler (Event_Handler1);
-			string abc = "M.gif";
+			string abc = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			eventhandled = false;
 			c.BackgroundImage = Image.FromFile (abc);
 			Assert.AreEqual (true, eventhandled, "#A2");

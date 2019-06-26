@@ -1,6 +1,10 @@
 thisdir = class
 
-pcl_facade_dirs := Facades
+NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools binary_reference_assemblies xbuild_12 xbuild_14 netcore, $(PROFILE))
+
+ifndef NO_FACADES_PROFILE
+FACADES_FOLDER := Facades
+endif
 
 -include ../build/config.make
 
@@ -8,30 +12,18 @@ ifdef MCS_MODE
 MCS_MODE_dirs := Mono.Cecil.Mdb
 endif
 
-# The minimal set of csc dependencies
-basic_SUBDIRS := \
+# Tooling dependencies of mscorlib, we build them to /tmp folder for MONO_PATH to work
+# reliably for clean and update builds. All deps are built against stable API to run with
+# range of boostrap versions and .NET at the same time
+build_SUBDIRS = \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
-	corlib \
-	Mono.Security \
-	System \
-	System.XML \
-	System.Security \
-	System.Core \
-	System.ComponentModel.Composition.4.5 \
-	System.Numerics \
-	System.Xml.Linq \
-	Mono.CompilerServices.SymbolWriter	\
 	PEAPI \
 	../ilasm \
-	corlib/il
+	corlib
 
-build_SUBDIRS :=  \
-	Mono.Cecil \
-	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer \
-	corlib \
+build_PARALLEL_SUBDIRS = \
 	Mono.Security \
 	System \
 	System.XML \
@@ -43,20 +35,29 @@ build_SUBDIRS :=  \
 	System.Numerics \
 	System.Xml.Linq \
 	System.IO.Compression \
-	System.Drawing			\
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI
+	System.IO.Compression.FileSystem \
+	System.Net.Http \
+	System.Net.Http.WebRequest \
+	System.Drawing
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
-build_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
-else
-basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
-build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
+
+build_SUBDIRS += \
+	Mono.Security \
+	System \
+	System.XML \
+	System.Security \
+	Mono.Posix \
+	System.Core \
+	Mono.CompilerServices.SymbolWriter
+
+build_PARALLEL_SUBDIRS += ../mcs
 endif
 
 mobile_common_dirs := \
-	corlib	\
+	corlib
+
+mobile_common_dirs_parallel := \
 	Mono.Security \
 	System	\
 	System.Core	\
@@ -86,75 +87,96 @@ mobile_common_dirs := \
 	System.Net.Http	\
 	System.Windows \
 	System.Xml.Serialization \
-	Mono.CSharp	\
 	Microsoft.CSharp \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler \
 	System.Runtime.CompilerServices.Unsafe
 
-testing_aot_full_dirs := \
-	$(mobile_common_dirs)	\
-	Mono.Simd			\
-	$(pcl_facade_dirs)
+testing_aot_full_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
+	Mono.Simd \
+	Mono.CSharp
 
-testing_aot_hybrid_dirs := \
-	$(mobile_common_dirs)	\
-	Mono.Simd			\
-	$(pcl_facade_dirs)
+testing_aot_full_interp_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
-xammac_dirs := \
-	$(mobile_common_dirs)	\
+testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
+
+xammac_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
 	Mono.CompilerServices.SymbolWriter	\
-	$(pcl_facade_dirs)
+	Mono.CSharp
 
-monodroid_dirs := \
-	$(mobile_common_dirs)	\
+monodroid_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
-	Mono.Posix	\
-	$(pcl_facade_dirs)
+	Mono.Posix \
+	Mono.CSharp \
+	Mono.Debugger.Soft \
+	Mono.Runtime.Tests
 
-monodroid_tools_dirs := \
+monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
+	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
-	monodoc
+	monodoc \
+	Mono.Debugger.Soft \
+	Mono.Profiler.Log
 
-monotouch_dirs := \
-	$(mobile_common_dirs)	\
-	Mono.Simd			\
-	$(pcl_facade_dirs)
+monotouch_tools_dirs_parallel := \
+	Mono.Cecil \
+	Mono.Cecil.Mdb
 
-monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
-monotouch_tv_dirs   := $(monotouch_dirs)
+monotouch_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
+	Mono.Simd \
+	Mono.CSharp \
+	Mono.Runtime.Tests
 
-monotouch_runtime_dirs := \
-	corlib \
+monotouch_watch_dirs_parallel := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs_parallel))
+
+monotouch_runtime_dirs_parallel := \
 	Mono.Security \
 	System \
 	System.Core \
 	System.XML \
 	Mono.CSharp
 
-monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
-monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
+monotouch_tv_dirs_parallel := $(monotouch_dirs_parallel)
 
-winaot_dirs := \
-	$(mobile_common_dirs)	\
-	System.Drawing			\
-	$(pcl_facade_dirs)
+monotouch_tv_runtime_dirs_parallel := $(monotouch_runtime_dirs_parallel)
 
-unreal_dirs := \
-	$(mobile_common_dirs)	\
-	System.Drawing			\
-	$(pcl_facade_dirs)
+monotouch_watch_runtime_dirs_parallel := \
+	System \
+	System.Core \
+	System.XML \
+	Mono.CSharp
 
-wasm_dirs := \
-	$(mobile_common_dirs)	\
-	System.Drawing			\
-	$(pcl_facade_dirs)
+monotouch_tv_runtime_dirs := \
+	Mono.Security \
+	$(monotouch_watch_runtime_dirs_parallel)
 
-xammac_4_5_dirs := \
-	corlib	\
+winaot_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
+	Mono.Simd
+
+testing_winaot_interp_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
+	Mono.Simd
+
+unreal_dirs_parallel := \
+	$(mobile_common_dirs_parallel)
+
+wasm_dirs_parallel := \
+	$(mobile_common_dirs_parallel)
+
+wasm_tools_dirs_parallel := \
+	Mono.Cecil
+
+orbis_dirs_parallel := \
+	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))
+
+xammac_4_5_dirs_parallel := \
 	Mono.Security \
 	System	\
 	System.XML			\
@@ -200,16 +222,17 @@ xammac_4_5_dirs := \
 	System.Net.Http.WebRequest \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
-	System.Runtime.CompilerServices.Unsafe \
-	$(pcl_facade_dirs)
+	System.Runtime.CompilerServices.Unsafe
 
+# Could be just mscorlib but we have unhandled dependency from RabbitMQ.Client.Apigen.exe
 net_4_x_dirs := \
-	corlib				\
+	corlib \
 	Mono.Security \
-	System				\
-	System.XML			\
+	System	\
+	System.XML
+
+net_4_x_parallel_dirs = \
 	System.Security			\
-	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	System.Core			\
 	System.Configuration	\
@@ -218,10 +241,9 @@ net_4_x_dirs := \
 	System.IO.Compression.FileSystem \
 	System.Transactions		\
 	System.EnterpriseServices	\
-	Mono.Data.Tds			\
 	System.Numerics		\
 	System.Numerics.Vectors		\
-	System.Data			\
+	System.Data		\
 	System.ComponentModel.DataAnnotations	\
 	Accessibility			\
 	Mono.WebBrowser			\
@@ -238,16 +260,13 @@ net_4_x_dirs := \
 	System.Configuration.Install 	\
 	System.Management		\
 	System.Data.OracleClient	\
-	Cscompmgd			\
 	Commons.Xml.Relaxng		\
 	Mono.Messaging			\
 	System.Messaging	        \
 	System.ServiceProcess           \
 	System.Drawing.Design		\
 	ICSharpCode.SharpZipLib		\
-	IBM.Data.DB2			\
-	CustomMarshalers		\
-	SystemWebTestShim			\
+	Microsoft.CSharp	\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
 	System.Runtime.Serialization	\
@@ -262,10 +281,7 @@ net_4_x_dirs := \
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.Web.DynamicData		\
-	Mono.CSharp			\
 	System.Net			\
-	System.Json		\
-	Microsoft.CSharp	\
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Activation \
@@ -284,18 +300,19 @@ net_4_x_dirs := \
 	System.Net.Http.Formatting \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
-	System.Web.Http.WebHost
-
-# These are the subdirs which depends on libs in net_4_x_dirs
-# or have proper dependencies between each other
-net_4_x_parallel_dirs := \
+	System.Web.Http.WebHost \
+	CustomMarshalers		\
+	IBM.Data.DB2			\
 	PEAPI				\
 	I18N				\
+	Cscompmgd			\
+	Mono.CompilerServices.SymbolWriter \
 	Mono.Btls.Interface		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
+	Mono.CSharp			\
 	Mono.Debugger.Soft		\
 	Mono.C5				\
 	Mono.Management			\
@@ -306,6 +323,7 @@ net_4_x_parallel_dirs := \
 	Mono.Parallel \
 	Mono.Security.Win32		\
 	Mono.Messaging.RabbitMQ		\
+	Mono.Data.Tds			\
 	System.Dynamic			\
 	System.Windows.Forms.DataVisualization	\
 	System.Reactive.Interfaces \
@@ -323,6 +341,7 @@ net_4_x_parallel_dirs := \
 	System.Data.Services \
 	System.Data.Entity \
 	System.Data.DataSetExtensions	\
+	System.Json		\
 	System.Json.Microsoft \
 	System.Threading.Tasks.Dataflow \
 	System.ComponentModel.Composition.4.5 \
@@ -344,51 +363,81 @@ net_4_x_parallel_dirs := \
 	Mono.Runtime.Tests	\
 	System.Runtime.CompilerServices.Unsafe \
 	legacy/Mono.Cecil \
-	$(pcl_facade_dirs)
+	SystemWebTestShim \
+	$(xbuild_4_0_dirs)
 
-xbuild_2_0_dirs := \
+xbuild_4_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Mono.XBuild.Tasks		\
-	Microsoft.Build.Tasks
-
-xbuild_4_0_dirs := \
-	$(xbuild_2_0_dirs)	\
+	Microsoft.Build.Tasks	\
 	Microsoft.Build
 
-orbis_dirs := \
-	$(filter-out Microsoft.CSharp Mono.CSharp Mono.Data.Sqlite,$(mobile_common_dirs))	\
-	System.Drawing		\
-	$(pcl_facade_dirs)
+monodroid_SUBDIRS := $(mobile_common_dirs)
+monodroid_PARALLEL_SUBDIRS := $(monodroid_dirs_parallel)
+monodroid_tools_SUBDIRS := 
+monodroid_tools_PARALLEL_SUBDIRS := $(monodroid_tools_dirs_parallel)
 
-monodroid_SUBDIRS := $(monodroid_dirs)
-monodroid_tools_SUBDIRS := $(monodroid_tools_dirs)
-monotouch_SUBDIRS := $(monotouch_dirs)
-monotouch_watch_SUBDIRS := $(monotouch_watch_dirs)
-monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
-monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
-monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
-monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
-testing_aot_full_SUBDIRS := $(testing_aot_full_dirs)
-testing_aot_hybrid_SUBDIRS := $(testing_aot_hybrid_dirs)
-xammac_SUBDIRS := $(xammac_dirs)
-xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
+monotouch_SUBDIRS := $(mobile_common_dirs)
+monotouch_PARALLEL_SUBDIRS := $(monotouch_dirs_parallel)
+monotouch_watch_SUBDIRS := $(mobile_common_dirs)
+monotouch_watch_PARALLEL_SUBDIRS := $(monotouch_watch_dirs_parallel)
+monotouch_tv_SUBDIRS    := $(mobile_common_dirs)
+monotouch_tv_PARALLEL_SUBDIRS := $(monotouch_tv_dirs_parallel)
+monotouch_runtime_SUBDIRS := $(mobile_common_dirs)
+monotouch_runtime_PARALLEL_SUBDIRS := $(monotouch_runtime_dirs_parallel)
+monotouch_watch_runtime_SUBDIRS := $(mobile_common_dirs)
+monotouch_watch_runtime_PARALLEL_SUBDIRS := $(monotouch_watch_runtime_dirs_parallel)
+monotouch_tv_runtime_SUBDIRS := $(mobile_common_dirs)
+monotouch_tv_runtime_PARALLEL_SUBDIRS := $(monotouch_tv_runtime_dirs_parallel)
+monotouch_tools_SUBDIRS :=
+monotouch_tools_PARALLEL_SUBDIRS := $(monotouch_tools_dirs_parallel)
+
+testing_aot_full_interp_SUBDIRS := $(mobile_common_dirs)
+testing_aot_full_interp_PARALLEL_SUBDIRS := $(testing_aot_full_interp_dirs_parallel)
+testing_aot_full_SUBDIRS := $(mobile_common_dirs)
+testing_aot_full_PARALLEL_SUBDIRS := $(testing_aot_full_dirs_parallel)
+testing_aot_hybrid_SUBDIRS := $(mobile_common_dirs)
+testing_aot_hybrid_PARALLEL_SUBDIRS := $(testing_aot_hybrid_dirs_parallel)
+
+xammac_SUBDIRS := $(mobile_common_dirs)
+xammac_PARALLEL_SUBDIRS := $(xammac_dirs_parallel)
+xammac_net_4_5_SUBDIRS := $(mobile_common_dirs)
+xammac_net_4_5_PARALLEL_SUBDIRS := $(xammac_4_5_dirs_parallel)
+
 binary_reference_assemblies_SUBDIRS := reference-assemblies
-net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
+net_4_x_SUBDIRS := $(net_4_x_dirs)
 net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
-winaot_SUBDIRS := $(winaot_dirs)
-orbis_SUBDIRS := $(orbis_dirs)
-unreal_SUBDIRS := $(unreal_dirs)
-wasm_SUBDIRS := $(wasm_dirs)
+
+winaot_SUBDIRS := $(mobile_common_dirs)
+winaot_PARALLEL_SUBDIRS := $(winaot_dirs_parallel)
+
+testing_winaot_interp_SUBDIRS := $(mobile_common_dirs)
+testing_winaot_interp_PARALLEL_SUBDIRS := $(testing_winaot_interp_dirs_parallel)
+
+orbis_SUBDIRS := $(mobile_common_dirs)
+orbis_PARALLEL_SUBDIRS := $(orbis_dirs_parallel)
+
+unreal_SUBDIRS := $(mobile_common_dirs)
+unreal_PARALLEL_SUBDIRS := $(unreal_dirs_parallel)
+
+wasm_SUBDIRS := $(mobile_common_dirs)
+wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
+wasm_tools_SUBDIRS :=
+wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
+
+netcore_SUBDIRS :=
+netcore_PARALLEL_SUBDIRS :=
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(monodroid_tools_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
-
-DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
+DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \
+$(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
+$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
+$(testing_aot_full_interp_dirs_parallel) $(netcore_SUBDIRS) dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
@@ -418,6 +467,8 @@ DISTFILES = \
 	test-helpers/RemoteExecutorTestBase.Mobile.cs \
 	test-helpers/RemoteExecutorTestBase.Mono.cs \
 	test-helpers/SocketResponder.cs \
+	test-helpers/TestResourceHelper.cs \
+	test-helpers/PathHelpers.cs \
 	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)
@@ -439,7 +490,7 @@ build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.C
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll Facades/netstandard.dll \
 	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
@@ -495,3 +546,9 @@ csproj-local:
 
 do-clean:
 	$(RM) -rf $(topdir)/class/lib/$(PROFILE)
+
+## Aliases for .dep_dirs-* tracker
+.PHONY: Microsoft.Build.Utilities.v4.0 System.ComponentModel.Composition System.Xml
+Microsoft.Build.Utilities.v4.0: Microsoft.Build.Utilities
+System.ComponentModel.Composition: System.ComponentModel.Composition.4.5
+System.Xml: System.XML

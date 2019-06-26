@@ -33,6 +33,8 @@ using System.ServiceModel.Configuration;
 using System.Configuration;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -63,7 +65,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void BindingExtensions () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/extensions").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/extensions")).GetSectionGroup ("system.serviceModel");
 
 			Assert.AreEqual (typeof (BasicHttpBindingCollectionElement).AssemblyQualifiedName, config.Extensions.BindingExtensions ["basicHttpBinding"].Type, "baseHttpBinding");
 			Assert.AreEqual (typeof (NetTcpBindingCollectionElement).AssemblyQualifiedName, config.Extensions.BindingExtensions ["netTcpBinding"].Type, "baseHttpBinding");
@@ -74,7 +76,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void BehaviorExtensions () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/extensions").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/extensions")).GetSectionGroup ("system.serviceModel");
 
 			Assert.AreEqual (typeof (ServiceAuthorizationElement).AssemblyQualifiedName, config.Extensions.BehaviorExtensions ["serviceAuthorization"].Type, "serviceAuthorization");
 			Assert.AreEqual ("MyBehaviorElement", config.Extensions.BehaviorExtensions ["behaviorExtensions1"].Type, "MyBehaviorElement");
@@ -83,7 +85,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void BindingElementExtensions () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/extensions").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/extensions")).GetSectionGroup ("system.serviceModel");
 
 			Assert.AreEqual (typeof (BinaryMessageEncodingElement).AssemblyQualifiedName, config.Extensions.BindingElementExtensions ["binaryMessageEncoding"].Type, "binaryMessageEncoding");
 			Assert.AreEqual ("MyBindingElementElement", config.Extensions.BindingElementExtensions ["bindingElementExtensions1"].Type, "MyBindingElementElement");

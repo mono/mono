@@ -1,5 +1,7 @@
 #include common.sources
 #include common_networking.sources
+#include corefx.unix.sources
 ../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
+System.IO/FileSystemWatcher.DefaultEventAttribute.cs
 Internal.Cryptography/OidLookup.Managed.cs

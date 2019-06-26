@@ -1,3 +1,4 @@
+// Linker options has to be: -l mideast
 using System;
 using System.Globalization;
 
@@ -7,9 +8,8 @@ public class C
 	{
 		var ci = CultureInfo.GetCultureInfo ("ar");
 
-		// FIXME:
-//		if (ci.Calendar.ToString () != "System.Globalization.UmAlQuraCalendar")
-//			return 1;
+		if (ci.Calendar.ToString () != "System.Globalization.UmAlQuraCalendar")
+			return 1;
 
 		return 0;
 	}

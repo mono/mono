@@ -35,13 +35,15 @@ using System.Configuration;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
 	public class MetadataElementTest
 	{
 		ServiceModelSectionGroup OpenConfig (string name) {
-			return (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/" + name).GetSectionGroup ("system.serviceModel");
+			return (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/" + name)).GetSectionGroup ("system.serviceModel");
 		}
 
 		[Test]

@@ -6,8 +6,23 @@
 #Disables building iOS
 #DISABLE_IOS = 1
 
+#Disables building Mac
+#DISABLE_MAC = 1
+
 #Disables build WebAssembly
 #DISABLE_WASM = 1
 
+#Disables WebAssembly Windows cross build
+#DISABLE_WASM_CROSS = 1
+
 #Disables building the BCL
 #DISABLE_BCL = 1
+
+#Disables building the Desktop profile
+#DISABLE_DESKTOP = 1
+
+#Disables building LLVM toolchain (some targets like ios/android/wasm will still use it)
+#DISABLE_LLVM = 1
+
+#Enables passing --enable-cxx to configure.
+#ENABLE_CXX = 1

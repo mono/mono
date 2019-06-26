@@ -144,7 +144,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// Methods
-		protected abstract IsolatedStoragePermission GetPermission (PermissionSet ps);
+		protected virtual IsolatedStoragePermission GetPermission (PermissionSet ps) => null;
 
 		protected void InitStore (IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType)
 		{
