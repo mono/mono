@@ -299,16 +299,16 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	}
 
 	if (aot) {
-		const char *icall_name;
+		MonoJitICallId icall_id;
 
 		if (resume_unwind)
-			icall_name = "mono_arm_resume_unwind";
+			icall_id = MONO_JIT_ICALL_mono_arm_resume_unwind;
 		else if (corlib)
-			icall_name = "mono_arm_throw_exception_by_token";
+			icall_id = MONO_JIT_ICALL_mono_arm_throw_exception_by_token;
 		else
-			icall_name = "mono_arm_throw_exception";
+			icall_id = MONO_JIT_ICALL_mono_arm_throw_exception;
 
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
+		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (icall_id));
 		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
 		ARM_B (code, 0);
 		*(gpointer*)(gpointer)code = NULL;
@@ -395,15 +395,15 @@ mono_arm_get_exception_trampolines (gboolean aot)
 
 	/* LLVM uses the normal trampolines, but with a different name */
 	get_throw_trampoline (168, TRUE, FALSE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", &info, aot, FALSE);
-	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline;
+	info->jit_icall_info = &mono_get_jit_icall_info ()->mono_llvm_throw_corlib_exception_trampoline;
 	tramps = g_slist_prepend (tramps, info);
 	
 	get_throw_trampoline (168, TRUE, FALSE, TRUE, FALSE, "llvm_throw_corlib_exception_abs_trampoline", &info, aot, FALSE);
-	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline;
+	info->jit_icall_info = &mono_get_jit_icall_info ()->mono_llvm_throw_corlib_exception_abs_trampoline;
 	tramps = g_slist_prepend (tramps, info);
 
 	get_throw_trampoline (168, FALSE, FALSE, FALSE, TRUE, "llvm_resume_unwind_trampoline", &info, aot, FALSE);
-	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_resume_unwind_trampoline;
+	info->jit_icall_info = &mono_get_jit_icall_info ()->mono_llvm_resume_unwind_trampoline;
 	tramps = g_slist_prepend (tramps, info);
 
 	return tramps;
@@ -431,13 +431,13 @@ mono_arch_exceptions_init (void)
 		// FIXME Macroize.
 
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_trampoline");
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline, tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE, NULL);
+		mono_register_jit_icall_info (&mono_get_jit_icall_info ()->mono_llvm_throw_corlib_exception_trampoline, tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE, NULL);
 
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_abs_trampoline");
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline, tramp, "llvm_throw_corlib_exception_abs_trampoline", NULL, TRUE, NULL);
+		mono_register_jit_icall_info (&mono_get_jit_icall_info ()->mono_llvm_throw_corlib_exception_abs_trampoline, tramp, "llvm_throw_corlib_exception_abs_trampoline", NULL, TRUE, NULL);
 
 		tramp = mono_aot_get_trampoline ("llvm_resume_unwind_trampoline");
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_resume_unwind_trampoline, tramp, "llvm_resume_unwind_trampoline", NULL, TRUE, NULL);
+		mono_register_jit_icall_info (&mono_get_jit_icall_info ()->mono_llvm_resume_unwind_trampoline, tramp, "llvm_resume_unwind_trampoline", NULL, TRUE, NULL);
 
 	} else {
 		tramps = mono_arm_get_exception_trampolines (FALSE);

@@ -1,8 +1,6 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
 
-all: package
-
 MAKEFLAGS += --no-builtin-rules
 
 CONFIGURATION?=release
@@ -69,7 +67,8 @@ EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 endif
 
-all: package
+.PHONY: all
+all:
 
 ## Common Mono targets
 
@@ -100,29 +99,34 @@ endif
 ##
 # Parameters:
 #  $(1): target (android, ios, mac, wasm)
+#  $(2): compression format (7z, zip)
 define ArchiveTemplate
 _$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
-_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).zip
+_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).$(2)
+
+ifeq ($(2),7z)
+_$(1)_COMPRESSION_ARGS = -t7z -mx=9
+endif
 
 .PHONY: archive-$(1)
 archive-$(1):
-	cd $$(TOP)/sdks/out && 7z a $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$($(1)_ARCHIVE))
+	cd $$(TOP)/sdks/out && 7z a $$(_$(1)_COMPRESSION_ARGS) $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$($(1)_ARCHIVE))
 endef
 
 ifndef DISABLE_ANDROID
-$(eval $(call ArchiveTemplate,android))
+$(eval $(call ArchiveTemplate,android,7z))
 endif
 
 ifndef DISABLE_IOS
-$(eval $(call ArchiveTemplate,ios))
+$(eval $(call ArchiveTemplate,ios,7z))
 endif
 
 ifndef DISABLE_MAC
-$(eval $(call ArchiveTemplate,mac))
+$(eval $(call ArchiveTemplate,mac,7z))
 endif
 
 ifndef DISABLE_WASM
-$(eval $(call ArchiveTemplate,wasm))
+$(eval $(call ArchiveTemplate,wasm,zip))
 endif
 
 ## Targets
@@ -168,9 +172,6 @@ setup-$(1)-$(2):
 
 .PHONY: package-$(1)-$(2)
 package-$(1)-$(2): setup-$(1)-$(2) build-$(1)-$(2)
-
-.PHONY: package
-package: package-$(1)-$(2)
 
 .PHONY: clean-$(1)-$(2)
 clean-$(1)-$(2):

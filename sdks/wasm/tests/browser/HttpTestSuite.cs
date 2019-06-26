@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using WebAssembly;
 using System.Threading;
 using System.IO;
-using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
 
 namespace TestSuite
 {

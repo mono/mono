@@ -310,12 +310,14 @@ common_sources = \
 	method-builder.c 	\
 	mono-basic-block.c	\
 	mono-basic-block.h	\
+	mono-config-internals.h	\
 	mono-config.c		\
 	mono-debug.h		\
 	mono-debug.c		\
 	debug-internals.h	\
 	mono-endian.c		\
 	mono-endian.h		\
+	mono-hash-internals.h	\
 	mono-hash.c		\
 	mono-hash.h		\
 	mono-conc-hash.c		\
@@ -346,6 +348,7 @@ common_sources = \
 	w32process-internals.h		\
 	profiler.c		\
 	profiler-private.h	\
+	profiler-legacy.h	\
 	rand.h			\
 	rand.c			\
 	remoting.h		\

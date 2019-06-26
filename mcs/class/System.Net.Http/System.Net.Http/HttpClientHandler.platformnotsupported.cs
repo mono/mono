@@ -170,6 +170,9 @@ namespace System.Net.Http
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
+		// Only used in MonoWebRequestHandler and ignored by the other handlers.
+		internal void SetWebRequestTimeout (TimeSpan timeout) => throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+
 		// NS2.1:
 		public static System.Func<System.Net.Http.HttpRequestMessage, System.Security.Cryptography.X509Certificates.X509Certificate2, System.Security.Cryptography.X509Certificates.X509Chain, System.Net.Security.SslPolicyErrors, bool> DangerousAcceptAnyServerCertificateValidator => throw new PlatformNotSupportedException ();
 	}

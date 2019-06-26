@@ -131,5 +131,129 @@ namespace TestSuite
             return min.Apply(null, parms);
         }
 
+        private static DataView DataViewConstructor () 
+        {
+            // create an ArrayBuffer with a size in bytes
+            var buffer = new ArrayBuffer(16);
+
+            // Create a couple of views
+            var view1 = new DataView(buffer);
+            var view2 = new DataView(buffer,12,4); //from byte 12 for the next 4 bytes
+            view1.SetInt8(12, 42); // put 42 in slot 12            
+            return view2;
+        }
+        private static DataView DataViewArrayBuffer (ArrayBuffer buffer) 
+        {
+            var view1 = new DataView(buffer);
+            return view1;
+        }
+        private static DataView DataViewByteLength (ArrayBuffer buffer) 
+        {
+            var x = new DataView(buffer, 4, 2);
+            return x;
+        }
+        private static DataView DataViewByteOffset (ArrayBuffer buffer) 
+        {
+            var x = new DataView(buffer, 4, 2);
+            return x;
+        }
+        private static float DataViewGetFloat32 (DataView view) 
+        {
+            return view.GetFloat32(1);
+        }
+        private static double DataViewGetFloat64 (DataView view) 
+        {
+            return view.GetFloat64(1);
+        }
+
+        private static short DataViewGetInt16 (DataView view) 
+        {
+            return view.GetInt16(1);
+        }
+
+        private static int DataViewGetInt32 (DataView view) 
+        {
+            return view.GetInt32(1);
+        }
+
+        private static sbyte DataViewGetInt8 (DataView view) 
+        {
+            return view.GetInt8(1);
+        }
+
+        private static ushort DataViewGetUint16 (DataView view) 
+        {
+            return view.GetUint16(1);
+        }
+
+        private static uint DataViewGetUint32 (DataView view) 
+        {
+            return view.GetUint32(1);
+        }
+
+        private static byte DataViewGetUint8 (DataView view) 
+        {
+            return view.GetUint8(1);
+        }
+
+        private static DataView DataViewSetFloat32 () 
+        {
+            // create an ArrayBuffer with a size in bytes
+            var buffer = new ArrayBuffer(16);
+
+            var view = new DataView(buffer);
+            view.SetFloat32(1, (float)Math.PI);
+            return view;
+        }
+
+        private static DataView DataViewSetFloat64 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetFloat64(1, Math.PI);        
+            return x;
+        }
+        
+        private static DataView DataViewSetInt16 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetInt16(1, 1234);
+            return x;
+        }
+        
+        private static DataView DataViewSetInt32 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetInt32(1, 1234);
+            return x;
+        }
+        
+        private static DataView DataViewSetInt8 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetInt8(1, 123);
+            return x;
+        }
+        
+        private static DataView DataViewSetUint16 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetUint16(1, 1234);
+            return x;
+        }
+        
+        private static DataView DataViewSetUint32 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetUint32(1, 1234);
+            return x;
+        }
+        
+        private static DataView DataViewSetUint8 () 
+        {
+            var x = new DataView(new ArrayBuffer(12), 0);
+            x.SetUint8(1, 123);
+            return x;
+        }
+
     }
 }

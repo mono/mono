@@ -77,10 +77,10 @@ namespace MonoTests.System.ServiceModel.Syndication
 		{
 			SyndicationItem item = new SyndicationItem ();
 			Assert.AreEqual (0, item.Links.Count, "#1");
-			item.AddPermalink (new Uri ("http://mono-project.com/index.rss.20071210"));
+			item.AddPermalink (new Uri ("http://example.com/index.rss.20071210"));
 			Assert.AreEqual (1, item.Links.Count, "#2");
 			SyndicationLink link = item.Links [0];
-			Assert.AreEqual ("http://mono-project.com/index.rss.20071210", link.Uri.ToString (), "#3");
+			Assert.AreEqual ("http://example.com/index.rss.20071210", link.Uri.ToString (), "#3");
 			Assert.AreEqual ("alternate", link.RelationshipType, "#4");
 		}
 
@@ -88,9 +88,9 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void Clone ()
 		{
 			SyndicationItem item = new SyndicationItem ();
-			item.AddPermalink (new Uri ("http://mono-project.com/index.rss.20071210"));
+			item.AddPermalink (new Uri ("http://example.com/index.rss.20071210"));
 			item.Id = Guid.NewGuid ().ToString ();
-			item.BaseUri = new Uri ("http://mono-project.com");
+			item.BaseUri = new Uri ("http://example.com");
 			item.Authors.Add (new SyndicationPerson ("atsushi@ximian.com"));
 			item.SourceFeed = new SyndicationFeed ();
 			item.SourceFeed.Items = new SyndicationItem [] {new SyndicationItem ()};
@@ -98,7 +98,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			SyndicationItem clone = item.Clone ();
 			Assert.AreEqual (1, clone.Links.Count, "#1");
 			Assert.AreEqual (item.Id, clone.Id, "#2"); // hmm ...
-			Assert.AreEqual ("http://mono-project.com/", clone.BaseUri.ToString (), "#3");
+			Assert.AreEqual ("http://example.com/", clone.BaseUri.ToString (), "#3");
 
 			// LAMESPEC: .NET fails to clone it
 			// Assert.IsFalse (Object.ReferenceEquals (item.BaseUri, clone.BaseUri), "#4"); // should not be just a shallow copy

@@ -540,6 +540,8 @@ namespace System.Security.Claims
                 }
             }
         }
+#else
+        public static ClaimsPrincipal Current => throw new PlatformNotSupportedException ();
 #endif
 
         /// <summary>

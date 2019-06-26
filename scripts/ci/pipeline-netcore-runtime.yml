@@ -12,17 +12,25 @@ variables:
 
 jobs:
 - job: Build
+  timeoutInMinutes: 90
   strategy:
     matrix:
-      Linux x64:
+      Linux_x64:
         poolname: Hosted Ubuntu 1604
         manifest: linux-x64
         sed: sed
-      Windows x64:
+      Linux_ARM64:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          poolname: Xamarin-ARM64
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          poolname: Xamarin-ARM64-Private
+        manifest: linux-arm64
+        sed: sed
+      Windows_x64:
         poolname: Hosted VS2017
         manifest: win-x64
         sed: sed
-      OSX x64:
+      OSX_x64:
         poolname: Hosted macOS
         manifest: osx-x64
         sed: gsed
@@ -36,7 +44,7 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
+      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
@@ -60,20 +68,13 @@ jobs:
         sed: $(sed)
       displayName: 'Rewrite .gitmodules'
 
-  - task: DotNetCoreInstaller@0
-    inputs:
-      packageType: 'sdk'
-      version: '2.2.203'
-    displayName: Install .NET Core 2.2 latest
-    condition: eq(variables['poolname'], 'Hosted VS2017')
-
   - script: |
       %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
       CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
-      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
+      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
       MKDIR mono\mini\.libs\
       COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
-      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
+      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
     displayName: 'Build (MSBuild and Make)'
     env:
       CHERE_INVOKING: yes
@@ -81,11 +82,36 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      make
-      make -C netcore nupkg
+      make -C mono -j4
+      make -C netcore bcl
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore nupkg
+    displayName: 'Build nupkg'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore update-tests-corefx
+    displayName: 'Download CoreFX Tests'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
   
+  - bash: |
+      for testdir in netcore/corefx/tests/extracted/*; do
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m make -C netcore run-tests-corefx-$(basename $testdir)
+      done
+    displayName: 'Run CoreFX Tests'
+    timeoutInMinutes: 90
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - task: PublishTestResults@2
+    inputs:
+      testRunTitle: $(poolname)
+      testResultsFormat: 'XUnit'
+      testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
         eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.Repository.LocalPath)\eng\empty.proj
@@ -94,6 +120,10 @@ jobs:
     - bash: |
         ./eng/common/build.sh -p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
       displayName: 'restore Arcade stuff with Bash'
+      condition: ne(variables['poolname'], 'Hosted VS2017')
+    - bash: |
+        rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+      displayName: 'Delete metapackage, except on Windows'
       condition: ne(variables['poolname'], 'Hosted VS2017')
     - bash: |
         dotnet msbuild eng/publishwitharcade.proj -p:AzureFeedUrl=$(dotnetfeedUrl) -p:AzureAccountKey=${dotnetFeedPat} -p:AssetManifest=${manifest}

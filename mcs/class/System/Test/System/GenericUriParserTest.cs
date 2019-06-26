@@ -107,7 +107,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Generic ()
 		{
-			Uri uri = new Uri ("generic://www.mono-project.com/");
+			Uri uri = new Uri ("generic://www.example.com/");
 			Assert.AreEqual (1, uri.Port, "Port");
 		}
 
@@ -115,7 +115,7 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void Generic_Methods ()
 		{
-			Uri uri = new Uri ("generic://www.mono-project.com/");
+			Uri uri = new Uri ("generic://www.example.com/");
 			Assert.AreEqual (String.Empty, uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -124,7 +124,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureGeneric ()
 		{
-			Uri uri = new Uri ("sgenericx://www.mono-project.com/");
+			Uri uri = new Uri ("sgenericx://www.example.com/");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

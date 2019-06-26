@@ -330,13 +330,9 @@ gpointer
 mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean add_static_rgctx_tramp, gboolean add_unbox_tramp)
 {
 	gpointer addr = compiled_method;
-	gboolean callee_gsharedvt, callee_array_helper;
+	gboolean callee_gsharedvt = FALSE, callee_array_helper;
 	MonoMethod *jmethod = NULL;
-	MonoJitInfo *ji;
-
-	// FIXME: This loads information from AOT (perf problem)
-	ji = mini_jit_info_table_find (mono_domain_get (), (char *)mono_get_addr_from_ftnptr (compiled_method), NULL);
-	callee_gsharedvt = mini_jit_info_is_gsharedvt (ji);
+	MonoJitInfo *ji = NULL;
 
 	callee_array_helper = FALSE;
 	if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED) {
@@ -357,6 +353,12 @@ mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean ad
 		if (info && info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER) {
 			m = info->d.synchronized_inner.method;
 		}
+	}
+
+	if (m->is_inflated || callee_array_helper) {
+		// This loads information from AOT so try to avoid it if possible
+		ji = mini_jit_info_table_find (mono_domain_get (), (char *)mono_get_addr_from_ftnptr (compiled_method), NULL);
+		callee_gsharedvt = mini_jit_info_is_gsharedvt (ji);
 	}
 
 	if (callee_gsharedvt)
@@ -430,6 +432,10 @@ common_call_trampoline (host_mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTa
 	gboolean imt_call, virtual_;
 	gpointer *orig_vtable_slot, *vtable_slot_to_patch = NULL;
 	MonoJitInfo *ji = NULL;
+	MonoDomain *domain = mono_domain_get ();
+#if LLVM_API_VERSION > 100
+	MonoMethod *orig_method = m;
+#endif
 
 	error_init (error);
 
@@ -657,8 +663,6 @@ common_call_trampoline (host_mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTa
 
 	/* the method was jumped to */
 	if (!code) {
-		MonoDomain *domain = mono_domain_get ();
-
 		mini_patch_jump_sites (domain, m, mono_get_addr_from_ftnptr (addr));
 
 		/* Patch the got entries pointing to this method */
@@ -739,6 +743,8 @@ common_call_trampoline (host_mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTa
 				no_patch = TRUE;
 			}
 #if LLVM_API_VERSION > 100
+			if (!no_patch)
+				mini_patch_llvm_jit_callees (domain, orig_method, addr);
 			/* LLVM code doesn't make direct calls */
 			if (ji && ji->from_llvm)
 				no_patch = TRUE;

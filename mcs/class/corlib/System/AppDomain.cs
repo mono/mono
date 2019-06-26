@@ -45,7 +45,9 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
+#endif
 using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Security.Permissions;
@@ -273,7 +275,11 @@ namespace System {
 					if (rd == CurrentDomain)
 						default_domain = rd;
 					else
+#if DISABLE_REMOTING
+						throw new PlatformNotSupportedException ();
+#else
 						default_domain = (AppDomain) RemotingServices.GetDomainProxy (rd);
+#endif
 				}
 				return default_domain;
 			}
@@ -1415,6 +1421,7 @@ namespace System {
 				UnhandledException (this, args);
 		}
 
+#if !DISABLE_REMOTING
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
@@ -1440,6 +1447,7 @@ namespace System {
 			else
 				arrResponse = null;
 		}
+#endif
 
 #pragma warning restore 169
 

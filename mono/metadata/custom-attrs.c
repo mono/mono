@@ -15,6 +15,7 @@
 #include <config.h>
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/class-init.h"
+#include "mono/metadata/class-internals.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/mono-endian.h"
 #include "mono/metadata/object-internals.h"
@@ -262,17 +263,6 @@ MONO_RESTORE_WARNING
 	*end = p + *slen;
 
 	return res;
-}
-
-static MonoReflectionType*
-load_cattr_type_object (MonoImage *image, MonoType *t, gboolean header, const char *p, const char *boundp, const char **end, MonoError *error, guint32 *slen)
-{
-	MonoType *type;
-
-	type = load_cattr_type (image, t, header, p, boundp, end, error, slen);
-	if (!type)
-		return NULL;
-	return mono_type_get_object_checked (mono_domain_get (), type, error);
 }
 
 /*
@@ -956,7 +946,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			mono_field_set_value_internal (MONO_HANDLE_RAW (attr), field, val); // FIXMEcoop
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			MonoProperty *prop;
-			prop = mono_class_get_property_from_name (mono_handle_class (attr), name);
+			prop = mono_class_get_property_from_name_internal (mono_handle_class (attr), name);
 			if (!prop) {
 				mono_error_set_generic_error (error, "System.Reflection", "CustomAttributeFormatException", "Could not find a property with name %s", name);
 				goto fail;
@@ -980,15 +970,19 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			mono_property_set_value_handle (prop, attr, pparams, error);
 			goto_if_nok (error, fail);
 		}
+		
+		g_free (name);
+		name = NULL;
 	}
 
 	goto exit;
 fail:
+	g_free (name);
+	name = NULL;
 	attr = mono_new_null ();
 exit:
 	if (field && !type_is_reference (field->type))
 		g_free (val);
-	g_free (name);
 	if (prop_type && !type_is_reference (prop_type))
 		g_free (pparams [0]);
 	if (params) {
@@ -1138,7 +1132,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 			/* Named arg is a property */
 			MonoObject *obj;
 			MonoType *prop_type;
-			MonoProperty *prop = mono_class_get_property_from_name (attrklass, name);
+			MonoProperty *prop = mono_class_get_property_from_name_internal (attrklass, name);
 
 			if (!prop || !prop->set) {
 				g_free (name);
@@ -1288,7 +1282,7 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			/* Named arg is a property */
 			MonoType *prop_type;
-			MonoProperty *prop = mono_class_get_property_from_name (attrklass, name);
+			MonoProperty *prop = mono_class_get_property_from_name_internal (attrklass, name);
 
 			if (!prop || !prop->set) {
 				g_free (name);

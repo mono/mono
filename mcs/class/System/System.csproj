@@ -67,22 +67,27 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_INTERP;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_INTERP;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;MOBILE_DYNAMIC;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;MOBILE_DYNAMIC;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -148,12 +153,10 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedPairReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedStringFormatReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\WhitespaceReader.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBufferType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TcpValidationHelpers.cs" />
@@ -1034,8 +1037,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -1099,6 +1104,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1163,24 +1169,41 @@
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.certificates.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.certificates_types.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\Interop.SECURITY_STATUS.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\Interop.SecPkgContext_ApplicationProtocol.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\SecPkgContext_ConnectionInfo.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CloseHandle.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\GlobalSSPI.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\Interop.SSPI.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\NegotiationInfoClass.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIAuthType.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIInterface.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPISecureChannelType.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIWrapper.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SafeDeleteContext.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_Bindings.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_NegotiationInfoW.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_Sizes.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_StreamSizes.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecurityPackageInfo.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecurityPackageInfoClass.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecuritySafeHandles.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\BidirectionalDictionary.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Windows.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityContextTokenHandle.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1253,8 +1276,6 @@
         <Compile Include="System.Net\WebRequestStream.cs" />
         <Compile Include="System.Net\WebResponseStream.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
-        <Compile Include="corefx\Unix\Interop.Read.cs" />
-        <Compile Include="corefx\Unix\Interop.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
@@ -1270,8 +1291,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -1316,6 +1339,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1391,8 +1415,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -1441,6 +1467,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1516,8 +1543,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -1562,6 +1591,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1667,11 +1697,13 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityContextTokenHandle.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
@@ -2137,8 +2169,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -2529,6 +2563,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -2631,8 +2666,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3038,6 +3075,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3143,8 +3181,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3535,6 +3575,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3625,8 +3666,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
@@ -3666,6 +3709,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3726,8 +3770,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3787,6 +3833,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3860,8 +3907,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3921,6 +3970,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4021,11 +4071,13 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityContextTokenHandle.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
@@ -4138,8 +4190,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -4189,6 +4243,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4276,8 +4331,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -4327,6 +4384,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4414,8 +4472,10 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -4465,6 +4525,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4824,6 +4885,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
+      <Aliases>MonoSecurity</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>

@@ -116,8 +116,7 @@ test-local: $(topdir)/class/lib/$(PROFILE)/tests/DummyAssembly.dll
 
 include ../../build/library.make
 
-TEST_HARNESS_EXCLUDES = -exclude=Interactive,NotWorking,CAS
-TEST_HARNESS_EXCLUDES_ONDOTNET = -exclude=Interactive,NotDotNet,CAS
+TEST_HARNESS_EXCLUDES += Interactive
 
 $(the_lib): $(RESOURCES)
 

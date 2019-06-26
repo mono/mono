@@ -123,6 +123,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract byte[] Export (X509ContentType contentType, SafePasswordHandle password);
 
+		public abstract X509CertificateImpl CopyWithPrivateKey (RSA privateKey);
+
+		public abstract X509Certificate CreateCertificate ();
+
 		public sealed override bool Equals (object obj)
 		{
 			var other = obj as X509CertificateImpl;

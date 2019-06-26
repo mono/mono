@@ -346,9 +346,13 @@ namespace WebAssembly {
 					res += "s";
 					break;
 				default:
-					if (t.IsValueType)
-						throw new Exception ("Can't handle VT arguments");
-					res += "o";
+					if (t == typeof(IntPtr)) { 
+ 						res += "i";
+					} else {
+ 						if (t.IsValueType)
+ 							throw new Exception("Can't handle VT arguments");
+						res += "o";
+					}
 					break;
 				}
 			}
@@ -454,6 +458,27 @@ namespace WebAssembly {
 			return o.ToString ();
 		}
 
+		static double GetDateValue (object dtv)
+		{
+			if (dtv == null)
+				throw new ArgumentNullException (nameof (dtv), "Value can not be null");
+			if (!(dtv is DateTime)) {
+				throw new InvalidCastException ($"Unable to cast object of type {dtv.GetType()} to type DateTime.");
+			}
+			var dt = (DateTime)dtv;
+			if (dt.Kind == DateTimeKind.Local)
+				dt = dt.ToUniversalTime ();
+			else if (dt.Kind == DateTimeKind.Unspecified)
+				dt = new DateTime (dt.Ticks, DateTimeKind.Utc);
+			return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+		}
+
+		static DateTime CreateDateTime (double ticks)
+		{
+			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
+			return unixTime.DateTime;
+		}
+
 		// This is simple right now and will include FlagsAttribute later.
 		public static Enum EnumFromExportContract (Type enumType, object value)
 		{
@@ -556,5 +581,23 @@ namespace WebAssembly {
 			return contractName;
 		}
 
+		//
+		// Can be called by the app to stop profiling
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void StopProfile () {
+		}
+
+		// Called by the AOT profiler to save profile data into Module.aot_profile_data
+		internal unsafe static void DumpAotProfileData (ref byte buf, int len, string s) {
+			var arr = new byte [len];
+			fixed (void *p = &buf) {
+				var span = new ReadOnlySpan<byte> (p, len);
+
+				// Send it to JS
+				var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
+			}
+		}
 	}
 }

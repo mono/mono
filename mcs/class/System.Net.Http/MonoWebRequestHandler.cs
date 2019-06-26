@@ -67,6 +67,7 @@ namespace System.Net.Http
 		bool unsafeAuthenticatedConnectionSharing;
 		bool sentRequest;
 		string connectionGroupName;
+		TimeSpan? timeout;
 		bool disposed;
 
 		internal MonoWebRequestHandler ()
@@ -368,6 +369,9 @@ namespace System.Net.Http
 
 			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
 
+			if (timeout != null)
+				wr.Timeout = (int)timeout.Value.TotalMilliseconds;
+
 			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
@@ -528,6 +532,11 @@ namespace System.Net.Http
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		void IMonoHttpClientHandler.SetWebRequestTimeout (TimeSpan timeout)
+		{
+			this.timeout = timeout;
 		}
 	}
 }
