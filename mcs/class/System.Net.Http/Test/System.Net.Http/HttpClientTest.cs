@@ -262,6 +262,7 @@ namespace MonoTests.System.Net.Http
 
 
 		[Test]
+		[Ignore]
 #if FEATURE_NO_BSD_SOCKETS
 		// Using HttpClientHandler, which indirectly requires BSD sockets.
 		[ExpectedException (typeof (PlatformNotSupportedException))]
