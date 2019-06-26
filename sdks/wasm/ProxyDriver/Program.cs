@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 namespace WsProxy
 {
 	public class ProxyOptions {
-		public string DevToolsUrl { get; set; } = "http://localhost:9222";
+		public Uri DevToolsUrl { get; set; } = new Uri ("http://localhost:9222");
 	}
 
 	public class TestHarnessOptions : ProxyOptions {
@@ -34,12 +34,11 @@ namespace WsProxy
 				.UseKestrel ()
 				.UseContentRoot (Directory.GetCurrentDirectory())
 				.UseStartup<Startup> ()
-				.UseDebugProxy ()
 				.ConfigureAppConfiguration ((hostingContext, config) =>
 				{
 					config.AddCommandLine(args);
-					//config.AddCommandLine(args, _switchMappings);
 				})
+				.UseDebugProxy ()
 				.Build ();
 
 			host.Run ();
