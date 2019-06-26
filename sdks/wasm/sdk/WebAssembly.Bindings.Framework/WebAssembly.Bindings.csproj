@@ -5,6 +5,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- get rid of warnings about assemblies not in lib -->
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PackageVersion>$(BindingsPackageVersion)</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\wasm\framework\WebAssembly.Bindings.dll" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />

@@ -5,6 +5,7 @@
     <RootNamespace>WebAssembly</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\..\..\mcs\class\Open.snk</AssemblyOriginatorKeyFile>
+    <Version>$(BindingsVersion)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
