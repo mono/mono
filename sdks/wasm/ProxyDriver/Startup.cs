@@ -21,12 +21,12 @@ namespace WsProxy {
 	internal class Startup {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-		public void ConfigureServices (IServiceCollection services)
-			=> services.AddRouting ()
+		public void ConfigureServices (IServiceCollection services) =>
+			services.AddRouting ()
 				.Configure<ProxyOptions> (Configuration);
 
-		public Startup (IConfiguration configuration)
-			=> Configuration = configuration;
+		public Startup (IConfiguration configuration) =>
+			Configuration = configuration;
 
 		public IConfiguration Configuration { get; }
 
@@ -41,29 +41,36 @@ namespace WsProxy {
 	}
 
 	static class DebugExtensions {
-		public static DevToolsTab DefaultTabMapper (DevToolsTab tab, HttpContext context, Uri debuggerHost)
+		public static Dictionary<string,string> MapValues (Dictionary<string,string> response, HttpContext context, Uri debuggerHost)
 		{
+			var filtered = new Dictionary<string, string> ();
 			var request = context.Request;
-			var frontendUrl = $"{debuggerHost.Scheme}://{debuggerHost.Authority}{tab.devtoolsFrontendUrl.Replace ($"ws={debuggerHost.Authority}", $"ws={request.Host}")}";
-			var debuggerPage = new Uri (tab.webSocketDebuggerUrl);
-			var proxyDebuggerUrl = $"{debuggerPage.Scheme}://{request.Host}{debuggerPage.PathAndQuery}";
-			
-			return new DevToolsTab {
-				description = tab.description,
-				devtoolsFrontendUrl = frontendUrl,
-				id = tab.id,
-				title = tab.title,
-				type = tab.type,
-				url = tab.url,
-				webSocketDebuggerUrl = proxyDebuggerUrl,
-				faviconUrl = tab.faviconUrl
-			};
+
+			foreach (var key in response.Keys) {
+				switch (key) {
+				case "devtoolsFrontendUrl":
+					var front = response [key];
+					filtered[key] = $"{debuggerHost.Scheme}://{debuggerHost.Authority}{front.Replace ($"ws={debuggerHost.Authority}", $"ws={request.Host}")}";
+					break;
+				case "webSocketDebuggerUrl":
+					var page = new Uri (response [key]);
+					filtered [key] = $"{page.Scheme}://{request.Host}{page.PathAndQuery}";
+					break;
+				default:
+					filtered [key] = response [key];
+					break;
+				}
+			}
+			return filtered;
 		}
 
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options)
-			=> UseDebugProxy (app, options, DefaultTabMapper);
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options) =>
+			UseDebugProxy (app, options, MapValues);
 		
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options, Func<DevToolsTab, HttpContext, Uri, DevToolsTab> rewriteFunc)
+		public static IApplicationBuilder UseDebugProxy (
+			this IApplicationBuilder app,
+			ProxyOptions options,
+			Func<Dictionary<string,string>, HttpContext, Uri, Dictionary<string,string>> mapFunc)
 		{
 			var devToolsHost = options.DevToolsUrl;
 			app.Use (async (context, next) => {
@@ -82,26 +89,16 @@ namespace WsProxy {
 						}
 						break;
 					case "/json/version":
-						context.Response.ContentType = "application/json";
-						await context.Response.WriteAsync (JsonConvert.SerializeObject (
-							new Dictionary<string, string> {
-								{ "Browser", "Chrome/71.0.3578.98" },
-								{ "Protocol-Version", "1.3" },
-								{ "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36" },
-								{ "V8-Version", "7.1.302.31" },
-								{ "WebKit-Version", "537.36 (@15234034d19b85dcd9a03b164ae89d04145d8368)" },
-							}));
-						break;
 					case "/json/new":
-						var tab = await ProxyGetJsonAsync <DevToolsTab> (endpoint);
-						var redirect = rewriteFunc?.Invoke (tab, context, devToolsHost);
+						var version = await ProxyGetJsonAsync<Dictionary<string,string>> (endpoint);
 						context.Response.ContentType = "application/json";
-						await context.Response.WriteAsync (JsonConvert.SerializeObject (redirect));
+						await context.Response.WriteAsync (
+							JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
 						break;
 					case "/json/list":
 					case "/json":
-						var tabs = await ProxyGetJsonAsync <DevToolsTab[]>(endpoint);
-						var alteredTabs = tabs.Select (t => rewriteFunc?.Invoke (t, context, devToolsHost)).ToArray();
+						var tabs = await ProxyGetJsonAsync <Dictionary<string, string>[]> (endpoint);
+						var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray();
 						context.Response.ContentType = "application/json";
 						await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
 						break;
@@ -129,17 +126,6 @@ namespace WsProxy {
 					});
 				});
 			return app;
-		}
-
-		public class DevToolsTab {
-			public string description { get; set; }
-			public string id { get; set; }
-			public string type { get; set; }
-			public string url { get; set; }
-			public string title { get; set; }
-			public string devtoolsFrontendUrl { get; set; }
-			public string webSocketDebuggerUrl { get; set; }
-			public string faviconUrl { get; set; }
 		}
 
 		private static async Task<T> ProxyGetJsonAsync<T> (string url)

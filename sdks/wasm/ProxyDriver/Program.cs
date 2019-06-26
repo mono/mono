@@ -1,16 +1,10 @@
 ﻿using System;
-﻿using System.Net.Http;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using Newtonsoft.Json.Linq;
+
 
 namespace WsProxy
 {
@@ -25,10 +19,9 @@ namespace WsProxy
 		public string NodeApp { get; set; }
 	}
 
-	public class Program
-	{
+	public class Program {
 		public static void Main(string[] args)
-        {
+		{
 			var host = new WebHostBuilder()
 				.UseSetting (nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
 				.UseKestrel ()
@@ -46,14 +39,15 @@ namespace WsProxy
 	}
 
 	public static class MonoProxyExtensions {
-		public static IWebHostBuilder UseDebugProxy (this IWebHostBuilder host)
-			=> host.UseUrls ("http://localhost:9300");
+		public static IWebHostBuilder UseDebugProxy (this IWebHostBuilder host) =>
+			host.UseUrls ("http://localhost:9300");
 	}
 
 	public class TestHarnessProxy {
 		static IWebHost host;
 
-		public static void Start (string chrome_path, string app_path, string page_path) {
+		public static void Start (string chrome_path, string app_path, string page_path)
+		{
 			lock (typeof (TestHarnessProxy)) {
 				if (host != null)
 					return;
