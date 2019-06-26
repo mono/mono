@@ -38,7 +38,9 @@ using MX = MonoSecurity::Mono.Security.X509;
 #else
 using Mono.Security;
 using Mono.Security.Cryptography;
+#if !MONOTOUCH_WATCH
 using Mono.Security.Authenticode;
+#endif
 using MX = Mono.Security.X509;
 #endif
 
@@ -99,10 +101,12 @@ namespace System.Security.Cryptography.X509Certificates
 				_cert = new MX.X509Certificate (rawData);
 				break;
 
+#if !MONOTOUCH_WATCH
 			case X509ContentType.Authenticode:
 				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (rawData);
 				_cert = ad.SigningCertificate;
 				break;
+#endif
 
 			default:
 				string msg = Locale.GetText ("Unable to decode certificate.");
