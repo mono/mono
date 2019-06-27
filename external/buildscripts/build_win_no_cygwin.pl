@@ -39,7 +39,7 @@ my $msBuildVersion = "14.0";
 my $buildDeps = "";
 my $stevedoreBuildDeps=1;
 
-if($ENV{YAMATO_PROJECT_ID} || ($ENV{USERNAME} == "bokken"))
+if($ENV{YAMATO_PROJECT_ID} || ($ENV{USERNAME} eq "bokken"))
 {
 	$msBuildVersion = "15.0";			
 }
