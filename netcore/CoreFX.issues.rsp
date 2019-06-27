@@ -365,6 +365,11 @@
 -nomethod System.Reflection.Emit.Tests.AssemblyTests.DefineDynamicAssembly_AssemblyName_AssemblyBuilderAccess
 -nomethod System.Reflection.Emit.Tests.AssemblyTests.DefineDynamicAssembly_AssemblyName_AssemblyBuilderAccess_CustomAttributeBuilder
 
+-nomethod System.Reflection.Emit.Tests.MethodBuilderSetSignature.SetSignature_AllParametersNull
+-nomethod System.Reflection.Emit.Tests.MethodBuilderSetReturnType.SetReturnType_NullReturnType_ReturnsVoid
+-nomethod System.Reflection.Emit.Tests.MethodBuilderGetGenericArguments.GetGenericArguments_NonGenericMethod_ReturnsEmptyArray
+-nomethod System.Reflection.Emit.Tests.MethodBuilderSetSignature.SetSignature_NullReturnType_CustomModifiersSetToWrongTypes
+
 ####################################################################
 ##  System.Reflection.Tests
 ####################################################################
@@ -610,6 +615,9 @@
 # CoreCLR creates the delegate, but fails to execute it with "System.InvalidOperationException: Instances of abstract classes cannot be created."
 -nomethod System.Text.Json.Serialization.Tests.ValueTests.ValueFail
 
+# The JSON value is not in a supported DateTime format
+-nonamespace System.Text.Json.Serialization.Tests
+
 ####################################################################
 ##  System.Threading.Tests
 ####################################################################
@@ -817,6 +825,7 @@
 -nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
 -nomethod System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
+-nomethod System.Tests.AppDomainTests.AssemblyResolveInvalidAssemblyName
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
@@ -835,6 +844,9 @@
 ####################################################################
 ##  System.Reflection.Emit.Lightweight.Tests
 ####################################################################
+
+-nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.String_Type_TypeArray_Type
+-nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.String_Type_TypeArray_Module
 
 -nomethod System.Reflection.Emit.Tests.DynamicMethodGetILGenerator1.GetILGenerator_Int_Module_CoreclrIgnoresSkipVisibility
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.Test_TwoDimTest
