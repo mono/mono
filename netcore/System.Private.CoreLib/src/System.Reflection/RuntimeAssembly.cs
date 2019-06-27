@@ -148,8 +148,8 @@ namespace System.Reflection
 				AddPublicNestedTypes (t, forwardedTypes, exceptions);
 
 			if (exceptions.Count > 0) {
-				forwardedTypes.AddRange (new Type[exceptions.Count]); // add one null Type for each exception
-				exceptions.InsertRange (0, new Exception[forwardedTypes.Count]); // align the Exceptions with the null Types
+				forwardedTypes.AddRange (new Type [exceptions.Count]); // add one null Type for each exception
+				exceptions.InsertRange (0, new Exception [forwardedTypes.Count]); // align the Exceptions with the null Types
 				throw new ReflectionTypeLoadException (forwardedTypes.ToArray (), exceptions.ToArray ());
 			}
 
