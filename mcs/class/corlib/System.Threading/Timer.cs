@@ -389,10 +389,7 @@ namespace System.Threading
 				long ticks = GetTimeMonotonic ();
 				var comparer = new TimerComparer();
 
-				if (needReSort) {
-					list.Sort(comparer);
-					needReSort = false;
-				}
+				MaybeReSort (comparer);
 
 				long min_next_run = Int64.MaxValue;
 
@@ -426,10 +423,7 @@ namespace System.Threading
 						break;
 				}
 
-				if (needReSort) {
-					list.Sort(comparer);
-					needReSort = false;
-				}
+				MaybeReSort (comparer);
 
 				//PrintList ();
 				ms_wait = -1;
@@ -445,6 +439,25 @@ namespace System.Threading
 					}
 				}
 				return ms_wait;
+			}
+
+			private void MaybeReSort (TimerComparer comparer) {
+				if (needReSort) {
+					try {
+						list.Sort(comparer);
+					} catch (InvalidOperationException) {
+						// Sort catches all exceptions thrown by comparer including
+						// ThreadAbortException and throws an InvalidOperationException,
+						// instead.  That can be a problem if Mono is shutting down because we
+						// will get a gratuitous InvalidOperationException when the runtime
+						// tries to abort the Timer-Scheduler thread.
+						//
+						// Since we know that TimerComparer doesn't throw, if we get an
+						// InvalidOperationException here, it's a TAE in disguise: catch it and
+						// ignore it and let the TAE continue.
+					}
+					needReSort = false;
+				}
 			}
 
 			/*
