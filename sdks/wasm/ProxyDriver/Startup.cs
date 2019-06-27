@@ -73,42 +73,49 @@ namespace WsProxy {
 			Func<Dictionary<string,string>, HttpContext, Uri, Dictionary<string,string>> mapFunc)
 		{
 			var devToolsHost = options.DevToolsUrl;
-			app.Use (async (context, next) => {
-				var request = context.Request;
-
-				var requestPath = request.Path;
-				var endpoint = $"{devToolsHost.Scheme}://{devToolsHost.Authority}{request.Path}{request.QueryString}";
-				
-				switch (requestPath.Value.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
-					case "/":
-						using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds (5) }) {
-							var response = await httpClient.GetStringAsync ($"{devToolsHost}");
-							context.Response.ContentType = "text/html";
-							context.Response.ContentLength = response.Length;
-							await context.Response.WriteAsync (response);
-						}
-						break;
-					case "/json/version":
-					case "/json/new":
-						var version = await ProxyGetJsonAsync<Dictionary<string,string>> (endpoint);
-						context.Response.ContentType = "application/json";
-						await context.Response.WriteAsync (
-							JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
-						break;
-					case "/json/list":
-					case "/json":
-						var tabs = await ProxyGetJsonAsync <Dictionary<string, string>[]> (endpoint);
-						var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray();
-						context.Response.ContentType = "application/json";
-						await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
-						break;
-					default:
-						await next();
-						break;
+			app.UseRouter (router => {
+				string GetEndpoint (HttpContext context)
+				{
+					var request = context.Request;
+					var requestPath = request.Path;
+					return $"{devToolsHost.Scheme}://{devToolsHost.Authority}{request.Path}{request.QueryString}";
 				}
-			})
-			.UseRouter (router => {
-					router.MapGet ("devtools/page/{pageId}", async context => {
+
+				async Task Copy (HttpContext context) {
+					using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds (5) }) {
+						var response = await httpClient.GetAsync (GetEndpoint (context));
+						context.Response.ContentType = response.Content.Headers.ContentType.ToString ();
+						if ((response.Content.Headers.ContentLength ?? 0) > 0)
+							context.Response.ContentLength = response.Content.Headers.ContentLength;
+						var bytes = await response.Content.ReadAsByteArrayAsync ();
+						await context.Response.Body.WriteAsync (bytes);
+
+					}
+				}
+
+				async Task RewriteSingle (HttpContext context)
+				{
+					var version = await ProxyGetJsonAsync<Dictionary<string, string>> (GetEndpoint (context));
+					context.Response.ContentType = "application/json";
+					await context.Response.WriteAsync (
+						JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
+				}
+
+				async Task RewriteArray (HttpContext context)
+				{
+					var tabs = await ProxyGetJsonAsync<Dictionary<string, string> []> (GetEndpoint (context));
+					var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray ();
+					context.Response.ContentType = "application/json";
+					await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
+				}
+
+				router.MapGet ("/", Copy);
+				router.MapGet ("/favicon.ico", Copy);
+				router.MapGet ("json", RewriteArray);
+				router.MapGet ("json/list", RewriteArray);
+				router.MapGet ("json/version", RewriteSingle);
+				router.MapGet ("json/new", RewriteSingle);
+				router.MapGet ("devtools/page/{pageId}", async context => {
 						if (!context.WebSockets.IsWebSocketRequest) {
 							context.Response.StatusCode = 400;
 							return;
