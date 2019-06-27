@@ -6042,8 +6042,11 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 	
 	MonoArrayHandle types = mono_array_new_handle (mono_domain_get (), mono_defaults.runtimetype_class, count, error);
 	return_val_if_nok (error, NULL_HANDLE_ARRAY);
+	MonoArrayHandle exceptions = mono_array_new_handle (mono_domain_get (), mono_defaults.exception_class, count, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	int aindex = 0;
+	int exception_count = 0;
 	for (int i = 0; i < table->rows; ++i) {
 		mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
 		if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
@@ -6058,22 +6061,42 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 
 		mono_assembly_load_reference (image, assembly_idx - 1);
 		g_assert (image->references [assembly_idx - 1]);
-		if (image->references [assembly_idx - 1] == (gpointer)-1)
+		if (image->references [assembly_idx - 1] == (gpointer) - 1) {
+			MonoExceptionHandle ex = MONO_HANDLE_NEW (MonoException, mono_get_exception_bad_image_format ("Invalid image"));
+			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
+			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
+			exception_count++; aindex++;
 			continue;
+		}
 		MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, error);
-		if (!is_ok (error))
+		if (!is_ok (error)) {
+			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
+			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
+			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
+			exception_count++; aindex++;
 			continue;
+		}
 		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), error);
-		if (!is_ok (error))
+		if (!is_ok (error)) {
+			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
+			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
+			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
+			exception_count++; aindex++;
 			continue;
+		}
 		MONO_HANDLE_ARRAY_SETREF (types, aindex, rt);
-		aindex ++;
+		MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, NULL_HANDLE);
+		aindex++;
 	}
-	if (aindex < count) {
-		// FIXME:
-		mono_error_set_type_load_name (error, g_strdup (""), g_strdup (""), "");
-		return MONO_HANDLE_NEW (MonoArray, NULL);
+
+	if (exception_count > 0) {
+		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+		MONO_HANDLE_ASSIGN (exc, mono_get_exception_reflection_type_load_checked (types, exceptions, error));
+		return_val_if_nok (error, NULL_HANDLE_ARRAY);
+		mono_error_set_exception_handle (error, exc);
+		return NULL_HANDLE_ARRAY;
 	}
+
 	return types;
 }
 #endif
