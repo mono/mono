@@ -7043,8 +7043,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (mono_security_core_clr_enabled ())
 				ensure_method_is_allowed_to_call_method (cfg, method, cil_method);
 
-			if (!virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
-				emit_bad_image_failure (cfg, method, cil_method);
+			if (!virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT)) {
+				if (!mono_class_is_interface (method->klass))
+					emit_bad_image_failure (cfg, method, cil_method);
+				else
+					virtual_ = TRUE;
+			}
 
 			{
 				/*
