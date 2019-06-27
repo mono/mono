@@ -1,6 +1,6 @@
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
   <Target Name="_CreatePackagesDir" BeforeTargets="PreBuildEvent">
-    <MakeDir Directories="packages" Condition="!Exists('packages')"/>
+    <MakeDir Directories="$(MSBuildThisFileDirectory)packages" Condition="!Exists('$(MSBuildThisFileDirectory)packages')"/>
   </Target>
 </Project>
