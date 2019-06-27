@@ -29,10 +29,8 @@ mono_win32_handle_tls_callback_type (MonoWin32TLSCallbackType callback_type)
 	return TRUE;
 }
 
-MONO_EXTERN_C
 VOID NTAPI mono_win32_tls_callback (PVOID module_handle, DWORD reason, PVOID reserved);
 
-MONO_EXTERN_C
 VOID NTAPI mono_win32_tls_callback (PVOID module_handle, DWORD reason, PVOID reserved)
 {
 	mono_win32_runtime_tls_callback ((HMODULE)module_handle, reason, reserved, MONO_WIN32_TLS_CALLBACK_TYPE_LIB);
@@ -44,12 +42,12 @@ VOID NTAPI mono_win32_tls_callback (PVOID module_handle, DWORD reason, PVOID res
 /* by OS loader (part of TLS Directory PE header), regardless if runtime is used */
 /* as a static or dynamic library. */
 #if (_MSC_VER >= 1400)
-#pragma const_seg(".CRT$XLX")
-MONO_EXTERN_C const PIMAGE_TLS_CALLBACK __mono_win32_tls_callback = mono_win32_tls_callback;
-#pragma const_seg()
+#pragma const_seg (".CRT$XLX")
+extern const PIMAGE_TLS_CALLBACK __mono_win32_tls_callback = mono_win32_tls_callback;
+#pragma const_seg ()
 #elif defined(__MINGW64__) || (__MINGW32__)
-MONO_EXTERN_C const PIMAGE_TLS_CALLBACK __mono_win32_tls_callback __attribute__ ((section (".CRT$XLX"))) = mono_win32_tls_callback;
+extern const PIMAGE_TLS_CALLBACK __mono_win32_tls_callback __attribute__ ((section (".CRT$XLX"))) = mono_win32_tls_callback;
 #else
-#pragma message("TLS callback support not included in .CRT$XLX segment. Static linked runtime won't add callback into PE header.")
+#pragma message ("TLS callback support not included in .CRT$XLX segment. Static linked runtime won't add callback into PE header.")
 #endif
 #endif
