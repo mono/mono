@@ -1,6 +1,10 @@
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
-  <Target Name="_CreatePackagesDir" BeforeTargets="PreBuildEvent">
-    <MakeDir Directories="$(MSBuildThisFileDirectory)packages" Condition="!Exists('$(MSBuildThisFileDirectory)packages')"/>
+  <Target Name="_CreatePackagesDir" BeforeTargets="_GenerateRestoreProjectSpec" >
+    <PropertyGroup>
+        <_PackagesDirectory>$(MSBuildThisFileDirectory)packages</_PackagesDirectory>
+    </PropertyGroup>
+    <Exec Condition="!Exists('$(_PackagesDirectory)')" Command="echo Restoring $(_PackagesDirectory)" />
+    <MakeDir Directories="$(_PackagesDirectory)" Condition="!Exists('$(_PackagesDirectory)')"/>
   </Target>
 </Project>
