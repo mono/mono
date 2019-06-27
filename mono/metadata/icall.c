@@ -6023,7 +6023,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes (MonoReflectionAsse
 }
 
 MonoArrayHandle
-ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
+ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
 {
 	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
 	MonoImage *image = assembly->image;
@@ -6039,8 +6039,10 @@ ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAss
 		if (mono_metadata_decode_row_col (table, i, MONO_EXP_TYPE_FLAGS) & TYPE_ATTRIBUTE_FORWARDER)
 			count ++;
 	}
-	MonoArrayHandle res = mono_array_new_handle (mono_domain_get (), mono_defaults.runtimetype_class, count, error);
+	
+	MonoArrayHandle types = mono_array_new_handle (mono_domain_get (), mono_defaults.runtimetype_class, count, error);
 	return_val_if_nok (error, NULL_HANDLE_ARRAY);
+
 	int aindex = 0;
 	for (int i = 0; i < table->rows; ++i) {
 		mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
@@ -6064,7 +6066,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAss
 		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), error);
 		if (!is_ok (error))
 			continue;
-		MONO_HANDLE_ARRAY_SETREF (res, aindex, rt);
+		MONO_HANDLE_ARRAY_SETREF (types, aindex, rt);
 		aindex ++;
 	}
 	if (aindex < count) {
@@ -6072,7 +6074,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAss
 		mono_error_set_type_load_name (error, g_strdup (""), g_strdup (""), "");
 		return MONO_HANDLE_NEW (MonoArray, NULL);
 	}
-	return res;
+	return types;
 }
 #endif
 
