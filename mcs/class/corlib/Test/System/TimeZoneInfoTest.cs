@@ -72,7 +72,7 @@ namespace MonoTests.System
 					return "W. Europe Standard Time";
 				case "Canada/Eastern":
 					return "Eastern Standard Time";
-				case "Iran":
+				case "Asia/Tehran":
 					return "Iran Standard Time";
 				case "Europe/Guernsey":
 					return "GMT Standard Time";
@@ -464,12 +464,13 @@ namespace MonoTests.System
 				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
 
+#if !WINAOT // https://github.com/mono/mono/issues/15439
 				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Vatican"));
 				date = new DateTime (2018, 10, 28, 2, 15, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (1, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Iran"));
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Asia/Tehran"));
 				date = new DateTime (2018, 9, 21, 23, 15, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (3, 30, 0), tzi.GetUtcOffset (date));
@@ -479,6 +480,7 @@ namespace MonoTests.System
 				date = new DateTime (2019, 10, 27, 1, 15, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (0, 0, 0), tzi.GetUtcOffset (date));
+#endif
 			}
 		}
 
