@@ -80,6 +80,9 @@ get_global_loaded_images (void)
 	return &global_loaded_images;
 }
 
+static void
+loaded_images_remove_image (MonoImage *image);
+
 static GHashTable *
 get_loaded_images_hash (MonoLoadedImages *li, gboolean refonly)
 {
@@ -2290,8 +2293,6 @@ mono_image_close_except_pools_all (MonoImage**images, int image_count)
 gboolean
 mono_image_close_except_pools (MonoImage *image)
 {
-	MonoImage *image2;
-	GHashTable *loaded_images, *loaded_images_by_name;
 	int i;
 
 	g_return_val_if_fail (image != NULL, FALSE);
@@ -2307,15 +2308,7 @@ mono_image_close_except_pools (MonoImage *image)
 		return FALSE;
 	}
 
-	loaded_images         = get_loaded_images_hash (get_global_loaded_images (), image->ref_only);
-	loaded_images_by_name = get_loaded_images_by_name_hash (get_global_loaded_images (), image->ref_only);
-	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, image->name);
-	if (image == image2) {
-		/* This is not true if we are called from mono_image_open () */
-		g_hash_table_remove (loaded_images, image->name);
-	}
-	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == image))
-		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);	
+	loaded_images_remove_image (image);
 
 	mono_images_unlock ();
 
@@ -3300,3 +3293,38 @@ mono_loaded_images_free (MonoLoadedImages *li)
 	g_free (li);
 }
 
+static MonoLoadedImages *
+loaded_images_get_owner (MonoImage *image)
+{
+#ifndef ENABLE_NETCORE
+	return get_global_loaded_images ();
+#else
+	/* image->alc could be NULL if we're closing an image that wasn't
+	 * registered yet (for example if two threads raced to open it and one
+	 * of them lost) */
+	return (image->alc && image->alc->loaded_images) ? image->alc->loaded_images : get_global_loaded_images ();
+#endif /* ENABLE_NETCORE */
+}
+
+/* LOCKING: assumes the images lock is locked */
+static void
+loaded_images_remove_image (MonoImage *image)
+{
+	MonoLoadedImages *li = loaded_images_get_owner (image);
+	if (!li) {
+		/* we weren't registered; maybe lost to another image */
+		return;
+	}
+	GHashTable *loaded_images, *loaded_images_by_name;
+	MonoImage *image2;
+
+	loaded_images         = get_loaded_images_hash (li, image->ref_only);
+	loaded_images_by_name = get_loaded_images_by_name_hash (li, image->ref_only);
+	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, image->name);
+	if (image == image2) {
+		/* This is not true if we are called from mono_image_open () */
+		g_hash_table_remove (loaded_images, image->name);
+	}
+	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == image))
+		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
+}
