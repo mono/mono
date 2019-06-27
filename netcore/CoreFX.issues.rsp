@@ -839,7 +839,6 @@
 -nomethod System.Reflection.Emit.Tests.DynamicMethodGetILGenerator1.GetILGenerator_Int_Module_CoreclrIgnoresSkipVisibility
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.Test_TwoDimTest
 -nomethod System.Reflection.Emit.Tests.DynamicMethodToString.ToStringTest
--nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.ByRefReturnType_DoesNotThrow
 -nomethod System.Reflection.Emit.Tests.DynamicMethodGetILGenerator1.GetILGenerator_Module_CoreclrIgnoresSkipVisibility
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.Test_GenericMethod
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.GetTokenFor_IntGenerics_Success
