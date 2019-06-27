@@ -1752,10 +1752,10 @@ mono_image_loaded_by_guid (const char *guid)
 }
 
 static MonoImage *
-register_image (MonoImage *image, gboolean *problematic)
+register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 {
 	MonoImage *image2;
-	GHashTable *loaded_images = get_loaded_images_hash (get_global_loaded_images (), image->ref_only);
+	GHashTable *loaded_images = get_loaded_images_hash (li, image->ref_only);
 
 	mono_images_lock ();
 	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, image->name);
@@ -1768,7 +1768,7 @@ register_image (MonoImage *image, gboolean *problematic)
 		return image2;
 	}
 
-	GHashTable *loaded_images_by_name = get_loaded_images_by_name_hash (get_global_loaded_images (), image->ref_only);
+	GHashTable *loaded_images_by_name = get_loaded_images_by_name_hash (li, image->ref_only);
 	g_hash_table_insert (loaded_images, image->name, image);
 	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == NULL))
 		g_hash_table_insert (loaded_images_by_name, (char *) image->assembly_name, image);
@@ -1820,7 +1820,7 @@ mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_
 	if (image == NULL)
 		return NULL;
 
-	return register_image (image, NULL);
+	return register_image (get_global_loaded_images (), image, NULL);
 }
 
 /**
@@ -1909,7 +1909,7 @@ mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean
 	if (image == NULL)
 		return NULL;
 
-	return register_image (image, NULL);
+	return register_image (get_global_loaded_images (), image, NULL);
 }
 #endif
 
@@ -2059,7 +2059,7 @@ mono_image_open_a_lot_parameterized (const char *fname, MonoImageOpenStatus *sta
 	if (image == NULL)
 		return NULL;
 
-	return register_image (image, problematic);
+	return register_image (get_global_loaded_images (), image, problematic);
 }
 
 MonoImage *
