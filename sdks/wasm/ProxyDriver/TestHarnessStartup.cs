@@ -152,8 +152,14 @@ namespace WsProxy {
 						var client = new HttpClient ();
 						var res = client.GetStringAsync ("http://localhost:9333/json/list").Result;
 						Console.WriteLine ("res is {0}", res);
+						if (res == null)
+							return null;
+
 						var obj = JArray.Parse (res);
-						var wsURl = obj? [0]? ["webSocketDebuggerUrl"]?.Value<string> ();
+						if (obj == null || obj.Count < 1)
+							return null;
+
+						var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
 						Console.WriteLine (">>> {0}", wsURl);
 
 						return wsURl;
