@@ -175,11 +175,6 @@ namespace System.Reflection
 			}
 		}
 
-		private static bool IsLoaderException (Exception e)
-		{
-			return e is FileLoadException || e is FileNotFoundException || e is TypeLoadException || e is IOException || e is UnauthorizedAccessException;
-		}
-
 		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName)
 		{
 			if (resourceName == null)
