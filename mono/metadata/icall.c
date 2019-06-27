@@ -6061,7 +6061,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 
 		mono_assembly_load_reference (image, assembly_idx - 1);
 		g_assert (image->references [assembly_idx - 1]);
-		if (image->references [assembly_idx - 1] == (gpointer) - 1) {
+		if (image->references [assembly_idx - 1] == REFERENCE_MISSING) {
 			MonoExceptionHandle ex = MONO_HANDLE_NEW (MonoException, mono_get_exception_bad_image_format ("Invalid image"));
 			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
 			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
