@@ -138,7 +138,7 @@ namespace System.Net.Sockets
 			Complete ();
 		}
 
-		string completed;
+		int completed;
 
 		public void Complete ()
 		{
@@ -147,9 +147,9 @@ namespace System.Net.Sockets
 
 			IsCompleted = true;
 
-			var old = Interlocked.CompareExchange(ref completed, Environment.StackTrace, null);
-			if (old != null)
-				throw new InvalidTimeZoneException ($"I LIVE ON TITAN!\n{old}\n\n");
+			var old = Interlocked.CompareExchange(ref completed, 1, 0);
+			if (old != 0)
+				throw new InvalidTimeZoneException ($"I LIVE ON TITAN!");
 
 			/* It is possible that this.socket is modified by this.Init which has been called by the callback. This
 			 * would lead to inconsistency, as we would for example not release the correct socket.ReadSem or
