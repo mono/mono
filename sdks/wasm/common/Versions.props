@@ -63,36 +63,6 @@
     <SDKPackageVersionPrefix>$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$(SDKPackagePatchVersion)</SDKPackageVersionPrefix>
     <SDKPackageVersion>$(SDKPackageVersionPrefix)-$(SDKPackagePreReleaseVersionLabel)</SDKPackageVersion>
     <PreviousSDKPackageReleaseVersion Condition=" '$(SDKPackagePatchVersion)' != '0' ">$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$([MSBuild]::Subtract($(SDKPackagePatchVersion), 1))</PreviousSDKPackageReleaseVersion>
-    <BindingsPackageMajorVersion>0</BindingsPackageMajorVersion>
-    <BindingsPackageMinorVersion>1</BindingsPackageMinorVersion>
-    <BindingsPackagePatchVersion>0</BindingsPackagePatchVersion>
-    <BindingsPackagePreReleasePreviewNumber>1</BindingsPackagePreReleasePreviewNumber>
-    <BindingsPackagePreReleaseVersionLabel>preview$(BindingsPackagePreReleasePreviewNumber)</BindingsPackagePreReleaseVersionLabel>
-    <BindingsPackagePreReleaseBrandingLabel>Preview $(BindingsPackagePreReleasePreviewNumber)</BindingsPackagePreReleaseBrandingLabel>
-    <BindingsPackageMajorMinorVersion>$(BindingsPackageMajorVersion).$(BindingsPackageMinorVersion)</BindingsPackageMajorMinorVersion>
-    <BindingsPackageVersionPrefix>$(BindingsPackageMajorVersion).$(BindingsPackageMinorVersion).$(BindingsPackagePatchVersion)</BindingsPackageVersionPrefix>
-    <BindingsPackageVersion>$(BindingsPackageVersionPrefix)-$(BindingsPackagePreReleaseVersionLabel)</BindingsPackageVersion>
-    <PreviousBindingsPackageReleaseVersion Condition=" '$(BindingsPackagePatchVersion)' != '0' ">$(BindingsPackageMajorVersion).$(BindingsPackageMinorVersion).$([MSBuild]::Subtract($(BindingsPackagePatchVersion), 1))</PreviousBindingsPackageReleaseVersion>
-    <HttpHandlerPackageMajorVersion>0</HttpHandlerPackageMajorVersion>
-    <HttpHandlerPackageMinorVersion>1</HttpHandlerPackageMinorVersion>
-    <HttpHandlerPackagePatchVersion>0</HttpHandlerPackagePatchVersion>
-    <HttpHandlerPackagePreReleasePreviewNumber>1</HttpHandlerPackagePreReleasePreviewNumber>
-    <HttpHandlerPackagePreReleaseVersionLabel>preview$(HttpHandlerPackagePreReleasePreviewNumber)</HttpHandlerPackagePreReleaseVersionLabel>
-    <HttpHandlerPackagePreReleaseBrandingLabel>Preview $(HttpHandlerPackagePreReleasePreviewNumber)</HttpHandlerPackagePreReleaseBrandingLabel>
-    <HttpHandlerPackageMajorMinorVersion>$(HttpHandlerPackageMajorVersion).$(HttpHandlerPackageMinorVersion)</HttpHandlerPackageMajorMinorVersion>
-    <HttpHandlerPackageVersionPrefix>$(HttpHandlerPackageMajorVersion).$(HttpHandlerPackageMinorVersion).$(HttpHandlerPackagePatchVersion)</HttpHandlerPackageVersionPrefix>
-    <HttpHandlerPackageVersion>$(HttpHandlerPackageVersionPrefix)-$(HttpHandlerPackagePreReleaseVersionLabel)</HttpHandlerPackageVersion>
-    <PreviousHttpHandlerPackageReleaseVersion Condition=" '$(HttpHandlerPackagePatchVersion)' != '0' ">$(HttpHandlerPackageMajorVersion).$(HttpHandlerPackageMinorVersion).$([MSBuild]::Subtract($(HttpHandlerPackagePatchVersion), 1))</PreviousHttpHandlerPackageReleaseVersion>
-    <ClientWebSocketPackageMajorVersion>0</ClientWebSocketPackageMajorVersion>
-    <ClientWebSocketPackageMinorVersion>1</ClientWebSocketPackageMinorVersion>
-    <ClientWebSocketPackagePatchVersion>0</ClientWebSocketPackagePatchVersion>
-    <ClientWebSocketPackagePreReleasePreviewNumber>1</ClientWebSocketPackagePreReleasePreviewNumber>
-    <ClientWebSocketPackagePreReleaseVersionLabel>preview$(ClientWebSocketPackagePreReleasePreviewNumber)</ClientWebSocketPackagePreReleaseVersionLabel>
-    <ClientWebSocketPackagePreReleaseBrandingLabel>Preview $(ClientWebSocketPackagePreReleasePreviewNumber)</ClientWebSocketPackagePreReleaseBrandingLabel>
-    <ClientWebSocketPackageMajorMinorVersion>$(ClientWebSocketPackageMajorVersion).$(ClientWebSocketPackageMinorVersion)</ClientWebSocketPackageMajorMinorVersion>
-    <ClientWebSocketPackageVersionPrefix>$(ClientWebSocketPackageMajorVersion).$(ClientWebSocketPackageMinorVersion).$(ClientWebSocketPackagePatchVersion)</ClientWebSocketPackageVersionPrefix>
-    <ClientWebSocketPackageVersion>$(ClientWebSocketPackageVersionPrefix)-$(ClientWebSocketPackagePreReleaseVersionLabel)</ClientWebSocketPackageVersion>
-    <PreviousClientWebSocketPackageReleaseVersion Condition=" '$(ClientWebSocketPackagePatchVersion)' != '0' ">$(ClientWebSocketPackageMajorVersion).$(ClientWebSocketPackageMinorVersion).$([MSBuild]::Subtract($(ClientWebSocketPackagePatchVersion), 1))</PreviousClientWebSocketPackageReleaseVersion>
   </PropertyGroup>
 
 </Project>
