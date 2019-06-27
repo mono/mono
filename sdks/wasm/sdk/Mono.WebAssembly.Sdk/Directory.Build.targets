@@ -9,26 +9,18 @@
 -->
 <Project>
   <PropertyGroup>
+    <_MonoWasmBuildPackageVersion>$(SDKPackageVersion)</_MonoWasmBuildPackageVersion>
+    <_MonoWasmFrameworkPackageVersion>$(SDKPackageVersion)</_MonoWasmFrameworkPackageVersion>
+    <_MonoWasmRuntimePackageVersion>$(SDKPackageVersion)</_MonoWasmRuntimePackageVersion>
+    <_MonoWasmBindingsPackageVersion>$(SDKPackageVersion)</_MonoWasmBindingsPackageVersion>
+    <_MonoWasmHttpHandlerPackageVersion>$(SDKPackageVersion)</_MonoWasmHttpHandlerPackageVersion>
+    <_MonoWasmClientWebSocketPackageVersion>$(SDKPackageVersion)1</_MonoWasmClientWebSocketPackageVersion>
+  </PropertyGroup>
+</Project>
       ]]>
       </_SDKFixedContent>      
-      <_SDKFixedContentEnd>
-      <![CDATA[
-<!--
-  End automatic generation.
--->
-  </PropertyGroup>
-</Project>  
-      ]]>
-      </_SDKFixedContentEnd>
     </PropertyGroup>
 
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Overwrite="true" Lines="$(_SDKFixedContent)" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmBuildPackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmBuildPackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmFrameworkPackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmFrameworkPackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmRuntimePackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmRuntimePackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmBindingsPackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmBindingsPackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmHttpHandlerPackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmHttpHandlerPackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="&lt;_MonoWasmClientWebSocketPackageVersion&gt;$(SDKPackageVersion)&lt;/_MonoWasmClientWebSocketPackageVersion&gt;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Lines="$(_SDKFixedContentEnd)" Encoding="Unicode" />
+    <WriteLinesToFile File="$(_SDKOutputPath)\Versions.props" Overwrite="true" Lines="$(_SDKFixedContent)" />
   </Target>
 </Project>
