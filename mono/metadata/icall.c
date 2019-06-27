@@ -6048,6 +6048,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 	int aindex = 0;
 	int exception_count = 0;
 	for (int i = 0; i < table->rows; ++i) {
+		ERROR_DECL (local_error);
 		mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
 		if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
 			continue;
@@ -6068,19 +6069,21 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 			exception_count++; aindex++;
 			continue;
 		}
-		MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, error);
-		if (!is_ok (error)) {
-			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
+		MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, local_error);
+		if (!is_ok (local_error)) {
+			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (local_error);
 			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
 			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
+			mono_error_cleanup (local_error);
 			exception_count++; aindex++;
 			continue;
 		}
-		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), error);
-		if (!is_ok (error)) {
-			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
+		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), local_error);
+		if (!is_ok (local_error)) {
+			MonoExceptionHandle ex = mono_error_convert_to_exception_handle (local_error);
 			MONO_HANDLE_ARRAY_SETREF (types, aindex, NULL_HANDLE);
 			MONO_HANDLE_ARRAY_SETREF (exceptions, aindex, ex);
+			mono_error_cleanup (local_error);
 			exception_count++; aindex++;
 			continue;
 		}
