@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WsProxy
 {
@@ -46,23 +47,22 @@ namespace WsProxy
 	public class TestHarnessProxy {
 		static IWebHost host;
 
-		public static void Start (string chrome_path, string app_path, string page_path)
+		public static void Start (string chromePath, string appPath, string pagePath)
 		{
 			lock (typeof (TestHarnessProxy)) {
 				if (host != null)
 					return;
 
-				//FIXME wtf ConfigureAppConfiguration
-				string[] args = new [] {
-					$"/ChromePath={chrome_path}",
-					$"/AppPath={app_path}",
-					$"/PagePath={page_path}",
-					$"/DevToolsUrl=http://localhost:9333"
-				};
-
 				var h = new WebHostBuilder()
 					.UseSetting(nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
-					.ConfigureAppConfiguration (config => config.AddCommandLine (args))
+					.ConfigureServices (services => {
+						services.Configure<TestHarnessOptions> (options => {
+							options.ChromePath = chromePath;
+							options.AppPath = appPath;
+							options.PagePath = pagePath;
+							options.DevToolsUrl = new Uri ("http://localhost:9333");
+						});
+					})
 					.UseKestrel ()
 					.UseStartup<TestHarnessStartup> ()
 					.UseDebugProxy ()
