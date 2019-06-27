@@ -451,6 +451,13 @@ struct _MonoImage {
 	 */
 	MonoAssembly *assembly;
 
+#ifdef ENABLE_NETCORE
+	/*
+	 * The AssemblyLoadContext that this image was loaded into.
+	 */
+	MonoAssemblyLoadContext *alc;
+#endif
+
 	/*
 	 * Indexed by method tokens and typedef tokens.
 	 */
