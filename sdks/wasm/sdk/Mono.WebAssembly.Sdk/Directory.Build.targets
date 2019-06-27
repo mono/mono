@@ -1,5 +1,5 @@
 <Project>
-  <Target Name="WriteBuildProperties" BeforeTargets="PreBuildEvent">
+  <Target Name="_WriteBuildProperties" BeforeTargets="PreBuildEvent">
     <PropertyGroup>
       <_SDKOutputPath>$(MSBuildThisFileDirectory)\sdk\</_SDKOutputPath>
       <_SDKFixedContent>
