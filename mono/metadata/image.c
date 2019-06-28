@@ -1898,7 +1898,7 @@ mono_image_storage_open_from_module_handle (HMODULE module_handle, const char *f
 
 /* fname is not duplicated. */
 MonoImage*
-mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean has_entry_point, MonoImageOpenStatus* status)
+mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module_handle, char* fname, gboolean has_entry_point, MonoImageOpenStatus* status)
 {
 	MonoImage* image;
 	MonoCLIImageInfo* iinfo;
@@ -1916,7 +1916,7 @@ mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean
 	if (image == NULL)
 		return NULL;
 
-	return register_image (get_global_loaded_images (), image, NULL);
+	return register_image (mono_alc_get_loaded_images (alc), image, NULL);
 }
 #endif
 
