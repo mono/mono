@@ -334,6 +334,7 @@ class Driver {
 		public bool ILStrip;
 		public bool LinkerVerbose;
 		public bool EnableZLib;
+		public bool EnableThreads;
 	}
 
 	int Run (string[] args) {
@@ -358,6 +359,7 @@ class Driver {
 		bool link_icalls = false;
 		bool gen_pinvoke = false;
 		bool enable_zlib = false;
+		bool enable_threads = false;
 		var il_strip = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
@@ -414,6 +416,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
 		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
+		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -445,6 +448,7 @@ class Driver {
 		linker_verbose = opts.LinkerVerbose;
 		gen_pinvoke = pinvoke_libs != "";
 		enable_zlib = opts.EnableZLib;
+		enable_threads = opts.EnableThreads;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -609,17 +613,23 @@ class Driver {
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
-		string runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
+		string runtime_dir;
+		if (enable_threads)
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "threads-release" : "threads-debug");
+		else
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
-			File.Delete (Path.Combine (out_prefix, "mono.js"));
-			File.Delete (Path.Combine (out_prefix, "mono.wasm"));
-
-			File.Copy (
-					   Path.Combine (runtime_dir, "mono.js"),
-					   Path.Combine (out_prefix, "mono.js"));
-			File.Copy (
-					   Path.Combine (runtime_dir, "mono.wasm"),
-					   Path.Combine (out_prefix, "mono.wasm"));
+			var interp_files = new List<string> { "mono.js", "mono.wasm" };
+			if (enable_threads) {
+                interp_files.Add ("mono.worker.js");
+				interp_files.Add ("mono.js.mem");
+            }
+			foreach (var fname in interp_files) {
+				File.Delete (Path.Combine (out_prefix, fname));
+				File.Copy (
+						   Path.Combine (runtime_dir, fname),
+						   Path.Combine (out_prefix, fname));
+			}
 
 			foreach(var asset in assets) {
 				CopyFile (asset, 
@@ -706,7 +716,7 @@ class Driver {
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_set_env.sh && emcc");
 		ninja.WriteLine ("wasm_strip = $emscripten_sdkdir/upstream/bin/wasm-strip");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\', \'memset\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\', \'memset\']\"");
 		ninja.WriteLine ($"aot_base_args = llvmonly,asmonly,no-opt,static,direct-icalls,deterministic,{aot_args}");
 
 		// Rules
@@ -786,6 +796,10 @@ class Driver {
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
+			if (enable_threads) {
+				ninja.WriteLine ("build $appdir/mono.worker.js: cpifdiff $wasm_runtime_dir/mono.worker.js");
+				ninja.WriteLine ("build $appdir/mono.js.mem: cpifdiff $wasm_runtime_dir/mono.js.mem");
+			}
 		}
 
 		var ofiles = "";
