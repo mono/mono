@@ -20,6 +20,10 @@ static MonoWin32TLSCallbackType mono_win32_tls_callback_type = MONO_WIN32_TLS_CA
 gboolean
 mono_win32_handle_tls_callback_type (MonoWin32TLSCallbackType callback_type)
 {
+	/* Makes sure our tls callback doesn't get optimized away. */
+	extern const PIMAGE_TLS_CALLBACK __mono_win32_tls_callback;
+	const volatile PIMAGE_TLS_CALLBACK __tls_callback = __mono_win32_tls_callback;
+
 	if (mono_win32_tls_callback_type == MONO_WIN32_TLS_CALLBACK_TYPE_NONE)
 		mono_win32_tls_callback_type = callback_type;
 
