@@ -55,6 +55,7 @@ typedef gboolean (*MonoAssemblyCandidatePredicate)(MonoAssembly *, gpointer);
 typedef struct MonoAssemblyLoadRequest {
 	/* Assembly Load context that is requesting an assembly. */
 	MonoAssemblyContextKind asmctx;
+	MonoAssemblyLoadContext *alc;
 	/* Predicate to apply to candidate assemblies. Optional. */
 	MonoAssemblyCandidatePredicate predicate;
 	/* user_data for predicate. Optional. */

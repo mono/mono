@@ -623,7 +623,8 @@ mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor,
 gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
-MonoImage *mono_assembly_open_from_bundle (const char *filename,
+MonoImage *mono_assembly_open_from_bundle (MonoAssemblyLoadContext *alc,
+					   const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly);
 

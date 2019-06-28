@@ -1787,7 +1787,7 @@ register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 }
 
 MonoImage *
-mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, const char *name)
+mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, const char *name)
 {
 	MonoCLIImageInfo *iinfo;
 	MonoImage *image;
@@ -1824,7 +1824,7 @@ mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_
 	if (image == NULL)
 		return NULL;
 
-	return register_image (get_global_loaded_images (), image, NULL);
+	return register_image (mono_alc_get_loaded_images (alc), image, NULL);
 }
 
 /**
@@ -1835,7 +1835,8 @@ mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
+	MonoDomain *domain = mono_domain_get ();
+	result = mono_image_open_from_data_internal (mono_domain_default_alc (domain), data, data_len, need_copy, status, refonly, FALSE, name);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -1848,7 +1849,8 @@ mono_image_open_from_data_full (char *data, guint32 data_len, gboolean need_copy
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, NULL);
+	MonoDomain *domain = mono_domain_get ();
+	result = mono_image_open_from_data_internal (mono_domain_default_alc (domain), data, data_len, need_copy, status, refonly, FALSE, NULL);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -1861,7 +1863,8 @@ mono_image_open_from_data (char *data, guint32 data_len, gboolean need_copy, Mon
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, FALSE, FALSE, NULL);
+	MonoDomain *domain = mono_domain_get ();
+	result = mono_image_open_from_data_internal (mono_domain_default_alc (domain), data, data_len, need_copy, status, FALSE, FALSE, NULL);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }

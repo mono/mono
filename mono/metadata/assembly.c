@@ -2149,7 +2149,7 @@ absolute_dir (const gchar *filename)
  * returns NULL
  */
 MonoImage *
-mono_assembly_open_from_bundle (const char *filename, MonoImageOpenStatus *status, gboolean refonly)
+mono_assembly_open_from_bundle (MonoAssemblyLoadContext *alc, const char *filename, MonoImageOpenStatus *status, gboolean refonly)
 {
 	int i;
 	char *name;
@@ -2170,7 +2170,7 @@ mono_assembly_open_from_bundle (const char *filename, MonoImageOpenStatus *statu
 	name = g_path_get_basename (filename);
 	for (i = 0; !image && bundles [i]; ++i) {
 		if (strcmp (bundles [i]->name, is_satellite ? filename : name) == 0) {
-			image = mono_image_open_from_data_internal ((char*)bundles [i]->data, bundles [i]->size, FALSE, status, refonly, FALSE, name);
+			image = mono_image_open_from_data_internal (alc, (char*)bundles [i]->data, bundles [i]->size, FALSE, status, refonly, FALSE, name);
 			break;
 		}
 	}
@@ -2334,7 +2334,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 	// If VM built with mkbundle
 	loaded_from_bundle = FALSE;
 	if (bundles != NULL) {
-		image = mono_assembly_open_from_bundle (fname, status, refonly);
+		image = mono_assembly_open_from_bundle (load_req.alc, fname, status, refonly);
 		loaded_from_bundle = image != NULL;
 	}
 
