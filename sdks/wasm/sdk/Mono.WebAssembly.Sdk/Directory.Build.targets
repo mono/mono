@@ -14,7 +14,7 @@
     <_MonoWasmRuntimePackageVersion>$(SDKPackageVersion)</_MonoWasmRuntimePackageVersion>
     <_MonoWasmBindingsPackageVersion>$(SDKPackageVersion)</_MonoWasmBindingsPackageVersion>
     <_MonoWasmHttpHandlerPackageVersion>$(SDKPackageVersion)</_MonoWasmHttpHandlerPackageVersion>
-    <_MonoWasmClientWebSocketPackageVersion>$(SDKPackageVersion)1</_MonoWasmClientWebSocketPackageVersion>
+    <_MonoWasmClientWebSocketPackageVersion>$(SDKPackageVersion)</_MonoWasmClientWebSocketPackageVersion>
   </PropertyGroup>
 </Project>
       ]]>

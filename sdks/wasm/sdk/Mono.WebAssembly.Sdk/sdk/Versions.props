@@ -8,6 +8,6 @@
     <_MonoWasmRuntimePackageVersion>0.1.0-preview1</_MonoWasmRuntimePackageVersion>
     <_MonoWasmBindingsPackageVersion>0.1.0-preview1</_MonoWasmBindingsPackageVersion>
     <_MonoWasmHttpHandlerPackageVersion>0.1.0-preview1</_MonoWasmHttpHandlerPackageVersion>
-    <_MonoWasmClientWebSocketPackageVersion>0.1.0-preview11</_MonoWasmClientWebSocketPackageVersion>
+    <_MonoWasmClientWebSocketPackageVersion>0.1.0-preview1</_MonoWasmClientWebSocketPackageVersion>
   </PropertyGroup>
 </Project>
