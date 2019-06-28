@@ -7,9 +7,10 @@
 #define __MONO_METADATA_IMAGE_INTERNALS_H__
 
 #include <mono/metadata/image.h>
+#include <mono/metadata/loader-internals.h>
 
 MonoImage*
-mono_image_loaded_internal (const char *name, mono_bool refonly);
+mono_image_loaded_internal (MonoAssemblyLoadContext *alc, const char *name, mono_bool refonly);
 
 MonoImage *
 mono_find_image_owner (void *ptr);

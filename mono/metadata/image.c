@@ -1662,13 +1662,15 @@ mono_image_loaded_full (const char *name, gboolean refonly)
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_image_loaded_internal (name, refonly);
+	MonoDomain *domain = mono_domain_get ();
+	result = mono_image_loaded_internal (mono_domain_default_alc (domain), name, refonly);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
 /**
  * mono_image_loaded_internal:
+ * \param alc The AssemblyLoadContext that should be checked
  * \param name path or assembly name of the image to load
  * \param refonly Check with respect to reflection-only loads?
  *
@@ -1678,14 +1680,15 @@ mono_image_loaded_full (const char *name, gboolean refonly)
  * \returns the loaded \c MonoImage, or NULL on failure.
  */
 MonoImage *
-mono_image_loaded_internal (const char *name, gboolean refonly)
+mono_image_loaded_internal (MonoAssemblyLoadContext *alc, const char *name, gboolean refonly)
 {
+	MonoLoadedImages *li = mono_alc_get_loaded_images (alc);
 	MonoImage *res;
 
 	mono_images_lock ();
-	res = (MonoImage *)g_hash_table_lookup (get_loaded_images_hash (get_global_loaded_images (), refonly), name);
+	res = (MonoImage *)g_hash_table_lookup (get_loaded_images_hash (li, refonly), name);
 	if (!res)
-		res = (MonoImage *)g_hash_table_lookup (get_loaded_images_by_name_hash (get_global_loaded_images (), refonly), name);
+		res = (MonoImage *)g_hash_table_lookup (get_loaded_images_by_name_hash (li, refonly), name);
 	mono_images_unlock ();
 
 	return res;
@@ -1702,7 +1705,8 @@ mono_image_loaded (const char *name)
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_image_loaded_internal (name, FALSE);
+	MonoDomain *domain = mono_domain_get ();
+	result = mono_image_loaded_internal (mono_domain_default_alc (domain), name, FALSE);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
