@@ -441,6 +441,7 @@
 -nomethod System.Reflection.Emit.Tests.AssemblyTests.DefineDynamicAssembly_AssemblyName_AssemblyBuilderAccess
 -nomethod System.Reflection.Emit.Tests.AssemblyTests.DefineDynamicAssembly_AssemblyName_AssemblyBuilderAccess_CustomAttributeBuilder
 
+# need to reflect https://github.com/dotnet/coreclr/pull/24937 changes
 -nomethod System.Reflection.Emit.Tests.MethodBuilderSetSignature.SetSignature_AllParametersNull
 -nomethod System.Reflection.Emit.Tests.MethodBuilderSetReturnType.SetReturnType_NullReturnType_ReturnsVoid
 -nomethod System.Reflection.Emit.Tests.MethodBuilderGetGenericArguments.GetGenericArguments_NonGenericMethod_ReturnsEmptyArray
