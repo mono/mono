@@ -55,7 +55,15 @@ g_static_assert (TLS_KEY_DOMAIN == 0);
 #define mono_native_tls_alloc(key,destructor) ((*(key) = TlsAlloc ()) != TLS_OUT_OF_INDEXES && destructor == NULL)
 #define mono_native_tls_free TlsFree
 #define mono_native_tls_set_value TlsSetValue
-#define mono_native_tls_get_value TlsGetValue
+
+static inline LPVOID mono_native_tls_get_value (MonoNativeTlsKey key)
+{
+	DWORD last_error = GetLastError ();
+	LPVOID result = TlsGetValue (key);
+	g_assert (GetLastError () == 0);
+	SetLastError (last_error);
+	return result;
+}
 
 #else
 
