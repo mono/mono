@@ -1272,6 +1272,12 @@ namespace System
 						isDst = true;
 					}
 
+					if (date >= new DateTime (tEnd.Ticks - current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					{
+						offset = baseUtcOffset;
+						isDst = false;
+					}
+
 					return true;
 				}
 			}
