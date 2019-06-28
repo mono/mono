@@ -1944,11 +1944,14 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 				return NULL;
 		}
 		image = assembly->image;
+#ifndef ENABLE_NETCORE
 	} else if (!image) {
 		image = mono_defaults.corlib;
+#endif
 	}
 
 	type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
+#ifndef ENABLE_NETCORE
 	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib) {
 		/* ignore the error and try again */
 		mono_error_cleanup (error);
@@ -1956,6 +1959,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 		image = mono_defaults.corlib;
 		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
 	}
+#endif
 
 	return type;
 }
