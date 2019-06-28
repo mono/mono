@@ -525,7 +525,9 @@ case "$host" in
 		with_gc=sgen
 		need_link_unlink=yes
 		use_sigposix=yes
-		dnl the valloc call to alloc the guard page bombs out, even with extending the data area
+		dnl Similar limitation to macOS about the first thread and the
+		dnl guard page, except sometimes the runtime hangs. Disable for
+		dnl now until cause can be determined or it seems OK enough.
 		with_sigaltstack=no
 		dnl use pthread TLS, __thread has issues with the compiler flags we use
 		with_tls=pthread
