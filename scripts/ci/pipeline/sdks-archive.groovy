@@ -104,7 +104,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
-                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} AndroidToolchainDirectory=/mnt/scratch/android-toolchain AndroidToolchainCacheDirectory=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
+                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} ANDROID_TOOLCHAIN_DIR=/mnt/scratch/android-toolchain ANDROID_TOOLCHAIN_CACHE_DIR=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
                                 bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
                         } else if (platform == "Windows") {
