@@ -1926,7 +1926,9 @@ mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module
 MonoImage *
 mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean refonly)
 {
-	return mono_image_open_a_lot (fname, status, refonly, FALSE);
+	/* FIXME: runtime callers of mono_image_open_full should use mono_image_open_a_lot and pass an ALC */
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (mono_domain_get ());
+	return mono_image_open_a_lot (alc, fname, status, refonly, FALSE);
 }
 
 static MonoImage *
@@ -2070,9 +2072,9 @@ mono_image_open_a_lot_parameterized (MonoLoadedImages *li, const char *fname, Mo
 }
 
 MonoImage *
-mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context)
+mono_image_open_a_lot (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context)
 {
-	MonoLoadedImages *li = get_global_loaded_images ();
+	MonoLoadedImages *li = mono_alc_get_loaded_images (alc);
 	return mono_image_open_a_lot_parameterized (li, fname, status, refonly, load_from_context, NULL);
 }
 

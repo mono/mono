@@ -2339,7 +2339,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 	}
 
 	if (!image)
-		image = mono_image_open_a_lot (fname, status, refonly, load_from_context);
+		image = mono_image_open_a_lot (load_req.alc, fname, status, refonly, load_from_context);
 
 	if (!image){
 		if (*status == MONO_IMAGE_OK)
