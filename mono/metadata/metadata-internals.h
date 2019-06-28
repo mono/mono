@@ -1183,4 +1183,15 @@ m_image_has_entry_point (MonoImage *image)
 
 #endif
 
+static inline
+MonoAssemblyLoadContext *
+mono_image_get_alc (MonoImage *image)
+{
+#ifndef ENABLE_NETCORE
+	return NULL;
+#else
+	return image->alc;
+#endif
+}
+
 #endif /* __MONO_METADATA_INTERNALS_H__ */

@@ -3300,14 +3300,11 @@ mono_loaded_images_free (MonoLoadedImages *li)
 static MonoLoadedImages *
 loaded_images_get_owner (MonoImage *image)
 {
-#ifndef ENABLE_NETCORE
-	return get_global_loaded_images ();
-#else
 	/* image->alc could be NULL if we're closing an image that wasn't
 	 * registered yet (for example if two threads raced to open it and one
 	 * of them lost) */
-	return (image->alc && image->alc->loaded_images) ? image->alc->loaded_images : get_global_loaded_images ();
-#endif /* ENABLE_NETCORE */
+	MonoAssemblyLoadContext *alc = mono_image_get_alc (image);
+	return mono_alc_get_loaded_images (alc);
 }
 
 /* LOCKING: assumes the images lock is locked */
