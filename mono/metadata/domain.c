@@ -2005,3 +2005,13 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 	mono_domain_assemblies_unlock (domain);
 	return assemblies;
 }
+
+MonoAssemblyLoadContext *
+mono_domain_default_alc (MonoDomain *domain)
+{
+#ifndef ENABLE_NETCORE
+	return NULL;
+#else
+	return domain->default_alc;
+#endif
+}

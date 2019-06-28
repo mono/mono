@@ -3328,3 +3328,13 @@ loaded_images_remove_image (MonoImage *image)
 	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == image))
 		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
 }
+
+MonoLoadedImages *
+mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
+{
+#ifdef ENABLE_NETCORE
+	return (alc && alc->loaded_images) ? alc->loaded_images : get_global_loaded_images ();
+#else
+	return get_global_loaded_images ();
+#endif
+}

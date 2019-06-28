@@ -666,4 +666,7 @@ mono_runtime_install_appctx_properties (void);
 gboolean 
 mono_domain_set_fast (MonoDomain *domain, gboolean force);
 
+MonoAssemblyLoadContext *
+mono_domain_default_alc (MonoDomain *domain);
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

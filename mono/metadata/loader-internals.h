@@ -66,4 +66,7 @@ mono_alc_domain (MonoAssemblyLoadContext *alc)
 }
 #endif /* ENABLE_NETCORE */
 
+MonoLoadedImages *
+mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc);
+
 #endif
