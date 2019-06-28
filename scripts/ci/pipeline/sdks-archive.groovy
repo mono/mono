@@ -26,14 +26,14 @@ parallel (
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
             }
         }
     },
@@ -104,7 +104,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
-                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} AndroidToolchainDirectory=/mnt/scratch/android-toolchain AndroidToolchainCacheDirectory=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
                                 bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
                         } else if (platform == "Windows") {
