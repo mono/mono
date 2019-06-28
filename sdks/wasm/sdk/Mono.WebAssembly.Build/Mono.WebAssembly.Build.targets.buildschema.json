@@ -32,7 +32,7 @@
         "none": "Do not include any additional code pages"
       },
       "valueSeparators": ",;"
-    }
+    },
     "EnableDefaultWebContentItems": {
       "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
       "kind": "bool",

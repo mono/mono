@@ -67,8 +67,8 @@ namespace Mono.WebAssembly.Build
 			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
 			if (File.Exists(toolsPath))
 				return toolsPath;
-			else 
-				return Path.Combine (dir, "monolinker.exe");
+
+			return Path.Combine (dir, "monolinker.exe");
 		}
 
 		protected override bool ValidateParameters ()
