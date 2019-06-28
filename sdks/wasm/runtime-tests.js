@@ -97,6 +97,8 @@ while (true) {
 load ("mono-config.js");
 
 var Module = { 
+	mainScriptUrlOrBlob: "mono.js",
+
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
