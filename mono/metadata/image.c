@@ -1930,10 +1930,10 @@ mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean r
 }
 
 static MonoImage *
-mono_image_open_a_lot_parameterized (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context, gboolean *problematic)
+mono_image_open_a_lot_parameterized (MonoLoadedImages *li, const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context, gboolean *problematic)
 {
 	MonoImage *image;
-	GHashTable *loaded_images = get_loaded_images_hash (get_global_loaded_images (), refonly);
+	GHashTable *loaded_images = get_loaded_images_hash (li, refonly);
 	char *absfname;
 	
 	g_return_val_if_fail (fname != NULL, NULL);
@@ -2023,7 +2023,7 @@ mono_image_open_a_lot_parameterized (const char *fname, MonoImageOpenStatus *sta
 			return image;
 		}
 
-		return mono_image_open_from_module_handle (module_handle, absfname, FALSE, status);
+		return mono_image_open_from_module_handle (alc, module_handle, absfname, FALSE, status);
 	}
 #endif
 
@@ -2066,13 +2066,14 @@ mono_image_open_a_lot_parameterized (const char *fname, MonoImageOpenStatus *sta
 	if (image == NULL)
 		return NULL;
 
-	return register_image (get_global_loaded_images (), image, problematic);
+	return register_image (li, image, problematic);
 }
 
 MonoImage *
 mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context)
 {
-	return mono_image_open_a_lot_parameterized (fname, status, refonly, load_from_context, NULL);
+	MonoLoadedImages *li = get_global_loaded_images ();
+	return mono_image_open_a_lot_parameterized (li, fname, status, refonly, load_from_context, NULL);
 }
 
 gboolean
@@ -2081,7 +2082,9 @@ mono_is_problematic_file (const char *fname)
 	MonoImageOpenStatus status;
 	gboolean problematic = FALSE;
 
-	MonoImage *opened = mono_image_open_a_lot_parameterized (fname, &status, FALSE, FALSE, &problematic);
+	MonoDomain *domain = mono_domain_get ();
+	MonoLoadedImages *li = mono_alc_get_loaded_images (mono_domain_default_alc (domain));
+	MonoImage *opened = mono_image_open_a_lot_parameterized (li, fname, &status, FALSE, FALSE, &problematic);
 	if (opened)
 		mono_image_close (opened);
 
