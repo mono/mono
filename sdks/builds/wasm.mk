@@ -2,7 +2,9 @@
 SHELL:=/bin/bash
 
 EMSCRIPTEN_VERSION=1.38.36
-EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+
+EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
 
 MONO_SUPPORT=$(TOP)/support
 
@@ -44,7 +46,12 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .PHONY: provision-wasm
+
+ifeq ($(EMSCRIPTEN_SDK_DIR),$(EMSCRIPTEN_LOCAL_SDK_DIR))
 provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
+else
+provision-wasm:
+endif
 
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
@@ -88,7 +95,7 @@ _wasm_$(1)_CONFIGURE_FLAGS = \
 
 .stamp-wasm-$(1)-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
 	mkdir -p $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)
-	cd $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $$(_wasm_$(1)_CONFIGURE_FLAGS)
+	cd $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) && source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $$(_wasm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
 .PHONY: .stamp-wasm-$(1)-configure
@@ -96,7 +103,7 @@ _wasm_$(1)_CONFIGURE_FLAGS = \
 
 .PHONY: build-custom-wasm-$(1)
 build-custom-wasm-$(1):
-	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && $(MAKE) -C wasm-$(1)-$(CONFIGURATION)
+	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C wasm-$(1)-$(CONFIGURATION)
 
 .PHONY: setup-custom-wasm-$(1)
 setup-custom-wasm-$(1):
@@ -129,7 +136,13 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
+wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
+
 $(eval $(call WasmRuntimeTemplate,runtime))
+ifdef ENABLE_WASM_THREADS
+$(eval $(call WasmRuntimeTemplate,runtime-threads))
+endif
 
 ##
 # Parameters
