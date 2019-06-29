@@ -623,7 +623,7 @@ class Driver {
 			if (enable_threads) {
 				interp_files.Add ("mono.worker.js");
 				interp_files.Add ("mono.js.mem");
-            }
+			}
 			foreach (var fname in interp_files) {
 				File.Delete (Path.Combine (out_prefix, fname));
 				File.Copy (
