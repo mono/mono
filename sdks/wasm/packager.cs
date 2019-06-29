@@ -621,7 +621,7 @@ class Driver {
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {
-                interp_files.Add ("mono.worker.js");
+				interp_files.Add ("mono.worker.js");
 				interp_files.Add ("mono.js.mem");
             }
 			foreach (var fname in interp_files) {
