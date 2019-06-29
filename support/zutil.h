@@ -13,6 +13,13 @@
 #ifndef ZUTIL_H
 #define ZUTIL_H
 
+//mono{
+#include "config.h"
+#if !defined (HAVE_HIDDEN) && !defined (_MSC_VER) && defined (HAVE_VISIBILITY_HIDDEN)
+#define HAVE_HIDDEN
+#endif
+//mono}
+
 #ifdef HAVE_HIDDEN
 #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
 #else
