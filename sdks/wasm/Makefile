@@ -241,7 +241,7 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp
 	touch $@
 
 build-aot-sample: packager.exe hello.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-sample
 
 zlibtest.exe: zlibtest.cs
@@ -291,14 +291,14 @@ threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
 
 build-threads-sample: packager.exe threads.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --threads threads.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --threads threads.exe
 	ninja -v -C obj/threads-sample
 
 run-threads-sample: build-threads-sample
 	(cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini
