@@ -16,9 +16,9 @@ DRIVER_CONF=release
 CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDK_DIR?=$(TOP)/sdks/builds/toolchains/emsdk
-
-EMCC=source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && emcc
-EMCC_DYNAMIC=source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && EMCC_FORCE_STDLIBS=1 emcc
+EMSCRIPTEN_DIR?=$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten
+EMCC=$(EMSCRIPTEN_DIR)/emcc
+EMCC_DYNAMIC=EMCC_FORCE_STDLIBS=1 $(EMCC)
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
 MINI_PATH=$(TOP)/mono/mini
