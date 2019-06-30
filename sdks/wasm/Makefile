@@ -16,8 +16,7 @@ DRIVER_CONF=release
 CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDK_DIR?=$(TOP)/sdks/builds/toolchains/emsdk
-EMSCRIPTEN_DIR?=$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten
-EMCC=$(EMSCRIPTEN_DIR)/emcc
+EMCC=source $(CURDIR)/emsdk_env.sh && emcc
 EMCC_DYNAMIC=EMCC_FORCE_STDLIBS=1 $(EMCC)
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
@@ -106,10 +105,14 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h
+# emsdk_env.sh calls emsdk construct_env which is racy so make a copy
+emsdk_env.sh:
+	$(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && cp $(EMSCRIPTEN_SDK_DIR)/emsdk_set_env.sh $@
+
+driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h emsdk_env.sh
 	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o
 
-corebindings-dynamic.o: corebindings.c
+corebindings-dynamic.o: corebindings.c emsdk_env.sh
 	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $@
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
@@ -128,16 +131,16 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 # $(3) - EMCC_FLAGS
 define InterpBuildTemplate
 
-$(1)/mono.js: $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | $(1)/
+$(1)/mono.js: $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | $(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o $(1)/mono.js
 
-$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | $(1)/
+$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | $(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
 
-$(1)/corebindings.o: corebindings.c | $(1)/
+$(1)/corebindings.o: corebindings.c | $(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
 
-$(1)/zlib-helper.o: zlib-helper.c | $(1)/
+$(1)/zlib-helper.o: zlib-helper.c | $(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
 
 build-native: $(1)/mono.js
@@ -426,6 +429,7 @@ clean: clean-sdk
 	$(RM) -r debug
 	$(RM) -r release
 	$(RM) -r release-dynamic
+	$(RM) emsdk_env.sh
 
 package: build build-dbg-proxy build-sdk
 	rm -rf tmp
