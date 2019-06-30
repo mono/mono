@@ -703,6 +703,7 @@ class Driver {
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
 		ninja.WriteLine ($"bcl_facades_dir = {bcl_facades_prefix}");
 		ninja.WriteLine ($"tools_dir = {bcl_tools_prefix}");
+		ninja.WriteLine ($"emsdk_env = $builddir/emsdk_env.sh");
 		if (add_binding) {
 			ninja.WriteLine ($"wasm_core_bindings = $builddir/{BINDINGS_MODULE}");
 			ninja.WriteLine ($"wasm_core_support = {wasm_core_support}");
@@ -713,7 +714,7 @@ class Driver {
 			ninja.WriteLine ("wasm_core_support_library =");
 		}
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
-		ninja.WriteLine ("emcc = $emscripten_sdkdir/emscripten/upstream/emcc");
+		ninja.WriteLine ("emcc = source $emsdk_env && emcc");
 		ninja.WriteLine ("wasm_strip = $emscripten_sdkdir/upstream/bin/wasm-strip");
 		// -s ASSERTIONS=2 is very slow
 		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\', \'memset\']\"");
@@ -735,6 +736,8 @@ class Driver {
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
 		ninja.WriteLine ("  description = [CPIFDIFF] $in -> $out");
+		ninja.WriteLine ("rule create-emsdk-env");
+		ninja.WriteLine ("  command = $emscripten_sdkdir/emsdk_env.sh && cp $emscripten_sdkdir/emsdk_set_env.sh $out");
 		ninja.WriteLine ("rule emcc");
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
@@ -776,21 +779,22 @@ class Driver {
 				var bindings_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "corebindings.c"));
 				ninja.WriteLine ($"build $builddir/corebindings.c: cpifdiff {bindings_source_file}");
 
-				ninja.WriteLine ($"build $builddir/corebindings.o: emcc $builddir/corebindings.c");
+				ninja.WriteLine ($"build $builddir/corebindings.o: emcc $builddir/corebindings.c | $emsdk_env");
 				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 				driver_cflags += " -DCORE_BINDINGS ";
 			}
 			if (gen_pinvoke)
 				driver_cflags += " -DGEN_PINVOKE ";
 
-			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
+			ninja.WriteLine ("build $emsdk_env: create-emsdk-env");
+			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $emsdk_env $builddir/driver-gen.c {driver_deps}");
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 
 			if (enable_zlib) {
 				var zlib_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "zlib-helper.c"));
 				ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
 
-				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c");
+				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c | $emsdk_env");
 				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I$mono_sdkdir/wasm-runtime-release/include/support");
 			}
 		} else {
@@ -865,7 +869,7 @@ class Driver {
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
 				ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
-				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
+				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path} | $emsdk_env");
 
 				ofiles += " " + $"{a.o_path}";
 				bc_files += " " + $"{a.bc_path}";
@@ -892,7 +896,7 @@ class Driver {
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
 			// The dedup image might not have changed
 			ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
-			ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
+			ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path} | $emsdk_env");
 			ofiles += $" {a.o_path}";
 		}
 		if (link_icalls) {
@@ -914,7 +918,7 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support} $emsdk_env");
 			ninja.WriteLine ("  out_js=$appdir/mono.js");
 			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
 		}
