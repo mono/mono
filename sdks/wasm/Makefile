@@ -446,7 +446,6 @@ package: build build-dbg-proxy build-sdk
 	cp driver.c pinvoke-tables-default.h tmp/
 	cp corebindings.c tmp/
 	cp zlib-helper.c tmp/
-	cp zlib-helper.o tmp/
 	cp pinvoke-tables-default.h tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
