@@ -2,6 +2,6 @@
   "msbuild-sdks": {
     "Microsoft.Build.CentralPackageVersions": "2.0.1",
     "Microsoft.Build.Traversal": "1.0.34",
-    "Mono.WebAssembly.Sdk": "0.1.0"
+    "Mono.WebAssembly.Sdk": "0.1.0-preview1"
   }
 }
