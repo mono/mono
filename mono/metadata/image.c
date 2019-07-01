@@ -1736,11 +1736,26 @@ find_by_guid (gpointer key, gpointer val, gpointer user_data)
 		data->res = image;
 }
 
+static MonoImage *
+mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly);
+
 /**
  * mono_image_loaded_by_guid_full:
  */
 MonoImage *
 mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
+{
+	return mono_image_loaded_by_guid_internal (guid, refonly);
+}
+
+/**
+ * mono_image_loaded_by_guid_internal:
+ *
+ * Do not use.  Looks only in the global loaded images hash, will miss Assembly
+ * Load Contexts.
+ */
+static MonoImage *
+mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 {
 	GuidData data;
 	GHashTable *loaded_images = get_loaded_images_hash (get_global_loaded_images (), refonly);
@@ -1759,7 +1774,7 @@ mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
 MonoImage *
 mono_image_loaded_by_guid (const char *guid)
 {
-	return mono_image_loaded_by_guid_full (guid, FALSE);
+	return mono_image_loaded_by_guid_internal (guid, FALSE);
 }
 
 static MonoImage *
