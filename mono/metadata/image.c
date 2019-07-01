@@ -80,6 +80,9 @@ get_global_loaded_images (void)
 	return &global_loaded_images;
 }
 
+static MonoLoadedImages*
+get_loaded_images_for_image_modules (MonoImage *image);
+
 static void
 loaded_images_remove_image (MonoImage *image);
 
@@ -133,6 +136,9 @@ static gboolean debug_assembly_unload = FALSE;
 static gboolean mutex_inited;
 static mono_mutex_t images_mutex;
 static mono_mutex_t images_storage_mutex;
+
+static MonoImage *
+mono_image_open_a_lot_parameterized (MonoLoadedImages *li, const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context, gboolean *problematic);
 
 /* Maps string keys to MonoImageStorage values.
  *
@@ -750,8 +756,9 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 			}
 		}
 		if (valid) {
+			MonoLoadedImages *li = get_loaded_images_for_image_modules (image);
 			module_ref = g_build_filename (base_dir, name, NULL);
-			MonoImage *moduleImage = mono_image_open_full (module_ref, &status, refonly);
+			MonoImage *moduleImage = mono_image_open_a_lot_parameterized (li, module_ref, &status, refonly, FALSE, NULL);
 			if (moduleImage) {
 				if (!assign_assembly_parent_for_netmodule (moduleImage, image, error)) {
 					mono_image_close (moduleImage);
@@ -1926,7 +1933,6 @@ mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module
 MonoImage *
 mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean refonly)
 {
-	/* FIXME: runtime callers of mono_image_open_full should use mono_image_open_a_lot and pass an ALC */
 	MonoAssemblyLoadContext *alc = mono_domain_default_alc (mono_domain_get ());
 	return mono_image_open_a_lot (alc, fname, status, refonly, FALSE);
 }
@@ -2106,7 +2112,8 @@ mono_is_problematic_file (const char *fname)
 MonoImage *
 mono_image_open (const char *fname, MonoImageOpenStatus *status)
 {
-	return mono_image_open_full (fname, status, FALSE);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (mono_domain_get ());
+	return mono_image_open_a_lot (alc, fname, status, FALSE, FALSE);
 }
 
 /**
@@ -3346,4 +3353,11 @@ mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 #else
 	return get_global_loaded_images ();
 #endif
+}
+
+MonoLoadedImages*
+get_loaded_images_for_image_modules (MonoImage *image)
+{
+	/* FIXME: should be a local set of MonoLoadedImages just for the netmodules of this one image. */
+	return mono_alc_get_loaded_images (mono_image_get_alc (image));
 }
