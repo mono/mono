@@ -7,10 +7,10 @@ include config.make
 #
 
 # Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L21
-NETCORETESTS_VERSION := 4.6.0-preview7.19324.8
+NETCORETESTS_VERSION := 4.6.0-preview8.19327.9
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L25
-NETCOREAPP_VERSION := 3.0.0-preview7-27823-05
+NETCOREAPP_VERSION := 3.0.0-preview7-27826-04
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
