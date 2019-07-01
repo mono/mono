@@ -1789,10 +1789,7 @@ mono_threads_open_native_thread_handle (MonoNativeThreadHandle thread_handle)
 	HANDLE new_thread_handle = NULL;
 
 	g_assert (thread_handle && thread_handle != INVALID_HANDLE_VALUE);
-	success = DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &new_thread_handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-	g_assertf (success, "Failed to duplicate thread handle");
-
-	return new_thread_handle;
+	return DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &new_thread_handle, 0, FALSE, DUPLICATE_SAME_ACCESS) ? new_thread_handle : NULL;
 #else
 	return NULL;
 #endif
