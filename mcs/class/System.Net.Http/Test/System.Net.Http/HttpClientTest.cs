@@ -803,42 +803,6 @@ namespace MonoTests.System.Net.Http
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		// The SocketsHttpHandler permits custom transfer encodings.
-		public void Send_Transfer_Encoding_Custom ()
-		{
-			if (HttpClientTestHelpers.UsingSocketsHandler)
-				Assert.Ignore ("Requires LegacyHttpClient");
-
-			bool? failed = null;
-
-			var listener = NetworkHelpers.CreateAndStartHttpListener("http://*:", out int port, "/Send_Transfer_Encoding_Custom/");
-			AddListenerContext (listener, l => {
-				failed = true;
-			});
-
-			try {
-				var client = HttpClientTestHelpers.CreateHttpClientWithHttpClientHandler ();
-				client.DefaultRequestHeaders.TransferEncoding.Add (new TransferCodingHeaderValue ("chunked2"));
-
-				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/Send_Transfer_Encoding_Custom/");
-
-				try {
-					client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Wait ();
-					Assert.Fail ("#1");
-				} catch (AggregateException e) {
-					Assert.AreEqual (typeof (InvalidOperationException), e.InnerException.GetType (), "#2");
-				}
-				Assert.IsNull (failed, "#102");
-			} finally {
-				listener.Abort ();
-				listener.Close ();
-			}
-		}
-
-		[Test]
-#if FEATURE_NO_BSD_SOCKETS
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
 		public void Send_Complete_Content ()
 		{
 			var listener = NetworkHelpers.CreateAndStartHttpListener("http://*:", out int port, "/Send_Complete_Content/");
