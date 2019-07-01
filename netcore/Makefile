@@ -108,6 +108,15 @@ bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
 	-p:RoslynPropsFile="../roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
 	System.Private.CoreLib/System.Private.CoreLib.csproj
 
+aot-shared:
+	# TODO: parallelism
+	# TODO: let some tool figure out the relevant paths
+	for assembly in shared/Microsoft.NETCore.App/3.0.0-preview7-27804-03/*.dll corefx/packages/runtime.osx-x64.microsoft.private.corefx.netcoreapp/4.6.0-preview7.19305.1/runtimes/osx-x64/lib/netcoreapp3.0/*.dll; do \
+		echo "[AOT] $$assembly"; \
+		MONO_PATH=./shared/Microsoft.NETCore.App/3.0.0-preview7-27804-03/ ../mono/mini/mono-sgen --llvm --aot $$assembly ; \
+	done; \
+
+
 debug-bcl:
 	$(MAKE) bcl CORLIB_BUILD_FLAGS="-c Debug"
 
