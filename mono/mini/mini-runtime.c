@@ -4714,6 +4714,8 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
+	print_jit_stats ();
+	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 #else
 void
