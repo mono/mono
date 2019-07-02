@@ -225,6 +225,8 @@ namespace System
 				case '+':
 					res.Names.Add (name.Substring (name_start, pos - name_start));
 					name_start = pos + 1;
+					var nested = ParseName (name, true, name_start, out pos);
+					res.Names.AddRange (nested.Names);
 					break;
 				case '\\':
 					pos ++;
