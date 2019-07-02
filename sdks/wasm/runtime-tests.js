@@ -76,7 +76,7 @@ function test_exit (exit_code) {
 		Module.exit_code = exit_code;
 		print ("WASM EXIT " + exit_code);
 	} else {
-		wams_exit (exit_code);
+		wasm_exit (exit_code);
 	}
 }
 
