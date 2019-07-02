@@ -76,7 +76,7 @@ function test_exit (exit_code) {
 		Module.exit_code = exit_code;
 		print ("WASM EXIT " + exit_code);
 	} else {
-		wasm_exit (exit_code);
+		Module.wasm_exit (exit_code);
 	}
 }
 
@@ -202,6 +202,8 @@ var App = {
 	  var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
 	  var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
 	  var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
+
+		Module.wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 
 		Module.print("Initializing.....");
 
