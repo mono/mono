@@ -1032,7 +1032,9 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 		GString *raw_bytes = g_string_new (NULL);
 		char *p = (char*)filename;
 		while (*p != 0) {
-			g_string_append_printf (raw_bytes, "%02X ", (int)*p);
+			g_string_append_printf (raw_bytes, "%02X ", (uint)*p);
+			p++;
+			g_string_append_printf (raw_bytes, "%02X ", (uint)*p);
 			p++;
 		}
 		g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; input was: %s", __func__, mono_error_get_message (error), raw_bytes->str);
