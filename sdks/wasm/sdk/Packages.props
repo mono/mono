@@ -10,5 +10,6 @@
     <PackageReference Update="xunit" Version="2.4.0" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Update="System.CodeDom" Version="4.5.0" />
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" />    
   </ItemGroup>
 </Project>
