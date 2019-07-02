@@ -170,6 +170,9 @@ cross:
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
 
+runtime-threads:
+	$(MAKE) -C ../builds package-wasm-runtime-threads
+
 tuner:
 	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
 	cp ../../mcs/class/lib/wasm_tools/wasm-tuner.exe* ../out/wasm-bcl/wasm_tools/wasm-tuner.exe*
