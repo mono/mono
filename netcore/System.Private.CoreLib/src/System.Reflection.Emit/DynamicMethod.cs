@@ -109,9 +109,7 @@ namespace System.Reflection.Emit {
 			if (owner == null && typeOwner)
 				throw new ArgumentNullException (nameof (owner));
 			if ((m == null) && !anonHosted)
-				throw new ArgumentNullException ("m");
-			if (returnType.IsByRef)
-				throw new ArgumentException ("Return type can't be a byref type", "returnType");
+				throw new ArgumentNullException ("m");			
 			if (parameterTypes != null) {
 				for (int i = 0; i < parameterTypes.Length; ++i)
 					if (parameterTypes [i] == null)
@@ -381,8 +379,9 @@ namespace System.Reflection.Emit {
 
 		public override ParameterInfo ReturnParameter {
 			get {
-				if (deleg == null)
-					return null;
+				if (deleg == null) {
+					return new RuntimeParameterInfo ((ParameterBuilder) null, returnType, this, -1);
+				}
 				return deleg.Method.ReturnParameter;
 			}
 		}
