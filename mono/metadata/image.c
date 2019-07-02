@@ -73,12 +73,13 @@ enum {
 
 static MonoLoadedImages global_loaded_images; /* zero initalized is good enough */
 
+#ifndef ENABLE_NETCORE
 static MonoLoadedImages*
 get_global_loaded_images (void)
 {
-	/* TODO: if ENABLE_NETCORE, don't define this function. */
 	return &global_loaded_images;
 }
+#endif
 
 static MonoLoadedImages*
 get_loaded_images_for_image_modules (MonoImage *image);
@@ -1757,6 +1758,7 @@ mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
 static MonoImage *
 mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 {
+#ifndef ENABLE_NETCORE
 	GuidData data;
 	GHashTable *loaded_images = get_loaded_images_hash (get_global_loaded_images (), refonly);
 	data.res = NULL;
@@ -1766,6 +1768,10 @@ mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 	g_hash_table_foreach (loaded_images, find_by_guid, &data);
 	mono_images_unlock ();
 	return data.res;
+#else
+	/* TODO: Maybe implement this for netcore by searching only the default ALC of the current domain */
+	return NULL;
+#endif
 }
 
 /**
@@ -3252,6 +3258,7 @@ mono_image_append_class_to_reflection_info_set (MonoClass *klass)
 MonoImage *
 mono_find_image_owner (void *ptr)
 {
+#ifndef ENABLE_NETCORE
 	MonoLoadedImages *li = get_global_loaded_images ();
 	mono_images_lock ();
 
@@ -3280,6 +3287,11 @@ mono_find_image_owner (void *ptr)
 	mono_images_unlock ();
 
 	return owner;
+#else
+	/* TODO: checked build for netcore should iterate over every ALC in
+	 * every domain to find the loaded images hashes */
+	return NULL;
+#endif
 }
 
 void
@@ -3381,7 +3393,9 @@ MonoLoadedImages *
 mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 {
 #ifdef ENABLE_NETCORE
-	return (alc && alc->loaded_images) ? alc->loaded_images : get_global_loaded_images ();
+	g_assert (alc);
+	g_assert (alc->loaded_images);
+	return alc->loaded_images;
 #else
 	return get_global_loaded_images ();
 #endif
