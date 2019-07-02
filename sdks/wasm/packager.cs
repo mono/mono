@@ -615,9 +615,9 @@ class Driver {
 
 		string runtime_dir;
 		if (enable_threads)
-			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "threads-release" : "threads-debug");
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
 		else
-			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {

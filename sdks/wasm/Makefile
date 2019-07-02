@@ -131,22 +131,22 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 # $(3) - EMCC_FLAGS
 define InterpBuildTemplate
 
-$(1)/mono.js: $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | $(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o $(1)/mono.js
+builds/$(1):
+	mkdir -p $$@
 
-$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | $(1)/ emsdk_env.sh
+builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
+
+builds/$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
 
-$(1)/corebindings.o: corebindings.c | $(1)/ emsdk_env.sh
+builds/$(1)/corebindings.o: corebindings.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
 
-$(1)/zlib-helper.o: zlib-helper.c | $(1)/ emsdk_env.sh
+builds/$(1)/zlib-helper.o: zlib-helper.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
 
-build-native: $(1)/mono.js
-
-$(1)/:
-	mkdir -p $$@
+build-native: builds/$(1)/mono.js
 
 endef
 
@@ -426,9 +426,7 @@ clean: clean-sdk
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
-	$(RM) -r debug
-	$(RM) -r release
-	$(RM) -r release-dynamic
+	$(RM) -r builds
 	$(RM) emsdk_env.sh
 
 package: build build-dbg-proxy build-sdk
@@ -451,8 +449,7 @@ package: build build-dbg-proxy build-sdk
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
 	cp dotnet_support.js tmp/
-	cp -r debug tmp/
-	cp -r release tmp/
+	cp -r builds tmp/
 	mkdir tmp/framework
 	cp framework/WebAssembly.Bindings.dll tmp/framework
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
