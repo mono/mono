@@ -5780,6 +5780,34 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			if (mono_type_is_native_blittable (arg0))
 				return mini_emit_memory_load (cfg, arg0, args [0], 0, 0);
 		}
+	} else if (!strcmp (cmethod->klass->image->assembly->aname.name, "System") &&
+			   !strcmp (cmethod->klass->name_space, "System") &&
+			   !strcmp (cmethod->klass->name, "Platform") &&
+			   !strcmp (cmethod->name, "get_IsMacOS")) {
+#if defined(TARGET_OSX)
+		EMIT_NEW_ICONST (cfg, ins, 1);
+#else
+		EMIT_NEW_ICONST (cfg, ins, 0);
+#endif
+		return ins;
+	} else if (!strcmp (cmethod->klass->image->assembly->aname.name, "System") &&
+			   !strcmp (cmethod->klass->name_space, "System") &&
+			   !strcmp (cmethod->klass->name, "Platform") &&
+			   !strcmp (cmethod->name, "get_IsFreeBSD")) {
+#if defined(__FreeBSD__)
+		EMIT_NEW_ICONST (cfg, ins, 1);
+#else
+		EMIT_NEW_ICONST (cfg, ins, 0);
+#endif
+		return ins;
+	} else if (!strcmp (cmethod->klass->image->assembly->aname.name, "System") &&
+			   !strcmp (cmethod->klass->name_space, "System.Net.NetworkInformation") &&
+			   !strcmp (cmethod->klass->name, "IPGlobalProperties") &&
+			   !strcmp (cmethod->name, "get_PlatformNeedsLibCWorkaround")) {
+#if defined(HOST_ANDROID)
+		EMIT_NEW_ICONST (cfg, ins, 1);
+		return ins;
+#endif
 	}
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS

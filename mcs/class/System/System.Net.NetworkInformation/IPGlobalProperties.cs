@@ -163,6 +163,17 @@ namespace System.Net.NetworkInformation {
 	}
 #endif
 
+#if UNITY
+	sealed class UnixNoLibCIPGlobalProperties : UnixIPGlobalProperties
+	{
+		public override string DomainName {
+			get {
+				return String.Empty;
+			}
+		}
+	}
+#endif
+
 	// It expects /proc/net/snmp (or /usr/compat/linux/proc/net/snmp),
 	// formatted like:
 	// http://www.linuxdevcenter.com/linux/2000/11/16/example5.html
