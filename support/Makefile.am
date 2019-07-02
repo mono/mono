@@ -67,15 +67,6 @@ MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
 MPH_LIBS   = $(glib_libs)
 endif
 
-MINIZIP_SOURCE = \
-	minizip/crypt.h \
-	minizip/ioapi.c	\
-	minizip/ioapi.h \
-	minizip/unzip.c	\
-	minizip/unzip.h	\
-	minizip/zip.c	\
-	minizip/zip.h
-
 ZLIB_SOURCES = \
 	adler32.c	\
 	compress.c	\
@@ -114,8 +105,7 @@ endif
 
 libMonoPosixHelper_la_SOURCES =			\
 	$(MPH_SOURCE)				\
-	$(Z_SOURCE)				\
-	$(MINIZIP_SOURCE)
+	$(Z_SOURCE)
 
 libMonoPosixHelper_la_LIBADD =			\
 	$(MPH_LIBS)				\
