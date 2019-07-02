@@ -201,14 +201,14 @@ typedef struct
 /* for locking access to type_initialization_hash and blocked_thread_hash */
 static MonoCoopMutex type_initialization_section;
 
-static inline void
+static void
 mono_type_initialization_lock (void)
 {
 	/* The critical sections protected by this lock in mono_runtime_class_init_full () can block */
 	mono_coop_mutex_lock (&type_initialization_section);
 }
 
-static inline void
+static void
 mono_type_initialization_unlock (void)
 {
 	mono_coop_mutex_unlock (&type_initialization_section);
