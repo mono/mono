@@ -72,6 +72,9 @@ typedef gsize (*MonoThreadStart)(gpointer);
 
 #endif /* #ifdef HOST_WIN32 */
 
+#define MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER(handle) ((gpointer)(gsize)(handle))
+#define MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE(handle) ((MonoNativeThreadHandle)(gsize)(handle))
+
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 
 typedef struct {

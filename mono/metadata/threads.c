@@ -864,7 +864,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	mono_thread_info_set_internal_thread_gchandle (info, mono_gchandle_new_internal ((MonoObject*) internal, FALSE));
 
 	internal->handle = mono_threads_open_thread_handle (info->handle);
-	internal->native_handle = mono_threads_open_native_thread_handle (info->native_handle);
+	internal->native_handle = MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER (mono_threads_open_native_thread_handle (info->native_handle));
 	internal->tid = MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ());
 	internal->thread_info = info;
 	internal->small_id = info->small_id;
@@ -1720,7 +1720,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		this_obj->handle = NULL;
 	}
 
-	mono_threads_close_native_thread_handle (this_obj->native_handle);
+	mono_threads_close_native_thread_handle (MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE (this_obj->native_handle));
 	this_obj->native_handle = NULL;
 
 	/* Possibly free synch_cs, if the thread already detached also. */

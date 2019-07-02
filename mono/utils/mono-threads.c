@@ -1791,7 +1791,7 @@ mono_threads_open_native_thread_handle (MonoNativeThreadHandle thread_handle)
 	g_assert (thread_handle && thread_handle != INVALID_HANDLE_VALUE);
 	return DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &new_thread_handle, 0, FALSE, DUPLICATE_SAME_ACCESS) ? new_thread_handle : NULL;
 #else
-	return NULL;
+	return MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE (NULL);
 #endif
 }
 
