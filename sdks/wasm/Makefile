@@ -131,7 +131,7 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 # $(3) - EMCC_FLAGS
 define InterpBuildTemplate
 
-builds/$(1):
+builds/$(1)/:
 	mkdir -p $$@
 
 builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
