@@ -3,5 +3,8 @@
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
     <PreReleaseVersionLabel>prerelease</PreReleaseVersionLabel>
+    <!-- Package versions -->
+    <!-- corefx -->
+    <MicrosoftPrivateCoreFxNETCoreAppVersion>4.6.0-preview8.19327.9</MicrosoftPrivateCoreFxNETCoreAppVersion>
   </PropertyGroup>
 </Project>
