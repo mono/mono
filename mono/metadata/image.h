@@ -31,7 +31,8 @@ MONO_API MonoImage    *mono_image_open     (const char *fname,
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoImage             *mono_image_open_full (const char *fname,
 				   MonoImageOpenStatus *status, mono_bool refonly);
-MONO_API MonoImage    *mono_pe_file_open     (const char *fname,
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage             *mono_pe_file_open     (const char *fname,
 				     MonoImageOpenStatus *status);
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoImage    *mono_image_open_from_data (char *data, uint32_t data_len, mono_bool need_copy,
