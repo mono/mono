@@ -220,7 +220,7 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) build-native
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 build-test-suite: bin/test-suite/mono.js
@@ -392,6 +392,9 @@ run-jsc-%: toolchain build-test-suite
 
 run-sm-%: toolchain build-test-suite
 	(cd bin/test-suite && $(SM) runtime.js $*)
+
+run-chrome-%: build-test-suite
+	node tests/runtime/run.js bin/test-suite $*
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
