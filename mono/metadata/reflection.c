@@ -1562,7 +1562,9 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 				len = (p - start + 1);
 				if (len > MONO_PUBLIC_KEY_TOKEN_LENGTH)
 					len = MONO_PUBLIC_KEY_TOKEN_LENGTH;
-				g_strlcpy ((char*)assembly->public_key_token, start, len);
+				char* pkt_lower = g_ascii_strdown ((char*) assembly->public_key_token, len);
+				g_strlcpy (pkt_lower, start, len);
+				g_free (pkt_lower);
 			}
 		} else {
 			while (*p && *p != ',')
