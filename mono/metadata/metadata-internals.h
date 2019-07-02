@@ -1079,9 +1079,9 @@ gboolean mono_image_load_cli_data (MonoImage *image);
 
 void mono_image_load_names (MonoImage *image);
 
-MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status);
+MonoImage *mono_image_open_raw (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status);
 
-MonoImage *mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status);
+MonoImage *mono_image_open_metadata_only (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status);
 
 MonoImage *mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, const char *name);
 

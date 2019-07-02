@@ -432,7 +432,7 @@ verify_image_file (const char *fname)
 	int i, count = 0;
 
 	if (!strstr (fname, "mscorlib.dll")) {
-		image = mono_image_open_raw (fname, &status);
+		image = mono_image_open_raw (mono_domain_default_alc (mono_get_root_domain ()), fname, &status);
 		if (!image) {
 			printf ("Could not open %s\n", fname);
 			return 1;

@@ -2163,7 +2163,7 @@ mono_pe_file_open (const char *fname, MonoImageOpenStatus *status)
  * Use mono_image_load_pe_data and mono_image_load_cli_data to load them.  
  */
 MonoImage *
-mono_image_open_raw (const char *fname, MonoImageOpenStatus *status)
+mono_image_open_raw (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status)
 {
 	g_return_val_if_fail (fname != NULL, NULL);
 	
@@ -2176,7 +2176,7 @@ mono_image_open_raw (const char *fname, MonoImageOpenStatus *status)
  *   Open an image which contains metadata only without a PE header.
  */
 MonoImage *
-mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status)
+mono_image_open_metadata_only (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status)
 {
 	return do_mono_image_open (fname, status, TRUE, TRUE, FALSE, TRUE, FALSE);
 }

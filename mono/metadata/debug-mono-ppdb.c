@@ -213,7 +213,7 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 			ppdb_filename = g_strdup_printf ("%s.pdb", filename);
 		}
 
-		ppdb_image = mono_image_open_metadata_only (ppdb_filename, &status);
+		ppdb_image = mono_image_open_metadata_only (alc, ppdb_filename, &status);
 		g_free (ppdb_filename);
 	}
 	g_free (to_free);
