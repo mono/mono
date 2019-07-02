@@ -805,6 +805,8 @@ class Driver {
 				ninja.WriteLine ("build $appdir/mono.js.mem: cpifdiff $wasm_runtime_dir/mono.js.mem");
 			}
 		}
+		if (enable_aot)
+			ninja.WriteLine ("build $builddir/aot-in: mkdir");
 
 		var ofiles = "";
 		var bc_files = "";
@@ -860,10 +862,17 @@ class Driver {
 				a.o_path = $"$builddir/{filename}.o";
 				a.aot_depfile_path = $"$builddir/linker-out/{filename}.depfile";
 
+				if (filename == "mscorlib.dll") {
+					// mscorlib has no dependencies so we can skip the aot step if the input didn't change
+					// The other assemblies depend on their references
+					infile = "$builddir/aot-in/mscorlib.dll";
+					a.aotin_path = infile;
+					ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
+				}
 				ninja.WriteLine ($"build {a.bc_path}.tmp: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
 				ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
-				ninja.WriteLine ($"  mono_path={aot_in_path}");
+				ninja.WriteLine ($"  mono_path=$builddir/aot-in:{aot_in_path}");
 				ninja.WriteLine ($"  depfile={a.aot_depfile_path}");
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
@@ -891,7 +900,7 @@ class Driver {
 			ninja.WriteLine ($"  dedup_image={a.filename}");
 			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
 			ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
-			ninja.WriteLine ($"  mono_path={aot_in_path}");
+			ninja.WriteLine ($"  mono_path=$builddir/aot-in:{aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
 			// The dedup image might not have changed
