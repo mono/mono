@@ -3360,6 +3360,23 @@ loaded_images_remove_image (MonoImage *image)
 		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
 }
 
+#ifdef ENABLE_NETCORE
+void
+mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc)
+{
+	MonoLoadedImages *li = g_new0 (MonoLoadedImages, 1);
+	mono_loaded_images_init (li, MONO_LOADED_IMAGES_ALC, alc);
+	alc->domain = domain;
+	alc->loaded_images = li;
+}
+
+void
+mono_alc_cleanup (MonoAssemblyLoadContext *alc)
+{
+	mono_loaded_images_free (alc->loaded_images);
+}
+#endif /* ENABLE_NETCORE */
+
 MonoLoadedImages *
 mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 {

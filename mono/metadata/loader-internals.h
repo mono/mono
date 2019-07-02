@@ -59,6 +59,14 @@ void
 mono_loaded_images_free (MonoLoadedImages *li);
 
 #ifdef ENABLE_NETCORE
+void
+mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc);
+
+void
+mono_alc_cleanup (MonoAssemblyLoadContext *alc);
+#endif /* ENABLE_NETCORE */
+
+#ifdef ENABLE_NETCORE
 static inline MonoDomain *
 mono_alc_domain (MonoAssemblyLoadContext *alc)
 {
