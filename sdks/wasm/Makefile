@@ -508,3 +508,6 @@ clean-sdk:
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	dotnet build sdk/MonoWasmSdkCLI.sln
+
+test-sdk: build-sdk
+	dotnet test sdk/Mono.WebAssembly.SdkTests/
