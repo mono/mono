@@ -689,6 +689,9 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
+		string emcc_link_flags = "";
+		if (enable_debug)
+			emcc_link_flags += "-O0 ";
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
@@ -742,7 +745,7 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; fi; done");
@@ -842,7 +845,7 @@ class Driver {
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
-				if (emit_pdb){
+				if (emit_pdb) {
 					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
 					infile_pdb = $"$builddir/{filename_pdb}";
 				}
@@ -855,7 +858,7 @@ class Driver {
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
-			if (emit_pdb)
+			if (emit_pdb && infile_pdb != "")
 				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
