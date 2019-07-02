@@ -294,11 +294,12 @@ threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
 
 build-threads-sample: packager.exe threads.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --threads threads.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --asset=tests/runtime/index.html --threads threads.exe
 	ninja -v -C obj/threads-sample
 
+# (cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 run-threads-sample: build-threads-sample
-	(cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
+	node tests/runtime/run.js bin/threads-sample/ --run threads.exe
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
