@@ -438,6 +438,7 @@ struct _MonoImage {
 	MonoImage **modules;
 	guint32 module_count;
 	gboolean *modules_loaded;
+	MonoLoadedImages *modules_loaded_images;
 
 	MonoImage **files;
 	guint32 file_count;

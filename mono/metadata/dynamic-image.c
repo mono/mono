@@ -357,6 +357,12 @@ mono_dynamic_image_create (MonoDynamicAssembly *assembly, char *assembly_name, c
 	image->image.references = g_new0 (MonoAssembly*, 1);
 	image->image.references [0] = NULL;
 
+	/* HACK: only want to crerate modules_loaded_images in the initial image for this dynamic assembly, not in the added modules. */
+	if (!assembly->assembly.image) {
+		image->image.modules_loaded_images = g_new0 (MonoLoadedImages, 1);
+		mono_loaded_images_init (image->image.modules_loaded_images, MONO_LOADED_IMAGES_ASSEMBLY, image);
+	}
+
 	mono_image_init (&image->image);
 
 	image->token_fixups = mono_g_hash_table_new_type_internal ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_REFLECTION, NULL, "Reflection Dynamic Image Token Fixup Table");

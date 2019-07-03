@@ -702,6 +702,10 @@ load_modules (MonoImage *image)
 	image->modules = g_new0 (MonoImage *, t->rows);
 	image->modules_loaded = g_new0 (gboolean, t->rows);
 	image->module_count = t->rows;
+	if (t->rows > 0) {
+		image->modules_loaded_images = g_new0 (MonoLoadedImages, 1);
+		mono_loaded_images_init (image->modules_loaded_images, MONO_LOADED_IMAGES_ASSEMBLY, image);
+	}
 }
 
 /**
@@ -2513,6 +2517,9 @@ mono_image_close_except_pools (MonoImage *image)
 	mono_image_close_except_pools_all (image->modules, image->module_count);
 	g_free (image->modules_loaded);
 
+	if (image->modules_loaded_images)
+		mono_loaded_images_free (image->modules_loaded_images);
+
 	mono_os_mutex_destroy (&image->szarray_cache_lock);
 	mono_os_mutex_destroy (&image->lock);
 
@@ -3314,7 +3321,7 @@ mono_loaded_images_init (MonoLoadedImages *li, guint8 owner_kind, gpointer owner
 		li->owner.alc = (MonoAssemblyLoadContext*)owner;
 		break;
 	case MONO_LOADED_IMAGES_ASSEMBLY:
-		li->owner.assembly = (MonoAssembly*)owner;
+		li->owner.assembly_image = (MonoImage*)owner;
 		break;
 	default:
 		g_assert_not_reached ();
@@ -3415,6 +3422,5 @@ mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 MonoLoadedImages*
 get_loaded_images_for_image_modules (MonoImage *image)
 {
-	/* FIXME: should be a local set of MonoLoadedImages just for the netmodules of this one image. */
-	return mono_alc_get_loaded_images (mono_image_get_alc (image));
+	return image->modules_loaded_images;
 }

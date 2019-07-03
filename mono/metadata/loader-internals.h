@@ -33,7 +33,7 @@ enum {
 struct _MonoLoadedImages {
 	union {
 		MonoAssemblyLoadContext *alc; /* NULL if global */
-		MonoAssembly *assembly; /* for netmodules */
+		MonoImage *assembly_image; /* for netmodules and SRE dynamic images */
 	} owner;
 	guint8 owner_kind;
 	GHashTable *loaded_images_hashes [4];
