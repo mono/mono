@@ -4172,22 +4172,27 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						!mono_class_is_marshalbyref (klass) &&
 						!mono_class_has_finalizer (klass) &&
 						!m_class_has_weak_fields (klass)) {
-					if (!m_class_is_valuetype (klass))
-						interp_add_ins (td, MINT_NEWOBJ_FAST);
-					else if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
-						interp_add_ins (td, MINT_NEWOBJ_VTST_FAST);
-					else
-						interp_add_ins (td, MINT_NEWOBJ_VT_FAST);
-
-					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
-					td->last_ins->data [1] = csignature->param_count;
-
 					if (!m_class_is_valuetype (klass)) {
+						interp_add_ins (td, MINT_NEWOBJ_FAST);
+
+						td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
+						td->last_ins->data [1] = csignature->param_count;
+
 						MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
 						goto_if_nok (error, exit);
 						td->last_ins->data [2] = get_data_item_index (td, vtable);
-					} else if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
-						td->last_ins->data [2] = mono_class_value_size (klass, NULL);
+					} else {
+						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
+							interp_add_ins (td, MINT_NEWOBJ_VTST_FAST);
+						else
+							interp_add_ins (td, MINT_NEWOBJ_VT_FAST);
+
+						td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
+						td->last_ins->data [1] = csignature->param_count;
+
+						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
+							td->last_ins->data [2] = mono_class_value_size (klass, NULL);
+						}
 					}
 				} else {
 					interp_add_ins (td, MINT_NEWOBJ);
