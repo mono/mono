@@ -103,9 +103,12 @@ static const char *
 mono_check_corlib_version_internal (void);
 
 static MonoAssembly *
-mono_domain_assembly_preload (MonoAssemblyName *aname,
+mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
+			      MonoAssemblyName *aname,
 			      gchar **assemblies_path,
-			      gpointer user_data);
+			      gboolean refonly,
+			      gpointer user_data,
+			      MonoError *error);
 
 static MonoAssembly *
 mono_domain_assembly_search (MonoAssemblyName *aname,
@@ -294,8 +297,8 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_marshal_init ();
 	mono_gc_init_icalls ();
 
-	mono_install_assembly_preload_hook (mono_domain_assembly_preload, GUINT_TO_POINTER (FALSE));
-	mono_install_assembly_refonly_preload_hook (mono_domain_assembly_preload, GUINT_TO_POINTER (TRUE));
+	mono_install_assembly_preload_hook_v2 (mono_domain_assembly_preload, GUINT_TO_POINTER (FALSE), FALSE);
+	mono_install_assembly_preload_hook_v2 (mono_domain_assembly_preload, GUINT_TO_POINTER (TRUE), TRUE);
 	mono_install_assembly_search_hook (mono_domain_assembly_search, GUINT_TO_POINTER (FALSE));
 	mono_install_assembly_refonly_search_hook (mono_domain_assembly_search, GUINT_TO_POINTER (TRUE));
 	mono_install_assembly_postload_search_hook ((MonoAssemblySearchFunc)mono_domain_assembly_postload_search, GUINT_TO_POINTER (FALSE));
@@ -2230,13 +2233,18 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
  * might hold the loader lock. Thus, this function must not acquire the domain lock.
  */
 static MonoAssembly *
-mono_domain_assembly_preload (MonoAssemblyName *aname,
+mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
+			      MonoAssemblyName *aname,
 			      gchar **assemblies_path,
-			      gpointer user_data)
+			      gboolean refonly,
+			      gpointer user_data,
+			      MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoAssembly *result = NULL;
-	gboolean refonly = GPOINTER_TO_UINT (user_data);
+#ifdef ENABLE_NETCORE
+	g_assert (mono_alc_domain (alc) == domain); /* should be true everywhere, not just on netcore */
+#endif
 
 	set_domain_search_path (domain);
 
@@ -2250,6 +2258,7 @@ mono_domain_assembly_preload (MonoAssemblyName *aname,
 #endif
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+	req.request.alc = alc;
 	req.request.predicate = predicate;
 	req.request.predicate_ud = predicate_ud;
 
