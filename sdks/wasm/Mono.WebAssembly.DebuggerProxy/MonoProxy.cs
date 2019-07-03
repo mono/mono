@@ -500,9 +500,12 @@ namespace WsProxy {
 				i++;
 			}
 			//Async methods are special in the way that local variables can be lifted to generated class fields
+			//value of "this" comes here either
 			while (i < values.Length) {
-				String name = values [i] ["name"].ToString ();
-				name = name.Substring (1, name.IndexOf (">", StringComparison.Ordinal)-1);
+			String name = values [i] ["name"].ToString ();
+
+				if (name.IndexOf (">", StringComparison.Ordinal) > 0)
+					name = name.Substring (1, name.IndexOf (">", StringComparison.Ordinal) - 1);
 				var_list.Add (JObject.FromObject (new {
 					name =  name,
 					value = values [i+1] ["value"]
