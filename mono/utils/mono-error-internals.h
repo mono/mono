@@ -284,4 +284,46 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
+#if HOST_WIN32
+
+// FIXME Change all GetLastError / SetLastError to these.
+// FIXME Inline function should work.
+
+#if HOST_X86
+#if __GNUC__
+#define mono_get_last_win32_error()              \
+    ({ unsigned long err;                        \
+    __asm__ ("movl %%fs:0x34, %0" : "=r" (err)); \
+    err; })
+#define mono_set_last_win32_error(err) __asm__ ("movl %0, %%fs:0x34" : : "r" (err))
+#elif _MSC_VER
+#define mono_get_last_win32_error()     (__readfsdword (0x34))
+#define mono_set_last_win32_error(err)  (__writefsdword (0x34, (err)))
+#else // x86 unknown compiler
+#define mono_get_last_win32_error()     (GetLastError ())
+#define mono_set_last_win32_error(err)  (SetLastError (err))
+#endif
+
+#elif HOST_AMD64
+#if __GNUC__
+#define mono_get_last_win32_error()              \
+    ({ unsigned long err;                        \
+    __asm__ ("movl %%gs:0x68, %0" : "=r" (err)); \
+    err; })
+#define mono_set_last_win32_error(err) __asm__ ("movl %0, %%gs:0x68" : : "r" (err))
+#elif _MSC_VER
+#define mono_get_last_win32_error()     (__readgsdword (0x68))
+#define mono_set_last_win32_error(err)  (__writegsdword (0x68, (err)))
+#else // amd64 unknown compiler
+#define mono_get_last_win32_error()     (GetLastError ())
+#define mono_set_last_win32_error(err)  (SetLastError (err))
+#endif
+
+#else // unknown architecture
+#define mono_get_last_win32_error()     (GetLastError ())
+#define mono_set_last_win32_error(err)  (SetLastError (err))
+#endif
+
+#endif // win32
+
 #endif
