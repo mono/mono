@@ -11,6 +11,12 @@ namespace System.Runtime.Loader
 {
 	partial class AssemblyLoadContext
 	{
+		internal IntPtr NativeALC {
+			get {
+				return _nativeAssemblyLoadContext;
+			}
+		}
+
 		static IntPtr InitializeAssemblyLoadContext (IntPtr assemblyLoadContext, bool representsTPALoadContext, bool isCollectible)
 		{
 			return IntPtr.Zero;
@@ -32,7 +38,7 @@ namespace System.Runtime.Loader
 
 			assemblyPath = assemblyPath.Replace ('\\', Path.DirectorySeparatorChar);
 			// TODO: Handle nativeImagePath
-			return InternalLoadFile (assemblyPath, ref stackMark);
+			return InternalLoadFile (NativeALC, assemblyPath, ref stackMark);
 		}
 
 		internal Assembly InternalLoad (byte[] arrAssembly, byte[] arrSymbols)
@@ -59,7 +65,7 @@ namespace System.Runtime.Loader
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static Assembly InternalLoadFile (string assemblyFile, ref StackCrawlMark stackMark);
+		extern static Assembly InternalLoadFile (IntPtr nativeAssemblyLoadContext, string assemblyFile, ref StackCrawlMark stackMark);
 
 		internal static Assembly DoAssemblyResolve (string name)
 		{

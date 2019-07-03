@@ -2438,11 +2438,12 @@ leave:
 	return result;
 }
 
-MonoReflectionAssemblyHandle
-ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoStackCrawlMark *stack_mark, MonoError *error)
+static
+MonoAssembly *
+mono_alc_load_file (MonoAssemblyLoadContext *alc, MonoStringHandle fname, MonoAssembly *executing_assembly, MonoError *error)
 {
-	MonoDomain *domain = mono_domain_get ();
-	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	MonoAssembly *ass = NULL;
+	HANDLE_FUNCTION_ENTER ();
 	char *filename = NULL;
 	if (MONO_HANDLE_IS_NULL (fname)) {
 		mono_error_set_argument_null (error, "assemblyFile", "");
@@ -2457,27 +2458,59 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 		goto leave;
 	}
 
+
 	MonoImageOpenStatus status;
-	MonoAssembly *executing_assembly;
-	executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
-	MonoAssembly *ass;
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_INDIVIDUAL);
 	req.requesting_assembly = executing_assembly;
+	req.request.alc = alc;
 	ass = mono_assembly_request_open (filename, &req, &status);
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
 			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
 		else
 			mono_error_set_file_not_found (error, filename, "Invalid Image");
-		goto leave;
 	}
+
+leave:
+	g_free (filename);
+	HANDLE_FUNCTION_RETURN_VAL (ass);
+}
+
+#ifndef ENABLE_NETCORE
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoStackCrawlMark *stack_mark, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	MonoAssembly *executing_assembly;
+	executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
+	MonoAssembly *ass = mono_alc_load_file (mono_domain_default_alc (domain), fname, executing_assembly, error);
+	goto_if_nok (error, leave);
 
 	result = mono_assembly_get_object_handle (domain, ass, error);
 leave:
-	g_free (filename);
 	return result;
 }
+#else
+MonoReflectionAssemblyHandle
+ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFile (gpointer alc_ptr, MonoStringHandle fname, MonoStackCrawlMark *stack_mark, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	MonoAssemblyLoadContext *alc = (MonoAssemblyLoadContext *)alc_ptr;
+
+	MonoAssembly *executing_assembly;
+	executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
+	MonoAssembly *ass = mono_alc_load_file (alc, fname, executing_assembly, error);
+	goto_if_nok (error, leave);
+
+	result = mono_assembly_get_object_handle (domain, ass, error);
+
+leave:
+	return result;
+}
+#endif
 
 MonoReflectionAssemblyHandle
 ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad, 
