@@ -2204,26 +2204,8 @@ mono_x86_emit_tls_get (guint8* code, int dreg, int tls_offset)
 	x86_prefix (code, X86_GS_PREFIX);
 	x86_mov_reg_mem (code, dreg, tls_gs_offset + (tls_offset * 4), 4);
 #elif defined (TARGET_WIN32)
-	/*
-	 * See the Under the Hood article in the May 1996 issue of Microsoft Systems
-	 * Journal and/or a disassembly of the TlsGet () function.
-	 */
-	x86_prefix (code, X86_FS_PREFIX);
-	x86_mov_reg_mem (code, dreg, 0x18, 4);
-	if (tls_offset < 64) {
-		x86_mov_reg_membase (code, dreg, dreg, 3600 + (tls_offset * 4), 4);
-	} else {
-		guint8 *buf [16];
-
-		g_assert (tls_offset < 0x440);
-		/* Load TEB->TlsExpansionSlots */
-		x86_mov_reg_membase (code, dreg, dreg, 0xf94, 4);
-		x86_test_reg_reg (code, dreg, dreg);
-		buf [0] = code;
-		x86_branch (code, X86_CC_EQ, code, TRUE);
-		x86_mov_reg_membase (code, dreg, dreg, (tls_offset * 4) - 0x100, 4);
-		x86_patch (buf [0], code);
-	}
+	// FIXME generate code like __declspec (thread) when runtime uses __declspec (thread).
+	g_assert_not_reached ();
 #else
 	if (optimize_for_xen) {
 		x86_prefix (code, X86_GS_PREFIX);

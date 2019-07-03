@@ -39,10 +39,8 @@ g_static_assert (TLS_KEY_DOMAIN == 0);
 #include <windows.h>
 
 // Some Windows SDKs define TLS to be FLS.
-// That is presumably catastrophic when combined with mono_amd64_emit_tls_get / mono_x86_emit_tls_get.
-// It also is not consistent.
-// FLS is a reasonable idea perhaps, but we would need to be consistent and to adjust JIT.
-// And there is __declspec(fiber).
+// FLS is a reasonable idea, but be consistent.
+// And there is no __declspec (fiber).
 #undef TlsAlloc
 #undef TlsFree
 #undef TlsGetValue
