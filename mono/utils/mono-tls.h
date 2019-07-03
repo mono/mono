@@ -58,10 +58,10 @@ g_static_assert (TLS_KEY_DOMAIN == 0);
 
 static inline LPVOID mono_native_tls_get_value (MonoNativeTlsKey key)
 {
-	DWORD last_error = GetLastError ();
+	W32_DEFINE_LAST_ERROR_RESTORE_POINT;
 	LPVOID result = TlsGetValue (key);
 	g_assert (GetLastError () == 0);
-	SetLastError (last_error);
+	W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT;
 	return result;
 }
 
