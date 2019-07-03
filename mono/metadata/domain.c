@@ -2092,6 +2092,16 @@ mono_domain_create_default_alc (MonoDomain *domain)
 #endif
 }
 
+#ifdef ENABLE_NETCORE
+MonoAssemblyLoadContext *
+mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error)
+{
+	g_assert (!collectible); /* TODO: implement collectible ALCs */
+	MonoAssemblyLoadContext *alc = create_alc (domain, FALSE);
+	return alc;
+}
+#endif
+
 static void
 mono_alc_free (MonoAssemblyLoadContext *alc)
 {

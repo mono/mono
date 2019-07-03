@@ -670,4 +670,9 @@ mono_domain_set_fast (MonoDomain *domain, gboolean force);
 MonoAssemblyLoadContext *
 mono_domain_default_alc (MonoDomain *domain);
 
+#ifdef ENABLE_NETCORE
+MonoAssemblyLoadContext *
+mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error);
+#endif
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

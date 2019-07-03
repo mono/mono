@@ -17,9 +17,9 @@ namespace System.Runtime.Loader
 			}
 		}
 
-		static IntPtr InitializeAssemblyLoadContext (IntPtr assemblyLoadContext, bool representsTPALoadContext, bool isCollectible)
+		static IntPtr InitializeAssemblyLoadContext (IntPtr thisHandlePtr, bool representsTPALoadContext, bool isCollectible)
 		{
-			return IntPtr.Zero;
+			return InternalInitializeNativeALC (thisHandlePtr, representsTPALoadContext, isCollectible);
 		}
 
 		static void PrepareForAssemblyLoadContextRelease (IntPtr nativeAssemblyLoadContext, IntPtr assemblyLoadContextStrong)
@@ -66,6 +66,9 @@ namespace System.Runtime.Loader
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static Assembly InternalLoadFile (IntPtr nativeAssemblyLoadContext, string assemblyFile, ref StackCrawlMark stackMark);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static IntPtr InternalInitializeNativeALC (IntPtr thisHandlePtr, bool representsTPALoadContext, bool isCollectible);
 
 		internal static Assembly DoAssemblyResolve (string name)
 		{
