@@ -757,7 +757,14 @@ mono_get_lmf (void)
 void
 mono_set_lmf (MonoLMF *lmf)
 {
+	/*
+	 * TLS access resets the last error. This is called from several places
+	 * in the interpreter and debugger where we need to preserve the value (eg.
+	 * to record it for P/Invoke calls).
+	 */
+	W32_DEFINE_LAST_ERROR_RESTORE_POINT;
 	(*mono_get_lmf_addr ()) = lmf;
+	W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT;
 }
 
 static void
