@@ -375,7 +375,7 @@ mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly
 static MonoAssembly*
 mono_assembly_request_byname_nosearch (MonoAssemblyName *aname, const MonoAssemblyByNameRequest *req, MonoImageOpenStatus *status);
 static MonoAssembly*
-mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
+mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, const char *basedir, MonoAssemblyLoadContext *alc, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
 static MonoAssembly*
 chain_redirections_loadfrom (MonoImage *image, MonoImageOpenStatus *status);
 static MonoAssembly*
@@ -4415,7 +4415,8 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
 		return result;
 	}
 
-	return mono_assembly_load_full_gac_base_default (aname, req->basedir, req->request.asmctx, status);
+	/* TODO: for netcore can we avoid calling this method?  There is no GAC and we also shouldn't need to load anything from the default path */
+	return mono_assembly_load_full_gac_base_default (aname, req->basedir, req->request.alc, req->request.asmctx, status);
 }
 
 /* Like mono_assembly_request_byname_nosearch, but don't ask the preload look (ie,
@@ -4426,6 +4427,7 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
 MonoAssembly*
 mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 					  const char *basedir,
+					  MonoAssemblyLoadContext *alc,
 					  MonoAssemblyContextKind asmctx,
 					  MonoImageOpenStatus *status)
 {
@@ -4465,6 +4467,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), asmctx);
+	req.request.alc = alc;
 	req.request.predicate = predicate;
 	req.request.predicate_ud = predicate_ud;
 
@@ -4510,6 +4513,8 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 MonoAssembly*
 mono_assembly_request_byname (MonoAssemblyName *aname, const MonoAssemblyByNameRequest *req, MonoImageOpenStatus *status)
 {
+	MonoDomain *domain = mono_domain_get ();
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Request to load %s in (domain %p, alc %p)", aname->name, domain, (gpointer)req->request.alc);
 	MonoAssembly *result = mono_assembly_request_byname_nosearch (aname, req, status);
 	const gboolean refonly = req->request.asmctx == MONO_ASMCTX_REFONLY;
 
@@ -4569,6 +4574,7 @@ mono_assembly_load (MonoAssemblyName *aname, const char *basedir, MonoImageOpenS
 	MonoAssemblyByNameRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
 	req.requesting_assembly = NULL;
+	req.request.alc = mono_domain_default_alc (mono_domain_get ());
 	req.basedir = basedir;
 	return mono_assembly_request_byname (aname, &req, status);
 }

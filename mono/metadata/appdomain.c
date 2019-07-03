@@ -2243,6 +2243,7 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 	MonoDomain *domain = mono_domain_get ();
 	MonoAssembly *result = NULL;
 #ifdef ENABLE_NETCORE
+	g_assert (alc);
 	g_assert (mono_alc_domain (alc) == domain); /* should be true everywhere, not just on netcore */
 #endif
 
@@ -2366,8 +2367,13 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	gboolean parsed;
 	char *name;
 
+	MonoAssemblyLoadContext *alc = (MonoAssemblyLoadContext *)load_Context;
+	if (!alc)
+		alc = mono_domain_default_alc (domain);
+	g_assert (alc);
 	asmctx = MONO_ASMCTX_DEFAULT;
 	mono_assembly_request_prepare (&req.request, sizeof (req), asmctx);
+	req.request.alc = alc;
 	req.basedir = NULL;
 	req.no_postload_search = TRUE;
 
