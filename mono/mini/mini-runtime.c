@@ -757,6 +757,9 @@ mono_get_lmf (void)
 void
 mono_set_lmf (MonoLMF *lmf)
 {
+#ifdef MONO_KEYWORD_THREAD
+	(*mono_get_lmf_addr ()) = lmf;
+#else
 	/*
 	 * TLS access resets the last error. This is called from several places
 	 * in the interpreter and debugger where we need to preserve the value (eg.
@@ -765,6 +768,7 @@ mono_set_lmf (MonoLMF *lmf)
 	W32_DEFINE_LAST_ERROR_RESTORE_POINT;
 	(*mono_get_lmf_addr ()) = lmf;
 	W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT;
+#endif
 }
 
 static void
