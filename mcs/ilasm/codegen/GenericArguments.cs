@@ -40,7 +40,11 @@ namespace Mono.ILASM {
 
 			if (type_list == null)
 				type_list = new ArrayList ();
-			type_list.Add (type);
+			var prim = PrimitiveTypeRef.GetPrimitiveType (type.FullName);
+			if (prim != null)
+				type_list.Add (prim);
+			else
+				type_list.Add (type);
 			type_str = null;
 			type_arr = null;
 		}
