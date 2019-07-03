@@ -16,14 +16,6 @@
 -nomethod Microsoft.VisualBasic.ApplicationServices.Tests.AssemblyInfoTests.LoadedAssemblies
 
 ####################################################################
-##  System.Buffers.Tests
-####################################################################
-
-# CoreCLR specific test
-# https://github.com/mono/mono/blob/cc5886e3d54a7fae15bfd8bda1e8781fcbf2be25/netcore/System.Private.CoreLib/shared/System/Buffers/TlsOverPerCoreLockedStacksArrayPool.cs#L319-L325
--nomethod System.Buffers.ArrayPool.Tests.CollectionTests.PollingEventFires
-
-####################################################################
 ##  System.CodeDom.Tests
 ####################################################################
 
@@ -221,11 +213,6 @@
 ##  System.Memory.Tests
 ####################################################################
 
-# CoreCLR specific test
-# https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L790-L800
-# https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L811-L821
--nomethod System.Tests.StringTests.NormalizationTest
-
 # System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
 # https://github.com/mono/mono/issues/14959
 -nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
@@ -294,10 +281,6 @@
 ####################################################################
 ##  System.Net.Sockets.Tests
 ####################################################################
-
-# Test does not run -> Precise GC not supported.
-# https://github.com/mono/mono/issues/15009
--nomethod System.Net.Sockets.Tests.UdpClientTest.Finalize_NoExceptionsThrown
 
 # TODO: Hangs and fails.
 # https://github.com/mono/mono/issues/15010
