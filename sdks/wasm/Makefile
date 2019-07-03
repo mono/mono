@@ -131,22 +131,22 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 # $(3) - EMCC_FLAGS
 define InterpBuildTemplate
 
-$(1)/mono.js: $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | $(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js $(1)/driver.o $(1)/corebindings.o $(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o $(1)/mono.js
-
-$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | $(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
-
-$(1)/corebindings.o: corebindings.c | $(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
-
-$(1)/zlib-helper.o: zlib-helper.c | $(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
-
-build-native: $(1)/mono.js
-
-$(1)/:
+builds/$(1)/:
 	mkdir -p $$@
+
+builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
+
+builds/$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
+
+builds/$(1)/corebindings.o: corebindings.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
+
+builds/$(1)/zlib-helper.o: zlib-helper.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
+
+build-native: builds/$(1)/mono.js
 
 endef
 
@@ -169,6 +169,9 @@ cross:
 
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
+
+runtime-threads:
+	$(MAKE) -C ../builds package-wasm-runtime-threads
 
 tuner:
 	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
@@ -210,7 +213,7 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) build-native
+packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
@@ -220,7 +223,7 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) build-native
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 build-test-suite: bin/test-suite/mono.js
@@ -291,11 +294,12 @@ threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
 
 build-threads-sample: packager.exe threads.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --threads threads.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --asset=tests/runtime/index.html --threads threads.exe
 	ninja -v -C obj/threads-sample
 
+# (cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 run-threads-sample: build-threads-sample
-	(cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
+	node tests/runtime/run.js bin/threads-sample/ --run threads.exe
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -393,6 +397,9 @@ run-jsc-%: toolchain build-test-suite
 run-sm-%: toolchain build-test-suite
 	(cd bin/test-suite && $(SM) runtime.js $*)
 
+run-chrome-%: build-test-suite
+	node tests/runtime/run.js bin/test-suite $*
+
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
 	$(MAKE) -C . run-ch-$*
@@ -426,9 +433,7 @@ clean: clean-sdk
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
-	$(RM) -r debug
-	$(RM) -r release
-	$(RM) -r release-dynamic
+	$(RM) -r builds
 	$(RM) emsdk_env.sh
 
 package: build build-dbg-proxy build-sdk
@@ -451,8 +456,7 @@ package: build build-dbg-proxy build-sdk
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
 	cp dotnet_support.js tmp/
-	cp -r debug tmp/
-	cp -r release tmp/
+	cp -r builds tmp/
 	mkdir tmp/framework
 	cp framework/WebAssembly.Bindings.dll tmp/framework
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
