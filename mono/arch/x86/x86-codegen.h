@@ -289,39 +289,11 @@ typedef union {
 
 #define kMaxMembaseEmitPadding 6
 
-#define x86_membase_emit_body(inst,r,basereg,disp)	do {\
-	if ((basereg) == X86_ESP) {	\
-		if ((disp) == 0) {	\
-			x86_address_byte ((inst), 0, (r), X86_ESP);	\
-			x86_address_byte ((inst), 0, X86_ESP, X86_ESP);	\
-		} else if (x86_is_imm8((disp))) {	\
-			x86_address_byte ((inst), 1, (r), X86_ESP);	\
-			x86_address_byte ((inst), 0, X86_ESP, X86_ESP);	\
-			x86_imm_emit8 ((inst), (disp));	\
-		} else {	\
-			x86_address_byte ((inst), 2, (r), X86_ESP);	\
-			x86_address_byte ((inst), 0, X86_ESP, X86_ESP);	\
-			x86_imm_emit32 ((inst), (disp));	\
-		}	\
-		break;	\
-	}	\
-	if ((disp) == 0 && (basereg) != X86_EBP) {	\
-		x86_address_byte ((inst), 0, (r), (basereg));	\
-		break;	\
-	}	\
-	if (x86_is_imm8((disp))) {	\
-		x86_address_byte ((inst), 1, (r), (basereg));	\
-		x86_imm_emit8 ((inst), (disp));	\
-	} else {	\
-		x86_address_byte ((inst), 2, (r), (basereg));	\
-		x86_imm_emit32 ((inst), (disp));	\
-	}	\
-	} while (0)
-
-#define x86_membase_emit(inst,r,basereg,disp) \
-	do { \
-		x86_membase_emit_body((inst),(r),(basereg),(disp)); \
-	} while (0)
+#define x86_membase_emit(inst,r,basereg,disp) do {		\
+	x86_address_byte ((inst), 2, (r), X86_ESP);		\
+	x86_address_byte ((inst), 0, X86_ESP, (basereg));	\
+	x86_imm_emit32 ((inst), (disp));			\
+} while (0)
 
 #define kMaxMemindexEmitPadding 6
 
