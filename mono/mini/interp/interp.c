@@ -4385,38 +4385,44 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_NEWOBJ_FAST) {
 			guint16 param_count;
+			guint16 imethod_index = *(guint16*) (ip + 1);
 
-			frame->ip = ip;
+			const gboolean is_inlined = imethod_index == 0xffff;
 
-			child_frame.imethod = (InterpMethod*) imethod->data_items [*(guint16*)(ip + 1)];
 			param_count = *(guint16*)(ip + 2);
 
 			if (param_count) {
 				sp -= param_count;
-				memmove (sp + 1, sp, param_count * sizeof (stackval));
+				memmove (sp + 1 + is_inlined, sp, param_count * sizeof (stackval));
 			}
-			child_frame.stack_args = sp;
 
 			MonoVTable *vtable = (MonoVTable*) imethod->data_items [*(guint16*)(ip + 3)];
-			if (G_UNLIKELY (!vtable->initialized)) {
-				mono_runtime_class_init_full (vtable, error);
-				if (!mono_error_ok (error))
-					THROW_EX (mono_error_convert_to_exception (error), ip);
-			}
+			INIT_VTABLE (vtable);
+
 			frame_objref (frame) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 			if (G_UNLIKELY (!frame_objref (frame))) {
 				mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 				THROW_EX (mono_error_convert_to_exception (error), ip);
 			}
-			sp->data.o = frame_objref (frame);
+
+			sp [0].data.o = frame_objref (frame);
+			if (is_inlined) {
+				sp [1].data.o = frame_objref (frame);
+				sp += param_count + 2;
+			} else {
+				InterpMethod *ctor_method = (InterpMethod*) imethod->data_items [imethod_index];
+				frame->ip = ip;
+
+				child_frame.imethod = ctor_method;
+				child_frame.stack_args = sp;
+
+				interp_exec_method (&child_frame, context, error);
+				CHECK_RESUME_STATE (context);
+				sp [0].data.o = frame_objref (frame);
+				sp++;
+			}
 			ip += 4;
 
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			sp->data.o = frame_objref (frame);
-			++sp;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_NEWOBJ_VT_FAST)
