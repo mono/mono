@@ -98,11 +98,10 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
-      errors=0
+      rm -rf .failures
       for testdir in netcore/corefx/tests/extracted/*; do
-        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || errors=$((errors+1))
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures
       done
-      echo $errors > .failures
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
     condition: ne(variables['poolname'], 'Hosted VS2017')
@@ -115,9 +114,8 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
-      errors=$(<.failures)
-      if [ "$errors" -ne "0" ]; then
-        echo "$errors test suits have failures. If the test view still shows 0 failures see logs for 'Run CoreFX tests' - probably some test suites crashed.";
+      if [ -e ".failures" ]; then
+        echo "$(<.failures) have failures, see 'Run CoreFX tests' logs if Test View shows 0 failures.";
         exit 125
       fi
     displayName: 'Validate test results'
