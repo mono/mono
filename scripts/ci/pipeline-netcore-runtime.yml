@@ -99,8 +99,10 @@ jobs:
   
   - bash: |
       rm -rf .failures
+      counter=0
       tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
       for testdir in netcore/corefx/tests/extracted/*; do
+        counter=$((counter+1))
         printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
         scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
       done
