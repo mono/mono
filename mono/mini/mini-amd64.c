@@ -3859,31 +3859,25 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 	return code;
 }
 
-#ifdef TARGET_WIN32
-
-#define TEB_LAST_ERROR_SLOT 0x30
-#define TEB_LAST_ERROR_OFFSET 0x068
-
 static guint8*
 emit_get_last_error (guint8* code, int dreg)
 {
-	/* Threads last error value is located in TEB_LAST_ERROR_OFFSET. */
+#ifdef TARGET_WIN32
+
+#define TEB_LAST_ERROR_OFFSET 0x068
+
+	// Thread's last error is in gs:0x68.
 	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_mem (code, dreg, TEB_LAST_ERROR_SLOT, sizeof (gpointer));
-	amd64_mov_reg_membase (code, dreg, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
+	amd64_mov_reg_mem (code, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
 
 	return code;
-}
 
 #else
 
-static guint8*
-emit_get_last_error (guint8* code, int dreg)
-{
 	g_assert_not_reached ();
+#endif
 }
 
-#endif
 
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
