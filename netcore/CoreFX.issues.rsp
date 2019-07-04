@@ -1034,7 +1034,7 @@
 -nomethod System.Tests.AppDomainTests.LoadBytes
 
 # These events are not wired up in mono
--nomethod System.Tests.AppDomainTests.TypeResolve
+#-nomethod System.Tests.AppDomainTests.TypeResolve
 -nomethod System.Tests.AppDomainTests.GetAssemblies
 -nomethod System.Tests.AppDomainTests.ResourceResolve
 -nomethod System.Tests.AppDomainTests.AssemblyLoad

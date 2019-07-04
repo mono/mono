@@ -23,3 +23,6 @@
 
 # StackOverflow somewhere here
 -nonamespace System.Threading.Tasks.Tests
+
+# NRE in SafeHandle.Dispose
+-nonamespace System.Runtime.InteropServices.RuntimeInformation.Tests

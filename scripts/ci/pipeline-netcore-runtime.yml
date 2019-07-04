@@ -19,6 +19,13 @@ jobs:
         poolname: Hosted Ubuntu 1604
         manifest: linux-x64
         sed: sed
+      Linux_ARM64:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          poolname: Xamarin-ARM64
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          poolname: Xamarin-ARM64-Private
+        manifest: linux-arm64
+        sed: sed
       Windows_x64:
         poolname: Hosted VS2017
         manifest: win-x64
@@ -108,8 +115,8 @@ jobs:
 
   - bash: |
       if [ -e ".failures" ]; then
-        echo "$(<.failures) have failures, see 'Run CoreFX tests' logs if Test View shows 0 failures.";
-        exit 125
+        printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n";
+        exit 1
       fi
     displayName: 'Validate test results'
     timeoutInMinutes: 90
