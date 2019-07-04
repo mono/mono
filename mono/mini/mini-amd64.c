@@ -2550,7 +2550,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
         } else { \
 	        mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_true_bb); \
 	        if (optimize_branch_pred && \
-            x86_is_imm8 (ins->inst_true_bb->max_offset - offset)) \
+            x86_use_imm8 (ins->inst_true_bb->max_offset - offset)) \
 		        x86_branch8 (code, cond, 0, sign); \
                 else \
 	                x86_branch32 (code, cond, 0, sign); \
@@ -3977,6 +3977,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		const guint offset = code - cfg->native_code;
 		set_code_cursor (cfg, code);
 		int max_len = ins_get_size (ins->opcode);
+
+		if (mini_debug_options.single_imm_size) // FIXME accurate number
+			max_len *= 2;
+
 		code = realloc_code (cfg, max_len);
 
 		if (cfg->debug_info)
@@ -5215,7 +5219,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				} else {
 					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 					if (optimize_branch_pred &&
-					    x86_is_imm8 (ins->inst_target_bb->max_offset - offset))
+					    x86_use_imm8 (ins->inst_target_bb->max_offset - offset))
 						x86_jump8 (code, 0);
 					else 
 						x86_jump32 (code, 0);
@@ -6815,11 +6819,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 		}
 
-		if ((code - cfg->native_code - offset) > max_len) {
-			g_warning ("wrong maximal instruction length of instruction %s (expected %d, got %ld)",
-				   mono_inst_name (ins->opcode), max_len, code - cfg->native_code - offset);
-			g_assert_not_reached ();
-		}
+		g_assertf ((code - cfg->native_code - offset) <= max_len,
+			   "wrong maximal instruction length of instruction %s (expected %d, got %ld)",
+			   mono_inst_name (ins->opcode), max_len, code - cfg->native_code - offset);
 	}
 
 	set_code_cursor (cfg, code);
@@ -7804,19 +7806,21 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 	unwind_ops = mono_arch_get_cie_program ();
 
+	int size = 64;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		size *= 2;
+
+	start = code = (guint8 *)mono_global_codeman_reserve (size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
+
 	if (has_target) {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 		/* Replace the this argument with the target */
 		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_ARG_REG1, 8);
 		amd64_mov_reg_membase (code, AMD64_ARG_REG1, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, target), 8);
 		amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	} else {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
-
 		if (param_count == 0) {
 			amd64_jump_membase (code, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		} else {
@@ -7835,9 +7839,10 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 			amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		}
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	}
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -7877,6 +7882,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	if (offset / (int)sizeof (target_mgreg_t) > MAX_VIRTUAL_DELEGATE_OFFSET)
 		return NULL;
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		size *= 2;
+
 	start = code = (guint8 *)mono_global_codeman_reserve (size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 	unwind_ops = mono_arch_get_cie_program ();
@@ -7893,6 +7901,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoObject, vtable), 8);
 	amd64_jump_membase (code, AMD64_RAX, offset);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
@@ -8025,10 +8036,10 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 
 #define CMP_SIZE (6 + 1)
 #define CMP_REG_REG_SIZE (4 + 1)
-#define BR_SMALL_SIZE 2
+#define BR_SMALL_SIZE (mini_debug_options.single_imm_size ? BR_LARGE_SIZE : 2)
 #define BR_LARGE_SIZE 6
-#define MOV_REG_IMM_SIZE 10
-#define MOV_REG_IMM_32BIT_SIZE 6
+#define MOV_REG_IMM_SIZE (mini_debug_options.single_imm_size ? 15 : 10) // FIXME correct values for mini_debug_options.single_imm_size)
+#define MOV_REG_IMM_32BIT_SIZE (mini_debug_options.single_imm_size ? 11 : 6) // FIXME correct values for mini_debug_options.single_imm_size)
 #define JUMP_REG_SIZE (2 + 1)
 
 static int
@@ -8171,12 +8182,12 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, MONO_ARCH_IMT_SCRATCH_REG);
 			}
 			item->jmp_code = code;
-			if (x86_is_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
+			if (x86_use_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
 				x86_branch8 (code, X86_CC_GE, 0, FALSE);
 			else
 				x86_branch32 (code, X86_CC_GE, 0, FALSE);
 		}
-		g_assert (code - item->code_target <= item->chunk_size);
+		g_assertf (code - item->code_target <= item->chunk_size, "%X %X", (guint)(code - item->code_target), (guint)item->chunk_size);
 	}
 	/* patch the branches to get to the target items */
 	for (i = 0; i < count; ++i) {

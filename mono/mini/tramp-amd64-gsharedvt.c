@@ -31,6 +31,8 @@
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
 
+#include "mini-runtime.h"
+
 #define SRC_REG_SHIFT 0
 #define SRC_REG_MASK 0xFFFF
 
@@ -153,11 +155,15 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 
 	buf_len = 32;
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
 	amd64_mov_reg_imm (code, AMD64_RAX, arg);
 	amd64_jump_code (code, addr);
-	g_assert ((code - start) < buf_len);
+
+	g_assertf ((code - start) <= buf_len, "%d %d", (int)(code - start), buf_len);
 
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
@@ -182,6 +188,10 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int reg_area_size;
 
 	buf_len = 2048;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	buf = code = mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/*
@@ -473,7 +483,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 #endif
 	amd64_ret (code);
 
-	g_assert ((code - buf) < buf_len);
+	g_assertf ((code - buf) <= buf_len, "%d %d", (int)(code - buf), buf_len);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
 	if (info)

@@ -13,6 +13,8 @@
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
+#include "mini-runtime.h"
+
 gpointer
 mono_x86_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
 {
@@ -89,6 +91,10 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int info_offset, mrgctx_offset;
 
 	buf_len = 320;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	buf = code = mono_global_codeman_reserve (buf_len);
 
 	/*
@@ -349,7 +355,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	x86_leave (code);
 	x86_ret_imm (code, 4);
 
-	g_assert ((code - buf) < buf_len);
+	g_assertf (code - buf <= buf_len, "%d %d", (int)(code - buf), buf_len);
 
 	if (info)
 		*info = mono_tramp_info_create ("gsharedvt_trampoline", buf, code - buf, ji, unwind_ops);

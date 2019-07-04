@@ -268,6 +268,8 @@ typedef union {
 #define x86_modrm_reg(modrm) (((modrm) >> 3) & 0x7)
 #define x86_modrm_rm(modrm) ((modrm) & 0x7)
 
+#define x86_use_imm8(x) (!mini_debug_options.single_imm_size && x86_is_imm8 (x))
+
 #define x86_address_byte(inst,m,o,r) do { *(inst)++ = ((((m)&0x03)<<6)|(((o)&0x07)<<3)|(((r)&0x07))); } while (0)
 #define x86_imm_emit32(inst,imm)     \
 	do {	\
@@ -279,8 +281,10 @@ typedef union {
 	} while (0)
 #define x86_imm_emit16(inst,imm)     do { *(short*)(inst) = (imm); (inst) += 2; } while (0)
 #define x86_imm_emit8(inst,imm)      do { *(inst) = (unsigned char)((imm) & 0xff); ++(inst); } while (0)
+
+// FIXME Most uses of x86_is_imm8 should be x86_use_imm8 (except in x86_patch?)
 #define x86_is_imm8(imm)             (((int)(imm) >= -128 && (int)(imm) <= 127))
-#define x86_is_imm16(imm)            (((int)(imm) >= -(1<<16) && (int)(imm) <= ((1<<16)-1)))
+//#define x86_is_imm16(imm)            (((int)(imm) >= -(1<<16) && (int)(imm) <= ((1<<16)-1)))
 
 #define x86_reg_emit(inst,r,regno)   do { x86_address_byte ((inst), 3, (r), (regno)); } while (0)
 #define x86_reg8_emit(inst,r,regno,is_rh,is_rnoh)   do {x86_address_byte ((inst), 3, (is_rh)?((r)|4):(r), (is_rnoh)?((regno)|4):(regno));} while (0)
@@ -289,12 +293,15 @@ typedef union {
 
 #define kMaxMembaseEmitPadding 6
 
+// FIXME single_imm_size implies this should always output the same size,
+// independent of register selection and comparison to 0.
+//
 #define x86_membase_emit_body(inst,r,basereg,disp)	do {\
 	if ((basereg) == X86_ESP) {	\
 		if ((disp) == 0) {	\
 			x86_address_byte ((inst), 0, (r), X86_ESP);	\
 			x86_address_byte ((inst), 0, X86_ESP, X86_ESP);	\
-		} else if (x86_is_imm8((disp))) {	\
+		} else if (x86_use_imm8 ((disp))) {	\
 			x86_address_byte ((inst), 1, (r), X86_ESP);	\
 			x86_address_byte ((inst), 0, X86_ESP, X86_ESP);	\
 			x86_imm_emit8 ((inst), (disp));	\
@@ -309,7 +316,7 @@ typedef union {
 		x86_address_byte ((inst), 0, (r), (basereg));	\
 		break;	\
 	}	\
-	if (x86_is_imm8((disp))) {	\
+	if (x86_use_imm8 ((disp))) {	\
 		x86_address_byte ((inst), 1, (r), (basereg));	\
 		x86_imm_emit8 ((inst), (disp));	\
 	} else {	\
@@ -334,7 +341,7 @@ typedef union {
 		} else if ((disp) == 0 && (basereg) != X86_EBP) {	\
 			x86_address_byte ((inst), 0, (r), 4);	\
 			x86_address_byte ((inst), (shift), (indexreg), (basereg));	\
-		} else if (x86_is_imm8((disp))) {	\
+		} else if (x86_use_imm8 ((disp))) {	\
 			x86_address_byte ((inst), 1, (r), 4);	\
 			x86_address_byte ((inst), (shift), (indexreg), (basereg));	\
 			x86_imm_emit8 ((inst), (disp));	\
@@ -361,10 +368,10 @@ typedef union {
  * the instruction is inspected for validity and the correct displacement
  * is inserted.
  */
-#define x86_do_patch(ins,target)	\
+#define x86_patch(ins,target)	\
 	do {	\
 		unsigned char* pos = (ins) + 1;	\
-		int disp, size = 0;	\
+		int size = 0;	\
 		switch (*(unsigned char*)(ins)) {	\
 		case 0xe8: case 0xe9: ++size; break; /* call, jump32 */	\
 		case 0x0f: if (!(*pos >= 0x70 && *pos <= 0x8f)) assert (0);	\
@@ -379,13 +386,13 @@ typedef union {
 			break;	\
 		default: assert (0);	\
 		}	\
-		disp = (target) - pos;	\
+		const int disp = (target) - pos;	\
 		if (size) x86_imm_emit32 (pos, disp - 4);	\
-		else if (x86_is_imm8 (disp - 1)) x86_imm_emit8 (pos, disp - 1);	\
-		else assert (0);	\
+		else {						\
+			g_assert (x86_is_imm8 (disp - 1));	\
+			x86_imm_emit8 (pos, disp - 1);		\
+		}						\
 	} while (0)
-
-#define x86_patch(ins,target) do { x86_do_patch((ins), (target)); } while (0)
 
 #define x86_breakpoint(inst) \
 	do {	\
@@ -591,7 +598,7 @@ typedef union {
 			x86_imm_emit32 ((inst), (imm));	\
 			break;	\
 		}	\
-		if (x86_is_imm8((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 3); \
 			*(inst)++ = (unsigned char)0x83;	\
 			x86_reg_emit ((inst), (opc), (reg));	\
@@ -606,7 +613,7 @@ typedef union {
 
 #define x86_alu_mem_imm(inst,opc,mem,imm) 	\
 	do {	\
-		if (x86_is_imm8((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 7); \
 			*(inst)++ = (unsigned char)0x83;	\
 			x86_mem_emit ((inst), (opc), (mem));	\
@@ -621,7 +628,7 @@ typedef union {
 
 #define x86_alu_membase_imm(inst,opc,basereg,disp,imm) 	\
 	do {	\
-		if (x86_is_imm8((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 2 + kMaxMembaseEmitPadding); \
 			*(inst)++ = (unsigned char)0x83;	\
 			x86_membase_emit ((inst), (opc), (basereg), (disp));	\
@@ -907,7 +914,7 @@ typedef union {
  */
 #define x86_imul_reg_reg_imm(inst,dreg,reg,imm)	\
 	do {	\
-		if (x86_is_imm8 ((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 3); \
 			*(inst)++ = (unsigned char)0x6b;	\
 			x86_reg_emit ((inst), (dreg), (reg));	\
@@ -922,7 +929,7 @@ typedef union {
 
 #define x86_imul_reg_mem_imm(inst,reg,mem,imm)	\
 	do {	\
-		if (x86_is_imm8 ((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 7); \
 			*(inst)++ = (unsigned char)0x6b;	\
 			x86_mem_emit ((inst), (reg), (mem));	\
@@ -937,7 +944,7 @@ typedef union {
 
 #define x86_imul_reg_membase_imm(inst,reg,basereg,disp,imm)	\
 	do {	\
-		if (x86_is_imm8 ((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			x86_codegen_pre(&(inst), 2 + kMaxMembaseEmitPadding); \
 			*(inst)++ = (unsigned char)0x6b;	\
 			x86_membase_emit ((inst), (reg), (basereg), (disp));	\
@@ -1578,7 +1585,7 @@ typedef union {
 #define x86_push_imm(inst,imm)	\
 	do {	\
 		int _imm = (int) (imm);	\
-		if (x86_is_imm8 (_imm)) {	\
+		if (x86_use_imm8 (_imm)) {	\
 			x86_codegen_pre(&(inst), 2); \
 			*(inst)++ = (unsigned char)0x6A;	\
 			x86_imm_emit8 ((inst), (_imm));	\
@@ -1693,7 +1700,7 @@ typedef union {
 		int t; \
 		x86_codegen_pre(&(inst), 2); \
 		t = (unsigned char*)(target) - (inst) - 2;	\
-		if (x86_is_imm8(t)) {	\
+		if (x86_use_imm8 (t)) {	\
 			x86_jump8 ((inst), t);	\
 		} else {	\
 			x86_codegen_pre(&(inst), 5); \
@@ -1710,7 +1717,7 @@ typedef union {
 #define x86_jump_disp(inst,disp)	\
 	do {	\
 		int t = (disp) - 2;	\
-		if (x86_is_imm8(t)) {	\
+		if (x86_use_imm8 (t)) {	\
 			x86_jump8 ((inst), t);	\
 		} else {	\
 			t -= 3;	\
@@ -1773,7 +1780,7 @@ typedef union {
 		x86_codegen_pre(&(inst), 2); \
 		offset = (target) - (inst) - 2;	\
 		branch_start = (inst); \
-		if (x86_is_imm8 ((offset)))	\
+		if (x86_use_imm8 ((offset)))	\
 			x86_branch8 ((inst), (cond), offset, (is_signed));	\
 		else {	\
 			x86_codegen_pre(&(inst), 6); \
@@ -1789,7 +1796,7 @@ typedef union {
 #define x86_branch_body(inst,cond,target,is_signed)	\
 	do {	\
 		int offset = (target) - (inst) - 2;	\
-		if (x86_is_imm8 ((offset)))	\
+		if (x86_use_imm8 ((offset)))	\
 			x86_branch8 ((inst), (cond), offset, (is_signed));	\
 		else {	\
 			offset = (target) - (inst) - 6;	\
@@ -1807,7 +1814,7 @@ typedef union {
 #define x86_branch_disp(inst,cond,disp,is_signed)	\
 	do {	\
 		int offset = (disp) - 2;	\
-		if (x86_is_imm8 ((offset)))	\
+		if (x86_use_imm8 ((offset)))	\
 			x86_branch8 ((inst), (cond), offset, (is_signed));	\
 		else {	\
 			offset -= 4;	\

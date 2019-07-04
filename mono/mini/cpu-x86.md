@@ -137,7 +137,7 @@ int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
 int_mul_ovf_un: dest:i src1:i src2:i len:16
 
 throw: src1:i len:13
-rethrow: src1:i len:13
+rethrow: src1:i len:15
 start_handler: len:16
 endfinally: len:16
 endfilter: src1:a len:16
@@ -250,7 +250,7 @@ float_not: dest:f src1:f len:2
 float_conv_to_i1: dest:y src1:f len:39
 float_conv_to_i2: dest:y src1:f len:39
 float_conv_to_i4: dest:i src1:f len:39
-float_conv_to_i8: dest:L src1:f len:39
+float_conv_to_i8: dest:L src1:f len:44
 float_conv_to_u4: dest:i src1:f len:39
 float_conv_to_u8: dest:L src1:f len:39
 float_conv_to_u2: dest:y src1:f len:39
@@ -268,7 +268,7 @@ float_cneq: dest:y src1:f src2:f len:25
 float_cge: dest:y src1:f src2:f len:37
 float_cle: dest:y src1:f src2:f len:37
 float_conv_to_u: dest:i src1:f len:36
-call_handler: len:11 clob:c
+call_handler: len:17 clob:c
 aotconst: dest:i len:5
 load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7

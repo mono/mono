@@ -186,7 +186,7 @@ typedef union {
 
 #define amd64_alu_reg_imm_size_body(inst,opc,reg,imm,size) \
 	do {	\
-		if (x86_is_imm8((imm))) {	\
+		if (x86_use_imm8 ((imm))) {	\
 			amd64_emit_rex(inst, size, 0, 0, (reg)); \
 			*(inst)++ = (unsigned char)0x83;	\
 			x86_reg_emit ((inst), (opc), (reg));	\

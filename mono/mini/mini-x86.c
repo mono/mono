@@ -1690,7 +1690,7 @@ if (ins->inst_true_bb->native_offset) { \
 } else { \
 	mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_true_bb); \
 	if ((cfg->opt & MONO_OPT_BRANCH) && \
-            x86_is_imm8 (ins->inst_true_bb->max_offset - cpos)) \
+            x86_use_imm8 (ins->inst_true_bb->max_offset - cpos)) \
 		x86_branch8 (code, cond, 0, sign); \
         else \
 	        x86_branch32 (code, cond, 0, sign); \
@@ -2356,6 +2356,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		const guint offset = code - cfg->native_code;
 		set_code_cursor (cfg, code);
 		int max_len = ins_get_size (ins->opcode);
+
+		if (mini_debug_options.single_imm_size) // FIXME accurate number
+			max_len *= 2;
+
 		code = realloc_code (cfg, max_len);
 
 		if (cfg->debug_info)
@@ -3234,7 +3238,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else {
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 				if ((cfg->opt & MONO_OPT_BRANCH) &&
-				    x86_is_imm8 (ins->inst_target_bb->max_offset - cpos))
+				    x86_use_imm8 (ins->inst_target_bb->max_offset - cpos))
 					x86_jump8 (code, 0);
 				else 
 					x86_jump32 (code, 0);
@@ -3516,7 +3520,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			tins = mono_branch_optimize_exception_target (cfg, bb, "OverflowException");
 			if (tins) {
 				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, tins->inst_true_bb);
-				if ((cfg->opt & MONO_OPT_BRANCH) && x86_is_imm8 (tins->inst_true_bb->max_offset - cpos))
+				if ((cfg->opt & MONO_OPT_BRANCH) && x86_use_imm8 (tins->inst_true_bb->max_offset - cpos))
 					x86_jump8 (code, 0);
 				else
 					x86_jump32 (code, 0);
@@ -5476,6 +5480,10 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		}
 		size += item->chunk_size;
 	}
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		size *= 2;
+
 	if (fail_tramp)
 		code = (guint8*)mono_method_alloc_generic_virtual_trampoline (domain, size);
 	else
@@ -5530,7 +5538,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		} else {
 			x86_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)item->key);
 			item->jmp_code = code;
-			if (x86_is_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
+			if (x86_use_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
 				x86_branch8 (code, X86_CC_GE, 0, FALSE);
 			else
 				x86_branch32 (code, X86_CC_GE, 0, FALSE);
@@ -5548,7 +5556,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	if (!fail_tramp)
 		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
-	g_assert (code - start <= size);
+	g_assertf (code - start <= size, "%d %d", (int)(code - start), size);
 
 #if DEBUG_IMT
 	{
@@ -5770,6 +5778,10 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 	 */
 
 	if (has_target) {
+
+		if (mini_debug_options.single_imm_size) // FIXME accurate number
+			code_reserve *= 2;
+
 		start = code = mono_global_codeman_reserve (code_reserve);
 
 		/* Replace the this argument with the target */
@@ -5783,6 +5795,10 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		int i = 0;
 		/* 8 for mov_reg and jump, plus 8 for each parameter */
 		code_reserve = 8 + (param_count * 8);
+
+		if (mini_debug_options.single_imm_size) // FIXME accurate number
+			code_reserve *= 2;
+
 		/*
 		 * The stack contains:
 		 * <args in reverse order>
@@ -5812,7 +5828,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 		x86_jump_membase (code, X86_ECX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 
-		g_assert ((code - start) < code_reserve);
+		g_assertf ((code - start) < code_reserve, "%d %d", (int)(code - start), code_reserve);
 	}
 
 	if (has_target) {
@@ -5851,6 +5867,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	if (offset / (int)sizeof (target_mgreg_t) > MAX_VIRTUAL_DELEGATE_OFFSET)
 		return NULL;
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		size *= 2;
+
 	/*
 	 * The stack contains:
 	 * <delegate>
@@ -5873,6 +5892,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	x86_mov_reg_membase (code, X86_EAX, X86_ECX, MONO_STRUCT_OFFSET (MonoObject, vtable), 4);
 	x86_jump_membase (code, X86_EAX, offset);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);

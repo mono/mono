@@ -114,7 +114,7 @@ long_conv_to_r4: dest:f src1:i len:15
 long_conv_to_r8: dest:f src1:i len:9
 long_conv_to_u4: dest:i src1:i len:3
 long_conv_to_u8: dest:i src1:i len:3
-long_conv_to_r_un: dest:f src1:i len:64
+long_conv_to_r_un: dest:f src1:i len:75
 long_conv_to_ovf_i4_un: dest:i src1:i len:16
 long_conv_to_ovf_u4: dest:i src1:i len:15
 long_conv_to_u2: dest:i src1:i len:4
@@ -134,7 +134,7 @@ endfinally: len:9
 endfilter: src1:a len:9
 get_ex_obj: dest:a len:16
 
-ckfinite: dest:f src1:f len:43
+ckfinite: dest:f src1:f len:48
 ceq: dest:c len:8
 cgt: dest:c len:8
 cgt_un: dest:c len:8
@@ -149,7 +149,7 @@ icompare_imm: src1:i len:8
 fcompare: src1:f src2:f clob:a len:13
 rcompare: src1:f src2:f clob:a len:13
 arglist: src1:b len:11
-check_this: src1:b len:5
+check_this: src1:b len:11
 call: dest:a clob:c len:32
 voidcall: clob:c len:32
 voidcall_reg: src1:i clob:c len:32
@@ -317,7 +317,7 @@ move_f_to_i4: dest:i src1:f len:16
 move_i4_to_f: dest:f src1:i len:16
 move_f_to_i8: dest:i src1:f len:5
 move_i8_to_f: dest:f src1:i len:5
-call_handler: len:14 clob:c
+call_handler: len:19 clob:c
 aotconst: dest:i len:10
 gc_safe_point: clob:c src1:i len:40
 x86_test_null: src1:i len:5
@@ -359,8 +359,8 @@ tls_get: dest:i len:32
 tls_set: src1:i len:16
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
-atomic_exchange_i4: src1:b src2:i dest:i len:12
-atomic_exchange_i8: src1:b src2:i dest:i len:12
+atomic_exchange_i4: src1:b src2:i dest:i len:14
+atomic_exchange_i8: src1:b src2:i dest:i len:14
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 atomic_cas_i8: src1:b src2:i src3:a dest:a len:24
 memory_barrier: len:3
@@ -391,12 +391,12 @@ adc_imm: dest:i src1:i len:8 clob:1
 sbb: dest:i src1:i src2:i len:3 clob:1
 sbb_imm: dest:i src1:i len:8 clob:1
 br_reg: src1:i len:3
-sin: dest:f src1:f len:32
-cos: dest:f src1:f len:32
+sin: dest:f src1:f len:34
+cos: dest:f src1:f len:34
 abs: dest:f src1:f clob:1 len:32
 tan: dest:f src1:f len:59
 atan: dest:f src1:f len:9
-sqrt: dest:f src1:f len:32
+sqrt: dest:f src1:f len:34
 sext_i1: dest:i src1:i len:4
 sext_i2: dest:i src1:i len:4
 sext_i4: dest:i src1:i len:8
@@ -590,7 +590,7 @@ vcall2: len:64 clob:c
 vcall2_reg: src1:i len:64 clob:c
 vcall2_membase: src1:b len:64 clob:c
 
-dyn_call: src1:i src2:i len:192 clob:c
+dyn_call: src1:i src2:i len:240 clob:c
 
 localloc_imm: dest:i len:120
 
@@ -823,7 +823,7 @@ gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 
-generic_class_init: src1:A len:32 clob:c
+generic_class_init: src1:A len:33 clob:c
 get_last_error: dest:i len:32
 
 fill_prof_call_ctx: src1:i len:128

@@ -66,7 +66,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	/* FIXME: Optimize this */
 	amd64_mov_reg_imm (code, AMD64_RAX, addr);
 	amd64_jump_reg (code, AMD64_RAX);
-	g_assert ((code - start) < size);
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	mono_arch_flush_icache (start, code - start);
@@ -101,13 +101,16 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 		buf_len = 30;
 #endif
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	start = code = (guint8 *)mono_domain_code_reserve (domain, buf_len + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 	unwind_ops = mono_arch_get_cie_program ();
 
 	amd64_mov_reg_imm (code, MONO_ARCH_RGCTX_REG, arg);
 	amd64_jump_code (code, addr);
-	g_assert ((code - start) < buf_len);
+	g_assertf ((code - start) <= buf_len, "%d %d", (int)(code - start), buf_len);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	mono_arch_flush_icache (start, code - start);
@@ -238,7 +241,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	gboolean has_caller;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
-	const guint kMaxCodeSize = 630;
+	const int kMaxCodeSize = mini_debug_options.single_imm_size ? 757 : 630;
 
 	if (tramp_type == MONO_TRAMPOLINE_JUMP)
 		has_caller = FALSE;
@@ -293,7 +296,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	orig_rsp_to_rbp_offset = 0;
 	r11_save_code = code;
 	/* Reserve space for the mov_membase_reg to save R11 */
-	code += 5;
+	code += mini_debug_options.single_imm_size ? 8 : 5;
 	after_r11_save_code = code;
 
 	/* Pop the return address off the stack */
@@ -568,7 +571,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		amd64_jump_membase (code, AMD64_RSP, rax_offset - sizeof (target_mgreg_t));
 	}
 
-	g_assert ((code - buf) <= kMaxCodeSize);
+	g_assertf ((code - buf) <= kMaxCodeSize, "code:%p buf:%p code-buf:%X kMaxCode:%X", code, buf, (guint)(code - buf), (guint)kMaxCodeSize);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
 	mono_arch_flush_icache (buf, code - buf);
@@ -660,6 +663,9 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	tramp_size = 64 + 8 * depth;
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		tramp_size *= 2;
+
 	code = buf = (guint8 *)mono_global_codeman_reserve (tramp_size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 	unwind_ops = mono_arch_get_cie_program ();
@@ -725,7 +731,8 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	mono_arch_flush_icache (buf, code - buf);
 	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
-	g_assert (code - buf <= tramp_size);
+	g_assertf ((code - buf) <= tramp_size, "%d %d", (int)(code - buf), tramp_size);
+
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	char *name = mono_get_rgctx_fetch_trampoline_name (slot);
@@ -746,6 +753,9 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	g_assert (aot);
 	tramp_size = 64;
 
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		tramp_size *= 2;
+
 	code = buf = (guint8 *)mono_global_codeman_reserve (tramp_size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 	unwind_ops = mono_arch_get_cie_program ();
@@ -762,7 +772,8 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	mono_arch_flush_icache (buf, code - buf);
 	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
-	g_assert (code - buf <= tramp_size);
+	g_assertf ((code - buf) <= tramp_size, "%d %d", (int)(code - buf), tramp_size);
+
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	if (info)
@@ -830,6 +841,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	guint8 *code, *buf;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		tramp_size *= 2;
 
 	code = buf = (guint8 *)mono_global_codeman_reserve (tramp_size + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
@@ -911,6 +925,8 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, AMD64_RSP, cfa_offset);
 	amd64_ret (code);
 
+	g_assertf ((code - buf) <= tramp_size, "%d %d", (int)(code - buf), tramp_size);
+
 	mono_arch_flush_icache (code, code - buf);
 	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 	g_assert (code - buf <= tramp_size);
@@ -940,6 +956,10 @@ mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 	int buf_len, i, cfa_offset, off_methodargs, off_targetaddr;
 
 	buf_len = 512;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	start = code = (guint8 *) mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	// CFA = sp + 8
@@ -1026,7 +1046,8 @@ mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 	mono_add_unwind_op_def_cfa (unwind_ops, code, start, AMD64_RSP, cfa_offset);
 	amd64_ret (code);
 
-	g_assert (code - start < buf_len);
+	g_assertf ((code - start) <= buf_len, "%d %d", (int)(code - start), buf_len);
+
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
 	mono_arch_flush_icache (start, code - start);
@@ -1052,6 +1073,10 @@ mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 	int buf_len, i, framesize, cfa_offset, ctx_offset;
 
 	buf_len = 512;
+
+	if (mini_debug_options.single_imm_size) // FIXME accurate number
+		buf_len *= 2;
+
 	start = code = (guint8 *) mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	framesize = 0;
@@ -1122,7 +1147,8 @@ mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 	mono_add_unwind_op_def_cfa (unwind_ops, code, start, AMD64_RSP, cfa_offset);
 	amd64_ret (code);
 
-	g_assert (code - start < buf_len);
+	g_assertf ((code - start) <= buf_len, "%d %d", (int)(code - start), buf_len);
+
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
 	mono_arch_flush_icache (start, code - start);
