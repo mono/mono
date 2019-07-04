@@ -826,12 +826,12 @@ void
 mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT \
-	const DWORD _last_error_restore_point = mono_get_last_win32_error ();
+	const DWORD _last_error_restore_point = GetLastError ();
 
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT \
 		/* Only restore if changed to prevent unecessary writes. */ \
-		if (mono_get_last_win32_error () != _last_error_restore_point) \
-			mono_set_last_win32_error (_last_error_restore_point);
+		if (GetLastError () != _last_error_restore_point) \
+			SetLastError (_last_error_restore_point);
 
 #else
 
