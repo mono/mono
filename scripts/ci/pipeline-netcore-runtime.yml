@@ -19,13 +19,6 @@ jobs:
         poolname: Hosted Ubuntu 1604
         manifest: linux-x64
         sed: sed
-      Linux_ARM64:
-        ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          poolname: Xamarin-ARM64
-        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-          poolname: Xamarin-ARM64-Private
-        manifest: linux-arm64
-        sed: sed
       Windows_x64:
         poolname: Hosted VS2017
         manifest: win-x64
