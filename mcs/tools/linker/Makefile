@@ -110,6 +110,7 @@ BINARY_TEST_CASES = \
 	$(BINARY_TEST_CASES_ROOT)Newtonsoft/bin/Release/netstandard2.0/dist/_framework/_bin/Newtonsoft.dll \
 	$(BINARY_TEST_CASES_ROOT)HelloWorld/bin/Release/netstandard2.0/dist/_framework/_bin/HelloWorld.dll \
 	$(BINARY_TEST_CASES_ROOT)Microsoft.AspNetCore.Blazor.E2EPerformance/bin/Release/netstandard2.0/Microsoft.AspNetCore.Blazor.E2EPerformance.dll
+	$(BINARY_TEST_CASES_ROOT)BlazingPizza.Client/bin/Release/netstandard2.0/BlazingPizza.Client.dll
 endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
