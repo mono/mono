@@ -100,7 +100,7 @@ jobs:
   - bash: |
       errors=0
       for testdir in netcore/corefx/tests/extracted/*; do
-        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m make -C netcore run-tests-corefx-$(basename $testdir) || errors=$((errors+1))
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || errors=$((errors+1))
       done
       echo $errors > .failures
     displayName: 'Run CoreFX Tests'
