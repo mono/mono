@@ -425,6 +425,7 @@ sgen_sources = \
 	sgen-bridge.c		\
 	sgen-bridge.h		\
 	sgen-bridge-internals.h	\
+	sgen-dynarray.h		\
 	sgen-old-bridge.c		\
 	sgen-new-bridge.c		\
 	sgen-tarjan-bridge.c		\
@@ -485,4 +486,4 @@ libmonoruntimeinclude_HEADERS = \
 
 EXTRA_DIST = $(win32_sources) $(unix_sources) $(null_sources) runtime.h \
 		external-only.c \
-		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c sgen-dynarray.h
+		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c
