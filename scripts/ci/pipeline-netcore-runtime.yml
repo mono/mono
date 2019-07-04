@@ -117,7 +117,7 @@ jobs:
   - bash: |
       errors=$(<.failures)
       if [ "$errors" -ne "0" ]; then
-        echo "$errors test suits have failures";
+        echo "$errors test suits have failures. If the test view still shows 0 failures see logs for 'Run CoreFX tests' - probably some test suites crashed.";
         exit 125
       fi
     displayName: 'Validate test results'

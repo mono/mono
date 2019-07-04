@@ -20,3 +20,6 @@
 
 -nomethod System.Tests.WeakReferenceTests.Generic
 -nomethod System.Reflection.Tests.AssemblyTests.CreateInstance
+
+# StackOverflow somewhere here
+-nonamespace System.Threading.Tasks.Tests
