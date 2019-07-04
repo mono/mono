@@ -285,13 +285,13 @@ void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
 // Provide single instruction inlinable forms of GetLastError and SetLastError.
-// Nobody should worry about their cost then.
+// Nobody should worry about their cost.
 // Offsets are from Wikipedia.
 // Runtime disassembly could assert correctness.
 
 // FIXME include this file more so the replacement takes affect.
 
-#if HOST_WIN32 && (HOST_X86 || HOST_AMD64) && (_MSC_VER || __GNUC__)
+#if HOST_WIN32 && (HOST_X86 || HOST_AMD64)
 
 #include <windows.h>
 
@@ -304,29 +304,12 @@ unsigned long
 __stdcall
 GetLastError (void)
 {
-#if __GNUC__
-    unsigned long err;
-
-#if HOST_X86
-    __asm__ ("movl %%fs:0x34, %0" : "=r" (err));
-#elif HOST_AMD64
-    __asm__ ("movl %%gs:0x68, %0" : "=r" (err));
-#else
-#error unknown architecture
-#endif
-    return err;
-
-#elif _MSC_VER
 #if HOST_X86
     return __readfsdword (0x34);
 #elif HOST_AMD64
     return __readgsdword (0x68);
 #else
-#error unknown architecture
-#endif
-
-#else
-#error unknown compiler
+#error Unreachable, see above.
 #endif
 }
 
@@ -335,26 +318,12 @@ void
 __stdcall
 SetLastError (unsigned long err)
 {
-#if __GNUC__
-#if HOST_X86
-    __asm__ ("movl %0, %%fs:0x34" : : "r" (err));
-#elif HOST_AMD64
-    __asm__ ("movl %0, %%gs:0x68" : : "r" (err));
-#else
-#error unknown architecture
-#endif
-
-#elif _MSC_VER
 #if HOST_X86
     __writefsdword (0x34, err);
 #elif HOST_AMD64
     __writegsdword (0x68, err);
 #else
-#error unknown architecture
-#endif
-
-#else
-#error unknown compiler
+#error Unreachable, see above.
 #endif
 }
 
