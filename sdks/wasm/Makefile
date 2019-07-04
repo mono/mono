@@ -180,7 +180,7 @@ tuner:
 cil-strip:
 	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
 
-mono: runtime cross bcl
+mono: runtime runtime-threads cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll /r:$(WASM_BCL_DIR)/System.IO.Compression.dll /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll 
 
