@@ -99,8 +99,10 @@ jobs:
   
   - bash: |
       rm -rf .failures
+      tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
       for testdir in netcore/corefx/tests/extracted/*; do
-        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures
+        printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
       done
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
@@ -115,7 +117,7 @@ jobs:
 
   - bash: |
       if [ -e ".failures" ]; then
-        printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n";
+        printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
         exit 1
       fi
     displayName: 'Validate test results'
