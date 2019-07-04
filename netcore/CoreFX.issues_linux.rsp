@@ -25,4 +25,7 @@
 -nonamespace System.Threading.Tasks.Tests
 
 # NRE in SafeHandle.Dispose
--nonamespace System.Runtime.InteropServices.RuntimeInformation.Tests
+-noclass SafeWaitHandleExtensions_4000_Tests
+-noclass SafeWaitHandle_4000_Tests
+-noclass SafeHandle_4000_Tests
+-noclass CriticalHandle_4000_Tests
