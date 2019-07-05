@@ -239,6 +239,8 @@ Example */
 			set {
 				if (headerCell != value) {
 					headerCell = value;
+					headerCell.SetDataGridView(DataGridView);
+					headerCell.SetColumnIndex(Index);
 					if (DataGridView != null) {
 						DataGridView.OnColumnHeaderCellChanged(new DataGridViewColumnEventArgs(this));
 					}
