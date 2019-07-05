@@ -26,6 +26,7 @@ CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
 DOTNET_BUILD?=dotnet build
+DOTNET_PACK?=dotnet pack
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
@@ -513,3 +514,4 @@ clean-sdk:
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
+	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
