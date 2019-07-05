@@ -3,8 +3,8 @@ trigger:
   branches:
     include:
     - master
-    - 2019-??
-    - 202?-??
+#    - 2019-??
+#    - 202?-??
 
 variables:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
