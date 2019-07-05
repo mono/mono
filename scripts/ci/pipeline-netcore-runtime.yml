@@ -1,3 +1,11 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - 2019-??
+    - 202?-??
+
 variables:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNet-VSTS-Bot

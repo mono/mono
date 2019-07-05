@@ -3864,7 +3864,7 @@ emit_get_last_error (guint8* code, int dreg)
 {
 #ifdef TARGET_WIN32
 
-#define TEB_LAST_ERROR_OFFSET 0x068
+#define TEB_LAST_ERROR_OFFSET 0x68
 
 	// Thread's last error is in gs:0x68.
 	x86_prefix (code, X86_GS_PREFIX);

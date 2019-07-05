@@ -25,6 +25,7 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
+DOTNET_BUILD?=dotnet build
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
@@ -194,7 +195,7 @@ binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
-	dotnet build $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
+	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
 	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
 	touch $@
 
@@ -299,7 +300,7 @@ build-threads-sample: packager.exe threads.exe
 
 # (cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 run-threads-sample: build-threads-sample
-	node tests/runtime/run.js bin/threads-sample/ --run threads.exe
+	(npm install --prefix tests/runtime/ && npm start --prefix tests/runtime)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -370,10 +371,10 @@ build-debugger-test-app: .stamp-build-debugger-test-app
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
-	dotnet build ProxyDriver
+	$(DOTNET_BUILD) ProxyDriver
 
 build-dbg-testsuite:
-	dotnet build DebuggerTestSuite
+	$(DOTNET_BUILD) DebuggerTestSuite
 
 build: build-native build-managed build-debugger-test-app
 
@@ -511,4 +512,4 @@ clean-sdk:
 	$(RM) -r sdk/packages
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
-	dotnet build sdk/MonoWasmSdkCLI.sln
+	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
