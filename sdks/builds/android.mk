@@ -13,7 +13,7 @@ android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ifeq ($(UNAME),Darwin)
 android_ARCHIVE += android-sources
-ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path
 endif
 
 ##
@@ -488,9 +488,9 @@ $(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel f
 
 $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
 
-$(android_HOST_DARWIN_LIB_DIR): $(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag
+$(android_HOST_DARWIN_LIB_DIR): $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path
 
-$(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag: package-android-host-Darwin
+$(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path: package-android-host-Darwin
 	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
 	$(android_PLATFORM_BIN)/install_name_tool -change $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.1.dylib @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_BIN_DIR)/mono
 	touch $@
