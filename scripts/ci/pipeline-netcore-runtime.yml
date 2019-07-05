@@ -20,7 +20,7 @@ variables:
 
 jobs:
 - job: Build
-  timeoutInMinutes: 90
+  timeoutInMinutes: 150
   strategy:
     matrix:
       Linux_x64:
@@ -114,7 +114,7 @@ jobs:
         scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
       done
     displayName: 'Run CoreFX Tests'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 150
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - task: PublishTestResults@2
