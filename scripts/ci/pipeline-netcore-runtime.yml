@@ -89,9 +89,8 @@ jobs:
     condition: eq(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
-      ./autogen.sh --with-core=only
-      make -C mono -j4
-      make -C netcore bcl
+      cd netcore
+      ./build.sh
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
