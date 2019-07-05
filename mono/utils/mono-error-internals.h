@@ -284,7 +284,8 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
-#if HOST_WIN32 && (HOST_X86 || HOST_AMD64)
+#if HOST_WIN32
+#if HOST_X86 || HOST_AMD64
 
 #include <windows.h>
 
@@ -332,6 +333,11 @@ mono_SetLastError (unsigned long err)
 #endif
 }
 
+#else // arm, arm64, etc.
+
+#define mono_SetLastError SetLastError
+
+#endif // processor
 #endif // win32
 
 #endif
