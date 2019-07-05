@@ -490,7 +490,7 @@ $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
 
 $(android_HOST_DARWIN_LIB_DIR): $(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag
 
-$(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag: $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
+$(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag: package-android-host-Darwin
 	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
 	$(android_PLATFORM_BIN)/install_name_tool -change $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.1.dylib @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_BIN_DIR)/mono
 	touch $@
