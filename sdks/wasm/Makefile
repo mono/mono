@@ -300,7 +300,7 @@ build-threads-sample: packager.exe threads.exe
 
 # (cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 run-threads-sample: build-threads-sample
-	node tests/runtime/run.js bin/threads-sample/ --run threads.exe
+	(npm install --prefix tests/runtime/ && npm start --prefix tests/runtime)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
