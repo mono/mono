@@ -7,10 +7,13 @@ ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
+android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-release/lib
+android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-release/bin
+android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ifeq ($(UNAME),Darwin)
 android_ARCHIVE += android-sources
-ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag
 endif
 
 ##
@@ -484,3 +487,10 @@ $(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel f
 	cd $(TOP) && rsync -r --include='*.cs' --include="README.md" --include="*/" --exclude="*" external/linker $(android_SOURCES_DIR)/external
 
 $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
+
+$(android_HOST_DARWIN_LIB_DIR): $(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag
+
+$(android_HOST_DARWIN_LIB_DIR)/loader_updated.flag: $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
+	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
+	$(android_PLATFORM_BIN)/install_name_tool -change $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.1.dylib @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_BIN_DIR)/mono
+	touch $@
