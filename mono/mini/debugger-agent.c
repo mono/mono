@@ -6012,7 +6012,9 @@ clear_types_for_assembly (MonoAssembly *assembly)
 static void
 add_thread (gpointer key, gpointer value, gpointer user_data)
 {
-	MonoInternalThread *thread = (MonoInternalThread *)value;
+	MonoThread *thread = (MonoThread *)value;
+	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread))
+		return;
 	Buffer *buf = (Buffer *)user_data;
 
 	buffer_add_objid (buf, (MonoObject*)thread);
@@ -6576,7 +6578,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_VM_ALL_THREADS: {
 		// FIXME: Domains
 		mono_loader_lock ();
-		buffer_add_int (buf, mono_g_hash_table_size (tid_to_thread_obj));
+		buffer_add_int (buf, mono_g_hash_table_size (tid_to_thread_obj) - 1); // -1 to remove the Finalizer GC Thread
 		mono_g_hash_table_foreach (tid_to_thread_obj, add_thread, buf);
 		mono_loader_unlock ();
 		break;
