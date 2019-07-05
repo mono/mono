@@ -1278,3 +1278,4 @@
 # Unexpected IntPtr.Zero from Interop.Mmap
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewAccessorTests.ValidAccessLevelCombinations
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
+
