@@ -23,14 +23,6 @@
 -noclass System.CodeDom.Compiler.Tests.ExecutorTests
 
 ####################################################################
-##  System.Collections.NonGeneric.Tests
-####################################################################
-
-# Mono currently supports Array.Copy from object[] array containing boxed ints to float[] array with primitive widening
-# https://github.com/mono/mono/issues/14857
--nomethod System.Collections.Tests.*.ICollection_NonGeneric_CopyTo_ArrayOfEnumType
-
-####################################################################
 ##  System.Collections.Specialized.Tests
 ####################################################################
 
@@ -105,6 +97,9 @@
 
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
+
+# flaky test (The process cannot access the file ...)
+-nomethod System.IO.Tests.File_Copy_str_str.CopyFileWithData_MemberData
 
 ####################################################################
 ##  System.Linq.Expressions.Tests
@@ -877,6 +872,23 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
+
+# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
+-nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
+-nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
 
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
