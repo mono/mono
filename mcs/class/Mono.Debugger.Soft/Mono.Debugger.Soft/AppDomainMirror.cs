@@ -72,6 +72,13 @@ namespace Mono.Debugger.Soft
 			return vm.GetObject<StringMirror> (vm.conn.Domain_CreateString (id, s));
 		}
 
+		public ArrayMirror CreateByteArray (byte [] bytes) {
+			if (bytes == null)
+				throw new ArgumentNullException ("bytes");
+
+			return vm.GetObject<ArrayMirror> (vm.conn.Domain_CreateByteArray (id, bytes));
+		}
+
 		public ObjectMirror CreateBoxedValue (Value value) {
 			if (value == null)
 				throw new ArgumentNullException ("value");

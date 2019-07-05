@@ -280,7 +280,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 51
+#define MINOR_VERSION 52
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -399,7 +399,8 @@ typedef enum {
 	CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY = 4,
 	CMD_APPDOMAIN_CREATE_STRING = 5,
 	CMD_APPDOMAIN_GET_CORLIB = 6,
-	CMD_APPDOMAIN_CREATE_BOXED_VALUE = 7
+	CMD_APPDOMAIN_CREATE_BOXED_VALUE = 7,
+	CMD_APPDOMAIN_CREATE_BYTE_ARRAY = 8,
 } CmdAppDomain;
 
 typedef enum {
@@ -7207,6 +7208,29 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_objid (buf, (MonoObject*)o);
 		break;
 	}
+	case CMD_APPDOMAIN_CREATE_BYTE_ARRAY: {
+		ERROR_DECL (error);
+		MonoArray *arr;
+		gpointer elem;
+		domain = decode_domainid (p, &p, end, NULL, &err);
+		uintptr_t size = 0;
+		printf("antes do primeiro decode_int\n");
+		int index = decode_int (p, &p, end);
+		printf("depois do primeiro decode_int\n");
+		int len = decode_int (p, &p, end);
+		printf("depois do segundo decode_int\n");
+		size = len;
+		int i, esize;
+		arr = mono_array_new_full_checked (mono_domain_get (), mono_class_create_array (mono_get_byte_class(), 1), &size, NULL, error);
+		esize = mono_array_element_size (arr->obj.vtable->klass);
+		for (i = index; i < index + len; ++i) {
+			elem = (gpointer*)((char*)arr->vector + (i * esize));
+
+			decode_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), arr->obj.vtable->domain, (guint8 *)elem, p, &p, end, TRUE);
+		}
+		buffer_add_objid (buf, (MonoObject*) arr);
+		break;
+	}
 	case CMD_APPDOMAIN_CREATE_BOXED_VALUE: {
 		ERROR_DECL (error);
 		MonoClass *klass;
@@ -9365,7 +9389,8 @@ static const char* appdomain_cmds_str[] = {
 	"GET_ENTRY_ASSEMBLY",
 	"CREATE_STRING",
 	"GET_CORLIB",
-	"CREATE_BOXED_VALUE"
+	"CREATE_BOXED_VALUE",
+	"CREATE_BYTE_ARRAY",
 };
 
 static const char* assembly_cmds_str[] = {

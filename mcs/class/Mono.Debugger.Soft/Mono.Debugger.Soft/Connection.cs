@@ -427,7 +427,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 51;
+		internal const int MINOR_VERSION = 52;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -533,7 +533,8 @@ namespace Mono.Debugger.Soft
 			GET_ENTRY_ASSEMBLY = 4,
 			CREATE_STRING = 5,
 			GET_CORLIB = 6,
-			CREATE_BOXED_VALUE = 7
+			CREATE_BOXED_VALUE = 7,
+			CREATE_BYTE_ARRAY = 8,
 		}
 
 		enum CmdAssembly {
@@ -1901,6 +1902,18 @@ namespace Mono.Debugger.Soft
 
 		internal long Domain_CreateString (long id, string s) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_STRING, new PacketWriter ().WriteId (id).WriteString (s)).ReadId ();
+		}
+
+		internal long Domain_CreateByteArray (long id, byte [] bytes) {
+			if (!Version.AtLeast (2, 52))
+				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+			var typ = (byte)ElementType.U1;
+			var w = new PacketWriter ().WriteId (id).WriteInt (0).WriteInt (bytes.Length);
+			for (int i = 0; i < bytes.Length; i++) {
+				w.WriteByte (typ);
+				w.WriteInt (bytes[i]);
+			}
+			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BYTE_ARRAY, w).ReadId ();
 		}
 
 		internal long Domain_CreateBoxedValue (long id, long type_id, ValueImpl v) {

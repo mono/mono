@@ -1354,6 +1354,21 @@ public class DebuggerTests
 		val = frame.GetArgument (0);
 		AssertValue ("BLA", val);
 	}
+	[Test]
+	public void CreateByteArrays () {
+		byte[] bt = new byte[5];
+		bt[0] = 1;
+		bt[1] = 0;
+		bt[2] = 255;
+		bt[3] = 10;
+		bt[4] = 50;
+		var val =  vm.RootDomain.CreateByteArray (bt);
+		AssertValue (1, val [0]);
+		AssertValue (0, val [1]);
+		AssertValue (255, val [2]);
+		AssertValue (10, val [3]);
+		AssertValue (50, val [4]);
+	}
 
 	[Test]
 	public void Arrays () {
