@@ -831,7 +831,7 @@ mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT \
 		/* Only restore if changed to prevent unecessary writes. */ \
 		if (GetLastError () != _last_error_restore_point) \
-			SetLastError (_last_error_restore_point);
+			mono_SetLastError (_last_error_restore_point);
 
 #else
 

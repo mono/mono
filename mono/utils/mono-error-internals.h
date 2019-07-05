@@ -284,20 +284,15 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
-// Provide single instruction inlinable forms of GetLastError and SetLastError.
-// Nobody should worry about their cost.
-// Offsets are from Wikipedia.
-// Runtime disassembly could assert correctness.
-
-// FIXME include this file more so the replacement takes affect.
-
 #if HOST_WIN32 && (HOST_X86 || HOST_AMD64)
 
 #include <windows.h>
 
-// Naming violation so can search disassembly for GetLastError / SetLastError.
+// Single instruction inlinable form of GetLastError.
+//
+// Naming violation so can search disassembly for GetLastError.
+//
 #define GetLastError mono_GetLastError
-#define SetLastError mono_SetLastError
 
 static inline
 unsigned long
@@ -313,10 +308,20 @@ GetLastError (void)
 #endif
 }
 
+// Single instruction inlinable valid subset of SetLastError.
+//
+// Naming violation so can search disassembly for SetLastError.
+//
+// This is useful, for example, if you want to set a breakpoint
+// on SetLastError, but do not want to break on merely "restoring" it,
+// only "originating" it.
+//
+// A generic name is used in case there are other use-cases.
+//
 static inline
 void
 __stdcall
-SetLastError (unsigned long err)
+mono_SetLastError (unsigned long err)
 {
 #if HOST_X86
     __writefsdword (0x34, err);
