@@ -105,6 +105,8 @@ namespace System.Security.Cryptography.X509Certificates
 			case X509ContentType.Authenticode:
 				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (rawData);
 				_cert = ad.SigningCertificate;
+                if (_cert == null)
+                    goto default;
 				break;
 #endif
 
