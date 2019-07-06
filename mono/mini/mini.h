@@ -2839,4 +2839,11 @@ mini_safepoints_enabled (void)
 gpointer
 mono_arch_load_function (MonoJitICallId jit_icall_id);
 
+#if HOST_WIN32 && defined (MONO_KEYWORD_THREAD)
+
+guint8*
+mono_windows_emit_tls_get (guint8* code, int dreg, int tls_offset);
+
+#endif
+
 #endif /* __MONO_MINI_H__ */

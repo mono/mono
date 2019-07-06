@@ -39,10 +39,8 @@ g_static_assert (TLS_KEY_DOMAIN == 0);
 #include <windows.h>
 
 // Some Windows SDKs define TLS to be FLS.
-// That is presumably catastrophic when combined with mono_amd64_emit_tls_get / mono_x86_emit_tls_get.
-// It also is not consistent.
-// FLS is a reasonable idea perhaps, but we would need to be consistent and to adjust JIT.
-// And there is __declspec(fiber).
+// FLS is a reasonable idea, but be consistent.
+// And there is no __declspec (fiber).
 #undef TlsAlloc
 #undef TlsFree
 #undef TlsGetValue
@@ -114,5 +112,31 @@ void mono_tls_set_jit_tls 	   (MonoJitTlsData     *value);
 void mono_tls_set_domain 	   (MonoDomain         *value);
 void mono_tls_set_sgen_thread_info (SgenThreadInfo     *value);
 void mono_tls_set_lmf_addr 	   (MonoLMF           **value);
+
+#if TARGET_WIN32 && defined (MONO_KEYWORD_THREAD)
+
+#define MONO_WINDOWS_TLS_VECTOR (0xB * sizeof (char*)) // Public but not in a public header. See compiler output.
+
+G_BEGIN_DECLS
+// This is a global variable in the C runtime, initialized
+// by the dynamic loader. It is referenced by metadata in the
+// .dll/.exe so the dynamic loader can initialize it.
+//
+// It is an index into a thread local array of pointers, one per .dll/.exe.
+//
+// It is initialized before any code in the .dll/.exe runs and is
+// never changed while the .dll/.exe is loaded.
+//
+// It is not the same from run to run (load to load) of a .dll/.exe.
+//
+// It must not be stored for example in AOT output, but can be stored
+// in JIT output.
+//
+// AOT output could reference it by relocated pointer.
+//
+extern guint _tls_index;
+G_END_DECLS
+
+#endif
 
 #endif /* __MONO_TLS_H__ */

@@ -471,3 +471,115 @@ mono_win32_runtime_tls_callback (HMODULE module_handle, DWORD reason, LPVOID res
 	}
 	return TRUE;
 }
+
+#if HOST_WIN32 && defined (MONO_KEYWORD_THREAD)
+
+guint8*
+mono_windows_emit_tls_get (guint8* code, int dreg, int tls_offset)
+{
+	// This is documented here:
+	//
+	// https://docs.microsoft.com/en-us/windows/win32/debug/pe-format
+	//
+	// Executable code accesses a static TLS data object through the following steps:
+	//
+	// At link time, the linker sets the Address of Index field of the TLS directory.
+	//
+	// This field points to a location where the program expects to receive the TLS index.
+	//
+	// The Microsoft run-time library facilitates this process by defining a memory image
+	// of the TLS directory and giving it the special name "__tls_used" (Intel x86 platforms)
+	// or "_tls_used" (other platforms).
+	//
+	// The linker looks for this memory image and uses the data there to create the TLS directory.
+	//
+	// Other compilers that support TLS and work with the Microsoft linker must use this same technique.
+	//
+	// When a thread is created,
+	//	[jaykrell: Or when a .dll is loaded, after thread create, retroactively for existing threads.]
+	// the loader communicates the address of the thread's TLS array by
+	// placing the address of the thread environment block (TEB) in the FS register. A pointer to
+	// the TLS array is at the offset of 0x2C from the beginning of TEB. This behavior is Intel x86-specific.
+	//	[jaykrell: For Win64 it is 0x2C times 2. For AMD64 it is GS:. This is obvious from compiler output].
+	//
+	// The loader assigns the value of the TLS index to the place that was indicated by the Address of Index field.
+	//
+	// The executable code retrieves the TLS index and also the location of the TLS array.
+	//
+	// The code uses the TLS index and the TLS array location (multiplying the index by 4 [jaykrell: or 8]
+	// and using it as an offset to the array) to get the address of the TLS data area for the given program
+	// and module. Each thread has its own TLS data area, but this is transparent to the program,
+	// which does not need to know how data is allocated for individual threads.
+	//
+	// An individual TLS data object is accessed as some fixed offset into the TLS data area.
+	//
+	// The TLS array is an array of addresses that the system maintains for each thread. Each address in
+	// this array gives the location of TLS data for a given module (EXE or DLL) within the program.
+	// The TLS index indicates which member of the array to use. The index is a number (meaningful only
+	// to the system) that identifies the module.
+	//
+	// [End of documentation]
+	//
+	// The documentation is out of date on some details that do not matter.
+	//   - It immediately prior contains a caveat that was fixed in Vista.
+	//   - Exactly when the operating system does the allocation/free does not matter.
+	//     That is, this works even if a thread is created before a .dll is loaded.
+	//
+	//   - The linker/compiler interface to the operating system remains unchanged and correct.
+	//
+	// For example:
+	//
+	// __declspec (thread) int a [10];
+	//
+	// __declspec (dllexport)
+	// int f1 (void)
+	// {
+	//	return a [0] + a [1] + a [2];
+	// }
+	//
+	// cl /O2 /Zi /MD /LD 1.c /link /incremental:no
+	// link /dump /disasm 1.dll | more
+	//
+	// f1:
+	// 0000000180001000: 8B 0D 3A 30 00 00  mov         ecx,dword ptr [_tls_index] ; ecx = _tls_index
+	// 0000000180001006: 65 48 8B 04 25 58  mov         rax,qword ptr gs:[58h]     ; rax = Teb->TlsVector
+	//	00 00 00
+	// 000000018000100F: BA 08 00 00 00     mov         edx,8                      ; edx = tls_offset common subexpression (tls_offset of a)
+	// 0000000180001014: 48 8B 04 C8        mov         rax,qword ptr [rax+rcx*8]  ; rax = Teb->TlsVector [_tls_index]
+	// 0000000180001018: 8B 4C 10 08        mov         ecx,dword ptr [rax+rdx+8]  ; ecx = *(Teb->TlsVector [_tls_index] + 16)
+	// 000000018000101C: 03 4C 10 04        add         ecx,dword ptr [rax+rdx+4]  ; ecx += *(Teb->TlsVector [_tls_index] + 12)
+	// 0000000180001020: 03 0C 10           add         ecx,dword ptr [rax+rdx]    ; ecx += *(Teb->TlsVector [_tls_index] + 8)
+	// 0000000180001023: 8B C1              mov         eax,ecx
+	// 0000000180001025: C3                 ret
+	//
+	// Use dreg as the only temp.
+	// _tls_index and tls_offset can be immediates in JIT.
+	//
+	// FIXME For AOT, we could export the offsets from mono runtime
+	// and access [__imp__tls_index] and [__imp__tls_offset] (for each tls_offset)
+	//
+	// tls_offset is determined at mono link-time but indirection is still a good idea.
+	// _tls_index is determined at load time and cannot be output to AOT.
+	//
+	const guint size = sizeof (char*); // documentation says "4" here
+
+ #if TARGET_X86
+	x86_prefix (code, X86_FS_PREFIX);
+
+	// FIXME Enable x86/amd64 code sharing. The interfaces match.
+#define amd64_mov_reg_mem       x86_mov_reg_mem
+#define amd64_mov_reg_membase   x86_mov_reg_membase
+
+#elif TARGET_AMD64
+	x86_prefix (code, X86_GS_PREFIX);
+#else
+	#error unknown target
+#endif
+	amd64_mov_reg_mem (code, dreg, MONO_WINDOWS_TLS_VECTOR, size);     // dreg = Teb->TlsVector
+	amd64_mov_reg_membase (code, dreg, dreg, _tls_index * size, size); // dreg = Teb->TlsVector [_tls_index]
+	amd64_mov_reg_membase (code, dreg, dreg, tls_offset, size);        // dreg = *(Teb->TlsVector [_tls_index] + tls_offset)
+
+	return code;
+}
+
+#endif

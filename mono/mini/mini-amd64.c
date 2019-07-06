@@ -3781,6 +3781,15 @@ static guint8*
 mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 {
 #ifdef TARGET_WIN32
+
+#ifdef MONO_KEYWORD_THREAD
+
+	return mono_windows_emit_tls_get (code, dreg, tls_offset);
+
+#else
+
+	// FIXME refactor x86/amd64
+
 	if (tls_offset < 64) {
 		x86_prefix (code, X86_GS_PREFIX);
 		amd64_mov_reg_mem (code, dreg, (tls_offset * 8) + 0x1480, 8);
@@ -3797,6 +3806,9 @@ mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 		amd64_mov_reg_membase (code, dreg, dreg, (tls_offset * 8) - 0x200, 8);
 		amd64_patch (buf [0], code);
 	}
+
+#endif
+
 #elif defined(TARGET_MACH)
 	x86_prefix (code, X86_GS_PREFIX);
 	amd64_mov_reg_mem (code, dreg, tls_gs_offset + (tls_offset * 8), 8);

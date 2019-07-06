@@ -87,7 +87,33 @@
 #endif
 
 /* Runtime offset detection */
-#if defined(TARGET_AMD64) && !defined(TARGET_MACH) && !defined(HOST_WIN32) /* __thread likely not tested on mac/win */
+
+#if HOST_WIN32
+
+// Get an array of pointers for the thread.
+// Each .dll/.exe has one pointer in the array.
+//
+#if _M_IX86
+#define  mono_tls_vector() ((char**)__readfsdword (MONO_WINDOWS_TLS_VECTOR))
+#elif _M_AMD64
+#define mono_tls_vector() ((char**)__readgsqword (MONO_WINDOWS_TLS_VECTOR))
+#else
+#error unknown architecture
+#endif
+
+// The base of the .dll/.exe's thread locals on the current thread.
+//
+#define mono_tls_base() (mono_tls_vector () [_tls_index])
+
+// Given the address of a thread local on the current thread,
+// find its offset, which can be used on any thread, given
+// that thread's tls_base.
+//
+#define mono_tls_offset(p) ((gsize)((char*)(p) - mono_tls_base ()))
+
+#define MONO_THREAD_VAR_OFFSET(var, offset) ((offset) = mono_tls_offset (&(var)))
+
+#elif defined(TARGET_AMD64) && !defined(TARGET_MACH) /* __thread likely not tested on mac */
 
 #if defined(PIC)
 // This only works if libmono is linked into the application
