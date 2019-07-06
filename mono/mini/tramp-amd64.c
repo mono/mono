@@ -293,7 +293,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	orig_rsp_to_rbp_offset = 0;
 	r11_save_code = code;
 	/* Reserve space for the mov_membase_reg to save R11 */
-	code += 5;
+	code += mini_debug_options.single_imm_size ? 8 : 5;
 	after_r11_save_code = code;
 
 	/* Pop the return address off the stack */
@@ -351,7 +351,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 			   scratch register */
 			/* This happens before the frame is set up, so it goes into the redzone */
 			amd64_mov_membase_reg (r11_save_code, AMD64_RSP, r11_save_offset + orig_rsp_to_rbp_offset, i, sizeof (target_mgreg_t));
-			g_assert (r11_save_code == after_r11_save_code);
+			g_assertf (r11_save_code == after_r11_save_code, "r11_save_code:%p after_r11_save_code:%p", r11_save_code, after_r11_save_code);
 
 			/* Copy from the save slot into the register array slot */
 			amd64_mov_reg_membase (code, i, AMD64_RSP, r11_save_offset + orig_rsp_to_rbp_offset, sizeof (target_mgreg_t));
