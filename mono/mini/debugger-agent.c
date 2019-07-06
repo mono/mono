@@ -7214,11 +7214,8 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		gpointer elem;
 		domain = decode_domainid (p, &p, end, NULL, &err);
 		uintptr_t size = 0;
-		printf("antes do primeiro decode_int\n");
 		int index = decode_int (p, &p, end);
-		printf("depois do primeiro decode_int\n");
 		int len = decode_int (p, &p, end);
-		printf("depois do segundo decode_int\n");
 		size = len;
 		int i, esize;
 		arr = mono_array_new_full_checked (mono_domain_get (), mono_class_create_array (mono_get_byte_class(), 1), &size, NULL, error);

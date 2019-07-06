@@ -1905,8 +1905,6 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal long Domain_CreateByteArray (long id, byte [] bytes) {
-			if (!Version.AtLeast (2, 52))
-				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 			var typ = (byte)ElementType.U1;
 			var w = new PacketWriter ().WriteId (id).WriteInt (0).WriteInt (bytes.Length);
 			for (int i = 0; i < bytes.Length; i++) {
