@@ -802,6 +802,7 @@
 # flaky test - System.TypeLoadException : Could not load type '_proxy_System.ComponentModel.Composition.IStronglyTypedStructure_3b7f133d-79c7-449e-8f68-22aa093dbb8d' from assembly ''.
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
+-nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_IMetadataViewWithDefaultedInt64
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -1290,5 +1291,6 @@
 -nomethod System.Tests.WeakReferenceTests.NonGeneric
 -nomethod System.Tests.WeakReferenceTests.Generic
 -nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
