@@ -293,7 +293,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	orig_rsp_to_rbp_offset = 0;
 	r11_save_code = code;
 	/* Reserve space for the mov_membase_reg to save R11 */
-	code += 5;
+	code += 3 /* mini_debug_options.single_imm_size */ + 5;
 	after_r11_save_code = code;
 
 	/* Pop the return address off the stack */
