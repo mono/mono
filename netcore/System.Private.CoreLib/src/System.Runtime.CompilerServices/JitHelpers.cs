@@ -7,9 +7,10 @@ namespace System.Runtime.CompilerServices
 	static class JitHelpers
 	{
 		[Intrinsic]
-		public static bool EnumEquals<T> (T x, T y) where T : struct, Enum => throw new NotImplementedException ();
+		// should be implemented as an intrinsic for Interpreter too: https://github.com/mono/mono/issues/15596
+		public static bool EnumEquals<T> (T x, T y) where T : struct, Enum => x.Equals(y);
 
 		[Intrinsic]
-		public static int EnumCompareTo<T> (T x, T y) where T : struct, Enum  => throw new NotImplementedException ();
+		public static int EnumCompareTo<T> (T x, T y) where T : struct, Enum  => x.CompareTo(y);
 	}
 }
