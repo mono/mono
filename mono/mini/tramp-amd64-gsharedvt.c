@@ -31,6 +31,8 @@
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
 
+#include "mini-runtime.h"
+
 #define SRC_REG_SHIFT 0
 #define SRC_REG_MASK 0xFFFF
 

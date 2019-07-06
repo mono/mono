@@ -13,6 +13,8 @@
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
+#include "mini-runtime.h"
+
 gpointer
 mono_x86_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
 {
