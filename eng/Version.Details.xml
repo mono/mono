@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Private.CoreFx.NETCoreApp" Version="4.6.0-preview8.19353.3">
+    <Dependency Name="Microsoft.Private.CoreFx.NETCoreApp" Version="4.6.0-preview8.19353.6">
       <Uri>https://github.com/dotnet/corefx</Uri>
-      <Sha>a9594f72540034902e2bcb2a5187fcdba584cf36</Sha>
+      <Sha>b00b4a5110c209b522fc711e48cd5243b3fb34ec</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App" Version="3.0.0-preview8-27903-08">
       <Uri>https://github.com/dotnet/core-setup</Uri>
