@@ -65,10 +65,10 @@ namespace Mono.WebAssembly.Build
 			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
 			// Check if coming from nuget or local
 			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
-			if (File.Exists(toolsPath))
-				return toolsPath;
+			if (!File.Exists(toolsPath))
+				toolsPath = Path.GetFullPath(Path.Combine (dir, "..", "..", "..", "..", "..", "..", "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
 
-			return Path.Combine (dir, "monolinker.exe");
+			return toolsPath;
 		}
 
 		protected override bool ValidateParameters ()

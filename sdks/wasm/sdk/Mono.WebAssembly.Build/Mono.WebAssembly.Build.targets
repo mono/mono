@@ -35,8 +35,8 @@
 		<PropertyGroup>
 			<!-- FIXME should this be decoupled from whether managed symbols are produced? -->
 			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
-			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)release\</_MonoWasmRuntimePath>
-			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)debug\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
 
 		<ItemGroup>
