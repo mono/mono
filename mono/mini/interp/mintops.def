@@ -339,8 +339,8 @@ OPDEF(MINT_VCALLVIRT, "vcallvirt", 2, MintOpMethodToken)
 OPDEF(MINT_CALLVIRT_FAST, "callvirt.fast", 3, MintOpMethodToken)
 OPDEF(MINT_VCALLVIRT_FAST, "vcallvirt.fast", 3, MintOpMethodToken)
 OPDEF(MINT_CALLI, "calli", 2, MintOpMethodToken) 
-OPDEF(MINT_CALLI_NAT, "calli.nat", 2, MintOpMethodToken)
-OPDEF(MINT_CALLI_NAT_FAST, "calli.nat.fast", 3, MintOpMethodToken)
+OPDEF(MINT_CALLI_NAT, "calli.nat", 3, MintOpMethodToken)
+OPDEF(MINT_CALLI_NAT_FAST, "calli.nat.fast", 4, MintOpMethodToken)
 OPDEF(MINT_CALL_VARARG, "call.vararg", 3, MintOpMethodToken)
 OPDEF(MINT_JMP, "jmp", 2, MintOpMethodToken) 
 
@@ -586,6 +586,7 @@ OPDEF(MINT_CONV_OVF_I8_R4, "conv.ovf.i8.r4", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_I8_R8, "conv.ovf.i8.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_I8_UN_R8, "conv.ovf.i8.un.r8", 1, MintOpNoArgs)
+OPDEF(MINT_CONV_OVF_I8_UN_R4, "conv.ovf.i8.un.r4", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_U8_I4, "conv.ovf.u8.i4", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_U8_I8, "conv.ovf.u8.i8", 1, MintOpNoArgs)

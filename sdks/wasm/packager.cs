@@ -615,9 +615,9 @@ class Driver {
 
 		string runtime_dir;
 		if (enable_threads)
-			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "threads-release" : "threads-debug");
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
 		else
-			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {
@@ -689,6 +689,9 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
+		string emcc_link_flags = "";
+		if (enable_debug)
+			emcc_link_flags += "-O0 ";
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
@@ -742,7 +745,7 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; fi; done");
@@ -805,6 +808,8 @@ class Driver {
 				ninja.WriteLine ("build $appdir/mono.js.mem: cpifdiff $wasm_runtime_dir/mono.js.mem");
 			}
 		}
+		if (enable_aot)
+			ninja.WriteLine ("build $builddir/aot-in: mkdir");
 
 		var ofiles = "";
 		var bc_files = "";
@@ -840,7 +845,7 @@ class Driver {
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
-				if (emit_pdb){
+				if (emit_pdb) {
 					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
 					infile_pdb = $"$builddir/{filename_pdb}";
 				}
@@ -853,17 +858,24 @@ class Driver {
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
-			if (emit_pdb)
+			if (emit_pdb && infile_pdb != "")
 				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 				a.o_path = $"$builddir/{filename}.o";
 				a.aot_depfile_path = $"$builddir/linker-out/{filename}.depfile";
 
+				if (filename == "mscorlib.dll") {
+					// mscorlib has no dependencies so we can skip the aot step if the input didn't change
+					// The other assemblies depend on their references
+					infile = "$builddir/aot-in/mscorlib.dll";
+					a.aotin_path = infile;
+					ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
+				}
 				ninja.WriteLine ($"build {a.bc_path}.tmp: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
 				ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
-				ninja.WriteLine ($"  mono_path={aot_in_path}");
+				ninja.WriteLine ($"  mono_path=$builddir/aot-in:{aot_in_path}");
 				ninja.WriteLine ($"  depfile={a.aot_depfile_path}");
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
@@ -891,7 +903,7 @@ class Driver {
 			ninja.WriteLine ($"  dedup_image={a.filename}");
 			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
 			ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
-			ninja.WriteLine ($"  mono_path={aot_in_path}");
+			ninja.WriteLine ($"  mono_path=$builddir/aot-in:{aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
 			// The dedup image might not have changed

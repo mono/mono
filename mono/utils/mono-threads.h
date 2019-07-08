@@ -21,6 +21,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <glib.h>
 #include <config.h>
@@ -563,7 +564,10 @@ This begins async suspend. This function must do the following:
 -Call mono_threads_transition_finish_async_suspend as part of its async suspend.
 -Register the thread for pending suspend with mono_threads_add_to_pending_operation_set if needed.
 
-If begin suspend fails the thread must be left uninterrupted and resumed.
+If begin suspend fails the following should be done:
+-The thread must be left uninterrupted and resumed.
+-Call mono_threads_transition_abort_async_suspend to make sure thread has correct state.
+-No pending suspend should be registered with mono_threads_add_to_pending_operation_set for this operation.
 */
 gboolean mono_threads_suspend_begin_async_suspend (THREAD_INFO_TYPE *info, gboolean interrupt_kernel);
 
@@ -707,6 +711,7 @@ MonoRequestSuspendResult mono_threads_transition_request_suspension (THREAD_INFO
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);
 MonoPulseResult mono_threads_transition_request_pulse (THREAD_INFO_TYPE* info);
+gboolean mono_threads_transition_abort_async_suspend (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
 MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
@@ -825,12 +830,12 @@ void
 mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT \
-	DWORD _last_error_restore_point = GetLastError ();
+	const DWORD _last_error_restore_point = GetLastError ();
 
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT \
 		/* Only restore if changed to prevent unecessary writes. */ \
 		if (GetLastError () != _last_error_restore_point) \
-			SetLastError (_last_error_restore_point);
+			mono_SetLastError (_last_error_restore_point);
 
 #else
 

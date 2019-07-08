@@ -7,10 +7,13 @@ ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
+android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-release/lib
+android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-release/bin
+android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ifeq ($(UNAME),Darwin)
 android_ARCHIVE += android-sources
-ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path
 endif
 
 ##
@@ -384,9 +387,9 @@ $(eval $(call AndroidCrossTemplateStub,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,
 $(eval $(call AndroidCrossTemplateStub,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
 $(eval $(call AndroidCrossTemplateStub,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
 else
-$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplate,cross-arm,x86_64,armv7,armeabi-v7a,llvm-llvm64,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86,x86_64,i686,x86,llvm-llvm64,i686-none-linux-android))
 $(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
 endif
 
@@ -484,3 +487,10 @@ $(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel f
 	cd $(TOP) && rsync -r --include='*.cs' --include="README.md" --include="*/" --exclude="*" external/linker $(android_SOURCES_DIR)/external
 
 $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
+
+$(android_HOST_DARWIN_LIB_DIR): $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path
+
+$(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path: package-android-host-Darwin
+	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
+	$(android_PLATFORM_BIN)/install_name_tool -change $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.1.dylib @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_BIN_DIR)/mono
+	touch $@

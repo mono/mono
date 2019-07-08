@@ -684,23 +684,32 @@ AC_CHECK_HEADERS(sys/user.h, [], [],
 
 AC_CHECK_HEADERS(linux/serial.h)
 
-AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
-if test x$have_zlib = xyes; then
-   AC_TRY_COMPILE([#include <zlib.h>], [
-   #if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
-   #else
-   #error No good zlib found
-   #endif
-   ],[
-	AC_MSG_RESULT(Using system zlib)
-	zlib_msg="system zlib"
-	AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
-   ],[
-	AC_MSG_RESULT(Using embedded zlib)
-	have_zlib=no
-	zlib_msg="bundled zlib"
-   ])
-fi
+case "$host" in
+	# Use bundled zlib on Windows to be sure it is static.
+	*-mingw*|*-cygwin*)
+		have_zlib=no
+		zlib_msg="bundled zlib"
+		;;
+	default)
+		AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
+		if test x$have_zlib = xyes; then
+			AC_TRY_COMPILE([#include <zlib.h>], [
+				#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
+				#else
+				#error No good zlib found
+				#endif
+			],[
+				AC_MSG_RESULT(Using system zlib)
+				zlib_msg="system zlib"
+				AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+			],[
+				AC_MSG_RESULT(Using embedded zlib)
+				have_zlib=no
+				zlib_msg="bundled zlib"
+			])
+		fi
+		;;
+esac
 
 AC_ARG_WITH(static-zlib, [  --with-static-zlib=PATH    use the specified static zlib instead of -lz],[STATIC_ZLIB_PATH=$with_static_zlib],[STATIC_ZLIB_PATH=])
 if test "x$STATIC_ZLIB_PATH" != "x"; then
@@ -2129,7 +2138,6 @@ if test x$host_win32 = xno; then
 		AC_MSG_WARN([No dynamic loading support available])
 	else
 		LIBS="$LIBS $DL_LIB"
-		AC_DEFINE(HAVE_DL_LOADER,1,[dlopen-based dynamic loader available])
 		dnl from glib's configure.ac
 		if test "x$cross_compiling" = "xyes"; then
 		   AC_MSG_RESULT(cross compiling, assuming no)
@@ -2153,11 +2161,8 @@ if test x$host_win32 = xno; then
 		  ])
 		fi
 		if test "x$mono_cv_uscore" = "xyes"; then
-			MONO_DL_NEED_USCORE=1
-		else
-			MONO_DL_NEED_USCORE=0
+			AC_DEFINE(MONO_DL_NEED_USCORE, 1, [Does dlsym require leading underscore.])
 		fi
-		AC_SUBST(MONO_DL_NEED_USCORE)
 		AC_CHECK_FUNC(dlerror)
 	fi
 
@@ -5083,25 +5088,12 @@ AC_SEARCH_LIBS(sqrtf, m)
 AC_SEARCH_LIBS(nanosleep, rt)
 
 AC_SEARCH_LIBS(dlopen, dl)
-old_ldflags="${LDFLAGS}"
-# GNU specific option, this confuses IBM ld, but do offer alternatives when possible
-if test $lt_cv_prog_gnu_ld = yes; then
-	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic,-Bsymbolic"
-else
-	case $host in
-	*-*-aix*|*-*-os400*)
-		LDFLAGS="${LDFLAGS} -bsymbolic"
-		;;
-	*)
-		dnl Try to use export-dynamic anyways
-		LDFLAGS="${LDFLAGS} -Wl,-export-dynamic,-Bsymbolic"
-		;;
-	esac
-fi
-AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
-if test $found_export_dynamic = no; then
-	LDFLAGS="${old_ldflags}"
-fi
+
+# AIX/OS400 -bsymbolic
+# Apple -bind_at_load
+# The rest GNU.
+#
+AX_APPEND_LINK_FLAGS([-Wl,-export-dynamic -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
 dnl giconv.c will check on HAVE_ICONV_H but we need this for link time
