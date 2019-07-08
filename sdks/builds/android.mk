@@ -7,8 +7,8 @@ ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
-android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-release/lib
-android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-release/bin
+android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/lib
+android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/bin
 android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ifeq ($(UNAME),Darwin)
