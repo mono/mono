@@ -1915,7 +1915,6 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal long Domain_CreateByteArray (long id, byte [] bytes) {
-			var typ = (byte)ElementType.U1;
 			var w = new PacketWriter ().WriteId (id);
 			w.WriteBytes (bytes);
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BYTE_ARRAY, w).ReadId ();
