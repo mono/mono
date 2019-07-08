@@ -121,6 +121,7 @@ docs/perlmod*
 artifacts
 .vs
 external/buildscripts/build.gen*
+stevedore
 
 # Allow
 !external/buildscripts/bee.exe
