@@ -1126,7 +1126,7 @@ arch_init (MonoAotCompile *acfg)
 		if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "ios")) {
 			g_string_append (acfg->llc_args, " -mattr=+v7");
 #ifdef LLVM_API_VERSION > 100
-			g_string_append (acfg->llc_args, " -exception-model=dwarf");
+			g_string_append (acfg->llc_args, " -exception-model=dwarf -disable-fp-elim");
 #endif
 		}
 
