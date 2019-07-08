@@ -703,8 +703,10 @@ load_modules (MonoImage *image)
 	image->modules_loaded = g_new0 (gboolean, t->rows);
 	image->module_count = t->rows;
 	if (t->rows > 0) {
+#ifdef ENABLE_NETCORE
 		image->modules_loaded_images = g_new0 (MonoLoadedImages, 1);
 		mono_loaded_images_init (image->modules_loaded_images, MONO_LOADED_IMAGES_ASSEMBLY, image);
+#endif
 	}
 }
 
@@ -731,6 +733,8 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		return NULL;
 	if (image->modules_loaded [idx - 1])
 		return image->modules [idx - 1];
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading module %d of %s (%s)", idx, image->assembly ? image->assembly->aname.name : "some assembly", image->name);
 
 	file_table = &image->tables [MONO_TABLE_FILE];
 	for (i = 0; i < file_table->rows; i++) {
@@ -2517,8 +2521,10 @@ mono_image_close_except_pools (MonoImage *image)
 	mono_image_close_except_pools_all (image->modules, image->module_count);
 	g_free (image->modules_loaded);
 
+#ifdef ENABLE_NETCORE
 	if (image->modules_loaded_images)
 		mono_loaded_images_free (image->modules_loaded_images);
+#endif
 
 	mono_os_mutex_destroy (&image->szarray_cache_lock);
 	mono_os_mutex_destroy (&image->lock);
@@ -3422,5 +3428,9 @@ mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 MonoLoadedImages*
 get_loaded_images_for_image_modules (MonoImage *image)
 {
+#ifndef ENABLE_NETCORE
+	return get_global_loaded_images ();
+#else
 	return image->modules_loaded_images;
+#endif
 }

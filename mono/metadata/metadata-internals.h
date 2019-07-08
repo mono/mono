@@ -438,7 +438,9 @@ struct _MonoImage {
 	MonoImage **modules;
 	guint32 module_count;
 	gboolean *modules_loaded;
+#ifdef ENABLE_NETCORE
 	MonoLoadedImages *modules_loaded_images;
+#endif
 
 	MonoImage **files;
 	guint32 file_count;
