@@ -149,6 +149,7 @@ typedef struct
 	 * the frame can become invalid.
 	 */
 	gboolean has_ctx;
+	gboolean managed;
 } StackFrame;
 
 typedef struct _InvokeData InvokeData;
@@ -3174,6 +3175,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	frame->flags = flags;
 	frame->interp_frame = info->interp_frame;
 	frame->frame_addr = info->frame_addr;
+	frame->managed = info->managed;
 	if (info->reg_locations)
 		memcpy (frame->reg_locations, info->reg_locations, MONO_MAX_IREGS * sizeof (host_mgreg_t*));
 	if (ctx) {
@@ -6009,14 +6011,43 @@ clear_types_for_assembly (MonoAssembly *assembly)
 	mono_loader_unlock ();
 }
 
+//Count threads removing the thread of finalizer GC if it is not executing a managed code
+static void
+count_thread_checking_finalizer_gc (gpointer key, gpointer value, gpointer remove_finalizer)
+{
+	gboolean *ret = (gboolean *)remove_finalizer;
+	MonoThread *thread = (MonoThread *)value;
+	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread)) {
+		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread->internal_thread);
+		if (tls->frame_count == 0) {
+			*ret = TRUE;
+			return;
+		}
+		if (tls->frame_count) {
+			StackFrame* frame = tls->frames [0];
+			if (!frame->managed) {
+				*ret = TRUE;
+				return;
+			}
+		}
+	}
+}
+
 static void
 add_thread (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoThread *thread = (MonoThread *)value;
+	Buffer *buf = (Buffer *)user_data;
+	buffer_add_objid (buf, (MonoObject*)thread);
+}
+
+static void
+add_thread_without_finalizer_gc (gpointer key, gpointer value, gpointer user_data)
 {
 	MonoThread *thread = (MonoThread *)value;
 	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread))
 		return;
 	Buffer *buf = (Buffer *)user_data;
-
 	buffer_add_objid (buf, (MonoObject*)thread);
 }
 
@@ -6577,9 +6608,20 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	}
 	case CMD_VM_ALL_THREADS: {
 		// FIXME: Domains
+		gboolean removeFinalizerGC = FALSE;
 		mono_loader_lock ();
-		buffer_add_int (buf, mono_g_hash_table_size (tid_to_thread_obj) - 1); // -1 to remove the Finalizer GC Thread
-		mono_g_hash_table_foreach (tid_to_thread_obj, add_thread, buf);
+		mono_g_hash_table_foreach (tid_to_thread_obj, count_thread_checking_finalizer_gc, &removeFinalizerGC);
+		int count = mono_g_hash_table_size (tid_to_thread_obj);
+		if (removeFinalizerGC) {
+			count--;
+			buffer_add_int (buf,count);
+			mono_g_hash_table_foreach (tid_to_thread_obj, add_thread_without_finalizer_gc, buf);
+		}
+		else {
+			buffer_add_int (buf,count); 
+			mono_g_hash_table_foreach (tid_to_thread_obj, add_thread, buf);
+		}
+		
 		mono_loader_unlock ();
 		break;
 	}
