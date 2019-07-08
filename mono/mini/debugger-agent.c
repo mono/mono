@@ -7214,17 +7214,12 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		gpointer elem;
 		domain = decode_domainid (p, &p, end, NULL, &err);
 		uintptr_t size = 0;
-		int index = decode_int (p, &p, end);
 		int len = decode_int (p, &p, end);
 		size = len;
-		int i, esize;
 		arr = mono_array_new_full_checked (mono_domain_get (), mono_class_create_array (mono_get_byte_class(), 1), &size, NULL, error);
-		esize = mono_array_element_size (arr->obj.vtable->klass);
-		for (i = index; i < index + len; ++i) {
-			elem = (gpointer*)((char*)arr->vector + (i * esize));
-
-			decode_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), arr->obj.vtable->domain, (guint8 *)elem, p, &p, end, TRUE);
-		}
+		elem = (gpointer*)arr->vector;
+		memcpy(elem, p, len);
+		p += len;
 		buffer_add_objid (buf, (MonoObject*) arr);
 		break;
 	}

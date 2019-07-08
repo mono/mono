@@ -1026,6 +1026,16 @@ namespace Mono.Debugger.Soft
 				offset += b.Length;
 				return this;
 			}
+			public PacketWriter WriteBytes (byte[] b) {
+				if (b == null)
+					return WriteInt (-1);
+				MakeRoom (4);
+				encode_int (data, b.Length, ref offset);
+				MakeRoom (b.Length);
+				Buffer.BlockCopy (b, 0, data, offset, b.Length);
+				offset += b.Length;
+				return this;
+			}
 
 			public PacketWriter WriteBool (bool val) {
 				WriteByte (val ? (byte)1 : (byte)0);
@@ -1906,11 +1916,8 @@ namespace Mono.Debugger.Soft
 
 		internal long Domain_CreateByteArray (long id, byte [] bytes) {
 			var typ = (byte)ElementType.U1;
-			var w = new PacketWriter ().WriteId (id).WriteInt (0).WriteInt (bytes.Length);
-			for (int i = 0; i < bytes.Length; i++) {
-				w.WriteByte (typ);
-				w.WriteInt (bytes[i]);
-			}
+			var w = new PacketWriter ().WriteId (id);
+			w.WriteBytes (bytes);
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BYTE_ARRAY, w).ReadId ();
 		}
 
