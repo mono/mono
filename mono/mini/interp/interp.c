@@ -109,7 +109,6 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	frame->imethod = rmethod;
 	frame->ex = NULL;
 	frame->ip = NULL;
-	frame->invoke_trap = 0;
 }
 
 #define INIT_FRAME(frame,parent_frame,method_args,method_retval,domain,mono_method,error) do { \
@@ -1735,9 +1734,6 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 
 	INIT_FRAME (&frame, NULL, args, &result, domain, invoke_wrapper, error);
 
-	if (exc)
-		frame.invoke_trap = 1;
-
 	interp_exec_method (&frame, context, error);
 
 	if (frame.ex) {
@@ -2327,7 +2323,7 @@ do_transform_method (InterpFrame *frame, ThreadContext *context)
 		interp_pop_lmf (&ext);
 }
 
-static void
+static MONO_NEVER_INLINE void
 copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, unsigned char **vt_sp)
 {
 	char *vt = *(char**)vt_sp;
