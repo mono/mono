@@ -13,25 +13,25 @@ namespace TestSuite
     {
         static CancellationTokenSource cts = null;
 
-        private static bool IsStreamingSupported()
+        public static bool IsStreamingSupported()
         {
             using (HttpClient httpClient = CreateHttpClient())
                 return WasmHttpMessageHandler.StreamingSupported;
         }
 
-        private static bool IsStreamingEnabled()
+        public static bool IsStreamingEnabled()
         {
             using (HttpClient httpClient = CreateHttpClient())
                 return WasmHttpMessageHandler.StreamingEnabled;
         }
 
-        private static string BasePath()
+        public static string BasePath()
         {
             using (HttpClient httpClient = CreateHttpClient())
                 return httpClient.BaseAddress.ToString();
         }
 
-        private static async Task<object> RequestStream(bool streamingEnabled, string url)
+        public static async Task<object> RequestStream(bool streamingEnabled, string url)
         {
             var requestTcs = new TaskCompletionSource<object>();
             cts = new CancellationTokenSource();
@@ -57,7 +57,7 @@ namespace TestSuite
             return requestTcs.Task;
         }
 
-        private static async Task<object> RequestByteArray(bool streamingEnabled, string url)
+        public static async Task<object> RequestByteArray(bool streamingEnabled, string url)
         {
             var requestTcs = new TaskCompletionSource<object>();
             cts = new CancellationTokenSource();
@@ -89,7 +89,7 @@ namespace TestSuite
             var requestTcs = new TaskCompletionSource<object>();
 
             using (HttpClient client = CreateHttpClient())
-            using (Stream stream = await client.GetStreamAsync("base/publish/NowIsTheTime.txt"))
+            using (Stream stream = await client.GetStreamAsync("base/publish/netstandard2.0/NowIsTheTime.txt"))
             {
                 requestTcs.SetResult(await stream.ReadAsync(new byte[1], 0, 0));
             }

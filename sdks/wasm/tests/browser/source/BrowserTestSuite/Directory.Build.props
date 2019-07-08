@@ -1,0 +1,6 @@
+﻿<Project>
+  <PropertyGroup>
+    <MonoWasmSdkPath>$(MSBuildThisFileDirectory)..\..\..\..\..\</MonoWasmSdkPath>
+    <MonoWasmLinkMode>Full</MonoWasmLinkMode>
+  </PropertyGroup>
+</Project>
