@@ -2,15 +2,8 @@ ifneq ($(wildcard config.make),)
 
 include config.make
 
-#
-# NETCORETESTS_VERSION and NETCOREAPP_VERSION must be updated in sync, we are using coreclr repo for that but that's fine for now
-#
-
-# Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L21
-NETCORETESTS_VERSION := 4.6.0-preview8.19352.1
-
-# Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L25
-NETCOREAPP_VERSION := 3.0.0-preview7-27826-04
+NETCORETESTS_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftPrivateCoreFxNETCoreAppVersion>\(.*\)<\/MicrosoftPrivateCoreFxNETCoreAppVersion.*/\1/p' )
+NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
@@ -22,7 +15,7 @@ PLATFORM_AOT_SUFFIX := .dll
 PLATFORM_AOT_PREFIX :=
 NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
-XUNIT_FLAGS = -notrait category=nonwindowstests
+XUNIT_FLAGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
 TESTS_PLATFORM = Windows_NT.x64
 ON_RUNTIME_EXTRACT = chmod -R 755 {host,shared,./dotnet}
 DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
@@ -149,7 +142,7 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 
 run-tests-corefx: update-tests-corefx
 	for testdir in corefx/tests/extracted/*; do \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}); \
+		$(MAKE) run-tests-corefx-$$(basename $${testdir}) || true; \
 	done; \
 	$(MAKE) xunit-summary
 

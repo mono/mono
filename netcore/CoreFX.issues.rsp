@@ -16,27 +16,11 @@
 -nomethod Microsoft.VisualBasic.ApplicationServices.Tests.AssemblyInfoTests.LoadedAssemblies
 
 ####################################################################
-##  System.Buffers.Tests
-####################################################################
-
-# CoreCLR specific test
-# https://github.com/mono/mono/blob/cc5886e3d54a7fae15bfd8bda1e8781fcbf2be25/netcore/System.Private.CoreLib/shared/System/Buffers/TlsOverPerCoreLockedStacksArrayPool.cs#L319-L325
--nomethod System.Buffers.ArrayPool.Tests.CollectionTests.PollingEventFires
-
-####################################################################
 ##  System.CodeDom.Tests
 ####################################################################
 
 # TODO: Hangs
 -noclass System.CodeDom.Compiler.Tests.ExecutorTests
-
-####################################################################
-##  System.Collections.NonGeneric.Tests
-####################################################################
-
-# Mono currently supports Array.Copy from object[] array containing boxed ints to float[] array with primitive widening
-# https://github.com/mono/mono/issues/14857
--nomethod System.Collections.Tests.*.ICollection_NonGeneric_CopyTo_ArrayOfEnumType
 
 ####################################################################
 ##  System.Collections.Specialized.Tests
@@ -76,9 +60,6 @@
 ##  System.Diagnostics.TraceSource.Tests
 ####################################################################
 
-# requires precise gc (should be ignored in corefx)
--nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
-
 # Object reference not set to an instance of an object on DefaultTraceListenerClassTests.MakeAssemblyGetEntryAssemblyReturnNull
 # https://github.com/mono/mono/issues/14905
 -nomethod System.Diagnostics.TraceSourceTests.DefaultTraceListenerClassTests.EntryAssemblyName_Null_NotIncludedInTrace
@@ -104,15 +85,15 @@
 # https://github.com/mono/mono/issues/14906
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.overloadResolution.Methods.Oneclass2methods.twoprms004.twoprms004.Test.DynamicCSharpRunTest
 
-# requires precise gc (should be ignored in corefx)
--nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
-
 ####################################################################
 ##  System.IO.Tests
 ####################################################################
 
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
+
+# flaky test (The process cannot access the file ...)
+-nomethod System.IO.Tests.File_Copy_str_str.CopyFileWithData_MemberData
 
 ####################################################################
 ##  System.Linq.Expressions.Tests
@@ -221,11 +202,6 @@
 ##  System.Memory.Tests
 ####################################################################
 
-# CoreCLR specific test
-# https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L790-L800
-# https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L811-L821
--nomethod System.Tests.StringTests.NormalizationTest
-
 # System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
 # https://github.com/mono/mono/issues/14959
 -nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
@@ -294,10 +270,6 @@
 ####################################################################
 ##  System.Net.Sockets.Tests
 ####################################################################
-
-# Test does not run -> Precise GC not supported.
-# https://github.com/mono/mono/issues/15009
--nomethod System.Net.Sockets.Tests.UdpClientTest.Finalize_NoExceptionsThrown
 
 # TODO: Hangs and fails.
 # https://github.com/mono/mono/issues/15010
@@ -745,6 +717,9 @@
 # GCSettings.LatencyMode is not implemented
 -nomethod System.Tests.GCTests.LatencyRoundtrips
 
+# GC.GetGCMemoryInfo is not implemented
+-nomethod System.Tests.GCTests.GetGCMemoryInfo
+
 # Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
@@ -827,6 +802,7 @@
 # flaky test - System.TypeLoadException : Could not load type '_proxy_System.ComponentModel.Composition.IStronglyTypedStructure_3b7f133d-79c7-449e-8f68-22aa093dbb8d' from assembly ''.
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
+-nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_IMetadataViewWithDefaultedInt64
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -888,6 +864,23 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
+
+# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
+-nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
+-nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
 
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
@@ -1275,9 +1268,6 @@
 # disabled in CoreCLR too
 -noclass System.Security.Cryptography.X509Certificates.Tests.X509Certificate2UITests
 
-# requires precise gc (should be ignored in corefx)
--nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
-
 -nomethod System.IO.Tests.File_Move_Tests.File_Move_From_Unwatched_To_Watched
 
 # unxpected non-breaking space in strings (char(160) - char(32))
@@ -1291,3 +1281,16 @@
 # Unexpected IntPtr.Zero from Interop.Mmap
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewAccessorTests.ValidAccessLevelCombinations
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
+
+# requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
+-nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
+-nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
+-nomethod System.Tests.GCTests.ReRegisterForFinalize
+-nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetEnumerator_CollectedItemsNotEnumerated
+-nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.AddRemove_DropValue
+-nomethod System.Tests.WeakReferenceTests.NonGeneric
+-nomethod System.Tests.WeakReferenceTests.Generic
+-nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
+-nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
+-nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected

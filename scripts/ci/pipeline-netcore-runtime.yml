@@ -3,8 +3,8 @@ trigger:
   branches:
     include:
     - master
-    - 2019-??
-    - 202?-??
+#    - 2019-??
+#    - 202?-??
 
 variables:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
@@ -89,9 +89,8 @@ jobs:
     condition: eq(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
-      ./autogen.sh --with-core=only
-      make -C mono -j4
-      make -C netcore bcl
+      cd netcore
+      ./build.sh
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
@@ -106,8 +105,13 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
+      rm -rf .failures
+      counter=0
+      tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
       for testdir in netcore/corefx/tests/extracted/*; do
-        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m make -C netcore run-tests-corefx-$(basename $testdir)
+        counter=$((counter+1))
+        printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
       done
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
@@ -118,6 +122,15 @@ jobs:
       testRunTitle: $(poolname)
       testResultsFormat: 'XUnit'
       testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      if [ -e ".failures" ]; then
+        printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
+        exit 1
+      fi
+    displayName: 'Validate test results'
+    timeoutInMinutes: 90
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
