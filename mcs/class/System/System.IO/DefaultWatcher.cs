@@ -128,8 +128,10 @@ namespace System.IO {
 			lock (watches) {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data != null) {
-					data.Enabled = false;
-					data.DisabledTime = DateTime.UtcNow;
+					lock (data.FilesLock) {
+						data.Enabled = false;
+						data.DisabledTime = DateTime.UtcNow;
+					}
 				}
 			}
 		}
@@ -221,7 +223,8 @@ namespace System.IO {
 			}
 
 			lock (data.FilesLock) {
-				IterateAndModifyFilesData (data, directory, dispatch, files);
+				if (data.Enabled)
+					IterateAndModifyFilesData (data, directory, dispatch, files);
 			}
 		}
 
