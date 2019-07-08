@@ -117,7 +117,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	init_frame ((frame), (parent_frame), _rmethod, (method_args), (method_retval)); \
 	} while (0)
 
-#define interp_exec_method(frame, context) interp_exec_method_full ((frame), (context), NULL)
+#define interp_exec_method(frame, context, error) interp_exec_method_full ((frame), (context), NULL, error)
 
 /*
  * List of classes whose methods will be executed by transitioning to JITted code.
@@ -131,7 +131,7 @@ static gboolean ss_enabled;
 
 static gboolean interp_init_done = FALSE;
 
-static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args);
+static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
 static InterpMethod* lookup_method_pointer (gpointer addr);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
@@ -287,7 +287,7 @@ get_context (void)
 	return context;
 }
 
-static void
+static MONO_NEVER_INLINE void
 ves_real_abort (int line, MonoMethod *mh,
 		const unsigned short *ip, stackval *stack, stackval *sp)
 {
@@ -452,7 +452,7 @@ interp_pop_lmf (MonoLMFExt *ext)
 	mono_pop_lmf (&ext->lmf);
 }
 
-static InterpMethod*
+static MONO_NEVER_INLINE InterpMethod*
 get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 {
 	MonoMethod *m = imethod->method;
@@ -992,7 +992,7 @@ ves_array_calculate_index (MonoArray *ao, stackval *sp, InterpFrame *frame, gboo
 	return pos;
 }
 
-static void
+static MONO_NEVER_INLINE void
 ves_array_set (InterpFrame *frame, stackval *sp, MonoMethodSignature *sig)
 {
 	MonoObject *o = sp->data.o;
@@ -1738,7 +1738,7 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	if (exc)
 		frame.invoke_trap = 1;
 
-	interp_exec_method (&frame, context);
+	interp_exec_method (&frame, context, error);
 
 	if (frame.ex) {
 		if (exc) {
@@ -1843,7 +1843,8 @@ interp_entry (InterpEntryData *data)
 		break;
 	}
 
-	interp_exec_method (&frame, context);
+	ERROR_DECL (error);
+	interp_exec_method (&frame, context, error);
 
 	if (rmethod->needs_thread_attach)
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
@@ -2563,7 +2564,8 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	/* Copy the args saved in the trampoline to the frame stack */
 	mono_arch_get_native_call_context_args (ccontext, &frame, sig);
 
-	interp_exec_method (&frame, context);
+	ERROR_DECL (error);
+	interp_exec_method (&frame, context, error);
 
 	if (rmethod->needs_thread_attach)
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
@@ -2881,9 +2883,11 @@ static int opcode_counts[512];
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
+ * The ERROR argument is used to avoid declaring an error object for every interp frame, its not used
+ * to return error information.
  */
 static void 
-interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args)
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
@@ -2900,7 +2904,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	int i32;
 	unsigned char *vt_sp;
 	unsigned char *locals = NULL;
-	ERROR_DECL (error);
 	MonoObject *o = NULL;
 	MonoClass *c;
 #if USE_COMPUTED_GOTO
@@ -3167,7 +3170,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				}
 			}
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -3235,7 +3238,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				child_frame.imethod = mono_interp_get_imethod (imethod->domain, m, error);
 				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 
-				interp_exec_method (&child_frame, context);
+				interp_exec_method (&child_frame, context, error);
 			} else {
 				ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context, save_last_error);
 			}
@@ -3282,7 +3285,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				sp [0].data.p = unboxed;
 			}
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -3316,7 +3319,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis + num_varargs;
 			child_frame.stack_args = sp;
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -3357,7 +3360,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				}
 			}
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -4404,7 +4407,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				ip += 4;
 			}
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -4481,7 +4484,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				}
 			}
 
-			interp_exec_method (&child_frame, context);
+			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
@@ -6407,6 +6410,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 exit_frame:
 
+	error_init_reuse (error);
+
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->args, frame->args, imethod->alloca_size);
 
@@ -6463,8 +6468,6 @@ interp_parse_options (const char *options)
 	}
 }
 
-typedef int (*TestMethod) (void);
-
 /*
  * interp_set_resume_state:
  *
@@ -6510,7 +6513,8 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	clause_args.end_at_ip = (guint16*) handler_ip_end;
 	clause_args.exit_clause = clause_index;
 
-	interp_exec_method_full (iframe, context, &clause_args);
+	ERROR_DECL (error);
+	interp_exec_method_full (iframe, context, &clause_args, error);
 	if (context->has_resume_state) {
 		return TRUE;
 	} else {
@@ -6550,7 +6554,8 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	clause_args.filter_exception = ex;
 	clause_args.base_frame = iframe;
 
-	interp_exec_method_full (&child_frame, context, &clause_args);
+	ERROR_DECL (error);
+	interp_exec_method_full (&child_frame, context, &clause_args, error);
 	/* ENDFILTER stores the result into child_frame->retval */
 	return child_frame.retval->data.i ? TRUE : FALSE;
 }
