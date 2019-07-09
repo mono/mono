@@ -433,7 +433,7 @@ clean: clean-sdk
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 
-package: build build-dbg-proxy build-sdk
+package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
