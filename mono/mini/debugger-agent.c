@@ -7217,8 +7217,8 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		int len = decode_int (p, &p, end);
 		size = len;
 		arr = mono_array_new_full_checked (mono_domain_get (), mono_class_create_array (mono_get_byte_class(), 1), &size, NULL, error);
-		elem = (gpointer*)arr->vector;
-		memcpy(elem, p, len);
+		elem = mono_array_addr_internal (arr, guint8, 0);
+		memcpy (elem, p, len);
 		p += len;
 		buffer_add_objid (buf, (MonoObject*) arr);
 		break;
