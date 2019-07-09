@@ -9,6 +9,8 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xamarin.ProcessControl;
+using System.Runtime.InteropServices;
+
 
 namespace Mono.WebAssembly.Build
 {
@@ -54,21 +56,33 @@ namespace Mono.WebAssembly.Build
 		public bool Debug { get; set; }
 
 		/// <summary>
+		/// Should the tooling use mono to execute the monolinker program?
+		/// </summary>
+		public bool CLIMode { get; set; }
+
+		/// <summary>
 		/// Internationalization code pages to be supported
 		/// </summary>
 		public string I18n { get; set; }
 
-		protected override string ToolName => "monolinker";
-
+		protected override string ToolName => (IsWindows || !CLIMode) ? "monolinker.exe" : "mono";
+		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
+                                               .IsOSPlatform(OSPlatform.Windows);
 		protected override string GenerateFullPathToTool ()
 		{
-			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
-			// Check if coming from nuget or local
-			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
-			if (!File.Exists(toolsPath))
-				toolsPath = Path.GetFullPath(Path.Combine (dir, "..", "..", "..", "..", "..", "..", "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
-
-			return toolsPath;
+			Log.LogMessage(MessageImportance.High, $"Using CLI Mode {CLIMode}");
+			if (IsWindows || !CLIMode) {
+				var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
+				Log.LogMessage(MessageImportance.High, $"Assembly location {dir}");
+				// Check if coming from nuget or local
+				var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", ToolName);
+				if (!File.Exists(toolsPath))
+					toolsPath = Path.GetFullPath(Path.Combine (dir, "..", "..", "..", "..", "..", "..", "out", "wasm-bcl", "wasm_tools", ToolName));
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath}");
+				return toolsPath;
+			}
+			else
+				return ToolName;
 		}
 
 		protected override bool ValidateParameters ()
@@ -88,13 +102,27 @@ namespace Mono.WebAssembly.Build
 				return false;
 			}
 
-
 			return base.ValidateParameters ();
 		}
 
 		protected override string GenerateCommandLineCommands ()
 		{
-			ProcessArguments arguments = ProcessArguments.Create ("--verbose");
+
+			ProcessArguments arguments = null;
+			
+			if (IsWindows || !CLIMode) {
+				arguments = ProcessArguments.Create ("--verbose");
+			}
+			else {
+				var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
+				// Check if coming from nuget or local
+				var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
+				if (!File.Exists(toolsPath))
+					toolsPath = Path.GetFullPath(Path.Combine (dir, "..", "..", "..", "..", "..", "..", "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath} with CLIMode? {CLIMode}");
+				arguments = ProcessArguments.Create (toolsPath);
+				arguments = arguments.Add("--verbose");
+			}
 
 			// add exclude features
 			arguments = arguments.AddRange ("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
@@ -168,7 +196,7 @@ namespace Mono.WebAssembly.Build
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
 				arguments = arguments.AddRange ("-l", string.Join (",", vals));
 			}
-
+			//Log.LogMessage(MessageImportance.High, $"CommandLine {arguments.ToString()}");
 			return arguments.ToString ();
 		}
 	}

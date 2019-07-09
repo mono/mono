@@ -37,6 +37,12 @@
       "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
       "kind": "bool",
       "default": true
+    },
+    "MonoWasmCLIMode": {
+      "description": "Whether to use mono to execute monolinker.  Useful on linux systems and CLI builds where there is a permissions error.",
+      "kind": "bool",
+      "default": false
     }
+
   }
 }
