@@ -126,7 +126,7 @@ update-tests-corefx: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 	curl $(TEST_ASSETS_URL) --output corefx-test-assets.xml
-	python3 dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
+	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
 	touch $@
 
 #
