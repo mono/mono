@@ -102,6 +102,7 @@ jobs:
   - bash: |
       make -C netcore update-tests-corefx
     displayName: 'Download CoreFX Tests'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
       rm -rf .failures
