@@ -194,6 +194,14 @@ namespace Mono {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForAllNativeLibs_internal ();
+
+		static void RegisterReportingForAllNativeLibs ()
+		{
+			RegisterReportingForAllNativeLibs_internal ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
 
 		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
