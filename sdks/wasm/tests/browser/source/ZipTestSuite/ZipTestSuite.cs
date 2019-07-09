@@ -309,7 +309,7 @@ namespace TestSuite {
 			return requestTcs.Task;
 
 		}
-		public static async Task<object> ZipUpdateEmptyArchive ()
+		public static Task<object> ZipUpdateEmptyArchive ()
 		{
 			var requestTcs = new TaskCompletionSource<object> ();
 			using (var memoryStream = new MemoryStream ()) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using WebAssembly.Net.Http.HttpClient;
 using System.Threading.Tasks;

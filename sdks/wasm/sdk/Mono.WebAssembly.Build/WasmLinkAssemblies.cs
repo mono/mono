@@ -196,7 +196,6 @@ namespace Mono.WebAssembly.Build
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
 				arguments = arguments.AddRange ("-l", string.Join (",", vals));
 			}
-			//Log.LogMessage(MessageImportance.High, $"CommandLine {arguments.ToString()}");
 			return arguments.ToString ();
 		}
 	}

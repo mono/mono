@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Net.Http;
 using WebAssembly;
-using WebAssembly.Core;
 
 namespace TestSuite
 {
