@@ -435,12 +435,10 @@ struct _MonoImage {
 	 * table, where the module table is a subset of the file table. We track both lists,
 	 * and because we can lazy-load them at different times we reference-increment both.
 	 */
+	/* No netmodules in netcore, but for System.Reflection.Emit support we still use modules */
 	MonoImage **modules;
 	guint32 module_count;
 	gboolean *modules_loaded;
-#ifdef ENABLE_NETCORE
-	MonoLoadedImages *modules_loaded_images;
-#endif
 
 	MonoImage **files;
 	guint32 file_count;

@@ -25,17 +25,8 @@ struct _MonoAssemblyLoadContext {
 };
 #endif /* ENABLE_NETCORE */
 
-enum {
-	MONO_LOADED_IMAGES_ALC = 0,  /* For assemblies */
-	MONO_LOADED_IMAGES_ASSEMBLY = 1, /* for files & netmodules */
-};
-
 struct _MonoLoadedImages {
-	union {
-		MonoAssemblyLoadContext *alc; /* NULL if global */
-		MonoImage *assembly_image; /* for netmodules and SRE dynamic images */
-	} owner;
-	guint8 owner_kind;
+	MonoAssemblyLoadContext *owner; /* NULL if global */
 	GHashTable *loaded_images_hashes [4];
 };
 
@@ -50,7 +41,7 @@ mono_set_pinvoke_search_directories (int dir_count, char **dirs);
 #endif
 
 void
-mono_loaded_images_init (MonoLoadedImages *li, guint8 owner_kind, gpointer owner);
+mono_loaded_images_init (MonoLoadedImages *li, MonoAssemblyLoadContext *owner);
 
 void
 mono_loaded_images_cleanup (MonoLoadedImages *li, gboolean shutdown);

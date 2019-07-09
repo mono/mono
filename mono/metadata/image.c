@@ -290,7 +290,7 @@ mono_images_init (void)
 
 	images_storage_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-	mono_loaded_images_init (&global_loaded_images, MONO_LOADED_IMAGES_ALC, NULL);
+	mono_loaded_images_init (&global_loaded_images, NULL);
 
 	debug_assembly_unload = g_hasenv ("MONO_DEBUG_ASSEMBLY_UNLOAD");
 
@@ -690,6 +690,7 @@ mono_image_check_for_module_cctor (MonoImage *image)
 	image->checked_module_cctor = TRUE;
 }
 
+#ifndef ENABLE_NETCORE
 static void
 load_modules (MonoImage *image)
 {
@@ -702,13 +703,8 @@ load_modules (MonoImage *image)
 	image->modules = g_new0 (MonoImage *, t->rows);
 	image->modules_loaded = g_new0 (gboolean, t->rows);
 	image->module_count = t->rows;
-	if (t->rows > 0) {
-#ifdef ENABLE_NETCORE
-		image->modules_loaded_images = g_new0 (MonoLoadedImages, 1);
-		mono_loaded_images_init (image->modules_loaded_images, MONO_LOADED_IMAGES_ASSEMBLY, image);
-#endif
-	}
 }
+#endif
 
 /**
  * mono_image_load_module_checked:
@@ -733,6 +729,11 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		return NULL;
 	if (image->modules_loaded [idx - 1])
 		return image->modules [idx - 1];
+
+#ifdef ENABLE_NETCORE
+	/* SRE still uses image->modules, but they are not loaded from files, so the rest of this function is dead code for netcore */
+	g_assert_not_reached ();
+#else
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading module %d of %s (%s)", idx, image->assembly ? image->assembly->aname.name : "some assembly", image->name);
 
@@ -796,6 +797,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	g_list_free (valid_modules);
 
 	return image->modules [idx - 1];
+#endif
 }
 
 /**
@@ -1432,7 +1434,9 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	mono_image_load_time_date_stamp (image);
 
+#ifndef ENABLE_NETCORE
 	load_modules (image);
+#endif
 
 done:
 	MONO_PROFILER_RAISE (image_loaded, (image));
@@ -2521,11 +2525,6 @@ mono_image_close_except_pools (MonoImage *image)
 	mono_image_close_except_pools_all (image->modules, image->module_count);
 	g_free (image->modules_loaded);
 
-#ifdef ENABLE_NETCORE
-	if (image->modules_loaded_images)
-		mono_loaded_images_free (image->modules_loaded_images);
-#endif
-
 	mono_os_mutex_destroy (&image->szarray_cache_lock);
 	mono_os_mutex_destroy (&image->lock);
 
@@ -3319,19 +3318,9 @@ mono_find_image_owner (void *ptr)
 }
 
 void
-mono_loaded_images_init (MonoLoadedImages *li, guint8 owner_kind, gpointer owner)
+mono_loaded_images_init (MonoLoadedImages *li, MonoAssemblyLoadContext *owner)
 {
-	li->owner_kind = owner_kind;
-	switch (owner_kind) {
-	case MONO_LOADED_IMAGES_ALC:
-		li->owner.alc = (MonoAssemblyLoadContext*)owner;
-		break;
-	case MONO_LOADED_IMAGES_ASSEMBLY:
-		li->owner.assembly_image = (MonoImage*)owner;
-		break;
-	default:
-		g_assert_not_reached ();
-	}
+	li->owner = owner;
 	for(int hash_idx = 0; hash_idx < IMAGES_HASH_COUNT; hash_idx++)
 		li->loaded_images_hashes [hash_idx] = g_hash_table_new (g_str_hash, g_str_equal);
 }
@@ -3401,7 +3390,7 @@ void
 mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc)
 {
 	MonoLoadedImages *li = g_new0 (MonoLoadedImages, 1);
-	mono_loaded_images_init (li, MONO_LOADED_IMAGES_ALC, alc);
+	mono_loaded_images_init (li, alc);
 	alc->domain = domain;
 	alc->loaded_images = li;
 }
@@ -3431,6 +3420,6 @@ get_loaded_images_for_image_modules (MonoImage *image)
 #ifndef ENABLE_NETCORE
 	return get_global_loaded_images ();
 #else
-	return image->modules_loaded_images;
+	g_assert_not_reached ();
 #endif
 }
