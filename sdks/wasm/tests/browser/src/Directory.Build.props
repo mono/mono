@@ -2,6 +2,6 @@
   <PropertyGroup>
     <MonoWasmSdkPath>$(MSBuildThisFileDirectory)..\..\..\..\</MonoWasmSdkPath>
     <MonoWasmLinkMode>Full</MonoWasmLinkMode>
-    <MonoWasmCLIMode>True</MonoWasmCLIMode>
+    <MonoWasmCLIMode>False</MonoWasmCLIMode>
   </PropertyGroup>
 </Project>
