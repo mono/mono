@@ -16,6 +16,18 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-
 * [unity-trunk (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-trunk)
 * [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
 
+#### 2019.2
+* [unity-2019.2](https://github.com/Unity-Technologies/mono/tree/unity-2019.2)
+* [unity-2019.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.2-mbe)
+
+#### 2019.1
+* [unity-2019.1](https://github.com/Unity-Technologies/mono/tree/unity-2019.1)
+* [unity-2019.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.1-mbe)
+
+#### 2018.4
+* [unity-2018.4](https://github.com/Unity-Technologies/mono/tree/unity-2018.4)
+* [unity-2018.4-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.4-mbe)
+
 #### 2018.3
 * [unity-2018.3](https://github.com/Unity-Technologies/mono/tree/unity-2018.3)
 * [unity-2018.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.3-mbe)
@@ -27,6 +39,10 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-
 #### 2018.1
 * [unity-2018.1](https://github.com/Unity-Technologies/mono/tree/unity-2018.1)
 * [unity-2018.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.1-mbe)
+
+#### 2017.4
+* [unity-2017.4](https://github.com/Unity-Technologies/mono/tree/unity-2017.4)
+* [unity-2017.4-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.4-mbe)
 
 #### 2017.3
 * [unity-2017.3](https://github.com/Unity-Technologies/mono/tree/unity-2017.3)
