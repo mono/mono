@@ -190,6 +190,7 @@
 -nomethod System.Linq.Expressions.Tests.LambdaMultiplyNullableTests.LambdaMultiplyNullableFloatTest
 -nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
 -nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
+-nomethod System.Linq.Expressions.Tests.OpAssign.AssignmentEquivalentsWithMemberAccess
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
