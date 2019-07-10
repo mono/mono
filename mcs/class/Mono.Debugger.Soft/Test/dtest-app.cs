@@ -1984,7 +1984,18 @@ public class Tests : TestsBase, ITest2
 	}
 
 	public static unsafe void pointer_arguments (int* a, BlittableStruct* s) {
+		int i = 12;
+		int *j = &i;
+		int *p = (int*)0x00000007;
+		int *np = (int*)0;
 		*a = 0;
+
+		pointer_get_value ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void pointer_get_value ()
+	{
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

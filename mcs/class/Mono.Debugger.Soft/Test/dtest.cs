@@ -4833,7 +4833,6 @@ public class DebuggerTests
 
 		AssertValue(2, pointerValue2.Value);
 
-
 		param = frame.Method.GetParameters()[1];
 		Assert.AreEqual("BlittableStruct*", param.ParameterType.Name);
 
@@ -4848,6 +4847,33 @@ public class DebuggerTests
 		f = structValue.Fields[1];
 		AssertValue (3.0, f);
 
+		run_until ("pointer_get_value");
+		frame = e.Thread.GetFrames () [1];
+
+		var j = frame.Method.GetLocal ("j");
+		var p = frame.Method.GetLocal ("p");
+		var np = frame.Method.GetLocal ("np");
+
+		pointerValue = frame.GetValue (j) as PointerValue;
+		Assert.AreEqual ("Int32*", pointerValue.Type.Name);
+		AssertValue(12, pointerValue.Value);
+
+		void AccessProperty(Value v)
+		{
+		}
+
+		pointerValue = frame.GetValue (p) as PointerValue;
+		Assert.AreEqual ("Int32*", pointerValue.Type.Name);
+		AssertThrows<CommandException> (() => AccessProperty(pointerValue.Value));
+
+		pointerValue = frame.GetValue (np) as PointerValue;
+		Assert.AreEqual ("Int32*", pointerValue.Type.Name);
+		Assert.AreEqual (0L, pointerValue.Address);
+
+		// We should throw here, you can't dereference null, but we historically
+		// return null for a zero address.
+		// AssertThrows<CommandException> (() => AccessProperty(pointerValue.Value));
+		Assert.AreEqual (null, pointerValue.Value);
 	}
 
 	[Test]
