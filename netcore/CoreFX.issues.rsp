@@ -1235,3 +1235,6 @@
 -nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
+
+# Flaky tests https://github.com/mono/mono/issues/15238
+-nonamespace System.Security.Cryptography.Pkcs
