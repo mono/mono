@@ -38,6 +38,16 @@ closedir(DIR);
 system("find collectedbuilds -type f -name mono -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
 system("find collectedbuilds -type f -name mono-sgen -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
 system("find collectedbuilds -type f -name pedump -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name cli -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name cli_x86 -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name ilasm -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name mcs -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name mono-env -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name monolinker -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name nunit-console -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name nunit-console2 -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name resgen2 -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name xbuild -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
 
 chdir("collectedbuilds");
 
