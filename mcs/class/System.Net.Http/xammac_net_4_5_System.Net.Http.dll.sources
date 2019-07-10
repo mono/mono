@@ -1,2 +1,1 @@
-#include legacy.sources
-System.Net.Http/HttpClient.macios.cs
+#include xammac_System.Net.Http.dll.sources
