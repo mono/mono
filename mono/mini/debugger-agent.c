@@ -149,7 +149,6 @@ typedef struct
 	 * the frame can become invalid.
 	 */
 	gboolean has_ctx;
-	gboolean managed;
 } StackFrame;
 
 typedef struct _InvokeData InvokeData;
@@ -3183,7 +3182,6 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	frame->flags = flags;
 	frame->interp_frame = info->interp_frame;
 	frame->frame_addr = info->frame_addr;
-	frame->managed = info->managed;
 	if (info->reg_locations)
 		memcpy (frame->reg_locations, info->reg_locations, MONO_MAX_IREGS * sizeof (host_mgreg_t*));
 	if (ctx) {
