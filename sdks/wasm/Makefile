@@ -231,7 +231,7 @@ bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_
 build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) build-sdk
-	$(DOTNET_BUILD) tests/browser/source -v normal
+	$(DOTNET_BUILD) tests/browser/src -v normal
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
