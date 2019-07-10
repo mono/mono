@@ -12,6 +12,11 @@ namespace System.Net.NetworkInformation
 
     public abstract class IPGlobalProperties
     {
+#if UNITY
+        // defaults to false, but may be replaced by intrinsic in runtime
+        static bool PlatformNeedsLibCWorkaround { get; }
+#endif
+
         public static IPGlobalProperties GetIPGlobalProperties()
         {
 #if MONODROID
@@ -21,6 +26,10 @@ namespace System.Net.NetworkInformation
 #elif MONO
             switch (Environment.OSVersion.Platform) {
             case PlatformID.Unix:
+#if UNITY
+                if (PlatformNeedsLibCWorkaround)
+                    return new UnixNoLibCIPGlobalProperties();
+#endif
                 MibIPGlobalProperties impl = null;
                 if (Directory.Exists (MibIPGlobalProperties.ProcDir)) {
                     impl = new MibIPGlobalProperties (MibIPGlobalProperties.ProcDir);

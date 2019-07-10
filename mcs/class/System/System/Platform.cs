@@ -79,6 +79,7 @@ namespace System {
 		}
 #endif
 
+		// UNITY: runtime replaces this with intrinsic
 		public static bool IsMacOS {
 			get {
 				if (!checkedOS)
@@ -86,7 +87,7 @@ namespace System {
 					try {
 						CheckOS();
 					}
-					catch (DllNotFoundException e) {
+					catch (DllNotFoundException) {
 						// libc does not exist, so this is not MacOS
 						isMacOS = false;
 					}
@@ -97,6 +98,7 @@ namespace System {
 			}
 		}
 
+		// UNITY: runtime replaces this with intrinsic
 		public static bool IsFreeBSD {
 			get {
 				if (!checkedOS)
