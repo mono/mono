@@ -406,6 +406,8 @@ namespace System.Net
 			return Task.FromException<int> (new NotSupportedException (SR.net_writeonlystream));
 		}
 
+		protected override bool TryReadFromBufferedContent (byte[] buffer, int offset, int count, out int result) => throw new InvalidOperationException ();
+
 		protected override void Close_internal (ref bool disposed)
 		{
 			WebConnection.Debug ($"{ME} CLOSE: {disposed} {requestWritten} {allowBuffering}");

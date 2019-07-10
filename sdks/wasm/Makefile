@@ -26,6 +26,7 @@ CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
 DOTNET_BUILD?=dotnet build
+DOTNET_PACK?=dotnet pack
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
@@ -181,7 +182,7 @@ tuner:
 cil-strip:
 	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
 
-mono: runtime cross bcl
+mono: runtime runtime-threads cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll /r:$(WASM_BCL_DIR)/System.IO.Compression.dll /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll 
 
@@ -509,6 +510,7 @@ clean-sdk:
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
+	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
 
 clean-browser-tests: clean-sdk 
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
