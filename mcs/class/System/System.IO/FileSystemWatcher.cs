@@ -123,6 +123,7 @@ namespace System.IO {
 					ok = DefaultWatcher.GetInstance (out watcher);
 					//ok = WindowsWatcher.GetInstance (out watcher);
 					break;
+#if !UNITY_AOT
 				case 2: // libfam
 					ok = FAMWatcher.GetInstance (out watcher, false);
 					break;
@@ -135,6 +136,7 @@ namespace System.IO {
 				case 5: // inotify
 					ok = InotifyWatcher.GetInstance (out watcher, true);
 					break;
+#endif
 				}
 
 				if (mode == 0 || !ok) {
@@ -173,8 +175,10 @@ namespace System.IO {
 					return mangledFilter;
 
 				string filterLocal = "*.*";
+#if !UNITY_AOT
 				if (!(watcher.GetType () == typeof (WindowsWatcher)))
 					filterLocal = "*";
+#endif
 
 				return filterLocal;
 			}
@@ -183,9 +187,11 @@ namespace System.IO {
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
+#if !UNITY_AOT
 					if (watcher.GetType () == typeof (KeventWatcher))
 						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
 					else
+#endif
 						pattern = new SearchPattern2 (MangledFilter);
 				}
 				return pattern;
