@@ -41,6 +41,7 @@ using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Reflection.Emit {
 
@@ -316,14 +317,25 @@ namespace System.Reflection.Emit {
 		}
 
 		public override string ToString () {
-			string parms = String.Empty;
-			ParameterInfo[] p = GetParametersInternal ();
-			for (int i = 0; i < p.Length; ++i) {
+			var paramsSb = new StringBuilder ();
+			ParameterInfo [] parameters = GetParametersInternal ();
+			for (int i = 0; i < parameters.Length; ++i) {
+				ParameterInfo p = parameters [i];
 				if (i > 0)
-					parms = parms + ", ";
-				parms = parms + p [i].ParameterType.Name;
+					paramsSb.Append (", ");
+
+				paramsSb.Append (p.ParameterType.IsPrimitive ? p.ParameterType.Name : p.ParameterType.ToString ());
 			}
-			return ReturnType.Name+" "+Name+"("+parms+")";
+
+			string returnTypeName;
+			if (ReturnType == typeof (void))
+				returnTypeName = "Void";
+			else if (ReturnType.IsPrimitive)
+				returnTypeName = ReturnType.Name;
+			else
+				returnTypeName = ReturnType.ToString ();
+
+			return $"{returnTypeName} {Name}({paramsSb})";
 		}
 
 		public override MethodAttributes Attributes {
