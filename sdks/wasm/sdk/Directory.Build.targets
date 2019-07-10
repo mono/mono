@@ -1,6 +1,5 @@
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
-  <Import Project="$(MSBuildThisFileDirectory)Templates\Template.targets" />
 
 <!--
   The following target is to make sure the sdk\packages exist.
