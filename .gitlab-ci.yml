@@ -237,8 +237,17 @@ build_linux_x86:
     - /opt/post_build_script.sh
 
 collate_builds:
-  image: ubuntu:latest
   stage: collate
+  tags:
+    - bokken-job
+  variables:
+    BOKKEN_VM: collate_ubuntu
+    BOKKEN_JOB: |
+      resources:
+        - name: collate_ubuntu
+          image: cds-ops/ubuntu-18.04-agent:v1.0.11-765607
+          flavor: b1.large
+          type: Unity::VM
   dependencies:
   - build_android
   - build_osx_runtime
@@ -249,10 +258,9 @@ collate_builds:
   - build_linux_x86
   - build_linux_x64
   before_script:
-  - apt-get update -qy && apt-get -qy upgrade
-  - apt-get install -qy perl
-  - apt-get install -qy zip unzip
-  - apt-get install -qy p7zip-full p7zip-rar
+  - sudo DEBIAN_FRONTEND=noninteractive apt-get update -qy && sudo DEBIAN_FRONTEND=noninteractive apt-get -qy upgrade
+  - sudo apt-get install -qy zip unzip
+  - sudo apt-get install -qy p7zip-full p7zip-rar
   script:
   - perl external/buildscripts/collect_allbuilds.pl
   - pwd
@@ -260,6 +268,8 @@ collate_builds:
   artifacts:
     paths:
     - collectedbuilds/builds.7z
+    - stevedore/MonoBleedingEdge.7z
+    - stevedore/artifactid.txt
     expire_in: 1 week
 
     

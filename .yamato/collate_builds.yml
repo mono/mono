@@ -27,3 +27,7 @@ artifacts:
   builds:
     paths:
       - collectedbuilds/builds.7z
+  stevedore:
+    paths:
+      - stevedore/MonoBleedingEdge.7z
+      - stevedore/artifactid.txt
