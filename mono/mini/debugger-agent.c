@@ -9102,12 +9102,49 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	return ERR_NONE;
 }
 
+/*
+ * Use managed code to verify that we can read at an address to avoid
+ * crashing the runtime if the client is requesting a value at an invalid address
+ */
+static gboolean
+can_read (gint64 addr, gint32 size)
+{
+	static MonoMethod *read_byte = NULL;
+
+	if (!read_byte) {
+		ERROR_DECL (error);
+		read_byte = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "ReadByte", 1, 0, error);
+		if (!mono_error_ok (error)) {
+			mono_error_cleanup (error);
+			return FALSE;
+		}
+	}
+
+	if (!addr)
+		return FALSE;
+
+	for (gint32 i = 0; i < size; i++) {
+		ERROR_DECL (error);
+		void* args [1];
+		gpointer arg = (gpointer)(addr + i);
+		args [0] = &arg;
+		mono_runtime_invoke_checked (read_byte, NULL, args, error);
+		if (!mono_error_ok (error)) {
+			mono_error_cleanup (error);
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 static ErrorCode
 pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
 	ErrorCode err;
 	gint64 addr;
 	MonoClass* klass;
+	MonoClass* eklass;
 	MonoDomain* domain = NULL;
 
 	switch (command) {
@@ -9120,8 +9157,12 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (m_class_get_byval_arg (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
 
-		buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
+		eklass = m_class_get_element_class (klass);
 
+		if (!can_read (addr, mono_class_value_size (eklass, NULL)))
+			return ERR_INVALID_ARGUMENT;
+
+		buffer_add_value (buf, m_class_get_byval_arg (eklass), (gpointer)addr, domain);
 		break;
 	default:
 		return ERR_NOT_IMPLEMENTED;
