@@ -130,7 +130,8 @@ namespace CppSharp
 
             foreach (var target in AndroidTargets)
                 target.Defines.AddRange (new string[] { "HOST_ANDROID",
-                    "TARGET_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX"
+                    "TARGET_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
+                    "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"
                 });
         }
 
