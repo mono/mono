@@ -669,6 +669,13 @@ class Tests
 		return 0;
 	}
 
+	public static int test_0_byte_equality_compater_devirt () {
+		var dict = new Dictionary<byte, AStruct>();
+		dict [1] = new AStruct ();
+		dict [1] = new AStruct ();
+		return 0;
+	}
+
 	// Requires c# 7.2
 #if !__MonoCS__
 	public interface GameComponent {
