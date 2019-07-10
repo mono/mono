@@ -114,7 +114,7 @@ namespace System.Reflection.Emit {
 			if (parameterTypes != null) {
 				for (int i = 0; i < parameterTypes.Length; ++i)
 					if (parameterTypes [i] == null)
-						throw new ArgumentException ("Parameter " + i + " is null", "parameterTypes");
+						throw new ArgumentException ("Parameter " + i + " is null");
 			}
 			if (owner != null && (owner.IsArray || owner.IsInterface)) {
 				throw new ArgumentException ("Owner can't be an array or an interface.");
@@ -318,9 +318,9 @@ namespace System.Reflection.Emit {
 
 		public override string ToString () {
 			var paramsSb = new StringBuilder ();
-			ParameterInfo [] parameters = GetParametersInternal ();
-			for (int i = 0; i < parameters.Length; ++i) {
-				ParameterInfo p = parameters [i];
+			ParameterInfo [] parameterInfos = GetParametersInternal ();
+			for (int i = 0; i < parameterInfos.Length; ++i) {
+				ParameterInfo p = parameterInfos [i];
 				if (i > 0)
 					paramsSb.Append (", ");
 
@@ -330,6 +330,8 @@ namespace System.Reflection.Emit {
 			string returnTypeName;
 			if (ReturnType == typeof (void))
 				returnTypeName = "Void";
+			else if (ReturnType == typeof (TypedReference))
+				returnTypeName = "TypedReference";
 			else if (ReturnType.IsPrimitive)
 				returnTypeName = ReturnType.Name;
 			else

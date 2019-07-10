@@ -953,15 +953,6 @@
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFromStream_Location_IsEmpty
 
 ####################################################################
-##  System.Reflection.Metadata.Tests
-####################################################################
-
-# Expected null, got a double byte array
-# https://github.com/mono/mono/issues/15193
--nomethod System.Reflection.Metadata.Tests.AssemblyDefinitionTests.ValidateAssemblyNameWithCultureSet
--nomethod System.Reflection.Metadata.Tests.AssemblyDefinitionTests.ValidateAssemblyNameForAssemblyDefinition
-
-####################################################################
 ##  System.Reflection.TypeExtensions.CoreCLR.Tests
 ####################################################################
 
@@ -1108,10 +1099,6 @@
 # Actual:   typeof(System.OverflowException): Arithmetic operation resulted in an overflow.
 # https://github.com/mono/mono/issues/15334
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.SetX_NegativeInputSize_ThrowsArgumentOutOfRangeException
-
-# Expected null, but got parameterTypes
-# https://github.com/mono/mono/issues/15335
--nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.NullObjectInParameterTypes_ThrowsArgumentException
 
 ####################################################################
 ##  System.Runtime.Loader.Tests
