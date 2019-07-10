@@ -126,7 +126,7 @@ namespace System.Net.Http
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
-		protected internal async override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}

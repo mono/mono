@@ -1,7 +1,13 @@
+HttpClient.DefaultHandler.cs
 HttpClientHandler.cs
-HttpClientHandler.Legacy.cs
-IMonoHttpClientHandler.cs
+HttpClientHandler.SocketsHandler.cs
+# IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
 
-../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/CancellationHelper.cs
+corefx/SocketsHttpHandler.Mono.cs
+
+../../../external/corefx/src/System.Net.Http/src/System/Net/Http/HttpClient.cs
+../../../external/corefx/src/System.Net.Http/src/System/Net/Http/HttpClientHandler.cs
+
+../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/*.cs
 ../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/ConnectHelper.cs
