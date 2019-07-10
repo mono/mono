@@ -92,3 +92,5 @@ using System.Runtime.InteropServices;
 
 [assembly: TypeForwardedTo (typeof (System.Collections.Generic.Stack<>))]
 [assembly: TypeForwardedTo (typeof (System.Collections.Generic.Queue<>))]
+[assembly: TypeForwardedTo (typeof (System.IO.Enumeration.FileSystemName))]
+[assembly: TypeForwardedTo (typeof (System.Security.Cryptography.CryptographicOperations))]
