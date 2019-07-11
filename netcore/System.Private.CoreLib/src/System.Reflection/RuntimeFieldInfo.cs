@@ -261,7 +261,8 @@ namespace System.Reflection
 		}
 
 		void CheckGeneric () {
-			if (DeclaringType.ContainsGenericParameters)
+			Type declaringType = DeclaringType;
+			if (declaringType != null && declaringType.ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on fields with types for which Type.ContainsGenericParameters is true.");
 	    }
 
