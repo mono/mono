@@ -5272,12 +5272,20 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 		return 0;
 	}
 	if (MONO_HANDLE_IS_NULL (field_name)) {
+#ifdef ENABLE_NETCORE
 		mono_error_set_argument_null (error, NULL, "");
+#else
+		mono_error_set_argument_null (error, "fieldName", "");
+#endif
 		return 0;
 	}
 
 	if (!m_class_is_runtime_type (MONO_HANDLE_GET_CLASS (ref_type))) {
+#ifdef ENABLE_NETCORE
 		mono_error_set_argument (error, "fieldName", "");
+#else
+		mono_error_set_argument (error, "type", "");
+#endif
 		return 0;
 	}
 
@@ -5693,7 +5701,6 @@ mono_marshal_load_type_info (MonoClass* klass)
 			size = mono_marshal_type_size (field->type, info->fields [j].mspec, 
 						       &align, TRUE, m_class_is_unicode (klass));
 			align = m_class_get_packing_size (klass) ? MIN (m_class_get_packing_size (klass), align): align;
-
 			min_align = MAX (align, min_align);
 			info->fields [j].offset = info->native_size;
 			info->fields [j].offset += align - 1;
