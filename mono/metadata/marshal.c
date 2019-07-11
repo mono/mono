@@ -5272,12 +5272,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 		return 0;
 	}
 	if (MONO_HANDLE_IS_NULL (field_name)) {
-		mono_error_set_argument_null (error, "fieldName", "");
+		mono_error_set_argument_null (error, NULL, "");
 		return 0;
 	}
 
 	if (!m_class_is_runtime_type (MONO_HANDLE_GET_CLASS (ref_type))) {
-		mono_error_set_argument (error, "type", "");
+		mono_error_set_argument (error, "fieldName", "");
 		return 0;
 	}
 
@@ -5693,6 +5693,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 			size = mono_marshal_type_size (field->type, info->fields [j].mspec, 
 						       &align, TRUE, m_class_is_unicode (klass));
 			align = m_class_get_packing_size (klass) ? MIN (m_class_get_packing_size (klass), align): align;
+
 			min_align = MAX (align, min_align);
 			info->fields [j].offset = info->native_size;
 			info->fields [j].offset += align - 1;
@@ -5935,9 +5936,17 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		klass = mono_class_from_mono_type_internal (type);
 		if (klass == mono_defaults.object_class &&
 			(mspec && mspec->native == MONO_NATIVE_STRUCT)) {
-		*align = 16;
-		return 16;
+			*align = 16;
+			return 16;
+		} 
+#if ENABLE_NETCORE
+		else if (strcmp (m_class_get_name_space (klass), "System") == 0 && 
+			strcmp (m_class_get_name (klass), "Decimal") == 0) {
+			// Special case: despite the fact Decimal consists of 4 int32 fields, the alignment should be 8 on x64
+			*align = MONO_ABI_ALIGNOF (gpointer);
+			return mono_class_native_size (klass, NULL);
 		}
+#endif
 		padded_size = mono_class_native_size (klass, align);
 		if (padded_size == 0)
 			padded_size = 1;
