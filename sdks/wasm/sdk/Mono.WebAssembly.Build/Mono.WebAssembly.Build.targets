@@ -10,7 +10,6 @@
 		<MonoWasmLinkMode Condition="'$(MonoWasmLinkMode)'==''">SdkOnly</MonoWasmLinkMode>
 		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
 		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
-		<_MonoWasmCLIMode>$(MonoWasmCLIMode)</_MonoWasmCLIMode>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -81,7 +80,6 @@
 			LinkMode="$(MonoWasmLinkMode)"
 			LinkSkip="$(MonoWasmLinkSkip)"
 			Debug="$(_DebugSymbolsProduced)"
-			CLIMode="$(_MonoWasmCLIMode)"
 			I18n="$(MonoWasmI18n)"
 		/>
 
