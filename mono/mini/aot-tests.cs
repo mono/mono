@@ -670,9 +670,9 @@ class Tests
 	}
 
 	public static int test_0_byte_equality_compater_devirt () {
-		var dict = new Dictionary<byte, AStruct>();
-		dict [1] = new AStruct ();
-		dict [1] = new AStruct ();
+		var dict = new Dictionary<byte, Struct1>();
+		dict [1] = new Struct1 ();
+		dict [1] = new Struct1 ();
 		return 0;
 	}
 
