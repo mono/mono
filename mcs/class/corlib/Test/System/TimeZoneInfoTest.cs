@@ -121,6 +121,7 @@ namespace MonoTests.System
 			[Test] // Covers #24958
 			public void LocalId ()
 			{
+#if !MONOTOUCH && !XAMMAC
 				byte[] buf = new byte [512];
 
 				var path = "/etc/localtime";
@@ -131,10 +132,9 @@ namespace MonoTests.System
 				} catch (DllNotFoundException e) {
 					return;
 				}
-#if !MONOTOUCH && !XAMMAC
-				// this assumption is incorrect for the TimeZoneInfo.MonoTouch.cs implementation (iOS, tvOS, watchOS and XamMac Modern)
-				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 #endif
+				
+				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 			}
 		}
 
