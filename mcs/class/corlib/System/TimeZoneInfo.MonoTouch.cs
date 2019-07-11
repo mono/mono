@@ -71,7 +71,7 @@ namespace System {
 				}
 			}
 		}
-				
+
 		[DllImport ("__Internal")]
 		extern static IntPtr xamarin_timezone_get_names (ref int count);
 

@@ -361,8 +361,6 @@ xamarin_timezone_get_data (const char *name, int *size)
 
 //
 // Returns the geopolitical region ID of the local timezone.
-// Previously we just provided the data to TimeZoneInfo.MonoTouch.cs and that
-// defaulted the ID to "Local", which is incorrect. 
 
 const char *
 xamarin_timezone_get_local_name ()
