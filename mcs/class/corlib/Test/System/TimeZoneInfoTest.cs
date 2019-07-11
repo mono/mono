@@ -115,18 +115,13 @@ namespace MonoTests.System
 				Assert.IsTrue (true);
 			}
 
-			[Test]
-			public void LocalIdCheck ()
-			{				
-				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");				
-			}
-
 			[DllImport ("libc")]
 			private static extern int readlink (string path, byte[] buffer, int buflen);
 
 			[Test] // Covers #24958
 			public void LocalId ()
 			{
+#if !MONOTOUCH && !XAMMAC
 				byte[] buf = new byte [512];
 
 				var path = "/etc/localtime";
@@ -137,6 +132,7 @@ namespace MonoTests.System
 				} catch (DllNotFoundException e) {
 					return;
 				}
+#endif
 				
 				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 			}
