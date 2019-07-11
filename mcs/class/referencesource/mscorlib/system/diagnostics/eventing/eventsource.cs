@@ -200,6 +200,12 @@ using Contract = System.Diagnostics.Contracts.Contract;
 using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
 #endif
 
+#if MONO
+using TplEtwProvider = System.Diagnostics.Tracing.TplEtwProvider;
+#else
+using TplEtwProvider = System.Threading.Tasks.TplEtwProvider;
+#endif
+
 #if ES_BUILD_STANDALONE
 namespace Microsoft.Diagnostics.Tracing
 #else
@@ -551,8 +557,8 @@ namespace System.Diagnostics.Tracing
                 }
 #endif // FEATURE_ACTIVITYSAMPLING
             }
-            if (System.Threading.Tasks.TplEtwProvider.Log != null)
-                System.Threading.Tasks.TplEtwProvider.Log.SetActivityId(activityId);
+            if (TplEtwProvider.Log != null)
+                TplEtwProvider.Log.SetActivityId(activityId);
         }
 
         /// <summary>
@@ -586,8 +592,8 @@ namespace System.Diagnostics.Tracing
 
             // We don't call the activityDying callback here because the caller has declared that
             // it is not dying.  
-            if (System.Threading.Tasks.TplEtwProvider.Log != null)
-                System.Threading.Tasks.TplEtwProvider.Log.SetActivityId(activityId);
+            if (TplEtwProvider.Log != null)
+                TplEtwProvider.Log.SetActivityId(activityId);
         }
 
         /// <summary>
@@ -4904,7 +4910,7 @@ namespace System.Diagnostics.Tracing
         }
 
 
-#if FEATURE_MANAGED_ETW_CHANNELS
+#if FEATURE_MANAGED_ETW_CHANNELS || MONO
         /// <summary>
         /// Gets the channel for the event.
         /// </summary>
@@ -5044,7 +5050,7 @@ namespace System.Diagnostics.Tracing
 
         /// <summary>Event's task: allows logical grouping of events</summary>
         public EventTask Task { get; set; }
-#if FEATURE_MANAGED_ETW_CHANNELS
+#if FEATURE_MANAGED_ETW_CHANNELS || MONO
         /// <summary>Event's channel: defines an event log as an additional destination for the event</summary>
         public EventChannel Channel { get; set; }
 #endif
@@ -6494,7 +6500,11 @@ namespace System.Diagnostics.Tracing
             // very early in the app domain creation, when _FusionStore is not set up yet, resulting in a failure to run the static constructory
             // for BinaryCompatibility. This failure is then cached and a TypeInitializationException is thrown every time some code attampts to
             // access BinaryCompatibility.
+#if MONO
+            ArraySortHelper<string>.IntrospectiveSort(sortedStrings, 0, sortedStrings.Length, Comparer<string>.Default.Compare);
+#else
             ArraySortHelper<string>.IntrospectiveSort(sortedStrings, 0, sortedStrings.Length, Comparer<string>.Default);
+#endif
 #endif
             foreach (var ci in cultures)
             {

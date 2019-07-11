@@ -79,5 +79,8 @@ namespace Microsoft.Win32
 			internal int dwFileAttributes = 0;
 			internal String cFileName = null;
 		}
+		
+        [DllImport("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+        internal static extern uint GetCurrentProcessId();
 	}
 }
