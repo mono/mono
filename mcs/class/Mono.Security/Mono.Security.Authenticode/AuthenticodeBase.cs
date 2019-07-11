@@ -115,7 +115,7 @@ namespace Mono.Security.Authenticode {
 		public const string spcIndirectDataContext = "1.3.6.1.4.1.311.2.1.4";
 
 		private byte[] fileblock;
-		private FileStream fs;
+		private Stream fs;
 		private int blockNo;
 		private int blockLength;
 		private int peOffset;
@@ -168,6 +168,14 @@ namespace Mono.Security.Authenticode {
 			if (fs != null)
 				Close ();
 			fs = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+			blockNo = 0;
+		}
+
+		internal void Open (byte[] rawdata)
+		{
+			if (fs != null)
+				Close ();
+			fs = new MemoryStream (rawdata, false);
 			blockNo = 0;
 		}
 

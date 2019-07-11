@@ -26,8 +26,12 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Authenticode;
 #else
 using Mono.Security;
+#if !MONOTOUCH_WATCH
+using Mono.Security.Authenticode;
+#endif
 #endif
 
 using System;
@@ -126,7 +130,17 @@ namespace Mono
 					return X509ContentType.Cert;
 			}
 
-			return X509ContentType.Unknown;
+#if MONOTOUCH_WATCH
+				return X509ContentType.Unknown;
+#else
+			try {
+				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (rawData);
+
+				return X509ContentType.Authenticode;
+			} catch {
+				return X509ContentType.Unknown;
+			}
+#endif
 		}
 
 		public X509ContentType GetCertContentType (string fileName)
