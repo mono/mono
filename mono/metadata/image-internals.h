@@ -12,9 +12,6 @@
 MonoImage*
 mono_image_loaded_internal (MonoAssemblyLoadContext *alc, const char *name, mono_bool refonly);
 
-MonoImage *
-mono_find_image_owner (void *ptr);
-
 MonoImage*
 mono_image_load_file_for_image_checked (MonoImage *image, int fileidx, MonoError *error);
 

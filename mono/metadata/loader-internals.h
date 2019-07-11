@@ -25,13 +25,6 @@ struct _MonoAssemblyLoadContext {
 };
 #endif /* ENABLE_NETCORE */
 
-struct _MonoLoadedImages {
-	MonoAssemblyLoadContext *owner; /* NULL if global */
-	GHashTable *loaded_images_hashes [4];
-};
-
-
-
 gpointer
 mono_lookup_pinvoke_call_internal (MonoMethod *method, MonoError *error);
 
@@ -40,24 +33,13 @@ void
 mono_set_pinvoke_search_directories (int dir_count, char **dirs);
 #endif
 
-void
-mono_loaded_images_init (MonoLoadedImages *li, MonoAssemblyLoadContext *owner);
-
-void
-mono_loaded_images_cleanup (MonoLoadedImages *li, gboolean shutdown);
-
-void
-mono_loaded_images_free (MonoLoadedImages *li);
-
 #ifdef ENABLE_NETCORE
 void
 mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc);
 
 void
 mono_alc_cleanup (MonoAssemblyLoadContext *alc);
-#endif /* ENABLE_NETCORE */
 
-#ifdef ENABLE_NETCORE
 static inline MonoDomain *
 mono_alc_domain (MonoAssemblyLoadContext *alc)
 {

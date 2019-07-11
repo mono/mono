@@ -44,6 +44,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/loaded-images-internals.h>
 #include <mono/metadata/w32process-internals.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -57,53 +58,6 @@
 // Amount initially reserved in each image's mempool.
 // FIXME: This number is arbitrary, a more practical number should be found
 #define INITIAL_IMAGE_SIZE    512
-
-/*
- * The "loaded images" hashes keep track of the various assemblies and netmodules loaded
- * There are four, for all combinations of [look up by path or assembly name?]
- * and [normal or reflection-only load?, as in Assembly.ReflectionOnlyLoad]
- */
-enum {
-	IMAGES_HASH_PATH = 0,
-	IMAGES_HASH_PATH_REFONLY = 1,
-	IMAGES_HASH_NAME = 2,
-	IMAGES_HASH_NAME_REFONLY = 3,
-	IMAGES_HASH_COUNT = 4
-};
-
-static MonoLoadedImages global_loaded_images; /* zero initalized is good enough */
-
-#ifndef ENABLE_NETCORE
-static MonoLoadedImages*
-get_global_loaded_images (void)
-{
-	return &global_loaded_images;
-}
-#endif
-
-static MonoLoadedImages*
-get_loaded_images_for_image_modules (MonoImage *image);
-
-static void
-loaded_images_remove_image (MonoImage *image);
-
-static GHashTable *
-get_loaded_images_hash (MonoLoadedImages *li, gboolean refonly)
-{
-	g_assert (li != NULL);
-	GHashTable **loaded_images_hashes = &li->loaded_images_hashes[0];
-	int idx = refonly ? IMAGES_HASH_PATH_REFONLY : IMAGES_HASH_PATH;
-	return loaded_images_hashes [idx];
-}
-
-static GHashTable *
-get_loaded_images_by_name_hash (MonoLoadedImages *li, gboolean refonly)
-{
-	g_assert (li != NULL);
-	GHashTable **loaded_images_hashes = &li->loaded_images_hashes[0];
-	int idx = refonly ? IMAGES_HASH_NAME_REFONLY : IMAGES_HASH_NAME;
-	return loaded_images_hashes [idx];
-}
 
 // Change the assembly set in `image` to the assembly set in `assemblyImage`. Halt if overwriting is attempted.
 // Can be used on modules loaded through either the "file" or "module" mechanism
@@ -130,13 +84,25 @@ assign_assembly_parent_for_netmodule (MonoImage *image, MonoImage *assemblyImage
 
 static gboolean debug_assembly_unload = FALSE;
 
-#define mono_images_lock() if (mutex_inited) mono_os_mutex_lock (&images_mutex)
-#define mono_images_unlock() if (mutex_inited) mono_os_mutex_unlock (&images_mutex)
 #define mono_images_storage_lock() do { if (mutex_inited) mono_os_mutex_lock (&images_storage_mutex); } while (0)
 #define mono_images_storage_unlock() do { if (mutex_inited) mono_os_mutex_unlock (&images_storage_mutex); } while (0)
 static gboolean mutex_inited;
 static mono_mutex_t images_mutex;
 static mono_mutex_t images_storage_mutex;
+
+void
+mono_images_lock (void)
+{
+	if (mutex_inited)
+		mono_os_mutex_lock (&images_mutex);
+}
+
+void
+mono_images_unlock(void)
+{
+	if (mutex_inited)
+		mono_os_mutex_unlock (&images_mutex);
+}
 
 static MonoImage *
 mono_image_open_a_lot_parameterized (MonoLoadedImages *li, MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context, gboolean *problematic);
@@ -290,7 +256,9 @@ mono_images_init (void)
 
 	images_storage_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-	mono_loaded_images_init (&global_loaded_images, NULL);
+#ifndef ENABLE_NETCORE
+	mono_loaded_images_init (mono_get_global_loaded_images (), NULL);
+#endif
 
 	debug_assembly_unload = g_hasenv ("MONO_DEBUG_ASSEMBLY_UNLOAD");
 
@@ -309,7 +277,9 @@ mono_images_cleanup (void)
 {
 	mono_os_mutex_destroy (&images_mutex);
 
-	mono_loaded_images_cleanup (&global_loaded_images, TRUE);
+#ifndef ENABLE_NETCORE
+	mono_loaded_images_cleanup (mono_get_global_loaded_images (), TRUE);
+#endif
 
 	g_hash_table_destroy (images_storage_hash);
 
@@ -767,7 +737,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		}
 		if (valid) {
 			MonoAssemblyLoadContext *alc = mono_image_get_alc (image);
-			MonoLoadedImages *li = get_loaded_images_for_image_modules (image);
+			MonoLoadedImages *li = mono_image_get_loaded_images_for_modules (image);
 			module_ref = g_build_filename (base_dir, name, NULL);
 			MonoImage *moduleImage = mono_image_open_a_lot_parameterized (li, alc, module_ref, &status, refonly, FALSE, NULL);
 			if (moduleImage) {
@@ -1709,9 +1679,9 @@ mono_image_loaded_internal (MonoAssemblyLoadContext *alc, const char *name, gboo
 	MonoImage *res;
 
 	mono_images_lock ();
-	res = (MonoImage *)g_hash_table_lookup (get_loaded_images_hash (li, refonly), name);
+	res = (MonoImage *)g_hash_table_lookup (mono_loaded_images_get_hash (li, refonly), name);
 	if (!res)
-		res = (MonoImage *)g_hash_table_lookup (get_loaded_images_by_name_hash (li, refonly), name);
+		res = (MonoImage *)g_hash_table_lookup (mono_loaded_images_get_by_name_hash (li, refonly), name);
 	mono_images_unlock ();
 
 	return res;
@@ -1775,7 +1745,7 @@ mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 {
 #ifndef ENABLE_NETCORE
 	GuidData data;
-	GHashTable *loaded_images = get_loaded_images_hash (get_global_loaded_images (), refonly);
+	GHashTable *loaded_images = mono_loaded_images_get_hash (mono_get_global_loaded_images (), refonly);
 	data.res = NULL;
 	data.guid = guid;
 
@@ -1802,7 +1772,7 @@ static MonoImage *
 register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 {
 	MonoImage *image2;
-	GHashTable *loaded_images = get_loaded_images_hash (li, image->ref_only);
+	GHashTable *loaded_images = mono_loaded_images_get_hash (li, image->ref_only);
 
 	mono_images_lock ();
 	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, image->name);
@@ -1815,7 +1785,7 @@ register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 		return image2;
 	}
 
-	GHashTable *loaded_images_by_name = get_loaded_images_by_name_hash (li, image->ref_only);
+	GHashTable *loaded_images_by_name = mono_loaded_images_get_by_name_hash (li, image->ref_only);
 	g_hash_table_insert (loaded_images, image->name, image);
 	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == NULL))
 		g_hash_table_insert (loaded_images_by_name, (char *) image->assembly_name, image);
@@ -1983,7 +1953,7 @@ static MonoImage *
 mono_image_open_a_lot_parameterized (MonoLoadedImages *li, MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context, gboolean *problematic)
 {
 	MonoImage *image;
-	GHashTable *loaded_images = get_loaded_images_hash (li, refonly);
+	GHashTable *loaded_images = mono_loaded_images_get_hash (li, refonly);
 	char *absfname;
 	
 	g_return_val_if_fail (fname != NULL, NULL);
@@ -2371,7 +2341,7 @@ mono_image_close_except_pools (MonoImage *image)
 		return FALSE;
 	}
 
-	loaded_images_remove_image (image);
+	mono_loaded_images_remove_image (image);
 
 	mono_images_unlock ();
 
@@ -3271,155 +3241,5 @@ mono_image_append_class_to_reflection_info_set (MonoClass *klass)
 	mono_image_unlock (image);
 }
 
-// This is support for the mempool reference tracking feature in checked-build, but lives in image.c due to use of static variables of this file.
 
-/**
- * mono_find_image_owner:
- *
- * Find the image, if any, which a given pointer is located in the memory of.
- */
-MonoImage *
-mono_find_image_owner (void *ptr)
-{
-#ifndef ENABLE_NETCORE
-	MonoLoadedImages *li = get_global_loaded_images ();
-	mono_images_lock ();
 
-	MonoImage *owner = NULL;
-
-	// Iterate over both by-path image hashes
-	const int hash_candidates[] = {IMAGES_HASH_PATH, IMAGES_HASH_PATH_REFONLY};
-	int hash_idx;
-	for (hash_idx = 0; !owner && hash_idx < G_N_ELEMENTS (hash_candidates); hash_idx++)
-	{
-		GHashTable *target = li->loaded_images_hashes [hash_candidates [hash_idx]];
-		GHashTableIter iter;
-		MonoImage *image;
-
-		// Iterate over images within a hash
-		g_hash_table_iter_init (&iter, target);
-		while (!owner && g_hash_table_iter_next(&iter, NULL, (gpointer *)&image))
-		{
-			mono_image_lock (image);
-			if (mono_mempool_contains_addr (image->mempool, ptr))
-				owner = image;
-			mono_image_unlock (image);
-		}
-	}
-
-	mono_images_unlock ();
-
-	return owner;
-#else
-	/* TODO: checked build for netcore should iterate over every ALC in
-	 * every domain to find the loaded images hashes */
-	return NULL;
-#endif
-}
-
-void
-mono_loaded_images_init (MonoLoadedImages *li, MonoAssemblyLoadContext *owner)
-{
-	li->owner = owner;
-	for(int hash_idx = 0; hash_idx < IMAGES_HASH_COUNT; hash_idx++)
-		li->loaded_images_hashes [hash_idx] = g_hash_table_new (g_str_hash, g_str_equal);
-}
-
-void
-mono_loaded_images_cleanup (MonoLoadedImages *li, gboolean shutdown)
-{
-	if (shutdown) {
-		GHashTableIter iter;
-		MonoImage *image;
-
-		// If an assembly image is still loaded at shutdown, this could indicate managed code is still running.
-		// Reflection-only images being still loaded doesn't indicate anything as harmful, so we don't check for it.
-		g_hash_table_iter_init (&iter, get_loaded_images_hash (li, FALSE));
-		while (g_hash_table_iter_next (&iter, NULL, (void**)&image))
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly image '%s' [%p] still loaded at shutdown.", image->name, image);
-	}
-
-	for(int hash_idx = 0; hash_idx < IMAGES_HASH_COUNT; hash_idx++) {
-		g_hash_table_destroy (li->loaded_images_hashes [hash_idx]);
-		li->loaded_images_hashes [hash_idx] = NULL;
-	}
-}
-
-void
-mono_loaded_images_free (MonoLoadedImages *li)
-{
-	mono_loaded_images_cleanup (li, FALSE);
-	g_free (li);
-}
-
-static MonoLoadedImages *
-loaded_images_get_owner (MonoImage *image)
-{
-	/* image->alc could be NULL if we're closing an image that wasn't
-	 * registered yet (for example if two threads raced to open it and one
-	 * of them lost) */
-	MonoAssemblyLoadContext *alc = mono_image_get_alc (image);
-	return mono_alc_get_loaded_images (alc);
-}
-
-/* LOCKING: assumes the images lock is locked */
-static void
-loaded_images_remove_image (MonoImage *image)
-{
-	MonoLoadedImages *li = loaded_images_get_owner (image);
-	if (!li) {
-		/* we weren't registered; maybe lost to another image */
-		return;
-	}
-	GHashTable *loaded_images, *loaded_images_by_name;
-	MonoImage *image2;
-
-	loaded_images         = get_loaded_images_hash (li, image->ref_only);
-	loaded_images_by_name = get_loaded_images_by_name_hash (li, image->ref_only);
-	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, image->name);
-	if (image == image2) {
-		/* This is not true if we are called from mono_image_open () */
-		g_hash_table_remove (loaded_images, image->name);
-	}
-	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == image))
-		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
-}
-
-#ifdef ENABLE_NETCORE
-void
-mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc)
-{
-	MonoLoadedImages *li = g_new0 (MonoLoadedImages, 1);
-	mono_loaded_images_init (li, alc);
-	alc->domain = domain;
-	alc->loaded_images = li;
-}
-
-void
-mono_alc_cleanup (MonoAssemblyLoadContext *alc)
-{
-	mono_loaded_images_free (alc->loaded_images);
-}
-#endif /* ENABLE_NETCORE */
-
-MonoLoadedImages *
-mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
-{
-#ifdef ENABLE_NETCORE
-	g_assert (alc);
-	g_assert (alc->loaded_images);
-	return alc->loaded_images;
-#else
-	return get_global_loaded_images ();
-#endif
-}
-
-MonoLoadedImages*
-get_loaded_images_for_image_modules (MonoImage *image)
-{
-#ifndef ENABLE_NETCORE
-	return get_global_loaded_images ();
-#else
-	g_assert_not_reached ();
-#endif
-}
