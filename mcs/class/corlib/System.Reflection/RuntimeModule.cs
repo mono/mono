@@ -371,7 +371,9 @@ namespace System.Reflection {
 		internal override Guid GetModuleVersionId ()
 #endif
 		{
-			return new Guid (GetGuidInternal (_impl));
+			var guid = new byte [16];
+			GetGuidInternal (_impl, guid);
+			return new Guid (guid);
 		}
 
 		internal static Exception resolve_token_exception (string name, int metadataToken, ResolveTokenError error, string tokenType) {
@@ -409,7 +411,7 @@ namespace System.Reflection {
 		internal static extern IntPtr GetHINSTANCE (IntPtr module);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern string GetGuidInternal (IntPtr module);
+		private static extern void GetGuidInternal (IntPtr module, byte[] guid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type GetGlobalType (IntPtr module);

@@ -24,6 +24,7 @@
 #endif
 
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads-debug.h>
@@ -127,7 +128,7 @@ mono_threads_platform_init (void)
 }
 
 gboolean
-mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
+mono_threads_platform_in_critical_region (THREAD_INFO_TYPE *info)
 {
 	return FALSE;
 }
@@ -350,6 +351,13 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 
 	if (!mono_threads_pthread_kill (info, sig)) {
 		mono_threads_add_to_pending_operation_set (info);
+		return TRUE;
+	}
+	if (!mono_threads_transition_abort_async_suspend (info)) {
+		/* We raced with self suspend and lost so suspend can continue. */
+		g_assert (mono_threads_is_hybrid_suspension_enabled ());
+		info->suspend_can_continue = TRUE;
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (info));
 		return TRUE;
 	}
 	return FALSE;

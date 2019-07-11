@@ -149,7 +149,7 @@ namespace System
 			return true;
 		}
 
-#if !MONODROID && !MONOTOUCH && !XAMMAC && !WASM
+#if (!MONODROID && !MONOTOUCH && !XAMMAC && !WASM) || MOBILE_DESKTOP_HOST
 		static TimeZoneInfo CreateLocal ()
 		{
 #if WIN_PLATFORM
@@ -1234,6 +1234,12 @@ namespace System
 					{
 						offset += current.DaylightDelta;
 						isDst = true;
+					}
+
+					if (date >= new DateTime (tEnd.Ticks - current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					{
+						offset = baseUtcOffset;
+						isDst = false;
 					}
 
 					return true;

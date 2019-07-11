@@ -49,3 +49,5 @@
 ../../../external/linker/src/linker/Linker.Steps/PreserveCalendarsStep.cs
 ../../../external/linker/src/linker/Linker.Steps/CodeRewriterStep.cs
 ../../../external/linker/src/linker/Linker.Steps/RemoveFeaturesStep.cs
+../../../external/linker/src/linker/Linker.Steps/ReflectionBlockedStep.cs
+

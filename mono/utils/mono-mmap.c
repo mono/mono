@@ -287,10 +287,21 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 #endif
 
 #if defined(__APPLE__) && defined(MAP_JIT)
-	if ((flags & MONO_MMAP_JIT) && use_mmap_jit) {
-		if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
-			mflags |= MAP_JIT;
+	if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
+		/* Check for hardened runtime */
+		static int is_hardened_runtime;
+
+		if (is_hardened_runtime == 0 && !use_mmap_jit) {
+			ptr = mmap (NULL, getpagesize (), PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+			if (ptr == MAP_FAILED) {
+				is_hardened_runtime = 1;
+			} else {
+				is_hardened_runtime = 2;
+				munmap (ptr, getpagesize ());
+			}
 		}
+		if ((flags & MONO_MMAP_JIT) && (use_mmap_jit || is_hardened_runtime == 1))
+			mflags |= MAP_JIT;
 	}
 #endif
 
@@ -353,6 +364,13 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
 void*
 mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
 {
+	return mono_file_map_error (length, flags, fd, offset, ret_handle, NULL, NULL);
+}
+
+void*
+mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle,
+	const char *filepath, char **error_message)
+{
 	void *ptr;
 	int mflags = 0;
 	int prot = prot_from_flags (flags);
@@ -369,23 +387,24 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 #ifdef HOST_WASM
 	if (length == 0)
 		/* emscripten throws an exception on 0 length */
+		*error_message = g_stdrup_printf ("%s failed file:%s length:0x%zx offset:0x%lluX error:%s\n",
+			__func__, filepath ? filepath : "", length, offset, "mmaps of zero length are not permitted with emscripten");
 		return NULL;
 #endif
 
+	// No GC safe transition because this is called early in main.c
 	BEGIN_CRITICAL_SECTION;
 	ptr = mmap (0, length, prot, mflags, fd, offset);
 	END_CRITICAL_SECTION;
-	if (ptr == MAP_FAILED)
+	if (ptr == MAP_FAILED) {
+		if (error_message) {
+			*error_message = g_strdup_printf ("%s failed file:%s length:0x%zX offset:0x%lluX error:%s(0x%X)\n",
+				__func__, filepath ? filepath : "", length, (unsigned long long)offset, g_strerror (errno), errno);
+		}
 		return NULL;
+	}
 	*ret_handle = (void*)length;
 	return ptr;
-}
-
-void*
-mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle,
-	const char *filepath, char **error_message)
-{
-	return mono_file_map (length, flags, fd, offset, ret_handle);
 }
 
 /**
@@ -401,6 +420,7 @@ mono_file_unmap (void *addr, void *handle)
 {
 	int res;
 
+	// No GC safe transition because this is called early in driver.c via mono_debug_init (with a few layers of indirection)
 	BEGIN_CRITICAL_SECTION;
 	res = munmap (addr, (size_t)handle);
 	END_CRITICAL_SECTION;
@@ -442,6 +462,7 @@ mono_mprotect (void *addr, size_t length, int flags)
 #endif
 #endif
 	}
+	// No GC safe transition because this is called early in mini_init via mono_arch_init (with a few layers of indirection)
 	return mprotect (addr, length, prot);
 }
 

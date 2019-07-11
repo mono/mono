@@ -210,7 +210,7 @@ if FULL_AOT_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
-MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
+MCS_NO_UNSAFE = $(TOOLS_RUNTIME) --clr-memory-model $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
@@ -1009,6 +1009,9 @@ TESTS_IL_SRC=			\
 	dim-sealed.il \
 	dim-protected-accessibility1.il \
 	dim-protected-accessibility2.il \
+	dim-reabstraction.il \
+	dim-reabstraction-generics.il \
+	dim-abstractcall.il \
 	twopassvariance.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
@@ -1021,7 +1024,8 @@ TESTS_IL_SRC=			\
 	custom-modifiers-append.1.il \
 	gh-13056_mono_local_cprop_av.il \
 	gh-13057_mono_local_emulate_ops_av.il \
-	module-cctor-entrypoint.il
+	module-cctor-entrypoint.il \
+	bug-gh-9706.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
@@ -1602,6 +1606,36 @@ PROFILE_DISABLED_TESTS += \
 
 PROFILE_DISABLED_TESTS += \
 	transparentproxy.exe
+
+# Tests depending on assembly load order. Under Full AOT using WinAOT
+# profile, console is still available, meaning that more assemblies (I18N)
+# will be loaded when AOT runtime initial loads mscorlib.
+if HOST_WIN32
+PROFILE_DISABLED_TESTS += \
+	assembly_append_ordering.exe
+endif
+endif
+
+REMOTING_DISABLED_TESTS = \
+	async-exc-compilation.exe \
+	bug-544446.exe \
+	context-static.exe \
+	remoting1.exe \
+	remoting2.exe \
+	remoting3.exe \
+	remoting5.exe \
+	nullable_boxing.2.exe
+
+if FULL_AOT_TESTS
+PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+endif
+
+if HYBRID_AOT_TESTS
+PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+endif
+
+if FULL_AOT_INTERP_TESTS
+PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
 endif
 
 AOT_DISABLED_TESTS= \

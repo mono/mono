@@ -33,6 +33,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-uri.h>
 #include <mono/metadata/mono-config.h>
+#include <mono/metadata/mono-config-internals.h>
 #include <mono/metadata/mono-config-dirs.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-logger-internals.h>
@@ -303,7 +304,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Threading.AccessControl"),
 	FACADE_ASSEMBLY ("System.Threading.Overlapped"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks"),
-	{"System.Threading.Tasks.Dataflow", 0},
+	{"System.Threading.Tasks.Dataflow", 0, NULL, TRUE},
 	FACADE_ASSEMBLY ("System.Threading.Tasks.Extensions"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks.Parallel"),
 	FACADE_ASSEMBLY ("System.Threading.Thread"),
@@ -2167,14 +2168,12 @@ mono_assembly_open_from_bundle (const char *filename, MonoImageOpenStatus *statu
 	is_satellite = g_str_has_suffix (lowercase_filename, ".resources.dll");
 	g_free (lowercase_filename);
 	name = g_path_get_basename (filename);
-	mono_assemblies_lock ();
 	for (i = 0; !image && bundles [i]; ++i) {
 		if (strcmp (bundles [i]->name, is_satellite ? filename : name) == 0) {
 			image = mono_image_open_from_data_internal ((char*)bundles [i]->data, bundles [i]->size, FALSE, status, refonly, FALSE, name);
 			break;
 		}
 	}
-	mono_assemblies_unlock ();
 	if (image) {
 		mono_image_addref (image);
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Loader loaded assembly from bundle: '%s'.", is_satellite ? filename : name);
@@ -2393,7 +2392,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
 				"Assembly Loader loaded assembly from location: '%s'.", filename);
 		if (!refonly)
-			mono_config_for_assembly (ass->image);
+			mono_config_for_assembly_internal (ass->image);
 	}
 
 	/* Clear the reference added by mono_image_open */
@@ -4385,10 +4384,15 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 					  MonoImageOpenStatus *status)
 {
 	MonoAssembly *result;
+	MonoAssemblyName maped_aname;
 	char *fullpath, *filename;
 	int ext_index;
 	const char *ext;
 	int len;
+
+	/* If we remap e.g. 4.1.3.0 to 4.0.0.0, look in the 4.0.0.0
+	 * GAC directory, not 4.1.3.0 */
+	aname = mono_assembly_remap_version (aname, &maped_aname);
 
 	/* Currently we retrieve the loaded corlib for reflection 
 	 * only requests, like a common reflection only assembly 

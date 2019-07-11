@@ -120,7 +120,7 @@ namespace System.Text
         /// <summary>
         /// Entry point from <see cref="EncoderNLS.GetByteCount"/>.
         /// </summary>
-        internal virtual unsafe int GetByteCount(char* pChars, int charCount, EncoderNLS encoder)
+        internal virtual unsafe int GetByteCount(char* pChars, int charCount, EncoderNLS? encoder)
         {
             Debug.Assert(encoder != null, "This code path should only be called from EncoderNLS.");
             Debug.Assert(charCount >= 0, "Caller should've checked this condition.");
@@ -173,7 +173,7 @@ namespace System.Text
         /// The implementation should not attempt to perform any sort of fallback behavior.
         /// If custom fallback behavior is necessary, override <see cref="GetByteCountWithFallback"/>.
         /// </remarks>
-        private protected virtual unsafe int GetByteCountFast(char* pChars, int charsLength, EncoderFallback fallback, out int charsConsumed)
+        private protected virtual unsafe int GetByteCountFast(char* pChars, int charsLength, EncoderFallback? fallback, out int charsConsumed)
         {
             // Any production-quality type would override this method and provide a real
             // implementation, so we won't provide a base implementation. However, a
@@ -257,7 +257,7 @@ namespace System.Text
         private unsafe int GetByteCountWithFallback(char* pOriginalChars, int originalCharCount, int charsConsumedSoFar, EncoderNLS encoder)
         {
             Debug.Assert(encoder != null, "This code path should only be called from EncoderNLS.");
-            Debug.Assert(0 <= charsConsumedSoFar && charsConsumedSoFar < originalCharCount, "Caller should've checked this condition.");
+            Debug.Assert(0 <= charsConsumedSoFar && charsConsumedSoFar <= originalCharCount, "Caller should've checked this condition.");
 
             // First, try draining any data that already exists on the encoder instance. If we can't complete
             // that operation, there's no point to continuing down to the main workhorse methods.
@@ -309,7 +309,7 @@ namespace System.Text
         /// If the resulting byte count is greater than <see cref="int.MaxValue"/>.
         /// (Implementation should call <see cref="ThrowConversionOverflow"/>.)
         /// </exception>
-        private protected virtual unsafe int GetByteCountWithFallback(ReadOnlySpan<char> chars, int originalCharsLength, EncoderNLS encoder)
+        private protected virtual unsafe int GetByteCountWithFallback(ReadOnlySpan<char> chars, int originalCharsLength, EncoderNLS? encoder)
         {
             Debug.Assert(!chars.IsEmpty, "Caller shouldn't invoke this method with an empty input buffer.");
             Debug.Assert(originalCharsLength >= 0, "Caller provided invalid parameter.");
@@ -397,7 +397,7 @@ namespace System.Text
         /// <summary>
         /// Entry point from <see cref="EncoderNLS.GetBytes"/> and <see cref="EncoderNLS.Convert"/>.
         /// </summary>
-        internal virtual unsafe int GetBytes(char* pChars, int charCount, byte* pBytes, int byteCount, EncoderNLS encoder)
+        internal virtual unsafe int GetBytes(char* pChars, int charCount, byte* pBytes, int byteCount, EncoderNLS? encoder)
         {
             Debug.Assert(encoder != null, "This code path should only be called from EncoderNLS.");
             Debug.Assert(charCount >= 0, "Caller should've checked this condition.");
@@ -523,7 +523,7 @@ namespace System.Text
         private unsafe int GetBytesWithFallback(char* pOriginalChars, int originalCharCount, byte* pOriginalBytes, int originalByteCount, int charsConsumedSoFar, int bytesWrittenSoFar, EncoderNLS encoder)
         {
             Debug.Assert(encoder != null, "This code path should only be called from EncoderNLS.");
-            Debug.Assert(0 <= charsConsumedSoFar && charsConsumedSoFar < originalCharCount, "Caller should've checked this condition.");
+            Debug.Assert(0 <= charsConsumedSoFar && charsConsumedSoFar <= originalCharCount, "Caller should've checked this condition.");
             Debug.Assert(0 <= bytesWrittenSoFar && bytesWrittenSoFar <= originalByteCount, "Caller should've checked this condition.");
 
             // First, try draining any data that already exists on the encoder instance. If we can't complete
@@ -584,7 +584,7 @@ namespace System.Text
         /// implementation, deferring to the base implementation if needed. This method calls <see cref="ThrowBytesOverflow"/>
         /// if necessary.
         /// </remarks>
-        private protected virtual unsafe int GetBytesWithFallback(ReadOnlySpan<char> chars, int originalCharsLength, Span<byte> bytes, int originalBytesLength, EncoderNLS encoder)
+        private protected virtual unsafe int GetBytesWithFallback(ReadOnlySpan<char> chars, int originalCharsLength, Span<byte> bytes, int originalBytesLength, EncoderNLS? encoder)
         {
             Debug.Assert(!chars.IsEmpty, "Caller shouldn't invoke this method with an empty input buffer.");
             Debug.Assert(originalCharsLength >= 0, "Caller provided invalid parameter.");
@@ -705,7 +705,7 @@ namespace System.Text
         /// <summary>
         /// Entry point from <see cref="DecoderNLS.GetCharCount"/>.
         /// </summary>
-        internal virtual unsafe int GetCharCount(byte* pBytes, int byteCount, DecoderNLS decoder)
+        internal virtual unsafe int GetCharCount(byte* pBytes, int byteCount, DecoderNLS? decoder)
         {
             Debug.Assert(decoder != null, "This code path should only be called from DecoderNLS.");
             Debug.Assert(byteCount >= 0, "Caller should've checked this condition.");
@@ -760,7 +760,7 @@ namespace System.Text
         /// The implementation should not attempt to perform any sort of fallback behavior.
         /// If custom fallback behavior is necessary, override <see cref="GetCharCountWithFallback"/>.
         /// </remarks>
-        private protected virtual unsafe int GetCharCountFast(byte* pBytes, int bytesLength, DecoderFallback fallback, out int bytesConsumed)
+        private protected virtual unsafe int GetCharCountFast(byte* pBytes, int bytesLength, DecoderFallback? fallback, out int bytesConsumed)
         {
             // Any production-quality type would override this method and provide a real
             // implementation, so we won't provide a base implementation. However, a
@@ -843,7 +843,7 @@ namespace System.Text
         private unsafe int GetCharCountWithFallback(byte* pOriginalBytes, int originalByteCount, int bytesConsumedSoFar, DecoderNLS decoder)
         {
             Debug.Assert(decoder != null, "This code path should only be called from DecoderNLS.");
-            Debug.Assert(0 <= bytesConsumedSoFar && bytesConsumedSoFar < originalByteCount, "Caller should've checked this condition.");
+            Debug.Assert(0 <= bytesConsumedSoFar && bytesConsumedSoFar <= originalByteCount, "Caller should've checked this condition.");
 
             // First, try draining any data that already exists on the decoder instance. If we can't complete
             // that operation, there's no point to continuing down to the main workhorse methods.
@@ -901,7 +901,7 @@ namespace System.Text
         /// If the resulting char count is greater than <see cref="int.MaxValue"/>.
         /// (Implementation should call <see cref="ThrowConversionOverflow"/>.)
         /// </exception>
-        private unsafe int GetCharCountWithFallback(ReadOnlySpan<byte> bytes, int originalBytesLength, DecoderNLS decoder)
+        private unsafe int GetCharCountWithFallback(ReadOnlySpan<byte> bytes, int originalBytesLength, DecoderNLS? decoder)
         {
             Debug.Assert(!bytes.IsEmpty, "Caller shouldn't invoke this method with an empty input buffer.");
             Debug.Assert(originalBytesLength >= 0, "Caller provided invalid parameter.");
@@ -985,7 +985,7 @@ namespace System.Text
         /// <summary>
         /// Entry point from <see cref="DecoderNLS.GetChars"/> and <see cref="DecoderNLS.Convert"/>.
         /// </summary>
-        internal virtual unsafe int GetChars(byte* pBytes, int byteCount, char* pChars, int charCount, DecoderNLS decoder)
+        internal virtual unsafe int GetChars(byte* pBytes, int byteCount, char* pChars, int charCount, DecoderNLS? decoder)
         {
             Debug.Assert(decoder != null, "This code path should only be called from DecoderNLS.");
             Debug.Assert(byteCount >= 0, "Caller should've checked this condition.");
@@ -1111,7 +1111,7 @@ namespace System.Text
         private protected unsafe int GetCharsWithFallback(byte* pOriginalBytes, int originalByteCount, char* pOriginalChars, int originalCharCount, int bytesConsumedSoFar, int charsWrittenSoFar, DecoderNLS decoder)
         {
             Debug.Assert(decoder != null, "This code path should only be called from DecoderNLS.");
-            Debug.Assert(0 <= bytesConsumedSoFar && bytesConsumedSoFar < originalByteCount, "Caller should've checked this condition.");
+            Debug.Assert(0 <= bytesConsumedSoFar && bytesConsumedSoFar <= originalByteCount, "Caller should've checked this condition.");
             Debug.Assert(0 <= charsWrittenSoFar && charsWrittenSoFar <= originalCharCount, "Caller should've checked this condition.");
 
             // First, try draining any data that already exists on the encoder instance. If we can't complete
@@ -1177,7 +1177,7 @@ namespace System.Text
         /// implementation, deferring to the base implementation if needed. This method calls <see cref="ThrowCharsOverflow"/>
         /// if necessary.
         /// </remarks>
-        private protected virtual unsafe int GetCharsWithFallback(ReadOnlySpan<byte> bytes, int originalBytesLength, Span<char> chars, int originalCharsLength, DecoderNLS decoder)
+        private protected virtual unsafe int GetCharsWithFallback(ReadOnlySpan<byte> bytes, int originalBytesLength, Span<char> chars, int originalCharsLength, DecoderNLS? decoder)
         {
             Debug.Assert(!bytes.IsEmpty, "Caller shouldn't invoke this method with an empty input buffer.");
             Debug.Assert(originalBytesLength >= 0, "Caller provided invalid parameter.");

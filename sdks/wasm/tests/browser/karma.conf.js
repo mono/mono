@@ -11,12 +11,16 @@ module.exports = function(config) {
             {pattern: './publish/http-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/core-bindings-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/issues-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/zip-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/mono.wasm', included: false, served: true, type: 'wasm'},
             {pattern: './publish/mono.js', included: false, served: true},
             {pattern: './publish/mono-config.js', included: false, served: true},
             {pattern: './publish/runtime.js', included: false, served: true},
             {pattern: './publish/managed/*.dll', included: false, served: true},
+            {pattern: './publish/managed/*.pdb', included: false, served: true},
             {pattern: './publish/**/*.txt', included: false, served: true, type: 'text'},
+            {pattern: './publish/**/*.zip', included: false, served: true, type: 'zip'},
+            {pattern: './publish/**/*.nupkg', included: false, served: true, type: 'zip'},
         ],
         //load karma-mocha-reporter and karma-html
         reporters: ['mocha','karmaHTML', 'dots', 'junit'], //, 'progress'],
@@ -51,7 +55,8 @@ module.exports = function(config) {
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
                     {src:'./publish/http-spec.html', tag:'httpspec'},
                     {src:'./publish/core-bindings-spec.html', tag:'corebindingsspec'},
-                    {src:'./publish/issues-spec.html', tag:'issuesspec'}
+                    {src:'./publish/issues-spec.html', tag:'issuesspec'},
+                    {src:'./publish/zip-spec.html', tag:'zipspec'}
                 ],
                 timeout: 10000,
                 abort: 60000,

@@ -163,7 +163,7 @@ value_to_name (value2name_t *tbl, int value)
 }
 #endif /* NL_DEBUG */
 
-int
+gpointer
 CreateNLSocket (void)
 {
 	int sock;
@@ -177,12 +177,12 @@ CreateNLSocket (void)
 		ret |= O_NONBLOCK;
 		ret = fcntl (sock, F_SETFL, ret);
 		if (ret < 0)
-			return -1;
+			return GINT_TO_POINTER (-1);
 	}
 
 	memset (&sa, 0, sizeof (sa));
 	if (sock < 0)
-		return -1;
+		return GINT_TO_POINTER (-1);
 	sa.nl_family = AF_NETLINK;
 	sa.nl_pid = getpid ();
 	sa.nl_groups = RTMGRP_IPV4_ROUTE | RTMGRP_IPV6_ROUTE | RTMGRP_NOTIFY;
@@ -190,9 +190,9 @@ CreateNLSocket (void)
 	 * RTMGRP_LINK */
 
 	if (bind (sock, (struct sockaddr *) &sa, sizeof (sa)) < 0)
-		return -1;
+		return GINT_TO_POINTER (-1);
 
-	return sock;
+	return GINT_TO_POINTER (sock);
 }
 
 int
@@ -359,10 +359,10 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 	return result;
 }
 
-int
+gpointer
 CloseNLSocket (gpointer sock)
 {
-	return close (GPOINTER_TO_INT (sock));
+	return GINT_TO_POINTER (close (GPOINTER_TO_INT (sock)));
 }
 #else
 int
@@ -371,16 +371,16 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 	return 0;
 }
 
-int
+gpointer
 CreateNLSocket (void)
 {
-	return -1;
+	return GINT_TO_POINTER (-1);
 }
 
-int
+gpointer
 CloseNLSocket (gpointer sock)
 {
-	return -1;
+	return GINT_TO_POINTER (-1);
 }
 #endif /* linux/netlink.h + linux/rtnetlink.h */
 

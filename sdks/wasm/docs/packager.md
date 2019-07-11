@@ -32,6 +32,7 @@ Valid options:
         --profile=x     Enable the 'x' mono profiler.
         --aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.
         --link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)
+        --pinvoke-libs=x DllImport libraries used.
                               'sdkonly' only link the Core libraries.
                               'all' link Core and User assemblies. (default)
 foo.dll         Include foo.dll as one of the root assemblies
@@ -51,6 +52,10 @@ Additional options (--option/--no-option):
         type: bool  default: true
   --linker-verbose (set verbose option on linker)
         type: bool  default: false
+  --zlib (enable the use of zlib for System.IO.Compression support)
+        type: bool  default: false
+  --threads (enable threads)
+        type: bool  default: false        
 
 ```
 
@@ -160,11 +165,13 @@ Steps of execution are:
 ### Example 1:
 ``` bash
 mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+ninja -v -C obj/aot-mini
 ```
 
 ### Example 2:
 ``` bash
 mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+ninja -v -C obj/aot-bindings-sample
 ```
 
 ## AOT Mixed Mode usage: (Experimental)

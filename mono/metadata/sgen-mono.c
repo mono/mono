@@ -256,6 +256,8 @@ emit_managed_allocater_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboole
 {
 }
 
+#if !ENABLE_ILGEN
+
 static void
 install_noilgen (void)
 {
@@ -265,6 +267,8 @@ install_noilgen (void)
 	cb.emit_managed_allocater = emit_managed_allocater_noilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
+
+#endif
 
 static MonoSgenMonoCallbacks *
 get_sgen_mono_cb (void)
@@ -2486,6 +2490,16 @@ mono_gc_get_los_limit (void)
 	return SGEN_MAX_SMALL_OBJ_SIZE;
 }
 
+guint64
+mono_gc_get_allocated_bytes_for_current_thread (void)
+{
+	SgenThreadInfo* info;
+	info = mono_thread_info_current ();
+
+	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
+	return info->total_bytes_allocated + info->tlab_next - info->tlab_start;
+}
+
 gpointer
 sgen_client_default_metadata (void)
 {
@@ -2804,10 +2818,10 @@ sgen_client_init (void)
 void
 mono_gc_init_icalls (void)
 {
-	mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_icall_sig_object_ptr_int, FALSE);
-	mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_icall_sig_object_ptr_int_int, FALSE);
-	mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_icall_sig_object_ptr_int_int32, FALSE);
-	mono_register_jit_icall (mono_profiler_raise_gc_allocation, "mono_profiler_raise_gc_allocation", mono_icall_sig_void_object, FALSE);
+	mono_register_jit_icall (mono_gc_alloc_obj, mono_icall_sig_object_ptr_int, FALSE);
+	mono_register_jit_icall (mono_gc_alloc_vector, mono_icall_sig_object_ptr_int_int, FALSE);
+	mono_register_jit_icall (mono_gc_alloc_string, mono_icall_sig_object_ptr_int_int32, FALSE);
+	mono_register_jit_icall (mono_profiler_raise_gc_allocation, mono_icall_sig_void_object, FALSE);
 }
 
 gboolean

@@ -1,0 +1,17 @@
+{
+  "name": "runtime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "run.js",
+  "scripts": {
+    "test": "node run.js ../../bin/threads-sample/ --run threads.exe",
+    "start": "node run.js ../../bin/threads-sample/ --run threads.exe"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "finalhandler": "^1.1.2",
+    "puppeteer": "^1.18.1",
+    "serve-static": "^1.14.1"
+  }
+}

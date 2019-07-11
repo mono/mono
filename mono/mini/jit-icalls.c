@@ -948,6 +948,12 @@ mono_fconv_ovf_u8 (double v)
 	return res;
 }
 
+guint64
+mono_fconv_ovf_u8_un (double v)
+{
+	return mono_fconv_ovf_u8 (v);
+}
+
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 gint64
 mono_rconv_i8 (float v)
@@ -985,6 +991,12 @@ mono_rconv_ovf_u8 (float v)
 	return res;
 }
 
+guint64
+mono_rconv_ovf_u8_un (float v)
+{
+	return mono_rconv_ovf_u8 (v);
+}
+
 #ifdef MONO_ARCH_EMULATE_LCONV_TO_R8
 double
 mono_lconv_to_r8 (gint64 a)
@@ -1014,6 +1026,15 @@ double
 mono_lconv_to_r8_un (guint64 a)
 {
 	return (double)a;
+}
+#endif
+
+#ifdef MONO_ARCH_EMULATE_FREM
+// Wrapper to avoid taking address of overloaded function.
+double
+mono_fmod (double a, double b)
+{
+	return fmod (a, b);
 }
 #endif
 
@@ -1145,7 +1166,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	MonoJitTlsData *jit_tls = NULL;
 	MonoClass *oklass;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
@@ -1161,7 +1182,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls->class_cast_from = oklass;
 		jit_tls->class_cast_to = klass;
 	}
@@ -1179,7 +1200,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	MonoJitTlsData *jit_tls = NULL;
 	gpointer cached_vtable, obj_vtable;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
@@ -1200,7 +1221,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls->class_cast_from = obj->vtable->klass;
 		jit_tls->class_cast_to = klass;
 	}
@@ -1511,6 +1532,14 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 	mono_error_set_pending_exception (error);
 	g_free (callee_name);
 	g_free (caller_name);
+}
+
+void
+mono_throw_bad_image ()
+{
+	ERROR_DECL (error);
+	mono_error_set_generic_error (error, "System", "BadImageFormatException", "Bad IL format.");
+	mono_error_set_pending_exception (error);
 }
 
 void

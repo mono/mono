@@ -1,8 +1,29 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.30
-EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+EMSCRIPTEN_VERSION=1.38.38
+EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+
+EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
+
+MONO_SUPPORT=$(TOP)/support
+
+ZLIB_HEADERS = \
+	$(MONO_SUPPORT)/crc32.h		\
+	$(MONO_SUPPORT)/deflate.h  	\
+	$(MONO_SUPPORT)/inffast.h  	\
+	$(MONO_SUPPORT)/inffixed.h  	\
+	$(MONO_SUPPORT)/inflate.h  	\
+	$(MONO_SUPPORT)/inftrees.h  	\
+	$(MONO_SUPPORT)/trees.h  	\
+	$(MONO_SUPPORT)/zconf.h  	\
+	$(MONO_SUPPORT)/zlib.h  	\
+	$(MONO_SUPPORT)/zutil.h
+
+ifeq ($(UNAME),Darwin)
+# The c# offsets tool is 32 bit, and the 64 bit version doesn't work
+USE_OFFSETS_TOOL_PY = 1
+endif
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
@@ -18,21 +39,27 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
+	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/emscripten-pr-8457.diff; exit 0)
 	touch $@
 
 .PHONY: provision-wasm
+
+ifeq ($(EMSCRIPTEN_SDK_DIR),$(EMSCRIPTEN_LOCAL_SDK_DIR))
 provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
+else
+provision-wasm:
+endif
 
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
-WASM_RUNTIME_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
-WASM_RUNTIME_CONFIGURE_FLAGS = \
-	--cache-file=$(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache \
-	--prefix=$(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION) \
+WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
 	--disable-nls \
 	--disable-boehm \
@@ -50,48 +77,72 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-icall-tables \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
-	$(if $(ENABLE_CXX),--enable-cxx) \
-	CFLAGS="$(WASM_RUNTIME_CFLAGS)"
+	$(if $(ENABLE_CXX),--enable-cxx)
 
-.stamp-wasm-runtime-toolchain:
-	touch $@
+# $(1) - target
+define WasmRuntimeTemplate
 
-.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
-	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
-	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
-	touch $@
+_wasm_$(1)_CONFIGURE_FLAGS = \
+	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
+	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
+	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
+	$$(wasm-$(1)_CONFIGURE_FLAGS) \
+	CFLAGS="$(WASM_RUNTIME_BASE_CFLAGS) $$(wasm_$(1)_CFLAGS)" \
+	CXXFLAGS="$(WASM_RUNTIME_BASE_CXXFLAGS) $$(wasm_$(1)_CXXFLAGS)"
 
-.PHONY: .stamp-wasm-runtime-configure
-.stamp-wasm-runtime-configure: .stamp-wasm-runtime-$(CONFIGURATION)-configure
+.stamp-wasm-$(1)-toolchain:
+	touch $$@
 
-.PHONY: build-custom-wasm-runtime
-build-custom-wasm-runtime:
-	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && $(MAKE) -C wasm-runtime-$(CONFIGURATION)
+.stamp-wasm-$(1)-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
+	mkdir -p $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)
+	cd $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) && source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $$(_wasm_$(1)_CONFIGURE_FLAGS)
+	touch $$@
 
-.PHONY: setup-custom-wasm-runtime
-setup-custom-wasm-runtime:
-	mkdir -p $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)
+.PHONY: .stamp-wasm-$(1)-configure
+.stamp-wasm-$(1)-configure: .stamp-wasm-$(1)-$(CONFIGURATION)-configure
 
-.PHONY: package-wasm-runtime
-package-wasm-runtime:
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)/mono install
+.PHONY: build-custom-wasm-$(1)
+build-custom-wasm-$(1):
+	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C wasm-$(1)-$(CONFIGURATION)
 
-.PHONY: clean-wasm-runtime
-clean-wasm-runtime:
-	rm -rf .stamp-wasm-runtime-toolchain .stamp-wasm-runtime-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)
+.PHONY: setup-custom-wasm-$(1)
+setup-custom-wasm-$(1):
+	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
 
-$(eval $(call TargetTemplate,wasm,runtime))
+# We do not build the support library but we will use the zlib headers to activate
+# zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
+.PHONY: package-wasm-$(1)
+package-wasm-$(1):
+	$(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
+	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
+	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
+
+.PHONY: clean-wasm-$(1)
+clean-wasm-$(1):
+	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
+
+$(eval $(call TargetTemplate,wasm,$(1)))
 
 .PHONY: configure-wasm
-configure-wasm: configure-wasm-runtime
+configure-wasm: configure-wasm-$(1)
 
 .PHONY: build-wasm
-build-wasm: build-wasm-runtime
+build-wasm: build-wasm-$(1)
 
 .PHONY: archive-wasm
-archive-wasm: package-wasm-runtime
+archive-wasm: package-wasm-$(1)
 
-wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
+wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
+
+endef
+
+wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
+wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
+
+$(eval $(call WasmRuntimeTemplate,runtime))
+ifdef ENABLE_WASM_THREADS
+$(eval $(call WasmRuntimeTemplate,runtime-threads))
+endif
 
 ##
 # Parameters
@@ -103,7 +154,7 @@ wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/emscripten/$$(EMSCRIPTEN_VERSION)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -135,7 +186,7 @@ $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-u
 #  $(6): offsets dumper abi
 define WasmCrossMXETemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten"
 
 _wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
 

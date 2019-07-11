@@ -31,6 +31,34 @@ struct MonoDlFallbackHandler {
 
 static GSList *fallback_handlers;
 
+#if defined (_AIX)
+#include <ar.h>
+#include <fcntl.h>
+
+/**
+ * On AIX/PASE, a shared library can be contained inside of an ar format
+ * archive. Determine if the file is an ar archive or not.
+ */
+static gboolean
+is_library_ar_archive (char *path)
+{
+	int lfd, readret;
+	char magic [SAIAMAG];
+	lfd = open (path, O_RDONLY);
+
+	/* don't assume it's an archive on error */
+	if (lfd == -1)
+		return FALSE;
+
+	readret = read (lfd, magic, SAIAMAG);
+	close (lfd);
+	/* check for equality with either version of header */
+	return readret == SAIAMAG &&
+		(memcmp (magic, AIAMAG, SAIAMAG) == 0 ||
+		 memcmp (magic, AIAMAGBIG, SAIAMAG) == 0);
+}
+#endif
+
 /*
  * read a value string from line with any of the following formats:
  * \s*=\s*'string'
@@ -150,6 +178,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
 
+	// No GC safe transition because this is called early in main.c
 	lib = mono_dl_open_file (name, lflags);
 
 	if (!lib) {
@@ -189,6 +218,23 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 		g_free (lname);
 		if (llname) {
 			lib = mono_dl_open_file (llname, lflags);
+#if defined (_AIX)
+			/*
+			 * HACK: deal with AIX archive members because libtool
+			 * underspecifies when using --with-aix-soname=svr4 -
+			 * without this check, Mono can't find System.Native
+			 * at build time.
+			 * XXX: Does this also need to be in other places?
+			 */
+			if (!lib && is_library_ar_archive (llname)) {
+				/* try common suffix */
+				char *llaixname;
+				llaixname = g_strconcat (llname, "(shr_64.o)", NULL);
+				lib = mono_dl_open_file (llaixname, lflags);
+				/* XXX: try another suffix like (shr.o)? */
+				g_free (llaixname);
+			}
+#endif
 			g_free (llname);
 		}
 		if (!lib) {
@@ -224,9 +270,10 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	} else {
 #if MONO_DL_NEED_USCORE
 		{
-			char *usname = g_malloc (strlen (name) + 2);
+			const size_t length = strlen (name);
+			char *usname = g_new (char, length + 2);
 			*usname = '_';
-			strcpy (usname + 1, name);
+			memcpy (usname + 1, name, length + 1);
 			sym = mono_dl_lookup_symbol (module, usname);
 			g_free (usname);
 		}

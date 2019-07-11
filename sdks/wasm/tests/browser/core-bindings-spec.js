@@ -1,4 +1,4 @@
-//describe, beforeAll, it, expext - are the Jasmine default methods
+//describe, beforeAll, it, expect - are the Jasmine default methods
 //karmaHTML is the karma-html package object with the access to all its features
  
 describe("The WebAssembly Core Bindings Test Suite",function(){
@@ -328,4 +328,211 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionMathMin", [[5, 6, 2, 3, 7]]);
       assert.equal(result, 2, "result does not match value 2.");
     }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return new DataView.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view2 = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewConstructor", []);
+      assert.equal(view2.getInt8(0), 42, "result does not match value 42.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: DataView ArrayBuffer should be equal.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      var buffer = new ArrayBuffer(12);
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewArrayBuffer", [buffer]);
+      assert.isTrue(view.buffer === buffer, "result is not true.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: DataView byteLength.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      var buffer = new ArrayBuffer(12);
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewByteLength", [buffer]);
+      assert.equal(view.byteLength, 2, "result does not match value 2.");
+    }, DEFAULT_TIMEOUT);  
+    it('BindingTestSuite: DataView byteOffset.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      var buffer = new ArrayBuffer(12);
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewByteOffset", [buffer]);
+      assert.equal(view.byteOffset, 4, "result does not match value 4.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetFloat32.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setFloat32(1, Math.PI);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetFloat32", [x]);
+      assert.equal(result.toFixed(5), Math.PI.toFixed(5), "result does not match value " + Math.PI.toFixed(5));
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetFloat64.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setFloat64(1, Math.PI);      
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetFloat64", [x]);
+      assert.equal(result.toFixed(5), Math.PI.toFixed(5), "result does not match value " + Math.PI.toFixed(5));
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt16 positive.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt16(1, 1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt16", [x]);
+      assert.equal(result, 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt16 negative.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt16(1, -1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt16", [x]);
+      assert.equal(result, -1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt32 positive.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt32(1, 1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt32", [x]);
+      assert.equal(result, 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt32 negative.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt32(1, -1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt32", [x]);
+      assert.equal(result, -1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt8 positive.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt8(1, 123);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt8", [x]);
+      assert.equal(result, 123, "result does not match value 123.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetInt8 negative.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setInt8(1, -123);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetInt8", [x]);
+      assert.equal(result, -123, "result does not match value 123.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetUint16.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setUint16(1, 1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetUint16", [x]);
+      assert.equal(result, 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetUint32.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setUint32(1, 1234);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetUint32", [x]);
+      assert.equal(result, 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView GetUint8.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var x = new DataView(new ArrayBuffer(12), 0);
+      x.setUint8(1, 123);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewGetUint8", [x]);
+      assert.equal(result, 123, "result does not match value 123.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetFloat32.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetFloat32", []);
+      assert.equal(view.getFloat32(1).toFixed(5), Math.PI.toFixed(5), "result does not match value " + Math.PI.toFixed(5));
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetFloat64.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetFloat64", []);
+      assert.equal(view.getFloat64(1).toFixed(5), Math.PI.toFixed(5), "result does not match value " + Math.PI.toFixed(5));
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetInt16.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetInt16", []);
+      assert.equal(view.getInt16(1), 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetInt32.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetInt32", []);
+      assert.equal(view.getInt32(1), 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetInt8.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetInt8", []);
+      assert.equal(view.getInt8(1), 123, "result does not match value 123.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetUint16.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetUint16", []);
+      assert.equal(view.getUint16(1), 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetUint32.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetUint32", []);
+      assert.equal(view.getUint32(1), 1234, "result does not match value 1234.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return DataView SetUint8.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var view = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:DataViewSetUint8", []);
+      assert.equal(view.getUint8(1), 123, "result does not match value 123.");
+    }, DEFAULT_TIMEOUT);  
+
+
   });

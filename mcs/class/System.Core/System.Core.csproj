@@ -37,52 +37,57 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
     <OutputPath>./../../class/lib/monotouch_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER;FULL_AOT_RUNTIME</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER;FULL_AOT_RUNTIME</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <OutputPath>./../../class/lib/monotouch_watch_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
     <OutputPath>./../../class/lib/monotouch_tv_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_INTERP;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;MOBILE_DYNAMIC;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -97,7 +102,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-orbis</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_REMOTING;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'unreal' ">
     <OutputPath>./../../class/lib/unreal</OutputPath>
@@ -107,7 +112,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -594,8 +599,6 @@
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -641,7 +644,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Windows.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
@@ -1196,6 +1199,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
@@ -1253,6 +1258,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
@@ -1310,51 +1317,324 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
-        <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-        <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
-        <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
-        <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
-        <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
-        <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
-        <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
-        <Compile Include="System.Security.Cryptography\AesTransform.cs" />
-      </ItemGroup>
+      <!--Per-host-platform files-->
+      <Choose>
+        <When Condition="'$(HostPlatform)' == 'win32'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.ImpersonateNamedPipeClient.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RevertToSelf.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CancelIoEx.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CloseHandle.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.ConnectNamedPipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CreateNamedPipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CreateNamedPipeClient.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CreatePipe_SafePipeHandle.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.DisconnectNamedPipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.DuplicateHandle_IntPtr.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.FileOperations.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.FileTypes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.FlushFileBuffers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.FormatMessage.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.GenericOperations.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.GetCurrentProcess_IntPtr.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.GetFileType_SafeHandle.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.GetNamedPipeHandleState.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.GetNamedPipeInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.HandleOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.MaxLengths.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.PipeOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.ReadFile_SafeHandle_IntPtr.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.ReadFile_SafeHandle_NativeOverlapped.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SECURITY_ATTRIBUTES.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SecurityOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SetNamedPipeHandleState.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WaitNamedPipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WriteFile_SafeHandle_IntPtr.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WriteFile_SafeHandle_NativeOverlapped.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\Microsoft\Win32\SafeHandles\SafePipeHandle.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\AnonymousPipeServerStream.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\ConnectionCompletionSource.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeClientStream.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeServerStream.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\PipeCompletionSource.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\PipeStream.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\ReadWriteCompletionSource.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Windows.cs" />
+            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+            <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Windows.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeClientStream.Windows.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeServerStream.Windows.cs" />
+            <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+            <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'unix'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Write.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\Microsoft\Win32\SafeHandles\SafePipeHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\PipeStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+            <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
+            <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+            <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+            <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'macos'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Write.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\Microsoft\Win32\SafeHandles\SafePipeHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\PipeStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+            <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
+            <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+            <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+            <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'linux'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Write.Pipe.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\Microsoft\Win32\SafeHandles\SafePipeHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.Pipes\src\System\IO\Pipes\PipeStream.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+            <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
+            <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
+            <Compile Include="System.IO.Pipes\NamedPipeServerStream.Unix.cs" />
+            <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+            <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+            <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+            <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+          </ItemGroup>
+        </When>
+      </Choose>
+      <!--End of per-host-platform files-->
     </When>
   </Choose>
   <!--End of per-profile files-->
@@ -1378,6 +1658,12 @@
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <Reference Include="nunitlite">
       <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

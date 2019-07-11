@@ -15,6 +15,7 @@
 #include <config.h>
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/class-init.h"
+#include "mono/metadata/class-internals.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/mono-endian.h"
 #include "mono/metadata/object-internals.h"
@@ -262,17 +263,6 @@ MONO_RESTORE_WARNING
 	*end = p + *slen;
 
 	return res;
-}
-
-static MonoReflectionType*
-load_cattr_type_object (MonoImage *image, MonoType *t, gboolean header, const char *p, const char *boundp, const char **end, MonoError *error, guint32 *slen)
-{
-	MonoType *type;
-
-	type = load_cattr_type (image, t, header, p, boundp, end, error, slen);
-	if (!type)
-		return NULL;
-	return mono_type_get_object_checked (mono_domain_get (), type, error);
 }
 
 /*
@@ -856,7 +846,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 		attr = mono_object_new_handle (mono_domain_get (), method->klass, error);
 		goto_if_nok (error, fail);
 
-		mono_runtime_invoke_handle (method, attr, NULL, error);
+		mono_runtime_invoke_handle_void (method, attr, NULL, error);
 		goto_if_nok (error, fail);
 
 		goto exit;
@@ -956,7 +946,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			mono_field_set_value_internal (MONO_HANDLE_RAW (attr), field, val); // FIXMEcoop
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			MonoProperty *prop;
-			prop = mono_class_get_property_from_name (mono_handle_class (attr), name);
+			prop = mono_class_get_property_from_name_internal (mono_handle_class (attr), name);
 			if (!prop) {
 				mono_error_set_generic_error (error, "System.Reflection", "CustomAttributeFormatException", "Could not find a property with name %s", name);
 				goto fail;
@@ -980,15 +970,19 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			mono_property_set_value_handle (prop, attr, pparams, error);
 			goto_if_nok (error, fail);
 		}
+		
+		g_free (name);
+		name = NULL;
 	}
 
 	goto exit;
 fail:
+	g_free (name);
+	name = NULL;
 	attr = mono_new_null ();
 exit:
 	if (field && !type_is_reference (field->type))
 		g_free (val);
-	g_free (name);
 	if (prop_type && !type_is_reference (prop_type))
 		g_free (pparams [0]);
 	if (params) {
@@ -1019,9 +1013,9 @@ create_custom_attr_into_array (MonoImage *image, MonoMethod *method, const gucha
  * NAMED_ARG_INFO will contain information about the named arguments.
  */
 void
-mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args, MonoArray **named_args, CattrNamedArg **named_arg_info, MonoError *error)
+mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args_out, MonoArray **named_args_out, CattrNamedArg **named_arg_info, MonoError *error)
 {
-	MonoArray *typedargs, *namedargs;
+	MonoArray *typed_args, *named_args;
 	MonoClass *attrklass;
 	MonoDomain *domain;
 	const char *p = (const char*)data;
@@ -1030,9 +1024,12 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 	guint32 i, j, num_named;
 	CattrNamedArg *arginfo = NULL;
 
-	*typed_args = NULL;
-	*named_args = NULL;
+	*typed_args_out = NULL;
+	*named_args_out = NULL;
 	*named_arg_info = NULL;
+
+	typed_args = NULL;
+	named_args = NULL;
 
 	error_init (error);
 
@@ -1049,9 +1046,9 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 	p += 2;
 
 	/* Parse each argument corresponding to the signature's parameters from
-	 * the blob and store in typedargs.
+	 * the blob and store in typed_args.
 	 */
-	typedargs = mono_array_new_checked (domain, mono_get_object_class (), mono_method_signature_internal (method)->param_count, error);
+	typed_args = mono_array_new_checked (domain, mono_get_object_class (), mono_method_signature_internal (method)->param_count, error);
 	return_if_nok (error);
 
 	for (i = 0; i < mono_method_signature_internal (method)->param_count; ++i) {
@@ -1059,7 +1056,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 
 		obj = load_cattr_value_boxed (domain, image, mono_method_signature_internal (method)->params [i], p, data_end, &p, error);
 		return_if_nok (error);
-		mono_array_setref_internal (typedargs, i, obj);
+		mono_array_setref_internal (typed_args, i, obj);
 	}
 
 	named = p;
@@ -1068,7 +1065,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 	if (!bcheck_blob (named, 1, data_end, error))
 		return;
 	num_named = read16 (named);
-	namedargs = mono_array_new_checked (domain, mono_get_object_class (), num_named, error);
+	named_args = mono_array_new_checked (domain, mono_get_object_class (), num_named, error);
 	return_if_nok (error);
 	named += 2;
 	attrklass = method->klass;
@@ -1132,13 +1129,13 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 				g_free (name);
 				return;
 			}
-			mono_array_setref_internal (namedargs, j, obj);
+			mono_array_setref_internal (named_args, j, obj);
 
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			/* Named arg is a property */
 			MonoObject *obj;
 			MonoType *prop_type;
-			MonoProperty *prop = mono_class_get_property_from_name (attrklass, name);
+			MonoProperty *prop = mono_class_get_property_from_name_internal (attrklass, name);
 
 			if (!prop || !prop->set) {
 				g_free (name);
@@ -1156,13 +1153,13 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 				g_free (name);
 				return;
 			}
-			mono_array_setref_internal (namedargs, j, obj);
+			mono_array_setref_internal (named_args, j, obj);
 		}
 		g_free (name);
 	}
 
-	*typed_args = typedargs;
-	*named_args = namedargs;
+	*typed_args_out = typed_args;
+	*named_args_out = named_args;
 	return;
 fail:
 	mono_error_set_generic_error (error, "System.Reflection", "CustomAttributeFormatException", "Binary format of the specified custom attribute was invalid.");
@@ -1179,10 +1176,10 @@ fail:
  */
 void
 mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len,
-													  gpointer **typed_args, gpointer **named_args, int *num_named_args,
+													  gpointer **typed_args_out, gpointer **named_args_out, int *num_named_args,
 													  CattrNamedArg **named_arg_info, MonoError *error)
 {
-	gpointer *typedargs, *namedargs;
+	gpointer *typed_args, *named_args;
 	MonoClass *attrklass;
 	const char *p = (const char*)data;
 	const char *data_end = p + len;
@@ -1191,9 +1188,12 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 	CattrNamedArg *arginfo = NULL;
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 
-	*typed_args = NULL;
-	*named_args = NULL;
+	*typed_args_out = NULL;
+	*named_args_out = NULL;
 	*named_arg_info = NULL;
+
+	typed_args = NULL;
+	named_args = NULL;
 
 	error_init (error);
 
@@ -1208,10 +1208,10 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 	/* skip prolog */
 	p += 2;
 
-	typedargs = g_new0 (gpointer, sig->param_count);
+	typed_args = g_new0 (gpointer, sig->param_count);
 
 	for (i = 0; i < sig->param_count; ++i) {
-		typedargs [i] = load_cattr_value (image, sig->params [i], NULL, p, data_end, &p, error);
+		typed_args [i] = load_cattr_value (image, sig->params [i], NULL, p, data_end, &p, error);
 		return_if_nok (error);
 	}
 
@@ -1221,7 +1221,7 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 	if (!bcheck_blob (named, 1, data_end, error))
 		goto fail;
 	num_named = read16 (named);
-	namedargs = g_new0 (gpointer, num_named);
+	named_args = g_new0 (gpointer, num_named);
 	return_if_nok (error);
 	named += 2;
 	attrklass = method->klass;
@@ -1280,15 +1280,15 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 			arginfo [j].type = field->type;
 			arginfo [j].field = field;
 
-		    namedargs [j] = load_cattr_value (image, field->type, NULL, named, data_end, &named, error);
+		    named_args [j] = load_cattr_value (image, field->type, NULL, named, data_end, &named, error);
 			if (!is_ok (error)) {
 				g_free (name);
-				return;
+				goto fail;
 			}
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			/* Named arg is a property */
 			MonoType *prop_type;
-			MonoProperty *prop = mono_class_get_property_from_name (attrklass, name);
+			MonoProperty *prop = mono_class_get_property_from_name_internal (attrklass, name);
 
 			if (!prop || !prop->set) {
 				g_free (name);
@@ -1301,29 +1301,31 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 			arginfo [j].type = prop_type;
 			arginfo [j].prop = prop;
 
-			namedargs [j] = load_cattr_value (image, prop_type, NULL, named, data_end, &named, error);
+			named_args [j] = load_cattr_value (image, prop_type, NULL, named, data_end, &named, error);
 			if (!is_ok (error)) {
 				g_free (name);
-				return;
+				goto fail;
 			}
 		}
 		g_free (name);
 	}
 
-	*typed_args = typedargs;
-	*named_args = namedargs;
+	*typed_args_out = typed_args;
+	*named_args_out = named_args;
 	return;
 fail:
 	mono_error_set_generic_error (error, "System.Reflection", "CustomAttributeFormatException", "Binary format of the specified custom attribute was invalid.");
+	g_free (typed_args);
+	g_free (named_args);
 	g_free (arginfo);
 	*named_arg_info = NULL;
 }
 
 static gboolean
-reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, MonoReflectionAssembly *assembly, gpointer data, guint32 len, MonoArray **ctor_args, MonoArray **named_args, MonoError *error)
+reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, MonoReflectionAssembly *assembly, gpointer data, guint32 len, MonoArray **ctor_args, MonoArray **named_args_out, MonoError *error)
 {
 	MonoDomain *domain;
-	MonoArray *typedargs, *namedargs;
+	MonoArray *typed_args, *named_args;
 	MonoImage *image;
 	MonoMethod *method;
 	CattrNamedArg *arginfo = NULL;
@@ -1332,7 +1334,10 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 	error_init (error);
 
 	*ctor_args = NULL;
-	*named_args = NULL;
+	*named_args_out = NULL;
+
+	typed_args = NULL;
+	named_args = NULL;
 
 	if (len == 0)
 		return TRUE;
@@ -1346,14 +1351,14 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 		goto leave;
 	}
 
-	mono_reflection_create_custom_attr_data_args (image, method, (const guchar *)data, len, &typedargs, &namedargs, &arginfo, error);
+	mono_reflection_create_custom_attr_data_args (image, method, (const guchar *)data, len, &typed_args, &named_args, &arginfo, error);
 	goto_if_nok (error, leave);
 
-	if (!typedargs || !namedargs)
+	if (!typed_args || !named_args)
 		goto leave;
 
 	for (i = 0; i < mono_method_signature_internal (method)->param_count; ++i) {
-		MonoObject *obj = mono_array_get_internal (typedargs, MonoObject*, i);
+		MonoObject *obj = mono_array_get_internal (typed_args, MonoObject*, i);
 		MonoObject *typedarg;
 		MonoType *t;
 
@@ -1363,12 +1368,12 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 		typedarg = create_cattr_typed_arg (t, obj, error);
 
 		goto_if_nok (error, leave);
-		mono_array_setref_internal (typedargs, i, typedarg);
+		mono_array_setref_internal (typed_args, i, typedarg);
 	}
 
-	for (i = 0; i < mono_array_length_internal (namedargs); ++i) {
-		MonoObject *obj = mono_array_get_internal (namedargs, MonoObject*, i);
-		MonoObject *typedarg, *namedarg, *minfo;
+	for (i = 0; i < mono_array_length_internal (named_args); ++i) {
+		MonoObject *obj = mono_array_get_internal (named_args, MonoObject*, i);
+		MonoObject *namedarg, *minfo;
 
 		if (arginfo [i].prop) {
 			minfo = (MonoObject*)mono_property_get_object_checked (domain, arginfo [i].prop->parent, arginfo [i].prop, error);
@@ -1379,16 +1384,20 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 			goto_if_nok (error, leave);
 		}
 
-		typedarg = create_cattr_typed_arg (arginfo [i].type, obj, error);
+#if ENABLE_NETCORE
+		namedarg = create_cattr_named_arg (minfo, obj, error);
+#else
+		MonoObject* typedarg = create_cattr_typed_arg (arginfo [i].type, obj, error);
 		goto_if_nok (error, leave);
 		namedarg = create_cattr_named_arg (minfo, typedarg, error);
+#endif
 		goto_if_nok (error, leave);
 
-		mono_array_setref_internal (namedargs, i, namedarg);
+		mono_array_setref_internal (named_args, i, namedarg);
 	}
 
-	*ctor_args = typedargs;
-	*named_args = namedargs;
+	*ctor_args = typed_args;
+	*named_args_out = named_args;
 
 leave:
 	g_free (arginfo);
@@ -1456,7 +1465,7 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	params [2] = &cattr->data;
 	params [3] = &cattr->data_size;
 
-	mono_runtime_invoke_handle (ctor, attr, params, error);
+	mono_runtime_invoke_handle_void (ctor, attr, params, error);
 	goto fail;
 result_null:
 	attr = MONO_HANDLE_CAST (MonoObject, mono_new_null ());

@@ -21,6 +21,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internals.h>
@@ -102,14 +103,14 @@ mono_exception_new_by_name_domain (MonoDomain *domain, MonoImage *image,
 	goto_if_nok (error, return_null);
 
 	if (domain != caller_domain)
-		mono_domain_set_internal (domain);
+		mono_domain_set_internal_with_options (domain, TRUE);
 
 	mono_runtime_object_init_handle (o, error);
 	mono_error_assert_ok (error);
 
 	// Restore domain in success and error path.
 	if (domain != caller_domain)
-		mono_domain_set_internal (caller_domain);
+		mono_domain_set_internal_with_options (caller_domain, TRUE);
 
 	goto_if_ok (error, exit);
 return_null:
@@ -202,7 +203,7 @@ create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringH
 
 	gpointer args [ ] = { MONO_HANDLE_RAW (a1), MONO_HANDLE_RAW (a2) };
 
-	mono_runtime_invoke_handle (method, o, args, error);
+	mono_runtime_invoke_handle_void (method, o, args, error);
 	if (!is_ok (error))
 		o = mono_new_null ();
 
@@ -742,12 +743,6 @@ mono_get_exception_argument_out_of_range (const char *arg)
 	return mono_get_exception_argument_internal ("ArgumentOutOfRangeException", arg, NULL);
 }
 
-static MonoExceptionHandle
-mono_new_exception_argument_out_of_range (const char *arg, MonoError *error)
-{
-	return mono_exception_new_argument_internal ("ArgumentOutOfRangeException", arg, NULL, error);
-}
-
 /**
  * mono_get_exception_thread_state:
  * \param msg the message to present to the user
@@ -865,7 +860,7 @@ mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExcep
 	MonoObjectHandle exc = mono_object_new_handle (domain, klass, error);
 	mono_error_assert_ok (error);
 
-	mono_runtime_invoke_handle (method, exc, args, error);
+	mono_runtime_invoke_handle_void (method, exc, args, error);
 	goto_if_nok (error, return_null);
 	goto exit;
 return_null:
@@ -1109,7 +1104,7 @@ mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, M
 
 	gpointer args [ ] = { MONO_HANDLE_RAW (wrapped_exception) };
 
-	mono_runtime_invoke_handle (method, o, args, error);
+	mono_runtime_invoke_handle_void (method, o, args, error);
 	goto_if_nok (error, return_null);
 	goto exit;
 return_null:

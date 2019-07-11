@@ -638,24 +638,18 @@ G_BEGIN_DECLS
 #include <pwd.h>
 #include <uuid/uuid.h>
 
-//libc / libpthread missing bits from musl or shit we didn't detect :facepalm:
+#ifndef __EMSCRIPTEN_PTHREADS__
 int pthread_getschedparam (pthread_t thread, int *policy, struct sched_param *param)
 {
 	g_error ("pthread_getschedparam");
 	return 0;
 }
+#endif
 
 int
 pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param)
 {
 	return 0;
-}
-
-
-int
-pthread_attr_getstacksize (const pthread_attr_t *attr, size_t *stacksize)
-{
-	return 65536; //wasm page size
 }
 
 int
@@ -710,13 +704,14 @@ inotify_add_watch (int fd, const char *pathname, uint32_t mask)
 	return 0;
 }
 
+#ifndef __EMSCRIPTEN_PTHREADS__
 int
 sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 {
 	g_error ("sem_timedwait");
 	return 0;
-	
 }
+#endif
 
 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
 
@@ -745,3 +740,9 @@ getpwuid_r (uid_t uid, struct passwd *pwd, char *buffer, size_t bufsize,
 G_END_DECLS
 
 #endif // HOST_WASM
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	return NULL;
+}

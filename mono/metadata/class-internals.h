@@ -78,6 +78,7 @@ struct _MonoMethod {
 	unsigned int is_inflated:1; /* whether we're a MonoMethodInflated */
 	unsigned int skip_visibility:1; /* whenever to skip JIT visibility checks */
 	unsigned int verification_success:1; /* whether this method has been verified successfully.*/
+	unsigned int is_reabstracted:1; /* whenever this is a reabstraction of another interface */
 	signed int slot : 16;
 
 	/*
@@ -248,7 +249,7 @@ typedef enum {
 	MONO_CLASS_GINST, /* generic instantiation */
 	MONO_CLASS_GPARAM, /* generic parameter */
 	MONO_CLASS_ARRAY, /* vector or array, bounded or not */
-	MONO_CLASS_POINTER, /* pointer of function pointer*/
+	MONO_CLASS_POINTER, /* pointer or function pointer*/
 } MonoTypeKind;
 
 typedef struct _MonoClassDef MonoClassDef;
@@ -576,6 +577,9 @@ typedef struct MonoCachedClassInfo {
 } MonoCachedClassInfo;
 
 typedef struct {
+	// Name and func fields double as "inited".
+	// That is, any initialized MonoJitICallInfo must
+	// have both of them to be non-NULL.
 	const char *name;
 	gconstpointer func;
 	gconstpointer wrapper;
@@ -813,6 +817,9 @@ mono_class_has_special_static_fields (MonoClass *klass);
 
 const char*
 mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_type);
+
+MonoProperty* 
+mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
 
 const char*
 mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def_type);
@@ -1067,42 +1074,22 @@ MONO_API gboolean
 mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container, MonoError *error);
 
-MonoJitICallInfo *
-mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean is_save);
-
-MonoJitICallInfo *
-mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
+// This is the "real" function for registering JIT icalls. All others are one line wrappers that call it,
+// i.e. filling in info or c_symbol.
+void
+mono_register_jit_icall_info (MonoJitICallInfo *info, gconstpointer func, const char *name,
+			      MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
 
 #ifdef __cplusplus
 template <typename T>
-inline MonoJitICallInfo *
-mono_register_jit_icall (T func, const char *name, MonoMethodSignature *sig, gboolean is_save)
+inline void
+mono_register_jit_icall_info (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol)
 {
-	return mono_register_jit_icall ((gconstpointer)func, name, sig, is_save);
-}
-
-template <typename T>
-inline MonoJitICallInfo *
-mono_register_jit_icall_full (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol)
-{
-	return mono_register_jit_icall_full ((gconstpointer)func, name, sig, no_wrapper, c_symbol);
+	mono_register_jit_icall_info (info, (gconstpointer)func, name, sig, no_wrapper, c_symbol);
 }
 #endif // __cplusplus
 
-void
-mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper);
-
-MonoJitICallInfo *
-mono_find_jit_icall_by_name (const char *name) MONO_LLVM_INTERNAL;
-
-MonoJitICallInfo *
-mono_find_jit_icall_by_addr (gconstpointer addr) MONO_LLVM_INTERNAL;
-
-GHashTable*
-mono_get_jit_icall_info (void);
-
-const char*
-mono_lookup_jit_icall_symbol (const char *name);
+#define mono_register_jit_icall(func, sig, no_wrapper) (mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (no_wrapper), NULL))
 
 gboolean
 mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
@@ -1225,6 +1212,9 @@ mono_class_has_variant_generic_params (MonoClass *klass);
 
 gboolean
 mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv);
+
+gboolean 
+mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
 mono_bool
 mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass);
@@ -1467,7 +1457,10 @@ gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
 
 MonoType*
-mono_class_enum_basetype_internal (MonoClass *klass);
+mono_class_enum_basetype_internal (MonoClass *klass) MONO_LLVM_INTERNAL;
+
+// Enum and static storage for JIT icalls.
+#include "jit-icall-reg.h"
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

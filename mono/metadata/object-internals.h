@@ -618,6 +618,7 @@ typedef struct {
 	MonoObject *additional;
 } MonoStreamingContext;
 
+#if !ENABLE_NETCORE
 typedef struct {
 	MonoObject obj;
 	MonoBoolean readOnly;
@@ -756,6 +757,7 @@ typedef struct {
 	MonoString *currency_english_name;
 	MonoString *currency_native_name;
 } MonoRegionInfo;
+#endif
 
 typedef struct {
 	MonoObject object;
@@ -1671,7 +1673,7 @@ ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type);
 
 void        mono_reflection_register_with_runtime (MonoReflectionType *type);
 
-void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args, MonoArray **named_args, CattrNamedArg **named_arg_info, MonoError *error);
+void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args_out, MonoArray **named_args_out, CattrNamedArg **named_arg_info, MonoError *error);
 MonoMethodSignature * mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token, MonoError *error);
 
 MonoArrayHandle mono_param_get_objects_internal  (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
@@ -2122,7 +2124,7 @@ mono_utf16_to_utf8len (const mono_unichar2 *s, gsize slength, gsize *utf8_length
 gboolean
 mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 
-MonoObject*
+MONO_PROFILER_API MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 
 // The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
@@ -2307,6 +2309,9 @@ void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value);
 
 MonoMethod* mono_get_context_capture_method (void);
+
+guint8*
+mono_runtime_get_aotid_arr (void);
 
 /* GC handles support
  *

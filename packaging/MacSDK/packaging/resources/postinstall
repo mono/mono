@@ -59,17 +59,17 @@ if [ -d ${FW_CURRENT} ]; then
 
     cd ${FW_CURRENT}/etc
     # Make sure we run the files we lay down, and not other stuff installed on the system
-    export PATH=${FW_CURRENT}/bin:$PATH
+    export PATH="${FW_CURRENT}/bin:$PATH"
     # gtk+ setup
-    gdk-pixbuf-query-loaders --update-cache
+    gdk-pixbuf-query-loaders --update-cache > "${FW_CURRENT}/postinstall-gdk-pixbuf-query-loaders.log" 2>&1 || true
     # pango setup
     mkdir -p pango
-    pango-querymodules >  pango/pango.modules
-    pango-querymodules --update-cache
-    fc-cache
+    pango-querymodules > pango/pango.modules 2> "${FW_CURRENT}/postinstall-pango-querymodules.log" || true
+    pango-querymodules --update-cache >> "${FW_CURRENT}/postinstall-pango-querymodules.log" 2>&1 || true
+    fc-cache > "${FW_CURRENT}/postinstall-fc-cache.log" 2>&1 || true
 
     cd ${FW_CURRENT}/lib/gtk-2.0/2.10.0
-    gtk-query-immodules-2.0 > immodules.cache
+    gtk-query-immodules-2.0 > immodules.cache 2> "${FW_CURRENT}/gtk-query-immodules-2.0.log" || true
 fi
 
 # Delete older Monos

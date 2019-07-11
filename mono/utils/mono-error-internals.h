@@ -164,7 +164,7 @@ void
 mono_error_set_argument_format (MonoError *error, const char *argument, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
-mono_error_set_argument (MonoError *error, const char *argument, const char *msg, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
+mono_error_set_argument (MonoError *error, const char *argument, const char *msg);
 
 void
 mono_error_set_argument_null (MonoError *oerror, const char *argument, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
@@ -283,5 +283,61 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
+
+#if HOST_WIN32
+#if HOST_X86 || HOST_AMD64
+
+#include <windows.h>
+
+// Single instruction inlinable form of GetLastError.
+//
+// Naming violation so can search disassembly for GetLastError.
+//
+#define GetLastError mono_GetLastError
+
+static inline
+unsigned long
+__stdcall
+GetLastError (void)
+{
+#if HOST_X86
+    return __readfsdword (0x34);
+#elif HOST_AMD64
+    return __readgsdword (0x68);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+// Single instruction inlinable valid subset of SetLastError.
+//
+// Naming violation so can search disassembly for SetLastError.
+//
+// This is useful, for example, if you want to set a breakpoint
+// on SetLastError, but do not want to break on merely "restoring" it,
+// only "originating" it.
+//
+// A generic name is used in case there are other use-cases.
+//
+static inline
+void
+__stdcall
+mono_SetLastError (unsigned long err)
+{
+#if HOST_X86
+    __writefsdword (0x34, err);
+#elif HOST_AMD64
+    __writegsdword (0x68, err);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+#else // arm, arm64, etc.
+
+#define mono_SetLastError SetLastError
+
+#endif // processor
+#endif // win32
 
 #endif

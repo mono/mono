@@ -45,6 +45,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-ptr-array.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/checked-build.h>
@@ -52,7 +53,7 @@
 #include "icall-decl.h"
 
 static void get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types);
-static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error);
+static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error);
 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (mono_assembly, "System.Reflection", "RuntimeAssembly")
@@ -500,7 +501,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_loader_lock (); /*FIXME mono_class_init_internal and mono_class_vtable acquire it*/
 	mono_domain_lock (domain);
 	if (!domain->type_hash)
-		domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
+		domain->type_hash = mono_g_hash_table_new_type_internal ((GHashFunc)mono_metadata_type_hash, 
 				(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
 	if ((res = (MonoReflectionType *)mono_g_hash_table_lookup (domain->type_hash, type))) {
 		mono_domain_unlock (domain);
@@ -523,7 +524,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 			mono_loader_unlock ();
 			return NULL;
 		}
-		mono_g_hash_table_insert (domain->type_hash, type, res);
+		mono_g_hash_table_insert_internal (domain->type_hash, type, res);
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
 		return res;
@@ -566,7 +567,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	}
 
 	res->type = type;
-	mono_g_hash_table_insert (domain->type_hash, type, res);
+	mono_g_hash_table_insert_internal (domain->type_hash, type, res);
 
 	if (type->type == MONO_TYPE_VOID)
 		domain->typeof_void = (MonoObject*)res;
@@ -1042,7 +1043,7 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	args [5] = MONO_HANDLE_RAW (member);
 	args [6] = MONO_HANDLE_RAW (mobj);
 
-	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
+	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
 	goto_if_nok (error, leave);
 
 	MONO_HANDLE_ARRAY_SETREF (dest, idx, param);
@@ -1346,7 +1347,7 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	params [3] = &init_locals_param;
 	params [4] = &sig_token_param;
 	params [5] = &max_stack_param;
-	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
+	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
 	mono_error_assert_ok (error);
 
 	return ret;
@@ -1920,7 +1921,7 @@ mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoErr
 }
 
 static MonoType*
-_mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, gboolean ignorecase, MonoError *error)
+_mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	gboolean type_resolve = FALSE;
 	MonoType *type;
@@ -1943,17 +1944,17 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 				return NULL;
 		}
 		image = assembly->image;
-	} else if (!image) {
+	} else if (!image && search_mscorlib) {
 		image = mono_defaults.corlib;
 	}
 
-	type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
-	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib) {
+	type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, &type_resolve, error);
+	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib && search_mscorlib) {
 		/* ignore the error and try again */
 		mono_error_cleanup (error);
 		error_init (error);
 		image = mono_defaults.corlib;
-		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
+		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, &type_resolve, error);
 	}
 
 	return type;
@@ -1965,7 +1966,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
  * Returns: may return NULL on success, sets error on failure.
  */
 static MonoType*
-mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoClass *klass;
@@ -2060,7 +2061,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		for (i = 0; i < info->type_arguments->len; i++) {
 			MonoTypeNameParse *subinfo = (MonoTypeNameParse *)g_ptr_array_index (info->type_arguments, i);
 
-			type_args [i] = _mono_reflection_get_type_from_info (subinfo, rootimage, ignorecase, error);
+			type_args [i] = _mono_reflection_get_type_from_info (subinfo, rootimage, ignorecase, search_mscorlib, error);
 			if (!type_args [i]) {
 				g_free (type_args);
 				goto leave;
@@ -2114,7 +2115,7 @@ leave:
 MonoType*
 mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve) {
 	ERROR_DECL (error);
-	MonoType *result = mono_reflection_get_type_with_rootimage (image, image, info, ignorecase, type_resolve, error);
+	MonoType *result = mono_reflection_get_type_with_rootimage (image, image, info, ignorecase, TRUE, type_resolve, error);
 	mono_error_cleanup (error);
 	return result;
 }
@@ -2126,18 +2127,19 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
  * \param info type description structure
  * \param ignorecase flag for case-insensitive string compares
  * \param type_resolve whenever type resolve was already tried
+ * \param
  * \param error set on error.
  * Build a \c MonoType from the type description in \p info. On failure returns NULL and sets \p error.
  */
 MonoType*
-mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error) {
+mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error) {
 	error_init (error);
-	return mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, type_resolve, error);
+	return mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, type_resolve, error);
 }
 
 
 static MonoType*
-module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -2145,12 +2147,12 @@ module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage
 	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW (MonoReflectionModuleBuilder, NULL);
 	MONO_HANDLE_ARRAY_GETREF (mb, module_builders, i);
 	MonoDynamicImage *dynamic_image = MONO_HANDLE_GETVAL (mb, dynamic_image);
-	type = mono_reflection_get_type_internal (rootimage, &dynamic_image->image, info, ignorecase, error);
+	type = mono_reflection_get_type_internal (rootimage, &dynamic_image->image, info, ignorecase, search_mscorlib, error);
 	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
 static MonoType*
-module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -2158,12 +2160,12 @@ module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, Mon
 	MonoReflectionModuleHandle mod = MONO_HANDLE_NEW (MonoReflectionModule, NULL);
 	MONO_HANDLE_ARRAY_GETREF (mod, modules, i);
 	MonoImage *image = MONO_HANDLE_GETVAL (mod, image);
-	type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, error);
+	type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, search_mscorlib, error);
 	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
 static MonoType*
-mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoType *type = NULL;
@@ -2182,7 +2184,7 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 	if (!MONO_HANDLE_IS_NULL (modules)) {
 		int n = mono_array_handle_length (modules);
 		for (i = 0; i < n; ++i) {
-			type = module_builder_array_get_type (modules, i, rootimage, info, ignorecase, error);
+			type = module_builder_array_get_type (modules, i, rootimage, info, ignorecase, search_mscorlib, error);
 			if (type)
 				break;
 			goto_if_nok (error, leave);
@@ -2195,7 +2197,7 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 	if (!type && !MONO_HANDLE_IS_NULL(loaded_modules)) {
 		int n = mono_array_handle_length (loaded_modules);
 		for (i = 0; i < n; ++i) {
-			type = module_array_get_type (loaded_modules, i, rootimage, info, ignorecase, error);
+			type = module_array_get_type (loaded_modules, i, rootimage, info, ignorecase, search_mscorlib, error);
 			if (type)
 				break;
 			goto_if_nok (error, leave);
@@ -2207,7 +2209,7 @@ leave:
 }
 	
 MonoType*
-mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error)
+mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
@@ -2219,9 +2221,9 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 	error_init (error);
 
 	if (image && image_is_dynamic (image))
-		type = mono_reflection_get_type_internal_dynamic (rootimage, image->assembly, info, ignorecase, error);
+		type = mono_reflection_get_type_internal_dynamic (rootimage, image->assembly, info, ignorecase, search_mscorlib, error);
 	else
-		type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, error);
+		type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, search_mscorlib, error);
 	goto_if_nok (error, return_null);
 
 	if (type)
@@ -2254,10 +2256,10 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 		MonoAssembly *assembly = MONO_HANDLE_GETVAL (reflection_assembly, assembly);
 		if (assembly_is_dynamic (assembly))
 			type = mono_reflection_get_type_internal_dynamic (rootimage, assembly,
-									  info, ignorecase, error);
+									  info, ignorecase, search_mscorlib, error);
 		else
 			type = mono_reflection_get_type_internal (rootimage, assembly->image,
-								  info, ignorecase, error);
+								  info, ignorecase, search_mscorlib, error);
 	}
 	goto_if_nok (error, return_null);
 	goto exit;
@@ -2344,7 +2346,7 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 		mono_error_cleanup (parse_error);
 		goto leave;
 	}
-	type = _mono_reflection_get_type_from_info (&info, image, FALSE, error);
+	type = _mono_reflection_get_type_from_info (&info, image, FALSE, TRUE, error);
 leave:
 	g_free (tmp);
 	mono_reflection_free_type_info (&info);
@@ -2640,6 +2642,9 @@ ves_icall_RuntimeMethodInfo_MakeGenericMethod_impl (MonoReflectionMethodHandle r
 	MonoMethod *imethod = reflection_bind_generic_method_parameters (method, types, error);
 	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE));
 
+	MonoReflectionType *reftype = MONO_HANDLE_GETVAL (rmethod, reftype);
+	MonoClass *refclass = mono_class_from_mono_type_internal (reftype->type);
+
 	/*FIXME but I think this is no longer necessary*/
 	if (image_is_dynamic (m_class_get_image (method->klass))) {
 		MonoDynamicImage *image = (MonoDynamicImage*)m_class_get_image (method->klass);
@@ -2648,11 +2653,11 @@ ves_icall_RuntimeMethodInfo_MakeGenericMethod_impl (MonoReflectionMethodHandle r
 		 * to the reflection objects representing their generic definitions.
 		 */
 		mono_image_lock ((MonoImage*)image);
-		mono_g_hash_table_insert (image->generic_def_objects, imethod, MONO_HANDLE_RAW (rmethod));
+		mono_g_hash_table_insert_internal (image->generic_def_objects, imethod, MONO_HANDLE_RAW (rmethod));
 		mono_image_unlock ((MonoImage*)image);
 	}
 
-	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (rmethod), imethod, NULL, error);
+	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (rmethod), imethod, refclass, error);
 }
 
 
@@ -3163,7 +3168,7 @@ mono_class_from_mono_type_handle (MonoReflectionTypeHandle reftype)
 	return mono_class_from_mono_type_internal (MONO_HANDLE_RAW (reftype)->type);
 }
 
-// This is called by calls, it will return NULL and set pending exception (in wrapper) on failure.
+// This is called by icalls, it will return NULL and set pending exception (in wrapper) on failure.
 MonoReflectionTypeHandle
 mono_type_from_handle_impl (MonoType *handle, MonoError *error)
 {

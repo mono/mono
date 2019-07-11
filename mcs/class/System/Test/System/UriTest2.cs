@@ -127,7 +127,7 @@ namespace MonoTests.System
 		[Ignore ("Tests needs to be updated for 2.0")]
 		public void RelativeUriFromFile ()
 		{
-			FromResource ("Test/System/test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
+			FromResource ("Test/System/test-uri-relative-props.txt", new Uri ("http://www.example.com"));
 		}
 		
 		private void FromResource (string res, Uri baseUri)
@@ -219,7 +219,7 @@ TextWriter sw = Console.Out;
 		[ExpectedException (typeof (UriFormatException))]
 		public void StarsInHost ()
 		{
-			new Uri ("http://w*w*w.go-mono.com");
+			new Uri ("http://w*w*w.example.com");
 		}
 
 		[Test]
@@ -795,14 +795,14 @@ TextWriter sw = Console.Out;
 		[Test]
 		public void NntpScheme ()
 		{
-			Uri uri = new Uri ("nntp://news.mono-project.com/novell.mono.moonlight/uri?query");
+			Uri uri = new Uri ("nntp://news.example.com/novell.mono.moonlight/uri?query");
 
 			Assert.AreEqual ("/novell.mono.moonlight/uri%3Fquery", uri.AbsolutePath, "AbsolutePath");
-			Assert.AreEqual ("nntp://news.mono-project.com/novell.mono.moonlight/uri%3Fquery", uri.AbsoluteUri, "AbsoluteUri");
-			Assert.AreEqual ("news.mono-project.com", uri.Authority, "Authority");
-			Assert.AreEqual ("news.mono-project.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("nntp://news.example.com/novell.mono.moonlight/uri%3Fquery", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("news.example.com", uri.Authority, "Authority");
+			Assert.AreEqual ("news.example.com", uri.DnsSafeHost, "DnsSafeHost");
 			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
-			Assert.AreEqual ("news.mono-project.com", uri.Host, "Host");
+			Assert.AreEqual ("news.example.com", uri.Host, "Host");
 			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
 			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
 			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
@@ -810,7 +810,7 @@ TextWriter sw = Console.Out;
 			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
 			Assert.IsFalse (uri.IsUnc, "IsUnc");
 			Assert.AreEqual ("/novell.mono.moonlight/uri?query", uri.LocalPath, "LocalPath");
-			Assert.AreEqual ("nntp://news.mono-project.com/novell.mono.moonlight/uri?query", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("nntp://news.example.com/novell.mono.moonlight/uri?query", uri.OriginalString, "OriginalString");
 			Assert.AreEqual ("/novell.mono.moonlight/uri%3Fquery", uri.PathAndQuery, "PathAndQuery");
 			Assert.AreEqual (119, uri.Port, "Port");
 			Assert.AreEqual (String.Empty, uri.Query, "Query");
@@ -822,7 +822,7 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
 
 			// special escaped characters - they differs a bit from other URI
-			uri = new Uri ("nntp://news.mono-project.com/novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			uri = new Uri ("nntp://news.example.com/novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
 			if (IriParsing)
 				Assert.AreEqual ("/novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,[]", uri.AbsolutePath, "Special");
@@ -834,13 +834,13 @@ TextWriter sw = Console.Out;
 		public void FtpScheme ()
 		{
 			// user, password, custom port and a "query"
-			Uri uri = new Uri ("ftp://user:password@ftp.mono-project.com:2121/mono.zip?latest-n-greatest");
+			Uri uri = new Uri ("ftp://user:password@ftp.example.com:2121/mono.zip?latest-n-greatest");
 			Assert.AreEqual ("/mono.zip%3Flatest-n-greatest", uri.AbsolutePath, "AbsolutePath");
-			Assert.AreEqual ("ftp://user:password@ftp.mono-project.com:2121/mono.zip%3Flatest-n-greatest", uri.AbsoluteUri, "AbsoluteUri");
-			Assert.AreEqual ("ftp.mono-project.com:2121", uri.Authority, "Authority");
-			Assert.AreEqual ("ftp.mono-project.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("ftp://user:password@ftp.example.com:2121/mono.zip%3Flatest-n-greatest", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("ftp.example.com:2121", uri.Authority, "Authority");
+			Assert.AreEqual ("ftp.example.com", uri.DnsSafeHost, "DnsSafeHost");
 			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
-			Assert.AreEqual ("ftp.mono-project.com", uri.Host, "Host");
+			Assert.AreEqual ("ftp.example.com", uri.Host, "Host");
 			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
 			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
 			Assert.IsFalse (uri.IsDefaultPort, "IsDefaultPort");
@@ -848,7 +848,7 @@ TextWriter sw = Console.Out;
 			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
 			Assert.IsFalse (uri.IsUnc, "IsUnc");
 			Assert.AreEqual ("/mono.zip?latest-n-greatest", uri.LocalPath, "LocalPath");
-			Assert.AreEqual ("ftp://user:password@ftp.mono-project.com:2121/mono.zip?latest-n-greatest", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("ftp://user:password@ftp.example.com:2121/mono.zip?latest-n-greatest", uri.OriginalString, "OriginalString");
 			Assert.AreEqual ("/mono.zip%3Flatest-n-greatest", uri.PathAndQuery, "PathAndQuery");
 			Assert.AreEqual (2121, uri.Port, "Port");
 			Assert.AreEqual (String.Empty, uri.Query, "Query");
@@ -859,7 +859,7 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("user:password", uri.UserInfo, "UserInfo");
 
 			// special characters and fragment
-			uri = new Uri ("ftp://ftp.mono-project.com/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			uri = new Uri ("ftp://ftp.example.com/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
 			if (IriParsing)
 				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,[]", uri.AbsolutePath, "Special");
@@ -1094,24 +1094,24 @@ TextWriter sw = Console.Out;
 			Uri abs = new Uri ("http://novell.com", UriKind.Absolute);
 
 			// note: invalid scheme
-			string srel = "http@ftp://mono-project.com/dir/file";
+			string srel = "http@ftp://example.com/dir/file";
 			Uri uri = new Uri (abs, srel);
-			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "1.ToString");
+			Assert.AreEqual ("http://novell.com/http@ftp://example.com/dir/file", uri.ToString (), "1.ToString");
 
 			Uri rel = new Uri (srel, UriKind.Relative);
-			Assert.AreEqual ("http@ftp://mono-project.com/dir/file", rel.ToString (), "2.ToString");
+			Assert.AreEqual ("http@ftp://example.com/dir/file", rel.ToString (), "2.ToString");
 
 			uri = new Uri (abs, rel);
-			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "3.ToString");
+			Assert.AreEqual ("http://novell.com/http@ftp://example.com/dir/file", uri.ToString (), "3.ToString");
 		}
 
 		[Test]
 		public void EmptyUserInfo ()
 		{
-			Uri uri = new Uri ("http://@www.mono-project.com");
-			Assert.AreEqual ("http://@www.mono-project.com/", uri.AbsoluteUri, "AbsoluteUri");
-			Assert.AreEqual ("http://@www.mono-project.com", uri.GetLeftPart (UriPartial.Authority), "UriPartial.Authority");
-			Assert.AreEqual ("http://@www.mono-project.com/", uri.GetLeftPart (UriPartial.Path), "UriPartial.Path");
+			Uri uri = new Uri ("http://@www.example.com");
+			Assert.AreEqual ("http://@www.example.com/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("http://@www.example.com", uri.GetLeftPart (UriPartial.Authority), "UriPartial.Authority");
+			Assert.AreEqual ("http://@www.example.com/", uri.GetLeftPart (UriPartial.Path), "UriPartial.Path");
 			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
 		}
 
@@ -1140,16 +1140,16 @@ TextWriter sw = Console.Out;
 		[Test]
 		public void OriginalPathEscaped ()
 		{
-			Uri uri = new Uri ("http://www.mono-project.com/%41/%42/%43", UriKind.Absolute);
+			Uri uri = new Uri ("http://www.example.com/%41/%42/%43", UriKind.Absolute);
 			Assert.AreEqual ("/A/B/C", uri.LocalPath, "LocalPath");
 			if (IriParsing)	{
-				Assert.AreEqual ("http://www.mono-project.com/A/B/C", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("http://www.example.com/A/B/C", uri.AbsoluteUri, "AbsoluteUri");
 				Assert.AreEqual ("/A/B/C", uri.AbsolutePath, "AbsolutePath");
-				Assert.AreEqual ("http://www.mono-project.com/A/B/C", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+				Assert.AreEqual ("http://www.example.com/A/B/C", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
 			} else {
-				Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("http://www.example.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
 				Assert.AreEqual ("/%41/%42/%43", uri.AbsolutePath, "AbsolutePath");
-				Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+				Assert.AreEqual ("http://www.example.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
 			}
 		}
 
@@ -1157,8 +1157,8 @@ TextWriter sw = Console.Out;
 		public void CheckHostName ()
 		{
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("host;machine"), "CheckHostName ;");
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www..mono-project.com"), "CheckHostName ..");
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.mono-project.com\\"), "CheckHostName \\");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www..example.com"), "CheckHostName ..");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.example.com\\"), "CheckHostName \\");
 		}
 
 		[Test]

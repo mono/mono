@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <dlfcn.h>
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
@@ -11,7 +12,11 @@
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
 
+#ifdef GEN_PINVOKE
+#include "pinvoke-table.h"
+#else
 #include "pinvoke-tables-default.h"
+#endif
 
 #ifdef CORE_BINDINGS
 void core_initialize_internals ();
@@ -33,6 +38,9 @@ char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
 
+static MonoClass* datetime_class;
+static MonoClass* datetimeoffset_class;
+
 /* Not part of public headers */
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -43,10 +51,13 @@ typedef struct {
 } MonoIcallTableCallbacks;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
+
+#define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
+#define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
 
 static char*
 m_strdup (const char *str)
@@ -54,10 +65,8 @@ m_strdup (const char *str)
 	if (!str)
 		return NULL;
 
-	int len = strlen (str) + 1;
-	char *res = malloc (len);
-	memcpy (res, str, len);
-	return res;
+	const size_t len = strlen (str) + 1;
+	return memcpy (g_new (char, len), str, len);
 }
 
 static MonoDomain *root_domain;
@@ -141,7 +150,7 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
-	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
+	WasmAssembly *entry = g_new0 (WasmAssembly, 1);
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
@@ -163,16 +172,37 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
 	}
+
+#if WASM_SUPPORTS_DLOPEN
+	return dlopen(name, flags);
+#endif
+
 	return NULL;
+}
+
+static mono_bool
+wasm_dl_is_pinvoke_tables (void* handle) {
+	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
+		if (pinvoke_tables [i] == handle) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
+#if WASM_SUPPORTS_DLOPEN
+	if (!wasm_dl_is_pinvoke_tables (handle)) {
+		return dlsym (handle, name);
+	}
+#endif
+
 	PinvokeImport *table = (PinvokeImport*)handle;
 	for (int i = 0; table [i].name; ++i) {
 		if (!strcmp (table [i].name, name))
-				return table [i].func;
+			return table [i].func;
 	}
 	return NULL;
 }
@@ -293,13 +323,13 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 #ifdef LINK_ICALLS
 	/* Link in our own linked icall table */
-	MonoIcallTableCallbacks cb;
-	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
-	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
-	cb.lookup = icall_table_lookup;
-	cb.lookup_icall_symbol = icall_table_lookup_symbol;
-
-	mono_install_icall_table_callbacks (&cb);
+	static const MonoIcallTableCallbacks mono_icall_table_callbacks =
+	{
+		MONO_ICALL_TABLE_CALLBACKS_VERSION,
+		icall_table_lookup,
+		icall_table_lookup_symbol
+	};
+	mono_install_icall_table_callbacks (&mono_icall_table_callbacks);
 #endif
 
 #ifdef NEED_NORMAL_ICALL_TABLES
@@ -313,16 +343,15 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 
 	if (assembly_count) {
-		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
+		MonoBundledAssembly **bundle_array = g_new0 (MonoBundledAssembly*, assembly_count + 1);
 		WasmAssembly *cur = assemblies;
-		bundle_array [assembly_count] = NULL;
 		int i = 0;
 		while (cur) {
 			bundle_array [i] = &cur->assembly;
 			cur = cur->next;
 			++i;
 		}
-		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
+		mono_register_bundled_assemblies ((const MonoBundledAssembly **)bundle_array);
 	}
 
 	mono_trace_init ();
@@ -431,6 +460,8 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_OBJECT 7
 #define MARSHAL_TYPE_BOOL 8
 #define MARSHAL_TYPE_ENUM 9
+#define MARSHAL_TYPE_DATE 20
+#define MARSHAL_TYPE_DATEOFFSET 21
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -447,6 +478,12 @@ mono_wasm_get_obj_type (MonoObject *obj)
 {
 	if (!obj)
 		return 0;
+
+	if (!datetime_class)
+		datetime_class = mono_class_from_name (mono_get_corlib(), "System", "DateTime");
+	if (!datetimeoffset_class)
+		datetimeoffset_class = mono_class_from_name (mono_get_corlib(), "System", "DateTimeOffset");
+
 	MonoClass *klass = mono_object_get_class (obj);
 	MonoType *type = mono_class_get_type (klass);
 
@@ -462,6 +499,7 @@ mono_wasm_get_obj_type (MonoObject *obj)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
+	case MONO_TYPE_I:	// IntPtr
 		return MARSHAL_TYPE_INT;
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
@@ -494,6 +532,10 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		}		
 	}
 	default:
+		if (klass == datetime_class)
+			return MARSHAL_TYPE_DATE;
+		if (klass == datetimeoffset_class)
+			return MARSHAL_TYPE_DATEOFFSET;
 		if (mono_class_is_enum (klass))
 			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt
@@ -526,6 +568,7 @@ mono_unbox_int (MonoObject *obj)
 	case MONO_TYPE_U2:
 		return *(unsigned short*)ptr;
 	case MONO_TYPE_I4:
+	case MONO_TYPE_I:
 		return *(int*)ptr;
 	case MONO_TYPE_U4:
 		return *(unsigned int*)ptr;
@@ -609,4 +652,10 @@ EMSCRIPTEN_KEEPALIVE int
 mono_wasm_strdup (const char *s)
 {
 	return (int)strdup (s);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_parse_runtime_options (int argc, char* argv[])
+{
+	mono_jit_parse_options (argc, argv);
 }

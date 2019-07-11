@@ -1,6 +1,24 @@
+// -*- mode: js; js-indent-level: 4; -*-
+//
+// Run runtime tests under a JS shell or a browser
+//
 
-//glue code to deal with the differences between ch, d8, jsc and sm.
-if (typeof print === "undefined")
+//glue code to deal with the differences between chrome, ch, d8, jsc and sm.
+var is_browser = typeof window != "undefined";
+
+if (is_browser) {
+	// We expect to be run by tests/runtime/run.js which passes in the arguments using http parameters
+	var url = new URL (decodeURI (window.location));
+	arguments = [];
+	for (var v of url.searchParams) {
+		if (v [0] == "arg") {
+			console.log ("URL ARG: " + v [0] + "=" + v [1]);
+			arguments.push (v [1]);
+		}
+	}
+}
+
+if (is_browser || typeof print === "undefined")
 	print = console.log;
 
 // JavaScript core does not have a console defined
@@ -32,32 +50,43 @@ if (typeof crypto == 'undefined') {
 	}
 }
 
-fail_exec = function(reason) {
-	print (reason);
-	wasm_exit (1);
+try {
+	if (typeof arguments == "undefined")
+		arguments = WScript.Arguments;
+	load = WScript.LoadScriptFile;
+	read = WScript.LoadBinaryFile;
+} catch (e) {
 }
 
 try {
-	arguments = WScript.Arguments;
-	load = WScript.LoadScriptFile;
-	read = WScript.LoadBinaryFile;
-	fail_exec = function(reason) {
-		print (reason);
-		wasm_exit (1);
+	if (typeof arguments == "undefined") {
+		if (typeof scriptArgs !== "undefined")
+			arguments = scriptArgs;
 	}
-} catch(e) {}
-
-try {
-	if (typeof scriptArgs !== "undefined")
-		arguments = scriptArgs;
-} catch(e) {}
+} catch (e) {
+}
 //end of all the nice shell glue code.
 
-// set up a global variable to be accessed in the App.init
+// set up a global variable to be accessed in App.init
 var testArguments = arguments;
 
-function inspect_object (o){
-    var r="";
+function test_exit (exit_code) {
+	if (is_browser) {
+		// Notify the puppeteer script
+		Module.exit_code = exit_code;
+		print ("WASM EXIT " + exit_code);
+	} else {
+		Module.wasm_exit (exit_code);
+	}
+}
+
+function fail_exec (reason) {
+	print (reason);
+	test_exit (1);
+}
+
+function inspect_object (o) {
+    var r = "";
     for(var p in o) {
         var t = typeof o[p];
         r += "'" + p + "' => '" + t + "', ";
@@ -70,6 +99,7 @@ var args = testArguments;
 print("Arguments: " + testArguments);
 profilers = [];
 setenv = {};
+runtime_args = [];
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -84,14 +114,21 @@ while (true) {
 			fail_exec ("Error: malformed argument: '" + args [0]);
 		setenv [parts [0]] = parts [1];
 		args = args.slice (1);
+	} else if (args [0].startsWith ("--runtime-arg=")) {
+		var arg = args [0].substring ("--runtime-arg=".length);
+		runtime_args.push (arg);
+		args = args.slice (1);
 	} else {
 		break;
 	}
 }
 
-load ("mono-config.js");
+if (typeof window == "undefined")
+  load ("mono-config.js");
 
 var Module = { 
+	mainScriptUrlOrBlob: "mono.js",
+
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
@@ -100,7 +137,7 @@ var Module = {
 		var err = new Error();
 		print ("Stacktrace: \n");
 		print (err.stack);
-		wasm_exit (1);
+		test_exit (1);
 	},
 
 	onRuntimeInitialized: function () {
@@ -120,6 +157,9 @@ var Module = {
 			},
 			function (asset ) 
 			{
+			  if (typeof window != 'undefined') {
+				return fetch (asset, { credentials: 'same-origin' });
+			  } else {
 				// The default mono_load_runtime_and_bcl defaults to using
 				// fetch to load the assets.  It also provides a way to set a 
 				// fetch promise callback.
@@ -135,31 +175,35 @@ var Module = {
 					}
 				   resolve(response)
 				 })
+			  }
 			}
 		);
 	},
 };
 
-load ("mono.js");
-
-var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
-var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
-var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
-var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
-var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
-var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
-var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
-var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
-var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
-var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
-var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
-var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
-var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
+if (typeof window == "undefined")
+  load ("mono.js");
 
 const IGNORE_PARAM_COUNT = -1;
 
 var App = {
     init: function () {
+
+	  var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
+	  var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
+	  var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
+	  var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
+	  var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
+	  var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
+	  var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
+	  var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
+	  var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
+	  var exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+	  var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+	  var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
+	  var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
+
+		Module.wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 
 		Module.print("Initializing.....");
 
@@ -187,6 +231,9 @@ var App = {
 
 			return;
 		}
+
+		if (runtime_args.length > 0)
+			MONO.mono_wasm_set_runtime_options (runtime_args);
 
 		if (args[0] == "--run") {
 			// Run an exe
@@ -224,13 +271,16 @@ var App = {
 				var eh_res = Module.getValue (eh_throw, "i32");
 				if (eh_res == 1) {
 					print ("Exception:" + string_get_utf8 (res));
-					wasm_exit (1);
+					test_exit (1);
 				}
 			} catch (ex) {
 				print ("JS exception: " + ex);
 				print (ex.stack);
-				wasm_exit (1);
+				test_exit (1);
 			}
+
+			if (is_browser)
+				test_exit (0);
 			return;
 		}
 
@@ -288,7 +338,7 @@ var App = {
 			{
 				res = send_message("start-test", testArguments [i])
 			} catch (e) {
-				printErr ("BAD SEND MSG: " + e);
+				Module.printErr ("BAD SEND MSG: " + e);
 				bad_send_msg_detected = true;
 			}
 			print ("-----STARTED " + testArguments [i] + "---- " + res);
@@ -310,6 +360,7 @@ var App = {
 
 		if (bad_send_msg_detected)
 			fail_exec ("BAD MSG SEND DETECTED");
+		test_exit (0);
     },
 };
 

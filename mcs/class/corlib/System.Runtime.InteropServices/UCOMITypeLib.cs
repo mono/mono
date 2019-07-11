@@ -28,7 +28,7 @@
 //
 // (C) 2002 Ximian, Inc.
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]

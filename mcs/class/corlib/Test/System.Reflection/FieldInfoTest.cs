@@ -1371,7 +1371,9 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("B", fields.str);
 		}
 
+#if !DISABLE_REMOTING
 		[Test]
+		[Category ("Remoting")]
 		public void GetValueContextBoundObject ()
 		{
 			var instance = new CBOTest ();
@@ -1394,6 +1396,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("Remoting")]
 		public void SetValueContextBoundObject ()
 		{
 			var instance = new CBOTest ();
@@ -1419,6 +1422,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (s2, "This is a string", "s2");
 
 		}
+#endif
 
 		class CBOTest : ContextBoundObject {
 			public double d1 = 14.0;

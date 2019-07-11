@@ -419,7 +419,10 @@ struct _MonoDomain {
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
-	
+
+	/* Information maintained by mono-debug.c */
+	gpointer debug_info;
+
 	/* Contains the compiled runtime invoke wrapper used by finalizers */
 	gpointer            finalize_runtime_invoke;
 
@@ -652,5 +655,8 @@ mono_runtime_register_appctx_properties (int nprops, const char **keys,  const c
 
 void
 mono_runtime_install_appctx_properties (void);
+
+gboolean 
+mono_domain_set_fast (MonoDomain *domain, gboolean force);
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

@@ -110,11 +110,12 @@ namespace System.Net
 			return e;
 		}
 
+		protected abstract bool TryReadFromBufferedContent (byte[] buffer, int offset, int count, out int result);
+
 		public override int Read (byte[] buffer, int offset, int count)
 		{
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
-			Operation.ThrowIfClosedOrDisposed ();
 
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));
@@ -125,7 +126,13 @@ namespace System.Net
 			if (count < 0 || (length - offset) < count)
 				throw new ArgumentOutOfRangeException (nameof (count));
 
-			try {
+			if (TryReadFromBufferedContent (buffer, offset, count, out var result))
+				return result;
+
+			Operation.ThrowIfClosedOrDisposed ();
+
+			try
+			{
 				return ReadAsync (buffer, offset, count, CancellationToken.None).Result;
 			} catch (Exception e) {
 				throw GetException (e);

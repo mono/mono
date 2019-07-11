@@ -28,10 +28,10 @@ namespace System.IO
         private const int MinBufferSize = 128;
 
         private readonly Stream _stream;
-        private Encoding _encoding;
-        private Decoder _decoder;
-        private readonly byte[] _byteBuffer;
-        private char[] _charBuffer;
+        private Encoding _encoding = null!; // only null in NullStreamReader where this is never used
+        private Decoder _decoder = null!; // only null in NullStreamReader where this is never used
+        private readonly byte[] _byteBuffer = null!; // only null in NullStreamReader where this is never used
+        private char[] _charBuffer = null!; // only null in NullStreamReader where this is never used
         private int _charPos;
         private int _charLen;
         // Record the number of valid bytes in the byteBuffer, for a few checks.
@@ -84,6 +84,7 @@ namespace System.IO
             }
         }
 
+        [DoesNotReturn]
         private static void ThrowAsyncIOInProgress() =>
             throw new InvalidOperationException(SR.InvalidOperation_AsyncIOInProgress);
 
@@ -94,6 +95,7 @@ namespace System.IO
 
         private StreamReader()
         {
+            Debug.Assert(this is NullStreamReader);
             _stream = Stream.Null;
             _closable = true;
         }
@@ -133,17 +135,25 @@ namespace System.IO
         {
         }
 
-        public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize, bool leaveOpen)
+        public StreamReader(Stream stream, Encoding? encoding = null, bool detectEncodingFromByteOrderMarks = true, int bufferSize = -1, bool leaveOpen = false)
         {
-            if (stream == null || encoding == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(stream == null ? nameof(stream) : nameof(encoding));
+                throw new ArgumentNullException(nameof(stream));
+            }
+            if (encoding == null)
+            {
+                encoding = Encoding.UTF8;
             }
             if (!stream.CanRead)
             {
                 throw new ArgumentException(SR.Argument_StreamNotReadable);
             }
-            if (bufferSize <= 0)
+            if (bufferSize == -1)
+            {
+                bufferSize = DefaultBufferSize;
+            }
+            else if (bufferSize <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), SR.ArgumentOutOfRange_NeedPosNum);
             }
@@ -220,7 +230,7 @@ namespace System.IO
             _disposed = true;
 
             // Dispose of our resources if this StreamReader is closable.
-            if (!LeaveOpen)
+            if (_closable)
             {
                 try
                 {
@@ -248,11 +258,6 @@ namespace System.IO
         public virtual Stream BaseStream
         {
             get { return _stream; }
-        }
-
-        internal bool LeaveOpen
-        {
-            get { return !_closable; }
         }
 
         // DiscardBufferedData tells StreamReader to throw away its internal
@@ -769,7 +774,7 @@ namespace System.IO
         // contain the terminating carriage return and/or line feed. The returned
         // value is null if the end of the input stream has been reached.
         //
-        public override string ReadLine()
+        public override string? ReadLine()
         {
             ThrowIfDisposed();
             CheckAsyncTaskInProgress();
@@ -782,7 +787,7 @@ namespace System.IO
                 }
             }
 
-            StringBuilder sb = null;
+            StringBuilder? sb = null;
             do
             {
                 int i = _charPos;
@@ -825,7 +830,7 @@ namespace System.IO
             return sb.ToString();
         }
 
-        public override Task<string> ReadLineAsync()
+        public override Task<string?> ReadLineAsync()
         {
             // If we have been inherited into a subclass, the following implementation could be incorrect
             // since it does not call through to Read() which a subclass might have overridden.  
@@ -839,20 +844,20 @@ namespace System.IO
             ThrowIfDisposed();
             CheckAsyncTaskInProgress();
 
-            Task<string> task = ReadLineAsyncInternal();
+            Task<string?> task = ReadLineAsyncInternal();
             _asyncReadTask = task;
 
             return task;
         }
 
-        private async Task<string> ReadLineAsyncInternal()
+        private async Task<string?> ReadLineAsyncInternal()
         {
             if (_charPos == _charLen && (await ReadBufferAsync().ConfigureAwait(false)) == 0)
             {
                 return null;
             }
 
-            StringBuilder sb = null;
+            StringBuilder? sb = null;
 
             do
             {
@@ -1228,7 +1233,7 @@ namespace System.IO
             return new ValueTask<int>(t);
         }
 
-        private async Task<int> ReadBufferAsync()
+        private async ValueTask<int> ReadBufferAsync()
         {
             _charLen = 0;
             _charPos = 0;
@@ -1342,7 +1347,7 @@ namespace System.IO
                 return 0;
             }
 
-            public override string ReadLine()
+            public override string? ReadLine()
             {
                 return null;
             }

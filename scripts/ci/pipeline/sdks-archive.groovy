@@ -16,17 +16,24 @@ parallel (
             }
         }
     },
+    "Android Windows (Release)": {
+        throttle(['provisions-android-toolchain']) {
+            node ("w64") {
+                archive ("android", "release", "Windows")
+            }
+        }
+    },
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
             }
         }
     },
@@ -73,9 +80,12 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 // remove old stuff
                 sh 'git reset --hard HEAD'
-                sh 'git submodule foreach --recursive git reset --hard HEAD'
+                // homebrew Git 2.22.0 misparses the submodule command and passes arguments like --hard and -xdff
+                // to git-submodule instead of to git-reset or git-clean.  Passing the entire command as a single
+                // argument seems to help.
+                sh 'git submodule foreach --recursive "git reset --hard HEAD"'
                 sh 'git clean -xdff'
-                sh 'git submodule foreach --recursive git clean -xdff'
+                sh 'git submodule foreach --recursive "git clean -xdff"'
 
                 // get current commit sha
                 commitHash = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
@@ -94,15 +104,17 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
-                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} ANDROID_TOOLCHAIN_DIR=/mnt/scratch/android-toolchain ANDROID_TOOLCHAIN_CACHE_DIR=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
                                 bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
+                        } else if (platform == "Windows") {
+                            sh "PATH=\"/usr/bin:/usr/local/bin:$PATH\" CI_TAGS=sdks-${product},win-amd64,no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else {
                             throw new Exception("Unknown platform \"${platform}\"")
                         }
                     }
-                    // move Archive to the workspace root
-                    packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.zip")[0].name
+                    // find Archive in the workspace root
+                    packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.*")[0].name
                 }
                 stage('Upload Archive to Azure') {
                     azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",

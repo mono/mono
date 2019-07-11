@@ -166,14 +166,17 @@ namespace System.Threading {
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
 #if !NETCORE
-		IPrincipal principal;
-		int principal_version;
-
+#if !DISABLE_REMOTING
 		public static Context CurrentContext {
 			get {
 				return(AppDomain.InternalGetContext ());
 			}
 		}
+#endif
+
+#if !DISABLE_SECURITY
+		IPrincipal principal;
+		int principal_version;
 
 		static void DeserializePrincipal (Thread th)
 		{
@@ -291,6 +294,12 @@ namespace System.Threading {
 				th.principal = value;
 			}
 		}
+#else
+		public static IPrincipal CurrentPrincipal {
+			get => throw new PlatformNotSupportedException ();
+			set => throw new PlatformNotSupportedException ();
+		}
+#endif
 
 		public static AppDomain GetDomain() {
 			return AppDomain.CurrentDomain;

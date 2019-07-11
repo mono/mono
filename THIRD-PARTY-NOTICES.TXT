@@ -1,0 +1,185 @@
+
+Mono uses third-party libraries or other resources that may be
+distributed under licenses different than the Mono software.
+
+Attributions and license notices for test cases originally authored by
+third parties can be found in the respective test directories.
+
+In the event that we accidentally failed to list a required notice, please
+bring it to our attention. Post an issue or email us:
+
+            dotnet@microsoft.com
+
+ The attached notices are provided for information only.
+
+License notice for Mono
+-----------------------
+
+Note: multiple license notices are provided that occure in source code.
+They are equivalent forms of the the MIT license from various copyright holders.
+
+// Dual licensed under the terms of the MIT X11 or GNU GPL
+// Copyright 2003-2011 Novell, Inc.
+// Copyright 2011 Xamarin Inc
+
+/**
+ *
+ * Copyright 2001-2003 Ximian, Inc
+ * Copyright 2003-2010 Novell, Inc.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ */
+
+/******************************************************************************
+* The MIT License
+* Copyright (c) 2003 Novell Inc.  www.novell.com
+* 
+* Permission is hereby granted, free of charge, to any person obtaining  a copy
+* of this software and associated documentation files (the Software), to deal
+* in the Software without restriction, including  without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+* copies of the Software, and to  permit persons to whom the Software is 
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in 
+* all copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*******************************************************************************/
+
+License notice for Apple
+-------------------------
+Content: https://github.com/mono/mono/blob/435f968102d0820ca65d63e1e741e4130b4d1303/support/ios/net/route.h
+License: https://opensource.apple.com/apsl/
+
+License for GCC
+---------------
+
+License: http://gcc.gnu.org/onlinedocs/gcc-4.6.4/libstdc++/manual/manual/license.html
+Content: https://github.com/mono/mono/blob/c398e19d3515c6bbb6046ed014b2095594a15229/mono/mini
+Example: https://github.com/mono/mono/blob/c398e19d3515c6bbb6046ed014b2095594a15229/mono/mini/decompose.c#L967
+
+GCC RUNTIME LIBRARY EXCEPTION
+
+Version 3.1, 31 March 2009
+
+Copyright (C) 2009 Free Software Foundation, Inc.
+
+Everyone is permitted to copy and distribute verbatim copies of this
+license document, but changing it is not allowed.
+
+This GCC Runtime Library Exception ("Exception") is an additional
+permission under section 7 of the GNU General Public License, version
+3 ("GPLv3"). It applies to a given file (the "Runtime Library") that
+bears a notice placed by the copyright holder of the file stating that
+the file is governed by GPLv3 along with this Exception.
+
+When you use GCC to compile a program, GCC may combine portions of
+certain GCC header files and runtime libraries with the compiled
+program. The purpose of this Exception is to allow compilation of
+non-GPL (including proprietary) programs to use, in this way, the
+header files and runtime libraries covered by this Exception.
+
+0. Definitions.
+
+A file is an "Independent Module" if it either requires the Runtime
+Library for execution after a Compilation Process, or makes use of an
+interface provided by the Runtime Library, but is not otherwise based
+on the Runtime Library.
+
+"GCC" means a version of the GNU Compiler Collection, with or without
+modifications, governed by version 3 (or a specified later version) of
+the GNU General Public License (GPL) with the option of using any
+subsequent versions published by the FSF.
+
+"GPL-compatible Software" is software whose conditions of propagation,
+modification and use would permit combination with GCC in accord with
+the license of GCC.
+
+"Target Code" refers to output from any compiler for a real or virtual
+target processor architecture, in executable form or suitable for
+input to an assembler, loader, linker and/or execution
+phase. Notwithstanding that, Target Code does not include data in any
+format that is used as a compiler intermediate representation, or used
+for producing a compiler intermediate representation.
+
+The "Compilation Process" transforms code entirely represented in
+non-intermediate languages designed for human-written code, and/or in
+Java Virtual Machine byte code, into Target Code. Thus, for example,
+use of source code generators and preprocessors need not be considered
+part of the Compilation Process, since the Compilation Process can be
+understood as starting with the output of the generators or
+preprocessors.
+
+A Compilation Process is "Eligible" if it is done using GCC, alone or
+with other GPL-compatible software, or if it is done without using any
+work based on GCC. For example, using non-GPL-compatible Software to
+optimize any GCC intermediate representations would not qualify as an
+Eligible Compilation Process.
+
+1. Grant of Additional Permission.
+
+You have permission to propagate a work of Target Code formed by
+combining the Runtime Library with Independent Modules, even if such
+propagation would otherwise violate the terms of GPLv3, provided that
+all Target Code was generated by Eligible Compilation Processes. You
+may then convey such a combination under terms of your choice,
+consistent with the licensing of the Independent Modules.
+
+2. No Weakening of GCC Copyleft.
+
+The availability of this Exception does not imply any general
+presumption that third-party software is unaffected by the copyleft
+requirements of the license of GCC.
+    
+
+Hopefully that text is self-explanatory. If it isn't, you need to speak to your lawyer, or the Free Software Foundation.
+
+License notice for Silicon Graphics and HP
+------------------------------------------
+
+/*
+ * Copyright (c) 1996-1997
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ * Copyright (c) 2002
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+/*
+ * This implements standard-conforming allocators that interact with
+ * the garbage collector.  Gc_alloctor<T> allocates garbage-collectable
+ * objects of type T.  Traceable_allocator<T> allocates objects that
+ * are not temselves garbage collected, but are scanned by the
+ * collector for pointers to collectable objects.  Traceable_alloc
+ * should be used for explicitly managed STL containers that may
+ * point to collectable objects.
+ *
+ * This code was derived from an earlier version of the GNU C++ standard
+ * library, which itself was derived from the SGI STL implementation.
+ */
+ 
+ Content: https://github.com/mono/mono/blob/d58dfa185af1d48fb93efdef1d046762f214f0a7/libgc/include/gc_allocator.h

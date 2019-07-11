@@ -104,6 +104,24 @@ void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
 void
+mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo);
+
+void
+mono_llvm_set_call_nonnull_ret (LLVMValueRef calli);
+
+void
+mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo);
+
+GSList *
+mono_llvm_calls_using (LLVMValueRef wrapped_local);
+
+LLVMValueRef *
+mono_llvm_call_args (LLVMValueRef calli);
+
+gboolean
+mono_llvm_is_nonnull (LLVMValueRef val);
+
+void
 mono_llvm_set_call_notailcall (LLVMValueRef call);
 
 void
@@ -122,9 +140,6 @@ mono_llvm_add_instr_attr (LLVMValueRef val, int index, AttrKind kind);
 G_EXTERN_C _Unwind_Reason_Code mono_debug_personality (int a, _Unwind_Action b,
 	uint64_t c, struct _Unwind_Exception *d, struct _Unwind_Context *e);
 #endif
-
-void
-default_mono_llvm_unhandled_exception (void);
 
 void*
 mono_llvm_create_di_builder (LLVMModuleRef module);

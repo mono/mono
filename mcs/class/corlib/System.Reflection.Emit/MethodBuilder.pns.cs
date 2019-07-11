@@ -41,7 +41,6 @@ namespace System.Reflection.Emit
 		public override bool ContainsGenericParameters { get { throw new PlatformNotSupportedException (); } }
 		public override System.Type DeclaringType { get { throw new PlatformNotSupportedException (); } }
 		public bool InitLocals { get { throw new PlatformNotSupportedException (); } set { throw new PlatformNotSupportedException (); }  }
-		public override bool IsConstructedGenericMethod { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsGenericMethod { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsGenericMethodDefinition { get { throw new PlatformNotSupportedException (); } }
 		public override System.RuntimeMethodHandle MethodHandle { get { throw new PlatformNotSupportedException (); } }
@@ -52,6 +51,8 @@ namespace System.Reflection.Emit
 		public override System.Type ReturnType { get { throw new PlatformNotSupportedException (); } }
 		public override System.Reflection.ICustomAttributeProvider ReturnTypeCustomAttributes { get { throw new PlatformNotSupportedException (); } }
 		public string Signature { get { throw new PlatformNotSupportedException (); } }
+
+		public void AddDeclarativeSecurity (System.Security.Permissions.SecurityAction action, System.Security.PermissionSet pset) { throw new PlatformNotSupportedException (); } 
 		public void CreateMethodBody(byte[] il, int count) { throw new PlatformNotSupportedException (); } 
 		public System.Reflection.Emit.GenericTypeParameterBuilder[] DefineGenericParameters(params string[] names) { throw new PlatformNotSupportedException (); }
 		public System.Reflection.Emit.ParameterBuilder DefineParameter(int position, System.Reflection.ParameterAttributes attributes, string strParamName) { throw new PlatformNotSupportedException (); }
@@ -74,10 +75,13 @@ namespace System.Reflection.Emit
 		public void SetCustomAttribute(System.Reflection.ConstructorInfo con, byte[] binaryAttribute) { throw new PlatformNotSupportedException (); } 
 		public void SetCustomAttribute(System.Reflection.Emit.CustomAttributeBuilder customBuilder) { throw new PlatformNotSupportedException (); } 
 		public void SetImplementationFlags(System.Reflection.MethodImplAttributes attributes) { throw new PlatformNotSupportedException (); } 
+		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+		public void SetMarshal (UnmanagedMarshal unmanagedMarshal) { throw new PlatformNotSupportedException (); }
 		public void SetMethodBody(byte[] il, int maxStack, byte[] localSignature, System.Collections.Generic.IEnumerable<System.Reflection.Emit.ExceptionHandler> exceptionHandlers, System.Collections.Generic.IEnumerable<int> tokenFixups) { throw new PlatformNotSupportedException (); } 
 		public void SetParameters(params System.Type[] parameterTypes) { throw new PlatformNotSupportedException (); } 
 		public void SetReturnType(System.Type returnType) { throw new PlatformNotSupportedException (); } 
 		public void SetSignature(System.Type returnType, System.Type[] returnTypeRequiredCustomModifiers, System.Type[] returnTypeOptionalCustomModifiers, System.Type[] parameterTypes, System.Type[][] parameterTypeRequiredCustomModifiers, System.Type[][] parameterTypeOptionalCustomModifiers) { throw new PlatformNotSupportedException (); } 
+		public void SetSymCustomAttribute (string name, byte[] data) { throw new PlatformNotSupportedException (); }
 		public override string ToString() { throw new PlatformNotSupportedException (); }
 	}
 }

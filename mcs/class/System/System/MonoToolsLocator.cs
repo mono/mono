@@ -1,4 +1,4 @@
-#if !MOBILE
+#if !MOBILE || MOBILE_DESKTOP_HOST
 
 using System.Diagnostics;
 using System.IO;

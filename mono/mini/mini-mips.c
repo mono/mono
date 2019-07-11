@@ -3438,8 +3438,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * So instead of emitting a trap, we emit a call a C function and place a 
 			 * breakpoint there.
 			 */
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-								 (gpointer)"mono_break");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 			mips_load (code, mips_t9, 0x1f1f1f1f);
 			mips_jalr (code, mips_t9, mips_ra);
 			mips_nop (code);
@@ -5096,7 +5095,7 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg)
 		mips_load_const (code, mips_at, alloc2_size);
 		mips_addu (code, mips_sp, mips_sp, mips_at);
 	}
-	pos = cfg->arch.iregs_offset - alloc2_size;
+	int pos = cfg->arch.iregs_offset - alloc2_size;
 	iregs_to_restore = (cfg->used_int_regs & MONO_ARCH_CALLEE_SAVED_REGS);
 	if (iregs_to_restore) {
 		for (i = MONO_MAX_IREGS-1; i >= 0; --i) {
@@ -5234,30 +5233,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_EXC: {
-#if 0
-			//unsigned char *ip = patch_info->ip.i + cfg->native_code;
-
-			i = exception_id_by_name (patch_info->data.target);
-			g_assert (i >= 0 && i < MONO_EXC_INTRINS_NUM);
-			if (!exc_throw_pos [i]) {
-				guint32 addr;
-
-				exc_throw_pos [i] = code;
-				//g_print ("exc: writing stub at %p\n", code);
-				mips_load_const (code, mips_a0, patch_info->data.target);
-				addr = (guint32) mono_arch_get_throw_exception_by_name ();
-				mips_load_const (code, mips_t9, addr);
-				mips_jr (code, mips_t9);
-				mips_nop (code);
-			}
-			//g_print ("exc: patch %p to %p\n", ip, exc_throw_pos[i]);
-
-			/* Turn into a Relative patch, pointing at code stub */
-			patch_info->type = MONO_PATCH_INFO_METHOD_REL;
-			patch_info->data.offset = exc_throw_pos[i] - cfg->native_code;
-#else
 			g_assert_not_reached();
-#endif
 			break;
 		}
 		default:
@@ -5631,4 +5607,10 @@ gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	return FALSE;
+}
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	return NULL;
 }

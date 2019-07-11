@@ -1094,6 +1094,26 @@ namespace MonoTests.System.Transactions
 		}
 
 		#endregion
+
+		[Test]
+		public void DefaultIsolationLevel()
+		{
+			using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required))
+			{
+				Assert.AreEqual(IsolationLevel.Serializable, Transaction.Current.IsolationLevel);
+			}
+		}
+		
+		[Test]
+		public void ExplicitIsolationLevel()
+		{
+			TransactionOptions transactionOptions = new TransactionOptions();
+			transactionOptions.IsolationLevel = IsolationLevel.ReadCommitted;
+			using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+			{
+				Assert.AreEqual(IsolationLevel.ReadCommitted, Transaction.Current.IsolationLevel);
+			}
+		}
 	}
 
 }

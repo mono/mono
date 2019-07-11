@@ -53,7 +53,7 @@ export EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-crash-privacy=no "
 if [[ ${CI_TAGS} == *'osx-i386'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m32 -arch i386 -mmacosx-version-min=10.9"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin13.0.0 --build=i386-apple-darwin13.0.0"; fi
 if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.9"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32 --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
-if [[ ${CI_TAGS} == *'win-amd64'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
+if [[ ${CI_TAGS} == *'win-amd64'* && ${CI_TAGS} != *'sdks-android'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'make-install'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-loadedllvm --prefix=${MONO_REPO_ROOT}/tmp/monoprefix"; fi
 
 if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
@@ -74,6 +74,8 @@ elif [[ ${CI_TAGS} == *'aot_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'jit_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes"; export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS --llvm";
 elif [[ ${CI_TAGS} == *'fullaotinterp_llvm'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaotinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaotinterp";
+elif [[ ${CI_TAGS} == *'winaotinterp'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaotinterp";
+elif [[ ${CI_TAGS} == *'winaotinterp_llvm'* ]];  then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=winaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaot";
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
@@ -82,6 +84,7 @@ elif [[ ${CI_TAGS} == *'bitcodeinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export PATH="$PATH:${MONO_REPO_ROOT}/llvm/usr/bin";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all";
+elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=/tmp/mono-from-source";
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
@@ -124,17 +127,22 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
-	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
-		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
-	fi
 	exit 0
 fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
-	   # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        export MACOS_VERSION=10.14
+        export IOS_VERSION=12.1
+        export TVOS_VERSION=12.1
+        export WATCHOS_VERSION=5.1
+        export WATCHOS64_32_VERSION=5.1
+
+        # make sure we embed the correct path into the PDBs
+        export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
         echo "DISABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
@@ -179,6 +187,10 @@ then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
     export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
     export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+    export MACOS_VERSION=10.14
+
+    # make sure we embed the correct path into the PDBs
+    export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
     echo "DISABLE_IOS=1" > sdks/Make.config
     echo "DISABLE_ANDROID=1" >> sdks/Make.config
@@ -212,9 +224,12 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
 
+        # TODO: provision-android on Windows.
+        if [[ ${CI_TAGS} != *'win-'* ]]; then
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
-        # but doesn't get stuck when called via the shell, so let's just call it here now.
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/builds provision-android && $gnumake -C sdks/android accept-android-license
+            # but doesn't get stuck when called via the shell, so let's just call it here now.
+            ${TESTCMD} --label=provision-android --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/builds provision-android && $gnumake -C sdks/android accept-android-license
+        fi
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
 
         ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
@@ -258,6 +273,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
+        echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
@@ -270,14 +286,14 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            #${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
             ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
             ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
             ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
             #The following tests are not passing yet, so enabling them would make us perma-red
             #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
             #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
-            #${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
             ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-system-core
@@ -311,17 +327,13 @@ if [[ ${CI_TAGS} == *'win-'* ]];
     ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen ${MSBUILD_CXX}"
 fi
 
-if [[ ${CI_TAGS} == *'winaot'* ]];
+if [[ ${CI_TAGS} == *'win-amd64'* ]];
     then
-
-    if [[ ${PLATFORM} == x64 ]];
-        then
-        # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
-        # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
-        # Use a wrapper script that will make sure to setup full VS MSVC environment if
-        # needed when running mono-sgen.exe as AOT compiler.
-        export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
-    fi
+    # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
+    # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
+    # Use a wrapper script that will make sure to setup full VS MSVC environment if
+    # needed when running mono-sgen.exe as AOT compiler.
+    export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
 fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
@@ -358,7 +370,9 @@ elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
 elif [[ ${CI_TAGS} == *'helix-tests'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-helix.sh;
+elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]];   then ${MONO_REPO_ROOT}/scripts/ci/run-test-msbuild.sh;
 elif [[ ${CI_TAGS} == *'make-install'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-make-install.sh;
+elif [[ ${CI_TAGS} == *'compiler-server-tests'* ]];          then ${MONO_REPO_ROOT}/scripts/ci/run-test-compiler-server.sh;
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests.";
 else make check-ci;
 fi

@@ -54,7 +54,7 @@ namespace System
 		{
 			Type type = obj as Type;
 #if !FULL_AOT_RUNTIME
-			if ((type is RuntimeType) || (type is TypeBuilder))
+			if ((type is RuntimeType) || (RuntimeFeature.IsDynamicCodeSupported && type is TypeBuilder))
 #else
 			if (type is RuntimeType)
 #endif
@@ -88,7 +88,7 @@ namespace System
 							return pseudoAttrs;
 						else
 							return new object [] { pseudoAttrs [i] };
-				return EmptyArray<object>.Value;
+				return Array.Empty<object> ();
 			}
 
 			return pseudoAttrs;
@@ -629,7 +629,7 @@ namespace System
 					return bmethod.GetParameters ()[parinfo.Position];
 				}
 			}
-			/**
+			/*
 			 * ParameterInfo -> null
 			 * Assembly -> null
 			 * RuntimeEventInfo -> null

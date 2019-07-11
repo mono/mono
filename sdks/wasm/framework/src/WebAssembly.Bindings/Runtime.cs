@@ -63,24 +63,8 @@ namespace WebAssembly {
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject> ();
 		static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject> ();
 
-		static Dictionary<string, Type> js_clr_mapping = new Dictionary<string, Type> (); 
-
 		static Runtime ()
-		{
-			js_clr_mapping.Add ("[object Array]", typeof (Core.Array));
-			js_clr_mapping.Add ("[object ArrayBuffer]", typeof (Core.ArrayBuffer));
-			js_clr_mapping.Add ("[object Int8Array]", typeof (Core.Int8Array));
-			js_clr_mapping.Add ("[object Uint8Array]", typeof (Core.Uint8Array));
-			js_clr_mapping.Add ("[object Uint8ClampedArray]", typeof (Core.Uint8ClampedArray));
-			js_clr_mapping.Add ("[object Int16Array]", typeof (Core.Int16Array));
-			js_clr_mapping.Add ("[object Uint16Array]", typeof (Core.Uint16Array));
-			js_clr_mapping.Add ("[object Int32Array]", typeof (Core.Int32Array));
-			js_clr_mapping.Add ("[object Uint32Array]", typeof (Core.Uint32Array));
-			js_clr_mapping.Add ("[object Float32Array]", typeof (Core.Float32Array));
-			js_clr_mapping.Add ("[object Float64Array]", typeof (Core.Float64Array));
-			js_clr_mapping.Add ("[object Function]", typeof (Core.Function));
-			js_clr_mapping.Add ("[object SharedArrayBuffer]", typeof (Core.SharedArrayBuffer));
-		}
+		{ }
 
 		/// <summary>
 		/// Creates a new JavaScript object of the specified type
@@ -118,11 +102,10 @@ namespace WebAssembly {
 			return res as JSObject;
 		}
 
-		static int BindJSObject (int js_id, string type)
+		static int BindJSObject (int js_id, Type mappedType)
 		{
-			JSObject obj;
-			if (!bound_objects.TryGetValue (js_id, out obj)) {
-				if (js_clr_mapping.TryGetValue (type, out Type mappedType)) {
+			if (!bound_objects.TryGetValue (js_id, out JSObject obj)) {
+				if (mappedType != null) {
 					return BindJSType (js_id, mappedType);
 				} else {
 					bound_objects [js_id] = obj = new JSObject ((IntPtr)js_id);
@@ -138,19 +121,21 @@ namespace WebAssembly {
 			GCHandle h = (GCHandle)(IntPtr)gcHandle;
 			JSObject obj = (JSObject)h.Target;
 
-			if (bound_objects.ContainsKey (js_id))
-				obj = bound_objects [js_id];
-			else
+			if (bound_objects.TryGetValue (js_id, out var existingObj)) {
+				if (existingObj.Handle != h && h.IsAllocated)
+					throw new JSException ($"Multiple handles pointing at js_id: {js_id}");
+
+				obj = existingObj;
+			} else
 				bound_objects [js_id] = obj;
 
 			return (int)(IntPtr)obj.Handle;
 		}
 
-		static int BindJSType (int js_id, Type type)
+		static int BindJSType (int js_id, Type mappedType)
 		{
-			JSObject obj;
-			if (!bound_objects.TryGetValue (js_id, out obj)) {
-				var jsobjectnew = type.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
+			if (!bound_objects.TryGetValue (js_id, out JSObject obj)) {
+				var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
 			    		null, new Type [] { typeof (IntPtr) }, null);
 				bound_objects [js_id] = obj = (JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id });
 			}
@@ -300,6 +285,13 @@ namespace WebAssembly {
 		
 		}
 
+		static object GetCoreType (string coreObj)
+		{
+			Assembly asm = typeof (Runtime).Assembly;
+			Type type = asm.GetType (coreObj);
+			return type;
+
+		}
 
 		[StructLayout (LayoutKind.Explicit)]
 		internal struct IntPtrAndHandle {
@@ -354,9 +346,13 @@ namespace WebAssembly {
 					res += "s";
 					break;
 				default:
-					if (t.IsValueType)
-						throw new Exception ("Can't handle VT arguments");
-					res += "o";
+					if (t == typeof(IntPtr)) { 
+ 						res += "i";
+					} else {
+ 						if (t.IsValueType)
+ 							throw new Exception("Can't handle VT arguments");
+						res += "o";
+					}
 					break;
 				}
 			}
@@ -462,6 +458,27 @@ namespace WebAssembly {
 			return o.ToString ();
 		}
 
+		static double GetDateValue (object dtv)
+		{
+			if (dtv == null)
+				throw new ArgumentNullException (nameof (dtv), "Value can not be null");
+			if (!(dtv is DateTime)) {
+				throw new InvalidCastException ($"Unable to cast object of type {dtv.GetType()} to type DateTime.");
+			}
+			var dt = (DateTime)dtv;
+			if (dt.Kind == DateTimeKind.Local)
+				dt = dt.ToUniversalTime ();
+			else if (dt.Kind == DateTimeKind.Unspecified)
+				dt = new DateTime (dt.Ticks, DateTimeKind.Utc);
+			return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+		}
+
+		static DateTime CreateDateTime (double ticks)
+		{
+			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
+			return unixTime.DateTime;
+		}
+
 		// This is simple right now and will include FlagsAttribute later.
 		public static Enum EnumFromExportContract (Type enumType, object value)
 		{
@@ -564,5 +581,23 @@ namespace WebAssembly {
 			return contractName;
 		}
 
+		//
+		// Can be called by the app to stop profiling
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void StopProfile () {
+		}
+
+		// Called by the AOT profiler to save profile data into Module.aot_profile_data
+		internal unsafe static void DumpAotProfileData (ref byte buf, int len, string s) {
+			var arr = new byte [len];
+			fixed (void *p = &buf) {
+				var span = new ReadOnlySpan<byte> (p, len);
+
+				// Send it to JS
+				var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
+			}
+		}
 	}
 }

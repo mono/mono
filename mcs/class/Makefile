@@ -120,7 +120,8 @@ monodroid_tools_dirs_parallel := \
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
 	monodoc \
-	Mono.Debugger.Soft
+	Mono.Debugger.Soft \
+	Mono.Profiler.Log
 
 monotouch_tools_dirs_parallel := \
 	Mono.Cecil \
@@ -156,6 +157,10 @@ monotouch_tv_runtime_dirs := \
 	$(monotouch_watch_runtime_dirs_parallel)
 
 winaot_dirs_parallel := \
+	$(mobile_common_dirs_parallel)	\
+	Mono.Simd
+
+testing_winaot_interp_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd
 
@@ -410,6 +415,9 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(mobile_common_dirs)
 winaot_PARALLEL_SUBDIRS := $(winaot_dirs_parallel)
 
+testing_winaot_interp_SUBDIRS := $(mobile_common_dirs)
+testing_winaot_interp_PARALLEL_SUBDIRS := $(testing_winaot_interp_dirs_parallel)
+
 orbis_SUBDIRS := $(mobile_common_dirs)
 orbis_PARALLEL_SUBDIRS := $(orbis_dirs_parallel)
 
@@ -421,7 +429,7 @@ wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
 wasm_tools_SUBDIRS :=
 wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
-netcore_SUBDIRS := System.Private.CoreLib
+netcore_SUBDIRS :=
 netcore_PARALLEL_SUBDIRS :=
 
 include ../build/rules.make

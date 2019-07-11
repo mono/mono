@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -56,6 +57,7 @@ namespace System.IO
             }
         }
 
+        [DoesNotReturn]
         private static void ThrowAsyncIOInProgress() =>
             throw new InvalidOperationException(SR.InvalidOperation_AsyncIOInProgress);
 
@@ -89,18 +91,26 @@ namespace System.IO
         {
         }
 
-        public StreamWriter(Stream stream, Encoding encoding, int bufferSize, bool leaveOpen)
+        public StreamWriter(Stream stream, Encoding? encoding = null, int bufferSize = -1, bool leaveOpen = false)
             : base(null) // Ask for CurrentCulture all the time
         {
-            if (stream == null || encoding == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(stream == null ? nameof(stream) : nameof(encoding));
+                throw new ArgumentNullException(nameof(stream));
+            }
+            if (encoding == null)
+            {
+                encoding = UTF8NoBOM;
             }
             if (!stream.CanWrite)
             {
                 throw new ArgumentException(SR.Argument_StreamNotWritable);
             }
-            if (bufferSize <= 0)
+            if (bufferSize == -1)
+            {
+                bufferSize = DefaultBufferSize;
+            }
+            else if (bufferSize <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), SR.ArgumentOutOfRange_NeedPosNum);
             }
@@ -190,7 +200,7 @@ namespace System.IO
         private void CloseStreamFromDispose(bool disposing)
         {
             // Dispose of our resources if this StreamWriter is closable. 
-            if (!LeaveOpen && !_disposed)
+            if (_closable && !_disposed)
             {
                 try
                 {
@@ -302,16 +312,6 @@ namespace System.IO
             get { return _stream; }
         }
 
-        internal bool LeaveOpen
-        {
-            get { return !_closable; }
-        }
-
-        internal bool HaveWrittenPreamble
-        {
-            set { _haveWrittenPreamble = value; }
-        }
-
         public override Encoding Encoding
         {
             get { return _encoding; }
@@ -335,7 +335,7 @@ namespace System.IO
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)] // prevent WriteSpan from bloating call sites
-        public override void Write(char[] buffer)
+        public override void Write(char[]? buffer)
         {
             WriteSpan(buffer, appendNewLine: false);
         }
@@ -453,13 +453,13 @@ namespace System.IO
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)] // prevent WriteSpan from bloating call sites
-        public override void Write(string value)
+        public override void Write(string? value)
         {
             WriteSpan(value, appendNewLine: false);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)] // prevent WriteSpan from bloating call sites
-        public override void WriteLine(string value)
+        public override void WriteLine(string? value)
         {
             CheckAsyncTaskInProgress();
             WriteSpan(value, appendNewLine: true);
@@ -484,8 +484,8 @@ namespace System.IO
         private void WriteFormatHelper(string format, ParamsArray args, bool appendNewLine)
         {
             StringBuilder sb =
-                StringBuilderCache.Acquire(format.Length + args.Length * 8)
-                .AppendFormatHelper(null, format, args);
+                StringBuilderCache.Acquire((format?.Length ?? 0) + args.Length * 8)
+                .AppendFormatHelper(null, format!, args); // AppendFormatHelper will appropriately throw ArgumentNullException for a null format
 
             StringBuilder.ChunkEnumerator chunks = sb.GetChunks();
 
@@ -502,7 +502,7 @@ namespace System.IO
             StringBuilderCache.Release(sb);
         }
 
-        public override void Write(string format, object arg0)
+        public override void Write(string format, object? arg0)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -514,7 +514,7 @@ namespace System.IO
             }
         }
 
-        public override void Write(string format, object arg0, object arg1)
+        public override void Write(string format, object? arg0, object? arg1)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -526,7 +526,7 @@ namespace System.IO
             }
         }
 
-        public override void Write(string format, object arg0, object arg1, object arg2)
+        public override void Write(string format, object? arg0, object? arg1, object? arg2)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -538,10 +538,14 @@ namespace System.IO
             }
         }
 
-        public override void Write(string format, params object[] arg)
+        public override void Write(string format, params object?[] arg)
         {
             if (GetType() == typeof(StreamWriter))
             {
+                if (arg == null)
+                {
+                    throw new ArgumentNullException((format == null) ? nameof(format) : nameof(arg)); // same as base logic
+                }
                 WriteFormatHelper(format, new ParamsArray(arg), appendNewLine: false);
             }
             else
@@ -550,7 +554,7 @@ namespace System.IO
             }
         }
 
-        public override void WriteLine(string format, object arg0)
+        public override void WriteLine(string format, object? arg0)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -562,7 +566,7 @@ namespace System.IO
             }
         }
 
-        public override void WriteLine(string format, object arg0, object arg1)
+        public override void WriteLine(string format, object? arg0, object? arg1)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -574,7 +578,7 @@ namespace System.IO
             }
         }
 
-        public override void WriteLine(string format, object arg0, object arg1, object arg2)
+        public override void WriteLine(string format, object? arg0, object? arg1, object? arg2)
         {
             if (GetType() == typeof(StreamWriter))
             {
@@ -586,10 +590,14 @@ namespace System.IO
             }
         }
 
-        public override void WriteLine(string format, params object[] arg)
+        public override void WriteLine(string format, params object?[] arg)
         {
             if (GetType() == typeof(StreamWriter))
             {
+                if (arg == null)
+                {
+                    throw new ArgumentNullException(nameof(arg));
+                }
                 WriteFormatHelper(format, new ParamsArray(arg), appendNewLine: true);
             }
             else
@@ -658,10 +666,10 @@ namespace System.IO
                 charPos = 0;
             }
 
-            _this.CharPos_Prop = charPos;
+            _this._charPos = charPos;
         }
 
-        public override Task WriteAsync(string value)
+        public override Task WriteAsync(string? value)
         {
             // If we have been inherited into a subclass, the following implementation could be incorrect
             // since it does not call through to Write() which a subclass might have overridden.  
@@ -747,7 +755,7 @@ namespace System.IO
                 charPos = 0;
             }
 
-            _this.CharPos_Prop = charPos;
+            _this._charPos = charPos;
         }
 
         public override Task WriteAsync(char[] buffer, int index, int count)
@@ -856,7 +864,7 @@ namespace System.IO
                 charPos = 0;
             }
 
-            _this.CharPos_Prop = charPos;
+            _this._charPos = charPos;
         }
 
         public override Task WriteLineAsync()
@@ -901,7 +909,7 @@ namespace System.IO
         }
 
 
-        public override Task WriteLineAsync(string value)
+        public override Task WriteLineAsync(string? value)
         {
             if (value == null)
             {
@@ -1010,16 +1018,6 @@ namespace System.IO
             return task;
         }
 
-        private int CharPos_Prop
-        {
-            set { _charPos = value; }
-        }
-
-        private bool HaveWrittenPreamble_Prop
-        {
-            set { _haveWrittenPreamble = value; }
-        }
-
         private Task FlushAsyncInternal(bool flushStream, bool flushEncoder,
                                         char[] sCharBuffer, int sCharPos, CancellationToken cancellationToken = default)
         {
@@ -1050,7 +1048,7 @@ namespace System.IO
         {
             if (!haveWrittenPreamble)
             {
-                _this.HaveWrittenPreamble_Prop = true;
+                _this._haveWrittenPreamble = true;
                 byte[] preamble = encoding.GetPreamble();
                 if (preamble.Length > 0)
                 {

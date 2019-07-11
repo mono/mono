@@ -1,13 +1,4 @@
 
-LLVM36_SRC?=$(TOP)/sdks/builds/toolchains/llvm36
-
-$(TOP)/sdks/builds/toolchains/llvm36:
-	mkdir -p $(dir $@)
-	git clone -b $(LLVM36_BRANCH) https://github.com/mono/llvm.git $@
-	cd $@ && git checkout $(LLVM36_HASH)
-
-$(LLVM36_SRC)/configure: | $(LLVM36_SRC)
-
 ##
 # Parameters
 #  $(1): version
@@ -39,8 +30,8 @@ $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
-ifeq ($(UNAME),Darwin)
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm))
 endif
 
 ##
@@ -70,66 +61,28 @@ clean-llvm-$(1)::
 
 endef
 
-llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMTemplate,llvm32))
-$(eval $(call LLVMTemplate,llvm64))
-
 ##
-# Parameters
+# Parameters:
 #  $(1): target
-#  $(2): arch
-define LLVM36Template
+define LLVMTemplateStub
 
-_llvm36-$(1)_CFLAGS=
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	@echo "TODO: setup-llvm-$(1) on $(NAME)"
 
-_llvm36-$(1)_CXXFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9 -stdlib=libc++)
+.PHONY: package-llvm-$(1)
+package-llvm-$(1):
+	@echo "TODO: package-llvm-$(1) on $(UNAME)"
 
-_llvm36-$(1)_LDFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
-
-_llvm36-$(1)_CONFIGURE_ENVIRONMENT= \
-	$$(if $$(llvm36-$(1)_CC),CC="$$(llvm36-$(1)_CC)") \
-	$$(if $$(llvm36-$(1)_CXX),CXX="$$(llvm36-$(1)_CXX)") \
-	CFLAGS="$$(_llvm36-$(1)_CFLAGS)" \
-	CXXFLAGS="$$(_llvm36-$(1)_CXXFLAGS)" \
-	LDFLAGS="$$(_llvm36-$(1)_LDFLAGS)"
-
-_llvm36-$(1)_CONFIGURE_FLAGS= \
-	--host=$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
-	--cache-file=$$(TOP)/sdks/builds/llvm36-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/llvm36-$(1) \
-	--enable-assertions=no \
-	--enable-optimized \
-	--enable-targets="arm,aarch64,x86" \
-	$$(if $$(filter $$(UNAME),Darwin),--enable-libcpp)
-
-.stamp-llvm36-$(1)-configure: $$(LLVM36_SRC)/configure
-	mkdir -p $$(TOP)/sdks/builds/llvm36-$(1)
-	cd $$(TOP)/sdks/builds/llvm36-$(1) && $$< $$(_llvm36-$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm36-$(1)_CONFIGURE_FLAGS)
-	touch $$@
-
-.PHONY: setup-llvm36-$(1)
-setup-llvm36-$(1):
-	mkdir -p $$(TOP)/sdks/out/llvm36-$(1)
-
-.PHONY: build-llvm36-$(1)
-build-llvm36-$(1): .stamp-llvm36-$(1)-configure
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm36-$(1)
-
-.PHONY: package-llvm36-$(1)
-package-llvm36-$(1): setup-llvm36-$(1) build-llvm36-$(1)
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm36-$(1) install
-
-.PHONY: clean-llvm36-$(1)
-clean-llvm36-$(1)::
-	rm -rf .stamp-llvm36-$(1)-configure $$(TOP)/sdks/builds/llvm36-$(1) $$(TOP)/sdks/builds/llvm36-$(1).config.cache $$(TOP)/sdks/out/llvm36-$(1)
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1)::
+	@echo "TODO: clean-llvm-$(1) on $(UNAME)"
 
 endef
 
-ifeq ($(UNAME),Darwin)
-$(eval $(call LLVM36Template,llvm32,i386))
-endif
+llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
+$(eval $(call LLVMTemplate,llvm32))
+$(eval $(call LLVMTemplate,llvm64))
 
 ##
 # Parameters
@@ -141,7 +94,9 @@ define LLVMMxeTemplate
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCMAKE_EXE_LINKER_FLAGS=-static is needed so that we don't dynamically link with any of the mingw gcc support libs.
 _llvm-$(1)_CMAKE_ARGS = \
+	-DCMAKE_EXE_LINKER_FLAGS=\"-static\" \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/NATIVE.cmake \
 	-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/$(3).cmake \
 	-DLLVM_ENABLE_THREADS=Off \
@@ -179,4 +134,28 @@ ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
+endif
+
+##
+# Parameters
+#  $(1): target
+#  $(2): arch
+define LLVMMsvcTemplate
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1): setup-llvm-$(1)
+	$$(TOP)/llvm/build_llvm_msbuild.sh "build" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1):
+	$$(TOP)/llvm/build_llvm_msbuild.sh "clean" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+endef
+
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMMsvcTemplate,llvmwin64-msvc,x86_64))
 endif

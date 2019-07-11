@@ -142,7 +142,7 @@ namespace System {
 				if (nested != null)
 					return nested;
 				else
-					return EmptyArray<TypeName>.Value;
+					return Array.Empty<TypeName> ();
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace System {
 				if (modifier_spec != null)
 					return modifier_spec;
 				else
-					return EmptyArray<ModifierSpec>.Value;
+					return Array.Empty<ModifierSpec> ();
 			}
 		}
 

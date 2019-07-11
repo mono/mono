@@ -73,6 +73,7 @@ Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
 System/AndroidPlatform.cs
 System/AppDomain.cs
+System/AppDomain.pns.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
 System/AppDomainSetup.cs
@@ -286,6 +287,7 @@ System.Reflection.Emit/MethodBuilder.cs
 System.Reflection.Emit/MethodOnTypeBuilderInst.cs
 System.Reflection.Emit/MethodToken.cs
 System.Reflection.Emit/MethodRental.cs
+System.Reflection.Emit/MethodRental.pns.cs
 System.Reflection.Emit/ModuleBuilder.cs
 System.Reflection.Emit/MonoArrayMethod.cs
 System.Reflection.Emit/OpCodeNames.cs
@@ -308,6 +310,7 @@ System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeBuilderInstantiation.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
+System.Reflection.Emit/UnmanagedMarshal.pns.cs
 System.Reflection.Emit/AssemblyBuilder.pns.cs
 System.Reflection.Emit/ConstructorBuilder.pns.cs
 System.Reflection.Emit/CustomAttributeBuilder.pns.cs
@@ -1619,6 +1622,7 @@ corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/MethodInfo.cs
 corefx/RandomNumberGenerator.cs
+corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs
 corefx/TimeSpanParse.cs
 
@@ -1904,4 +1908,8 @@ corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
 corefx/ThrowHelper.cs
+corefx/EnumeratorCancellationAttribute.cs
+corefx/TaskAsyncEnumerableExtensions.cs
+corefx/PbeParameters.cs
+corefx/PbeEncryptionAlgorithm.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/AmbiguousImplementationException.cs

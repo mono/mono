@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Xamarin.ProcessControl;
 
 namespace Mono.WebAssembly.Build
 {
@@ -66,8 +67,8 @@ namespace Mono.WebAssembly.Build
 			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
 			if (File.Exists(toolsPath))
 				return toolsPath;
-			else 
-				return Path.Combine (dir, "monolinker.exe");
+
+			return Path.Combine (dir, "monolinker.exe");
 		}
 
 		protected override bool ValidateParameters ()
@@ -93,11 +94,10 @@ namespace Mono.WebAssembly.Build
 
 		protected override string GenerateCommandLineCommands ()
 		{
-			var sb = new StringBuilder ();
-			sb.Append (" --verbose");
+			ProcessArguments arguments = ProcessArguments.Create ("--verbose");
 
 			// add exclude features
-			sb.Append (" --exclude-feature remoting --exclude-feature com --exclude-feature etw");
+			arguments = arguments.AddRange ("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
 
 			string coremode, usermode;
 
@@ -116,24 +116,30 @@ namespace Mono.WebAssembly.Build
 				break;
 			}
 
-			sb.AppendFormat ($" -c {coremode} -u {usermode}");
+			arguments = arguments.AddRange ("-c", coremode, "-u", usermode);
 
 			//the linker doesn't consider these core by default
-			sb.AppendFormat ($" -p {coremode} WebAssembly.Bindings -p {coremode} WebAssembly.Net.Http -p {coremode} WebAssembly.Net.WebSockets");
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Bindings");
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.Http");
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.WebSockets");
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
-					sb.AppendFormat ($" -p \"{s}\" copy");
+					arguments = arguments.AddRange ("-p", "copy", s);
 				}
 			}
 
-			sb.AppendFormat ($" -out \"{OutputDir.Replace ("\\", "\\\\")}\"");
-			sb.AppendFormat ($" -d \"{FrameworkDir.Replace ("\\", "\\\\")}\"");
-			sb.AppendFormat ($" -d \"{Path.Combine (FrameworkDir, "Facades").Replace ("\\", "\\\\")}\"");
-			sb.AppendFormat ($" -b {Debug} -v {Debug}");
+			arguments = arguments.AddRange ("-out", OutputDir);
 
-			sb.AppendFormat ($" -a \"{RootAssembly[0].GetMetadata("FullPath").Replace ("\\", "\\\\")}\"");
+			arguments = arguments.AddRange ("-d", FrameworkDir);
+
+			arguments = arguments.AddRange ("-d", Path.Combine(FrameworkDir, "Facades"));
+
+			arguments = arguments.AddRange ("-b", Debug.ToString());
+			arguments = arguments.AddRange ("-v", Debug.ToString());
+
+			arguments = arguments.AddRange ("-a", RootAssembly[0].GetMetadata ("FullPath"));
 
 			//we'll normally have to check most of the because the SDK references most framework asm by default
 			//so let's enumerate upfront
@@ -148,23 +154,22 @@ namespace Mono.WebAssembly.Build
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
-
 					var p = asm.GetMetadata ("FullPath");
-					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
+					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
 					}
-
-					sb.AppendFormat ($" -r \"{p.Replace ("\\", "\\\\")}\"");
+					arguments = arguments.AddRange ("-r", p);
 				}
 			}
 
 			if (string.IsNullOrEmpty (I18n)) {
-				sb.Append (" -l none");
+				arguments = arguments.AddRange ("-l", "none");
 			} else {
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
-				sb.AppendFormat ($" -l {string.Join (",", vals)}");
+				arguments = arguments.AddRange ("-l", string.Join (",", vals));
 			}
-			return sb.ToString ();
+
+			return arguments.ToString ();
 		}
 	}
 

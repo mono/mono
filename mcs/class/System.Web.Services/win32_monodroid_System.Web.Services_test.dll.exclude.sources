@@ -1,0 +1,7 @@
+System.Web.Services.Configuration/DiagnosticsElementTest.cs
+System.Web.Services.Configuration/ProtocolElementTest.cs
+System.Web.Services.Configuration/SoapEnvelopeProcessingElementTest.cs
+System.Web.Services.Configuration/SoapExtensionTypeElementTest.cs
+System.Web.Services.Configuration/TypeElementTest.cs
+System.Web.Services.Configuration/WsdlHelpGeneratorElementTest.cs
+System.Web.Services.Configuration/WsiProfilesElementTest.cs

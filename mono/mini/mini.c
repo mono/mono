@@ -1678,14 +1678,13 @@ mono_find_jit_opcode_emulation (int opcode)
 }
 
 void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
+mini_register_opcode_emulation (int opcode, MonoJitICallInfo *info, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
 {
-	MonoJitICallInfo *info;
-
+	g_assert (info);
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
-	info = mono_register_jit_icall_full (func, name, sig, no_wrapper, symbol);
+	mono_register_jit_icall_info (info, func, name, sig, no_wrapper, symbol);
 
 	if (emul_opcode_num >= emul_opcode_alloced) {
 		int incr = emul_opcode_alloced? emul_opcode_alloced/2: 16;
@@ -2090,27 +2089,17 @@ mono_postprocess_patches (MonoCompile *cfg)
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_ABS: {
-			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (patch_info->data.target);
-
 			/*
-			 * Change patches of type MONO_PATCH_INFO_ABS into patches describing the 
+			 * Change patches of type MONO_PATCH_INFO_ABS into patches describing the
 			 * absolute address.
 			 */
-			if (info) {
-				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-				patch_info->data.name = info->name;
-			}
-
-			if (patch_info->type == MONO_PATCH_INFO_ABS) {
-				if (cfg->abs_patches) {
-					MonoJumpInfo *abs_ji = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, patch_info->data.target);
-					if (abs_ji) {
-						patch_info->type = abs_ji->type;
-						patch_info->data.target = abs_ji->data.target;
-					}
+			if (cfg->abs_patches) {
+				MonoJumpInfo *abs_ji = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, patch_info->data.target);
+				if (abs_ji) {
+					patch_info->type = abs_ji->type;
+					patch_info->data.target = abs_ji->data.target;
 				}
 			}
-
 			break;
 		}
 		case MONO_PATCH_INFO_SWITCH: {
@@ -2877,9 +2866,9 @@ insert_safepoints (MonoCompile *cfg)
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
-				(info->d.icall.func == mono_threads_state_poll ||
-				 info->d.icall.func == mono_thread_interruption_checkpoint ||
-				 info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
+				(info->d.icall.jit_icall_id == MONO_JIT_ICALL_mono_threads_state_poll ||
+				 info->d.icall.jit_icall_id == MONO_JIT_ICALL_mono_thread_interruption_checkpoint ||
+				 info->d.icall.jit_icall_id == MONO_JIT_ICALL_mono_threads_exit_gc_safe_region_unbalanced)) {
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for the polling function icall\n");
 			return;
@@ -3432,7 +3421,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	/*We must verify the method before doing any IR generation as mono_compile_create_vars can assert.*/
 	if (mono_compile_is_broken (cfg, cfg->method, TRUE)) {
-		if (mini_get_debug_options ()->break_on_unverified)
+		if (mini_debug_options.break_on_unverified)
 			G_BREAKPOINT ();
 		return cfg;
 	}
@@ -4137,19 +4126,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	mono_destroy_compile (cfg);
 
+	mini_patch_llvm_jit_callees (target_domain, method, code);
 #ifndef DISABLE_JIT
-	/* Update llvm callees */
-	if (domain_jit_info (target_domain)->llvm_jit_callees) {
-		GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
-		GSList *l;
-
-		for (l = callees; l; l = l->next) {
-			gpointer *addr = (gpointer*)l->data;
-
-			*addr = code;
-		}
-	}
-
 	mono_emit_jit_map (jinfo);
 #endif
 	mono_domain_unlock (target_domain);
