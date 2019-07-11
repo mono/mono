@@ -168,7 +168,8 @@ namespace System.Reflection
 		}
 		public override Type DeclaringType {
 			get {
-				return GetParentType (true);
+				Type parentType = GetParentType (true);
+				return parentType.Name != "<Module>" ? parentType : null;
 			}
 		}
 		public override string Name {
