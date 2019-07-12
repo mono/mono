@@ -230,13 +230,8 @@ bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_
 
 build-test-suite: bin/test-suite/mono.js
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/BindingsTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/BindingsTestSuite.cs 
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/IssuesTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/IssuesTestSuite.cs 
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/ZipTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/ZipTestSuite.cs 
-	mono packager.exe -debug -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll $(BROWSER_TEST)/IssuesTestSuite.dll $(BROWSER_TEST)/ZipTestSuite.dll
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) build-sdk
+	$(DOTNET_BUILD) tests/browser/src -v normal
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
@@ -424,6 +419,7 @@ clean: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
+	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
 	$(RM) -r packager.exe
@@ -438,7 +434,7 @@ clean: clean-sdk
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 
-package: build build-dbg-proxy build-sdk
+package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
@@ -515,3 +511,9 @@ clean-sdk:
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
 	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
+
+clean-browser-tests: clean-sdk 
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/node-modules
+	$(RM) -r $(BROWSER_TEST)/publish
+	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	

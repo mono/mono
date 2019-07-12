@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using WebAssembly.Net.Http.HttpClient;
 using System.Threading.Tasks;
 using WebAssembly;
-using System.Threading;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -312,7 +309,7 @@ namespace TestSuite {
 			return requestTcs.Task;
 
 		}
-		public static async Task<object> ZipUpdateEmptyArchive ()
+		public static Task<object> ZipUpdateEmptyArchive ()
 		{
 			var requestTcs = new TaskCompletionSource<object> ();
 			using (var memoryStream = new MemoryStream ()) {
@@ -407,7 +404,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/archive.zip")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/archive.zip")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;
@@ -416,7 +413,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/test.nupkg")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/test.nupkg")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;

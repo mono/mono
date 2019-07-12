@@ -8,19 +8,19 @@ module.exports = function(config) {
             'application/wasm': ['wasm']
         },
         files: [
-            {pattern: './publish/http-spec.js',watched:true,served:true,included:true},
-            {pattern: './publish/core-bindings-spec.js',watched:true,served:true,included:true},
-            {pattern: './publish/issues-spec.js',watched:true,served:true,included:true},
-            {pattern: './publish/zip-spec.js',watched:true,served:true,included:true},
-            {pattern: './publish/mono.wasm', included: false, served: true, type: 'wasm'},
-            {pattern: './publish/mono.js', included: false, served: true},
-            {pattern: './publish/mono-config.js', included: false, served: true},
-            {pattern: './publish/runtime.js', included: false, served: true},
-            {pattern: './publish/managed/*.dll', included: false, served: true},
-            {pattern: './publish/managed/*.pdb', included: false, served: true},
-            {pattern: './publish/**/*.txt', included: false, served: true, type: 'text'},
-            {pattern: './publish/**/*.zip', included: false, served: true, type: 'zip'},
-            {pattern: './publish/**/*.nupkg', included: false, served: true, type: 'zip'},
+            {pattern: './publish/netstandard2.0/http-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/core-bindings-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/issues-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/zip-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/mono.wasm', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/mono.js', included: false, served: true},
+            {pattern: './publish/netstandard2.0/mono-config.js', included: false, served: true},
+            {pattern: './publish/netstandard2.0/runtime.js', included: false, served: true},
+            {pattern: './publish/netstandard2.0/managed/*.dll', included: false, served: true},
+            {pattern: './publish/netstandard2.0/managed/*.pdb', included: false, served: true},
+            {pattern: './publish/netstandard2.0/**/*.txt', included: false, served: true, type: 'text'},
+            {pattern: './publish/netstandard2.0/**/*.zip', included: false, served: true, type: 'zip'},
+            {pattern: './publish/netstandard2.0/**/*.nupkg', included: false, served: true, type: 'zip'},
         ],
         //load karma-mocha-reporter and karma-html
         reporters: ['mocha','karmaHTML', 'dots', 'junit'], //, 'progress'],
@@ -53,10 +53,10 @@ module.exports = function(config) {
                 source: [
                     //indicate 'index.html' file that will be loaded in the browser
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
-                    {src:'./publish/http-spec.html', tag:'httpspec'},
-                    {src:'./publish/core-bindings-spec.html', tag:'corebindingsspec'},
-                    {src:'./publish/issues-spec.html', tag:'issuesspec'},
-                    {src:'./publish/zip-spec.html', tag:'zipspec'}
+                    {src:'./publish/netstandard2.0/http-spec.html', tag:'httpspec'},
+                    {src:'./publish/netstandard2.0/core-bindings-spec.html', tag:'corebindingsspec'},
+                    {src:'./publish/netstandard2.0/issues-spec.html', tag:'issuesspec'},
+                    {src:'./publish/netstandard2.0/zip-spec.html', tag:'zipspec'}
                 ],
                 timeout: 10000,
                 abort: 60000,

@@ -32,8 +32,20 @@
 	<Target Name="_MonoWasmAssemblyCollectOutput"
 					AfterTargets="_CheckForCompileOutputs">
 
-		<PropertyGroup>
-			<!-- FIXME should this be decoupled from whether managed symbols are produced? -->
+		<!-- 
+			Make sure we set the runtime paths correctly.
+			If running from a master build the runtime builds path is different
+			from the nuget paths.
+
+			FIXME should this be decoupled from whether managed symbols are produced?
+		-->
+		<PropertyGroup Condition="Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<PropertyGroup Condition="!Exists('$(MonoWasmRuntimePath)builds\')">
 			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
 			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)release\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)debug\</_MonoWasmRuntimePath>
