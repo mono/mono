@@ -53,6 +53,11 @@ typedef MonoAssembly * (*MonoAssemblyPreLoadFuncV2) (MonoAssemblyLoadContext *al
 
 void mono_install_assembly_preload_hook_v2 (MonoAssemblyPreLoadFuncV2 func, void *user_data, gboolean refonly);
 
+typedef MonoAssembly * (*MonoAssemblySearchFuncV2) (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
+
+void
+mono_install_assembly_search_hook_v2 (MonoAssemblySearchFuncV2 func, void *user_data, gboolean refonly, gboolean postload);
+
 /* If predicate returns true assembly should be loaded, if false ignore it. */
 typedef gboolean (*MonoAssemblyCandidatePredicate)(MonoAssembly *, gpointer);
 

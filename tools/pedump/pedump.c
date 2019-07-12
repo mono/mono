@@ -48,7 +48,7 @@ static char *assembly_directory[2];
 
 static MonoAssembly *pedump_preload (MonoAssemblyName *aname, gchar **assemblies_path, gpointer user_data);
 static void pedump_assembly_load_hook (MonoAssembly *assembly, gpointer user_data);
-static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data);
+static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
 /* unused
 static void
@@ -468,7 +468,7 @@ verify_image_file (const char *fname)
 
 		/*Finish initializing the runtime*/
 		mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
 
 		mono_init_version ("pedump", image->version);
 
@@ -479,7 +479,7 @@ verify_image_file (const char *fname)
 	} else {
 		/*Finish initializing the runtime*/
 		mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
 
 		mono_init_version ("pedump", NULL);
 
@@ -652,7 +652,8 @@ pedump_assembly_load_hook (MonoAssembly *assembly, gpointer user_data)
 }
 
 static MonoAssembly *
-pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data)
+pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname,
+			     gboolean refonly, gboolean postload, gpointer user_data, MonoError *error)
 {
         GList *tmp;
 
