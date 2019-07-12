@@ -49,15 +49,17 @@ namespace System.Collections.Generic
             Contract.Ensures(Contract.Result<EqualityComparer<T>>() != null);
 
             RuntimeType t = (RuntimeType)typeof(T);
-            // Specialize type byte for performance reasons
-            if (t == typeof(byte)) {
-                return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
-            }
 
 			/////////////////////////////////////////////////
 			// KEEP THIS IN SYNC WITH THE DEVIRT CODE
 			// IN METHOD-TO-IR.C
 			/////////////////////////////////////////////////
+
+            // Specialize type byte for performance reasons
+            if (t == typeof(byte)) {
+                return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
+            }
+
 #if MOBILE
             // Breaks .net serialization compatibility
             if (t == typeof (string))
