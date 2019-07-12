@@ -65,3 +65,9 @@
 -nomethod System.Threading.Threads.Tests.ThreadTests.*
 -nomethod System.ComponentModel.TypeConverterTests
 -nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
+-nomethod System.Tests.StringTests.NormalizationTest
+-nomethod System.Globalization.Tests.StringNormalizationAllTests.Normalize
+-nomethod System.Globalization.Tests.StringNormalizationTests.IsNormalized
+-nonamespace System.Runtime.InteropServices.WindowsRuntime.Tests
+-nonamespace System.Utf8String.Experimental.Tests
+-nomethod OverlappedTests.PropertyTest2
