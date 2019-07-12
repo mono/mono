@@ -45,13 +45,16 @@ node (isPr ? "mono-package-pr" : "mono-package") {
                     // move .pkg to the workspace root
                     sh 'mv packaging/MacSDKRelease/MonoFramework-MDK-*.pkg .'
                     packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0].name
+
+                    // move mac-entitlements.plist to the workspace root
+                    sh 'mv mono/mini/mac-entitlements.plist .'
                 }
                 stage('Upload .pkg to Azure') {
                     azureUpload(storageCredentialId: (isPrivate ? "bc6a99d18d7d9ca3f6bf6b19e364d564" : "fbd29020e8166fbede5518e038544343"),
                                 storageType: "blobstorage",
                                 containerName: "${jobName}",
                                 virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/",
-                                filesPath: "${packageFileName}",
+                                filesPath: "${packageFileName},mac-entitlements.plist",
                                 allowAnonymousAccess: (isPrivate ? false : true),
                                 pubAccessible: (isPrivate ? false : true),
                                 doNotWaitForPreviousBuild: true,
