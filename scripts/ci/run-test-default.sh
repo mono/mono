@@ -2,6 +2,7 @@
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
+${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check EMIT_NUNIT=1
 if [[ ${CI_TAGS} == *'win-i386'* ]]
 then ${TESTCMD} --label=mini-aotcheck --skip;
 else ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
