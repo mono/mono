@@ -362,7 +362,7 @@ fi
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 
-if [[ ${CI_TAGS} == *'hardened-runtime'* ]]; then security unlock-keychain -p ${CODESIGN_KEYCHAIN}; codesign -s ${CODESIGN_IDENTITY} -fv -o runtime --entitlements ${MONO_REPO_ROOT}/mono/mini/mac-entitlements.xml ${MONO_REPO_ROOT}/mono/mini/mono-sgen; fi
+if [[ ${CI_TAGS} == *'hardened-runtime'* ]]; then codesign -s - -fv -o runtime --entitlements ${MONO_REPO_ROOT}/mono/mini/mac-entitlements.xml ${MONO_REPO_ROOT}/mono/mini/mono-sgen; fi
 
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
