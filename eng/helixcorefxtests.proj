@@ -1,0 +1,40 @@
+<Project>
+  <Import Sdk="Microsoft.DotNet.Helix.Sdk" Project="Sdk.props" />
+
+  <PropertyGroup>
+    <HelixTargetQueue>''</HelixTargetQueue>
+    <TestAssetBlobFeedUrl>https://dotnetfeed.blob.core.windows.net/dotnet-core</TestAssetBlobFeedUrl>
+    <MicrosoftPrivateCoreFxNETCoreAppVersion>4.6.0-preview8.19353.6</MicrosoftPrivateCoreFxNETCoreAppVersion>
+    <__BuildOS>OSX</__BuildOS>
+    <__BuildArch>x64</__BuildArch>
+    <_TargetGroup>netcoreapp</_TargetGroup>
+  </PropertyGroup>
+
+  <!-- Import Microsoft.DotNet.Build.Tasks.Feed.targets for `ParseBuildManifest` -->
+  <Import Project="/Users/egorb/.nuget/packages/microsoft.dotnet.build.tasks.feed/2.2.0-beta.19356.1/build/Microsoft.DotNet.Build.Tasks.Feed.targets" />
+
+
+  <Target Name="GetTestAssetManifest">
+    <PropertyGroup>
+      <_TargetGroup>netcoreapp</_TargetGroup>
+      <_AssetManifestPath>$(TestAssetBlobFeedUrl)/corefx-tests/$(MicrosoftPrivateCoreFxNETCoreAppVersion)/$(__BuildOS).$(__BuildArch)/$(_TargetGroup)/corefx-test-assets.xml</_AssetManifestPath>
+    </PropertyGroup>
+    <ParseBuildManifest AssetManifestPath="$(_AssetManifestPath)">
+      <Output TaskParameter="BlobInfos" ItemName="TestAssetBlobInfos" />
+    </ParseBuildManifest>
+  </Target>
+
+
+  <Target Name="BuildHelixWorkItems" DependsOnTargets="GetTestAssetManifest">
+    <ItemGroup>
+      <HelixCorrelationPayload Include="$(TestHostRootPath)" />
+      <HelixWorkItem Include="@(TestAssetBlobInfos -> '%(FileName)')">
+        <PayloadUri>$(TestAssetBlobFeedUrl)/%(Identity)</PayloadUri>
+        <Command>$(HelixCommand)</Command>
+      </HelixWorkItem>
+    </ItemGroup>
+  </Target>
+
+
+  <Import Sdk="Microsoft.DotNet.Helix.Sdk" Project="Sdk.targets" />
+</Project>
