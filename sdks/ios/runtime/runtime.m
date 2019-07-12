@@ -367,8 +367,8 @@ xamarin_timezone_get_local_name ()
 {
 	NSTimeZone *tz = nil;
 	tz = [NSTimeZone localTimeZone];
-	NSString *name = [tz name];
-	return strdup ([name UTF8String]);
+	NSString *name = [tz name];	
+	return (name != nil) ? strdup ([name UTF8String]) : strdup ("Local");
 }
 
 char**
