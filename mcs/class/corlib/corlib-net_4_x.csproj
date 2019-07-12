@@ -292,7 +292,8 @@
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\conditionalattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\contracts\contracts.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\contracts\contractsbcl.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\diagnostics\debuggerattributes.cs" />    <Compile Include="..\referencesource\mscorlib\system\diagnostics\eventing\activitytracker.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\diagnostics\debuggerattributes.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\diagnostics\eventing\activitytracker.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\eventing\eventactivityoptions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\eventing\eventdescriptor.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\eventing\eventprovider.cs" />
