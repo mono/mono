@@ -68,6 +68,27 @@ $(ASPNETCORESDK_FILE):
 	$(UNZIPCMD) $(ASPNETCORESDK_FILE)
 	sed -e 's/.*version.*/\"version\": \"$(NETCOREAPP_VERSION)\"/' < shared/Microsoft.AspNetCore.App/$(ASPNETCOREAPP_VERSION)/Microsoft.AspNetCore.App.runtimeconfig.json > 2 && mv 2 shared/Microsoft.AspNetCore.App/$(ASPNETCOREAPP_VERSION)/Microsoft.AspNetCore.App.runtimeconfig.json
 
+
+# WIP: use helixcorefxtests.proj in order to download corefx tests
+test:
+	cd ../eng && \
+	$(DOTNET) msbuild helixcorefxtests.proj \
+	/p:TestAssetBlobFeedUrl=$(FEED_BASE_URL) \
+	/p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) \
+	/p:__BuildOS=OSX \
+	/p:__BuildArch=x64 \
+	/p:_TargetGroup=netcoreapp \
+	/p:MicrosoftDotNetBuildTasksFeedVersion=2.2.0-beta.19356.1 \
+	/p:NuGetPackageRoot=/Users/egorb/.nuget/packages/ \
+	/p:CoreFXTestExclusionFile=../netcore/CoreFX.issues.rsp \
+	/p:_Scenarios=normal \
+	/p:_TimeoutPerTestCollectionInMinutes=10 \
+	/p:_Creator=' ' \
+	/p:_HelixBuild=' ' \
+	/p:_HelixSource=' ' \
+	/p:_HelixTargetQueues=' ' \
+	/p:_HelixType=' '
+
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
