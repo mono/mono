@@ -1346,6 +1346,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_security='yes'
    mono_feature_disable_mdb='yes'
    mono_feature_disable_com='yes'
+   mono_feature_disable_gac='yes'
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
