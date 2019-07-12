@@ -114,6 +114,9 @@ mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *s
 MonoAssembly*
 mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx);
 
+MonoAssembly *
+mono_assembly_loaded_internal (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, gboolean refonly);
+
 MONO_PROFILER_API MonoAssemblyName*
 mono_assembly_get_name_internal (MonoAssembly *assembly);
 
