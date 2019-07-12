@@ -1,19 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Net.Http;
 using WebAssembly;
-using WebAssembly.Core;
 
 namespace TestSuite
 {
     public class Program
     {
         // https://github.com/mono/mono/issues/12981 Interpreter Recursion
-        static void BugInterpRecursion(string[] args) => BugInterpRecursionA(null);
+        public static void BugInterpRecursion(string[] args) => BugInterpRecursionA(null);
 
         internal static bool BugInterpRecursionA(object sender)
         {
@@ -63,7 +60,7 @@ namespace TestSuite
         private static async Task Fetch()
         {
             var client = CreateHttpClient();
-            var response = await client.GetStringAsync("base/publish/NowIsTheTime.txt");
+            var response = await client.GetStringAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
             fetchResponse.Push(response);
         }   
 
@@ -79,7 +76,7 @@ namespace TestSuite
         private static async Task FetchHeaders()
         {
             var client = CreateHttpClient();
-            var response = await client.GetAsync("base/publish/NowIsTheTime.txt");
+            var response = await client.GetAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
             // Raise exception if fails
             response.EnsureSuccessStatusCode();
             // On success, return sign in results from the server response packet

@@ -23,14 +23,6 @@
 -noclass System.CodeDom.Compiler.Tests.ExecutorTests
 
 ####################################################################
-##  System.Collections.NonGeneric.Tests
-####################################################################
-
-# Mono currently supports Array.Copy from object[] array containing boxed ints to float[] array with primitive widening
-# https://github.com/mono/mono/issues/14857
--nomethod System.Collections.Tests.*.ICollection_NonGeneric_CopyTo_ArrayOfEnumType
-
-####################################################################
 ##  System.Collections.Specialized.Tests
 ####################################################################
 
@@ -68,9 +60,6 @@
 ##  System.Diagnostics.TraceSource.Tests
 ####################################################################
 
-# requires precise gc (should be ignored in corefx)
--nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
-
 # Object reference not set to an instance of an object on DefaultTraceListenerClassTests.MakeAssemblyGetEntryAssemblyReturnNull
 # https://github.com/mono/mono/issues/14905
 -nomethod System.Diagnostics.TraceSourceTests.DefaultTraceListenerClassTests.EntryAssemblyName_Null_NotIncludedInTrace
@@ -96,15 +85,15 @@
 # https://github.com/mono/mono/issues/14906
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.overloadResolution.Methods.Oneclass2methods.twoprms004.twoprms004.Test.DynamicCSharpRunTest
 
-# requires precise gc (should be ignored in corefx)
--nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
-
 ####################################################################
 ##  System.IO.Tests
 ####################################################################
 
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
+
+# flaky test (The process cannot access the file ...)
+-nomethod System.IO.Tests.File_Copy_str_str.CopyFileWithData_MemberData
 
 ####################################################################
 ##  System.Linq.Expressions.Tests
@@ -201,6 +190,7 @@
 -nomethod System.Linq.Expressions.Tests.LambdaMultiplyNullableTests.LambdaMultiplyNullableFloatTest
 -nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
 -nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
+-nomethod System.Linq.Expressions.Tests.OpAssign.AssignmentEquivalentsWithMemberAccess
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -288,9 +278,6 @@
 
 # flaky test
 -nomethod System.Net.Sockets.Tests.SocketOptionNameTest.MulticastInterface_Set_AnyInterface_Succeeds
-
-# requires precise GC (should be ignored in corefx)
--nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
 
 ####################################################################
 ##  System.Reflection.Emit.ILGeneration.Tests
@@ -508,10 +495,6 @@
 # Fails b/c it returns the wrong assembly string
 # https://github.com/mono/mono/issues/15074
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFile
-
-# Expects TypeLoadException but none is returned
-# https://github.com/mono/mono/issues/15075
--nomethod System.Reflection.Tests.AssemblyTests.GetType_DoesntSearchMscorlib
 
 # Returns the same string, but still fails.  
 # https://github.com/mono/mono/issues/15076
@@ -731,6 +714,9 @@
 # GCSettings.LatencyMode is not implemented
 -nomethod System.Tests.GCTests.LatencyRoundtrips
 
+# GC.GetGCMemoryInfo is not implemented
+-nomethod System.Tests.GCTests.GetGCMemoryInfo
+
 # Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
@@ -813,6 +799,7 @@
 # flaky test - System.TypeLoadException : Could not load type '_proxy_System.ComponentModel.Composition.IStronglyTypedStructure_3b7f133d-79c7-449e-8f68-22aa093dbb8d' from assembly ''.
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
+-nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_IMetadataViewWithDefaultedInt64
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -875,13 +862,26 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
 
+# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
+-nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
+-nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
+-nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
+-nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
+
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
 ####################################################################
-
-# ArgumentNullException thrown
-# https://github.com/mono/mono/issues/15182
--nomethod System.Diagnostics.Tests.StackTraceTests.Ctor_Exception_SkipFrames
 
 # Expected -1, but got 0
 # https://github.com/mono/mono/issues/15183
@@ -902,10 +902,6 @@
 # Assertion differences.  Expects -1, got 0
 # https://github.com/mono/mono/issues/15187
 -nomethod System.Diagnostics.Tests.StackFrameTests.Ctor_SkipFrames_FNeedFileInfo
-
-# ArgumentNullException : Value cannot be null
-# https://github.com/mono/mono/issues/15188
--nomethod System.Diagnostics.Tests.StackTraceTests.Ctor_Exception_SkipFrames_FNeedFileInfo
 
 ####################################################################
 ##  System.Drawing.Common.Tests
@@ -1061,10 +1057,6 @@
 # https://github.com/mono/mono/issues/15318
 -nomethod System.Reflection.Tests.ConstructorInfoInvokeArrayTests.Invoke_LargeDimensionalArrayConstructor
 
-# Assertion expects false, but we return true
-# https://github.com/mono/mono/issues/15080
--nomethod System.Reflection.Tests.TypeTests.IsAssignableFrom
-
 # Throws a lot of different exceptions
 # https://github.com/mono/mono/issues/15319
 -nomethod System.Reflection.Tests.PropertyInfoTests.GetGetMethod_GetSetMethod
@@ -1127,22 +1119,6 @@
 ##  System.Reflection.MetadataLoadContext.Tests
 ####################################################################
 
--nomethod System.Reflection.Tests.TypeTests_AmbiguityResolution_NoParameterBinding.*
--nomethod System.Reflection.Tests.TypeTests_GetInterface.*
-
-# System.InvalidOperationException : System.Reflection.Tests.IdentityTests is not a GenericTypeDefinition. MakeGenericType may only be called on a type for which Type.IsGenericTypeDefinition is true.
-# https://github.com/mono/mono/issues/15336
--nomethod System.Reflection.Tests.IdentityTests.*
-
-# Assertion... Expected: 1, Actual: 0
-# https://github.com/mono/mono/issues/15337
--nomethod System.Reflection.Tests.TypeTests_GetMember.*
-
-# Expected: Explicit
-# Actual:   Auto
-# https://github.com/mono/mono/issues/15338
--nomethod System.Reflection.Tests.TypeTests_StructLayoutAttribute.*
-
 # System.InvalidOperationException : Sequence contains no elements
 # https://github.com/mono/mono/issues/15339
 # 
@@ -1151,52 +1127,13 @@
 -nomethod System.Reflection.Tests.ParameterTests.TestPseudoCustomAttributes
 -nomethod System.Reflection.Tests.TypeTests.TestExplicitOffsetPseudoCustomAttribute
 
-# Assertion failure: Expected: 4, Actual: 0
-# https://github.com/mono/mono/issues/15341
--nomethod System.Reflection.Tests.TypeTests_HiddenEvents.GetEventHidesEventsBySimpleNameCompare
-
-# Multiple failures... 
-# System.Reflection.Tests.TypeInfoDeclaredNestedTypeTests.TestNestedTypes10 
-# Expected: typeof(System.Reflection.Tests.TestNestGeneric<>)
-# Actual:   typeof(System.Reflection.Tests.TestNestGeneric<>)
-# https://github.com/mono/mono/issues/15342
--nomethod System.Reflection.Tests.TypeInfoDeclaredNestedTypeTests.*
--nomethod System.Reflection.Tests.TypeInfoPropertyTests.TestIsNested
--nomethod System.Reflection.Tests.TypeInfoPropertyTests.TestIsNestedPublic
-
-# Assertion failure: Expected: 5, Actual: 0
-# https://github.com/mono/mono/issues/15343
--nomethod System.Reflection.Tests.TypeTests_PrefixingOnlyAllowedOnGetMember.TestGetMemberAll
-
 # Assertion failure: Expected: true, Actual: false
 # https://github.com/mono/mono/issues/15344
 -nomethod System.Reflection.Tests.TypeInvariants.TestInvariantCode
 
-# Assertion failure: Expected: 2, Actual: 1
-# https://github.com/mono/mono/issues/15345
--nomethod System.Reflection.Tests.TypeTests_HiddenMethods.GetMethodDoesNotHideHiddenMethods
-
-# Expected: String[] ["Item", "MyInstanceThenStaticProp", "MyStaticThenInstanceProp", "MyStringThenDoubleProp"]
-# Actual:   String[] []
-# https://github.com/mono/mono/issues/15346
--nomethod System.Reflection.Tests.TypeTests_HiddenProperties.GetPropertyHidesPropertiesByNameAndSigAndCallingConventionCompare
-
-# Expected: typeof(Outer+Inner)
-# Actual:   typeof(Outer+Inner+ReallyInner)
-# https://github.com/mono/mono/issues/15347
--nomethod System.Reflection.Tests.AssemblyTests.CrossAssemblyTypeRefToNestedType
-
-# Assertion failure: Expected: 4, Actual: 0
-# https://github.com/mono/mono/issues/15348
--nomethod System.Reflection.Tests.TypeTests_HiddenFields.GetFieldDoesNotHideHiddenFields
-
 # System.TypeLoadException : Could not find type 'Typ\\W\[t\]S\+r\*n\&e\,haracters' in assembly ''.
 # https://github.com/mono/mono/issues/15349
 -nomethod System.Reflection.Tests.TypeTests.TypesWithStrangeCharacters
-
-# Assertion failure: Expected: 1, Actual: 0
-# https://github.com/mono/mono/issues/15351
--nomethod System.Reflection.Tests.TypeTests_HiddenTestingOrder.HideDetectionHappensAfterPrivateInBaseClassChecks
 
 # flaky tests
 -nomethod System.Reflection.Tests.TypeInfoDeclaredImplementedInterfacesTests.*
@@ -1261,10 +1198,6 @@
 # disabled in CoreCLR too
 -noclass System.Security.Cryptography.X509Certificates.Tests.X509Certificate2UITests
 
-# requires precise gc (should be ignored in corefx)
--nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
--nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
-
 -nomethod System.IO.Tests.File_Move_Tests.File_Move_From_Unwatched_To_Watched
 
 # unxpected non-breaking space in strings (char(160) - char(32))
@@ -1278,3 +1211,19 @@
 # Unexpected IntPtr.Zero from Interop.Mmap
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewAccessorTests.ValidAccessLevelCombinations
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
+
+# requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
+-nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
+-nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
+-nomethod System.Tests.GCTests.ReRegisterForFinalize
+-nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetEnumerator_CollectedItemsNotEnumerated
+-nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.AddRemove_DropValue
+-nomethod System.Tests.WeakReferenceTests.NonGeneric
+-nomethod System.Tests.WeakReferenceTests.Generic
+-nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
+-nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
+-nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
+
+# Flaky tests https://github.com/mono/mono/issues/15238
+-nonamespace System.Security.Cryptography.Pkcs

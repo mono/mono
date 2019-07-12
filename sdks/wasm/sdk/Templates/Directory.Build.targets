@@ -1,7 +1,7 @@
 <Project>
-  <Target Name="_WriteDotNetTemplateVersion" BeforeTargets="PreBuildEvent">
+  <Target Name="_WriteDotNetTemplateVersion" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
-      <_globalOutputPath>$(MSBuildThisFileDirectory)\DotNet\</_globalOutputPath>
+      <_globalOutputPath>$(MSBuildThisFileDirectory)\templates\DotNet\</_globalOutputPath>
       <_globalFixedContent>
       <![CDATA[
 {

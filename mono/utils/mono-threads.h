@@ -21,6 +21,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <glib.h>
 #include <config.h>
@@ -29,7 +30,7 @@
 #include <windows.h>
 
 typedef DWORD MonoNativeThreadId;
-typedef HANDLE MonoNativeThreadHandle; /* unused */
+typedef HANDLE MonoNativeThreadHandle;
 
 typedef DWORD mono_native_thread_return_t;
 typedef DWORD mono_thread_start_return_t;
@@ -71,6 +72,9 @@ typedef gsize (*MonoThreadStart)(gpointer);
 #endif /* !defined(__HAIKU__) */
 
 #endif /* #ifdef HOST_WIN32 */
+
+#define MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER(handle) ((gpointer)(gsize)(handle))
+#define MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE(handle) ((MonoNativeThreadHandle)(gsize)(handle))
 
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 
@@ -535,6 +539,12 @@ mono_threads_open_thread_handle (MonoThreadHandle *handle);
 void
 mono_threads_close_thread_handle (MonoThreadHandle *handle);
 
+MonoNativeThreadHandle
+mono_threads_open_native_thread_handle (MonoNativeThreadHandle handle);
+
+void
+mono_threads_close_native_thread_handle (MonoNativeThreadHandle handle);
+
 #if !defined(HOST_WIN32)
 
 /*Use this instead of pthread_kill */
@@ -829,12 +839,12 @@ void
 mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT \
-	DWORD _last_error_restore_point = GetLastError ();
+	const DWORD _last_error_restore_point = GetLastError ();
 
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT \
 		/* Only restore if changed to prevent unecessary writes. */ \
 		if (GetLastError () != _last_error_restore_point) \
-			SetLastError (_last_error_restore_point);
+			mono_SetLastError (_last_error_restore_point);
 
 #else
 

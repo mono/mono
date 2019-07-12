@@ -27,7 +27,6 @@ export MONO_HELIX_CORRELATION_ID_FILE="$MONO_REPO_ROOT/test-correlation-id.txt"
 ${TESTCMD} --label=upload-helix-tests --timeout=5m --fatal make -w -C mcs/tools/mono-helix-client upload-to-helix
 
 # test suites which aren't ported to helix yet
-${TESTCMD} --label=mini-seq-points --timeout=5m make -w -C mono/mini -k check-seq-points
 ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
 ${TESTCMD} --label=runtime --timeout=20m make -w -C mono/tests test-wrench IGNORE_TEST_JIT=1 V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check

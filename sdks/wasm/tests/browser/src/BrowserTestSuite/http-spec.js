@@ -60,7 +60,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, "base/publish/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -105,7 +105,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, "base/publish/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -150,7 +150,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, "base/publish/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -195,7 +195,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, "base/publish/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);

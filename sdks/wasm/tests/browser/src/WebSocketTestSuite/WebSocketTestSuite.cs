@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using WebAssembly.Net.Http.HttpClient;
 using System.Threading.Tasks;
-using WebAssembly;
-using WebAssembly.Core;
 using System.Threading;
-using System.IO;
 using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
 using System.Net.WebSockets;
 using System.Text;

@@ -387,7 +387,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 static MONO_NEVER_INLINE gboolean
 break_on_unverified (void)
 {
-	if (mini_get_debug_options ()->break_on_unverified) {
+	if (mini_debug_options.break_on_unverified) {
 		G_BREAKPOINT ();
 		return TRUE;
 	}
@@ -1692,7 +1692,7 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 {
 	MonoInst *fast_tls = NULL;
 
-	if (!mini_get_debug_options ()->use_fallback_tls)
+	if (!mini_debug_options.use_fallback_tls)
 		fast_tls = mono_create_fast_tls_getter (cfg, key);
 
 	if (fast_tls) {
@@ -2282,7 +2282,7 @@ mini_emit_storing_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *valu
 	 * Add a release memory barrier so the object contents are flushed
 	 * to memory before storing the reference into another object.
 	 */
-	if (mini_get_debug_options ()->clr_memory_model)
+	if (mini_debug_options.clr_memory_model)
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
 	EMIT_NEW_STORE_MEMBASE (cfg, store, OP_STORE_MEMBASE_REG, ptr->dreg, 0, value->dreg);
@@ -2888,7 +2888,7 @@ emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_
 void
 mini_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, gboolean null_check)
 {
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		int vtable_reg = alloc_preg (cfg);
 		int klass_reg = alloc_preg (cfg);
 		MonoBasicBlock *is_null_bb = NULL;
@@ -2924,7 +2924,7 @@ void
 mini_reset_cast_details (MonoCompile *cfg)
 {
 	/* Reset the variables holding the cast details */
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		MonoInst *tls_get = mono_create_tls_get (cfg, TLS_KEY_JIT_TLS);
 		/* It is enough to reset the from field */
 		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, tls_get->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), 0);
@@ -3635,7 +3635,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 			supported = MONO_TYPE_IS_PRIMITIVE (fsig->params [0]) || MONO_TYPE_IS_REFERENCE (fsig->params [0]) || fsig->params [0]->byref || mini_is_gsharedvt_type (fsig->params [0]);
 			if (supported) {
 				for (int i = 1; i < fsig->param_count; ++i) {
-					if (!(fsig->params [i]->byref || MONO_TYPE_IS_PRIMITIVE (fsig->params [i]) || MONO_TYPE_IS_REFERENCE (fsig->params [i])))
+					if (!(fsig->params [i]->byref || MONO_TYPE_IS_PRIMITIVE (fsig->params [i]) || MONO_TYPE_IS_REFERENCE (fsig->params [i]) || MONO_TYPE_ISSTRUCT (fsig->params [i])))
 						supported = FALSE;
 				}
 			}
@@ -3681,7 +3681,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 			for (int i = 0; i < fsig->param_count; ++i) {
 				int addr_reg;
 
-				if (mini_is_gsharedvt_type (fsig->params [i]) || MONO_TYPE_IS_PRIMITIVE (fsig->params [i])) {
+				if (mini_is_gsharedvt_type (fsig->params [i]) || MONO_TYPE_IS_PRIMITIVE (fsig->params [i]) || MONO_TYPE_ISSTRUCT (fsig->params [i])) {
 					EMIT_NEW_VARLOADA_VREG (cfg, ins, sp [i + 1]->dreg, fsig->params [i]);
 					addr_reg = ins->dreg;
 					EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [4]->dreg, i * sizeof (target_mgreg_t), addr_reg);
@@ -3905,6 +3905,11 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (mono_profiler_coverage_instrumentation_enabled (method))
 		return FALSE;
 
+#if ENABLE_NETCORE
+	if (!cfg->ret_var_set)
+		return FALSE;
+#endif
+		
 	return TRUE;
 }
 
@@ -5206,15 +5211,19 @@ handle_call_res_devirt (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *call_re
 		// FIXME: Add more
 		/* 1. Implements IEquatable<T> */
 		/*
-		 * Can't use this for string as it might use a different comparer:
+		 * Can't use this for string/byte as it might use a different comparer:
 		 *
+         * // Specialize type byte for performance reasons
+         * if (t == typeof(byte)) {
+         *     return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
+         * }
 		 * #if MOBILE
 		 *   // Breaks .net serialization compatibility
 		 *   if (t == typeof (string))
 		 *       return (EqualityComparer<T>)(object)new InternalStringComparer ();
 		 * #endif
 		 */
-		if (mono_class_is_assignable_from_internal (inst, mono_class_from_mono_type_internal (param_type)) && param_type->type != MONO_TYPE_STRING) {
+		if (mono_class_is_assignable_from_internal (inst, mono_class_from_mono_type_internal (param_type)) && param_type->type != MONO_TYPE_U1 && param_type->type != MONO_TYPE_STRING) {
 			MonoInst *typed_objref;
 			MonoClass *gcomparer_inst;
 
