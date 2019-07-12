@@ -675,4 +675,15 @@ MonoAssemblyLoadContext *
 mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error);
 #endif
 
+static inline
+MonoAssemblyLoadContext *
+mono_domain_ambient_alc (MonoDomain *domain)
+{
+	/*
+	 * FIXME: All the callers of mono_domain_ambient_alc should get an ALC
+	 * passed to them from their callers.
+	 */
+	return mono_domain_default_alc (domain);
+}
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */
