@@ -511,9 +511,17 @@ namespace System.Diagnostics.Tracing
 
                 fixed (Guid* provider = &m_providerId)
                 {
-                    hr = UnsafeNativeMethods.ManifestEtw.EnumerateTraceGuidsEx(UnsafeNativeMethods.ManifestEtw.TRACE_QUERY_INFO_CLASS.TraceGuidQueryInfo,
-                        provider, sizeof(Guid), buffer, buffSize, ref buffSize);
-                }
+					try
+					{
+						hr = UnsafeNativeMethods.ManifestEtw.EnumerateTraceGuidsEx(UnsafeNativeMethods.ManifestEtw.TRACE_QUERY_INFO_CLASS.TraceGuidQueryInfo,
+							provider, sizeof(Guid), buffer, buffSize, ref buffSize);
+					}
+					catch (DllNotFoundException)
+					{
+						// This API isn't available on UWP prior to Windows SDK 16299
+						return;
+					}
+				}
                 if (hr == 0)
                     break;
                 if (hr != 122 /* ERROR_INSUFFICIENT_BUFFER */)
