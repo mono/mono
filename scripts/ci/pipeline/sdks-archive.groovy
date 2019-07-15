@@ -26,14 +26,14 @@ parallel (
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
+                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "/mnt/scratch")
+                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8", "/mnt/scratch")
             }
         }
     },
@@ -54,7 +54,7 @@ parallel (
     "WASM Linux": {
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
-                archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget")
+                archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget openjdk-8-jre")
             }
         }
     }
@@ -106,7 +106,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             chroot chrootName: chrootname,
                                 command: "CI_TAGS=sdks-${product},no-tests,${configuration} ANDROID_TOOLCHAIN_DIR=/mnt/scratch/android-toolchain ANDROID_TOOLCHAIN_CACHE_DIR=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
                                 bindMounts: chrootBindMounts,
-                                additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
+                                additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 ${chrootadditionalpackages}"
                         } else if (platform == "Windows") {
                             sh "PATH=\"/usr/bin:/usr/local/bin:$PATH\" CI_TAGS=sdks-${product},win-amd64,no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else {
