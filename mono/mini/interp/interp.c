@@ -452,7 +452,7 @@ interp_pop_lmf (MonoLMFExt *ext)
 }
 
 static MONO_NEVER_INLINE InterpMethod*
-get_virtual_method (InterpMethod *imethod, MonoObject *obj)
+get_virtual_method (InterpMethod *imethod, MonoVTable *vtable)
 {
 	MonoMethod *m = imethod->method;
 	MonoDomain *domain = imethod->domain;
@@ -460,7 +460,7 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 	ERROR_DECL (error);
 
 #ifndef DISABLE_REMOTING
-	if (mono_object_is_transparent_proxy (obj)) {
+	if (mono_class_is_transparent_proxy (vtable->klass)) {
 		MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (m, error);
 		mono_error_assert_ok (error);
 		ret = mono_interp_get_imethod (domain, remoting_invoke_method, error);
@@ -479,17 +479,17 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 		return ret;
 	}
 
-	mono_class_setup_vtable (obj->vtable->klass);
+	mono_class_setup_vtable (vtable->klass);
 
 	int slot = mono_method_get_vtable_slot (m);
 	if (mono_class_is_interface (m->klass)) {
-		g_assert (obj->vtable->klass != m->klass);
+		g_assert (vtable->klass != m->klass);
 		/* TODO: interface offset lookup is slow, go through IMT instead */
 		gboolean non_exact_match;
-		slot += mono_class_interface_offset_with_variance (obj->vtable->klass, m->klass, &non_exact_match);
+		slot += mono_class_interface_offset_with_variance (vtable->klass, m->klass, &non_exact_match);
 	}
 
-	MonoMethod *virtual_method = m_class_get_vtable (mono_object_class (obj)) [slot];
+	MonoMethod *virtual_method = m_class_get_vtable (vtable->klass) [slot];
 	if (m->is_inflated && mono_method_get_context (m)->method_inst) {
 		MonoGenericContext context = { NULL, NULL };
 
@@ -549,63 +549,62 @@ get_target_imethod (GSList *list, InterpMethod *imethod)
 }
 
 static gpointer*
-get_method_table (MonoObject *obj, int offset)
+get_method_table (MonoVTable *vtable, int offset)
 {
-	if (offset >= 0) {
-		return obj->vtable->interp_vtable;
-	} else {
-		return (gpointer*)obj->vtable;
-	}
+	if (offset >= 0)
+		return vtable->interp_vtable;
+	else
+		return (gpointer*)vtable;
 }
 
 static gpointer*
-alloc_method_table (MonoObject *obj, int offset)
+alloc_method_table (MonoVTable *vtable, int offset)
 {
 	gpointer *table;
 
 	if (offset >= 0) {
-		table = mono_domain_alloc0 (obj->vtable->domain, m_class_get_vtable_size (obj->vtable->klass) * sizeof (gpointer));
-		obj->vtable->interp_vtable = table;
+		table = mono_domain_alloc0 (vtable->domain, m_class_get_vtable_size (vtable->klass) * sizeof (gpointer));
+		vtable->interp_vtable = table;
 	} else {
-		table = (gpointer*)obj->vtable;
+		table = (gpointer*)vtable;
 	}
 
 	return table;
 }
 
 static InterpMethod*
-get_virtual_method_fast (MonoObject *obj, InterpMethod *imethod, int offset)
+get_virtual_method_fast (InterpMethod *imethod, MonoVTable *vtable, int offset)
 {
 	gpointer *table;
 
 #ifndef DISABLE_REMOTING
 	/* FIXME Remoting */
-	if (mono_object_is_transparent_proxy (obj))
-		return get_virtual_method (imethod, obj);
+	if (mono_class_is_transparent_proxy (vtable->klass))
+		return get_virtual_method (imethod, vtable);
 #endif
 
-	table = get_method_table (obj, offset);
+	table = get_method_table (vtable, offset);
 
 	if (!table) {
 		/* Lazily allocate method table */
-		mono_domain_lock (obj->vtable->domain);
-		table = get_method_table (obj, offset);
+		mono_domain_lock (vtable->domain);
+		table = get_method_table (vtable, offset);
 		if (!table)
-			table = alloc_method_table (obj, offset);
-		mono_domain_unlock (obj->vtable->domain);
+			table = alloc_method_table (vtable, offset);
+		mono_domain_unlock (vtable->domain);
 	}
 
 	if (!table [offset]) {
-		InterpMethod *target_imethod = get_virtual_method (imethod, obj);
+		InterpMethod *target_imethod = get_virtual_method (imethod, vtable);
 		/* Lazily initialize the method table slot */
-		mono_domain_lock (obj->vtable->domain);
+		mono_domain_lock (vtable->domain);
 		if (!table [offset]) {
 			if (imethod->method->is_inflated || offset < 0)
-				table [offset] = append_imethod (obj->vtable->domain, NULL, imethod, target_imethod);
+				table [offset] = append_imethod (vtable->domain, NULL, imethod, target_imethod);
 			else
 				table [offset] = (gpointer) ((gsize)target_imethod | 0x1);
 		}
-		mono_domain_unlock (obj->vtable->domain);
+		mono_domain_unlock (vtable->domain);
 	}
 
 	if ((gsize)table [offset] & 0x1) {
@@ -616,11 +615,11 @@ get_virtual_method_fast (MonoObject *obj, InterpMethod *imethod, int offset)
 		InterpMethod *target_imethod = get_target_imethod ((GSList*)table [offset], imethod);
 
 		if (!target_imethod) {
-			target_imethod = get_virtual_method (imethod, obj);
-			mono_domain_lock (obj->vtable->domain);
+			target_imethod = get_virtual_method (imethod, vtable);
+			mono_domain_lock (vtable->domain);
 			if (!get_target_imethod ((GSList*)table [offset], imethod))
-				table [offset] = append_imethod (obj->vtable->domain, (GSList*)table [offset], imethod, target_imethod);
-			mono_domain_unlock (obj->vtable->domain);
+				table [offset] = append_imethod (vtable->domain, (GSList*)table [offset], imethod, target_imethod);
+			mono_domain_unlock (vtable->domain);
 		}
 		return target_imethod;
 	}
@@ -943,7 +942,6 @@ ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackva
 {
 	uintptr_t *lengths;
 	intptr_t *lower_bounds;
-	MonoObject *obj;
 	int i;
 
 	lengths = g_newa (uintptr_t, m_class_get_rank (klass) * 2);
@@ -959,8 +957,7 @@ ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackva
 		lower_bounds = (intptr_t *) lengths;
 		lengths += m_class_get_rank (klass);
 	}
-	obj = (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
-	return obj;
+	return (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
 }
 
 static gint32
@@ -1433,7 +1430,7 @@ interp_init_delegate (MonoDelegate *del, MonoError *error)
 			method->flags & METHOD_ATTRIBUTE_VIRTUAL &&
 			method->flags & METHOD_ATTRIBUTE_ABSTRACT &&
 			mono_class_is_abstract (method->klass))
-		del->interp_method = get_virtual_method ((InterpMethod*)del->interp_method, del->target);
+		del->interp_method = get_virtual_method ((InterpMethod*)del->interp_method, del->target->vtable);
 
 	method = ((InterpMethod*)del->interp_method)->method;
 	if (method && m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
@@ -3274,7 +3271,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			this_arg = (MonoObject*)sp->data.p;
 			this_class = this_arg->vtable->klass;
 
-			child_frame.imethod = get_virtual_method_fast (this_arg, target_imethod, slot);
+			child_frame.imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
 			if (m_class_is_valuetype (this_class) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
 				/* unbox */
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
@@ -3348,7 +3345,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				MonoObject *this_arg = (MonoObject*)sp->data.p;
 				MonoClass *this_class = this_arg->vtable->klass;
 
-				child_frame.imethod = get_virtual_method (child_frame.imethod, this_arg);
+				child_frame.imethod = get_virtual_method (child_frame.imethod, this_arg->vtable);
 				if (m_class_is_valuetype (this_class) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
 					/* unbox */
 					gpointer unboxed = mono_object_unbox_internal (this_arg);
@@ -6006,7 +6003,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (!sp->data.p)
 				THROW_EX (mono_get_exception_null_reference (), ip - 2);
 				
-			sp->data.p = get_virtual_method (m, sp->data.o);
+			sp->data.p = get_virtual_method (m, sp->data.o->vtable);
 			++sp;
 			MINT_IN_BREAK;
 		}
