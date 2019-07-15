@@ -1,7 +1,5 @@
 /**
  * \file
- * PLEASE NOTE: This is a research prototype.
- *
  *
  * interp.c: Interpreter for CIL byte codes
  *
