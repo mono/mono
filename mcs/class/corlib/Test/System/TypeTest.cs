@@ -1950,6 +1950,29 @@ namespace MonoTests.System
 			else
 				throw new COMException ();
 		}
+
+		[Test]
+		public void TypeFromProgID ()
+		{
+			try {
+				Type t1 = Type.GetTypeFromProgID("file");
+
+				Type t2 = Type.GetTypeFromProgID("bogus_progid");
+
+				Assert.AreEqual (t1.FullName, "System.__ComObject");
+
+				if (!isMono && (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+					Environment.OSVersion.Platform == PlatformID.Win32NT))
+					Activator.CreateInstance(t1);
+
+				Assert.AreEqual (t2.FullName, "System.__ComObject");
+
+				Assert.AreNotEqual (t1, t2);
+			}
+			catch (NotImplementedException) {
+				// Currently fails on Mono (unmanaged activation is not supported)
+			}
+		}
 #endif
 		[Test]
 		public void ExerciseFilterName ()

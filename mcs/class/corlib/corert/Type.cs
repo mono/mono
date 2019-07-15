@@ -3,7 +3,7 @@ using System.Reflection;
 namespace System {
 	partial class Type {
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => RuntimeType.GetTypeFromCLSIDImpl (clsid, server, throwOnError);
-		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => RuntimeType.GetTypeFromProgID (progID, server, throwOnError);
+		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => RuntimeType.GetTypeFromProgIDImpl (progID, server, throwOnError);
 
 		internal const string DefaultTypeNameWhenMissingMetadata = "UnknownType";		
 		
