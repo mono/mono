@@ -194,6 +194,18 @@ namespace Mono {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void EnableCrashReportLog_internal (IntPtr directory);
 
 		static void EnableCrashReportLog (string directory_str)
@@ -204,14 +216,30 @@ namespace Mono {
 			}
 		}
 
+		enum CrashReportLogLevel : int {
+			MonoSummaryNone = 0,
+			MonoSummarySetup,
+			MonoSummarySuspendHandshake,
+			MonoSummaryUnmanagedStacks,
+			MonoSummaryManagedStacks,
+			MonoSummaryStateWriter,
+			MonoSummaryStateWriterDone,
+			MonoSummaryMerpWriter,
+			MonoSummaryMerpInvoke,
+			MonoSummaryCleanup,
+			MonoSummaryDone,
+
+			MonoSummaryDoubleFault
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern int CheckCrashReportLog_internal (IntPtr directory, bool clear);
 
-		static int CheckCrashReportLog (string directory_str, bool clear)
+		static CrashReportLogLevel CheckCrashReportLog (string directory_str, bool clear)
 		{
 			using (var directory_chars = RuntimeMarshal.MarshalString (directory_str))
 			{
-				return CheckCrashReportLog_internal (directory_chars.Value, clear);
+				return (CrashReportLogLevel) CheckCrashReportLog_internal (directory_chars.Value, clear);
 			}
 		}
 

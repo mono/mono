@@ -36,14 +36,14 @@ namespace MonoTests.System.Xml
 		public void EmptyCtorCannotResolve ()
 		{
 			XmlSecureResolver r = new XmlSecureResolver (null, (Evidence)null);
-			r.ResolveUri (null, "http://www.go-mono.com");
+			r.ResolveUri (null, "http://www.example.com");
 		}
 
 		[Test]
 		public void EmptyEvidenceWontMatter ()
 		{
 			XmlSecureResolver r = new XmlSecureResolver (new XmlUrlResolver (), (Evidence)null);
-			Uri uri = r.ResolveUri (null, "http://www.go-mono.com");
+			Uri uri = r.ResolveUri (null, "http://www.example.com");
 			Assert.IsNotNull (uri);
 		}
 
@@ -109,9 +109,9 @@ namespace MonoTests.System.Xml
 		public void CreateEvidenceForUrl_Http ()
 		{
 			// http://
-			Evidence e = XmlSecureResolver.CreateEvidenceForUrl ("http://www.go-mono.com");
+			Evidence e = XmlSecureResolver.CreateEvidenceForUrl ("http://www.example.com");
 #pragma warning disable 612
-			Assert.AreEqual (3, e.Count, "http://www.go-mono.com");
+			Assert.AreEqual (3, e.Count, "http://www.example.com");
 #pragma warning restore
 			bool url = false;
 			bool zone = false;

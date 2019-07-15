@@ -95,7 +95,7 @@ namespace MonoTests.System.Globalization
 		public void GetAscii ()
 		{
 			IdnMapping m = new IdnMapping ();
-			GetAscii (m, "www.mono-project.com", "www.mono-project.com", 1);
+			GetAscii (m, "www.example.com", "www.example.com", 1);
 			GetAscii (m, "a\uFF61b", "a.b", 2);
 
 			// umm... does it reject anything larger than U+FFFF ??
@@ -168,7 +168,7 @@ namespace MonoTests.System.Globalization
 		public void GetUnicode ()
 		{
 			IdnMapping m = new IdnMapping ();
-			GetAscii (m, "www.mono-project.com", "www.mono-project.com", 1);
+			GetAscii (m, "www.example.com", "www.example.com", 1);
 			GetAscii (m, "a\uFF61b", "a.b", 2);
 
 			// umm... does it reject anything larger than U+FFFF ??

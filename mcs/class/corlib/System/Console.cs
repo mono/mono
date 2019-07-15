@@ -150,7 +150,7 @@ namespace System
 				stdout = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding) { AutoFlush = true });
 				stderr = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding) { AutoFlush = true });
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
 				if (LogcatTextWriter.IsRunningOnAndroid ()) {
 					stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
 					stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));

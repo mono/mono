@@ -1,6 +1,6 @@
 <Project Sdk="Mono.WebAssembly.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard20</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\sample.cs" />

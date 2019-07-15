@@ -92,7 +92,7 @@ mono_class_get_field_token (MonoClassField *field);
 MONO_API uint32_t
 mono_class_get_event_token (MonoEvent *event);
 
-MONO_API MonoProperty*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoProperty *
 mono_class_get_property_from_name (MonoClass *klass, const char *name);
 
 MONO_API uint32_t
@@ -119,7 +119,7 @@ mono_class_min_align       (MonoClass *klass);
 MONO_API MONO_RT_EXTERNAL_ONLY MonoClass *
 mono_class_from_mono_type  (MonoType *type);
 
-MONO_API mono_bool
+MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, 
 						   mono_bool check_interfaces);
 
@@ -220,7 +220,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 mono_bool
 mono_class_is_delegate       (MonoClass* klass);
 
-MONO_API mono_bool
+MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_class_implements_interface (MonoClass* klass, MonoClass* iface);
 
 /* MonoClassField accessors */
@@ -291,6 +291,12 @@ mono_method_can_access_field (MonoMethod *method, MonoClassField *field);
 
 MONO_API mono_bool
 mono_method_can_access_method (MonoMethod *method, MonoMethod *called);
+
+MONO_API mono_bool
+mono_class_is_nullable (MonoClass *klass);
+
+MONO_API MONO_RT_EXTERNAL_ONLY MonoClass*
+mono_class_get_nullable_param (MonoClass *klass);
 
 MONO_END_DECLS
 

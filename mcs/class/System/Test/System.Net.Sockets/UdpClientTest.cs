@@ -872,7 +872,7 @@ namespace MonoTests.System.Net.Sockets {
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
-			IPAddress local_addr = Dns.GetHostEntry (string.Empty).AddressList [0];
+			IPAddress local_addr = Dns.GetHostEntry ("localhost").AddressList [0];
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
@@ -980,7 +980,7 @@ namespace MonoTests.System.Net.Sockets {
 						 "BeginSend #4");
 			}
 
-			IPAddress[] addresses = Dns.GetHostEntry (string.Empty).AddressList;
+			IPAddress[] addresses = Dns.GetHostEntry ("localhost").AddressList;
 			IPEndPoint ep = null;
 			foreach (IPAddress a in addresses) {
 				if (a.AddressFamily == AddressFamily.InterNetwork) {

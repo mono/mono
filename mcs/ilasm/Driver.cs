@@ -371,7 +371,7 @@ namespace Mono.ILASM {
                         {
                                 Console.WriteLine (
                                         "For more information on Mono, visit the project Web site\n" +
-                                        "   http://www.go-mono.com\n\n");
+                                        "   http://www.mono-project.com\n\n");
                                 Environment.Exit (0);
                         }
 

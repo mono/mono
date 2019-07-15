@@ -188,8 +188,10 @@ namespace System.Diagnostics {
 				return frames;
 
 			var accum = new List<StackFrame> ();
-			foreach (var t in captured_traces)
-				accum.AddRange(t.GetFrames ());
+			foreach (var t in captured_traces) {
+				for (int i = 0; i < t.FrameCount; i++)
+					accum.Add (t.GetFrame (i));
+			}
 
 			accum.AddRange (frames);
 			return accum.ToArray ();
@@ -200,9 +202,9 @@ namespace System.Diagnostics {
 		static string GetAotId ()
 		{
 			if (!isAotidSet) {
-				aotid = Assembly.GetAotId ();
-				if (aotid != null)
-					aotid = new Guid (aotid).ToString ("N");
+				var arr = RuntimeAssembly.GetAotId ();
+				if (arr != null)
+					aotid = new Guid (arr).ToString ("N");
 				isAotidSet = true;
 			}
 

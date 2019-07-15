@@ -40,6 +40,9 @@
 #include <sys/systemcfg.h>
 #endif
 
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (mathf, "System", "MathF")
+
 #define FORCE_INDIR_CALL 1
 
 enum {
@@ -62,6 +65,7 @@ enum {
 	PPC_ISA_2X            = 1 << 3,
 	PPC_ISA_64            = 1 << 4,
 	PPC_MOVE_FPR_GPR      = 1 << 5,
+	PPC_ISA_2_03          = 1 << 6,
 	PPC_HW_CAP_END
 };
 
@@ -553,6 +557,9 @@ mono_arch_init (void)
 	if (mono_hwcap_ppc_is_isa_2x)
 		cpu_hw_caps |= PPC_ISA_2X;
 
+	if (mono_hwcap_ppc_is_isa_2_03)
+		cpu_hw_caps |= PPC_ISA_2_03;
+
 	if (mono_hwcap_ppc_is_isa_64)
 		cpu_hw_caps |= PPC_ISA_64;
 
@@ -576,8 +583,6 @@ mono_arch_init (void)
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
-
-	mono_aot_register_jit_icall ("mono_ppc_throw_exception", mono_ppc_throw_exception);
 
 	// FIXME: Fix partial sharing for power and remove this
 	mono_set_partial_sharing_supported (FALSE);
@@ -3329,8 +3334,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_break");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -3803,10 +3807,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VOIDCALL:
 		case OP_CALL:
 			call = (MonoCallInst*)ins;
-			if (ins->flags & MONO_INST_HAS_METHOD)
-				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
-			else
-				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, call->fptr);
+			mono_call_add_patch_info (cfg, call, offset);
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -3909,8 +3910,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW: {
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_throw_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_exception));
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -3923,8 +3923,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RETHROW: {
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_rethrow_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_rethrow_exception));
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -4214,6 +4214,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 #endif
 		}
+		case OP_ROUND:
+			ppc_frind (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_TRUNC:
+			ppc_frizd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_CEIL:
+			ppc_fripd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_FLOOR:
+			ppc_frimd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_ABS:
+			ppc_fabsd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_SQRTF:
+			ppc_fsqrtsd (code, ins->dreg, ins->sreg1);
+			break;
 		case OP_SQRT:
 			ppc_fsqrtd (code, ins->dreg, ins->sreg1);
 			break;
@@ -4235,6 +4253,39 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FREM:
 			/* emulated */
 			g_assert_not_reached ();
+			break;
+		/* These min/max require POWER5 */
+		case OP_IMIN:
+			ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMIN_UN:
+			ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMAX:
+			ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMAX_UN:
+			ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		CASE_PPC64 (OP_LMIN)
+			ppc_cmp (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		CASE_PPC64 (OP_LMIN_UN)
+			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		CASE_PPC64 (OP_LMAX)
+			ppc_cmp (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		CASE_PPC64 (OP_LMAX_UN)
+			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_FCOMPARE:
 			ppc_fcmpu (code, 0, ins->sreg1, ins->sreg2);
@@ -4539,7 +4590,7 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_ppc_throw_exception, "mono_ppc_throw_exception", mono_create_icall_signature ("void"), TRUE);
+	mono_register_jit_icall (mono_ppc_throw_exception, mono_icall_sig_void, TRUE);
 }
 
 #ifdef __mono_ppc64__
@@ -4583,10 +4634,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	case MONO_PATCH_INFO_IP:
 		patch_load_sequence (ip, ip);
 		break;
-	case MONO_PATCH_INFO_METHOD_REL:
-		g_assert_not_reached ();
-		*((gpointer *)(ip)) = code + ji->data.offset;
-		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *table = (gpointer *)ji->data.table->table;
 		int i;
@@ -4627,10 +4674,11 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		/* everything is dealt with at epilog output time */
 		break;
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
-	case MONO_PATCH_INFO_JIT_ICALL:
+	case MONO_PATCH_INFO_JIT_ICALL_ID:
 	case MONO_PATCH_INFO_ABS:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		is_fd = TRUE;
 		/* fall through */
 #endif
@@ -5107,8 +5155,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			/* Compute the got address which is needed by the PLT entry */
 			code = mono_arch_emit_load_got_addr (cfg->native_code, code, cfg, NULL);
 		}
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-			     (gpointer)"mono_tls_get_lmf_addr");
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+			     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_tls_get_lmf_addr));
 		if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 			ppc_load_func (code, PPC_CALL_REG, 0);
 			ppc_mtlr (code, PPC_CALL_REG);
@@ -5383,8 +5431,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			ppc_load (code, ppc_r3, m_class_get_type_token (exc_class));
 			/* we got here from a conditional call, so the calling ip is set in lr */
 			ppc_mflr (code, ppc_r4);
-			patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-			patch_info->data.name = "mono_arch_throw_corlib_exception";
+			patch_info->type = MONO_PATCH_INFO_JIT_ICALL_ID;
+			patch_info->data.jit_icall_id = MONO_JIT_ICALL_mono_arch_throw_corlib_exception;
 			patch_info->ip.i = code - cfg->native_code;
 			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
@@ -5610,8 +5658,109 @@ mono_arch_get_cie_program (void)
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	/* FIXME: */
-	return NULL;
+	MonoInst *ins = NULL;
+	int opcode = 0;
+
+	if (cmethod->klass == mono_class_try_get_math_class ()) {
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_ABS;
+		}
+
+		if (opcode && fsig->param_count == 1) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R8;
+			ins->dreg = mono_alloc_freg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		/* Check for Min/Max for (u)int(32|64) */
+		opcode = 0;
+		if (cpu_hw_caps & PPC_ISA_2_03) {
+			if (strcmp (cmethod->name, "Min") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMIN;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMIN_UN;
+#ifdef __mono_ppc64__
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMIN_UN;
+#endif
+			} else if (strcmp (cmethod->name, "Max") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMAX;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMAX_UN;
+#ifdef __mono_ppc64__
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMAX_UN;
+#endif
+			}
+			/*
+			 * TODO: Floating point version with fsel, but fsel has
+			 * some peculiarities (need a scratch reg unless
+			 * comparing with 0, NaN/Inf behaviour (then MathF too)
+			 */
+		}
+
+		if (opcode && fsig->param_count == 2) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = fsig->params [0]->type == MONO_TYPE_I4 ? STACK_I4 : STACK_I8;
+			ins->dreg = mono_alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		/* Rounding instructions */
+		opcode = 0;
+		if ((cpu_hw_caps & PPC_ISA_2X) && (fsig->param_count == 1) && (fsig->params [0]->type == MONO_TYPE_R8)) {
+			/*
+			 * XXX: sysmath.c and the POWER ISA documentation for
+			 * frin[.] imply rounding is a little more complicated
+			 * than expected; the semantics are slightly different,
+			 * so just "frin." isn't a drop-in replacement. Floor,
+			 * Truncate, and Ceiling seem to work normally though.
+			 * (also, no float versions of these ops, but frsp
+			 * could be preprended?)
+			 */
+			//if (!strcmp (cmethod->name, "Round"))
+			//	opcode = OP_ROUND;
+			if (!strcmp (cmethod->name, "Floor"))
+				opcode = OP_PPC_FLOOR;
+			else if (!strcmp (cmethod->name, "Ceiling"))
+				opcode = OP_PPC_CEIL;
+			else if (!strcmp (cmethod->name, "Truncate"))
+				opcode = OP_PPC_TRUNC;
+			if (opcode != 0) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->type = STACK_R8;
+				ins->dreg = mono_alloc_freg (cfg);
+				ins->sreg1 = args [0]->dreg;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
+		}
+	}
+	if (cmethod->klass == mono_class_try_get_mathf_class ()) {
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRTF;
+		} /* XXX: POWER has no single-precision normal FPU abs? */
+
+		if (opcode && fsig->param_count == 1) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R4;
+			ins->dreg = mono_alloc_freg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+	}
+	return ins;
 }
 
 host_mgreg_t
@@ -5835,3 +5984,14 @@ mono_arch_opcode_supported (int opcode)
 	}
 }
 
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	gpointer target = NULL;
+	switch (jit_icall_id) {
+#undef MONO_AOT_ICALL
+#define MONO_AOT_ICALL(x) case MONO_JIT_ICALL_ ## x: target = (gpointer)x; break;
+	MONO_AOT_ICALL (mono_ppc_throw_exception)
+	}
+	return target;
+}

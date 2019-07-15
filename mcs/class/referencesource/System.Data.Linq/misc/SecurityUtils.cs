@@ -7,7 +7,9 @@
 /*
  */
 
-
+#if MONO
+namespace System.Data.Linq
+#else
 #if Microsoft_NAMESPACE
     namespace System.Windows.Forms
 #elif DRAWING_NAMESPACE
@@ -22,6 +24,7 @@
     namespace System.Data.Linq
 #else
 namespace System.Windows.Forms 
+#endif
 #endif
 {
     using System;

@@ -337,6 +337,10 @@ mono_ios_runtime_init (void)
 //
 // ICALLS used by the mobile profile of mscorlib
 //
+// NOTE: The timezone functions are duplicated in XI, so if you're going to modify here, you have to 
+// modify there. 
+//
+// See in XI runtime/xamarin-support.m
 
 void*
 xamarin_timezone_get_data (const char *name, int *size)
@@ -353,6 +357,18 @@ xamarin_timezone_get_data (const char *name, int *size)
 	void* result = malloc (*size);
 	memcpy (result, data.bytes, *size);
 	return result;
+}
+
+//
+// Returns the geopolitical region ID of the local timezone.
+
+const char *
+xamarin_timezone_get_local_name ()
+{
+	NSTimeZone *tz = nil;
+	tz = [NSTimeZone localTimeZone];
+	NSString *name = [tz name];
+	return (name != nil) ? strdup ([name UTF8String]) : strdup ("Local");
 }
 
 char**

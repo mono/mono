@@ -351,6 +351,11 @@ public class BuiltinTests {
 		return a == b;
 	}
 
+	static bool decimal_cmp_can_inline (decimal a, decimal b)
+	{
+		return a == b;
+	}
+
 	static int test_0_nint_implicit_decimal ()
 	{
 		nint a = new nint (10);
@@ -855,6 +860,9 @@ public class BuiltinTests {
 		if ((int) x.GetA () != 20)
 			return 6;
 
+		if (!decimal_cmp_can_inline ((int) x.GetA (), 20))
+			return 66;
+
 		if ((float) SomeNativeStructWithNuint.b != 21f)
 			return 7;
 
@@ -1353,6 +1361,33 @@ public class BuiltinTests {
 
 		if ((float) y.GetAVirtual () != 30f)
 			return 10;
+
+		return 0;
+	}
+
+	static int test_0_much_casting ()
+	{
+		var notOof = (int)(float)1;
+		if (notOof != 1)
+			return 1;
+
+		var notOof2 = (nint)(float)(nfloat)1;
+		if (notOof2 != 1)
+			return 2;
+
+		var notOof3 = (nint)(int)(nfloat)1;
+		if (notOof3 != 1)
+			return 3;
+
+		var oof = (nint)(nfloat)1;
+		var oof2 = (int) oof - 1;
+		if (oof2 != 0)
+			return 4;
+
+		var noof = (nfloat)(nint)1;
+		var noof2 = (float) noof - 1;
+		if (noof2 > 0.1)
+			return 5;
 
 		return 0;
 	}

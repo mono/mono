@@ -1,0 +1,3 @@
+setup:
+	pip install clang
+

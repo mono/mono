@@ -75,8 +75,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
-			var ip = GetIPv4Address (entry);
-			Assert.AreEqual (site1Dot, ip.ToString ());
+			CheckIPv4Address (entry, IPAddress.Parse (site1Dot));
 		}
 
 		[Test]
@@ -239,12 +238,10 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		static IPAddress GetIPv4Address (IPHostEntry h)
+		static void CheckIPv4Address (IPHostEntry h, IPAddress a)
 		{
-			var al = h.AddressList.FirstOrDefault (x => x.AddressFamily == AddressFamily.InterNetwork);
-			if (al == null)
-				Assert.Ignore ("Could not resolve an IPv4 address as required by this test case, e.g. running on an IPv6 only network");
-			return al;
+			var al = h.AddressList.Contains (a);
+			Assert.True (al, "Failed to resolve host name " + h.HostName + " to expected IP address " + a.ToString());
 		}
 
 		void SubTestGetHostByName (string siteName, string siteDot)
@@ -252,8 +249,7 @@ namespace MonoTests.System.Net
 			IPHostEntry h = Dns.GetHostByName (siteName);
 			SubTestValidIPHostEntry (h);
 			Assert.AreEqual (siteName, h.HostName, "siteName");
-			var ip = GetIPv4Address (h);
-			Assert.AreEqual (siteDot, ip.ToString (), "siteDot");
+			CheckIPv4Address (h, IPAddress.Parse (siteDot));
 		}
 
 		[Test]
@@ -330,8 +326,7 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			var ip = GetIPv4Address (h);
-			Assert.AreEqual (addr.ToString (), ip.ToString ());
+			CheckIPv4Address (h, addr);
 		}
 
 		[Test]
@@ -340,8 +335,7 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site2IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			var ip = GetIPv4Address (h);
-			Assert.AreEqual (addr.ToString (), ip.ToString ());
+			CheckIPv4Address (h, addr);
 		}
 
 		[Test]
@@ -565,7 +559,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void GetHostEntry_StringEmpty ()
 		{
-			Dns.GetHostEntry (string.Empty);
+			Dns.GetHostEntry ("localhost");
 		}
 
 		/* This isn't used anymore, but could be useful for debugging

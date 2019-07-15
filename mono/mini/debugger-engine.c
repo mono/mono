@@ -337,7 +337,9 @@ mono_de_add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
 				}
 			}
 
-			g_assert (seq_points);
+			if (!seq_points)
+				/* Could be AOT code, or above "search_all_backends" call could have failed */
+				continue;
 
 			insert_breakpoint (seq_points, domain, ji, bp, NULL);
 		}
@@ -349,13 +351,12 @@ mono_de_add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
 static void
 set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_points, MonoBreakpoint *bp, MonoError *error)
 {
-	gpointer code;
 	MonoJitInfo *ji;
 
 	if (error)
 		error_init (error);
 
-	code = mono_jit_search_all_backends_for_jit_info (domain, method, &ji);
+	(void)mono_jit_search_all_backends_for_jit_info (domain, method, &ji);
 	g_assert (ji);
 
 	insert_breakpoint (seq_points, domain, ji, bp, error);
@@ -954,7 +955,7 @@ mono_de_ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, void *tls,
 		}
 	}
 
-	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && !(sp->flags & MONO_SEQ_POINT_FLAG_NESTED_CALL) && req->start_method) {
+	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && req->start_method) {
 		int nframes;
 		rt_callbacks.ss_calculate_framecount (tls, ctx, FALSE, NULL, &nframes);
 		if (req->start_method == method && req->nframes && nframes == req->nframes) { //Check also frame count(could be recursion)
@@ -1554,4 +1555,13 @@ mono_de_cleanup (void)
 	domains_cleanup ();
 }
 
+void
+mono_debugger_free_objref (gpointer value)
+{
+	ObjRef *o = (ObjRef *)value;
+
+	mono_gchandle_free_internal (o->handle);
+
+	g_free (o);
+}
 #endif

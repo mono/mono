@@ -56,8 +56,10 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	long add_time;
 #pragma warning restore 169, 414, 649
 
+#if !DISABLE_REMOTING
 	// not part of MonoAsyncResult...
 	MonoMethodMessage call_message;
+#endif
 #pragma warning disable 0414
 	IMessageCtrl message_ctrl;
 #pragma warning restore
@@ -173,11 +175,13 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 		return null;
 	}
 	
+#if !DISABLE_REMOTING
 	internal MonoMethodMessage CallMessage
 	{
 		get { return call_message; }
 		set { call_message = value; }
 	}
+#endif
 
 	void IThreadPoolWorkItem.ExecuteWorkItem()
 	{

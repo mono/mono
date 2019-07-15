@@ -34,6 +34,7 @@ namespace Mono
 	class SystemDependencyProvider : ISystemDependencyProvider
 	{
 		static SystemDependencyProvider instance;
+		static object syncRoot = new object ();
 
 		public static SystemDependencyProvider Instance {
 			get {
@@ -44,8 +45,12 @@ namespace Mono
 
 		internal static void Initialize ()
 		{
-			if (instance == null)
-				Interlocked.CompareExchange (ref instance, new SystemDependencyProvider (), null);
+			lock (syncRoot) {
+				if (instance != null)
+					return;
+
+				instance = new SystemDependencyProvider ();
+			}
 		}
 
 		ISystemCertificateProvider ISystemDependencyProvider.CertificateProvider => CertificateProvider;

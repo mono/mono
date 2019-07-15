@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public struct FieldToken {
+	public readonly struct FieldToken : IEquatable<FieldToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly FieldToken Empty = new FieldToken ();
 

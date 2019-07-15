@@ -407,12 +407,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			CssStyleCollection css = GetCssCollection ();
 			TestTableStyle ts = new TestTableStyle ();
-			ts.BackImageUrl = "http://www.go-mono.com";
+			ts.BackImageUrl = "http://www.example.com";
 			ts.Fill (css, null);
 			Assert.AreEqual (1, css.Count, "Count");
-			Assert.AreEqual ("http://www.go-mono.com", css["background-image"], "css[string]");
-			Assert.AreEqual ("http://www.go-mono.com", css[HtmlTextWriterStyle.BackgroundImage], "css[HtmlTextWriterStyle]");
-			Assert.AreEqual ("background-image:url(http://www.go-mono.com);", css.Value, "css.Value");
+			Assert.AreEqual ("http://www.example.com", css["background-image"], "css[string]");
+			Assert.AreEqual ("http://www.example.com", css[HtmlTextWriterStyle.BackgroundImage], "css[HtmlTextWriterStyle]");
+			Assert.AreEqual ("background-image:url(http://www.example.com);", css.Value, "css.Value");
 		}
 
 		[Test]
@@ -420,13 +420,13 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			CssStyleCollection css = GetCssCollection ();
 			TestTableStyle ts = new TestTableStyle ();
-			ts.BackImageUrl = "http://www.go-mono.com";
+			ts.BackImageUrl = "http://www.example.com";
 			ts.Fill (css, new TestResolutionService ());
 			Assert.AreEqual (1, css.Count, "Count");
 			Assert.AreEqual ("http://www.mono-project.com", css["background-image"], "css[string]");
 			Assert.AreEqual ("http://www.mono-project.com", css[HtmlTextWriterStyle.BackgroundImage], "css[HtmlTextWriterStyle]");
 			Assert.AreEqual ("background-image:url(http://www.mono-project.com);", css.Value, "css.Value");
-			Assert.AreEqual ("http://www.go-mono.com", ts.BackImageUrl, "BackImageUrl");
+			Assert.AreEqual ("http://www.example.com", ts.BackImageUrl, "BackImageUrl");
 		}
 		[Test]
 		[Category ("NotWorking")]

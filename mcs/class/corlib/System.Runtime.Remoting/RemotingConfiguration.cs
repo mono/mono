@@ -53,7 +53,7 @@ namespace System.Runtime.Remoting
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
 		static bool defaultDelayedConfigRead = false;
-		static string _errorMode;
+		static CustomErrorsModes _errorMode = CustomErrorsModes.RemoteOnly;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
 		static Hashtable activatedClientEntries = new Hashtable();
@@ -81,11 +81,10 @@ namespace System.Runtime.Remoting
 			set { applicationName = value; }
 		}
 
-		[MonoTODO]
 		public static CustomErrorsModes CustomErrorsMode
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _errorMode; }
+			set { _errorMode = value; }
 		}
 
 		public static string ProcessId 
@@ -387,8 +386,8 @@ namespace System.Runtime.Remoting
 		
 		public static bool CustomErrorsEnabled (bool isLocalRequest)
 		{
-			if (_errorMode == "off") return false;
-			if (_errorMode == "on") return true;
+			if (_errorMode == CustomErrorsModes.Off) return false;
+			if (_errorMode == CustomErrorsModes.On) return true;
 			return !isLocalRequest;
 		}
 
@@ -403,7 +402,7 @@ namespace System.Runtime.Remoting
 			if (m != "on" && m != "off" && m != "remoteonly")
 				throw new RemotingException ("Invalid custom error mode: " + mode);
 				
-			_errorMode = m;
+			_errorMode = (CustomErrorsModes) Enum.Parse(typeof(CustomErrorsModes), m, true);
 		}
 	}
 

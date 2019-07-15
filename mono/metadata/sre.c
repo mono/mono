@@ -77,7 +77,6 @@ static gboolean is_sre_field_builder (MonoClass *klass);
 static gboolean is_sre_gparam_builder (MonoClass *klass);
 static gboolean is_sre_enum_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
-static gboolean is_sr_mono_field (MonoClass *klass);
 
 static guint32 mono_image_get_methodspec_token (MonoDynamicImage *assembly, MonoMethod *method);
 static guint32 mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m);
@@ -318,7 +317,7 @@ method_encode_clauses (MonoImage *image, MonoDynamicImage *assembly, MonoReflect
 	MonoILExceptionInfo *ex_info;
 	MonoILExceptionBlock *ex_block;
 	guint32 finally_start;
-	int i, j, clause_index;;
+	int i, j, clause_index;
 
 	clauses = image_g_new0 (image, MonoExceptionClause, num_clauses);
 
@@ -1106,7 +1105,7 @@ mono_image_create_method_token (MonoDynamicImage *assembly, MonoObjectHandle obj
 	error_init (error);
 
 	MonoClass *klass = mono_handle_class (obj);
-	if (strcmp (klass->name, "MonoMethod") == 0 || strcmp (klass->name, "MonoCMethod") == 0) {
+	if (strcmp (klass->name, "RuntimeMethodInfo") == 0 || strcmp (klass->name, "RuntimeConstructorInfo") == 0) {
 		MonoReflectionMethodHandle ref_method = MONO_HANDLE_CAST (MonoReflectionMethod, obj);
 		MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
 		g_assert (!MONO_HANDLE_IS_NULL (opt_param_types) && (mono_method_signature_internal (method)->sentinelpos >= 0));
@@ -1170,8 +1169,8 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj,
 		/* If it's a RuntimeType now, we could have registered a
 		 * TypeBuilder for it before, so replacing is okay. */
 		how_collide = MONO_DYN_IMAGE_TOK_REPLACE;
-	} else if (strcmp (klass->name, "MonoCMethod") == 0 ||
-			   strcmp (klass->name, "MonoMethod") == 0) {
+	} else if (strcmp (klass->name, "RuntimeMethodInfo") == 0 ||
+			   strcmp (klass->name, "RuntimeConstructorInfo") == 0) {
 		MonoReflectionMethodHandle m = MONO_HANDLE_CAST (MonoReflectionMethod, obj);
 		MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 		if (method->is_inflated) {
@@ -1222,7 +1221,7 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj,
 			token = methodref_token;
 		}
 		/*g_print ("got token 0x%08x for %s\n", token, m->method->name);*/
-	} else if (strcmp (klass->name, "MonoField") == 0) {
+	} else if (strcmp (klass->name, "RuntimeFieldInfo") == 0) {
 		MonoReflectionFieldHandle f = MONO_HANDLE_CAST (MonoReflectionField, obj);
 		MonoClassField *field = MONO_HANDLE_GETVAL (f, field);
 		if ((field->parent->image == &assembly->image) &&
@@ -1503,37 +1502,44 @@ add_custom_modifiers_to_type (MonoType *without_mods, MonoArrayHandle req_array,
 	if (!MONO_HANDLE_IS_NULL (opt_array))
 		num_opt_mods = mono_array_handle_length (opt_array);
 
-	if (!(num_opt_mods || num_req_mods))
+	const int total_mods = num_req_mods + num_opt_mods;
+	if (total_mods == 0)
 		return without_mods;
 
 	MonoTypeWithModifiers *result;
-	result = mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (num_req_mods + num_opt_mods));
+	result = mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (total_mods, FALSE));
 	memcpy (result, without_mods, MONO_SIZEOF_TYPE);
 	result->unmodified.has_cmods = 1;
 	MonoCustomModContainer *cmods = mono_type_get_cmods ((MonoType *)result);
 	g_assert (cmods);
-	cmods->count = num_req_mods + num_opt_mods;
+	cmods->count = total_mods;
 	cmods->image = image;
 
 	g_assert (image_is_dynamic (image));
 	MonoDynamicImage *allocator = (MonoDynamicImage *) image;
 
-	int modifier_index = 0;
+	g_assert (total_mods > 0);
+	/* store cmods in reverse order from how the API supplies them.
+	(Assemblies store modifiers in reverse order of IL syntax - and SRE
+	follows the same order as IL syntax). */
+	int modifier_index = total_mods - 1;
 
 	MonoObjectHandle mod_handle = MONO_HANDLE_NEW (MonoObject, NULL);
 	for (int i=0; i < num_req_mods; i++) {
 		cmods->modifiers [modifier_index].required = TRUE;
 		MONO_HANDLE_ARRAY_GETREF (mod_handle, req_array, i);
 		cmods->modifiers [modifier_index].token = mono_image_create_token (allocator, mod_handle, FALSE, TRUE, error);
-		modifier_index++;
+		modifier_index--;
 	}
 
 	for (int i=0; i < num_opt_mods; i++) {
 		cmods->modifiers [modifier_index].required = FALSE;
 		MONO_HANDLE_ARRAY_GETREF (mod_handle, opt_array, i);
 		cmods->modifiers [modifier_index].token = mono_image_create_token (allocator, mod_handle, FALSE, TRUE, error);
-		modifier_index++;
+		modifier_index--;
 	}
+
+	g_assert (modifier_index == -1);
 
 	HANDLE_FUNCTION_RETURN_VAL ((MonoType *) result);
 }
@@ -1924,13 +1930,16 @@ ctor_builder_to_signature_raw (MonoImage *image, MonoReflectionCtorBuilder* ctor
  * LOCKING: Assumes the loader lock is held.
  */
 static MonoMethodSignature*
-method_builder_to_signature (MonoImage *image, MonoReflectionMethodBuilderHandle method, MonoError *error) {
+method_builder_to_signature (MonoImage *image, MonoReflectionMethodBuilderHandle method, MonoError *error)
+{
 	MonoMethodSignature *sig;
 
 	error_init (error);
 	MonoArrayHandle params = MONO_HANDLE_NEW_GET(MonoArray, method, parameters);
 	MonoArrayHandle required_modifiers = MONO_HANDLE_NEW_GET(MonoArray, method, param_modreq);
 	MonoArrayHandle optional_modifiers = MONO_HANDLE_NEW_GET(MonoArray, method, param_modopt);
+	MonoArrayHandle ret_req_modifiers = MONO_HANDLE_NEW_GET (MonoArray, method, return_modreq);
+	MonoArrayHandle ret_opt_modifiers = MONO_HANDLE_NEW_GET (MonoArray, method, return_modopt);
 
 	sig = parameters_to_signature (image, params, required_modifiers, optional_modifiers, error);
 	return_val_if_nok (error, NULL);
@@ -1939,6 +1948,7 @@ method_builder_to_signature (MonoImage *image, MonoReflectionMethodBuilderHandle
 	rtype = MONO_HANDLE_CAST (MonoReflectionType, MONO_HANDLE_NEW_GET (MonoObject, method, rtype));
 	if (!MONO_HANDLE_IS_NULL (rtype)) {
 		sig->ret = mono_reflection_type_handle_mono_type (rtype, error);
+		sig->ret = add_custom_modifiers_to_type (sig->ret, ret_req_modifiers, ret_opt_modifiers, image, error);
 		if (!is_ok (error)) {
 			image_g_free (image, sig);
 			return NULL;
@@ -2051,29 +2061,22 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 
 #endif /* !DISABLE_REFLECTION_EMIT */
 
-
-static gboolean
-is_sr_mono_field (MonoClass *klass)
-{
-	check_corlib_type_cached (klass, "System.Reflection", "MonoField");
-}
-
 gboolean
 mono_is_sr_mono_property (MonoClass *klass)
 {
-	check_corlib_type_cached (klass, "System.Reflection", "MonoProperty");
+	check_corlib_type_cached (klass, "System.Reflection", "RuntimePropertyInfo");
 }
 
 static gboolean
 is_sr_mono_method (MonoClass *klass)
 {
-	check_corlib_type_cached (klass, "System.Reflection", "MonoMethod");
+	check_corlib_type_cached (klass, "System.Reflection", "RuntimeMethodInfo");
 }
 
 gboolean
 mono_is_sr_mono_cmethod (MonoClass *klass)
 {
-	check_corlib_type_cached (klass, "System.Reflection", "MonoCMethod");
+	check_corlib_type_cached (klass, "System.Reflection", "RuntimeConstructorInfo");
 }
 
 gboolean
@@ -2308,7 +2311,8 @@ handle_type:
 			*p++ = simple_type = klass_byval_arg->type;
 			goto handle_enum;
 		} else {
-			g_error ("unhandled type in custom attr");
+			mono_error_set_not_supported (error, "unhandled type in custom attr");
+			break;
 		}
 		str = type_get_qualified_name (m_class_get_byval_arg (klass), NULL);
 		slen = strlen (str);
@@ -2328,7 +2332,7 @@ handle_type:
 		goto handle_enum;
 	}
 	default:
-		g_error ("type 0x%02x not yet supported in custom attr encoder", simple_type);
+		mono_error_set_not_supported (error, "type 0x%02x not yet supported in custom attr encoder", simple_type);
 	}
 	*retp = p;
 	*retbuffer = buffer;
@@ -2453,7 +2457,7 @@ mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly,
 
 	error_init (error);
 
-	if (strcmp (ctor->vtable->klass->name, "MonoCMethod")) {
+	if (strcmp (ctor->vtable->klass->name, "RuntimeConstructorInfo")) {
 		/* sig is freed later so allocate it in the heap */
 		sig = ctor_builder_to_signature_raw (NULL, (MonoReflectionCtorBuilder*)ctor, error); /* FIXME use handles */
 		if (!is_ok (error)) {
@@ -2522,7 +2526,7 @@ mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly,
 	memcpy (p, buffer, buflen);
 leave:
 	g_free (buffer);
-	if (strcmp (ctor->vtable->klass->name, "MonoCMethod"))
+	if (strcmp (ctor->vtable->klass->name, "RuntimeConstructorInfo"))
 		g_free (sig);
 	return result;
 }
@@ -2865,14 +2869,16 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 	switch (utype) {
 	case MONO_NATIVE_LPARRAY:
 		MONO_HANDLE_SETVAL (minfo, array_subtype, guint32, spec->data.array_data.elem_type);
-		MONO_HANDLE_SETVAL (minfo, size_const, gint32, spec->data.array_data.num_elem);
+		if (spec->data.array_data.num_elem != -1)
+			MONO_HANDLE_SETVAL (minfo, size_const, gint32, spec->data.array_data.num_elem);
 		if (spec->data.array_data.param_num != -1)
 			MONO_HANDLE_SETVAL (minfo, size_param_index, gint16, spec->data.array_data.param_num);
 		break;
 
 	case MONO_NATIVE_BYVALTSTR:
 	case MONO_NATIVE_BYVALARRAY:
-		MONO_HANDLE_SETVAL (minfo, size_const, gint32, spec->data.array_data.num_elem);
+		if (spec->data.array_data.num_elem != -1)
+			MONO_HANDLE_SETVAL (minfo, size_const, gint32, spec->data.array_data.num_elem);
 		break;
 
 	case MONO_NATIVE_CUSTOM:
@@ -3828,17 +3834,20 @@ remove_instantiations_of_and_ensure_contents (gpointer key,
 static gboolean
 reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoReflectionModuleBuilderHandle module_ref = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, ref_tb, module);
 	GHashTable *unparented_classes = MONO_HANDLE_GETVAL(module_ref, unparented_classes);
+	gboolean ret_val;
 
 	if (unparented_classes) {
-		return reflection_setup_internal_class_internal (ref_tb, error);
+		ret_val = reflection_setup_internal_class_internal (ref_tb, error);
 	} else {
 		// If we're not being called recursively
 		unparented_classes = g_hash_table_new (NULL, NULL);
 		MONO_HANDLE_SETVAL (module_ref, unparented_classes, GHashTable *, unparented_classes);
 
-		gboolean ret_val = reflection_setup_internal_class_internal (ref_tb, error);
+		ret_val = reflection_setup_internal_class_internal (ref_tb, error);
 		mono_error_assert_ok (error);
 
 		// Fix the relationship between the created classes and their parents
@@ -3847,9 +3856,9 @@ reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoErr
 
 		g_hash_table_destroy (unparented_classes);
 		MONO_HANDLE_SETVAL (module_ref, unparented_classes, GHashTable *, NULL);
-
-		return ret_val;
 	}
+
+	HANDLE_FUNCTION_RETURN_VAL (ret_val);
 }
 
 MonoReflectionTypeHandle
@@ -4253,8 +4262,8 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.typehandle_class;
 		g_assert (result);
-	} else if (strcmp (oklass->name, "MonoMethod") == 0 ||
-			   strcmp (oklass->name, "MonoCMethod") == 0) {
+	} else if (strcmp (oklass->name, "RuntimeMethodInfo") == 0 ||
+			   strcmp (oklass->name, "RuntimeConstructorInfo") == 0) {
 		result = ((MonoReflectionMethod*)obj)->method;
 		if (context) {
 			result = mono_class_inflate_generic_method_checked ((MonoMethod *)result, context, error);
@@ -4262,7 +4271,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
-	} else if (strcmp (oklass->name, "MonoField") == 0) {
+	} else if (strcmp (oklass->name, "RuntimeFieldInfo") == 0) {
 		MonoClassField *field = ((MonoReflectionField*)obj)->field;
 
 		ensure_complete_type (field->parent, error);
@@ -4541,6 +4550,7 @@ ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
 	return mono_image_create_method_token (MONO_HANDLE_GETVAL (mb, dynamic_image), MONO_HANDLE_CAST (MonoObject, method), opt_param_types, error);
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, HANDLE file)
 {
@@ -4556,6 +4566,7 @@ ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb)
 	mono_image_build_metadata (mb, error);
 	mono_error_set_pending_exception (error);
 }
+#endif
 
 void
 ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, guint32 token, MonoError *error)

@@ -32,6 +32,11 @@ public class BitcodeMixedTests
 		return iface.virt<int> () == typeof(int) ? 0 : 1;
 	}
 
+	public static int test_0_entry_vcall_virtual_wrapper () {
+		InterpOnlyIFace iface = new InterpOnly ();
+		return iface.virt2 (new FooStruct (), new FooStruct ()) == typeof(FooStruct) ? 0 : 1;
+	}
+
 	public static int test_2_entry_delegate () {
 		Func<int, int> func = InterpOnly.entry_1;
 
@@ -53,6 +58,18 @@ public class BitcodeMixedTests
 		return func ();
 	}
 
+	public static int test_2_entry_delegate_dynamic () {
+		var func = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int, int>), null, typeof (InterpOnly).GetMethod ("entry_1"), true);
+
+		return func (1);
+	}
+
+	public static int test_2_entry_delegate_created_in_interp () {
+		Func<int, int> func = InterpOnly.create_del ();
+
+		return func (1);
+	}
+
 	public static int test_2_invoke () {
 		var res = typeof (InterpOnly).GetMethod ("entry_1").Invoke (null, new object [] { 1 });
 		return (int)res;
@@ -70,5 +87,9 @@ public class BitcodeMixedTests
 			return 0;
 		}
 		return 2;
+	}
+
+	public static int test_21_entry_sig () {
+		return InterpOnly.entry_sig ((byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6);
 	}
 }

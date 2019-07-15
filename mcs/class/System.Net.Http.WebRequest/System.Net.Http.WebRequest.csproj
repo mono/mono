@@ -51,15 +51,25 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Net.Http\MonoWebRequestHandler.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Net.Http.WebRequest\WebRequestHandler.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Net.Http/System.Net.Http.csproj" />
     <ProjectReference Include="../System/System.csproj" />
+    <ProjectReference Include="../System.Core/System.Core.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->

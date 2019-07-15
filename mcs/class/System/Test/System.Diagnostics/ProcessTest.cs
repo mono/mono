@@ -1035,6 +1035,12 @@ namespace MonoTests.System.Diagnostics
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void StandardInputWrite ()
 		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
+			{
+				// This test is broken on AIX because the fork child seems to become comatose.
+				Assert.Ignore ("Skipping on AIX/i");
+			}
+
 			var psi = GetEchoCrossPlatformStartInfo ();
 			psi.RedirectStandardInput = true;
 			psi.RedirectStandardOutput = true;

@@ -41,7 +41,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 	[TestFixture]
 	public class InstanceDescriptorTest {
 
-		private const string url = "http://www.mono-project.com/";
+		private const string url = "http://www.example.com/";
 		private ConstructorInfo ci;
 
 		[TestFixtureSetUp]
@@ -185,10 +185,11 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 			}
 		}
 
+#if !DISABLE_SECURITY
 		[Test]
 		public void Property_Arguments_Mismatch ()
 		{
-#if MOBILE
+#if MOBILE && !DISABLE_SECURITY
 			// ensure the property is not linked out of the application since it make the test fails
 			Assert.IsNotNull (Thread.CurrentPrincipal, "pre-test");
 #endif
@@ -211,7 +212,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 		[Test]
 		public void Property_Arguments_Null ()
 		{
-#if MOBILE
+#if MOBILE && !DISABLE_SECURITY
 			// ensure the property is not linked out of the application since it make the test fails
 			Assert.IsNotNull (Thread.CurrentPrincipal, "pre-test");
 #endif
@@ -223,6 +224,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 			Assert.AreSame (pi, id.MemberInfo, "#3");
 			Assert.IsNotNull (id.Invoke (), "#4");
 		}
+#endif
 
 		[Test]
 		public void Property_MemberInfo_NonStatic ()

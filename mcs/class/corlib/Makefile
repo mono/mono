@@ -59,7 +59,8 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx	\
-	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx
+	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -71,18 +72,26 @@ RESOURCE_STRINGS_FILES = --mscorlib-debug
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE) LinkerDescriptor/mscorlib.xml
 
-RESOURCE_FILES = \
-	resources/charinfo.nlp \
+
+ifdef WASM
+MANAGED_COLLATOR_RESOURCES_FILES =
+else
+MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \
 	resources/collation.cjkCHS.bin \
 	resources/collation.cjkCHT.bin \
 	resources/collation.cjkJA.bin \
 	resources/collation.cjkKO.bin \
-	resources/collation.cjkKOlv2.bin \
+	resources/collation.cjkKOlv2.bin
+endif
+
+RESOURCE_FILES = \
+	resources/charinfo.nlp \
+	$(MANAGED_COLLATOR_RESOURCES_FILES) \
 	LinkerDescriptor/mscorlib.xml
 
-REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,FEATURE_DEFAULT_INTERFACES,HAS_CORLIB_CONTRACTS
 
 ifndef NO_SRE
 LIB_MCS_FLAGS += -d:MONO_FEATURE_SRE
@@ -93,7 +102,11 @@ REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
+ifndef DISABLE_REMOTING
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_REMOTING,MONO_COM,FEATURE_COMINTEROP,FEATURE_ROLE_BASED_SECURITY
+else
+REFERENCE_SOURCES_FLAGS += -d:FEATURE_ROLE_BASED_SECURITY
+endif
 endif
 
 ifndef NO_THREAD_ABORT
@@ -140,15 +153,17 @@ XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 ifndef AOT_FRIENDLY_PROFILE
+ifneq ($(PROFILE),xammac)
 ifneq ($(PROFILE),testing_aot_hybrid)
 ifneq ($(PROFILE),testing_aot_full_interp)
 TEST_LIB_REFS += Mono.Posix
 endif
 endif
 endif
+endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -nowarn:67,114,162,169,649,659 \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%) -resource:LinkerDescriptor/mscorlib_test.xml,$(test_lib:.dll=.xml)
 
 ifeq ($(PROFILE),net_4_x)
@@ -231,12 +246,12 @@ $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources
 
 test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
 
-$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
+$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs | $(test_lib_dir)
 	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
 
 test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
 
-$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll | $(test_lib_dir)
 	cp $< $(test_lib_dir)
 
 XTEST_LIB_FLAGS += -r:$(test_module)
@@ -275,6 +290,10 @@ run-test-vts: test-vts
 		$(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
 ifdef NO_TEST
+NO_VTS_TEST = yes
+endif
+
+ifdef DISABLE_REMOTING
 NO_VTS_TEST = yes
 endif
 

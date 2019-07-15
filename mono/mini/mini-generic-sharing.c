@@ -555,6 +555,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
+	case MONO_RGCTX_INFO_CLASS_SIZEOF:
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS:
 	case MONO_RGCTX_INFO_MEMCPY:
@@ -958,6 +959,10 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 			return GUINT_TO_POINTER (sizeof (gpointer));
 		else
 			return GUINT_TO_POINTER (mono_class_value_size (klass, NULL));
+	case MONO_RGCTX_INFO_CLASS_SIZEOF: {
+		int align;
+		return GINT_TO_POINTER (mono_type_size (m_class_get_byval_arg (klass), &align));
+	}
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 		if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (klass)))
 			return GUINT_TO_POINTER (MONO_GSHAREDVT_BOX_TYPE_REF);
@@ -1139,6 +1144,7 @@ tramp_info_equal (gconstpointer a, gconstpointer b)
 		tramp1->addr == tramp2->addr && tramp1->sig == tramp2->sig && tramp1->gsig == tramp2->gsig;
 }
 
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_0, "Mono", "ValueTuple");
 static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_1, "Mono", "ValueTuple`1");
 static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_2, "Mono", "ValueTuple`2");
 static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_3, "Mono", "ValueTuple`3");
@@ -1186,10 +1192,13 @@ get_wrapper_shared_vtype (MonoType *t)
 		if (findex >= 16)
 			break;
 	}
-	if (findex == 0 || findex > 5)
+	if (findex > 5)
 		return NULL;
 
 	switch (findex) {
+	case 0:
+		tuple_class = mono_class_get_valuetuple_0_class ();
+		break;
 	case 1:
 		tuple_class = mono_class_get_valuetuple_1_class ();
 		break;
@@ -1327,6 +1336,58 @@ static MonoType*
 get_wrapper_shared_type (MonoType *t)
 {
 	return get_wrapper_shared_type_full (t, FALSE);
+}
+
+
+/* Returns the intptr type for types that are passed in a single register */
+static MonoType*
+get_wrapper_shared_type_reg (MonoType *t)
+{
+	t = get_wrapper_shared_type (t);
+	if (t->byref)
+		return t;
+
+	switch (t->type) {
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+#if TARGET_SIZEOF_VOID_P == 8
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return mono_get_int_type ();
+#endif
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:
+	case MONO_TYPE_PTR:
+		return mono_get_int_type ();
+	default:
+		return t;
+	}
+}
+
+static MonoMethodSignature*
+mini_get_underlying_reg_signature (MonoMethodSignature *sig)
+{
+	MonoMethodSignature *res = mono_metadata_signature_dup (sig);
+	int i;
+
+	res->ret = get_wrapper_shared_type_reg (sig->ret);
+	for (i = 0; i < sig->param_count; ++i)
+		res->params [i] = get_wrapper_shared_type_reg (sig->params [i]);
+	res->generic_param_count = 0;
+	res->is_inflated = 0;
+
+	return res;
 }
 
 static MonoMethodSignature*
@@ -1633,7 +1694,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	gboolean generic = FALSE;
 	gboolean return_native_struct;
 
-	sig = mini_get_underlying_signature (sig);
+	sig = mini_get_underlying_reg_signature (sig);
 
 	gshared_lock ();
 	if (!cache)
@@ -1825,27 +1886,32 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 MonoMethod*
 mini_get_interp_lmf_wrapper (const char *name, gpointer target)
 {
+	static MonoMethod *cache [2];
+	g_assert (target == (gpointer)mono_interp_to_native_trampoline || target == (gpointer)mono_interp_entry_from_trampoline);
+	const int index = target == (gpointer)mono_interp_to_native_trampoline;
+	const MonoJitICallId jit_icall_id = index ? MONO_JIT_ICALL_mono_interp_to_native_trampoline : MONO_JIT_ICALL_mono_interp_entry_from_trampoline;
+
 	MonoMethod *res, *cached;
 	MonoMethodSignature *sig;
 	MonoMethodBuilder *mb;
 	WrapperInfo *info;
-	static GHashTable *cache = NULL;
-	MonoType *int_type = mono_get_int_type ();
 
 	gshared_lock ();
-	if (!cache)
-		cache = g_hash_table_new_full (NULL, NULL, NULL, NULL);
-	res = (MonoMethod *) g_hash_table_lookup (cache, target);
+
+	res = cache [index];
+
 	gshared_unlock ();
 
 	if (res)
 		return res;
 
+	MonoType *int_type = mono_get_int_type ();
+
 	char *wrapper_name = g_strdup_printf ("__interp_lmf_%s", name);
 	mb = mono_mb_new (mono_defaults.object_class, wrapper_name, MONO_WRAPPER_OTHER);
 
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
-	sig->ret = mono_get_void_type ();;
+	sig->ret = mono_get_void_type ();
 	sig->params [0] = int_type;
 	sig->params [1] = int_type;
 
@@ -1857,21 +1923,22 @@ mini_get_interp_lmf_wrapper (const char *name, gpointer target)
 	mono_mb_emit_byte (mb, CEE_LDARG_1);
 
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_ICALL, target);
+	mono_mb_emit_byte (mb, CEE_MONO_ICALL);
+	mono_mb_emit_i4 (mb, jit_icall_id);
 
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_INTERP_LMF);
-	info->d.icall.func = (gpointer) target;
+	info->d.icall.jit_icall_id = jit_icall_id;
 	res = mono_mb_create (mb, sig, 4, info);
 
 	gshared_lock ();
-	cached = (MonoMethod *) g_hash_table_lookup (cache, target);
+	cached = cache [index];
 	if (cached) {
 		mono_free_method (res);
 		res = cached;
 	} else {
-		g_hash_table_insert (cache, target, res);
+		cache [index] = res;
 	}
 	gshared_unlock ();
 	mono_mb_free (mb);
@@ -2041,6 +2108,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
+	case MONO_RGCTX_INFO_CLASS_SIZEOF:
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS:
 	case MONO_RGCTX_INFO_MEMCPY:
@@ -2501,6 +2569,7 @@ mono_rgctx_info_type_to_str (MonoRgctxInfoType type)
 	case MONO_RGCTX_INFO_CAST_CACHE: return "CAST_CACHE";
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE: return "ARRAY_ELEMENT_SIZE";
 	case MONO_RGCTX_INFO_VALUE_SIZE: return "VALUE_SIZE";
+	case MONO_RGCTX_INFO_CLASS_SIZEOF: return "CLASS_SIZEOF";
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE: return "CLASS_BOX_TYPE";
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS: return "CLASS_IS_REF_OR_CONTAINS_REFS";
 	case MONO_RGCTX_INFO_FIELD_OFFSET: return "FIELD_OFFSET";
@@ -2591,6 +2660,7 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
+	case MONO_RGCTX_INFO_CLASS_SIZEOF:
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS:
 	case MONO_RGCTX_INFO_MEMCPY:
@@ -2652,6 +2722,7 @@ mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
+	case MONO_RGCTX_INFO_CLASS_SIZEOF:
 	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS:
 	case MONO_RGCTX_INFO_MEMCPY:
@@ -2668,19 +2739,46 @@ mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type)
 	}
 }
 
-static int
-lookup_or_register_info (MonoClass *klass, int type_argc, gpointer data, MonoRgctxInfoType info_type,
-	MonoGenericContext *generic_context)
+/*
+ * lookup_or_register_info:
+ * @method: a method
+ * @in_mrgctx: whether to put the data into the MRGCTX
+ * @data: the info data
+ * @info_type: the type of info to register about data
+ * @generic_context: a generic context
+ *
+ * Looks up and, if necessary, adds information about data/info_type in
+ * method's or method's class runtime generic context.  Returns the
+ * encoded slot number.
+ */
+static guint32
+lookup_or_register_info (MonoClass *klass, MonoMethod *method, gboolean in_mrgctx, gpointer data,
+						 MonoRgctxInfoType info_type, MonoGenericContext *generic_context)
 {
+	int type_argc = 0;
+
+	if (in_mrgctx) {
+		klass = method->klass;
+
+		MonoGenericInst *method_inst = mono_method_get_context (method)->method_inst;
+
+		if (method_inst) {
+			g_assert (method->is_inflated && method_inst);
+			type_argc = method_inst->type_argc;
+			g_assert (type_argc > 0);
+		}
+	}
+
 	MonoRuntimeGenericContextTemplate *rgctx_template =
 		mono_class_get_runtime_generic_context_template (klass);
 	MonoRuntimeGenericContextInfoTemplate *oti_list, *oti;
-	int i;
+	int i, index;
 
 	klass = get_shared_class (klass);
 
 	mono_loader_lock ();
 
+	index = -1;
 	if (info_has_identity (info_type)) {
 		oti_list = get_info_templates (rgctx_template, type_argc);
 
@@ -2694,55 +2792,22 @@ lookup_or_register_info (MonoClass *klass, int type_argc, gpointer data, MonoRgc
 
 			if (info_equal (data, inflated_data, info_type)) {
 				free_inflated_info (info_type, inflated_data);
-				mono_loader_unlock ();
-				return i;
+				index = i;
+				break;
 			}
 			free_inflated_info (info_type, inflated_data);
 		}
 	}
 
 	/* We haven't found the info */
-	i = register_info (klass, type_argc, data, info_type);
+	if (index == -1)
+		index = register_info (klass, type_argc, data, info_type);
 
 	/* interlocked by loader lock */
-	if (i > UnlockedRead (&rgctx_max_slot_number))
-		UnlockedWrite (&rgctx_max_slot_number, i);
+	if (index > UnlockedRead (&rgctx_max_slot_number))
+		UnlockedWrite (&rgctx_max_slot_number, index);
 
 	mono_loader_unlock ();
-
-	return i;
-}
-
-/*
- * mono_method_lookup_or_register_info:
- * @method: a method
- * @in_mrgctx: whether to put the data into the MRGCTX
- * @data: the info data
- * @info_type: the type of info to register about data
- * @generic_context: a generic context
- *
- * Looks up and, if necessary, adds information about data/info_type in
- * method's or method's class runtime generic context.  Returns the
- * encoded slot number.
- */
-guint32
-mono_method_lookup_or_register_info (MonoMethod *method, gboolean in_mrgctx, gpointer data,
-	MonoRgctxInfoType info_type, MonoGenericContext *generic_context)
-{
-	MonoClass *klass = method->klass;
-	int type_argc = 0, index;
-
-	if (in_mrgctx) {
-		MonoGenericInst *method_inst = mono_method_get_context (method)->method_inst;
-
-		if (method_inst) {
-			g_assert (method->is_inflated && method_inst);
-			type_argc = method_inst->type_argc;
-			g_assert (type_argc > 0);
-		}
-	}
-
-	index = lookup_or_register_info (klass, type_argc, data, info_type, generic_context);
 
 	//g_print ("rgctx item at index %d argc %d\n", index, type_argc);
 
@@ -3894,6 +3959,8 @@ get_shared_type (MonoType *t, MonoType *type)
 	ttype = type->type;
 	if (type->type == MONO_TYPE_VALUETYPE) {
 		ttype = mono_class_enum_basetype_internal (type->data.klass)->type;
+	} else if (type->type == MONO_TYPE_GENERICINST && m_class_is_enumtype(type->data.generic_class->container_class)) {
+		ttype = mono_class_enum_basetype_internal (mono_class_from_mono_type_internal (type))->type;
 	} else if (MONO_TYPE_IS_REFERENCE (type)) {
 		ttype = MONO_TYPE_OBJECT;
 	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {
@@ -3963,6 +4030,7 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	MonoGenericContainer *class_container, *method_container = NULL;
 	MonoGenericContext *context = mono_method_get_context (method);
 	MonoGenericInst *inst;
+	WrapperInfo *info = NULL;
 
 	error_init (error);
 
@@ -3972,7 +4040,10 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	 * same wrapper, breaking AOT which assumes wrappers are unique.
 	 * FIXME: Add other cases.
 	 */
-	if (method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED) {
+	if (method->wrapper_type)
+		info = mono_marshal_get_wrapper_info (method);
+	switch (method->wrapper_type) {
+	case MONO_WRAPPER_SYNCHRONIZED: {
 		MonoMethod *wrapper = mono_marshal_method_from_wrapper (method);
 
 		MonoMethod *gwrapper = mini_get_shared_method_full (wrapper, flags, error);
@@ -3980,16 +4051,27 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 
 		return mono_marshal_get_synchronized_wrapper (gwrapper);
 	}
-	if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
-
+	case MONO_WRAPPER_DELEGATE_INVOKE: {
 		if (info->subtype == WRAPPER_SUBTYPE_NONE) {
 			MonoMethod *ginvoke = mini_get_shared_method_full (info->d.delegate_invoke.method, flags, error);
 			return_val_if_nok (error, NULL);
 
-			MonoMethod *m = mono_marshal_get_delegate_invoke (ginvoke, NULL);
-			return m;
+			return mono_marshal_get_delegate_invoke (ginvoke, NULL);
 		}
+		break;
+	}
+	case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
+	case MONO_WRAPPER_DELEGATE_END_INVOKE: {
+		MonoMethod *ginvoke = mini_get_shared_method_full (info->d.delegate_invoke.method, flags, error);
+		return_val_if_nok (error, NULL);
+
+		if (method->wrapper_type == MONO_WRAPPER_DELEGATE_BEGIN_INVOKE)
+			return mono_marshal_get_delegate_begin_invoke (ginvoke);
+		else
+			return mono_marshal_get_delegate_end_invoke (ginvoke);
+	}
+	default:
+		break;
 	}
 
 	if (method->is_generic || (mono_class_is_gtd (method->klass) && !method->is_inflated)) {
@@ -4037,27 +4119,27 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 int
 mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 {
-	guint32 slot = -1;
+	gpointer entry_data = NULL;
 
 	switch (entry->data->type) {
 	case MONO_PATCH_INFO_CLASS:
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, m_class_get_byval_arg (entry->data->data.klass), entry->info_type, mono_method_get_context (entry->method));
+		entry_data = m_class_get_byval_arg (entry->data->data.klass);
 		break;
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHODCONST:
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.method, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = entry->data->data.method;
 		break;
 	case MONO_PATCH_INFO_FIELD:
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.field, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = entry->data->data.field;
 		break;
 	case MONO_PATCH_INFO_SIGNATURE:
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.sig, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = entry->data->data.sig;
 		break;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL: {
 		MonoJumpInfoGSharedVtCall *call_info = (MonoJumpInfoGSharedVtCall *)g_malloc0 (sizeof (MonoJumpInfoGSharedVtCall)); //mono_domain_alloc0 (domain, sizeof (MonoJumpInfoGSharedVtCall));
 
 		memcpy (call_info, entry->data->data.gsharedvt, sizeof (MonoJumpInfoGSharedVtCall));
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, call_info, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = call_info;
 		break;
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_METHOD: {
@@ -4076,7 +4158,7 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 
 			memcpy (template_, otemplate, sizeof (MonoRuntimeGenericContextInfoTemplate));
 		}
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = info;
 		break;
 	}
 	case MONO_PATCH_INFO_VIRT_METHOD: {
@@ -4085,7 +4167,7 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 
 		info = (MonoJumpInfoVirtMethod *)g_malloc0 (sizeof (MonoJumpInfoVirtMethod));
 		memcpy (info, oinfo, sizeof (MonoJumpInfoVirtMethod));
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = info;
 		break;
 	}
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
@@ -4094,7 +4176,7 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 
 		info = (MonoDelegateClassMethodPair *)g_malloc0 (sizeof (MonoDelegateClassMethodPair));
 		memcpy (info, oinfo, sizeof (MonoDelegateClassMethodPair));
-		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
+		entry_data = info;
 		break;
 	}
 	default:
@@ -4102,7 +4184,10 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 		break;
 	}
 
-	return slot;
+	if (entry->in_mrgctx)
+		return lookup_or_register_info (entry->d.method->klass, entry->d.method, entry->in_mrgctx, entry_data, entry->info_type, mono_method_get_context (entry->d.method));
+	else
+		return lookup_or_register_info (entry->d.klass, NULL, entry->in_mrgctx, entry_data, entry->info_type, mono_class_get_context (entry->d.klass));
 }
 
 static gboolean gsharedvt_supported;

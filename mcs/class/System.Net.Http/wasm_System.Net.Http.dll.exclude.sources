@@ -1,0 +1,6 @@
+HttpClient.DefaultHandler.cs
+HttpClientHandler.cs
+HttpClientHandler.DefaultHandler.cs
+HttpClientHandler.SocketsHandler.cs
+corefx/SocketsHttpHandler.Mono.cs
+../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/*.cs

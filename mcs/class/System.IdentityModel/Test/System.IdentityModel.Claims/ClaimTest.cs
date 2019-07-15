@@ -53,7 +53,7 @@ namespace MonoTests.System.IdentityModel.Claims
 			c = Claim.CreateDnsClaim ("123.45.6.7");
 			AssertClaim ("Dns", c, ClaimTypes.Dns, "123.45.6.7", Rights.PossessProperty);
 
-			Uri uri = new Uri ("http://www.mono-project.com");
+			Uri uri = new Uri ("http://www.example.com");
 			c = Claim.CreateUriClaim (uri);
 			AssertClaim ("Uri", c, ClaimTypes.Uri, uri, Rights.PossessProperty);
 

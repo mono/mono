@@ -4,7 +4,7 @@ DIST_ONLY_SUBDIRS = certview
 include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = 
-LIB_REFS = Mono.Security System
+LIB_REFS = Mono.Security System System.Core
 
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe makecert.exe chktrust.exe crlupdate.exe \
 	signcode.exe setreg.exe certmgr.exe caspol.exe permview.exe mozroots.exe cert-sync.exe
@@ -66,4 +66,4 @@ permview.exe: permview.cs
 	$(CSCOMPILE) $^ $(HELPER_SOURCES) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
 
 %.exe: %.cs $(HELPER_SOURCES)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll $^
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll $^

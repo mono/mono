@@ -184,9 +184,9 @@ namespace System.Globalization
             InitializeAbbreviatedEraNames(localeName, calendarId);
 
             // Abbreviated English Era Names are only used for the Japanese calendar.
-            if (calendarId == (int)CalendarId.JAPAN)
+            if (!GlobalizationMode.Invariant && calendarId == (int)CalendarId.JAPAN)
             {
-                this.saAbbrevEnglishEraNames = JapaneseCalendar.EnglishEraNames();
+                this.saAbbrevEnglishEraNames = GetJapaneseEnglishEraNames();
             }
             else
             {
@@ -268,7 +268,7 @@ namespace System.Globalization
                     
                 case CalendarId.JAPAN:
                 case CalendarId.JAPANESELUNISOLAR:
-                    this.saEraNames = JapaneseCalendar.EraNames();
+                    this.saEraNames = GetJapaneseEraNames ();
                     break;
 
                 case CalendarId.PERSIAN:
@@ -283,6 +283,20 @@ namespace System.Globalization
                     this.saEraNames = Invariant.saEraNames;
                     break;
             }
+        }
+
+        private static string[] GetJapaneseEraNames()
+        {
+            if (GlobalizationMode.Invariant)
+                throw new PlatformNotSupportedException();
+            return JapaneseCalendar.EraNames();
+        }
+
+        private static string[] GetJapaneseEnglishEraNames()
+        {
+            if (GlobalizationMode.Invariant)
+                throw new PlatformNotSupportedException();
+            return JapaneseCalendar.EnglishEraNames();
         }
 
         private void InitializeAbbreviatedEraNames(string localeName, int calendarId)
@@ -306,7 +320,11 @@ namespace System.Globalization
                     break;                    
                 case CalendarId.JAPAN:
                 case CalendarId.JAPANESELUNISOLAR:
-                    this.saAbbrevEraNames = JapaneseCalendar.AbbrevEraNames();
+                    if (GlobalizationMode.Invariant)
+                    {
+                        throw new PlatformNotSupportedException();
+                    }
+                    this.saAbbrevEraNames = this.saEraNames;
                     break;
                 case CalendarId.HIJRI:
                 case CalendarId.UMALQURA:

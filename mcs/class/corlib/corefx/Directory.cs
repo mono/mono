@@ -5,6 +5,9 @@ namespace System.IO
 {
 	public partial class Directory
 	{
+		public static DirectoryInfo CreateDirectory (string path, System.Security.AccessControl.DirectorySecurity directorySecurity)
+			=> CreateDirectory (path); //ignore directorySecurity
+
 		public static DirectorySecurity GetAccessControl(string path, AccessControlSections includeSections)
 		{
 			return new DirectorySecurity (path, includeSections);

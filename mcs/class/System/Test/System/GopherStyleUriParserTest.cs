@@ -108,7 +108,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Gopherx ()
 		{
-			Uri uri = new Uri ("gopherx://go-mono.com/");
+			Uri uri = new Uri ("gopherx://example.com/");
 			Assert.AreEqual (7070, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -117,7 +117,7 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void Gopherx_Methods ()
 		{
-			Uri uri = new Uri ("gopherx://go-mono.com/");
+			Uri uri = new Uri ("gopherx://example.com/");
 			Assert.AreEqual (String.Empty, uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -127,7 +127,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureGopherx ()
 		{
-			Uri uri = new Uri ("sgopherx://go-mono.com/");
+			Uri uri = new Uri ("sgopherx://example.com/");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

@@ -120,6 +120,7 @@ namespace System.Reflection.Emit
 			return attrs;
 		}
 
+		[PreserveDependency ("DoTypeBuilderResolve", "System.AppDomain")]
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
 			this.parent = null;
@@ -791,7 +792,7 @@ namespace System.Reflection.Emit
 					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
 						TypeBuilder tb = (TypeBuilder)ft;
 						if (!tb.is_created) {
-							AppDomain.CurrentDomain.DoTypeResolve (tb);
+							AppDomain.CurrentDomain.DoTypeBuilderResolve (tb);
 							if (!tb.is_created) {
 								// FIXME: We should throw an exception here,
 								// but mcs expects that the type is created

@@ -49,7 +49,7 @@ namespace Mono.Btls
 {
 	class MonoBtlsContext : MNS.MobileTlsContext, IMonoBtlsBioMono
 	{
-		X509Certificate remoteCertificate;
+		X509Certificate2 remoteCertificate;
 		X509Certificate clientCertificate;
 		X509CertificateImplBtls nativeServerCertificate;
 		X509CertificateImplBtls nativeClientCertificate;
@@ -66,7 +66,7 @@ namespace Mono.Btls
 		public MonoBtlsContext (MNS.MobileAuthenticatedStream parent, MNS.MonoSslAuthenticationOptions options)
 			: base (parent, options)
 		{
-			if (IsServer)
+			if (IsServer && LocalServerCertificate != null)
 				nativeServerCertificate = GetPrivateCertificate (LocalServerCertificate);
 		}
 
@@ -123,6 +123,22 @@ namespace Mono.Btls
 			return 1;
 		}
 
+		int ServerNameCallback ()
+		{
+			Debug ("SERVER NAME CALLBACK");
+			var name = ssl.GetServerName ();
+			Debug ($"SERVER NAME CALLBACK #1: {name}");
+
+			var certificate = SelectServerCertificate (name);
+			if (certificate == null)
+				return 1;
+
+			nativeServerCertificate = GetPrivateCertificate (certificate);
+			SetPrivateCertificate (nativeServerCertificate);
+
+			return 1;
+		}
+
 		public override void StartHandshake ()
 		{
 			InitializeConnection ();
@@ -133,7 +149,8 @@ namespace Mono.Btls
 			ssl.SetBio (bio);
 
 			if (IsServer) {
-				SetPrivateCertificate (nativeServerCertificate);
+				if (nativeServerCertificate != null)
+					SetPrivateCertificate (nativeServerCertificate);
 			} else {
 				ssl.SetServerName (ServerName);
 			}
@@ -241,6 +258,10 @@ namespace Mono.Btls
 				ctx.SetVerifyCallback (VerifyCallback, false);
 			if (!IsServer)
 				ctx.SetSelectCallback (SelectCallback);
+
+			if (IsServer && (Options.ServerCertSelectionDelegate != null || Settings.ClientCertificateSelectionCallback != null)) {
+				ctx.SetServerNameCallback (ServerNameCallback);
+			}
 
 			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (Settings, ServerName, IsServer));
 
@@ -463,7 +484,7 @@ namespace Mono.Btls
 		internal override X509Certificate LocalClientCertificate {
 			get { return clientCertificate; }
 		}
-		public override X509Certificate RemoteCertificate {
+		public override X509Certificate2 RemoteCertificate {
 			get { return remoteCertificate; }
 		}
 		public override TlsProtocols NegotiatedProtocol {

@@ -157,7 +157,7 @@ namespace System.Runtime.Remoting
 
 		public MarshalByRefObject ClientProxy
 		{
-			get	{ return (MarshalByRefObject) _proxyReference.Target; }
+			get	{ return (MarshalByRefObject) _proxyReference?.Target; }
 			set { _proxyReference = new WeakReference (value); }
 		}
 

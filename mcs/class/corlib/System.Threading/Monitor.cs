@@ -31,7 +31,7 @@
 //
 
 using System.Runtime.CompilerServices;
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 using System.Runtime.Remoting.Contexts;
 #endif
 using System.Runtime.ConstrainedExecution;
@@ -77,14 +77,14 @@ namespace System.Threading
 				throw new SynchronizationLockException ("Object is not synchronized");
 
 			try {
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
 
 				return Monitor_wait (obj, millisecondsTimeout);
 			} finally {
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 #endif
@@ -116,5 +116,9 @@ namespace System.Threading
 		{
 			return Monitor_test_owner (obj);
 		}
+		
+#if NETCORE
+		public static long LockContentionCount => throw new PlatformNotSupportedException ();
+#endif
 	}
 }

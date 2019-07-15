@@ -76,5 +76,10 @@ namespace Android.Runtime {
 			return null;
 		}
 
+		static byte[] CertStoreLookup (long _1, bool _2)
+		{
+			return null;
+		}
+
 	}
 }

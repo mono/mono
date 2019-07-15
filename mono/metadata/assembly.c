@@ -33,6 +33,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-uri.h>
 #include <mono/metadata/mono-config.h>
+#include <mono/metadata/mono-config-internals.h>
 #include <mono/metadata/mono-config-dirs.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-logger-internals.h>
@@ -64,7 +65,7 @@ typedef struct  {
 } AssemblyVersionMap;
 
 /* the default search path is empty, the first slot is replaced with the computed value */
-static const char*
+static char*
 default_path [] = {
 	NULL,
 	NULL,
@@ -74,8 +75,10 @@ default_path [] = {
 /* Contains the list of directories to be searched for assemblies (MONO_PATH) */
 static char **assemblies_path = NULL;
 
+#ifndef DISABLE_GAC
 /* Contains the list of directories that point to auxiliary GACs */
 static char **extra_gac_paths = NULL;
+#endif
 
 #ifndef DISABLE_DESKTOP_LOADER
 
@@ -303,7 +306,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Threading.AccessControl"),
 	FACADE_ASSEMBLY ("System.Threading.Overlapped"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks"),
-	{"System.Threading.Tasks.Dataflow", 0},
+	{"System.Threading.Tasks.Dataflow", 0, NULL, TRUE},
 	FACADE_ASSEMBLY ("System.Threading.Tasks.Extensions"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks.Parallel"),
 	FACADE_ASSEMBLY ("System.Threading.Thread"),
@@ -487,6 +490,7 @@ check_path_env (void)
 	g_free (path);
 }
 
+#ifndef DISABLE_GAC
 static void
 check_extra_gac_path_env (void) 
 {
@@ -520,6 +524,7 @@ check_extra_gac_path_env (void)
 		splitted++;
 	}
 }
+#endif /* DISABLE_GAC */
 
 static gboolean
 assembly_binding_maps_name (MonoAssemblyBindingInfo *info, MonoAssemblyName *aname)
@@ -799,7 +804,8 @@ mono_assembly_setrootdir (const char *root_dir)
 	/*
 	 * Override the MONO_ASSEMBLIES directory configured at compile time.
 	 */
-	/* Leak if called more than once */
+	if (default_path [0])
+		g_free (default_path [0]);
 	default_path [0] = g_strdup (root_dir);
 }
 
@@ -997,8 +1003,12 @@ mono_set_rootdir (void)
 	int  s;
 	char *str;
 
+#if defined(HAVE_READLINK)
 	/* Linux style */
 	s = readlink ("/proc/self/exe", buf, sizeof (buf)-1);
+#else
+	s = -1;
+#endif
 
 	if (s != -1){
 		buf [s] = 0;
@@ -1008,7 +1018,13 @@ mono_set_rootdir (void)
 
 	/* Solaris 10 style */
 	str = g_strdup_printf ("/proc/%d/path/a.out", getpid ());
+
+#if defined(HAVE_READLINK)
 	s = readlink (str, buf, sizeof (buf)-1);
+#else
+	s = -1;
+#endif
+
 	g_free (str);
 	if (s != -1){
 		buf [s] = 0;
@@ -1035,7 +1051,9 @@ mono_assemblies_init (void)
 		mono_set_rootdir ();
 
 	check_path_env ();
+#ifndef DISABLE_GAC
 	check_extra_gac_path_env ();
+#endif
 
 	mono_os_mutex_init_recursive (&assemblies_mutex);
 	mono_os_mutex_init (&assembly_binding_mutex);
@@ -1044,7 +1062,7 @@ mono_assemblies_init (void)
 	assembly_remapping_table = g_hash_table_new (g_str_hash, g_str_equal);
 
 	int i;
-	for (i = 0; i < G_N_ELEMENTS (framework_assemblies) - 1; ++i)
+	for (i = 0; i < G_N_ELEMENTS (framework_assemblies); ++i)
 		g_hash_table_insert (assembly_remapping_table, (void*)framework_assemblies [i].assembly_name, (void*)&framework_assemblies [i]);
 
 #endif
@@ -1453,6 +1471,7 @@ load_reference_by_aname_refonly_asmctx (MonoAssemblyName *aname, MonoAssembly *a
 {
 	MonoAssembly *reference = NULL;
 	g_assert (assm != NULL);
+	g_assert (status != NULL);
 	*status = MONO_IMAGE_OK;
 	{
 		/* We use the loaded corlib */
@@ -1483,6 +1502,7 @@ static MonoAssembly*
 load_reference_by_aname_default_asmctx (MonoAssemblyName *aname, MonoAssembly *assm, MonoImageOpenStatus *status)
 {
 	MonoAssembly *reference = NULL;
+	g_assert (status != NULL);
 	*status = MONO_IMAGE_OK;
 	{
 		/* we first try without setting the basedir: this can eventually result in a ResolveAssembly
@@ -1527,6 +1547,8 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	 * else we fire the assembly resolve event - similar to refonly - but
 	 * subject to remaping and binding.
 	 */
+
+	g_assert (status != NULL);
 
 	MonoAssembly *reference = NULL;
 	*status = MONO_IMAGE_OK;
@@ -1728,7 +1750,8 @@ void
 mono_assembly_load_references (MonoImage *image, MonoImageOpenStatus *status)
 {
 	/* This is a no-op now but it is part of the embedding API so we can't remove it */
-	*status = MONO_IMAGE_OK;
+	if (status)
+		*status = MONO_IMAGE_OK;
 }
 
 typedef struct AssemblyLoadHook AssemblyLoadHook;
@@ -2151,14 +2174,12 @@ mono_assembly_open_from_bundle (const char *filename, MonoImageOpenStatus *statu
 	is_satellite = g_str_has_suffix (lowercase_filename, ".resources.dll");
 	g_free (lowercase_filename);
 	name = g_path_get_basename (filename);
-	mono_assemblies_lock ();
 	for (i = 0; !image && bundles [i]; ++i) {
 		if (strcmp (bundles [i]->name, is_satellite ? filename : name) == 0) {
 			image = mono_image_open_from_data_internal ((char*)bundles [i]->data, bundles [i]->size, FALSE, status, refonly, FALSE, name);
 			break;
 		}
 	}
-	mono_assemblies_unlock ();
 	if (image) {
 		mono_image_addref (image);
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Loader loaded assembly from bundle: '%s'.", is_satellite ? filename : name);
@@ -2377,7 +2398,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
 				"Assembly Loader loaded assembly from location: '%s'.", filename);
 		if (!refonly)
-			mono_config_for_assembly (ass->image);
+			mono_config_for_assembly_internal (ass->image);
 	}
 
 	/* Clear the reference added by mono_image_open */
@@ -2580,6 +2601,8 @@ chain_redirections_loadfrom (MonoImage *image, MonoImageOpenStatus *out_status)
 MonoAssembly*
 mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *status)
 {
+	g_assert (status != NULL);
+
 	/* This is a "fun" one now.
 	 * For LoadFrom ("/basedir/some.dll") or LoadFile("/basedir/some.dll") or Load(byte[])),
 	 * apparently what we're meant to do is:
@@ -2647,6 +2670,8 @@ mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *s
 MonoAssembly*
 mono_problematic_image_reprobe (MonoImage *image, MonoImageOpenStatus *status)
 {
+	g_assert (status != NULL);
+
 	if (G_LIKELY (!mono_is_problematic_image (image))) {
 		*status = MONO_IMAGE_OK;
 		return NULL;
@@ -2742,6 +2767,9 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	MonoAssembly *res;
 	MONO_ENTER_GC_UNSAFE;
 	MonoAssemblyLoadRequest req;
+	MonoImageOpenStatus def_status;
+	if (!status)
+		status = &def_status;
 	mono_assembly_request_prepare (&req, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
 	res = mono_assembly_request_load_from (image, fname, &req, status);
 	MONO_EXIT_GC_UNSAFE;
@@ -2759,6 +2787,8 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 
 	MonoAssembly *ass, *ass2;
 	char *base_dir;
+
+	g_assert (status != NULL);
 
 	asmctx = req->asmctx;
 	predicate = req->predicate;
@@ -2891,7 +2921,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 	mono_assemblies_unlock ();
 
 #ifdef HOST_WIN32
-	if (image->is_module_handle)
+	if (m_image_is_module_handle (image))
 		mono_image_fixup_vtable (image);
 #endif
 
@@ -2930,6 +2960,9 @@ mono_assembly_load_from (MonoImage *image, const char *fname,
 	MonoAssembly *res;
 	MONO_ENTER_GC_UNSAFE;
 	MonoAssemblyLoadRequest req;
+	MonoImageOpenStatus def_status;
+	if (!status)
+		status = &def_status;
 	mono_assembly_request_prepare (&req, sizeof (req), MONO_ASMCTX_DEFAULT);
 	res = mono_assembly_request_load_from (image, fname, &req, status);
 	MONO_EXIT_GC_UNSAFE;
@@ -3046,7 +3079,6 @@ parse_public_key (const gchar *key, gchar** pubkey, gboolean *is_ecma)
 static gboolean
 build_assembly_name (const char *name, const char *version, const char *culture, const char *token, const char *key, guint32 flags, guint32 arch, MonoAssemblyName *aname, gboolean save_public_key)
 {
-	gint major, minor, build, revision;
 	gint len;
 	gint version_parts;
 	gchar *pkeyptr, *encoded, tok [8];
@@ -3054,6 +3086,50 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	memset (aname, 0, sizeof (MonoAssemblyName));
 
 	if (version) {
+#ifdef ENABLE_NETCORE
+		int parts [4];
+		int i;
+		int part_len;
+
+		parts [2] = -1;
+		parts [3] = -1;
+		const char *s = version;
+		version_parts = 0;
+		for (i = 0; i < 4; ++i) {
+			int n = sscanf (s, "%u%n", &parts [i], &part_len);
+			if (n != 1)
+				return FALSE;
+			if (parts [i] < 0 || parts [i] > 65535)
+				return FALSE;
+			if (i < 2 && parts [i] == 65535)
+				return FALSE;
+			version_parts ++;
+			s += part_len;
+			if (s [0] == '\0')
+				break;
+			if (i < 3) {
+				if (s [0] != '.')
+					return FALSE;
+				s ++;
+			}
+		}
+		if (s [0] != '\0')
+			return FALSE;
+		if (version_parts < 2 || version_parts > 4)
+			return FALSE;
+		aname->major = parts [0];
+		aname->minor = parts [1];
+		if (version_parts >= 3)
+			aname->build = parts [2];
+		else
+			aname->build = -1;
+		if (version_parts == 4)
+			aname->revision = parts [3];
+		else
+			aname->revision = -1;
+#else
+		gint major, minor, build, revision;
+
 		version_parts = sscanf (version, "%u.%u.%u.%u", &major, &minor, &build, &revision);
 		if (version_parts < 2 || version_parts > 4)
 			return FALSE;
@@ -3071,6 +3147,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 			aname->revision = revision;
 		else
 			aname->revision = 0;
+#endif
 	}
 	
 	aname->flags = flags;
@@ -3282,6 +3359,8 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 				arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
 			else if (!g_ascii_strcasecmp (procarch, "AMD64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
+			else if (!g_ascii_strcasecmp (procarch, "ARM"))
+				arch = MONO_PROCESSOR_ARCHITECTURE_ARM;
 			else {
 				g_free (procarch_uq);
 				goto cleanup_and_fail;
@@ -3538,6 +3617,9 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 {
 	MonoAssembly *result;
 	MONO_ENTER_GC_UNSAFE;
+	MonoImageOpenStatus def_status;
+	if (!status)
+		status = &def_status;
 	result = mono_assembly_load_with_partial_name_internal (name, status);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
@@ -3550,10 +3632,10 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenSt
 	MonoAssembly *res;
 	MonoAssemblyName *aname, base_name;
 	MonoAssemblyName mapped_aname;
-	gchar *fullname, *gacpath;
-	gchar **paths;
 
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	g_assert (status != NULL);
 
 	memset (&base_name, 0, sizeof (MonoAssemblyName));
 	aname = &base_name;
@@ -3581,6 +3663,9 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenSt
 		return res;
 	}
 
+#ifndef DISABLE_GAC
+	gchar *fullname, *gacpath;
+	gchar **paths;
 	fullname = g_strdup_printf ("%s.dll", aname->name);
 
 	if (extra_gac_paths) {
@@ -3605,11 +3690,13 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenSt
 	g_free (gacpath);
 
 	g_free (fullname);
-	mono_assembly_name_free (aname);
-
 	if (res)
 		res->in_gac = TRUE;
-	else {
+#endif
+
+	mono_assembly_name_free (aname);
+
+	if (!res) {
 		MonoDomain *domain = mono_domain_get ();
 
 		res = mono_try_assembly_resolve (domain, name, NULL, FALSE, error);
@@ -3626,6 +3713,7 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenSt
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filename)
 {
+#ifndef DISABLE_GAC
 	const gchar *rootdir;
 	gchar *gp;
 	gchar **paths;
@@ -3682,12 +3770,16 @@ mono_assembly_is_in_gac (const gchar *filename)
 	if (*gp != G_DIR_SEPARATOR)
 		return FALSE;
 	return TRUE;
+#else
+	return FALSE;
+#endif /* DISABLE_GAC */
 }
 
 static MonoImage*
 mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 {
-	MonoImage *image;
+	MonoImage *image = NULL;
+#ifndef DISABLE_GAC
 	gchar *filename, *pname, *name, *culture, *version, *fullpath, *subpath;
 	gchar **paths;
 	gint32 len;
@@ -3738,6 +3830,7 @@ mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 	image = mono_image_open (fullpath, NULL);
 	g_free (subpath);
 	g_free (fullpath);
+#endif
 	
 	return image;
 }
@@ -4027,6 +4120,7 @@ exit:
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
+#ifndef DISABLE_GAC
 /**
  * mono_assembly_load_from_gac
  *
@@ -4102,6 +4196,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 
 	return result;
 }
+#endif /* DISABLE_GAC */
 
 MonoAssembly*
 mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *status)
@@ -4120,6 +4215,12 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	corlib = invoke_assembly_preload_hook (aname, NULL);
 	/* MonoCore preload hook should know how to find it */
 	/* FIXME: AOT compiler comes here without an installed hook. */
+	if (!corlib) {
+		if (assemblies_path) { // Custom assemblies path set via MONO_PATH or mono_set_assemblies_path
+			char *corlib_name = g_strdup_printf ("%s.dll", MONO_ASSEMBLY_CORLIB_NAME);
+			corlib = load_in_path (corlib_name, (const char**)assemblies_path, &req, status);
+		}
+	}
 	g_assert (corlib);
 #else
 	// A nonstandard preload hook may provide a special mscorlib assembly
@@ -4147,7 +4248,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 			goto return_corlib_and_facades;
 		}
 	}
-	corlib = load_in_path (corlib_file, default_path, &req, status);
+	corlib = load_in_path (corlib_file, (const char**) default_path, &req, status);
 	g_free (corlib_file);
 
 return_corlib_and_facades:
@@ -4210,7 +4311,13 @@ mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointe
 gboolean
 exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name)
 {
+#if ENABLE_NETCORE
+	gboolean result = mono_assembly_names_equal_flags (wanted_name, candidate_name, MONO_ANAME_EQ_IGNORE_VERSION);
+	if (result && assembly_names_compare_versions (wanted_name, candidate_name, -1) > 0)
+		result = FALSE;
+#else
 	gboolean result = mono_assembly_names_equal (wanted_name, candidate_name);
+#endif
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s\n",
 		    result ? "match, returning TRUE" : "don't match, returning FALSE");
@@ -4294,18 +4401,24 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 					  MonoImageOpenStatus *status)
 {
 	MonoAssembly *result;
+	MonoAssemblyName maped_aname;
 	char *fullpath, *filename;
 	int ext_index;
 	const char *ext;
 	int len;
 
+	/* If we remap e.g. 4.1.3.0 to 4.0.0.0, look in the 4.0.0.0
+	 * GAC directory, not 4.1.3.0 */
+	aname = mono_assembly_remap_version (aname, &maped_aname);
+
 	/* Currently we retrieve the loaded corlib for reflection 
 	 * only requests, like a common reflection only assembly 
 	 */
 	gboolean name_is_corlib = strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME) == 0;
-#ifndef NETCORE_LOADER
-	name_is_corlib |= strcmp (aname->name, "mscorlib.dll") == 0;
-#endif
+	/* Assembly.Load (new AssemblyName ("mscorlib.dll")) (respectively,
+	 * "System.Private.CoreLib.dll" for netcore) is treated the same as
+	 * "mscorlib" (resp "System.Private.CoreLib"). */
+	name_is_corlib = name_is_corlib || strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME ".dll") == 0;
 	if (name_is_corlib) {
 		return mono_assembly_load_corlib (mono_get_runtime_info (), status);
 	}
@@ -4318,8 +4431,6 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 		predicate_ud = aname;
 	}
 #endif
-
-	const gboolean refonly = asmctx == MONO_ASMCTX_REFONLY;
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), asmctx);
@@ -4337,11 +4448,15 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 			filename = g_strconcat (aname->name, ext, NULL);
 		}
 
+#ifndef DISABLE_GAC
+		const gboolean refonly = asmctx == MONO_ASMCTX_REFONLY;
+
 		result = mono_assembly_load_from_gac (aname, filename, status, refonly);
 		if (result) {
 			g_free (filename);
 			return result;
 		}
+#endif
 
 		if (basedir) {
 			fullpath = g_build_filename (basedir, filename, NULL);
@@ -4354,7 +4469,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 			}
 		}
 
-		result = load_in_path (filename, default_path, &req, status);
+		result = load_in_path (filename, (const char**) default_path, &req, status);
 		if (result)
 			result->in_gac = FALSE;
 		g_free (filename);

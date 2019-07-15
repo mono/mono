@@ -465,3 +465,4 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/NameValuePermission.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/SafeNativeMethods.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/ProviderBase/DbBuffer.cs
+corefx/DbProviderFactories.mobile.cs

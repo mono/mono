@@ -6,7 +6,7 @@
 PLATFORM_MCS_FLAGS =
 PLATFORM_RUNTIME = 
 PLATFORM_CORLIB = mscorlib.dll
-PLATFORM_TEST_HARNESS_EXCLUDES = NotOnWindows,
+PLATFORM_TEST_HARNESS_EXCLUDES = NotOnWindows
 
 EXTERNAL_MCS = mcs
 EXTERNAL_MBAS = vbc.exe
@@ -30,3 +30,5 @@ hidden_suffix = .tmp
 
 platform-check:
 	@:
+
+PLATFORM_WIN32=1

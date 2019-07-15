@@ -1,0 +1,18 @@
+<Project>
+  <Target Name="_WriteDotNetTemplateVersion" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <_globalOutputPath>$(MSBuildThisFileDirectory)\templates\DotNet\</_globalOutputPath>
+      <_globalFixedContent>
+      <![CDATA[
+{
+  "msbuild-sdks": {
+    "Mono.WebAssembly.Sdk": "$(SDKPackageVersion)"
+  }
+}
+      ]]>
+      </_globalFixedContent>      
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_globalOutputPath)\global.json" Overwrite="true" Lines="$(_globalFixedContent)" />
+  </Target>
+</Project>

@@ -6,7 +6,7 @@
 
 // Relevant cookie specs:
 //
-// PERSISTENT CLIENT STATE HTTP COOKIES (1996)
+// PERSISTENTÂ CLIENTÂ STATE HTTP COOKIES (1996)
 // From <http://web.archive.org/web/20020803110822/http://wp.netscape.com/newsref/std/cookie_spec.html> 
 //
 // RFC2109 HTTP State Management Mechanism (February 1997)
@@ -119,11 +119,13 @@ namespace System.Net {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public CookieContainer() {
+#if !WASM        
             string domain = IPGlobalProperties.InternalGetIPGlobalProperties().DomainName;
             if (domain != null && domain.Length > 1)
             {
                 m_fqdnMyDomain = '.' + domain;
             }
+#endif            
             //Otherwise it will remain string.Empty
         }
 

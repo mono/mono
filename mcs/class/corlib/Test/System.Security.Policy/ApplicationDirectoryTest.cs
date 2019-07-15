@@ -84,8 +84,8 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ApplicationDirectory_HttpUrl ()
 		{
-			ApplicationDirectory ad = new ApplicationDirectory ("http://www.go-mono.com/");
-			Assert.AreEqual ("http://www.go-mono.com/", ad.Directory, "Directory");
+			ApplicationDirectory ad = new ApplicationDirectory ("http://www.example.com/");
+			Assert.AreEqual ("http://www.example.com/", ad.Directory, "Directory");
 		}
 
 		[Test]

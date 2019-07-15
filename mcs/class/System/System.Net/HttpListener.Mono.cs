@@ -80,8 +80,8 @@ namespace System.Net {
 					if (!File.Exists (pvk_file))
 						return null;
 					var cert = new X509Certificate2 (cert_file);
-					cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
-					certificate = cert;
+					var privateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
+					certificate = new X509Certificate2 ((X509Certificate2Impl)cert.Impl.CopyWithPrivateKey (privateKey));
 					return certificate;
 				} catch {
 					// ignore errors

@@ -1,62 +1,63 @@
 :: Set up build environment and run execute msbuild with all supplied arguments.
+
+:: Arguments:
+:: -------------------------------------------------------
+:: %1 Visual Studio target, build|clean, default build
+:: %2 Host CPU architecture, x86_64|i686, default x86_64
+:: %3 Visual Studio configuration, debug|release, default release
+:: %4 Additional arguments passed to msbuild, needs to be quoted if multiple.
+:: -------------------------------------------------------
+
 @echo off
 setlocal
 
 set BUILD_RESULT=1
 
-set VS_2015_DEV_CMD=%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\Common7\Tools\VsMSBuildCmd.bat
-set VS_2015_BUILD_TOOLS_CMD=%ProgramFiles(x86)%\Microsoft Visual C++ Build Tools\vcbuildtools_msbuild.bat
-set VSWHERE_TOOLS_BIN=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe
-set VS_2017_DEV_CMD=
-set VS_2017_BUILD_TOOLS_CMD=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsMSBuildCmd.bat
-set VS_PLATFORM_TOOLSET=/p:PlatformToolset=v140
+:: Get path for current running script.
+set RUN_MSBUILD_SCRIPT_PATH=%~dp0
 
-:: Visual Studio 2015 == 14.0
-:: Visual Studio 2017 == 15.0
-if "%VisualStudioVersion%" == "15.0" (
-    goto SETUP_VS_2017
+:: Configure all known build arguments.
+set VS_BUILD_ARGS=""
+set VS_TARGET=build
+if /i "%~1" == "clean" (
+    set VS_TARGET="clean"
+)
+shift
+
+set VS_PLATFORM=x64
+if /i "%~1" == "i686" (
+    set VS_PLATFORM="Win32"
+)
+if /i "%~1" == "win32" (
+    set VS_PLATFORM="Win32"
+)
+shift
+
+set VS_CONFIGURATION=Release
+if /i "%~1" == "debug" (
+    set VS_CONFIGURATION="Debug"
+)
+shift
+
+set "VS_ADDITIONAL_ARGUMENTS=/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
+if /i not "%~1" == "" (
+    set VS_ADDITIONAL_ARGUMENTS=%~1
 )
 
-:SETUP_VS_2015
+:: Setup Windows environment.
+call %RUN_MSBUILD_SCRIPT_PATH%setup-windows-env.bat
 
-if exist "%VS_2015_DEV_CMD%" (
-    echo Setting up VS2015 build environment.
-    call "%VS_2015_DEV_CMD%" && (
-        goto ON_BUILD
-    )
-)
+:: Setup VS msbuild environment.
+call %RUN_MSBUILD_SCRIPT_PATH%setup-vs-msbuild-env.bat
 
-if exist "%VS_2015_BUILD_TOOLS_CMD%" (
-    echo Setting up VS2015 build environment.
-    call "%VS_2015_BUILD_TOOLS_CMD%" && (
-        goto ON_BUILD
-    )
-)
-
-:SETUP_VS_2017
-
-if exist "%VSWHERE_TOOLS_BIN%" (
-    for /f "tokens=*" %%a in ('"%VSWHERE_TOOLS_BIN%" -latest -property installationPath') do (
-        set VS_2017_DEV_CMD=%%a\Common7\Tools\VsMSBuildCmd.bat
-    )
-)
-
-if exist "%VS_2017_DEV_CMD%" (
-    echo Setting up VS2017 build environment.
-    call "%VS_2017_DEV_CMD%"
-    set VS_PLATFORM_TOOLSET=/p:PlatformToolset=v141
-)
-
-if exist "%VS_2017_BUILD_TOOLS_CMD%" (
-    echo Setting up VS2017 build environment.
-    call "%VS_2017_BUILD_TOOLS_CMD%"
-    set VS_PLATFORM_TOOLSET=/p:PlatformToolset=v141
-)
-
-:ON_BUILD
-
-call msbuild.exe %VS_PLATFORM_TOOLSET% %* "%~dp0mono.sln" && (
+set VS_BUILD_ARGS=/p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% %VS_ADDITIONAL_ARGUMENTS% /t:%VS_TARGET%
+call msbuild.exe %VS_BUILD_ARGS% "%RUN_MSBUILD_SCRIPT_PATH%mono.sln" && (
     set BUILD_RESULT=0
+) || (
+    set BUILD_RESULT=1
+    if not %ERRORLEVEL% == 0 (
+        set BUILD_RESULT=%ERRORLEVEL%
+    )
 )
 
 exit /b %BUILD_RESULT%

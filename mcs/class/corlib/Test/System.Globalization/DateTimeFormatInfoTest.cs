@@ -92,6 +92,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TestSpecificCultureFormats_es_ES ()
 		{
 			CultureInfo ci = new CultureInfo ("es-ES");
@@ -119,6 +120,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void MonthGenitiveNames ()
 		{
 			var dfi = new CultureInfo ("cs-CZ").DateTimeFormat;
@@ -127,6 +129,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void QuoteInValue ()
 		{
 			var culture = new CultureInfo("mt-MT");
@@ -141,6 +144,29 @@ namespace MonoTests.System.Globalization
 			string s = dt.ToString (ci);
 			DateTime dt2 = DateTime.Parse (s, ci);
 			Assert.AreEqual (dt.Month, dt2.Month);
+		}
+
+		[Test]
+		[Category ("Calendars")]
+		public void TestFirstYearOfJapaneseEra ()
+		{
+			DateTimeFormatInfo jpnFormat = new CultureInfo ("ja-JP").DateTimeFormat;
+			jpnFormat.Calendar = new JapaneseCalendar ();
+
+			string pattern = "gg yyyy'\u5E74' MM'\u6708' dd'\u65E5'"; // "gg yyyy'年' MM'月' dd'日'"
+			DateTime dt = new DateTime (1989, 01, 08); // Start of Heisei Era
+
+			string formattedDateWithGannen = "\u5E73\u6210 \u5143\u5E74 01\u6708 08\u65E5"; // 平成 元年 01月 08日
+			string formattedDate = dt.ToString (pattern, jpnFormat);
+
+			Assert.IsTrue (DateTime.TryParseExact (formattedDate, pattern, jpnFormat, DateTimeStyles.None, out DateTime parsedDate));
+			Assert.AreEqual (dt, parsedDate);
+
+			// If the formatting with Gan-nen is supported, then parsing should succeed. otherwise parsing should fail.
+			Assert.IsTrue (formattedDate.IndexOf ("\u5143" /* 元 */, StringComparison.Ordinal) >= 0 ==
+						DateTime.TryParseExact (formattedDateWithGannen, pattern, jpnFormat, DateTimeStyles.None, out parsedDate),
+						$"Parsing '{formattedDateWithGannen}' result should match if '{formattedDate}' has Gan-nen symbol"
+						);
 		}
 	}
 }

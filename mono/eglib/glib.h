@@ -54,6 +54,10 @@
 #include <malloc.h>
 #endif
 
+#ifdef G_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #ifndef offsetof
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
@@ -104,14 +108,14 @@ public:
 
 #endif
 
-#ifdef __cplusplus
-
 // G++4.4 breaks opeq below without this.
 #if defined  (__GNUC__) || defined  (__clang__)
 #define G_MAY_ALIAS  __attribute__((__may_alias__))
 #else
 #define G_MAY_ALIAS /* nothing */
 #endif
+
+#ifdef __cplusplus
 
 // Provide for bit operations on enums, but not all integer operations.
 // This alleviates a fair number of casts in porting C to C++.
@@ -304,6 +308,7 @@ typedef struct {
 } GMemVTable;
 
 void g_mem_set_vtable (GMemVTable* vtable);
+void g_mem_get_vtable (GMemVTable* vtable);
 
 struct _GMemChunk {
 	guint alloc_size;
@@ -370,6 +375,7 @@ gchar       *g_strchug        (gchar *str);
 gchar       *g_strchomp       (gchar *str);
 void         g_strdown        (gchar *string);
 gchar       *g_strnfill       (gsize length, gchar fill_char);
+gsize        g_strnlen        (const char*, gsize);
 
 void	     g_strdelimit     (char *string, char delimiter, char new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
@@ -762,7 +768,10 @@ const char *   g_get_assertion_message (void);
 
 typedef void (*GLogFunc) (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data);
 typedef void (*GPrintFunc) (const gchar *string);
+typedef void (*GAbortFunc) (void);
 
+void       g_assertion_disable_global   (GAbortFunc func);
+void       g_assert_abort               (void);
 void       g_log_default_handler     (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data);
 GLogFunc   g_log_set_default_handler (GLogFunc log_func, gpointer user_data);
 GPrintFunc g_set_print_handler       (GPrintFunc func);
@@ -894,6 +903,12 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, "<disabled>"), 0))
 #else
 #define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
+#endif
+
+#ifdef __cplusplus
+#define g_static_assert(x) static_assert (x, "")
+#else
+#define g_static_assert(x) g_assert (x)
 #endif
 
 #define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
@@ -1109,6 +1124,12 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #else
 #define g_write write
 #endif
+#ifdef G_OS_WIN32
+#define g_read _read
+#else
+#define g_read read
+#endif
+
 #define g_fopen fopen
 #define g_lstat lstat
 #define g_rmdir rmdir
@@ -1118,6 +1139,75 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #define g_ascii_isalnum isalnum
 
 gchar *g_mkdtemp (gchar *tmpl);
+
+/*
+ * Low-level write-based printing functions
+ */
+
+static inline int
+g_async_safe_fgets (char *str, int num, int handle, gboolean *newline)
+{
+	memset (str, 0, num);
+	// Make sure we don't overwrite the last index so that we are
+	// guaranteed to be NULL-terminated
+	int without_padding = num - 1;
+	int i=0;
+	while (i < without_padding && g_read (handle, &str [i], sizeof(char))) {
+		if (str [i] == '\n') {
+			str [i] = '\0';
+			*newline = TRUE;
+		}
+		
+		if (!isprint (str [i]))
+			str [i] = '\0';
+
+		if (str [i] == '\0')
+			break;
+
+		i++;
+	}
+
+	return i;
+}
+
+static inline gint
+g_async_safe_vfprintf (int handle, gchar const *format, va_list args)
+{
+	char print_buff [1024];
+	print_buff [0] = '\0';
+	g_vsnprintf (print_buff, sizeof(print_buff), format, args);
+	int ret = g_write (handle, print_buff, (guint32) strlen (print_buff));
+
+	return ret;
+}
+
+static inline gint
+g_async_safe_fprintf (int handle, gchar const *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	int ret = g_async_safe_vfprintf (handle, format, args);
+	va_end (args);
+	return ret;
+}
+
+static inline gint
+g_async_safe_vprintf (gchar const *format, va_list args)
+{
+	return g_async_safe_vfprintf (1, format, args);
+}
+
+static inline gint
+g_async_safe_printf (gchar const *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	int ret = g_async_safe_vfprintf (1, format, args);
+	va_end (args);
+
+	return ret;
+}
+
 
 /*
  * Pattern matching

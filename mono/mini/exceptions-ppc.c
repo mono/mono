@@ -396,7 +396,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		if (aot) {
 			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_IMAGE, mono_defaults.corlib);
 			ppc_mr (code, ppc_r3, ppc_r12);
-			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_exception_from_token");
+			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_exception_from_token));
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 			ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 			ppc_ldptr (code, ppc_r12, 0, ppc_r12);
@@ -433,7 +433,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		// r30 contains the got address.
 		// So emit the got address loading code too
 		code = mono_arch_emit_load_got_addr (start, code, NULL, &ji);
-		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_ppc_throw_exception");
+		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_ppc_throw_exception));
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
@@ -581,10 +581,13 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			for (i = MONO_PPC_FIRST_SAVED_GREG; i < MONO_MAX_IREGS; ++i)
 				regs [i] = ctx->regs [i];
 
-			mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
+			gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 							   (guint8*)ji->code_start + ji->code_size,
 							   ip, NULL, regs, ppc_lr + 1,
 							   save_locations, MONO_MAX_IREGS, &cfa);
+
+			if (!success)
+				return FALSE;
 
 			/* we substract 4, so that the IP points into the call instruction */
 			MONO_CONTEXT_SET_IP (new_ctx, regs [ppc_lr] - 4);
@@ -639,13 +642,10 @@ mono_arch_ip_from_context (void *sigctx)
 }
 
 static void
-altstack_handle_and_restore (void *sigctx, gpointer obj)
+altstack_handle_and_restore (MonoContext *mctx, gpointer obj)
 {
-	MonoContext mctx;
-
-	mono_sigctx_to_monoctx (sigctx, &mctx);
-	mono_handle_exception (&mctx, obj);
-	mono_restore_context (&mctx);
+	mono_handle_exception (mctx, obj);
+	mono_restore_context (mctx);
 }
 
 void
@@ -655,8 +655,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	g_assert_not_reached ();
 #else
 #ifdef MONO_ARCH_USE_SIGACTION
-	os_ucontext *uc = (ucontext_t*)sigctx;
-	os_ucontext *uc_copy;
+	os_ucontext *uc = (os_ucontext*)sigctx;
+	MonoContext *uc_copy;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (sigctx), NULL);
 	gpointer *sp;
 	int frame_size;
@@ -681,14 +681,14 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	 *   ...
 	 * 224 is the size of the red zone
 	 */
-	frame_size = sizeof (ucontext_t) + sizeof (gpointer) * 16 + 224;
+	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 16 + 224;
 	frame_size += 15;
 	frame_size &= ~15;
 	sp = (gpointer)(UCONTEXT_REG_Rn(uc, 1) & ~15);
 	sp = (gpointer)((char*)sp - frame_size);
 	/* may need to adjust pointers in the new struct copy, depending on the OS */
-	uc_copy = (ucontext_t*)(sp + 16);
-	memcpy (uc_copy, uc, sizeof (os_ucontext));
+	uc_copy = (MonoContext*)(sp + 16);
+	mono_sigctx_to_monoctx (uc, uc_copy);
 #if defined(__linux__) && !defined(__mono_ppc64__)
 	uc_copy->uc_mcontext.uc_regs = (gpointer)((char*)uc_copy + ((char*)uc->uc_mcontext.uc_regs - (char*)uc));
 #endif
@@ -711,7 +711,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 #endif
 #endif
 	UCONTEXT_REG_Rn(uc, 1) = (unsigned long)sp;
-	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG) = (unsigned long)(sp + 16);
+	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG) = (unsigned long)uc_copy;
 	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG + 1) = 0;
 	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG + 2) = 0;
 #endif

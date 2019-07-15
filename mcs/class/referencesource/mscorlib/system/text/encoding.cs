@@ -6,7 +6,6 @@
 namespace System.Text
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Runtime;
     using System.Runtime.Remoting;
@@ -107,7 +106,7 @@ namespace System.Text
 #if FEATURE_LATIN1
         private static volatile Encoding latin1Encoding;
 #endif
-        static volatile Hashtable encodings;
+        static volatile Dictionary<int, Encoding> encodings;
 
         //
         // The following values are from mlang.idl.  These values
@@ -440,9 +439,8 @@ namespace System.Text
             // Our Encoding
 
             // See if we have a hash table with our encoding in it already.
-            if (encodings != null) {
-                result = (Encoding)encodings[codepage];
-            }
+            if (encodings != null)
+                encodings.TryGetValue (codepage, out result);
 
             if (result == null)
             {
@@ -451,12 +449,11 @@ namespace System.Text
                 {
                     // Need a new hash table
                     // in case another thread beat us to creating the Dictionary
-                    if (encodings == null) {
-                        encodings = new Hashtable();
-                    }
+                    if (encodings == null)
+                        encodings = new Dictionary<int, Encoding> ();
 
                     // Double check that we don't have one in the table (in case another thread beat us here)
-                    if ((result = (Encoding)encodings[codepage]) != null)
+                    if (encodings.TryGetValue (codepage, out result))
                         return result;
 
                     // Special case the commonly used Encoding classes here, then call
@@ -552,8 +549,8 @@ namespace System.Text
                                 break;
                             default:
                                 result = (Encoding)(EncodingHelper.InvokeI18N ("GetEncoding", codepage));
-								if (result == null)
-									throw new NotSupportedException(string.Format("Encoding {0} data could not be found. Make sure you have correct international codeset assembly installed and enabled.", codepage));
+                                if (result == null)
+                                    throw new NotSupportedException(string.Format("Encoding {0} data could not be found. Make sure you have correct international codeset assembly installed and enabled.", codepage));
                                 break;
                             }
 #else

@@ -414,6 +414,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-wrapper") {
+			unhandled_exception_wrapper ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
 			return 0;
@@ -489,9 +493,25 @@ public class Tests : TestsBase, ITest2
 		elapsed_time();
 		field_with_unsafe_cast_value();
 		inspect_enumerator_in_generic_struct();
+		if_property_stepping();
 		return 3;
 	}
 
+	private class TestClass {
+		private string oneLineProperty = "";
+		public string OneLineProperty {
+			get { return oneLineProperty; }
+			set { oneLineProperty = value; }
+		}
+	}
+
+	public static void if_property_stepping() {
+		var test = new TestClass();
+		if (test.OneLineProperty == "someInvalidValue6049e709-7271-41a1-bc0a-f1f1b80d4125")
+			return;
+		Console.Write("");
+	}
+	
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
@@ -1467,6 +1487,10 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep (10000);
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_wrapper () {
+		 throw new ArgumentException("test");
+	}
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke_2 () {
 	}

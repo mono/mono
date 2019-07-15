@@ -18,38 +18,13 @@ CONFIGURATION?=release
 
 APK_DIR=apk
 
-BCL_RUNNER_EXE = app/assets/asm/main.exe
 DEBUGGER_RUNNER_EXE = app/assets/asm/dtest-app.exe
 DEBUGGER_RUNNER_PDB = app/assets/asm/dtest-app.pdb
 
-
-BCL_CHECKS= \
-	corlib \
-	System \
-	System.Core \
-	System.Data \
-	System.IO.Compression.FileSystem \
-	System.IO.Compression \
-	System.Json \
-	System.Net.Http \
-	System.Numerics \
-	System.Runtime.Serialization \
-	System.ServiceModel \
-	System.ServiceModel.Web \
-	System.Transactions \
-	System.Xml \
-	System.Xml.Linq \
-	Mono.CSharp \
-	Mono.Data.Sqlite \
-	Mono.Data.Tds \
-	Mono.Security
-
-CHECKS= \
-	mini \
-	$(BCL_CHECKS)
+CHECKS=$(subst mscorlib,corlib,$(patsubst $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_%_test.dll,%,$(wildcard $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_*_test.dll)))
 
 .PHONY: all
-all: package
+all: .stamp-package
 
 #This is hilarious, but we can't clean unless we got the 2 property files around
 .PHONY: clean
@@ -85,20 +60,13 @@ accept-android-license:
 
 ## Check targets
 
-BCL_LIBS=$(subst corlib.dll,mscorlib.dll,$(patsubst %,%.dll,$(BCL_CHECKS)))
-BCL_PDBS=$(subst corlib.pdb,mscorlib.pdb,$(patsubst %,%.pdb,$(BCL_CHECKS)))
-BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%,$(BCL_LIBS))
-
-NUNIT_LIBS= \
-	nunitlite.dll
-
-NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%,$(NUNIT_LIBS))
-
 local.properties:
 	echo "sdk.dir=$(SDK_DIR)" >  $@
 	echo "ndk.dir=$(NDK_DIR)" >> $@
 
-app/assets/asm:
+## Directories
+
+app/assets/asm app/src/main/jniLibs/armeabi-v7a app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86 app/src/main/jniLibs/x86_64 app/assets/armeabi-v7a app/assets/arm64-v8a app/assets/x86 app/assets/x86_64:
 	mkdir -p $@
 
 ## Package the monosgen-2.0, MonoPosixHelper and mono-native libraries
@@ -108,120 +76,122 @@ MONO_LIBS= \
 	libMonoPosixHelper.so \
 	libmono-native.so
 
-##
-# Parameters:
-#  $(1): arch
-define RuntimeTemplate
-app/src/main/jniLibs/$(1):
-	mkdir -p $$@
+$(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(TOP)/sdks/out/android-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a
+	cp $< $@
 
-$$(patsubst %,app/src/main/jniLibs/$(1)/%,$$(MONO_LIBS)): app/src/main/jniLibs/$(1)/%: $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)/lib/% | app/src/main/jniLibs/$(1)
-	cp $$< $$@
+.stamp-package: $(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS))
 
-.PHONY: package
-package: $$(patsubst %,app/src/main/jniLibs/$(1)/%,$$(MONO_LIBS))
-endef
+$(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS)): app/src/main/jniLibs/arm64-v8a/%: $(TOP)/sdks/out/android-arm64-v8a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/arm64-v8a
+	cp $< $@
 
-$(eval $(call RuntimeTemplate,armeabi-v7a))
-$(eval $(call RuntimeTemplate,arm64-v8a))
-$(eval $(call RuntimeTemplate,x86))
-$(eval $(call RuntimeTemplate,x86_64))
+.stamp-package: $(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS))
 
-## Package the main.exe and Mono.Android.dll
+$(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS)): app/src/main/jniLibs/x86/%: $(TOP)/sdks/out/android-x86-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86
+	cp $< $@
 
-app/assets/asm/main.exe: managed/main.cs | app/assets/asm
-	csc /nostdlib /noconfig /langversion:latest /unsafe /out:$@ $(BCL_REFERENCES) $(NUNIT_REFERENCES) $<
+.stamp-package: $(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS))
+
+$(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS)): app/src/main/jniLibs/x86_64/%: $(TOP)/sdks/out/android-x86_64-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86_64
+	cp $< $@
+
+.stamp-package: $(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS))
+
+## Package Mono.Android.dll
 
 app/assets/asm/Mono.Android.dll: managed/fake-monodroid.cs | app/assets/asm
-	csc /nostdlib /noconfig /langversion:latest /t:library /out:$@ $(BCL_REFERENCES) $<
+	csc /nostdlib /noconfig /langversion:latest /t:library /out:$@ $(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%.dll,mscorlib System System.Core) $<
 
-.PHONY: package
-package: app/assets/asm/main.exe app/assets/asm/Mono.Android.dll
+.stamp-package: app/assets/asm/Mono.Android.dll
 
-## Package the BCL assemblies
+## Package the BCL
 
-$(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/sdks/out/android-bcl/monodroid/% | app/assets/asm
-	cp $< $@
+BCL=$(patsubst $(TOP)/sdks/out/android-bcl/monodroid/%,%,$(shell find $(TOP)/sdks/out/android-bcl/monodroid -type f))
 
-.PHONY: package
-package: $(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS))
+$(patsubst %,app/assets/asm/%,$(BCL)): app/assets/asm/%: $(TOP)/sdks/out/android-bcl/monodroid/% | app/assets/asm
+	cp -R $(TOP)/sdks/out/android-bcl/monodroid/* app/assets/asm
 
-## Package the BCL test assemblies
+.stamp-package: $(patsubst %,app/assets/asm/%,$(BCL))
 
-##
-# Parameters:
-#  $(1): assembly name (corlib, System, etc.)
-define BCLTestAssemblyTemplate
-app/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$(1)_test.dll
-	cp $$< $$@
+## Package LLDB
 
-.PHONY: package
-package: app/assets/asm/monodroid_$(1)_test.dll
-endef
-
-$(foreach check,$(BCL_CHECKS),$(eval $(call BCLTestAssemblyTemplate,$(check))))
-
-# corlib tests need additional resource assemblies
-app/assets/asm/monodroid_corlib_test.dll: app/assets/asm/es-ES/monodroid_corlib_test.resources.dll app/assets/asm/nn-NO/monodroid_corlib_test.resources.dll
-
-app/assets/asm/%/monodroid_corlib_test.resources.dll: $(TOP)/mcs/class/lib/monodroid/tests/%/monodroid_corlib_test.resources.dll
-	mkdir -p $(dir $@)
-	cp $< $@
-
-## Package the mini test assembly
-
-MINI_TEST_SOURCES= \
-	$(TOP)/mono/mini/aot-tests.cs \
-	$(TOP)/mono/mini/arrays.cs \
-	$(TOP)/mono/mini/basic-calls.cs \
-	$(TOP)/mono/mini/basic-float.cs \
-	$(TOP)/mono/mini/basic-long.cs \
-	$(TOP)/mono/mini/basic-math.cs \
-	$(TOP)/mono/mini/basic.cs \
-	$(TOP)/mono/mini/exceptions.cs \
-	$(TOP)/mono/mini/generics.cs \
-	$(TOP)/mono/mini/gshared.cs \
-	$(TOP)/mono/mini/objects.cs \
-	$(TOP)/mono/mini/TestDriver.cs \
-	managed/mini-test-runner.cs
-
-app/assets/asm/monodroid_mini_test.dll: $(MINI_TEST_SOURCES)
-	csc /nostdlib /noconfig /langversion:latest /unsafe /t:library /out:$@ /d:__MOBILE__ $(BCL_REFERENCES) $(NUNIT_REFERENCES) $(MINI_TEST_SOURCES)
-
-.PHONY: package
-package: app/assets/asm/monodroid_mini_test.dll
-
-## Package Mono.Debugger.Soft test assemblies
-
-.PHONY: $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb
-$(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb:
-	$(MAKE) PROFILE='monodroid' -C $(TOP)/mcs/class/Mono.Debugger.Soft build-dtest
-
-app/assets/asm/dtest-app.exe app/assets/asm/dtest-app.pdb: app/assets/asm/%: $(TOP)/mcs/class/lib/monodroid/tests/%
-	cp $< $@
-
-package: app/assets/asm/dtest-app.exe app/assets/asm/dtest-app.pdb
-
-## LLDB support
-
-lldb-mono-0.1/xa-lldb: xa-lldb
+lldb-mono-0.1:
 	wget --no-verbose -O - 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz' | tar xvf -
-	cp xa-lldb lldb-mono-0.1/xa-lldb
 
-## Run Mono.Debugger.Soft and BCL tests
+#FIXME: armeabi-v7a in place of armeabi
+lldb-mono-0.1/android/armeabi/lldb-server: | lldb-mono-0.1
 
-build-Mono.Debugger.Soft: package local.properties
-	./gradlew uninstallAll assembleDebug installDebug -Pmono.debuggertests $(if $(MONO_WAIT_LLDB),-Pmono.waitforlldb)
+app/assets/armeabi-v7a/lldb-server: lldb-mono-0.1/android/armeabi/lldb-server | app/assets/armeabi-v7a
+	cp $< $@
+	chmod 777 $@
 
-check-Mono.Debugger.Soft: build-Mono.Debugger.Soft $(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb)
-	$(ADB) reverse tcp:6100 tcp:6100
-	$(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb,$(ADB) shell am instrument -w $(PACKAGE)/$(RUNNER))
+.stamp-package: app/assets/armeabi-v7a/lldb-server
 
-.PHONY: build-%
-build-%: package local.properties
-	printf "monodroid_$*_test.dll" > app/assets/asm/testassembly.txt
-	./gradlew uninstallAll assembleDebug installDebug -Pmono.bcltests $(if $(MONO_WAIT_LLDB),-Pmono.waitforlldb)
+lldb-mono-0.1/android/arm64-v8a/lldb-server: | lldb-mono-0.1
+
+app/assets/arm64-v8a/lldb-server: lldb-mono-0.1/android/arm64-v8a/lldb-server | app/assets/arm64-v8a
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/arm64-v8a/lldb-server
+
+lldb-mono-0.1/android/x86/lldb-server: | lldb-mono-0.1
+
+app/assets/x86/lldb-server: lldb-mono-0.1/android/x86/lldb-server | app/assets/x86
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/x86/lldb-server
+
+lldb-mono-0.1/android/x86_64/lldb-server: | lldb-mono-0.1
+
+app/assets/x86_64/lldb-server: lldb-mono-0.1/android/x86_64/lldb-server | app/assets/x86_64
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/x86_64/lldb-server
+
+## Run Mono.Debugger.Soft, Mono.Profiler.Log and BCL tests
+
+.stamp-package:
+	touch $@
+
+.stamp-install: .stamp-package local.properties app/src/main/c/runtime-bootstrap.c app/src/main/java/org/mono/android/AndroidRunner.java
+	./gradlew uninstallAll assembleDebug installDebug
+	touch $@
+
+.PHONY: check-Mono.Debugger.Soft
+check-Mono.Debugger.Soft: .stamp-install
+	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
+		-labels \
+		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
+		-remote:android:$(PACKAGE)/$(RUNNER) \
+		-result:TestResult-Mono.Debugger.Soft.xml \
+		-format:nunit2 \
+		$(if $(TESTNAME),-test:$(TESTNAME)) \
+		$(TOP)/sdks/out/android-bcl/monodroid_tools/tests/monodroid_tools_Mono.Debugger.Soft_test.dll
+
+# TODO: profiler
+# .PHONY: check-Mono.Profiler.Log
+# check-Mono.Profiler.Log: .stamp-install
+# 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
+# 		-labels \
+# 		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,AndroidSdksNotWorking \
+# 		-remote:android:$(PACKAGE)/$(RUNNER) \
+# 		-result:TestResult-Mono.Profiler.Log.xml \
+# 		-format:nunit2 \
+# 		$(if $(TESTNAME),-test:$(TESTNAME)) \
+# 		$(TOP)/sdks/out/android-bcl/monodroid_tools/tests/monodroid_tools_Mono.Profiler.Log_test.dll
 
 .PHONY: check-%
-check-%: build-% $(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb)
-	$(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb,$(ADB) shell am instrument -w $(PACKAGE)/$(RUNNER))
+check-%: .stamp-install
+	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
+		-labels \
+		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
+		-android:$(PACKAGE)/$(RUNNER) \
+		-result:TestResult-$*.xml \
+		-format:nunit2 \
+		$(if $(TESTNAME),-test:$(TESTNAME)) \
+		$(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$*_test.dll
+
+attach-lldb:
+	PATH="$$PATH:$(dir $(ADB))" $(TOP)/sdks/android/lldb-android.sh "$(PACKAGE)"

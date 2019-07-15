@@ -540,11 +540,13 @@ mono_w32handle_ops_typesize (MonoW32Type type)
 	return handle_ops [type]->typesize ();
 }
 
-static void
+static gint32
 mono_w32handle_ops_signal (MonoW32Handle *handle_data)
 {
 	if (handle_ops [handle_data->type] && handle_ops [handle_data->type]->signal)
-		handle_ops [handle_data->type]->signal (handle_data);
+		return handle_ops [handle_data->type]->signal (handle_data);
+
+	return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 }
 
 static gboolean
@@ -813,13 +815,20 @@ own_if_owned (MonoW32Handle *handle_data, gboolean *abandoned)
 	return TRUE;
 }
 
+#ifdef HOST_WIN32
+MonoW32HandleWaitRet
+mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
+{
+	return mono_w32handle_convert_wait_ret (mono_coop_win32_wait_for_single_object_ex (handle, timeout, alertable), 1);
+}
+#else
 MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleWaitRet ret;
 	gboolean alerted;
-	gint64 start;
+	gint64 start = 0;
 	gboolean abandoned = FALSE;
 
 	alerted = FALSE;
@@ -903,6 +912,7 @@ done:
 
 	return ret;
 }
+#endif /* HOST_WIN32 */
 
 static MonoW32Handle*
 mono_w32handle_has_duplicates (MonoW32Handle *handles [ ], gsize nhandles)
@@ -965,13 +975,23 @@ mono_w32handle_check_duplicates (MonoW32Handle *handles [ ], gsize nhandles, gbo
 	mono_w32handle_clear_duplicates (handles, nhandles);
 }
 
+#ifdef HOST_WIN32
+MonoW32HandleWaitRet
+mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable, MonoError *error)
+{
+	DWORD const wait_result = (nhandles != 1)
+		? mono_coop_win32_wait_for_multiple_objects_ex (nhandles, handles, waitall, timeout, alertable, error)
+		: mono_coop_win32_wait_for_single_object_ex (handles [0], timeout, alertable);
+	return mono_w32handle_convert_wait_ret (wait_result, nhandles);
+}
+#else
 MonoW32HandleWaitRet
 mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable, MonoError *error)
 {
 	MonoW32HandleWaitRet ret;
 	gboolean alerted, poll;
 	gint i;
-	gint64 start;
+	gint64 start = 0;
 	MonoW32Handle *handles_data [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	gboolean abandoned [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS] = {0};
 
@@ -1159,13 +1179,21 @@ done:
 
 	return ret;
 }
+#endif /* HOST_WIN32 */
 
+#ifdef HOST_WIN32
+MonoW32HandleWaitRet
+mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, guint32 timeout, gboolean alertable)
+{
+	return mono_w32handle_convert_wait_ret (mono_coop_win32_signal_object_and_wait (signal_handle, wait_handle, timeout, alertable), 1);
+}
+#else
 MonoW32HandleWaitRet
 mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, guint32 timeout, gboolean alertable)
 {
 	MonoW32Handle *signal_handle_data, *wait_handle_data, *handles_data [2];
 	MonoW32HandleWaitRet ret;
-	gint64 start;
+	gint64 start = 0;
 	gboolean alerted;
 	gboolean abandoned = FALSE;
 
@@ -1202,9 +1230,15 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_lock_handles (handles_data, 2);
 
-	mono_w32handle_ops_signal (signal_handle_data);
+	gint32 signal_ret = mono_w32handle_ops_signal (signal_handle_data);
 
 	mono_w32handle_unlock (signal_handle_data);
+
+	if (signal_ret == MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS ||
+		signal_ret == MONO_W32HANDLE_WAIT_RET_NOT_OWNED_BY_CALLER) {
+		ret = (MonoW32HandleWaitRet) signal_ret;
+		goto done;
+	}
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle_data, &abandoned)) {
@@ -1263,3 +1297,4 @@ done:
 
 	return ret;
 }
+#endif /* HOST_WIN32 */

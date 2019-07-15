@@ -4,13 +4,19 @@ include ../../build/rules.make
 
 PROGRAM = mono-symbolicate.exe
 
-LOCAL_MCS_FLAGS = /D:NO_AUTHENTICODE /D:CECIL -nowarn:649
+LOCAL_MCS_FLAGS = /D:NO_AUTHENTICODE /D:CECIL -nowarn:649 -unsafe
 
 LIB_REFS = System.Xml System.Core System
 
 include ../../build/executable.make
 
 LIB_PATH = $(topdir)/class/lib/$(PROFILE)
+
+ifdef TARGET_NET_REFERENCE
+LIB_REF_PATH = $(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)
+else
+LIB_REF_PATH = $(LIB_PATH)
+endif
 
 MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
 
@@ -63,7 +69,7 @@ test-bundle:
 	cp -L $(TEST_EXE) $(TEST_EXE:.exe=.pdb) $(SYMBOLICATE_EXPECTED_FILE) $(TEST_BUNDLE_PATH)/tests/symbolicate/
 
 $(TEST_EXE): $(TEST_CS)
-	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -r:$(LIB_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE)
+	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_REF_PATH)/mscorlib.dll -r:$(LIB_REF_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE)
 
 run-test-local: run-test-without-aot run-test-with-aot run-test-with-aot-msym
 

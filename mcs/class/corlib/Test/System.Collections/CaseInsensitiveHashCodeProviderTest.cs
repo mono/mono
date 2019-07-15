@@ -80,6 +80,7 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void HashCode ()
 		{
 			CaseInsensitiveHashCodeProvider cih = new CaseInsensitiveHashCodeProvider ();

@@ -2,11 +2,11 @@
 var BindingSupportLib = {
 	$BINDING__postset: 'BINDING.export_functions (Module);',
 	$BINDING: {
-		BINDING_ASM: "[binding_tests]WebAssembly.Runtime",
+		BINDING_ASM: "[WebAssembly.Bindings]WebAssembly.Runtime",
 		mono_wasm_object_registry: [],
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
-		mono_wasm_marshal_enum_as_int: false,	
+		mono_wasm_marshal_enum_as_int: false,
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -41,7 +41,6 @@ var BindingSupportLib = {
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
-			this.mono_array_to_heap = Module.cwrap ('mono_wasm_array_to_heap', 'void', ['number','number']);
 
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
@@ -72,6 +71,7 @@ var BindingSupportLib = {
 				return res;
 			}
 			this.bind_js_obj = get_method ("BindJSObject");
+			this.bind_core_clr_obj = get_method ("BindCoreCLRObject");
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
 			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");			
@@ -82,6 +82,8 @@ var BindingSupportLib = {
 			this.box_js_int = get_method ("BoxInt");
 			this.box_js_double = get_method ("BoxDouble");
 			this.box_js_bool = get_method ("BoxBool");
+			this.is_simple_array = get_method ("IsSimpleArray");
+			this.get_core_type = get_method ("GetCoreType");
 			this.setup_js_cont = get_method ("SetupJSContinuation");
 
 			this.create_tcs = get_method ("CreateTaskSource");
@@ -91,9 +93,10 @@ var BindingSupportLib = {
 			this.get_call_sig = get_method ("GetCallSignature");
 
 			this.object_to_string = get_method ("ObjectToString");
+			this.get_date_value = get_method ("GetDateValue");
+			this.create_date_time = get_method ("CreateDateTime");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
-
 			this.init = true;
 		},		
 
@@ -114,7 +117,11 @@ var BindingSupportLib = {
 
 			return res;
 		},
-		
+
+		is_nested_array: function (ele) {
+			return this.call_method (this.is_simple_array, null, "mi", [ ele ]);
+		},
+
 		mono_array_to_js_array: function (mono_array) {
 			if (mono_array == 0)
 				return null;
@@ -122,7 +129,13 @@ var BindingSupportLib = {
 			var res = [];
 			var len = this.mono_array_length (mono_array);
 			for (var i = 0; i < len; ++i)
-				res.push (this.unbox_mono_obj (this.mono_array_get (mono_array, i)));
+			{
+				var ele = this.mono_array_get (mono_array, i);
+				if (this.is_nested_array(ele))
+					res.push(this.mono_array_to_js_array(ele));
+				else
+					res.push (this.unbox_mono_obj (ele));
+			}
 
 			return res;
 		},
@@ -204,10 +217,14 @@ var BindingSupportLib = {
 			case 17: 
 			case 18:
 			{
-				var res =  this.mono_array_to_js_typedarray(type, mono_obj); 
-				return res;
-			}			
-	
+				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
+			}
+			case 20: // clr .NET DateTime
+				var dateValue = this.call_method(this.get_date_value, null, "md", [ mono_obj ]);
+				return new Date(dateValue);
+			case 21: // clr .NET DateTimeOffset
+				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				return dateoffsetValue;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -236,89 +253,8 @@ var BindingSupportLib = {
 			var numBytes = typedArray.length * typedArray.BYTES_PER_ELEMENT;
 			var ptr = Module._malloc(numBytes);
 			var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
-			heapBytes.set(new Uint8Array(typedArray.buffer));
+			heapBytes.set(new Uint8Array(typedArray.buffer, typedArray.byteOffset, numBytes));
 			return heapBytes;
-		},
-		mono_array_to_js_typedarray: function(type, mono_array){
-
-			// length of our array
-			var szLength = this.mono_array_length(mono_array);
-				
-			// The element size that will need to be allocated
-			var bytes_per_element = 0;
-
-			switch (type)
-			{
-				case 11: 
-					bytes_per_element = Int8Array.BYTES_PER_ELEMENT; 
-					break;
-				case 12: 
-					bytes_per_element = Uint8Array.BYTES_PER_ELEMENT; 
-					break;
-				case 13: 
-					bytes_per_element = Int16Array.BYTES_PER_ELEMENT; 
-					break;
-				case 14: 
-					bytes_per_element = Uint16Array.BYTES_PER_ELEMENT; 
-					break;
-				case 15: 
-					bytes_per_element = Int32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 16: 
-					bytes_per_element = Uint32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 17: 
-					bytes_per_element = Float32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 18:
-					bytes_per_element = Float64Array.BYTES_PER_ELEMENT;
-					break;
-			}
-			
-			// Allocate bytes needed for the array of bytes
-			var bufferSize = szLength * bytes_per_element;
-			var bufferPtr = Module._malloc(bufferSize);
-
-			// blit the mono array to the heap
-			this.mono_array_to_heap(mono_array, bufferPtr);
-
-			// result to be returned
-			var res = null;
-
-			// We now need to create a new typed array based off the heap view
-			switch (type)
-			{
-				case 11: 
-					res = Module.HEAP8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 12: 
-					res = Module.HEAPU8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 13: 
-					res = Module.HEAP16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 14: 
-					res = Module.HEAPU16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 15: 
-					res = Module.HEAP32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 16: 
-					res = Module.HEAPU32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 17: 
-					res = Module.HEAPF32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 18:
-					res = Module.HEAPF64.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-			}
-
-			// free the allocated memory
-			Module._free(bufferPtr);
-			// return new typed array
-			return res;
-			
 		},
 		js_to_mono_obj: function (js_obj) {
 	  		this.bindings_lazy_init ();
@@ -351,6 +287,13 @@ var BindingSupportLib = {
 				return this.get_task_and_bind (tcs, js_obj);
 			}
 
+			if (js_obj.constructor.name === "Date")
+				// We may need to take into account the TimeZone Offset
+				return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+
+			return this.extract_mono_obj (js_obj);
+		},
+		js_typed_array_to_array : function (js_obj) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -387,23 +330,137 @@ var BindingSupportLib = {
 				Module._free(heapBytes.byteOffset);
 				return bufferArray;
 			}
-			// The ArrayBuffer object is used to represent a generic, fixed-length raw binary data buffer. 
-			// You cannot directly manipulate the contents of an ArrayBuffer; instead, you create one of the 
-			// typed array objects or a DataView object which represents the buffer in a specific format, and 
-			// use that to read and write the contents of the buffer.
-			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays#ArrayBuffer
-			if (ArrayBuffer.isView(js_obj) || js_obj instanceof ArrayBuffer)
+			else {
+				throw new Error("Object '" + js_obj + "' is not a typed array");
+			} 
+
+
+		},
+		// Copy the existing typed array to the heap pointed to by the pinned array address
+		// 	 typed array memory -> copy to heap -> address of managed pinned array
+		typedarray_copy_to : function (typed_array, pinned_array, begin, end, bytes_per_element) {
+
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
+			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			// and number of elements — that turns the data into an actual typed array.
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
 			{
-				var byteView = new Uint8Array(js_obj);
-				var heapBytes = this.js_typedarray_to_heap(byteView);
-				byteView = null;
-				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, heapBytes.length, heapBytes.BYTES_PER_ELEMENT, 2);
-				Module._free(heapBytes.byteOffset);
-				return bufferArray;
+				// Some sanity checks of what is being asked of us
+				// lets play it safe and throw an error here instead of assuming to much.
+				// Better safe than sorry later
+				if (bytes_per_element !== typed_array.BYTES_PER_ELEMENT)
+					throw new Error("Inconsistent element sizes: TypedArray.BYTES_PER_ELEMENT '" + typed_array.BYTES_PER_ELEMENT + "' sizeof managed element: '" + bytes_per_element + "'");
+
+				// how much space we have to work with
+				var num_of_bytes = (end - begin) * bytes_per_element;
+				// how much typed buffer space are we talking about
+				var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
+				// only use what is needed.
+				if (num_of_bytes > view_bytes)
+					num_of_bytes = view_bytes;
+
+				// offset index into the view
+				var offset = begin * bytes_per_element;
+
+				// Create a view over the heap pointed to by the pinned array address
+				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array + offset, num_of_bytes);
+				// Copy the bytes of the typed array to the heap.
+				heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
+
+				return num_of_bytes;
+			}
+			else {
+				throw new Error("Object '" + typed_array + "' is not a typed array");
+			} 
+
+		},	
+		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
+		// 	 adress of managed pinned array -> copy from heap -> typed array memory
+		typedarray_copy_from : function (typed_array, pinned_array, begin, end, bytes_per_element) {
+
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
+			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			// and number of elements — that turns the data into an actual typed array.
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
+			{
+				// Some sanity checks of what is being asked of us
+				// lets play it safe and throw an error here instead of assuming to much.
+				// Better safe than sorry later
+				if (bytes_per_element !== typed_array.BYTES_PER_ELEMENT)
+					throw new Error("Inconsistent element sizes: TypedArray.BYTES_PER_ELEMENT '" + typed_array.BYTES_PER_ELEMENT + "' sizeof managed element: '" + bytes_per_element + "'");
+
+				// how much space we have to work with
+				var num_of_bytes = (end - begin) * bytes_per_element;
+				// how much typed buffer space are we talking about
+				var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
+				// only use what is needed.
+				if (num_of_bytes > view_bytes)
+					num_of_bytes = view_bytes;
+
+				// Create a new view for mapping
+				var typedarrayBytes = new Uint8Array(typed_array.buffer, 0, num_of_bytes);
+				// offset index into the view
+				var offset = begin * bytes_per_element;
+				// Set view bytes to value from HEAPU8
+				typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array + offset, pinned_array + offset + num_of_bytes));
+				return num_of_bytes;
+			}
+			else {
+				throw new Error("Object '" + typed_array + "' is not a typed array");
+			} 
+
+		},	
+		// Creates a new typed array from pinned array address from pinned_array allocated on the heap to the typed array.
+		// 	 adress of managed pinned array -> copy from heap -> typed array memory
+		typed_array_from : function (pinned_array, begin, end, bytes_per_element, type) {
+
+			// typed array
+			var newTypedArray = 0;
+
+			switch (type)
+			{
+				case 5: 
+					newTypedArray = new Int8Array(end - begin);
+					break;
+				case 6: 
+					newTypedArray = new Uint8Array(end - begin);
+					break;
+				case 7: 
+					newTypedArray = new Int16Array(end - begin);
+					break;
+				case 8: 
+					newTypedArray = new Uint16Array(end - begin);
+					break;
+				case 9: 
+					newTypedArray = new Int32Array(end - begin);
+					break;
+				case 10: 
+					newTypedArray = new Uint32Array(end - begin);
+					break;
+				case 13: 
+					newTypedArray = new Float32Array(end - begin);
+					break;
+				case 14:
+					newTypedArray = new Float64Array(end - begin);
+					break;
+				case 15:  // This is a special case because the typed array is also byte[]
+					newTypedArray = new Uint8ClampedArray(end - begin);
+					break;
 			}
 
-			return this.extract_mono_obj (js_obj);
-		},
+			this.typedarray_copy_from(newTypedArray, pinned_array, begin, end, bytes_per_element);
+			return newTypedArray;
+		},		
 		js_to_mono_enum: function (method, parmIdx, js_obj) {
 			this.bindings_lazy_init ();
     
@@ -416,14 +473,18 @@ var BindingSupportLib = {
 			// return the unboxed enum value.
 			return this.mono_unbox_enum(monoEnum);
 		},
-		wasm_binding_obj_new: function (js_obj_id)
+		wasm_binding_obj_new: function (js_obj_id, type)
 		{
-			return this.call_method (this.bind_js_obj, null, "i", [js_obj_id]);
+			return this.call_method (this.bind_js_obj, null, "io", [js_obj_id, type]);
 		},
-
 		wasm_bind_existing: function (mono_obj, js_id)
 		{
 			return this.call_method (this.bind_existing_obj, null, "mi", [mono_obj, js_id]);
+		},
+
+		wasm_bind_core_clr_obj: function (js_id, gc_handle)
+		{
+			return this.call_method (this.bind_core_clr_obj, null, "ii", [js_id, gc_handle]);
 		},
 
 		wasm_unbind_js_obj: function (js_obj_id)
@@ -593,8 +654,12 @@ var BindingSupportLib = {
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
-				return res;
+			if (args_marshal !== null && typeof args_marshal !== "undefined") 
+			{
+				if (args_marshal.length >= args.length && args_marshal [args.length] === "m")
+					return res;
+			}
+
 			return this.unbox_mono_obj (res);
 		},
 
@@ -615,8 +680,9 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
-
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
+			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.  
+			// This may need more analysis if causes problems again.
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mo", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
@@ -671,6 +737,102 @@ var BindingSupportLib = {
 				return BINDING.call_method (method, null, signature, arguments);
 			};
 		},
+		wasm_get_core_type: function (obj)
+		{
+			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+		},
+		get_wasm_type: function(obj) {
+			var coreType = obj[Symbol.for("wasm type")];
+			if (typeof coreType === "undefined") {
+				switch (obj.constructor.name) {
+					case "Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "ArrayBuffer":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							ArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Int8Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int8Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Uint8Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint8Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Uint8ClampedArray":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint8ClampedArray.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Int16Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int16Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Uint16Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint16Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Int32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Uint32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						return coreType;
+					case "Float32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Float32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Float64Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Float64Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Function":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Function.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "SharedArrayBuffer":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "DataView":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							DataView.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+				}
+		  	}
+			return coreType;
+		},
 		// Object wrapping helper functions to handle reference handles that will
 		// be used in managed code.
 		mono_wasm_register_obj: function(obj) {
@@ -684,7 +846,9 @@ var BindingSupportLib = {
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 					obj.__mono_jshandle__ = handle;
-					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1);
+					// Obtain the JS -> C# type mapping.
+					var wasm_type = this.get_wasm_type(obj);
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, wasm_type);
 					this.mono_wasm_object_registry[handle] = obj;
 						
 				}
@@ -756,6 +920,10 @@ var BindingSupportLib = {
 				___mono_wasm_global___ = global;
 			} else if (typeof window === 'object' && testGlobal(window)) {
 				___mono_wasm_global___ = window;
+			} else if (testGlobal((function(){return Function;})()('return this')())) {
+
+				___mono_wasm_global___ = (function(){return Function;})()('return this')();
+
 			}
 			if (typeof ___mono_wasm_global___ === 'object') {
 				return ___mono_wasm_global___;
@@ -872,6 +1040,48 @@ var BindingSupportLib = {
         }
         return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
 	},
+	mono_wasm_get_by_index: function(js_handle, property_index, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var obj = BINDING.mono_wasm_require_handle (js_handle);
+		if (!obj) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		try {
+			var m = obj [property_index];
+			return BINDING.js_to_mono_obj (m);
+		} catch (e) {
+			var res = e.toString ();
+			setValue (is_exception, 1, "i32");
+			if (res === null || typeof res === "undefined")
+				res = "unknown exception";
+			return BINDING.js_string_to_mono_string (res);
+		}
+	},
+	mono_wasm_set_by_index: function(js_handle, property_index, value, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var obj = BINDING.mono_wasm_require_handle (js_handle);
+		if (!obj) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		var js_value = BINDING.unbox_mono_obj(value);
+
+		try {
+			obj [property_index] = js_value;
+			return true;
+		} catch (e) {
+			var res = e.toString ();
+			setValue (is_exception, 1, "i32");
+			if (res === null || typeof res === "undefined")
+				res = "unknown exception";
+			return BINDING.js_string_to_mono_string (res);
+		}
+	},
 	mono_wasm_get_global_object: function(global_name, is_exception) {
 		BINDING.bindings_lazy_init ();
 
@@ -903,23 +1113,94 @@ var BindingSupportLib = {
 
 		BINDING.mono_wasm_free_raw_object(js_handle);
 	},	
-	mono_wasm_new_array: function(is_exception) {
+	mono_wasm_bind_core_object: function(js_handle, gc_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
-		return BINDING.js_to_mono_obj ([]);
-	},	
-	mono_wasm_new_object: function(object_handle, args, is_exception) {
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		BINDING.wasm_bind_core_clr_obj(js_handle, gc_handle );
+		requireObject.__mono_gchandle__ = gc_handle;
+		return gc_handle;
+	},
+	mono_wasm_bind_host_object: function(js_handle, gc_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
-		if (!object_handle) {
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		BINDING.wasm_bind_core_clr_obj(js_handle, gc_handle );
+		requireObject.__mono_gchandle__ = gc_handle;
+		return gc_handle;
+	},
+	mono_wasm_new: function (core_name, args, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var js_name = BINDING.conv_string (core_name);
+
+		if (!js_name) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Core object '" + js_name + "' not found.");
+		}
+
+		var coreObj = BINDING.mono_wasm_get_global()[js_name];
+
+		if (coreObj === null || typeof coreObj === undefined) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Global object '" + js_name + "' not found.");
+		}
+
+		var js_args = BINDING.mono_array_to_js_array(args);
+		
+		try {
+			
+			// This is all experimental !!!!!!
+			var allocator = function(constructor, js_args) {
+				// Not sure if we should be checking for anything here
+				var argsList = new Array();
+				argsList[0] = constructor;
+				if (js_args)
+					argsList = argsList.concat(js_args);
+				var obj = new (constructor.bind.apply(constructor, argsList ));
+				return obj;
+			};
+	
+			var res = allocator(coreObj, js_args);
+			var gc_handle = BINDING.mono_wasm_free_list.length ? BINDING.mono_wasm_free_list.pop() : BINDING.mono_wasm_ref_counter++;
+			BINDING.mono_wasm_object_registry[gc_handle] = res;
+			return BINDING.js_to_mono_obj (gc_handle + 1);
+		} catch (e) {
+			var res = e.toString ();
+			setValue (is_exception, 1, "i32");
+			if (res === null || res === undefined)
+				res = "Error allocating object.";
+			return BINDING.js_string_to_mono_string (res);
+		}	
+
+	},
+	mono_wasm_new_object: function(object_handle_or_function, args, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		if (!object_handle_or_function) {
 			return BINDING.js_to_mono_obj ({});
 		}
 		else {
 
-			var requireObject = BINDING.mono_wasm_require_handle (object_handle);
+			var requireObject;
+			if (typeof object_handle_or_function === 'function')
+				requireObject = object_handle_or_function;
+			else
+				requireObject = BINDING.mono_wasm_require_handle (object_handle_or_function);
+
 			if (!requireObject) {
 				setValue (is_exception, 1, "i32");
-				return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+				return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + object_handle_or_function + "'");
 			}
 
 			var js_args = BINDING.mono_array_to_js_array(args);
@@ -948,7 +1229,48 @@ var BindingSupportLib = {
 			}	
 		}
 
-	},	
+	},
+	mono_wasm_typed_array_to_array: function(js_handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		return BINDING.js_typed_array_to_array(requireObject);
+	},
+	mono_wasm_typed_array_copy_to: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		var res = BINDING.typedarray_copy_to(requireObject, pinned_array, begin, end, bytes_per_element);
+		return BINDING.js_to_mono_obj (res)
+	},
+	mono_wasm_typed_array_from: function(pinned_array, begin, end, bytes_per_element, type, is_exception) {
+		BINDING.bindings_lazy_init ();
+		var res = BINDING.typed_array_from(pinned_array, begin, end, bytes_per_element, type);
+		return BINDING.js_to_mono_obj (res)
+	},
+	mono_wasm_typed_array_copy_from: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		var res = BINDING.typedarray_copy_from(requireObject, pinned_array, begin, end, bytes_per_element);
+		return BINDING.js_to_mono_obj (res)
+	},
+
 
 };
 

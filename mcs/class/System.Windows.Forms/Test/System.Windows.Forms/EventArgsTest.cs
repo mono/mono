@@ -441,7 +441,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserDocumentCompletedEventArgs()
 		{
-			Uri url = new Uri("http://www.mono-project.com/");
+			Uri url = new Uri("http://www.example.com/");
 			
 			WebBrowserDocumentCompletedEventArgs e = new WebBrowserDocumentCompletedEventArgs(url);
 			
@@ -451,7 +451,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserNavigatedEventArgs ()
 		{
-			Uri url = new Uri ("http://www.mono-project.com/");
+			Uri url = new Uri ("http://www.example.com/");
 
 			WebBrowserNavigatedEventArgs e = new WebBrowserNavigatedEventArgs (url);
 
@@ -461,7 +461,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserNavigatingEventArgs ()
 		{
-			Uri url = new Uri ("http://www.mono-project.com/");
+			Uri url = new Uri ("http://www.example.com/");
 			string frame = "TOP";
 
 			WebBrowserNavigatingEventArgs e = new WebBrowserNavigatingEventArgs (url, frame);

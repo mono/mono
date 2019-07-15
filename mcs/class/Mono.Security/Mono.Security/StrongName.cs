@@ -239,7 +239,7 @@ namespace Mono.Security {
 					byte[] publicKey = PublicKey;
 					if (publicKey == null)
 						return null;
-					HashAlgorithm ha = HashAlgorithm.Create (TokenAlgorithm);
+					HashAlgorithm ha = GetHashAlgorithm (TokenAlgorithm);
 					byte[] hash = ha.ComputeHash (publicKey);
 					// we need the last 8 bytes in reverse order
 					keyToken = new byte [8];
@@ -248,6 +248,22 @@ namespace Mono.Security {
 				}
 				return (byte[]) keyToken.Clone ();
 			}
+		}
+
+		static HashAlgorithm GetHashAlgorithm (string algorithm)
+		{
+#if FULL_AOT_RUNTIME
+			switch (algorithm.ToUpper (CultureInfo.InvariantCulture)) {
+			case "SHA1":
+				return new SHA1CryptoServiceProvider ();
+			case "MD5":
+				return new MD5CryptoServiceProvider ();
+			default:
+				throw new ArgumentException ("Unsupported hash algorithm for token");
+			}
+#else
+			return HashAlgorithm.Create (algorithm);
+#endif
 		}
 
 		public string TokenAlgorithm {

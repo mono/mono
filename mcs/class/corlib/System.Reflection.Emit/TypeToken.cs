@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[Serializable]
 	[ComVisible (true)]
-	public struct TypeToken {
+	public readonly struct TypeToken : IEquatable<TypeToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly TypeToken Empty = new TypeToken ();
 

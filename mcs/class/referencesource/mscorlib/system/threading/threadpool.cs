@@ -1155,8 +1155,8 @@ namespace System.Threading
             // This will result in a "leak" of sorts (since the handle will not be cleaned up)
             // but the process is exiting anyway.
             //
-            // During AD-unload, we don’t finalize live objects until all threads have been 
-            // aborted out of the AD.  Since these locked regions are CERs, we won’t abort them 
+            // During AD-unload, we donï¿½t finalize live objects until all threads have been 
+            // aborted out of the AD.  Since these locked regions are CERs, we wonï¿½t abort them 
             // while the lock is held.  So there should be no leak on AD-unload.
             //
             if (Interlocked.CompareExchange(ref m_lock, 1, 0) == 0)
@@ -1729,11 +1729,36 @@ namespace System.Threading
             return QueueUserWorkItemHelper(callBack,state,ref stackMark,false);
         }
 
+        public static bool QueueUserWorkItem<TState>(Action<TState> callBack, TState state, bool preferLocal)
+        {
+            if (callBack == null)
+            {
+                throw new ArgumentNullException(nameof(callBack));
+            }
+
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+            WaitCallback waitCallback = x => callBack((TState)x);
+            return QueueUserWorkItemHelper(waitCallback,state,ref stackMark,true,!preferLocal);
+        }
+
+        public static bool UnsafeQueueUserWorkItem<TState>(Action<TState> callBack, TState state, bool preferLocal)
+        {
+            if (callBack == null)
+            {
+                throw new ArgumentNullException(nameof(callBack));
+            }
+
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+            WaitCallback waitCallback = x => callBack((TState)x);
+            return QueueUserWorkItemHelper(waitCallback,state,ref stackMark,false,!preferLocal);
+        }
+
+
         //ThreadPool has per-appdomain managed queue of work-items. The VM is
         //responsible for just scheduling threads into appdomains. After that
         //work-items are dispatched from the managed queue.
         [System.Security.SecurityCritical]  // auto-generated
-        private static bool QueueUserWorkItemHelper(WaitCallback callBack, Object state, ref StackCrawlMark stackMark, bool compressStack )
+        private static bool QueueUserWorkItemHelper(WaitCallback callBack, Object state, ref StackCrawlMark stackMark, bool compressStack, bool forceGlobal = true)
         {
             bool success =  true;
 
@@ -1754,7 +1779,7 @@ namespace System.Threading
                 finally
                 {
                     QueueUserWorkItemCallback tpcallBack = new QueueUserWorkItemCallback(callBack, state, compressStack, ref stackMark);
-                    ThreadPoolGlobals.workQueue.Enqueue(tpcallBack, true);
+                    ThreadPoolGlobals.workQueue.Enqueue(tpcallBack, forceGlobal);
                     success = true;
                 }
             }
@@ -1907,8 +1932,7 @@ namespace System.Threading
                 throw new NotSupportedException(Environment.GetResourceString("Arg_NotSupportedException"));
             Contract.EndContractBlock();
 #endif
-
-            return PostQueuedCompletionStatus(overlapped);
+            throw new NotImplementedException("");
         }
 
         [SecurityCritical]
@@ -1961,8 +1985,7 @@ namespace System.Threading
         [System.Security.SecuritySafeCritical]
         internal static void NotifyWorkItemProgress()
         {
-            if (!ThreadPoolGlobals.vmTpInitialized)
-                ThreadPool.InitializeVMTp(ref ThreadPoolGlobals.enableWorkerTracking);
+            EnsureVMInitialized();
             NotifyWorkItemProgressNative();
         }
 
@@ -1980,8 +2003,10 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern bool IsThreadPoolHosted();
+        internal static bool IsThreadPoolHosted()
+        {
+            return false;
+        }
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
@@ -2050,8 +2075,10 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern bool BindIOCompletionCallbackNative(IntPtr fileHandle);
+        private static bool BindIOCompletionCallbackNative(IntPtr fileHandle)
+        {
+            return true;
+        }
     }
 }

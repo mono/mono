@@ -125,5 +125,8 @@ namespace System.Threading
 		public static void MemoryBarrier () {
 			Thread.MemoryBarrier ();
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void MemoryBarrierProcessWide ();
 	}
 }

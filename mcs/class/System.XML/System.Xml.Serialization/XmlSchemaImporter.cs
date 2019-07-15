@@ -43,10 +43,11 @@ using System.Xml.Serialization.Configuration;
 
 namespace System.Xml.Serialization 
 {
-	public class XmlSchemaImporter
-#if !MOBILE
-		: SchemaImporter
+#if MOBILE
+    public abstract class SchemaImporter {}
 #endif
+
+	public class XmlSchemaImporter : SchemaImporter
 	{
 		#region Fields
 

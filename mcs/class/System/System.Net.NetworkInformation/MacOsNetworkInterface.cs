@@ -36,9 +36,19 @@ using System.Runtime.InteropServices;
 namespace System.Net.NetworkInformation {
 	internal class MacOsNetworkInterfaceAPI : UnixNetworkInterfaceAPI
 	{
-		const int AF_INET  = 2;
-		const int AF_INET6 = 30;
-		const int AF_LINK  = 18;
+		const int AF_INET = 2;
+		const int AF_LINK = 18;
+		protected readonly int AF_INET6;
+
+		public MacOsNetworkInterfaceAPI ()
+		{
+			AF_INET6 = 30;
+		}
+
+		protected MacOsNetworkInterfaceAPI (int AF_INET6)
+		{
+			this.AF_INET6 = AF_INET6;
+		}
 
 		public override NetworkInterface [] GetAllNetworkInterfaces ()
 		{

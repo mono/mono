@@ -597,5 +597,13 @@ namespace MonoTests.I18N.CJK
 		}
 
 		#endregion
+
+		[Test]
+		public void Bug13144 ()
+		{
+			var encoding = Encoding.GetEncoding ("GB18030");
+			var str = encoding.GetString (new byte[] { 0x84, 0x32, 0x81, 0x30 });
+			Assert.AreEqual ("?", str);
+		}
 	}
 }

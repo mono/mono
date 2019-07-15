@@ -508,7 +508,7 @@ namespace System.Net {
             throw new PlatformNotSupportedException ();
 #elif MONOTOUCH
             return Mono.Net.CFNetwork.GetDefaultProxy ();
-#elif MONODROID
+#elif MONODROID && !MOBILE_DESKTOP_HOST
             // Return the system web proxy.  This only works for ICS+.
             var data = AndroidPlatform.GetDefaultProxy ();
             if (data != null)

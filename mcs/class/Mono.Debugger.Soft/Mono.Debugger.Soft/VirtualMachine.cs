@@ -109,6 +109,21 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public EventSet GetNextEventSet (int timeoutInMilliseconds) {
+			lock (queue_monitor) {
+				if (queue.Count == 0) {
+					if (!Monitor.Wait (queue_monitor, timeoutInMilliseconds)) {
+						return null;
+					}
+				}
+
+				current_es = null;
+				current_es_index = 0;
+
+				return (EventSet)queue.Dequeue ();
+			}
+		}
+
 		[Obsolete ("Use GetNextEventSet () instead")]
 		public T GetNextEvent<T> () where T : Event {
 			return GetNextEvent () as T;
@@ -135,8 +150,8 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void Detach () {
-			conn.VM_Dispose ();
 			conn.Close ();
+			conn.VM_Dispose ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null, 0);
 		}
 

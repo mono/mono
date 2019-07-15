@@ -20,9 +20,16 @@ TEST_RESOURCE_FILES = \
 	Test/System/test-uri-relative-props.txt \
 	Test/compressed.bin
 
+XTEST_RESOURCE_FILES = \
+	Test/TestData/testclienteku.contoso.com.pfx \
+	Test/TestData/testnoeku.contoso.com.pfx \
+	Test/TestData/testselfsignedservereku.contoso.com.pfx \
+	Test/TestData/testservereku.contoso.com.pfx
+
 USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
 LIB_MCS_FLAGS = -d:COREFX -d:CONFIGURATION_2_0 -d:SYSTEM_NET_PRIMITIVES_DLL -d:XML_DEP -d:SECURITY_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
+XTEST_MCS_FLAGS += $(XTEST_RESOURCE_FILES:%=-resource:%)
 
 ifndef NO_MONO_SECURITY
 MONO_SECURITY := Mono.Security
@@ -115,11 +122,14 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
 	$(RESOURCE_FILES)				\
-	$(TEST_RESOURCE_FILES)
+	$(TEST_RESOURCE_FILES)			\
+	$(XTEST_RESOURCE_FILES)
 
 include ../../build/library.make
 
 $(test_lib_output): $(TEST_RESOURCE_FILES) $(test_lib_dir)
+
+$(xtest_lib_output): $(XTEST_RESOURCE_FILES)
 
 # Helper target to run the perl regex test suite
 regex-check:

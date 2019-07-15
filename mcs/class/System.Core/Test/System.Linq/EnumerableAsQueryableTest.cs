@@ -39,6 +39,7 @@ using System.Collections;
 namespace MonoTests.System.Linq {
 
 	[TestFixture]
+	[Category("SRE")]
 	public class EnumerableAsQueryableTest {
 
 		int [] _array;

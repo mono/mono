@@ -3294,11 +3294,9 @@ namespace MonoTests.System
 			Type t = Type.ReflectionOnlyGetType (typeof (int).AssemblyQualifiedName.ToString (), true, true);
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
-
+/*
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -3313,9 +3311,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_NestedUserDefinedType ()
 		{
 			Type ut = new UserType (new UserType (typeof (int)));
@@ -3330,9 +3326,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
 		{
 			Type ut = new UserType(typeof(int));
@@ -3343,9 +3337,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
@@ -3353,7 +3345,7 @@ namespace MonoTests.System
 			var g0 = t.GetGenericArguments () [0];
 			Assert.AreSame (g0, ut, "#1");
 		}
-
+*/
 		[Test]
 		public void MakeGenericType_WrongNumOfArguments ()
 		{
@@ -3549,8 +3541,9 @@ namespace MonoTests.System
 		}
 #endif
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		[Test]
+		[Category("SRE")]
 		public void Bug506757 ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -3595,6 +3588,7 @@ namespace MonoTests.System
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
 #endif
+
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{
@@ -4565,7 +4559,7 @@ namespace MonoTests.System
 
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384

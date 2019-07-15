@@ -57,9 +57,15 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
-# Don't use /shared here because the compiler server is incompatible with the build profile.
 #
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
+
+ifeq ("$(ENABLE_COMPILER_SERVER)","1")
+	COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
+else
+	COMPILER_SERVER_ARGS:=
+endif
+
+USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 
 .PHONY: profile-check do-profile-check
 profile-check:
@@ -76,6 +82,7 @@ clean-profile:
 
 post-profile-cleanup:
 	@rm -f $(monolite_flag)
+	$(MAKE) $(MAKE_Q) start-compiler-server
 
 PROFILE_EXE = $(depsdir)/basic-profile-check.exe
 PROFILE_OUT = $(PROFILE_EXE:.exe=.out)
@@ -128,3 +135,20 @@ $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
+
+ifeq ("$(ENABLE_COMPILER_SERVER)","1")
+BUILDLIB_LOCATION=$(realpath $(topdir))/class/lib/build
+MONOWRAPPER_LOCATION=$(realpath $(topdir)/../runtime/mono-wrapper)
+VBCS_LOCATION?=$(dir $(SERVER_CSC_LOCATION))/VBCSCompiler.exe
+VBCS_RUNTIME=MONO_PATH="$(BUILDLIB_LOCATION)$(PLATFORM_PATH_SEPARATOR)$(BUILDLIB_LOCATION)/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" '$(MONOWRAPPER_LOCATION)'
+
+export VBCS_RUNTIME
+export VBCS_LOCATION
+
+start-compiler-server:
+	echo Attempting to start compiler server...
+	$(topdir)/build/start-compiler-server.sh '$(realpath $(topdir))' '$(realpath $(topdir)/build)/compiler-server.log' '$(COMPILER_SERVER_PIPENAME)'
+else
+start-compiler-server:
+	
+endif

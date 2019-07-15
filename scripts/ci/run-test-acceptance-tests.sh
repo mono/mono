@@ -13,8 +13,13 @@ if [ "$total_tests" -lt "1600" ]
 	exit 1
 fi
 
-# run Roslyn tests
+# run Roslyn tests, they use Mono from PATH so we need to do a temporary install
+${TESTCMD} --label=install-temp-mono --timeout=10m make install
+OLD_PATH=$PATH
+export PATH=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests/bin:$PATH
 ${TESTCMD} --label=check-roslyn --timeout=60m make -C acceptance-tests check-roslyn
+export PATH=$OLD_PATH
+rm -rf "${MONO_REPO_ROOT}/tmp/mono-acceptance-tests"
 
 # run CoreCLR managed tests, we precompile them in parallel so individual steps don't need to do it
 ${TESTCMD} --label=coreclr-compile-tests --timeout=140m --fatal make -C acceptance-tests coreclr-compile-tests

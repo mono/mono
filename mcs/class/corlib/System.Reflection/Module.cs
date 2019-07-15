@@ -37,60 +37,13 @@ using System.Collections.Generic;
 
 namespace System.Reflection {
 
-	internal enum ResolveTokenError {
-		OutOfRange,
-		BadTable,
-		Other
-	};
-
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Module {
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int get_MetadataToken (Module module);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int GetMDStreamVersion (IntPtr module_handle);
-	
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type[] InternalGetTypes ();
-
 		internal Guid MvId {
 			get {
 				return GetModuleVersionId ();
 			}
-		}
-
-		internal Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
-			if (error == ResolveTokenError.OutOfRange)
-				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, Name));
-			else
-				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, Name), "metadataToken");
-		}
-
-		internal IntPtr[] ptrs_from_types (Type[] types) {
-			if (types == null)
-				return null;
-			else {
-				IntPtr[] res = new IntPtr [types.Length];
-				for (int i = 0; i < types.Length; ++i) {
-					if (types [i] == null)
-						throw new ArgumentException ();
-					res [i] = types [i].TypeHandle.Value;
-				}
-				return res;
-			}
-		}
-
-		internal static Type MonoDebugger_ResolveType (Module module, int token)
-		{
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveTypeToken (module.GetImpl (), token, null, null, out error);
-			if (handle == IntPtr.Zero)
-				return null;
-			else
-				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
 		}
 
 		// Used by mcs, the symbol writer, and mdb through reflection
@@ -101,45 +54,11 @@ namespace System.Reflection {
 
 		internal virtual Guid GetModuleVersionId ()
 		{
-			return new Guid (GetGuidInternal ());
+			throw new NotImplementedException ();
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetHINSTANCE ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string GetGuidInternal ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type GetGlobalType ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string ResolveStringToken (IntPtr module, int token, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern byte[] ResolveSignature (IntPtr module, int metadataToken, out ResolveTokenError error);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 
 		public virtual X509Certificate GetSignerCertificate ()
 		{
-			throw NotImplemented.ByDesign;
-		}
-
-		internal virtual IntPtr GetImpl () {
 			throw NotImplemented.ByDesign;
 		}
 	}

@@ -7,7 +7,7 @@
 // Copyright (C) 2007 Novell, Inc.
 //
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 using NUnit.Framework;
 using System;
 using System.Web.Services;

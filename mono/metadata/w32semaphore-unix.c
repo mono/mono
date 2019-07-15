@@ -28,7 +28,7 @@ struct MonoW32HandleNamedSemaphore {
 	MonoW32HandleNamespace sharedns;
 };
 
-static void sem_handle_signal (MonoW32Handle *handle_data)
+static gint32 sem_handle_signal (MonoW32Handle *handle_data)
 {
 	MonoW32HandleSemaphore *sem_handle;
 
@@ -41,6 +41,7 @@ static void sem_handle_signal (MonoW32Handle *handle_data)
 	if (sem_handle->val + 1 > (guint32)sem_handle->max) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
 			__func__, mono_w32handle_get_typename (handle_data->type), handle_data, sem_handle->val, 1, sem_handle->max);
+		return MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS;
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: %s handle %p val %d count %d max %d",
 			__func__, mono_w32handle_get_typename (handle_data->type), handle_data, sem_handle->val, 1, sem_handle->max);
@@ -48,6 +49,7 @@ static void sem_handle_signal (MonoW32Handle *handle_data)
 		sem_handle->val += 1;
 		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 	}
+	return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 }
 
 static gboolean sem_handle_own (MonoW32Handle *handle_data, gboolean *abandoned)
@@ -230,6 +232,9 @@ exit:
 	g_free (utf8_name);
 	return handle;
 }
+
+// These functions appear to be using coop-aware locking functions, and so this file does not include explicit
+// GC-safe transitions like its corresponding Windows version
 
 gpointer
 ves_icall_System_Threading_Semaphore_CreateSemaphore_icall (gint32 initialCount, gint32 maximumCount,

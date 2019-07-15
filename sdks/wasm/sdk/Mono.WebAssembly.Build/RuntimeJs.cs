@@ -22,7 +22,6 @@ public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
 public IEnumerable<string> FileList { get; set; }
-public bool InitBindings { get; set; }
 
         #line default
         #line hidden
@@ -87,19 +86,6 @@ public bool InitBindings { get; set; }
             #line hidden
             
             #line 11 ""
-if(InitBindings){
-            
-            #line default
-            #line hidden
-            
-            #line 12 ""
-            this.Write("\t\t\t\tModule.mono_bindings_init(\"[WebAssembly.Bindings]WebAssembly.Runtime\");\n");
-            
-            #line default
-            #line hidden
-            
-            #line 13 ""
-}
             
             #line default
             #line hidden

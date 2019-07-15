@@ -8,6 +8,9 @@ using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Xamarin.ProcessControl;
+using System.Runtime.InteropServices;
+
 
 namespace Mono.WebAssembly.Build
 {
@@ -57,19 +60,21 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public string I18n { get; set; }
 
-		protected override string ToolName => "monolinker";
-
+		protected override string ToolName => (InvokeLinkerUsingMono) ? "mono" : "monolinker.exe";
+		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
+                                               .IsOSPlatform(OSPlatform.Windows);
+		bool InvokeLinkerUsingMono => (!IsWindows && !String.IsNullOrEmpty(GetNetCoreVersion()));
 		protected override string GenerateFullPathToTool ()
 		{
-			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
-			// Check if coming from nuget or local
-			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
-			if (File.Exists(toolsPath))
+			Log.LogMessage(MessageImportance.High, $"InvokeLinkerUsingMono {InvokeLinkerUsingMono}");
+			if (!InvokeLinkerUsingMono) {
+				var toolsPath = GetPathToMonoLinker ();
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath}");
 				return toolsPath;
-			else 
-				return Path.Combine (dir, "monolinker.exe");
+			}
+			else
+				return ToolName;
 		}
-
 		protected override bool ValidateParameters ()
 		{
 			if (string.IsNullOrEmpty (OutputDir)) {
@@ -82,21 +87,31 @@ namespace Mono.WebAssembly.Build
 				return false;
 			}
 
-			WasmLinkMode linkme;
-			if (!Enum.TryParse<WasmLinkMode>(LinkMode, out linkme)) {
+			if (!Enum.TryParse<WasmLinkMode> (LinkMode, out var linkme)) {
 				Log.LogError ("LinkMode is invalid.");
 				return false;
 			}
-
 
 			return base.ValidateParameters ();
 		}
 
 		protected override string GenerateCommandLineCommands ()
 		{
-			var sb = new StringBuilder ();
 
-			sb.Append (" --verbose");
+			ProcessArguments arguments = null;
+			
+			if (!InvokeLinkerUsingMono) {
+				arguments = ProcessArguments.Create ("--verbose");
+			}
+			else {
+				var toolsPath = GetPathToMonoLinker();
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath}.");
+				arguments = ProcessArguments.Create (toolsPath);
+				arguments = arguments.Add("--verbose");
+			}
+
+			// add exclude features
+			arguments = arguments.AddRange ("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
 
 			string coremode, usermode;
 
@@ -115,24 +130,30 @@ namespace Mono.WebAssembly.Build
 				break;
 			}
 
-			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
+			arguments = arguments.AddRange ("-c", coremode, "-u", usermode);
 
 			//the linker doesn't consider these core by default
-			sb.AppendFormat (" -p {0} netstandard -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http", coremode);
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Bindings");
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.Http");
+			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.WebSockets");
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
-					sb.AppendFormat (" -p \"{0}\" copy", s);
+					arguments = arguments.AddRange ("-p", "copy", s);
 				}
 			}
 
-			sb.AppendFormat (" -out \"{0}\"", OutputDir);
-			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
-			sb.AppendFormat (" -d \"{0}\"", Path.Combine(FrameworkDir, "Facades"));
-			sb.AppendFormat (" -b {0} -v {0}", Debug);
+			arguments = arguments.AddRange ("-out", OutputDir);
 
-			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
+			arguments = arguments.AddRange ("-d", FrameworkDir);
+
+			arguments = arguments.AddRange ("-d", Path.Combine(FrameworkDir, "Facades"));
+
+			arguments = arguments.AddRange ("-b", Debug.ToString());
+			arguments = arguments.AddRange ("-v", Debug.ToString());
+
+			arguments = arguments.AddRange ("-a", RootAssembly[0].GetMetadata ("FullPath"));
 
 			//we'll normally have to check most of the because the SDK references most framework asm by default
 			//so let's enumerate upfront
@@ -147,24 +168,54 @@ namespace Mono.WebAssembly.Build
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
-
 					var p = asm.GetMetadata ("FullPath");
-					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
+					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
 					}
-
-					sb.AppendFormat (" -r \"{0}\"", p);
+					arguments = arguments.AddRange ("-r", p);
 				}
 			}
 
 			if (string.IsNullOrEmpty (I18n)) {
-				sb.Append (" -l none");
+				arguments = arguments.AddRange ("-l", "none");
 			} else {
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
-				sb.AppendFormat (" -l {0}", string.Join(",", vals));
+				arguments = arguments.AddRange ("-l", string.Join (",", vals));
 			}
+			return arguments.ToString ();
+		}
 
-			return sb.ToString ();
+		static string GetNetCoreVersion()
+		{
+			var assembly = typeof(System.Runtime.GCSettings).Assembly;
+			var assemblyPath = assembly.CodeBase.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+			int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
+			if (netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2)
+				return assemblyPath[netCoreAppIndex + 1];
+			return null;
+		}
+
+		string GetPathToMonoLinker () {
+			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
+			// Check if coming from nuget or local
+			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
+			if (!File.Exists(toolsPath))
+				toolsPath = Path.GetFullPath(Path.Combine (GetParentDirectoryOf(dir,6), "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
+			return toolsPath;
+		} 
+
+		static string GetParentDirectoryOf (string path, int up)
+		{
+			if (up == 0)
+				return path;
+			for (int i = path.Length -1; i >= 0; i--) {
+				if (path[i] == Path.DirectorySeparatorChar) {
+					up--;
+					if (up == 0)
+						return path.Substring (0, i);
+				}
+			}
+			return null;
 		}
 	}
 

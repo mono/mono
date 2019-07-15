@@ -269,6 +269,9 @@ namespace System.Net.Http
 		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
 			using (var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken)) {
+				// Hack to pass the timeout to the HttpWebRequest that's created by MonoWebRequestHandler; all other handlers ignore this.
+				if (handler is HttpClientHandler clientHandler)
+					clientHandler.SetWebRequestTimeout (timeout);
 				lcts.CancelAfter (timeout);
 
 				var task = base.SendAsync (request, lcts.Token);
@@ -335,5 +338,11 @@ namespace System.Net.Http
 				return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
 			}
 		}
+
+		// NS2.1 methods, added here while CoreFX HttpClient PR is not merged
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
 	}
 }

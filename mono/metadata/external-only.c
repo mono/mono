@@ -12,6 +12,9 @@
 
 #include "config.h"
 #include "class-internals.h"
+#include "domain-internals.h"
+#include "mono-hash-internals.h"
+#include "mono-config-internals.h"
 #include "object-internals.h"
 #include "class-init.h"
 #include "marshal.h"
@@ -35,7 +38,7 @@
 uint32_t
 mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 {
-	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_internal (obj, pinned));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_internal (obj, pinned));
 }
 
 /**
@@ -62,7 +65,7 @@ mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 uint32_t
 mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 {
-	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
 }
 
 /**
@@ -78,7 +81,7 @@ mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 MonoObject*
 mono_gchandle_get_target (uint32_t gchandle)
 {
-	MONO_EXTERNAL_ONLY (MonoObject*, mono_gchandle_get_target_internal (gchandle));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoObject*, mono_gchandle_get_target_internal (gchandle));
 }
 
 /**
@@ -92,6 +95,11 @@ mono_gchandle_get_target (uint32_t gchandle)
 void
 mono_gchandle_free (uint32_t gchandle)
 {
+	/* Xamarin.Mac and Xamarin.iOS can call this from a worker thread
+	 * that's not attached to the runtime. This is okay for SGen because
+	 * the gchandle code is lockfree.  SGen calls back into Mono which
+	 * fires a profiler event, so the profiler must be prepared to be
+	 * called from threads that aren't attached to Mono. */
 	MONO_EXTERNAL_ONLY_VOID (mono_gchandle_free_internal (gchandle));
 }
 
@@ -103,7 +111,7 @@ mono_gchandle_free (uint32_t gchandle)
 void
 mono_gc_wbarrier_set_field (MonoObject *obj, void* field_ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_set_field_internal (obj, field_ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_set_field_internal (obj, field_ptr, value));
 }
 
 /**
@@ -112,13 +120,13 @@ mono_gc_wbarrier_set_field (MonoObject *obj, void* field_ptr, MonoObject* value)
 void
 mono_gc_wbarrier_set_arrayref (MonoArray *arr, void* slot_ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_set_arrayref_internal (arr, slot_ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_set_arrayref_internal (arr, slot_ptr, value));
 }
 
 void
 mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_arrayref_copy_internal (dest_ptr, src_ptr, count));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_arrayref_copy_internal (dest_ptr, src_ptr, count));
 }
 
 /**
@@ -127,7 +135,7 @@ mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count)
 void
 mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_store_internal (ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_store_internal (ptr, value));
 }
 
 /**
@@ -138,19 +146,19 @@ mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 void
 mono_gc_wbarrier_generic_store_atomic (void *ptr, MonoObject *value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_store_atomic_internal (ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_store_atomic_internal (ptr, value));
 }
 
 void
 mono_gc_wbarrier_generic_nostore (void* ptr)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_nostore_internal (ptr));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_nostore_internal (ptr));
 }
 
 void
 mono_gc_wbarrier_value_copy (void* dest, /*const*/ void* src, int count, MonoClass *klass)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_value_copy_internal (dest, src, count, klass));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_value_copy_internal (dest, src, count, klass));
 }
 
 /**
@@ -161,7 +169,7 @@ mono_gc_wbarrier_value_copy (void* dest, /*const*/ void* src, int count, MonoCla
 void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_object_copy_internal (obj, src));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_object_copy_internal (obj, src));
 }
 
 /**
@@ -185,4 +193,94 @@ mono_bool
 mono_class_init (MonoClass *klass)
 {
 	MONO_EXTERNAL_ONLY_GC_UNSAFE (gboolean, mono_class_init_internal (klass));
+}
+
+/**
+ * mono_g_hash_table_new_type:
+ */
+MonoGHashTable*
+mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoGHashTable*, mono_g_hash_table_new_type_internal (hash_func, key_equal_func, type, source, key, msg));
+}
+
+/**
+ * mono_config_for_assembly:
+ */
+void 
+mono_config_for_assembly (MonoImage *assembly)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_config_for_assembly_internal (assembly));
+}
+
+/**
+ * mono_class_get_property_from_name:
+ * \param klass a class
+ * \param name name of the property to lookup in the specified class
+ *
+ * Use this method to lookup a property in a class
+ * \returns the \c MonoProperty with the given name, or NULL if the property
+ * does not exist on the \p klass.
+ */
+MonoProperty*
+mono_class_get_property_from_name (MonoClass *klass, const char *name)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoProperty*, mono_class_get_property_from_name_internal (klass, name));
+}
+
+/**
+ * mono_class_is_subclass_of:
+ * \param klass class to probe if it is a subclass of another one
+ * \param klassc the class we suspect is the base class
+ * \param check_interfaces whether we should perform interface checks
+ *
+ * This method determines whether \p klass is a subclass of \p klassc.
+ *
+ * If the \p check_interfaces flag is set, then if \p klassc is an interface
+ * this method return TRUE if the \p klass implements the interface or
+ * if \p klass is an interface, if one of its base classes is \p klass.
+ *
+ * If \p check_interfaces is false, then if \p klass is not an interface,
+ * it returns TRUE if the \p klass is a subclass of \p klassc.
+ *
+ * if \p klass is an interface and \p klassc is \c System.Object, then this function
+ * returns TRUE.
+ *
+ */
+gboolean
+mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (gboolean, mono_class_is_subclass_of_internal (klass, klassc, check_interfaces));
+}
+
+/**
+ * mono_domain_set_internal:
+ * \param domain the new domain
+ *
+ * Sets the current domain to \p domain.
+ */
+void
+mono_domain_set_internal (MonoDomain *domain)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_domain_set_internal_with_options (domain, TRUE));
+}
+
+/**
+ * mono_domain_set:
+ * \param domain domain
+ * \param force force setting.
+ *
+ * Set the current appdomain to \p domain. If \p force is set, set it even
+ * if it is being unloaded.
+ *
+ * \returns TRUE on success; FALSE if the domain is unloaded
+ */
+gboolean
+mono_domain_set (MonoDomain *domain, gboolean force)
+{
+	if (!force && domain->state == MONO_APPDOMAIN_UNLOADED)
+		return FALSE;
+
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_domain_set_internal_with_options (domain, TRUE));
+	return TRUE;
 }

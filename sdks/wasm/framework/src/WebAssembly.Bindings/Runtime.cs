@@ -20,6 +20,10 @@ namespace WebAssembly {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object SetObjectProperty (int js_obj_handle, string propertyName, object value, bool createIfNotExists, bool hasOwnProperty, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object GetByIndex (int js_obj_handle, int index, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object SetByIndex (int js_obj_handle, int index, object value, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object GetGlobalObject (string globalName, out int exceptional_result);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -27,9 +31,21 @@ namespace WebAssembly {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object ReleaseObject (int js_obj_handle, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object NewArrayJS (out int exceptional_result);
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object NewObjectJS (int js_obj_handle, object [] _params, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object BindCoreObject (int js_obj_handle, int gc_handle, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object BindHostObject (int js_obj_handle, int gc_handle, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object New (string className, object [] _params, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object TypedArrayToArray (int js_obj_handle, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object TypedArrayCopyTo (int js_obj_handle, int array_ptr, int begin, int end, int bytes_per_element, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object TypedArrayFrom (int array_ptr, int begin, int end, int bytes_per_element, int type, out int exceptional_result);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object TypedArrayCopyFrom (int js_obj_handle, int array_ptr, int begin, int end, int bytes_per_element, out int exceptional_result);
 
 		/// <summary>
 		/// Execute the provided string in the JavaScript context
@@ -38,8 +54,7 @@ namespace WebAssembly {
 		/// <param name="str">String.</param>
 		public static string InvokeJS (string str)
 		{
-			int exception;
-			var res = InvokeJS (str, out exception);
+			var res = InvokeJS (str, out int exception);
 			if (exception != 0)
 				throw new JSException (res);
 			return res;
@@ -48,17 +63,29 @@ namespace WebAssembly {
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject> ();
 		static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject> ();
 
+		static Runtime ()
+		{ }
+
 		/// <summary>
-		/// Creates a new JavaScript array object
+		/// Creates a new JavaScript object of the specified type
 		/// </summary>
-		/// <returns>The JS Array.</returns>
-		public static JSObject NewJSArray ()
+		/// <returns>The new.</returns>
+		/// <param name="_params">Parameters.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static int New<T> (params object [] _params)
 		{
-			int exception;
-			var res = NewArrayJS (out exception);
+			var res = New (typeof(T).Name, _params, out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
-			return res as JSObject;
+			return (int)res;
+		}
+
+		public static int New (string hostClassName, params object [] _params)
+		{
+			var res = New (hostClassName, _params, out int exception);
+			if (exception != 0)
+				throw new JSException ((string)res);
+			return (int)res;
 		}
 
 		/// <summary>
@@ -69,34 +96,60 @@ namespace WebAssembly {
 		/// <param name="_params">Parameters.</param>
 		public static JSObject NewJSObject (JSObject js_func_ptr = null, params object [] _params)
 		{
-			int exception;
-			var res = NewObjectJS (js_func_ptr?.JSHandle ?? 0, _params, out exception);
+			var res = NewObjectJS (js_func_ptr?.JSHandle ?? 0, _params, out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
 			return res as JSObject;
 		}
 
-		static int BindJSObject (int js_id)
+		static int BindJSObject (int js_id, Type mappedType)
 		{
-			JSObject obj;
-			if (bound_objects.ContainsKey (js_id))
-				obj = bound_objects [js_id];
-			else
-				bound_objects [js_id] = obj = new JSObject (js_id);
+			if (!bound_objects.TryGetValue (js_id, out JSObject obj)) {
+				if (mappedType != null) {
+					return BindJSType (js_id, mappedType);
+				} else {
+					bound_objects [js_id] = obj = new JSObject ((IntPtr)js_id);
+				}
+			}
 
+			return (int)(IntPtr)obj.Handle;
+		}
+
+		static int BindCoreCLRObject (int js_id, int gcHandle)
+		{
+			//Console.WriteLine ($"Registering CLR Object {js_id} with handle {gcHandle}");
+			GCHandle h = (GCHandle)(IntPtr)gcHandle;
+			JSObject obj = (JSObject)h.Target;
+
+			if (bound_objects.TryGetValue (js_id, out var existingObj)) {
+				if (existingObj.Handle != h && h.IsAllocated)
+					throw new JSException ($"Multiple handles pointing at js_id: {js_id}");
+
+				obj = existingObj;
+			} else
+				bound_objects [js_id] = obj;
+
+			return (int)(IntPtr)obj.Handle;
+		}
+
+		static int BindJSType (int js_id, Type mappedType)
+		{
+			if (!bound_objects.TryGetValue (js_id, out JSObject obj)) {
+				var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
+			    		null, new Type [] { typeof (IntPtr) }, null);
+				bound_objects [js_id] = obj = (JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id });
+			}
 			return (int)(IntPtr)obj.Handle;
 		}
 
 		static int UnBindJSObject (int js_id)
 		{
-			if (bound_objects.ContainsKey (js_id)) {
-				var obj = bound_objects [js_id];
+			if (bound_objects.TryGetValue (js_id, out var obj)) {
 				bound_objects.Remove (js_id);
 				return (int)(IntPtr)obj.Handle;
 			}
 
 			return 0;
-
 		}
 
 		static void UnBindJSObjectAndFree (int js_id)
@@ -181,13 +234,9 @@ namespace WebAssembly {
 
 		static int BindExistingObject (object raw_obj, int js_id)
 		{
+			JSObject obj = raw_obj as JSObject;
 
-			JSObject obj;
-			if (raw_obj is JSObject)
-				obj = (JSObject)raw_obj;
-			else if (raw_to_js.ContainsKey (raw_obj))
-				obj = raw_to_js [raw_obj];
-			else
+			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
 				raw_to_js [raw_obj] = obj = new JSObject (js_id, raw_obj);
 
 			return (int)(IntPtr)obj.Handle;
@@ -195,15 +244,12 @@ namespace WebAssembly {
 
 		static int GetJSObjectId (object raw_obj)
 		{
-			JSObject obj = null;
-			if (raw_obj is JSObject)
-				obj = (JSObject)raw_obj;
-			else if (raw_to_js.ContainsKey (raw_obj))
-				obj = raw_to_js [raw_obj];
+			JSObject obj = raw_obj as JSObject;
 
-			var js_handle = obj != null ? obj.JSHandle : -1;
+			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
+				return -1;
 
-			return js_handle;
+			return obj != null ? obj.JSHandle : -1;
 		}
 
 		static object GetMonoObject (int gc_handle)
@@ -227,6 +273,24 @@ namespace WebAssembly {
 		static object BoxBool (int b)
 		{
 			return b == 0 ? false : true;
+		}
+
+		static bool IsSimpleArray (object a)
+		{
+			if (a is Array arr) {
+				if (arr.Rank == 1 && arr.GetLowerBound (0) == 0)
+					return true;
+			}
+			return false;
+		
+		}
+
+		static object GetCoreType (string coreObj)
+		{
+			Assembly asm = typeof (Runtime).Assembly;
+			Type type = asm.GetType (coreObj);
+			return type;
+
 		}
 
 		[StructLayout (LayoutKind.Explicit)]
@@ -282,12 +346,17 @@ namespace WebAssembly {
 					res += "s";
 					break;
 				default:
-					if (t.IsValueType)
-						throw new Exception ("Can't handle VT arguments");
-					res += "o";
+					if (t == typeof(IntPtr)) { 
+ 						res += "i";
+					} else {
+ 						if (t.IsValueType)
+ 							throw new Exception("Can't handle VT arguments");
+						res += "o";
+					}
 					break;
 				}
 			}
+
 			return res;
 		}
 
@@ -309,33 +378,33 @@ namespace WebAssembly {
 		static MethodInfo gsjsc;
 		static void GenericSetupJSContinuation<T> (Task<T> task, JSObject cont_obj)
 		{
-			task.GetAwaiter ().OnCompleted (() => {
+			task.GetAwaiter ().OnCompleted ((Action)(() => {
 
 				if (task.Exception != null)
-					cont_obj.Invoke ("reject", task.Exception.ToString ());
+					cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
 				else {
-					cont_obj.Invoke ("resolve", task.Result);
+					cont_obj.Invoke ((string)"resolve", task.Result);
 				}
 
 				cont_obj.Dispose ();
 				FreeObject (task);
 
-			});
+			}));
 		}
 
 		static void SetupJSContinuation (Task task, JSObject cont_obj)
 		{
 			if (task.GetType () == typeof (Task)) {
-				task.GetAwaiter ().OnCompleted (() => {
+				task.GetAwaiter ().OnCompleted ((Action)(() => {
 
 					if (task.Exception != null)
-						cont_obj.Invoke ("reject", task.Exception.ToString ());
+						cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
 					else
-						cont_obj.Invoke ("resolve", null);
+						cont_obj.Invoke ((string)"resolve", (object [])null);
 
 					cont_obj.Dispose ();
 					FreeObject (task);
-				});
+				}));
 			} else {
 				//FIXME this is horrible codegen, we can do better with per-method glue
 				if (gsjsc == null)
@@ -387,6 +456,27 @@ namespace WebAssembly {
 				return EnumToExportContract ((Enum)o).ToString ();
 
 			return o.ToString ();
+		}
+
+		static double GetDateValue (object dtv)
+		{
+			if (dtv == null)
+				throw new ArgumentNullException (nameof (dtv), "Value can not be null");
+			if (!(dtv is DateTime)) {
+				throw new InvalidCastException ($"Unable to cast object of type {dtv.GetType()} to type DateTime.");
+			}
+			var dt = (DateTime)dtv;
+			if (dt.Kind == DateTimeKind.Local)
+				dt = dt.ToUniversalTime ();
+			else if (dt.Kind == DateTimeKind.Unspecified)
+				dt = new DateTime (dt.Ticks, DateTimeKind.Utc);
+			return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+		}
+
+		static DateTime CreateDateTime (double ticks)
+		{
+			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
+			return unixTime.DateTime;
 		}
 
 		// This is simple right now and will include FlagsAttribute later.
@@ -491,5 +581,23 @@ namespace WebAssembly {
 			return contractName;
 		}
 
+		//
+		// Can be called by the app to stop profiling
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void StopProfile () {
+		}
+
+		// Called by the AOT profiler to save profile data into Module.aot_profile_data
+		internal unsafe static void DumpAotProfileData (ref byte buf, int len, string s) {
+			var arr = new byte [len];
+			fixed (void *p = &buf) {
+				var span = new ReadOnlySpan<byte> (p, len);
+
+				// Send it to JS
+				var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
+			}
+		}
 	}
 }

@@ -207,11 +207,6 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        if (IsInterface && !methoddef.IsStatic && !methoddef.IsVirtual) {
-                                Report.Warning (methoddef.StartLocation, "Non-virtual instance method in interface, set to such");
-                                methoddef.Attributes |= PEAPI.MethAttr.Virtual;
-                        }
-
                         if (method_table [methoddef.Signature] != null)
                                 Report.Error (methoddef.StartLocation, "Duplicate method declaration: " + methoddef.Signature);
 

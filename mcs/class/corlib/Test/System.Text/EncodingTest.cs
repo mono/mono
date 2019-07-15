@@ -131,7 +131,7 @@ namespace MonoTests.System.Text
 			Assert.AreEqual ("Unicode (UTF-8)", Encoding.UTF8.EncodingName);
 		}
 
-#if !MOBILE // certain encodings aren't available on mobile
+#if !MOBILE && !XAMMAC_4_5 // all encodings aren't always available on mobile / XM, e.g. with linking
 		[Test] // https://github.com/mono/mono/issues/11529
 		public void AllEncodingsAreSerializable ()
 		{

@@ -81,7 +81,7 @@ namespace MonoTests.System.Reflection
 	public class CustomAttributeDataTest
 	{
 		[DllImport ("libc")]
-		public static extern void pinvoke ();
+		public static extern int readlink (string path, byte[] buffer, int buflen);
 
 		[MarshalAs (UnmanagedType.LPStr)]
 		[NonSerialized]
@@ -274,7 +274,7 @@ namespace MonoTests.System.Reflection
 		// https://github.com/mono/mono/issues/10544
 		public void MethodIncludesDllImportAttributeData ()
 		{
-			var mi = typeof (CustomAttributeDataTest).FindMembers (MemberTypes.Method, BindingFlags.Static | BindingFlags.Public, (m, criteria) => m.Name == "pinvoke", null);
+			var mi = typeof (CustomAttributeDataTest).FindMembers (MemberTypes.Method, BindingFlags.Static | BindingFlags.Public, (m, criteria) => m.Name == "readlink", null);
 			var data = ((MethodInfo)(mi[0])).CustomAttributes;
 			
 			Assert.AreEqual (2, data.Count ());

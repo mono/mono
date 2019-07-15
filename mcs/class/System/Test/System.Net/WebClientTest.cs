@@ -35,11 +35,11 @@ namespace MonoTests.System.Net
 			
 			// A new, but empty file has been created. This is a test case
 			// for bug 81005
-			wc.DownloadFile("http://google.com/", filename);
+			wc.DownloadFile("http://example.com/", filename);
 			
 			// Now, remove the file and attempt to download again.
 			File.Delete(filename);
-			wc.DownloadFile("http://google.com/", filename);
+			wc.DownloadFile("http://example.com/", filename);
 		}
 
 		[Test]
@@ -59,6 +59,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadData (string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadData1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -98,6 +99,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadData (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadData2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -137,6 +139,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadFile (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadFile1_Address_SchemeNotSupported ()
 		{
 			using (var tmpdir = new TempDirectory ()) {
@@ -163,6 +166,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadFile (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadFile1_FileName_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -180,6 +184,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadFile (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadFile2_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -196,6 +201,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadFile (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadFile2_Address_SchemeNotSupported ()
 		{
 			using (var tmpdir = new TempDirectory ()) {
@@ -222,6 +228,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadFile (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadFile2_FileName_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -255,6 +262,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadString (string)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadString1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -294,6 +302,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // DownloadString (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void DownloadString2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -357,6 +366,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenRead (string)
+		[Category ("BitcodeNotSupported")]
 		public void OpenRead1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -380,6 +390,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenRead (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void OpenRead2_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -396,6 +407,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenRead (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void OpenRead2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -448,6 +460,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (string)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -487,6 +500,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -510,6 +524,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite3_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -526,6 +541,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (Uri)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite3_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -549,6 +565,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite4_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -565,6 +582,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // OpenWrite (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void OpenWrite4_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -605,6 +623,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (string, byte [])
+		[Category ("BitcodeNotSupported")]
 		public void UploadData1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -632,7 +651,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData ("http://www.mono-project.com",
+				wc.UploadData ("http://www.example.com",
 					(byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -661,6 +680,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (Uri, byte [])
+		[Category ("BitcodeNotSupported")]
 		public void UploadData2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -689,7 +709,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData (new Uri ("http://www.mono-project.com"),
+				wc.UploadData (new Uri ("http://www.example.com"),
 					(byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -719,6 +739,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (string, string, byte [])
+		[Category ("BitcodeNotSupported")]
 		public void UploadData3_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -747,7 +768,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData ("http://www.mono-project.com",
+				wc.UploadData ("http://www.example.com",
 					"POST", (byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -776,6 +797,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (Uri, string, byte [])
+		[Category ("BitcodeNotSupported")]
 		public void UploadData4_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -804,7 +826,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData (new Uri ("http://www.mono-project.com"),
+				wc.UploadData (new Uri ("http://www.example.com"),
 					"POST", (byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -838,6 +860,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile1_Address_SchemeNotSupported ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -867,6 +890,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile1_FileName_NotFound ()
 		{
 			using (var tempPath = new TempDirectory ()) {
@@ -933,6 +957,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile2_Address_SchemeNotSupported ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -962,6 +987,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile2_FileName_NotFound ()
 		{
 			using (var tempPath = new TempDirectory ()) {
@@ -1028,6 +1054,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (string, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile3_Address_SchemeNotSupported ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -1057,6 +1084,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (string, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile3_FileName_NotFound ()
 		{
 			using (var tempPath = new TempDirectory ()) {
@@ -1123,6 +1151,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (Uri, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile4_Address_SchemeNotSupported ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -1152,6 +1181,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadFile (Uri, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadFile4_FileName_NotFound ()
 		{
 			using (var tempPath = new TempDirectory ()) {
@@ -1216,6 +1246,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadString (string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadString1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1271,6 +1302,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadString (Uri, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadString2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1328,6 +1360,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadString (string, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadString3_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1386,6 +1419,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadString (Uri, string, string)
+		[Category ("BitcodeNotSupported")]
 		public void UploadString4_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1465,6 +1499,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues1_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1489,11 +1524,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues1_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues ("http://www.mono-project.com",
+				wc.UploadValues ("http://www.example.com",
 					(NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1506,6 +1542,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues2_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -1522,6 +1559,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues2_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1546,11 +1584,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues2_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues (new Uri ("http://www.mono-project.com"),
+				wc.UploadValues (new Uri ("http://www.example.com"),
 					(NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1580,6 +1619,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues3_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1604,11 +1644,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues3_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues ("http://www.mono-project.com",
+				wc.UploadValues ("http://www.example.com",
 					"POST", (NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1621,6 +1662,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues4_Address_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -1638,6 +1680,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues4_Address_SchemeNotSupported ()
 		{
 			WebClient wc = new WebClient ();
@@ -1662,11 +1705,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (Uri, string, NameValueCollection)
+		[Category ("BitcodeNotSupported")]
 		public void UploadValues4_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues (new Uri ("http://www.mono-project.com"),
+				wc.UploadValues (new Uri ("http://www.example.com"),
 					"POST", (NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {

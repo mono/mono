@@ -10,7 +10,7 @@ namespace TestWebApp
 	{
 		protected virtual void Application_Error (Object sender, EventArgs e)
 		{
-			Response.Redirect ("http://google.com/");
+			Response.Redirect ("http://example.com/");
 		}
 	}
 }

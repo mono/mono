@@ -994,6 +994,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void MoveFile ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();

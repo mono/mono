@@ -1,0 +1,10 @@
+System/UriTemplateTest.cs
+System.ServiceModel/WebHttpBindingTest.cs
+System.ServiceModel.Activation/WebScriptServiceHostFactoryTest.cs
+System.ServiceModel.Configuration/WebHttpBindingElementTest.cs
+System.ServiceModel.Description/WebHttpBehaviorTest.cs
+System.ServiceModel.Description/WebHttpEndpointTest.cs
+System.ServiceModel.Description/WebScriptEnablingBehaviorTest.cs
+System.ServiceModel.Dispatcher/WebHttpDispatchOperationSelectorTest.cs
+System.ServiceModel.Web/WebOperationContextTest.cs
+System.ServiceModel.Web/WebServiceHostTest.cs

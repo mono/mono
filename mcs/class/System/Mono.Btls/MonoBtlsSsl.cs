@@ -34,6 +34,7 @@ namespace Mono.Btls
 {
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
 	delegate int MonoBtlsSelectCallback (string[] acceptableIssuers);
+	delegate int MonoBtlsServerNameCallback ();
 
 	class MonoBtlsSsl : MonoBtlsObject
 	{

@@ -8,6 +8,12 @@
 #include <time.h>
 #include <math.h>
 #include <setjmp.h>
+#include "../utils/mono-errno.h"
+#include "../utils/mono-compiler.h"
+
+#ifndef HOST_WIN32
+#include <dlfcn.h>
+#endif
 
 #ifdef WIN32
 #include <windows.h>
@@ -124,7 +130,7 @@ mono_cominterop_is_supported (void)
 }
 
 LIBTEST_API unsigned short* STDCALL
-test_lpwstr_marshal (unsigned short* chars, long length)
+test_lpwstr_marshal (unsigned short* chars, int length)
 {
 	int i = 0;
 	unsigned short *res;
@@ -294,7 +300,7 @@ struct Rect {
 LIBTEST_API char * STDCALL
 mono_return_struct_4_double (void *ptr, struct Rect rect, struct Scalar4 sc4, int a, int b, int c)
 {
-	char *buffer = (char *) malloc (1024 * sizeof (char));
+	char *buffer = (char *)marshal_alloc (1024 * sizeof (char));
 	sprintf (buffer, "sc4 = {%.1f, %.1f, %.1f, %.1f }, a=%x, b=%x, c=%x\n", (float) sc4.val [0], (float) sc4.val [1], (float) sc4.val [2], (float) sc4.val [3], a, b, c);
 	return buffer;
 }
@@ -1247,6 +1253,14 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	return 0;
 }
 
+LIBTEST_API void STDCALL  
+mono_test_marshal_stringbuilder_utf16_tolower (short *s, int n)
+{
+	for (int i = 0; i < n; i++)
+		s[i] = tolower(s[i]);
+}
+
+
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++-compat"
@@ -1764,8 +1778,23 @@ mono_test_last_error (int err)
 {
 #ifdef WIN32
 	SetLastError (err);
+
+	/*
+	* Make sure argument register used calling SetLastError
+	* get's cleaned before returning back to caller. This is done to ensure
+	* we don't get a undetected failure if error is preserved in register
+	* on return since we read back value directly when doing p/invoke with SetLastError = true
+	* into first argument register and then pass it to Mono function setting value in TLS.
+	* If there is a codegen bug reading last error or the code has been incorrectly eliminated
+	* this test could still succeed since expected error code could be left in argument register.
+	* Below code just do something that shouldn't touch last error and won't be optimized away
+	* but will change the argument registers to something different than err.
+	*/
+	char buffer[256] = { 0 };
+	char value[] = "Dummy";
+	strncpy (buffer, value, G_N_ELEMENTS (value) - 1);
 #else
-	errno = err;
+	mono_set_errno (err);
 #endif
 }
 
@@ -5682,6 +5711,18 @@ _mono_test_native_thiscall3 (int arg, int arg2, int arg3)
 	return arg + (arg2^1) + (arg3^2);
 }
 
+typedef int (
+#ifndef _MSC_VER
+__thiscall
+#endif
+*ThiscallFunction)(int arg, int arg2);
+
+LIBTEST_API ThiscallFunction STDCALL
+mono_test_get_native_thiscall2 (void)
+{
+	return _mono_test_native_thiscall2;
+}
+
 LIBTEST_API int STDCALL
 _mono_test_managed_thiscall1 (int (__thiscall*fn)(int), int arg)
 {
@@ -7574,6 +7615,9 @@ static MonoObject* (*sym_mono_gchandle_get_target) (guint32 gchandle);
 static guint32 (*sym_mono_gchandle_new) (MonoObject *, mono_bool pinned);
 static void (*sym_mono_gchandle_free) (guint32 gchandle);
 static void (*sym_mono_raise_exception) (MonoException *ex);
+static void (*sym_mono_domain_unload) (gpointer);
+static void (*sym_mono_threads_exit_gc_safe_region_unbalanced) (gpointer, gpointer *);
+static void (*null_function_ptr) (void);
 
 static void
 mono_test_init_symbols (void)
@@ -7590,6 +7634,10 @@ mono_test_init_symbols (void)
 	sym_mono_gchandle_free = (void (*) (guint32 gchandle)) (lookup_mono_symbol ("mono_gchandle_free"));
 
 	sym_mono_raise_exception = (void (*) (MonoException *)) (lookup_mono_symbol ("mono_raise_exception"));
+
+	sym_mono_domain_unload = (void (*) (gpointer)) (lookup_mono_symbol ("mono_domain_unload"));
+
+	sym_mono_threads_exit_gc_safe_region_unbalanced = (void (*) (gpointer, gpointer *)) (lookup_mono_symbol ("mono_threads_exit_gc_safe_region_unbalanced"));
 
 	sym_inited = 1;
 }
@@ -7669,6 +7717,63 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 
 	// Return true if we can't get INotImplemented
 	return pUnk == NULL && hr == S_OK;
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSnprintf (void)
+{
+	fprintf (stderr, "Before overwrite\n");
+
+	char buff [1] = { '\0' };
+	char overflow [1] = { 'a' }; // Not null-terminated
+	g_snprintf (buff, sizeof(buff) * 10, "THISSHOULDOVERRUNTERRIBLY%s", overflow);
+	g_snprintf ((char *) GINT_TO_POINTER(-1), sizeof(buff) * 10, "THISSHOULDOVERRUNTERRIBLY%s", overflow);
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashDladdr (void)
+{
+#ifndef HOST_WIN32
+	dlopen (GINT_TO_POINTER(-1), -1);
+#endif
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashMalloc (void)
+{
+	gpointer x = g_malloc (sizeof(gpointer));
+	g_free (x);
+
+	// Double free
+	g_free (x);
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashNullFp (void)
+{
+	null_function_ptr ();
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashDomainUnload (void)
+{
+	mono_test_init_symbols ();
+	sym_mono_domain_unload (GINT_TO_POINTER (-1));
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashUnbalancedGCSafe (void)
+{
+	mono_test_init_symbols ();
+	gpointer foo = GINT_TO_POINTER (-1);
+	gpointer bar = GINT_TO_POINTER (-2);
+	sym_mono_threads_exit_gc_safe_region_unbalanced (foo, &bar);
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashUnhandledExceptionHook (void)
+{
+	g_assert_not_reached ();
 }
 
 #ifdef __cplusplus

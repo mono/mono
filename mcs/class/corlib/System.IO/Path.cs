@@ -51,7 +51,7 @@ using System.Diagnostics;
 namespace System.IO {
 
 	[ComVisible (true)]
-	public static class Path {
+	public static partial class Path {
 
 		[Obsolete ("see GetInvalidPathChars and GetInvalidFileNameChars methods.")]
 		public static readonly char[] InvalidPathChars;
@@ -278,7 +278,6 @@ namespace System.IO {
 
 			return path;
 		}
-
 		public static string GetFileNameWithoutExtension (string path)
 		{
 			return ChangeExtension (GetFileName (path), null);
@@ -434,7 +433,6 @@ namespace System.IO {
 		internal static bool IsDirectorySeparator (char c) {
 			return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 		}
-
 		public static string GetPathRoot (string path)
 		{
 			if (path == null)
@@ -569,6 +567,7 @@ namespace System.IO {
 
 		public static char[] GetInvalidFileNameChars ()
 		{
+#pragma warning disable 162
 			// return a new array as we do not want anyone to be able to change the values
 			if (Environment.IsRunningOnWindows) {
 				return new char [41] { '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
@@ -578,10 +577,12 @@ namespace System.IO {
 			} else {
 				return new char [2] { '\x00', '/' };
 			}
+#pragma warning restore 162
 		}
 
 		public static char[] GetInvalidPathChars ()
 		{
+#pragma warning disable 162
 			// return a new array as we do not want anyone to be able to change the values
 			if (Environment.IsRunningOnWindows) {
 				return new char [36] { '\x22', '\x3C', '\x3E', '\x7C', '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
@@ -591,6 +592,7 @@ namespace System.IO {
 			} else {
 				return new char [1] { '\x00' };
 			}
+#pragma warning restore 162
 		}
 
 		public static string GetRandomFileName ()
@@ -699,6 +701,7 @@ namespace System.IO {
 
 		static string CanonicalizePath (string path)
 		{
+#pragma warning disable 162
 			// STEP 1: Check for empty string
 			if (path == null)
 				return path;
@@ -780,6 +783,7 @@ namespace System.IO {
 				}
 				return ret;
 			}
+#pragma warning restore 162
 		}
 
 		// required for FileIOPermission (and most proibably reusable elsewhere too)

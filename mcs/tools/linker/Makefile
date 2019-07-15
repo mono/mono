@@ -5,6 +5,7 @@ include ../../build/rules.make
 PROGRAM = monolinker.exe
 
 LIB_REFS = System System.Core System.Xml Mono.Cecil
+LOCAL_MCS_FLAGS = -unsafe
 
 TEST_CASES := \
 	mscorlib/test-array.cs \
@@ -24,8 +25,12 @@ TEST_CASES := \
 	System/test-security.cs \
 	System.Core/test-plinq-01.cs
 
-# Disabled tests
-#	mscorlib/test-marshaling.cs
+ifdef INCLUDE_DISABLED
+TEST_CASES += \
+	System.Core/test-queryable-01.cs \
+	System.Runtime.Serialization/test-dcs-01.cs \
+	mscorlib/test-marshaling.cs
+endif
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
@@ -39,16 +44,14 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs
 endif
 
-SIZE_TEST_CASES :=
-
-TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
+TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 MARSHALING_TEST_NATIVE = mscorlib/test-marshaling-native.so
 
 check: compile-tests
 	$(MAKE) run-tests
 
-compile-tests: $(TEST_CASES) $(SIZE_TEST_CASES)
+compile-tests: $(TEST_CASES)
 
 mscorlib/test-%.cs:
 	$(TESTS_COMPILER) Tests/$@ /out:Tests/$(@:.cs=.exe)
@@ -65,6 +68,9 @@ System/test-%.cs:
 System.Core/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
+System.Runtime.Serialization/test-%.cs:
+	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
+
 System.Net.Http/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
@@ -72,13 +78,39 @@ run-tests: $(TEST_CASES:.cs=.exe)
 
 LINKER_PROFILE_OPTIONS :=
 
-# Should be in sync with runtime sdk flags
+BINARY_TEST_CASES =
+
+ifeq ($(PROFILE),net_4_x)
+BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/net_4_x/
+
+BINARY_TEST_CASES = \
+	$(BINARY_TEST_CASES_ROOT)Newtonsoft.Json.Test/bin/Release/Newtonsoft.Json.Test.exe
+endif
+
 ifeq ($(PROFILE),monotouch)
+
+# Should be in sync with runtime sdk flags
 LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+
+# System.Net.Http needs Xamarin.iOS.dll
+LINKER_PROFILE_OPTIONS += -d ../../../external/binary-reference-assemblies/build/monotouch
+
+BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/monotouch/
+
+BINARY_TEST_CASES = \
+	$(BINARY_TEST_CASES_ROOT)Newtonsoft.Json.Test/bin/iPhoneSimulator/Release/Newtonsoft.Json.Test.exe
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw --exclude-feature sre
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+
+BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
+
+BINARY_TEST_CASES = \
+	$(BINARY_TEST_CASES_ROOT)Newtonsoft/bin/Release/netstandard2.0/dist/_framework/_bin/Newtonsoft.dll \
+	$(BINARY_TEST_CASES_ROOT)HelloWorld/bin/Release/netstandard2.0/dist/_framework/_bin/HelloWorld.dll \
+	$(BINARY_TEST_CASES_ROOT)Microsoft.AspNetCore.Blazor.E2EPerformance/bin/Release/netstandard2.0/Microsoft.AspNetCore.Blazor.E2EPerformance.dll
+	$(BINARY_TEST_CASES_ROOT)BlazingPizza.Client/bin/Release/netstandard2.0/BlazingPizza.Client.dll
 endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
@@ -89,7 +121,7 @@ TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-a
 
 .NOTPARALLEL:
 
-System.Net.Http/test-%.exe System.Core/test-%.exe System/test-%.exe mscorlib/test-%.exe:
+System.Net.Http/test-%.exe System.Runtime.Serialization/test-%.exe System.Core/test-%.exe System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@
@@ -115,24 +147,26 @@ mscorlib/test-marshaling.exe: $(MARSHALING_TEST_NATIVE)
 	@rm -rf $(LINKER_OUTPUT)
 
 BCL_ASSEMBLIES_CORE=mscorlib.dll System.dll System.Core.dll System.Xml.dll
-BCL_ASSEMBLIES=$(BCL_ASSEMBLIES_CORE) $(sort $(filter-out $(BCL_ASSEMBLIES_CORE), $(notdir $(wildcard $(PROFILE_PATH)/System.*.dll)) ))
+BCL_ASSEMBLIES=$(BCL_ASSEMBLIES_CORE) $(sort $(filter-out $(BCL_ASSEMBLIES_CORE), $(notdir $(wildcard $(PROFILE_PATH)/System.*.dll $(PROFILE_PATH)/Microsoft.*.dll $(PROFILE_PATH)/I18*.dll )) ))
 
 COMMA=,
 REPORT_FILE=$(PROFILE)-linked-size.csv
 
 bcl-size-current: compile-tests
 	@echo "App,$$(echo '$(BCL_ASSEMBLIES)' | tr ' ' ',')" > $(REPORT_FILE)
-	@for app in $(sort $(SIZE_TEST_CASES:.cs=.exe) $(TEST_CASES:.cs=.exe)); do \
+	@for app in $(sort $(BINARY_TEST_CASES) $(patsubst %.cs,Tests/%.exe,$(TEST_CASES))); do \
 		rm -rf $(LINKER_OUTPUT); \
 		mkdir $(LINKER_OUTPUT); \
-		echo Checking linked BCL size for $$app; \
-		$(LINKER_DEFAULT) -a Tests/$$app; \
+		app_name=$${app#$(BINARY_TEST_CASES_ROOT)}; \
+		app_name=$${app_name#Tests/}; \
+		echo Checking linked BCL size in $(PROFILE) profile for $$app_name; \
+		$(LINKER_DEFAULT) -a $$app; \
 		sizes=""; \
 		for asm in $(BCL_ASSEMBLIES); do \
 			if [ -f "$(LINKER_OUTPUT)/$$asm" ]; then size=$$(wc -c < "$(LINKER_OUTPUT)/$$asm" | tr -d "[:space:]"); else size="0"; fi; \
 			sizes="$$sizes,$$size"; \
 		done; \
-		echo "$$app$$sizes" >> $(REPORT_FILE); \
+		echo "$$app_name$$sizes" >> $(REPORT_FILE); \
 		rm -rf $(LINKER_OUTPUT); \
 	done;
 

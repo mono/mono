@@ -160,7 +160,7 @@ namespace StandAloneTests.Unhandled_Exception_Global_Asax
 
 		void Default_Aspx (string result, TestRunItem runItem)
 		{
-			string originalHtml = @"<h2>Object moved to <a href=""http://google.com/"">here</a></h2>";
+			string originalHtml = @"<h2>Object moved to <a href=""http://example.com/"">here</a></h2>";
 			
 			Assert.IsTrue (result.IndexOf (originalHtml) != -1, "#A1");
 		}

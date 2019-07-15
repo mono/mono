@@ -21,7 +21,6 @@
 void
 mono_arm_gsharedvt_init (void)
 {
-	mono_aot_register_jit_icall ("mono_arm_start_gsharedvt_call", mono_arm_start_gsharedvt_call);
 }
 
 gboolean
@@ -281,7 +280,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			src [0] |= (arg_size << 22);
 			/* Encode the offset inside the stack slot */
 			src [0] |= ((ainfo->offset % 8) << 26);
-			if (ainfo2->storage == ArgOnStack)
+			if (ainfo2->storage == ArgOnStack || ainfo2->storage == ArgOnStackR4)
 				dst [0] |= ((ainfo2->offset % 8) << 26);
 		} else if (ainfo2->storage == ArgOnStack && ainfo2->slot_size != 8) {
 			/* The caller passes in an address, need to store it into a stack slot */

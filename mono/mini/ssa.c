@@ -826,6 +826,10 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 		return 2;
 
 	num_sregs = mono_inst_get_src_registers (ins, sregs);
+
+	if (num_sregs > 2)
+		return 2;
+
 	for (i = 0; i < MONO_MAX_SRC_REGS; ++i)
 		args [i] = NULL;
 	for (i = 0; i < num_sregs; ++i) {
@@ -1500,6 +1504,14 @@ mono_ssa_loop_invariant_code_motion (MonoCompile *cfg)
 						continue;
 					ins->sreg1 = sreg;
 				}
+
+				/* if any successor block of the immediate post dominator is an
+				 * exception handler, it's not safe to do the code motion */
+				skip = FALSE;
+				for (int j = 0; j < idom->out_count && !skip; j++)
+					skip |= !!(idom->out_bb [j]->flags & BB_EXCEPTION_HANDLER);
+				if (skip)
+					continue;
 
 				if (cfg->verbose_level > 1) {
 					printf ("licm in BB%d on ", bb->block_num);

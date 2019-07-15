@@ -38,13 +38,20 @@ namespace MonoTests.System.Runtime.CompilerServices
     public class RuntimeFeatureTest
     {
         readonly Dictionary<string, bool> ExpectedFeatures = new Dictionary<string, bool> {
-            {"PortablePdb", true}
+            {"PortablePdb", true},
+            {"DefaultImplementationsOfInterfaces", true}
         };
 
         [Test]
         public void PortablePdbSupported ()
         {
             Assert.IsTrue (RuntimeFeature.IsSupported (RuntimeFeature.PortablePdb));
+        }
+
+        [Test]
+        public void DefaultImplementationsOfInterfacesSupported ()
+        {
+            Assert.IsTrue (RuntimeFeature.IsSupported (RuntimeFeature.DefaultImplementationsOfInterfaces));
         }
 
         [Test]

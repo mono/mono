@@ -22,7 +22,9 @@
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
+#ifdef HAVE_NETINET_TCP_H
 #include <arpa/inet.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -56,6 +58,7 @@
 #include "utils/mono-poll.h"
 #include "utils/mono-compiler.h"
 #include "icall-decl.h"
+#include "utils/mono-errno.h"
 
 typedef struct {
 	MonoFDHandle fdhandle;
@@ -346,7 +349,7 @@ mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sock
 		 */
 		if (sockethandle->still_readable != 1) {
 			ret = -1;
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	}
 
@@ -419,7 +422,7 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 		/* see mono_w32socket_recvfrom */
 		if (sockethandle->still_readable != 1) {
 			ret = -1;
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	}
 
@@ -800,9 +803,13 @@ mono_w32socket_getpeername (SOCKET sock, struct sockaddr *name, socklen_t *namel
 		return SOCKET_ERROR;
 	}
 
+#ifdef HAVE_GETPEERNAME
 	MONO_ENTER_GC_SAFE;
 	ret = getpeername (((MonoFDHandle*) sockethandle)->fd, name, namelen);
 	MONO_EXIT_GC_SAFE;
+#else
+	ret = -1;
+#endif
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SOCKET, "%s: getpeername error: %s", __func__, g_strerror (errno));
@@ -1538,6 +1545,9 @@ mono_w32socket_convert_error (gint error)
 #endif
 #ifdef ENXIO
 	case ENXIO: return WSAENXIO;
+#endif
+#ifdef ENONET
+	case ENONET: return WSAENETUNREACH;
 #endif
 	default:
 		g_error ("%s: no translation into winsock error for (%d) \"%s\"", __func__, error, g_strerror (error));

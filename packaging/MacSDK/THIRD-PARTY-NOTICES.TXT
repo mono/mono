@@ -1,0 +1,25 @@
+Mono uses third-party libraries or other resources that may be
+distributed under licenses different than the Mono software.
+
+Attributions and license notices for test cases originally authored by
+third parties can be found in the respective test directories.
+
+In the event that we accidentally failed to list a required notice, please
+bring it to our attention. Post an issue or email us:
+
+            dotnet@microsoft.com
+
+The attached notices are provided for information only.
+
+License notice for Stack Overflow
+-------------------------------------
+
+Policy: https://stackoverflow.com/help/licensing
+License: https://creativecommons.org/licenses/by-sa/3.0/
+
+Title: How to compare versions of some products in unix ksh shell?
+Content: http://stackoverflow.com/a/7366753/494990
+Question author: Volodymyr Bezuglyy -- https://stackoverflow.com/users/167739/volodymyr-bezuglyy
+Answer author: mivk -- https://stackoverflow.com/users/111036/mivk
+
+Use: https://github.com/mono/mono/blob/7a1a832f6577ffb12d4d302d2868a5b1aaa5ec65/packaging/MacSDK/packaging/resources/postinstall#L96

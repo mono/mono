@@ -139,6 +139,7 @@ static GSList *bundle_library_paths;
 /* Directory where we unpacked dynamic libraries */
 static char *bundled_dylibrary_directory;
 
+#ifdef HAVE_ATEXIT
 static void
 delete_bundled_libraries (void)
 {
@@ -149,6 +150,7 @@ delete_bundled_libraries (void)
 	}
 	rmdir (bundled_dylibrary_directory);
 }
+#endif
 
 static void
 bundle_save_library_initialize (void)
@@ -159,7 +161,9 @@ bundle_save_library_initialize (void)
 	g_free (path);
 	if (bundled_dylibrary_directory == NULL)
 		return;
+#ifdef HAVE_ATEXIT
 	atexit (delete_bundled_libraries);
+#endif
 }
 
 static void

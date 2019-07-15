@@ -36,11 +36,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-#if NETCORE
-using Internal.Runtime.CompilerServices;
-#endif
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.ConstrainedExecution;

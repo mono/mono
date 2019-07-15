@@ -1071,7 +1071,7 @@ namespace System.Windows.Forms
 						return TreeView.ImageList.Images.IndexOfKey (selected_image_key);
 					if (!string.IsNullOrEmpty (TreeView.SelectedImageKey))
 						return TreeView.ImageList.Images.IndexOfKey (TreeView.SelectedImageKey);
-					if (TreeView.SelectedImageIndex >= 0)
+					if (selected_image_index == -1 && TreeView.SelectedImageIndex >= 0)
 						return TreeView.SelectedImageIndex;
 				} else {
 					if (image_index >= 0)
@@ -1080,12 +1080,9 @@ namespace System.Windows.Forms
 						return TreeView.ImageList.Images.IndexOfKey (image_key);
 					if (!string.IsNullOrEmpty (TreeView.ImageKey))
 						return TreeView.ImageList.Images.IndexOfKey (TreeView.ImageKey);
-					if (TreeView.ImageIndex >= 0)
+					if (image_index == -1 && TreeView.ImageIndex >= 0)
 						return TreeView.ImageIndex;
 				}
-
-				if (TreeView.ImageList.Images.Count > 0)
-					return 0;
 					
 				return -1;
 			}

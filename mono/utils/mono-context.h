@@ -48,7 +48,18 @@ typedef __m128d MonoContextSimdReg;
 #endif
 #elif defined(TARGET_ARM64)
 #define MONO_HAVE_SIMD_REG
+#if defined(MONO_ARCH_ILP32) && defined(MONO_CPPSHARP_HACK)
+/* We lie to the MonoAotOffsetsDumper tool and claim we targeting armv7k. This
+ * is because aarch64_ilp32 isn't available (yet). Unfortunately __uint128_t
+ * isn't defined for this target by the compiler, so we define a struct with
+ * the same size here in order to get the right offset */
+typedef struct
+{
+	guint8 v[16];
+} MonoContextSimdReg;
+#else
 typedef __uint128_t MonoContextSimdReg;
+#endif
 #endif
 
 /*
@@ -476,7 +487,7 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_FP])
 #define MONO_CONTEXT_GET_SP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_SP])
 
-#if defined (HOST_APPLETVOS)
+#if defined (HOST_TVOS)
 
 #define MONO_CONTEXT_GET_CURRENT(ctx) do { \
 	arm_unified_thread_state_t thread_state;	\

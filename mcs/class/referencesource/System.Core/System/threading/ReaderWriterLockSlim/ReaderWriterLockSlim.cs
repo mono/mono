@@ -1138,7 +1138,7 @@ namespace System.Threading
 
         private void EnterMyLockSpin()
         {
-            int pc = Environment.ProcessorCount;
+            int pc = PlatformHelper.ProcessorCount;
             for (int i = 0; ; i++)
             {
                 if (i < LockSpinCount && pc > 1)
@@ -1172,7 +1172,7 @@ namespace System.Threading
         private static void SpinWait(int SpinCount)
         {
             //Exponential backoff
-            if ((SpinCount < 5) && (Environment.ProcessorCount > 1))
+            if ((SpinCount < 5) && (PlatformHelper.ProcessorCount > 1))
             {
                 Thread.SpinWait(LockSpinCycles * SpinCount);
             }

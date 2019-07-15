@@ -15,6 +15,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/image-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
@@ -66,9 +67,13 @@
  */
 static size_t mono_sysconf (int name)
 {
+#ifdef HAVE_SYSCONF
 	size_t size = (size_t) sysconf (name);
 	/* default value */
 	return (size == -1) ? MONO_SYSCONF_DEFAULT_SIZE : size;
+#else
+	return MONO_SYSCONF_DEFAULT_SIZE;
+#endif
 }
 
 static gchar*
@@ -518,7 +523,11 @@ Protect (const gunichar2 *path, gint32 file_mode, gint32 add_dir_mode)
 			int mode = file_mode;
 			if (st.st_mode & S_IFDIR)
 				mode |= add_dir_mode;
+#ifdef HAVE_CHMOD
 			result = (chmod (utf8_name, mode) == 0);
+#else
+			result = -1;
+#endif
 		}
 		g_free (utf8_name);
 	}
@@ -605,7 +614,7 @@ mono_invoke_protected_memory_method (MonoArrayHandle data, MonoObjectHandle scop
 {
 	if (!*method) {
 		if (system_security_assembly == NULL) {
-			system_security_assembly = mono_image_loaded ("System.Security");
+			system_security_assembly = mono_image_loaded_internal ("System.Security", FALSE);
 			if (!system_security_assembly) {
 				MonoAssemblyOpenRequest req;
 				mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);

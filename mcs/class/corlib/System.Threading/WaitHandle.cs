@@ -31,7 +31,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 using System.Runtime.Remoting.Contexts;
 #endif
 using System.Runtime.InteropServices;
@@ -61,7 +61,7 @@ namespace System.Threading
 			try {
 				waitableSafeHandle.DangerousAddRef (ref release);
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
@@ -94,7 +94,7 @@ namespace System.Threading
 				if (release)
 					waitableSafeHandle.DangerousRelease ();
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 #endif
@@ -111,7 +111,7 @@ namespace System.Threading
 			var context = SynchronizationContext.Current;
 
 			try {
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
@@ -151,7 +151,7 @@ namespace System.Threading
 					waitHandles [i].SafeWaitHandle.DangerousRelease ();
 				}
 
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 #endif

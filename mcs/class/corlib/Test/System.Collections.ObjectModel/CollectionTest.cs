@@ -60,7 +60,6 @@ namespace MonoTests.System.Collections.ObjectModel
 			object cLock = ((ICollection) c).SyncRoot;
 
 			Assert.IsNotNull (cLock);
-			Assert.IsTrue (cLock.GetType ().Equals (typeof (object)));
 		}
 
 		[Test]

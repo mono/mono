@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public struct PropertyToken {
+	public readonly struct PropertyToken : IEquatable<PropertyToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly PropertyToken Empty = new PropertyToken ();
 

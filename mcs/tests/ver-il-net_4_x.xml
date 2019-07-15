@@ -73853,8 +73853,13 @@
     </type>
   </test>
   <test name="test-ref-07.cs">
-    <type name="Test">
+    <type name="TestMain">
       <method name="Void Main()" attrs="150">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void MainMethod()" attrs="150">
         <size>18</size>
       </method>
       <method name="Test Method()" attrs="129">
@@ -74501,6 +74506,16 @@
         <size>7</size>
       </method>
     </type>
+  </test>
+  <test name="test-tuple-11.cs">
+    <type name="Program">
+	  <method name="Int32 Main()" attrs="150">
+	    <size>70</size>
+	  </method>
+	  <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+	  </method>
+	</type>
   </test>
   <test name="test-var-01.cs">
     <type name="Test">

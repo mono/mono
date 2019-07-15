@@ -64,15 +64,15 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void SiteMembershipCondition_FullUrlWithPort () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("http://www.go-mono.com:8080/index.html");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("http://www.example.com:8080/index.html");
 		}
 
 		[Test]
 		public void SiteMembershipCondition_GoMonoWebSite () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("www.go-mono.com");
-			Assert.AreEqual ("www.go-mono.com", smc.Site, "Site");
-			Assert.AreEqual ("Site - www.go-mono.com", smc.ToString (), "ToString");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("www.example.com");
+			Assert.AreEqual ("www.example.com", smc.Site, "Site");
+			Assert.AreEqual ("Site - www.example.com", smc.ToString (), "ToString");
 
 			SiteMembershipCondition smc2 = (SiteMembershipCondition) smc.Copy ();
 			Assert.AreEqual (smc.Site, smc2.Site, "Copy.Site");
@@ -84,16 +84,16 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (smc.Site, smc3.Site, "ToXml/FromXml");
 
 			Assert.IsTrue (smc.Equals (smc2), "Equals");
-			SiteMembershipCondition smc4 = new SiteMembershipCondition ("go-mono.com");
+			SiteMembershipCondition smc4 = new SiteMembershipCondition ("example.com");
 			Assert.IsFalse (smc.Equals (smc4), "!Equals");
 		}
 
 		[Test]
 		public void Site_AllGoMonoSite () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Assert.AreEqual ("*.go-mono.com", smc.Site, "Site");
-			Assert.AreEqual ("Site - *.go-mono.com", smc.ToString (), "ToString");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
+			Assert.AreEqual ("*.example.com", smc.Site, "Site");
+			Assert.AreEqual ("Site - *.example.com", smc.ToString (), "ToString");
 
 			SiteMembershipCondition smc2 = (SiteMembershipCondition) smc.Copy ();
 			Assert.AreEqual (smc.Site, smc2.Site, "Copy.Site");
@@ -105,14 +105,14 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (smc.Site, smc3.Site, "ToXml/FromXml");
 
 			Assert.IsTrue (smc.Equals (smc2), "Equals");
-			SiteMembershipCondition smc4 = new SiteMembershipCondition ("go-mono.com");
+			SiteMembershipCondition smc4 = new SiteMembershipCondition ("example.com");
 			Assert.IsFalse (smc.Equals (smc4), "!Equals");
 		}
 
 		[Test]
 		public void Check () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 
 			Evidence e = null;
 			Assert.IsFalse (smc.Check (e), "Check(null)");
@@ -121,14 +121,14 @@ namespace MonoTests.System.Security.Policy {
 			e.AddHost (new Zone (SecurityZone.MyComputer));
 			Assert.IsFalse (smc.Check (e), "Check (zone)");
 			
-			Site s = new Site ("*.go-mono.com");
+			Site s = new Site ("*.example.com");
 			e.AddAssembly (s);
 			Assert.IsFalse (smc.Check (e), "Check (site-assembly)");
 			e.AddHost (s);
 			Assert.IsTrue (smc.Check (e), "Check (site-host)");
 
 			e = new Evidence ();
-			e.AddHost (new Site ("www.go-mono.com"));
+			e.AddHost (new Site ("www.example.com"));
 			Assert.IsTrue (smc.Check (e), "Check(+-)");
 
 			e = new Evidence ();
@@ -139,9 +139,9 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void Equals () 
 		{
-			SiteMembershipCondition smc1 = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc1 = new SiteMembershipCondition ("*.example.com");
 			Assert.IsFalse (smc1.Equals (null), "Null");
-			SiteMembershipCondition smc2 = new SiteMembershipCondition ("*.Go-Mono.com");
+			SiteMembershipCondition smc2 = new SiteMembershipCondition ("*.Example.com");
 			Assert.IsTrue (smc1.Equals (smc2), "CaseSensitive");
 		}
 
@@ -149,7 +149,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromXml_Null () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			smc.FromXml (null);
 		}
 
@@ -157,7 +157,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void FromXml_InvalidTag () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 			se.Tag = "IMonoship";
 			smc.FromXml (se);
@@ -166,7 +166,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_InvalidClass ()
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 			se.Attributes ["class"] = "Hello world";
 			smc.FromXml (se);
@@ -175,7 +175,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_NoClass ()
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 
 			SecurityElement w = new SecurityElement (se.Tag);
@@ -187,7 +187,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_InvalidVersion ()
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 			se.Attributes ["version"] = "2";
 			smc.FromXml (se);
@@ -196,7 +196,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_NoVersion ()
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 
 			SecurityElement w = new SecurityElement (se.Tag);
@@ -210,7 +210,7 @@ namespace MonoTests.System.Security.Policy {
 #endif
 		public void FromXml_PolicyLevel () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 			// is it accepted for all policy levels ?
 			IEnumerator e = SecurityManager.PolicyHierarchy ();
@@ -226,7 +226,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToXml_Null () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			// no ArgumentNullException here
 			SecurityElement se = smc.ToXml (null);
 			Assert.IsNotNull (se, "ToXml(null)");
@@ -238,7 +238,7 @@ namespace MonoTests.System.Security.Policy {
 #endif
 		public void ToXml_PolicyLevel () 
 		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc.ToXml ();
 			string s = smc.ToXml ().ToString ();
 			// is it accepted for all policy levels ?
@@ -255,7 +255,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToFromXmlRoundTrip () 
 		{
-			SiteMembershipCondition smc1 = new SiteMembershipCondition ("*.go-mono.com");
+			SiteMembershipCondition smc1 = new SiteMembershipCondition ("*.example.com");
 			SecurityElement se = smc1.ToXml ();
 
 			SiteMembershipCondition smc2 = new SiteMembershipCondition ("*");

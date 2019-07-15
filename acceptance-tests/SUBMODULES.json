@@ -10,7 +10,7 @@
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "1e8d7a94155a04a6556a7ae9ef8dc5841b3ab206",
+    "rev": "90f7060935732bb624e1f325d23f63072433725f",
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"
@@ -18,7 +18,7 @@
   {
     "name": "ms-test-suite", 
     "url": "git@github.com:xamarin/ms-test-suite.git", 
-    "rev": "27c90fce655ade05a7357a3c50706c95bdd33287", 
+    "rev": "39b1b222e8a3690a1b8ea018ce54d2a826f5246e", 
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "ms-test-suite"

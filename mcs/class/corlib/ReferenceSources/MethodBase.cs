@@ -8,6 +8,7 @@ using System.Text;
 
 namespace System.Reflection
 {
+	[Serializable]
 	partial class MethodBase
 	{
 		//
@@ -46,32 +47,6 @@ namespace System.Reflection
 			throw new Exception ("Method is not a builder method");
 		}
 
-		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
-		{
-			return GetMethodFromHandleInternalType_native (handle.Value, IntPtr.Zero, false);
-		}
-
-		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle, RuntimeTypeHandle reflectedType)
-		{
-			return GetMethodFromHandleInternalType_native (handle.Value, reflectedType.Value, false);
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		[PreserveDependency(".ctor(System.Reflection.ExceptionHandlingClause[],System.Reflection.LocalVariableInfo[],System.Byte[],System.Boolean,System.Int32,System.Int32)", "System.Reflection.MethodBody")]
-		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
-
-		internal static MethodBody GetMethodBody (IntPtr handle) 
-		{
-			return GetMethodBodyInternal (handle);
-		}
-
-		static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle) {
-			return GetMethodFromHandleInternalType_native (method_handle, type_handle, true);
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static MethodBase GetMethodFromHandleInternalType_native (IntPtr method_handle, IntPtr type_handle, bool genericCheck);
-
 		internal virtual string FormatNameAndSig (bool serialization)
 		{
 			// Serialization uses ToString to resolve MethodInfo overloads.
@@ -103,7 +78,7 @@ namespace System.Reflection
 				throw new ArgumentException (Environment.GetResourceString("Argument_InvalidHandle"));
 
 #if MONO
-			MethodBase m = GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+			MethodBase m = RuntimeMethodInfo.GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
 			if (m == null)
 				throw new ArgumentException ("The handle is invalid.");
 #else
@@ -125,7 +100,7 @@ namespace System.Reflection
 			if (handle.IsNullHandle ())
 				throw new ArgumentException (Environment.GetResourceString("Argument_InvalidHandle"));
 #if MONO
-			MethodBase m = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
+			MethodBase m = RuntimeMethodInfo.GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
 			if (m == null)
 				throw new ArgumentException ("The handle is invalid.");
 			return m;

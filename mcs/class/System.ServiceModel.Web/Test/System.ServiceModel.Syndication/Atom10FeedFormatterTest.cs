@@ -159,19 +159,19 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void WriteTo ()
 		{
 			SyndicationFeed feed = new SyndicationFeed ();
-			feed.BaseUri = new Uri ("http://mono-project.com");
+			feed.BaseUri = new Uri ("http://example.com");
 			feed.Copyright = new TextSyndicationContent ("No rights reserved");
 			feed.Description = new TextSyndicationContent ("A sample feed for unit testing");
 			feed.Generator = "mono test generator";
 			// .NET bug: it ignores this value.
 			feed.Id = "urn:myid";
-			feed.ImageUrl = new Uri ("http://mono-project.com/images/mono.png");
+			feed.ImageUrl = new Uri ("http://example.com/images/mono.png");
 			feed.LastUpdatedTime = new DateTimeOffset (DateTime.SpecifyKind (new DateTime (2008, 1, 1), DateTimeKind.Utc));
 
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10FeedFormatter (feed).WriteTo (w);
-			Assert.AreEqual ("<feed xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><subtitle type=\"text\">A sample feed for unit testing</subtitle><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><logo>http://mono-project.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
+			Assert.AreEqual ("<feed xml:base=\"http://example.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><subtitle type=\"text\">A sample feed for unit testing</subtitle><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><logo>http://example.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
 		}
 
 		[Test]
@@ -193,12 +193,12 @@ namespace MonoTests.System.ServiceModel.Syndication
 		{
 			// ... and it passes.
 			SyndicationFeed feed = new SyndicationFeed ();
-			feed.Links.Add (new SyndicationLink (new Uri ("http://mono-project.com/Page1"), "alternate", "Page 1", "text/html", 0));
-			feed.Links.Add (new SyndicationLink (new Uri ("http://mono-project.com/Page2"), "alternate", "Page 2", "text/html", 0));
+			feed.Links.Add (new SyndicationLink (new Uri ("http://example.com/Page1"), "alternate", "Page 1", "text/html", 0));
+			feed.Links.Add (new SyndicationLink (new Uri ("http://example.com/Page2"), "alternate", "Page 2", "text/html", 0));
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10FeedFormatter (feed).WriteTo (w);
-			Assert.AreEqual ("<feed xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><id>XXX</id><updated>XXX</updated><link rel=\"alternate\" type=\"text/html\" title=\"Page 1\" href=\"http://mono-project.com/Page1\" /><link rel=\"alternate\" type=\"text/html\" title=\"Page 2\" href=\"http://mono-project.com/Page2\" /></feed>", DummyUpdated (DummyId (sw.ToString ())));
+			Assert.AreEqual ("<feed xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><id>XXX</id><updated>XXX</updated><link rel=\"alternate\" type=\"text/html\" title=\"Page 1\" href=\"http://example.com/Page1\" /><link rel=\"alternate\" type=\"text/html\" title=\"Page 2\" href=\"http://example.com/Page2\" /></feed>", DummyUpdated (DummyId (sw.ToString ())));
 		}
 
 		XmlWriter CreateWriter (StringWriter sw)
@@ -333,7 +333,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void ReadFrom_Extension ()
 		{
 			Atom10FeedFormatter f = new Atom10FeedFormatter ();
-			f.ReadFrom (CreateReader ("<feed xmlns='http://www.w3.org/2005/Atom'><icon>http://www.mono-project.com/icons/mono.png</icon></feed>"));
+			f.ReadFrom (CreateReader ("<feed xmlns='http://www.w3.org/2005/Atom'><icon>http://www.example.com/icons/mono.png</icon></feed>"));
 			Assert.IsNotNull (f.Feed, "#1");
 			// 'icon' is treated as an extension ...
 			Assert.AreEqual (1, f.Feed.ElementExtensions.Count, "#2");
@@ -360,9 +360,9 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void ReadFrom_ImageUrl ()
 		{
 			Atom10FeedFormatter f = new Atom10FeedFormatter ();
-			f.ReadFrom (CreateReader ("<feed xmlns='http://www.w3.org/2005/Atom'><logo>http://mono-project.com/images/mono.png</logo></feed>"));
+			f.ReadFrom (CreateReader ("<feed xmlns='http://www.w3.org/2005/Atom'><logo>http://example.com/images/mono.png</logo></feed>"));
 			Assert.IsNotNull (f.Feed.ImageUrl, "#1");
-			Assert.AreEqual ("http://mono-project.com/images/mono.png", f.Feed.ImageUrl.ToString (), "#2");
+			Assert.AreEqual ("http://example.com/images/mono.png", f.Feed.ImageUrl.ToString (), "#2");
 		}
 
 		[Test]

@@ -216,6 +216,9 @@ ICALL_EXPORT
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
 ICALL_EXPORT
+void ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide (void);
+
+ICALL_EXPORT
 gint8 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr);
 
 ICALL_EXPORT
@@ -276,6 +279,9 @@ ICALL_EXPORT
 gint64 ves_icall_System_Threading_Volatile_Read8 (void *ptr);
 
 ICALL_EXPORT
+guint64 ves_icall_System_Threading_Volatile_ReadU8 (void *ptr);
+
+ICALL_EXPORT
 void * ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr);
 
 ICALL_EXPORT
@@ -298,6 +304,9 @@ void ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32);
 
 ICALL_EXPORT
 void ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64);
+
+ICALL_EXPORT
+void ves_icall_System_Threading_Volatile_WriteU8 (void *ptr, guint64);
 
 ICALL_EXPORT
 void ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *);
@@ -434,9 +443,6 @@ gboolean
 mono_thread_internal_is_current (MonoInternalThread *internal);
 
 gboolean
-mono_thread_internal_is_current_handle (MonoInternalThreadHandle internal);
-
-gboolean
 mono_threads_is_current_thread_in_protected_block (void);
 
 gboolean
@@ -465,6 +471,7 @@ mono_set_pending_exception_handle (MonoExceptionHandle exc);
 #define MONO_MAX_THREAD_NAME_LEN 140
 #define MONO_MAX_SUMMARY_THREADS 32
 #define MONO_MAX_SUMMARY_FRAMES 80
+#define MONO_MAX_SUMMARY_EXCEPTIONS 15
 
 typedef struct {
 	gboolean is_managed;
@@ -480,7 +487,9 @@ typedef struct {
 		// symbolicated string on release builds
 		const char *name;
 #endif
-
+		const char *filename;
+		guint32 image_size;
+		guint32 time_date_stamp;
 	} managed_data;
 	struct {
 		intptr_t ip;
@@ -490,6 +499,13 @@ typedef struct {
 		gboolean has_name;
 	} unmanaged_data;
 } MonoFrameSummary;
+
+typedef struct {
+	MonoClass *managed_exc_type;
+
+	int num_managed_frames;
+	MonoFrameSummary managed_frames [MONO_MAX_SUMMARY_FRAMES];
+} MonoExcSummary;
 
 typedef struct {
 	guint64 offset_free_hash;
@@ -512,7 +528,6 @@ typedef struct {
 
 	char name [MONO_MAX_THREAD_NAME_LEN];
 
-	intptr_t managed_thread_ptr;
 	intptr_t info_addr;
 	intptr_t native_thread_id;
 
@@ -526,12 +541,13 @@ typedef struct {
 	int num_unmanaged_frames;
 	MonoFrameSummary unmanaged_frames [MONO_MAX_SUMMARY_FRAMES];
 
+	int num_exceptions;
+	MonoExcSummary exceptions [MONO_MAX_SUMMARY_EXCEPTIONS];
+
 	MonoStackHash hashes;
 
 	MonoContext *ctx;
 	MonoContext ctx_mem;
-
-	MonoClass *managed_exc_type;
 } MonoThreadSummary;
 
 gboolean

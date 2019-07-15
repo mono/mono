@@ -1,6 +1,6 @@
 thisdir := .
 
-SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
+SUBDIRS := build jay mcs class ilasm tools tests errors docs packages
 
 # Resgen is corlib specific tool
 
@@ -19,11 +19,12 @@ testing_aot_full_interp_SUBDIRS := build class
 testing_aot_hybrid_SUBDIRS := build class
 testing_aot_full_SUBDIRS := build class
 binary_reference_assemblies_SUBDIRS := build class
-net_4_x_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs class/aot-compiler packages
+net_4_x_SUBDIRS := build class ilasm tools tests errors docs mcs class/aot-compiler packages
 xammac_net_4_5_SUBDIRS := build class
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
 winaot_SUBDIRS := build class
+testing_winaot_interp_SUBDIRS := build class
 orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
@@ -85,11 +86,11 @@ $(_boot_:%=profile-do--testing_aot_full_interp--%):        profile-do--testing_a
 $(_boot_:%=profile-do--testing_aot_hybrid--%):        profile-do--testing_aot_hybrid--%:        profile-do--build--%
 $(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_full--%:          profile-do--build--%
 $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
+$(_boot_:%=profile-do--testing_winaot_interp--%):     profile-do--testing_winaot_interp--%:              profile-do--build--%
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
-$(_boot_:%=profile-do--netcore--%):         profile-do--netcore--%:         profile-do--build--%
 
 compiler-test:
 	$(MAKE) -C tests test
@@ -156,7 +157,7 @@ distcheck: dist-tarball
 MONO_API_SNAPSHOT_PATH := $(topdir)../external/api-snapshot/
 GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/Microsoft.DotNet.GenAPI.exe
 MONO_API_SNAPSHOT_PROFILE_PATH := $(MONO_API_SNAPSHOT_PATH)profiles/$(PROFILE)/
-MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunit.core.dll nunit.core.extensions.dll nunit.core.interfaces.dll nunit.framework.dll nunit.framework.extensions.dll nunit.mocks.dll nunit.util.dll nunit-console-runner.dll nunitlite.dll Mono.Profiler.Log.dll)
+MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunitlite.dll Mono.Profiler.Log.dll)
 MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)
 MONO_API_ASSEMBLIES_CS := $(MONO_API_ASSEMBLIES:$(topdir)class/lib/$(PROFILE)/%.dll=$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs)
 

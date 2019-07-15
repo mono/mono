@@ -2,22 +2,30 @@
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
-${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
-if [[ ${CI_TAGS} == *'win-'* ]]
+${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check EMIT_NUNIT=1
+if [[ ${CI_TAGS} == *'win-i386'* ]]
 then ${TESTCMD} --label=mini-aotcheck --skip;
 else ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
 fi
-if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
+if [[ ${CI_TAGS} == *'win-i386'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
 then ${TESTCMD} --label=aot-test --skip;
 else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j ${CI_CPU_COUNT} -k test-aot
 fi
-${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j ${CI_CPU_COUNT} test xunit-test
+# workaround some races in the tests build
+for dir in mcs/tools/nunit-lite mcs/class/Microsoft.Build*; do
+    ${TESTCMD} --label=compile-$(basename $dir) --timeout=5m make -w -C $dir test xunit-test
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_12 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_12
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_14 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_14
+done
+${TESTCMD} --label=compile-bcl-tests --timeout=40m make -w -C runtime -j ${CI_CPU_COUNT} test xunit-test
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+if [[ ${CI_TAGS} == *'linux'* ]]; then ${TESTCMD} --label=fullaot-mixed --timeout=10m make -w -C mono/tests/fullaot-mixed -j ${CI_CPU_COUNT} check; fi
+if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=llvmonly-mixed --timeout=10m make -w -C mono/tests/llvmonly-mixed -j ${CI_CPU_COUNT} check; fi
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
-${TESTCMD} --label=corlib-xunit --timeout=30m make -w -C mcs/class/corlib run-xunit-test
+${TESTCMD} --label=corlib-xunit --timeout=60m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
@@ -109,6 +117,8 @@ ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
 ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run-test
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
+${TESTCMD} --label=System.Net.Http-xunit --timeout=15m make -w -C mcs/class/System.Net.Http run-xunit-test
+${TESTCMD} --label=System.Net.Http.WebRequest --timeout=5m make -w -C mcs/class/System.Net.Http.WebRequest run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Json-xunit --timeout=5m make -w -C mcs/class/System.Json run-xunit-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
@@ -131,6 +141,7 @@ ${TESTCMD} --label=Microsoft.Build.Framework-14 --timeout=60m make -w -C mcs/cla
 ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Tasks run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
+${TESTCMD} --label=System.IO.Compression-xunit --timeout=5m make -w -C mcs/class/System.IO.Compression run-xunit-test
 if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 ${TESTCMD} --label=csi --timeout=10m make -w -C mcs/packages run-test

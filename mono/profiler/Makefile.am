@@ -97,11 +97,15 @@ endif
 endif
 endif
 
+if HAVE_STATIC_ZLIB
+zlib_dep = $(STATIC_ZLIB_PATH)
+else
 if HAVE_ZLIB
 # The log profiler uses zlib for output compression when available.
 zlib_dep = -lz
 else
 zlib_dep =
+endif
 endif
 
 # We build a separate, static version of each profiler for use on targets
@@ -109,16 +113,16 @@ endif
 # the shared version on those targets since it's useful for e.g. simulator
 # builds.
 
-libmono_profiler_aot_la_SOURCES = aot.c
+libmono_profiler_aot_la_SOURCES = aot.c helper.c
 libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(glib_libs)
 libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
-libmono_profiler_aot_static_la_SOURCES = aot.c
+libmono_profiler_aot_static_la_SOURCES = aot.c helper.c
 libmono_profiler_aot_static_la_LDFLAGS = -static
 
-libmono_profiler_log_la_SOURCES = log.c log-args.c
+libmono_profiler_log_la_SOURCES = log.c log-args.c helper.c
 libmono_profiler_log_la_LIBADD = $(libmono_dep) $(glib_libs) $(zlib_dep)
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
-libmono_profiler_log_static_la_SOURCES = log.c log-args.c
+libmono_profiler_log_static_la_SOURCES = log.c log-args.c helper.c
 libmono_profiler_log_static_la_LDFLAGS = -static
 
 libmono_profiler_coverage_la_SOURCES = coverage.c
@@ -177,6 +181,7 @@ check-local: $(check_targets)
 EXTRA_DIST = \
 	log.h \
 	aot.h \
+	helper.h \
 	$(PLOG_TESTS_SRC) \
 	ptestrunner.pl \
 	$(suppression_DATA)

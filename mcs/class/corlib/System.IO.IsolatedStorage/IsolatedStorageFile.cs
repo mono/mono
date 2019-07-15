@@ -609,8 +609,12 @@ namespace System.IO.IsolatedStorage {
 
 			try {
 				File.Copy (source_full_path, dest_full_path, overwrite);
-			} catch (IOException) {
-				throw new IsolatedStorageException ("Operation not allowed.");
+			}
+			catch (IOException e) {
+				throw new IsolatedStorageException ("Operation not allowed.", e);
+			}
+			catch (UnauthorizedAccessException e) {
+				throw new IsolatedStorageException ("Operation not allowed.", e);
 			}
 		}
 
@@ -872,8 +876,12 @@ namespace System.IO.IsolatedStorage {
 
 			try {
 				Directory.Move (src_full_path, dest_full_path);
-			} catch (IOException) {
-				throw new IsolatedStorageException ("Operation not allowed.");
+			}
+			catch (IOException e) {
+				throw new IsolatedStorageException ("Operation not allowed.", e);
+			}
+			catch (UnauthorizedAccessException e) {
+				throw new IsolatedStorageException ("Operation not allowed.", e);
 			}
 		}
 
@@ -904,8 +912,8 @@ namespace System.IO.IsolatedStorage {
 
 			try {
 				File.Move (source_full_path, dest_full_path);
-			} catch (IOException) {
-				throw new IsolatedStorageException ("Operation not allowed.");
+			} catch (UnauthorizedAccessException e) {
+				throw new IsolatedStorageException ("Operation not allowed.", e);
 			}
 		}
 

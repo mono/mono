@@ -10,6 +10,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Threading
 {
@@ -42,9 +43,19 @@ namespace MonoTests.System.Threading
 		readonly IntPtr iptr_2 = (IntPtr)int32_2;
 		readonly IntPtr iptr_3 = (IntPtr)int32_3;
 
+		// The exchange tests are broken on AIX and cause a runtime lockup.
+		void AssertNotAix()
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
+			{
+				Assert.Ignore ("Skipping on AIX/i");
+			}
+		}
+
 		[Test]
 		public void TestExchange_Int32 ()
 		{
+			AssertNotAix();
 			int32 = int32_1;
 			Assert.AreEqual(int32_1, Interlocked.Exchange(ref int32, int32_2));
 			Assert.AreEqual(int32_2, int32);
@@ -53,6 +64,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestExchange_Flt ()
 		{
+			AssertNotAix();
 			flt = flt_1;
 			Assert.AreEqual(flt_1, Interlocked.Exchange(ref flt, flt_2));
 			Assert.AreEqual(flt_2, flt);
@@ -61,6 +73,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestExchange_Obj ()
 		{
+			AssertNotAix();
 			obj = obj_1;
 			Assert.AreEqual(obj_1, Interlocked.Exchange(ref obj, obj_2));
 			Assert.AreEqual(obj_2, obj);
@@ -69,6 +82,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestExchange_Int64 ()
 		{
+			AssertNotAix();
 			int64 = int64_1;
 			Assert.AreEqual(int64_1, Interlocked.Exchange(ref int64, int64_2));
 			Assert.AreEqual(int64_2, int64);
@@ -77,6 +91,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestExchange_Dbl ()
 		{
+			AssertNotAix();
 			dbl = dbl_1;
 			Assert.AreEqual(dbl_1, Interlocked.Exchange(ref dbl, dbl_2));
 			Assert.AreEqual(dbl_2, dbl);
@@ -85,6 +100,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestExchange_Iptr ()
 		{
+			AssertNotAix();
 			iptr = iptr_1;
 			Assert.AreEqual(iptr_1, Interlocked.Exchange(ref iptr, iptr_2));
 			Assert.AreEqual(iptr_2, iptr);
@@ -93,6 +109,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Int32 ()
 		{
+			AssertNotAix();
 			int32 = int32_1;
 			Assert.AreEqual(int32_1, Interlocked.CompareExchange(ref int32, int32_2, int32_1));
 			Assert.AreEqual(int32_2, int32);
@@ -101,6 +118,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Flt ()
 		{
+			AssertNotAix();
 			flt = flt_1;
 			Assert.AreEqual(flt_1, Interlocked.CompareExchange(ref flt, flt_2, flt_1));
 			Assert.AreEqual(flt_2, flt);
@@ -109,6 +127,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Obj ()
 		{
+			AssertNotAix();
 			obj = obj_1;
 			Assert.AreEqual(obj_1, Interlocked.CompareExchange(ref obj, obj_2, obj_1));
 			Assert.AreEqual(obj_2, obj);
@@ -117,6 +136,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Int64 ()
 		{
+			AssertNotAix();
 			int64 = int64_1;
 			Assert.AreEqual(int64_1, Interlocked.CompareExchange(ref int64, int64_2, int64_1));
 			Assert.AreEqual(int64_2, int64);
@@ -125,6 +145,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Dbl ()
 		{
+			AssertNotAix();
 			dbl = dbl_1;
 			Assert.AreEqual(dbl_1, Interlocked.CompareExchange(ref dbl, dbl_2, dbl_1));
 			Assert.AreEqual(dbl_2, dbl);
@@ -133,6 +154,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Iptr ()
 		{
+			AssertNotAix();
 			iptr = iptr_1;
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_1));
 			Assert.AreEqual(iptr_2, iptr);
@@ -141,6 +163,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Int32 ()
 		{
+			AssertNotAix();
 			int32 = int32_1;
 			Assert.AreEqual(int32_1, Interlocked.CompareExchange(ref int32, int32_2, int32_3));
 			Assert.AreEqual(int32_1, int32);
@@ -149,6 +172,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Flt ()
 		{
+			AssertNotAix();
 			flt = flt_1;
 			Assert.AreEqual(flt_1, Interlocked.CompareExchange(ref flt, flt_2, flt_3));
 			Assert.AreEqual(flt_1, flt);
@@ -157,6 +181,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Obj ()
 		{
+			AssertNotAix();
 			obj = obj_1;
 			Assert.AreEqual(obj_1, Interlocked.CompareExchange(ref obj, obj_2, obj_3));
 			Assert.AreEqual(obj_1, obj);
@@ -165,6 +190,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Int64 ()
 		{
+			AssertNotAix();
 			int64 = int64_1;
 			Assert.AreEqual(int64_1, Interlocked.CompareExchange(ref int64, int64_2, int64_3));
 			Assert.AreEqual(int64_1, int64);
@@ -173,6 +199,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Dbl ()
 		{
+			AssertNotAix();
 			dbl = dbl_1;
 			Assert.AreEqual(dbl_1, Interlocked.CompareExchange(ref dbl, dbl_2, dbl_3));
 			Assert.AreEqual(dbl_1, dbl);
@@ -181,6 +208,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestCompareExchange_Failed_Iptr ()
 		{
+			AssertNotAix();
 			iptr = iptr_1;
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_3));
 			Assert.AreEqual(iptr_1, iptr);

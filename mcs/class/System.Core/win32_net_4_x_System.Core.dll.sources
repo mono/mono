@@ -37,6 +37,9 @@ System.IO.Pipes/AnonymousPipeServerStream.Windows.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RevertToSelf.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.ImpersonateNamedPipeClient.cs
 
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Windows.cs
+
 ../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.Windows.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeServerStream.Windows.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/ConnectionCompletionSource.cs

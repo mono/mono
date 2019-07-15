@@ -15,14 +15,8 @@ TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Ru
 
 XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks
 
-ifneq ($(PROFILE),monodroid)
-ifneq ($(PROFILE),monotouch)
-ifneq ($(PROFILE),monotouch_tv)
-ifneq ($(PROFILE),monotouch_watch)
+ifneq (,$(filter build net_4_x, $(PROFILE)))
 XTEST_LIB_REFS += System.Drawing
-endif
-endif
-endif
 endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))

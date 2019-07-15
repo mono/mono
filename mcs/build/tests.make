@@ -41,17 +41,13 @@ $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnos
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
 
-ifeq ($(PROFILE),monodroid)
+ifdef MOBILE_PROFILE
 xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
 else
-ifeq ($(PROFILE),monotouch_tv)
-xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
-else
-ifeq ($(PROFILE),monotouch_watch)
+ifeq ($(PROFILE), xammac_net_4_5)
 xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
 else
 xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
-endif
 endif
 endif
 
@@ -62,13 +58,25 @@ xunit_class_deps :=
 xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
 xunit_libs_ref += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/Facades/%.dll,$(xunit_deps))
 
-xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%.dll)
+xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/%.dll)
 xunit_libs_ref += $(xunit_libs_dep:%=-r:%)
 
-TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(TEST_LIB_REFS) $(DEFAULT_REFERENCES))
+TEST_LIB_REFS_ALL = $(TEST_LIB_REFS) $(DEFAULT_REFERENCES)
+
+ifdef TARGET_NET_REFERENCE
+# System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+TEST_LIB_REFS_MONO = $(call _FILTER_OUT,System,$(call _FILTER_OUT,mscorlib,$(TEST_LIB_REFS_ALL)))
+TEST_LIB_REFS_SYSTEM = $(filter-out $(TEST_LIB_REFS_MONO),$(TEST_LIB_REFS_ALL))
+
+TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(TEST_LIB_REFS_SYSTEM))
+TEST_LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(TEST_LIB_REFS_MONO))
+else
+TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(TEST_LIB_REFS_ALL))
+endif
+
 XTEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(XTEST_LIB_REFS) $(DEFAULT_REFERENCES))
 
-test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%)
+test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
@@ -92,7 +100,8 @@ endif
 tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb)
 
 xtest_sourcefile_base = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-xtest_sourcefile_base_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
+xtest_sourcefile_base_excludes_full = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
+xtest_sourcefile_base_excludes = $(xtest_sourcefile_base_excludes_full:_%=%)
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
@@ -119,9 +128,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
-ifndef PARENT_PROFILE
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
-endif
 	echo "stamp" >$@
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
@@ -134,17 +141,15 @@ ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
 
 check: run-test
-test-local: $(test_assemblies)
+test-local: $(test_assemblies) $(test_lib_dir)/nunit-excludes.txt
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
-ifdef TEST_WITH_INTERPRETER
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,NotWorkingRuntimeInterpreter,CAS
-else
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,CAS
-endif
+TEST_HARNESS_EXCLUDES = $(PLATFORM_TEST_HARNESS_EXCLUDES) $(PROFILE_TEST_HARNESS_EXCLUDES) NotWorking CAS
 
-TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
+ifdef TEST_WITH_INTERPRETER
+TEST_HARNESS_EXCLUDES += NotWorkingRuntimeInterpreter
+endif
 
 NOSHADOW_FLAG =
 
@@ -209,7 +214,7 @@ MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 TEST_ASSEMBLIES:=$(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 
 $(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
-	make -C $(topdir)/tools/mkbundle
+	$(MAKE) -C $(topdir)/tools/mkbundle
 
 mkbundle-all-tests:
 	$(Q_AOT) $(MAKE) -C $(topdir)/class do-test
@@ -228,15 +233,19 @@ endif # PLATFORM_AOT_SUFFIX
 
 ifneq ($(wildcard $(MKBUNDLE_TEST_BIN)),)
 TEST_HARNESS_EXEC=$(MKBUNDLE_TEST_BIN)
-TEST_HARNESS_EXCLUDES:=$(TEST_HARNESS_EXCLUDES),StaticLinkedAotNotWorking
+TEST_HARNESS_EXCLUDES:=$(TEST_HARNESS_EXCLUDES) StaticLinkedAotNotWorking
 else 
 TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS)
 endif
 
+$(test_lib_dir)/nunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
+	@rm -f $@
+	@$(foreach entry,$(TEST_HARNESS_EXCLUDES),echo "$(entry)" >> $@;)
+
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) -exclude=$(subst $(space),$(comma),$(TEST_HARNESS_EXCLUDES)) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_assemblies))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$$ok
 
@@ -244,7 +253,7 @@ run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
 run-test-ondotnet-lib: LOCAL_TEST_COMPILER_ONDOTNET_FLAGS:=-d:RUN_ONDOTNET
 run-test-ondotnet-lib: test-local
 	ok=:; \
-	$(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(LABELS_ARG) -format:nunit2 -result:TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
+	$(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) /exclude:$(subst $(space),$(comma),$(TEST_HARNESS_EXCLUDES) NotDotNet) $(LABELS_ARG) -format:nunit2 -result:TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
 	$$ok
 
 
@@ -265,7 +274,7 @@ test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
 
 test_sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).sources
 $(test_sourcefile): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(depsdir)/.stamp
-	$(GENSOURCES) --trace:4 --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).response
 $(test_response): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
@@ -301,11 +310,17 @@ XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_RESULT_FILE := TestResult-$(PROFILE)-xunit.xml
 XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit $(XTEST_RESULT_FILE)
-XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
+
+XTEST_NOTRAITS := category=failing category=nonmonotests Benchmark=true
+
+ifndef OUTER_LOOP
+XTEST_NOTRAITS += category=outerloop
+endif
+
 # The logic is double inverted so this actually excludes tests not intented for current platform
 # best to search for `property name="category"` in the xml output to see what's going on
 # https://github.com/dotnet/buildtools/blob/master/src/xunit.netcore.extensions/Discoverers/PlatformSpecificDiscoverer.cs
-XTEST_TRAIT_PLATFORM := -notrait category=non$(XTEST_PLATFORM)tests
+XTEST_NOTRAITS += category=non$(XTEST_PLATFORM)tests
 
 TEST_MONO_PATH := $(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$(XTEST_HARNESS_PATH)
 
@@ -322,17 +337,24 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output)
+xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 run-xunit-test-local: run-xunit-test-lib
 
-# cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
+$(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
+	@rm -f $@
+	$(foreach entry,$(XTEST_NOTRAITS),echo "$(entry)" >> $@;)
+
+$(test_lib_dir)/Xunit.NetCore.Extensions.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll | $(test_lib_dir)
+	@cp -f $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll $@
+
+$(test_lib_dir)/xunit.execution.dotnet.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll | $(test_lib_dir)
+	@cp -f $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll $@
+
 run-xunit-test-lib: xunit-test-local
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.dotnet.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) -notrait $(subst $(space), -notrait ,$(XTEST_NOTRAITS)) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
-	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)

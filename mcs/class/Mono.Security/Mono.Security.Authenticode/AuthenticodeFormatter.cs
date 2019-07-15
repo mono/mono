@@ -88,7 +88,13 @@ namespace Mono.Security.Authenticode {
 				switch (h) {
 					case "MD5":
 					case "SHA1":
+					case "SHA256":
+					case "SHA384":
+					case "SHA512":
 						hash = h;
+						break;
+					case "SHA2":
+						hash = "SHA256";
 						break;
 					default:
 						throw new ArgumentException ("Invalid Authenticode hash algorithm");

@@ -724,151 +724,57 @@ mono_array_new_n_icall (MonoMethod *cm, gint32 pcount, intptr_t *params)
 	return mono_error_set_pending_exception (error) ? NULL : arr;
 }
 
+static MonoArray *
+mono_array_new_n (MonoMethod *cm, int n, uintptr_t lengths [], intptr_t lower_bounds [])
+{
+	ERROR_DECL (error);
+	intptr_t *plower_bounds = NULL;
+	const int pcount = mono_method_signature_internal (cm)->param_count;
+	const int rank = m_class_get_rank (cm->klass);
+
+	g_assert (rank == pcount);
+	g_assert (rank == n);
+
+	if (m_class_get_byval_arg (cm->klass)->type == MONO_TYPE_ARRAY)
+		plower_bounds = lower_bounds;
+
+	MonoArray *arr = mono_array_new_full_checked (mono_domain_get (),
+		cm->klass, lengths, plower_bounds, error);
+
+	return mono_error_set_pending_exception (error) ? NULL : arr;
+}
+
 /* Specialized version of mono_array_new_va () which avoids varargs */
 MonoArray *
 mono_array_new_1 (MonoMethod *cm, guint32 length)
 {
-	ERROR_DECL (error);
-	MonoArray *arr;
-	MonoDomain *domain = mono_domain_get ();
-	uintptr_t lengths [1];
-	intptr_t *lower_bounds;
-	int pcount;
-	int rank;
-
-	pcount = mono_method_signature_internal (cm)->param_count;
-	rank = m_class_get_rank (cm->klass);
-
-	lengths [0] = length;
-
-	g_assert (rank == pcount);
-
-	if (m_class_get_byval_arg (cm->klass)->type == MONO_TYPE_ARRAY) {
-		lower_bounds = g_newa (intptr_t, rank);
-		memset (lower_bounds, 0, sizeof (intptr_t) * rank);
-	} else {
-		lower_bounds = NULL;
-	}
-
-	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, error);
-
-	if (!mono_error_ok (error)) {
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	return arr;
+	uintptr_t lengths [ ] = {length};
+	intptr_t lower_bounds [G_N_ELEMENTS (lengths)] = {0};
+	return mono_array_new_n (cm, G_N_ELEMENTS (lengths), lengths, lower_bounds);
 }
 
 MonoArray *
 mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 {
-	ERROR_DECL (error);
-	MonoArray *arr;
-	MonoDomain *domain = mono_domain_get ();
-	uintptr_t lengths [2];
-	intptr_t *lower_bounds;
-	int pcount;
-	int rank;
-
-	pcount = mono_method_signature_internal (cm)->param_count;
-	rank = m_class_get_rank (cm->klass);
-
-	lengths [0] = length1;
-	lengths [1] = length2;
-
-	g_assert (rank == pcount);
-
-	if (m_class_get_byval_arg (cm->klass)->type == MONO_TYPE_ARRAY) {
-		lower_bounds = g_newa (intptr_t, rank);
-		memset (lower_bounds, 0, sizeof (intptr_t) * rank);
-	} else {
-		lower_bounds = NULL;
-	}
-
-	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, error);
-
-	if (!mono_error_ok (error)) {
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	return arr;
+	uintptr_t lengths [ ] = {length1, length2};
+	intptr_t lower_bounds [G_N_ELEMENTS (lengths)] = {0};
+	return mono_array_new_n (cm, G_N_ELEMENTS (lengths), lengths, lower_bounds);
 }
 
 MonoArray *
 mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3)
 {
-	ERROR_DECL (error);
-	MonoArray *arr;
-	MonoDomain *domain = mono_domain_get ();
-	uintptr_t lengths [3];
-	intptr_t *lower_bounds;
-	int pcount;
-	int rank;
-
-	pcount = mono_method_signature_internal (cm)->param_count;
-	rank = m_class_get_rank (cm->klass);
-
-	lengths [0] = length1;
-	lengths [1] = length2;
-	lengths [2] = length3;
-
-	g_assert (rank == pcount);
-
-	if (m_class_get_byval_arg (cm->klass)->type == MONO_TYPE_ARRAY) {
-		lower_bounds = g_newa (intptr_t, rank);
-		memset (lower_bounds, 0, sizeof (intptr_t) * rank);
-	} else {
-		lower_bounds = NULL;
-	}
-
-	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, error);
-
-	if (!mono_error_ok (error)) {
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	return arr;
+	uintptr_t lengths [ ] = {length1, length2, length3};
+	intptr_t lower_bounds [G_N_ELEMENTS (lengths)] = {0};
+	return mono_array_new_n (cm, G_N_ELEMENTS (lengths), lengths, lower_bounds);
 }
 
 MonoArray *
 mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3, guint32 length4)
 {
-	ERROR_DECL (error);
-	MonoArray *arr;
-	MonoDomain *domain = mono_domain_get ();
-	uintptr_t lengths [4];
-	intptr_t *lower_bounds;
-	int pcount;
-	int rank;
-
-	pcount = mono_method_signature_internal (cm)->param_count;
-	rank = m_class_get_rank (cm->klass);
-
-	lengths [0] = length1;
-	lengths [1] = length2;
-	lengths [2] = length3;
-	lengths [3] = length4;
-
-	g_assert (rank == pcount);
-
-	if (m_class_get_byval_arg (cm->klass)->type == MONO_TYPE_ARRAY) {
-		lower_bounds = g_newa (intptr_t, rank);
-		memset (lower_bounds, 0, sizeof (intptr_t) * rank);
-	} else {
-		lower_bounds = NULL;
-	}
-
-	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, error);
-
-	if (!mono_error_ok (error)) {
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	return arr;
+	uintptr_t lengths [ ] = {length1, length2, length3, length4};
+	intptr_t lower_bounds [G_N_ELEMENTS (lengths)] = {0};
+	return mono_array_new_n (cm, G_N_ELEMENTS (lengths), lengths, lower_bounds);
 }
 
 gpointer
@@ -1042,6 +948,12 @@ mono_fconv_ovf_u8 (double v)
 	return res;
 }
 
+guint64
+mono_fconv_ovf_u8_un (double v)
+{
+	return mono_fconv_ovf_u8 (v);
+}
+
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 gint64
 mono_rconv_i8 (float v)
@@ -1079,6 +991,12 @@ mono_rconv_ovf_u8 (float v)
 	return res;
 }
 
+guint64
+mono_rconv_ovf_u8_un (float v)
+{
+	return mono_rconv_ovf_u8 (v);
+}
+
 #ifdef MONO_ARCH_EMULATE_LCONV_TO_R8
 double
 mono_lconv_to_r8 (gint64 a)
@@ -1108,6 +1026,15 @@ double
 mono_lconv_to_r8_un (guint64 a)
 {
 	return (double)a;
+}
+#endif
+
+#ifdef MONO_ARCH_EMULATE_FREM
+// Wrapper to avoid taking address of overloaded function.
+double
+mono_fmod (double a, double b)
+{
+	return fmod (a, b);
 }
 #endif
 
@@ -1239,7 +1166,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	MonoJitTlsData *jit_tls = NULL;
 	MonoClass *oklass;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
@@ -1255,7 +1182,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls->class_cast_from = oklass;
 		jit_tls->class_cast_to = klass;
 	}
@@ -1273,7 +1200,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	MonoJitTlsData *jit_tls = NULL;
 	gpointer cached_vtable, obj_vtable;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
@@ -1294,7 +1221,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls->class_cast_from = obj->vtable->klass;
 		jit_tls->class_cast_to = klass;
 	}
@@ -1507,8 +1434,16 @@ ves_icall_mono_delegate_ctor (MonoObject *this_obj_raw, MonoObject *target_raw, 
 	ERROR_DECL (error);
 	MONO_HANDLE_DCL (MonoObject, this_obj);
 	MONO_HANDLE_DCL (MonoObject, target);
+
+	if (!addr) {
+		mono_error_set_argument_null (error, "method", "");
+		mono_error_set_pending_exception (error);
+		goto leave;
+	}
 	mono_delegate_ctor (this_obj, target, addr, error);
 	mono_error_set_pending_exception (error);
+
+leave:
 	HANDLE_FUNCTION_RETURN ();
 }
 
@@ -1520,8 +1455,15 @@ ves_icall_mono_delegate_ctor_interp (MonoObject *this_obj_raw, MonoObject *targe
 	MONO_HANDLE_DCL (MonoObject, this_obj);
 	MONO_HANDLE_DCL (MonoObject, target);
 
+	if (!addr) {
+		mono_error_set_argument_null (error, "method", "");
+		mono_error_set_pending_exception (error);
+		goto leave;
+	}
 	mini_get_interp_callbacks ()->delegate_ctor (this_obj, target, addr, error);
 	mono_error_set_pending_exception (error);
+
+leave:
 	HANDLE_FUNCTION_RETURN ();
 }
 
@@ -1590,6 +1532,14 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 	mono_error_set_pending_exception (error);
 	g_free (callee_name);
 	g_free (caller_name);
+}
+
+void
+mono_throw_bad_image ()
+{
+	ERROR_DECL (error);
+	mono_error_set_generic_error (error, "System", "BadImageFormatException", "Bad IL format.");
+	mono_error_set_pending_exception (error);
 }
 
 void

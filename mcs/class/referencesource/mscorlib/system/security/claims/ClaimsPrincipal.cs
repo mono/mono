@@ -117,6 +117,7 @@ namespace System.Security.Claims
             return selectedClaimsIdentity;
         }
 
+#if !DISABLE_SECURITY
         /// <summary>
         /// Used to set a custom claims principal.
         /// </summary>
@@ -131,6 +132,7 @@ namespace System.Security.Claims
 
             return new ClaimsPrincipal(Thread.CurrentPrincipal);
         }
+#endif
 
         public static Func<IEnumerable<ClaimsIdentity>, ClaimsIdentity> PrimaryIdentitySelector
         {
@@ -519,6 +521,7 @@ namespace System.Security.Claims
             }
         }
 
+#if !DISABLE_SECURITY
         /// <summary>
         /// Returns the Current Principal by calling a delegate.  Users may specify the delegate.
         /// </summary>
@@ -537,6 +540,9 @@ namespace System.Security.Claims
                 }
             }
         }
+#else
+        public static ClaimsPrincipal Current => throw new PlatformNotSupportedException ();
+#endif
 
         /// <summary>
         /// Retrieves a <see cref="IEnumerable{Claim}"/> where each claim is matched by <param name="match"/>.

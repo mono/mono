@@ -31,16 +31,14 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
-MOBILE_NATIVE_INTERP := $(filter testing_aot_full_interp, $(PROFILE))
-
-ifdef MOBILE_NATIVE_INTERP
+ifndef NO_SRE
 LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER
 else
-	ifdef AOT_FRIENDLY_PROFILE
-	extra_test_flags := -exclude:NotWorkingLinqInterpreter
+	MANAGED_INTERP := $(filter orbis winaot monotouch monotouch_tv monotouch_watch, $(PROFILE))
+	ifdef MANAGED_INTERP
 	LIB_MCS_FLAGS += -d:NO_FEATURE_STATIC_DELEGATE,FEATURE_MAKE_RUN_METHODS
 	else
-	LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER,FEATURE_PDB_GENERATOR
+	LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER
 	endif
 endif
 
@@ -65,5 +63,3 @@ XTEST_LIB_FLAGS = -unsafe -d:FEATURE_COMPILE
 XTEST_RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Collections.Immutable/src/Resources/Strings.resx
 
 include ../../build/library.make
-
-TEST_HARNESS_EXCLUDES += $(extra_test_flags)

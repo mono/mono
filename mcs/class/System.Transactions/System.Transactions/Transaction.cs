@@ -69,10 +69,10 @@ namespace System.Transactions
 
 		internal IPromotableSinglePhaseNotification Pspe { get { return pspe; } }
 
-		internal Transaction ()
+		internal Transaction (IsolationLevel isolationLevel)
 		{
 			info = new TransactionInformation ();
-			level = IsolationLevel.Serializable;
+			level = isolationLevel;
 		}
 
 		internal Transaction (Transaction other)

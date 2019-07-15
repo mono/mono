@@ -3,7 +3,8 @@
 	<assembly fullname="mscorlib">
 	
 		<!-- domain.c: mono_defaults.appdomain_class -->
-		<type fullname="System.AppDomain" preserve="fields">
+		<type fullname="System.AppDomain">
+		  <field name="_mono_app_domain" />
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
 			<!-- appdomain.c: mono_try_assembly_resolve -->
@@ -100,10 +101,14 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.boolean_class -->
-		<type fullname="System.Boolean" preserve="fields" />
+		<type fullname="System.Boolean">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.byte_class -->
-		<type fullname="System.Byte" preserve="fields" />
+		<type fullname="System.Byte">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- exception.c" mono_get_exception_cannot_unload_appdomain (called by appdomain.c) -->
 		<type fullname="System.CannotUnloadAppDomainException">
@@ -112,7 +117,9 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.char_class -->
-		<type fullname="System.Char" preserve="fields" />
+		<type fullname="System.Char">
+		  <field name="m_value"/>
+		</type>
 
 		<!-- marshal.c: emit_marshal_vtype -->
 		<type fullname="System.DateTime" preserve="fields" />
@@ -153,7 +160,9 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.double_class -->
-		<type fullname="System.Double" preserve="fields" />
+		<type fullname="System.Double">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.enum_class -->
 		<type fullname="System.Enum" preserve="fields" />
@@ -203,16 +212,24 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.int16_class -->
-		<type fullname="System.Int16" preserve="fields" />
+		<type fullname="System.Int16">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int32_class -->
-		<type fullname="System.Int32" preserve="fields" />
+		<type fullname="System.Int32">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int64_class -->
-		<type fullname="System.Int64" preserve="fields" />
+		<type fullname="System.Int64">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int_class -->
-		<type fullname="System.IntPtr" preserve="fields" />
+		<type fullname="System.IntPtr">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- exception.c (mono_get_exception_invalid_cast) -->
 		<type fullname="System.InvalidCastException">
@@ -284,6 +301,12 @@
 			<!-- mono_get_exception_not_implemented -->
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
+
+		<!-- mono-error.c (mono_error_set_ambiguous_implementation) -->
+		<type fullname="System.Runtime.AmbiguousImplementationException">
+			<!-- mono_error_set_ambiguous_implementation -->
+			<method signature="System.Void .ctor(System.String)" />
+		</type>
         
 		<!-- appdomain.c (create_domain_objects) domain->null_reference_ex -->
 		<!-- exception.c (mono_get_exception_null_reference) -->
@@ -341,14 +364,22 @@
 		
 		<!-- domain.c: mono_defaults.methodhandle_class -->
 		<type fullname="System.RuntimeMethodHandle" preserve="fields" />
+
+		<!-- domain.c: mono_defaults.runtimetype_class -->
+		<type fullname="System.RuntimeType" preserve="fields" />
 		
 		<!-- domain.c: mono_defaults.typehandle_class -->
 		<type fullname="System.RuntimeTypeHandle" preserve="fields" />
+
 		<!-- domain.c: mono_defaults.sbyte_class -->
-		<type fullname="System.SByte" preserve="fields" />
+		<type fullname="System.SByte">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.single_class -->
-		<type fullname="System.Single" preserve="fields" />
+		<type fullname="System.Single">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- appdomain.c (create_domain_objects) domain->stack_overflow_ex -->
 		<type fullname="System.StackOverflowException">
@@ -414,16 +445,24 @@
 		<type fullname="System.TypedReference" preserve="fields" />
 		
 		<!-- domain.c: mono_defaults.uint16_class -->
-		<type fullname="System.UInt16" preserve="fields" />
+		<type fullname="System.UInt16">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint32_class -->
-		<type fullname="System.UInt32" preserve="fields" />
+		<type fullname="System.UInt32">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint64_class -->
-		<type fullname="System.UInt64" preserve="fields" />
+		<type fullname="System.UInt64">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint_class -->
-		<type fullname="System.UIntPtr" preserve="fields" />
+		<type fullname="System.UIntPtr">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- object.c: create_unhandled_exception_eventargs (assert) -->
 		<type fullname="System.UnhandledExceptionEventArgs">
@@ -528,33 +567,33 @@
 		<type fullname="System.Reflection.MethodInfo" preserve="nothing" />
 
 		<type fullname="System.Reflection.Module" preserve="fields" />
-		<type fullname="System.Reflection.MonoAssembly">
+		<type fullname="System.Reflection.RuntimeAssembly">
 			<method name=".ctor" />
 		</type>
-		<type fullname="System.Reflection.MonoModule">
+		<type fullname="System.Reflection.RuntimeModule">
 			<method name=".ctor" />
 		</type>
-		<type fullname="System.Reflection.MonoCMethod" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeConstructorInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
-		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" >
+		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
+		<type fullname="System.Reflection.RuntimeEventInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoField" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeFieldInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in field_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoMethod" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeMethodInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
 		<type fullname="System.Reflection.MonoMethodInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoPropertyInfo" preserve="fields" />
 		
-		<type fullname="System.Reflection.MonoProperty" preserve="fields">
+		<type fullname="System.Reflection.RuntimePropertyInfo" preserve="fields">
 			<method name="GetterAdapterFrame" />
 			<method name="StaticGetterAdapterFrame" />
 			<!-- reflection.c mono_object_new_checked in add_parameter_object_to_array -->
@@ -562,9 +601,11 @@
 		</type>
 		<type fullname="System.Reflection.ParameterInfo" preserve="fields" />
 		<!-- reflection.c: ves_icall_get_parameter_info -->
-		<type fullname="System.Reflection.MonoParameterInfo" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeParameterInfo" >
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
+			<!-- reflection.c add_parameter_object_to_array -->
+			<method signature="System.Void .ctor(System.String,System.Type,System.Int32,System.Int32,System.Object,System.Reflection.MemberInfo,System.Runtime.InteropServices.MarshalAsAttribute)" />
 		</type>
 
 		<!-- object.c: mono_field_get_value_object and mono_runtime_invoke_array -->
@@ -589,40 +630,22 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<type fullname="System.Reflection.Emit.AssemblyBuilder" feature="sre">
-			<method name="AddPermissionRequests" feature="sre" />
-			<method name="AddModule" feature="sre" />
-			<method name="DefineIconResource" feature="sre" />
-			<method name="AddTypeForwarder" feature="sre" />
-			<method name="EmbedResourceFile" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.ConstructorBuilder" preserve="fields" feature="sre">
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
+		<type fullname="System.Reflection.Emit.AssemblyBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ConstructorBuilder" preserve="fields" feature="sre"/>
 		<type fullname="System.Reflection.Emit.DynamicMethod" preserve="fields" feature="sre" />
 		<!-- mono_dynamic_image_register_token -->
 		<type fullname="System.Reflection.Emit.EnumBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.EventBuilder" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.GenericTypeParameterBuilder" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
+		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" feature="sre" />
+		<type
+		  fullname="System.Reflection.Emit.GenericTypeParameterBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.ILExceptionBlock" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.ILExceptionInfo" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.ILGenerator" feature="sre" >
-			<method name="Mono_GetCurrentOffset" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" >
-			<method name="Mono_GetLocalIndex" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.ModuleBuilder" feature="sre">
+		<type fullname="System.Reflection.Emit.ILGenerator" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields" feature="sre">
 			<method name="Mono_GetGuid" feature="sre" />
-			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" feature="sre" />
@@ -638,27 +661,12 @@
 			<method name="DefineCustom" feature="sre" />
 			<method name="DefineLPArrayInternal" feature="sre" />
 		</type>
-		<type fullname="System.Reflection.Emit.TypeBuilderInstantiation">
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.ArrayType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.ByRefType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.PointerType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" feature="sre" />
-		</type>
+		<type fullname="System.Reflection.Emit.ArrayType" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ByRefType" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.PointerType" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst" preserve="fields" feature="sre" />
 
 		<!-- exception.c: mono_get_exception_runtime_wrapped () -->
 		<type fullname="System.Runtime.CompilerServices.RuntimeWrappedException">
@@ -671,7 +679,7 @@
 		<type fullname="System.Runtime.InteropServices.ICustomMarshaler" />
 
 		<!-- domain.c: mono_defaults.marshal_class -->
-		<type fullname="System.Runtime.InteropServices.Marshal" preserve="fields" >
+		<type fullname="System.Runtime.InteropServices.Marshal">
 			<!-- marshal.c (mono_marshal_get_struct_to_ptr) -->
 			<method name="StructureToPtr" />
 		</type>
@@ -841,6 +849,7 @@
 		<type fullname="System.Threading.WasmRuntime"/>
 
 		<!-- mini-generic-sharing.c -->
+		<type fullname="Mono.ValueTuple" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`1" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`2" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`3" preserve="fields"/>

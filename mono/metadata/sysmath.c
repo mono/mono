@@ -200,6 +200,39 @@ ves_icall_System_Math_Ceiling (gdouble v)
 	return ceil (v);
 }
 
+#if ENABLE_NETCORE
+gint32
+ves_icall_System_Math_ILogB (gdouble x)
+{
+	int ret;
+	if (FP_ILOGB0 != -2147483648 && x == 0.0)
+		ret = -2147483648;
+	else if (FP_ILOGBNAN != 2147483647 && isnan(x))
+		ret = 2147483647;
+	else
+		ret = ilogb(x);
+	return ret;
+}
+
+gdouble
+ves_icall_System_Math_Log2 (gdouble x)
+{
+	return log2 (x);
+}
+
+gdouble
+ves_icall_System_Math_ScaleB (gdouble x, gint32 n)
+{
+	return scalbn (x, n);
+}
+
+gdouble
+ves_icall_System_Math_FusedMultiplyAdd (gdouble x, gdouble y, gdouble z)
+{
+	return fma (x, y, z);
+}
+#endif
+
 float
 ves_icall_System_MathF_Acos (float x)
 {
@@ -337,3 +370,36 @@ ves_icall_System_MathF_ModF (float x, float *d)
 {
 	return modff (x, d);
 }
+
+#if ENABLE_NETCORE
+gint32
+ves_icall_System_MathF_ILogB (float x)
+{
+	int ret;
+	if (FP_ILOGB0 != -2147483648 && x == 0.0)
+		ret = -2147483648;
+	else if (FP_ILOGBNAN != 2147483647 && isnan(x))
+		ret = 2147483647;
+	else
+		ret = ilogbf(x);
+	return ret;
+}
+
+float
+ves_icall_System_MathF_Log2 (float x)
+{
+	return log2f (x);
+}
+
+float
+ves_icall_System_MathF_ScaleB (float x, gint32 n)
+{
+	return scalbnf (x, n);
+}
+
+float
+ves_icall_System_MathF_FusedMultiplyAdd (float x, float y, float z)
+{
+	return fmaf (x, y, z);
+}
+#endif

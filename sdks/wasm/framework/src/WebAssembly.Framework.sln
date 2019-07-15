@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Bindings", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.Http", "WebAssembly.Net.Http\WebAssembly.Net.Http.csproj", "{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.WebSockets", "WebAssembly.Net.WebSockets\WebAssembly.Net.WebSockets.csproj", "{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,18 @@ Global
 		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x64.Build.0 = Release|Any CPU
 		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x86.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x64.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x64.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

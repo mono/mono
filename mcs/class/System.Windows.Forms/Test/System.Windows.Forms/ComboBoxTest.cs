@@ -1500,7 +1500,25 @@ namespace MonoTests.System.Windows.Forms
 			cmb.Items.Add (new ComboVal ("A"));
 			cmb.Sorted = true;
 		}
-	}
+
+        [Test]
+        public void SetTextAfterDisposeTest()
+        {
+            var comboBox = new ComboBox();
+            comboBox.Dispose();
+            comboBox.Text = "1";
+        }
+
+        [Test]
+        public void SetNullTextDropDownTest()
+        {
+            var comboBox = new ComboBox();
+            comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+            comboBox.SelectedIndex = -1;
+            comboBox.Dispose();
+            comboBox.Text = null;
+        }
+    }
 
 	[TestFixture]
 	public class ComboBoxObjectCollectionTest : TestHelper

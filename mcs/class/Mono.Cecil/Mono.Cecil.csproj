@@ -14,6 +14,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>Mono.Cecil</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
@@ -33,12 +34,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO;WIN_PLATFORM;NET_4_0</DefineConstants>
+    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM;NET_4_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'wasm_tools' ">
     <OutputPath>./../../class/lib/wasm_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO;NET_4_0</DefineConstants>
+    <DefineConstants>NET_4_6;MONO;WASM_TOOLS;NET_4_0</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -185,7 +186,7 @@
     <Compile Include="..\..\..\external\cecil\Mono.Security.Cryptography\CryptoService.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Disposable.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Empty.cs" />
-    <Compile Include="..\..\..\external\cecil\Mono\Type.cs" />
+    <Compile Include="..\..\..\external\cecil\Mono\MergeSort.cs" />
     <Compile Include="..\..\..\external\cecil\ProjectInfo.cs" />
     <Compile Include="Consts.cs" />
   </ItemGroup>

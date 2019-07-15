@@ -525,6 +525,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void TestOrderByIdDescendingThenByNameAscending ()
 		{
 			ParallelTestHelper.Repeat (() => {

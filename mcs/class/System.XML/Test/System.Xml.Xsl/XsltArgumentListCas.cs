@@ -60,7 +60,7 @@ namespace MonoCasTests.System.Xml.Xsl {
 		public void AddExtensionObject ()
 		{
 			XsltArgumentList xal = new XsltArgumentList ();
-			xal.AddExtensionObject ("http://www.go-mono.com", new object ());
+			xal.AddExtensionObject ("http://www.example.com", new object ());
 		}
 
 		// we use reflection to call XsltArgumentList as it's AddExtensionObject method
@@ -74,7 +74,7 @@ namespace MonoCasTests.System.Xml.Xsl {
 			// requires FullTrust, so denying anything break the requirements
 			Assert.IsNotNull (addExtensionObject, "AddExtensionObject");
 			XsltArgumentList xal = new XsltArgumentList ();
-			addExtensionObject.Invoke (xal, new object[2] { "http://www.go-mono.com", new object () });
+			addExtensionObject.Invoke (xal, new object[2] { "http://www.example.com", new object () });
 		}
 	}
 }

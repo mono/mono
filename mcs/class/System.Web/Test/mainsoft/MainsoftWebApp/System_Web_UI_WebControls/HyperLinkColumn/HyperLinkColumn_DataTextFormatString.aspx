@@ -32,18 +32,18 @@
 			<cc1:ghtsubtest id="Ghtsubtest3" runat="server" Height="120px" Width="553px">
 				<asp:DataGrid id="DataGrid3" runat="server" AutoGenerateColumns="False">
 					<Columns>
-						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.google.com&quot;"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn DataTextField="Name" NavigateUrl="&quot;http://www.google.com&quot;" DataTextFormatString="(format str)"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn DataTextField="Company" NavigateUrl="&quot;http://www.google.com&quot;" DataTextFormatString="{0:c5}"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.example.com&quot;"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="Name" NavigateUrl="&quot;http://www.example.com&quot;" DataTextFormatString="(format str)"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="Company" NavigateUrl="&quot;http://www.example.com&quot;" DataTextFormatString="{0:c5}"></asp:HyperLinkColumn>
 					</Columns>
 				</asp:DataGrid>
 			</cc1:ghtsubtest>
 			<cc1:ghtsubtest id="Ghtsubtest4" runat="server" Height="120px" Width="553px">
 				<asp:DataGrid id="DataGrid4" runat="server" AutoGenerateColumns="False">
 					<Columns>
-						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.google.com&quot;"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.google.com&quot;" DataTextFormatString="(format)"></asp:HyperLinkColumn>
-						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.google.com&quot;" DataTextFormatString="{0:c5}"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.example.com&quot;"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.example.com&quot;" DataTextFormatString="(format)"></asp:HyperLinkColumn>
+						<asp:HyperLinkColumn DataTextField="ID" NavigateUrl="&quot;http://www.example.com&quot;" DataTextFormatString="{0:c5}"></asp:HyperLinkColumn>
 					</Columns>
 				</asp:DataGrid>
 			</cc1:ghtsubtest>

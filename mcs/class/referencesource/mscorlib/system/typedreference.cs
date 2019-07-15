@@ -44,7 +44,7 @@ namespace System {
                 throw new ArgumentNullException("flds");
             Contract.EndContractBlock();
             if (flds.Length == 0)
-                throw new ArgumentException(Environment.GetResourceString("Arg_ArrayZeroError"));
+                throw new ArgumentException(Environment.GetResourceString("Arg_ArrayZeroError"), nameof (flds));
 
             IntPtr[] fields = new IntPtr[flds.Length];
             // For proper handling of Nullable<T> don't change GetType() to something like 'IsAssignableFrom'
@@ -56,7 +56,7 @@ namespace System {
                 if (field == null)
                     throw new ArgumentException(Environment.GetResourceString("Argument_MustBeRuntimeFieldInfo"));
 
-                if (field.IsInitOnly || field.IsStatic)
+                if (field.IsStatic)
                     throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
                 
                 if (targetType != field.GetDeclaringTypeInternal() && !targetType.IsSubclassOf(field.GetDeclaringTypeInternal()))

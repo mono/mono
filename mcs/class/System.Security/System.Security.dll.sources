@@ -1,6 +1,7 @@
 #include common_System.Security.dll.sources
 
 Mono.Security.Cryptography/ManagedProtection.cs
+ReferenceSources/DataProtector.cs
 System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/ProtectedMemory.cs
 System.Security.Cryptography.Pkcs/KeyAgreeKeyChoice.cs

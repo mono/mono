@@ -437,6 +437,21 @@ mono_error_set_not_supported (MonoError *oerror, const char *msg_format, ...)
 	va_end (args);
 }
 
+
+/**
+ * mono_error_set_ambiguous_implementation:
+ *
+ * System.Runtime.AmbiguousImplementationException
+ */
+void
+mono_error_set_ambiguous_implementation (MonoError *oerror, const char *msg_format, ...)
+{
+	va_list args;
+	va_start (args, msg_format);
+	mono_error_set_generic_errorv (oerror, "System.Runtime", "AmbiguousImplementationException", msg_format, args);
+	va_end (args);
+}
+
 /**
  * mono_error_set_invalid_operation:
  *
@@ -700,6 +715,10 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 
 	case MONO_ERROR_ARGUMENT_NULL:
 		exception = mono_exception_new_argument_null (error->first_argument, error_out);
+		break;
+	
+	case MONO_ERROR_ARGUMENT_OUT_OF_RANGE: 
+		exception = mono_exception_new_argument_out_of_range(error->first_argument, error->full_message, error_out); 
 		break;
 
 	case MONO_ERROR_NOT_VERIFIABLE:

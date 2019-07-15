@@ -75,12 +75,12 @@ namespace MonoTests.System.ServiceModel.Syndication
 			Assert.IsNull (link.BaseUri, "#1");
 
 			// absolute
-			link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 			Assert.IsNull (link.BaseUri, "#2");
 
 			// absolute #2
 			link = new SyndicationLink ();
-			link.Uri = new Uri ("http://mono-project.com/index.rss");
+			link.Uri = new Uri ("http://example.com/index.rss");
 			Assert.IsNull (link.BaseUri, "#3");
 		}
 
@@ -98,7 +98,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Test]
 		public void MediaType ()
 		{
-			SyndicationLink link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			SyndicationLink link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 			link.MediaType = "text/xml";
 			Assert.AreEqual ("text/xml", link.MediaType, "#1");
 			link.MediaType = null;
@@ -109,7 +109,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Test]
 		public void RelationshipType ()
 		{
-			SyndicationLink link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			SyndicationLink link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 			link.RelationshipType = "alternate";
 			Assert.AreEqual ("alternate", link.RelationshipType, "#1");
 			link.RelationshipType = null;
@@ -120,7 +120,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Test]
 		public void Length ()
 		{
-			SyndicationLink link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			SyndicationLink link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 			link.Length = 0;
 			link.Length = long.MaxValue;
 		}
@@ -129,7 +129,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void NegativeLength ()
 		{
-			SyndicationLink link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			SyndicationLink link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 			link.Length = -1;
 		}
 
@@ -144,7 +144,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void AttributeElementExtensions ()
 		{
 			// The properties do not affect extension attributes.
-			SyndicationLink link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
+			SyndicationLink link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
 
 			Assert.AreEqual (0, link.ElementExtensions.Count, "#0");
 			Assert.IsFalse (link.AttributeExtensions.ContainsKey (new QName ("mediaType")), "#3");
@@ -163,12 +163,12 @@ namespace MonoTests.System.ServiceModel.Syndication
 			Assert.IsNull (link.GetAbsoluteUri (), "#2");
 
 			// Uri is absolute
-			link = new SyndicationLink (new Uri ("http://mono-project.com/index.rss"));
-			Assert.AreEqual ("http://mono-project.com/index.rss", link.GetAbsoluteUri ().ToString (), "#3");
+			link = new SyndicationLink (new Uri ("http://example.com/index.rss"));
+			Assert.AreEqual ("http://example.com/index.rss", link.GetAbsoluteUri ().ToString (), "#3");
 
 			// only BaseUri - null result
 			link = new SyndicationLink ();
-			link.BaseUri = new Uri ("http://mono-project.com/index.rss");
+			link.BaseUri = new Uri ("http://example.com/index.rss");
 			Assert.IsNull (link.GetAbsoluteUri (), "#4");
 		}
 
@@ -176,7 +176,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void Clone ()
 		{
 			SyndicationLink link = new SyndicationLink (null, null, "my RSS", "text/xml", 1);
-			link.BaseUri = new Uri ("http://mono-project.com/index.rss");
+			link.BaseUri = new Uri ("http://example.com/index.rss");
 			SyndicationLink clone = link.Clone ();
 			Assert.AreEqual (link.BaseUri, clone.BaseUri, "#1");
 			Assert.AreEqual ("my RSS", clone.Title, "#2");

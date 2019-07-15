@@ -23,6 +23,8 @@ setlocal
 set TEMP_PATH=%PATH%
 set BUILD_RESULT=1
 
+set BUILD_EXTERNAL_LLVM_SCRIPT_PATH=%~dp0
+
 set CL_BIN_NAME=cl.exe
 set LINK_BIN_NAME=link.exe
 set GIT_BIN_NAME=git.exe
@@ -275,36 +277,9 @@ if exist "%LLVM_BUILD_DIR%\install.vcxproj" (
     "%MSBUILD%" "%LLVM_BUILD_DIR%\install.vcxproj" /p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% /v:m /nologo
 )
 
-if not exist "%LLVM_INSTALL_DIR%\bin\opt.exe" (
-    echo Missing LLVM build output, "%LLVM_INSTALL_DIR%\bin\opt.exe"
+call "%BUILD_EXTERNAL_LLVM_SCRIPT_PATH%\install-llvm-mono-build.bat" "%LLVM_INSTALL_DIR%" "%MONO_DIST_DIR%" || (
     goto ON_ERROR
 )
-
-if not exist "%LLVM_INSTALL_DIR%\bin\llc.exe" (
-    echo Missing LLVM build output, "%LLVM_INSTALL_DIR%\bin\llc.exe"
-    goto ON_ERROR
-)
-
-if not exist "%LLVM_INSTALL_DIR%\bin\llvm-dis.exe" (
-    echo Missing LLVM build output, "%LLVM_INSTALL_DIR%\bin\llvm-dis.exe"
-    goto ON_ERROR
-)
-
-if not exist "%LLVM_INSTALL_DIR%\bin\llvm-mc.exe" (
-    echo Missing LLVM build output, "%LLVM_INSTALL_DIR%\bin\llvm-mc.exe"
-    goto ON_ERROR
-)
-
-if not exist "%LLVM_INSTALL_DIR%\bin\llvm-as.exe" (
-    echo Missing LLVM build output, "%LLVM_INSTALL_DIR%\bin\llvm-as.exe"
-    goto ON_ERROR
-)
-
-copy /Y "%LLVM_INSTALL_DIR%\bin\opt.exe" "%MONO_DIST_DIR%" >nul 2>&1
-copy /Y "%LLVM_INSTALL_DIR%\bin\llc.exe" "%MONO_DIST_DIR%" >nul 2>&1
-copy /Y "%LLVM_INSTALL_DIR%\bin\llvm-dis.exe" "%MONO_DIST_DIR%" >nul 2>&1
-copy /Y "%LLVM_INSTALL_DIR%\bin\llvm-mc.exe" "%MONO_DIST_DIR%" >nul 2>&1
-copy /Y "%LLVM_INSTALL_DIR%\bin\llvm-as.exe" "%MONO_DIST_DIR%" >nul 2>&1
 
 goto ON_SUCCESS
 

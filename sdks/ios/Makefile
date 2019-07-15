@@ -55,10 +55,10 @@ test-runner.exe: test-runner/runner.cs
 	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll -r:$(BCL_DIR)/Mono.Security.dll test-runner/runner.cs
 
 runtime/runtime:
-	make -C runtime
+	$(MAKE) -C runtime
 
 runtime/libmonoios.a:
-	make -C runtime
+	$(MAKE) -C runtime
 
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
@@ -77,8 +77,8 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 	test-runner.exe
 
 build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
+	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-sim/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-sim/test-$*.app) --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-sim/test-$*.app
 	ninja -C obj/ios-sim/test-$*.app -v
 
 ifdef LLVM
@@ -104,13 +104,13 @@ endif
 # targets.
 #
 ifdef ENABLE_AOT_CACHE
-APPBUILDER_ARGS += --aot-cachedir $(PWD)/aot-cache
+APPBUILDER_ARGS += --aot-cachedir $(abspath aot-cache)
 endif
 
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
-	mkdir -p $(PWD)/aot-cache
-	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
+	mkdir -p aot-cache
+	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-dev/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-dev/test-$*.app) --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-dev/test-$*.app
 	ninja -C obj/ios-dev/test-$*.app -v
 
 # Clean %
@@ -134,26 +134,26 @@ clean:
 	$(RM) -rf bin obj *.exe *.log aot-cache
 
 run-ios-sim-all:
-	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) build-ios-sim-$$suite || exit 1; $(MAKE) run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-llvm-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-only-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-mixed-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 run-ios-dev-all:
-	for suite in $(TEST_SUITES); do make run-ios-dev-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) run-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
@@ -177,7 +177,7 @@ stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
 
 # CONNSTR will be replace by the harness with the real connection string
-NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
+NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test

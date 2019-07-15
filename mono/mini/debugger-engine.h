@@ -189,6 +189,26 @@ typedef struct {
 	int nframes;
 } SingleStepArgs;
 
+/*
+ * OBJECT IDS
+ */
+
+/*
+ * Represents an object accessible by the debugger client.
+ */
+typedef struct {
+	/* Unique id used in the wire protocol to refer to objects */
+	int id;
+	/*
+	 * A weakref gc handle pointing to the object. The gc handle is used to 
+	 * detect if the object was garbage collected.
+	 */
+	guint32 handle;
+} ObjRef;
+
+
+void mono_debugger_free_objref (gpointer value);
+
 typedef int DbgEngineErrorCode;
 #define DE_ERR_NONE 0
 // WARNING WARNING WARNING

@@ -37,12 +37,15 @@
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
+#ifdef HAVE_NETINET_TCP_H
 #include <arpa/inet.h>
+#endif
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <errno.h>
+#include <mono/utils/mono-errno.h>
 
 #include <sys/types.h>
 
@@ -58,6 +61,7 @@
 /* FIXME change this code to not mess so much with the internals */
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/domain-internals.h>
+#include <mono/metadata/image-internals.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
@@ -93,6 +97,14 @@
 #ifdef HAVE_GETIFADDRS
 // <net/if.h> must be included before <ifaddrs.h>
 #include <ifaddrs.h>
+#elif defined(HAVE_QP2GETIFADDRS)
+/* Bizarrely, IBM i implements this, but AIX doesn't, so on i, it has a different name... */
+#include <as400_types.h>
+#include <as400_protos.h>
+/* Defines to just reuse ifaddrs code */
+#define ifaddrs ifaddrs_pase
+#define freeifaddrs Qp2freeifaddrs
+#define getifaddrs Qp2getifaddrs
 #endif
 
 #if defined(_MSC_VER) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
@@ -710,7 +722,7 @@ get_socket_assembly (void)
 	if (domain->socket_assembly == NULL) {
 		MonoImage *socket_assembly;
 
-		socket_assembly = mono_image_loaded ("System");
+		socket_assembly = mono_image_loaded_internal ("System", FALSE);
 		if (!socket_assembly) {
 			MonoAssemblyOpenRequest req;
 			mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
@@ -1182,7 +1194,7 @@ create_sockaddr_from_handle (MonoObjectHandle saddr_obj, socklen_t *sa_size, gin
 		 * two bytes hold the SocketAddress family
 		 */
 		if (len - 2 >= sizeof (sock_un->sun_path)) {
-			mono_error_set_argument_out_of_range (error, "SocketAddress.Size");
+			mono_error_set_argument_out_of_range (error, "SocketAddress.Size", "MonoArgumentException:SocketAddress.Size");
 			mono_gchandle_free_internal (gchandle);
 			return NULL;
 		}
@@ -1284,7 +1296,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 				timeout = 0;
 			}
 			
-			errno = err;
+			mono_set_errno (err);
 		}
 
 		if (ret == -1 && errno == EINTR) {
@@ -1296,7 +1308,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 			/* Suspend requested? */
 			mono_thread_interruption_checkpoint_void ();
 
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	} while (ret == -1 && errno == EINTR);
 
@@ -1661,7 +1673,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandleOut sockets,
 			timeout = rtimeout - sec * 1000;
 			if (timeout < 0)
 				timeout = 0;
-			errno = err;
+			mono_set_errno (err);
 		}
 
 		if (ret == -1 && errno == EINTR) {
@@ -1674,7 +1686,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandleOut sockets,
 			/* Suspend requested? */
 			mono_thread_interruption_checkpoint_void ();
 
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	} while (ret == -1 && errno == EINTR);
 	
@@ -1837,7 +1849,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 		static MonoImage *mono_posix_image = NULL;
 		
 		if (mono_posix_image == NULL) {
-			mono_posix_image = mono_image_loaded ("Mono.Posix");
+			mono_posix_image = mono_image_loaded_internal ("Mono.Posix", FALSE);
 			if (!mono_posix_image) {
 				MonoAssemblyOpenRequest req;
 				mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
@@ -1919,14 +1931,14 @@ ipaddress_handle_to_struct_in_addr (MonoObjectHandle ipaddr)
 	struct in_addr inaddr;
 	MonoClassField *field;
 	
-	field = mono_class_get_field_from_name_full (mono_handle_class (ipaddr), "m_Address", NULL);
+	field = mono_class_get_field_from_name_full (mono_handle_class (ipaddr), "_addressOrScopeId", NULL);
 	g_assert (field);
 
 	/* No idea why .net uses a 64bit type to hold a 32bit value...
 	 *
 	 * Internal value of IPAddess is in little-endian order
 	 */
-	inaddr.s_addr = GUINT_FROM_LE ((guint32)MONO_HANDLE_GET_FIELD_VAL (ipaddr, guint64, field));
+	inaddr.s_addr = GUINT_FROM_LE ((guint32)MONO_HANDLE_GET_FIELD_VAL (ipaddr, guint32, field));
 	
 	return inaddr;
 }
@@ -1939,7 +1951,7 @@ ipaddress_handle_to_struct_in6_addr (MonoObjectHandle ipaddr)
 	MonoClassField *field;
 	int i;
 
-	field = mono_class_get_field_from_name_full (mono_handle_class (ipaddr), "m_Numbers", NULL);
+	field = mono_class_get_field_from_name_full (mono_handle_class (ipaddr), "_numbers", NULL);
 	g_assert (field);
 	MonoArrayHandle data = MONO_HANDLE_NEW_GET_FIELD (ipaddr, MonoArray, field);
 
@@ -1966,7 +1978,7 @@ ipaddress_handle_to_struct_in6_addr (MonoObjectHandle ipaddr)
 static int
 get_local_interface_id (int family)
 {
-#if !defined(HAVE_GETIFADDRS) || !defined(HAVE_IF_NAMETOINDEX)
+#if !(defined(HAVE_GETIFADDRS) || defined(HAVE_QP2GETIFADDRS)) || !defined(HAVE_IF_NAMETOINDEX)
 	return 0;
 #else
 	struct ifaddrs *ifap = NULL, *ptr;

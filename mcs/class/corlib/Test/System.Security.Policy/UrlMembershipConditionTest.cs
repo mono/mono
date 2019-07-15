@@ -61,15 +61,15 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void UrlMembershipCondition_FullUrlWithPort () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com:8080/index.html");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com:8080/index.html");
 		}
 
 		[Test]
 		public void UrlMembershipCondition_GoMonoWebUrl () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com/");
-			Assert.AreEqual ("http://www.go-mono.com/", umc.Url, "Url");
-			Assert.AreEqual ("Url - http://www.go-mono.com/", umc.ToString (), "ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com/");
+			Assert.AreEqual ("http://www.example.com/", umc.Url, "Url");
+			Assert.AreEqual ("Url - http://www.example.com/", umc.ToString (), "ToString");
 
 			UrlMembershipCondition umc2 = (UrlMembershipCondition) umc.Copy ();
 			Assert.AreEqual (umc.Url, umc2.Url, "Copy.Url");
@@ -81,7 +81,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (umc.Url, umc3.Url, "ToXml/FromXml");
 
 			Assert.IsTrue (umc.Equals (umc2), "Equals");
-			UrlMembershipCondition umc4 = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc4 = new UrlMembershipCondition ("http://www.example.com");
 			// note that a last slash is added to Url - so it's equal
 			Assert.IsTrue (umc.Equals (umc4), "Equals-AutoAddedLastSlash");
 		}
@@ -89,9 +89,9 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void Url_AllGoMonoUrl () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com/*");
-			Assert.AreEqual ("http://www.go-mono.com/*", umc.Url, "Url");
-			Assert.AreEqual ("Url - http://www.go-mono.com/*", umc.ToString (), "ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com/*");
+			Assert.AreEqual ("http://www.example.com/*", umc.Url, "Url");
+			Assert.AreEqual ("Url - http://www.example.com/*", umc.ToString (), "ToString");
 
 			UrlMembershipCondition umc2 = (UrlMembershipCondition) umc.Copy ();
 			Assert.AreEqual (umc.Url, umc2.Url, "Copy.Url");
@@ -103,7 +103,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (umc.Url, umc3.Url, "ToXml/FromXml");
 
 			Assert.IsTrue (umc.Equals (umc2), "Equals");
-			UrlMembershipCondition umc4 = new UrlMembershipCondition ("http://www.go-mono.com/");
+			UrlMembershipCondition umc4 = new UrlMembershipCondition ("http://www.example.com/");
 			Assert.IsTrue (umc.Equals (umc4), "Equals-*");
 		}
 
@@ -117,51 +117,51 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void Url_NoProtocol () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("www.go-mono.com");
-			Assert.AreEqual ("www.go-mono.com", umc.Url, "Url");
-			Assert.AreEqual ("Url - www.go-mono.com", umc.ToString (), "ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("www.example.com");
+			Assert.AreEqual ("www.example.com", umc.Url, "Url");
+			Assert.AreEqual ("Url - www.example.com", umc.ToString (), "ToString");
 		}
 
 		[Test]
 		public void Url_WellKnownProtocol () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
-			Assert.AreEqual ("http://www.go-mono.com", umc.Url, "http-Url");
-			Assert.AreEqual ("Url - http://www.go-mono.com", umc.ToString (), "http-ToString");
-			umc = new UrlMembershipCondition ("https://www.go-mono.com");
-			Assert.AreEqual ("https://www.go-mono.com", umc.Url, "https-Url");
-			Assert.AreEqual ("Url - https://www.go-mono.com", umc.ToString (), "https-ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
+			Assert.AreEqual ("http://www.example.com", umc.Url, "http-Url");
+			Assert.AreEqual ("Url - http://www.example.com", umc.ToString (), "http-ToString");
+			umc = new UrlMembershipCondition ("https://www.example.com");
+			Assert.AreEqual ("https://www.example.com", umc.Url, "https-Url");
+			Assert.AreEqual ("Url - https://www.example.com", umc.ToString (), "https-ToString");
 
-			umc = new UrlMembershipCondition ("ftp://www.go-mono.com");
-			Assert.AreEqual ("ftp://www.go-mono.com", umc.Url, "ftp-Url");
-			Assert.AreEqual ("Url - ftp://www.go-mono.com", umc.ToString (), "ftp-ToString");
+			umc = new UrlMembershipCondition ("ftp://www.example.com");
+			Assert.AreEqual ("ftp://www.example.com", umc.Url, "ftp-Url");
+			Assert.AreEqual ("Url - ftp://www.example.com", umc.ToString (), "ftp-ToString");
 
-			umc = new UrlMembershipCondition ("file://www.go-mono.com");
-			Assert.AreEqual ("file://www.go-mono.com", umc.Url, "file-Url");
-			Assert.AreEqual ("Url - file://www.go-mono.com", umc.ToString (), "file-ToString");
+			umc = new UrlMembershipCondition ("file://www.example.com");
+			Assert.AreEqual ("file://www.example.com", umc.Url, "file-Url");
+			Assert.AreEqual ("Url - file://www.example.com", umc.ToString (), "file-ToString");
 		}
 
 		[Test]
 		public void Url_UnknownProtocol () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("mono://www.go-mono.com");
-			Assert.AreEqual ("mono://www.go-mono.com", umc.Url, "Url");
-			Assert.AreEqual ("Url - mono://www.go-mono.com", umc.ToString (), "ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("mono://www.example.com");
+			Assert.AreEqual ("mono://www.example.com", umc.Url, "Url");
+			Assert.AreEqual ("Url - mono://www.example.com", umc.ToString (), "ToString");
 		}
 
 		[Test]
 		public void Url_RelativePath () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com/path/../newpath/index.html");
-			Assert.AreEqual ("http://www.go-mono.com/path/../newpath/index.html", umc.Url, "Url");
-			Assert.AreEqual ("Url - http://www.go-mono.com/path/../newpath/index.html", umc.ToString (), "ToString");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com/path/../newpath/index.html");
+			Assert.AreEqual ("http://www.example.com/path/../newpath/index.html", umc.Url, "Url");
+			Assert.AreEqual ("Url - http://www.example.com/path/../newpath/index.html", umc.ToString (), "ToString");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Url_Null () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("ftp://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("ftp://www.example.com");
 			umc.Url = null;
 		}
 
@@ -169,14 +169,14 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (FormatException))]
 		public void Url_Empty () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("ftp://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("ftp://www.example.com");
 			umc.Url = String.Empty;
 		}
 
 		[Test]
 		public void Check () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 
 			Evidence e = null;
 			Assert.IsFalse (umc.Check (e), "Check(null)");
@@ -187,7 +187,7 @@ namespace MonoTests.System.Security.Policy {
 			e.AddHost (new Zone (SecurityZone.MyComputer));
 			Assert.IsFalse (umc.Check (e), "Check(zone)");
 
-			Url u = new Url ("http://www.go-mono.com");
+			Url u = new Url ("http://www.example.com");
 			e.AddAssembly (u);
 			Assert.IsFalse (umc.Check (e), "Check(url-assembly)");
 			e.AddHost (u);
@@ -197,16 +197,16 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void CheckPositive_Partial () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com/*");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com/*");
 			Evidence e = new Evidence ();
-			e.AddHost (new Url ("http://www.go-mono.com/index.html"));
+			e.AddHost (new Url ("http://www.example.com/index.html"));
 			Assert.IsTrue (umc.Check (e), "Check(+-)");
 		}
 
 		[Test]
 		public void CheckNegative () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			Evidence e = new Evidence ();
 			e.AddHost (new Url ("http://www.go-mono.org"));
 			Assert.IsFalse (umc.Check (e), "Check(-)");
@@ -215,10 +215,10 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void CheckMultipleEvidences () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			Evidence e = new Evidence ();
 			e.AddHost (new Url ("http://www.go-mono.org"));	// the bad
-			e.AddHost (new Url ("http://www.go-mono.com"));	// the good
+			e.AddHost (new Url ("http://www.example.com"));	// the good
 			e.AddHost (new Zone (SecurityZone.MyComputer));	// and the ugly (couldn't resist ;)
 			Assert.IsTrue (umc.Check (e), "Check(n)");
 			// check all Url evidence (i.e. do not stop at the first Url evidence)
@@ -227,8 +227,8 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void EqualsCaseSensitive_Http () 
 		{
-			UrlMembershipCondition umc1 = new UrlMembershipCondition ("http://www.go-mono.com");
-			UrlMembershipCondition umc2 = new UrlMembershipCondition ("http://www.Go-Mono.com");
+			UrlMembershipCondition umc1 = new UrlMembershipCondition ("http://www.example.com");
+			UrlMembershipCondition umc2 = new UrlMembershipCondition ("http://www.Example.com");
 			Assert.IsTrue (umc1.Equals (umc2), "CaseSensitive");
 		}
 
@@ -243,7 +243,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void EqualsNull () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			Assert.IsFalse (umc.Equals (null), "EqualsNull");
 		}
 
@@ -251,7 +251,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromXml_Null () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			umc.FromXml (null);
 		}
 
@@ -259,7 +259,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void FromXml_InvalidTag () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 			se.Tag = "IMonoship";
 			umc.FromXml (se);
@@ -268,7 +268,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_InvalidClass ()
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 			se.Attributes ["class"] = "Hello world";
 			umc.FromXml (se);
@@ -277,7 +277,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_NoClass ()
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 
 			SecurityElement w = new SecurityElement (se.Tag);
@@ -289,7 +289,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_InvalidVersion ()
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 
 			SecurityElement w = new SecurityElement (se.Tag);
@@ -302,7 +302,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void FromXml_NoVersion ()
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 
 			SecurityElement w = new SecurityElement (se.Tag);
@@ -316,7 +316,7 @@ namespace MonoTests.System.Security.Policy {
 #endif
 		public void FromXml_PolicyLevel () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 			// is it accepted for all policy levels ?
 			IEnumerator e = SecurityManager.PolicyHierarchy ();
@@ -332,7 +332,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToXml_Null () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			// no ArgumentNullException here
 			SecurityElement se = umc.ToXml (null);
 			Assert.IsNotNull (se, "ToXml(null)");
@@ -344,7 +344,7 @@ namespace MonoTests.System.Security.Policy {
 #endif
 		public void ToXml_PolicyLevel () 
 		{
-			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc.ToXml ();
 			string s = umc.ToXml ().ToString ();
 			// is it accepted for all policy levels ?
@@ -361,7 +361,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToFromXmlRoundTrip () 
 		{
-			UrlMembershipCondition umc1 = new UrlMembershipCondition ("http://www.go-mono.com");
+			UrlMembershipCondition umc1 = new UrlMembershipCondition ("http://www.example.com");
 			SecurityElement se = umc1.ToXml ();
 
 			UrlMembershipCondition umc2 = new UrlMembershipCondition ("*");

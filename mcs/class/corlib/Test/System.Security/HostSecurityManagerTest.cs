@@ -28,7 +28,7 @@
 //
 
 // MOBILE profile lacks some (of the few) CAS features required to execute those tests
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using NUnit.Framework;
 using System;

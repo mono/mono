@@ -188,7 +188,7 @@ namespace MonoTests.System.Net {
 		public void Host ()
 		{
 			SocketPermissionAttribute a = new SocketPermissionAttribute (SecurityAction.Assert);
-			a.Host = "www.mono-project.com";
+			a.Host = "www.example.com";
 		}
 
 		[Test]

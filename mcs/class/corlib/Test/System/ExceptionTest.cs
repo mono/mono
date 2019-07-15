@@ -407,15 +407,21 @@ namespace MonoTests.System
 		}
 
 #if !MOBILE
-		// Ensure that we can convert a stacktrace to a
-		// telemetry message
-		//
-		[Test]
-		[Category("NotOnWindows")]
-		public void StacktraceToState ()
+		void NestedStackTraces (int depth)
+		{
+			if (depth == 0)
+				throw new ArgumentException ("Depth 0 exception");
+
+			try {
+				NestedStackTraces (depth - 1);
+			} catch (Exception exc) {
+				throw new Exception (String.Format ("Depth {0} exception, expect nested",  depth), exc);
+			}
+		}
+		void StacktraceToStateTest (int depth)
 		{
 			try {
-				throw new Exception ("#0");
+				NestedStackTraces (depth);
 			} catch (Exception exc) {
 				var monoType = Type.GetType ("Mono.Runtime", false);
 				var convert = monoType.GetMethod("ExceptionToState", BindingFlags.NonPublic | BindingFlags.Static);
@@ -426,57 +432,39 @@ namespace MonoTests.System
 				var portable_hash = output.Item2;
 				var unportable_hash = output.Item3;
 
+				// To see what we're working with
+				// Console.WriteLine (dump);
+
 				Assert.IsTrue (portable_hash != 0, "#1");
 				Assert.IsTrue (unportable_hash != 0, "#2");
 				Assert.IsTrue (dump.Length > 0, "#3");
-
-				// Console.WriteLine (dump);
-				// dump should look something like:
-				// {
-				//  "protocol_version" : "0.0.1",
-				//  "configuration" : {
-				//    "version" : "5.19.0 (managed_telemetry_pipeline/d342c73e320 Wed Aug 15 14:40:40 EDT 2018)",
-				//    "tlc" : "normal",
-				//    "sigsgev" : "altstack",
-				//    "notifications" : "kqueue",
-				//    "architecture" : "amd64",
-				//    "disabled_features" : "none",
-				//    "smallconfig" : "disabled",
-				//    "bigarrays" : "disabled",
-				//    "softdebug" : "enabled",
-				//    "interpreter" : "enabled",
-				//    "llvm_support" : "disabled",
-				//    "suspend" : "hybrid"
-				//  },
-				//  "memory" : {
-				//    "Resident Size" : "40693760",
-				//    "Virtual Size" : "4521312256",
-				//    "minor_gc_time" : "216992",
-				//    "major_gc_time" : "0",
-				//    "minor_gc_count" : "6",
-				//    "major_gc_count" : "0",
-				//    "major_gc_time_concurrent" : "0"
-				//  },
-				//  "threads" : [
-				//    {
-				//      "is_managed" : false,
-				//      "managed_thread_ptr" : "0x0",
-				//      "thread_info_addr" : "0x0",
-				//      "native_thread_id" : "0x0",
-				//      "managed_exception_type" : "System.Exception",
-				//      "managed_frames" : [
-				//        {
-				//          "is_managed" : "true",
-				//          "guid" : "43A03618-E657-44B0-B9FA-F63314A3C1B2",
-				//          "token" : "0x60008da",
-				//          "native_offset" : "0xb2",
-				//          "il_offset" : "0x00000"
-				//        }
-				//      ]
-				//    }
-				//  ]
-				//  }
 			}
+		}
+
+		// Ensure that we can convert a stacktrace to a
+		// telemetry message
+		//
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateBase ()
+		{
+			StacktraceToStateTest (0);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateDeeper ()
+		{
+			StacktraceToStateTest (2);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateOverflow ()
+		{
+			// We set a limit on 15 nested exceptions. Lets check that we're valid
+			// when exceeding that limit.
+			StacktraceToStateTest (20);
 		}
 
 		void DumpSingle ()
@@ -527,9 +515,10 @@ namespace MonoTests.System
 		{
 			var monoType = Type.GetType ("Mono.Runtime", false);
 			var convert = monoType.GetMethod("CheckCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
-			var result = (int) convert.Invoke(null, new object[] { "./", true });
-			var monoSummaryDone = 8;
-			Assert.AreEqual (monoSummaryDone, result, "#DLC1");
+			var result = convert.Invoke(null, new object[] { "./", true });
+			var enumType = monoType.Assembly.GetType("Mono.Runtime+CrashReportLogLevel");
+			var doneEnum = Enum.Parse(enumType, "MonoSummaryDone");
+			Assert.AreEqual (doneEnum, result, "#DLC1");
 		}
 
 		[Test]

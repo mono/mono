@@ -6,6 +6,9 @@
 #Disables building iOS
 #DISABLE_IOS = 1
 
+#Disables building Mac
+#DISABLE_MAC = 1
+
 #Disables build WebAssembly
 #DISABLE_WASM = 1
 

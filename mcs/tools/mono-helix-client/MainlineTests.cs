@@ -51,6 +51,8 @@ public class MainlineTests : HelixTestBase
         CreateXunitWorkItem ("net_4_x_System.Data_xunit-test.dll");
         CreateXunitWorkItem ("net_4_x_System.Core_xunit-test.dll");
         CreateXunitWorkItem ("net_4_x_System.ComponentModel.Composition_xunit-test.dll");
+        CreateXunitWorkItem ("net_4_x_System.Net.Http.FunctionalTests_xunit-test.dll");
+        CreateXunitWorkItem ("net_4_x_System.Net.Http.UnitTests_xunit-test.dll");
         CreateXunitWorkItem ("net_4_x_Mono.Profiler.Log_xunit-test.dll");
         CreateXunitWorkItem ("net_4_x_Microsoft.CSharp_xunit-test.dll");
 
@@ -84,6 +86,7 @@ public class MainlineTests : HelixTestBase
         CreateNunitWorkItem ("net_4_x_System.Runtime.Caching_test.dll");
         CreateNunitWorkItem ("net_4_x_System.Numerics_test.dll");
         CreateNunitWorkItem ("net_4_x_System.Net.Http_test.dll");
+        CreateNunitWorkItem ("net_4_x_System.Net.Http.WebRequest_test.dll");
         //CreateNunitWorkItem ("net_4_x_System.Messaging_test.dll"); // needs RabbitMQ installed and hangs on process exit
         CreateNunitWorkItem ("net_4_x_System.Json_test.dll");
         CreateNunitWorkItem ("net_4_x_System.Json.Microsoft_test.dll");

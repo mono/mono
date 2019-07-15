@@ -5,8 +5,8 @@ The goal of this doc is to get you setup with a workable WebAssembly SDK and run
 ## Content
 
 &nbsp;&nbsp;&nbsp;&nbsp;[Requirements](#requirements)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Create sampe](#create-sample)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Serving sampe](#serving-sample)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Create sample](#create-sample)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Serving sample](#serving-sample)  
   
 
 ## Requirements

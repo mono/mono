@@ -335,8 +335,11 @@ public unsafe class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_out_unicode", CharSet=CharSet.Unicode)]
 	public static extern void mono_test_marshal_stringbuilder_out_unicode (out StringBuilder sb);
 
-	[DllImport ("libtest", EntryPoint="mono_test_last_error", SetLastError=true)]
-	public static extern void mono_test_last_error (int err);
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_utf16_tolower", CharSet=CharSet.Unicode)]
+	public static extern void mono_test_marshal_stringbuilder_utf16_tolower (StringBuilder sb, int len);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_utf16_tolower", CharSet=CharSet.Unicode)]
+	public static extern void mono_test_marshal_stringbuilder_utf16_tolower_in ([In] StringBuilder sb, int len);
 
 	[DllImport ("libtest", EntryPoint="mono_test_asany")]
 	public static extern int mono_test_asany ([MarshalAs (UnmanagedType.AsAny)] object o, int what);
@@ -942,6 +945,28 @@ public unsafe class Tests {
 		return 0;
 	}
 
+	public static int test_0_marshal_stringbuilder_utf16_tolower () {
+		StringBuilder sb = new StringBuilder (3);
+		sb.Append ("ABC").Append ("DEF");
+		
+		mono_test_marshal_stringbuilder_utf16_tolower (sb, sb.Length);
+		if (sb.ToString () != "abcdef")
+			return 1;
+
+		return 0;
+	}
+
+	public static int test_0_marshal_stringbuilder_utf16_tolower_in () {
+		StringBuilder sb = new StringBuilder (3);
+		sb.Append ("ABC").Append ("DEF");
+		
+		mono_test_marshal_stringbuilder_utf16_tolower_in (sb, sb.Length);
+		if (sb.ToString () != "ABCDEF")
+			return 1;
+
+		return 0;
+	}
+
 	public static int test_0_marshal_empty_string_array () {
 		return mono_test_marshal_empty_string_array (null);
 	}
@@ -966,14 +991,6 @@ public unsafe class Tests {
 		if (sb2.ToString () != "ABC")
 			return 6;
 		return 0;
-	}
-
-	public static int test_0_last_error () {
-		mono_test_last_error (5);
-		if (Marshal.GetLastWin32Error () == 5)
-			return 0;
-		else
-			return 1;
 	}
 
 	public static int test_0_entry_point_not_found () {

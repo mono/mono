@@ -200,6 +200,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void EditingCellFormattedValue()
+		{
+			var boolCheckBoxCell = new DataGridViewCheckBoxCell();
+			Assert.AreEqual(false, boolCheckBoxCell.EditingCellFormattedValue, "A1");
+			boolCheckBoxCell.EditingCellFormattedValue = true;
+			Assert.AreEqual(true, boolCheckBoxCell.EditingCellFormattedValue, "A2");
+
+			var treeStateCheckBoxCell = new DataGridViewCheckBoxCell(true);
+			Assert.AreEqual(CheckState.Unchecked, treeStateCheckBoxCell.EditingCellFormattedValue, "A3");
+			treeStateCheckBoxCell.EditingCellFormattedValue = CheckState.Checked;
+			Assert.AreEqual(CheckState.Checked, treeStateCheckBoxCell.EditingCellFormattedValue, "A4");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void BoolEditingCellFormattedValueCheckStateSet()
+		{
+			var boolCheckBoxCell = new DataGridViewCheckBoxCell();
+			boolCheckBoxCell.EditingCellFormattedValue = CheckState.Checked;
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TreeStateEditingCellFormattedValueBoolSet()
+		{
+			var treeStateCheckBoxCell = new DataGridViewCheckBoxCell(true);
+			treeStateCheckBoxCell.EditingCellFormattedValue = false;
+		}
+
+		[Test]
 		public void FormattedValueType ()
 		{
 			BaseCell c = new BaseCell ();

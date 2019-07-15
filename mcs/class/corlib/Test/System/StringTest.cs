@@ -545,6 +545,7 @@ public class StringTest
 	}
 
 	[Test] // bug #316666
+	[Category ("ManagedCollator")]
 	public void CompareNotWorking ()
 	{
 		Assert.AreEqual (String.Compare ("A", "a"), 1, "A03");
@@ -970,6 +971,7 @@ public class StringTest
 	}
 
 	[Test] // EndsWith (String, Boolean, CultureInfo)
+	[Category ("ManagedCollator")]
 	public void EndsWith3 ()
 	{
 		string s;
@@ -1271,6 +1273,7 @@ public class StringTest
 	}
 
 	[Test]
+	[Category ("ManagedCollator")]
 	public void IndexOf ()
 	{
 		string s1 = "original";
@@ -1385,6 +1388,7 @@ public class StringTest
 	}
 
 	[Test] // IndexOf (String, Int32)
+	[Category ("ManagedCollator")]
 	public void IndexOf4 ()
 	{
 		string s = "testing123456";
@@ -1415,6 +1419,7 @@ public class StringTest
 	}
 
 	[Test] // IndexOf (String, StringComparison)
+	[Category ("ManagedCollator")]
 	public void IndexOf5 ()
 	{
 		string s = "testing123456";
@@ -1618,6 +1623,7 @@ public class StringTest
 	}
 
 	[Test]
+	[Category ("ManagedCollator")]
 	public void IndexOfStringComparisonCurrentCulture_Empty ()
 	{
 		Assert.AreEqual (1, "Mono".IndexOf ("", 1, StringComparison.CurrentCultureIgnoreCase));
@@ -1764,6 +1770,7 @@ public class StringTest
 	}
 
 	[Test] // IndexOf (String, Int32, Int32)
+	[Category ("ManagedCollator")]
 	public void IndexOf7 ()
 	{
 		string s = "testing123456test";
@@ -2299,6 +2306,7 @@ public class StringTest
 	}
 
 	[Test]
+	[Category ("ManagedCollator")]
 	public void IndexOfIsCultureAwareWhileContainsIsNot ()
 	{
 		string a = "encyclopædia";

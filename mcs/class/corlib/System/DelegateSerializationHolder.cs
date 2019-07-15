@@ -77,7 +77,7 @@ namespace System
 				Type dt = dasm.GetType (type);
 
 				if (realTarget != null) {
-#if !DISABLE_REMOTING
+#if FEATURE_REMOTING
 					if (RemotingServices.IsTransparentProxy (realTarget)) {
 						// The call to IsInstanceOfType will force the proxy
 						// to load the real type of the remote object. This is

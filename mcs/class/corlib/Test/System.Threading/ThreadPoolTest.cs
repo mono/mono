@@ -183,22 +183,27 @@ namespace MonoTests.System.Threading
 		[Category ("MultiThreaded")]
 		public void GetAvailableThreads ()
 		{
+			int cpuCount = Environment.ProcessorCount;
+
+			if (cpuCount > 16)
+				Assert.Inconclusive ("This test doesn't work well with a high number of processor cores.");
+
 			ManualResetEvent mre = new ManualResetEvent (false);
 			var sw = Stopwatch.StartNew ();
 			int i, workerThreads, completionPortThreads;
 
 			try {
-				Assert.IsTrue (ThreadPool.SetMaxThreads (Environment.ProcessorCount, Environment.ProcessorCount));
+				Assert.IsTrue (ThreadPool.SetMaxThreads (cpuCount, cpuCount));
 
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 					if (workerThreads == 0)
 						break;
 
-					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
-
-					if (sw.Elapsed.TotalSeconds >= 10)
+					if (sw.Elapsed.TotalSeconds >= 30) {
+						Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 						Assert.Fail ("did not reach 0 available threads");
+					}
 
 					ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
 					Thread.Sleep (1);

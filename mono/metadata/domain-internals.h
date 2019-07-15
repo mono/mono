@@ -23,7 +23,7 @@
 /* Mono appdomain support is deeply itegrated in the runtime, as a result, even
  * though .NET Standard does not include System.AppDomain in
  * System.Private.CoreLib, we still depend on having an appdomain class.
- * So we move it to System.Mono.MonoDomain
+ * So we move it to Mono.MonoDomain
  *
  */
 #ifndef ENABLE_NETCORE
@@ -32,9 +32,9 @@
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "System"
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME "AppDomainSetup"
 #else
-#define MONO_APPDOMAIN_CLASS_NAME_SPACE "System.Mono"
+#define MONO_APPDOMAIN_CLASS_NAME_SPACE "Mono"
 #define MONO_APPDOMAIN_CLASS_NAME "MonoDomain"
-#define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "System.Mono"
+#define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "Mono"
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME "MonoDomainSetup"
 #endif
 
@@ -419,7 +419,10 @@ struct _MonoDomain {
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
-	
+
+	/* Information maintained by mono-debug.c */
+	gpointer debug_info;
+
 	/* Contains the compiled runtime invoke wrapper used by finalizers */
 	gpointer            finalize_runtime_invoke;
 
@@ -646,5 +649,14 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
+
+void
+mono_runtime_register_appctx_properties (int nprops, const char **keys,  const char **values);
+
+void
+mono_runtime_install_appctx_properties (void);
+
+gboolean 
+mono_domain_set_fast (MonoDomain *domain, gboolean force);
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

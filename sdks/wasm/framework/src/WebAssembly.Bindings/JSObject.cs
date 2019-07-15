@@ -7,26 +7,38 @@ namespace WebAssembly {
 	///   JSObjects are wrappers for a native JavaScript object, and
 	///   they retain a reference to the JavaScript object for the lifetime of this C# object.
 	/// </summary>
-	public class JSObject : IDisposable {
-		public int JSHandle { get; internal set; }
-		internal GCHandle Handle;
+	public class JSObject : AnyRef, IJSObject, IDisposable {
 		internal object RawObject;
+
 		// to detect redundant calls
 		public bool IsDisposed { get; internal set; }
 
-		internal JSObject (int js_handle)
+		public JSObject() : this(Runtime.New<Object> ())
 		{
-			this.JSHandle = js_handle;
-			this.Handle = GCHandle.Alloc (this);
+			var result = Runtime.BindCoreObject (JSHandle, (int)(IntPtr)Handle, out int exception);
+			if (exception != 0)
+				throw new JSException ($"JSObject Error binding: {result.ToString ()}");
+
 		}
 
-		internal JSObject (int js_id, object raw_obj)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:WebAssembly.JSObject"/> class.
+		/// </summary>
+		/// <param name="js_handle">Js handle.</param>
+		internal JSObject (IntPtr js_handle) : base (js_handle)
 		{
-			this.JSHandle = js_id;
-			this.Handle = GCHandle.Alloc (this);
-			this.RawObject = raw_obj;
+			//Console.WriteLine ($"JSObject: {js_handle}");
 		}
 
+		internal JSObject (int js_handle) : base ((IntPtr)js_handle)
+		{
+			//Console.WriteLine ($"JSObject: {js_handle}");
+		}
+
+		internal JSObject (int js_handle, object raw_obj) : base (js_handle)
+		{
+			RawObject = raw_obj;
+		}
 
 		/// <returns>
 		///   <para>
@@ -104,6 +116,29 @@ namespace WebAssembly {
 				throw new JSException ($"Error setting {name} on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
 
 		}
+
+		/// <summary>
+		/// Gets or sets the length.
+		/// </summary>
+		/// <value>The length.</value>
+		public int Length {
+			get => Convert.ToInt32(GetObjectProperty ("length"));
+			set => SetObjectProperty ("length", value, false);
+		}
+
+		/// <summary>
+		/// Returns a boolean indicating whether the object has the specified property as its own property (as opposed to inheriting it).
+		/// </summary>
+		/// <returns><c>true</c>, if the object has the specified property as own property, <c>false</c> otherwise.</returns>
+		/// <param name="prop">The String name or Symbol of the property to test.</param>
+		public bool HasOwnProperty (string prop) => (bool)Invoke ("hasOwnProperty", prop);
+
+		/// <summary>
+		/// Returns a boolean indicating whether the specified property is enumerable.
+		/// </summary>
+		/// <returns><c>true</c>, if the specified property is enumerable, <c>false</c> otherwise.</returns>
+		/// <param name="prop">The String name or Symbol of the property to test.</param>
+		public bool PropertyIsEnumerable (string prop) => (bool)Invoke ("propertyIsEnumerable", prop);
 
 		protected void FreeHandle ()
 		{

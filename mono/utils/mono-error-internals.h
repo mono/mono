@@ -170,6 +170,9 @@ void
 mono_error_set_argument_null (MonoError *oerror, const char *argument, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
+mono_error_set_argument_out_of_range (MonoError *error, const char *name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
+
+void
 mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
@@ -183,6 +186,9 @@ mono_error_set_not_implemented (MonoError *error, const char *msg_format, ...) M
 
 void
 mono_error_set_not_supported (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
+
+void 
+mono_error_set_ambiguous_implementation (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 void
 mono_error_set_invalid_operation (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
@@ -253,8 +259,6 @@ mono_error_set_cannot_unload_appdomain (MonoError *error, const char *message)
 	mono_error_set_generic_error (error, "System", "CannotUnloadAppDomainException", "%s", message);
 }
 
-void
-mono_error_set_argument_out_of_range (MonoError *error, const char *name);
 
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out);
@@ -279,5 +283,61 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
+
+#if HOST_WIN32
+#if HOST_X86 || HOST_AMD64
+
+#include <windows.h>
+
+// Single instruction inlinable form of GetLastError.
+//
+// Naming violation so can search disassembly for GetLastError.
+//
+#define GetLastError mono_GetLastError
+
+static inline
+unsigned long
+__stdcall
+GetLastError (void)
+{
+#if HOST_X86
+    return __readfsdword (0x34);
+#elif HOST_AMD64
+    return __readgsdword (0x68);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+// Single instruction inlinable valid subset of SetLastError.
+//
+// Naming violation so can search disassembly for SetLastError.
+//
+// This is useful, for example, if you want to set a breakpoint
+// on SetLastError, but do not want to break on merely "restoring" it,
+// only "originating" it.
+//
+// A generic name is used in case there are other use-cases.
+//
+static inline
+void
+__stdcall
+mono_SetLastError (unsigned long err)
+{
+#if HOST_X86
+    __writefsdword (0x34, err);
+#elif HOST_AMD64
+    __writegsdword (0x68, err);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+#else // arm, arm64, etc.
+
+#define mono_SetLastError SetLastError
+
+#endif // processor
+#endif // win32
 
 #endif

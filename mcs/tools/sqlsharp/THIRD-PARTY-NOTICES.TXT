@@ -1,0 +1,29 @@
+Mono uses third-party libraries or other resources that may be
+distributed under licenses different than the Mono software.
+
+Attributions and license notices for test cases originally authored by
+third parties can be found in the respective test directories.
+
+In the event that we accidentally failed to list a required notice, please
+bring it to our attention. Post an issue or email us:
+
+            dotnet@microsoft.com
+
+The attached notices are provided for information only.
+
+License notice for Daniel Morgan
+--------------------------------
+
+//                  This program is included in Mono and is licenced under the GPL.
+//                  http://www.fsf.org/licenses/gpl.html  
+//
+//                  For more information about Mono, 
+//                  visit http://www.mono-project.com/
+
+// Author:
+//    Daniel Morgan <monodanmorg@yahoo.com>
+//
+// (C)Copyright 2002-2004, 2008 Daniel Morgan
+//
+
+Use: https://github.com/mono/mono/tree/61559965a188d03456d6f7840a0cdabdf35c2400/mcs/tools/sqlsharp

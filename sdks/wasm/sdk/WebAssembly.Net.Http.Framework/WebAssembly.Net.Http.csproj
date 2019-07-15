@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Include="..\..\..\wasm\framework\WebAssembly.Net.Http.dll" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />
     <None Include="..\..\..\wasm\framework\WebAssembly.Net.Http.pdb" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />
+    <None Include="..\..\..\wasm\framework\WebAssembly.Net.Http.xml" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebAssembly.Bindings.Framework\WebAssembly.Bindings.csproj" />

@@ -1,5 +1,5 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-targetNamespace="http://go-mono.com/tests" xmlns="http://go-mono.com/tests"
+targetNamespace="http://example.com/tests" xmlns="http://example.com/tests"
 elementFormDefault="qualified">
 	<xs:element name="note">
 		<xs:complexType>

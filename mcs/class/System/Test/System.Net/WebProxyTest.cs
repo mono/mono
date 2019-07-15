@@ -75,7 +75,7 @@ namespace MonoTests.System.Net
 			p.BypassArrayList.Add ("http://proxy2.contoso.com");
 			p.BypassArrayList.Add ("http://proxy2.contoso.com");
 			Assert.AreEqual (2, p.BypassList.Length, "#1");
-			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#2");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.example.com")), "#2");
 			Assert.IsTrue (p.IsBypassed (proxy2), "#3");
 			Assert.AreEqual (proxy2, p.GetProxy (proxy2), "#4");
 
@@ -127,7 +127,7 @@ namespace MonoTests.System.Net
 		public void IsByPassed ()
 		{
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);
-			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#1");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.example.com")), "#1");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost/index.html")), "#2");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost:8080/index.html")), "#3");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://loopback:8080/index.html")), "#4");
@@ -136,33 +136,33 @@ namespace MonoTests.System.Net
 			Assert.IsTrue (!p.IsBypassed (new Uri ("http://webserver.com/index.html")), "#7");
 
 			p = new WebProxy ("http://proxy.contoso.com", false);
-			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#11");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.example.com")), "#11");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost/index.html")), "#12: lamespec of ms.net");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost:8080/index.html")), "#13: lamespec of ms.net");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://loopback:8080/index.html")), "#14: lamespec of ms.net");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://127.0.0.01:8080/index.html")), "#15: lamespec of ms.net");
 			Assert.IsTrue (!p.IsBypassed (new Uri ("http://webserver/index.html")), "#16");
 
-			p.BypassList = new string [] { "google.com", "contoso.com" };
-			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#20");
-			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.GOOGLE.com")), "#21");
+			p.BypassList = new string [] { "example.com", "contoso.com" };
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.example.com")), "#20");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.EXAMPLE.com")), "#21");
 			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.contoso.com:8080/foo/bar/index.html")), "#22");
 			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.contoso2.com:8080/foo/bar/index.html")), "#23");
 			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.foo.com:8080/contoso.com.html")), "#24");
 
 			p.BypassList = new string [] { "https" };
-			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#30");
-			Assert.IsTrue (p.IsBypassed (new Uri ("https://www.google.com")), "#31");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.example.com")), "#30");
+			Assert.IsTrue (p.IsBypassed (new Uri ("https://www.example.com")), "#31");
 		}
 
 		[Test]
 		public void IsByPassed_Address_Null ()
 		{
 			WebProxy p = new WebProxy ((Uri) null, false);
-			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#1");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.example.com")), "#1");
 
 			p = new WebProxy ((Uri) null, true);
-			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#2");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.example.com")), "#2");
 		}
 
 		[Test]

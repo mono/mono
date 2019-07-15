@@ -120,6 +120,7 @@
 #define g_markup_parse_context_parse monoeg_g_markup_parse_context_parse
 #define g_memdup monoeg_g_memdup
 #define g_mem_set_vtable monoeg_g_mem_set_vtable
+#define g_mem_get_vtable monoeg_g_mem_get_vtable
 #define g_mkdtemp monoeg_g_mkdtemp
 #define g_module_build_path monoeg_g_module_build_path
 #define g_module_close monoeg_g_module_close
@@ -132,8 +133,14 @@
 #define g_pattern_match_string monoeg_g_pattern_match_string
 #define g_pattern_spec_free monoeg_g_pattern_spec_free
 #define g_pattern_spec_new monoeg_g_pattern_spec_new
+#define g_async_safe_fgets monoeg_g_async_safe_fgets
+#define g_async_safe_fprintf monoeg_g_async_safe_fprintf
+#define g_async_safe_vfprintf monoeg_g_async_safe_vfprintf
+#define g_async_safe_printf monoeg_g_async_safe_printf
+#define g_async_safe_vprintf monoeg_g_async_safe_vprintf
 #define g_print monoeg_g_print
 #define g_printf monoeg_g_printf
+#define g_printv monoeg_g_printv
 #define g_printerr monoeg_g_printerr
 #define g_propagate_error monoeg_g_propagate_error
 #define g_ptr_array_add monoeg_g_ptr_array_add
@@ -225,6 +232,7 @@
 #define g_strlcpy monoeg_g_strlcpy
 #define g_strndup monoeg_g_strndup
 #define g_strnfill monoeg_g_strnfill
+#define g_strnlen monoeg_g_strnlen
 #define g_strreverse monoeg_g_strreverse
 #define g_strsplit monoeg_g_strsplit
 #define g_strsplit_set monoeg_g_strsplit_set
@@ -268,6 +276,8 @@
 #define g_utf8_to_ucs4_fast monoeg_g_utf8_to_ucs4_fast
 #define g_vasprintf monoeg_g_vasprintf
 #define g_win32_getlocale monoeg_g_win32_getlocale
+#define g_assertion_disable_global monoeg_assertion_disable_global
+#define g_assert_abort monoeg_assert_abort
 #define g_assertion_message monoeg_assertion_message
 #define g_get_assertion_message monoeg_get_assertion_message
 #define g_malloc monoeg_malloc
@@ -279,6 +289,7 @@
 #define g_strdup monoeg_strdup
 #define g_ucs4_to_utf16_len monoeg_ucs4_to_utf16_len
 #define g_utf16_to_ucs4_len monoeg_utf16_to_ucs4_len
+#define g_utf16_len monoeg_utf16_len
 
 #define g_ascii_strcasecmp monoeg_ascii_strcasecmp
 #define g_ascii_strup monoeg_ascii_strup

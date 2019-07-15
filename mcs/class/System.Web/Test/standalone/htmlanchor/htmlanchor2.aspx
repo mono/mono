@@ -2,8 +2,8 @@
 <script runat="server">
 	void Page_Load (object sender, EventArgs e)
 	{
-		a1.HRef = "http://www.go-mono.com";
-		a2.HRef = "http://www.mono-project.com";
+		a1.HRef = "http://www.example.com";
+		a2.HRef = "http://www.example.org";
 		a3.HRef = ":@\\";
 
 		a2.Name = "Name";
@@ -38,7 +38,7 @@
 <a id="a1" target="_blank" runat="server">Go mono!</a><hr>
 <a id="a2" target="_parent" runat="server">Go mono!</a><hr>
 <a id="a3" target="_self" runat="server">Go mono!</a><hr>
-<a id="a4" href="http://www.go-mono.com#4" target="mono" runat="server">Go mono!</a><hr>
+<a id="a4" href="http://www.example.com#4" target="mono" runat="server">Go mono!</a><hr>
 <form runat="server">
 <a id="a5" href="oops" title="t" runat="server" OnServerClick="Click">Click1</a><hr>
 <a id="a6" runat="server" OnServerClick="HtmlAnchor_Click">Click2</a><hr>

@@ -25,20 +25,15 @@
 ../../../external/corefx/src/System.IO.FileSystem/tests/FSAssert.cs
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AdminHelpers.cs
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/ReadWriteAllLines.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/ReadWriteAllText.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/Copy.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/Create.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/Delete.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/Move.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs:StaticGetSetTimes.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/*.cs:GetSetTimes.cs
 ../../../external/corefx/src/System.IO.FileSystem/tests/FileStream/ctor_*.cs
 ../../../external/corefx/src/System.IO.FileSystem/tests/PortedCommon/*.cs
 ../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs:GetSetTimes.cs
 
 # System.IO.Directory
-../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs:GetSetTimes.cs
 
 # System.IO.DirectoryInfo
-../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs:GetSetTimes.cs

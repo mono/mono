@@ -4197,7 +4197,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME && !FULL_AOT_INTERP
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !FULL_AOT_INTERP && !DISABLE_REMOTING
 		[Test]
 		public void NFIFromBug55978 ()
 		{

@@ -286,5 +286,12 @@ namespace System
 
 			return !d1.Equals (d2);
 		}
+
+#if NETCORE
+		internal override object GetTarget()
+		{
+			return delegates?.Length > 0 ? delegates [delegates.Length - 1].GetTarget () : base.GetTarget ();
+		}
+#endif
 	}
 }

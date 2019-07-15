@@ -13,8 +13,8 @@
   <ItemGroup>
     <None Include="..\..\..\out\wasm-bcl\wasm_tools\monolinker.exe" Link="monolinker.exe" CopyToOutputDirectory="Always" Pack="true" PackagePath="$(BuildOutputTargetFolder)\tools" />
     <None Include="..\..\..\out\wasm-bcl\wasm_tools\Mono.Cecil.dll" Link="Mono.Cecil.dll" CopyToOutputDirectory="Always" Pack="true" PackagePath="$(BuildOutputTargetFolder)\tools" />
-    <None Update="Mono.WebAssembly.Build.targets" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)netstandard2.0" />
-    <None Update="Mono.WebAssembly.Build.props" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
+    <None Update="Mono.WebAssembly.Build.targets" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)\netstandard2.0" />
+    <None Update="Mono.WebAssembly.Build.props" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)\netstandard2.0" />
     <None Update="RuntimeJs.tt" Generator="TextTemplatingFilePreprocessor" LastGenOutput="RuntimeJs.cs" />
     <Compile Update="RuntimeJs.cs" DependentUpon="RuntimeJs.tt" />
   </ItemGroup>

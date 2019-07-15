@@ -55,8 +55,10 @@
 
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/debug-internals.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/environment.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/assembly.h>
@@ -90,6 +92,10 @@
 */
 #if !defined (TARGET_IOS)
 #define TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
+#endif
+
+#if DISABLE_SOCKETS
+#define DISABLE_SOCKET_TRANSPORT
 #endif
 
 #ifndef DISABLE_SDB
@@ -256,6 +262,8 @@ struct _DebuggerTlsData {
 	// The state that the debugger expects the thread to be in
 	MonoDebuggerThreadState thread_state;
 	MonoStopwatch step_time;
+
+	gboolean gc_finalizing;
 };
 
 typedef struct {
@@ -274,7 +282,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 49
+#define MINOR_VERSION 52
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -393,7 +401,8 @@ typedef enum {
 	CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY = 4,
 	CMD_APPDOMAIN_CREATE_STRING = 5,
 	CMD_APPDOMAIN_GET_CORLIB = 6,
-	CMD_APPDOMAIN_CREATE_BOXED_VALUE = 7
+	CMD_APPDOMAIN_CREATE_BOXED_VALUE = 7,
+	CMD_APPDOMAIN_CREATE_BYTE_ARRAY = 8,
 } CmdAppDomain;
 
 typedef enum {
@@ -408,7 +417,8 @@ typedef enum {
 	CMD_ASSEMBLY_GET_IS_DYNAMIC = 9,
 	CMD_ASSEMBLY_GET_PDB_BLOB = 10,
 	CMD_ASSEMBLY_GET_TYPE_FROM_TOKEN = 11,
-	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12
+	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12,
+	CMD_ASSEMBLY_HAS_DEBUG_INFO = 13
 } CmdAssembly;
 
 typedef enum {
@@ -656,6 +666,10 @@ static void invalidate_each_thread (gpointer key, gpointer value, gpointer user_
 static void assembly_load (MonoProfiler *prof, MonoAssembly *assembly);
 
 static void assembly_unload (MonoProfiler *prof, MonoAssembly *assembly);
+
+static void gc_finalizing (MonoProfiler *prof);
+
+static void gc_finalized (MonoProfiler *prof);
 
 static void emit_assembly_load (gpointer assembly, gpointer user_data);
 
@@ -966,17 +980,19 @@ debugger_agent_init (void)
 	mono_profiler_set_assembly_unloading_callback (prof, assembly_unload);
 	mono_profiler_set_jit_done_callback (prof, jit_done);
 	mono_profiler_set_jit_failed_callback (prof, jit_failed);
-
+	mono_profiler_set_gc_finalizing_callback (prof, gc_finalizing);
+	mono_profiler_set_gc_finalized_callback (prof, gc_finalized);
+	
 	mono_native_tls_alloc (&debugger_tls_id, NULL);
 
 	/* Needed by the hash_table_new_type () call below */
 	mono_gc_base_init ();
 
-	thread_to_tls = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger TLS Table");
+	thread_to_tls = mono_g_hash_table_new_type_internal ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger TLS Table");
 
-	tid_to_thread = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Table");
+	tid_to_thread = mono_g_hash_table_new_type_internal (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Table");
 
-	tid_to_thread_obj = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Object Table");
+	tid_to_thread_obj = mono_g_hash_table_new_type_internal (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Object Table");
 
 	pending_assembly_loads = g_ptr_array_new ();
 
@@ -1235,7 +1251,10 @@ socket_transport_connect (const char *address)
 
 			/* No address, generate one */
 			sfd = socket (AF_INET, SOCK_STREAM, 0);
-			g_assert (sfd);
+			if (sfd == -1) {
+				g_printerr ("debugger-agent: Unable to create a socket: %s\n", strerror (get_last_sock_error ()));
+				exit (1);
+			}
 
 			/* This will bind the socket to a random port */
 			res = listen (sfd, 16);
@@ -1896,22 +1915,6 @@ buffer_reply_packet (int id, int error, Buffer *data)
 	nreply_packets ++;
 }
 
-/*
- * OBJECT IDS
- */
-
-/*
- * Represents an object accessible by the debugger client.
- */
-typedef struct {
-	/* Unique id used in the wire protocol to refer to objects */
-	int id;
-	/*
-	 * A weakref gc handle pointing to the object. The gc handle is used to 
-	 * detect if the object was garbage collected.
-	 */
-	guint32 handle;
-} ObjRef;
 
 /* Maps objid -> ObjRef */
 /* Protected by the loader lock */
@@ -1921,22 +1924,14 @@ static GHashTable *obj_to_objref;
 /* Protected by the dbg lock */
 static MonoGHashTable *suspended_objs;
 
-static void
-free_objref (gpointer value)
-{
-	ObjRef *o = (ObjRef *)value;
 
-	mono_gchandle_free_internal (o->handle);
-
-	g_free (o);
-}
 
 static void
 objrefs_init (void)
 {
-	objrefs = g_hash_table_new_full (NULL, NULL, NULL, free_objref);
+	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
 	obj_to_objref = g_hash_table_new (NULL, NULL);
-	suspended_objs = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Suspended Object Table");
+	suspended_objs = mono_g_hash_table_new_type_internal ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Suspended Object Table");
 }
 
 static void
@@ -1964,7 +1959,7 @@ get_objref (MonoObject *obj)
 		 * Have to keep object refs created during suspensions alive for the duration of the suspension, so GCs during invokes don't collect them.
 		 */
 		dbg_lock ();
-		mono_g_hash_table_insert (suspended_objs, obj, NULL);
+		mono_g_hash_table_insert_internal (suspended_objs, obj, NULL);
 		dbg_unlock ();
 	}
 
@@ -2796,6 +2791,8 @@ try_process_suspend (void *the_tls, MonoContext *ctx)
 		/* Fastpath during invokes, see in process_suspend () */
 		if (suspend_count - tls->resume_count == 0)
 			return FALSE;
+		if (tls->invoke)
+			return FALSE;
 		process_suspend (tls, ctx);
 		return TRUE;
 	}
@@ -2974,39 +2971,46 @@ suspend_current (void)
  	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
 
-	mono_coop_mutex_lock (&suspend_mutex);
+	gboolean do_resume = FALSE;
+	while (!do_resume) {
+		mono_coop_mutex_lock (&suspend_mutex);
 
-	tls->suspending = FALSE;
-	tls->really_suspended = TRUE;
+		tls->suspending = FALSE;
+		tls->really_suspended = TRUE;
 
-	if (!tls->suspended) {
-		tls->suspended = TRUE;
-		mono_coop_sem_post (&suspend_sem);
-	}
+		if (!tls->suspended) {
+			tls->suspended = TRUE;
+			mono_coop_sem_post (&suspend_sem);
+		}
 
-	mono_debugger_log_suspend (tls);
-	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_suspend (tls);
+		DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	while (suspend_count - tls->resume_count > 0) {
-		mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
-	}
+		while (suspend_count - tls->resume_count > 0) {
+			mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
+		}
 
-	tls->suspended = FALSE;
-	tls->really_suspended = FALSE;
+		tls->suspended = FALSE;
+		tls->really_suspended = FALSE;
 
-	threads_suspend_count --;
+		threads_suspend_count --;
 
-	mono_coop_mutex_unlock (&suspend_mutex);
+		mono_coop_mutex_unlock (&suspend_mutex);
 
-	mono_debugger_log_resume (tls);
-	DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_resume (tls);
+		DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	if (tls->pending_invoke) {
-		/* Save the original context */
-		tls->pending_invoke->has_ctx = TRUE;
-		tls->pending_invoke->ctx = tls->context.ctx;
+		if (tls->pending_invoke) {
+			/* Save the original context */
+			tls->pending_invoke->has_ctx = TRUE;
+			tls->pending_invoke->ctx = tls->context.ctx;
 
-		invoke_method ();
+			invoke_method ();
+
+			/* Have to suspend again */
+		} else {
+			do_resume = TRUE;
+		}
 	}
 
 	/* The frame info becomes invalid after a resume */
@@ -3240,7 +3244,7 @@ compute_frame_info_from (MonoInternalThread *thread, DebuggerTlsData *tls, MonoT
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean force_update)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -3249,10 +3253,22 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	MonoUnwindOptions opts = (MonoUnwindOptions)(MONO_UNWIND_DEFAULT | MONO_UNWIND_REG_LOCATIONS);
 
 	// FIXME: Locking on tls
-	if (tls->frames && tls->frames_up_to_date)
+	if (tls->frames && tls->frames_up_to_date && !force_update)
 		return;
 
 	DEBUG_PRINTF (1, "Frames for %p(tid=%lx):\n", thread, (glong)thread->tid);
+
+	if (CHECK_PROTOCOL_VERSION (2, 52)) {
+		if (tls->restore_state.valid && MONO_CONTEXT_GET_IP (&tls->context.ctx) != MONO_CONTEXT_GET_IP (&tls->restore_state.ctx)) {
+			new_frames = compute_frame_info_from (thread, tls, &tls->restore_state, &new_frame_count);
+			invalidate_frames (tls);
+
+			tls->frames = new_frames;
+			tls->frame_count = new_frame_count;
+			tls->frames_up_to_date = TRUE;
+			return;
+		}
+	}
 
 	user_data.tls = tls;
 	user_data.frames = NULL;
@@ -3364,6 +3380,32 @@ emit_type_load (gpointer key, gpointer value, gpointer user_data)
 {
 	process_profiler_event (EVENT_KIND_TYPE_LOAD, value);
 }
+
+
+static void gc_finalizing (MonoProfiler *prof)
+{
+	DebuggerTlsData *tls;
+
+	if (is_debugger_thread ())
+		return;
+
+	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	g_assert (tls);
+	tls->gc_finalizing = TRUE;
+}
+
+static void gc_finalized (MonoProfiler *prof)
+{
+	DebuggerTlsData *tls;
+
+	if (is_debugger_thread ())
+		return;
+
+	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	g_assert (tls);
+	tls->gc_finalizing = FALSE;
+}
+
 
 static char*
 strdup_tolower (char *s)
@@ -3971,9 +4013,9 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	DEBUG_PRINTF (1, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls);
 
 	mono_loader_lock ();
-	mono_g_hash_table_insert (thread_to_tls, thread, tls);
-	mono_g_hash_table_insert (tid_to_thread, (gpointer)tid, thread);
-	mono_g_hash_table_insert (tid_to_thread_obj, GUINT_TO_POINTER (tid), mono_thread_current ());
+	mono_g_hash_table_insert_internal (thread_to_tls, thread, tls);
+	mono_g_hash_table_insert_internal (tid_to_thread, (gpointer)tid, thread);
+	mono_g_hash_table_insert_internal (tid_to_thread_obj, GUINT_TO_POINTER (tid), mono_thread_current ());
 	mono_loader_unlock ();
 
 	process_profiler_event (EVENT_KIND_THREAD_START, thread);
@@ -4008,13 +4050,17 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 
 	/* We might be called for threads started before we registered the start callback */
 	if (thread) {
-		DEBUG_PRINTF (1, "[%p] Thread terminated, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls);
+		DEBUG_PRINTF (1, "[%p] Thread terminated, obj=%p, tls=%p (domain=%p).\n", (gpointer)tid, thread, tls, (gpointer)mono_domain_get ());
 
-		if (mono_thread_internal_is_current (thread) && !mono_native_tls_get_value (debugger_tls_id)
+		if (mono_thread_internal_is_current (thread) &&
+		    (!mono_native_tls_get_value (debugger_tls_id) ||
+		     !mono_domain_get ())
 		) {
 			/*
-			 * This can happen on darwin since we deregister threads using pthread dtors.
-			 * process_profiler_event () and the code it calls cannot handle a null TLS value.
+			 * This can happen on darwin and android since we
+			 * deregister threads using pthread dtors.
+			 * process_profiler_event () and the code it calls
+			 * cannot handle a null TLS value.
 			 */
 			return;
 		}
@@ -4142,13 +4188,13 @@ send_types_for_domain (MonoDomain *domain, void *user_data)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 	
 	mono_loader_lock ();
 	g_hash_table_foreach (info->loaded_classes, emit_type_load, NULL);
 	mono_loader_unlock ();
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 }
 
 static void
@@ -4159,7 +4205,7 @@ send_assemblies_for_domain (MonoDomain *domain, void *user_data)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
@@ -4168,7 +4214,7 @@ send_assemblies_for_domain (MonoDomain *domain, void *user_data)
 	}
 	mono_domain_assemblies_unlock (domain);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 }
 
 static void
@@ -4251,7 +4297,7 @@ ss_calculate_framecount (void *the_tls, MonoContext *ctx, gboolean force_use_ctx
 
 	if (force_use_ctx || !tls->context.valid)
 		mono_thread_state_init_from_monoctx (&tls->context, ctx);
-	compute_frame_info (tls->thread, tls);
+	compute_frame_info (tls->thread, tls, FALSE);
 	if (frames)
 		*frames = (DbgEngineStackFrame**)tls->frames;
 	if (nframes)
@@ -4811,7 +4857,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 			if (frames && nframes)
 				frame = frames [0];
 		} else {
-			compute_frame_info (ss_req->thread, tls);
+			compute_frame_info (ss_req->thread, tls, FALSE);
 
 			if (tls->frame_count)
 				frame = tls->frames [0];
@@ -6010,14 +6056,34 @@ clear_types_for_assembly (MonoAssembly *assembly)
 	mono_loader_unlock ();
 }
 
+
+static void
+count_thread_check_gc_finalizer (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoThread *thread = (MonoThread *)value;
+	gboolean *ret = (gboolean *)user_data;
+	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread)) {
+		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread->internal_thread);
+		if (!tls->gc_finalizing) { //GC Finalizer is not running some finalizer code, so ignore it
+			*ret = TRUE;
+			return;
+		}
+	}
+}
+
 static void
 add_thread (gpointer key, gpointer value, gpointer user_data)
 {
-	MonoInternalThread *thread = (MonoInternalThread *)value;
+	MonoThread *thread = (MonoThread *)value;
 	Buffer *buf = (Buffer *)user_data;
-
+	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread)) {
+		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread->internal_thread);
+		if (!tls->gc_finalizing) //GC Finalizer is not running some finalizer code, so ignore it
+			return;
+	}
 	buffer_add_objid (buf, (MonoObject*)thread);
 }
+
 
 static ErrorCode
 do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 *p, guint8 **endp)
@@ -6388,8 +6454,6 @@ invoke_method (void)
 
 	g_free (invoke->p);
 	g_free (invoke);
-
-	suspend_current ();
 }
 
 static gboolean
@@ -6465,7 +6529,7 @@ get_types (gpointer key, gpointer value, gpointer user_data)
 		if (ass->image) {
 			ERROR_DECL (probe_type_error);
 			/* FIXME really okay to call while holding locks? */
-			t = mono_reflection_get_type_checked (ass->image, ass->image, ud->info, ud->ignore_case, &type_resolve, probe_type_error);
+			t = mono_reflection_get_type_checked (ass->image, ass->image, ud->info, ud->ignore_case, TRUE, &type_resolve, probe_type_error);
 			mono_error_cleanup (probe_type_error);
 			if (t) {
 				g_ptr_array_add (ud->res_classes, mono_type_get_class (t));
@@ -6578,9 +6642,15 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	}
 	case CMD_VM_ALL_THREADS: {
 		// FIXME: Domains
+		gboolean remove_gc_finalizing;
 		mono_loader_lock ();
-		buffer_add_int (buf, mono_g_hash_table_size (tid_to_thread_obj));
+		int count = mono_g_hash_table_size (tid_to_thread_obj);
+		mono_g_hash_table_foreach (tid_to_thread_obj, count_thread_check_gc_finalizer, &remove_gc_finalizing);
+		if (remove_gc_finalizing)
+			count--;
+		buffer_add_int (buf, count);
 		mono_g_hash_table_foreach (tid_to_thread_obj, add_thread, buf);
+		
 		mono_loader_unlock ();
 		break;
 	}
@@ -7210,6 +7280,21 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_objid (buf, (MonoObject*)o);
 		break;
 	}
+	case CMD_APPDOMAIN_CREATE_BYTE_ARRAY: {
+		ERROR_DECL (error);
+		MonoArray *arr;
+		gpointer elem;
+		domain = decode_domainid (p, &p, end, NULL, &err);
+		uintptr_t size = 0;
+		int len = decode_int (p, &p, end);
+		size = len;
+		arr = mono_array_new_full_checked (mono_domain_get (), mono_class_create_array (mono_get_byte_class(), 1), &size, NULL, error);
+		elem = mono_array_addr_internal (arr, guint8, 0);
+		memcpy (elem, p, len);
+		p += len;
+		buffer_add_objid (buf, (MonoObject*) arr);
+		break;
+	}
 	case CMD_APPDOMAIN_CREATE_BOXED_VALUE: {
 		ERROR_DECL (error);
 		MonoClass *klass;
@@ -7320,7 +7405,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		MonoDomain *d = mono_domain_get ();
 
 		/* This is needed to be able to find referenced assemblies */
-		res = mono_domain_set (domain, FALSE);
+		res = mono_domain_set_fast (domain, FALSE);
 		g_assert (res);
 
 		if (!mono_reflection_parse_type_checked (s, &info, error)) {
@@ -7329,7 +7414,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			if (info.assembly.name)
 				NOT_IMPLEMENTED;
-			t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignorecase, &type_resolve, error);
+			t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignorecase, TRUE, &type_resolve, error);
 			if (!is_ok (error)) {
 				mono_error_cleanup (error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
@@ -7341,7 +7426,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_reflection_free_type_info (&info);
 		g_free (s);
 
-		mono_domain_set (d, TRUE);
+		mono_domain_set_fast (d, TRUE);
 
 		break;
 	}
@@ -7420,6 +7505,10 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         mono_error_cleanup (error);
         break;
     }
+	case CMD_ASSEMBLY_HAS_DEBUG_INFO: {
+		buffer_add_byte (buf, !ass->dynamic && mono_debug_image_has_debug_info (ass->image));
+		break;
+	}
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
@@ -8098,11 +8187,11 @@ type_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	err = type_commands_internal (command, klass, domain, p, end, buf);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 
 	return err;
 }
@@ -8551,11 +8640,11 @@ method_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	err = method_commands_internal (command, method, domain, p, end, buf);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 
 	return err;
 }
@@ -8621,7 +8710,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, TRUE); //the last parameter is TRUE to force that the frame info that will be send is synchronised with the debugged thread
 
 		buffer_add_int (buf, tls->frame_count);
 		for (i = 0; i < tls->frame_count; ++i) {
@@ -8675,7 +8764,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, FALSE);
 		if (tls->frame_count == 0 || tls->frames [0]->actual_method != method)
 			return ERR_INVALID_ARGUMENT;
 
@@ -8750,6 +8839,9 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	if (i == tls->frame_count)
 		return ERR_INVALID_FRAMEID;
 
+	/* The thread is still running native code, can't get frame variables info */
+	if (!tls->really_suspended && !tls->async_state.valid) 
+		return ERR_NOT_SUSPENDED;
 	frame_idx = i;
 	frame = tls->frames [frame_idx];
 
@@ -9361,7 +9453,8 @@ static const char* appdomain_cmds_str[] = {
 	"GET_ENTRY_ASSEMBLY",
 	"CREATE_STRING",
 	"GET_CORLIB",
-	"CREATE_BOXED_VALUE"
+	"CREATE_BOXED_VALUE",
+	"CREATE_BYTE_ARRAY",
 };
 
 static const char* assembly_cmds_str[] = {
@@ -9371,7 +9464,8 @@ static const char* assembly_cmds_str[] = {
 	"GET_OBJECT",
 	"GET_TYPE",
 	"GET_NAME",
-	"GET_DOMAIN"
+	"GET_DOMAIN",
+	"HAS_DEBUG_INFO"
 };
 
 static const char* module_cmds_str[] = {

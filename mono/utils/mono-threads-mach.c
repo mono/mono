@@ -33,7 +33,7 @@ mono_threads_suspend_init (void)
 	mono_threads_init_dead_letter ();
 }
 
-#if defined(HOST_WATCHOS) || defined(HOST_TVOS)
+#if defined(HOST_WATCHOS)
 
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
@@ -58,7 +58,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
 }
 
-#else /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
+#else /* defined(HOST_WATCHOS) */
 
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
@@ -73,8 +73,16 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	} while (ret == KERN_ABORTED);
 
 	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (gpointer)(gsize)info->native_handle, ret);
-	if (ret != KERN_SUCCESS)
+	if (ret != KERN_SUCCESS) {
+		if (!mono_threads_transition_abort_async_suspend (info)) {
+			/* We raced with self suspend and lost so suspend can continue. */
+			g_assert (mono_threads_is_hybrid_suspension_enabled ());
+			info->suspend_can_continue = TRUE;
+			THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (gpointer)(gsize)info->native_handle);
+			return TRUE;
+		}
 		return FALSE;
+	}
 
 	if (!mono_threads_transition_finish_async_suspend (info)) {
 		/* We raced with self-suspend and lost.  Resume the native
@@ -192,7 +200,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	g_assert (ret == KERN_SUCCESS);
 }
 
-#endif /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
+#endif /* defined(HOST_WATCHOS) */
 
 void
 mono_threads_suspend_register (MonoThreadInfo *info)

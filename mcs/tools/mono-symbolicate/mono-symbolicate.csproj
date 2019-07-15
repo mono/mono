@@ -14,6 +14,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>False</NoStdLib>
     <NoConfig>True</NoConfig>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>mono-symbolicate</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
@@ -31,7 +32,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
-    <DefineConstants>NO_AUTHENTICODE;CECIL;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NO_AUTHENTICODE;CECIL;NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -177,7 +178,7 @@
     <Compile Include="..\..\..\external\cecil\Mono.Security.Cryptography\CryptoService.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Disposable.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Empty.cs" />
-    <Compile Include="..\..\..\external\cecil\Mono\Type.cs" />
+    <Compile Include="..\..\..\external\cecil\Mono\MergeSort.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbReader.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbWriter.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />

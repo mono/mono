@@ -35,7 +35,7 @@ namespace MonoTests.System
 	[TestFixture]
 	public class UriTest3
 	{
-		private const string absolute = "http://www.mono-project.com/CAS";
+		private const string absolute = "http://www.example.com/CAS";
 		private const string relative = "server.com/directory/";
 
 		[Test] // .ctor (String, UriKind)
@@ -92,7 +92,7 @@ namespace MonoTests.System
 		public void Absolute_UriKind_Absolute ()
 		{
 			Uri uri = new Uri (absolute, UriKind.Absolute);
-			Assert.AreEqual ("www.mono-project.com", uri.DnsSafeHost, "#1");
+			Assert.AreEqual ("www.example.com", uri.DnsSafeHost, "#1");
 			Assert.IsTrue (uri.IsAbsoluteUri, "#2");
 			Assert.AreEqual (absolute, uri.OriginalString, "#3");
 			Assert.AreEqual (absolute, uri.ToString (), "#4");
@@ -182,10 +182,10 @@ namespace MonoTests.System
 			Assert.IsTrue (Uri.TryCreate (relative, UriKind.Relative, out uri), "relative-Relative");
 			Assert.AreEqual (relative, uri.OriginalString, "relative-RelativeOrAbsolute-OriginalString");
 
-			Assert.IsTrue (Uri.TryCreate ("http://mono-project.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
-			Assert.AreEqual("http://mono-project.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
+			Assert.IsTrue (Uri.TryCreate ("http://example.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
+			Assert.AreEqual("http://example.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
 
-			string mixedCaseUri = "http://mOnO-proJECT.com";
+			string mixedCaseUri = "http://eXaMpLe.com";
 			uri = new Uri (mixedCaseUri);
 			Uri uri2;
 			Assert.IsTrue (Uri.TryCreate (mixedCaseUri, UriKind.Absolute, out uri2), "mixedcasehost-absolute");
@@ -227,8 +227,8 @@ namespace MonoTests.System
 
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, relative, out uri), "baseUri+relative");
-			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relative+AbsoluteUri");
-			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.OriginalString, "baseUri+relative+OriginalString");
+			Assert.AreEqual ("http://www.example.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relative+AbsoluteUri");
+			Assert.AreEqual ("http://www.example.com/server.com/directory/", uri.OriginalString, "baseUri+relative+OriginalString");
 
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, absolute, out uri), "baseUri+absolute");
@@ -267,8 +267,8 @@ namespace MonoTests.System
 
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, relativeUri, out uri), "baseUri+relativeUri");
-			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relativeUri+AbsoluteUri");
-			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.OriginalString, "baseUri+relativeUri+OriginalString");
+			Assert.AreEqual ("http://www.example.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relativeUri+AbsoluteUri");
+			Assert.AreEqual ("http://www.example.com/server.com/directory/", uri.OriginalString, "baseUri+relativeUri+OriginalString");
 
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, baseUri, out uri), "baseUri+baseUri");
@@ -307,11 +307,11 @@ namespace MonoTests.System
 		[Test]
 		public void IsWellFormedUriString ()
 		{
-			Assert.IsFalse (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", UriKind.Absolute), "http/space");
-			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main%20Page", UriKind.Absolute), "http/%20");
+			Assert.IsFalse (Uri.IsWellFormedUriString ("http://www.example.com/Main Page", UriKind.Absolute), "http/space");
+			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.example.com/Main%20Page", UriKind.Absolute), "http/%20");
 			Assert.IsFalse (Uri.IsWellFormedUriString (null, UriKind.Absolute), "null");
 			Assert.IsFalse (Uri.IsWellFormedUriString ("data", UriKind.Absolute), "data");
-			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main_Page#1", UriKind.Absolute), "http/hex");
+			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.example.com/Main_Page#1", UriKind.Absolute), "http/hex");
 			Assert.IsTrue (Uri.IsWellFormedUriString ("test", UriKind.RelativeOrAbsolute), "rel1");
 			Assert.IsTrue (Uri.IsWellFormedUriString ("/test", UriKind.RelativeOrAbsolute), "rel2");
 		}
@@ -320,7 +320,7 @@ namespace MonoTests.System
 		public void IsWellFormedUriString_UriKind_Invalid ()
 		{
 			try {
-				Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page",
+				Uri.IsWellFormedUriString ("http://www.example.com/Main Page",
 					(UriKind) 666);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
@@ -342,15 +342,15 @@ namespace MonoTests.System
 			Uri u2 = null;
 			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "null-null");
 
-			u1 = new Uri ("http://www.go-mono.com");
+			u1 = new Uri ("http://www.example.com");
 			Assert.AreEqual (1, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "non-null - null");
 
 			u1 = null;
-			u2 = new Uri ("http://www.go-mono.com");
+			u2 = new Uri ("http://www.example.com");
 			Assert.AreEqual (-1, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "null - non-null");
 
-			u1 = new Uri ("http://www.go-mono.com/Main Page");
-			u2 = new Uri ("http://www.go-mono.com/Main%20Page");
+			u1 = new Uri ("http://www.example.com/Main Page");
+			u2 = new Uri ("http://www.example.com/Main%20Page");
 			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.CurrentCulture), "http/space-http/%20-unescaped");
 			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "http/space-http/%20-escaped");
 			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped, StringComparison.CurrentCulture), "http/space-http/%20-safe");
@@ -359,62 +359,62 @@ namespace MonoTests.System
 		[Test]
 		public void IsBaseOf ()
 		{
-			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
+			Uri http = new Uri ("http://www.example.com/Main_Page#FAQ?Edit");
 			Assert.IsTrue (http.IsBaseOf (http), "http-http");
 
-			Uri u = new Uri ("http://www.mono-project.com/Main_Page#FAQ");
+			Uri u = new Uri ("http://www.example.com/Main_Page#FAQ");
 			Assert.IsTrue (u.IsBaseOf (http), "http-1a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-1b");
 
-			u = new Uri ("http://www.mono-project.com/Main_Page");
+			u = new Uri ("http://www.example.com/Main_Page");
 			Assert.IsTrue (u.IsBaseOf (http), "http-2a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-2b");
 
-			u = new Uri ("http://www.mono-project.com/");
+			u = new Uri ("http://www.example.com/");
 			Assert.IsTrue (u.IsBaseOf (http), "http-3a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-3b");
 
-			u = new Uri ("http://www.mono-project.com/Main_Page/");
+			u = new Uri ("http://www.example.com/Main_Page/");
 			Assert.IsFalse (u.IsBaseOf (http), "http-4a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-4b");
 
 			// docs says the UserInfo isn't evaluated, but...
-			u = new Uri ("http://username:password@www.mono-project.com/Main_Page");
+			u = new Uri ("http://username:password@www.example.com/Main_Page");
 			Assert.IsFalse (u.IsBaseOf (http), "http-5a");
 			Assert.IsFalse (http.IsBaseOf (u), "http-5b");
 
 			// scheme case sensitive ? no
-			u = new Uri ("HTTP://www.mono-project.com/Main_Page");
+			u = new Uri ("HTTP://www.example.com/Main_Page");
 			Assert.IsTrue (u.IsBaseOf (http), "http-6a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-6b");
 
 			// host case sensitive ? no
-			u = new Uri ("http://www.Mono-Project.com/Main_Page");
+			u = new Uri ("http://www.example.com/Main_Page");
 			Assert.IsTrue (u.IsBaseOf (http), "http-7a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-7b");
 
 			// path case sensitive ? no
-			u = new Uri ("http://www.Mono-Project.com/MAIN_Page");
+			u = new Uri ("http://www.example.com/MAIN_Page");
 			Assert.IsTrue (u.IsBaseOf (http), "http-8a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-8b");
 
 			// different scheme
-			u = new Uri ("ftp://www.mono-project.com/Main_Page");
+			u = new Uri ("ftp://www.example.com/Main_Page");
 			Assert.IsFalse (u.IsBaseOf (http), "http-9a");
 			Assert.IsFalse (http.IsBaseOf (u), "http-9b");
 
 			// different host
-			u = new Uri ("http://www.go-mono.com/Main_Page");
+			u = new Uri ("http://www.example.org/Main_Page");
 			Assert.IsFalse (u.IsBaseOf (http), "http-10a");
 			Assert.IsFalse (http.IsBaseOf (u), "http-10b");
 
 			// different port
-			u = new Uri ("http://www.mono-project.com:8080/");
+			u = new Uri ("http://www.example.com:8080/");
 			Assert.IsFalse (u.IsBaseOf (http), "http-11a");
 			Assert.IsFalse (http.IsBaseOf (u), "http-11b");
 
 			// specify default port
-			u = new Uri ("http://www.mono-project.com:80/");
+			u = new Uri ("http://www.example.com:80/");
 			Assert.IsTrue (u.IsBaseOf (http), "http-12a");
 			Assert.IsTrue (http.IsBaseOf (u), "http-12b");
 		}
@@ -422,7 +422,7 @@ namespace MonoTests.System
 		[Test]
 		public void IsBaseOf_Null ()
 		{
-			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
+			Uri http = new Uri ("http://www.example.com/Main_Page#FAQ?Edit");
 			try {
 				http.IsBaseOf (null);
 				Assert.Fail ();
@@ -557,27 +557,27 @@ namespace MonoTests.System
 		[Test] // LAMESPEC: see bug #321113
 		public void OriginalStringRelative ()
 		{
-			Uri k1 = new Uri ("http://www.mono-project.com");
+			Uri k1 = new Uri ("http://www.example.com");
 			Uri k2 = new Uri (k1, "docs");
-			Assert.AreEqual ("http://www.mono-project.com/docs", k2.OriginalString, "#1");
+			Assert.AreEqual ("http://www.example.com/docs", k2.OriginalString, "#1");
 
-			Uri a = new Uri ("http://www.mono-project.com:808/foo");
+			Uri a = new Uri ("http://www.example.com:808/foo");
 			Uri b = new Uri (a, "../docs?queryyy#% %20%23%25bar");
-			Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
+			Assert.AreEqual ("http://www.example.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
 
-			Uri c = new Uri ("http://www.mono-project.com:808/foo");
+			Uri c = new Uri ("http://www.example.com:808/foo");
 			Uri d = new Uri (a, "../docs?queryyy#%20%23%25bar");
-			Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#%20%23%25bar", d.OriginalString, "#3");
+			Assert.AreEqual ("http://www.example.com:808/docs?queryyy#%20%23%25bar", d.OriginalString, "#3");
 
-			Uri e = new Uri ("http://www.mono-project.com:909");
-			Uri f = new Uri (e, "http://www.mono-project.com:606/docs");
-			Assert.AreEqual ("http://www.mono-project.com:606/docs", f.OriginalString, "#4");
+			Uri e = new Uri ("http://www.example.com:909");
+			Uri f = new Uri (e, "http://www.example.com:606/docs");
+			Assert.AreEqual ("http://www.example.com:606/docs", f.OriginalString, "#4");
 
-			Uri g = new Uri ("http://www.mono-project.com:303/foo");
+			Uri g = new Uri ("http://www.example.com:303/foo");
 			Uri h = new Uri (g, "?query");
 			// it doesn't work. MS.NET also returns incorrect URI: ..303/?query
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=412604
-			//Assert.AreEqual ("http://www.mono-project.com:303/foo?query", h.OriginalString, "#5");
+			//Assert.AreEqual ("http://www.example.com:303/foo?query", h.OriginalString, "#5");
 		}
 
 		[Test]

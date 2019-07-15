@@ -3176,7 +3176,7 @@ namespace System.Windows.Forms
 			}
 
 			sformat.LineAlignment = StringAlignment.Near;
-			dc.DrawString (group.Header, font, SystemBrushes.ControlText, text_bounds, sformat);
+			dc.DrawString (group.Header, font, SystemBrushes.Highlight, text_bounds, sformat);
 			dc.DrawLine (pen, header_bounds.Left, header_bounds.Top + text_height, header_bounds.Left + ListViewGroupLineWidth, 
 					header_bounds.Top + text_height);
 

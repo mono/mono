@@ -266,13 +266,13 @@ namespace MonoTests.System.Security.Cryptography {
 		// note: important to emulate in Mono because we need it for SSL/TLS
 		public void Build_SubjectAltNameExtension ()
 		{
-			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x16, 0x82, 0x14, 0x77, 0x77, 0x77, 0x2E, 0x6D, 0x6F, 0x6E, 0x6F, 0x2D, 0x70, 0x72, 0x6F, 0x6A, 0x65, 0x63, 0x74, 0x2E, 0x63, 0x6F, 0x6D });
-			Assert.AreEqual ("30 16 82 14 77 77 77 2e 6d 6f 6e 6f 2d 70 72 6f 6a 65 63 74 2e 63 6f 6d", aed.Format (true), "Format(true)");
-			Assert.AreEqual ("30 16 82 14 77 77 77 2e 6d 6f 6e 6f 2d 70 72 6f 6a 65 63 74 2e 63 6f 6d", aed.Format (false), "Format(false)");
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x11, 0x82, 0x0F, 0x77, 0x77, 0x77, 0x2E, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C, 0x65, 0x2E, 0x63, 0x6F, 0x6D });
+			Assert.AreEqual ("30 11 82 0f 77 77 77 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d", aed.Format (true), "Format(true)");
+			Assert.AreEqual ("30 11 82 0f 77 77 77 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d", aed.Format (false), "Format(false)");
 			aed.Oid = new Oid ("2.5.29.17");
 			// and now "AsnEncodedData" knows how to (magically) decode the data without involving the class
-			Assert.AreEqual ("DNS Name=www.mono-project.com" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
-			Assert.AreEqual ("DNS Name=www.mono-project.com", aed.Format (false), "aed.Format(false)");
+			Assert.AreEqual ("DNS Name=www.example.com" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
+			Assert.AreEqual ("DNS Name=www.example.com", aed.Format (false), "aed.Format(false)");
 			// note that the Fx doesn't "really" support this extension
 			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
 			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.

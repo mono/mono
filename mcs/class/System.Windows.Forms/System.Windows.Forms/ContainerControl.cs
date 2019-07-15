@@ -543,6 +543,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose(bool disposing) {
 			base.Dispose(disposing);
+			active_control = null;
 		}
 
 		// LAMESPEC This used to be documented, but it's not in code

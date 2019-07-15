@@ -48,10 +48,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-#if NETCORE
-using Internal.Runtime.CompilerServices;
-#endif
-
 namespace System
 {
 	partial class String

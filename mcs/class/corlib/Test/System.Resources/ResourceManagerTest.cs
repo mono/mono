@@ -791,6 +791,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("Globalization")]
 		[Category ("StackWalks")]
 		[Category ("NotWasm")]
 		public void TestSatellites ()

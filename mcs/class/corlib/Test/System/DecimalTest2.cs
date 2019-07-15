@@ -146,7 +146,7 @@ namespace MonoTests.System
         public void TestRemainder()
         {
             Assert.IsTrue ((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
-            decimal res = 24420760848422211464106753m;
+            decimal res = 24420760848422211464106753.012m;
             decimal remainder = Decimal.Remainder(79228162514264337593543950335m, 27703302467091960609331879.53200m);
             if (AreNotEqual (res, remainder))
                 Assert.AreEqual (res, remainder, "A02");

@@ -41,7 +41,8 @@ namespace System.ServiceModel.Channels
 	{
 		HttpChannelFactory<IRequestChannel> source;
 
-		List<WebRequest> web_requests = new List<WebRequest> ();
+		object locker = new object();
+		List<WebRequest> web_requests = new List<WebRequest> ();	//synced by locker
 
 		// Constructor
 
@@ -86,7 +87,12 @@ namespace System.ServiceModel.Channels
 			}
 
 			var web_request = (HttpWebRequest) HttpWebRequest.Create (destination);
-			web_requests.Add (web_request);
+
+			lock (locker)
+			{
+				web_requests.Add (web_request);
+			}
+		
 			result.WebRequest = web_request;
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
@@ -350,9 +356,20 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
-			foreach (var web_request in web_requests.ToArray ())
+			WebRequest[] current_web_requests;
+
+			lock (locker)
+			{
+				current_web_requests = web_requests.ToArray();
+			}
+
+			foreach (var web_request in current_web_requests)
 				web_request.Abort ();
-			web_requests.Clear ();
+
+			lock(locker)
+			{
+				web_requests.Clear ();
+			}
 		}
 
 		// Close
@@ -497,7 +514,10 @@ namespace System.ServiceModel.Channels
 			
 			void Cleanup ()
 			{
-				owner.web_requests.Remove (WebRequest);
+				lock (owner.locker)
+				{
+					owner.web_requests.Remove (WebRequest);
+				}
 			}
 		}
 	}

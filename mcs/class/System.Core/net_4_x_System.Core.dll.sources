@@ -10,6 +10,5 @@ System.Security.Cryptography/SHA384Cng.cs
 System.Security.Cryptography/SHA512Cng.cs
 
 ../referencesource/System.Core/System/Security/Cryptography/AesManaged.cs
-../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/LockRecursionException.cs

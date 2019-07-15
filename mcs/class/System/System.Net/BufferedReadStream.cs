@@ -64,6 +64,23 @@ namespace System.Net
 			return await InnerStream.ReadAsync (
 				buffer, offset, size, cancellationToken).ConfigureAwait (false);
 		}
+
+		internal bool TryReadFromBuffer (byte[] buffer, int offset, int size, out int result)
+		{
+			var remaining = readBuffer?.Size ?? 0;
+			if (remaining <= 0) {
+				result = 0;
+				return InnerStream == null;
+			}
+
+			int copy = (remaining > size) ? size : remaining;
+			Buffer.BlockCopy (readBuffer.Buffer, readBuffer.Offset, buffer, offset, copy);
+			readBuffer.Offset += copy;
+			readBuffer.Size -= copy;
+			offset += copy;
+			size -= copy;
+			result = copy;
+			return true;
+		}
 	}
 }
-

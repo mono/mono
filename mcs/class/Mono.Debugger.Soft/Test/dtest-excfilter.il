@@ -5,13 +5,13 @@
 }
 .assembly 'dtest-lib' { }
 
-.class public auto ansi ExceptionFilterTest
+.class public auto ansi Tests
        extends [mscorlib]System.Object
 {
-	.method public static void Main () cil managed
+	.method public static void Main (string[] args) cil managed
 	{
 		.entrypoint
-		call void class ExceptionFilterTest::Test ()
+		call void class Tests::Test ()
 		ret
 	}
 
@@ -35,11 +35,11 @@
 			leave end
 		} filter {
 		    castclass [mscorlib]System.Exception
-			call int32 class ExceptionFilterTest::Filter([mscorlib]System.Exception)
+			call int32 class Tests::Filter([mscorlib]System.Exception)
 			endfilter
 		} {
 		    castclass [mscorlib]System.Exception
-			call void class ExceptionFilterTest::Handler([mscorlib]System.Exception)
+			call void class Tests::Handler([mscorlib]System.Exception)
 			leave end
 		}
 

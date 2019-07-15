@@ -138,14 +138,14 @@ namespace System.Transactions
 
 			oldTransaction = Transaction.CurrentInternal;
 
-			Transaction.CurrentInternal = transaction = InitTransaction (tx, scopeOption);
+			Transaction.CurrentInternal = transaction = InitTransaction (tx, scopeOption, options);
 			if (transaction != null)
 				transaction.InitScope (this);
 			if (parentScope != null)
 				parentScope.nested ++;
 		}
 
-		Transaction InitTransaction (Transaction tx, TransactionScopeOption scopeOption)
+		Transaction InitTransaction (Transaction tx, TransactionScopeOption scopeOption, TransactionOptions options)
 		{
 			if (tx != null)
 				return tx;
@@ -159,7 +159,7 @@ namespace System.Transactions
 			if (scopeOption == TransactionScopeOption.Required) {
 				if (Transaction.CurrentInternal == null) {
 					isRoot = true;
-					return new Transaction ();
+					return new Transaction (options.IsolationLevel);
 				}
 
 				parentScope = Transaction.CurrentInternal.Scope;
@@ -170,8 +170,8 @@ namespace System.Transactions
 			if (Transaction.CurrentInternal != null)
 				parentScope = Transaction.CurrentInternal.Scope;
 			isRoot = true;
-			return new Transaction ();
-		}
+			return new Transaction (options.IsolationLevel);
+        }
 
 		public void Complete ()
 		{

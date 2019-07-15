@@ -1,2 +1,1 @@
-#include win32_net_4_x_corlib.dll.sources
-
+#include win32_build_corlib.dll.sources

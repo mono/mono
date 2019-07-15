@@ -12,7 +12,7 @@ namespace System.Globalization
     {
         private const string JapaneseErasHive = @"System\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras";
 
-        // We know about 4 built-in eras, however users may add additional era(s) from the
+        // We know about 5 built-in eras, however users may add additional era(s) from the
         // registry, by adding values to HKLM\SYSTEM\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras
         //
         // Registry values look like:
@@ -27,16 +27,16 @@ namespace System.Globalization
         // . is a delimiter, but the value of . doesn't matter.
         // '_' marks the space between the japanese era name, japanese abbreviated era name
         //     english name, and abbreviated english names.
-        private static EraInfo[] GetJapaneseEras()
+        private static EraInfo[]? GetJapaneseEras()
         {
             // Look in the registry key and see if we can find any ranges
             int iFoundEras = 0;
-            EraInfo[] registryEraRanges = null;
+            EraInfo[]? registryEraRanges = null;
 
             try
             {
                 // Need to access registry
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(JapaneseErasHive))
+                using (RegistryKey? key = Registry.LocalMachine.OpenSubKey(JapaneseErasHive))
                 {
                     // Abort if we didn't find anything
                     if (key == null) return null;
@@ -51,7 +51,7 @@ namespace System.Globalization
                         for (int i = 0; i < valueNames.Length; i++)
                         {
                             // See if the era is a valid date
-                            EraInfo era = GetEraFromValue(valueNames[i], key.GetValue(valueNames[i]).ToString());
+                            EraInfo? era = GetEraFromValue(valueNames[i], key.GetValue(valueNames[i])?.ToString());
 
                             // continue if not valid
                             if (era == null) continue;
@@ -81,9 +81,9 @@ namespace System.Globalization
 
             //
             // If we didn't have valid eras, then fail
-            // should have at least 4 eras
+            // should have at least 5 eras
             //
-            if (iFoundEras < 4) return null;
+            if (iFoundEras < 5) return null;
 
             //
             // Now we have eras, clean them up.
@@ -143,7 +143,7 @@ namespace System.Globalization
         // . is a delimiter, but the value of . doesn't matter.
         // '_' marks the space between the japanese era name, japanese abbreviated era name
         //     english name, and abbreviated english names.
-        private static EraInfo GetEraFromValue(string value, string data)
+        private static EraInfo? GetEraFromValue(string? value, string? data)
         {
             // Need inputs
             if (value == null || data == null) return null;
@@ -195,16 +195,6 @@ namespace System.Globalization
             //
             return new EraInfo(0, year, month, day, year - 1, 1, 0,
                                 names[0], names[1], names[3]);
-        }
-
-        // PAL Layer ends here
-
-        private static readonly string[] s_japaneseErasEnglishNames = new string[] { "M", "T", "S", "H" };
-
-        private static string GetJapaneseEnglishEraName(int era)
-        {
-            Debug.Assert(era > 0);
-            return era <= s_japaneseErasEnglishNames.Length ? s_japaneseErasEnglishNames[era - 1] : " ";
         }
     }
 }

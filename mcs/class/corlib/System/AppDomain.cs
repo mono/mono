@@ -45,7 +45,9 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
+#endif
 using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Security.Permissions;
@@ -72,7 +74,9 @@ namespace System {
 #endif
         #pragma warning disable 169
         #region Sync with object-internals.h
+		#region Sync with LinkerDescriptor/mscorlib.xml
 		IntPtr _mono_app_domain;
+		#endregion
 		#endregion
         #pragma warning restore 169
 		static string _process_guid;
@@ -194,6 +198,7 @@ namespace System {
 			}
 		}
 
+#if !DISABLE_SECURITY
 		public Evidence Evidence {
 			get {
 #if MONOTOUCH
@@ -239,6 +244,7 @@ namespace System {
 				return (IPrincipal)_principal; 
 			}
 		}
+#endif
 
 		// for AppDomain there is only an allowed (i.e. granted) set
 		// http://msdn.microsoft.com/library/en-us/cpguide/html/cpcondetermininggrantedpermissions.asp
@@ -269,7 +275,11 @@ namespace System {
 					if (rd == CurrentDomain)
 						default_domain = rd;
 					else
+#if DISABLE_REMOTING
+						throw new PlatformNotSupportedException ();
+#else
 						default_domain = (AppDomain) RemotingServices.GetDomainProxy (rd);
+#endif
 				}
 				return default_domain;
 			}
@@ -947,7 +957,7 @@ namespace System {
 				InternalPushDomainRef (domain);
 				pushed = true;
 				InternalSetDomain (domain);
-				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				object o = ((RuntimeMethodInfo) method).InternalInvoke (obj, args, out exc);
 				if (exc != null)
 					throw exc;
 				return o;
@@ -969,7 +979,7 @@ namespace System {
 				InternalPushDomainRefByID (domain_id);
 				pushed = true;
 				InternalSetDomainByID (domain_id);
-				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				object o = ((RuntimeMethodInfo) method).InternalInvoke (obj, args, out exc);
 				if (exc != null)
 					throw exc;
 				return o;
@@ -1043,6 +1053,7 @@ namespace System {
 			info.SerializeNonPrimitives ();
 
 			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
+#if !DISABLE_SECURITY
 			if (securityInfo == null) {
 				// get default domain's Evidence (unless we're are the default!)
 				if (def == null)
@@ -1052,6 +1063,7 @@ namespace System {
 			}
 			else
 				ad._evidence = new Evidence (securityInfo);	// copy
+#endif
 
 #if !MOBILE
 			if (info.AppDomainInitializer != null) {
@@ -1338,19 +1350,20 @@ namespace System {
 			}
 		}
 
-		internal Assembly DoTypeResolve (Object name_or_tb)
+#if MONO_FEATURE_SRE
+		internal Assembly DoTypeBuilderResolve (TypeBuilder tb)
 		{
 			if (TypeResolve == null)
 				return null;
 
-			string name;
-
-#if MONO_FEATURE_SRE
-			if (name_or_tb is TypeBuilder)
-				name = ((TypeBuilder) name_or_tb).FullName;
-			else
+			return DoTypeResolve (tb.FullName);
+		}
 #endif
-				name = (string) name_or_tb;
+
+		internal Assembly DoTypeResolve (string name)
+		{
+			if (TypeResolve == null)
+				return null;
 
 			/* Prevent infinite recursion */
 			var ht = type_resolve_in_progress;
@@ -1408,6 +1421,7 @@ namespace System {
 				UnhandledException (this, args);
 		}
 
+#if !DISABLE_REMOTING
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
@@ -1433,6 +1447,7 @@ namespace System {
 			else
 				arrResponse = null;
 		}
+#endif
 
 #pragma warning restore 169
 

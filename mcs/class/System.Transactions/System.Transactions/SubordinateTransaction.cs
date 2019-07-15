@@ -16,6 +16,7 @@ namespace System.Transactions
 	{
 		public SubordinateTransaction (IsolationLevel isoLevel,
 			ISimpleTransactionSuperior superior)
+			: base (isoLevel)
 		{
 			throw new NotImplementedException ();
 		}

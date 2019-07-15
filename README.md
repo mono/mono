@@ -306,6 +306,9 @@ faster under the Xen virtualization system.
 
 * `--with-large-heap=yes,no` - Enable support for GC heaps larger than 3GB.
 
+  * This only applies only to the Boehm garbage collector, the SGen garbage
+collector does not use this configuration option.
+
   * This defaults to `no`.
 
 * `--enable-small-config=yes,no` - Enable some tweaks to reduce memory usage

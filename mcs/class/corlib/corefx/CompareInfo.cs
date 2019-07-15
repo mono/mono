@@ -26,6 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// Disable unreachable code warnings in this entire file.
+#pragma warning disable 162
+
 namespace System.Globalization
 {
 	partial class CompareInfo

@@ -14,19 +14,18 @@ namespace System.Globalization
     using System.Threading;
     using System.Diagnostics.Contracts;
 
-
-	internal static partial class EncodingTable
-	{
+    internal static partial class EncodingTable
+    {
         static int GetNumEncodingItems ()
         {
-			return encodingDataPtr.Length;
-		}
-		
+            return encodingDataPtr.Length;
+        }
+
 #region "from coreclr/src/classlibnative/nls/encodingdata.cpp"
 // as of d921298
 
-	static InternalEncodingDataItem ENC (string name, ushort cp) { return new InternalEncodingDataItem () { webName = name, codePage = cp }; }
-	
+    static InternalEncodingDataItem ENC (string name, ushort cp) { return new InternalEncodingDataItem () { webName = name, codePage = cp }; }
+
         internal static InternalEncodingDataItem [] encodingDataPtr = new InternalEncodingDataItem [] {
 #if FEATURE_CORECLR
     // encoding name, codepage.
@@ -498,18 +497,18 @@ ENC ("x-x-big5", 950),
 
 #endif // FEATURE_CORECLR
     
-		};
+        };
 
 // Working set optimization: 
 // 1. code page, family code page stored as unsigned short
 // 2. if web/header/body names are the same, only web name is stored; otherwise, we store "|webname|headername|bodyname"
 // 3. Move flags before names to fill gap on 64-bit platforms
 
-	static InternalCodePageDataItem MapCodePageDataItem (UInt16 cp, UInt16 fcp, string names, uint flags) { return new InternalCodePageDataItem () { codePage = cp, uiFamilyCodePage = fcp, flags = flags, Names = names }; }
+    static InternalCodePageDataItem MapCodePageDataItem (UInt16 cp, UInt16 fcp, string names, uint flags) { return new InternalCodePageDataItem () { codePage = cp, uiFamilyCodePage = fcp, flags = flags, Names = names }; }
 //
 // Information about codepages.
 //
-	internal static InternalCodePageDataItem [] codePageDataPtr = new InternalCodePageDataItem [] {
+    internal static InternalCodePageDataItem [] codePageDataPtr = new InternalCodePageDataItem [] {
 #if FEATURE_CORECLR
 
 // Total Items: 
@@ -695,7 +694,7 @@ ENC ("x-x-big5", 950),
 #region "from coreclr/src/pal/inc/rt/palrt.h"
 // modified
 
-	const int
+    const int
 //typedef 
 //enum tagMIMECONTF {
     MIMECONTF_MAILNEWS  = 0x1,
@@ -747,14 +746,15 @@ ENC ("x-x-big5", 950),
         [SecurityCritical]
         unsafe internal static InternalCodePageDataItem* codePageDataPtr = GetCodePageData();
 */
+
         //
         // This caches the mapping of an encoding name to a code page.
         //
-        private static Hashtable hashByName = Hashtable.Synchronized(new Hashtable(StringComparer.OrdinalIgnoreCase));
+        private static Dictionary<string, int> hashByName = new Dictionary<string, int> (StringComparer.OrdinalIgnoreCase);
         //
         // THe caches the data item which is indexed by the code page value.
         //
-        private static Hashtable hashByCodePage = Hashtable.Synchronized(new Hashtable());
+        private static Dictionary<int, CodePageDataItem> hashByCodePage = new Dictionary<int, CodePageDataItem> ();
 
         [System.Security.SecuritySafeCritical] // static constructors should be safe to call
         static EncodingTable()
@@ -845,25 +845,25 @@ ENC ("x-x-big5", 950),
             }
             Contract.EndContractBlock();
 
-            Object codePageObj;
-
             //
             // The name is case-insensitive, but ToLower isn't free.  Check for
             // the code page in the given capitalization first.
             //
-            codePageObj = hashByName[name];
+           ICollection ic = hashByName;
+           lock (ic.SyncRoot) {
+                int codePage;
 
-            if (codePageObj!=null) {
-                return ((int)codePageObj);
+                if (hashByName.TryGetValue (name, out codePage))
+                    return codePage;
+
+                //Okay, we didn't find it in the hash table, try looking it up in the
+                //unmanaged data.
+                codePage = internalGetCodePageFromName(name);
+
+                hashByName[name] = codePage;
+
+                return codePage;
             }
-
-            //Okay, we didn't find it in the hash table, try looking it up in the 
-            //unmanaged data.
-            int codePage = internalGetCodePageFromName(name);
-
-            hashByName[name] = codePage;
-
-            return codePage;
         }
     
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -876,29 +876,27 @@ ENC ("x-x-big5", 950),
             // other than that. 
 
             //Look up the item in the hashtable.
-            dataItem = (CodePageDataItem)hashByCodePage[codepage];
-            
-            //If we found it, return it.
-            if (dataItem!=null) {
-                return dataItem;
-            }
+            ICollection ic = hashByCodePage;
+            lock (ic.SyncRoot) {
+                if (hashByCodePage.TryGetValue (codepage, out dataItem))
+                    return dataItem;
 
-
-            //If we didn't find it, try looking it up now.
-            //If we find it, add it to the hashtable.
-            //This is a linear search, but we probably won't be doing it very often.
-            //
-            int i = 0;
-            int data;
-            while ((data = codePageDataPtr[i].codePage) != 0) {
-                if (data == codepage) {
-                    dataItem = new CodePageDataItem(i);
-                    hashByCodePage[codepage] = dataItem;
-                    return (dataItem);
+                //If we didn't find it, try looking it up now.
+                //If we find it, add it to the hashtable.
+                //This is a linear search, but we probably won't be doing it very often.
+                //
+                int i = 0;
+                int data;
+                while ((data = codePageDataPtr[i].codePage) != 0) {
+                    if (data == codepage) {
+                        dataItem = new CodePageDataItem(i);
+                        hashByCodePage[codepage] = dataItem;
+                        return (dataItem);
+                    }
+                    i++;
                 }
-                i++;
             }
-        
+
             //Nope, we didn't find it.
             return null;
         }
