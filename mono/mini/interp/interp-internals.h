@@ -65,8 +65,8 @@ typedef struct {
 		} pair;
 		float f_r4;
 		double f;
+		MonoObject * volatile o;
 		/* native size integer and pointer types */
-		MonoObject *o;
 		gpointer p;
 		mono_u nati;
 		gpointer vt;
@@ -132,6 +132,12 @@ struct _InterpFrame {
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	unsigned char  *locals;
+	/*
+	 * For GC tracking of local objrefs in exec_method ().
+	 * Storing into this field will keep the object pinned
+	 * until the objref can be stored into stackval->data.o.
+	 */
+	MonoObject* volatile o;
 	/* exception info */
 	const unsigned short  *ip;
 	MonoException     *ex;

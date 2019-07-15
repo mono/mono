@@ -2872,6 +2872,19 @@ static int opcode_counts[512];
 	} while (0);
 
 /*
+ * GC SAFETY:
+ *
+ *  The interpreter executes in gc unsafe (non-preempt) mode. On wasm, the C stack is
+ * scannable but the wasm stack is not, so to make the code GC safe, the following rules
+ * should be followed:
+ * - every objref handled by the code needs to have a copy stored inside InterpFrame,
+ *   in stackval->data.o. For objrefs which are not yet on the IL stack, they can be stored
+ *   in frame->o. This will ensure the objects are pinned. The 'frame' local is assumed
+ *   to be allocated to the C stack and not to registers.
+ * - minimalize the number of MonoObject* locals/arguments.
+ */
+
+/*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  * The ERROR argument is used to avoid declaring an error object for every interp frame, its not used
@@ -2895,6 +2908,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	int i32;
 	unsigned char *vt_sp;
 	unsigned char *locals = NULL;
+	// See the comment about GC safety above
 	MonoObject *o = NULL;
 	MonoClass *c;
 #if USE_COMPUTED_GOTO
@@ -4344,7 +4358,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			newobj_class = (MonoClass*) imethod->data_items [token];
 
 			sp -= param_count;
-			sp->data.p = ves_array_create (imethod->domain, newobj_class, param_count, sp, error);
+			sp->data.o = ves_array_create (imethod->domain, newobj_class, param_count, sp, error);
 			if (!mono_error_ok (error))
 				THROW_EX (mono_error_convert_to_exception (error), ip);
 
@@ -4389,12 +4403,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 					if (!mono_error_ok (error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-				if (G_UNLIKELY (!o)) {
+				frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				if (G_UNLIKELY (!frame->o)) {
 					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 					THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				sp->data.p = o;
+				sp->data.o = frame->o;
 				ip += 4;
 			}
 
@@ -4405,7 +4419,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (vt)
 				*sp = valuetype_this;
 			else
-				sp->data.p = o;
+				sp->data.p = frame->o;
 			++sp;
 			MINT_IN_BREAK;
 		}
@@ -4457,12 +4471,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 					MonoVTable *vtable = mono_class_vtable_checked (imethod->domain, newobj_class, error);
 					if (!mono_error_ok (error) || !mono_runtime_class_init_full (vtable, error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
-					o = mono_object_new_checked (imethod->domain, newobj_class, error);
+					frame->o = mono_object_new_checked (imethod->domain, newobj_class, error);
 					mono_error_cleanup (error); /* FIXME: don't swallow the error */
 					EXCEPTION_CHECKPOINT;
-					sp->data.p = o;
+					sp->data.o = frame->o;
 #ifndef DISABLE_REMOTING
-					if (mono_object_is_transparent_proxy (o)) {
+					if (mono_object_is_transparent_proxy (frame->o)) {
 						MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method, error);
 						mono_error_assert_ok (error);
 						child_frame.imethod = mono_interp_get_imethod (imethod->domain, remoting_invoke_method, error);
@@ -4487,7 +4501,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			} else if (newobj_class == mono_defaults.string_class) {
 				*sp = retval;
 			} else {
-				sp->data.p = o;
+				sp->data.o = frame->o;
 			}
 			++sp;
 			MINT_IN_BREAK;
@@ -5098,10 +5112,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MonoVTable *vtable = (MonoVTable*)imethod->data_items [* (guint16 *)(ip + 1)];
 			guint16 offset = * (guint16 *)(ip + 2);
 
-			MonoObject *obj = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-			stackval_to_data (m_class_get_byval_arg (vtable->klass), &sp [-1 - offset], mono_object_get_data (obj), FALSE);
+			frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			stackval_to_data (m_class_get_byval_arg (vtable->klass), &sp [-1 - offset], mono_object_get_data (frame->o), FALSE);
 
-			sp [-1 - offset].data.p = obj;
+			sp [-1 - offset].data.p = frame->o;
 
 			ip += 3;
 			MINT_IN_BREAK;
@@ -5114,10 +5128,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			offset &= ~BOX_NOT_CLEAR_VT_SP;
 
 			int size = mono_class_value_size (c, NULL);
-			MonoObject *obj = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-			mono_value_copy_internal (mono_object_get_data (obj), sp [-1 - offset].data.p, c);
+			frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			mono_value_copy_internal (mono_object_get_data (frame->o), sp [-1 - offset].data.p, c);
 
-			sp [-1 - offset].data.p = obj;
+			sp [-1 - offset].data.p = frame->o;
 			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			if (pop_vt_sp)
 				vt_sp -= size;
@@ -5133,7 +5147,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			int size = mono_class_value_size (c, NULL);
 
-			sp [-1 - offset].data.p = mono_nullable_box (sp [-1 - offset].data.p, c, error);
+			sp [-1 - offset].data.o = mono_nullable_box (sp [-1 - offset].data.p, c, error);
 			mono_error_cleanup (error); /* FIXME: don't swallow the error */
 
 			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
@@ -5145,7 +5159,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_NEWARR) {
 			MonoVTable *vtable = (MonoVTable*)imethod->data_items[*(guint16 *)(ip + 1)];
-			sp [-1].data.p = (MonoObject*) mono_array_new_specific_checked (vtable, sp [-1].data.i, error);
+			sp [-1].data.o = (MonoObject*) mono_array_new_specific_checked (vtable, sp [-1].data.i, error);
 			if (!mono_error_ok (error)) {
 				THROW_EX (mono_error_convert_to_exception (error), ip);
 			}
