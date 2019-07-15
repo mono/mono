@@ -65,7 +65,11 @@ typedef struct {
 		} pair;
 		float f_r4;
 		double f;
+#ifdef TARGET_WASM
 		MonoObject * volatile o;
+#else
+		MonoObject *o;
+#endif
 		/* native size integer and pointer types */
 		gpointer p;
 		mono_u nati;
@@ -137,7 +141,9 @@ struct _InterpFrame {
 	 * Storing into this field will keep the object pinned
 	 * until the objref can be stored into stackval->data.o.
 	 */
+#ifdef TARGET_WASM
 	MonoObject* volatile o;
+#endif
 	/* exception info */
 	const unsigned short  *ip;
 	MonoException     *ex;

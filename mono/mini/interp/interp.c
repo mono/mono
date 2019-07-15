@@ -2884,6 +2884,12 @@ static int opcode_counts[512];
  * - minimalize the number of MonoObject* locals/arguments.
  */
 
+#ifdef TARGET_WASM
+#define frame_objref(frame) (frame)->o
+#else
+#define frame_objref(frame) o
+#endif
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -4403,12 +4409,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 					if (!mono_error_ok (error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-				if (G_UNLIKELY (!frame->o)) {
+				frame_objref (frame) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				if (G_UNLIKELY (!frame_objref (frame))) {
 					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 					THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				sp->data.o = frame->o;
+				sp->data.o = frame_objref (frame);
 				ip += 4;
 			}
 
@@ -4419,7 +4425,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (vt)
 				*sp = valuetype_this;
 			else
-				sp->data.p = frame->o;
+				sp->data.p = frame_objref (frame);
 			++sp;
 			MINT_IN_BREAK;
 		}
@@ -4471,12 +4477,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 					MonoVTable *vtable = mono_class_vtable_checked (imethod->domain, newobj_class, error);
 					if (!mono_error_ok (error) || !mono_runtime_class_init_full (vtable, error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
-					frame->o = mono_object_new_checked (imethod->domain, newobj_class, error);
+					frame_objref (frame) = mono_object_new_checked (imethod->domain, newobj_class, error);
 					mono_error_cleanup (error); /* FIXME: don't swallow the error */
 					EXCEPTION_CHECKPOINT;
-					sp->data.o = frame->o;
+					sp->data.o = frame_objref (frame);
 #ifndef DISABLE_REMOTING
-					if (mono_object_is_transparent_proxy (frame->o)) {
+					if (mono_object_is_transparent_proxy (frame_objref (frame))) {
 						MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method, error);
 						mono_error_assert_ok (error);
 						child_frame.imethod = mono_interp_get_imethod (imethod->domain, remoting_invoke_method, error);
@@ -4501,7 +4507,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			} else if (newobj_class == mono_defaults.string_class) {
 				*sp = retval;
 			} else {
-				sp->data.o = frame->o;
+				sp->data.o = frame_objref (frame);
 			}
 			++sp;
 			MINT_IN_BREAK;
@@ -5112,10 +5118,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MonoVTable *vtable = (MonoVTable*)imethod->data_items [* (guint16 *)(ip + 1)];
 			guint16 offset = * (guint16 *)(ip + 2);
 
-			frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-			stackval_to_data (m_class_get_byval_arg (vtable->klass), &sp [-1 - offset], mono_object_get_data (frame->o), FALSE);
+			frame_objref (frame) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			stackval_to_data (m_class_get_byval_arg (vtable->klass), &sp [-1 - offset], mono_object_get_data (frame_objref (frame)), FALSE);
 
-			sp [-1 - offset].data.p = frame->o;
+			sp [-1 - offset].data.p = frame_objref (frame);
 
 			ip += 3;
 			MINT_IN_BREAK;
@@ -5128,10 +5134,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			offset &= ~BOX_NOT_CLEAR_VT_SP;
 
 			int size = mono_class_value_size (c, NULL);
-			frame->o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-			mono_value_copy_internal (mono_object_get_data (frame->o), sp [-1 - offset].data.p, c);
+			frame_objref (frame) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			mono_value_copy_internal (mono_object_get_data (frame_objref (frame)), sp [-1 - offset].data.p, c);
 
-			sp [-1 - offset].data.p = frame->o;
+			sp [-1 - offset].data.p = frame_objref (frame);
 			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			if (pop_vt_sp)
 				vt_sp -= size;
