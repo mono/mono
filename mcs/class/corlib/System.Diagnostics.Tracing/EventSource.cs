@@ -174,6 +174,10 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		internal void ReportOutOfBandMessage (string msg, bool flush)
+		{
+		}
+
 		protected void WriteEvent (int eventId)
 		{
 			WriteEvent (eventId, new object[] { } );

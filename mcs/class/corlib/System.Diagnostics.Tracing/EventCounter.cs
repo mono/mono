@@ -28,9 +28,9 @@
 
 namespace System.Diagnostics.Tracing
 {
-	public class EventCounter : IDisposable
+	public class EventCounter : DiagnosticCounter
 	{
-		public EventCounter (string name, EventSource eventSource)
+		public EventCounter (string name, EventSource eventSource) : base (name, eventSource)
 		{
 		}
 
@@ -38,7 +38,7 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-		public void Dispose ()
+		public void WriteMetric (double value)
 		{
 		}
 	}
