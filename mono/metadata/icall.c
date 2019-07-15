@@ -8972,7 +8972,7 @@ no_icall_table (void)
 gconstpointer
 mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_missing, guint32 *flags)
 {
-	char *sigstart;
+	char *sigstart = NULL;
 	char *tmpsig = NULL;
 	char mname [2048];
 	char *classname = NULL;
