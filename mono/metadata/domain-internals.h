@@ -376,6 +376,13 @@ struct _MonoDomain {
 	/* Needed by Thread:GetDomainID() */
 	gint32             domain_id;
 	gint32             shadow_serial;
+	/*
+	 * For framework Mono, this is every assembly loaded in this
+	 * domain. For netcore, this is every assembly loaded in every ALC in
+	 * this domain.  In netcore, the thread that adds an assembly to its
+	 * MonoAssemblyLoadContext:loaded_assemblies should also add it to this
+	 * list.
+	 */
 	GSList             *domain_assemblies;
 	MonoAssembly       *entry_assembly;
 	char               *friendly_name;
