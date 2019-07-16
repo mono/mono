@@ -63,9 +63,9 @@ node (isPr ? "mono-package-pr" : "mono-package") {
 
                 if (isReleaseJob) {
                     stage("Signing") {
-                        timeout(time: 30, unit: 'MINUTES') {
+                        timeout(time: 90, unit: 'MINUTES') {
                             // waits until the signing job posts completion signal to this pipeline input
-                            input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
+                            input id: 'FinishedSigning', message: 'Waiting for signing to finish (please be patient)...', submitter: 'monojenkins'
                             echo "Signing done."
                         }
                     }
