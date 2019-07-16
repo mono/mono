@@ -174,7 +174,7 @@ namespace System.Data
 
         private static void AssertNotNull(DbDataReader reader)
         {
-            if (reader is null)
+            if (reader == null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
