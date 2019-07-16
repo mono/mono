@@ -134,7 +134,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter \
+	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter,gac \
 	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-btls-android-api=$$(ANDROID_SDK_VERSION_$(1)) \
