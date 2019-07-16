@@ -9,7 +9,7 @@
 /* MonoAssemblyLoadContext support only in netcore Mono */
 
 void
-mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc)
+mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain)
 {
 	MonoLoadedImages *li = g_new0 (MonoLoadedImages, 1);
 	mono_loaded_images_init (li, alc);

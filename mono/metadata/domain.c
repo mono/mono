@@ -2069,7 +2069,7 @@ create_alc (MonoDomain *domain, gboolean is_default)
 		goto leave;
 
 	alc = g_new0 (MonoAssemblyLoadContext, 1);
-	mono_alc_init (alc, domain, is_default);
+	mono_alc_init (alc, domain);
 
 	domain->alcs = g_slist_prepend (domain->alcs, alc);
 	if (is_default)

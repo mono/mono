@@ -35,7 +35,7 @@ mono_set_pinvoke_search_directories (int dir_count, char **dirs);
 
 #ifdef ENABLE_NETCORE
 void
-mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean default_alc);
+mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain);
 
 void
 mono_alc_cleanup (MonoAssemblyLoadContext *alc);
