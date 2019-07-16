@@ -8,7 +8,7 @@ void
 mono_loaded_images_init (MonoLoadedImages *li, MonoAssemblyLoadContext *owner)
 {
 	li->owner = owner;
-	for(int hash_idx = 0; hash_idx < MONO_LOADED_IMAGES_HASH_COUNT; hash_idx++)
+	for (int hash_idx = 0; hash_idx < MONO_LOADED_IMAGES_HASH_COUNT; hash_idx++)
 		li->loaded_images_hashes [hash_idx] = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
@@ -26,7 +26,7 @@ mono_loaded_images_cleanup (MonoLoadedImages *li, gboolean shutdown)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly image '%s' [%p] still loaded at shutdown.", image->name, image);
 	}
 
-	for(int hash_idx = 0; hash_idx < MONO_LOADED_IMAGES_HASH_COUNT; hash_idx++) {
+	for (int hash_idx = 0; hash_idx < MONO_LOADED_IMAGES_HASH_COUNT; hash_idx++) {
 		g_hash_table_destroy (li->loaded_images_hashes [hash_idx]);
 		li->loaded_images_hashes [hash_idx] = NULL;
 	}
