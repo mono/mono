@@ -117,6 +117,7 @@ monodroid_dirs_parallel := \
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
+	Mono.Cecil.Mdb	\
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
 	monodoc \
