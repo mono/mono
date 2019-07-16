@@ -1727,6 +1727,9 @@ mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly);
 
 /**
  * mono_image_loaded_by_guid_full:
+ *
+ * Looks only in the global loaded images hash, will miss assemblies loaded
+ * into an AssemblyLoadContext.
  */
 MonoImage *
 mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
@@ -1761,6 +1764,9 @@ mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 
 /**
  * mono_image_loaded_by_guid:
+ *
+ * Looks only in the global loaded images hash, will miss assemblies loaded
+ * into an AssemblyLoadContext.
  */
 MonoImage *
 mono_image_loaded_by_guid (const char *guid)

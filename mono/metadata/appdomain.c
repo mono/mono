@@ -2244,7 +2244,7 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 	MonoAssembly *result = NULL;
 #ifdef ENABLE_NETCORE
 	g_assert (alc);
-	g_assert (mono_alc_domain (alc) == domain); /* should be true everywhere, not just on netcore */
+	g_assert (mono_alc_domain (alc) == domain);
 #endif
 
 	set_domain_search_path (domain);
