@@ -44,7 +44,7 @@ mono_loaded_images_get_hash (MonoLoadedImages *li, gboolean refonly);
 GHashTable *
 mono_loaded_images_get_by_name_hash (MonoLoadedImages *li, gboolean refonly);
 
-void
+gboolean
 mono_loaded_images_remove_image (MonoImage *image);
 
 MonoLoadedImages*

@@ -2336,20 +2336,9 @@ mono_image_close_except_pools (MonoImage *image)
 
 	g_return_val_if_fail (image != NULL, FALSE);
 
-	/*
-	 * Atomically decrement the refcount and remove ourselves from the hash tables, so
-	 * register_image () can't grab an image which is being closed.
-	 */
-	mono_images_lock ();
 
-	if (mono_atomic_dec_i32 (&image->ref_count) > 0) {
-		mono_images_unlock ();
+	if (!mono_loaded_images_remove_image (image))
 		return FALSE;
-	}
-
-	mono_loaded_images_remove_image (image);
-
-	mono_images_unlock ();
 
 #ifdef HOST_WIN32
 	if (m_image_is_module_handle (image) && m_image_has_entry_point (image)) {

@@ -67,14 +67,33 @@ loaded_images_get_owner (MonoImage *image)
 	return mono_alc_get_loaded_images (alc);
 }
 
-/* LOCKING: assumes the images lock is locked */
-void
+/**
+ * Atomically decrements the image refcount and removes it from the loaded
+ * images hashes if the refcount becomes zero.
+ *
+ * Returns TRUE if image unloading should proceed or FALSE otherwise.
+ *
+ * LOCKING: takes the images lock
+ */
+gboolean
 mono_loaded_images_remove_image (MonoImage *image)
 {
-	MonoLoadedImages *li = loaded_images_get_owner (image);
+	gboolean proceed = FALSE;
+	/*
+	 * Atomically decrement the refcount and remove ourselves from the hash tables, so
+	 * register_image () can't grab an image which is being closed.
+	 */
+	mono_images_lock ();
+
+	if (mono_atomic_dec_i32 (&image->ref_count) > 0)
+		goto done;
+
+	MonoLoadedImages *li;
+	li = loaded_images_get_owner (image);
 	if (!li) {
 		/* we weren't registered; maybe lost to another image */
-		return;
+		proceed = TRUE;
+		goto done;
 	}
 	GHashTable *loaded_images, *loaded_images_by_name;
 	MonoImage *image2;
@@ -88,6 +107,13 @@ mono_loaded_images_remove_image (MonoImage *image)
 	}
 	if (image->assembly_name && (g_hash_table_lookup (loaded_images_by_name, image->assembly_name) == image))
 		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
+
+	proceed = TRUE;
+done:
+	mono_images_unlock ();
+
+	return proceed;
+	
 }
 
 MonoLoadedImages*
