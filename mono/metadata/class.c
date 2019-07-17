@@ -3795,7 +3795,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 			*result = TRUE;
 			return;
 		}
-	}else if (m_class_get_rank (klass)) {
+	} else if (m_class_get_rank (klass)) {
 		MonoClass *eclass, *eoclass;
 
 		if (m_class_get_rank (oklass) != m_class_get_rank (klass)) {
