@@ -60,22 +60,13 @@ parallel (
     }
 )
 
-def reportGitHubStatus(commitHash, context, backref, statusResult, statusResultMessage) {
-    step([
-        $class: 'GitHubCommitStatusSetter',
-        commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
-        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
-        statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: backref],
-        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: statusResult, message: statusResultMessage]]]
-    ])
-}
-
 def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "") {
     def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
     def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
     def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
     def packageFileName = null
     def commitHash = null
+    def utils = null
 
     ws ("workspace/${jobName}/${monoBranch}/${product}/${configuration}") {
         timestamps {
@@ -84,6 +75,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 // clone and checkout repo
                 checkout scm
+
+                utils = load "scripts/ci/pipeline/utils.groovy"
 
                 // remove old stuff
                 sh 'git reset --hard HEAD'
@@ -100,7 +93,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
             }
             try {
                 stage('Build') {
-                    reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'PENDING', 'Building...')
+                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'PENDING', 'Building...')
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
@@ -135,10 +128,10 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 uploadArtifactsOnlyIfSuccessful: true)
                 }
 
-                reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/mono-sdks/${packageFileName}", 'SUCCESS', packageFileName)
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/mono-sdks/${packageFileName}", 'SUCCESS', packageFileName)
             }
             catch (Exception e) {
-                reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'FAILURE', "Build failed.")
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'FAILURE', "Build failed.")
                 throw e
             }
         }
