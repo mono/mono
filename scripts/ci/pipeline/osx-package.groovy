@@ -7,7 +7,6 @@ def windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : isPrivate ? 
 def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins build pkg and msi"))
 def packageFileName = null
 def commitHash = null
-def utils = null
 // compression is incompatible with JEP-210 right now
 properties([ /* compressBuildLog() */ ])
 
@@ -27,12 +26,10 @@ try {
                     // get current commit sha
                     commitHash = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
                     currentBuild.displayName = "${commitHash.substring(0,7)}"
-
-                    utils = load "scripts/ci/pipeline/utils.groovy"
                 }
 
                 stage('Build') {
-                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'PENDING', 'Building...')
+                    reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'PENDING', 'Building...')
 
                     // build the .pkg
                     timeout (time: 420, unit: 'MINUTES') {
@@ -82,12 +79,12 @@ try {
         def packageUrl = "https://${downloadHost}/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
         currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
 
-        if (isReleaseJob) { utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'artifacts.json', "${packageUrl}/artifacts.json", 'SUCCESS', '') }
-        utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', "${packageUrl}/${packageFileName}", 'SUCCESS', packageFileName)
+        if (isReleaseJob) { reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'artifacts.json', "${packageUrl}/artifacts.json", 'SUCCESS', '') }
+        reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', "${packageUrl}/${packageFileName}", 'SUCCESS', packageFileName)
     }
 }
 catch (Exception e) {
-    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'FAILURE', "Build failed.")
+    reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'FAILURE', "Build failed.")
     throw e
 }
 
@@ -106,4 +103,14 @@ if (!isPr || isWindowsPrBuild) {
 
     // trigger the Windows build
     build(job: "${windowsJobName}", wait: false, parameters: parameters)
+}
+
+def reportGitHubStatus(commitHash, context, backref, statusResult, statusResultMessage) {
+    step([
+        $class: 'GitHubCommitStatusSetter',
+        commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
+        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
+        statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: backref],
+        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: statusResult, message: statusResultMessage]]]
+    ])
 }
