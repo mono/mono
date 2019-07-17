@@ -12,7 +12,7 @@ namespace System.Security.Cryptography
         public static System.Security.Cryptography.KeySizes TagByteSizes => throw new PlatformNotSupportedException ();
         public void Decrypt (byte[] nonce, byte[] ciphertext, byte[] tag, byte[] plaintext, byte[] associatedData = null) => throw new PlatformNotSupportedException ();
         public void Decrypt (System.ReadOnlySpan<byte> nonce, System.ReadOnlySpan<byte> ciphertext, System.ReadOnlySpan<byte> tag, System.Span<byte> plaintext, System.ReadOnlySpan<byte> associatedData = default(System.ReadOnlySpan<byte>)) => throw new PlatformNotSupportedException ();
-        public void Dispose () => throw new PlatformNotSupportedException ();
+        public void Dispose () {}
         public void Encrypt (byte[] nonce, byte[] plaintext, byte[] ciphertext, byte[] tag, byte[] associatedData = null) => throw new PlatformNotSupportedException ();
         public void Encrypt (System.ReadOnlySpan<byte> nonce, System.ReadOnlySpan<byte> plaintext, System.Span<byte> ciphertext, System.Span<byte> tag, System.ReadOnlySpan<byte> associatedData = default(System.ReadOnlySpan<byte>)) => throw new PlatformNotSupportedException ();
     }
