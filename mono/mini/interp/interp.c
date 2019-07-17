@@ -1370,8 +1370,9 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 	}
 
 #ifdef ENABLE_NETCORE
-	if (save_last_error)
+	if (save_last_error) {
 		mono_marshal_clear_last_error ();
+	}
 #endif
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
