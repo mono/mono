@@ -3826,6 +3826,20 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 			}
 		}
 
+		/* 
+		 * a is b does not imply a[] is b[] in the case where b is an interface and
+		 * a is a generic parameter that implements that interface,.
+		 */
+
+		if (MONO_CLASS_IS_INTERFACE_INTERNAL (eclass)) {
+			MonoType *eoclass_byval_arg = m_class_get_byval_arg (eoclass);
+			if (mono_type_is_generic_argument (eoclass_byval_arg) && 
+				MONO_CLASS_IMPLEMENTS_INTERFACE (eoclass, m_class_get_interface_id (eclass))) {
+				*result = FALSE;
+				return;
+			}
+		}
+
 		if (mono_class_is_nullable (eclass) ^ mono_class_is_nullable (eoclass)) {
 			*result = FALSE;
 			return;
