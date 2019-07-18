@@ -3851,13 +3851,15 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 
 		if (MONO_CLASS_IS_INTERFACE_INTERNAL (eclass)) {
 			MonoType *eoclass_byval_arg = m_class_get_byval_arg (eoclass);
-			MonoGenericParam *eoparam = eoclass_byval_arg->data.generic_param;
-			MonoGenericParamInfo *eoinfo = mono_generic_param_info (eoparam);
-			int eomask = eoinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
-			if (mono_type_is_generic_argument (eoclass_byval_arg) &&
-				!((eomask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0)) {
-				*result = FALSE;
-				return;
+			if (mono_type_is_generic_argument (eoclass_byval_arg)) {
+				MonoGenericParam *eoparam = eoclass_byval_arg->data.generic_param;
+				MonoGenericParamInfo *eoinfo = mono_generic_param_info (eoparam);
+				int eomask = eoinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
+				// check for class constraint
+				if ((eomask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0) {
+					*result = FALSE;
+					return;
+				}
 			}
 		}
 
