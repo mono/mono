@@ -622,6 +622,8 @@ void mono_threads_coop_end_global_suspend (void);
 MONO_API MonoNativeThreadId
 mono_native_thread_id_get (void);
 
+guint64 mono_native_thread_os_id_get (void);
+
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 

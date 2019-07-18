@@ -58,4 +58,10 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 		slow_get_thread_bounds (current, staddr, stsize);
 }
 
+guint64
+mono_native_thread_os_id_get (void)
+{
+	return (guint64)syscall (SYS_gettid);
+}
+
 #endif
