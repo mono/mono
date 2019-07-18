@@ -421,6 +421,8 @@
 ##  System.Reflection.Tests
 ####################################################################
 
+-nomethod System.Reflection.Tests.AssemblyTests.CreateInstance
+
 # Expected to throw FileLoadException, but we aren't
 # https://github.com/mono/mono/issues/15021
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
@@ -678,11 +680,11 @@
 
 # RuntimeAssembly.IsCollectible is not implemented yet
 # Implementation task https://github.com/mono/mono/issues/15142
--nomethod System.Reflection.Tests.IsCollectibleTests.MemberInfoGeneric_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleTrue_WhenUsingTestAssemblyLoadContext
--nomethod System.Reflection.Tests.IsCollectibleTests.MemberInfo_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoadContext
+-nomethod System.Reflection.Tests.IsCollectibleTests.*
+
+# runtime crashes instead of TypeLoadException
+-nomethod System.Tests.TypeTestsExtended.GetTypeByName_NoSuchType_ThrowsTypeLoadException
+-nomethod System.Tests.TypeTestsExtended.GetTypeByNameCaseSensitiveTypeloadFailure
 
 # Mono ignores [Optional] attribute defined on parameters in delegates
 # https://github.com/mono/mono/issues/15148
@@ -1227,3 +1229,6 @@
 
 # Flaky tests https://github.com/mono/mono/issues/15238
 -nonamespace System.Security.Cryptography.Pkcs
+
+#
+-nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
