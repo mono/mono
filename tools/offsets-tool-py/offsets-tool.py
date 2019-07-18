@@ -41,6 +41,16 @@ class OffsetsTool:
 		pass
 
 	def parse_args(self):
+		def require_sysroot (args):
+			if not args.sysroot:
+				print ("Sysroot dir for device not set.", file=sys.stderr)
+				sys.exit (1)
+
+		def require_emscipten_path (args):
+			if not args.emscripten_path:
+				print ("Emscripten sdk dir not set.", file=sys.stderr)
+				sys.exit (1)
+
 		parser = argparse.ArgumentParser ()
 		parser.add_argument ('--xcode-path', dest='xcode_path', help='path to Xcode.app')
 		parser.add_argument ('--emscripten-sdk', dest='emscripten_path', help='path to emscripten sdk')
@@ -48,6 +58,7 @@ class OffsetsTool:
 		parser.add_argument ('--monodir', dest='mono_path', help='path to mono source tree', required=True)
 		parser.add_argument ('--targetdir', dest='target_path', help='path to mono tree configured for target', required=True)
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
+		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		args = parser.parse_args ()
 
 		if args.xcode_path == None:
@@ -67,36 +78,35 @@ class OffsetsTool:
 		self.target = None
 		self.target_args = []
 
-		sysroot_ios = "/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
-		sysroot_watchos = "/Platforms/WatchOS.platform/Developer/SDKs/WatchOS.sdk"
-
 		if "wasm" in args.abi:
-			if args.emscripten_path == None:
-				print ("Emscripten sdk dir not set.", file=sys.stderr)
-				sys.exit (1)
+			require_emscipten_path (args)
 			self.sys_includes = [args.emscripten_path + "/system/include/libc"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
-		elif "arm-apple-darwin10" == args.abi:
+		elif "arm-apple-darwin11" == args.abi:
+			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm"]
-			self.target_args += ["-isysroot", args.xcode_path + sysroot_ios]
+			self.target_args += ["-isysroot", args.sysroot]
 
 		elif "aarch64-apple-darwin10" == args.abi:
+			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_IOS", IOS_DEFINES)
 			self.target_args += ["-arch", "arm64"]
-			self.target_args += ["-isysroot", args.xcode_path + sysroot_ios]
+			self.target_args += ["-isysroot", args.sysroot]
 
 		elif "armv7k-apple-darwin" == args.abi:
+			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "armv7k"]
-			self.target_args += ["-isysroot", args.xcode_path + sysroot_watchos]
+			self.target_args += ["-isysroot", args.sysroot]
 
 		elif "aarch64-apple-darwin10_ilp32" == args.abi:
+			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm64_32"]
-			self.target_args += ["-isysroot", args.xcode_path + sysroot_watchos]
+			self.target_args += ["-isysroot", args.sysroot]
 
 
 		if not self.target:
