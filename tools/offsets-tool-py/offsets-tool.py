@@ -84,7 +84,7 @@ class OffsetsTool:
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
-		elif "arm-apple-darwin11" == args.abi:
+		elif "arm-apple-darwin10" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm"]
