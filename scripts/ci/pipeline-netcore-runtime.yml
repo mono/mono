@@ -125,6 +125,7 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
+      make -C netcore xunit-summary
       if [ -e ".failures" ]; then
         printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
         exit 1
