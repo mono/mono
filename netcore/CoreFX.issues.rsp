@@ -397,7 +397,7 @@
 ##  System.Reflection.Tests
 ####################################################################
 
-# crashes runtime
+# Runtime crashes
 -nomethod System.Reflection.Tests.AssemblyTests.CreateInstance
 -nomethod System.Reflection.Tests.AssemblyNetCoreAppTests.AssemblyGetForwardedTypesLoadFailure
 
@@ -640,7 +640,7 @@
 # Implementation task https://github.com/mono/mono/issues/15142
 -nomethod System.Reflection.Tests.IsCollectibleTests.*
 
-# runtime crashes instead of TypeLoadException
+# Runtime crashes instead of TypeLoadException
 -nomethod System.Tests.TypeTestsExtended.GetTypeByName_NoSuchType_ThrowsTypeLoadException
 -nomethod System.Tests.TypeTestsExtended.GetTypeByNameCaseSensitiveTypeloadFailure
 
@@ -1125,6 +1125,7 @@
 # Xml differences... Looks like the parsing isn't working
 # https://github.com/mono/mono/issues/15353
 -nomethod System.Xml.Tests.CXmlResolverTest.TC_AbsolutePath_Transform
+-nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 
 ####################################################################
 ##  System.Net.Requests.Tests
@@ -1172,6 +1173,3 @@
 
 # Flaky tests https://github.com/mono/mono/issues/15238
 -nonamespace System.Security.Cryptography.Pkcs
-
-#
--nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
