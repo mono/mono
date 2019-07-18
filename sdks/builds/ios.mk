@@ -20,6 +20,8 @@ ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_D
 
 ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
+USE_OFFSETS_TOOL_PY = 1
+
 ##
 # Device builds
 #
@@ -333,7 +335,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSETS_DUMPER_ARGS=--gen-ios
+_ios-$(1)_OFFSETS_DUMPER_ARGS=--xcode-path $(7)
 _ios_$(1)_PLATFORM_BIN=$(7)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _ios-$(1)_CC=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang
@@ -374,18 +376,18 @@ $$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5)
 
 endef
 
-ios-cross32_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
-ios-crosswatch_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
+ios-cross32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
+ios-crosswatch_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-cross64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-crosswatch64_32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-cross32-64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
 
-$(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 $(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
-$(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,armv7k-apple-darwin_ilp32,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(XCODE_DIR)))
 
 
 $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
