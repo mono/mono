@@ -8,6 +8,7 @@
 
 #include <mono/utils/mono-threads.h>
 #include <pthread.h>
+#include <sys/syscall.h>
 
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
