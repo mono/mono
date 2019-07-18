@@ -52,7 +52,7 @@ class OffsetsTool:
 				sys.exit (1)
 
 		parser = argparse.ArgumentParser ()
-		parser.add_argument ('--xcode-path', dest='xcode_path', help='path to Xcode.app')
+		parser.add_argument ('--libclang-path', dest='libclang_path', help='path to directory where libclang.{so,dylib} lives')
 		parser.add_argument ('--emscripten-sdk', dest='emscripten_path', help='path to emscripten sdk')
 		parser.add_argument ('--outfile', dest='outfile', help='path to output file', required=True)
 		parser.add_argument ('--monodir', dest='mono_path', help='path to mono source tree', required=True)
@@ -61,11 +61,8 @@ class OffsetsTool:
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		args = parser.parse_args ()
 
-		if args.xcode_path == None:
-			args.xcode_path = "/Applications/Xcode.app/Contents/Developer"
-
-		if not os.path.isdir (args.xcode_path):
-			print ("Xcode directory '" + args.xcode_path + "' doesn't exist.", file=sys.stderr)
+		if not os.path.isdir (args.libclang_path):
+			print ("Libclang path '" + args.libclang_path + "' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 		if not os.path.isdir (args.mono_path):
 			print ("Mono directory '" + args.mono_path + "' doesn't exist.", file=sys.stderr)
@@ -192,7 +189,7 @@ class OffsetsTool:
 		for define in self.target.get_clang_args ():
 			clang_args.append ("-D" + define)
 		
-		clang.cindex.Config.set_library_path (args.xcode_path + "/Toolchains/XcodeDefault.xctoolchain/usr/lib/")
+		clang.cindex.Config.set_library_path (args.libclang_path)
 		
 		for srcfile in srcfiles:
 			src = args.mono_path + "/" + srcfile

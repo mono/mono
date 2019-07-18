@@ -20,10 +20,7 @@ ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/zlib.h  	\
 	$(MONO_SUPPORT)/zutil.h
 
-ifeq ($(UNAME),Darwin)
-# The c# offsets tool is 32 bit, and the 64 bit version doesn't work
 USE_OFFSETS_TOOL_PY = 1
-endif
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
@@ -154,7 +151,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang-path /home/lewurm/work/mono/sdks/builds/toolchains/emsdk/upstream/lib/
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \

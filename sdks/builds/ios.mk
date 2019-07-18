@@ -340,7 +340,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSETS_DUMPER_ARGS=--xcode-path $(XCODE_DIR) --sysroot $(7)
+_ios-$(1)_OFFSETS_DUMPER_ARGS=--libclang-path $(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib --sysroot $(7)
 _ios_$(1)_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _ios-$(1)_CC=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang
