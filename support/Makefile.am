@@ -83,6 +83,7 @@ ZLIB_SOURCES = \
 	crc32.c		\
 	uncompr.c	\
 	deflate.c	\
+	gzguts.h	\
 	trees.c		\
 	zutil.c		\
 	inflate.c	\
