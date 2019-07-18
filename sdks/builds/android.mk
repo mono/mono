@@ -495,7 +495,7 @@ $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
 
 $(android_TPN_DIR)/LICENSE:
 	mkdir -p $(android_TPN_DIR)
-	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='/LICENSE' --include='*/' --exclude="*" --prune-empty-dirs . $(android_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(android_TPN_DIR)
 
 $(android_TPN_DIR): $(android_TPN_DIR)/LICENSE
 
