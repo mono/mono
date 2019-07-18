@@ -13,10 +13,11 @@
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
 ios_SOURCES_DIR = $(TOP)/sdks/out/ios-sources
+ios_TPN_DIR = $(TOP)/sdks/out/ios-tpn
 ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
-ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-mono-version.txt
-ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_MONO_VERSION)
+ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-tpn ios-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_TPN_DIR) $(ios_MONO_VERSION)
 
 ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
@@ -575,6 +576,12 @@ $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file
 	cd $(TOP) && rsync -r --exclude='external/api-doc-tools/*' --exclude='external/api-snapshot/*' --exclude='external/aspnetwebstack/*' --exclude='external/binary-reference-assemblies/*' --exclude='netcore/*' --include='*.cs' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_SOURCES_DIR)
 
 $(ios_SOURCES_DIR): $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs
+
+$(ios_TPN_DIR)/LICENSE:
+	mkdir -p $(ios_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='/LICENSE' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_TPN_DIR)
+
+$(ios_TPN_DIR): $(ios_TPN_DIR)/LICENSE
 
 $(ios_MONO_VERSION): $(TOP)/configure.ac
 	mkdir -p $(dir $(ios_MONO_VERSION))

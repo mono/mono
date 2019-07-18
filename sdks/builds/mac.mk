@@ -2,10 +2,11 @@
 mac_BIN_DIR = $(TOP)/sdks/out/mac-bin
 mac_PKG_CONFIG_DIR = $(TOP)/sdks/out/mac-pkgconfig
 mac_LIBS_DIR = $(TOP)/sdks/out/mac-libs
+mac_TPN_DIR = $(TOP)/sdks/out/mac-tpn
 mac_MONO_VERSION = $(TOP)/sdks/out/mac-mono-version.txt
 
-mac_ARCHIVE += mac-bin mac-pkgconfig mac-libs mac-mono-version.txt
-ADDITIONAL_PACKAGE_DEPS += $(mac_BIN_DIR) $(mac_PKG_CONFIG_DIR) $(mac_LIBS_DIR) $(mac_MONO_VERSION)
+mac_ARCHIVE += mac-bin mac-pkgconfig mac-libs mac-tpn mac-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(mac_BIN_DIR) $(mac_PKG_CONFIG_DIR) $(mac_LIBS_DIR) $(mac_TPN_DIR) $(mac_MONO_VERSION)
 
 ##
 # Parameters
@@ -97,3 +98,9 @@ $(mac_LIBS_DIR): package-mac-mac32 package-mac-mac64
 $(mac_MONO_VERSION): $(TOP)/configure.ac
 	mkdir -p $(dir $(mac_MONO_VERSION))
 	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
+
+$(mac_TPN_DIR)/LICENSE:
+	mkdir -p $(mac_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='/LICENSE' --include='*/' --exclude="*" --prune-empty-dirs . $(mac_TPN_DIR)
+
+$(mac_TPN_DIR): $(mac_TPN_DIR)/LICENSE
