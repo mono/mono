@@ -579,7 +579,7 @@ $(ios_SOURCES_DIR): $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs
 
 $(ios_TPN_DIR)/LICENSE:
 	mkdir -p $(ios_TPN_DIR)
-	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='/LICENSE' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_TPN_DIR)
 
 $(ios_TPN_DIR): $(ios_TPN_DIR)/LICENSE
 

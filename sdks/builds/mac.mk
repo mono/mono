@@ -101,6 +101,6 @@ $(mac_MONO_VERSION): $(TOP)/configure.ac
 
 $(mac_TPN_DIR)/LICENSE:
 	mkdir -p $(mac_TPN_DIR)
-	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='/LICENSE' --include='*/' --exclude="*" --prune-empty-dirs . $(mac_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(mac_TPN_DIR)
 
 $(mac_TPN_DIR): $(mac_TPN_DIR)/LICENSE
