@@ -3828,12 +3828,34 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 
 		/* 
 		 * a is b does not imply a[] is b[] in the case where b is an interface and
-		 * a is a generic parameter that implements that interface.
+		 * a is a generic parameter, unless a has an additional class constraint.
+		 * For example (C#):
+		 * ```
+		 * interface I {}
+		 * class G<T> where T : I {}
+		 * class H<U> where U : class, I {}
+		 * public class P {
+		 *     public static void Main() {
+		 *         var t = typeof(G<>).GetTypeInfo().GenericTypeParameters[0].MakeArrayType();
+		 *         var i = typeof(I).MakeArrayType();
+		 *         var u = typeof(H<>).GetTypeInfo().GenericTypeParameters[0].MakeArrayType();
+		 *         Console.WriteLine("I[] assignable from T[] ? {0}", i.IsAssignableFrom(t));
+		 *         Console.WriteLine("I[] assignable from U[] ? {0}", i.IsAssignableFrom(u));
+		 *     }
+		 * }
+		 * ```
+		 * This should print:
+		 * I[] assignable from T[] ? False
+		 * I[] assignable from U[] ? True
 		 */
 
 		if (MONO_CLASS_IS_INTERFACE_INTERNAL (eclass)) {
 			MonoType *eoclass_byval_arg = m_class_get_byval_arg (eoclass);
-			if (mono_type_is_generic_argument (eoclass_byval_arg)) {
+			MonoGenericParam *eoparam = eoclass_byval_arg->data.generic_param;
+			MonoGenericParamInfo *eoinfo = mono_generic_param_info (eoparam);
+			int eomask = eoinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
+			if (mono_type_is_generic_argument (eoclass_byval_arg) &&
+				!((eomask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0)) {
 				*result = FALSE;
 				return;
 			}
