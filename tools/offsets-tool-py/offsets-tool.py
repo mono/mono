@@ -61,7 +61,7 @@ class OffsetsTool:
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		args = parser.parse_args ()
 
-		if not os.path.isdir (args.libclang_path):
+		if not args.libclang_path or not os.path.isdir (args.libclang_path):
 			print ("Libclang path '" + args.libclang_path + "' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 		if not os.path.isdir (args.mono_path):
