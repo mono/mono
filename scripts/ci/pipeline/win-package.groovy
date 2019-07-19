@@ -83,6 +83,8 @@ try {
                                 doNotWaitForPreviousBuild: true,
                                 uploadArtifactsOnlyIfSuccessful: true)
                 }
+
+                sh 'git clean -xdff'
             }
         }
 
