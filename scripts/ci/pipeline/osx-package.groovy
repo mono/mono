@@ -11,8 +11,14 @@ def utils = null
 
 if (monoBranch == 'master') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
-                pipelineTriggers([cron('H H(0-3) * * *')])
+                pipelineTriggers([cron('0 3 * * *')])
     ])
+
+    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered
+    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').isEmpty()) {
+        echo "Skipping per-commit build on master."
+        return
+    }
 }
 
 try {
