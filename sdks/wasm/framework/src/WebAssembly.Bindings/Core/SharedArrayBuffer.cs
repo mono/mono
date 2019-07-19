@@ -8,7 +8,7 @@ namespace WebAssembly.Core {
 		public SharedArrayBuffer (int length) : base (Runtime.New<SharedArrayBuffer> (length))
 		{ }
 
-		internal SharedArrayBuffer (IntPtr js_handle) : base (js_handle)
+		internal SharedArrayBuffer (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }
 
 		/// <summary>
