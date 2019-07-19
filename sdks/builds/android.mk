@@ -12,7 +12,7 @@ android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATIO
 android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/bin
 android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
-ifeq ($(UNAME),Darwin)
+ifneq (,$(filter $(UNAME),Darwin Linux))
 android_ARCHIVE += android-sources android-tpn
 ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_TPN_DIR)
 endif
