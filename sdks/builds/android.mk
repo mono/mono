@@ -7,13 +7,14 @@ ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
+android_TPN_DIR = $(TOP)/sdks/out/android-tpn
 android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/lib
 android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/bin
 android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ifeq ($(UNAME),Darwin)
-android_ARCHIVE += android-sources
-ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
+android_ARCHIVE += android-sources android-tpn
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_TPN_DIR)
 endif
 
 ##
@@ -491,6 +492,12 @@ $(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel f
 	cd $(TOP) && rsync -r --include='*.cs' --include="README.md" --include="*/" --exclude="*" external/linker $(android_SOURCES_DIR)/external
 
 $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
+
+$(android_TPN_DIR)/LICENSE:
+	mkdir -p $(android_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(android_TPN_DIR)
+
+$(android_TPN_DIR): $(android_TPN_DIR)/LICENSE
 
 $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path: package-android-host-Darwin
 	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib
