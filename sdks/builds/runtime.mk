@@ -226,7 +226,7 @@ _cross-runtime_$(1)-$(2)_CONFIGURE_FLAGS= \
 ifdef USE_OFFSETS_TOOL_PY
 $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure | configure-$(1)-$(5)
 	$(MAKE) -C $(TOP)/tools/offsets-tool-py setup
-	python $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
+	python3 $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
 else
 $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe | configure-$(1)-$(5)
 	cd $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION) && \
