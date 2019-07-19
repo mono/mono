@@ -37,6 +37,12 @@
       "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
       "kind": "bool",
       "default": true
+    },
+    "EnableMonoWasmThreads": {
+      "description": "Whether to include support for threads or not.",
+      "kind": "bool",
+      "default": false
     }
+
   }
 }

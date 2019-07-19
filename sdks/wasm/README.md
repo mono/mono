@@ -65,6 +65,7 @@
                 |--- mono.js                - Mono WebAssembly implementations
                 |--- mono.wasm              - Mono WebAssembly implementations
                 |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- mono.js.mem            - Mono WebAssembly implementations
                 |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- threads-release        - Release build that includes pthreads.
@@ -73,6 +74,7 @@
                 |--- mono.js                - Mono WebAssembly implementations
                 |--- mono.wasm              - Mono WebAssembly implementations
                 |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- mono.js.mem            - Mono WebAssembly implementations
                 |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
@@ -80,7 +82,7 @@
 
     _Note:_ In the above directories the only files that need to be distributed are the ones prefixed with **mono.***.
 
-    _Note:_ The **`mono.worker.js`** file must be deployed with the rest of the generated code files if using the runtimes for threads.
+    _Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files must be deployed with the rest of the generated code files if using the runtimes for threads.
 
 # Requirements
 
@@ -188,6 +190,7 @@ During the main build two directories will be created:
             |--- mono.js                - Mono WebAssembly implementations
             |--- mono.wasm              - Mono WebAssembly implementations
             |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
             |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
             |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
         |--- threads-release        - Release build that includes pthreads.
@@ -196,12 +199,13 @@ During the main build two directories will be created:
             |--- mono.js                - Mono WebAssembly implementations
             |--- mono.wasm              - Mono WebAssembly implementations
             |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
             |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
             |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
 ```
 
-_Note:_ The **`mono.worker.js`** file must be deployed with the rest of the generated code files if using these two runtimes.
+_Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files  must be deployed with the rest of the generated code files if using these two runtimes.
 
 
 # AOT support
