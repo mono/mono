@@ -1,5 +1,5 @@
 def reportGitHubStatus(commitHash, context, backref, statusResult, statusResultMessage) {
-    node("master") {
+    node {
         step([
             $class: 'GitHubCommitStatusSetter',
             commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
