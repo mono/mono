@@ -15,7 +15,7 @@ mkdir "$COV_DIR"
 scripts/ci/run-step.sh --label=coverage-lcov --timeout=20m lcov --no-external -c -d mono -d support -d tools -o "$COV_INFO"
 
 # Generate HTML coverage report in the lcov directory at the root of the project.
-scripts/ci/run-step.sh --label=coverage-genhtml --timeout=20m genhtml -f -s "$COV_INFO" -o lcov
+scripts/ci/run-step.sh --label=coverage-genhtml --timeout=20m genhtml -s "$COV_INFO" -o lcov
 
 # Make the paths relative so that they could be assembled from different Jenkins workspaces.
 sed -Eie "s#^SF:$WORKSPACE/?#SF:#" "$COV_INFO"
