@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Mono.WebAssembly framework assemblies. This package is not intended to be referenced directly.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SignAssembly>true</SignAssembly>
     <!-- get rid of warnings about assemblies not in lib -->
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
