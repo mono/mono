@@ -18,7 +18,7 @@ namespace WebAssembly.Core {
 
 		public Int16Array (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
 
-		internal Int16Array (IntPtr js_handle) : base (js_handle)
+		internal Int16Array (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }
 
 		/// <summary>

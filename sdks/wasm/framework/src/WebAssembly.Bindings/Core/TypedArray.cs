@@ -30,7 +30,7 @@ namespace WebAssembly.Core {
 		protected TypedArray (SharedArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
 		{ }
 
-		internal TypedArray (IntPtr js_handle) : base (js_handle)
+		internal TypedArray (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }
 
 		public TypedArrayTypeCode GetTypedArrayType()

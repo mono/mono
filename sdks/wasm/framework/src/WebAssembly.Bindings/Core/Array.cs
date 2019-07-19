@@ -14,7 +14,7 @@ namespace WebAssembly.Core {
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.Array"/> class.
 		/// </summary>
 		/// <param name="js_handle">Js handle.</param>
-		internal Array (IntPtr js_handle) : base (js_handle)
+		internal Array (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }		
 
 		/// <summary>

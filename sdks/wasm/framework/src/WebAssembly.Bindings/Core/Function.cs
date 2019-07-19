@@ -7,7 +7,7 @@ namespace WebAssembly.Core {
 		public Function (params object [] args) : base (Runtime.New<Function> (args))
 		{ }
 
-		internal Function (IntPtr js_handle) : base (js_handle)
+		internal Function (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }
 
 

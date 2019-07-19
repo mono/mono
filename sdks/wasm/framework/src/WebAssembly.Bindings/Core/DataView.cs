@@ -57,7 +57,7 @@ namespace WebAssembly.Core {
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.DataView"/> class.
 		/// </summary>
 		/// <param name="js_handle">Js handle.</param>
-		internal DataView (IntPtr js_handle) : base (js_handle)
+		internal DataView (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{ }
 		/// <summary>
 		/// Gets the length (in bytes) of this view from the start of its <see cref="T:WebAssembly.Core.ArrayBuffer"/>. Fixed at construction time and thus read only.

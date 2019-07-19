@@ -18,7 +18,7 @@ namespace WebAssembly.Core {
 
 		public Uint32Array (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
 
-		internal Uint32Array (IntPtr js_handle) : base (js_handle) { }
+		internal Uint32Array (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle) { }
 
 		/// <summary>
 		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint32Array"/> class to a <see cref="Span<uint>"/>
