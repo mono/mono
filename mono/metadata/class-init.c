@@ -3501,6 +3501,41 @@ type_has_references (MonoClass *klass, MonoType *ftype)
 	return FALSE;
 }
 
+static gboolean
+mono_class_is_gparam_with_reference_parent (MonoClass *klass)
+{
+	MonoType *type = m_class_get_byval_arg (klass);
+	g_assert (mono_type_is_generic_parameter (type));
+	MonoGenericParam *gparam = type->data.generic_param;
+	if ((mono_generic_param_info (gparam)->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0)
+		return TRUE;
+	if ((mono_generic_param_info (gparam)->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0)
+		return FALSE;
+
+	/* FIXME: is this reasonable? */
+	if (mono_generic_param_owner (gparam)->is_anonymous)
+		return FALSE;
+
+	/* We could have:  T : U,  U : Base.  So have to follow the constraints. */
+	MonoClass  *parent_class = mono_generic_param_get_base_type (klass);
+
+	g_assert (!MONO_CLASS_IS_INTERFACE_INTERNAL (parent_class));
+
+	/* Parent can only be: System.Object, System.ValueType or some specific base class.
+	 *
+	 * If the parent_class is ValueType, the valuetype constraint would be set, above, so
+	 * we wouldn't get here.
+	 *
+	 * If there was a reference constraint, the parent_class would be System.Object,
+	 * but we would have returned early above.
+	 *
+	 * So if we get here, there is either no base class constraint at all,
+	 * in which case parent_class would be set to System.Object, or there is none at all.
+	 */
+	return klass->parent != mono_defaults.object_class;
+
+}
+
 /*
  * mono_class_layout_fields:
  * @class: a class
@@ -3612,6 +3647,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			continue;
 		if (blittable) {
 			if (field->type->byref || MONO_TYPE_IS_REFERENCE (field->type)) {
+				blittable = FALSE;
+			} else if (mono_type_is_generic_parameter (field->type) && mono_class_is_gparam_with_reference_parent (mono_class_from_mono_type_internal (field->type))) {
 				blittable = FALSE;
 			} else {
 				MonoClass *field_class = mono_class_from_mono_type_internal (field->type);

@@ -7292,6 +7292,12 @@ mono_type_is_pointer (MonoType *type)
 		(type->type == MONO_TYPE_FNPTR)));
 }
 
+static mono_bool
+mono_gparam_is_reference (MonoGenericParam *gparam)
+{
+	return (mono_generic_param_info (gparam)->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0;
+}
+
 /**
  * mono_type_is_reference:
  * \param type the \c MonoType operated on
@@ -7304,7 +7310,9 @@ mono_type_is_reference (MonoType *type)
 		(type->type == MONO_TYPE_SZARRAY) || (type->type == MONO_TYPE_CLASS) ||
 		(type->type == MONO_TYPE_OBJECT) || (type->type == MONO_TYPE_ARRAY)) ||
 		((type->type == MONO_TYPE_GENERICINST) &&
-		!mono_metadata_generic_class_is_valuetype (type->data.generic_class))));
+		 !mono_metadata_generic_class_is_valuetype (type->data.generic_class)) ||
+		(mono_type_is_generic_parameter (type) &&
+		 mono_gparam_is_reference (type->data.generic_param))));
 }
 
 mono_bool
