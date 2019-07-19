@@ -133,6 +133,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 uploadArtifactsOnlyIfSuccessful: true)
                 }
 
+                sh 'git clean -xdff'
+
                 utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/mono-sdks/${packageFileName}", 'SUCCESS', packageFileName)
             }
             catch (Exception e) {
