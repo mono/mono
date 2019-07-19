@@ -71,8 +71,8 @@ public class DebuggerTests
 #if !MONODROID_TOOLS
 	Diag.ProcessStartInfo CreateStartInfo (string app, string method = null, string runtimeParameters = null) {
 		var pi = new Diag.ProcessStartInfo ();
-		//pi.RedirectStandardOutput = true;
-		//pi.RedirectStandardError = true;
+		pi.RedirectStandardOutput = true;
+		pi.RedirectStandardError = true;
 		if (runtime != null) {
 			pi.FileName = runtime;
 		} else {
