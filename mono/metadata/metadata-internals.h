@@ -1200,7 +1200,7 @@ static inline
 MonoAssemblyLoadContext *
 mono_assembly_get_alc (MonoAssembly *assm)
 {
-	return assm->image->alc;
+	return mono_image_get_alc (assm->image);
 }
 #endif
 
