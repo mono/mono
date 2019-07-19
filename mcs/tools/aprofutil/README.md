@@ -1,16 +1,13 @@
-.TH aotprof-tool 1
-.SH NAME
-aotprof-tool \- Mono's AOT profile tool
-.SH SYNOPSIS
-.B aotprof-tool
-\fR[\fIoptions\fR] <\fIyour-aot-profile.aotprofile\fR>
-.SH DESCRIPTION
-AOT profile tool is a tool to inspect AOT profiler files.
-.PP
-It can be used to show, filter and write the profiler file content in readable text form.
-.SH OPTIONS
-.nf
-.RS
+**aprofutil** is a tool to inspect AOT profiler files
+
+```
+Usage: aprofutil.exe OPTIONS* <aotprofile-file>
+
+Processes AOTPROFILE files created by Mono's AOT Profiler
+
+Copyright 2019 Microsoft Corporation
+
+Options:
   -h, --help, -?             Show this message and exit
   -a, --all                  Show modules, types and methods in the profile
   -d, --modules              Show modules in the profile
@@ -18,26 +15,21 @@ It can be used to show, filter and write the profiler file content in readable t
       --filter-module=VALUE  Filter by module with regex VALUE
       --filter-type=VALUE    Filter by type with regex VALUE
   -m, --methods              Show methods in the profile
-  -o, --output=VALUE         Write profile to OUTPUT file
   -s, --summary              Show summary of the profile
   -t, --types                Show types in the profile
   -v, --verbose              Output information about progress during the run
                                of the tool
-.RE
-.fi
-.SH EXAMPLES
+
+If no other option than -v is used then --all is used by default
+```
+
+It can be use to show and filter the profiler file content in readable text form.
+
+### Example usage
+
 Display modules and summary of XA startup profile
-.PP
-.nf
-.RS
-mono aotprof-tool.exe -sd startup.aotprofile
-.fi
-.RE
-.PP
-Output:
-.PP
-.nf
-.RS
+```
+mono aprofutil.exe -sd startup.aotprofile
 Modules:
 	41C38B0A-2032-45CE-8638-0299CED65330 mscorlib
 	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
@@ -59,21 +51,11 @@ Summary:
 	Modules:         16
 	Types:          907
 	Methods:      4,230
-.fi
-.RE
-.PP
-Filter Java.Interop.Runtime type in XA startup profile
-.PP
-.nf
-.RS
-mono aotprof-tool.exe --filter-type Java.Interop.Runtime -sa startup.aotprofile
-.fi
-.RE
-.PP
-Output:
-.PP
-.nf
-.RS
+```
+
+Filter Java.Interop.Runtime type in XA startup profile:
+```
+mono aprofutil.exe --filter-type Java.Interop.Runtime -sa startup.aotprofile
 Modules:
 	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
 Types:
@@ -85,7 +67,4 @@ Summary:
 	Modules:          1  (of 16)
 	Types:            1  (of 907)
 	Methods:          2  (of 4230)
-.fi
-.RE
-.SH SEE ALSO
-\fBmono-profilers\fR(1)
+```

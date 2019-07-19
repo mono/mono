@@ -2,7 +2,7 @@ thisdir = tools
 
 net_4_5_dirs := \
 	al		\
-	aotprof-tool	\
+	aprofutil	\
 	linker		\
 	culevel		\
 	genxs		\

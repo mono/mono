@@ -1,7 +1,7 @@
-thisdir = tools/aotprof-tool
+thisdir = tools/aprofutil
 include ../../build/rules.make
 
-PROGRAM = aotprof-tool.exe
+PROGRAM = aprofutil.exe
 
 LIB_REFS = System System.Core Mono.Options Mono.Profiler.Log
 
