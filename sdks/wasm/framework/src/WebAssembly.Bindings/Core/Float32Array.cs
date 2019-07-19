@@ -18,7 +18,7 @@ namespace WebAssembly.Core {
 
 		public Float32Array (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
 
-		internal Float32Array (IntPtr js_handle) : base (js_handle) { }
+		internal Float32Array (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle) { }
 
 		/// <summary>
 		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Float32Array"/> class to a <see cref="Span<float>"/>

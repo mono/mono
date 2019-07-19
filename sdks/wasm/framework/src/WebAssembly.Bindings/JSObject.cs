@@ -13,9 +13,9 @@ namespace WebAssembly {
 		// to detect redundant calls
 		public bool IsDisposed { get; internal set; }
 
-		public JSObject() : this(Runtime.New<Object> ())
+		public JSObject () : this (Runtime.New<Object> (), true)
 		{
-			var result = Runtime.BindCoreObject (JSHandle, (int)(IntPtr)Handle, out int exception);
+			var result = Runtime.BindCoreObject (JSHandle, (int)(IntPtr)AnyRefHandle, out int exception);
 			if (exception != 0)
 				throw new JSException ($"JSObject Error binding: {result.ToString ()}");
 
@@ -25,18 +25,19 @@ namespace WebAssembly {
 		/// Initializes a new instance of the <see cref="T:WebAssembly.JSObject"/> class.
 		/// </summary>
 		/// <param name="js_handle">Js handle.</param>
-		internal JSObject (IntPtr js_handle) : base (js_handle)
+		internal JSObject (IntPtr js_handle, bool ownsHandle) : base (js_handle, ownsHandle)
 		{
-			//Console.WriteLine ($"JSObject: {js_handle}");
+			//Console.WriteLine ($"JSObject IntPtr: {js_handle} / ownshandle {ownsHandle}");
 		}
 
-		internal JSObject (int js_handle) : base ((IntPtr)js_handle)
+		internal JSObject (int js_handle, bool ownsHandle) : base ((IntPtr)js_handle, ownsHandle)
 		{
-			//Console.WriteLine ($"JSObject: {js_handle}");
+			//Console.WriteLine ($"JSObject int: {js_handle} / ownshandle {ownsHandle}");
 		}
 
-		internal JSObject (int js_handle, object raw_obj) : base (js_handle)
+		internal JSObject (int js_handle, object raw_obj) : base (js_handle, false)
 		{
+			//Console.WriteLine ($"JSObject: {js_handle} / ownshandle {false} / rawobject {raw_obj}");
 			RawObject = raw_obj;
 		}
 
@@ -113,7 +114,7 @@ namespace WebAssembly {
 
 			var setPropResult = Runtime.SetObjectProperty (JSHandle, name, value, createIfNotExists, hasOwnProperty, out int exception);
 			if (exception != 0)
-				throw new JSException ($"Error setting {name} on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
+				throw new JSException ($"Error setting {name} on (js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle} raw '{RawObject != null})");
 
 		}
 
@@ -122,7 +123,7 @@ namespace WebAssembly {
 		/// </summary>
 		/// <value>The length.</value>
 		public int Length {
-			get => Convert.ToInt32(GetObjectProperty ("length"));
+			get => Convert.ToInt32 (GetObjectProperty ("length"));
 			set => SetObjectProperty ("length", value, false);
 		}
 
@@ -140,11 +141,12 @@ namespace WebAssembly {
 		/// <param name="prop">The String name or Symbol of the property to test.</param>
 		public bool PropertyIsEnumerable (string prop) => (bool)Invoke ("propertyIsEnumerable", prop);
 
-		protected void FreeHandle ()
+		protected bool FreeHandle ()
 		{
 			Runtime.ReleaseHandle (JSHandle, out int exception);
 			if (exception != 0)
-				throw new JSException ($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
+				throw new JSException ($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle} raw '{RawObject != null})");
+			return true;
 		}
 
 		public override bool Equals (System.Object obj)
@@ -160,42 +162,35 @@ namespace WebAssembly {
 			return JSHandle;
 		}
 
-		~JSObject ()
+		// We should not provide a finalizer - SafeHandle's critical finalizer will call ReleaseHandle inside a CER for us.
+		override protected bool ReleaseHandle ()
 		{
-			Dispose (false);
-		}
+			
+			bool ret = false;
 
-		public void Dispose ()
-		{
-			// Dispose of unmanaged resources.
-			Dispose (true);
-			// Suppress finalization.
-			GC.SuppressFinalize (this);
-		}
+#if DEBUG_HANDLE
+			Console.WriteLine ($"Release Handle handle:{handle}");
+			try {
+#endif
+			    ret = FreeHandle ();
 
-		// Protected implementation of Dispose pattern.
-		protected virtual void Dispose (bool disposing)
-		{
-
-			if (!IsDisposed) {
-				if (disposing) {
-
-					// Free any other managed objects here.
-					//
-					RawObject = null;
+#if DEBUG_HANDLE
+			} catch (Exception exception) {
+				Console.WriteLine ($"ReleaseHandle: {exception.Message}");
+				ret = true;  // Avoid a second assert.
+				throw;
+			} finally {
+				if (!ret) {
+					Console.WriteLine ($"ReleaseHandle failed. handle:{handle}");
 				}
-
-				IsDisposed = true;
-
-				// Free any unmanaged objects here.
-				FreeHandle ();
-
 			}
+#endif
+			return ret;
 		}
 
 		public override string ToString ()
 		{
-			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})";
+			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle}' raw '{RawObject != null}')";
 		}
 
 	}
