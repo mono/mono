@@ -1,5 +1,12 @@
-// compression is incompatible with JEP-210 right now
-properties([/* compressBuildLog() */])
+def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
+
+if (monoBranch == 'master') {
+    properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
+                pipelineTriggers([cron('H H(0-3) * * *')])
+    ])
+}
 
 parallel (
     "Android Darwin (Debug)": {
@@ -61,9 +68,6 @@ parallel (
 )
 
 def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "") {
-    def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
-    def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-    def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
     def packageFileName = null
     def packageFileSha1 = null
     def commitHash = null

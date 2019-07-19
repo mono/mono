@@ -8,8 +8,12 @@ def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins buil
 def packageFileName = null
 def commitHash = null
 def utils = null
-// compression is incompatible with JEP-210 right now
-properties([ /* compressBuildLog() */ ])
+
+if (monoBranch == 'master') {
+    properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
+                pipelineTriggers([cron('H H(0-3) * * *')])
+    ])
+}
 
 try {
     timestamps {
