@@ -26,14 +26,14 @@ parallel (
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8", "/mnt/scratch")
+                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8", "/mnt/scratch")
+                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync", "/mnt/scratch")
             }
         }
     },
