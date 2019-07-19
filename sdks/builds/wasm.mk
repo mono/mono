@@ -151,7 +151,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang-path /home/lewurm/work/mono/sdks/builds/toolchains/emsdk/upstream/lib/
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang-path $(EMSCRIPTEN_LOCAL_SDK_DIR)/upstream/lib/
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
