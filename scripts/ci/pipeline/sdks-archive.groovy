@@ -65,6 +65,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
     def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
     def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
     def packageFileName = null
+    def packageFileSha1 = null
     def commitHash = null
     def utils = null
 
@@ -115,13 +116,17 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     }
                     // find Archive in the workspace root
                     packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.*")[0].name
+
+                    // compute SHA1 of the Archive
+                    packageFileSha1 = sha1 (packageFileName)
+                    writeFile (file: "${packageFileName}.sha1", text: "${packageFileSha1}")
                 }
                 stage('Upload Archive to Azure') {
                     azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
                                 storageType: "blobstorage",
                                 containerName: "mono-sdks",
                                 virtualPath: "",
-                                filesPath: "${packageFileName}",
+                                filesPath: "${packageFileName},${packageFileName}.sha1",
                                 allowAnonymousAccess: true,
                                 pubAccessible: true,
                                 doNotWaitForPreviousBuild: true,
