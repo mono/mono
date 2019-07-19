@@ -232,7 +232,7 @@ class OffsetsTool:
 							continue
 						if child.is_bitfield ():
 							continue
-						rtype.fields.append (FieldInfo (child.spelling, int (child.get_field_offsetof () / 8)))
+						rtype.fields.append (FieldInfo (child.spelling, child.get_field_offsetof () // 8))
 				if c.spelling == "basic_types_struct":
 					for field in c.get_children ():
 						btype = field.spelling.replace ("_f", "")
