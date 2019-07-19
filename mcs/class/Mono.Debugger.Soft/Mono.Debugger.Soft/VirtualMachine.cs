@@ -724,7 +724,32 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl { Type = (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL, Objid = 0 };
 				duplicates.Add (v);
 
-				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeValues ((v as StructMirror).Fields, duplicates) };
+				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeFieldValues ((v as StructMirror).Fields, (v as StructMirror).Type.GetFields (), duplicates, 1) };
+			} else if (v is PointerValue) {
+				PointerValue val = (PointerValue)v;
+				return new ValueImpl { Type = ElementType.Ptr, Klass = val.Type.Id, Value = val.Address };
+			} else {
+				throw new NotSupportedException ("Value of type " + v.GetType());
+			}
+		}
+
+		internal ValueImpl EncodeValueFixedSize (Value v, List<Value> duplicates, int len_fixed_size) {
+			if (v is PrimitiveValue) {
+				object val = (v as PrimitiveValue).Value;
+				if (val == null)
+					return new ValueImpl { Type = (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL, Objid = 0 };
+				else
+					return new ValueImpl { Value = val , FixedSize = len_fixed_size};
+			} else if (v is ObjectMirror) {
+				return new ValueImpl { Type = ElementType.Object, Objid = (v as ObjectMirror).Id };
+			} else if (v is StructMirror) {
+				if (duplicates == null)
+					duplicates = new List<Value> ();
+				if (duplicates.Contains (v))
+					return new ValueImpl { Type = (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL, Objid = 0 };
+				duplicates.Add (v);
+
+				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeFieldValues ((v as StructMirror).Fields, (v as StructMirror).Type.GetFields (), duplicates, len_fixed_size) };
 			} else if (v is PointerValue) {
 				PointerValue val = (PointerValue)v;
 				return new ValueImpl { Type = ElementType.Ptr, Klass = val.Type.Id, Value = val.Address };
@@ -735,8 +760,20 @@ namespace Mono.Debugger.Soft
 
 		internal ValueImpl[] EncodeValues (IList<Value> values, List<Value> duplicates = null) {
 			ValueImpl[] res = new ValueImpl [values.Count];
-			for (int i = 0; i < values.Count; ++i)
+			for (int i = 0; i < values.Count; ++i) {
 				res [i] = EncodeValue (values [i], duplicates);
+			}
+			return res;
+		}
+
+		internal ValueImpl[] EncodeFieldValues (IList<Value> values, FieldInfoMirror[] field_info, List<Value> duplicates, int isFixedSize) {
+			ValueImpl[] res = new ValueImpl [values.Count];
+			for (int i = 0; i < values.Count; ++i) {
+				if (isFixedSize > 1 || field_info [i].IsFixedSize > 1)
+					res [i] = EncodeValueFixedSize (values [i], duplicates, isFixedSize > 1 ? isFixedSize : field_info [i].IsFixedSize);
+				else
+					res [i] = EncodeValue (values [i], duplicates);
+			}
 			return res;
 		}
 

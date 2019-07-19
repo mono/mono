@@ -162,6 +162,21 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public int IsFixedSize
+		{
+			get
+			{
+				if (!vm.Version.AtLeast (2, 53))
+					return 0;
+				var fbas = this.GetCustomAttributes (true);
+				for (int j = 0 ; j < fbas.Length; ++j)
+				{
+					if (fbas [j].Constructor.DeclaringType.FullName.Equals("System.Runtime.CompilerServices.FixedBufferAttribute")) 
+						return (int) fbas [j].ConstructorArguments[1].Value;
+				}
+				return 1;
+			}
+		}
 		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
 			return GetCAttrs (null, inherit);
 		}

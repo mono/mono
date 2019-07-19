@@ -174,6 +174,83 @@ public struct AStruct : ITest2 {
 	}
 }
 
+public struct int4
+{
+	public int w, x, y, z;
+
+	public int4(int w, int x, int y, int z)
+	{
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+
+public struct char4
+{
+	public int w, x, y, z;
+
+	public char4(char w, char x, char y, char z)
+	{
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+public unsafe struct NodeTestFixedArray
+{
+	private fixed short buffer[4];
+	private fixed char buffer2[4];
+
+	public int4 Buffer
+	{
+		set
+		{
+			this.buffer[0] = (short)value.w;
+			this.buffer[1] = (short)value.x;
+			this.buffer[2] = (short)value.y;
+			this.buffer[3] = (short)value.z;
+		}
+	}
+	public char4 Buffer2
+	{
+		set
+		{
+			this.buffer2[0] = (char)value.w;
+			this.buffer2[1] = (char)value.x;
+			this.buffer2[2] = (char)value.y;
+			this.buffer2[3] = (char)value.z;
+		}
+	}
+	public String getBuffer0() {
+		return Convert.ToString(this.buffer[0]);
+	}
+	public String getBuffer1() {
+		return Convert.ToString(this.buffer[1]);
+	}
+	public String getBuffer2() {
+		return Convert.ToString(this.buffer[2]);
+	}
+	public String getBuffer3() {
+		return Convert.ToString(this.buffer[3]);
+	}
+	public String getBuffer2_0() {
+		return Char.ToString(this.buffer2[0]);
+	}
+	public String getBuffer2_1() {
+		return Char.ToString(this.buffer2[1]);
+	}
+	public String getBuffer2_2() {
+		return Char.ToString(this.buffer2[2]);
+	}
+	public String getBuffer2_3() {
+		return Char.ToString(this.buffer2[3]);
+	}
+}
 
 public struct BlittableStruct {
 	public int i;
@@ -494,6 +571,7 @@ public class Tests : TestsBase, ITest2
 		field_with_unsafe_cast_value();
 		inspect_enumerator_in_generic_struct();
 		if_property_stepping();
+		fixed_size_array();
 		return 3;
 	}
 
@@ -730,6 +808,13 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep(300);
 	}
 	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void fixed_size_array () {
+		var n = new NodeTestFixedArray();
+		n.Buffer = new int4(1, 2, 3, 4);
+		n.Buffer2 = new char4('a', 'b', 'c', 'd');
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void inspect_enumerator_in_generic_struct() {
 		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
