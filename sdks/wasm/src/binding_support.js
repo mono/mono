@@ -6,6 +6,8 @@ var BindingSupportLib = {
 		mono_wasm_object_registry: [],
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
+		mono_wasm_owned_objects_frames: [],
+		mono_wasm_owned_objects_LMF: [],
 		mono_wasm_marshal_enum_as_int: false,
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
@@ -25,7 +27,7 @@ var BindingSupportLib = {
 		bindings_lazy_init: function () {
 			if (this.init)
 				return;
-		
+
 			this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
 			this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
 			this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
@@ -47,7 +49,7 @@ var BindingSupportLib = {
 
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
-			
+
 			this.binding_module = this.assembly_load (binding_fqn_asm);
 			if (!this.binding_module)
 				throw "Can't find bindings module assembly: " + binding_fqn_asm;
@@ -77,8 +79,8 @@ var BindingSupportLib = {
 			this.bind_core_clr_obj = get_method ("BindCoreCLRObject");
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
-			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");			
-			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");			
+			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");
+			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
@@ -99,7 +101,10 @@ var BindingSupportLib = {
 			this.get_date_value = get_method ("GetDateValue");
 			this.create_date_time = get_method ("CreateDateTime");
 			this.create_uri = get_method ("CreateUri");
-
+			this.safehandle_addref = get_method ("SafeHandleAddRef");
+			this.safehandle_release = get_method ("SafeHandleRelease");
+			this.safehandle_get_handle = get_method ("SafeHandleGetHandle");
+			this.safehandle_release_by_handle = get_method ("SafeHandleReleaseByHandle");
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
 		},
@@ -204,13 +209,13 @@ var BindingSupportLib = {
 				return enumValue;
 
 
-			case 11: 
-			case 12: 
-			case 13: 
-			case 14: 
-			case 15: 
-			case 16: 
-			case 17: 
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
 			case 18:
 			{
 				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
@@ -224,6 +229,18 @@ var BindingSupportLib = {
 			case 22: // clr .NET Uri
 				var uriValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
 				return uriValue;
+			case 23: // clr .NET SafeHandle
+				var addRef = true;
+				var js_handle = this.call_method(this.safehandle_get_handle, null, "mii", [ mono_obj, addRef ]);
+				var requiredObject = BINDING.mono_wasm_require_handle (js_handle);
+				if (addRef)
+				{
+					if (typeof this.mono_wasm_owned_objects_LMF === "undefined")
+						this.mono_wasm_owned_objects_LMF = [];
+
+					this.mono_wasm_owned_objects_LMF.push(js_handle);
+				}
+				return requiredObject;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -259,15 +276,15 @@ var BindingSupportLib = {
 			this.bindings_lazy_init ();
 
 			// determines if the javascript object is a Promise or Promise like which can happen
-			// when using an external Promise library.  The javascript object should be marshalled 
+			// when using an external Promise library.  The javascript object should be marshalled
 			// as managed Task objects.
-			// 
-			// Example is when Bluebird is included in a web page using a script tag, it overwrites the 
+			//
+			// Example is when Bluebird is included in a web page using a script tag, it overwrites the
 			// global Promise object by default with its own version of Promise.
 			function isThenable() {
 				// When using an external Promise library the Promise.resolve may not be sufficient
 				// to identify the object as a Promise.
-				return Promise.resolve(js_obj) === js_obj || 
+				return Promise.resolve(js_obj) === js_obj ||
 						((typeof js_obj === "object" || typeof js_obj === "function") && typeof js_obj.then === "function")
 			}
 
@@ -316,17 +333,17 @@ var BindingSupportLib = {
 		},
 		js_typed_array_to_array : function (js_obj) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT)) 
+			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT))
 			{
-				var arrayType = 0;	
+				var arrayType = 0;
 				if (js_obj instanceof Int8Array)
 					arrayType = 11;
 				if (js_obj instanceof Uint8Array)
@@ -353,7 +370,7 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + js_obj + "' is not a typed array");
-			} 
+			}
 
 
 		},
@@ -361,15 +378,15 @@ var BindingSupportLib = {
 		// 	 typed array memory -> copy to heap -> address of managed pinned array
 		typedarray_copy_to : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT))
 			{
 				// Some sanity checks of what is being asked of us
 				// lets play it safe and throw an error here instead of assuming to much.
@@ -397,22 +414,22 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
-			} 
+			}
 
-		},	
+		},
 		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typedarray_copy_from : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT))
 			{
 				// Some sanity checks of what is being asked of us
 				// lets play it safe and throw an error here instead of assuming to much.
@@ -438,9 +455,9 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
-			} 
+			}
 
-		},	
+		},
 		// Creates a new typed array from pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typed_array_from : function (pinned_array, begin, end, bytes_per_element, type) {
@@ -450,25 +467,25 @@ var BindingSupportLib = {
 
 			switch (type)
 			{
-				case 5: 
+				case 5:
 					newTypedArray = new Int8Array(end - begin);
 					break;
-				case 6: 
+				case 6:
 					newTypedArray = new Uint8Array(end - begin);
 					break;
-				case 7: 
+				case 7:
 					newTypedArray = new Int16Array(end - begin);
 					break;
-				case 8: 
+				case 8:
 					newTypedArray = new Uint16Array(end - begin);
 					break;
-				case 9: 
+				case 9:
 					newTypedArray = new Int32Array(end - begin);
 					break;
-				case 10: 
+				case 10:
 					newTypedArray = new Uint32Array(end - begin);
 					break;
-				case 13: 
+				case 13:
 					newTypedArray = new Float32Array(end - begin);
 					break;
 				case 14:
@@ -481,10 +498,10 @@ var BindingSupportLib = {
 
 			this.typedarray_copy_from(newTypedArray, pinned_array, begin, end, bytes_per_element);
 			return newTypedArray;
-		},		
+		},
 		js_to_mono_enum: function (method, parmIdx, js_obj) {
 			this.bindings_lazy_init ();
-    
+
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 
@@ -494,9 +511,9 @@ var BindingSupportLib = {
 			// return the unboxed enum value.
 			return this.mono_unbox_enum(monoEnum);
 		},
-		wasm_binding_obj_new: function (js_obj_id, type)
+		wasm_binding_obj_new: function (js_obj_id, ownsHandle, type)
 		{
-			return this.call_method (this.bind_js_obj, null, "io", [js_obj_id, type]);
+			return this.call_method (this.bind_js_obj, null, "iio", [js_obj_id, ownsHandle, type]);
 		},
 		wasm_bind_existing: function (mono_obj, js_id)
 		{
@@ -511,12 +528,12 @@ var BindingSupportLib = {
 		wasm_unbind_js_obj: function (js_obj_id)
 		{
 			this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
-		},		
+		},
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
 			this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
-		},		
+		},
 
 		wasm_get_js_id: function (mono_obj)
 		{
@@ -600,7 +617,7 @@ var BindingSupportLib = {
 
 		i: int32
 		j: int32 - Enum with underlying type of int32
-		l: int64 
+		l: int64
 		k: int64 - Enum with underlying type of int64
 		f: float
 		d: double
@@ -622,7 +639,7 @@ var BindingSupportLib = {
 
 			if (has_args_marshal && (!has_args || args.length < args_marshal.leghth))
 				throw Error("Parameter count mismatch.");
-			
+
 			// check if the method signature needs argument mashalling
 			if (has_args_marshal && has_args) {
 				var extra_args_mem = 0;
@@ -647,7 +664,7 @@ var BindingSupportLib = {
 						Module.setValue (args_mem + i * 4, this.js_to_mono_uri (args [i]), "i32");
 					} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
 						var enumVal = this.js_to_mono_enum(method, i, args[i]);
-			
+
 						var extra_cell = extra_args_mem + extra_arg_idx;
 						extra_arg_idx += 8;
 
@@ -716,11 +733,11 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
-			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.  
+			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.
 			// This may need more analysis if causes problems again.
 			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mo", [ mono_args ]);
 		},
-		
+
 		resolve_method_fqn: function (fqn) {
 			var assembly = fqn.substring(fqn.indexOf ("[") + 1, fqn.indexOf ("]")).trim();
 			fqn = fqn.substring (fqn.indexOf ("]") + 1).trim();
@@ -908,7 +925,7 @@ var BindingSupportLib = {
 		mono_wasm_register_obj: function(obj) {
 
 			var gc_handle = undefined;
-			if (obj !== null && typeof obj !== "undefined") 
+			if (obj !== null && typeof obj !== "undefined")
 			{
 				gc_handle = obj.__mono_gchandle__;
 
@@ -918,9 +935,15 @@ var BindingSupportLib = {
 					obj.__mono_jshandle__ = handle;
 					// Obtain the JS -> C# type mapping.
 					var wasm_type = this.get_wasm_type(obj);
-					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, wasm_type);
+					var ownsHandle = true;
+
+					// If this is the global object we do not want to release it.
+					if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
+						ownsHandle = false;
+
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, ownsHandle, wasm_type);
 					this.mono_wasm_object_registry[handle] = obj;
-						
+
 				}
 			}
 			return gc_handle;
@@ -1000,7 +1023,27 @@ var BindingSupportLib = {
 			}
 			throw Error('Unable to get mono wasm global object.');
 		},
-	
+		mono_wasm_save_LMF : function () {
+			//console.log("save LMF: " + BINDING.mono_wasm_owned_objects_frames.length)
+			BINDING.mono_wasm_owned_objects_frames.push(BINDING.mono_wasm_owned_objects_LMF);
+			BINDING.mono_wasm_owned_objects_LMF = undefined;
+		},
+		mono_wasm_unwind_LMF : function () {
+			var __owned_objects__ = this.mono_wasm_owned_objects_frames.pop();
+			// Release all managed objects that are loaded into the LMF
+			if (typeof __owned_objects__ !== "undefined")
+			{
+				// Look into passing the array of owned object handles in one pass.
+				var refidx;
+				for (refidx = 0; refidx < __owned_objects__.length; refidx++)
+				{
+					var ownerRelease = __owned_objects__[refidx];
+					this.call_method(this.safehandle_release_by_handle, null, "i", [ ownerRelease ]);
+				}
+			}
+			//console.log("restore LMF: " + BINDING.mono_wasm_owned_objects_frames.length)
+
+		}
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -1019,6 +1062,7 @@ var BindingSupportLib = {
 		}
 
 		var js_args = BINDING.mono_array_to_js_array(args);
+		BINDING.mono_wasm_save_LMF();
 
 		var res;
 		try {
@@ -1026,6 +1070,7 @@ var BindingSupportLib = {
 			if (typeof m === "undefined")
 				throw new Error("Method: '" + js_name + "' not found for: '" + Object.prototype.toString.call(obj) + "'");
 			var res = m.apply (obj, js_args);
+			BINDING.mono_wasm_unwind_LMF();
 			return BINDING.js_to_mono_obj (res);
 		} catch (e) {
 			var res = e.toString ();
@@ -1055,7 +1100,7 @@ var BindingSupportLib = {
 			var m = obj [js_name];
 			if (m === Object(m) && obj.__is_mono_proxied__)
 				m.__is_mono_proxied__ = true;
-				
+
 			return BINDING.js_to_mono_obj (m);
 		} catch (e) {
 			var res = e.toString ();
@@ -1081,33 +1126,34 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid property name object '" + property_name + "'");
 		}
 
-        var result = false;
+		var result = false;
 
 		var js_value = BINDING.unbox_mono_obj(value);
+		BINDING.mono_wasm_save_LMF();
 
-        if (createIfNotExist) {
-            requireObject[property] = js_value;
-            result = true;
-        }
-        else {
+		if (createIfNotExist) {
+			requireObject[property] = js_value;
+			result = true;
+		}
+		else {
 			result = false;
 			if (!createIfNotExist)
 			{
 				if (!requireObject.hasOwnProperty(property))
 					return false;
 			}
-            if (hasOwnProperty === true) {
-                if (requireObject.hasOwnProperty(property)) {
-                    requireObject[property] = js_value;
-                    result = true;
-                }
-            }
-            else {
-                requireObject[property] = js_value;
-                result = true;
-            }
-        
-        }
+			if (hasOwnProperty === true) {
+				if (requireObject.hasOwnProperty(property)) {
+					requireObject[property] = js_value;
+					result = true;
+				}
+			}
+			else {
+				requireObject[property] = js_value;
+				result = true;
+			}
+		}
+		BINDING.mono_wasm_unwind_LMF();
         return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
 	},
 	mono_wasm_get_by_index: function(js_handle, property_index, is_exception) {
@@ -1140,9 +1186,11 @@ var BindingSupportLib = {
 		}
 
 		var js_value = BINDING.unbox_mono_obj(value);
+		BINDING.mono_wasm_save_LMF();
 
 		try {
 			obj [property_index] = js_value;
+			BINDING.mono_wasm_unwind_LMF();
 			return true;
 		} catch (e) {
 			var res = e.toString ();
@@ -1177,12 +1225,12 @@ var BindingSupportLib = {
 		BINDING.bindings_lazy_init ();
 
 		BINDING.mono_wasm_free_handle(js_handle);
-	},	
+	},
 	mono_wasm_release_object: function(js_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
 		BINDING.mono_wasm_free_raw_object(js_handle);
-	},	
+	},
 	mono_wasm_bind_core_object: function(js_handle, gc_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
@@ -1194,6 +1242,7 @@ var BindingSupportLib = {
 
 		BINDING.wasm_bind_core_clr_obj(js_handle, gc_handle );
 		requireObject.__mono_gchandle__ = gc_handle;
+		requireObject.__js_handle__ = js_handle;
 		return gc_handle;
 	},
 	mono_wasm_bind_host_object: function(js_handle, gc_handle, is_exception) {
@@ -1227,9 +1276,10 @@ var BindingSupportLib = {
 		}
 
 		var js_args = BINDING.mono_array_to_js_array(args);
-		
+		BINDING.mono_wasm_save_LMF();
+
 		try {
-			
+
 			// This is all experimental !!!!!!
 			var allocator = function(constructor, js_args) {
 				// Not sure if we should be checking for anything here
@@ -1240,10 +1290,11 @@ var BindingSupportLib = {
 				var obj = new (constructor.bind.apply(constructor, argsList ));
 				return obj;
 			};
-	
+
 			var res = allocator(coreObj, js_args);
 			var gc_handle = BINDING.mono_wasm_free_list.length ? BINDING.mono_wasm_free_list.pop() : BINDING.mono_wasm_ref_counter++;
 			BINDING.mono_wasm_object_registry[gc_handle] = res;
+			BINDING.mono_wasm_unwind_LMF();
 			return BINDING.js_to_mono_obj (gc_handle + 1);
 		} catch (e) {
 			var res = e.toString ();
@@ -1251,7 +1302,7 @@ var BindingSupportLib = {
 			if (res === null || res === undefined)
 				res = "Error allocating object.";
 			return BINDING.js_string_to_mono_string (res);
-		}	
+		}
 
 	},
 	mono_wasm_new_object: function(object_handle_or_function, args, is_exception) {
@@ -1274,9 +1325,10 @@ var BindingSupportLib = {
 			}
 
 			var js_args = BINDING.mono_array_to_js_array(args);
-			
+			BINDING.mono_wasm_save_LMF();
+
 			try {
-				
+
 				// This is all experimental !!!!!!
 				var allocator = function(constructor, js_args) {
 					// Not sure if we should be checking for anything here
@@ -1287,8 +1339,9 @@ var BindingSupportLib = {
 					var obj = new (constructor.bind.apply(constructor, argsList ));
 					return obj;
 				};
-		
+
 				var res = allocator(requireObject, js_args);
+				BINDING.mono_wasm_unwind_LMF();
 				return BINDING.extract_mono_obj (res);
 			} catch (e) {
 				var res = e.toString ();
@@ -1296,7 +1349,7 @@ var BindingSupportLib = {
 				if (res === null || res === undefined)
 					res = "Error allocating object.";
 				return BINDING.js_string_to_mono_string (res);
-			}	
+			}
 		}
 
 	},
@@ -1340,8 +1393,6 @@ var BindingSupportLib = {
 		var res = BINDING.typedarray_copy_from(requireObject, pinned_array, begin, end, bytes_per_element);
 		return BINDING.js_to_mono_obj (res)
 	},
-
-
 };
 
 autoAddDeps(BindingSupportLib, '$BINDING')
