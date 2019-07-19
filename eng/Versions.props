@@ -7,6 +7,6 @@
     <!-- corefx -->
     <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19368.5</MicrosoftPrivateCoreFxNETCoreAppVersion>
     <!-- core-setup -->
-    <MicrosoftNETCoreAppVersion>3.0.0-preview8-27903-08</MicrosoftNETCoreAppVersion>
+    <MicrosoftNETCoreAppVersion>3.0.0-preview8-27903-05</MicrosoftNETCoreAppVersion>
   </PropertyGroup>
 </Project>
