@@ -10006,6 +10006,7 @@ emit_code (MonoAotCompile *acfg)
 			continue;
 
 		method = cfg->orig_method;
+		(void)method;
 
 		if (mono_aot_mode_is_full (&acfg->aot_opts) && m_class_is_valuetype (cfg->orig_method->klass)) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
