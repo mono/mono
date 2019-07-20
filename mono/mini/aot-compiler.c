@@ -4170,6 +4170,8 @@ add_jit_icall_wrapper (MonoAotCompile *acfg, MonoJitICallInfo *callinfo)
 	add_method (acfg, mono_marshal_get_icall_wrapper (callinfo, TRUE));
 }
 
+#if ENABLE_LLVM
+
 static void
 add_lazy_init_wrappers (MonoAotCompile *acfg)
 {
@@ -4178,6 +4180,8 @@ add_lazy_init_wrappers (MonoAotCompile *acfg)
 	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_VTABLE));
 	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_THIS));
 }
+
+#endif
 
 static MonoMethod*
 get_runtime_invoke_sig (MonoMethodSignature *sig)
