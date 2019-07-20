@@ -11,41 +11,269 @@
 #include <string.h>
 #include <assert.h>
 #include <glib.h>
-
-/* For dlmalloc.h */
-#define USE_DL_PREFIX 1
-
 #include "mono-codeman.h"
-#include "mono-mmap.h"
 #include "mono-counters.h"
+
+static size_t dynamic_code_alloc_count;
+static size_t dynamic_code_bytes_count;
+static size_t dynamic_code_frees_count;
+
+void
+mono_code_manager_init (void)
+{
+	mono_counters_register ("Dynamic code allocs", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_alloc_count);
+	mono_counters_register ("Dynamic code bytes", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_bytes_count);
+	mono_counters_register ("Dynamic code frees", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_frees_count);
+}
+
+#if _WIN32
+
+#include "mono/utils/atomic.h"
+#include <windows.h>
+
+struct _MonoCodeManager {
+	size_t size;
+	char read_only;
+};
+
+static void* mono_code_manager_heap;
+static MonoCodeManager mono_code_manager;
+
+void
+mono_code_manager_cleanup (void)
+{
+}
+
+void
+mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
+{
+    // TODO
+}
+
+/**
+ * mono_code_manager_init_internal
+ *
+ */
+static
+void
+mono_code_manager_init_internal (void)
+{
+	if (mono_code_manager_heap)
+        return;
+	void* const heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, 0, 0);
+	if (heap && mono_atomic_cas_ptr (&mono_code_manager_heap, heap, NULL))
+		HeapDestroy (heap);
+}
+
+/**
+ * mono_code_manager_new:
+ *
+ * Creates a new code manager. A code manager can be used to allocate memory
+ * suitable for storing native code that can be later executed.
+ * A code manager allocates memory from the operating system in large chunks
+ * (typically 64KB in size) so that many methods can be allocated inside them
+ * close together, improving cache locality.
+ *
+ * Returns: the new code manager
+ */
+MonoCodeManager*
+mono_code_manager_new (void)
+{
+	mono_code_manager_init_internal ();
+	return g_new0 (MonoCodeManager, 1);
+}
+
+/**
+ * mono_code_manager_new_dynamic:
+ *
+ * Creates a new code manager suitable for holding native code that can be
+ * used for single or small methods that need to be deallocated independently
+ * of other native code.
+ *
+ * Returns: the new code manager
+ */
+MonoCodeManager*
+mono_code_manager_new_dynamic (void)
+{
+	mono_code_manager_init_internal ();
+	return g_new0 (MonoCodeManager, 1);
+}
+
+/**
+ * mono_code_manager_destroy:
+ * \param cman a code manager
+ * Free all the memory associated with the code manager \p cman.
+ * Even the non-Windows one leaks.
+ */
+void
+mono_code_manager_destroy (MonoCodeManager *cman)
+{
+    g_free (cman); // incomplete
+}
+
+/**
+ * mono_code_manager_invalidate:
+ * \param cman a code manager
+ * Fill all the memory with an invalid native code value
+ * so that any attempt to execute code allocated in the code
+ * manager \p cman will fail. This is used for debugging purposes.
+ */
+void
+mono_code_manager_invalidate (MonoCodeManager *cman)
+{
+	void* const heap = mono_code_manager_heap;
+	if (!heap)
+		return;
+#if defined(__i386__) || defined(__x86_64__)
+	int fill_value = 0xcc; /* x86 break */
+#else
+	int fill_value = 0x2a;
+#endif
+	PROCESS_HEAP_ENTRY entry;
+
+	ZeroMemory (&entry, sizeof (entry));
+	while (HeapWalk (heap, &entry)) {
+		if (entry.wFlags & PROCESS_HEAP_ENTRY_BUSY) {
+            memset (entry.lpData, fill_value, entry.cbData);
+		}
+	}
+}
+
+/**
+ * mono_code_manager_set_read_only:
+ * \param cman a code manager
+ * Make the code manager read only, so further allocation requests cause an assert.
+ */
+void
+mono_code_manager_set_read_only (MonoCodeManager *cman)
+{
+	cman->read_only = 1;
+}
+
+/**
+ * mono_code_manager_foreach:
+ * \param cman a code manager
+ * \param func a callback function pointer
+ * \param user_data additional data to pass to \p func
+  * Invokes the callback \p func for each different chunk of memory allocated
+ * in the code manager \p cman.
+ */
+void
+mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void *user_data)
+{
+	void* const heap = mono_code_manager_heap;
+	if (!heap)
+		return;
+	PROCESS_HEAP_ENTRY entry;
+
+	ZeroMemory (&entry, sizeof (entry));
+	while (HeapWalk (heap, &entry)) {
+		if (entry.wFlags & PROCESS_HEAP_ENTRY_BUSY) {
+			if (func (entry.lpData, entry.cbData, 0, user_data))
+				return;
+		}
+	}
+}
+
+/**
+ * mono_code_manager_reserve_align:
+ * \param cman a code manager
+ * \param size size of memory to allocate
+ * \param alignment power of two alignment value
+ * Allocates at least \p size bytes of memory inside the code manager \p cman.
+ * \returns the pointer to the allocated memory or NULL on failure
+ */
+void*
+mono_code_manager_reserve_align (MonoCodeManager *cman, int size, int alignment)
+{
+	g_assert (alignment <= MEMORY_ALLOCATION_ALIGNMENT);
+	g_assert (!cman->read_only);
+	void* p = HeapAlloc (mono_code_manager_heap, HEAP_REALLOC_IN_PLACE_ONLY, size);
+	if (p)
+		cman->size += size;
+	return p;
+}
+
+/**
+ * mono_code_manager_reserve:
+ * \param cman a code manager
+ * \param size size of memory to allocate
+ * Allocates at least \p size bytes of memory inside the code manager \p cman.
+ * \returns the pointer to the allocated memory or NULL on failure
+ */
+void*
+mono_code_manager_reserve (MonoCodeManager *cman, int size)
+{
+	return mono_code_manager_reserve_align (cman, size, 0);
+}
+
+/**
+ * mono_code_manager_commit:
+ * \param cman a code manager
+ * \param data the pointer returned by mono_code_manager_reserve ()
+ * \param size the size requested in the call to mono_code_manager_reserve ()
+ * \param newsize the new size to reserve
+ * If we reserved too much room for a method and we didn't allocate
+ * already from the code manager, we can get back the excess allocation
+ * for later use in the code manager.
+ */
+void
+mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsize)
+{
+	g_assert (newsize <= size);
+
+	if (newsize == size)
+		return;
+
+    void* p = HeapReAlloc (mono_code_manager_heap, HEAP_REALLOC_IN_PLACE_ONLY, data, newsize);
+    if (p)
+        cman->size -= size - newsize;
+}
+
+/**
+ * mono_code_manager_size:
+ * \param cman a code manager
+ * \param used_size pointer to an integer for the result
+ * This function can be used to get statistics about a code manager:
+ * the integer pointed to by \p used_size will contain how much
+ * memory is actually used inside the code managed \p cman.
+ * \returns the amount of memory allocated in \p cman
+ */
+int
+mono_code_manager_size (MonoCodeManager *cman, int *used_size)
+{
+    return (*used_size = cman->size);
+}
+
+#else
+
+#include "mono-mmap.h"
+#define USE_DL_PREFIX 1
 #include "dlmalloc.h"
 #include <mono/metadata/profiler-private.h>
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
-
 #include <mono/utils/mono-os-mutex.h>
 
-
 static uintptr_t code_memory_used = 0;
-static size_t dynamic_code_alloc_count;
-static size_t dynamic_code_bytes_count;
-static size_t dynamic_code_frees_count;
 static const MonoCodeManagerCallbacks *code_manager_callbacks;
 
 /*
- * AMD64 processors maintain icache coherency only for pages which are 
+ * AMD64 processors maintain icache coherency only for pages which are
  * marked executable. Also, windows DEP requires us to obtain executable memory from
- * malloc when using dynamic code managers. The system malloc can't do this so we use a 
+ * malloc when using dynamic code managers. The system malloc can't do this so we use a
  * slighly modified version of Doug Lea's Malloc package for this purpose:
  * http://g.oswego.edu/dl/html/malloc.html
+ *
+ * Or on Windows, HeapCreate (HEAP_CREATE_ENABLE_EXECUTE).
  */
 
 #define MIN_PAGES 16
 
-#if defined(__x86_64__) || defined (_WIN64)
+#if defined(__x86_64__)
 /*
- * We require 16 byte alignment on amd64 so the fp literals embedded in the code are 
+ * We require 16 byte alignment on amd64 so the fp literals embedded in the code are
  * properly aligned for SSE2.
  */
 #define MIN_ALIGN 16
@@ -165,14 +393,6 @@ codechunk_cleanup (void)
 }
 
 void
-mono_code_manager_init (void)
-{
-	mono_counters_register ("Dynamic code allocs", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_alloc_count);
-	mono_counters_register ("Dynamic code bytes", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_bytes_count);
-	mono_counters_register ("Dynamic code frees", MONO_COUNTER_JIT | MONO_COUNTER_ULONG, &dynamic_code_frees_count);
-}
-
-void
 mono_code_manager_cleanup (void)
 {
 	codechunk_cleanup ();
@@ -182,6 +402,32 @@ void
 mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 {
 	code_manager_callbacks = callbacks;
+}
+
+static
+int
+mono_codeman_get_allocation_type (MonoCodeManager const *cman)
+{
+#ifdef FORCE_MALLOC
+	return CODE_FLAG_MALLOC;
+#else
+	return cman->dynamic ? CODE_FLAG_MALLOC : CODE_FLAG_MMAP;
+#endif
+}
+
+/**
+ * mono_code_manager_new_internal
+ *
+ * Returns: the new code manager
+ */
+static
+MonoCodeManager*
+mono_code_manager_new_internal (gboolean dynamic)
+{
+	MonoCodeManager* cman = g_new0 (MonoCodeManager, 1);
+	if (cman)
+		cman->dynamic = dynamic;
+	return cman;
 }
 
 /**
@@ -195,10 +441,10 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
  *
  * Returns: the new code manager
  */
-MonoCodeManager* 
+MonoCodeManager*
 mono_code_manager_new (void)
 {
-	return (MonoCodeManager *) g_malloc0 (sizeof (MonoCodeManager));
+	return mono_code_manager_new_internal (FALSE);
 }
 
 /**
@@ -210,14 +456,11 @@ mono_code_manager_new (void)
  *
  * Returns: the new code manager
  */
-MonoCodeManager* 
+MonoCodeManager*
 mono_code_manager_new_dynamic (void)
 {
-	MonoCodeManager *cman = mono_code_manager_new ();
-	cman->dynamic = 1;
-	return cman;
+	return mono_code_manager_new_internal (TRUE);
 }
-
 
 static void
 free_chunklist (CodeChunk *chunk)
@@ -228,7 +471,7 @@ free_chunklist (CodeChunk *chunk)
 	int valgrind_unregister = 0;
 	if (RUNNING_ON_VALGRIND)
 		valgrind_unregister = 1;
-#define valgrind_unregister(x) do { if (valgrind_unregister) { VALGRIND_JIT_UNREGISTER_MAP(NULL,x); } } while (0) 
+#define valgrind_unregister(x) do { if (valgrind_unregister) { VALGRIND_JIT_UNREGISTER_MAP(NULL,x); } } while (0)
 #else
 #define valgrind_unregister(x)
 #endif
@@ -258,6 +501,8 @@ free_chunklist (CodeChunk *chunk)
 void
 mono_code_manager_destroy (MonoCodeManager *cman)
 {
+	if (!cman)
+		return;
 	free_chunklist (cman->full);
 	free_chunklist (cman->current);
 	g_free (cman);
@@ -270,7 +515,7 @@ mono_code_manager_destroy (MonoCodeManager *cman)
  * so that any attempt to execute code allocated in the code
  * manager \p cman will fail. This is used for debugging purposes.
  */
-void             
+void
 mono_code_manager_invalidate (MonoCodeManager *cman)
 {
 	CodeChunk *chunk;
@@ -292,7 +537,7 @@ mono_code_manager_invalidate (MonoCodeManager *cman)
  * \param cman a code manager
  * Make the code manager read only, so further allocation requests cause an assert.
  */
-void             
+void
 mono_code_manager_set_read_only (MonoCodeManager *cman)
 {
 	cman->read_only = TRUE;
@@ -333,26 +578,22 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #endif
 
 static CodeChunk*
-new_codechunk (CodeChunk *last, int dynamic, int size)
+new_codechunk (MonoCodeManager *cman, int size)
 {
-	int minsize, flags = CODE_FLAG_MMAP;
+	CodeChunk * const last = cman->last;
+	int const dynamic = cman->dynamic;
 	int chunk_size, bsize = 0;
-	int pagesize, valloc_granule;
 	CodeChunk *chunk;
 	void *ptr;
 
-#ifdef FORCE_MALLOC
-	flags = CODE_FLAG_MALLOC;
-#endif
-
-	pagesize = mono_pagesize ();
-	valloc_granule = mono_valloc_granule ();
+	const int flags = mono_codeman_get_allocation_type (cman);
+	const int pagesize = mono_pagesize ();
+	const int valloc_granule = mono_valloc_granule ();
 
 	if (dynamic) {
 		chunk_size = size;
-		flags = CODE_FLAG_MALLOC;
 	} else {
-		minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
+		const int minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
 		if (size < minsize)
 			chunk_size = minsize;
 		else {
@@ -386,7 +627,8 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
-		ptr = dlmemalign (MIN_ALIGN, chunk_size + MIN_ALIGN - 1);
+		const int malloc_size = chunk_size + MIN_ALIGN - 1;
+		ptr = dlmemalign (MIN_ALIGN, malloc_size);
 		if (!ptr)
 			return NULL;
 	} else {
@@ -400,18 +642,18 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 			return NULL;
 	}
 
-	if (flags == CODE_FLAG_MALLOC) {
 #ifdef BIND_ROOM
+	if (flags == CODE_FLAG_MALLOC) {
 		/* Make sure the thunks area is zeroed */
 		memset (ptr, 0, bsize);
-#endif
 	}
+#endif
 
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
-		if (flags == CODE_FLAG_MALLOC)
+		if (flags == CODE_FLAG_MALLOC) {
 			dlfree (ptr);
-		else
+		} else
 			mono_vfree (ptr, chunk_size, MONO_MEM_ACCOUNT_CODE);
 		return NULL;
 	}
@@ -440,7 +682,7 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
  * \returns the pointer to the allocated memory or NULL on failure
  */
 void*
-(mono_code_manager_reserve_align) (MonoCodeManager *cman, int size, int alignment)
+mono_code_manager_reserve_align (MonoCodeManager *cman, int size, int alignment)
 {
 	CodeChunk *chunk, *prev;
 	void *ptr;
@@ -459,7 +701,7 @@ void*
 	}
 
 	if (!cman->current) {
-		cman->current = new_codechunk (cman->last, cman->dynamic, size);
+		cman->current = new_codechunk (cman, size);
 		if (!cman->current)
 			return NULL;
 		cman->last = cman->current;
@@ -475,8 +717,8 @@ void*
 			return ptr;
 		}
 	}
-	/* 
-	 * no room found, move one filled chunk to cman->full 
+	/*
+	 * no room found, move one filled chunk to cman->full
 	 * to keep cman->current from growing too much
 	 */
 	prev = NULL;
@@ -492,7 +734,7 @@ void*
 		cman->full = chunk;
 		break;
 	}
-	chunk = new_codechunk (cman->last, cman->dynamic, size);
+	chunk = new_codechunk (cman, size);
 	if (!chunk)
 		return NULL;
 	chunk->next = cman->current;
@@ -514,7 +756,7 @@ void*
  * \returns the pointer to the allocated memory or NULL on failure
  */
 void*
-(mono_code_manager_reserve) (MonoCodeManager *cman, int size)
+mono_code_manager_reserve (MonoCodeManager *cman, int size)
 {
 	return mono_code_manager_reserve_align (cman, size, MIN_ALIGN);
 }
@@ -534,7 +776,10 @@ mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsi
 {
 	g_assert (newsize <= size);
 
-	if (cman->current && (size != newsize) && (data == cman->current->data + cman->current->pos - size)) {
+	if (newsize == size)
+		return;
+
+	if (cman->current && (data == cman->current->data + cman->current->pos - size)) {
 		cman->current->pos -= size - newsize;
 	}
 }
@@ -566,3 +811,5 @@ mono_code_manager_size (MonoCodeManager *cman, int *used_size)
 		*used_size = used;
 	return size;
 }
+
+#endif
