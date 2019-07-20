@@ -10000,7 +10000,6 @@ emit_code (MonoAotCompile *acfg)
 	for (i = 0; i < acfg->nmethods; ++i) {
 		MonoCompile *cfg;
 		MonoMethod *method;
-		int index;
 
 		cfg = acfg->cfgs [i];
 		if (ignore_cfg (cfg))
@@ -10012,7 +10011,7 @@ emit_code (MonoAotCompile *acfg)
 #ifdef MONO_ARCH_AOT_SUPPORTED
 			int call_size;
 
-			index = get_method_index (acfg, method);
+			const int index = get_method_index (acfg, method);
 			sprintf (symbol, "ut_%d", index);
 
 			arch_emit_direct_call (acfg, symbol, FALSE, acfg->thumb_mixed && cfg->compile_llvm, NULL, &call_size);
