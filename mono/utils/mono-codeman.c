@@ -18,7 +18,9 @@
 #include "mono-codeman.h"
 #include "mono-mmap.h"
 #include "mono-counters.h"
+#if !_WIN32
 #include "dlmalloc.h"
+#endif
 #include <mono/metadata/profiler-private.h>
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
@@ -39,10 +41,15 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
  * malloc when using dynamic code managers. The system malloc can't do this so we use a 
  * slighly modified version of Doug Lea's Malloc package for this purpose:
  * http://g.oswego.edu/dl/html/malloc.html
+ *
+ * Or on Windows, HeapCreate (HEAP_CREATE_ENABLE_EXECUTE).
  */
 
 #define MIN_PAGES 16
 
+// HeapAlloc and malloc on Windows return memory
+// that is aligned to at least two pointers (MEMORY_ALLOCATION_ALIGNMENT).
+// That is, the same for x86/amd64/arm32, more aligned for arm64.
 #if defined(__x86_64__) || defined (_WIN64)
 /*
  * We require 16 byte alignment on amd64 so the fp literals embedded in the code are 
@@ -88,6 +95,9 @@ struct _MonoCodeManager {
 	CodeChunk *current;
 	CodeChunk *full;
 	CodeChunk *last;
+#if _WIN32
+	void* heap;
+#endif
 };
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
@@ -185,6 +195,38 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 }
 
 /**
+ * mono_code_manager_new_internal
+ *
+ * Returns: the new code manager
+ */
+static
+MonoCodeManager*
+mono_code_manager_new_internal (gboolean dynamic)
+{
+	MonoCodeManager* cman = g_new0 (MonoCodeManager, 1);
+	if (cman) {
+		cman->dynamic = dynamic;
+#if _WIN32
+		// dynamic means heap, create it here.
+		// non-dynamic usually means VirtualAllloc.
+		// FIXME? It would seem HeapAlloc is ok for all cases.
+#ifndef FORCE_MALLOC
+		if (dynamic)
+#endif
+		{
+			// Dynamic code managers are short lived so start with only one page.
+			// Start non-dynamic at 64K.
+			if (!(cman->heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, dynamic ? 0 : (1UL << 16), 0))) {
+				mono_code_manager_destroy (cman);
+				cman = 0;
+			}
+		}
+#endif
+	}
+	return cman;
+}
+
+/**
  * mono_code_manager_new:
  *
  * Creates a new code manager. A code manager can be used to allocate memory
@@ -198,7 +240,7 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 MonoCodeManager* 
 mono_code_manager_new (void)
 {
-	return (MonoCodeManager *) g_malloc0 (sizeof (MonoCodeManager));
+	return mono_code_manager_new_internal (FALSE);
 }
 
 /**
@@ -213,14 +255,11 @@ mono_code_manager_new (void)
 MonoCodeManager* 
 mono_code_manager_new_dynamic (void)
 {
-	MonoCodeManager *cman = mono_code_manager_new ();
-	cman->dynamic = 1;
-	return cman;
+	return mono_code_manager_new_internal (TRUE);
 }
 
-
 static void
-free_chunklist (CodeChunk *chunk)
+free_chunklist (MonoCodeManager *cman, CodeChunk *chunk)
 {
 	CodeChunk *dead;
 	
@@ -243,7 +282,11 @@ free_chunklist (CodeChunk *chunk)
 			codechunk_vfree (dead->data, dead->size);
 			/* valgrind_unregister(dead->data); */
 		} else if (dead->flags == CODE_FLAG_MALLOC) {
+#if _WIN32
+			// No need to do it one at a time, HeapDestroy is coming.
+#else
 			dlfree (dead->data);
+#endif
 		}
 		code_memory_used -= dead->size;
 		g_free (dead);
@@ -258,8 +301,14 @@ free_chunklist (CodeChunk *chunk)
 void
 mono_code_manager_destroy (MonoCodeManager *cman)
 {
-	free_chunklist (cman->full);
-	free_chunklist (cman->current);
+	if (!cman)
+		return;
+	free_chunklist (cman, cman->full);
+	free_chunklist (cman, cman->current);
+#if _WIN32
+	if (cman->heap)
+		HeapDestroy (cman->heap);
+#endif
 	g_free (cman);
 }
 
@@ -333,7 +382,7 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #endif
 
 static CodeChunk*
-new_codechunk (CodeChunk *last, int dynamic, int size)
+new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
 {
 	int minsize, flags = CODE_FLAG_MMAP;
 	int chunk_size, bsize = 0;
@@ -386,7 +435,16 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
-		ptr = dlmemalign (MIN_ALIGN, chunk_size + MIN_ALIGN - 1);
+		const int malloc_size = chunk_size + MIN_ALIGN - 1;
+#if _WIN32
+		// Win32 heap is aligned to two pointers, which matches or exceeds MIN_ALIGN.
+		// CodeManager does not use locks elsewhere, so do not lock here either.
+		g_static_assert (MEMORY_ALLOCATION_ALIGNMENT >= MIN_ALIGN);
+		g_assert (cman->heap);
+		ptr = HeapAlloc (cman->heap, HEAP_NO_SERIALIZE, malloc_size);
+#else
+		ptr = dlmemalign (MIN_ALIGN, malloc_size);
+#endif
 		if (!ptr)
 			return NULL;
 	} else {
@@ -409,9 +467,14 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
-		if (flags == CODE_FLAG_MALLOC)
+		if (flags == CODE_FLAG_MALLOC) {
+#if _WIN32
+			g_assert (cman->heap);
+			HeapFree (cman->heap, HEAP_NO_SERIALIZE, ptr);
+#else
 			dlfree (ptr);
-		else
+#endif
+		} else
 			mono_vfree (ptr, chunk_size, MONO_MEM_ACCOUNT_CODE);
 		return NULL;
 	}
@@ -459,7 +522,7 @@ void*
 	}
 
 	if (!cman->current) {
-		cman->current = new_codechunk (cman->last, cman->dynamic, size);
+		cman->current = new_codechunk (cman, cman->last, cman->dynamic, size);
 		if (!cman->current)
 			return NULL;
 		cman->last = cman->current;
@@ -492,7 +555,7 @@ void*
 		cman->full = chunk;
 		break;
 	}
-	chunk = new_codechunk (cman->last, cman->dynamic, size);
+	chunk = new_codechunk (cman, cman->last, cman->dynamic, size);
 	if (!chunk)
 		return NULL;
 	chunk->next = cman->current;
