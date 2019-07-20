@@ -12,13 +12,15 @@
 #include <assert.h>
 #include <glib.h>
 
-/* For dlmalloc.h */
-#define USE_DL_PREFIX 1
-
 #include "mono-codeman.h"
 #include "mono-mmap.h"
 #include "mono-counters.h"
+#if _WIN32
+static void* mono_code_manager_heap;
+#else
+#define USE_DL_PREFIX 1
 #include "dlmalloc.h"
+#endif
 #include <mono/metadata/profiler-private.h>
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
@@ -39,11 +41,15 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
  * malloc when using dynamic code managers. The system malloc can't do this so we use a 
  * slighly modified version of Doug Lea's Malloc package for this purpose:
  * http://g.oswego.edu/dl/html/malloc.html
+ *
+ * Or on Windows, HeapCreate (HEAP_CREATE_ENABLE_EXECUTE).
  */
 
 #define MIN_PAGES 16
 
-#if defined(__x86_64__) || defined (_WIN64)
+#if _WIN32 // This turns out to be the same.
+#define MIN_ALIGN MEMORY_ALLOCATION_ALIGNMENT
+#elif defined(__x86_64__)
 /*
  * We require 16 byte alignment on amd64 so the fp literals embedded in the code are 
  * properly aligned for SSE2.
@@ -88,6 +94,10 @@ struct _MonoCodeManager {
 	CodeChunk *current;
 	CodeChunk *full;
 	CodeChunk *last;
+#if _WIN32
+	// Try a global heap instead due to some CI failures.
+	//void* heap;
+#endif
 };
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
@@ -184,6 +194,47 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 	code_manager_callbacks = callbacks;
 }
 
+static
+int
+mono_codeman_get_allocation_type (MonoCodeManager const *cman)
+{
+#ifdef FORCE_MALLOC
+	return CODE_FLAG_MALLOC;
+#else
+	return cman->dynamic ? CODE_FLAG_MALLOC : CODE_FLAG_MMAP;
+#endif
+}
+
+/**
+ * mono_code_manager_new_internal
+ *
+ * Returns: the new code manager
+ */
+static
+MonoCodeManager*
+mono_code_manager_new_internal (gboolean dynamic)
+{
+	MonoCodeManager* cman = g_new0 (MonoCodeManager, 1);
+	if (cman) {
+		cman->dynamic = dynamic;
+#if _WIN32
+		// It would seem the heap should live and die with the codemanager,
+		// but that was failing, so try a global.
+		if (mono_codeman_get_allocation_type (cman) == CODE_FLAG_MALLOC && !mono_code_manager_heap) {
+			// This heap is leaked, possibly similar to dlmalloc state.
+			void* const heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, 0, 0);
+			if (heap && mono_atomic_cas_ptr (&mono_code_manager_heap, heap, NULL))
+				HeapDestroy (heap);
+			if (!mono_code_manager_heap) {
+				mono_code_manager_destroy (cman);
+				cman = 0;
+			}
+		}
+#endif
+	}
+	return cman;
+}
+
 /**
  * mono_code_manager_new:
  *
@@ -198,7 +249,7 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 MonoCodeManager* 
 mono_code_manager_new (void)
 {
-	return (MonoCodeManager *) g_malloc0 (sizeof (MonoCodeManager));
+	return mono_code_manager_new_internal (FALSE);
 }
 
 /**
@@ -213,11 +264,8 @@ mono_code_manager_new (void)
 MonoCodeManager* 
 mono_code_manager_new_dynamic (void)
 {
-	MonoCodeManager *cman = mono_code_manager_new ();
-	cman->dynamic = 1;
-	return cman;
+	return mono_code_manager_new_internal (TRUE);
 }
-
 
 static void
 free_chunklist (CodeChunk *chunk)
@@ -243,7 +291,14 @@ free_chunklist (CodeChunk *chunk)
 			codechunk_vfree (dead->data, dead->size);
 			/* valgrind_unregister(dead->data); */
 		} else if (dead->flags == CODE_FLAG_MALLOC) {
+#if _WIN32
+			// If HeapDestroy in mono_code_manager_destroy, then nothing needed here.
+			void* const heap = mono_code_manager_heap;
+			g_assert (heap);
+			HeapFree (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, dead->data);
+#else
 			dlfree (dead->data);
+#endif
 		}
 		code_memory_used -= dead->size;
 		g_free (dead);
@@ -258,8 +313,16 @@ free_chunklist (CodeChunk *chunk)
 void
 mono_code_manager_destroy (MonoCodeManager *cman)
 {
+	if (!cman)
+		return;
 	free_chunklist (cman->full);
 	free_chunklist (cman->current);
+#if _WIN32
+	// It would seem we should HeapDestroy cman->heap here,
+	// but this was failing, so try a global heap instead.
+	//if (cman->heap)
+	// HeapDestroy (cman->heap);
+#endif
 	g_free (cman);
 }
 
@@ -270,7 +333,7 @@ mono_code_manager_destroy (MonoCodeManager *cman)
  * so that any attempt to execute code allocated in the code
  * manager \p cman will fail. This is used for debugging purposes.
  */
-void             
+void
 mono_code_manager_invalidate (MonoCodeManager *cman)
 {
 	CodeChunk *chunk;
@@ -292,7 +355,7 @@ mono_code_manager_invalidate (MonoCodeManager *cman)
  * \param cman a code manager
  * Make the code manager read only, so further allocation requests cause an assert.
  */
-void             
+void
 mono_code_manager_set_read_only (MonoCodeManager *cman)
 {
 	cman->read_only = TRUE;
@@ -333,26 +396,22 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #endif
 
 static CodeChunk*
-new_codechunk (CodeChunk *last, int dynamic, int size)
+new_codechunk (MonoCodeManager *cman, int size)
 {
-	int minsize, flags = CODE_FLAG_MMAP;
+	CodeChunk * const last = cman->last;
+	int const dynamic = cman->dynamic;
 	int chunk_size, bsize = 0;
-	int pagesize, valloc_granule;
 	CodeChunk *chunk;
 	void *ptr;
 
-#ifdef FORCE_MALLOC
-	flags = CODE_FLAG_MALLOC;
-#endif
-
-	pagesize = mono_pagesize ();
-	valloc_granule = mono_valloc_granule ();
+	const int flags = mono_codeman_get_allocation_type (cman);
+	const int pagesize = mono_pagesize ();
+	const int valloc_granule = mono_valloc_granule ();
 
 	if (dynamic) {
 		chunk_size = size;
-		flags = CODE_FLAG_MALLOC;
 	} else {
-		minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
+		const int minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
 		if (size < minsize)
 			chunk_size = minsize;
 		else {
@@ -386,7 +445,15 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
-		ptr = dlmemalign (MIN_ALIGN, chunk_size + MIN_ALIGN - 1);
+		const int malloc_size = chunk_size + MIN_ALIGN - 1;
+#if _WIN32
+		//void* const heap = cman->heap;
+		void* const heap = mono_code_manager_heap;
+		g_assert (heap);
+		ptr = HeapAlloc (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, malloc_size);
+#else
+		ptr = dlmemalign (MIN_ALIGN, malloc_size);
+#endif
 		if (!ptr)
 			return NULL;
 	} else {
@@ -400,18 +467,24 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 			return NULL;
 	}
 
-	if (flags == CODE_FLAG_MALLOC) {
 #ifdef BIND_ROOM
+	if (flags == CODE_FLAG_MALLOC) {
 		/* Make sure the thunks area is zeroed */
 		memset (ptr, 0, bsize);
-#endif
 	}
+#endif
 
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
-		if (flags == CODE_FLAG_MALLOC)
+		if (flags == CODE_FLAG_MALLOC) {
+#if _WIN32
+			void* const heap = mono_code_manager_heap;
+			g_assert (heap);
+			HeapFree (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, ptr);
+#else
 			dlfree (ptr);
-		else
+#endif
+		} else
 			mono_vfree (ptr, chunk_size, MONO_MEM_ACCOUNT_CODE);
 		return NULL;
 	}
@@ -459,7 +532,7 @@ mono_code_manager_reserve_align (MonoCodeManager *cman, int size, int alignment)
 	}
 
 	if (!cman->current) {
-		cman->current = new_codechunk (cman->last, cman->dynamic, size);
+		cman->current = new_codechunk (cman, size);
 		if (!cman->current)
 			return NULL;
 		cman->last = cman->current;
@@ -492,7 +565,7 @@ mono_code_manager_reserve_align (MonoCodeManager *cman, int size, int alignment)
 		cman->full = chunk;
 		break;
 	}
-	chunk = new_codechunk (cman->last, cman->dynamic, size);
+	chunk = new_codechunk (cman, size);
 	if (!chunk)
 		return NULL;
 	chunk->next = cman->current;
