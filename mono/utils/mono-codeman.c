@@ -12,13 +12,11 @@
 #include <assert.h>
 #include <glib.h>
 
-/* For dlmalloc.h */
-#define USE_DL_PREFIX 1
-
 #include "mono-codeman.h"
 #include "mono-mmap.h"
 #include "mono-counters.h"
 #if !_WIN32
+#define USE_DL_PREFIX 1
 #include "dlmalloc.h"
 #endif
 #include <mono/metadata/profiler-private.h>
@@ -441,7 +439,8 @@ new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
 		// CodeManager does not use locks elsewhere, so do not lock here either.
 		g_static_assert (MEMORY_ALLOCATION_ALIGNMENT >= MIN_ALIGN);
 		g_assert (cman->heap);
-		ptr = HeapAlloc (cman->heap, HEAP_NO_SERIALIZE, malloc_size);
+		// HEAP_NO_SERIALIZE should work, but there is an undebugged crash on 32bit x86, so try 0.
+		ptr = HeapAlloc (cman->heap, 0, malloc_size);
 #else
 		ptr = dlmemalign (MIN_ALIGN, malloc_size);
 #endif
@@ -470,7 +469,8 @@ new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
 		if (flags == CODE_FLAG_MALLOC) {
 #if _WIN32
 			g_assert (cman->heap);
-			HeapFree (cman->heap, HEAP_NO_SERIALIZE, ptr);
+			// HEAP_NO_SERIALIZE should work, but there is an undebugged crash on 32bit x86, so try 0.
+			HeapFree (cman->heap, 0, ptr);
 #else
 			dlfree (ptr);
 #endif
