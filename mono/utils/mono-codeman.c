@@ -380,26 +380,29 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #endif
 
 static CodeChunk*
-new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
+new_codechunk (MonoCodeManager *cman, int size)
 {
-	int minsize, flags = CODE_FLAG_MMAP;
-	int chunk_size, bsize = 0;
-	int pagesize, valloc_granule;
+	CodeChunk *const last = cman->last;
+	int const dynamic = cman->dynamic;
+#ifdef BIND_ROOM
+	int bsize = 0;
+#else
+	int const bsize = 0;
+#endif
 	CodeChunk *chunk;
 	void *ptr;
-
 #ifdef FORCE_MALLOC
-	flags = CODE_FLAG_MALLOC;
+	int const flags = CODE_FLAG_MALLOC;
+#else
+	int const flags = dynamic ? CODE_FLAG_MALLOC : CODE_FLAG_MMAP;
 #endif
+	int chunk_size = dynamic ? size : 0;
+	int valloc_granule;
 
-	pagesize = mono_pagesize ();
-	valloc_granule = mono_valloc_granule ();
-
-	if (dynamic) {
-		chunk_size = size;
-		flags = CODE_FLAG_MALLOC;
-	} else {
-		minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
+	if (!dynamic) {
+		valloc_granule = mono_valloc_granule ();
+		int const pagesize = mono_pagesize ();
+		int const minsize = MAX (pagesize * MIN_PAGES, valloc_granule);
 		if (size < minsize)
 			chunk_size = minsize;
 		else {
@@ -433,6 +436,7 @@ new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
+		// FIXME? Next line seems suspicious but mimics old behavior.
 		const int malloc_size = chunk_size + MIN_ALIGN - 1;
 #if _WIN32
 		// Win32 heap is aligned to two pointers, which matches or exceeds MIN_ALIGN.
@@ -457,12 +461,12 @@ new_codechunk (MonoCodeManager *cman, CodeChunk *last, int dynamic, int size)
 			return NULL;
 	}
 
-	if (flags == CODE_FLAG_MALLOC) {
 #ifdef BIND_ROOM
+	if (flags == CODE_FLAG_MALLOC) {
 		/* Make sure the thunks area is zeroed */
 		memset (ptr, 0, bsize);
-#endif
 	}
+#endif
 
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
@@ -522,7 +526,7 @@ void*
 	}
 
 	if (!cman->current) {
-		cman->current = new_codechunk (cman, cman->last, cman->dynamic, size);
+		cman->current = new_codechunk (cman, size);
 		if (!cman->current)
 			return NULL;
 		cman->last = cman->current;
@@ -555,7 +559,7 @@ void*
 		cman->full = chunk;
 		break;
 	}
-	chunk = new_codechunk (cman, cman->last, cman->dynamic, size);
+	chunk = new_codechunk (cman, size);
 	if (!chunk)
 		return NULL;
 	chunk->next = cman->current;
