@@ -1625,6 +1625,12 @@ corefx/RandomNumberGenerator.cs
 corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs
 corefx/TimeSpanParse.cs
+corefx/DiagnosticCounter.cs
+corefx/AesCcm.cs
+corefx/AesGcm.cs
+corefx/IncrementingEventCounter.cs
+corefx/IncrementingPollingCounter.cs
+corefx/PollingCounter.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs

@@ -58,11 +58,6 @@ static gpointer ss_trampoline;
 /* The breakpoint trampoline */
 static gpointer bp_trampoline;
 
-/* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() mono_os_mutex_lock (&mini_arch_mutex)
-#define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
-static mono_mutex_t mini_arch_mutex;
-
 #define ARGS_OFFSET 8
 
 #ifdef TARGET_WIN32
@@ -742,8 +737,6 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	mono_os_mutex_init_recursive (&mini_arch_mutex);
-
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
 }
@@ -754,7 +747,6 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	mono_os_mutex_destroy (&mini_arch_mutex);
 }
 
 /*
@@ -5412,11 +5404,6 @@ mono_arch_finish_init (void)
 	} else {
 		g_free (mono_no_tls);
 	}
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
-{
 }
 
 // Linear handler, the bsearch head compare is shorter

@@ -534,5 +534,13 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       assert.equal(view.getUint8(1), 123, "result does not match value 123.");
     }, DEFAULT_TIMEOUT);  
 
+    it('BindingTestSuite: Pop should return undefined if Array is empty.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var pop = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ArrayPop", []);
+      assert.equal(pop, undefined, "result does not match expected value unidentified.");
+      assert.equal(pop, null, "result does not match expected value null.");
+    }, DEFAULT_TIMEOUT);  
 
   });

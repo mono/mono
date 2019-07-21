@@ -27,7 +27,7 @@ namespace WebAssembly.Core {
 		/// Pop this instance.
 		/// </summary>
 		/// <returns>The element removed from the array or null if the array was empty</returns>
-		public int Pop () => (int)Invoke ("pop");
+		public object Pop () => (object)Invoke ("pop");
 		/// <summary>
 		/// Remove the first element of the Array and return that element
 		/// </summary>

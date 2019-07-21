@@ -115,7 +115,7 @@ $(patsubst %,app/assets/asm/%,$(BCL)): app/assets/asm/%: $(TOP)/sdks/out/android
 ## Package LLDB
 
 lldb-mono-0.1:
-	wget --no-verbose -O - 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz' | tar xvf -
+	wget --no-verbose -O - 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz' | tar xvfz -
 
 #FIXME: armeabi-v7a in place of armeabi
 lldb-mono-0.1/android/armeabi/lldb-server: | lldb-mono-0.1

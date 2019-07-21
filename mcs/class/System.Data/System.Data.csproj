@@ -525,6 +525,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />
     <Compile Include="System.Data.SqlClient\SqlCredential.cs" />
+    <Compile Include="corefx\DataReaderExtensions.cs" />
     <Compile Include="corefx\DbConnectionOptions.cs" />
     <Compile Include="corefx\DbProviderFactories.mobile.cs" />
     <Compile Include="corefx\DiagnosticListener.cs" />

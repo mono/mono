@@ -944,7 +944,6 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 	//This happens during AOT cuz the thread is never attached
 	if (!jit_tls)
 		return;
-	mono_arch_free_jit_tls_data (jit_tls);
 	mono_free_altstack (jit_tls);
 
 	g_free (jit_tls->first_lmf);
@@ -2743,7 +2742,8 @@ static RuntimeInvokeInfo*
 create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer compiled_method, gboolean callee_gsharedvt, gboolean use_interp, MonoError *error)
 {
 	MonoMethod *invoke;
-	RuntimeInvokeInfo *info;
+	RuntimeInvokeInfo *info = NULL;
+	RuntimeInvokeInfo *ret = NULL;
 
 	info = g_new0 (RuntimeInvokeInfo, 1);
 	info->compiled_method = compiled_method;
@@ -2756,10 +2756,11 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 	invoke = mono_marshal_get_runtime_invoke (method, FALSE);
 	info->vtable = mono_class_vtable_checked (domain, method->klass, error);
 	if (!mono_error_ok (error))
-		return NULL;
+		goto exit;
 	g_assert (info->vtable);
 
-	MonoMethodSignature *sig = info->sig;
+	MonoMethodSignature *sig;
+	sig = info->sig;
 	MonoType *ret_type;
 
 	/*
@@ -2834,8 +2835,11 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 		break;
 	}
 
-	if (info->use_interp)
-		return info;
+	if (info->use_interp) {
+		ret = info;
+		info = NULL;
+		goto exit;
+	}
 
 	if (!info->dyn_call_info) {
 		if (mono_llvm_only) {
@@ -2856,10 +2860,8 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				g_free (wrapper_sig);
 
 				info->compiled_method = mono_jit_compile_method (wrapper, error);
-				if (!mono_error_ok (error)) {
-					g_free (info);
-					return NULL;
-				}
+				if (!mono_error_ok (error))
+					goto exit;
 			} else {
 				/* Gsharedvt methods can be invoked the same way */
 				/* The out wrapper has the same signature as the compiled gsharedvt method */
@@ -2872,13 +2874,15 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 			}
 		}
 		info->runtime_invoke = mono_jit_compile_method (invoke, error);
-		if (!mono_error_ok (error)) {
-			g_free (info);
-			return NULL;
-		}
+		if (!mono_error_ok (error))
+			goto exit;
 	}
 
-	return info;
+	ret = info;
+	info = NULL;
+exit:
+	g_free (info);
+	return ret;
 }
 
 static MonoObject*
@@ -4744,8 +4748,6 @@ mini_cleanup (MonoDomain *domain)
 	if (profile_options)
 		g_ptr_array_free (profile_options, TRUE);
 
-	free_jit_tls_data (mono_tls_get_jit_tls ());
-
 	mono_icall_cleanup ();
 
 	mono_runtime_cleanup_handlers ();
@@ -4753,6 +4755,7 @@ mini_cleanup (MonoDomain *domain)
 #ifndef MONO_CROSS_COMPILE
 	mono_domain_free (domain, TRUE);
 #endif
+	free_jit_tls_data (mono_tls_get_jit_tls ());
 
 #ifdef ENABLE_LLVM
 	if (mono_use_llvm)

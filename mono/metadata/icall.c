@@ -5833,6 +5833,7 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 
 	error_init (error);
 
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (fname);
 	filename = mono_string_handle_to_utf8 (fname, error);
 	return_if_nok (error);
 
@@ -5842,7 +5843,8 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "InternalGetAssemblyName (\"%s\")", filename);
 
-	image = mono_image_open_full (filename, &status, TRUE);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
+	image = mono_image_open_a_lot (alc, filename, &status, TRUE, FALSE);
 
 	if (!image){
 		if (status == MONO_IMAGE_IMAGE_INVALID)
@@ -8972,12 +8974,13 @@ no_icall_table (void)
 gconstpointer
 mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_missing, guint32 *flags)
 {
-	char *sigstart;
-	char *tmpsig;
+	char *sigstart = NULL;
+	char *tmpsig = NULL;
 	char mname [2048];
-	char *classname;
+	char *classname = NULL;
 	int typelen = 0, mlen, siglen;
-	gconstpointer res;
+	gconstpointer res = NULL;
+	gboolean locked = FALSE;
 
 	g_assert (method != NULL);
 
@@ -8987,20 +8990,20 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 	if (m_class_get_nested_in (method->klass)) {
 		int pos = concat_class_name (mname, sizeof (mname)-2, m_class_get_nested_in (method->klass));
 		if (!pos)
-			return NULL;
+			goto exit;
 
 		mname [pos++] = '/';
 		mname [pos] = 0;
 
 		typelen = concat_class_name (mname+pos, sizeof (mname)-pos-1, method->klass);
 		if (!typelen)
-			return NULL;
+			goto exit;
 
 		typelen += pos;
 	} else {
 		typelen = concat_class_name (mname, sizeof (mname), method->klass);
 		if (!typelen)
-			return NULL;
+			goto exit;
 	}
 
 	classname = g_strdup (mname);
@@ -9015,21 +9018,22 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 
 	tmpsig = mono_signature_get_desc (mono_method_signature_internal (method), TRUE);
 	siglen = strlen (tmpsig);
-	if (typelen + mlen + siglen + 6 > sizeof (mname)) {
-		g_free (classname);
-		return NULL;
-	}
+	if (typelen + mlen + siglen + 6 > sizeof (mname))
+		goto exit;
+
 	sigstart [0] = '(';
 	memcpy (sigstart + 1, tmpsig, siglen);
 	sigstart [siglen + 1] = ')';
 	sigstart [siglen + 2] = 0;
-	g_free (tmpsig);
 
 	/* mono_marshal_get_native_wrapper () depends on this */
-	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-		return (gconstpointer)ves_icall_System_String_ctor_RedirectToCreateString;
+	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor")) {
+		res = (gconstpointer)ves_icall_System_String_ctor_RedirectToCreateString;
+		goto exit;
+	}
 
 	mono_icall_lock ();
+	locked = TRUE;
 
 	res = g_hash_table_lookup (icall_hash, mname);
 	if (res) {
@@ -9037,9 +9041,7 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 		if (flags)
 			*flags = value->flags;
 		res = value->method;
-		mono_icall_unlock ();
-		g_free (classname);
-		return res;
+		goto exit;
 	}
 
 	/* try without signature */
@@ -9050,16 +9052,13 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 		if (flags)
 			*flags = value->flags;
 		res = value->method;
-		mono_icall_unlock ();
-		g_free (classname);
-		return res;
+		goto exit;
 	}
 
 	if (!icall_table) {
-		mono_icall_unlock ();
-		g_free (classname);
 		/* Fail only when the result is actually used */
-		return (gconstpointer)no_icall_table;
+		res = (gconstpointer)no_icall_table;
+		goto exit;
 	} else {
 		gboolean uses_handles = FALSE;
 		g_assert (icall_table->lookup);
@@ -9067,10 +9066,10 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 		if (res && flags && uses_handles)
 			*flags = *flags | MONO_ICALL_FLAGS_USES_HANDLES;
 		mono_icall_unlock ();
-		g_free (classname);
+		locked = FALSE;
 
 		if (res)
-			return res;
+			goto exit;
 
 		if (warn_on_missing) {
 			g_warning ("cant resolve internal call to \"%s\" (tested without signature also)", mname);
@@ -9082,8 +9081,15 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 			g_print ("and you need to fix your mono install first.\n");
 		}
 
-		return NULL;
+		res = NULL;
 	}
+
+exit:
+	if (locked)
+		mono_icall_unlock ();
+	g_free (classname);
+	g_free (tmpsig);
+	return res;
 }
 
 /**
