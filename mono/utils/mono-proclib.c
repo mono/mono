@@ -979,7 +979,7 @@ mono_atexit (void (*func)(void))
 #ifndef HOST_WIN32
 
 gboolean
-mono_pe_file_time_date_stamp (gunichar2 *filename, guint32 *out)
+mono_pe_file_time_date_stamp (const gunichar2 *filename, guint32 *out)
 {
 	void *map_handle;
 	gint32 map_size;
@@ -1011,7 +1011,7 @@ mono_pe_file_time_date_stamp (gunichar2 *filename, guint32 *out)
 }
 
 gpointer
-mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
+mono_pe_file_map (const gunichar2 *filename, gint32 *map_size, void **handle)
 {
 	gchar *filename_ext = NULL;
 	gchar *located_filename = NULL;
