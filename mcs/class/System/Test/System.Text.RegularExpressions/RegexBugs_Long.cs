@@ -8,6 +8,7 @@ namespace MonoTests.System.Text.RegularExpressions
 	public class RegexBugs2
 	{		
 		[Test]
+		[Category("MultiThreaded")]
 		public void BugXamarin7578 ()
 		{			
 			string testData = @"\id aaaaaaaaaaaaaaaaa

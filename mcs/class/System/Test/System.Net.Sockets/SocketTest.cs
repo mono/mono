@@ -28,6 +28,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category("NotWasm")]
 	public class SocketTest
 	{
 		public const string BogusAddress = "192.168.244.244";

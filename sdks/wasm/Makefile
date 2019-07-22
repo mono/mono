@@ -359,13 +359,13 @@ $(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
 $(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
 $(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
 
-AOT_TEST_SUITES=corlib System.Core
+AOT_TEST_SUITES=corlib System System.Core
 
 build-aot-all: build
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
 run-aot-all: build-aot-all
-	for suite in System.Core; do $(MAKE) run-aot-$$suite || exit 1; done
+	for suite in $(AOT_TEST_SUITES); do $(MAKE) run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
 
