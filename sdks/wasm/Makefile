@@ -73,6 +73,7 @@ WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
 WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
@@ -230,8 +231,13 @@ bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_
 
 build-test-suite: bin/test-suite/mono.js
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) build-sdk
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
+$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
@@ -410,6 +416,9 @@ test-debugger: build-debugger-test-app build-dbg-testsuite
 run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
 
+run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
+	(cd $(BROWSER_TEST_THREADS) && npm test)
+
 clean: clean-sdk
 	$(RM) -r *.o
 	$(RM) -r ./obj
@@ -417,6 +426,7 @@ clean: clean-sdk
 	$(RM) -r .stamp-build-debug-sample
 	$(RM) -r .stamp-build-test-suite
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
 	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
@@ -507,13 +517,15 @@ clean-sdk:
 	$(RM) -r sdk/**/**/bin
 	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
+	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
 	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
 
-clean-browser-tests: clean-sdk 
+clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
 	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
