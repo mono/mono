@@ -50,13 +50,6 @@
 
 #define mono_array_handle_setref(array,index,value) MONO_HANDLE_ARRAY_SETREF ((array), (index), (value))
 
-#define SET_STR_FIELD(obj,field,domain,expr,error) do {					\
-	MonoStringHandle _str = mono_string_new_handle ((domain), (expr), (error));	\
-	if (!is_ok ((error)))												\
-		goto exit;								\
-	MONO_HANDLE_SET ((obj), field, _str);	\
-	} while (0)
-
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 					     gint32 options);
 
@@ -161,6 +154,7 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 {
 	MonoDomain *domain;
 	MonoArrayHandle arr;
+	MonoStringHandle s;
 	const DateTimeFormatEntry *dfe;
 	const CultureInfoNameEntry *ne;
 	const CultureInfoEntry *ci;
@@ -179,7 +173,10 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 
 	domain = mono_domain_get ();
 
-	SET_STR_FIELD (this_obj, NativeName, domain, idx2string (ci->nativename), error);
+	s = mono_string_new_handle (domain, idx2string (ci->nativename), error);
+	return_val_if_nok (error, FALSE);
+	MONO_HANDLE_SET (this_obj, NativeName, s);
+
 	arr = create_names_array_idx_dynamic (dfe->short_date_patterns, NUM_SHORT_DATE_PATTERNS, error);
 	return_val_if_nok (error, FALSE);
 	MONO_HANDLE_SET (this_obj, ShortDatePatterns, arr);
@@ -225,7 +222,6 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 	return_val_if_nok (error, FALSE);
 	MONO_HANDLE_SET (this_obj, GenitiveAbbreviatedMonthNames, arr);
 
- exit:
 	return TRUE;
 }
 
@@ -242,9 +238,17 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureDataHan
 
 	domain = mono_domain_get ();
 
+#define SET_STR_FIELD(obj,field,domain,expr,error) do {					\
+	MonoStringHandle _str = mono_string_new_handle ((domain), (expr), (error));	\
+	return_if_nok (error); \
+	MONO_HANDLE_SET ((obj), field, _str);	\
+	} while (0)
+
 	SET_STR_FIELD (this_obj, AMDesignator, domain, idx2string (dfe->am_designator), error);
 	SET_STR_FIELD (this_obj, PMDesignator, domain, idx2string (dfe->pm_designator), error);
 	SET_STR_FIELD (this_obj, TimeSeparator, domain, idx2string (dfe->time_separator), error);
+
+#undef SET_STR_FIELD
 
 	arr = create_names_array_idx_dynamic (dfe->long_time_patterns,
 										  NUM_LONG_TIME_PATTERNS, error);
@@ -257,8 +261,6 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureDataHan
 
 	MONO_HANDLE_SETVAL (this_obj, FirstDayOfWeek, guint32, dfe->first_day_of_week);
 	MONO_HANDLE_SETVAL (this_obj, CalendarWeekRule, guint32, dfe->calendar_week_rule);
- exit:
-	return;
 }
 
 gconstpointer
@@ -303,6 +305,12 @@ construct_culture (MonoCultureInfoHandle this_obj, const CultureInfoEntry *ci, M
 
 	mono_handle_setval (this_obj, lcid, ci->lcid);
 
+#define SET_STR_FIELD(obj,field,domain,expr,error) do {					\
+	MonoStringHandle _str = mono_string_new_handle ((domain), (expr), (error));	\
+	return_val_if_nok (error, FALSE);										\
+	MONO_HANDLE_SET ((obj), field, _str);	\
+	} while (0)
+
 	SET_STR_FIELD (this_obj, name, domain, idx2string (ci->name), error);
 	SET_STR_FIELD (this_obj, englishname, domain, idx2string (ci->englishname), error);
 	SET_STR_FIELD (this_obj, nativename, domain, idx2string (ci->nativename), error);
@@ -314,6 +322,8 @@ construct_culture (MonoCultureInfoHandle this_obj, const CultureInfoEntry *ci, M
 	if (ci->territory > 0)
 		SET_STR_FIELD (this_obj, territory, domain, idx2string (ci->territory), error);
 
+#undef SET_STR_FIELD
+
 	MonoArrayHandle native_calendar_names = create_names_array_idx (ci->native_calendar_names, NUM_CALENDARS, error);
 	return_val_if_nok (error, FALSE);
 	mono_handle_setref (this_obj, native_calendar_names, native_calendar_names);
@@ -322,8 +332,6 @@ construct_culture (MonoCultureInfoHandle this_obj, const CultureInfoEntry *ci, M
 	mono_handle_setval (this_obj, number_index, ci->number_format_index);
 	mono_handle_setval (this_obj, calendar_type, ci->calendar_type);
 	mono_handle_setval (this_obj, text_info_data, &ci->text_info);
-
- exit:	
 	return TRUE;
 }
 
@@ -333,6 +341,13 @@ construct_region (MonoRegionInfoHandle this_obj, const RegionInfoEntry *ri, Mono
 	MonoDomain *domain = mono_domain_get ();
 
 	mono_handle_setval (this_obj, geo_id, ri->geo_id);
+
+#define SET_STR_FIELD(obj,field,domain,expr,error) do {					\
+	MonoStringHandle _str = mono_string_new_handle ((domain), (expr), (error));	\
+	return_val_if_nok (error, FALSE);										\
+	MONO_HANDLE_SET ((obj), field, _str);	\
+	} while (0)
+
 	SET_STR_FIELD (this_obj, iso2name, domain, idx2string (ri->iso2name), error);
 	SET_STR_FIELD (this_obj, iso3name, domain, idx2string (ri->iso3name), error);
 	SET_STR_FIELD (this_obj, win3name, domain, idx2string (ri->win3name), error);
@@ -342,10 +357,10 @@ construct_region (MonoRegionInfoHandle this_obj, const RegionInfoEntry *ri, Mono
 	SET_STR_FIELD (this_obj, iso_currency_symbol, domain, idx2string (ri->iso_currency_symbol), error);
 	SET_STR_FIELD (this_obj, currency_english_name, domain, idx2string (ri->currency_english_name), error);
 	SET_STR_FIELD (this_obj, currency_native_name, domain, idx2string (ri->currency_native_name), error);
-	
+
+#undef SET_STR_FIELD
+
 	return TRUE;
- exit:
-	return FALSE;
 }
 
 static const CultureInfoEntry*
