@@ -154,28 +154,38 @@ process_set_field_string (MonoObjectHandle obj, const char *fieldname, MonoStrin
 static void
 process_set_field_utf16 (MonoObjectHandle obj, MonoStringHandle str, const char *fieldname, const gunichar2 *val, guint32 len, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	LOGDEBUG (g_message ("%s: Setting field %s to [%s]", __func__, fieldname, g_utf16_to_utf8 (val, len, NULL, NULL, NULL)));
 
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (obj);
 	g_assert (domain);
 
-	mono_string_new_utf16_assign (str, domain, val, len, error);
-	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (str, mono_string_new_utf16_handle (domain, val, len, error));
+	goto_if_nok (error, exit);
 	process_set_field_string (obj, fieldname, str);
+
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static void
 process_set_field_utf8 (MonoObjectHandle obj, MonoStringHandle str, const char *fieldname, const char *val, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	LOGDEBUG (g_message ("%s: Setting field %s to [%s]", __func__, fieldname, val));
 
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (obj);
 	g_assert (domain);
 
-	mono_string_new_utf8z_assign (str, domain, val, error);
-	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (str, mono_string_new_utf8_len (domain, val, strlen (val), error));
+	goto_if_nok (error, exit);
 
 	process_set_field_string (obj, fieldname, str);
+
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static MonoClassField*
@@ -438,23 +448,25 @@ process_add_module (MonoObjectHandle item, MonoObjectHandle filever, MonoStringH
 	HANDLE process, HMODULE mod, const gunichar2 *filename, const gunichar2 *modulename,
 	MonoClass *proc_class, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MODULEINFO modinfo;
 
 	MonoDomain *domain = mono_domain_get ();
 	g_assert (domain);
 
 	/* Build a System.Diagnostics.ProcessModule with the data. */
-	mono_object_new_assign (item, domain, proc_class, error);
-	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (item, mono_object_new_handle (domain, proc_class, error));
+	goto_if_nok (error, exit);
 
-	mono_object_new_assign (filever, domain, get_file_version_info_class (), error);
-	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (filever, mono_object_new_handle (domain, get_file_version_info_class (), error));
+	goto_if_nok (error, exit);
 
 	mono_w32process_get_fileversion (filever, str, filename, error);
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 
 	process_set_field_utf16 (filever, str, "filename", filename, g_utf16_len (filename), error);
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 
 	if (mono_w32process_module_get_information (process, mod, &modinfo, sizeof (MODULEINFO))) {
 		process_set_field_intptr (item, "baseaddr", modinfo.lpBaseOfDll);
@@ -463,12 +475,15 @@ process_add_module (MonoObjectHandle item, MonoObjectHandle filever, MonoStringH
 	}
 
 	process_set_field_utf16 (item, str, "filename", filename, g_utf16_len (filename), error);
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 
 	process_set_field_utf16 (item, str, "modulename", modulename, g_utf16_len (modulename), error);
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 
 	process_set_field_object (item, "version_info", filever);
+
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static void
@@ -483,15 +498,17 @@ static void
 process_get_module (MonoObjectHandle item, MonoObjectHandle filever,
 	MonoStringHandle str, MonoAssembly *assembly, MonoClass *proc_class, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoDomain *domain = mono_domain_get ();
 	const char *modulename = assembly->aname.name;
 	char *filename = g_strdup_printf ("[In Memory] %s", modulename);
 
 	/* Build a System.Diagnostics.ProcessModule with the data. */
-	mono_object_new_assign (item, domain, proc_class, error);
+	MONO_HANDLE_ASSIGN (item, mono_object_new_handle (domain, proc_class, error));
 	goto_if_nok (error, exit);
 
-	mono_object_new_assign (filever, domain, get_file_version_info_class (), error);
+	MONO_HANDLE_ASSIGN (filever, mono_object_new_handle (domain, get_file_version_info_class (), error));
 	goto_if_nok (error, exit);
 
 	process_get_assembly_fileversion (filever, assembly);
@@ -506,6 +523,8 @@ process_get_module (MonoObjectHandle item, MonoObjectHandle filever,
 	process_set_field_utf8 (item, str, "modulename", modulename, error);
 exit:
 	g_free (filename);
+
+	HANDLE_FUNCTION_RETURN ();
 }
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
