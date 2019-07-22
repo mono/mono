@@ -127,7 +127,8 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline void
+
+static void
 mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, STARTUPINFO *startinfo)
 {
 	startinfo->cb = sizeof(STARTUPINFO);
@@ -135,7 +136,6 @@ mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDL
 	startinfo->hStdInput = stdin_handle;
 	startinfo->hStdOutput = stdout_handle;
 	startinfo->hStdError = stderr_handle;
-	return;
 }
 
 static gboolean
@@ -295,6 +295,9 @@ MonoBoolean
 ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info,
 	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	MonoCreateProcessCoop coop;
 	mono_createprocess_coop_init (&coop, proc_start_info, process_info);
 
@@ -369,6 +372,17 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 exit:
 	mono_createprocess_coop_cleanup (&coop);
 	return ret;
+
+#else
+
+	const char *api_name = mono_process_info->username ? "CreateProcessWithLogonW" : "CreateProcess";
+	memset (process_info, 0, sizeof (PROCESS_INFORMATION));
+	g_unsupported_api (api_name);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, api_name);
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+
+#endif
 }
 
 MonoArrayHandle

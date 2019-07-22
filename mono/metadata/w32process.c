@@ -87,6 +87,8 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32) */
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 static MonoImage *system_image;
 
 static void
@@ -213,8 +215,6 @@ process_set_field_bool (MonoObjectHandle obj, const char *fieldname, guint8 val)
 
 	MONO_HANDLE_SET_FIELD_VAL (obj, guint8, process_resolve_field (obj, fieldname), val);
 }
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 #define SFI_COMMENTS		"\\StringFileInfo\\%02X%02X%02X%02X\\Comments"
 #define SFI_COMPANYNAME		"\\StringFileInfo\\%02X%02X%02X%02X\\CompanyName"
@@ -503,6 +503,7 @@ exit:
 MonoArrayHandle
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, HANDLE process, MonoError *error)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoArrayHandle temp_arr = NULL_HANDLE_ARRAY;
 	MonoArrayHandle arr = NULL_HANDLE_ARRAY;
 	HMODULE mods [1024];
@@ -570,6 +571,12 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 	}
 
 	return arr;
+#else
+	g_unsupported_api ("EnumProcessModules");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "EnumProcessModules");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return NULL_HANDLE_ARRAY;
+#endif
 }
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
