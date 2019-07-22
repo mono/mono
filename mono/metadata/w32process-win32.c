@@ -310,7 +310,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 
 	gboolean ret;
 	gunichar2 *dir = NULL;
-	STARTUPINFO startinfo={0};
+	STARTUPINFOW startinfo={0};
 	PROCESS_INFORMATION procinfo;
 	gunichar2 *env_vars = NULL;
 	MonoStringHandle cmd = NULL_HANDLE_STRING;
@@ -385,7 +385,7 @@ exit:
 	// FIXME CreateProcess is supported for UWP.
 
 	const char *api_name = mono_process_info->username ? "CreateProcessWithLogonW" : "CreateProcess";
-	memset (process_info, 0, sizeof (PROCESS_INFORMATION));
+	memset (process_info, 0, sizeof (*process_info));
 	g_unsupported_api (api_name);
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, api_name);
 	SetLastError (ERROR_NOT_SUPPORTED);
@@ -496,7 +496,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoE
 	return GetPriorityClass (handle);
 #else
 
-	// FIXME GetPriorityClass is supported for UWP.. Use finer grained #if.
+	// FIXME GetPriorityClass is supported for UWP. Use finer grained #if.
 
 	g_unsupported_api ("GetPriorityClass");
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
