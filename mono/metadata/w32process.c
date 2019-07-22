@@ -433,6 +433,8 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_image (m_class_get_image (mono_object_class (this_obj)));
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	mono_w32process_get_fileversion (this_obj, mono_string_chars_internal (filename), error);
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
@@ -443,6 +445,15 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
 	}
+
+#else
+
+	g_unsupported_api ("GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
+	mono_error_set_pending_exception (error);
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+#endif
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
@@ -567,6 +578,7 @@ MonoArray *
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
 {
 	ERROR_DECL (error);
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoArray *temp_arr = NULL;
 	MonoArray *arr;
 	HMODULE mods[1024];
@@ -631,47 +643,63 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 	}
 
 	return arr;
+#else
+	g_unsupported_api ("EnumProcessModules, GetModuleBaseName, GetModuleFileNameEx");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "EnumProcessModules, GetModuleBaseName, GetModuleFileNameEx");
+	mono_error_set_pending_exception (error);
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return NULL;
+#endif
 }
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 MonoString *
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 {
 	ERROR_DECL (error);
-	MonoString *string;
+
 	gunichar2 name[MAX_PATH];
-	guint32 len;
-	gboolean ok;
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	HMODULE mod;
 	DWORD needed;
 
-	ok = mono_w32process_try_get_modules (process, &mod, sizeof(mod), &needed);
+	gboolean ok = mono_w32process_try_get_modules (process, &mod, sizeof(mod), &needed);
 	if (!ok)
 		return NULL;
 
-	len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
+	const guint32 len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
 	if (len == 0)
 		return NULL;
 
-	string = mono_string_new_utf16_checked (mono_domain_get (), name, len, error);
+	MonoString *string = mono_string_new_utf16_checked (mono_domain_get (), name, len, error);
 	if (!mono_error_ok (error))
 		mono_error_set_pending_exception (error);
 
 	return string;
-}
+
+#else
+
+	const guint32 len = GetModuleFileName (NULL, name, G_N_ELEMENTS (name));
+	if (len == 0)
+		return NULL;
+
+	MonoString *string = mono_string_new_utf16_checked (mono_domain_get (), name, len, error);
+	if (!mono_error_ok (error))
+		mono_error_set_pending_exception (error);
+
+	return string;
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error)
 {
 	MonoProcessError perror;
-	guint64 res;
-
-	res = mono_process_get_data_with_error (GINT_TO_POINTER (pid), (MonoProcessData)data_type, &perror);
+	guint64 res = mono_process_get_data_with_error (GINT_TO_POINTER (pid), (MonoProcessData)data_type, &perror);
 	if (error)
 		*error = perror;
 	return res;
