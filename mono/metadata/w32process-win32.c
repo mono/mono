@@ -20,7 +20,6 @@
 
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/w32process.h>
-#include <mono/metadata/w32process-win32-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/image.h>
@@ -76,10 +75,10 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoCreateProcessCoop coop;
 	mono_createprocess_coop_init (&coop, proc_start_info, process_info);
 
@@ -123,8 +122,17 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 	mono_createprocess_coop_cleanup (&coop);
 
 	return ret;
-}
+
+#else
+
+    g_unsupported_api ("ShellExecuteEx");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "ShellExecuteEx");
+	process_info->pid = (guint32)(-ERROR_NOT_SUPPORTED);
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
@@ -375,6 +383,8 @@ exit:
 
 #else
 
+	// FIXME CreateProcess is supported for UWP.
+
 	const char *api_name = mono_process_info->username ? "CreateProcessWithLogonW" : "CreateProcess";
 	memset (process_info, 0, sizeof (PROCESS_INFORMATION));
 	g_unsupported_api (api_name);
@@ -486,6 +496,9 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoE
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return GetPriorityClass (handle);
 #else
+
+	// FIXME GetPriorityClass is supported for UWP.. Use finer grained #if.
+
 	g_unsupported_api ("GetPriorityClass");
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
 	SetLastError (ERROR_NOT_SUPPORTED);
@@ -499,6 +512,9 @@ ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint3
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return SetPriorityClass (handle, (guint32) priorityClass);
 #else
+
+	// FIXME SetPriorityClass is supported for UWP. Use finer grained #if.
+
 	g_unsupported_api ("SetPriorityClass");
 	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "SetPriorityClass");
 	SetLastError (ERROR_NOT_SUPPORTED);

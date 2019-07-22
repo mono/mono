@@ -6,7 +6,6 @@
 
 #include "w32process.h"
 #include "w32process-internals.h"
-#include "w32process-win32-internals.h"
 #include "w32file.h"
 #include "object.h"
 #include "object-internals.h"
@@ -87,8 +86,6 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32) */
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
 static MonoImage *system_image;
 
 static void
@@ -96,6 +93,8 @@ stash_system_image (MonoImage *image)
 {
 	system_image = image;
 }
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static MonoClass*
 get_file_version_info_class (void)
@@ -390,10 +389,20 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_image (m_class_get_image (mono_handle_class (this_obj)));
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	mono_w32process_get_fileversion (this_obj, str, filename, error);
 	return_if_nok (error);
 
 	process_set_field_utf16 (this_obj, str, "filename", filename, filename_length, error);
+
+#else
+
+	g_unsupported_api ("GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+#endif
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
@@ -499,6 +508,8 @@ exit:
 	g_free (filename);
 }
 
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
 /* Returns an array of System.Diagnostics.ProcessModule */
 MonoArrayHandle
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, HANDLE process, MonoError *error)
@@ -579,13 +590,11 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 #endif
 }
 
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
 MonoStringHandle
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoError *error)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	gunichar2 name [MAX_PATH]; // FIXME (MAX_PATH)
 	HMODULE mod = 0;
 	DWORD needed = 0;
@@ -593,21 +602,25 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 	if (!mono_w32process_try_get_modules (process, &mod, sizeof (mod), &needed))
 		return NULL_HANDLE_STRING;
 
-	guint32 len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
+	const guint32 len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
 
 	return len ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
-}
+
+#else
+
+	gunichar2 name [MAX_PATH]; // FIXME MAX_PATH
+	const guint32 len = GetModuleFileNameW (NULL, name, G_N_ELEMENTS (name));
+	if (len == 0)
+		return NULL_HANDLE_STRING;
+	return mono_string_new_utf16_handle (mono_domain_get (), name, len, error);
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, MonoProcessError *error)
 {
-#if defined (__cplusplus) || defined (static_assert)
-	static_assert (sizeof (MonoProcessError) == sizeof (gint32), "");
-#else
-	g_assert (sizeof (MonoProcessError) == sizeof (gint32));
-#endif
+	g_static_assert (sizeof (MonoProcessError) == sizeof (gint32));
 	g_assert (error);
 	*error = MONO_PROCESS_ERROR_NONE;
 	return mono_process_get_data_with_error (GINT_TO_POINTER (pid), (MonoProcessData)data_type, error);
