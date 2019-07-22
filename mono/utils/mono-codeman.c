@@ -94,10 +94,6 @@ struct _MonoCodeManager {
 	CodeChunk *current;
 	CodeChunk *full;
 	CodeChunk *last;
-#if _WIN32
-	// Try a global heap instead due to some CI failures.
-	//void* heap;
-#endif
 };
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
@@ -221,7 +217,7 @@ mono_code_manager_new_internal (gboolean dynamic)
 		// It would seem the heap should live and die with the codemanager,
 		// but that was failing, so try a global.
 		if (mono_codeman_get_allocation_type (cman) == CODE_FLAG_MALLOC && !mono_code_manager_heap) {
-			// This heap is leaked, possibly similar to dlmalloc state.
+			// This heap is leaked, similar to dlmalloc state.
 			void* const heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, 0, 0);
 			if (heap && mono_atomic_cas_ptr (&mono_code_manager_heap, heap, NULL))
 				HeapDestroy (heap);
@@ -292,7 +288,6 @@ free_chunklist (CodeChunk *chunk)
 			/* valgrind_unregister(dead->data); */
 		} else if (dead->flags == CODE_FLAG_MALLOC) {
 #if _WIN32
-			// If HeapDestroy in mono_code_manager_destroy, then nothing needed here.
 			void* const heap = mono_code_manager_heap;
 			g_assert (heap);
 			HeapFree (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, dead->data);
@@ -317,12 +312,6 @@ mono_code_manager_destroy (MonoCodeManager *cman)
 		return;
 	free_chunklist (cman->full);
 	free_chunklist (cman->current);
-#if _WIN32
-	// It would seem we should HeapDestroy cman->heap here,
-	// but this was failing, so try a global heap instead.
-	//if (cman->heap)
-	// HeapDestroy (cman->heap);
-#endif
 	g_free (cman);
 }
 
@@ -447,7 +436,6 @@ new_codechunk (MonoCodeManager *cman, int size)
 	if (flags == CODE_FLAG_MALLOC) {
 		const int malloc_size = chunk_size + MIN_ALIGN - 1;
 #if _WIN32
-		//void* const heap = cman->heap;
 		void* const heap = mono_code_manager_heap;
 		g_assert (heap);
 		ptr = HeapAlloc (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, malloc_size);
