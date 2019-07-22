@@ -1,11 +1,6 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)\Versions.props" />
   <PropertyGroup>
-    <_MonoWasmBuildPackageVersion>0.1.0</_MonoWasmBuildPackageVersion>
-    <_MonoWasmFrameworkPackageVersion>0.1.0</_MonoWasmFrameworkPackageVersion>
-    <_MonoWasmRuntimePackageVersion>0.1.0</_MonoWasmRuntimePackageVersion>
-    <_MonoWasmBindingsPackageVersion>0.1.0</_MonoWasmBindingsPackageVersion>
-    <_MonoWasmHttpHandlerPackageVersion>0.1.0</_MonoWasmHttpHandlerPackageVersion>
-    <_MonoWasmClientWebSocketPackageVersion>0.1.0</_MonoWasmClientWebSocketPackageVersion>
     <_IsMonoWasmProject>True</_IsMonoWasmProject>
   </PropertyGroup>
 

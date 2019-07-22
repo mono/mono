@@ -99,12 +99,11 @@ if ENABLE_MONODROID
 support_sources += \
 	../../support/nl.c \
 	../../support/zlib-helper.c
-if HAVE_ZLIB
-# See libmonoruntime_support_la_LDFLAGS
-else
-support_sources += \
+endif
+endif
+
+zlib_sources = \
 	../../support/adler32.c \
-	../../support/compress.c \
 	../../support/crc32.c \
 	../../support/crc32.h \
 	../../support/deflate.c \
@@ -119,12 +118,21 @@ support_sources += \
 	../../support/inftrees.h \
 	../../support/trees.c \
 	../../support/trees.h \
-	../../support/uncompr.c \
 	../../support/zconf.h \
 	../../support/zlib.h \
 	../../support/zutil.c \
 	../../support/zutil.h
-endif
+
+#
+# Support is a separate library because it is not valid C++.
+#
+if HOST_WIN32
+support_sources += $(zlib_sources)
+else
+if HAVE_ZLIB
+# See libmonoruntime_support_la_LDFLAGS
+else
+support_sources += $(zlib_sources)
 endif
 endif
 
@@ -153,11 +161,10 @@ libmonoruntime_config_la_SOURCES = \
 libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" -DMONO_RELOC_LIBDIR=\"../$(reloc_libdir)\" @CXX_ADD_CFLAGS@
 
 #
-# This library is only used to compile the required support/ sources. We can't use them directly in platform_sources
-# because they aren't C++ compatible.
+# Support is a separate library because it is not valid C++.
 #
 libmonoruntime_support_la_SOURCES = $(support_sources)
-libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @ZLIB_CFLAGS@
 if HAVE_STATIC_ZLIB
 libmonoruntime_support_la_LDFLAGS = $(STATIC_ZLIB_PATH)
 else
@@ -238,6 +245,7 @@ endif
 common_sources = \
 	$(platform_sources)	\
 	appdomain.c	\
+	assembly-load-context.c	\
 	domain.c	\
 	appdomain-icalls.h	\
 	assembly.c		\
@@ -292,6 +300,10 @@ common_sources = \
 	jit-info.c		\
 	loader.c		\
 	loader-internals.h	\
+	loaded-images-internals.h		\
+	loaded-images.c		\
+	loaded-images-global.c	\
+	loaded-images-netcore.c	\
 	locales.c		\
 	locales.h		\
 	lock-tracer.c		\
@@ -354,6 +366,7 @@ common_sources = \
 	remoting.h		\
 	remoting.c		\
 	runtime.c		\
+	runtime.h		\
 	mono-security.c		\
 	security.h		\
 	security-core-clr.c	\
@@ -413,6 +426,7 @@ common_sources = \
 	callspec.c	\
 	abi.c
 
+
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
 	gc-stats.c	\
@@ -426,6 +440,7 @@ sgen_sources = \
 	sgen-bridge.c		\
 	sgen-bridge.h		\
 	sgen-bridge-internals.h	\
+	sgen-dynarray.h		\
 	sgen-old-bridge.c		\
 	sgen-new-bridge.c		\
 	sgen-tarjan-bridge.c		\
@@ -484,6 +499,6 @@ libmonoruntimeinclude_HEADERS = \
 	tokentype.h		\
 	verify.h		
 
-EXTRA_DIST = $(win32_sources) $(unix_sources) $(null_sources) runtime.h \
+EXTRA_DIST = $(null_sources) \
 		external-only.c \
-		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c sgen-dynarray.h
+		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c

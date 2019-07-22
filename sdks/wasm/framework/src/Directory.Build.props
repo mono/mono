@@ -1,0 +1,4 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\common\Versions.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\common\Signing.props" />
+</Project>

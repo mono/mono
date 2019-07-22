@@ -134,13 +134,17 @@ namespace System
 			Type dst_type = destinationArray.GetType ().GetElementType ()!;
 			var dst_type_vt = dst_type.IsValueType && Nullable.GetUnderlyingType (dst_type) == null;
 
-			if (src_type.IsEnum)
+			bool src_is_enum = src_type.IsEnum;
+			bool dst_is_enum = dst_type.IsEnum;
+			
+			if (src_is_enum)
 				src_type = Enum.GetUnderlyingType (src_type);
-			if (dst_type.IsEnum)
+			if (dst_is_enum)
 				dst_type = Enum.GetUnderlyingType (dst_type);
 
 			if (reliable) {
-				if (!dst_type.Equals (src_type)) {
+				if (!dst_type.Equals (src_type) &&
+					!(dst_type.IsPrimitive && src_type.IsPrimitive && CanChangePrimitive(dst_type, src_type, true))) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
 			} else {
@@ -153,11 +157,14 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
+					if (!src_type.IsValueType && dst_is_enum)
+						throw new InvalidCastException (SR.InvalidCast_DownCastArrayElement);
+
 					if (dst_type_vt && (srcval == null || (src_type == typeof (object) && srcval.GetType () != dst_type)))
 						throw new InvalidCastException ();
 
 					try {
-						destinationArray.SetValueImpl (srcval, dest_pos + i);
+						destinationArray.SetValueRelaxedImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
 						throw CreateArrayTypeMismatchException ();
 					}
@@ -167,7 +174,7 @@ namespace System
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
 					try {
-						destinationArray.SetValueImpl (srcval, dest_pos + i);
+						destinationArray.SetValueRelaxedImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
 						throw CreateArrayTypeMismatchException ();
 					}
@@ -201,12 +208,8 @@ namespace System
 					return true;
 				} else if (source.IsPrimitive && target.IsPrimitive) {
 					
-					// Special case: normally C# doesn't allow implicit ushort->char cast).
-					if (source == typeof (ushort) && target == typeof (char))
-						return true;
-					
 					// Allow primitive type widening
-					return DefaultBinder.CanChangePrimitive (source, target);
+					return CanChangePrimitive (source, target, false);
 				} else if (!source.IsValueType && !source.IsPointer) {
 					// Source is base class or interface of destination type
 					if (target.IsPointer)
@@ -471,6 +474,9 @@ namespace System
 		extern static Array CreateInstanceImpl (Type elementType, int[] lengths, int[]? bounds);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool CanChangePrimitive (Type srcType, Type dstType, bool reliable);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -503,6 +509,10 @@ namespace System
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern void SetValueImpl (object? value, int pos);
+
+		// CAUTION! No bounds checking!
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern void SetValueRelaxedImpl (object? value, int pos);
 
 		/*
 		 * These methods are used to implement the implicit generic interfaces 

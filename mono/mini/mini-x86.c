@@ -58,11 +58,6 @@ static gpointer ss_trampoline;
 /* The breakpoint trampoline */
 static gpointer bp_trampoline;
 
-/* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() mono_os_mutex_lock (&mini_arch_mutex)
-#define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
-static mono_mutex_t mini_arch_mutex;
-
 #define ARGS_OFFSET 8
 
 #ifdef TARGET_WIN32
@@ -742,8 +737,6 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	mono_os_mutex_init_recursive (&mini_arch_mutex);
-
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
 }
@@ -754,7 +747,6 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	mono_os_mutex_destroy (&mini_arch_mutex);
 }
 
 /*
@@ -2171,7 +2163,7 @@ mono_arch_have_fast_tls (void)
 	static gboolean inited = FALSE;
 	guint32 *ins;
 
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 	if (inited)
 		return have_fast_tls;
@@ -2191,7 +2183,7 @@ mono_arch_have_fast_tls (void)
 #elif defined(TARGET_ANDROID)
 	return FALSE;
 #else
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 	return TRUE;
 #endif
@@ -2292,6 +2284,29 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 	return code;
 }
+
+#ifdef TARGET_WIN32
+
+#define TEB_LAST_ERROR_OFFSET 0x34
+
+static guint8*
+emit_get_last_error (guint8* code, int dreg)
+{
+	/* Threads last error value is located in TEB_LAST_ERROR_OFFSET. */
+	x86_prefix (code, X86_FS_PREFIX);
+	x86_mov_reg_mem (code, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
+	return code;
+}
+
+#else
+
+static guint8*
+emit_get_last_error (guint8* code, int dreg)
+{
+	g_assert_not_reached ();
+}
+
+#endif
 
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
@@ -4856,6 +4871,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, esi), X86_ESI, sizeof (target_mgreg_t));
 			x86_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, edi), X86_EDI, sizeof (target_mgreg_t));
 			break;
+		case OP_GET_LAST_ERROR:
+			code = emit_get_last_error (code, ins->dreg);
+			break;
 		default:
 			g_warning ("unknown opcode %s\n", mono_inst_name (ins->opcode));
 			g_assert_not_reached ();
@@ -5386,11 +5404,6 @@ mono_arch_finish_init (void)
 	} else {
 		g_free (mono_no_tls);
 	}
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
-{
 }
 
 // Linear handler, the bsearch head compare is shorter

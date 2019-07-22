@@ -29,9 +29,20 @@
 #ifdef HAVE_GETIFADDRS
 #include <ifaddrs.h>
 #endif
+#ifdef HAVE_QP2GETIFADDRS
+/* Bizarrely, IBM i implements this, but AIX doesn't, so on i, it has a different name... */
+#include <as400_types.h>
+#include <as400_protos.h>
+/* Defines to just reuse ifaddrs code */
+#define ifaddrs ifaddrs_pase
+#define freeifaddrs Qp2freeifaddrs
+#define getifaddrs Qp2getifaddrs
+#endif
 
 #include <mono/utils/networking.h>
 #include <mono/utils/mono-threads-coop.h>
+
+#if HAVE_SIOCGIFCONF || HAVE_GETIFADDRS
 
 static void*
 get_address_from_sockaddr (struct sockaddr *sa)
@@ -46,6 +57,8 @@ get_address_from_sockaddr (struct sockaddr *sa)
 	}
 	return NULL;
 }
+
+#endif
 
 #ifdef HAVE_GETADDRINFO
 
@@ -276,7 +289,7 @@ done:
 	return result;
 }
 
-#elif defined(HAVE_GETIFADDRS)
+#elif defined(HAVE_GETIFADDRS) || defined(HAVE_QP2GETIFADDRS)
 
 void *
 mono_get_local_interfaces (int family, int *interface_count)

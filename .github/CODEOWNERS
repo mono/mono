@@ -121,7 +121,7 @@
 /msvc @lateralusX @kg @akoeplinger
 /msvc/scripts @akoeplinger @kg
 
-/netcore @marek-safar @akoeplinger @egorbo @vargaz
+/netcore @marek-safar @akoeplinger @egorbo @vargaz @steveisok
 
 /packaging @alexischr @akoeplinger @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger

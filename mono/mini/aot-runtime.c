@@ -1891,7 +1891,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 		msg = g_strdup_printf ("not compiled with --aot=llvm");
 		usable = FALSE;
 	}
-	if (mini_get_debug_options ()->mdb_optimizations && !(info->flags & MONO_AOT_FILE_FLAG_DEBUG) && !full_aot && !interp) {
+	if (mini_debug_options.mdb_optimizations && !(info->flags & MONO_AOT_FILE_FLAG_DEBUG) && !full_aot && !interp) {
 		msg = g_strdup_printf ("not compiled for debugging");
 		usable = FALSE;
 	}
@@ -3992,7 +3992,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	}
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 		break;
-	case MONO_PATCH_INFO_GET_TLS_TRAMP:
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
 		ji->data.index = decode_value (p, &p);
 		break;
@@ -4182,6 +4181,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 
 	if (mini_debug_options.aot_skip_set && !(method && method->wrapper_type)) {
 		gint32 methods_aot = mono_atomic_load_i32 (&mono_jit_stats.methods_aot);
+		methods_aot += mono_atomic_load_i32 (&mono_jit_stats.methods_aot_llvm);
 		if (methods_aot == mini_debug_options.aot_skip) {
 			if (!method) {
 				method = mono_get_method_checked (image, token, NULL, NULL, error);
@@ -4202,6 +4202,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 
 	if (mono_last_aot_method != -1) {
 		gint32 methods_aot = mono_atomic_load_i32 (&mono_jit_stats.methods_aot);
+		methods_aot += mono_atomic_load_i32 (&mono_jit_stats.methods_aot_llvm);
 		if (methods_aot >= mono_last_aot_method)
 			return NULL;
 		else if (methods_aot == mono_last_aot_method - 1) {
@@ -4261,11 +4262,14 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		}
 	}
 
-	amodule_lock (amodule);
-
 	init_plt (amodule);
 
-	mono_atomic_inc_i32 (&mono_jit_stats.methods_aot);
+	amodule_lock (amodule);
+
+	if (is_llvm_code (amodule, code))
+		mono_atomic_inc_i32 (&mono_jit_stats.methods_aot_llvm);
+	else
+		mono_atomic_inc_i32 (&mono_jit_stats.methods_aot);
 
 	if (method && method->wrapper_type)
 		g_hash_table_insert (amodule->method_to_code, method, code);
@@ -4613,7 +4617,7 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 		mono_mempool_destroy (mp);
 	}
 
-	if (mini_get_debug_options ()->load_aot_jit_info_eagerly)
+	if (mini_debug_options.load_aot_jit_info_eagerly)
 		jinfo = mono_aot_find_jit_info (domain, amodule->assembly->image, code);
 
 	gboolean inited_ok;
@@ -4727,7 +4731,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		method_index = mono_metadata_token_index (method->token) - 1;
 
 		if (amodule->llvm_code_start) {
-			/* Needed by mono_aot_init_gshared_method_this () */
+			/* Needed by mini_llvm_init_gshared_method_this () */
 			/* orig_method is a random instance but it is enough to make init_method () work */
 			amodule_lock (amodule);
 			g_hash_table_insert (amodule->extra_methods, GUINT_TO_POINTER (method_index), orig_method);
@@ -5156,7 +5160,6 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
  *
  *   Initialize the PLT table of the AOT module. Called lazily when the first AOT
  * method in the module is loaded to avoid committing memory by writing to it.
- * LOCKING: Assumes the AMODULE lock is held.
  */
 static void
 init_plt (MonoAotModule *amodule)
@@ -5167,23 +5170,34 @@ init_plt (MonoAotModule *amodule)
 	if (amodule->plt_inited)
 		return;
 
-	if (amodule->info.plt_size <= 1) {
-		amodule->plt_inited = TRUE;
+	tramp = mono_create_specific_trampoline (amodule, MONO_TRAMPOLINE_AOT_PLT, mono_get_root_domain (), NULL);
+	tramp = mono_create_ftnptr (mono_domain_get (), tramp);
+
+	amodule_lock (amodule);
+
+	if (amodule->plt_inited) {
+		amodule_unlock (amodule);
 		return;
 	}
 
-	tramp = mono_create_specific_trampoline (amodule, MONO_TRAMPOLINE_AOT_PLT, mono_get_root_domain (), NULL);
+	if (amodule->info.plt_size <= 1) {
+		amodule->plt_inited = TRUE;
+		amodule_unlock (amodule);
+		return;
+	}
 
 	/*
 	 * Initialize the PLT entries in the GOT to point to the default targets.
 	 */
+	for (i = 1; i < amodule->info.plt_size; ++i)
+		/* All the default entries point to the AOT trampoline */
+		((gpointer*)amodule->got)[amodule->info.plt_got_offset_base + i] = tramp;
 
-	tramp = mono_create_ftnptr (mono_domain_get (), tramp);
-	 for (i = 1; i < amodule->info.plt_size; ++i)
-		 /* All the default entries point to the AOT trampoline */
-		 ((gpointer*)amodule->got)[amodule->info.plt_got_offset_base + i] = tramp;
+	mono_memory_barrier ();
 
 	amodule->plt_inited = TRUE;
+
+	amodule_unlock (amodule);
 }
 
 /*
@@ -6263,21 +6277,6 @@ mono_aot_find_method_index (MonoMethod *method)
 
 void
 mono_aot_init_llvm_method (gpointer aot_module, guint32 method_index)
-{
-}
-
-void
-mono_aot_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this)
-{
-}
-
-void
-mono_aot_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
-{
-}
-
-void
-mono_aot_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
 {
 }
 

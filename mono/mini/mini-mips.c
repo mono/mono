@@ -5095,7 +5095,7 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg)
 		mips_load_const (code, mips_at, alloc2_size);
 		mips_addu (code, mips_sp, mips_sp, mips_at);
 	}
-	pos = cfg->arch.iregs_offset - alloc2_size;
+	int pos = cfg->arch.iregs_offset - alloc2_size;
 	iregs_to_restore = (cfg->used_int_regs & MONO_ARCH_CALLEE_SAVED_REGS);
 	if (iregs_to_restore) {
 		for (i = MONO_MAX_IREGS-1; i >= 0; --i) {
@@ -5248,11 +5248,6 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 void
 mono_arch_finish_init (void)
-{
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 {
 }
 

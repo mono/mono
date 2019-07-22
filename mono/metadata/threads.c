@@ -233,10 +233,12 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc);
 
 static void ref_stack_destroy (gpointer rs);
 
-/* Spin lock for InterlockedXXX 64 bit functions */
+#if SIZEOF_VOID_P == 4
+/* Spin lock for unaligned InterlockedXXX 64 bit functions on 32bit platforms. */
 #define mono_interlocked_lock() mono_os_mutex_lock (&interlocked_mutex)
 #define mono_interlocked_unlock() mono_os_mutex_unlock (&interlocked_mutex)
 static mono_mutex_t interlocked_mutex;
+#endif
 
 /* global count of thread interruptions requested */
 static gint32 thread_interruption_requested = 0;
@@ -862,9 +864,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	mono_thread_info_set_internal_thread_gchandle (info, mono_gchandle_new_internal ((MonoObject*) internal, FALSE));
 
 	internal->handle = mono_threads_open_thread_handle (info->handle);
-#ifdef HOST_WIN32
-	internal->native_handle = OpenThread (THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId ());
-#endif
+	internal->native_handle = MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER (mono_threads_open_native_thread_handle (info->native_handle));
 	internal->tid = MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ());
 	internal->thread_info = info;
 	internal->small_id = info->small_id;
@@ -1720,9 +1720,8 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		this_obj->handle = NULL;
 	}
 
-#if HOST_WIN32
-	CloseHandle (this_obj->native_handle);
-#endif
+	mono_threads_close_native_thread_handle (MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE (this_obj->native_handle));
+	this_obj->native_handle = NULL;
 
 	/* Possibly free synch_cs, if the thread already detached also. */
 	dec_longlived_thread_data (this_obj->longlived);
@@ -3347,9 +3346,11 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 {
 	mono_coop_mutex_init_recursive (&threads_mutex);
 
-	mono_os_mutex_init_recursive(&interlocked_mutex);
+#if SIZEOF_VOID_P == 4
+	mono_os_mutex_init (&interlocked_mutex);
+#endif
 	mono_coop_mutex_init_recursive(&joinable_threads_mutex);
-	
+
 	mono_os_event_init (&background_change_event, FALSE);
 	
 	mono_coop_cond_init (&pending_native_thread_join_calls_event);
@@ -6735,6 +6736,12 @@ ves_icall_System_Threading_Thread_InitInternal (MonoThreadObjectHandle thread_ha
 	init_internal_thread_object (internal);
 	internal->state = ThreadState_Unstarted;
 	MONO_OBJECT_SETREF_INTERNAL (internal, internal_thread, internal);
+}
+
+guint64
+ves_icall_System_Threading_Thread_GetCurrentOSThreadId (MonoError *error)
+{
+	return mono_native_thread_os_id_get ();
 }
 
 #endif

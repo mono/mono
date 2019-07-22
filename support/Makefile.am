@@ -11,6 +11,7 @@ lib_LTLIBRARIES = 				\
 endif
 
 AM_CPPFLAGS =					\
+	@ZLIB_CFLAGS@				\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
 

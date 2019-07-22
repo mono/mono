@@ -12,6 +12,7 @@
 
 #if defined(USE_WINDOWS_BACKEND)
 
+#include <glib.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-debug.h>
@@ -179,8 +180,16 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	g_assert (handle);
 
 	result = SuspendThread (handle);
-	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (void*)id, ret);
+	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %u\n", GUINT_TO_POINTER (id), result);
 	if (result == (DWORD)-1) {
+		if (!mono_threads_transition_abort_async_suspend (info)) {
+			/* We raced with self suspend and lost so suspend can continue. */
+			g_assert (mono_threads_is_hybrid_suspension_enabled ());
+			info->suspend_can_continue = TRUE;
+			THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (info));
+			return TRUE;
+		}
+		THREADS_SUSPEND_DEBUG ("SUSPEND FAILED, id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
 		return FALSE;
 	}
 
@@ -193,6 +202,16 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	CONTEXT context;
 	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 	if (!GetThreadContext (handle, &context)) {
+		result = ResumeThread (handle);
+		g_assert (result == 1);
+		if (!mono_threads_transition_abort_async_suspend (info)) {
+			/* We raced with self suspend and lost so suspend can continue. */
+			g_assert (mono_threads_is_hybrid_suspension_enabled ());
+			info->suspend_can_continue = TRUE;
+			THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (info));
+			return TRUE;
+		}
+		THREADS_SUSPEND_DEBUG ("SUSPEND FAILED (GetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
 		return FALSE;
 	}
 
@@ -204,18 +223,18 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		result = ResumeThread (handle);
 		g_assert (result == 1);
 		info->suspend_can_continue = TRUE;
-		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (void*)id);
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", GUINT_TO_POINTER (id));
 		g_assert (mono_threads_is_hybrid_suspension_enabled ());
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
 	}
 	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info, &context);
-	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (void*)id, res);
+	THREADS_SUSPEND_DEBUG ("thread state %p -> %u\n", GUINT_TO_POINTER (id), result);
 	if (info->suspend_can_continue) {
 		if (interrupt_kernel)
 			suspend_abort_syscall (info, handle, id);
 	} else {
-		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (void*)info->native_handle, 0);
+		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %u\n", GUINT_TO_POINTER (id), 0);
 	}
 
 	return TRUE;
@@ -274,6 +293,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 
 		if (!GetThreadContext (handle, &context)) {
+			THREADS_SUSPEND_DEBUG ("RESUME FAILED (GetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
 			return FALSE;
 		}
 
@@ -285,6 +305,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 		res = SetThreadContext (handle, &context);
 		if (!res) {
+			THREADS_SUSPEND_DEBUG ("RESUME FAILED (SetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
 			return FALSE;
 		}
 #else
@@ -293,6 +314,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 	}
 
 	result = ResumeThread (handle);
+	THREADS_SUSPEND_DEBUG ("RESUME %p -> %u\n", GUINT_TO_POINTER (id), result);
 
 	return result != (DWORD)-1;
 }
@@ -301,19 +323,14 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
 {
-	BOOL success;
-	HANDLE currentThreadHandle = NULL;
-
-	success = DuplicateHandle (GetCurrentProcess (), GetCurrentThread (), GetCurrentProcess (), &currentThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-	g_assertf (success, "Failed to duplicate current thread handle");
-
-	info->native_handle = currentThreadHandle;
+	g_assert (!info->native_handle);
+	info->native_handle = mono_threads_open_native_thread_handle (GetCurrentThread ());
 }
 
 void
 mono_threads_suspend_free (MonoThreadInfo *info)
 {
-	CloseHandle (info->native_handle);
+	mono_threads_close_native_thread_handle (info->native_handle);
 	info->native_handle = NULL;
 }
 
@@ -389,6 +406,12 @@ mono_native_thread_id_get (void)
 	return GetCurrentThreadId ();
 }
 
+guint64
+mono_native_thread_os_id_get (void)
+{
+	return (guint64)GetCurrentThreadId ();
+}
+
 gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
 {
@@ -429,44 +452,26 @@ mono_native_thread_join (MonoNativeThreadId tid)
 }
 #endif
 
-#if HAVE_DECL___READFSDWORD==0
-static MONO_ALWAYS_INLINE unsigned long long
-__readfsdword (unsigned long offset)
-{
-	unsigned long value;
-	//	__asm__("movl %%fs:%a[offset], %k[value]" : [value] "=q" (value) : [offset] "irm" (offset));
-   __asm__ volatile ("movl    %%fs:%1,%0"
-     : "=r" (value) ,"=m" ((*(volatile long *) offset)));
-	return value;
-}
-#endif
-
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-	MEMORY_BASIC_INFORMATION meminfo;
-#if defined(_WIN64) || defined(_M_ARM)
-	/* win7 apis */
-	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
-	guint8 *stackTop = (guint8*)tib->StackBase;
-	guint8 *stackBottom = (guint8*)tib->StackLimit;
-#else
-	/* http://en.wikipedia.org/wiki/Win32_Thread_Information_Block */
-	void* tib = (void*)__readfsdword(0x18);
-	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
-	guint8 *stackBottom = (guint8*)*(int*)((char*)tib + 8);
+#if _WIN32_WINNT >= 0x0602 // Windows 8 or newer.
+	ULONG_PTR low;
+	ULONG_PTR high;
+	GetCurrentThreadStackLimits (&low, &high);
+	*staddr = (guint8*)low;
+	*stsize = high - low;
+#else // Win7 and older.
+	MEMORY_BASIC_INFORMATION info;
+	// Windows stacks are commited on demand, one page at time.
+	// teb->StackBase is the top from which it grows down.
+	// teb->StackLimit is commited, the lowest it has gone so far.
+	// info.AllocationBase is reserved, the lowest it can go.
+	//
+	VirtualQuery (&info, &info, sizeof (info));
+	*staddr = (guint8*)info.AllocationBase;
+	*stsize = (size_t)((NT_TIB*)NtCurrentTeb ())->StackBase - (size_t)info.AllocationBase;
 #endif
-	/*
-	Windows stacks are expanded on demand, one page at time. The TIB reports
-	only the currently allocated amount.
-	VirtualQuery will return the actual limit for the bottom, which is what we want.
-	*/
-	if (VirtualQuery (&meminfo, &meminfo, sizeof (meminfo)) == sizeof (meminfo))
-		stackBottom = MIN (stackBottom, (guint8*)meminfo.AllocationBase);
-
-	*staddr = stackBottom;
-	*stsize = stackTop - stackBottom;
-
 }
 
 #if SIZEOF_VOID_P == 4 && HAVE_API_SUPPORT_WIN32_IS_WOW64_PROCESS
@@ -485,6 +490,12 @@ mono_threads_platform_init (void)
 #endif
 }
 
+static gboolean
+thread_is_cooperative_suspend_aware (MonoThreadInfo *info)
+{
+	return (mono_threads_is_cooperative_suspension_enabled () || mono_atomic_load_i32 (&(info->coop_aware_thread)));
+}
+
 /*
  * When running x86 process under x64 system syscalls are done through WoW64. This
  * needs to do a transition from x86 mode to x64 so it can syscall into the x64 system.
@@ -500,7 +511,7 @@ mono_threads_platform_in_critical_region (THREAD_INFO_TYPE *info)
 #if SIZEOF_VOID_P == 4 && HAVE_API_SUPPORT_WIN32_OPEN_THREAD
 /* FIXME On cygwin these are not defined */
 #if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
-	if (is_wow64 && mono_threads_is_cooperative_suspension_enabled ()) {
+	if (is_wow64 && thread_is_cooperative_suspend_aware (info)) {
 		/* Cooperative suspended threads will block at well-defined locations. */
 		return FALSE;
 	} else if (is_wow64 && mono_threads_is_hybrid_suspension_enabled ()) {

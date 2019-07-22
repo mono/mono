@@ -1,8 +1,6 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
 
-all: package
-
 MAKEFLAGS += --no-builtin-rules
 
 CONFIGURATION?=release
@@ -69,14 +67,28 @@ EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 endif
 
-all: package
+.PHONY: all
+all:
 
 ## Common Mono targets
 
 .PHONY: configure-mono
 configure-mono: $(TOP)/configure
 
-$(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
+
+ifeq ($(UNAME),Darwin)
+.stamp-ulimit-check:
+	@if [ $$(ulimit -n) -lt 1024 ] ; then \
+		echo "Error: Increase ulimit -n to at least 1024"; \
+		exit 1; \
+	fi
+	touch $@
+else
+.stamp-ulimit-check:
+	touch $@
+endif
+
+$(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh .stamp-ulimit-check
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh $(if $(wildcard $(TOP)/../mono-extensions),--enable-extension-module=xamarin --enable-extension-module)
 
 ## Archive targets
@@ -173,9 +185,6 @@ setup-$(1)-$(2):
 
 .PHONY: package-$(1)-$(2)
 package-$(1)-$(2): setup-$(1)-$(2) build-$(1)-$(2)
-
-.PHONY: package
-package: package-$(1)-$(2)
 
 .PHONY: clean-$(1)-$(2)
 clean-$(1)-$(2):

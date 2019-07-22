@@ -61,6 +61,14 @@ namespace MonoTests.System
 		C
 	};
 
+	class SampleGeneric<T> where T : IFace1
+	{
+	}
+
+	class SampleGenericConstrained<U> where U : class, IFace1
+	{
+	}
+
 	abstract class Base
 	{
 		public int level;
@@ -435,6 +443,16 @@ namespace MonoTests.System
 			Assert.IsFalse (typeof (Array).IsAssignableFrom (gparams[0]), "#45");
 			Assert.IsFalse (typeof (Delegate).IsAssignableFrom (gparams[0]), "#46");
 
+			// Arrays of generic parameters and arrays of interfaces, see https://github.com/mono/mono/pull/15749
+			var t = typeof (SampleGeneric<>).GetTypeInfo ().GenericTypeParameters [0];
+			var ta = t.MakeArrayType ();
+			var i = typeof (IFace1);
+			var ia = i.MakeArrayType ();
+			var t2 = typeof (SampleGenericConstrained<>).GetTypeInfo ().GenericTypeParameters [0];
+			var ta2 = t2.MakeArrayType ();
+			Assert.IsTrue (i.IsAssignableFrom (t), "#47");
+			Assert.IsFalse (ia.IsAssignableFrom (ta), "#48");
+			Assert.IsTrue (ia.IsAssignableFrom (ta2), "#49");
 		}
 
 		[Test]

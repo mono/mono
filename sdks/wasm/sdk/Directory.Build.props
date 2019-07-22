@@ -1,6 +1,8 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)..\common\Versions.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\common\Signing.props" />
   <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Sample'))">
-    <Version>0.1</Version>
+    <Version>$(SDKPackageVersion)</Version>
     <PackageTags>WebAssembly Wasm Mono Sdk</PackageTags>
     <PackageOutputPath>$(MSBuildThisFileDirectory)packages</PackageOutputPath>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

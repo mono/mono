@@ -75,6 +75,7 @@ elif [[ ${CI_TAGS} == *'jit_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'fullaotinterp_llvm'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaotinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaotinterp";
 elif [[ ${CI_TAGS} == *'winaotinterp'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaotinterp";
+elif [[ ${CI_TAGS} == *'winaotinterp_llvm'* ]];  then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=winaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaot";
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
@@ -126,9 +127,6 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
-	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
-		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
-	fi
 	exit 0
 fi
 
@@ -141,7 +139,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         export IOS_VERSION=12.1
         export TVOS_VERSION=12.1
         export WATCHOS_VERSION=5.1
-        export WATCHOS5_VERSION=5.1
+        export WATCHOS64_32_VERSION=5.1
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -275,6 +273,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
+        echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
@@ -360,6 +359,8 @@ fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
+
+if [[ ${CI_TAGS} == *'hardened-runtime'* ]]; then codesign -s - -fv -o runtime --entitlements ${MONO_REPO_ROOT}/mono/mini/mac-entitlements.plist ${MONO_REPO_ROOT}/mono/mini/mono-sgen; fi
 
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 import os
@@ -6,9 +6,23 @@ import sys
 import argparse
 import clang.cindex
 
+IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
+
 class Target:
-	def __init__(self, defines):
-		self.defines = defines
+	def __init__(self, arch, platform, others):
+		self.arch_define = arch
+		self.platform_define = platform
+		self.defines = others
+
+	def get_clang_args(self):
+		ret = []
+		if self.arch_define:
+			ret.append (self.arch_define)
+		if self.platform_define:
+			ret.append (self.platform_define)
+		if self.defines:
+			ret.extend (self.defines)
+		return ret
 
 class TypeInfo:
 	def __init__(self, name, is_jit):
@@ -24,24 +38,31 @@ class FieldInfo:
 
 class OffsetsTool:
 	def __init__(self):
-		self.supported_abis = { "wasm32-unknown-unknown" : 1}
 		pass
 
 	def parse_args(self):
+		def require_sysroot (args):
+			if not args.sysroot:
+				print ("Sysroot dir for device not set.", file=sys.stderr)
+				sys.exit (1)
+
+		def require_emscipten_path (args):
+			if not args.emscripten_path:
+				print ("Emscripten sdk dir not set.", file=sys.stderr)
+				sys.exit (1)
+
 		parser = argparse.ArgumentParser ()
-		parser.add_argument ('--xcode-path', dest='xcode_path', help='path to Xcode.app')
+		parser.add_argument ('--libclang-path', dest='libclang_path', help='path to directory where libclang.{so,dylib} lives')
 		parser.add_argument ('--emscripten-sdk', dest='emscripten_path', help='path to emscripten sdk')
 		parser.add_argument ('--outfile', dest='outfile', help='path to output file', required=True)
 		parser.add_argument ('--monodir', dest='mono_path', help='path to mono source tree', required=True)
 		parser.add_argument ('--targetdir', dest='target_path', help='path to mono tree configured for target', required=True)
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
+		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		args = parser.parse_args ()
 
-		if args.xcode_path == None:
-			args.xcode_path = "/Applications/Xcode.app"
-
-		if not os.path.isdir (args.xcode_path):
-			print ("Xcode directory '" + args.xcode_path + "' doesn't exist.", file=sys.stderr)
+		if not args.libclang_path or not os.path.isdir (args.libclang_path):
+			print ("Libclang path '" + args.libclang_path + "' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 		if not os.path.isdir (args.mono_path):
 			print ("Mono directory '" + args.mono_path + "' doesn't exist.", file=sys.stderr)
@@ -50,18 +71,44 @@ class OffsetsTool:
 			print ("File '" + args.target_path + "/config.h' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 			
-		if not args.abi in self.supported_abis:
-			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
-			sys.exit (1)
-
 		self.sys_includes=[]
 		self.target = None
+		self.target_args = []
+
 		if "wasm" in args.abi:
-			if args.emscripten_path == None:
-				print ("Emscripten sdk dir not set.", file=sys.stderr)
-				sys.exit (1)
+			require_emscipten_path (args)
 			self.sys_includes = [args.emscripten_path + "/system/include/libc"]
-			self.target = Target (["TARGET_WASM"])
+			self.target = Target ("TARGET_WASM", None, [])
+			self.target_args += ["-target", args.abi]
+
+		elif "arm-apple-darwin10" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
+			self.target_args += ["-arch", "arm"]
+			self.target_args += ["-isysroot", args.sysroot]
+
+		elif "aarch64-apple-darwin10" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM64", "TARGET_IOS", IOS_DEFINES)
+			self.target_args += ["-arch", "arm64"]
+			self.target_args += ["-isysroot", args.sysroot]
+
+		elif "armv7k-apple-darwin" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
+			self.target_args += ["-arch", "armv7k"]
+			self.target_args += ["-isysroot", args.sysroot]
+
+		elif "aarch64-apple-darwin10_ilp32" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + IOS_DEFINES)
+			self.target_args += ["-arch", "arm64_32"]
+			self.target_args += ["-isysroot", args.sysroot]
+
+
+		if not self.target:
+			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
+			sys.exit (1)
 
 		self.args = args
 
@@ -130,17 +177,19 @@ class OffsetsTool:
 
 		srcfiles = ['mono/metadata/metadata-cross-helpers.c', 'mono/mini/mini-cross-helpers.c']
 
-		clang_args = ["-target", args.abi, '-std=gnu99', '-DMONO_GENERATING_OFFSETS']
+		clang_args = []
+		clang_args += self.target_args
+		clang_args += ['-std=gnu99', '-DMONO_GENERATING_OFFSETS']
 		for include in self.sys_includes:
 			clang_args.append ("-I")
 			clang_args.append (include)
 		for include in mono_includes:
 			clang_args.append ("-I")
 			clang_args.append (include)
-		for define in self.target.defines:
+		for define in self.target.get_clang_args ():
 			clang_args.append ("-D" + define)
 		
-		clang.cindex.Config.set_library_path (args.xcode_path + "/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/")
+		clang.cindex.Config.set_library_path (args.libclang_path)
 		
 		for srcfile in srcfiles:
 			src = args.mono_path + "/" + srcfile
@@ -183,7 +232,7 @@ class OffsetsTool:
 							continue
 						if child.is_bitfield ():
 							continue
-						rtype.fields.append (FieldInfo (child.spelling, child.get_field_offsetof () / 8))
+						rtype.fields.append (FieldInfo (child.spelling, child.get_field_offsetof () // 8))
 				if c.spelling == "basic_types_struct":
 					for field in c.get_children ():
 						btype = field.spelling.replace ("_f", "")
@@ -195,8 +244,10 @@ class OffsetsTool:
 		target = self.target
 		f = open (outfile, 'w')
 		f.write ("#ifndef USED_CROSS_COMPILER_OFFSETS\n")
-		for define in target.defines:
-			f.write ("#ifdef " + define + "\n")
+		if target.arch_define:
+			f.write ("#ifdef " + target.arch_define + "\n")
+		if target.platform_define:
+			f.write ("#ifdef " + target.platform_define + "\n")
 		f.write ("#ifndef HAVE_BOEHM_GC\n")
 		f.write ("#define HAS_CROSS_COMPILER_OFFSETS\n")
 		f.write ("#if defined (USE_CROSS_COMPILE_OFFSETS) || defined (MONO_CROSS_COMPILE)\n")
@@ -216,8 +267,8 @@ class OffsetsTool:
 				f.write ("DECL_OFFSET2(%s,%s,%s)\n" % (type.name, field.name, field.offset))
 		f.write ("#endif //disable metadata check\n")
 		
-		f.write ("#ifndef DISABLE_JIT_OFFSETS\n");
-		f.write ("#define USED_CROSS_COMPILER_OFFSETS\n");
+		f.write ("#ifndef DISABLE_JIT_OFFSETS\n")
+		f.write ("#define USED_CROSS_COMPILER_OFFSETS\n")
 		for type_name in self.jit_type_names:
 			type = self.runtime_types [type_name]
 			if type.size == -1:
@@ -225,12 +276,14 @@ class OffsetsTool:
 			f.write ("DECL_SIZE2(%s,%s)\n" % (type.name, type.size))
 			for field in type.fields:
 				f.write ("DECL_OFFSET2(%s,%s,%s)\n" % (type.name, field.name, field.offset))
-		f.write ("#endif //disable jit check\n");
+		f.write ("#endif //disable jit check\n")
 					
 		f.write ("#endif //cross compiler checks\n")
 		f.write ("#endif //gc check\n")
-		for define in target.defines:
-			f.write ("#endif //" + define + "\n")
+		if target.arch_define:
+			f.write ("#endif //" + target.arch_define + "\n")
+		if target.platform_define:
+			f.write ("#endif //" + target.platform_define + "\n")
 		f.write ("#endif //USED_CROSS_COMPILER_OFFSETS check\n")
 
 tool = OffsetsTool ()

@@ -4,6 +4,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Mono.WebAssembly build targets. This package is not intended to be referenced directly.</Description>
     <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />

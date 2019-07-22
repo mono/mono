@@ -1,26 +1,21 @@
+ifneq ($(wildcard config.make),)
+
 include config.make
 
-#
-# NETCORETESTS_VERSION and NETCOREAPP_VERSION must be updated in sync, we are using coreclr repo for that but that's fine for now
-#
-
-# Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L21
-NETCORETESTS_VERSION := 4.6.0-preview7.19305.1
-
-# Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L25
-NETCOREAPP_VERSION := 3.0.0-preview7-27804-03
+NETCORETESTS_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftPrivateCoreFxNETCoreAppVersion>\(.*\)<\/MicrosoftPrivateCoreFxNETCoreAppVersion.*/\1/p' )
+NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
-ROSLYN_VERSION := 3.2.0-beta3-19310-04
+ROSLYN_VERSION := 3.3.0-beta4-19328-04
 
 ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
 PLATFORM_AOT_PREFIX :=
 NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
-XUNIT_FLAGS = -notrait category=nonwindowstests
+XUNIT_FLAGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
 TESTS_PLATFORM = Windows_NT.x64
 ON_RUNTIME_EXTRACT = chmod -R 755 {host,shared,./dotnet}
 DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
@@ -131,7 +126,8 @@ update-tests-corefx: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 	curl $(TEST_ASSETS_URL) --output corefx-test-assets.xml
-	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
+	./dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
+	rm -rf corefx/tests/extracted/System.Utf8String.Experimental.Tests
 	touch $@
 
 #
@@ -147,8 +143,9 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 
 run-tests-corefx: update-tests-corefx
 	for testdir in corefx/tests/extracted/*; do \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}); \
-	done
+		$(MAKE) run-tests-corefx-$$(basename $${testdir}) || true; \
+	done; \
+	$(MAKE) xunit-summary
 
 run-tests-corefx-%: prepare update-tests-corefx
 	echo -n "***************** $* *********************"
@@ -157,12 +154,12 @@ run-tests-corefx-%: prepare update-tests-corefx
 	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/xunit.console.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
-	sed -i -e 's/9.9.9/$(NETCOREAPP_VERSION)/g' corefx/tests/extracted/$*/*.runtimeconfig.json
+	sed -i -e 's/3.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
-		$(FIXTURE) || true
+		$(FIXTURE)
 
 # build a test assembly in COREFX_ROOT (path to a fully built corefx repo) and copy it to corefx/tests/extracted
 # e.g. `make build-test-corefx-System.Runtime COREFX_ROOT=/prj/corefx-master`
@@ -170,5 +167,10 @@ build-test-corefx-%:
 	cd $(COREFX_ROOT)/src/$*/tests && $(DOTNET) msbuild /p:OutputPath=tmp
 	cp $(COREFX_ROOT)/src/$*/tests/tmp/$*.Tests.{dll,pdb} $(CURDIR)/corefx/tests/extracted/$*.Tests/
 	rm -rf $(COREFX_ROOT)/src/$*/tests/tmp
+
+xunit-summary:
+	./xunit-summary.py "corefx/tests"
+
+endif
 
 distdir:

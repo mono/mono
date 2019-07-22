@@ -427,7 +427,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 51;
+		internal const int MINOR_VERSION = 52;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -533,7 +533,8 @@ namespace Mono.Debugger.Soft
 			GET_ENTRY_ASSEMBLY = 4,
 			CREATE_STRING = 5,
 			GET_CORLIB = 6,
-			CREATE_BOXED_VALUE = 7
+			CREATE_BOXED_VALUE = 7,
+			CREATE_BYTE_ARRAY = 8,
 		}
 
 		enum CmdAssembly {
@@ -1018,6 +1019,16 @@ namespace Mono.Debugger.Soft
 					return WriteInt (-1);
 
 				byte[] b = Encoding.UTF8.GetBytes (s);
+				MakeRoom (4);
+				encode_int (data, b.Length, ref offset);
+				MakeRoom (b.Length);
+				Buffer.BlockCopy (b, 0, data, offset, b.Length);
+				offset += b.Length;
+				return this;
+			}
+			public PacketWriter WriteBytes (byte[] b) {
+				if (b == null)
+					return WriteInt (-1);
 				MakeRoom (4);
 				encode_int (data, b.Length, ref offset);
 				MakeRoom (b.Length);
@@ -1901,6 +1912,12 @@ namespace Mono.Debugger.Soft
 
 		internal long Domain_CreateString (long id, string s) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_STRING, new PacketWriter ().WriteId (id).WriteString (s)).ReadId ();
+		}
+
+		internal long Domain_CreateByteArray (long id, byte [] bytes) {
+			var w = new PacketWriter ().WriteId (id);
+			w.WriteBytes (bytes);
+			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BYTE_ARRAY, w).ReadId ();
 		}
 
 		internal long Domain_CreateBoxedValue (long id, long type_id, ValueImpl v) {
