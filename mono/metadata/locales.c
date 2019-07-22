@@ -44,6 +44,8 @@
 
 #undef DEBUG
 
+/* Make sure computing VALUE doesn't cause a GC */
+/* Don't move to handles.h */
 #define mono_handle_setval(handle,field,value) MONO_HANDLE_RAW (handle)->field = (value)
 
 #define mono_handle_setref(handle,field,value) MONO_HANDLE_SET((handle),field,(value))
@@ -160,7 +162,7 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 	const CultureInfoEntry *ci;
 	char *n;
 
-	n = mono_string_to_utf8_checked_internal (MONO_HANDLE_RAW (name), error);
+	n = mono_string_handle_to_utf8 (name, error);
 	return_val_if_nok (error, FALSE);
 	ne = (const CultureInfoNameEntry *)mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
 			sizeof (CultureInfoNameEntry), culture_name_locator);
@@ -550,7 +552,7 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 	const CultureInfoNameEntry *ne;
 	char *n;
 	
-	n = mono_string_to_utf8_checked_internal (MONO_HANDLE_RAW (name), error);
+	n = mono_string_handle_to_utf8 (name, error);
 	return_val_if_nok (error, FALSE);
 	ne = (const CultureInfoNameEntry *)mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
 			sizeof (CultureInfoNameEntry), culture_name_locator);
@@ -572,7 +574,7 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (M
 	const RegionInfoNameEntry *ne;
 	char *n;
 	
-	n = mono_string_to_utf8_checked_internal (MONO_HANDLE_RAW (name), error);
+	n = mono_string_handle_to_utf8 (name, error);
 	return_val_if_nok (error, FALSE);
 	ne = (const RegionInfoNameEntry *)mono_binary_search (n, region_name_entries, NUM_REGION_ENTRIES,
 		sizeof (RegionInfoNameEntry), region_name_locator);
