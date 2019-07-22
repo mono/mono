@@ -2045,15 +2045,12 @@ MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 MonoObjectHandle
-mono_object_new_assign (MonoObjectHandleOut o, MonoDomain *domain, MonoClass *klass, MonoError *error);
-
-MonoObjectHandle
 mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 // This function skips handling of remoting and COM.
 // "alloc" means "less".
 MonoObjectHandle
-mono_object_new_alloc_by_vtable (MonoObjectHandleOut o, MonoVTable *vtable, MonoError *error);
+mono_object_new_alloc_by_vtable (MonoVTable *vtable, MonoError *error);
 
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
@@ -2108,15 +2105,6 @@ mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 
 
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error);
-
-MonoStringHandle
-mono_string_new_utf16_assign (MonoStringHandleOut handle, MonoDomain *domain, const gunichar2 *text, gsize length, MonoError *error);
-
-MonoStringHandle
-mono_string_new_utf8_assign (MonoStringHandleOut handle, MonoDomain *domain, const char *text, gsize length, MonoError *error);
-
-MonoStringHandle
-mono_string_new_utf8z_assign (MonoStringHandleOut handle, MonoDomain *domain, const char *text, MonoError *error);
 
 MonoString *
 mono_string_from_utf16_checked (const mono_unichar2 *data, MonoError *error);
