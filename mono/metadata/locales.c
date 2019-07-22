@@ -44,9 +44,7 @@
 
 #undef DEBUG
 
-#define mono_handle_setval(handle,field,value) do { \
-	MONO_HANDLE_RAW (handle)->field = (value); \
-	} while (0)
+#define mono_handle_setval(handle,field,value) MONO_HANDLE_RAW (handle)->field = (value)
 
 #define mono_handle_setref(handle,field,value) MONO_HANDLE_SET((handle),field,(value))
 
