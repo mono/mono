@@ -32,7 +32,6 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/utils/w32api.h>
-#include <mono/utils/mono-threads-coop.h>
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <shellapi.h>
 #endif
@@ -125,7 +124,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 
 #else
 
-    g_unsupported_api ("ShellExecuteEx");
+	g_unsupported_api ("ShellExecuteEx");
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "ShellExecuteEx");
 	process_info->pid = (guint32)(-ERROR_NOT_SUPPORTED);
 	SetLastError (ERROR_NOT_SUPPORTED);
@@ -408,9 +407,9 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 	do {
 		pids = g_new0 (DWORD, count);
 
-        MONO_ENTER_GC_SAFE;
-        success = EnumProcesses (pids, count, needed);
-        MONO_EXIT_GC_SAFE;
+		MONO_ENTER_GC_SAFE;
+		success = EnumProcesses (pids, count, needed);
+		MONO_EXIT_GC_SAFE;
 
 		if (!success)
 			goto exit;
