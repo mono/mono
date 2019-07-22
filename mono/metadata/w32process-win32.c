@@ -408,7 +408,7 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 		pids = g_new0 (DWORD, count);
 
 		MONO_ENTER_GC_SAFE;
-		success = EnumProcesses (pids, count, needed);
+		success = EnumProcesses (pids, count * sizeof (DWORD), &needed);
 		MONO_EXIT_GC_SAFE;
 
 		if (!success)
@@ -438,7 +438,6 @@ exit:
 	return procs;
 #else
 	g_unsupported_api ("EnumProcesses");
-	*needed = 0;
 	SetLastError (ERROR_NOT_SUPPORTED);
 	mono_error_set_not_supported (error, "This system does not support EnumProcesses");
 	return NULL_HANDLE_ARRAY;
