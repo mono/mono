@@ -33,9 +33,11 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-threads-coop.h>
+
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <shellapi.h>
 #endif
+
 #include "icall-decl.h"
 
 void
@@ -53,10 +55,11 @@ mono_w32process_signal_finished (void)
 {
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	HANDLE handle;
 	
 	/* GetCurrentProcess returns a pseudo-handle, so use
@@ -67,18 +70,11 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError
 		/* FIXME: Throw an exception */
 		return NULL;
 	return handle;
-#else
-	g_unsupported_api ("OpenProcess");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "OpenProcess");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return NULL;
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 }
 
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoCreateProcessCoop coop;
 	mono_createprocess_coop_init (&coop, proc_start_info, process_info);
 
@@ -122,19 +118,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 	mono_createprocess_coop_cleanup (&coop);
 
 	return ret;
-
-#else
-
-	g_unsupported_api ("ShellExecuteEx");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "ShellExecuteEx");
-	process_info->pid = (guint32)(-ERROR_NOT_SUPPORTED);
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static void
 mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, STARTUPINFO *startinfo)
@@ -185,7 +169,6 @@ mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mo
 
 	return result;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 static gchar*
 process_unquote_application_name (gchar *appname)
@@ -303,9 +286,6 @@ MonoBoolean
 ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info,
 	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
 	MonoCreateProcessCoop coop;
 	mono_createprocess_coop_init (&coop, proc_start_info, process_info);
 
@@ -380,25 +360,11 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 exit:
 	mono_createprocess_coop_cleanup (&coop);
 	return ret;
-
-#else
-
-	// FIXME CreateProcess is supported for UWP.
-
-	const char *api_name = mono_process_info->username ? "CreateProcessWithLogonW" : "CreateProcess";
-	memset (process_info, 0, sizeof (*process_info));
-	g_unsupported_api (api_name);
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, api_name);
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-
-#endif
 }
 
 MonoArrayHandle
 ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoArrayHandle procs = NULL_HANDLE_ARRAY;
 	DWORD needed = 0;
 	DWORD *pids = NULL;
@@ -437,12 +403,6 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 exit:
 	g_free (pids);
 	return procs;
-#else
-	g_unsupported_api ("EnumProcesses");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	mono_error_set_not_supported (error, "This system does not support EnumProcesses");
-	return NULL_HANDLE_ARRAY;
-#endif
 }
 
 MonoBoolean
@@ -466,59 +426,25 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return GetProcessWorkingSetSize (handle, (PSIZE_T)min, (PSIZE_T)max);
-#else
-	g_unsupported_api ("GetProcessWorkingSetSize");
-	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "GetProcessWorkingSetSize");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return SetProcessWorkingSetSize (handle, min, max);
-#else
-	g_unsupported_api ("SetProcessWorkingSetSize");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "SetProcessWorkingSetSize");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 gint32
 ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return GetPriorityClass (handle);
-#else
-
-	// FIXME GetPriorityClass is supported for UWP. Use finer grained #if.
-
-	g_unsupported_api ("GetPriorityClass");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	return SetPriorityClass (handle, (guint32) priorityClass);
-#else
-
-	// FIXME SetPriorityClass is supported for UWP. Use finer grained #if.
-
-	g_unsupported_api ("SetPriorityClass");
-	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "SetPriorityClass");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return FALSE;
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 MonoBoolean
@@ -532,3 +458,5 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
 {
 	return GetCurrentProcess ();
 }
+
+#endif

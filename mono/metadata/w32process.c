@@ -84,8 +84,6 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 	return VerLanguageNameW (lang, lang_out, lang_len);
 }
 
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32) */
-
 static MonoImage *system_image;
 
 static void
@@ -93,8 +91,6 @@ stash_system_image (MonoImage *image)
 {
 	system_image = image;
 }
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static MonoClass*
 get_file_version_info_class (void)
@@ -389,8 +385,6 @@ cleanup:
 	g_free (data);
 }
 
-#endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
 void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObjectHandle this_obj,
 		const gunichar2 *filename, int filename_length, MonoError *error)
@@ -399,23 +393,11 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_image (m_class_get_image (mono_handle_class (this_obj)));
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
 	mono_w32process_get_fileversion (this_obj, str, filename, error);
 	return_if_nok (error);
 
 	process_set_field_utf16 (this_obj, str, "filename", filename, filename_length, error);
-
-#else
-
-	g_unsupported_api ("GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-#endif
 }
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static GPtrArray*
 get_domain_assemblies (MonoDomain *domain)
@@ -527,13 +509,10 @@ exit:
 	HANDLE_FUNCTION_RETURN ();
 }
 
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
 /* Returns an array of System.Diagnostics.ProcessModule */
 MonoArrayHandle
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, HANDLE process, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	MonoArrayHandle temp_arr = NULL_HANDLE_ARRAY;
 	MonoArrayHandle arr = NULL_HANDLE_ARRAY;
 	HMODULE mods [1024];
@@ -601,19 +580,11 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 	}
 
 	return arr;
-#else
-	g_unsupported_api ("EnumProcessModules");
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "EnumProcessModules");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	return NULL_HANDLE_ARRAY;
-#endif
 }
 
 MonoStringHandle
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoError *error)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
 	gunichar2 name [MAX_PATH]; // FIXME (MAX_PATH)
 	HMODULE mod = 0;
 	DWORD needed = 0;
@@ -624,18 +595,11 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 	const guint32 len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
 
 	return len ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
-
-#else
-
-	gunichar2 name [MAX_PATH]; // FIXME MAX_PATH
-	const guint32 len = GetModuleFileNameW (NULL, name, G_N_ELEMENTS (name));
-	if (len == 0)
-		return NULL_HANDLE_STRING;
-	return mono_string_new_utf16_handle (mono_domain_get (), name, len, error);
-
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
+#endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32)
+
+// This is the only part of this file common to classic and UWP.
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, MonoProcessError *error)
 {
@@ -644,6 +608,8 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 	*error = MONO_PROCESS_ERROR_NONE;
 	return mono_process_get_data_with_error (GINT_TO_POINTER (pid), (MonoProcessData)data_type, error);
 }
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static void
 mono_pin_string (MonoStringHandle in_coophandle, MonoStringHandle *out_coophandle, gunichar2 **chars, gsize *length, gchandle_t *gchandle)
@@ -689,3 +655,5 @@ mono_createprocess_coop_cleanup (MonoCreateProcessCoop *coop)
 	mono_unpin_array ((gchandle_t*)&coop->gchandle, sizeof (coop->gchandle) / sizeof (gchandle_t));
 	memset (coop, 0, sizeof (*coop));
 }
+
+#endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
