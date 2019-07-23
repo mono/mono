@@ -21,6 +21,15 @@
 #include "mono/metadata/w32process-win32-internals.h"
 #include "icall-decl.h"
 
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
+{
+	g_unsupported_api ("EnumProcesses");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_not_supported (error, "This system does not support EnumProcesses");
+	return NULL_HANDLE_ARRAY;
+}
+
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error)
 {
@@ -82,15 +91,6 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, api_name);
 	SetLastError (ERROR_NOT_SUPPORTED);
 	return FALSE;
-}
-
-MonoArrayHandle
-ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
-{
-	g_unsupported_api ("EnumProcesses");
-	SetLastError (ERROR_NOT_SUPPORTED);
-	mono_error_set_not_supported (error, "This system does not support EnumProcesses");
-	return NULL_HANDLE_ARRAY;
 }
 
 MonoBoolean
