@@ -1,6 +1,6 @@
-def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
-def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
+isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
 
 if (monoBranch == 'master') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now

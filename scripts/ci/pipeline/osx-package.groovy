@@ -1,13 +1,13 @@
-def isPrivate = (env.JENKINS_URL ==~ /.*jenkins\.internalx\.com.*/ ? true : false)
-def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
-def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
-def jobName = (isPr ? "build-package-osx-mono-pullrequest" : isPrivate ? "build-package-osx-mono-private" : "build-package-osx-mono")
-def windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : isPrivate ? "build-package-win-mono-private/${monoBranch}" : "build-package-win-mono/${monoBranch}")
-def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins build pkg and msi"))
-def packageFileName = null
-def commitHash = null
-def utils = null
+isPrivate = (env.JENKINS_URL ==~ /.*jenkins\.internalx\.com.*/ ? true : false)
+isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
+jobName = (isPr ? "build-package-osx-mono-pullrequest" : isPrivate ? "build-package-osx-mono-private" : "build-package-osx-mono")
+windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : isPrivate ? "build-package-win-mono-private/${monoBranch}" : "build-package-win-mono/${monoBranch}")
+isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins build pkg and msi"))
+packageFileName = null
+commitHash = null
+utils = null
 
 if (monoBranch == 'master') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
