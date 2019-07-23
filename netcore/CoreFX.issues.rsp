@@ -393,10 +393,6 @@
 ##  System.Reflection.Tests
 ####################################################################
 
-# Runtime crashes
--nomethod System.Reflection.Tests.AssemblyTests.CreateInstance
--nomethod System.Reflection.Tests.AssemblyNetCoreAppTests.AssemblyGetForwardedTypesLoadFailure
-
 # Expected to throw FileLoadException, but we aren't
 # https://github.com/mono/mono/issues/15021
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
@@ -460,9 +456,6 @@
 # https://github.com/mono/mono/issues/15076
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
 
-# throws a NRE
-# https://github.com/mono/mono/issues/15077
--nomethod System.Reflection.Tests.GetTypeTests.GetType
 
 # Assertion expects false, but we return true
 # https://github.com/mono/mono/issues/15080

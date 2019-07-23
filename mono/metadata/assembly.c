@@ -349,9 +349,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 };
 #endif
 
-/*
- * keeps track of loaded assemblies
- */
+/* keeps track of loaded assemblies, excluding dynamic ones */
 static GList *loaded_assemblies = NULL;
 static MonoAssembly *corlib;
 
@@ -430,7 +428,7 @@ encode_public_tok (const guchar *token, gint32 len)
 gboolean
 mono_public_tokens_are_equal (const unsigned char *pubt1, const unsigned char *pubt2)
 {
-	return memcmp (pubt1, pubt2, 16) == 0;
+	return g_ascii_strncasecmp ((const char*) pubt1, (const char*) pubt2, 16) == 0;
 }
 
 /**
