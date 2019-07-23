@@ -39,9 +39,13 @@
       "default": true
     },
     "EnableMonoWasmThreads": {
-      "description": "Whether to include support for threads or not.",
-      "kind": "bool",
-      "default": false
+      "description": "Whether to enable support for threads or not.",
+      "values": {
+        "None": "Do not enable runtime for threads.",
+        "ThreadsOnly": "Only enable runtime for threads support.",
+        "All": "Enable runtimes for both thread and non thread support.",
+      },
+      "default": "None"
     }
 
   }

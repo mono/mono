@@ -30,6 +30,8 @@ namespace Mono.WebAssembly.Build
 		public string VfsPrefix { get; set; }
 		public string DeployPrefix { get; set; }
 		public bool EnableDebugging { get; set; }
+		public bool LoadThreadsRuntime { get; set; }
+
 		public bool InitBindings { get; set; }
 
 		[Required]
@@ -44,7 +46,8 @@ namespace Mono.WebAssembly.Build
 				EnableDebugging = EnableDebugging,
 				VfsPrefix = VfsPrefix,
 				DeployPrefix = DeployPrefix,
-				FileList = FileList.Select (f => f.GetMetadata ("Filename") + f.GetMetadata ("Extension"))
+				FileList = FileList.Select (f => f.GetMetadata ("Filename") + f.GetMetadata ("Extension")),
+				LoadThreadsRuntime = LoadThreadsRuntime,
 			};
 
 			var text = template.TransformText ();

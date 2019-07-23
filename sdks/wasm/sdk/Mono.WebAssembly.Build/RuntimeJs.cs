@@ -21,6 +21,7 @@ namespace Mono.WebAssembly.Build {
 public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
+public bool LoadThreadsRuntime { get; set; }
 public IEnumerable<string> FileList { get; set; }
 
         #line default
@@ -29,72 +30,95 @@ public IEnumerable<string> FileList { get; set; }
         
         public override string TransformText() {
             this.GenerationEnvironment = null;
-            
+
             #line 3 ""
-            this.Write("var Module = { \n\tonRuntimeInitialized: function () {\n\t\tMONO.mono_load_runtime_and" +
+            this.WriteLine("var Module = { ");
+            this.WriteLine($"{(LoadThreadsRuntime?"\tloadThreadsRuntime: true, ": "\tloadThreadsRuntime: false, ")}");
+            this.WriteLine("\tlocateMonoThreads: function (path, pref) {\n\t\treturn pref + path;\n\t},");
+            this.WriteLine("\tlocateFile: function (path, pref) {");
+            this.WriteLine("\t\tif (this.loadThreadsRuntime) {");
+            this.WriteLine("\t\t\tif (typeof SharedArrayBuffer !== 'undefined') {");
+            this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.js\")) return this.locateMonoThreads (path, pref);");
+            this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.wasm\")) return this.locateMonoThreads (path, pref);");
+            this.WriteLine("\t\t\t\tif (path === (\"mono.worker.js\")) return this.locateMonoThreads (path, pref);");
+            this.WriteLine("\t\t\t}");
+            this.WriteLine("\t\t\t\treturn pref + \"../\" + path;");
+            this.WriteLine("\t\t}");
+            this.WriteLine("\t\treturn pref + path;");
+            this.WriteLine("\t},");
+            this.Write("\tonRuntimeInitialized: function () {\n\t\tMONO.mono_load_runtime_and" +
                     "_bcl (\n\t\t\t\"");
             
             #line default
             #line hidden
             
-            #line 6 ""
+            #line 20 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(VfsPrefix??"managed"));
             
             #line default
             #line hidden
             
-            #line 6 ""
+            #line 20 ""
             this.Write("\",\n\t\t\t\"");
             
             #line default
             #line hidden
             
-            #line 7 ""
+            #line 21 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(DeployPrefix??"managed"));
             
             #line default
             #line hidden
             
-            #line 7 ""
+            #line 21 ""
             this.Write("\",\n\t\t\t");
             
             #line default
             #line hidden
             
-            #line 8 ""
+            #line 22 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(EnableDebugging?1:0));
             
             #line default
             #line hidden
             
-            #line 8 ""
+            #line 22 ""
             this.Write(",\n\t\t\t[ \"");
             
             #line default
             #line hidden
             
-            #line 9 ""
+            #line 23 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Join("\", \"", FileList)));
             
             #line default
             #line hidden
             
-            #line 9 ""
+            #line 23 ""
             this.Write("\" ],\n\t\t\tfunction () {\n");
             
             #line default
             #line hidden
             
-            #line 11 ""
+            #line 25 ""
             
             #line default
             #line hidden
             
-            #line 14 ""
+            #line 26 ""
             this.Write("\t\t\t\tApp.init ();\n\t\t\t}\n\t\t);\n\t},\n};\n\n\n");
             
             #line default
             #line hidden
+
+            this.WriteLine("(function() {");
+            this.WriteLine("\tvar __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = \"mono.js\";");
+            this.WriteLine("\tvar __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];");
+            this.WriteLine("\tif (Module.loadFromThreads && typeof SharedArrayBuffer !== 'undefined')");
+            this.WriteLine("\t\t__mono_wasm_monoScript_js__.src = \"threads/mono.js\";");
+            this.WriteLine("\t__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);");
+            this.WriteLine("})();");
+
             return this.GenerationEnvironment.ToString();
         }
         
