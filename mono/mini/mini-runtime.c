@@ -2597,9 +2597,9 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	 */
 	mono_jit_info_table_remove (domain, ji->ji);
 
-	if (destroy)
 		mono_code_manager_destroy (ji->code_mp);
-	g_free (ji);
+
+    g_free (ji);
 }
 
 gpointer

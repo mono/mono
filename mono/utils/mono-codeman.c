@@ -258,8 +258,9 @@ free_chunklist (CodeChunk *chunk)
 void
 mono_code_manager_destroy (MonoCodeManager *cman)
 {
-	free_chunklist (cman->full);
-	free_chunklist (cman->current);
+	mono_code_manager_invalidate (cman);
+//	free_chunklist (cman->full);
+//	free_chunklist (cman->current);
 	g_free (cman);
 }
 
