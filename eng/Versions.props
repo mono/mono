@@ -5,8 +5,8 @@
     <PreReleaseVersionLabel>prerelease</PreReleaseVersionLabel>
     <!-- Package versions -->
     <!-- corefx -->
-    <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19371.2</MicrosoftPrivateCoreFxNETCoreAppVersion>
+    <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19373.5</MicrosoftPrivateCoreFxNETCoreAppVersion>
     <!-- core-setup -->
-    <MicrosoftNETCoreAppVersion>5.0.0-alpha1.27918.11</MicrosoftNETCoreAppVersion>
+    <MicrosoftNETCoreAppVersion>5.0.0-alpha1.19373.9</MicrosoftNETCoreAppVersion>
   </PropertyGroup>
 </Project>
