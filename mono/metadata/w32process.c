@@ -84,6 +84,8 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 	return VerLanguageNameW (lang, lang_out, lang_len);
 }
 
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32) */
+
 static MonoImage *system_image;
 
 static void
@@ -220,6 +222,8 @@ process_set_field_bool (MonoObjectHandle obj, const char *fieldname, guint8 val)
 
 	MONO_HANDLE_SET_FIELD_VAL (obj, guint8, process_resolve_field (obj, fieldname), val);
 }
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 #define SFI_COMMENTS		"\\StringFileInfo\\%02X%02X%02X%02X\\Comments"
 #define SFI_COMPANYNAME		"\\StringFileInfo\\%02X%02X%02X%02X\\CompanyName"
@@ -385,6 +389,8 @@ cleanup:
 	g_free (data);
 }
 
+#endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObjectHandle this_obj,
 		const gunichar2 *filename, int filename_length, MonoError *error)
@@ -398,6 +404,8 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	process_set_field_utf16 (this_obj, str, "filename", filename, filename_length, error);
 }
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 static GPtrArray*
 get_domain_assemblies (MonoDomain *domain)
