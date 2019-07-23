@@ -1145,6 +1145,7 @@
 # requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
 
 # CoreLib out of sync (https://github.com/dotnet/coreclr/pull/25617)
 -nomethod System.Threading.Tests.TimerConstructorTests.Timer_Constructor_NullCallback_Throws
