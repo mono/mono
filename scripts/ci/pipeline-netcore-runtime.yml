@@ -45,6 +45,10 @@ jobs:
   pool:
     name: $(poolname)
   steps:
+  - bash: |
+      git clean -ffdx
+      git reset --hard HEAD
+    displayName: 'Clean up working directory'
   - bash: |  
       brew install autoconf automake libtool gnu-sed
     displayName: 'Prepare OSX dependencies'
