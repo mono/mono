@@ -30,6 +30,9 @@ GModule *g_module_open (const gchar *file, GModuleFlags flags);
 G_EXTERN_C // Used by libtest, at least.
 gboolean g_module_symbol (GModule *module, const gchar *symbol_name,
 			  gpointer *symbol);
+/* The non-constness is currently because of the AIX reimplementation. */
+gboolean g_module_address (void *addr, char **file_name, void **file_base,
+			   char **sym_name, void **sym_addr);
 const gchar *g_module_error (void);
 gboolean g_module_close (GModule *module);
 gchar *  g_module_build_path (const gchar *directory, const gchar *module_name);

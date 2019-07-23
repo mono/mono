@@ -1492,20 +1492,26 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	// Note: it's not safe for us to be interrupted while inside of dl_addr, because if we
 	// try to call dl_addr while interrupted while inside the lock, we will try to take a
 	// non-recursive lock twice on this thread, and will deadlock.
-	Dl_info info;
-	gboolean success = dladdr ((void*)in_ip, &info);
+	char *sname = NULL, *fname = NULL;
+	void *saddr = NULL, *fbase = NULL;
+	gboolean success = g_module_address ((void*)in_ip, &fname, &fbase, &saddr, &sbase);
 	if (!success)
 		return FALSE;
 
-	if (!check_whitelisted_module (info.dli_fname, out_module))
+	if (!check_whitelisted_module (fname, out_module))
 		return FALSE;
 
-	*out_ip = mono_make_portable_ip ((intptr_t) info.dli_saddr, (intptr_t) info.dli_fbase);
+	*out_ip = mono_make_portable_ip ((intptr_t) saddr, (intptr_t) fbase);
 	*out_offset = in_ip - (intptr_t) info.dli_saddr;
 
 #ifndef MONO_PRIVATE_CRASHES
 	if (info.dli_saddr && out_name)
 		copy_summary_string_safe (out_name, info.dli_sname);
+#endif
+#ifdef _AIX
+	/* HACK: because g_module_address fname is non-const on AIX */
+	if (fname != NULL)
+		free (fname);
 #endif
 	return TRUE;
 }

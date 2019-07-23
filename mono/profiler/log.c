@@ -12,6 +12,7 @@
  */
 
 #include <config.h>
+#include <gmodule.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/class-internals.h>
@@ -50,9 +51,6 @@
 #include "log.h"
 #include "helper.h"
 
-#ifdef HAVE_DLFCN_H
-#include <dlfcn.h>
-#endif
 #include <fcntl.h>
 #ifdef HAVE_LINK_H
 #include <link.h>
@@ -2444,13 +2442,10 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 static const char*
 symbol_for (uintptr_t code)
 {
-#ifdef HAVE_DLADDR
-	Dl_info di;
+	char *sname = NULL;
 
-	if (dladdr ((void *) code, &di))
-		if (di.dli_sname)
-			return di.dli_sname;
-#endif
+	if (g_module_address ((void *) code, NULL, NULL, &sname, NULL) == TRUE)
+		return sname;
 
 	return NULL;
 }
