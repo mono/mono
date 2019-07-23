@@ -152,6 +152,13 @@ var MonoSupportLib = {
 			Module.ccall ('mono_wasm_load_profiler_aot', 'void', ['string'], [arg]);
 		},
 
+		mono_wasm_has_threading_support: function () {
+			if (typeof _emscripten_has_threading_support !== "undefined")
+				return (_emscripten_has_threading_support() == 1);
+			else
+				return false;
+		},
+
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];
@@ -370,7 +377,7 @@ var MonoSupportLib = {
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
 		debugger;
-	}
+	}	
 };
 
 autoAddDeps(MonoSupportLib, '$MONO')
