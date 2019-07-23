@@ -15,6 +15,7 @@ namespace System
 		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = false;
 		public static readonly bool SetActorAsReferenceWhenCopyingClaimsIdentity = false;
 		public static readonly bool NoAsyncCurrentCulture = false;
+		public static readonly bool PreserveEventListnerObjectIdentity = false;
 #else
         private static int _noAsyncCurrentCulture;
         public static bool NoAsyncCurrentCulture

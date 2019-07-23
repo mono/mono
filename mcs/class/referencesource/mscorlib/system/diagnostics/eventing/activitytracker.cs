@@ -61,7 +61,7 @@ namespace System.Diagnostics.Tracing
                 if (m_checkedForEnable)
                     return;
                 m_checkedForEnable = true;
-#if ES_BUILD_STANDALONE
+#if ES_BUILD_STANDALONE || MONO
                 Enable();           // Enable it unconditionally.  
 #else
                 if (System.Threading.Tasks.TplEtwProvider.Log.IsEnabled(EventLevel.Informational, System.Threading.Tasks.TplEtwProvider.Keywords.TasksFlowActivityIds))
@@ -609,7 +609,7 @@ namespace System.Diagnostics.Tracing
         #endregion
     }
 
-#if ES_BUILD_STANDALONE
+#if ES_BUILD_STANDALONE || MONO
     /******************************** SUPPORT *****************************/
     /// <summary>
     /// This is supplied by the framework.   It is has the semantics that the value is copied to any new Tasks that is created

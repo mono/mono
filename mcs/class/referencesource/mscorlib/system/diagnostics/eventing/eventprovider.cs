@@ -78,6 +78,7 @@ namespace System.Diagnostics.Tracing
 
         [SecurityCritical]
         UnsafeNativeMethods.ManifestEtw.EtwEnableCallback m_etwCallback;     // Trace Callback function
+        GCHandle m_thisGCHandle;
         private long m_regHandle;                        // Trace Registration Handle
         private byte m_level;                            // Tracing Level
         private long m_anyKeywordMask;                   // Trace Enable Flags
@@ -149,13 +150,25 @@ namespace System.Diagnostics.Tracing
         internal unsafe void Register(Guid providerGuid)
         {
             m_providerId = providerGuid;
-            uint status;
             m_etwCallback = new UnsafeNativeMethods.ManifestEtw.EtwEnableCallback(EtwEnableCallBack);
 
-            status = EventRegister(ref m_providerId, m_etwCallback); 
-            if (status != 0)
+            if (m_thisGCHandle.IsAllocated)
+                m_thisGCHandle.Free();
+
+            m_thisGCHandle = GCHandle.Alloc(this);
+
+            try
             {
-                throw new ArgumentException(Win32Native.GetMessage(unchecked((int)status)));
+                var status = UnsafeNativeMethods.ManifestEtw.EventRegister(ref providerGuid, m_etwCallback, GCHandle.ToIntPtr(m_thisGCHandle).ToPointer(), ref m_regHandle);
+                if (status != 0)
+                {
+                    throw new ArgumentException(Win32Native.GetMessage(unchecked((int)status)));
+                }
+            }
+            catch
+            {
+                m_thisGCHandle.Free();
+                throw;
             }
         }
 
@@ -264,15 +277,20 @@ namespace System.Diagnostics.Tracing
             {
                 EventUnregister();
                 m_regHandle = 0;
+                m_thisGCHandle.Free();
             }
         }
 
-        // <SecurityKernel Critical="True" Ring="0">
-        // <UsesUnsafeCode Name="Parameter filterData of type: Void*" />
-        // <UsesUnsafeCode Name="Parameter callbackContext of type: Void*" />
-        // </SecurityKernel>
-        [System.Security.SecurityCritical]
-        unsafe void EtwEnableCallBack(
+        [AttributeUsage(AttributeTargets.Method)]
+        private sealed class MonoPInvokeCallbackAttribute : Attribute
+        {
+            public MonoPInvokeCallbackAttribute(Type t)
+            {
+            }
+        }
+
+        [MonoPInvokeCallback(typeof(UnsafeNativeMethods.ManifestEtw.EtwEnableCallback))]
+        unsafe static void EtwEnableCallBack(
                         [In] ref System.Guid sourceId,
                         [In] int controlCode,
                         [In] byte setLevel,
@@ -280,6 +298,23 @@ namespace System.Diagnostics.Tracing
                         [In] long allKeyword,
                         [In] UnsafeNativeMethods.ManifestEtw.EVENT_FILTER_DESCRIPTOR* filterData,
                         [In] void* callbackContext
+                        )
+        {
+            var _this = (EventProvider)GCHandle.FromIntPtr(new IntPtr(callbackContext)).Target;
+            _this.EtwEnableCallBackImpl(controlCode, setLevel, anyKeyword, allKeyword, filterData);
+        }
+
+        // <SecurityKernel Critical="True" Ring="0">
+        // <UsesUnsafeCode Name="Parameter filterData of type: Void*" />
+        // <UsesUnsafeCode Name="Parameter callbackContext of type: Void*" />
+        // </SecurityKernel>
+        [System.Security.SecurityCritical]
+        unsafe void EtwEnableCallBackImpl(
+                        [In] int controlCode,
+                        [In] byte setLevel,
+                        [In] long anyKeyword,
+                        [In] long allKeyword,
+                        [In] UnsafeNativeMethods.ManifestEtw.EVENT_FILTER_DESCRIPTOR* filterData
                         )
         {
             // This is an optional callback API. We will therefore ignore any failures that happen as a 
@@ -476,9 +511,17 @@ namespace System.Diagnostics.Tracing
 
                 fixed (Guid* provider = &m_providerId)
                 {
-                    hr = UnsafeNativeMethods.ManifestEtw.EnumerateTraceGuidsEx(UnsafeNativeMethods.ManifestEtw.TRACE_QUERY_INFO_CLASS.TraceGuidQueryInfo,
-                        provider, sizeof(Guid), buffer, buffSize, ref buffSize);
-                }
+					try
+					{
+						hr = UnsafeNativeMethods.ManifestEtw.EnumerateTraceGuidsEx(UnsafeNativeMethods.ManifestEtw.TRACE_QUERY_INFO_CLASS.TraceGuidQueryInfo,
+							provider, sizeof(Guid), buffer, buffSize, ref buffSize);
+					}
+					catch (DllNotFoundException)
+					{
+						// This API isn't available on UWP prior to Windows SDK 16299
+						return;
+					}
+				}
                 if (hr == 0)
                     break;
                 if (hr != 122 /* ERROR_INSUFFICIENT_BUFFER */)
@@ -539,7 +582,7 @@ namespace System.Diagnostics.Tracing
             dataStart = 0;
             if (filterData == null)
             {
-#if !ES_BUILD_PCL
+#if !ES_BUILD_PCL && !MONO
                 string regKey = @"\Microsoft\Windows\CurrentVersion\Winevt\Publishers\{" + m_providerId + "}";
                 if (System.Runtime.InteropServices.Marshal.SizeOf(typeof(IntPtr)) == 8)
                     regKey = @"HKEY_LOCAL_MACHINE\Software" + @"\Wow6432Node" + regKey;
@@ -1161,13 +1204,6 @@ namespace System.Diagnostics.Tracing
 
         // These are look-alikes to the Manifest based ETW OS APIs that have been shimmed to work
         // either with Manifest ETW or Classic ETW (if Manifest based ETW is not available).  
-        [SecurityCritical]
-        private unsafe uint EventRegister(ref Guid providerId, UnsafeNativeMethods.ManifestEtw.EtwEnableCallback enableCallback)
-        {
-            m_providerId = providerId;
-            m_etwCallback = enableCallback;
-            return UnsafeNativeMethods.ManifestEtw.EventRegister(ref providerId, enableCallback, null, ref m_regHandle);
-        }
 
         [SecurityCritical]
         private uint EventUnregister()
