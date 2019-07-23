@@ -155,6 +155,7 @@ run-tests-corefx-%: prepare update-tests-corefx
 	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/xunit.console.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
+	cp corefx/tests/extracted/$*/$*.runtimeconfig.json corefx/tests/extracted/$*/xunit.console.runtimeconfig.json
 	sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
