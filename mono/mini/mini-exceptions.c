@@ -94,9 +94,7 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
-#ifndef HOST_WIN32
-#include <dlfcn.h>
-#endif
+#include <gmodule.h>
 
 /*
  * Raw frame information is stored in MonoException.trace_ips as an IntPtr[].
@@ -1494,7 +1492,7 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	// non-recursive lock twice on this thread, and will deadlock.
 	char *sname = NULL, *fname = NULL;
 	void *saddr = NULL, *fbase = NULL;
-	gboolean success = g_module_address ((void*)in_ip, &fname, &fbase, &saddr, &sbase);
+	gboolean success = g_module_address ((void*)in_ip, &fname, &fbase, &sname, &saddr);
 	if (!success)
 		return FALSE;
 
@@ -1502,11 +1500,11 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 		return FALSE;
 
 	*out_ip = mono_make_portable_ip ((intptr_t) saddr, (intptr_t) fbase);
-	*out_offset = in_ip - (intptr_t) info.dli_saddr;
+	*out_offset = in_ip - (intptr_t) saddr;
 
 #ifndef MONO_PRIVATE_CRASHES
-	if (info.dli_saddr && out_name)
-		copy_summary_string_safe (out_name, info.dli_sname);
+	if (saddr && out_name)
+		copy_summary_string_safe (out_name, sname);
 #endif
 #ifdef _AIX
 	/* HACK: because g_module_address fname is non-const on AIX */

@@ -93,9 +93,7 @@
 #endif
 
 #include <fcntl.h>
-#ifndef HOST_WIN32
-#include <dlfcn.h>
-#endif
+#include <gmodule.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
