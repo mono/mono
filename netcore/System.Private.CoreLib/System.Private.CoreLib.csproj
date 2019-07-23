@@ -17,6 +17,8 @@
     <Configurations>Debug;Release;Checked</Configurations>
     <Configuration>Release</Configuration>
     <Platforms>x64;x86;arm;arm64</Platforms>
+
+    <Features>strict;nullablePublicOnly</Features>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetsUnix)'=='' AND '$(TargetsOSX)'=='' AND '$(TargetsWindows)'==''">

@@ -1150,7 +1150,3 @@
 -nomethod System.Threading.Tests.TimerConstructorTests.Timer_Constructor_NullCallback_Throws
 -nomethod System.Threading.Tests.TimerConstructorTests.Timer_Constructor_PeriodOutOfRange_Throws
 -nomethod System.Threading.Tests.TimerConstructorTests.Timer_Constructor_DueTimeOutOfRange_Throws
-
-# TBD
--nomethod System.Runtime.Tests.NullableMetadataTests.NullablePublicOnlyAttributePresent
--nemethod System.Runtime.Tests.NullableMetadataTests.NullableAttributesOnPublicApiOnly
