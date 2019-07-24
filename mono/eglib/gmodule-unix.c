@@ -89,12 +89,16 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	/* This zero-on-failure is unlike other Unix APIs. */
 	if (ret == 0)
 		return FALSE;
+	/*
+	 * XXX: AIX reimplementation should be fixed to ensure constiness,
+	 * until then, cast these to non-const strings
+	 */
 	if (file_name != NULL)
-		*file_name = dli.dli_fname;
+		*file_name = (char *)dli.dli_fname;
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
 	if (sym_name != NULL)
-		*sym_name = dli.dli_sname;
+		*sym_name = (char *)dli.dli_sname;
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;

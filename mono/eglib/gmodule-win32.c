@@ -137,6 +137,16 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 	}
 }
 
+gboolean
+g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
+{
+	/*
+	 * XXX: For an actual implementation, file_name can be filled in from
+	 * GetModuleFileName, at least?
+	 */
+	return FALSE;
+}
+
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 const gchar *
 g_module_error (void)
