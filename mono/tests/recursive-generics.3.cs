@@ -8,6 +8,9 @@ class Program {
 		// initialization is a failure.
 		var subC = new SubClass ();
 		Console.WriteLine (subC.GetTest ());
+		// same as above, but try to land in generic sharing code.
+		var genSubC = new GenericSubClass<object> ();
+		Console.WriteLine (genSubC.GetTest ());
 	}
 }
 
@@ -24,6 +27,15 @@ public abstract class BaseClass<T> where T : BaseClass<T> {
 }
 
 public class SubClass : BaseClass<SubClass> {
+	private string test = "test";
+
+	public string GetTest()
+	{
+		return test;
+	}
+}
+
+public class GenericSubClass<T> : BaseClass<GenericSubClass<T>> {
 	private string test = "test";
 
 	public string GetTest()
