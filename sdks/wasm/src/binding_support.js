@@ -1023,6 +1023,11 @@ var BindingSupportLib = {
 			}
 			throw Error('Unable to get mono wasm global object.');
 		},
+		mono_wasm_parse_args : function (args) {
+			var js_args = this.mono_array_to_js_array(args);
+			this.mono_wasm_save_LMF();
+			return js_args;
+		},
 		mono_wasm_save_LMF : function () {
 			//console.log("save LMF: " + BINDING.mono_wasm_owned_objects_frames.length)
 			BINDING.mono_wasm_owned_objects_frames.push(BINDING.mono_wasm_owned_objects_LMF);
@@ -1043,7 +1048,11 @@ var BindingSupportLib = {
 			}
 			//console.log("restore LMF: " + BINDING.mono_wasm_owned_objects_frames.length)
 
-		}
+		},
+		mono_wasm_convert_return_value: function (ret) {
+			this.mono_wasm_unwind_LMF();
+			return this.js_to_mono_obj (ret);
+		},
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -1061,8 +1070,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid method name object '" + method_name + "'");
 		}
 
-		var js_args = BINDING.mono_array_to_js_array(args);
-		BINDING.mono_wasm_save_LMF();
+		var js_args = BINDING.mono_wasm_parse_args(args);
 
 		var res;
 		try {
@@ -1070,9 +1078,10 @@ var BindingSupportLib = {
 			if (typeof m === "undefined")
 				throw new Error("Method: '" + js_name + "' not found for: '" + Object.prototype.toString.call(obj) + "'");
 			var res = m.apply (obj, js_args);
-			BINDING.mono_wasm_unwind_LMF();
-			return BINDING.js_to_mono_obj (res);
+			return BINDING.mono_wasm_convert_return_value(res);
 		} catch (e) {
+			// make sure we release object reference counts on errors.
+			BINDING.mono_wasm_unwind_LMF();
 			var res = e.toString ();
 			setValue (is_exception, 1, "i32");
 			if (res === null || res === undefined)
@@ -1275,8 +1284,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("JavaScript host object '" + js_name + "' not found.");
 		}
 
-		var js_args = BINDING.mono_array_to_js_array(args);
-		BINDING.mono_wasm_save_LMF();
+		var js_args = BINDING.mono_wasm_parse_args(args);
 
 		try {
 
@@ -1294,9 +1302,10 @@ var BindingSupportLib = {
 			var res = allocator(coreObj, js_args);
 			var gc_handle = BINDING.mono_wasm_free_list.length ? BINDING.mono_wasm_free_list.pop() : BINDING.mono_wasm_ref_counter++;
 			BINDING.mono_wasm_object_registry[gc_handle] = res;
-			BINDING.mono_wasm_unwind_LMF();
-			return BINDING.js_to_mono_obj (gc_handle + 1);
+			return BINDING.mono_wasm_convert_return_value(gc_handle + 1);
 		} catch (e) {
+			// make sure we release object reference counts on errors.
+			BINDING.mono_wasm_unwind_LMF();
 			var res = e.toString ();
 			setValue (is_exception, 1, "i32");
 			if (res === null || res === undefined)
