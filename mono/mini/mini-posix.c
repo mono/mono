@@ -942,7 +942,7 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 	for (int i = 0; i < size; ++i) {
 		gpointer ip = array [i];
 		char *sname = NULL, *fname = NULL;
-		gboolean success = g_module_address ((void*)ip, &fname, NULL, &saddr, NULL);
+		gboolean success = g_module_address ((void*)ip, &fname, NULL, &sname, NULL);
 		if (!success) {
 			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
