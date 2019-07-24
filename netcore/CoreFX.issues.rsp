@@ -171,14 +171,6 @@
 ##  System.Memory.Tests
 ####################################################################
 
-# System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
-# https://github.com/mono/mono/issues/14959
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
-
 # Reflection TargetException: Non-static method requires a target. 
 # https://github.com/mono/mono/issues/14962
 -nomethod System.SpanTests.SpanTests.ReadOnlyMemory_PropertyReturningReadOnlySpan
