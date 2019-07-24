@@ -1,0 +1,5 @@
+System.Runtime.Serialization/Bug2843Test.cs
+System.Runtime.Serialization/Bug675144Test.cs
+System.Runtime.Serialization/DataContractSerializerTest_NullableWithDictionary.cs
+System.Runtime.Serialization/Bug695203Test.cs
+System.Runtime.Serialization/Bug242Test.cs
