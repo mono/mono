@@ -1235,54 +1235,6 @@ var BindingSupportLib = {
 		}	
 
 	},
-	mono_wasm_new_object: function(object_handle_or_function, args, is_exception) {
-		BINDING.bindings_lazy_init ();
-
-		if (!object_handle_or_function) {
-			return BINDING.js_to_mono_obj ({});
-		}
-		else {
-
-			var requireObject;
-			if (typeof object_handle_or_function === 'function')
-				requireObject = object_handle_or_function;
-			else
-				requireObject = BINDING.mono_wasm_require_handle (object_handle_or_function);
-
-			if (!requireObject) {
-				setValue (is_exception, 1, "i32");
-				return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + object_handle_or_function + "'");
-			}
-
-			var js_args = BINDING.mono_array_to_js_array(args);
-			BINDING.mono_wasm_save_LMF();
-	
-			try {
-				
-				// This is all experimental !!!!!!
-				var allocator = function(constructor, js_args) {
-					// Not sure if we should be checking for anything here
-					var argsList = new Array();
-					argsList[0] = constructor;
-					if (js_args)
-						argsList = argsList.concat(js_args);
-					var obj = new (constructor.bind.apply(constructor, argsList ));
-					return obj;
-				};
-		
-				var res = allocator(requireObject, js_args);
-				BINDING.mono_wasm_unwind_LMF();
-				return BINDING.extract_mono_obj (res);
-			} catch (e) {
-				var res = e.toString ();
-				setValue (is_exception, 1, "i32");
-				if (res === null || res === undefined)
-					res = "Error allocating object.";
-				return BINDING.js_string_to_mono_string (res);
-			}	
-		}
-
-	},
 	mono_wasm_typed_array_to_array: function(js_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 

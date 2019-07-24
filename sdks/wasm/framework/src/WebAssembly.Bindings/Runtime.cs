@@ -31,8 +31,6 @@ namespace WebAssembly {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object ReleaseObject (int js_obj_handle, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object NewObjectJS (int js_obj_handle, object [] _params, out int exceptional_result);
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object BindCoreObject (int js_obj_handle, int gc_handle, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object BindHostObject (int js_obj_handle, int gc_handle, out int exceptional_result);
@@ -80,26 +78,18 @@ namespace WebAssembly {
 			return (int)res;
 		}
 
+		/// <summary>
+		/// Create a new JavaScript object of the host class name
+		/// </summary>
+		/// <param name="hostClassName">The name of the host class name of the object to create.</param>
+		/// <param name="_params">Parameters</param>
+		/// <returns></returns>
 		public static int New (string hostClassName, params object [] _params)
 		{
 			var res = New (hostClassName, _params, out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
 			return (int)res;
-		}
-
-		/// <summary>
-		/// Creates a new JavaScript object 
-		/// </summary>
-		/// <returns>The JSO bject.</returns>
-		/// <param name="js_func_ptr">Js func ptr.</param>
-		/// <param name="_params">Parameters.</param>
-		public static JSObject NewJSObject (JSObject js_func_ptr = null, params object [] _params)
-		{
-			var res = NewObjectJS (js_func_ptr?.JSHandle ?? 0, _params, out int exception);
-			if (exception != 0)
-				throw new JSException ((string)res);
-			return res as JSObject;
 		}
 
 		static int BindJSObject (int js_id, bool ownsHandle, Type mappedType)
