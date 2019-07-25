@@ -335,6 +335,24 @@ data.aotprofile: build-aot-profile
 ##
 # Parameters:
 # $(1) - make target suffix
+#
+define InterpTestTemplate
+build-interp-$(1): packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --template=runtime-tests.js --appdir=bin/interp-$(1) --builddir=obj/interp-$(1) --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	ninja -v -C obj/interp-$(1)
+
+clean-interp-$(1):
+	$(RM) -r obj/interp-$(1) bin/interp-$(1)
+endef
+
+$(eval $(call InterpTestTemplate,mini))
+$(eval $(call InterpTestTemplate,corlib))
+$(eval $(call InterpTestTemplate,System.Core))
+$(eval $(call InterpTestTemplate,System))
+
+##
+# Parameters:
+# $(1) - make target suffix
 # $(2) - test assembly filename
 # $(3) - main.exe argument
 # $(4) - extra args to packager
@@ -353,11 +371,11 @@ check-aot-$(1) run-aot-$(1): build-aot-$(1)
 endef
 
 $(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
-$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
-$(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,System.Core))
+$(eval $(call AotTestTemplate,System,wasm_System_test.dll,System))
 
 $(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
-$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
+$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,System.Core,--aot-interp --aot-assemblies=mscorlib))
 
 AOT_TEST_SUITES=corlib System.Core
 
