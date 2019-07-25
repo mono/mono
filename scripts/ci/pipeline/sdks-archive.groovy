@@ -103,7 +103,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
             }
             try {
                 stage('Build') {
-                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'PENDING', 'Building...')
+                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", env.BUILD_URL, 'PENDING', 'Building...')
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
@@ -144,10 +144,10 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 sh 'git clean -xdff'
 
-                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${packageFileName}", 'SUCCESS', packageFileName)
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${packageFileName}", 'SUCCESS', packageFileName)
             }
             catch (Exception e) {
-                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'FAILURE', "Build failed.")
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", env.BUILD_URL, 'FAILURE', "Build failed.")
                 throw e
             }
         }
