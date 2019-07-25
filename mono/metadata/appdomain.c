@@ -1306,7 +1306,6 @@ leave:
 MonoArrayHandle
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies (MonoError *error)
 {
-	error_init (error);
 	MonoDomain *domain = mono_domain_get ();
 	return get_assembly_array_from_domain (domain, FALSE, error);
 }
@@ -1314,7 +1313,6 @@ ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies 
 MonoArrayHandle
 ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
 {
-	error_init (error);
 	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
 	return get_assembly_array_from_domain (domain, refonly, error);
 }
