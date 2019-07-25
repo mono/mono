@@ -1302,14 +1302,6 @@ leave:
 	return res;
 }
 
-MonoArrayHandle
-ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
-{
-	error_init (error);
-	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
-	return get_assembly_array_from_domain (domain, refonly, error);
-}
-
 #ifdef ENABLE_NETCORE
 MonoArrayHandle
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies (MonoError *error)
@@ -1317,6 +1309,14 @@ ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies 
 	error_init (error);
 	MonoDomain *domain = mono_domain_get ();
 	return get_assembly_array_from_domain (domain, FALSE, error);
+}
+#else
+MonoArrayHandle
+ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
+{
+	error_init (error);
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
+	return get_assembly_array_from_domain (domain, refonly, error);
 }
 #endif
 
