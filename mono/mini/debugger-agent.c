@@ -8665,20 +8665,14 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	   
 	switch (command) {
 	case CMD_THREAD_GET_NAME: {
-		guint32 name_len;
-		gunichar2 *s = mono_thread_get_name (thread, &name_len);
-
-		if (!s) {
+		char* name = mono_thread_get_name_utf8 (thread_obj);
+		if (!name) {
 			buffer_add_int (buf, 0);
 		} else {
-			char *name;
-			glong len;
-
-			name = g_utf16_to_utf8 (s, name_len, NULL, &len, NULL);
-			g_assert (name);
+			const size_t len = strlen (name);
 			buffer_add_int (buf, len);
 			buffer_add_data (buf, (guint8*)name, len);
-			g_free (s);
+			g_free (name);
 		}
 		break;
 	}
@@ -9662,7 +9656,6 @@ wait_for_attach (void)
 static gsize WINAPI
 debugger_thread (void *arg)
 {
-	ERROR_DECL (error);
 	int res, len, id, flags, command = 0;
 	CommandSet command_set = (CommandSet)0;
 	guint8 header [HEADER_LENGTH];
@@ -9679,10 +9672,7 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
-	MonoString *str = mono_string_new_checked (mono_domain_get (), "Debugger agent", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, str, TRUE, FALSE, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name (internal, G_STRING_CONSTANT_AND_LENGTH ("Debugger agent"), TRUE, FALSE);
 
 	internal->state |= ThreadState_Background;
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;

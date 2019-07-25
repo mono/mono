@@ -405,7 +405,13 @@ namespace System.Threading {
 		private extern static string GetName_internal (InternalThread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetName_internal (InternalThread thread, String name);
+		private static unsafe extern void SetName_icall (InternalThread thread, char *name, int nameLength);
+
+		private static unsafe void SetName_internal (InternalThread thread, String name)
+		{
+			fixed (char* fixed_name = name)
+				SetName_icall (thread, fixed_name, name?.Length ?? 0);
+		}
 
 		/* 
 		 * The thread name must be shared by appdomains, so it is stored in

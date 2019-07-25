@@ -123,9 +123,6 @@ typedef struct {
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
 ICALL_EXPORT
-void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
-
-ICALL_EXPORT
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
 
 ICALL_EXPORT
@@ -356,14 +353,13 @@ void mono_thread_cleanup_apartment_state (void);
 
 void mono_threads_set_shutting_down (void);
 
-gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len);
-
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 
 ICALL_EXPORT
 void ves_icall_thread_finish_async_abort (void);
 
-MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
+MONO_PROFILER_API void
+mono_thread_set_name (MonoInternalThread *this_obj, const char* name8, size_t length, gboolean permanent, gboolean reset);
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);

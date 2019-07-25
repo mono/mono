@@ -325,13 +325,9 @@ selector_thread_interrupt (gpointer unused)
 static gsize WINAPI
 selector_thread (gpointer data)
 {
-	ERROR_DECL (error);
 	MonoGHashTable *states;
 
-	MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool I/O Selector", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (mono_thread_internal_current (), thread_name, FALSE, TRUE, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name (mono_thread_internal_current (), G_STRING_CONSTANT_AND_LENGTH ("Thread Pool I/O Selector"), FALSE, TRUE);
 
 	if (mono_runtime_is_shutting_down ()) {
 		io_selector_running = FALSE;
@@ -339,6 +335,8 @@ selector_thread (gpointer data)
 	}
 
 	states = mono_g_hash_table_new_type_internal (g_direct_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, NULL, "Thread Pool I/O State Table");
+
+	ERROR_DECL (error);
 
 	while (!mono_runtime_is_shutting_down ()) {
 		gint i, j;

@@ -530,6 +530,13 @@ typedef enum {
 
 struct _MonoThreadInfo;
 
+// FIXME use this
+typedef struct MonoThreadName {
+	char* chars;
+	gint32 length;
+	gboolean free;
+} MonoThreadName;
+
 #ifdef ENABLE_NETCORE
 /*
  * There is only one thread object, MonoInternalThread is aliased to MonoThread,
@@ -543,9 +550,11 @@ struct _MonoInternalThread {
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
 	MonoThreadHandle *handle;
 	gpointer native_handle;
-	gpointer unused3;
-	gunichar2  *name;
-	guint32	    name_len;
+	// FIXME
+	// MonoThreadName name;
+	gsize	    name_free; // boolean
+	gunichar2*  name_chars;
+	guint32	    name_length;
 	guint32	    state;      /* must be accessed while longlived->synch_cs is locked */
 	MonoException *abort_exc;
 	int abort_state_handle;

@@ -3144,7 +3144,7 @@ new_filename (const char* filename)
 }
 
 static MonoProfilerThread *
-profiler_thread_begin (const char *name, gboolean send)
+profiler_thread_begin (const char *name, int name_length, gboolean send)
 {
 	mono_thread_info_attach ();
 	MonoProfilerThread *thread = init_thread (FALSE);
@@ -3160,12 +3160,7 @@ profiler_thread_begin (const char *name, gboolean send)
 	 */
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	ERROR_DECL (error);
-
-	MonoString *name_str = mono_string_new_checked (mono_get_root_domain (), name, error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, name_str, FALSE, FALSE, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name (internal, name, name_length, FALSE, FALSE);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
@@ -3209,7 +3204,7 @@ profiler_thread_check_detach (MonoProfilerThread *thread)
 static void *
 helper_thread (void *arg)
 {
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Helper", TRUE);
+	MonoProfilerThread *thread = profiler_thread_begin (G_STRING_CONSTANT_AND_LENGTH ("Profiler Helper"), TRUE);
 
 	GArray *command_sockets = g_array_new (FALSE, FALSE, sizeof (int));
 
@@ -3445,7 +3440,7 @@ writer_thread (void *arg)
 {
 	dump_header ();
 
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Writer", FALSE);
+	MonoProfilerThread *thread = profiler_thread_begin (G_STRING_CONSTANT_AND_LENGTH ("Profiler Writer"), FALSE);
 
 	while (mono_atomic_load_i32 (&log_profiler.run_writer_thread)) {
 		MONO_ENTER_GC_SAFE;
@@ -3560,7 +3555,7 @@ handle_dumper_queue_entry (void)
 static void *
 dumper_thread (void *arg)
 {
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Dumper", TRUE);
+	MonoProfilerThread *thread = profiler_thread_begin (G_STRING_CONSTANT_AND_LENGTH ("Profiler Dumper"), TRUE);
 
 	while (mono_atomic_load_i32 (&log_profiler.run_dumper_thread)) {
 		gboolean timedout = FALSE;

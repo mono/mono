@@ -3387,12 +3387,8 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 		return;
 
 	text = g_string_new (0);
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &gerror);
-		g_assert (!gerror);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
+	if (thread->name_chars)
+		g_string_append_printf (text, "\n\"%s\"", thread->name_chars);
 	else if (thread->threadpool_thread)
 		g_string_append (text, "\n\"<threadpool thread>\"");
 	else

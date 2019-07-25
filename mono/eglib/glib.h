@@ -1407,4 +1407,6 @@ G_END_DECLS
 #define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
 #define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
 
+#define G_STRING_CONSTANT_AND_LENGTH(x) (x), G_N_ELEMENTS (x) - 1
+
 #endif // __GLIB_H
