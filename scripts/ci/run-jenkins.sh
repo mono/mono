@@ -134,23 +134,13 @@ fi
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
         # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-        if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-            export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-            export MACOS_VERSION=10.15
-            export IOS_VERSION=13.0
-            export TVOS_VERSION=13.0
-            export WATCHOS_VERSION=6.0
-            export WATCHOS64_32_VERSION=6.0
-        else
-            export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-            export MACOS_VERSION=10.14
-            export IOS_VERSION=12.1
-            export TVOS_VERSION=12.1
-            export WATCHOS_VERSION=5.1
-            export WATCHOS64_32_VERSION=5.1
-        fi
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        export MACOS_VERSION=10.14
+        export IOS_VERSION=12.1
+        export TVOS_VERSION=12.1
+        export WATCHOS_VERSION=5.1
+        export WATCHOS64_32_VERSION=5.1
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -196,15 +186,9 @@ fi
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-    if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-        export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-        export MACOS_VERSION=10.15
-    else
-        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-        export MACOS_VERSION=10.14
-    fi
+    export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+    export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+    export MACOS_VERSION=10.14
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
@@ -373,6 +357,124 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
         ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
         exit ${build_error}
     fi
+fi
+
+if [[ ${CI_TAGS} == *'freebsd'* ]]; # FreeBSD prerequisites and dependencies
+	then
+    # Test for a working pkgng repository first.
+    if [ -f /etc/pkg/FreeBSD.conf ]; then
+        grep 'enabled: yes' /etc/pkg/FreeBSD.conf > /dev/null
+        if [ $? -eq 0 ]; then
+            echo "NOTICE: Using pkg.FreeBSD.org repository."
+        fi
+	else
+        pkg search gmake > /dev/null
+        if [ $? -ne 0 ]; then
+            echo "ERROR: No working pkgng repository available for dependencies."
+            ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+            exit ${build_error}
+        fi
+    fi
+    # Install dependencies for build and run
+    for bp in autoconf autoconf-wrapper automake bash bison ca_root_nss cmake curl encodings expat font-alias fontconfig freetype2 gettext-runtime gettext-tools gmake iconv indexinfo libX11 libXrender libarchive libdrm libffi libiconv libinotify libpthread-stubs libtool libxcb libxml2 perl5 readline python36 sqlite3 unixODBC xorgproto; do
+        pkg info $bp > /dev/null 
+        if [ $? -eq 70 ]; then
+            # Attempt installation of package.
+            pkg install -f -y $bp
+            if [ $? -ne 0 ]; then
+                echo "ERROR: Unable to install prerequisite $bp"
+                ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+                exit ${build_error}
+            fi
+        fi
+    done
+    # Install the python and ninja pieces separately to avoid pkg collisions
+    for pp in python36 py36-pillow py36-setuptools py36-tkinter ninja; do
+        pkg info $pp > /dev/null
+        if [ $? -eq 70 ]; then
+            # Attempt installation of package.
+            pkg install -f -y $pp
+            if [ $? -ne 0 ]; then
+                echo "ERROR: Unable to install prerequisite $pp"
+                ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+                exit ${build_error}
+            fi
+        fi
+    done
+    # Tweak the CI builder just a touch to prevent OOM/swap failures.
+    sysctl vm.swap_idle_enabled=0
+    sysctl vm.overcommit=0
+    # Ensure that fdescfs is functional to prevent false test failures
+    kldstat | grep fdescfs.ko > /dev/null
+    if [ $? -ne 0 ]; then
+        kldload fdescfs
+        if [ $? -ne 0 ]; then
+            # This is an error but not a critical one.
+            echo "WARNING: builder could not load fdescfs.ko"
+        fi
+    else
+        echo "fdescfs.ko already loaded."
+    fi
+    mount | grep ^fdescfs > /dev/null
+    if [ $? -ne 0 ]; then
+        grep ^fdesc /etc/fstab > /dev/null
+        if [ $? -ne 0 ]; then
+            echo "fdesc /dev/fd fdescfs rw 0 0" >> /etc/fstab
+        fi
+        mount /dev/fd
+        if [ $? -ne 0 ]; then
+            # This is an error but not a critical one.
+            echo "WARNING: builder could not mount fdescfs"
+        fi
+    fi
+    # Mount FreeBSD's own /proc which is distinct from linprocfs.
+    mount | grep ^procfs > /dev/null
+    if [ $? -ne 0 ]; then
+        # Attempt mount directly.
+        mount -t procfs proc /proc
+        if [ $? -ne 0 ]; then
+            # This is a critical error, as it does cause test failures.
+            echo "ERROR: Unable to mount FreeBSD procfs at /proc"
+            ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+            exit ${build_error}
+        fi
+    fi
+    # Ensure that linprocfs is functional to prevent false test failures
+    kldstat | grep linprocfs.ko > /dev/null
+    if [ $? -ne 0 ]; then
+        kldload linprocfs
+        if [ $? -ne 0 ]; then
+            # This is an error but not critical; may cause some inotify test fails
+            echo "WARNING: builder could not load linprocfs.ko"
+        fi
+    else 
+        echo "linprocfs.ko already loaded."
+    fi
+    mount | grep ^linprocfs > /dev/null
+    if [ $? -ne 0 ]; then
+        grep ^linproc /etc/fstab > /dev/null
+        if [ $? -ne 0 ]; then
+            echo "linproc /compat/linux/proc linprocfs rw 0 0" >> /etc/fstab
+        fi
+        mount /compat/linux/proc
+        if [ $? -ne 0 ]; then
+            # This is an error but not critical; may cause some inotify test fails
+            echo "WARNING: builder could not mount /compat/linux/proc"
+        fi
+    fi
+    # Ensure crypto modules are loaded; this can reduce build time 10-20%
+    for kc in cryptodev aesni; do
+        kldstat | grep $kc > /dev/null
+        if [ $? -ne 0 ]; then
+            kldload $kc
+            if [ $? -ne 0 ]; then
+                # The build will be slower but still functional
+                echo "INFO: failed to load $kc.ko" > /dev/null
+            fi
+        else
+            echo "$kc.ko already loaded."
+        fi
+    done
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
