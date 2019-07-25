@@ -537,6 +537,10 @@ typedef enum {
 
 struct _MonoThreadInfo;
 
+void
+mono_gstring_append_thread_name (GString*, MonoInternalThread*);
+
+
 #ifdef ENABLE_NETCORE
 /*
  * There is only one thread object, MonoInternalThread is aliased to MonoThread,
