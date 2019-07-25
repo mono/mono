@@ -140,11 +140,24 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 gboolean
 g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
 {
-	/*
-	 * XXX: For an actual implementation, file_name can be filled in from
-	 * GetModuleFileName, at least?
-	 */
-	return FALSE;
+	HMODULE module;
+	BOOL ret = GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, addr, &module);
+	if (ret)
+		return FALSE;
+
+	if (file_name) {
+		/* sigh, non-const */
+		TCHAR *fname = malloc(255);
+		DWORD bytes = GetModuleFileName(module, fname, 255);
+		/* XXX: check for ERROR_INSUFFICIENT_BUFFER? */
+		*file_name = bytes ? fname : NULL;
+	}
+	/* XXX: implement the rest */
+	*file_base = NULL;
+	*sym_name = NULL;
+	*sym_addr = NULL;
+
+	return TRUE;
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
