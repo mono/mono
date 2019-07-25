@@ -20,10 +20,10 @@ namespace System.Threading
 		// stores a thread handle
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
-		IntPtr unused3;
 		/* accessed only from unmanaged code */
-		private IntPtr name;
-		private int name_len;
+		private IntPtr name_chars;
+		private int name_length;
+		private int name_free;
 		private ThreadState state;
 		private object abort_exc;
 		private int abort_state_handle;
@@ -50,7 +50,6 @@ namespace System.Threading
 		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private IntPtr unused4;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
@@ -59,6 +58,7 @@ namespace System.Threading
 		private IntPtr suspended_event;
 		private int self_suspended;
 		private IntPtr thread_state;
+
 		private Thread self;
 		private object pending_exception;
 		private object start_obj;
@@ -294,7 +294,13 @@ namespace System.Threading
 		extern static string GetName (Thread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void SetName (Thread thread, String name);
+		private static unsafe extern void SetName_icall (InternalThread thread, char *name, int nameLength);
+
+		static void SetName (Thread thread, String name);
+		{
+			fixed (char* fixed_name = name)
+				SetName_icall (thread, fixed_name, name?.Length ?? 0);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool YieldInternal ();

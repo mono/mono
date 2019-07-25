@@ -1209,11 +1209,10 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 	fire_attach_profiler_events ((MonoNativeThreadId) tid);
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
-	if (internal->name) {
-		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
-		MONO_PROFILER_RAISE (thread_name, (internal->tid, tname));
-		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), tname);
-		g_free (tname);
+	// FIXME Is this racy?
+	if (internal->name.chars) {
+		MONO_PROFILER_RAISE (thread_name, (internal->tid, internal->name.chars));
+		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), internal->name.chars);
 	}
 
 	/* start_func is set only for unmanaged start functions */
@@ -1700,6 +1699,16 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
 }
 #endif
 
+static
+void
+mono_thread_name_cleanup (MonoThreadName* name)
+{
+	MonoThreadName const old_name = *name;
+	memset (name, 0, sizeof (*name));
+	if (old_name.free)
+		g_free (old_name.chars);
+}
+
 /*
  * This is called from the finalizer of the internal thread object.
  */
@@ -1726,12 +1735,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	/* Possibly free synch_cs, if the thread already detached also. */
 	dec_longlived_thread_data (this_obj->longlived);
 
-
-	if (this_obj->name) {
-		void *name = this_obj->name;
-		this_obj->name = NULL;
-		g_free (name);
-	}
+	mono_thread_name_cleanup (&this_obj->name);
 }
 
 void
@@ -1808,7 +1812,7 @@ mono_thread_get_name_utf8 (MonoThread *thread)
 
 	LOCK_THREAD (internal);
 
-	char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
+	char *tname = (char*)g_memdup (internal->name.chars, internal->name.length + 1);
 
 	UNLOCK_THREAD (internal);
 
@@ -1842,12 +1846,12 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	MonoInternalThread * const this_obj = mono_internal_thread_handle_ptr (thread_handle);
 
-	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
+	MonoStringHandle str = NULL_HANDLE_STRING;
 
 	LOCK_THREAD (this_obj);
 	
-	if (this_obj->name)
-		MONO_HANDLE_ASSIGN (str, mono_string_new_utf16_handle (mono_domain_get (), this_obj->name, this_obj->name_len, error));
+	if (this_obj->name.chars)
+		str = mono_string_new_utf8_len (mono_domain_get (), this_obj->name.chars, this_obj->name.length, error);
 
 	UNLOCK_THREAD (this_obj);
 	
@@ -1855,57 +1859,72 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 }
 #endif
 
+// Unusal function:
+//  - MonoError is optional -- failure is usually not interesting, except the documented failure mode for managed callers.
+//  - name16 only used on Windows.
+//  - name8 is either constant, or g_free'able -- this function always takes ownership and never copies.
+//
 void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
+mono_thread_set_name (MonoInternalThread *this_obj,
+		const char* name8, size_t name8_length, const gunichar2* name16,
+		MonoSetThreadNameFlags flags, MonoError *error)
 {
 	MonoNativeThreadId tid = 0;
 
+	const gboolean constant = !!(flags & MonoSetThreadNameFlag_Constant);
+
+#if HOST_WIN32 // On Windows, if name8 is supplied, then name16 must be also.
+	g_assert (!name8 || name16);
+#endif
+
 	LOCK_THREAD (this_obj);
 
-	error_init (error);
-
-	if (reset) {
+	if (flags & MonoSetThreadNameFlag_Reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
 		
-		mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
+		if (error)
+			mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
+
+		if (!constant)
+			g_free ((char*)name8);
 		return;
 	}
-	if (this_obj->name) {
-		g_free (this_obj->name);
-		this_obj->name_len = 0;
-	}
-	if (name) {
-		this_obj->name = g_memdup (mono_string_chars_internal (name), mono_string_length_internal (name) * sizeof (gunichar2));
-		this_obj->name_len = mono_string_length_internal (name);
 
-		if (permanent)
+	mono_thread_name_cleanup (&this_obj->name);
+
+	if (name8) {
+		this_obj->name.chars = (char*)name8;
+		this_obj->name.length = name8_length;
+		this_obj->name.free = !constant;
+		if (flags & MonoSetThreadNameFlag_Permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
 	}
-	else
-		this_obj->name = NULL;
 
 	if (!(this_obj->state & ThreadState_Stopped))
 		tid = thread_get_tid (this_obj);
 
 	UNLOCK_THREAD (this_obj);
 
-	if (this_obj->name && tid) {
-		char *tname = mono_string_to_utf8_checked_internal (name, error);
-		return_if_nok (error);
-		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, tname));
-		mono_native_thread_set_name (tid, tname);
-		mono_free (tname);
+	if (name8 && tid) {
+		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, name8));
+		mono_native_thread_set_name (tid, name8);
 	}
+	mono_thread_set_name_windows (this_obj->native_handle, name16);
+
+	mono_free (0); // FIXME keep mono-publib.c in use and its functions exported
 }
 
 void 
-ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
+ves_icall_System_Threading_Thread_SetName_icall (MonoInternalThreadHandle thread_handle, const gunichar2* name16, gint32 name16_length, MonoError* error)
 {
-	ERROR_DECL (error);
-	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, error);
-	mono_error_set_pending_exception (error);
+	long name8_length = 0;
+
+	char* name8 = name16 ? g_utf16_to_utf8 (name16, name16_length, NULL, &name8_length, NULL) : NULL;
+
+	mono_thread_set_name (mono_internal_thread_handle_ptr (thread_handle),
+		name8, (gint32)name8_length, name16, MonoSetThreadNameFlag_Permanent, error);
 }
 
 #ifndef ENABLE_NETCORE
@@ -4011,6 +4030,16 @@ collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
 	return ud.nthreads;
 }
 
+void
+mono_gstring_append_thread_name (GString* text, MonoInternalThread* thread)
+{
+	g_string_append (text, "\n\"");
+	g_string_append (text, thread->name.chars ? thread->name.chars :
+			thread->threadpool_thread ? "<threadpool thread>" :
+						    "<unnamed thread>");
+	g_string_append (text, "\"");
+}
+
 static void
 dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_file)
 {
@@ -4032,17 +4061,7 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_fi
 	/*
 	 * Do all the non async-safe work outside of get_thread_dump.
 	 */
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &gerror);
-		g_assert (!gerror);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
-	else if (thread->threadpool_thread) {
-		g_string_append (text, "\n\"<threadpool thread>\"");
-	} else {
-		g_string_append (text, "\n\"<unnamed thread>\"");
-	}
+	mono_gstring_append_thread_name (text, thread);
 
 	for (i = 0; i < ud->nframes; ++i) {
 		MonoStackFrameInfo *frame = &ud->frames [i];
