@@ -1886,18 +1886,23 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 void 
 mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
 {
+	// Mostly setting thread name is best-effort, and failure does not matter,
+	// but it is also a public API with a documented failure mode.
+
 	MonoNativeThreadId tid = 0;
 
-	LOCK_THREAD (this_obj);
+	if (error)
+		error_init (error);
 
-	error_init (error);
+	LOCK_THREAD (this_obj);
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
 		
-		mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
+		if (error)
+			mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
 		return;
 	}
 	if (this_obj->name) {
@@ -1920,8 +1925,13 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 	UNLOCK_THREAD (this_obj);
 
 	if (this_obj->name && tid) {
+		ERROR_DECL (local_error);
+		error = error ? error : local_error;
 		char *tname = mono_string_to_utf8_checked_internal (name, error);
-		return_if_nok (error);
+		const gboolean ok = is_ok (error);
+		mono_error_cleanup (local_error);
+		if (!ok)
+			return;
 		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, tname));
 		mono_native_thread_set_name (tid, tname);
 		mono_free (tname);

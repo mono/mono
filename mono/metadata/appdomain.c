@@ -3003,21 +3003,17 @@ deregister_reflection_info_roots (MonoDomain *domain)
 static gsize WINAPI
 unload_thread_main (void *arg)
 {
-	ERROR_DECL (error);
 	unload_data *data = (unload_data*)arg;
 	MonoDomain *domain = data->domain;
-	MonoInternalThread *internal;
 	int i;
 	gsize result = 1; // failure
 
-	internal = mono_thread_internal_current ();
-
-	MonoString *thread_name_str = mono_string_new_checked (mono_domain_get (), "Domain unloader", error);
-	if (is_ok (error))
-		mono_thread_set_name_internal (internal, thread_name_str, TRUE, FALSE, error);
-	if (!is_ok (error)) {
-		data->failure_reason = g_strdup (mono_error_get_message (error));
-		goto failure;
+	{
+		ERROR_DECL (error);
+		MonoString *thread_name_str = mono_string_new_checked (mono_domain_get (), "Domain unloader", error);
+		if (is_ok (error))
+			mono_thread_set_name_internal (mono_thread_internal_current (), thread_name_str, TRUE, FALSE, NULL);
+		mono_error_cleanup (error);
 	}
 
 	/* 
@@ -3081,7 +3077,6 @@ unload_thread_main (void *arg)
 
 	result = 0; // success
 exit:
-	mono_error_cleanup (error);
 	mono_atomic_store_release (&data->done, TRUE);
 	unload_data_unref (data);
 	return result;
