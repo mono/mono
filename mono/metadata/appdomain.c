@@ -1312,11 +1312,11 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean re
 
 #ifdef ENABLE_NETCORE
 MonoArrayHandle
-ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies (MonoBoolean refonly, MonoError *error)
+ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies (MonoError *error)
 {
 	error_init (error);
 	MonoDomain *domain = mono_domain_get ();
-	return get_assembly_array_from_domain (domain, refonly, error);
+	return get_assembly_array_from_domain (domain, FALSE, error);
 }
 #endif
 
