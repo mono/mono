@@ -689,13 +689,10 @@ sampling_thread_func (gpointer unused)
 
 	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	ERROR_DECL (error);
-
 	// Profiler Sampler
-	mono_thread_set_name_constant (thread,
-		MonoSetThreadNameFlag_None, error,
+	mono_thread_set_name_constant_ignore_error (thread,
+		MonoSetThreadNameFlag_None,
 		'P','r','o','f','i','l','e','r',' ','S','a','m','p','l','e','r');
-	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
@@ -863,9 +860,9 @@ mono_runtime_setup_stat_profiler (void)
 
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
 
-	MonoError error;
-	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
-	mono_error_assert_ok (&error);
+	ERROR_DECL (error);
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	mono_error_assert_ok (error);
 
 	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }

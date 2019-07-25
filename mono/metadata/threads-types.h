@@ -381,12 +381,12 @@ MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_o
 						      const gunichar2* name_utf16, size_t name_utf16_length,
 						      MonoSetThreadNameFlags flags, MonoError *error);
 
-#define mono_thread_set_name_constant(thread, flags, error, ...)				\
+#define mono_thread_set_name_constant_ignore_error(thread, flags, ...)				\
 do {												\
 	G_STRING_CONSTANT_8_AND_16 (thread_name, __VA_ARGS__);					\
 	const size_t name_length = G_N_ELEMENTS (thread_name8) - 1;				\
 	mono_thread_set_name_internal ((thread), thread_name8, name_length,			\
-		thread_name16, name_length, (flags) | MonoSetThreadNameFlag_Constant, (error));	\
+		thread_name16, name_length, (flags) | MonoSetThreadNameFlag_Constant, NULL);	\
 } while (0)
 
 void mono_thread_suspend_all_other_threads (void);

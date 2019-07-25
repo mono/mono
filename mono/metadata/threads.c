@@ -1887,9 +1887,10 @@ void
 mono_thread_set_name_internal (MonoInternalThread *this_obj, const char* name8, size_t name8_length,
 		const gunichar2 *name16, size_t name16_length, MonoSetThreadNameFlags flags, MonoError *error)
 {
-	MonoNativeThreadId tid = 0;
+	// Mostly setting thread name is best-effort, and failure does not matter,
+	// but it is also a public API with a documented failure mode.
 
-	error_init (error);
+	MonoNativeThreadId tid = 0;
 
 	LOCK_THREAD (this_obj);
 
@@ -1901,7 +1902,8 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, const char* name8, 
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
 		
-		mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
+		if (error)
+			mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
 		return;
 	}
 	if (this_obj->name) {

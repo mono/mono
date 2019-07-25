@@ -9662,7 +9662,6 @@ wait_for_attach (void)
 static gsize WINAPI
 debugger_thread (void *arg)
 {
-	ERROR_DECL (error);
 	int res, len, id, flags, command = 0;
 	CommandSet command_set = (CommandSet)0;
 	guint8 header [HEADER_LENGTH];
@@ -9680,10 +9679,9 @@ debugger_thread (void *arg)
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
 	// Debugger agent
-	mono_thread_set_name_constant (internal,
-		MonoSetThreadNameFlag_Permanent, error,
+	mono_thread_set_name_constant_ignore_error (internal,
+		MonoSetThreadNameFlag_Permanent,
 		'D','e','b','u','g','g','e','r',' ','a','g','e','n','t');
-	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	internal->state |= ThreadState_Background;
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
