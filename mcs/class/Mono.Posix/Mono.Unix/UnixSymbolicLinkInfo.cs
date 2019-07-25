@@ -94,7 +94,7 @@ namespace Mono.Unix {
 
 		public override void SetOwner (long owner, long group)
 		{
-			int r = Native.Syscall.lchown (FullPath, Convert.ToUInt32 (owner), Convert.ToUInt32 (group));
+			int r = Native.Syscall.lchown (FullPath, Convert.ToInt32 (owner), Convert.ToInt32 (group));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
