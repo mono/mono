@@ -9679,10 +9679,11 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
-	MonoString *str = mono_string_new_checked (mono_domain_get (), "Debugger agent", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, str, TRUE, FALSE, error);
-	mono_error_assert_ok (error);
+	// Debugger agent
+	mono_thread_set_name_constant (internal,
+		MonoSetThreadNameFlag_Permanent, error,
+		'D','e','b','u','g','g','e','r',' ','a','g','e','n','t');
+	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	internal->state |= ThreadState_Background;
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;

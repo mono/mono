@@ -946,10 +946,11 @@ finalizer_thread (gpointer unused)
 	ERROR_DECL (error);
 	gboolean wait = TRUE;
 
-	MonoString *finalizer = mono_string_new_checked (mono_get_root_domain (), "Finalizer", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (mono_thread_internal_current (), finalizer, FALSE, FALSE, error);
-	mono_error_assert_ok (error);
+	// Finalizer
+	mono_thread_set_name_constant (mono_thread_internal_current (),
+		MonoSetThreadNameFlag_None, error,
+		'F','i','n','a','l','i','z','e','r');
+	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	/* Register a hazard free queue pump callback */
 	mono_hazard_pointer_install_free_queue_size_callback (hazard_free_queue_is_too_big);

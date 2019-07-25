@@ -352,10 +352,11 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", error);
-		mono_error_assert_ok (error);
-		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, error);
-		mono_error_assert_ok (error);
+		// Thread Pool Worker
+		mono_thread_set_name_constant_ignore_error (thread,
+			MonoSetThreadNameFlag_Reset,
+			'T','h','r','e','a','d',' ','P','o','o','l',' ','W','o','r','k','e','r');
+		mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,

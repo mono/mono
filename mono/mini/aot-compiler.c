@@ -8801,11 +8801,11 @@ compile_thread_main (gpointer user_data)
 	int i;
 
 	ERROR_DECL (error);
-	MonoInternalThread *internal = mono_thread_internal_current ();
-	MonoString *str = mono_string_new_checked (mono_domain_get (), "AOT compiler", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, str, TRUE, FALSE, error);
-	mono_error_assert_ok (error);
+	// AOT compiler
+	mono_thread_set_name_constant (mono_thread_internal_current (),
+		MonoSetThreadNameFlag_Permanent, error,
+		'A','O','T',' ','c','o','m','p','i','l','e','r');
+	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	for (i = 0; i < methods->len; ++i)
 		compile_method (acfg, (MonoMethod *)g_ptr_array_index (methods, i));

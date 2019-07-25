@@ -363,7 +363,31 @@ MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 ICALL_EXPORT
 void ves_icall_thread_finish_async_abort (void);
 
-MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
+
+typedef enum {
+    MonoSetThreadNameFlag_None      = 0x0000,
+    MonoSetThreadNameFlag_Permanent = 0x0001,
+    MonoSetThreadNameFlag_Reset     = 0x0002,
+    MonoSetThreadNameFlag_Constant  = 0x0004,
+} MonoSetThreadNameFlags;
+
+G_ENUM_FUNCTIONS (MonoSetThreadNameFlags)
+
+// FIXME: Windows supports Unicode thread names, and mono will set them soon.
+// Some thread names are constant. So accept both forms. Some callers
+// pass both, some just one. Conversion, allocations, copying are avoided often but not always.
+MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_obj,
+						      const char* name_utf8, size_t name_utf8_length,
+						      const gunichar2* name_utf16, size_t name_utf16_length,
+						      MonoSetThreadNameFlags flags, MonoError *error);
+
+#define mono_thread_set_name_constant(thread, flags, error, ...)				\
+do {												\
+	G_STRING_CONSTANT_8_AND_16 (thread_name, __VA_ARGS__);					\
+	const size_t name_length = G_N_ELEMENTS (thread_name8) - 1;				\
+	mono_thread_set_name_internal ((thread), thread_name8, name_length,			\
+		thread_name16, name_length, (flags) | MonoSetThreadNameFlag_Constant, (error));	\
+} while (0)
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);

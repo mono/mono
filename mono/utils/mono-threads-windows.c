@@ -579,6 +579,7 @@ typedef struct tagTHREADNAME_INFO
 void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 {
+	// FIXME Windows 10 LoadLibrary/GetProcAddress SetThreadDescription
 #if defined(_MSC_VER)
 	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
 	THREADNAME_INFO info;

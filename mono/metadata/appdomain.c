@@ -3010,12 +3010,11 @@ unload_thread_main (void *arg)
 	int i;
 	gsize result = 1; // failure
 
-	internal = mono_thread_internal_current ();
-
-	MonoString *thread_name_str = mono_string_new_checked (mono_domain_get (), "Domain unloader", error);
-	if (is_ok (error))
-		mono_thread_set_name_internal (internal, thread_name_str, TRUE, FALSE, error);
-	if (!is_ok (error)) {
+	// Domain unloader
+	mono_thread_set_name_constant (mono_thread_internal_current (),
+		MonoSetThreadNameFlag_Permanent, error,
+		'D','o','m','a','i','n',' ','u','n','l','o','a','d','e','r');
+	if (!is_ok (error)) { // FIXME: Does failure here matter?
 		data->failure_reason = g_strdup (mono_error_get_message (error));
 		goto failure;
 	}

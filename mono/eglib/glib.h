@@ -1389,6 +1389,21 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
+// G_STRING_CONSTANT_8_AND_16 (foo, 'f','o,'o');
+// => static const char foo8 [] = ...
+// => static const char foo16 [] = ...
+//
+// This is useful when a string constant may be needed in UTF8
+// or UTF16 or both, depending on platform.
+//
+// For constants, but not dynamic data, caller can assume
+// the lengths are the same. If it is desired to specify a string
+// constant that is not 7bit ASCII/Unicode, seek other means.
+//
+#define G_STRING_CONSTANT_8_AND_16(name, ...)                   \
+    static const char name ## 8 [] = {__VA_ARGS__, 0};          \
+    static const gunichar2 name ## 16 [] = {__VA_ARGS__, 0};    \
+
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.
 // However these are also already macros.

@@ -691,10 +691,11 @@ sampling_thread_func (gpointer unused)
 
 	ERROR_DECL (error);
 
-	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
-	mono_error_assert_ok (error);
+	// Profiler Sampler
+	mono_thread_set_name_constant (thread,
+		MonoSetThreadNameFlag_None, error,
+		'P','r','o','f','i','l','e','r',' ','S','a','m','p','l','e','r');
+	mono_error_assert_ok (error); // FIXME: Does failure here matter?
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
