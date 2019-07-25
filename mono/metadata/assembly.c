@@ -2985,7 +2985,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		}
 	}
 
-	/* We need to check for ReferenceAssmeblyAttribute before we
+	/* We need to check for ReferenceAssemblyAttribute before we
 	 * mark the assembly as loaded and before we fire the load
 	 * hook. Otherwise mono_domain_fire_assembly_load () in
 	 * appdomain.c will cache a mapping from the assembly name to
