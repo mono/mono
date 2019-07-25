@@ -55,7 +55,7 @@ namespace System.Runtime.Loader
 
 		public static Assembly[] GetLoadedAssemblies ()
 		{
-			throw new NotImplementedException ();
+			return InternalGetLoadedAssemblies (false);
 		}
 
 		public static AssemblyLoadContext GetLoadContext (Assembly assembly)
@@ -79,6 +79,9 @@ namespace System.Runtime.Loader
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static Assembly InternalLoadFromStream (IntPtr nativeAssemblyLoadContext, IntPtr assm, int assmLength, IntPtr symbols, int symbolsLength);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static Assembly[] InternalGetLoadedAssemblies (bool refonly);
 
 		internal static Assembly DoAssemblyResolve (string name)
 		{
