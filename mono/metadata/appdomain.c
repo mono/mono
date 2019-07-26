@@ -1451,6 +1451,7 @@ add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *ht)
 		g_hash_table_destroy (ht);
 }
 
+#ifdef ENABLE_NETCORE
 static void
 add_assembly_to_alc (MonoAssemblyLoadContext *alc, MonoAssembly *ass)
 {
@@ -1487,6 +1488,7 @@ add_assembly_to_alc (MonoAssemblyLoadContext *alc, MonoAssembly *ass)
 
 	mono_alc_assemblies_unlock (alc);
 }
+#endif
 
 static void
 mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
