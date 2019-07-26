@@ -1883,7 +1883,8 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 }
 #endif
 
-void 
+void
+MONO_NO_OPTIMIZATION // temporary
 mono_thread_set_name_internal (MonoInternalThread *this_obj, const char* name8, size_t name8_length,
 		const gunichar2 *name16, size_t name16_length, MonoSetThreadNameFlags flags, MonoError *error)
 {
