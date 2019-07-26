@@ -1479,10 +1479,8 @@ add_assembly_to_alc (MonoAssemblyLoadContext *alc, MonoAssembly *ass)
 
 	if (ass->image->references) {
 		for (i = 0; i < ass->image->nreferences; i++) {
-			if (ass->image->references[i] && ass->image->references [i] != REFERENCE_MISSING) {
-				// TODO: remove all this after we're confident this assert isn't hit
-				g_assert_not_reached ();
-			}
+			// TODO: remove all this after we're confident this assert isn't hit
+			g_assertf (!ass->image->references [i], "Did not expect reference %d of %s to be resolved", i, ass->image->name);
 		}
 	}
 
@@ -1498,7 +1496,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	static MonoMethod *assembly_load_method;
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
-	MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (domain); // FIXME: pass alc via mono_assembly_invoke_load_hook
 	MonoClass *klass;
 	MonoObjectHandle appdomain;
 
@@ -2378,7 +2376,6 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 			     MonoError *error)
 {
 	g_assert (aname != NULL);
-	MonoDomain *domain = mono_domain_get ();
 	GSList *tmp;
 	MonoAssembly *ass;
 	const gboolean strong_name = aname->public_key_token[0] != 0;
@@ -2402,6 +2399,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	}
 	mono_alc_assemblies_unlock (alc);
 #else
+	MonoDomain *domain = mono_domain_get ();
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
