@@ -94,11 +94,6 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-unreal</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
-    <OutputPath>./../../class/lib/wasm</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY</DefineConstants>
-  </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
