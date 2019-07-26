@@ -186,7 +186,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token, Mo
 					if (!is_ok (error)) {
 						g_free (uniname);
 						g_free (tg);
-						return NULL;
+						return NULL_HANDLE_ARRAY;
 					}
 					MONO_HANDLE_ARRAY_SETREF (array, i, str_h);
 					g_free (uniname);
