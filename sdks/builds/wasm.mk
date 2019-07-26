@@ -4,6 +4,12 @@ SHELL:=/bin/bash
 EMSCRIPTEN_VERSION=1.38.31
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
+ifeq ($(UNAME),Darwin)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
+else ifeq ($(UNAME),Linux)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
+endif
+
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
@@ -109,7 +115,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/emscripten/$$(EMSCRIPTEN_VERSION)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/emscripten/$$(EMSCRIPTEN_VERSION)" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -141,7 +147,7 @@ $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-u
 #  $(6): offsets dumper abi
 define WasmCrossMXETemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/emscripten/$$(EMSCRIPTEN_VERSION)" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
 
