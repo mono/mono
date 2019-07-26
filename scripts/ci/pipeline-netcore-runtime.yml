@@ -45,6 +45,10 @@ jobs:
   pool:
     name: $(poolname)
   steps:
+  - bash: |
+      git clean -ffdx
+      git reset --hard HEAD
+    displayName: 'Clean up working directory'
   - bash: |  
       brew install autoconf automake libtool gnu-sed
     displayName: 'Prepare OSX dependencies'
@@ -102,7 +106,7 @@ jobs:
   - bash: |
       make -C netcore update-tests-corefx
     displayName: 'Download CoreFX Tests'
-    condition: ne(variables['poolname'], 'Hosted VS2017')
+    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
   
   - bash: |
       rm -rf .failures
@@ -115,14 +119,14 @@ jobs:
       done
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
-    condition: ne(variables['poolname'], 'Hosted VS2017')
+    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
 
   - task: PublishTestResults@2
     inputs:
       testRunTitle: $(poolname)
       testResultsFormat: 'XUnit'
       testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
-    condition: ne(variables['poolname'], 'Hosted VS2017')
+    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
 
   - bash: |
       make -C netcore xunit-summary
@@ -132,7 +136,7 @@ jobs:
       fi
     displayName: 'Validate test results'
     timeoutInMinutes: 90
-    condition: ne(variables['poolname'], 'Hosted VS2017')
+    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
 
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |

@@ -419,17 +419,12 @@ run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
 
-clean: clean-sdk
+clean: clean-browser-tests
 	$(RM) -r *.o
 	$(RM) -r ./obj
 	$(RM) -r ./bin
 	$(RM) -r .stamp-build-debug-sample
 	$(RM) -r .stamp-build-test-suite
-	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
-	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
-	$(RM) -r $(BROWSER_TEST)/node-modules
-	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
 	$(RM) -r packager.exe

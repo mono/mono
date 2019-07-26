@@ -8,7 +8,7 @@ NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftN
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
-ROSLYN_VERSION := 3.3.0-beta4-19328-04
+ROSLYN_VERSION := 3.3.0-beta2-19374-02
 
 ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
@@ -38,6 +38,9 @@ PLATFORM_AOT_PREFIX := lib
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonlinuxtests @../../../../CoreFX.issues_linux.rsp
+ifeq ($(COREARCH), arm64)
+XUNIT_FLAGS += @../../../../CoreFX.issues_linux_arm64.rsp
+endif
 TESTS_PLATFORM = Linux.x64
 DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
@@ -91,7 +94,7 @@ run-aspnet-sample: prepare
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
-System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in
+System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in config.make
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
 
@@ -151,12 +154,11 @@ run-tests-corefx-%: prepare update-tests-corefx
 	echo -n "***************** $* *********************"
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.deps.json
-	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/xunit.console.runtimeconfig.dev.json
-	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.runtimeconfig.dev.json
+	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/$*.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
-	sed -i -e 's/3.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
+	sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
+	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec --runtimeconfig $*.runtimeconfig.json --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
 		$(FIXTURE)

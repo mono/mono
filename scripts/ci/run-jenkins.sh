@@ -4,7 +4,7 @@ export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 export CI=1
 export CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
-export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
+export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || getconf NPROCESSORS_ONLN || echo 4)
 export TEST_HARNESS_VERBOSE=1
 
 # workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
@@ -54,6 +54,7 @@ if [[ ${CI_TAGS} == *'osx-i386'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m32 -arch
 if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.9"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32 --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* && ${CI_TAGS} != *'sdks-android'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
+if [[ ${CI_TAGS} == *'freebsd-amd64'* ]]; then export CC="clang"; export CXX="clang++"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-dtrace --disable-boehm ac_cv_header_sys_inotify_h=no ac_cv_func_inotify_init=no ac_cv_func_inotify_add_watch=no ac_cv_func_inotify_rm_watch=no"; fi
 if [[ ${CI_TAGS} == *'make-install'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-loadedllvm --prefix=${MONO_REPO_ROOT}/tmp/monoprefix"; fi
 
 if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
@@ -133,13 +134,23 @@ fi
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
         # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-        export MACOS_VERSION=10.14
-        export IOS_VERSION=12.1
-        export TVOS_VERSION=12.1
-        export WATCHOS_VERSION=5.1
-        export WATCHOS64_32_VERSION=5.1
+        if [[ ${CI_TAGS} == *'xcode11'* ]]; then
+            export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.0
+            export TVOS_VERSION=13.0
+            export WATCHOS_VERSION=6.0
+            export WATCHOS64_32_VERSION=6.0
+        else
+            export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+            export MACOS_VERSION=10.14
+            export IOS_VERSION=12.1
+            export TVOS_VERSION=12.1
+            export WATCHOS_VERSION=5.1
+            export WATCHOS64_32_VERSION=5.1
+        fi
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -185,9 +196,15 @@ fi
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-    export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-    export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-    export MACOS_VERSION=10.14
+    if [[ ${CI_TAGS} == *'xcode11'* ]]; then
+        export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    else
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        export MACOS_VERSION=10.14
+    fi
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/

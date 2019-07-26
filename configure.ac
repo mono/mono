@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=a3d6fce2-2790-4089-9543-34eb239e2b04
+MONO_CORLIB_VERSION=21aeaa06-293b-4279-82ce-2a32285a3ea3
 
 #
 # Put a quoted #define in config.h.
@@ -5111,7 +5111,7 @@ AC_SEARCH_LIBS(dlopen, dl)
 # Apple -bind_at_load
 # The rest GNU.
 #
-AX_APPEND_LINK_FLAGS([-Wl,-export-dynamic -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
+AX_APPEND_LINK_FLAGS([-Wl,--export-dynamic -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
 dnl giconv.c will check on HAVE_ICONV_H but we need this for link time

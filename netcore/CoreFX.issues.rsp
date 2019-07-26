@@ -160,12 +160,6 @@
 # Expected test Assertion fails https://github.com/mono/mono/issues/14951
 -nomethod System.Linq.Expressions.Tests.CallTests.MethodName_TypeArgsDontMatchConstraints_ThrowsArgumentException
 
-# flaky tests - Invalid IL code in (wrapper dynamic-method)
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyNullableTests.LambdaMultiplyNullableFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
--nomethod System.Linq.Expressions.Tests.OpAssign.AssignmentEquivalentsWithMemberAccess
-
 ####################################################################
 ##  System.Linq.Parallel.Tests
 ####################################################################
@@ -176,14 +170,6 @@
 ####################################################################
 ##  System.Memory.Tests
 ####################################################################
-
-# System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
-# https://github.com/mono/mono/issues/14959
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
 
 # Reflection TargetException: Non-static method requires a target. 
 # https://github.com/mono/mono/issues/14962
@@ -224,21 +210,6 @@
 
 # When test is run, xunit claims it's not a part of the test suite 
 #-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_ClientCertificates_Test.AutomaticOrManual_DoesntFailRegardlessOfWhetherClientCertsAreAvailable
-
-####################################################################
-##  System.Net.HttpListener.Tests
-####################################################################
-
-# TODO:
-# System.ArgumentException : Cannot bind to the target method because its signature is not compatible with that of the delegate type.
-# at System.Delegate.CreateDelegate(Type type, Object firstArgument, MethodInfo method, Boolean throwOnBindFailure, Boolean allowClosed)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method, Boolean throwOnBindFailure)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method)
-# at System.Reflection.RuntimeMethodInfo.CreateDelegate(Type delegateType)
-# at System.Net.CookieExtensions.IsRfc2965Variant(Cookie cookie)
-#
-# https://github.com/mono/mono/issues/15008
--noclass System.Net.Tests.HttpListenerResponseCookiesTests
 
 ####################################################################
 ##  System.Net.Sockets.Tests
@@ -431,11 +402,6 @@
 # CustomConstantAttribute not supported
 # https://github.com/mono/mono/issues/15037
 -nomethod System.Reflection.Tests.ParameterInfoTests.RawDefaultValueFromAttribute
-
-# AssemblyLoadContext.InternalLoad not implemented
-# https://github.com/mono/mono/issues/14830
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytes
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytesWithSymbols
 
 # Need to set ProcessorArchitecture in AssemblyName
 # https://github.com/mono/mono/issues/15068
@@ -646,9 +612,6 @@
 # error: Invalid IL code in (wrapper dynamic-method) object:<xsl:apply-templates> (System.Xml.Xsl.Runtime.XmlQueryRuntime,System.Xml.XPath.XPathNavigator,double): IL_0179: ret
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
 
-# Boxed pointers are not supported? https://github.com/mono/mono/blob/ced517784b2a07fb851e2227dac04e0df2262d57/mcs/class/corlib/ReferenceSources/RuntimeType.cs#L229
--nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
-
 # throws ArgumentException
 # https://github.com/mono/mono/issues/15152
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
@@ -668,18 +631,6 @@
 # Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
-
-####################################################################
-##  System.Text.Json.Tests
-####################################################################
-
-# The JSON value is not in a supported DateTime format
--noclass System.Text.Json.Serialization.Tests.ObjectTests
--noclass System.Text.Json.Serialization.Tests.ArrayTests
--nomethod System.Text.Json.Serialization.Tests.DictionaryTests.DictionaryOfClasses
--nomethod System.Text.Json.Serialization.Tests.CacheTests.PropertyCacheWithMinInputsFirst
--nomethod System.Text.Json.Serialization.Tests.CacheTests.PropertyCacheWithMinInputsLast
--nomethod System.Text.Json.Serialization.Tests.ValueTests.ValueFail
 
 ####################################################################
 ##  System.Threading.Tests
@@ -806,23 +757,6 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
-
-# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
--nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
--nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
--nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
--nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
 
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
@@ -1148,17 +1082,6 @@
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
 
 # requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
--nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
--nomethod System.Tests.GCTests.ReRegisterForFinalize
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetEnumerator_CollectedItemsNotEnumerated
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.AddRemove_DropValue
--nomethod System.Tests.WeakReferenceTests.NonGeneric
--nomethod System.Tests.WeakReferenceTests.Generic
--nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
--nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
--nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
-
-# Flaky tests https://github.com/mono/mono/issues/15238
--nonamespace System.Security.Cryptography.Pkcs
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
