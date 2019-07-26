@@ -27,9 +27,9 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public ITaskItem[] Assemblies { get; set; }
 
-        /// <summary>
-        /// Full paths to managed assemblies from packages to run against.
-        /// </summary>
+		/// <summary>
+		/// Full paths to managed assemblies from packages to run against.
+		/// </summary>
 		public ITaskItem[] RuntimeCopyLocalAssemblies { get; set; }
 
 		/// <summary>
