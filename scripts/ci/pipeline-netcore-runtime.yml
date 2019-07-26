@@ -53,6 +53,7 @@ stages:
             sudo apt update
             sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
           displayName: 'Prepare Linux dependencies'
+          condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
 
         - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
           - bash: |
