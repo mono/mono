@@ -89,7 +89,6 @@ class OffsetsTool:
 			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm"]
 			self.target_args += ["-isysroot", args.sysroot]
-
 		elif "aarch64-apple-darwin10" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_IOS", IOS_DEFINES)
@@ -102,7 +101,6 @@ class OffsetsTool:
 			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "armv7k"]
 			self.target_args += ["-isysroot", args.sysroot]
-
 		elif "aarch64-apple-darwin10_ilp32" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + IOS_DEFINES)
@@ -115,25 +113,21 @@ class OffsetsTool:
 			self.target = Target ("TARGET_X86", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=i386---android"]
 			self.target_args += ["-I", args.sysroot + "/usr/include/i686-linux-android"]
-
 		elif "x86_64-none-linux-android" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_AMD64", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=x86_64---android"]
 			self.target_args += ["-I", args.sysroot + "/usr/include/x86_64-linux-android"]
-
 		elif "armv7-none-linux-androideabi" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_ANDROID", ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + ANDROID_DEFINES)
 			self.target_args += ["--target=arm---androideabi"]
 			self.target_args += ["-I", args.sysroot + "/usr/include/arm-linux-androideabi"]
-
 		elif "aarch64-v8a-linux-android" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=aarch64---android"]
 			self.target_args += ["-I", args.sysroot + "/usr/include/aarch64-linux-android"]
-
 
 		if self.target.platform_define == "TARGET_ANDROID":
 			self.target_args += [android_api_level]
