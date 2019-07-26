@@ -17,6 +17,12 @@ android_ARCHIVE += android-sources android-tpn
 ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_TPN_DIR)
 endif
 
+ifeq ($(UNAME),Darwin)
+ANDROID_LIBCLANG = $(ANDROID_TOOLCHAIN_DIR)/ndk/toolchains/llvm/prebuilt/darwin-x86_64/lib64/libclang.dylib
+else ifeq ($(UNAME),Linux)
+ANDROID_LIBCLANG = $(ANDROID_TOOLCHAIN_DIR)/ndk/toolchains/llvm/prebuilt/linux-x86_64/lib64/libclang.so.8svn
+endif
+
 ##
 # Parameters:
 #  $(1): target
@@ -340,7 +346,7 @@ endif
 #  $(6): offsets dumper abi
 define AndroidCrossTemplate
 
-_android-$(1)_OFFSETS_DUMPER_ARGS=--gen-android --android-ndk="$$(ANDROID_TOOLCHAIN_DIR)/ndk"
+_android-$(1)_OFFSETS_DUMPER_ARGS=--libclang="$$(ANDROID_LIBCLANG)" --sysroot="$$(ANDROID_TOOLCHAIN_DIR)/ndk/sysroot"
 
 _android-$(1)_AR=ar
 _android-$(1)_AS=as
@@ -408,7 +414,7 @@ endif
 #  $(6): offsets dumper abi
 define AndroidCrossMXETemplate
 
-_android-$(1)_OFFSETS_DUMPER_ARGS=--gen-android --android-ndk="$$(ANDROID_TOOLCHAIN_DIR)/ndk"
+_android-$(1)_OFFSETS_DUMPER_ARGS=--libclang="$$(ANDROID_LIBCLANG)" --sysroot="$$(ANDROID_TOOLCHAIN_DIR)/ndk/sysroot"
 
 _android-$(1)_PATH=$$(MXE_PREFIX)/bin
 
