@@ -224,4 +224,5 @@ stages:
       enableSourceLinkValidation: false
       enableSigningValidation: false
       enableSymbolValidation: false
-      enableNugetValidation: false
+      enableNugetValidation: true
+
