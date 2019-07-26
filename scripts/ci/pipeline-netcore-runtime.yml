@@ -33,17 +33,14 @@ stages:
         strategy:
           matrix:
             x64:
-              poolimage: ubuntu-16.04
-              poolname: # empty
+              poolname: Hosted Ubuntu 1604
             ARM64:
-              poolimage: # empty
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
                 poolname: Xamarin-ARM64-Private
         pool:
           name: $(poolname)
-          vmImage: $(poolimage)
         steps:
         - bash: |
             git clean -ffdx
@@ -113,9 +110,9 @@ stages:
         strategy:
           matrix:
             x64:
-              poolimage: macOS-10.14
+              poolname: Hosted macOS
         pool:
-          vmImage: $(poolimage)
+          name: $(poolname)
         steps:
         - bash: |
             git clean -ffdx
@@ -183,9 +180,9 @@ stages:
         strategy:
           matrix:
             x64:
-              poolimage: vs2017-win2016
+              poolname: Hosted VS2017
         pool:
-          vmImage: $(poolimage)
+          name: $(poolname)
         steps:
         - bash: |
             git clean -ffdx
