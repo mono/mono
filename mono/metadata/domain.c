@@ -1091,6 +1091,8 @@ unregister_vtable_reflection_type (MonoVTable *vtable)
  * This releases the resources associated with the specific domain.
  * This is a low-level function that is invoked by the AppDomain infrastructure
  * when necessary.
+ *
+ * In theory, this is dead code on netcore and thus does not need to be ALC-aware.
  */
 void
 mono_domain_free (MonoDomain *domain, gboolean force)

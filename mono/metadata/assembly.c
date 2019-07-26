@@ -764,6 +764,7 @@ assembly_names_compare_versions (MonoAssemblyName *l, MonoAssemblyName *r, int m
 void
 mono_assembly_request_prepare (MonoAssemblyLoadRequest *req, size_t req_size, MonoAssemblyContextKind asmctx)
 {
+	// TODO: Shouldn't this be setting an ALC? Seems almost none of the callers do.
 	memset (req, 0, req_size);
 	req->asmctx = asmctx;
 }
