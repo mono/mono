@@ -29,59 +29,36 @@ mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain)
 void
 mono_alc_cleanup (MonoAssemblyLoadContext *alc)
 {
-	// TODO: get someone familiar with the GC to look at this
+	/*
+	 * As it stands, ALC and domain cleanup is probably broken on netcore. Without ALC collectability, this should not
+	 * be hit. I've documented roughly the things that still need to be accomplish, but the implementation is TODO and
+	 * the ideal order and locking unclear.
+	 * 
+	 * For now, this makes two important assumptions:
+	 *   1. The minimum refcount on assemblies is 2: one for the domain and one for the ALC. The domain refcount might 
+	 *        be less than optimal on netcore, but its removal is too likely to cause issues for now.
+	 *   2. An ALC will have been removed from the domain before cleanup.
+	 */
 	GSList *tmp;
 	MonoDomain *domain = alc->domain;
 
+	/*
+	 * Missing steps:
+	 * 
+	 * + Release GC roots for all assemblies in the ALC
+	 * + Iterate over the domain_assemblies and remove ones that belong to the ALC, which will probably require
+	 *     converting domain_assemblies to a doubly-linked list, ideally GQueue
+	 * + Close dynamic and then remaining assemblies, potentially nulling the data field depending on refcount
+	 * + Second pass to call mono_assembly_close_finish on remaining assemblies
+	 */
+
 	mono_loaded_images_free (alc->loaded_images);
-
-	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
-		MonoAssembly *ass = (MonoAssembly *)tmp->data;
-		mono_assembly_release_gc_roots (ass);
-	}
-
-	// Close dynamic assemblies first, since they have no ref count
-	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
-		MonoAssembly *ass = (MonoAssembly *)tmp->data;
-		if (!ass->image || !image_is_dynamic (ass->image))
-			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading ALC [%p], assembly %s[%p], ref_count=%d", alc, ass->aname.name, ass, ass->ref_count);
-		if (!mono_assembly_close_except_image_pools (ass)) {
-			mono_domain_assemblies_lock (domain);
-			g_slist_remove (domain->domain_assemblies, ass);
-			mono_domain_assemblies_unlock (domain);
-			tmp->data = NULL;
-		}
-	}
-
-	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
-		MonoAssembly *ass = (MonoAssembly *)tmp->data;
-		if (!ass)
-			continue;
-		if (!ass->image || image_is_dynamic (ass->image))
-			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
-		if (!mono_assembly_close_except_image_pools (ass)) {
-			mono_domain_assemblies_lock (domain);
-			g_slist_remove (domain->domain_assemblies, ass);
-			mono_domain_assemblies_unlock (domain);
-			tmp->data = NULL;
-		}
-	}
-
-	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
-		MonoAssembly *ass = (MonoAssembly *)tmp->data;
-		if (ass) {
-			mono_domain_assemblies_lock (domain);
-			g_slist_remove (domain->domain_assemblies, ass);
-			mono_domain_assemblies_unlock (domain);
-			mono_assembly_close_finish (ass);
-		}
-	}
 
 	g_slist_free (alc->loaded_assemblies);
 	alc->loaded_assemblies = NULL;
 	mono_coop_mutex_destroy (&alc->assemblies_lock);
+
+	g_assert_not_reached ();
 }
 
 void
