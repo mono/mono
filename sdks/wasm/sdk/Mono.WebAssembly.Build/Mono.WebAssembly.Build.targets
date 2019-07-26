@@ -89,6 +89,7 @@
 		<WasmLinkAssemblies
 			RootAssembly="@(IntermediateAssembly)"
 			Assemblies="@(ReferencePath)"
+			RuntimeCopyLocalAssemblies="@(RuntimeCopyLocalItems)"
 			FrameworkDir="$(MonoWasmFrameworkPath)"
 			OutputDir="$(_MonoWasmManagedOutputDir)"
 			LinkMode="$(MonoWasmLinkMode)"
