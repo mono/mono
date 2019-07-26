@@ -197,7 +197,7 @@ binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
-	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln -v diag /p:UseSharedCompilation=false
+	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln -v diag /p:UseSharedCompilation=false /m:1
 	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
 	touch $@
 
@@ -429,7 +429,7 @@ clean: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
+	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
 	$(RM) -r packager.exe
