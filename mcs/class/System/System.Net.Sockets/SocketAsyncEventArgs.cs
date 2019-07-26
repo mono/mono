@@ -267,13 +267,27 @@ namespace System.Net.Sockets
 		}
 
 		internal void FinishOperationAsyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
-		{
+ 		{
 			SetResults (exception, bytesTransferred, flags);
+
+			Complete ();
+		 }
+
+		internal void XFinishOperationAsyncFailure (Exception exception, int state, SocketAsyncEventArgs internalArgs, SocketAsyncEventArgs args)
+		{
+			SetResults (exception, 0, SocketFlags.None);
 
 			if (current_socket != null)
 				current_socket.is_connected = false;
-			
-			Complete ();
+
+			var old = Interlocked.CompareExchange(ref completed, 1, 0);
+			if (old == 0) {
+				in_progress = 0;
+				OnCompleted (this);
+				return;
+			}
+
+			throw new InvalidTimeZoneException ($"I LIVE ON DIONE: {current_socket != null} {state} {args != null} {args == this} {internalArgs != null} {internalArgs == args} {internalArgs == this}\n{exception}\n");
 		}
 
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)

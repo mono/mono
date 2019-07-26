@@ -209,7 +209,7 @@ namespace System.Net.Sockets
             }
             else
             {
-                AsyncFail(exception);
+                XAsyncFail(exception, state, args);
             }
         }
 
@@ -303,6 +303,17 @@ namespace System.Net.Sockets
             }
 
             userArgs.FinishOperationAsyncFailure(e, 0, SocketFlags.None);
+        }
+
+        private void XAsyncFail(Exception e, State state, SocketAsyncEventArgs args)
+        {
+            OnFail(false);
+            if (internalArgs != null)
+            {
+                internalArgs.Dispose();
+            }
+
+            userArgs.XFinishOperationAsyncFailure(e, (int)state, internalArgs, args);
         }
 
         public void Cancel()
