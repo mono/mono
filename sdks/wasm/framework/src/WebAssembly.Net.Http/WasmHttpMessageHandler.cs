@@ -93,7 +93,11 @@ namespace WebAssembly.Net.Http.HttpClient {
 					if (request.Content is StringContent) {
 						requestObject.SetObjectProperty ("body", await request.Content.ReadAsStringAsync ());
 					} else {
-						using (var uint8Buffer = Uint8Array.From(await request.Content.ReadAsByteArrayAsync ()))
+						// 2.1.801 seems to have a problem with the line
+						// using (var uint8Buffer = Uint8Array.From(await request.Content.ReadAsByteArrayAsync ()))
+						// so we split it up into two lines.
+						var byteAsync = await request.Content.ReadAsByteArrayAsync ();
+						using (var uint8Buffer = Uint8Array.From(byteAsync))
 						{
 							requestObject.SetObjectProperty ("body", uint8Buffer);
 						}
