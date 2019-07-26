@@ -197,7 +197,7 @@ binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
-	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln -v diag
+	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln -v diag /p:UseSharedCompilation=false
 	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
 	touch $@
 
