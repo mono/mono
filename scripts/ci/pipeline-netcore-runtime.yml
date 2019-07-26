@@ -7,6 +7,8 @@ trigger:
 #    - 202?-??
 
 variables:
+- name: _BuildConfig
+  value: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNet-VSTS-Bot
   - group: DotNet-Blob-Feed
