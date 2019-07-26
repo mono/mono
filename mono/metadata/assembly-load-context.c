@@ -22,14 +22,79 @@ mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain)
 	mono_loaded_images_init (li, alc);
 	alc->domain = domain;
 	alc->loaded_images = li;
+	alc->loaded_assemblies = NULL;
+	mono_coop_mutex_init (&alc->assemblies_lock);
 }
 
 void
 mono_alc_cleanup (MonoAssemblyLoadContext *alc)
 {
+	// TODO: get someone familiar with the GC to look at this
+	GSList *tmp;
+	MonoDomain *domain = alc->domain;
+
 	mono_loaded_images_free (alc->loaded_images);
+
+	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = (MonoAssembly *)tmp->data;
+		mono_assembly_release_gc_roots (ass);
+	}
+
+	// Close dynamic assemblies first, since they have no ref count
+	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = (MonoAssembly *)tmp->data;
+		if (!ass->image || !image_is_dynamic (ass->image))
+			continue;
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading ALC [%p], assembly %s[%p], ref_count=%d", alc, ass->aname.name, ass, ass->ref_count);
+		if (!mono_assembly_close_except_image_pools (ass)) {
+			mono_domain_assemblies_lock (domain);
+			g_slist_remove (domain->domain_assemblies, ass);
+			mono_domain_assemblies_unlock (domain);
+			tmp->data = NULL;
+		}
+	}
+
+	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = (MonoAssembly *)tmp->data;
+		if (!ass)
+			continue;
+		if (!ass->image || image_is_dynamic (ass->image))
+			continue;
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
+		if (!mono_assembly_close_except_image_pools (ass)) {
+			mono_domain_assemblies_lock (domain);
+			g_slist_remove (domain->domain_assemblies, ass);
+			mono_domain_assemblies_unlock (domain);
+			tmp->data = NULL;
+		}
+	}
+
+	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = (MonoAssembly *)tmp->data;
+		if (ass) {
+			mono_domain_assemblies_lock (domain);
+			g_slist_remove (domain->domain_assemblies, ass);
+			mono_domain_assemblies_unlock (domain);
+			mono_assembly_close_finish (ass);
+		}
+	}
+
+	g_slist_free (alc->loaded_assemblies);
+	alc->loaded_assemblies = NULL;
+	mono_coop_mutex_destroy (&alc->assemblies_lock);
 }
 
+void
+mono_alc_assemblies_lock (MonoAssemblyLoadContext *alc)
+{
+	mono_coop_mutex_lock (&alc->assemblies_lock);
+}
+
+void
+mono_alc_assemblies_unlock (MonoAssemblyLoadContext *alc)
+{
+	mono_coop_mutex_unlock (&alc->assemblies_lock);
+}
 
 gpointer
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalInitializeNativeALC (gpointer this_gchandle_ptr, MonoBoolean is_default_alc, MonoBoolean collectible, MonoError *error)
