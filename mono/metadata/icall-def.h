@@ -936,7 +936,7 @@ ICALL_TYPE(WINID, "System.Security.Principal.WindowsIdentity", WINID_1)
 HANDLES(WINID_1, "GetCurrentToken", ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken, gpointer, 0, ())
 HANDLES(WINID_2, "GetTokenName", ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName, MonoString, 1, (gpointer))
 HANDLES(WINID_3, "GetUserToken", ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken, gpointer, 1, (MonoString))
-ICALL(WINID_4, "_GetRoles", ves_icall_System_Security_Principal_WindowsIdentity_GetRoles)
+HANDLES(WINID_4, "_GetRoles", ves_icall_System_Security_Principal_WindowsIdentity_GetRoles, MonoArray, 1, (gpointer))
 
 ICALL_TYPE(WINIMP, "System.Security.Principal.WindowsImpersonationContext", WINIMP_1)
 HANDLES(WINIMP_1, "CloseToken", ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken, MonoBoolean, 1, (gpointer))
