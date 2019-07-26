@@ -7,10 +7,6 @@ trigger:
 #    - 202?-??
 
 variables:
-- name: _PublishUsingPipelines
-  value: true
-- name: _BuildConfig
-  value: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNet-VSTS-Bot
   - group: DotNet-Blob-Feed
@@ -30,6 +26,9 @@ stages:
     parameters:
       enablePublishUsingPipelines: true
       enablePublishBuildAssets: true
+      variables:
+        - _PublishUsingPipelines: true
+        - _BuildConfig: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
       jobs:
       - job: Build_Linux
         displayName: Linux
