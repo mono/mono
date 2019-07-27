@@ -63,7 +63,7 @@ stages:
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')
+          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
             cd netcore
@@ -143,7 +143,7 @@ stages:
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')
+          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
             cd netcore
@@ -231,7 +231,7 @@ stages:
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')
+          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - script: |
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
