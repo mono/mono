@@ -1677,7 +1677,7 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
  * Return whether any objects were late-pinned due to being out of memory.
  */
 static gboolean
-collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_queue)
+collect_nursery (const char *reason, gboolean is_overflow)
 {
 	gboolean needs_major, is_parallel = FALSE;
 	mword fragment_total;
@@ -1844,7 +1844,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	 * next allocations.
 	 */
 	sgen_client_binary_protocol_reclaim_start (GENERATION_NURSERY);
-	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section, unpin_queue);
+	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section);
 	if (!fragment_total)
 		sgen_degraded_mode = 1;
 
@@ -1900,7 +1900,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	sgen_binary_protocol_collection_end (mono_atomic_load_i32 (&mono_gc_stats.minor_gc_count) - 1, GENERATION_NURSERY, 0, 0);
 
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
-		sgen_check_nursery_objects_pinned (unpin_queue != NULL);
+		sgen_check_nursery_objects_pinned (FALSE);
 
 	return needs_major;
 }
@@ -2257,7 +2257,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	 * pinned objects as we go, memzero() the empty fragments so they are ready for the
 	 * next allocations.
 	 */
-	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section, NULL);
+	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section);
 	if (!fragment_total)
 		sgen_degraded_mode = 1;
 	SGEN_LOG (4, "Free space in nursery after major %ld", (long)fragment_total);
@@ -2541,7 +2541,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 		if (sgen_concurrent_collection_in_progress)
 			major_update_concurrent_collection ();
 
-		if (collect_nursery (reason, FALSE, NULL) && !sgen_concurrent_collection_in_progress) {
+		if (collect_nursery (reason, FALSE) && !sgen_concurrent_collection_in_progress) {
 			overflow_generation_to_collect = GENERATION_OLD;
 			overflow_reason = "Minor overflow";
 		}
@@ -2553,7 +2553,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 	} else {
 		SGEN_ASSERT (0, generation_to_collect == GENERATION_OLD, "We should have handled nursery collections above");
 		if (sgen_major_collector.is_concurrent && !forced_serial) {
-			collect_nursery ("Concurrent start", FALSE, NULL);
+			collect_nursery ("Concurrent start", FALSE);
 			major_start_concurrent_collection (reason);
 			oldest_generation_collected = GENERATION_NURSERY;
 		} else if (major_do_collection (reason, FALSE, forced_serial)) {
@@ -2571,7 +2571,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 		 */
 
 		if (overflow_generation_to_collect == GENERATION_NURSERY)
-			collect_nursery (overflow_reason, TRUE, NULL);
+			collect_nursery (overflow_reason, TRUE);
 		else
 			major_do_collection (overflow_reason, TRUE, forced_serial);
 
