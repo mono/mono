@@ -3021,24 +3021,6 @@ ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr)
 	return tmp;
 }
 
-gint8
-ves_icall_System_Threading_Volatile_Read1 (void *ptr)
-{
-	return mono_atomic_load_i8 ((volatile gint8 *)ptr);
-}
-
-gint16
-ves_icall_System_Threading_Volatile_Read2 (void *ptr)
-{
-	return mono_atomic_load_i16 ((volatile gint16 *)ptr);
-}
-
-gint32
-ves_icall_System_Threading_Volatile_Read4 (void *ptr)
-{
-	return mono_atomic_load_i32 ((volatile gint32 *)ptr);
-}
-
 gint64
 ves_icall_System_Threading_Volatile_Read8 (void *ptr)
 {
@@ -3069,12 +3051,6 @@ ves_icall_System_Threading_Volatile_ReadU8 (void *ptr)
 	return (guint64)mono_atomic_load_i64 ((volatile gint64 *)ptr);
 }
 
-void *
-ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr)
-{
-	return mono_atomic_load_ptr ((volatile gpointer *)ptr);
-}
-
 double
 ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 {
@@ -3093,22 +3069,6 @@ ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 	u.ival = mono_atomic_load_i64 ((volatile gint64 *)ptr);
 
 	return u.fval;
-}
-
-float
-ves_icall_System_Threading_Volatile_ReadFloat (void *ptr)
-{
-	IntFloatUnion u;
-
-	u.ival = mono_atomic_load_i32 ((volatile gint32 *)ptr);
-
-	return u.fval;
-}
-
-MonoObject*
-ves_icall_System_Threading_Volatile_Read_T (void *ptr)
-{
-	return (MonoObject *)mono_atomic_load_ptr ((volatile gpointer *)ptr);
 }
 
 void
@@ -3168,24 +3128,6 @@ ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float value)
 }
 
 void
-ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8 value)
-{
-	mono_atomic_store_i8 ((volatile gint8 *)ptr, value);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16 value)
-{
-	mono_atomic_store_i16 ((volatile gint16 *)ptr, value);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32 value)
-{
-	mono_atomic_store_i32 ((volatile gint32 *)ptr, value);
-}
-
-void
 ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64 value)
 {
 #if SIZEOF_VOID_P == 4
@@ -3216,12 +3158,6 @@ ves_icall_System_Threading_Volatile_WriteU8 (void *ptr, guint64 value)
 }
 
 void
-ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *value)
-{
-	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
-}
-
-void
 ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 {
 	LongDoubleUnion u;
@@ -3238,22 +3174,6 @@ ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 	u.fval = value;
 
 	mono_atomic_store_i64 ((volatile gint64 *)ptr, u.ival);
-}
-
-void
-ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float value)
-{
-	IntFloatUnion u;
-
-	u.fval = value;
-
-	mono_atomic_store_i32 ((volatile gint32 *)ptr, u.ival);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value)
-{
-	mono_gc_wbarrier_generic_store_atomic_internal (ptr, value);
 }
 
 static void
