@@ -287,15 +287,15 @@ HANDLES(PERFCTRCAT_8, "InstanceExistsInternal_icall", mono_perfcounter_instance_
 ICALL_TYPE(PROCESS, "System.Diagnostics.Process", PROCESS_1)
 HANDLES(PROCESS_1, "CreateProcess_internal", ves_icall_System_Diagnostics_Process_CreateProcess_internal,
 	MonoBoolean, 5, (MonoW32ProcessStartInfo, gpointer, gpointer, gpointer, MonoW32ProcessInfo_ref))
-HANDLES(PROCESS_4, "GetModules_icall", ves_icall_System_Diagnostics_Process_GetModules_internal, MonoArray, 2, (MonoObject, HANDLE))
+HANDLES(PROCESS_4, "GetModules_icall", ves_icall_System_Diagnostics_Process_GetModules_internal, MonoArray, 2, (MonoObject, PROCESS_HANDLE))
 NOHANDLES(ICALL(PROCESS_5H, "GetProcessData", ves_icall_System_Diagnostics_Process_GetProcessData))
 HANDLES(PROCESS_6, "GetProcess_internal", ves_icall_System_Diagnostics_Process_GetProcess_internal, gpointer, 1, (guint32))
 HANDLES(PROCESS_7, "GetProcesses_internal", ves_icall_System_Diagnostics_Process_GetProcesses_internal, MonoArray, 0, ())
-HANDLES(PROCESS_10, "ProcessName_icall", ves_icall_System_Diagnostics_Process_ProcessName_internal, MonoString, 1, (HANDLE))
+HANDLES(PROCESS_10, "ProcessName_icall", ves_icall_System_Diagnostics_Process_ProcessName_internal, MonoString, 1, (PROCESS_HANDLE))
 HANDLES(PROCESS_13, "ShellExecuteEx_internal", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal, MonoBoolean, 2, (MonoW32ProcessStartInfo, MonoW32ProcessInfo_ref))
 
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
-ICALL(STOPWATCH_1, "GetTimestamp", ves_icall_System_Diagnostics_Stopwatch_GetTimestamp)
+NOHANDLES(ICALL(STOPWATCH_1, "GetTimestamp", ves_icall_System_Diagnostics_Stopwatch_GetTimestamp))
 
 ICALL_TYPE(ENUM, "System.Enum", ENUM_1)
 HANDLES(ENUM_1, "GetEnumValuesAndNames", ves_icall_System_Enum_GetEnumValuesAndNames, MonoBoolean, 3, (MonoReflectionType, MonoArrayOut, MonoArrayOut))
@@ -365,7 +365,6 @@ HANDLES(CULINF_5, "construct_internal_locale_from_lcid", ves_icall_System_Global
 HANDLES(CULINF_6, "construct_internal_locale_from_name", ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name, MonoBoolean, 2, (MonoCultureInfo, MonoString))
 HANDLES(CULINF_7, "get_current_locale_name", ves_icall_System_Globalization_CultureInfo_get_current_locale_name, MonoString, 0, ())
 HANDLES(CULINF_9, "internal_get_cultures", ves_icall_System_Globalization_CultureInfo_internal_get_cultures, MonoArray, 3, (MonoBoolean, MonoBoolean, MonoBoolean))
-//ICALL(CULINF_10, "internal_is_lcid_neutral", ves_icall_System_Globalization_CultureInfo_internal_is_lcid_neutral)
 
 ICALL_TYPE(REGINF, "System.Globalization.RegionInfo", REGINF_2)
 HANDLES(REGINF_2, "construct_internal_region_from_name", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name, MonoBoolean, 2, (MonoRegionInfo, MonoString))
@@ -387,13 +386,13 @@ HANDLES(IODRIVEINFO_3, "GetDriveTypeInternal", ves_icall_System_IO_DriveInfo_Get
 #endif
 
 ICALL_TYPE(FAMW, "System.IO.FAMWatcher", FAMW_1)
-ICALL(FAMW_1, "InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent)
+HANDLES(FAMW_1, "InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent, MonoBoolean, 4, (gpointer, MonoStringOut, int_ref, int_ref))
 
 ICALL_TYPE(FILEW, "System.IO.FileSystemWatcher", FILEW_4)
-ICALL(FILEW_4, "InternalSupportsFSW", ves_icall_System_IO_FSW_SupportsFSW)
+NOHANDLES(ICALL(FILEW_4, "InternalSupportsFSW", ves_icall_System_IO_FSW_SupportsFSW))
 
 ICALL_TYPE(KQUEM, "System.IO.KqueueMonitor", KQUEM_1)
-ICALL(KQUEM_1, "kevent_notimeout", ves_icall_System_IO_KqueueMonitor_kevent_notimeout)
+NOHANDLES(ICALL(KQUEM_1, "kevent_notimeout", ves_icall_System_IO_KqueueMonitor_kevent_notimeout))
 
 ICALL_TYPE(LOGCATEXTWRITER, "System.IO.LogcatTextWriter", LOGCATEXTWRITER_1)
 NOHANDLES(ICALL(LOGCATEXTWRITER_1, "Log", ves_icall_System_IO_LogcatTextWriter_Log))
@@ -578,7 +577,7 @@ NOHANDLES(ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Socke
 #endif /* !DISABLE_SOCKETS */
 
 ICALL_TYPE(NUMBER_FORMATTER, "System.NumberFormatter", NUMBER_FORMATTER_1)
-ICALL(NUMBER_FORMATTER_1, "GetFormatterTables", ves_icall_System_NumberFormatter_GetFormatterTables)
+NOHANDLES(ICALL(NUMBER_FORMATTER_1, "GetFormatterTables", ves_icall_System_NumberFormatter_GetFormatterTables))
 
 ICALL_TYPE(OBJ, "System.Object", OBJ_1)
 HANDLES(OBJ_1, "GetType", ves_icall_System_Object_GetType, MonoReflectionType, 1, (MonoObject))
@@ -842,7 +841,7 @@ ICALL(ARES_1, "Invoke", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_
 
 #ifndef DISABLE_REMOTING
 ICALL_TYPE(REALP, "System.Runtime.Remoting.Proxies.RealProxy", REALP_1)
-ICALL(REALP_1, "InternalGetProxyType", ves_icall_Remoting_RealProxy_InternalGetProxyType)
+HANDLES(REALP_1, "InternalGetProxyType", ves_icall_Remoting_RealProxy_InternalGetProxyType, MonoReflectionType, 1, (MonoTransparentProxy))
 HANDLES(REALP_2, "InternalGetTransparentProxy", ves_icall_Remoting_RealProxy_GetTransparentProxy, MonoObject, 2, (MonoObject, MonoString))
 
 ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
