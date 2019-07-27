@@ -255,7 +255,7 @@ namespace System.Net.Sockets
         protected void Succeed()
         {
             OnSucceed();
-            userArgs.FinishWrapperConnectSuccess(internalArgs.ConnectSocket, internalArgs.BytesTransferred, internalArgs.SocketFlags);
+            userArgs.XFinishWrapperConnectSuccess(internalArgs.ConnectSocket, internalArgs.BytesTransferred, internalArgs.SocketFlags);
             internalArgs.Dispose();
         }
 

@@ -298,6 +298,21 @@ namespace System.Net.Sockets
 			Complete ();
 		}
 
+		internal void XFinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
+		{
+			SetResults(SocketError.Success, bytesTransferred, flags);
+			current_socket = connectSocket;
+
+			var old = Interlocked.CompareExchange(ref completed, 1, 0);
+			if (old == 0) {
+				in_progress = 0;
+				OnCompleted (this);
+				return;
+			}
+
+			throw new InvalidTimeZoneException ($"I LIVE ON EPIMETHEUS: {connectSocket} {bytesTransferred} {flags}");
+		}
+
 		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)
 		{
 			SocketError = socketError;
