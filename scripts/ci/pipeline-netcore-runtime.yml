@@ -14,9 +14,6 @@ variables:
   # Variables used to publish packages to blob feed
   - name: dotnetFeedUrl
     value: https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-  # Variables used by arcade to gather asset manifests
-  - name: _DotNetPublishToBlobFeed
-    value: true
 
 stages:
 - stage: build
@@ -40,6 +37,7 @@ stages:
             x64:
               poolname: Hosted Ubuntu 1604
               manifest: linux-x64
+              prepareDependencies: true
             ARM64:
               manifest: linux-arm64
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -58,7 +56,7 @@ stages:
             sudo apt update
             sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
           displayName: 'Prepare Linux dependencies'
-          condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
+          condition: eq(variables['prepareDependencies'], 'true')
 
         - bash: |
             sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
@@ -112,7 +110,7 @@ stages:
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.csproj
+        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -192,7 +190,7 @@ stages:
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.csproj
+        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -246,7 +244,7 @@ stages:
           env:
             CHERE_INVOKING: yes
 
-        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.csproj
+        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
