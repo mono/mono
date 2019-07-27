@@ -26,7 +26,7 @@ stages:
     parameters:
       enablePublishBuildArtifacts: true
       enablePublishBuildAssets: true
-      enablePublishUsingPipelines: true
+      enablePublishUsingPipelines: false
       variables:
         - _BuildConfig: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
       jobs:
@@ -256,10 +256,10 @@ stages:
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      enableSourceLinkValidation: false
-      enableSigningValidation: false
-      enableSymbolValidation: false
-      enableNugetValidation: true
+# - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+#   - template: /eng/common/templates/post-build/post-build.yml
+#     parameters:
+#       enableSourceLinkValidation: false
+#       enableSigningValidation: false
+#       enableSymbolValidation: false
+#       enableNugetValidation: true
