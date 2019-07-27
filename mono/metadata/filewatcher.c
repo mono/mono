@@ -44,7 +44,7 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	return 1;
 }
 
-MonoBoolean
+int
 ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
 											   MonoStringHandleOut filename,
 											   int *code,
@@ -114,7 +114,7 @@ typedef struct FAMEvent {
 	gint code;
 } FAMEvent;
 
-MonoBoolean
+int
 ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
 											   MonoStringHandleOut filename,
 											   int *code,

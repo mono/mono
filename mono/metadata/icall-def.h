@@ -386,7 +386,7 @@ HANDLES(IODRIVEINFO_3, "GetDriveTypeInternal", ves_icall_System_IO_DriveInfo_Get
 #endif
 
 ICALL_TYPE(FAMW, "System.IO.FAMWatcher", FAMW_1)
-HANDLES(FAMW_1, "InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent, MonoBoolean, 4, (gpointer, MonoStringOut, int_ref, int_ref))
+HANDLES(FAMW_1, "InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent, int, 4, (gpointer, MonoStringOut, int_ref, int_ref))
 
 ICALL_TYPE(FILEW, "System.IO.FileSystemWatcher", FILEW_4)
 NOHANDLES(ICALL(FILEW_4, "InternalSupportsFSW", ves_icall_System_IO_FSW_SupportsFSW))
