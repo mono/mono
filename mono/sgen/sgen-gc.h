@@ -1093,7 +1093,7 @@ void sgen_check_whole_heap_stw (void)
 	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_check_objref (char *obj);
 void sgen_check_heap_marked (gboolean nursery_must_be_pinned);
-void sgen_check_nursery_objects_pinned (gboolean pinned);
+void sgen_check_nursery_objects_untag (void);
 void sgen_check_for_xdomain_refs (void);
 GCObject* sgen_find_object_for_ptr (char *ptr);
 
