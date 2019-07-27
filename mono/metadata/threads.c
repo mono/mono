@@ -1905,8 +1905,9 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 		this_obj->name_len = 0;
 	}
 	if (name) {
-		this_obj->name = g_memdup (mono_string_chars_internal (name), mono_string_length_internal (name) * sizeof (gunichar2));
-		this_obj->name_len = mono_string_length_internal (name);
+		const size_t length = mono_string_length_internal (name);
+		this_obj->name = (gunichar2*)g_memdup (mono_string_chars_internal (name), (length + 1) * sizeof (gunichar2));
+		this_obj->name_len = length;
 
 		if (permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
