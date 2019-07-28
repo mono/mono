@@ -131,7 +131,7 @@ static char*
 decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	int type;
-    gint32 length;
+	gint32 length;
 	guint8 *p = buf;
 	char *s;
 
@@ -265,24 +265,26 @@ mono_attach_cleanup (void)
 }
 
 static int
-mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject **exc)
+mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoError* error)
 {
-	ERROR_DECL (error);
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoAssembly *agent_assembly;
 	MonoImage *image;
 	MonoMethod *method;
 	guint32 entry;
-	MonoArray *main_args;
+	MonoArrayHandle main_args;
 	gpointer pa [1];
 	MonoImageOpenStatus open_status;
+	int result = 0;
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
 	agent_assembly = mono_assembly_request_open (agent, &req, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
-		g_free (agent);
-		return 2;
+		result = 2;
+		goto exit;
 	}
 
 	/* 
@@ -293,51 +295,44 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	entry = mono_image_get_entry_point (image);
 	if (!entry) {
 		g_print ("Assembly '%s' doesn't have an entry point.\n", mono_image_get_filename (image));
-		g_free (agent);
-		return 1;
+		result = 1;
+		goto exit;
 	}
 
 	method = mono_get_method_checked (image, entry, NULL, NULL, error);
 	if (method == NULL){
 		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (error));
-		mono_error_cleanup (error);
-		g_free (agent);
-		return 1;
+		result = 1;
+		goto exit;
 	}
 	
-	
-	main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, (args == NULL) ? 0 : 1, error);
-	if (main_args == NULL) {
+	main_args = mono_array_new_handle (domain, mono_defaults.string_class, (args == NULL) ? 0 : 1, error);
+	if (MONO_HANDLE_IS_NULL (main_args)) {
 		g_print ("Could not allocate main method args due to %s\n", mono_error_get_message (error));
-		mono_error_cleanup (error);
-		g_free (agent);
-		return 1;
+		result = 1;
+		goto exit;
 	}
 
 	if (args) {
-		MonoString *args_str = mono_string_new_checked (domain, args, error);
+		MonoStringHandle args_str = mono_string_new_handle (domain, args, error);
 		if (!is_ok (error)) {
 			g_print ("Could not allocate main method arg string due to %s\n", mono_error_get_message (error));
-			mono_error_cleanup (error);
-			g_free (agent);
-			return 1;
+			result = 1;
+			goto exit;
 		}
-		mono_array_set_internal (main_args, MonoString*, 0, args_str);
+		MONO_HANDLE_ARRAY_SETREF (main_args, 0, args_str);
 	}
 
-
-	pa [0] = main_args;
-	mono_runtime_try_invoke (method, NULL, pa, exc, error);
+	pa [0] = MONO_HANDLE_RAW (main_args);
+	mono_runtime_try_invoke_handle (method, NULL_HANDLE, pa, error);
 	if (!is_ok (error)) {
 		g_print ("The entry point method of assembly '%s' could not be executed due to %s\n", agent, mono_error_get_message (error));
-		mono_error_cleanup (error);
-		g_free (agent);
-		return 1;
+		result = 1;
+		goto exit;
 	}
 
-	g_free (agent);
-
-	return 0;
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 /*
@@ -507,7 +502,6 @@ receiver_thread (void *arg)
 	int res, content_len;
 	guint8 buffer [256];
 	guint8 *p, *p_end;
-	MonoObject *exc;
 	MonoInternalThread *internal;
 
 	internal = mono_thread_internal_current ();
@@ -577,8 +571,11 @@ receiver_thread (void *arg)
 			agent_args = decode_string_value (p, &p, p_end);
 
 			printf ("attach: Loading agent '%s'.\n", agent_name);
-			mono_attach_load_agent (mono_domain_get (), agent_name, agent_args, &exc);
-
+			ERROR_DECL (error);
+			mono_attach_load_agent (mono_domain_get (), agent_name, agent_args, error);
+			mono_error_cleanup (error);
+			g_free (agent_name);
+			g_free (agent_args);
 			g_free (body);
 
 			// FIXME: Send back a result
