@@ -44,6 +44,9 @@ namespace System.Net.Sockets
 		internal EndPoint remote_ep;
 		internal Socket current_socket;
 
+		static int nextId;
+		public readonly int ID = ++nextId;
+
 		internal SocketAsyncResult socket_async_result = new SocketAsyncResult ();
 
 		public Exception ConnectByNameError {
@@ -273,7 +276,7 @@ namespace System.Net.Sockets
 			Complete ();
 		 }
 
-		internal void XFinishOperationAsyncFailure (Exception exception, int state, SocketAsyncEventArgs internalArgs, SocketAsyncEventArgs args)
+		internal void XFinishOperationAsyncFailure (Exception exception, int state, SocketAsyncEventArgs internalArgs, SocketAsyncEventArgs args, string startStackTrace, string startContext)
 		{
 			SetResults (exception, 0, SocketFlags.None);
 
@@ -287,7 +290,7 @@ namespace System.Net.Sockets
 				return;
 			}
 
-			throw new InvalidTimeZoneException ($"I LIVE ON DIONE: {current_socket != null} {state} {args != null} {args == this} {internalArgs != null} {internalArgs == args} {internalArgs == this}\n{exception}\n");
+			throw new InvalidTimeZoneException ($"I LIVE ON DIONE: {ID} {args?.ID} {current_socket != null} {state} {args != null} {args == this} {internalArgs != null} {internalArgs == args} {internalArgs == this}\nSTART CONTEXT: {startContext}\nSTART STACK TRACE:\n{startStackTrace}\n\nEXCEPTION:\n{exception}\n\n");
 		}
 
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)

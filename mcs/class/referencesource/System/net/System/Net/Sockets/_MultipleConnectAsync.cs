@@ -12,7 +12,7 @@ namespace System.Net.Sockets
     // on behalf of a single user call to ConnectAsync with a DnsEndPoint
     internal abstract class MultipleConnectAsync
     {
-        protected SocketAsyncEventArgs userArgs;
+        SocketAsyncEventArgs userArgs;
         protected SocketAsyncEventArgs internalArgs;
 
         protected DnsEndPoint endPoint;
@@ -32,12 +32,20 @@ namespace System.Net.Sockets
 
         private object lockObject = new object();
 
+        string startStackTrace;
+        string startContext;
+
         // Called by Socket to kick off the ConnectAsync process.  We'll complete the user's SAEA
         // when it's done.  Returns true if the operation will be asynchronous, false if it has failed synchronously
         public bool StartConnectAsync(SocketAsyncEventArgs args, DnsEndPoint endPoint)
         {
             lock (lockObject)
             {
+                if (startStackTrace != null)
+                    throw new InvalidOperationException();
+                startStackTrace = Environment.StackTrace;
+                startContext = $"{args.ID} {endPoint}";
+                Console.Error.WriteLine ($"START CONNECT ASYNC: {startContext}\n{startStackTrace}");
                 GlobalLog.Assert(endPoint.AddressFamily == AddressFamily.Unspecified ||
                      endPoint.AddressFamily == AddressFamily.InterNetwork ||
                      endPoint.AddressFamily == AddressFamily.InterNetworkV6,
@@ -313,7 +321,7 @@ namespace System.Net.Sockets
                 internalArgs.Dispose();
             }
 
-            userArgs.XFinishOperationAsyncFailure(e, (int)state, internalArgs, args);
+            userArgs.XFinishOperationAsyncFailure(e, (int)state, internalArgs, args, startStackTrace, startContext);
         }
 
         public void Cancel()
