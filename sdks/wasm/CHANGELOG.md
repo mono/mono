@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-* Add threading support to sdk
+* [[wasm][sdk] Threading support for the SDK #15802](https://github.com/mono/mono/pull/15802)
 
 
 ## 2019-07-01
