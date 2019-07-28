@@ -1112,7 +1112,7 @@ namespace System.Runtime.InteropServices
 		{
 #if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
-				throw new ArgumentException ("Value cannot be null.", "pUnk");
+				throw new ArgumentNullException ("Value cannot be null.", "pUnk");
 
 			return ReleaseInternal (pUnk);
 #else
