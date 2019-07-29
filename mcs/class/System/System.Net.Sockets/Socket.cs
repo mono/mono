@@ -925,6 +925,10 @@ namespace System.Net.Sockets
 					ares.CheckIfThrowDelayedException ();
 					return false;
 				}
+			} catch (SocketException exc) {
+				e.SocketError = exc.SocketErrorCode;
+				e.socket_async_result.Complete (exc, true);
+				return false;
 			} catch (Exception exc) {
 				e.socket_async_result.Complete (exc, true);
 				return false;
