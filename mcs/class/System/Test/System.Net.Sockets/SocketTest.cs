@@ -4707,9 +4707,10 @@ namespace MonoTests.System.Net.Sockets
 			socketArgs.RemoteEndPoint = endPoint;
 			socketArgs.Completed += (sender, e) => mre.Set ();
 
-			socket.ConnectAsync (socketArgs);
+			if (socket.ConnectAsync (socketArgs))
+				Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
 
-			Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
+			Assert.AreNotEqual (SocketError.Success, socketArgs.SocketError);
 		}
 
 		[Test] // Covers https://bugzilla.xamarin.com/show_bug.cgi?id=52549
