@@ -7436,8 +7436,7 @@ mono_icall_get_environment_variable_names (MonoError *error)
 	for (e = environ; *e != 0; ++ e) {
 		parts = g_strsplit (*e, "=", 2);
 		if (*parts != 0) {
-			MonoString *s = mono_string_new_checked (domain, *parts, error);
-			MONO_HANDLE_ASSIGN_RAW (str, s);
+			mono_string_new_utf8z_assign (str, domain, *parts, error);
 			if (!is_ok (error)) {
 				g_strfreev (parts);
 				return NULL_HANDLE_ARRAY;

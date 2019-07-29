@@ -1829,6 +1829,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		/* Copy each environ string into 'strings' turning it into utf8 (or the requested encoding) at the same time */
 		for (gsize i = 0; i < array_length; ++i) {
 			MONO_HANDLE_ARRAY_GETREF (var, array, i);
+			// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 			gchandle_t gchandle = 0;
 			env_strings [i] = mono_unicode_to_external (mono_string_handle_pin_chars (var, &gchandle));
 			mono_gchandle_free_internal (gchandle);

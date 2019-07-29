@@ -2061,9 +2061,6 @@ MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 MonoObjectHandle
-mono_object_new_assign (MonoObjectHandleOut o, MonoDomain *domain, MonoClass *klass, MonoError *error);
-
-MonoObjectHandle
 mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 // This function skips handling of remoting and COM.

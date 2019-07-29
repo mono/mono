@@ -1046,6 +1046,8 @@ mono_string_to_byvalwstr_impl (gunichar2 *dst, MonoStringHandle src, int size, M
 		return;
 	}
 
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
+
 	gchandle_t gchandle = 0;
 	int len = MIN (size, mono_string_handle_length (src));
 	memcpy (dst, mono_string_handle_pin_chars (src, &gchandle), len * sizeof (gunichar2));
@@ -4978,6 +4980,8 @@ mono_marshal_string_to_utf16_copy_impl (MonoStringHandle s, MonoError *error)
 {
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
+
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 
 	gsize const length = mono_string_handle_length (s);
 	gunichar2 *res = (gunichar2 *)mono_marshal_alloc ((length + 1) * sizeof (*res), error);

@@ -109,9 +109,8 @@ create_names_array_idx (const guint16 *names, int ml, MonoError *error)
 
 	MonoStringHandle s_h = MONO_HANDLE_NEW (MonoString, NULL);
 	for (int i = 0; i < ml; i++) {
-		MonoString *s = mono_string_new_checked (domain, dtidx2string (names [i]), error);
+		mono_string_new_utf8z_assign (s_h, domain, dtidx2string (names [i]), error);
 		return_val_if_nok (error, NULL_HANDLE_ARRAY);
-		MONO_HANDLE_ASSIGN_RAW (s_h, s);
 		mono_array_handle_setref (ret, i, s_h);
 	}
 
@@ -143,7 +142,7 @@ create_names_array_idx_dynamic (const guint16 *names, int ml, MonoError *error)
 
 	MonoStringHandle s_h = MONO_HANDLE_NEW (MonoString, NULL);
 	for(i = 0; i < len; i++) {
-		MONO_HANDLE_ASSIGN_RAW (s_h, mono_string_new_checked (domain, pattern2string (names [i]), error));
+		mono_string_new_utf8z_assign (s_h, domain, pattern2string (names [i]), error);
 		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 		mono_array_handle_setref (ret, i, s_h);
 	}

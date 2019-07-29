@@ -6628,37 +6628,6 @@ mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 
 }
 
 /**
- * mono_string_new_utf32_checked:
- * \param text a pointer to an utf32 string
- * \param len the length of the string
- * \param error set on failure.
- * \returns A newly created string object which contains \p text. On failure returns NULL and sets \p error.
- */
-static MonoString *
-mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gint32 len, MonoError *error)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoString *s;
-	mono_unichar2 *utf16_output = NULL;
-	
-	error_init (error);
-	utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
-	
-	gint32 utf16_len = g_utf16_len (utf16_output);
-	
-	s = mono_string_new_size_checked (domain, utf16_len, error);
-	goto_if_nok (error, exit);
-
-	memcpy (mono_string_chars_internal (s), utf16_output, utf16_len * 2);
-
-exit:
-	g_free (utf16_output);
-	
-	return s;
-}
-
-/**
  * mono_string_new_utf32:
  * \param text a pointer to a UTF-32 string
  * \param len the length of the string
@@ -6667,10 +6636,27 @@ exit:
 MonoString *
 mono_string_new_utf32 (MonoDomain *domain, const mono_unichar4 *text, gint32 len)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
-	MonoString *result = mono_string_new_utf32_checked (domain, text, len, error);
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	gunichar2 *utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
+	gint32 utf16_len = g_utf16_len (utf16_output);
+
+	MonoStringHandle s = mono_string_new_size_handle (domain, utf16_len, error);
+	goto_if_nok (error, exit);
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	memcpy (mono_string_chars_internal (MONO_HANDLE_RAW (s)), utf16_output, utf16_len * 2);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
+exit:
+	g_free (utf16_output);
 	mono_error_cleanup (error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (s);
 }
 
 /**
@@ -6682,11 +6668,13 @@ mono_string_new_utf32 (MonoDomain *domain, const mono_unichar4 *text, gint32 len
 MonoString *
 mono_string_new_size (MonoDomain *domain, gint32 len)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
-	MonoString *str = mono_string_new_size_checked (domain, len, error);
+	MonoStringHandle str = mono_string_new_size_handle (domain, len, error);
 	mono_error_cleanup (error);
 
-	return str;
+	HANDLE_FUNCTION_RETURN_OBJ (str);
 }
 
 MonoStringHandle
@@ -6820,13 +6808,16 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 }
 
 static
-MonoString*
+MonoStringHandle
 mono_string_new_internal (MonoDomain *domain, const char *text)
 {
 	ERROR_DECL (error);
-	MonoString *res = NULL;
-	res = mono_string_new_checked (domain, text, error);
+	MonoStringHandle res = mono_string_new_handle (domain, text, error);
 	if (!is_ok (error)) {
+		// Note: Because of this compatibility, be very careful
+		// adding/removing calls to mono_string_new_internal, vs.
+		// using other string creaters.
+
 		/* Mono API compatability: assert on Out of Memory errors,
 		 * return NULL otherwise (most likely an invalid UTF-8 byte
 		 * sequence). */
@@ -6848,7 +6839,17 @@ mono_string_new_internal (MonoDomain *domain, const char *text)
 MonoString*
 mono_string_new (MonoDomain *domain, const char *text)
 {
-	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoString*, mono_string_new_internal (domain, text));
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoStringHandle result;
+
+	MONO_ENTER_GC_UNSAFE;
+
+	result = mono_string_new_internal (domain, text);
+
+	MONO_EXIT_GC_UNSAFE;
+
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 /**
@@ -6947,7 +6948,14 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 MonoStringHandle
 mono_string_new_wrapper_internal_impl (const char *text, MonoError *error)
 {
-	return MONO_HANDLE_NEW (MonoString, mono_string_new_internal (mono_domain_get (), text));
+	// FIXME? Propagate error. Do not use mono_string_new_internal.
+	// We have a MonoError available to use.
+	// Figure out if this is 7bit data or really 16bit data.
+	// If 7bit, do not treat as UTF8.
+	// If 16bit, expand earlier.
+	// That is, do no decoding here. The only error should be out of memory,
+	// and that should propagate too.
+	return mono_string_new_internal (mono_domain_get (), text);
 }
 
 /**
