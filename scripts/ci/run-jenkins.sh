@@ -279,6 +279,12 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
+        # Disable WebAssembly build on 2019-06.
+        # It misses an emscripten SDK update to make it work with the python offset
+        # tool on Linux. Since it isn't consumed by anyone from the 2019-06 branch,
+        # let's just disable it.
+        exit 0
+
         echo "DISABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_IOS=1" >> sdks/Make.config
         echo "DISABLE_MAC=1" >> sdks/Make.config
