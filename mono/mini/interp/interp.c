@@ -109,11 +109,6 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	frame->ip = NULL;
 }
 
-#define INIT_FRAME(frame,parent_frame,method_args,method_retval,domain,mono_method,error) do { \
-	InterpMethod *_rmethod = mono_interp_get_imethod ((domain), (mono_method), (error));	\
-	init_frame ((frame), (parent_frame), _rmethod, (method_args), (method_retval)); \
-	} while (0)
-
 #define interp_exec_method(frame, context, error) interp_exec_method_full ((frame), (context), NULL, error)
 
 /*
@@ -244,6 +239,11 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 	context->has_resume_state = 0;
 	context->handler_frame = NULL;
 	context->handler_ei = NULL;
+	/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */ \
+	while (frame->finally_ips &&
+		   frame->finally_ips->data >= (context)->handler_ei->try_start &&
+		   frame->finally_ips->data < (context)->handler_ei->try_end)
+		frame->finally_ips = g_slist_remove (frame->finally_ips, frame->finally_ips->data);
 }
 
 /* Set the current execution state to the resume state in context */
@@ -253,14 +253,9 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 		sp = frame->stack; \
 		vt_sp = (unsigned char *) sp + imethod->stack_size; \
 		if (frame->ex) { \
-		sp->data.p = frame->ex;											\
-		++sp;															\
+			sp->data.p = frame->ex;										\
+			++sp;														\
 		} \
-		/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */ \
-		while (finally_ips && \
-				finally_ips->data >= (context)->handler_ei->try_start && \
-				finally_ips->data < (context)->handler_ei->try_end) \
-			finally_ips = g_slist_remove (finally_ips, finally_ips->data); \
 		set_resume_state ((context), (frame));							\
 		MINT_IN_DISPATCH(*ip);											\
 	} while (0)
@@ -1755,7 +1750,9 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	args [2].data.p = exc;
 	args [3].data.p = target_method;
 
-	INIT_FRAME (&frame, NULL, args, &result, domain, invoke_wrapper, error);
+	InterpMethod *imethod = mono_interp_get_imethod (domain, invoke_wrapper, error);
+	mono_error_assert_ok (error);
+	init_frame (&frame, NULL, imethod, args, &result);
 
 	interp_exec_method (&frame, context, error);
 
@@ -2914,8 +2911,6 @@ static void
 interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
 	InterpFrame child_frame;
-	GSList *finally_ips = NULL;
-	const unsigned short *endfinally_ip = NULL;
 	const unsigned short *ip = NULL;
 	stackval *sp;
 	InterpMethod *imethod = NULL;
@@ -2938,6 +2933,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #endif
 
 	frame->ex = NULL;
+	frame->finally_ips = NULL;
+	frame->endfinally_ip = NULL;
 
 #if DEBUG_INTERP
 	debug_enter (frame, &tracing);
@@ -5754,11 +5751,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			while (sp > frame->stack) {
 				--sp;
 			}
-			if (finally_ips) {
-				ip = (const guint16*)finally_ips->data;
-				finally_ips = g_slist_remove (finally_ips, ip);
+			if (frame->finally_ips) {
+				ip = (const guint16*)frame->finally_ips->data;
+				frame->finally_ips = g_slist_remove (frame->finally_ips, ip);
 				/* Throw abort after the last finally block to avoid confusing EH */
-				if (pending_abort && !finally_ips)
+				if (pending_abort && !frame->finally_ips)
 					EXCEPTION_CHECKPOINT;
 				MINT_IN_DISPATCH(*ip);
 			}
@@ -5799,16 +5796,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			} else {
 				ip += (gint32) READ32 (ip + 1);
 			}
-			endfinally_ip = ip;
+			frame->endfinally_ip = ip;
 
 			guint32 ip_offset;
 			MonoExceptionClause *clause;
-			GSList *old_list = finally_ips;
+			GSList *old_list = frame->finally_ips;
 			MonoMethod *method = imethod->method;
 
 #if DEBUG_INTERP
 			if (tracing)
-				g_print ("* Handle finally IL_%04x\n", endfinally_ip == NULL ? 0 : endfinally_ip - imethod->code);
+				g_print ("* Handle finally IL_%04x\n", frame->endfinally_ip == NULL ? 0 : frame->endfinally_ip - imethod->code);
 #endif
 			if (imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 				|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
@@ -5816,15 +5813,15 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			}
 			ip_offset = frame->ip - imethod->code;
 
-			if (endfinally_ip != NULL)
-				finally_ips = g_slist_prepend(finally_ips, (void *)endfinally_ip);
+			if (frame->endfinally_ip != NULL)
+				frame->finally_ips = g_slist_prepend(frame->finally_ips, (void *)frame->endfinally_ip);
 
 			for (int i = imethod->num_clauses - 1; i >= 0; i--) {
 				clause = &imethod->clauses [i];
-				if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - imethod->code)))) {
+				if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (frame->endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, frame->endfinally_ip - imethod->code)))) {
 					if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 						ip = imethod->code + clause->handler_offset;
-						finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
+						frame->finally_ips = g_slist_prepend (frame->finally_ips, (gpointer) ip);
 #if DEBUG_INTERP
 						if (tracing)
 							g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
@@ -5833,11 +5830,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				}
 			}
 
-			endfinally_ip = NULL;
+			frame->endfinally_ip = NULL;
 
-			if (old_list != finally_ips && finally_ips) {
-				ip = (const guint16*)finally_ips->data;
-				finally_ips = g_slist_remove (finally_ips, ip);
+			if (old_list != frame->finally_ips && frame->finally_ips) {
+				ip = (const guint16*)frame->finally_ips->data;
+				frame->finally_ips = g_slist_remove (frame->finally_ips, ip);
 				sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
 				vt_sp = (unsigned char *) sp + imethod->stack_size;
 				MINT_IN_DISPATCH (*ip);
