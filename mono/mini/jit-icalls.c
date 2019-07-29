@@ -854,9 +854,9 @@ mono_fconv_u8 (double v)
 {
 	const double two63 = 2147483648.0 * 4294967296.0;
 	if (v < two63) {
-		return (guint64)v;
+		return (gint64)v;
 	} else {
-		return (guint64)(v - two63) + ((guint64)1 << 63);
+		return (gint64)(v - two63) + ((guint64)1 << 63);
 	}
 }
 
@@ -876,9 +876,9 @@ mono_rconv_u8 (float v)
 {
 	const float two63 = 2147483648.0 * 4294967296.0;
 	if (v < two63) {
-		return (guint64)v;
+		return (gint64)v;
 	} else {
-		return (guint64)(v - two63) + ((guint64)1 << 63);
+		return (gint64)(v - two63) + ((guint64)1 << 63);
 	}
 }
 
