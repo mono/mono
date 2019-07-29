@@ -318,7 +318,7 @@ mono_attach_load_agent (MonoDomain *domain, const char *agent, const char *args,
 	}
 
 	pa [0] = MONO_HANDLE_RAW (main_args);
-	mono_runtime_try_invoke_handle (method, NULL_HANDLE, pa, error);
+	mono_runtime_try_invoke_handle (method, NULL_HANDLE, pa, MONO_HANDLE_NEW (MonoObject, NULL), error);
 	if (!is_ok (error)) {
 		g_print ("The entry point method of assembly '%s' could not be executed due to %s\n", agent, mono_error_get_message (error));
 		result = 1;

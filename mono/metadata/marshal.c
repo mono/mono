@@ -747,7 +747,8 @@ mono_string_builder_new (int starting_string_length, MonoError *error)
 	MonoStringBuilderHandle sb = MONO_HANDLE_CAST (MonoStringBuilder, mono_object_new_handle (mono_domain_get (), string_builder_class, error));
 	mono_error_assert_ok (error);
 
-	mono_runtime_try_invoke_handle (sb_ctor, MONO_HANDLE_CAST (MonoObject, sb), args, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	mono_runtime_try_invoke_handle (sb_ctor, MONO_HANDLE_CAST (MonoObject, sb), args, NULL_HANDLE, error);
 	mono_error_assert_ok (error);
 
 	MonoArrayHandle chunkChars = MONO_HANDLE_NEW_GET (MonoArray, sb, chunkChars);

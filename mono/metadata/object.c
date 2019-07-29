@@ -3126,15 +3126,26 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 }
 
 MonoObjectHandle
-mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoObjectHandleOut exch, MonoError* error)
 {
-	// FIXME? typing of params
-	MonoException *exc = NULL;
-	MonoObject *obj_raw = mono_runtime_try_invoke (method, MONO_HANDLE_RAW (obj), params, (MonoObject**)&exc, error);
+	// FIXME Go back and carefully reconvert old callers, i.e. that pass NULL for exc.
+	// And then remove the first part here and add the assert.
+	// g_assert (exc.__raw);
 
-	if (exc && is_ok (error))
-		mono_error_set_exception_instance (error, exc);
+	MonoObject* obj_raw;
+	MonoObject* volatile * const exch_raw = exch.__raw;
 
+	if (!exch_raw) {
+		// FIXME? typing of params
+		MonoException* exc = NULL;
+		obj_raw = mono_runtime_try_invoke (method, MONO_HANDLE_RAW (obj), params, (MonoObject**)&exc, error);
+
+		if (exc && is_ok (error))
+			mono_error_set_exception_instance (error, exc);
+	} else {
+		// FIXME? typing of params
+		obj_raw = mono_runtime_try_invoke (method, MONO_HANDLE_RAW (obj), params, (MonoObject**)exch_raw, error);
+	}
 	return MONO_HANDLE_NEW (MonoObject, obj_raw);
 }
 
@@ -4397,7 +4408,8 @@ mono_runtime_delegate_try_invoke_handle (MonoObjectHandle delegate, void **param
 	MonoMethod* const im = mono_get_delegate_invoke_internal (klass);
 	g_assertf (im, "Could not lookup delegate invoke method for delegate %s", mono_type_get_full_name (klass));
 
-	return mono_runtime_try_invoke_handle (im, delegate, params, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	return mono_runtime_try_invoke_handle (im, delegate, params, NULL_HANDLE, error);
 }
 
 /**
@@ -4720,7 +4732,8 @@ serialize_or_deserialize_object (MonoObjectHandle obj, const gchar *method_name,
 	}
 
 	void *params [ ] = { MONO_HANDLE_RAW (obj) };
-	return mono_runtime_try_invoke_handle (*method, NULL_HANDLE, params, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	return mono_runtime_try_invoke_handle (*method, NULL_HANDLE, params, NULL_HANDLE, error);
 }
 
 static MonoMethod *serialize_method;
@@ -4766,7 +4779,8 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 	MONO_HANDLE_SET (real_proxy, class_to_proxy, reflection_type);
 	MONO_HANDLE_SET (real_proxy, unwrapped_server, obj);
 
-	return mono_runtime_try_invoke_handle (get_proxy_method, MONO_HANDLE_CAST (MonoObject, real_proxy), NULL, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	return mono_runtime_try_invoke_handle (get_proxy_method, MONO_HANDLE_CAST (MonoObject, real_proxy), NULL, NULL_HANDLE, error);
 return_null:
 	return mono_new_null ();
 }

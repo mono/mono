@@ -2143,12 +2143,15 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 MONO_PROFILER_API MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 
-// The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
+// The exc parameter was deliberately missing and so far this has proven to reduce code duplication.
 // In particular, if an exception is returned from underlying otherwise succeeded call,
 // is set into the MonoError with mono_error_set_exception_instance.
 // The result is that caller need only check MonoError.
+//
+// FIXME The removal of exc parameter confuses ongoing coop conversion. It has been restored.
+// Prior conversion should be revisited (despite long term success).
 MonoObjectHandle
-mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoObjectHandleOut exc, MonoError* error);
 
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
