@@ -132,10 +132,8 @@ mono_icall_get_environment_variable_names (MonoError *error)
 			if (*env_string != '=') {
 				equal_str = wcschr(env_string, '=');
 				g_assert(equal_str);
-				MonoString *s = mono_string_new_utf16_checked (domain, env_string, (gint32)(equal_str - env_string), error);
+				mono_string_new_utf16_assign (str, domain, env_string, (gint32)(equal_str - env_string), error);
 				goto_if_nok (error, cleanup);
-				MONO_HANDLE_ASSIGN_RAW (str, s);
-
 				mono_array_handle_setref (names, n, str);
 				n++;
 			}

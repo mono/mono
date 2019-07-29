@@ -891,6 +891,12 @@ mono_get_exception_cannot_unload_appdomain (const char *msg)
 	return mono_exception_from_name_msg (mono_get_corlib (), "System", "CannotUnloadAppDomainException", msg);
 }
 
+void
+mono_get_exception_cannot_unload_appdomain_handle (MonoExceptionHandleOut exc, const char *msg)
+{
+	MONO_HANDLE_ASSIGN (exc, mono_exception_new_by_name_msg (mono_get_corlib (), "System", "CannotUnloadAppDomainException", msg));
+}
+
 /**
  * mono_get_exception_appdomain_unloaded
  * \returns a new instance of the \c System.AppDomainUnloadedException

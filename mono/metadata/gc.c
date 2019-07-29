@@ -171,7 +171,7 @@ void
 mono_gc_run_finalize (void *obj, void *data)
 {
 	ERROR_DECL (error);
-	MonoObject *exc = NULL;
+	MonoObjectHandle exc = MONO_HANDLE_NEW (MonoObject, NULL);
 	MonoObject *o;
 #ifndef HAVE_SGEN_GC
 	MonoObject *o2;

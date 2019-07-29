@@ -80,8 +80,7 @@
 #include "object-internals.h"
 #include "icall-decl.h"
 
-typedef struct
-{
+typedef struct {
 	int runtime_count;
 	int assemblybinding_count;
 	MonoDomain *domain;
@@ -1359,13 +1358,12 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	params [0] = MONO_HANDLE_RAW (fname);
 	params [1] = requesting ? MONO_HANDLE_RAW (requesting_handle) : NULL;
 	params [2] = &isrefonly;
-	MonoObject *exc;
-	exc = NULL;
+	MonoObjectHandle exc = MONO_HANDLE_NEW (MonoObject, NULL);
 	MonoReflectionAssemblyHandle result;
-	result = MONO_HANDLE_CAST (MonoReflectionAssembly, MONO_HANDLE_NEW (MonoObject, mono_runtime_try_invoke (method, domain->domain, params, &exc, error)));
-	if (!is_ok (error) || exc != NULL) {
+	result = MONO_HANDLE_CAST (MonoReflectionAssembly, MONO_HANDLE_NEW (MonoObject, mono_runtime_try_invoke_handle (method, domain->domain, params, exc, error)));
+	if (!is_ok (error) || MONO_HANDLE_BOOL (exc)) {
 		if (is_ok (error))
-			mono_error_set_exception_instance (error, (MonoException*)exc);
+			mono_error_set_exception_handle_object (error, exc);
 		goto leave;
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
@@ -2713,7 +2711,7 @@ fail:
 }
 
 void
-ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
+ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoObjectHandleOut exc, MonoError *error)
 {
 	MonoDomain * domain = mono_domain_get_by_id (domain_id);
 
@@ -2734,10 +2732,10 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
 	if (g_hasenv ("MONO_NO_UNLOAD"))
 		return;
 
-	MonoException *exc = NULL;
-	mono_domain_try_unload (domain, (MonoObject**)&exc);
-	if (exc)
-		mono_error_set_exception_instance (error, exc);
+	mono_domain_try_unload_handle (domain, &exc);
+
+	if (MONO_HANDLE_BOOL (exc))
+		mono_error_set_exception_handle (error, exc);
 }
 
 MonoBoolean
@@ -2782,7 +2780,7 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomainHandle ad,
 		mono_error_assert_ok (error);
 	}
 
-	int res = mono_runtime_exec_main_checked (method, MONO_HANDLE_RAW (args), error);
+	int res = mono_runtime_exec_main_checked (method, args, error);
 	return res;
 }
 
@@ -3095,10 +3093,13 @@ failure:
 void
 mono_domain_unload (MonoDomain *domain)
 {
-	MONO_ENTER_GC_UNSAFE;
-	MonoObject *exc = NULL;
-	mono_domain_try_unload (domain, &exc);
-	MONO_EXIT_GC_UNSAFE;
+	MONO_EXTERNAL_ONLY_BEGIN;
+	HANDLE_FUNCTION_ENTER ();
+
+	mono_domain_try_unload_handle (domain, NULL);
+
+	HANDLE_FUNCTION_RETURN ();
+	MONO_EXTERNAL_ONLY_END;
 }
 
 static MonoThreadInfoWaitRet
@@ -3132,10 +3133,10 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
  *  it must not be called with any managed frames on the stack, since the unload
  *  process could end up trying to abort the current thread.
  */
+static
 void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
+mono_domain_try_unload_handle (MonoDomain *domain, MonoObjectHandleOut* exc)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoThreadHandle *thread_handle = NULL;
 	MonoAppDomainState prev_state;
@@ -3154,10 +3155,14 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		switch (prev_state) {
 		case MONO_APPDOMAIN_UNLOADING_START:
 		case MONO_APPDOMAIN_UNLOADING:
-			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already being unloaded.");
+			if (exc)
+				mono_get_exception_cannot_unload_appdomain_handle (*exc, "Appdomain is already being unloaded."));
 			goto exit;
+
 		case MONO_APPDOMAIN_UNLOADED:
-			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already unloaded.");
+			if (exc)
+				mono_get_exception_cannot_unload_appdomain_handle (*exc, "Appdomain is already unloaded."));
+			mono_error_set_error (error, MONO_ERROR_APPDOMAIN_UNLOADED);
 			goto exit;
 		default:
 			g_warning ("Invalid appdomain state %d", prev_state);
@@ -3170,16 +3175,9 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	method = mono_class_get_method_from_name_checked (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1, 0, error);
 	g_assert (method);
 
-	mono_runtime_try_invoke (method, domain->domain, NULL, exc, error);
+	mono_runtime_try_invoke (method, domain->domain, NULL, NULL, error);
 
-	if (!mono_error_ok (error)) {
-		if (*exc)
-			mono_error_cleanup (error);
-		else
-			*exc = (MonoObject*)mono_error_convert_to_exception (error);
-	}
-
-	if (*exc) {
+	if (!is_ok (error)) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
 		mono_domain_set_fast (caller_domain, FALSE);
@@ -3223,7 +3221,8 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 
 		g_warning ("%s", thread_data->failure_reason);
 
-		*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain (thread_data->failure_reason);
+		if (exc)
+			mono_get_exception_cannot_unload_appdomain_handle (*exc, thread_data->failure_reason);
 
 		g_free (thread_data->failure_reason);
 		thread_data->failure_reason = NULL;
@@ -3232,7 +3231,24 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 exit:
 	mono_threads_close_thread_handle (thread_handle);
 	unload_data_unref (thread_data);
-	HANDLE_FUNCTION_RETURN ();
+}
+
+void
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc);
+{
+	if (exc) {
+		HANDLE_FUNCTION_ENTER ();
+
+		MonoObjectHandleOut exch = MONO_HANDLE_NEW (MonoObject, NULL);
+
+		mono_domain_try_unload_handle (domain, &exch);
+
+		*exc = MONO_HANDLE_RAW (exch);
+
+		HANDLE_FUNCTION_RETURN ();
+	} else {
+		mono_domain_try_unload_handle (domain, NULL);
+	}
 }
 
 #ifdef ENABLE_NETCORE

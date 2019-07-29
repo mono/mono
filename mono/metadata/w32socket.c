@@ -2589,6 +2589,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoStringHan
 		return FALSE;
 
 	/* FIXME: replace file by a proper fd that we can call open and close on, as they are interruptible */
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 
 	uint32_t filename_gchandle;
 	gunichar2 *filename_chars = mono_string_handle_pin_chars (filename, &filename_gchandle);

@@ -350,6 +350,8 @@ typedef struct {
 	MonoException base;
 } MonoSystemException;
 
+TYPED_HANDLE_DECL (MonoSystemException);
+
 #ifndef ENABLE_NETCORE
 typedef struct {
 	MonoSystemException base;
@@ -372,6 +374,8 @@ typedef struct {
 	MonoObject  *original_context;
 	gint64	     add_time;
 } MonoAsyncResult;
+
+TYPED_HANDLE_DECL (MonoAsyncResult);
 
 typedef struct {
 	MonoMarshalByRefObject object;
@@ -420,6 +424,8 @@ typedef struct {
 	MonoReflectionType type;
 	MonoObject *type_info;
 } MonoReflectionMonoType;
+
+TYPED_HANDLE_DECL (MonoReflectionMonoType);
 
 typedef struct {
 	MonoObject  object;
@@ -498,6 +504,8 @@ typedef struct {
 	guint32	    call_type;
 } MonoMethodMessage;
 
+TYPED_HANDLE_DECL (MonoMethodMessage);
+
 /* Keep in sync with the System.MonoAsyncCall */
 typedef struct {
 	MonoObject object;
@@ -509,12 +517,16 @@ typedef struct {
 	MonoArray *out_args;
 } MonoAsyncCall;
 
+TYPED_HANDLE_DECL (MonoAsyncCall);
+
 typedef struct {
 	MonoObject obj;
 	MonoArray *frames;
 	MonoArray *captured_traces;
 	MonoBoolean debug_info;
 } MonoStackTrace;
+
+TYPED_HANDLE_DECL (MonoStackTrace);
 
 typedef struct {
 	MonoObject obj;
@@ -528,6 +540,8 @@ typedef struct {
 	gint32 column;
 	MonoString *internal_method_name;
 } MonoStackFrame;
+
+TYPED_HANDLE_DECL (MonoStackFrame);
 
 typedef enum {
 	MONO_THREAD_FLAG_DONT_MANAGE = 1, // Don't wait for or abort this thread
@@ -2155,12 +2169,15 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 MONO_PROFILER_API MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 
-// The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
+// The exc parameter was deliberately missing and so far this has proven to reduce code duplication.
 // In particular, if an exception is returned from underlying otherwise succeeded call,
 // is set into the MonoError with mono_error_set_exception_instance.
 // The result is that caller need only check MonoError.
+//
+// FIXME The removal of exc parameter confuses ongoing coop conversion. It has been restored.
+// Prior conversion should be revisited (despite long term success).
 MonoObjectHandle
-mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoObjectHandleOut exc, MonoError* error);
 
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
@@ -2202,10 +2219,10 @@ mono_runtime_try_run_main (MonoMethod *method, int argc, char* argv[],
 			   MonoObject **exc);
 
 int
-mono_runtime_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *error);
+mono_runtime_exec_main_checked (MonoMethod *method, MonoArrayHandle args, MonoError *error);
 
 int
-mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc);
+mono_runtime_try_exec_main (MonoMethod *method, MonoArrayHandle args, MonoObject **exc);
 
 ICALL_EXPORT
 void

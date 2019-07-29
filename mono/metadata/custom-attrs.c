@@ -880,7 +880,8 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 	attr = mono_object_new_handle (mono_domain_get (), method->klass, error);
 	goto_if_nok (error, fail);
 
-	(void)mono_runtime_try_invoke_handle (method, attr, params, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	(void)mono_runtime_try_invoke_handle (method, attr, params, NULL_HANDLE, error);
 	goto_if_nok (error, fail);
 
 	if (named + 1 < data_end) {

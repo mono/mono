@@ -265,7 +265,7 @@ mono_attach_cleanup (void)
 }
 
 static int
-mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject **exc)
+mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObjectHandleOut *exc)
 {
 	ERROR_DECL (error);
 	MonoAssembly *agent_assembly;
