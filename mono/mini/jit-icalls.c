@@ -860,6 +860,7 @@ mono_fconv_u8 (double v)
 	}
 }
 
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U8
 guint64
 mono_fconv_u8_2 (double v)
 {
@@ -881,6 +882,7 @@ mono_rconv_u8 (float v)
 		return (gint64)(v - two63) + ((guint64)1 << 63);
 	}
 }
+#endif
 
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 gint64
@@ -899,6 +901,7 @@ mono_fconv_u4 (double v)
 	return (guint32)v;
 }
 
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U4
 guint32
 mono_fconv_u4_2 (double v)
 {
@@ -909,6 +912,7 @@ mono_fconv_u4_2 (double v)
 	// wrappers are only produced for one of them, breaking FullAOT.
 	return mono_fconv_u4 (v);
 }
+#endif
 
 gint64
 mono_fconv_ovf_i8 (double v)
