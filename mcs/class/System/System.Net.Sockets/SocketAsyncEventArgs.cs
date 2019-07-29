@@ -206,7 +206,7 @@ namespace System.Net.Sockets
 		{
 			var old = Interlocked.CompareExchange(ref completed, 1, 0);
 			if (old != 0)
-				throw new InvalidTimeZoneException ($"I LIVE ON ENCELADUS!");
+				throw new InvalidTimeZoneException ($"I LIVE ON ENCELADUS: {old}");
 
 			in_progress = 0;
 			OnCompleted (this);
@@ -283,14 +283,14 @@ namespace System.Net.Sockets
 			if (current_socket != null)
 				current_socket.is_connected = false;
 
-			var old = Interlocked.CompareExchange(ref completed, 1, 0);
+			var old = Interlocked.CompareExchange(ref completed, 2, 0);
 			if (old == 0) {
 				in_progress = 0;
 				OnCompleted (this);
 				return;
 			}
 
-			throw new InvalidTimeZoneException ($"I LIVE ON DIONE: {ID} {args?.ID} {current_socket != null} {state} {args != null} {args == this} {internalArgs != null} {internalArgs == args} {internalArgs == this}\nSTART CONTEXT: {startContext}\nSTART STACK TRACE:\n{startStackTrace}\n\nEXCEPTION:\n{exception}\n\n");
+			throw new InvalidTimeZoneException ($"I LIVE ON DIONE: {ID} {old} {args?.ID} {current_socket != null} {state} {args != null} {args == this} {internalArgs != null} {internalArgs == args} {internalArgs == this}\nSTART CONTEXT: {startContext}\nSTART STACK TRACE:\n{startStackTrace}\n\nEXCEPTION:\n{exception}\n\n");
 		}
 
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
@@ -306,14 +306,14 @@ namespace System.Net.Sockets
 			SetResults(SocketError.Success, bytesTransferred, flags);
 			current_socket = connectSocket;
 
-			var old = Interlocked.CompareExchange(ref completed, 1, 0);
+			var old = Interlocked.CompareExchange(ref completed, 3, 0);
 			if (old == 0) {
 				in_progress = 0;
 				OnCompleted (this);
 				return;
 			}
 
-			throw new InvalidTimeZoneException ($"I LIVE ON EPIMETHEUS: {connectSocket} {bytesTransferred} {flags}");
+			throw new InvalidTimeZoneException ($"I LIVE ON EPIMETHEUS: {old} {connectSocket} {bytesTransferred} {flags}");
 		}
 
 		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)

@@ -19,6 +19,8 @@ namespace System.Net.Sockets
         protected IPAddress[] addressList;
         protected int nextAddress;
 
+        int completed;
+
         private enum State
         {
             NotStarted,
@@ -262,6 +264,9 @@ namespace System.Net.Sockets
         protected void Succeed()
         {
             OnSucceed();
+            var old = Interlocked.CompareExchange(ref completed, 1, 0);
+            if (old != 0)
+                throw new InvalidTimeZoneException ($"I LIVE ON HYPERION: {old}");
             userArgs.XFinishWrapperConnectSuccess(internalArgs.ConnectSocket, internalArgs.BytesTransferred, internalArgs.SocketFlags);
             internalArgs.Dispose();
         }
@@ -293,6 +298,9 @@ namespace System.Net.Sockets
             SocketException socketException = e as SocketException;
             if (socketException != null)
             {
+                var old = Interlocked.CompareExchange(ref completed, 2, 0);
+                if (old != 0)
+                    throw new InvalidTimeZoneException ($"I LIVE ON HYPERION: {old}");
                 userArgs.FinishConnectByNameSyncFailure(socketException, 0, SocketFlags.None);
             }
             else
@@ -309,6 +317,9 @@ namespace System.Net.Sockets
                 internalArgs.Dispose();
             }
 
+            var old = Interlocked.CompareExchange(ref completed, 3, 0);
+            if (old != 0)
+                throw new InvalidTimeZoneException ($"I LIVE ON HYPERION: {old}");
             userArgs.FinishOperationAsyncFailure(e, 0, SocketFlags.None);
         }
 
@@ -320,6 +331,9 @@ namespace System.Net.Sockets
                 internalArgs.Dispose();
             }
 
+            var old = Interlocked.CompareExchange(ref completed, 4, 0);
+            if (old != 0)
+                throw new InvalidTimeZoneException ($"I LIVE ON HYPERION: {old}");
             userArgs.XFinishOperationAsyncFailure(e, (int)state, internalArgs, args, startStackTrace, startContext);
         }
 
