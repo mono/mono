@@ -2385,7 +2385,8 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
 		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
-#ifdef ENABLE_NETCORE
+// TODO: this is currently broken due to the lack of proper ALC resolution logic and the load hook not using the correct ALC
+#if 0 //def ENABLE_NETCORE
 	mono_alc_assemblies_lock (alc);
 	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
