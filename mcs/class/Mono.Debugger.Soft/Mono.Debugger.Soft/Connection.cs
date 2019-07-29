@@ -151,7 +151,8 @@ namespace Mono.Debugger.Soft
 	enum ValueTypeId {
 		VALUE_TYPE_ID_NULL = 0xf0,
 		VALUE_TYPE_ID_TYPE = 0xf1,
-		VALUE_TYPE_ID_PARENT_VTYPE = 0xf2
+		VALUE_TYPE_ID_PARENT_VTYPE = 0xf2,
+		VALUE_TYPE_ID_FIXED_ARRAY = 0xf3
 	}
 
 	[Flags]
@@ -856,10 +857,8 @@ namespace Mono.Debugger.Soft
 
 			public int ReadFixedSize () {
 				if (connection.Version.AtLeast (2, 53)) {
-					bool isFixedSize = ReadByte () == 1;
 					int lenFixedSize = 1;
-					if (isFixedSize)
-						lenFixedSize = ReadInt ();
+					lenFixedSize = ReadInt ();
 					return lenFixedSize;
 				}
 				else 
@@ -1046,8 +1045,7 @@ namespace Mono.Debugger.Soft
 				else 
 					return ReadDouble ();
 			}
-
-			public ValueImpl ReadValue () {
+			public ValueImpl ReadValueFixedSize () {
 				ElementType etype = (ElementType)ReadByte ();
 				switch (etype) {
 				case ElementType.Void:
@@ -1076,6 +1074,40 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl { Type = etype, Value = ReadFloatValue () };
 				case ElementType.R8:
 					return new ValueImpl { Type = etype, Value = ReadDoubleValue () };
+				}
+				throw new NotImplementedException ("Unable to handle type " + etype);
+			}
+			public ValueImpl ReadValue () {
+				ElementType etype = (ElementType)ReadByte ();
+				switch (etype) {
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY:
+					return ReadValueFixedSize ();
+				case ElementType.Void:
+					return new ValueImpl { Type = etype };
+				case ElementType.I1:
+					return new ValueImpl { Type = etype, Value = (sbyte)ReadInt () };
+				case ElementType.U1:
+					return new ValueImpl { Type = etype, Value = (byte)ReadInt () };
+				case ElementType.Boolean:
+					return new ValueImpl { Type = etype, Value = ReadInt () != 0 };
+				case ElementType.I2:
+					return new ValueImpl { Type = etype, Value = (short)ReadInt () };
+				case ElementType.U2:
+					return new ValueImpl { Type = etype, Value = (ushort)ReadInt () };
+				case ElementType.Char:
+					return new ValueImpl { Type = etype, Value = (char)ReadInt () };
+				case ElementType.I4:
+					return new ValueImpl { Type = etype, Value = ReadInt () };
+				case ElementType.U4:
+					return new ValueImpl { Type = etype, Value = (uint)ReadInt () };
+				case ElementType.I8:
+					return new ValueImpl { Type = etype, Value = ReadLong () };
+				case ElementType.U8:
+					return new ValueImpl { Type = etype, Value = (ulong)ReadLong () };
+				case ElementType.R4:
+					return new ValueImpl { Type = etype, Value = ReadFloat ()  };
+				case ElementType.R8:
+					return new ValueImpl { Type = etype, Value = ReadDouble () };
 				case ElementType.I:
 				case ElementType.U:
 					// FIXME: The client and the debuggee might have different word sizes
@@ -1243,7 +1275,7 @@ namespace Mono.Debugger.Soft
 				return arr[i];
 			}
 
-			public PacketWriter WriteValue (ValueImpl v) {
+			public PacketWriter WriteFixedSizeValue (ValueImpl v) {
 				ElementType t;
 
 				if (v.Value != null) {
@@ -1252,17 +1284,9 @@ namespace Mono.Debugger.Soft
 				else {
 					t = v.Type;
 				}
+				WriteByte ((byte) ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY);
 				WriteByte ((byte)t);
-				if (v.FixedSize > 0) {
-				if (v.FixedSize > 1) {
-					WriteByte(1);
-					WriteInt (v.FixedSize);
-				}
-				else
-					WriteByte(0);
-				}
-				else 
-					v.FixedSize = 1;
+				WriteInt (v.FixedSize);
 				for (int j = 0 ; j < v.FixedSize; j++)
 				{
 					switch (t) {
@@ -1302,30 +1326,86 @@ namespace Mono.Debugger.Soft
 						case ElementType.R8:
 							WriteDouble (GetValue<double> (v.Value, j, v.FixedSize > 1));
 							break;
-						case ElementType.String:
-						case ElementType.SzArray:
-						case ElementType.Class:
-						case ElementType.Array:
-						case ElementType.Object:
-							WriteId (v.Objid);
-							break;
-						case ElementType.ValueType:
-							// FIXME: 
-							if (v.IsEnum)
-								throw new NotImplementedException ();
-							WriteByte (0);
-							WriteId (v.Klass);
-							WriteInt (v.Fields.Length);
-							for (int i = 0; i < v.Fields.Length; ++i) {
-								WriteValue (v.Fields [i]);
-							}
-							break;
-						case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
-							break;
 						default:
 							throw new NotImplementedException ();
 					}
+				}
+				return this;
+			}
 
+			public PacketWriter WriteValue (ValueImpl v) {
+				ElementType t;
+
+				if (v.Value != null) {
+					t = TypeCodeToElementType (Type.GetTypeCode (v.Value.GetType ()), v.Value.GetType ());
+				}
+				else {
+					t = v.Type;
+				}
+				if (v.FixedSize > 1 && t != ElementType.ValueType)
+				{
+					WriteFixedSizeValue (v);
+					return this;
+				}
+				WriteByte ((byte)t);
+				switch (t) {
+					case ElementType.Boolean:
+						WriteInt ((bool)v.Value ? 1 : 0);
+						break;
+					case ElementType.Char:
+						WriteInt ((int)(char)v.Value);
+						break;
+					case ElementType.I1:
+						WriteInt ((int)(sbyte)v.Value);
+						break;
+					case ElementType.U1:
+						WriteInt ((int)(byte)v.Value);
+						break;
+					case ElementType.I2:
+						WriteInt ((int)(short)v.Value);
+						break;
+					case ElementType.U2:
+						WriteInt ((int)(ushort)v.Value);
+						break;
+					case ElementType.I4:
+						WriteInt ((int)(int)v.Value);
+						break;
+					case ElementType.U4:
+						WriteInt ((int)(uint)v.Value);
+						break;
+					case ElementType.I8:
+						WriteLong ((long)(long)v.Value);
+						break;
+					case ElementType.U8:
+						WriteLong ((long)(ulong)v.Value);
+						break;
+					case ElementType.R4:
+						WriteFloat ((float)v.Value);
+						break;
+					case ElementType.R8:
+						WriteDouble ((double)v.Value);
+						break;
+					case ElementType.String:
+					case ElementType.SzArray:
+					case ElementType.Class:
+					case ElementType.Array:
+					case ElementType.Object:
+						WriteId (v.Objid);
+						break;
+					case ElementType.ValueType:
+						// FIXME: 
+						if (v.IsEnum)
+							throw new NotImplementedException ();
+						WriteByte (0);
+						WriteId (v.Klass);
+						WriteInt (v.Fields.Length);
+						for (int i = 0; i < v.Fields.Length; ++i)
+							WriteValue (v.Fields [i]);
+						break;
+					case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
+						break;
+					default:
+						throw new NotImplementedException ();
 				}
 				return this;
 			}

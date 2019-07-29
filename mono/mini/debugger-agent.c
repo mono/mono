@@ -334,7 +334,8 @@ typedef enum {
 typedef enum {
 	VALUE_TYPE_ID_NULL = 0xf0,
 	VALUE_TYPE_ID_TYPE = 0xf1,
-	VALUE_TYPE_ID_PARENT_VTYPE = 0xf2
+	VALUE_TYPE_ID_PARENT_VTYPE = 0xf2,
+	VALUE_TYPE_ID_FIXED_ARRAY = 0xf3
 } ValueTypeId;
 
 typedef enum {
@@ -550,9 +551,7 @@ typedef struct ReplyPacket {
 #define BUFFER_ADD_PRIMITIVE_VALUE() \
 	buffer_add_byte (buf, t->type); \
 	if (CHECK_PROTOCOL_VERSION (2, 53)) { \
-		buffer_add_byte (buf, is_fixed_array > 1); \
-		if (is_fixed_array > 1) \
-			buffer_add_int (buf, is_fixed_array ); \
+		buffer_add_int (buf, is_fixed_array ); \
 	} \
 	for (int i = 0; i < is_fixed_array; i++) 
 /*
@@ -5228,6 +5227,50 @@ debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoC
 	tls->filter_state.valid = FALSE;
 }
 
+static void 
+buffer_add_fixed_array (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
+					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 is_fixed_array)
+{
+	buffer_add_byte (buf, VALUE_TYPE_ID_FIXED_ARRAY);
+	switch (t->type) {
+		case MONO_TYPE_VOID:
+			buffer_add_byte (buf, t->type);
+			break;
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+			BUFFER_ADD_PRIMITIVE_VALUE ()
+			buffer_add_int (buf, ((gint8*)addr)[i]);
+			break;
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+			BUFFER_ADD_PRIMITIVE_VALUE ()
+			buffer_add_int (buf, ((gint16*)addr)[i]);
+			break;
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_R4:
+			BUFFER_ADD_PRIMITIVE_VALUE ()
+			buffer_add_int (buf, ((gint32*)addr)[i]);
+			break;
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+		case MONO_TYPE_R8:
+			BUFFER_ADD_PRIMITIVE_VALUE ()
+			buffer_add_long (buf, ((gint64*)addr)[i]);
+			break;
+		case MONO_TYPE_PTR: {
+			gssize val = *(gssize*)addr;
+			
+			buffer_add_byte (buf, t->type);
+			buffer_add_long (buf, val);
+			if (CHECK_PROTOCOL_VERSION(2, 46))
+				buffer_add_typeid (buf, domain, mono_class_from_mono_type_internal (t));
+			break;
+		}
+	}
+}
 /*
  * buffer_add_value_full:
  *
@@ -5278,7 +5321,11 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 		}
 	}
 	
-	
+	if (is_fixed_array > 1 && t->type != MONO_TYPE_VALUETYPE)
+	{
+		buffer_add_fixed_array(buf, t, addr, domain, as_vtype, parent_vtypes, is_fixed_array);
+		return;
+	}
 	switch (t->type) {
 	case MONO_TYPE_VOID:
 		buffer_add_byte (buf, t->type);
@@ -5286,20 +5333,20 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 	case MONO_TYPE_BOOLEAN:
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
-		BUFFER_ADD_PRIMITIVE_VALUE ()
-		buffer_add_int (buf, ((gint8*)addr)[i]);
+		buffer_add_byte (buf, t->type);
+		buffer_add_int (buf, *(gint8*)addr);
 		break;
 	case MONO_TYPE_CHAR:
 	case MONO_TYPE_I2:
 	case MONO_TYPE_U2:
-		BUFFER_ADD_PRIMITIVE_VALUE ()
-		buffer_add_int (buf, ((gint16*)addr)[i]);
+		buffer_add_byte (buf, t->type);
+		buffer_add_int (buf, *(gint16*)addr);
 		break;
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4:
 	case MONO_TYPE_R4:
-		BUFFER_ADD_PRIMITIVE_VALUE ()
-		buffer_add_int (buf, ((gint32*)addr)[i]);
+		buffer_add_byte (buf, t->type);
+		buffer_add_int (buf, *(gint32*)addr);
 		break;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
@@ -5494,31 +5541,18 @@ decode_vtype (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 
 	return ERR_NONE;
 }
-
-static ErrorCode
-decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
+static ErrorCode decode_fixed_size_array_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
 {
-	ErrorCode err;
-
-	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t) &&
-		!(t->type == MONO_TYPE_I && type == MONO_TYPE_VALUETYPE) &&
-		!(t->type == MONO_TYPE_U && type == MONO_TYPE_VALUETYPE) &&
-		!(t->type == MONO_TYPE_PTR && type == MONO_TYPE_I8) &&
-		!(t->type == MONO_TYPE_GENERICINST && type == MONO_TYPE_VALUETYPE) &&
-		!(t->type == MONO_TYPE_VALUETYPE && type == MONO_TYPE_OBJECT)) {
-		char *name = mono_type_full_name (t);
-		DEBUG_PRINTF (1, "[%p] Expected value of type %s, got 0x%0x.\n", (gpointer) (gsize) mono_native_thread_id_get (), name, type);
-		g_free (name);
-		return ERR_INVALID_ARGUMENT;
-	}
+	ErrorCode err = ERR_NONE;
 	int fixedSizeLen = 1;
+	int newType = MONO_TYPE_END;
 	if (CHECK_PROTOCOL_VERSION (2, 53)) {
-		gboolean fixedSize = decode_byte (buf, &buf, limit);
-		if (fixedSize) 
-			fixedSizeLen = decode_int (buf, &buf, limit);
+		newType = decode_byte (buf, &buf, limit);
+		fixedSizeLen = decode_int (buf, &buf, limit);
+		//t->type = newType;
 	}
 	for (int i = 0 ; i < fixedSizeLen; i++) {
-		switch (t->type) {
+		switch (newType) {
 		case MONO_TYPE_BOOLEAN:
 			((guint8*)addr)[i] = decode_int (buf, &buf, limit);
 			break;
@@ -5555,32 +5589,115 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 		case MONO_TYPE_R8:
 			((guint64*)addr)[i]  = decode_long (buf, &buf, limit);
 			break;
-		case MONO_TYPE_PTR:
-			/* We send these as I8, so we get them back as such */
-			g_assert (fixedSizeLen == 1);
-			g_assert (type == MONO_TYPE_I8);
-			*(gssize*)addr = decode_long (buf, &buf, limit);
-			break;
-		case MONO_TYPE_GENERICINST:
-			g_assert (fixedSizeLen == 1);
-			if (MONO_TYPE_ISSTRUCT (t)) {
-				/* The client sends these as a valuetype */
-				goto handle_vtype;
-			} else {
-				goto handle_ref;
+		}
+	}
+	*endbuf = buf;
+	return err;
+}
+static ErrorCode
+decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
+{
+	ErrorCode err;
+	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t) &&
+		!(t->type == MONO_TYPE_I && type == MONO_TYPE_VALUETYPE) &&
+		!(type == VALUE_TYPE_ID_FIXED_ARRAY) &&
+		!(t->type == MONO_TYPE_U && type == MONO_TYPE_VALUETYPE) &&
+		!(t->type == MONO_TYPE_PTR && type == MONO_TYPE_I8) &&
+		!(t->type == MONO_TYPE_GENERICINST && type == MONO_TYPE_VALUETYPE) &&
+		!(t->type == MONO_TYPE_VALUETYPE && type == MONO_TYPE_OBJECT)) {
+		char *name = mono_type_full_name (t);
+		DEBUG_PRINTF (1, "[%p] Expected value of type %s, got 0x%0x.\n", (gpointer) (gsize) mono_native_thread_id_get (), name, type);
+		g_free (name);
+		return ERR_INVALID_ARGUMENT;
+	}
+	if (type == VALUE_TYPE_ID_FIXED_ARRAY && t->type != MONO_TYPE_VALUETYPE) {
+		decode_fixed_size_array_internal (t, type, domain, addr, buf, endbuf, limit, check_field_datatype);
+		return ERR_NONE;
+	}
+
+	switch (t->type) {
+	case MONO_TYPE_BOOLEAN:
+		*(guint8*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_CHAR:
+		*(gunichar2*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_I1:
+		*(gint8*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_U1:
+		*(guint8*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_I2:
+		*(gint16*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_U2:
+		*(guint16*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_I4:
+		*(gint32*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_U4:
+		*(guint32*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_I8:
+		*(gint64*)addr = decode_long (buf, &buf, limit);
+		break;
+	case MONO_TYPE_U8:
+		*(guint64*)addr = decode_long (buf, &buf, limit);
+		break;
+	case MONO_TYPE_R4:
+		*(guint32*)addr = decode_int (buf, &buf, limit);
+		break;
+	case MONO_TYPE_R8:
+		*(guint64*)addr = decode_long (buf, &buf, limit);
+		break;
+	case MONO_TYPE_PTR:
+		/* We send these as I8, so we get them back as such */
+		g_assert (type == MONO_TYPE_I8);
+		*(gssize*)addr = decode_long (buf, &buf, limit);
+		break;
+	case MONO_TYPE_GENERICINST:
+		if (MONO_TYPE_ISSTRUCT (t)) {
+			/* The client sends these as a valuetype */
+			goto handle_vtype;
+		} else {
+			goto handle_ref;
+		}
+		break;
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+		/* We send these as vtypes, so we get them back as such */
+		g_assert (type == MONO_TYPE_VALUETYPE);
+		/* Fall through */
+		handle_vtype:
+	case MONO_TYPE_VALUETYPE:
+		if (type == MONO_TYPE_OBJECT) {
+			/* Boxed vtype */
+			int objid = decode_objid (buf, &buf, limit);
+			ErrorCode err;
+			MonoObject *obj;
+
+			err = get_object (objid, (MonoObject**)&obj);
+			if (err != ERR_NONE)
+				return err;
+			if (!obj)
+				return ERR_INVALID_ARGUMENT;
+			if (obj->vtable->klass != mono_class_from_mono_type_internal (t)) {
+				DEBUG_PRINTF (1, "Expected type '%s', got object '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
+				return ERR_INVALID_ARGUMENT;
 			}
-			break;
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-			g_assert (fixedSizeLen == 1);
-			/* We send these as vtypes, so we get them back as such */
-			g_assert (type == MONO_TYPE_VALUETYPE);
-			/* Fall through */
-			handle_vtype:
-		case MONO_TYPE_VALUETYPE:
-			g_assert (fixedSizeLen == 1);
+			memcpy (addr, mono_object_unbox_internal (obj), mono_class_value_size (obj->vtable->klass, NULL));
+		} else {
+			err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
+			if (err != ERR_NONE)
+				return err;
+		}
+		break;
+	handle_ref:
+	default:
+		if (MONO_TYPE_IS_REFERENCE (t)) {
 			if (type == MONO_TYPE_OBJECT) {
-				/* Boxed vtype */
 				int objid = decode_objid (buf, &buf, limit);
 				ErrorCode err;
 				MonoObject *obj;
@@ -5588,100 +5705,75 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				err = get_object (objid, (MonoObject**)&obj);
 				if (err != ERR_NONE)
 					return err;
-				if (!obj)
-					return ERR_INVALID_ARGUMENT;
-				if (obj->vtable->klass != mono_class_from_mono_type_internal (t)) {
-					DEBUG_PRINTF (1, "Expected type '%s', got object '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
-					return ERR_INVALID_ARGUMENT;
-				}
-				memcpy (addr, mono_object_unbox_internal (obj), mono_class_value_size (obj->vtable->klass, NULL));
-			} else {
-				err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
-				if (err != ERR_NONE)
-					return err;
-			}
-			break;
-		handle_ref:
-		default:
-			g_assert (fixedSizeLen == 1);
-			if (MONO_TYPE_IS_REFERENCE (t)) {
-				if (type == MONO_TYPE_OBJECT) {
-					int objid = decode_objid (buf, &buf, limit);
-					ErrorCode err;
-					MonoObject *obj;
 
-					err = get_object (objid, (MonoObject**)&obj);
-					if (err != ERR_NONE)
-						return err;
-
-					if (obj) {
-						if (!obj_is_of_type (obj, t)) {
-							if (check_field_datatype) { //if it's not executing a invoke method check the datatypes.
-								DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
-								return ERR_INVALID_ARGUMENT;
-							}
+				if (obj) {
+					if (!obj_is_of_type (obj, t)) {
+						if (check_field_datatype) { //if it's not executing a invoke method check the datatypes.
+							DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
+							return ERR_INVALID_ARGUMENT;
 						}
 					}
-					if (obj && obj->vtable->domain != domain)
-						return ERR_INVALID_ARGUMENT;
-
-					mono_gc_wbarrier_generic_store_internal (addr, obj);
-				} else if (type == VALUE_TYPE_ID_NULL) {
-					*(MonoObject**)addr = NULL;
-				} else if (type == MONO_TYPE_VALUETYPE) {
-					ERROR_DECL (error);
-					guint8 *buf2;
-					gboolean is_enum;
-					MonoClass *klass;
-					MonoDomain *d;
-					guint8 *vtype_buf;
-					int vtype_buf_size;
-
-					/* This can happen when round-tripping boxed vtypes */
-					/*
-					* Obtain vtype class.
-					* Same as the beginning of the handle_vtype case above.
-					*/
-					buf2 = buf;
-					is_enum = decode_byte (buf, &buf, limit);
-					if (is_enum)
-						return ERR_NOT_IMPLEMENTED;
-					klass = decode_typeid (buf, &buf, limit, &d, &err);
-					if (err != ERR_NONE)
-						return err;
-
-					/* Decode the vtype into a temporary buffer, then box it. */
-					vtype_buf_size = mono_class_value_size (klass, NULL);
-					vtype_buf = (guint8 *)g_malloc0 (vtype_buf_size);
-					g_assert (vtype_buf);
-
-					buf = buf2;
-					err = decode_vtype (NULL, domain, vtype_buf, buf, &buf, limit, check_field_datatype);
-					if (err != ERR_NONE) {
-						g_free (vtype_buf);
-						return err;
-					}
-					*(MonoObject**)addr = mono_value_box_checked (d, klass, vtype_buf, error);
-					mono_error_cleanup (error);
-					g_free (vtype_buf);
-				} else {
-					char *name = mono_type_full_name (t);
-					DEBUG_PRINTF (1, "[%p] Expected value of type %s, got 0x%0x.\n", (gpointer) (gsize) mono_native_thread_id_get (), name, type);
-					g_free (name);
-					return ERR_INVALID_ARGUMENT;
 				}
-			} else if ((t->type == MONO_TYPE_GENERICINST) && 
-						mono_metadata_generic_class_is_valuetype (t->data.generic_class) &&
-						m_class_is_enumtype (t->data.generic_class->container_class)){
-				err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
+				if (obj && obj->vtable->domain != domain)
+					return ERR_INVALID_ARGUMENT;
+
+				mono_gc_wbarrier_generic_store_internal (addr, obj);
+			} else if (type == VALUE_TYPE_ID_NULL) {
+				*(MonoObject**)addr = NULL;
+			} else if (type == MONO_TYPE_VALUETYPE) {
+				ERROR_DECL (error);
+				guint8 *buf2;
+				gboolean is_enum;
+				MonoClass *klass;
+				MonoDomain *d;
+				guint8 *vtype_buf;
+				int vtype_buf_size;
+
+				/* This can happen when round-tripping boxed vtypes */
+				/*
+				* Obtain vtype class.
+				* Same as the beginning of the handle_vtype case above.
+				*/
+				buf2 = buf;
+				is_enum = decode_byte (buf, &buf, limit);
+				if (is_enum)
+					return ERR_NOT_IMPLEMENTED;
+				klass = decode_typeid (buf, &buf, limit, &d, &err);
 				if (err != ERR_NONE)
 					return err;
+
+				/* Decode the vtype into a temporary buffer, then box it. */
+				vtype_buf_size = mono_class_value_size (klass, NULL);
+				vtype_buf = (guint8 *)g_malloc0 (vtype_buf_size);
+				g_assert (vtype_buf);
+
+				buf = buf2;
+				err = decode_vtype (NULL, domain, vtype_buf, buf, &buf, limit, check_field_datatype);
+				if (err != ERR_NONE) {
+					g_free (vtype_buf);
+					return err;
+				}
+				*(MonoObject**)addr = mono_value_box_checked (d, klass, vtype_buf, error);
+				mono_error_cleanup (error);
+				g_free (vtype_buf);
 			} else {
-				NOT_IMPLEMENTED;
+				char *name = mono_type_full_name (t);
+				DEBUG_PRINTF (1, "[%p] Expected value of type %s, got 0x%0x.\n", (gpointer) (gsize) mono_native_thread_id_get (), name, type);
+				g_free (name);
+				return ERR_INVALID_ARGUMENT;
 			}
-			break;
+		} else if ((t->type == MONO_TYPE_GENERICINST) && 
+					mono_metadata_generic_class_is_valuetype (t->data.generic_class) &&
+					m_class_is_enumtype (t->data.generic_class->container_class)){
+			err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
+			if (err != ERR_NONE)
+				return err;
+		} else {
+			NOT_IMPLEMENTED;
 		}
+		break;
 	}
+
 
 	*endbuf = buf;
 
