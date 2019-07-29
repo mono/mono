@@ -852,7 +852,12 @@ mono_ldtoken_wrapper_generic_shared (MonoImage *image, int token, MonoMethod *me
 guint64
 mono_fconv_u8 (double v)
 {
-	return (guint64)v;
+	const double two63 = 2147483648.0 * 4294967296.0;
+	if (v < two63) {
+		return (guint64)v;
+	} else {
+		return (guint64)(v - two63) + ((guint64)1 << 63);
+	}
 }
 
 guint64
@@ -869,7 +874,12 @@ mono_fconv_u8_2 (double v)
 guint64
 mono_rconv_u8 (float v)
 {
-	return (guint64)v;
+	const float two63 = 2147483648.0 * 4294967296.0;
+	if (v < two63) {
+		return (guint64)v;
+	} else {
+		return (guint64)(v - two63) + ((guint64)1 << 63);
+	}
 }
 
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
