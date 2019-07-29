@@ -132,7 +132,7 @@ namespace System.Runtime.CompilerServices
                 // and decrement its outstanding operation count.
                 try
                 {
-                    System.Threading.Tasks.Task.ThrowAsync(exception!, targetContext: _synchronizationContext); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                    System.Threading.Tasks.Task.ThrowAsync(exception, targetContext: _synchronizationContext);
                 }
                 finally
                 {
@@ -144,7 +144,7 @@ namespace System.Runtime.CompilerServices
                 // Otherwise, queue the exception to be thrown on the ThreadPool.  This will
                 // result in a crash unless legacy exception behavior is enabled by a config
                 // file or a CLR host.
-                System.Threading.Tasks.Task.ThrowAsync(exception!, targetContext: null); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                System.Threading.Tasks.Task.ThrowAsync(exception, targetContext: null);
             }
 
             // The exception was propagated already; we don't need or want to fault the builder, just mark it as completed.
@@ -315,7 +315,7 @@ namespace System.Runtime.CompilerServices
     {
 #if !PROJECTN
         /// <summary>A cached task for default(TResult).</summary>
-        internal readonly static Task<TResult> s_defaultResultTask = AsyncTaskCache.CreateCacheableTask(default(TResult)!); // TODO-NULLABLE: Remove ! when nullable attributes are respected
+        internal readonly static Task<TResult> s_defaultResultTask = AsyncTaskCache.CreateCacheableTask<TResult>(default);
 #endif
 
         /// <summary>The lazily-initialized built task.</summary>
@@ -570,13 +570,13 @@ namespace System.Runtime.CompilerServices
             {
                 Debug.Assert(s is AsyncStateMachineBox<TStateMachine>);
                 // Only used privately to pass directly to EC.Run
-                Unsafe.As<AsyncStateMachineBox<TStateMachine>>(s).StateMachine.MoveNext();
+                Unsafe.As<AsyncStateMachineBox<TStateMachine>>(s).StateMachine!.MoveNext();
             }
 
             /// <summary>A delegate to the <see cref="MoveNext()"/> method.</summary>
             private Action? _moveNextAction;
             /// <summary>The state machine itself.</summary>
-            [AllowNull, MaybeNull] public TStateMachine StateMachine = default!; // mutable struct; do not make this readonly. SOS DumpAsync command depends on this name.  // TODO-NULLABLE: Remove ! when nullable attributes are respected
+            [AllowNull, MaybeNull] public TStateMachine StateMachine = default; // mutable struct; do not make this readonly. SOS DumpAsync command depends on this name.
             /// <summary>Captured ExecutionContext with which to invoke <see cref="MoveNextAction"/>; may be null.</summary>
             public ExecutionContext? Context;
 
@@ -601,6 +601,7 @@ namespace System.Runtime.CompilerServices
                 ExecutionContext? context = Context;
                 if (context == null)
                 {
+                    Debug.Assert(StateMachine != null);
                     StateMachine.MoveNext();
                 }
                 else
@@ -620,7 +621,7 @@ namespace System.Runtime.CompilerServices
                     // Clear out state now that the async method has completed.
                     // This avoids keeping arbitrary state referenced by lifted locals
                     // if this Task / state machine box is held onto.
-                    StateMachine = default!; // TODO-NULLABLE: Remove ! when nullable attributes are respected
+                    StateMachine = default;
                     Context = default;
 
 #if !CORERT
@@ -641,7 +642,7 @@ namespace System.Runtime.CompilerServices
             }
 
             /// <summary>Gets the state machine as a boxed object.  This should only be used for debugging purposes.</summary>
-            IAsyncStateMachine IAsyncStateMachineBox.GetStateMachineObject() => StateMachine; // likely boxes, only use for debugging
+            IAsyncStateMachine IAsyncStateMachineBox.GetStateMachineObject() => StateMachine!; // likely boxes, only use for debugging
         }
 
         /// <summary>Gets the <see cref="System.Threading.Tasks.Task{TResult}"/> for this builder.</summary>
@@ -787,7 +788,7 @@ namespace System.Runtime.CompilerServices
             // If the exception represents cancellation, cancel the task.  Otherwise, fault the task.
             bool successfullySet = exception is OperationCanceledException oce ?
                 task.TrySetCanceled(oce.CancellationToken, oce) :
-                task.TrySetException(exception!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                task.TrySetException(exception);
 
             // Unlike with TaskCompletionSource, we do not need to spin here until _taskAndStateMachine is completed,
             // since AsyncTaskMethodBuilder.SetException should not be immediately followed by any code
@@ -1016,7 +1017,7 @@ namespace System.Runtime.CompilerServices
 
             try
             {
-                stateMachine!.MoveNext(); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                stateMachine.MoveNext();
             }
             finally
             {

@@ -1,27 +1,23 @@
+ifneq ($(wildcard config.make),)
+
 include config.make
 
-#
-# NETCORETESTS_VERSION and NETCOREAPP_VERSION must be updated in sync, we are using coreclr repo for that but that's fine for now
-#
-
-# Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L21
-NETCORETESTS_VERSION := 4.6.0-preview7.19305.1
-
-# Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L25
-NETCOREAPP_VERSION := 3.0.0-preview7-27804-03
+NETCORETESTS_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftPrivateCoreFxNETCoreAppVersion>\(.*\)<\/MicrosoftPrivateCoreFxNETCoreAppVersion.*/\1/p' )
+NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
-ROSLYN_VERSION := 3.2.0-beta3-19310-04
+ROSLYN_VERSION := 3.3.0-beta2-19374-02
 
 ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
 PLATFORM_AOT_PREFIX :=
 NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
-XUNIT_FLAGS =
+XUNIT_FLAGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
 TESTS_PLATFORM = Windows_NT.x64
+ON_RUNTIME_EXTRACT = chmod -R 755 {host,shared,./dotnet}
 DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
 DOTNET := "$(subst \,/,$(DOTNET))"
 endif
@@ -42,6 +38,9 @@ PLATFORM_AOT_PREFIX := lib
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonlinuxtests @../../../../CoreFX.issues_linux.rsp
+ifeq ($(COREARCH), arm64)
+XUNIT_FLAGS += @../../../../CoreFX.issues_linux_arm64.rsp
+endif
 TESTS_PLATFORM = Linux.x64
 DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
@@ -63,6 +62,7 @@ $(NETCORESDK_FILE):
 	curl $(NETCORE_URL) --output $(NETCORESDK_FILE)
 	rm -rf shared/Microsoft.NETCore.App
 	$(UNZIPCMD) $(NETCORESDK_FILE)
+	$(ON_RUNTIME_EXTRACT)
 
 # AspNetCoreApp contains its own .NET Core Runtime but we don't need it so let's remove it 
 # and update version in Microsoft.AspNetCore.App.runtimeconfig.json to NETCOREAPP_VERSION
@@ -94,7 +94,7 @@ run-aspnet-sample: prepare
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
-System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in
+System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in config.make
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
 
@@ -118,8 +118,8 @@ link-mono:
 prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
-	$(DOTNET) pack roslyn-restore.csproj -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
-	$(DOTNET) pack roslyn-restore.csproj -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 
 clean:
 	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
@@ -129,7 +129,8 @@ update-tests-corefx: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 	curl $(TEST_ASSETS_URL) --output corefx-test-assets.xml
-	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
+	./dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
+	rm -rf corefx/tests/extracted/System.Utf8String.Experimental.Tests
 	touch $@
 
 #
@@ -145,28 +146,33 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 
 run-tests-corefx: update-tests-corefx
 	for testdir in corefx/tests/extracted/*; do \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}); \
-	done
+		$(MAKE) run-tests-corefx-$$(basename $${testdir}) || true; \
+	done; \
+	$(MAKE) xunit-summary
 
 run-tests-corefx-%: prepare update-tests-corefx
 	echo -n "***************** $* *********************"
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.deps.json
-	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/xunit.console.runtimeconfig.dev.json
-	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.runtimeconfig.dev.json
+	cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/$*.runtimeconfig.dev.json
 	cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
-	sed -i -e 's/9.9.9/$(NETCOREAPP_VERSION)/g' corefx/tests/extracted/$*/*.runtimeconfig.json
+	sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
+	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec --runtimeconfig $*.runtimeconfig.json --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
-		$(FIXTURE) || true
+		$(FIXTURE)
 
-# build a test assembly in COREFX_ROOT and copy it to corefx/tests/extracted
+# build a test assembly in COREFX_ROOT (path to a fully built corefx repo) and copy it to corefx/tests/extracted
 # e.g. `make build-test-corefx-System.Runtime COREFX_ROOT=/prj/corefx-master`
-build-test-corefx-%: check-env
-	cd $(COREFX_ROOT)/src/$*/tests && $(DOTNET) build -o "$(CURDIR)/corefx/tests/extracted/tmp"
-	cp $(CURDIR)/corefx/tests/extracted/tmp/$*.Tests.{dll,pdb} $(CURDIR)/corefx/tests/extracted/$*.Tests/
-	rm -rf $(CURDIR)/corefx/tests/extracted/tmp
+build-test-corefx-%:
+	cd $(COREFX_ROOT)/src/$*/tests && $(DOTNET) msbuild /p:OutputPath=tmp
+	cp $(COREFX_ROOT)/src/$*/tests/tmp/$*.Tests.{dll,pdb} $(CURDIR)/corefx/tests/extracted/$*.Tests/
+	rm -rf $(COREFX_ROOT)/src/$*/tests/tmp
+
+xunit-summary:
+	./xunit-summary.py "corefx/tests"
+
+endif
 
 distdir:

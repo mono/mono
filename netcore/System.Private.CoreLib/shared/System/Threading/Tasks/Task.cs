@@ -194,7 +194,7 @@ namespace System.Threading.Tasks
         {
             Debug.Assert(task != null, "Null Task objects can't be added to the ActiveTasks collection");
 
-            LazyInitializer.EnsureInitialized<Dictionary<int, Task>>(ref s_currentActiveTasks!, () => new Dictionary<int, Task>()); // TODO-NULLABLE: Remove ! when nullable attributes are respected
+            LazyInitializer.EnsureInitialized(ref s_currentActiveTasks, () => new Dictionary<int, Task>());
 
             int taskId = task.Id;
             lock (s_currentActiveTasks)
@@ -1037,7 +1037,7 @@ namespace System.Threading.Tasks
                 ThrowHelper.ThrowArgumentNullException(ExceptionArgument.scheduler);
             }
 
-            InternalRunSynchronously(scheduler!, waitForCompletion: true); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            InternalRunSynchronously(scheduler, waitForCompletion: true);
         }
 
         //
@@ -1343,7 +1343,7 @@ namespace System.Threading.Tasks
         /// <returns>The initialized contingent properties object.</returns>
         internal ContingentProperties EnsureContingentPropertiesInitialized()
         {
-            return LazyInitializer.EnsureInitialized<ContingentProperties>(ref m_contingentProperties!, () => new ContingentProperties())!; // TODO-NULLABLE: Remove ! when nullable attributes are respected
+            return LazyInitializer.EnsureInitialized(ref m_contingentProperties, () => new ContingentProperties());
         }
 
         /// <summary>
@@ -1512,7 +1512,7 @@ namespace System.Threading.Tasks
                     }
                 }
 
-                return contingentProps.m_completionEvent!; // TODO-NULLABLE: Remove ! when compiler specially-recognizes CompareExchange for nullability
+                return contingentProps.m_completionEvent;
             }
         }
 
@@ -1802,7 +1802,7 @@ namespace System.Threading.Tasks
 
             lock (props)
             {
-                props.m_exceptionsHolder!.Add(exceptionObject, representsCancellation); // TODO-NULLABLE: Remove ! when compiler specially-recognizes CompareExchange for nullability
+                props.m_exceptionsHolder.Add(exceptionObject, representsCancellation);
             }
         }
 
@@ -3296,11 +3296,10 @@ namespace System.Threading.Tasks
         {
             Debug.Assert(continuationObject != null);
 
-            TplEventSource log = TplEventSource.Log;
-            bool TplEventSourceLoggingEnabled = log.IsEnabled();
-            if (TplEventSourceLoggingEnabled)
+            TplEventSource? log = TplEventSource.Log;
+            if (!log.IsEnabled())
             {
-                log.RunningContinuation(Id, continuationObject);
+                log = null;
             }
 
             if (AsyncCausalityTracer.LoggingOn)
@@ -3351,26 +3350,64 @@ namespace System.Threading.Tasks
             lock (continuations) { }
             int continuationCount = continuations.Count;
 
-            // Fire the asynchronous continuations first ...
-            for (int i = 0; i < continuationCount; i++)
+            // Fire the asynchronous continuations first. However, if we're not able to run any continuations synchronously,
+            // then we can skip this first pass, since the second pass that tries to run everything synchronously will instead
+            // run everything asynchronously anyway.
+            if (canInlineContinuations)
             {
-                // Synchronous continuation tasks will have the ExecuteSynchronously option,
-                // and we're looking for asynchronous tasks...
-                if (continuations[i] is StandardTaskContinuation tc &&
-                    (tc.m_options & TaskContinuationOptions.ExecuteSynchronously) == 0)
+                bool forceContinuationsAsync = false;
+                for (int i = 0; i < continuationCount; i++)
                 {
-                    if (TplEventSourceLoggingEnabled)
+                    // For StandardTaskContinuations, we respect the TaskContinuationOptions.ExecuteSynchronously option,
+                    // as the developer needs to explicitly opt-into running the continuation synchronously, and if they do,
+                    // they get what they asked for. ITaskCompletionActions are only ever created by the runtime, and we always
+                    // try to execute them synchronously. For all other continuations (related to await), we only run it synchronously
+                    // if it's the first such continuation; otherwise, we force it to run asynchronously so as to not artificially
+                    // delay an await continuation behind other arbitrary user code created as a previous await continuation.
+
+                    object? currentContinuation = continuations[i];
+                    if (currentContinuation == null)
                     {
-                        log.RunningContinuationList(Id, i, tc);
+                        // The continuation was unregistered and null'd out, so just skip it.
+                        continue;
                     }
-                    continuations[i] = null; // so that we can skip this later
-                    tc.Run(this, canInlineContinuations);
+                    else if (currentContinuation is StandardTaskContinuation stc)
+                    {
+                        if ((stc.m_options & TaskContinuationOptions.ExecuteSynchronously) == 0)
+                        {
+                            continuations[i] = null; // so that we can skip this later
+                            log?.RunningContinuationList(Id, i, stc);
+                            stc.Run(this, canInlineContinuationTask: false);
+                        }
+                    }
+                    else if (!(currentContinuation is ITaskCompletionAction))
+                    {
+                        if (forceContinuationsAsync)
+                        {
+                            continuations[i] = null;
+                            log?.RunningContinuationList(Id, i, currentContinuation);
+                            switch (currentContinuation)
+                            {
+                                case IAsyncStateMachineBox stateMachineBox:
+                                    AwaitTaskContinuation.RunOrScheduleAction(stateMachineBox, allowInlining: false);
+                                    break;
+
+                                case Action action:
+                                    AwaitTaskContinuation.RunOrScheduleAction(action, allowInlining: false);
+                                    break;
+
+                                default:
+                                    Debug.Assert(currentContinuation is TaskContinuation);
+                                    ((TaskContinuation)currentContinuation).Run(this, canInlineContinuationTask: false);
+                                    break;
+                            }
+                        }
+                        forceContinuationsAsync = true;
+                    }
                 }
             }
 
             // ... and then fire the synchronous continuations (if there are any).
-            // This includes ITaskCompletionAction, AwaitTaskContinuations, IAsyncStateMachineBox,
-            // and Action delegates, which are all by default implicitly synchronous.
             for (int i = 0; i < continuationCount; i++)
             {
                 object? currentContinuation = continuations[i];
@@ -3379,10 +3416,7 @@ namespace System.Threading.Tasks
                     continue;
                 }
                 continuations[i] = null; // to enable free'ing up memory earlier
-                if (TplEventSourceLoggingEnabled)
-                {
-                    log.RunningContinuationList(Id, i, currentContinuation);
-                }
+                log?.RunningContinuationList(Id, i, currentContinuation);
 
                 switch (currentContinuation)
                 {
@@ -3600,13 +3634,13 @@ namespace System.Threading.Tasks
             CreationOptionsFromContinuationOptions(continuationOptions, out creationOptions, out internalOptions);
 
             Task continuationTask = new ContinuationTaskFromTask(
-                this, continuationAction!, null, // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                this, continuationAction, null,
                 creationOptions, internalOptions
             );
 
             // Register the continuation.  If synchronous execution is requested, this may
             // actually invoke the continuation before returning.
-            ContinueWithCore(continuationTask, scheduler!, cancellationToken, continuationOptions); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            ContinueWithCore(continuationTask, scheduler, cancellationToken, continuationOptions);
 
             return continuationTask;
         }
@@ -3790,13 +3824,13 @@ namespace System.Threading.Tasks
             CreationOptionsFromContinuationOptions(continuationOptions, out creationOptions, out internalOptions);
 
             Task continuationTask = new ContinuationTaskFromTask(
-                this, continuationAction!, state, // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                this, continuationAction, state,
                 creationOptions, internalOptions
             );
 
             // Register the continuation.  If synchronous execution is requested, this may
             // actually invoke the continuation before returning.
-            ContinueWithCore(continuationTask, scheduler!, cancellationToken, continuationOptions); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            ContinueWithCore(continuationTask, scheduler, cancellationToken, continuationOptions);
 
             return continuationTask;
         }
@@ -3993,13 +4027,13 @@ namespace System.Threading.Tasks
             CreationOptionsFromContinuationOptions(continuationOptions, out creationOptions, out internalOptions);
 
             Task<TResult> continuationTask = new ContinuationResultTaskFromTask<TResult>(
-                this, continuationFunction!, null, // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                this, continuationFunction, null,
                 creationOptions, internalOptions
             );
 
             // Register the continuation.  If synchronous execution is requested, this may
             // actually invoke the continuation before returning.
-            ContinueWithCore(continuationTask, scheduler!, cancellationToken, continuationOptions); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            ContinueWithCore(continuationTask, scheduler, cancellationToken, continuationOptions);
 
             return continuationTask;
         }
@@ -4200,13 +4234,13 @@ namespace System.Threading.Tasks
             CreationOptionsFromContinuationOptions(continuationOptions, out creationOptions, out internalOptions);
 
             Task<TResult> continuationTask = new ContinuationResultTaskFromTask<TResult>(
-                this, continuationFunction!, state, // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                this, continuationFunction, state,
                 creationOptions, internalOptions
             );
 
             // Register the continuation.  If synchronous execution is requested, this may
             // actually invoke the continuation before returning.
-            ContinueWithCore(continuationTask, scheduler!, cancellationToken, continuationOptions); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            ContinueWithCore(continuationTask, scheduler, cancellationToken, continuationOptions);
 
             return continuationTask;
         }
@@ -4711,7 +4745,7 @@ namespace System.Threading.Tasks
             bool returnValue = true;
 
             // Collects incomplete tasks in "waitedOnTaskList"
-            for (int i = tasks!.Length - 1; i >= 0; i--) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            for (int i = tasks.Length - 1; i >= 0; i--)
             {
                 Task task = tasks[i];
 
@@ -4720,7 +4754,7 @@ namespace System.Threading.Tasks
                     ThrowHelper.ThrowArgumentException(ExceptionResource.Task_WaitMulti_NullTask, ExceptionArgument.tasks);
                 }
 
-                bool taskIsCompleted = task!.IsCompleted; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                bool taskIsCompleted = task.IsCompleted;
                 if (!taskIsCompleted)
                 {
                     // try inlining the task only if we have an infinite timeout and an empty cancellation token
@@ -5076,7 +5110,7 @@ namespace System.Threading.Tasks
             // Make a pass through the loop to check for any tasks that may have
             // already been completed, and to verify that no tasks are null.
 
-            for (int taskIndex = 0; taskIndex < tasks!.Length; taskIndex++) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            for (int taskIndex = 0; taskIndex < tasks.Length; taskIndex++)
             {
                 Task task = tasks[taskIndex];
 
@@ -5085,7 +5119,7 @@ namespace System.Threading.Tasks
                     ThrowHelper.ThrowArgumentException(ExceptionResource.Task_WaitMulti_NullTask, ExceptionArgument.tasks);
                 }
 
-                if (signaledTaskIndex == -1 && task!.IsCompleted) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                if (signaledTaskIndex == -1 && task.IsCompleted)
                 {
                     // We found our first completed task.  Store it, but we can't just return here,
                     // as we still need to validate the whole array for nulls.
@@ -5137,7 +5171,7 @@ namespace System.Threading.Tasks
             if (exception == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.exception);
 
             var task = new Task();
-            bool succeeded = task.TrySetException(exception!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            bool succeeded = task.TrySetException(exception);
             Debug.Assert(succeeded, "This should always succeed on a new task.");
             return task;
         }
@@ -5151,7 +5185,7 @@ namespace System.Threading.Tasks
             if (exception == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.exception);
 
             var task = new Task<TResult>();
-            bool succeeded = task.TrySetException(exception!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            bool succeeded = task.TrySetException(exception);
             Debug.Assert(succeeded, "This should always succeed on a new task.");
             return task;
         }
@@ -5174,7 +5208,7 @@ namespace System.Threading.Tasks
         {
             if (!cancellationToken.IsCancellationRequested)
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.cancellationToken);
-            return new Task<TResult>(true, default!, TaskCreationOptions.None, cancellationToken); // TODO-NULLABLE: Remove ! when nullable attributes are respected
+            return new Task<TResult>(true, default, TaskCreationOptions.None, cancellationToken);
         }
 
         /// <summary>Creates a <see cref="Task"/> that's completed due to cancellation with the specified exception.</summary>
@@ -5311,7 +5345,7 @@ namespace System.Threading.Tasks
                 return Task.FromCanceled(cancellationToken);
 
             // Kick off initial Task, which will call the user-supplied function and yield a Task.
-            Task<Task?> task1 = Task<Task?>.Factory.StartNew(function!, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            Task<Task?> task1 = Task<Task?>.Factory.StartNew(function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 
             // Create a promise-style Task to be used as a proxy for the operation
             // Set lookForOce == true so that unwrap logic can be on the lookout for OCEs thrown as faults from task1, to support in-delegate cancellation.
@@ -5356,7 +5390,7 @@ namespace System.Threading.Tasks
                 return Task.FromCanceled<TResult>(cancellationToken);
 
             // Kick off initial Task, which will call the user-supplied function and yield a Task.
-            Task<Task<TResult>?> task1 = Task<Task<TResult>?>.Factory.StartNew(function!, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            Task<Task<TResult>?> task1 = Task<Task<TResult>?>.Factory.StartNew(function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 
             // Create a promise-style Task to be used as a proxy for the operation
             // Set lookForOce == true so that unwrap logic can be on the lookout for OCEs thrown as faults from task1, to support in-delegate cancellation.
@@ -5583,7 +5617,7 @@ namespace System.Threading.Tasks
                 foreach (var task in tasks)
                 {
                     if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                    taskArray[index++] = task!; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                    taskArray[index++] = task;
                 }
                 return InternalWhenAll(taskArray);
             }
@@ -5591,10 +5625,10 @@ namespace System.Threading.Tasks
             // Do some argument checking and convert tasks to a List (and later an array).
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
             List<Task> taskList = new List<Task>();
-            foreach (Task task in tasks!) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            foreach (Task task in tasks)
             {
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                taskList.Add(task!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                taskList.Add(task);
             }
 
             // Delegate the rest to InternalWhenAll()
@@ -5633,7 +5667,7 @@ namespace System.Threading.Tasks
             // Do some argument checking and make a defensive copy of the tasks array
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
 
-            int taskCount = tasks!.Length; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            int taskCount = tasks.Length;
             if (taskCount == 0) return InternalWhenAll(tasks); // Small optimization in the case of an empty array.
 
             Task[] tasksCopy = new Task[taskCount];
@@ -5641,7 +5675,7 @@ namespace System.Threading.Tasks
             {
                 Task task = tasks[i];
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                tasksCopy[i] = task!; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                tasksCopy[i] = task;
             }
 
             // The rest can be delegated to InternalWhenAll()
@@ -5827,7 +5861,7 @@ namespace System.Threading.Tasks
                 foreach (var task in tasks)
                 {
                     if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                    taskArray[index++] = task!; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                    taskArray[index++] = task;
                 }
                 return InternalWhenAll<TResult>(taskArray);
             }
@@ -5835,10 +5869,10 @@ namespace System.Threading.Tasks
             // Do some argument checking and convert tasks into a List (later an array)
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
             List<Task<TResult>> taskList = new List<Task<TResult>>();
-            foreach (Task<TResult> task in tasks!) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            foreach (Task<TResult> task in tasks)
             {
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                taskList.Add(task!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                taskList.Add(task);
             }
 
             // Delegate the rest to InternalWhenAll<TResult>().
@@ -5880,7 +5914,7 @@ namespace System.Threading.Tasks
             // Do some argument checking and make a defensive copy of the tasks array
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
 
-            int taskCount = tasks!.Length; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            int taskCount = tasks.Length;
             if (taskCount == 0) return InternalWhenAll<TResult>(tasks); // small optimization in the case of an empty task array
 
             Task<TResult>[] tasksCopy = new Task<TResult>[taskCount];
@@ -5888,7 +5922,7 @@ namespace System.Threading.Tasks
             {
                 Task<TResult> task = tasks[i];
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                tasksCopy[i] = task!; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                tasksCopy[i] = task;
             }
 
             // Delegate the rest to InternalWhenAll<TResult>()
@@ -6047,7 +6081,7 @@ namespace System.Threading.Tasks
         public static Task<Task> WhenAny(params Task[] tasks)
         {
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
-            if (tasks!.Length == 0) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            if (tasks.Length == 0)
             {
                 ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_EmptyTaskList, ExceptionArgument.tasks);
             }
@@ -6060,7 +6094,7 @@ namespace System.Threading.Tasks
             {
                 Task task = tasks[i];
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                tasksCopy[i] = task!; // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                tasksCopy[i] = task;
             }
 
             // Previously implemented CommonCWAnyLogic() can handle the rest
@@ -6089,10 +6123,10 @@ namespace System.Threading.Tasks
             // Make a defensive copy, as the user may manipulate the tasks collection
             // after we return but before the WhenAny asynchronously completes.
             List<Task> taskList = new List<Task>();
-            foreach (Task task in tasks!) // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+            foreach (Task task in tasks)
             {
                 if (task == null) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_NullTask, ExceptionArgument.tasks);
-                taskList.Add(task!); // TODO-NULLABLE: Remove ! when [DoesNotReturn] respected
+                taskList.Add(task);
             }
 
             if (taskList.Count == 0)
@@ -6660,7 +6694,7 @@ namespace System.Threading.Tasks
                     if (Task.s_asyncDebuggingEnabled)
                         RemoveFromActiveTasks(this);
 
-                    result = TrySetResult(taskTResult != null ? taskTResult.Result : default!); // TODO-NULLABLE: Remove ! when nullable attributes are respected
+                    result = TrySetResult(taskTResult != null ? taskTResult.Result : default);
                     break;
             }
             return result;

@@ -68,7 +68,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT;CLR40;USE_ECMA_KEY;FEATURE_REFLECTIONCONTEXT;FEATURE_REFLECTIONFILEIO;FEATURE_SERIALIZATION;FEATURE_SLIMLOCK</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;CLR40;USE_ECMA_KEY;FEATURE_REFLECTIONCONTEXT;FEATURE_REFLECTIONFILEIO;FEATURE_SERIALIZATION;FEATURE_SLIMLOCK</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING;CLR40;USE_ECMA_KEY;FEATURE_REFLECTIONCONTEXT;FEATURE_REFLECTIONFILEIO;FEATURE_SERIALIZATION;FEATURE_SLIMLOCK</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -319,6 +324,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <EmbeddedResource Include="src/ComponentModel/Strings.resx">
@@ -361,6 +372,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <EmbeddedResource Include="src/ComponentModel/Strings.resx">
+      <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
     <EmbeddedResource Include="src/ComponentModel/Strings.resx">
       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>

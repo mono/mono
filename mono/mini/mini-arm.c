@@ -373,7 +373,7 @@ mono_arch_have_fast_tls (void)
 	static gboolean have_fast_tls = FALSE;
         static gboolean inited = FALSE;
 
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 
 	if (inited)
@@ -802,11 +802,11 @@ mono_arch_init (void)
 	char *cpu_arch;
 
 #ifdef TARGET_WATCHOS
-	mini_get_debug_options ()->soft_breakpoints = TRUE;
+	mini_debug_options.soft_breakpoints = TRUE;
 #endif
 
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
-	if (mini_get_debug_options ()->soft_breakpoints) {
+	if (mini_debug_options.soft_breakpoints) {
 		if (!mono_aot_only)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
@@ -4049,7 +4049,7 @@ mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val)
 	code += 4;
 	return code;
 #endif
-	if (mini_get_debug_options()->single_imm_size && v7_supported) {
+	if (mini_debug_options.single_imm_size && v7_supported) {
 		ARM_MOVW_REG_IMM (code, dreg, val & 0xffff);
 		ARM_MOVT_REG_IMM (code, dreg, (val >> 16) & 0xffff);
 		return code;
@@ -4663,7 +4663,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				var = info_var;
 				code = emit_ldr_imm (code, dreg, var->inst_basereg, var->inst_offset);
 				/* Add the offset */
-				val = ((offset / 4) * sizeof (guint8*)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
+				val = ((offset / 4) * sizeof (target_mgreg_t)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
 				/* Load the info->bp_addrs [offset], which is either 0 or the address of a trigger page */
 				if (arm_is_imm12 ((int)val)) {
 					ARM_LDR_IMM (code, dreg, dreg, val);
@@ -6313,11 +6313,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
 			ARM_STR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
 		}
+
+		mono_add_var_location (cfg, cfg->rgctx_var, TRUE, MONO_ARCH_RGCTX_REG, 0, 0, code - cfg->native_code);
+		mono_add_var_location (cfg, cfg->rgctx_var, FALSE, ins->inst_basereg, ins->inst_offset, code - cfg->native_code, 0);
 	}
 
 	/* load arguments allocated to register from the stack */
-	pos = 0;
-
 	cinfo = get_call_info (NULL, sig);
 
 	if (cinfo->ret.storage == RegTypeStructByAddr) {
@@ -6341,7 +6342,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
-		inst = cfg->args [pos];
+		inst = cfg->args [i];
 		
 		if (cfg->verbose_level > 2)
 			g_print ("Saving argument %d (type: %d)\n", i, ainfo->storage);
@@ -6361,8 +6362,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			} else
 				g_assert_not_reached ();
 
+			if (i == 0 && sig->hasthis) {
+				g_assert (ainfo->storage == RegTypeGeneral);
+				mono_add_var_location (cfg, inst, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
+				mono_add_var_location (cfg, inst, TRUE, inst->dreg, 0, code - cfg->native_code, 0);
+			}
+
 			if (cfg->verbose_level > 2)
-				g_print ("Argument %d assigned to register %s\n", pos, mono_arch_regname (inst->dreg));
+				g_print ("Argument %d assigned to register %s\n", i, mono_arch_regname (inst->dreg));
 		} else {
 			switch (ainfo->storage) {
 			case RegTypeHFA:
@@ -6417,6 +6424,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					}
 					break;
 				}
+				if (i == 0 && sig->hasthis) {
+					g_assert (ainfo->storage == RegTypeGeneral);
+					mono_add_var_location (cfg, inst, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
+					mono_add_var_location (cfg, inst, FALSE, inst->inst_basereg, inst->inst_offset, code - cfg->native_code, 0);
+                                }
 				break;
 			case RegTypeBaseGen:
 				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
@@ -6535,7 +6547,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				break;
 			}
 		}
-		pos++;
 	}
 
 	if (method->save_lmf)
@@ -6844,11 +6855,6 @@ mono_arch_finish_init (void)
 {
 }
 
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
-{
-}
-
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -6993,10 +6999,10 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	if (large_offsets) {
 		ARM_PUSH4 (code, ARMREG_R0, ARMREG_R1, ARMREG_IP, ARMREG_PC);
-		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 4 * sizeof (host_mgreg_t));
+		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 4 * sizeof (target_mgreg_t));
 	} else {
 		ARM_PUSH2 (code, ARMREG_R0, ARMREG_R1);
-		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (host_mgreg_t));
+		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (target_mgreg_t));
 	}
 	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_LR, -4);
 	vtable_target = code;
@@ -7074,8 +7080,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				} else {
 					ARM_POP2 (code, ARMREG_R0, ARMREG_R1);
 					if (large_offsets) {
-						mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (host_mgreg_t));
-						ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 2 * sizeof (host_mgreg_t));
+						mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (target_mgreg_t));
+						ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 2 * sizeof (target_mgreg_t));
 					}
 					mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 0);
 					ARM_LDR_IMM (code, ARMREG_PC, ARMREG_IP, vtable_offset);
@@ -7089,7 +7095,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				/* Load target address */
 				ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0);
 				/* Save it to the fourth slot */
-				ARM_STR_IMM (code, ARMREG_R1, ARMREG_SP, 3 * sizeof (host_mgreg_t));
+				ARM_STR_IMM (code, ARMREG_R1, ARMREG_SP, 3 * sizeof (target_mgreg_t));
 				/* Restore registers and branch */
 				ARM_POP4 (code, ARMREG_R0, ARMREG_R1, ARMREG_IP, ARMREG_PC);
 				
@@ -7195,7 +7201,6 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
 	guint8 *code = ip;
 	guint32 native_offset = ip - (guint8*)ji->code_start;
-	MonoDebugOptions *opt = mini_get_debug_options ();
 
 	if (ji->from_aot) {
 		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
@@ -7205,8 +7210,8 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 
 		g_assert (native_offset % 4 == 0);
 		g_assert (info->bp_addrs [native_offset / 4] == 0);
-		info->bp_addrs [native_offset / 4] = (guint8*)(opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page);
-	} else if (opt->soft_breakpoints) {
+		info->bp_addrs [native_offset / 4] = (guint8*)(mini_debug_options.soft_breakpoints ? breakpoint_tramp : bp_trigger_page);
+	} else if (mini_debug_options.soft_breakpoints) {
 		code += 4;
 		ARM_BLX_REG (code, ARMREG_LR);
 		mono_arch_flush_icache (code - 4, 4);
@@ -7241,7 +7246,6 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 void
 mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
-	MonoDebugOptions *opt = mini_get_debug_options ();
 	guint8 *code = ip;
 	int i;
 
@@ -7253,9 +7257,9 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 
 		g_assert (native_offset % 4 == 0);
-		g_assert (info->bp_addrs [native_offset / 4] == (guint8*)(opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page));
+		g_assert (info->bp_addrs [native_offset / 4] == (guint8*)(mini_debug_options.soft_breakpoints ? breakpoint_tramp : bp_trigger_page));
 		info->bp_addrs [native_offset / 4] = 0;
-	} else if (opt->soft_breakpoints) {
+	} else if (mini_debug_options.soft_breakpoints) {
 		code += 4;
 		ARM_NOP (code);
 		mono_arch_flush_icache (code - 4, 4);

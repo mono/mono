@@ -1253,6 +1253,14 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	return 0;
 }
 
+LIBTEST_API void STDCALL  
+mono_test_marshal_stringbuilder_utf16_tolower (short *s, int n)
+{
+	for (int i = 0; i < n; i++)
+		s[i] = tolower(s[i]);
+}
+
+
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++-compat"
@@ -5701,6 +5709,18 @@ __thiscall
 _mono_test_native_thiscall3 (int arg, int arg2, int arg3)
 {
 	return arg + (arg2^1) + (arg3^2);
+}
+
+typedef int (
+#ifndef _MSC_VER
+__thiscall
+#endif
+*ThiscallFunction)(int arg, int arg2);
+
+LIBTEST_API ThiscallFunction STDCALL
+mono_test_get_native_thiscall2 (void)
+{
+	return _mono_test_native_thiscall2;
 }
 
 LIBTEST_API int STDCALL

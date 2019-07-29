@@ -1123,8 +1123,10 @@ arch_init (MonoAotCompile *acfg)
 		if (!(acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "thumb")))
 			g_string_append (acfg->llc_args, " -march=arm");
 
-		if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "ios"))
+		if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "ios")) {
 			g_string_append (acfg->llc_args, " -mattr=+v7");
+			g_string_append (acfg->llc_args, " -exception-model=dwarf -disable-fp-elim");
+		}
 
 #if defined(ARM_FPU_VFP_HARD)
 		g_string_append (acfg->llc_args, " -mattr=+vfp2,-neon,+d16 -float-abi=hard");
@@ -1133,11 +1135,7 @@ arch_init (MonoAotCompile *acfg)
 		g_string_append (acfg->llc_args, " -mattr=+vfp2,-neon,+d16");
 		g_string_append (acfg->as_args, " -mfpu=vfp3");
 #else
-#ifdef LLVM_API_VERSION > 100
 		g_string_append (acfg->llc_args, " -mattr=+soft-float");
-#else
-		g_string_append (acfg->llc_args, " -soft-float");
-#endif
 #endif
 	}
 	if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "thumb"))
@@ -5812,7 +5810,7 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 				direct_callable = FALSE;
 
 			//
-			// FIXME: Support inflated methods, it asserts in mono_aot_init_gshared_method_this () because the method is not in
+			// FIXME: Support inflated methods, it asserts in mini_llvm_init_gshared_method_this () because the method is not in
 			// amodule->extra_methods.
 			//
 			if (direct_callable && callee_cfg->method->is_inflated)
@@ -6477,8 +6475,6 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		encode_method_ref (acfg, patch_info->data.method, p, &p);
 		break;
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
-	case MONO_PATCH_INFO_GET_TLS_TRAMP:
-	case MONO_PATCH_INFO_SET_TLS_TRAMP:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		encode_value (patch_info->data.index, p, &p);
 		break;
@@ -6622,8 +6618,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 		break;
 	default:
-		g_warning ("unable to handle jump info %d", patch_info->type);
-		g_assert_not_reached ();
+		g_error ("unable to handle jump info %d", patch_info->type);
 	}
 
 	*endbuf = p;
@@ -9662,11 +9657,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	} else {
-#if LLVM_API_VERSION > 100
 		opts = g_strdup ("-O2 -disable-tail-calls -place-safepoints -spp-all-backedges");
-#else
-		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify -place-safepoints -spp-all-backedges");
-#endif
 	}
 
 	if (acfg->aot_opts.llvm_opts) {
@@ -9703,7 +9694,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (acfg->aot_opts.mtriple)
 		g_string_append_printf (acfg->llc_args, " -mtriple=%s", acfg->aot_opts.mtriple);
 
-#if defined(TARGET_X86_64_WIN32_MSVC) && LLVM_API_VERSION >= 600
+#if defined(TARGET_X86_64_WIN32_MSVC)
 	if (!acfg->aot_opts.mtriple)
 		g_string_append_printf (acfg->llc_args, " -mtriple=%s", "x86_64-pc-windows-msvc");
 #endif
@@ -9712,11 +9703,9 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	g_string_append_printf (acfg->llc_args, " -mono-eh-frame-symbol=%s%s", acfg->user_symbol_prefix, acfg->llvm_eh_frame_symbol);
 
-#if LLVM_API_VERSION > 100
 	g_string_append_printf (acfg->llc_args, " -disable-tail-calls");
-#endif
 
-#if LLVM_API_VERSION > 500 && (defined(TARGET_AMD64) || defined(TARGET_X86))
+#if defined(TARGET_AMD64) || defined(TARGET_X86)
 	/* This generates stack adjustments in the middle of functions breaking unwind info */
 	g_string_append_printf (acfg->llc_args, " -no-x86-call-frame-opt");
 #endif
@@ -12895,13 +12884,8 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	if (!acfg->aot_opts.llvm_only) {
 		for (i = 0; i < TLS_KEY_NUM; i++) {
 			ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
-			ji->type = MONO_PATCH_INFO_GET_TLS_TRAMP;
-			ji->data.index = i;
-			add_preinit_slot (acfg, ji);
-
-			ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
-			ji->type = MONO_PATCH_INFO_SET_TLS_TRAMP;
-			ji->data.index = i;
+			ji->type = MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL;
+			ji->data.jit_icall_id = mono_get_tls_key_to_jit_icall_id (i);
 			add_preinit_slot (acfg, ji);
 		}
 	}
@@ -12913,7 +12897,7 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	add_preinit_slot (acfg, ji);
 
 	for (i = 0; i < G_N_ELEMENTS (preinited_jit_icalls); ++i) {
-		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoAotCompile));
+		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
 		ji->type = MONO_PATCH_INFO_JIT_ICALL_ID;
 		ji->data.jit_icall_id = preinited_jit_icalls [i];
 		add_preinit_slot (acfg, ji);
@@ -13387,10 +13371,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->aot_opts.asm_writer = TRUE;
 
 	if (acfg->aot_opts.soft_debug) {
-		MonoDebugOptions *opt = mini_get_debug_options ();
-
-		opt->mdb_optimizations = TRUE;
-		opt->gen_sdb_seq_points = TRUE;
+		mini_debug_options.mdb_optimizations = TRUE;
+		mini_debug_options.gen_sdb_seq_points = TRUE;
 
 		if (!mono_debug_enabled ()) {
 			aot_printerrf (acfg, "The soft-debug AOT option requires the --debug option.\n");
@@ -13549,7 +13531,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
-		LLVMModuleFlags flags = 0;
+		LLVMModuleFlags flags = (LLVMModuleFlags)0;
 #ifdef EMIT_DWARF_INFO
 		flags = LLVM_MODULE_FLAG_DWARF;
 #endif

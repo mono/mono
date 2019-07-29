@@ -117,7 +117,7 @@ namespace System.Reflection
             return Activator.CreateInstance(t, bindingAttr, binder, args, culture, activationAttributes);
         }
 
-        public virtual event ModuleResolveEventHandler ModuleResolve { add { throw NotImplemented.ByDesign; } remove { throw NotImplemented.ByDesign; } }
+        public virtual event ModuleResolveEventHandler? ModuleResolve { add { throw NotImplemented.ByDesign; } remove { throw NotImplemented.ByDesign; } }
 
         public virtual Module ManifestModule { get { throw NotImplemented.ByDesign; } }
         public virtual Module? GetModule(string name) { throw NotImplemented.ByDesign; }
@@ -235,7 +235,7 @@ namespace System.Reflection
 
             string normalizedPath = Path.GetFullPath(path);
 
-            Assembly result;
+            Assembly? result;
             lock (s_loadfile)
             {
                 if (s_loadfile.TryGetValue(normalizedPath, out result))

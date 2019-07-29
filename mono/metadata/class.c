@@ -3795,7 +3795,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 			*result = TRUE;
 			return;
 		}
-	}else if (m_class_get_rank (klass)) {
+	} else if (m_class_get_rank (klass)) {
 		MonoClass *eclass, *eoclass;
 
 		if (m_class_get_rank (oklass) != m_class_get_rank (klass)) {
@@ -3820,10 +3820,52 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 		if (m_class_is_valuetype (eoclass)) {
 			if ((eclass == mono_defaults.enum_class) || 
 			    (eclass == m_class_get_parent (mono_defaults.enum_class)) ||
-			    (eclass == mono_defaults.object_class)) {
+			    (!m_class_is_valuetype (eclass))) {
 				*result = FALSE;
 				return;
 			}
+		}
+
+		/* 
+		 * a is b does not imply a[] is b[] in the case where b is an interface and
+		 * a is a generic parameter, unless a has an additional class constraint.
+		 * For example (C#):
+		 * ```
+		 * interface I {}
+		 * class G<T> where T : I {}
+		 * class H<U> where U : class, I {}
+		 * public class P {
+		 *     public static void Main() {
+		 *         var t = typeof(G<>).GetTypeInfo().GenericTypeParameters[0].MakeArrayType();
+		 *         var i = typeof(I).MakeArrayType();
+		 *         var u = typeof(H<>).GetTypeInfo().GenericTypeParameters[0].MakeArrayType();
+		 *         Console.WriteLine("I[] assignable from T[] ? {0}", i.IsAssignableFrom(t));
+		 *         Console.WriteLine("I[] assignable from U[] ? {0}", i.IsAssignableFrom(u));
+		 *     }
+		 * }
+		 * ```
+		 * This should print:
+		 * I[] assignable from T[] ? False
+		 * I[] assignable from U[] ? True
+		 */
+
+		if (MONO_CLASS_IS_INTERFACE_INTERNAL (eclass)) {
+			MonoType *eoclass_byval_arg = m_class_get_byval_arg (eoclass);
+			if (mono_type_is_generic_argument (eoclass_byval_arg)) {
+				MonoGenericParam *eoparam = eoclass_byval_arg->data.generic_param;
+				MonoGenericParamInfo *eoinfo = mono_generic_param_info (eoparam);
+				int eomask = eoinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
+				// check for class constraint
+				if ((eomask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0) {
+					*result = FALSE;
+					return;
+				}
+			}
+		}
+
+		if (mono_class_is_nullable (eclass) ^ mono_class_is_nullable (eoclass)) {
+			*result = FALSE;
+			return;
 		}
 
 		mono_class_is_assignable_from_checked (eclass, eoclass, result, error);
@@ -4022,6 +4064,8 @@ mono_generic_param_get_base_type (MonoClass *klass)
 	g_assert (mono_type_is_generic_argument (type));
 
 	MonoGenericParam *gparam = type->data.generic_param;
+
+	g_assert (gparam->owner && !gparam->owner->is_anonymous);
 
 	MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
 

@@ -62,18 +62,6 @@ static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
 
-#ifdef TARGET_WIN32
-/* Under windows, the calling convention is never stdcall */
-#define CALLCONV_IS_STDCALL(call_conv) (FALSE)
-#else
-#define CALLCONV_IS_STDCALL(call_conv) ((call_conv) == MONO_CALL_STDCALL)
-#endif
-
-/* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() mono_os_mutex_lock (&mini_arch_mutex)
-#define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
-static mono_mutex_t mini_arch_mutex;
-
 /* The single step trampoline */
 static gpointer ss_trampoline;
 
@@ -179,7 +167,7 @@ amd64_is_near_call (guint8 *code)
 static inline gboolean
 amd64_use_imm32 (gint64 val)
 {
-	if (mini_get_debug_options()->single_imm_size)
+	if (mini_debug_options.single_imm_size)
 		return FALSE;
 
 	return amd64_is_imm32 (val);
@@ -1435,8 +1423,6 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	mono_os_mutex_init_recursive (&mini_arch_mutex);
-
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
 }
@@ -1447,7 +1433,6 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	mono_os_mutex_destroy (&mini_arch_mutex);
 }
 
 /*
@@ -3697,7 +3682,7 @@ mono_arch_have_fast_tls (void)
 	static gboolean inited = FALSE;
 	guint8 *ins;
 
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 
 	if (inited)
@@ -3757,7 +3742,7 @@ mono_arch_have_fast_tls (void)
 #elif defined(TARGET_ANDROID)
 	return FALSE;
 #else
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 	return TRUE;
 #endif
@@ -3868,17 +3853,14 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 #ifdef TARGET_WIN32
 
-#define TEB_LAST_ERROR_SLOT 0x30
-#define TEB_LAST_ERROR_OFFSET 0x068
+#define TEB_LAST_ERROR_OFFSET 0x68
 
 static guint8*
 emit_get_last_error (guint8* code, int dreg)
 {
 	/* Threads last error value is located in TEB_LAST_ERROR_OFFSET. */
 	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_mem (code, dreg, TEB_LAST_ERROR_SLOT, sizeof (gpointer));
-	amd64_mov_reg_membase (code, dreg, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
-
+	amd64_mov_reg_mem (code, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
 	return code;
 }
 
@@ -4360,7 +4342,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				/* Load info var */
 				amd64_mov_reg_membase (code, AMD64_R11, info_var->inst_basereg, info_var->inst_offset, 8);
-				val = ((offset) * sizeof (guint8*)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
+				val = ((offset) * sizeof (target_mgreg_t)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
 				/* Load the info->bp_addrs [offset], which is either NULL or the address of the breakpoint trampoline */
 				amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11, val, 8);
 				amd64_test_reg_reg (code, AMD64_R11, AMD64_R11);
@@ -4783,7 +4765,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		case OP_ICONST:
 		case OP_I8CONST:
-			if ((((guint64)ins->inst_c0) >> 32) == 0 && !mini_get_debug_options()->single_imm_size)
+			if ((((guint64)ins->inst_c0) >> 32) == 0 && !mini_debug_options.single_imm_size)
 				amd64_mov_reg_imm_size (code, ins->dreg, ins->inst_c0, 4);
 			else
 				amd64_mov_reg_imm_size (code, ins->dreg, ins->inst_c0, 8);
@@ -7126,7 +7108,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	}
 #endif
 
-	if (mini_get_debug_options ()->init_stacks) {
+	if (mini_debug_options.init_stacks) {
 		/* Fill the stack frame with a dummy value to force deterministic behavior */
 	
 		/* Save registers to the red zone */
@@ -7260,7 +7242,7 @@ MONO_RESTORE_WARNING
 				 * get_generic_info_from_stack_frame () needs this to properly look up
 				 * the argument value during the handling of async exceptions.
 				 */
-				if (ins == cfg->args [0]) {
+				if (i == 0 && sig->hasthis) {
 					mono_add_var_location (cfg, ins, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
 					mono_add_var_location (cfg, ins, FALSE, ins->inst_basereg, ins->inst_offset, code - cfg->native_code, 0);
 				}
@@ -7316,7 +7298,8 @@ MONO_RESTORE_WARNING
 				g_assert_not_reached ();
 			}
 
-			if (ins == cfg->args [0]) {
+			if (i == 0 && sig->hasthis) {
+				g_assert (ainfo->storage == ArgInIReg);
 				mono_add_var_location (cfg, ins, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
 				mono_add_var_location (cfg, ins, TRUE, ins->dreg, 0, code - cfg->native_code, 0);
 			}
@@ -8025,11 +8008,6 @@ mono_arch_finish_init (void)
 #if !defined(HOST_WIN32) && defined(MONO_XEN_OPT)
 	optimize_for_xen = access ("/proc/xen", F_OK) == 0;
 #endif
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
-{
 }
 
 #define CMP_SIZE (6 + 1)

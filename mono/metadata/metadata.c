@@ -2251,6 +2251,19 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	method->call_convention = call_convention;
 	method->generic_param_count = gen_param_count;
 
+	switch (method->call_convention) {
+	case MONO_CALL_DEFAULT:
+	case MONO_CALL_VARARG:
+		method->pinvoke = 0;
+		break;
+	case MONO_CALL_C:
+	case MONO_CALL_STDCALL:
+	case MONO_CALL_THISCALL:
+	case MONO_CALL_FASTCALL:
+		method->pinvoke = 1;
+		break;
+	}
+
 	if (call_convention != 0xa) {
 		method->ret = mono_metadata_parse_type_checked (m, container, pattrs ? pattrs [0] : 0, FALSE, ptr, &ptr, error);
 		if (!method->ret) {
@@ -7287,6 +7300,11 @@ mono_type_is_pointer (MonoType *type)
 mono_bool
 mono_type_is_reference (MonoType *type)
 {
+	/* NOTE: changing this function to return TRUE more often may have
+	 * consequences for generic sharing in the AOT compiler.  In
+	 * particular, returning TRUE for generic parameters with a 'class'
+	 * constraint may cause crashes.
+	 */
 	return (type && (((type->type == MONO_TYPE_STRING) ||
 		(type->type == MONO_TYPE_SZARRAY) || (type->type == MONO_TYPE_CLASS) ||
 		(type->type == MONO_TYPE_OBJECT) || (type->type == MONO_TYPE_ARRAY)) ||

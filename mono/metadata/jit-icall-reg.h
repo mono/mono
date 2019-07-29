@@ -47,12 +47,12 @@ MONO_JIT_ICALL (generic_trampoline_delegate)	\
 MONO_JIT_ICALL (generic_trampoline_generic_virtual_remoting)	\
 MONO_JIT_ICALL (generic_trampoline_vcall)	\
 	\
-/* These must be ordered like MonoTlsKey. */ \
-MONO_JIT_ICALL (mono_tls_get_thread) \
-MONO_JIT_ICALL (mono_tls_get_jit_tls) \
+/* These must be ordered like MonoTlsKey (alphabetical). */ \
 MONO_JIT_ICALL (mono_tls_get_domain) \
-MONO_JIT_ICALL (mono_tls_get_sgen_thread_info) \
+MONO_JIT_ICALL (mono_tls_get_jit_tls) \
 MONO_JIT_ICALL (mono_tls_get_lmf_addr) \
+MONO_JIT_ICALL (mono_tls_get_sgen_thread_info) \
+MONO_JIT_ICALL (mono_tls_get_thread) \
 	\
 MONO_JIT_ICALL (__emul_fadd)	\
 MONO_JIT_ICALL (__emul_fcmp_ceq)	\
@@ -77,6 +77,7 @@ MONO_JIT_ICALL (__emul_fconv_to_i4)	\
 MONO_JIT_ICALL (__emul_fconv_to_i8)	\
 MONO_JIT_ICALL (__emul_fconv_to_ovf_i8)	\
 MONO_JIT_ICALL (__emul_fconv_to_ovf_u8)	\
+MONO_JIT_ICALL (__emul_fconv_to_ovf_u8_un)	\
 MONO_JIT_ICALL (__emul_fconv_to_r4)	\
 MONO_JIT_ICALL (__emul_fconv_to_u)	\
 MONO_JIT_ICALL (__emul_fconv_to_u1)	\
@@ -114,6 +115,7 @@ MONO_JIT_ICALL (__emul_op_irem_un) \
 MONO_JIT_ICALL (__emul_rconv_to_i8) \
 MONO_JIT_ICALL (__emul_rconv_to_ovf_i8) \
 MONO_JIT_ICALL (__emul_rconv_to_ovf_u8) \
+MONO_JIT_ICALL (__emul_rconv_to_ovf_u8_un) \
 MONO_JIT_ICALL (__emul_rconv_to_u8) \
 MONO_JIT_ICALL (__emul_rrem) \
 MONO_JIT_ICALL (cominterop_get_ccw) \
@@ -232,6 +234,7 @@ MONO_JIT_ICALL (mono_llvmonly_init_delegate) \
 MONO_JIT_ICALL (mono_llvmonly_init_delegate_virtual) \
 MONO_JIT_ICALL (mono_marshal_asany) \
 MONO_JIT_ICALL (mono_marshal_check_domain_image) \
+MONO_JIT_ICALL (mono_marshal_clear_last_error) \
 MONO_JIT_ICALL (mono_marshal_free) \
 MONO_JIT_ICALL (mono_marshal_free_array) \
 MONO_JIT_ICALL (mono_marshal_free_asany) \
@@ -302,11 +305,7 @@ MONO_JIT_ICALL (mono_threads_exit_gc_unsafe_region_unbalanced) \
 MONO_JIT_ICALL (mono_threads_state_poll) \
 MONO_JIT_ICALL (mono_throw_exception) \
 MONO_JIT_ICALL (mono_throw_method_access) \
-MONO_JIT_ICALL (mono_tls_set_domain) \
-MONO_JIT_ICALL (mono_tls_set_jit_tls) \
-MONO_JIT_ICALL (mono_tls_set_lmf_addr) \
-MONO_JIT_ICALL (mono_tls_set_sgen_thread_info) \
-MONO_JIT_ICALL (mono_tls_set_thread) \
+MONO_JIT_ICALL (mono_throw_bad_image) \
 MONO_JIT_ICALL (mono_trace_enter_method) \
 MONO_JIT_ICALL (mono_trace_leave_method) \
 MONO_JIT_ICALL (mono_upgrade_remote_class_wrapper) \

@@ -168,7 +168,8 @@ namespace System.Reflection
 		}
 		public override Type DeclaringType {
 			get {
-				return GetParentType (true);
+				Type parentType = GetParentType (true);
+				return parentType.Name != "<Module>" ? parentType : null;
 			}
 		}
 		public override string Name {
@@ -178,14 +179,14 @@ namespace System.Reflection
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit) {
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+			return CustomAttribute.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes( bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+			return CustomAttribute.GetCustomAttributes (this, inherit);
 		}
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+			return CustomAttribute.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -260,7 +261,8 @@ namespace System.Reflection
 		}
 
 		void CheckGeneric () {
-			if (DeclaringType.ContainsGenericParameters)
+			Type declaringType = DeclaringType;
+			if (declaringType != null && declaringType.ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on fields with types for which Type.ContainsGenericParameters is true.");
 	    }
 

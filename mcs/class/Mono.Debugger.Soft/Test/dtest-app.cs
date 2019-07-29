@@ -414,6 +414,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-wrapper") {
+			unhandled_exception_wrapper ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
 			return 0;
@@ -1483,6 +1487,10 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep (10000);
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_wrapper () {
+		 throw new ArgumentException("test");
+	}
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke_2 () {
 	}

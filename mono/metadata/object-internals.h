@@ -709,6 +709,8 @@ typedef struct {
 	MonoArray *GenitiveAbbreviatedMonthNames;
 } MonoCalendarData;
 
+TYPED_HANDLE_DECL (MonoCalendarData);
+
 typedef struct {
 	MonoObject obj;
 	MonoString *AMDesignator;
@@ -719,6 +721,8 @@ typedef struct {
 	guint32 FirstDayOfWeek;
 	guint32 CalendarWeekRule;
 } MonoCultureData;
+
+TYPED_HANDLE_DECL (MonoCultureData);
 
 typedef struct {
 	MonoObject obj;
@@ -744,6 +748,8 @@ typedef struct {
 	const void* text_info_data;
 } MonoCultureInfo;
 
+TYPED_HANDLE_DECL (MonoCultureInfo);
+
 typedef struct {
 	MonoObject obj;
 	gint32 geo_id;
@@ -757,7 +763,10 @@ typedef struct {
 	MonoString *currency_english_name;
 	MonoString *currency_native_name;
 } MonoRegionInfo;
-#endif
+
+TYPED_HANDLE_DECL (MonoRegionInfo);
+
+#endif /* !ENABLE_NETCORE */
 
 typedef struct {
 	MonoObject object;
@@ -1673,7 +1682,7 @@ ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type);
 
 void        mono_reflection_register_with_runtime (MonoReflectionType *type);
 
-void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args, MonoArray **named_args, CattrNamedArg **named_arg_info, MonoError *error);
+void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args_out, MonoArray **named_args_out, CattrNamedArg **named_arg_info, MonoError *error);
 MonoMethodSignature * mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token, MonoError *error);
 
 MonoArrayHandle mono_param_get_objects_internal  (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
@@ -2186,10 +2195,6 @@ ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, gpointer f
 ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb);
-
-ICALL_EXPORT
-void
-ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb);
 
 ICALL_EXPORT
 MonoArray*

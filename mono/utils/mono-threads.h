@@ -21,6 +21,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <glib.h>
 #include <config.h>
@@ -29,7 +30,7 @@
 #include <windows.h>
 
 typedef DWORD MonoNativeThreadId;
-typedef HANDLE MonoNativeThreadHandle; /* unused */
+typedef HANDLE MonoNativeThreadHandle;
 
 typedef DWORD mono_native_thread_return_t;
 typedef DWORD mono_thread_start_return_t;
@@ -71,6 +72,9 @@ typedef gsize (*MonoThreadStart)(gpointer);
 #endif /* !defined(__HAIKU__) */
 
 #endif /* #ifdef HOST_WIN32 */
+
+#define MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER(handle) ((gpointer)(gsize)(handle))
+#define MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE(handle) ((MonoNativeThreadHandle)(gsize)(handle))
 
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 
@@ -272,6 +276,15 @@ typedef struct _MonoThreadInfo {
 	gpointer win32_apc_info_io_handle;
 #endif
 
+	/* When running hybrid suspend mode, a thread can explicitly flag */
+	/* itself to be cooperative suspend aware. If it does, it won't */
+	/* be preemptive suspended, so will behave as a cooperative suspended */
+	/* thread, continue to run when in safe mode. NOTE, threads setting */
+	/* this flag needs to correctly follow cooperative suspend rules. */
+	/* Flag can only be toggled for hybrid/cooperative suspend mode */
+	/* and is a onetime switch, FALSE -> TRUE. */
+	gboolean coop_aware_thread;
+
 	/*
 	 * This is where we store tools tls data so it follows our lifecycle and doesn't depends on posix tls cleanup ordering
 	 *
@@ -432,7 +445,7 @@ MONO_API void*
 mono_thread_info_get_tools_data (void);
 
 
-THREAD_INFO_TYPE*
+MONO_PROFILER_API THREAD_INFO_TYPE*
 mono_thread_info_current_unchecked (void);
 
 MONO_API int
@@ -526,6 +539,12 @@ mono_threads_open_thread_handle (MonoThreadHandle *handle);
 void
 mono_threads_close_thread_handle (MonoThreadHandle *handle);
 
+MonoNativeThreadHandle
+mono_threads_open_native_thread_handle (MonoNativeThreadHandle handle);
+
+void
+mono_threads_close_native_thread_handle (MonoNativeThreadHandle handle);
+
 #if !defined(HOST_WIN32)
 
 /*Use this instead of pthread_kill */
@@ -554,7 +573,10 @@ This begins async suspend. This function must do the following:
 -Call mono_threads_transition_finish_async_suspend as part of its async suspend.
 -Register the thread for pending suspend with mono_threads_add_to_pending_operation_set if needed.
 
-If begin suspend fails the thread must be left uninterrupted and resumed.
+If begin suspend fails the following should be done:
+-The thread must be left uninterrupted and resumed.
+-Call mono_threads_transition_abort_async_suspend to make sure thread has correct state.
+-No pending suspend should be registered with mono_threads_add_to_pending_operation_set for this operation.
 */
 gboolean mono_threads_suspend_begin_async_suspend (THREAD_INFO_TYPE *info, gboolean interrupt_kernel);
 
@@ -599,6 +621,16 @@ void mono_threads_coop_end_global_suspend (void);
 
 MONO_API MonoNativeThreadId
 mono_native_thread_id_get (void);
+
+/*
+ * This does _not_ return the same value as mono_native_thread_id_get, except on Windows.
+ * On POSIX, mono_native_thread_id_get returns the value from pthread_self, which is then
+ * passed around as an identifier to other pthread functions. However this function, where 
+ * possible, returns the OS-unique thread id value, fetched in a platform-specific manner. 
+ * It will not work with the various pthread functions, should never be used as a
+ * MonoNativeThreadId, and is intended solely to match the output of various diagonistic tools.
+ */
+guint64 mono_native_thread_os_id_get (void);
 
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
@@ -698,6 +730,7 @@ MonoRequestSuspendResult mono_threads_transition_request_suspension (THREAD_INFO
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);
 MonoPulseResult mono_threads_transition_request_pulse (THREAD_INFO_TYPE* info);
+gboolean mono_threads_transition_abort_async_suspend (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
 MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
@@ -816,12 +849,12 @@ void
 mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT \
-	DWORD _last_error_restore_point = GetLastError ();
+	const DWORD _last_error_restore_point = GetLastError ();
 
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT \
 		/* Only restore if changed to prevent unecessary writes. */ \
 		if (GetLastError () != _last_error_restore_point) \
-			SetLastError (_last_error_restore_point);
+			mono_SetLastError (_last_error_restore_point);
 
 #else
 

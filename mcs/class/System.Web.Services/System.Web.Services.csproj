@@ -68,7 +68,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -89,11 +94,6 @@
     <OutputPath>./../../class/lib/unreal</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-unreal</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
-    <OutputPath>./../../class/lib/wasm</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -1707,6 +1707,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices.csproj" />
     <ProjectReference Include="../System.Data/System.Data.csproj" />
@@ -1812,6 +1818,17 @@
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
+      <LogicalName>wsdl-1.1.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
+      <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
       <LogicalName>web-reference.xsd</LogicalName>
@@ -1846,17 +1863,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
-      <LogicalName>wsdl-1.1.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
-      <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
     <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
       <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>

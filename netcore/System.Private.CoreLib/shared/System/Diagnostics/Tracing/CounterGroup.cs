@@ -52,11 +52,9 @@ namespace System.Diagnostics.Tracing
         {
             if (e.Command == EventCommand.Enable || e.Command == EventCommand.Update)
             {
-                string valueStr;
-                float value;
                 Debug.Assert(e.Arguments != null);
 
-                if (e.Arguments.TryGetValue("EventCounterIntervalSec", out valueStr) && float.TryParse(valueStr, out value))
+                if (e.Arguments.TryGetValue("EventCounterIntervalSec", out string? valueStr) && float.TryParse(valueStr, out float value))
                 {
                     lock (this)      // Lock the CounterGroup
                     {
@@ -147,6 +145,7 @@ namespace System.Diagnostics.Tracing
                 Debug.WriteLine("Polling interval changed at " + DateTime.UtcNow.ToString("mm.ss.ffffff"));
                 _pollingIntervalInMilliseconds = (int)(pollingIntervalInSeconds * 1000);
                 DisposeTimer();
+                ResetCounters(); // Reset statistics for counters before we start the thread.
                 _timeStampSinceCollectionStarted = DateTime.UtcNow;
                 // Don't capture the current ExecutionContext and its AsyncLocals onto the timer causing them to live forever
                 bool restoreFlow = false;
@@ -167,8 +166,28 @@ namespace System.Diagnostics.Tracing
                         ExecutionContext.RestoreFlow();
                 }
             }
-            // Always fire the timer event (so you see everything up to this time).  
-            OnTimer(null);
+        }
+
+        private void ResetCounters()
+        {
+            lock (this) // Lock the CounterGroup
+            {
+                foreach (var counter in _counters)
+                {
+                    if (counter is IncrementingEventCounter ieCounter)
+                    {
+                        ieCounter.UpdateMetric();
+                    }
+                    else if (counter is IncrementingPollingCounter ipCounter)
+                    {
+                        ipCounter.UpdateMetric();
+                    }
+                    else if (counter is EventCounter eCounter)
+                    {
+                        eCounter.ResetStatistics();
+                    }
+                }
+            }
         }
 
         private void OnTimer(object? state)

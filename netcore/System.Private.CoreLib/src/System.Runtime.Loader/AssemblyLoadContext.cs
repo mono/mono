@@ -11,9 +11,15 @@ namespace System.Runtime.Loader
 {
 	partial class AssemblyLoadContext
 	{
-		static IntPtr InitializeAssemblyLoadContext (IntPtr assemblyLoadContext, bool representsTPALoadContext, bool isCollectible)
+		internal IntPtr NativeALC {
+			get {
+				return _nativeAssemblyLoadContext;
+			}
+		}
+
+		static IntPtr InitializeAssemblyLoadContext (IntPtr thisHandlePtr, bool representsTPALoadContext, bool isCollectible)
 		{
-			return IntPtr.Zero;
+			return InternalInitializeNativeALC (thisHandlePtr, representsTPALoadContext, isCollectible);
 		}
 
 		static void PrepareForAssemblyLoadContextRelease (IntPtr nativeAssemblyLoadContext, IntPtr assemblyLoadContextStrong)
@@ -32,17 +38,24 @@ namespace System.Runtime.Loader
 
 			assemblyPath = assemblyPath.Replace ('\\', Path.DirectorySeparatorChar);
 			// TODO: Handle nativeImagePath
-			return InternalLoadFile (assemblyPath, ref stackMark);
+			return InternalLoadFile (NativeALC, assemblyPath, ref stackMark);
 		}
 
 		internal Assembly InternalLoad (byte[] arrAssembly, byte[] arrSymbols)
 		{
-			throw new NotImplementedException ();
+			unsafe {
+				int symbolsLength = arrSymbols?.Length ?? 0;
+				fixed (byte* ptrAssembly = arrAssembly, ptrSymbols = arrSymbols)
+				{
+					return InternalLoadFromStream (NativeALC, new IntPtr (ptrAssembly), arrAssembly.Length,
+								       new IntPtr (ptrSymbols), symbolsLength);
+				}
+			}
 		}
 
 		public static Assembly[] GetLoadedAssemblies ()
 		{
-			throw new NotImplementedException ();
+			return InternalGetLoadedAssemblies ();
 		}
 
 		public static AssemblyLoadContext GetLoadContext (Assembly assembly)
@@ -59,7 +72,16 @@ namespace System.Runtime.Loader
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static Assembly InternalLoadFile (string assemblyFile, ref StackCrawlMark stackMark);
+		extern static Assembly InternalLoadFile (IntPtr nativeAssemblyLoadContext, string assemblyFile, ref StackCrawlMark stackMark);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static IntPtr InternalInitializeNativeALC (IntPtr thisHandlePtr, bool representsTPALoadContext, bool isCollectible);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static Assembly InternalLoadFromStream (IntPtr nativeAssemblyLoadContext, IntPtr assm, int assmLength, IntPtr symbols, int symbolsLength);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static Assembly[] InternalGetLoadedAssemblies ();
 
 		internal static Assembly DoAssemblyResolve (string name)
 		{

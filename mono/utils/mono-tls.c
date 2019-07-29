@@ -172,21 +172,14 @@
 
 #endif
 
-#ifdef __cplusplus
-// static and anonymous namespace both fail to link otherwise; Linux/amd64/gcc.
-#define MONO_TLS_STATIC /* nothing */
-#else
-#define MONO_TLS_STATIC static
-#endif
-
-/* Tls variables for each MonoTlsKey */
-MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoInternalThread *mono_tls_thread MONO_TLS_FAST;
-MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoJitTlsData     *mono_tls_jit_tls MONO_TLS_FAST;
-MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoDomain         *mono_tls_domain MONO_TLS_FAST;
-MONO_TLS_STATIC MONO_KEYWORD_THREAD SgenThreadInfo     *mono_tls_sgen_thread_info MONO_TLS_FAST;
-MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoLMF           **mono_tls_lmf_addr MONO_TLS_FAST;
-
-#undef MONO_TLS_STATIC // no further uses
+// Tls variables for each MonoTlsKey.
+// These are extern instead of static for inexplicable C++ compatibility.
+//
+MONO_KEYWORD_THREAD MonoInternalThread *mono_tls_thread MONO_TLS_FAST;
+MONO_KEYWORD_THREAD MonoJitTlsData     *mono_tls_jit_tls MONO_TLS_FAST;
+MONO_KEYWORD_THREAD MonoDomain         *mono_tls_domain MONO_TLS_FAST;
+MONO_KEYWORD_THREAD SgenThreadInfo     *mono_tls_sgen_thread_info MONO_TLS_FAST;
+MONO_KEYWORD_THREAD MonoLMF           **mono_tls_lmf_addr MONO_TLS_FAST;
 
 #else
 
@@ -270,49 +263,6 @@ mono_tls_get_tls_offset (MonoTlsKey key)
 {
 	g_assert (tls_offsets [key]);
 	return tls_offsets [key];
-}
-
-/*
- * Returns the getter (gpointer (*)(void)) for the mono tls key.
- * Managed code will always get the value by calling this getter.
- */
-MonoTlsGetter
-mono_tls_get_tls_getter (MonoTlsKey key)
-{
-	switch (key) {
-	case TLS_KEY_THREAD:
-		return (MonoTlsGetter)mono_tls_get_thread;
-	case TLS_KEY_JIT_TLS:
-		return (MonoTlsGetter)mono_tls_get_jit_tls;
-	case TLS_KEY_DOMAIN:
-		return (MonoTlsGetter)mono_tls_get_domain;
-	case TLS_KEY_SGEN_THREAD_INFO:
-		return (MonoTlsGetter)mono_tls_get_sgen_thread_info;
-	case TLS_KEY_LMF_ADDR:
-		return (MonoTlsGetter)mono_tls_get_lmf_addr;
-	}
-	g_assert_not_reached ();
-	return NULL;
-}
-
-/* Returns the setter (void (*)(gpointer)) for the mono tls key */
-MonoTlsSetter
-mono_tls_get_tls_setter (MonoTlsKey key)
-{
-	switch (key) {
-	case TLS_KEY_THREAD:
-		return (MonoTlsSetter)mono_tls_set_thread;
-	case TLS_KEY_JIT_TLS:
-		return (MonoTlsSetter)mono_tls_set_jit_tls;
-	case TLS_KEY_DOMAIN:
-		return (MonoTlsSetter)mono_tls_set_domain;
-	case TLS_KEY_SGEN_THREAD_INFO:
-		return (MonoTlsSetter)mono_tls_set_sgen_thread_info;
-	case TLS_KEY_LMF_ADDR:
-		return (MonoTlsSetter)mono_tls_set_lmf_addr;
-	}
-	g_assert_not_reached ();
-	return NULL;
 }
 
 // Casts on getters are for the !MONO_KEYWORD_THREAD case.

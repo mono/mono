@@ -1620,6 +1620,7 @@ typedef enum {
 typedef struct {
 	gint32 methods_compiled;
 	gint32 methods_aot;
+	gint32 methods_aot_llvm;
 	gint32 methods_lookups;
 	gint32 allocate_var;
 	gint32 cil_code_size;
@@ -2243,6 +2244,7 @@ MonoInst*         mini_emit_extra_arg_calli (MonoCompile *cfg, MonoMethodSignatu
 MonoInst*         mini_emit_llvmonly_calli (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, MonoInst *addr);
 MonoInst*         mini_emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, int context_used, MonoInst **sp);
 MonoInst*         mini_emit_memory_barrier (MonoCompile *cfg, int kind);
+MonoInst*         mini_emit_storing_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value);
 void              mini_emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value);
 MonoInst*         mini_emit_memory_load (MonoCompile *cfg, MonoType *type, MonoInst *src, int offset, int ins_flag);
 void              mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoInst *value, int ins_flag);
@@ -2345,7 +2347,6 @@ void      mono_arch_lowering_pass               (MonoCompile *cfg, MonoBasicBloc
 void      mono_arch_peephole_pass_1             (MonoCompile *cfg, MonoBasicBlock *bb);
 void      mono_arch_peephole_pass_2             (MonoCompile *cfg, MonoBasicBlock *bb);
 void      mono_arch_output_basic_block          (MonoCompile *cfg, MonoBasicBlock *bb);
-void      mono_arch_free_jit_tls_data           (MonoJitTlsData *tls);
 void      mono_arch_fill_argument_info          (MonoCompile *cfg);
 void      mono_arch_allocate_vars               (MonoCompile *m);
 int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info);

@@ -77,7 +77,6 @@ static gboolean is_sre_field_builder (MonoClass *klass);
 static gboolean is_sre_gparam_builder (MonoClass *klass);
 static gboolean is_sre_enum_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
-static gboolean is_sr_mono_field (MonoClass *klass);
 
 static guint32 mono_image_get_methodspec_token (MonoDynamicImage *assembly, MonoMethod *method);
 static guint32 mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m);
@@ -1306,9 +1305,8 @@ assemblybuilderaccess_can_save (guint32 access)
  * of the helper hash table and the basic metadata streams.
  */
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoDynamicAssembly *assembly;
 	MonoDynamicImage *image;
 	MonoDomain *domain = mono_object_domain (assemblyb);
@@ -1325,12 +1323,10 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->assembly.corlib_internal = assemblyb->corlib_internal;
 	assemblyb->assembly.assembly = (MonoAssembly*)assembly;
 	assembly->assembly.basedir = mono_string_to_utf8_checked_internal (assemblyb->dir, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	if (assemblyb->culture) {
 		assembly->assembly.aname.culture = mono_string_to_utf8_checked_internal (assemblyb->culture, error);
-		if (mono_error_set_pending_exception (error))
-			return;
+		return_if_nok (error);
 	} else
 		assembly->assembly.aname.culture = g_strdup ("");
 
@@ -1363,8 +1359,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->domain = domain;
 
 	char *assembly_name = mono_string_to_utf8_checked_internal (assemblyb->name, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	image = mono_dynamic_image_create (assembly, assembly_name, g_strdup ("RefEmit_YouForgotToDefineAModule"));
 	image->initial_image = TRUE;
 	assembly->assembly.aname.name = image->image.name;
@@ -2061,13 +2056,6 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 }
 
 #endif /* !DISABLE_REFLECTION_EMIT */
-
-
-static gboolean
-is_sr_mono_field (MonoClass *klass)
-{
-	check_corlib_type_cached (klass, "System.Reflection", "RuntimeFieldInfo");
-}
 
 gboolean
 mono_is_sr_mono_property (MonoClass *klass)
@@ -3842,17 +3830,20 @@ remove_instantiations_of_and_ensure_contents (gpointer key,
 static gboolean
 reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoReflectionModuleBuilderHandle module_ref = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, ref_tb, module);
 	GHashTable *unparented_classes = MONO_HANDLE_GETVAL(module_ref, unparented_classes);
+	gboolean ret_val;
 
 	if (unparented_classes) {
-		return reflection_setup_internal_class_internal (ref_tb, error);
+		ret_val = reflection_setup_internal_class_internal (ref_tb, error);
 	} else {
 		// If we're not being called recursively
 		unparented_classes = g_hash_table_new (NULL, NULL);
 		MONO_HANDLE_SETVAL (module_ref, unparented_classes, GHashTable *, unparented_classes);
 
-		gboolean ret_val = reflection_setup_internal_class_internal (ref_tb, error);
+		ret_val = reflection_setup_internal_class_internal (ref_tb, error);
 		mono_error_assert_ok (error);
 
 		// Fix the relationship between the created classes and their parents
@@ -3861,9 +3852,9 @@ reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoErr
 
 		g_hash_table_destroy (unparented_classes);
 		MONO_HANDLE_SETVAL (module_ref, unparented_classes, GHashTable *, NULL);
-
-		return ret_val;
 	}
+
+	HANDLE_FUNCTION_RETURN_VAL (ret_val);
 }
 
 MonoReflectionTypeHandle
@@ -4043,11 +4034,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 
 	error_init (error);
 
-	if (mono_runtime_is_shutting_down ()) {
-		mono_error_set_generic_error (error, "System", "InvalidOperationException", "");
-		return FALSE;
-	}
-
 	if (!(queue = dynamic_method_queue)) {
 		mono_loader_lock ();
 		if (!(queue = dynamic_method_queue))
@@ -4156,9 +4142,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 		}
 	}
 	g_slist_free (mb->referenced_by);
-
-	/* ilgen is no longer needed */
-	mb->ilgen = NULL;
 
 	domain = mono_domain_get ();
 	mono_domain_lock (domain);
@@ -4446,7 +4429,7 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
 }
 
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
 	g_error ("This mono runtime was configured with --enable-minimal=reflection_emit, so System.Reflection.Emit is not supported.");
 }
@@ -4555,6 +4538,7 @@ ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
 	return mono_image_create_method_token (MONO_HANDLE_GETVAL (mb, dynamic_image), MONO_HANDLE_CAST (MonoObject, method), opt_param_types, error);
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, HANDLE file)
 {
@@ -4570,6 +4554,7 @@ ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb)
 	mono_image_build_metadata (mb, error);
 	mono_error_set_pending_exception (error);
 }
+#endif
 
 void
 ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, guint32 token, MonoError *error)
@@ -4599,9 +4584,11 @@ ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, Mono
 #endif
 
 void
-ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error)
 {
-	mono_reflection_dynimage_basic_init (assemblyb);
+	uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, assemblyb), TRUE);
+	mono_reflection_dynimage_basic_init (MONO_HANDLE_RAW (assemblyb), error);
+	mono_gchandle_free_internal (gchandle);
 }
 
 void

@@ -69,6 +69,9 @@ monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 winaot_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
+testing_winaot_interp_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_winaot_interp_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
 orbis_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
@@ -76,7 +79,7 @@ unreal_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
-wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+wasm_PARALLEL_SUBDIRS = $(filter-out System.ServiceModel.%, $(common_SUBDIRS)) $(mobile_only_SUBDIRS)
 
 testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)

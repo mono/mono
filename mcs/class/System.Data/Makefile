@@ -53,7 +53,7 @@ TEST_RESOURCE_FILES = \
 	Test/Mono.Data.SqlExpressions/dateComparisonTest.xml	\
 	Test/System.Data.Common/SqliteTest.db
 
-TEST_LIB_REFS = System.Core Mono.Data.Sqlite
+TEST_LIB_REFS = System.Core
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168 $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file

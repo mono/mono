@@ -1,3 +1,3 @@
 setup:
-	pip install clang
+	pip3 install clang
 

@@ -1,3 +1,6 @@
 #include mobile_System.dll.sources
+#include corefx.windows.sources
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
+
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs

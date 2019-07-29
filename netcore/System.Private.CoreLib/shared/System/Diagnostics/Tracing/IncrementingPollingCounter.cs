@@ -52,12 +52,13 @@ namespace System.Diagnostics.Tracing
         /// <summary>
         /// Calls "_totalValueProvider" to enqueue the counter value to the queue. 
         /// </summary>
-        private void UpdateMetric()
+        internal void UpdateMetric()
         {
             try
             {
-                lock (MyLock)
+                lock (this)
                 {
+                    _prevIncrement = _increment;
                     _increment = _totalValueProvider();
                 }
             }
@@ -70,7 +71,7 @@ namespace System.Diagnostics.Tracing
         internal override void WritePayload(float intervalSec, int pollingIntervalMillisec)
         {
             UpdateMetric();
-            lock (MyLock)     // Lock the counter
+            lock (this)     // Lock the counter
             {
                 IncrementingCounterPayload payload = new IncrementingCounterPayload();
                 payload.Name = Name;
@@ -82,7 +83,6 @@ namespace System.Diagnostics.Tracing
                 payload.Metadata = GetMetadataString();
                 payload.Increment = _increment - _prevIncrement;
                 payload.DisplayUnits = DisplayUnits ?? "";
-                _prevIncrement = _increment;
                 EventSource.Write("EventCounters", new EventSourceOptions() { Level = EventLevel.LogAlways }, new IncrementingPollingCounterPayloadType(payload));
             }
         }

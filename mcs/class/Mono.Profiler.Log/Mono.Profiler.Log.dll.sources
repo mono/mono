@@ -13,6 +13,8 @@ Mono.Profiler.Log/LogProfiler.cs
 Mono.Profiler.Log/LogReader.cs
 Mono.Profiler.Log/LogStream.cs
 Mono.Profiler.Log/LogStreamHeader.cs
+Mono.Profiler.Aot/ProfileBase.cs
 Mono.Profiler.Aot/ProfileData.cs
 Mono.Profiler.Aot/ProfileReader.cs
+Mono.Profiler.Aot/ProfileWriter.cs
 Mono.Profiler.Aot/Records.cs

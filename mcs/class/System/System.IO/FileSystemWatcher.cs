@@ -420,6 +420,8 @@ namespace System.IO {
 		}
 		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
 		{
+			if (disposed)
+				return;
 			if (ev == null)
 				return;
 
@@ -497,11 +499,15 @@ namespace System.IO {
 
 		internal void DispatchErrorEvents (ErrorEventArgs args)
 		{
+			if (disposed)
+				return;
 			OnError (args);
 		}
 
 		internal void DispatchEvents (FileAction act, string filename, ref RenamedEventArgs renamed)
 		{
+			if (disposed)
+				return;
 			if (waiting) {
 				lastData = new WaitForChangedResult ();
 			}

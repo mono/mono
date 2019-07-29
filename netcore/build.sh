@@ -87,10 +87,7 @@ CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
 
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
-  cd ..
-  ./autogen.sh --with-core=only
-  make -j$CPU_COUNT
-  cd netcore
+  (cd .. && ./autogen.sh --with-core=only)
   touch .configured
 fi
 
@@ -111,6 +108,7 @@ fi
 
 # run all xunit tests
 if [ "$test" = "true" ]; then
+  make update-tests-corefx
   for testdir in corefx/tests/extracted/*; do
     ../scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=15m make run-tests-corefx-$(basename $testdir)
   done

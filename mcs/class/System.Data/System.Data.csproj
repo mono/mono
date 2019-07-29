@@ -69,7 +69,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -520,6 +525,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />
     <Compile Include="System.Data.SqlClient\SqlCredential.cs" />
+    <Compile Include="corefx\DataReaderExtensions.cs" />
     <Compile Include="corefx\DbConnectionOptions.cs" />
     <Compile Include="corefx\DbProviderFactories.mobile.cs" />
     <Compile Include="corefx\DiagnosticListener.cs" />
@@ -1120,6 +1126,13 @@
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../Mono.Security/Mono.Security.csproj" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj" />
   </ItemGroup>
@@ -1179,6 +1192,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
+      <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
     <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
       <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
     </EmbeddedResource>

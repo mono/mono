@@ -109,9 +109,7 @@ namespace System.Reflection.Emit {
 			if (owner == null && typeOwner)
 				throw new ArgumentNullException (nameof (owner));
 			if ((m == null) && !anonHosted)
-				throw new ArgumentNullException ("m");
-			if (returnType.IsByRef)
-				throw new ArgumentException ("Return type can't be a byref type", "returnType");
+				throw new ArgumentNullException ("m");			
 			if (parameterTypes != null) {
 				for (int i = 0; i < parameterTypes.Length; ++i)
 					if (parameterTypes [i] == null)
@@ -138,30 +136,33 @@ namespace System.Reflection.Emit {
 		private static extern void create_dynamic_method (DynamicMethod m);
 
 		private void CreateDynMethod () {
-			if (mhandle.Value == IntPtr.Zero) {
-				if (ilgen == null || ilgen.ILOffset == 0)
-					throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
+			// Clearing of ilgen in create_dynamic_method is not yet synchronized for multiple threads
+			lock (this) {
+				if (mhandle.Value == IntPtr.Zero) {
+					if (ilgen == null || ilgen.ILOffset == 0)
+						throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
 
-				ilgen.label_fixup (this);
+					ilgen.label_fixup (this);
 
-				// Have to create all DynamicMethods referenced by this one
-				try {
-					// Used to avoid cycles
-					creating = true;
-					if (refs != null) {
-						for (int i = 0; i < refs.Length; ++i) {
-							if (refs [i] is DynamicMethod) {
-								DynamicMethod m = (DynamicMethod)refs [i];
-								if (!m.creating)
-									m.CreateDynMethod ();
+					// Have to create all DynamicMethods referenced by this one
+					try {
+						// Used to avoid cycles
+						creating = true;
+						if (refs != null) {
+							for (int i = 0; i < refs.Length; ++i) {
+								if (refs [i] is DynamicMethod) {
+									DynamicMethod m = (DynamicMethod)refs [i];
+									if (!m.creating)
+										m.CreateDynMethod ();
+								}
 							}
 						}
+					} finally {
+						creating = false;
 					}
-				} finally {
-					creating = false;
+					create_dynamic_method (this);
+					ilgen = null;
 				}
-
-				create_dynamic_method (this);
 			}
 		}
 
@@ -381,8 +382,9 @@ namespace System.Reflection.Emit {
 
 		public override ParameterInfo ReturnParameter {
 			get {
-				if (deleg == null)
-					return null;
+				if (deleg == null) {
+					return new RuntimeParameterInfo ((ParameterBuilder) null, returnType, this, -1);
+				}
 				return deleg.Method.ReturnParameter;
 			}
 		}

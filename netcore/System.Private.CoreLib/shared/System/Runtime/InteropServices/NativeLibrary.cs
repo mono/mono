@@ -208,7 +208,7 @@ namespace System.Runtime.InteropServices
 
             try
             {
-                s_nativeDllResolveMap!.Add(assembly, resolver); // TODO-NULLABLE: Remove ! when compiler specially-recognizes CompareExchange for nullability
+                s_nativeDllResolveMap.Add(assembly, resolver);
             }
             catch (ArgumentException)
             {
@@ -235,7 +235,7 @@ namespace System.Runtime.InteropServices
                 return IntPtr.Zero;
             }
 
-            if (!s_nativeDllResolveMap.TryGetValue(assembly, out DllImportResolver resolver))
+            if (!s_nativeDllResolveMap.TryGetValue(assembly, out DllImportResolver? resolver))
             {
                 return IntPtr.Zero;
             }

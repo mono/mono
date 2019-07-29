@@ -1354,6 +1354,21 @@ public class DebuggerTests
 		val = frame.GetArgument (0);
 		AssertValue ("BLA", val);
 	}
+	[Test]
+	public void CreateByteArrays () {
+		byte[] bt = new byte[5];
+		bt[0] = 1;
+		bt[1] = 0;
+		bt[2] = 255;
+		bt[3] = 10;
+		bt[4] = 50;
+		var val =  vm.RootDomain.CreateByteArray (bt);
+		AssertValue (1, val [0]);
+		AssertValue (0, val [1]);
+		AssertValue (255, val [2]);
+		AssertValue (10, val [3]);
+		AssertValue (50, val [4]);
+	}
 
 	[Test]
 	public void Arrays () {
@@ -4218,6 +4233,8 @@ public class DebuggerTests
 		var e = run_until ("unhandled_exception_endinvoke");
 		vm.Resume ();
 
+		var e1 = GetNextEvent (); //this should be the exception
+		vm.Resume ();
 		var e2 = GetNextEvent ();
 		Assert.IsFalse (e2 is ExceptionEvent);
 
@@ -4242,6 +4259,24 @@ public class DebuggerTests
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
 
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException3 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-wrapper");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_wrapper");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
 		vm.Exit (0);
 		vm = null;
 	}
@@ -4399,6 +4434,40 @@ public class DebuggerTests
 
 		e.Thread.SetIP (next_loc);
 
+		/* Check that i ++; j = 5; was skipped */
+		bevent = run_until ("set_ip_2");
+		var f = bevent.Thread.GetFrames ()[1];
+		AssertValue (2, f.GetValue (f.Method.GetLocal ("i")));
+		AssertValue (0, f.GetValue (f.Method.GetLocal ("j")));
+
+		// Error handling
+		AssertThrows<ArgumentNullException> (delegate {
+				e.Thread.SetIP (null);
+			});
+
+		AssertThrows<ArgumentException> (delegate {
+				e.Thread.SetIP (invalid_loc);
+			});
+	}
+
+	[Test]
+	[Category ("NotWorkingRuntimeInterpreter")]
+	public void SetIP2 () {
+		var bevent = run_until ("set_ip_1");
+
+		var invalid_loc = bevent.Thread.GetFrames ()[0].Location;
+
+		var req = create_step (bevent);
+		var e = step_out ();
+		req.Disable ();
+		var frames = e.Thread.GetFrames ();
+		var locs = frames [0].Method.Locations;
+
+		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 3));
+
+		e.Thread.SetIP (next_loc);
+
+		Assert.AreEqual(next_loc.ILOffset, e.Thread.GetFrames ()[0].Location.ILOffset);
 		/* Check that i ++; j = 5; was skipped */
 		bevent = run_until ("set_ip_2");
 		var f = bevent.Thread.GetFrames ()[1];

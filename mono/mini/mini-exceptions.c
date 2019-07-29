@@ -1141,7 +1141,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 
 		mono_debug_free_source_location (location);
-		mono_array_setref_internal (res, i, sf);
+		mono_array_setref_internal (res, i - skip, sf);
 	}
 
 	return res;
@@ -2290,7 +2290,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 		method = jinfo_get_method (ji);
 		//printf ("M: %s %d.\n", mono_method_full_name (method, TRUE), frame_count);
 
-		if (mini_get_debug_options ()->reverse_pinvoke_exceptions && method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
+		if (mini_debug_options.reverse_pinvoke_exceptions && method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
 			g_error ("A native frame was found while unwinding the stack after an exception.\n"
 					 "The native frame called the managed method:\n%s\n",
 					 mono_method_full_name (method, TRUE));
@@ -2531,7 +2531,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 	mono_ex = (MonoException*)obj;
 
-	if (mini_get_debug_options ()->suspend_on_exception) {
+	if (mini_debug_options.suspend_on_exception) {
 		mono_runtime_printf_err ("Exception thrown, suspending...");
 		while (1)
 			;
@@ -2637,11 +2637,11 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				throw_exception (obj, TRUE);
 				g_assert_not_reached ();
 			}
-			if (mini_get_debug_options ()->break_on_exc)
+			if (mini_debug_options.break_on_exc)
 				G_BREAKPOINT ();
 			mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 
-			if (mini_get_debug_options ()->suspend_on_unhandled) {
+			if (mini_debug_options.suspend_on_unhandled) {
 				mono_runtime_printf_err ("Unhandled exception, suspending...");
 				while (1)
 					;
@@ -2668,6 +2668,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 			if (unhandled)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+			else if (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
+			}
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 		}
@@ -3042,10 +3046,14 @@ mono_setup_altstack (MonoJitTlsData *tls)
 	size_t stsize = 0;
 	stack_t sa;
 	guint8 *staddr = NULL;
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) || defined(_AIX)
 	/*
 	 * On macOS Mojave we are encountering a bug when changing mapping for main thread
 	 * stack pages. Stack overflow on main thread will kill the app.
+	 *
+	 * AIX seems problematic as well; it gives ENOMEM for mprotect and valloc, if we
+	 * do this for thread 1 with its stack at the top of memory. Other threads seem
+	 * fine for the altstack guard page, though.
 	 */
 	gboolean disable_stack_guard = mono_threads_platform_is_main_thread ();
 #else
@@ -3301,7 +3309,7 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 	if (handle_crash_loop)
 		return;
 
-	if (mini_get_debug_options ()->suspend_on_native_crash) {
+	if (mini_debug_options.suspend_on_native_crash) {
 		g_async_safe_printf ("Received %s, suspending...\n", signal);
 		while (1) {
 			// Sleep for 1 second.
@@ -3569,7 +3577,7 @@ mono_set_cast_details (MonoClass *from, MonoClass *to)
 {
 	MonoJitTlsData *jit_tls = NULL;
 
-	if (mini_get_debug_options ()->better_cast_details) {
+	if (mini_debug_options.better_cast_details) {
 		jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = from;
 		jit_tls->class_cast_to = to;

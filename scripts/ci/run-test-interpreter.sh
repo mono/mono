@@ -5,7 +5,7 @@ export TEST_WITH_INTERPRETER=1
 
 ${TESTCMD} --label=interpreter-regression --timeout=10m make -C mono/mini richeck
 ${TESTCMD} --label=mixedmode-regression --timeout=10m make -C mono/mini mixedcheck
-${TESTCMD} --label=fullaotmixed-regression --timeout=10m make -C mono/mini fullaotmixedcheck
+${TESTCMD} --label=fullaotmixed-regression --timeout=20m make -C mono/mini fullaotmixedcheck
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
 ${TESTCMD} --label=runtime-interp --timeout=160m make -w -C mono/tests -k testinterp V=1
 ${TESTCMD} --label=corlib --timeout=160m make -w -C mcs/class/corlib run-test V=1
@@ -14,7 +14,21 @@ ${TESTCMD} --label=System.Core --timeout=160m make -w -C mcs/class/System.Core r
 ${TESTCMD} --label=mcs-tests --timeout=160m make -w -C mcs/tests run-test V=1;
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test V=1
 
-if [[ ${CI_TAGS} != *'pull-request'* ]] || [[ ${CI_TAGS} != *'arm'* ]]; then
+run_full_test_suite=1
+
+# Don't run full interpreter test suite on arm architectures during PR builds.
+# NOTE, full test suite will still be run on none PR builds.
+if [[ ${CI_TAGS} == *'pull-request'* ]] && [[ ${CI_TAGS} == *'arm'* ]]; then
+	run_full_test_suite=0
+fi
+
+# Don't run full interpreter test suite on Windows during PR builds.
+# NOTE, full test suite will still be run on none PR builds.
+if [[ ${CI_TAGS} == *'pull-request'* ]] && [[ ${CI_TAGS} == *'win-'* ]]; then
+	run_full_test_suite=0
+fi
+
+if [[ "$run_full_test_suite" -eq "1" ]]; then
 
 	${TESTCMD} --label=corlib-xunit --timeout=60m make -w -C mcs/class/corlib run-xunit-test
 	${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test V=1

@@ -919,8 +919,9 @@ namespace System
 			DateTime DST_end = TransitionPoint (rule.DaylightTransitionEnd, year + ((rule.DaylightTransitionStart.Month < rule.DaylightTransitionEnd.Month) ? 0 : 1));
 			if (dateTime.Kind == DateTimeKind.Utc) {
 				DST_start -= BaseUtcOffset;
-				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
+				DST_end -= BaseUtcOffset;
 			}
+			DST_end -= rule.DaylightDelta;
 			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 		
@@ -1234,6 +1235,12 @@ namespace System
 					{
 						offset += current.DaylightDelta;
 						isDst = true;
+					}
+
+					if (date >= new DateTime (tEnd.Ticks - current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					{
+						offset = baseUtcOffset;
+						isDst = false;
 					}
 
 					return true;

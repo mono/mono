@@ -97,6 +97,14 @@
 #ifdef HAVE_GETIFADDRS
 // <net/if.h> must be included before <ifaddrs.h>
 #include <ifaddrs.h>
+#elif defined(HAVE_QP2GETIFADDRS)
+/* Bizarrely, IBM i implements this, but AIX doesn't, so on i, it has a different name... */
+#include <as400_types.h>
+#include <as400_protos.h>
+/* Defines to just reuse ifaddrs code */
+#define ifaddrs ifaddrs_pase
+#define freeifaddrs Qp2freeifaddrs
+#define getifaddrs Qp2getifaddrs
 #endif
 
 #if defined(_MSC_VER) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
@@ -714,7 +722,7 @@ get_socket_assembly (void)
 	if (domain->socket_assembly == NULL) {
 		MonoImage *socket_assembly;
 
-		socket_assembly = mono_image_loaded_internal ("System", FALSE);
+		socket_assembly = mono_image_loaded_internal (mono_domain_default_alc (domain), "System", FALSE);
 		if (!socket_assembly) {
 			MonoAssemblyOpenRequest req;
 			mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
@@ -1841,7 +1849,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 		static MonoImage *mono_posix_image = NULL;
 		
 		if (mono_posix_image == NULL) {
-			mono_posix_image = mono_image_loaded_internal ("Mono.Posix", FALSE);
+			mono_posix_image = mono_image_loaded_internal (mono_domain_default_alc (domain), "Mono.Posix", FALSE);
 			if (!mono_posix_image) {
 				MonoAssemblyOpenRequest req;
 				mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
@@ -1970,7 +1978,7 @@ ipaddress_handle_to_struct_in6_addr (MonoObjectHandle ipaddr)
 static int
 get_local_interface_id (int family)
 {
-#if !defined(HAVE_GETIFADDRS) || !defined(HAVE_IF_NAMETOINDEX)
+#if !(defined(HAVE_GETIFADDRS) || defined(HAVE_QP2GETIFADDRS)) || !defined(HAVE_IF_NAMETOINDEX)
 	return 0;
 #else
 	struct ifaddrs *ifap = NULL, *ptr;

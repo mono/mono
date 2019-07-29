@@ -152,7 +152,7 @@ namespace System.Threading
                     }
                     Interlocked.CompareExchange(ref s_asyncLocalPrincipal, new AsyncLocal<IPrincipal?>(), null);
                 }
-                s_asyncLocalPrincipal!.Value = value; // TODO-NULLABLE: Remove ! when compiler specially-recognizes CompareExchange for nullability
+                s_asyncLocalPrincipal.Value = value;
             }
         }
 
@@ -355,7 +355,7 @@ namespace System.Threading
                 Dictionary<string, LocalDataStoreSlot> nameToSlotMap = EnsureNameToSlotMap();
                 lock (nameToSlotMap)
                 {
-                    LocalDataStoreSlot slot;
+                    LocalDataStoreSlot? slot;
                     if (!nameToSlotMap.TryGetValue(name, out slot))
                     {
                         slot = AllocateSlot();

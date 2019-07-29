@@ -1,1 +1,7 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/Dynamic/InvokeMemberBindingTests.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.CreateClient.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.CreateServer.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Read.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Specific.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Write.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTestBase.cs
