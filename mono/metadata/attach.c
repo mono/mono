@@ -110,30 +110,26 @@ static void transport_start_receive (void);
 /*
  * Functions to decode protocol data
  */
-static inline int
-decode_byte (guint8 *buf, guint8 **endbuf, guint8 *limit)
+static int
+decode_byte (guint8 const *buf, guint8 const **endbuf, guint8 const *limit)
 {
 	*endbuf = buf + 1;
 	g_assert (*endbuf <= limit);
 	return buf [0];
 }
 
-static inline int
-decode_int (guint8 *buf, guint8 **endbuf, guint8 *limit)
+static int
+decode_int (const guint8 *buf)
 {
-	*endbuf = buf + 4;
-	g_assert (*endbuf <= limit);
-
 	return (((int)buf [0]) << 0) | (((int)buf [1]) << 8) | (((int)buf [2]) << 16) | (((int)buf [3]) << 24);
 }
 
-static char*
-decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
+static const char*
+decode_string_value (guint8 const *buf, guint8 const **endbuf, guint8 const *limit)
 {
 	int type;
 	gint32 length;
-	guint8 *p = buf;
-	char *s;
+	guint8 const *p = buf;
 
 	type = decode_byte (p, &p, limit);
 	if (type == PRIM_TYPE_NULL) {
@@ -154,12 +150,10 @@ decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
 
 	g_assert (length < (1 << 16));
 
-	s = (char *)g_malloc (length + 1);
+	const char *s = (const char*)p;
+	p += length + 1;
 
-	g_assert (p + length <= limit);
-	memcpy (s, p, length);
-	s [length] = '\0';
-	p += length;
+	g_assert (p <= limit);
 
 	*endbuf = p;
 
@@ -265,7 +259,7 @@ mono_attach_cleanup (void)
 }
 
 static int
-mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoError* error)
+mono_attach_load_agent (MonoDomain *domain, const char *agent, const char *args, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
@@ -500,8 +494,6 @@ receiver_thread (void *arg)
 {
 	ERROR_DECL (error);
 	int res, content_len;
-	guint8 buffer [256];
-	guint8 *p, *p_end;
 	MonoInternalThread *internal;
 
 	internal = mono_thread_internal_current ();
@@ -525,8 +517,8 @@ receiver_thread (void *arg)
 		printf ("attach: Connected.\n");
 
 		while (TRUE) {
-			char *cmd, *agent_name, *agent_args;
 			guint8 *body;
+			guint8 buffer [6];
 
 			/* Read Header */
 			res = read (conn_fd, buffer, 6);
@@ -540,7 +532,7 @@ receiver_thread (void *arg)
 			if (res != 6)
 				break;
 
-			if ((strncmp ((char*)buffer, "MONO", 4) != 0) || buffer [4] != 1 || buffer [5] != 0) {
+			if (memcmp (buffer, "MONO", 4) != 0 || buffer [4] != 1 || buffer [5] != 0) {
 				fprintf (stderr, "attach: message from server has unknown header.\n");
 				break;
 			}
@@ -550,32 +542,27 @@ receiver_thread (void *arg)
 			if (res != 4)
 				break;
 
-			p = buffer;
-			p_end = p + 8;
-
-			content_len = decode_int (p, &p, p_end);
+			content_len = decode_int (buffer);
 
 			/* Read message body */
 			body = (guint8 *)g_malloc (content_len);
 			res = read (conn_fd, body, content_len);
-			
-			p = body;
-			p_end = body + content_len;
 
-			cmd = decode_string_value (p, &p, p_end);
+			guint8 const * p = body;
+			guint8 const * const p_end = body + content_len;
+
+			char const * const cmd = decode_string_value (p, &p, p_end);
 			if (cmd == NULL)
 				break;
 			g_assert (!strcmp (cmd, "attach"));
 
-			agent_name = decode_string_value (p, &p, p_end);
-			agent_args = decode_string_value (p, &p, p_end);
+			char const * const agent_name = decode_string_value (p, &p, p_end);
+			char const * const agent_args = decode_string_value (p, &p, p_end);
 
 			printf ("attach: Loading agent '%s'.\n", agent_name);
 			ERROR_DECL (error);
 			mono_attach_load_agent (mono_domain_get (), agent_name, agent_args, error);
 			mono_error_cleanup (error);
-			g_free (agent_name);
-			g_free (agent_args);
 			g_free (body);
 
 			// FIXME: Send back a result
