@@ -242,7 +242,8 @@ namespace System.Net.Sockets
 
                 if (!attemptSocket.ConnectAsync(internalArgs))
                 {
-                    return new SocketException(internalArgs.SocketError);
+                    InternalConnectCallback(null, internalArgs);
+//                    return new SocketException(internalArgs.SocketError);
                 }
             }
             catch (ObjectDisposedException)
