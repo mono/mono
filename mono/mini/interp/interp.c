@@ -137,6 +137,7 @@ static MonoNativeTlsKey thread_context_id;
 
 #define DEBUG_INTERP 0
 #define COUNT_OPS 0
+
 #if DEBUG_INTERP
 int mono_interp_traceopt = 2;
 /* If true, then we output the opcodes as we interpret them */
@@ -215,6 +216,27 @@ static void debug_enter (InterpFrame *frame, int *tracing)
 
 #endif
 
+#if defined(__GNUC__) && !defined(TARGET_WASM)
+#define USE_COMPUTED_GOTO 1
+#endif
+#if USE_COMPUTED_GOTO
+#define MINT_IN_SWITCH(op) COUNT_OP(op); goto *in_labels[op];
+#define MINT_IN_CASE(x) LAB_ ## x:
+#define MINT_IN_DISPATCH(op) goto *in_labels[op];
+#if DEBUG_INTERP
+#define MINT_IN_BREAK if (tracing > 1) MINT_IN_DISPATCH(*ip); else { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#else
+#define MINT_IN_BREAK { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#endif
+#define MINT_IN_DEFAULT mint_default: if (0) goto mint_default; /* make gcc shut up */
+#else
+#define MINT_IN_SWITCH(op) switch (op)
+#define MINT_IN_CASE(x) case x:
+#define MINT_IN_DISPATCH(op) goto main_loop;
+#define MINT_IN_BREAK break
+#define MINT_IN_DEFAULT default:
+#endif
+
 static void
 set_resume_state (ThreadContext *context, InterpFrame *frame)
 {
@@ -240,7 +262,7 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 				finally_ips->data < (context)->handler_ei->try_end) \
 			finally_ips = g_slist_remove (finally_ips, finally_ips->data); \
 		set_resume_state ((context), (frame));							\
-		goto main_loop;													\
+		MINT_IN_DISPATCH(*ip);											\
 	} while (0)
 
 /*
@@ -2855,25 +2877,6 @@ static int opcode_counts[512];
 #define DUMP_INSTR()
 #endif
 
-#if defined(__GNUC__) && !defined(TARGET_WASM)
-#define USE_COMPUTED_GOTO 1
-#endif
-#if USE_COMPUTED_GOTO
-#define MINT_IN_SWITCH(op) COUNT_OP(op); goto *in_labels[op];
-#define MINT_IN_CASE(x) LAB_ ## x:
-#if DEBUG_INTERP
-#define MINT_IN_BREAK if (tracing > 1) goto main_loop; else { COUNT_OP(*ip); goto *in_labels[*ip]; }
-#else
-#define MINT_IN_BREAK { COUNT_OP(*ip); goto *in_labels[*ip]; }
-#endif
-#define MINT_IN_DEFAULT mint_default: if (0) goto mint_default; /* make gcc shut up */
-#else
-#define MINT_IN_SWITCH(op) switch (op)
-#define MINT_IN_CASE(x) case x:
-#define MINT_IN_BREAK break
-#define MINT_IN_DEFAULT default:
-#endif
-
 #define INIT_VTABLE(vtable) do { \
 		if (G_UNLIKELY (!(vtable)->initialized)) { \
 			mono_runtime_class_init_full ((vtable), error); \
@@ -2919,8 +2922,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #if DEBUG_INTERP
 	gint tracing = global_tracing;
 	unsigned char *vtalloc;
-#else
-	gint tracing = 0;
 #endif
 	int i32;
 	unsigned char *vt_sp;
@@ -2937,7 +2938,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #endif
 
 	frame->ex = NULL;
+
+#if DEBUG_INTERP
 	debug_enter (frame, &tracing);
+#endif
 
 	imethod = frame->imethod;
 	if (!imethod->transformed) {
@@ -2985,7 +2989,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	 * but it may be useful for debug
 	 */
 	while (1) {
+#ifndef USE_COMPUTED_GOTO
 	main_loop:
+#endif
 		/* g_assert (sp >= frame->stack); */
 		/* g_assert(vt_sp - vtalloc <= imethod->vt_stack_size); */
 		DUMP_INSTR();
@@ -5754,59 +5760,92 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				/* Throw abort after the last finally block to avoid confusing EH */
 				if (pending_abort && !finally_ips)
 					EXCEPTION_CHECKPOINT;
-				goto main_loop;
+				MINT_IN_DISPATCH(*ip);
 			}
 			ves_abort();
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_LEAVE) /* Fall through */
+		MINT_IN_CASE(MINT_LEAVE)
 		MINT_IN_CASE(MINT_LEAVE_S)
-			while (sp > frame->stack) {
-				--sp;
-			}
-			frame->ip = ip;
-
-			if (*ip == MINT_LEAVE_S) {
-				ip += (short) *(ip + 1);
-			} else {
-				ip += (gint32) READ32 (ip + 1);
-			}
-			endfinally_ip = ip;
-			goto handle_finally;
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LEAVE_CHECK)
-		MINT_IN_CASE(MINT_LEAVE_S_CHECK)
+		MINT_IN_CASE(MINT_LEAVE_S_CHECK) {
 			while (sp > frame->stack) {
 				--sp;
 			}
 			frame->ip = ip;
 
-			if (imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
-				stackval tmp_sp;
+			if (*ip == MINT_LEAVE_S_CHECK || *ip == MINT_LEAVE_CHECK) {
+				if (imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
+					stackval tmp_sp;
 
-				child_frame.parent = frame;
-				child_frame.imethod = NULL;
-				/*
-				 * We need for mono_thread_get_undeniable_exception to be able to unwind
-				 * to check the abort threshold. For this to work we use child_frame as a
-				 * dummy frame that is stored in the lmf and serves as the transition frame
-				 */
-				do_icall_wrapper (&child_frame, NULL, MINT_ICALL_V_P, &tmp_sp, (gpointer)mono_thread_get_undeniable_exception, FALSE);
+					child_frame.parent = frame;
+					child_frame.imethod = NULL;
+					/*
+					 * We need for mono_thread_get_undeniable_exception to be able to unwind
+					 * to check the abort threshold. For this to work we use child_frame as a
+					 * dummy frame that is stored in the lmf and serves as the transition frame
+					 */
+					do_icall_wrapper (&child_frame, NULL, MINT_ICALL_V_P, &tmp_sp, (gpointer)mono_thread_get_undeniable_exception, FALSE);
 
-				MonoException *abort_exc = (MonoException*)tmp_sp.data.p;
-				if (abort_exc)
-					THROW_EX (abort_exc, frame->ip);
+					MonoException *abort_exc = (MonoException*)tmp_sp.data.p;
+					if (abort_exc)
+						THROW_EX (abort_exc, frame->ip);
+				}
 			}
 
-			if (*ip == MINT_LEAVE_S_CHECK) {
+			if (*ip == MINT_LEAVE_S || *ip == MINT_LEAVE_S_CHECK) {
 				ip += (short) *(ip + 1);
 			} else {
 				ip += (gint32) READ32 (ip + 1);
 			}
 			endfinally_ip = ip;
-			goto handle_finally;
+
+			guint32 ip_offset;
+			MonoExceptionClause *clause;
+			GSList *old_list = finally_ips;
+			MonoMethod *method = imethod->method;
+
+#if DEBUG_INTERP
+			if (tracing)
+				g_print ("* Handle finally IL_%04x\n", endfinally_ip == NULL ? 0 : endfinally_ip - imethod->code);
+#endif
+			if (imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+				|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
+				goto exit_frame;
+			}
+			ip_offset = frame->ip - imethod->code;
+
+			if (endfinally_ip != NULL)
+				finally_ips = g_slist_prepend(finally_ips, (void *)endfinally_ip);
+
+			for (int i = imethod->num_clauses - 1; i >= 0; i--) {
+				clause = &imethod->clauses [i];
+				if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - imethod->code)))) {
+					if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
+						ip = imethod->code + clause->handler_offset;
+						finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
+#if DEBUG_INTERP
+						if (tracing)
+							g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
+#endif
+					}
+				}
+			}
+
+			endfinally_ip = NULL;
+
+			if (old_list != finally_ips && finally_ips) {
+				ip = (const guint16*)finally_ips->data;
+				finally_ips = g_slist_remove (finally_ips, ip);
+				sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
+				vt_sp = (unsigned char *) sp + imethod->stack_size;
+				MINT_IN_DISPATCH (*ip);
+			}
+
+			ves_abort();
 			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_ICALL_V_V) 
 		MINT_IN_CASE(MINT_ICALL_V_P)
 		MINT_IN_CASE(MINT_ICALL_P_V) 
@@ -6413,62 +6452,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 
 		MINT_IN_DEFAULT
-			g_print ("Unimplemented opcode: %04x %s at 0x%x\n", *ip, mono_interp_opname[*ip], ip-imethod->code);
-			THROW_EX (mono_get_exception_execution_engine ("Unimplemented opcode"), ip);
+			g_error ("Unimplemented opcode: %04x %s at 0x%x\n", *ip, mono_interp_opname[*ip], ip-imethod->code);
 		}
 	}
 
 	g_assert_not_reached ();
-	handle_finally:
-	{
-		int i;
-		guint32 ip_offset;
-		MonoExceptionClause *clause;
-		GSList *old_list = finally_ips;
-		MonoMethod *method = imethod->method;
-		
-#if DEBUG_INTERP
-		if (tracing)
-			g_print ("* Handle finally IL_%04x\n", endfinally_ip == NULL ? 0 : endfinally_ip - imethod->code);
-#endif
-		if (imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) 
-				|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
-			goto exit_frame;
-		}
-		ip_offset = frame->ip - imethod->code;
-
-		if (endfinally_ip != NULL)
-			finally_ips = g_slist_prepend(finally_ips, (void *)endfinally_ip);
-
-		for (i = imethod->num_clauses - 1; i >= 0; i--) {
-			clause = &imethod->clauses [i];
-			if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - imethod->code)))) {
-				if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
-					ip = imethod->code + clause->handler_offset;
-					finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
-#if DEBUG_INTERP
-					if (tracing)
-						g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
-#endif
-				}
-			}
-		}
-
-		endfinally_ip = NULL;
-
-		if (old_list != finally_ips && finally_ips) {
-			ip = (const guint16*)finally_ips->data;
-			finally_ips = g_slist_remove (finally_ips, ip);
-			sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
-			vt_sp = (unsigned char *) sp + imethod->stack_size;
-			goto main_loop;
-		}
-
-		ves_abort();
-	}
 
 exit_frame:
-
 	error_init_reuse (error);
 
 	if (clause_args && clause_args->base_frame)
