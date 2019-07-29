@@ -26,7 +26,6 @@ archive-$(1)-$(2): package-$(1)-$(2)
 	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
@@ -80,8 +79,6 @@ clean-llvm-$(1)::
 
 endef
 
-llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMTemplate,llvm32))
 $(eval $(call LLVMTemplate,llvm64))
 
 ##
