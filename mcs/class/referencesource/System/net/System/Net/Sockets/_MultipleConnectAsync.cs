@@ -45,7 +45,6 @@ namespace System.Net.Sockets
                     throw new InvalidOperationException();
                 startStackTrace = Environment.StackTrace;
                 startContext = $"{args.ID} {endPoint}";
-                Console.Error.WriteLine ($"START CONNECT ASYNC: {startContext}\n{startStackTrace}");
                 GlobalLog.Assert(endPoint.AddressFamily == AddressFamily.Unspecified ||
                      endPoint.AddressFamily == AddressFamily.InterNetwork ||
                      endPoint.AddressFamily == AddressFamily.InterNetworkV6,
