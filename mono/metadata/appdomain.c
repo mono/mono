@@ -2390,7 +2390,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		g_assert (ass != NULL);
-		// TODO: can dynamic assemblies match here for netcore?
+		// TODO: Can dynamic assemblies match here for netcore? Also, this ignores case while exact_sn_match does not.
 		if (assembly_is_dynamic (ass) || !mono_assembly_names_equal_flags (aname, &ass->aname, eq_flags))
 			continue;
 
