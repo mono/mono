@@ -6019,6 +6019,7 @@ void
 mono_thread_internal_unhandled_exception (MonoObject* exc)
 {
 	MonoClass *klass = exc->vtable->klass;
+
 	if (is_threadabort_exception (klass)) {
 		mono_thread_internal_reset_abort (mono_thread_internal_current ());
 	} else if (!is_appdomainunloaded_exception (klass)

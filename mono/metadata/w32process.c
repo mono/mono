@@ -622,6 +622,7 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 static void
 mono_pin_string (MonoStringHandle in_coophandle, MonoStringHandle *out_coophandle, gunichar2 **chars, gsize *length, gchandle_t *gchandle)
 {
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 	*out_coophandle = in_coophandle;
 	if (!MONO_HANDLE_IS_NULL (in_coophandle)) {
 		*chars = mono_string_handle_pin_chars (in_coophandle, gchandle);

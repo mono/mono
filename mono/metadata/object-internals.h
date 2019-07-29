@@ -268,6 +268,8 @@ typedef struct {
 #endif
 } MonoMarshalByRefObject;
 
+TYPED_HANDLE_DECL (MonoMarshalByRefObject);
+
 /* This is a copy of System.AppDomain */
 struct _MonoAppDomain {
 	MonoMarshalByRefObject mbr;
@@ -350,6 +352,8 @@ typedef struct {
 	MonoException base;
 } MonoSystemException;
 
+TYPED_HANDLE_DECL (MonoSystemException);
+
 #ifndef ENABLE_NETCORE
 typedef struct {
 	MonoSystemException base;
@@ -373,10 +377,14 @@ typedef struct {
 	gint64	     add_time;
 } MonoAsyncResult;
 
+TYPED_HANDLE_DECL (MonoAsyncResult);
+
 typedef struct {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
 } MonoWaitHandle;
+
+TYPED_HANDLE_DECL (MonoWaitHandle);
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -420,6 +428,8 @@ typedef struct {
 	MonoReflectionType type;
 	MonoObject *type_info;
 } MonoReflectionMonoType;
+
+TYPED_HANDLE_DECL (MonoReflectionMonoType);
 
 typedef struct {
 	MonoObject  object;
@@ -498,6 +508,8 @@ typedef struct {
 	guint32	    call_type;
 } MonoMethodMessage;
 
+TYPED_HANDLE_DECL (MonoMethodMessage);
+
 /* Keep in sync with the System.MonoAsyncCall */
 typedef struct {
 	MonoObject object;
@@ -509,12 +521,16 @@ typedef struct {
 	MonoArray *out_args;
 } MonoAsyncCall;
 
+TYPED_HANDLE_DECL (MonoAsyncCall);
+
 typedef struct {
 	MonoObject obj;
 	MonoArray *frames;
 	MonoArray *captured_traces;
 	MonoBoolean debug_info;
 } MonoStackTrace;
+
+TYPED_HANDLE_DECL (MonoStackTrace);
 
 typedef struct {
 	MonoObject obj;
@@ -528,6 +544,8 @@ typedef struct {
 	gint32 column;
 	MonoString *internal_method_name;
 } MonoStackFrame;
+
+TYPED_HANDLE_DECL (MonoStackFrame);
 
 typedef enum {
 	MONO_THREAD_FLAG_DONT_MANAGE = 1, // Don't wait for or abort this thread
@@ -842,9 +860,6 @@ MONO_COLD void mono_set_pending_exception (MonoException *exc);
 MonoAsyncResult *
 mono_async_result_new	    (MonoDomain *domain, gpointer handle, 
 			     MonoObject *state, gpointer data, MonoObject *object_data, MonoError *error);
-ICALL_EXPORT
-MonoObject *
-ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
 
 MonoWaitHandle *
 mono_wait_handle_new	    (MonoDomain *domain, gpointer handle, MonoError *error);
@@ -1794,8 +1809,8 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 gboolean
 mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class);
 
-MonoObject *
-mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);
+MonoObjectHandle
+mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessageHandle msg, MonoObjectHandleOut exc, MonoArrayHandleOut out_args, MonoError *error);
 
 gpointer
 mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxyHandle real_proxy, MonoError *error);
@@ -1804,7 +1819,7 @@ gboolean
 mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle tproxy, MonoClass *klass, MonoError *error);
 
 void*
-mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, void **res, MonoError *error);
+mono_load_remote_field_checked (MonoObjectHandle self, MonoClass *klass, MonoClassField *field, void **res, MonoError *error);
 
 MonoObject *
 mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, MonoError *error);
@@ -2008,6 +2023,9 @@ mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, M
 MonoString*
 mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error);
 
+MonoStringHandle
+mono_object_try_to_string_handle (MonoObjectHandle obj, MonoObjectHandleOut exc, MonoError *error);
+
 char *
 mono_string_to_utf8_ignore (MonoString *s);
 
@@ -2155,12 +2173,15 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 MONO_PROFILER_API MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 
-// The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
+// The exc parameter was deliberately missing and so far this has proven to reduce code duplication.
 // In particular, if an exception is returned from underlying otherwise succeeded call,
 // is set into the MonoError with mono_error_set_exception_instance.
 // The result is that caller need only check MonoError.
+//
+// FIXME The removal of exc parameter confuses ongoing coop conversion. It has been restored.
+// Prior conversion should be revisited (despite long term success).
 MonoObjectHandle
-mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoObjectHandleOut exc, MonoError* error);
 
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
@@ -2202,10 +2223,10 @@ mono_runtime_try_run_main (MonoMethod *method, int argc, char* argv[],
 			   MonoObject **exc);
 
 int
-mono_runtime_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *error);
+mono_runtime_exec_main_checked (MonoMethod *method, MonoArrayHandle args, MonoError *error);
 
 int
-mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc);
+mono_runtime_try_exec_main (MonoMethod *method, MonoArrayHandle args, MonoObject **exc);
 
 ICALL_EXPORT
 void

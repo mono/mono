@@ -132,7 +132,7 @@ break_coop_alertable_wait (gpointer user_data)
  *   Wait on COND/MUTEX. If ALERTABLE is non-null, the wait can be interrupted.
  * In that case, *ALERTABLE will be set to TRUE, and 0 is returned.
  */
-static inline gint
+static gint
 coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32 timeout_ms, gboolean *alertable)
 {
 	BreakCoopAlertableWaitUD *ud;
@@ -171,7 +171,7 @@ void
 mono_gc_run_finalize (void *obj, void *data)
 {
 	ERROR_DECL (error);
-	MonoObject *exc = NULL;
+	MonoObjectHandle exc = MONO_HANDLE_NEW (MonoObject, NULL);
 	MonoObject *o;
 #ifndef HAVE_SGEN_GC
 	MonoObject *o2;
@@ -180,17 +180,17 @@ mono_gc_run_finalize (void *obj, void *data)
 	MonoDomain *caller_domain = mono_domain_get ();
 	MonoDomain *domain;
 
+	MonoObjectHandle o = MONO_HANDLE_NEW (MonoObject, (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data)));
+
 	// This function is called from the innards of the GC, so our best alternative for now is to do polling here
 	mono_threads_safepoint ();
-
-	o = (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data));
 
 	const char *o_ns = m_class_get_name_space (mono_object_class (o));
 	const char *o_name = m_class_get_name (mono_object_class (o));
 
 	if (mono_do_not_finalize) {
 		if (!mono_do_not_finalize_class_names)
-			return;
+			goto exit;
 
 		size_t namespace_len = strlen (o_ns);
 		for (int i = 0; mono_do_not_finalize_class_names [i]; ++i) {
@@ -201,7 +201,7 @@ mono_gc_run_finalize (void *obj, void *data)
 				break;
 			if (strcmp (name + namespace_len + 1, o_name))
 				break;
-			return;
+			goto exit;
 		}
 	}
 
@@ -209,7 +209,7 @@ mono_gc_run_finalize (void *obj, void *data)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_DEBUG, "<%s at %p> Starting finalizer checks.", o_name, o);
 
 	if (suspend_finalizers)
-		return;
+		goto exit;
 
 	domain = o->vtable->domain;
 
@@ -222,7 +222,7 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	if (!o2)
 		/* Already finalized somehow */
-		return;
+		goto exit;
 #endif
 
 	/* make sure the finalizer is not called again if the object is resurrected */
@@ -236,7 +236,7 @@ mono_gc_run_finalize (void *obj, void *data)
 
 		if (mono_gc_is_finalizer_internal_thread (t))
 			/* Avoid finalizing ourselves */
-			return;
+			goto exit;
 	}
 
 	if (m_class_get_image (mono_object_class (o)) == mono_defaults.corlib && !strcmp (o_name, "DynamicMethod") && finalizing_root_domain) {
@@ -247,11 +247,11 @@ mono_gc_run_finalize (void *obj, void *data)
 		 * FIXME: This is not perfect, objects dying at the same time as 
 		 * dynamic methods can still reference them even when !shutdown.
 		 */
-		return;
+		goto exit;
 	}
 
 	if (mono_runtime_get_no_exec ())
-		return;
+		goto exit;
 
 	/* speedup later... and use a timeout */
 	/* g_print ("Finalize run on %p %s.%s\n", o, mono_object_class (o)->name_space, mono_object_class (o)->name); */
@@ -268,7 +268,7 @@ mono_gc_run_finalize (void *obj, void *data)
 		if (del->delegate_trampoline)
 			mono_delegate_free_ftnptr ((MonoDelegate*)o);
 		mono_domain_set_internal_with_options (caller_domain, TRUE);
-		return;
+		goto exit;
 	}
 
 	finalizer = mono_class_get_finalizer (o->vtable->klass);
@@ -281,7 +281,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	 */
 	if (mono_marshal_free_ccw (o) && !finalizer) {
 		mono_domain_set_internal_with_options (caller_domain, TRUE);
-		return;
+		goto exit;
 	}
 
 	/* 
@@ -318,6 +318,8 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
+	exc = MONO_HANDLE_NEW (MonoObject, NULL);
+
 #ifdef HOST_WASM
 	if (finalizer) { // null finalizers work fine when using the vcall invoke as Object has an empty one
 		gpointer params [1];
@@ -340,6 +342,9 @@ unhandled_error:
 		mono_thread_internal_unhandled_exception (exc);
 
 	mono_domain_set_internal_with_options (caller_domain, TRUE);
+
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 /*

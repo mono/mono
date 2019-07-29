@@ -1276,18 +1276,18 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 	ERROR_DECL (error);
 	MonoImage *image = mono_assembly_get_image_internal (assembly);
 
-    // We need to ensure that any module cctor for this image
-    // is run *before* we invoke the entry point
-    // For more information, see https://blogs.msdn.microsoft.com/junfeng/2005/11/19/module-initializer-a-k-a-module-constructor/
-    //
-    // This is required in order for tools like Costura
-    // (https://github.com/Fody/Costura) to work properly, as they inject
-    // a module initializer which sets up event handlers (e.g. AssemblyResolve)
-    // that allow the main method to run properly
-    if (!mono_runtime_run_module_cctor(image, domain, error)) {
-        g_print ("Failed to run module constructor due to %s\n", mono_error_get_message (error));
-        return 1;
-    }
+	// We need to ensure that any module cctor for this image
+	// is run *before* we invoke the entry point
+	// For more information, see https://blogs.msdn.microsoft.com/junfeng/2005/11/19/module-initializer-a-k-a-module-constructor/
+	//
+	// This is required in order for tools like Costura
+	// (https://github.com/Fody/Costura) to work properly, as they inject
+	// a module initializer which sets up event handlers (e.g. AssemblyResolve)
+	// that allow the main method to run properly
+	if (!mono_runtime_run_module_cctor(image, domain, error)) {
+		g_print ("Failed to run module constructor due to %s\n", mono_error_get_message (error));
+		return 1;
+	}
 
 	MonoMethod *method;
 	guint32 entry = mono_image_get_entry_point (image);
@@ -1306,10 +1306,13 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 		mono_environment_exitcode_set (1);
 		return 1;
 	}
+
+	int res = 0;
+
+	HANDLE_FUNCTION_ENTER ();
 	
 	if (mono_llvm_only) {
 		MonoObject *exc = NULL;
-		int res;
 
 		res = mono_runtime_try_run_main (method, argc, argv, &exc);
 		if (exc) {
@@ -1317,9 +1320,8 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 			mono_invoke_unhandled_exception_hook (exc);
 			g_assert_not_reached ();
 		}
-		return res;
 	} else {
-		int res = mono_runtime_run_main_checked (method, argc, argv, error);
+		res = mono_runtime_run_main_checked (method, argc, argv, error);
 		if (!is_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
 			if (ex) {
@@ -1328,8 +1330,9 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 				g_assert_not_reached ();
 			}
 		}
-		return res;
 	}
+
+	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
 typedef struct 

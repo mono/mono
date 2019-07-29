@@ -101,6 +101,8 @@ mono_string_to_bstr_impl (MonoStringHandle s, MonoError *error)
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
 
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
+
 	gchandle_t gchandle = 0;
 	mono_bstr const res = mono_ptr_to_bstr (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s));
 	mono_gchandle_free_internal (gchandle);

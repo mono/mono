@@ -1132,7 +1132,7 @@ append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset
 }
 
 char *
-mono_exception_get_managed_backtrace (MonoException *exc)
+mono_exception_get_managed_backtrace (MonoException *exc) // FIXMEcoop
 {
 	GString *text;
 
@@ -1258,26 +1258,40 @@ mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, void *us
 	unhandled_exception_hook_data = user_data;
 }
 
+static
 void
-mono_invoke_unhandled_exception_hook (MonoObject *exc)
+mono_invoke_unhandled_exception_hook_internal (MonoObjectHandle exc)
 {
+	// This function does not necessarily return.
+	// However unhandled_exception_hook could resume running indefinitely.
+
 	if (unhandled_exception_hook) {
-		unhandled_exception_hook (exc, unhandled_exception_hook_data);
+		unhandled_exception_hook (MONO_HANDLE_RAW (exc, unhandled_exception_hook_data));
 	} else {
+
+		// FIXME This should be the default hook instead of a special case.
+
+		// Manage handle stack w/o getting to end of function.
+		SETUP_ICALL_FUNCTION;
+		SETUP_ICALL_FRAME;
+
 		ERROR_DECL (inner_error);
-		MonoObject *other = NULL;
-		MonoString *str = mono_object_try_to_string (exc, &other, inner_error);
+		MonoObjectHandleOut other = MONO_HANDLE_NEW (MonoObject, NULL);
+		MonoStringHandle str = mono_object_try_to_string_handle (exc, other, inner_error);
 		char *msg = NULL;
-		
+		gsize msg_length;
+		gboolean msg_free = TRUE;
+
 		if (str && is_ok (inner_error)) {
-			msg = mono_string_to_utf8_checked_internal (str, inner_error);
+			msg = mono_string_to_utf8len (str, &msg_length, inner_error);
 			if (!is_ok (inner_error)) {
-				msg = g_strdup_printf ("Nested exception while formatting original exception");
+				msg_free = FALSE;
+				msg = "Nested exception while formatting original exception";
 				mono_error_cleanup (inner_error);
 			}
-		} else if (other) {
-			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
-			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
+		} else if (MONO_HANDLE_BOOL (other)) {
+			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)MONO_HANDLE_RAW (exc)); // FIXMEcoop
+			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)MONO_HANDLE_RAW (other)); // FIXMEcoop
 
 			msg = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
 				original_backtrace, nested_backtrace);
@@ -1285,10 +1299,13 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 			g_free (original_backtrace);
 			g_free (nested_backtrace);
 		} else {
-			msg = g_strdup ("Nested exception trying to figure out what went wrong");
+			msg_free = FALSE;
+			msg = "Nested exception trying to figure out what went wrong";
 		}
+		CLEAR_ICALL_FRAME;
 		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg);
-		g_free (msg);
+		if (msg_free)
+			g_free (msg);
 #if defined(HOST_IOS)
 		g_assertion_message ("Terminating runtime due to unhandled exception");
 #else
@@ -1297,6 +1314,21 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	}
 
 	g_assert_not_reached ();
+}
+
+void
+mono_invoke_unhandled_exception_hook_handle (MonoObjectHandle exc)
+{
+	// This function does not necessarily return.
+	mono_invoke_unhandled_exception_hook (exc);
+}
+
+void
+mono_invoke_unhandled_exception_hook (MonoObject *exc)
+{
+	// FIXME This function does not necessarily return so fake a handle.
+	MonoObjectHandle exch = { &exc };
+	mono_invoke_unhandled_exception_hook_internal (exch);
 }
 
 MonoExceptionHandle

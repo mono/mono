@@ -718,7 +718,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 	
 	case MONO_ERROR_ARGUMENT_OUT_OF_RANGE: 
-		exception = mono_exception_new_argument_out_of_range(error->first_argument, error->full_message, error_out); 
+		exception = mono_exception_new_argument_out_of_range (error->first_argument, error->full_message, error_out); 
 		break;
 
 	case MONO_ERROR_NOT_VERIFIABLE:
@@ -787,7 +787,7 @@ mono_error_convert_to_exception (MonoError *target_error)
 	/* Mempool stored error shouldn't be cleaned up */
 	g_assert (!is_boxed ((MonoErrorInternal*)target_error));
 
-	if (mono_error_ok (target_error))
+	if (is_ok (target_error))
 		return NULL;
 
 	ex = mono_error_prepare_exception (target_error, error);

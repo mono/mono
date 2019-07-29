@@ -186,12 +186,7 @@ ves_icall_mono_string_to_utf8_impl (MonoStringHandle str, MonoError *error)
 MonoStringHandle
 ves_icall_string_new_wrapper_impl (const char *text, MonoError *error)
 {
-	if (text) {
-		MonoString *s = mono_string_new_checked (mono_domain_get (), text, error);
-		return_val_if_nok (error, NULL_HANDLE_STRING);
-		return MONO_HANDLE_NEW (MonoString, s);
-	}
-	return NULL_HANDLE_STRING;
+	return text ? mono_string_new_handle (mono_domain_get (), text, error) : NULL_HANDLE_STRING;
 }
 
 void
@@ -584,9 +579,7 @@ mono_string_from_byvalwstr_impl (const gunichar2 *data, int max_len, MonoError *
 	// FIXME Check max_len while scanning data? mono_string_from_byvalstr does.
 	int len = g_utf16_len (data);
 
-	MonoString *res = mono_string_new_utf16_checked (mono_domain_get (), data, MIN (len, max_len), error);
-	return_val_if_nok (error, NULL_HANDLE_STRING);
-	return MONO_HANDLE_NEW (MonoString, res);
+	return mono_string_new_utf16_handle (mono_domain_get (), data, MIN (len, max_len), error);
 }
 
 gpointer
@@ -747,7 +740,8 @@ mono_string_builder_new (int starting_string_length, MonoError *error)
 	MonoStringBuilderHandle sb = MONO_HANDLE_CAST (MonoStringBuilder, mono_object_new_handle (mono_domain_get (), string_builder_class, error));
 	mono_error_assert_ok (error);
 
-	mono_runtime_try_invoke_handle (sb_ctor, MONO_HANDLE_CAST (MonoObject, sb), args, error);
+	// FIXME go back and carefully reconvert to coop i.e. with exc parameter
+	mono_runtime_try_invoke_handle (sb_ctor, MONO_HANDLE_CAST (MonoObject, sb), args, NULL_HANDLE, error);
 	mono_error_assert_ok (error);
 
 	MonoArrayHandle chunkChars = MONO_HANDLE_NEW_GET (MonoArray, sb, chunkChars);
@@ -1045,6 +1039,8 @@ mono_string_to_byvalwstr_impl (gunichar2 *dst, MonoStringHandle src, int size, M
 		memset (dst, 0, size * sizeof (gunichar2));
 		return;
 	}
+
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 
 	gchandle_t gchandle = 0;
 	int len = MIN (size, mono_string_handle_length (src));
@@ -1975,7 +1971,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 				MonoString *tmp_str = mono_string_new_checked (domain, tmp, inner_error);
 				g_free (tmp);
 				if (is_ok (inner_error))
-					MONO_OBJECT_SETREF_INTERNAL (((MonoException*)exc), stack_trace, tmp_str);
+					MONO_HANDLE_SET (((MonoException*)exc), stack_trace, tmp_str);
 			};
 			if (!is_ok (inner_error))
 				mono_error_cleanup (inner_error); /* no stack trace, but at least throw the original exception */
@@ -4978,6 +4974,8 @@ mono_marshal_string_to_utf16_copy_impl (MonoStringHandle s, MonoError *error)
 {
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
+
+	// FIXME use MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle
 
 	gsize const length = mono_string_handle_length (s);
 	gunichar2 *res = (gunichar2 *)mono_marshal_alloc ((length + 1) * sizeof (*res), error);

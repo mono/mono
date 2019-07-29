@@ -130,7 +130,8 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_synchronization_lock (const char *msg);
 
-MONO_API MonoException *
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoException *
 mono_get_exception_cannot_unload_appdomain (const char *msg);
 
 MONO_API MonoException *
@@ -171,7 +172,6 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception);
  */
 typedef void  (*MonoUnhandledExceptionFunc)         (MonoObject *exc, void *user_data);
 MONO_API void mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, void *user_data);
-void          mono_invoke_unhandled_exception_hook  (MonoObject *exc);
 
 MONO_END_DECLS
 

@@ -1369,10 +1369,20 @@ emit_invoke_call (MonoMethodBuilder *mb, MonoMethod *method,
 
 	/* to make it work with our special string constructors */
 	if (!string_dummy) {
-		ERROR_DECL (error);
+
+		// FIXME Allow for static construction of MonoString.
+
+		SETUP_ICALL_FUNCTION;
+		SETUP_ICALL_FRAME;
+
 		MONO_GC_REGISTER_ROOT_SINGLE (string_dummy, MONO_ROOT_SOURCE_MARSHAL, NULL, "Marshal Dummy String");
-		string_dummy = mono_string_new_checked (mono_get_root_domain (), "dummy", error);
+
+		ERROR_DECL (error);
+		MonoStringHandle string_dummy_handle = mono_string_new_utf8_assign (MONO_HANDLE_NEW (MonoString, NULL), mono_get_root_domain (), "dummy", 5, error);
+		string_dummy = MONO_HANDLE_RAW (string_dummy_handle);
 		mono_error_assert_ok (error);
+
+		CLEAR_ICALL_FRAME;
 	}
 
 	if (virtual_) {

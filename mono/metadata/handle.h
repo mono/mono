@@ -210,11 +210,28 @@ Icall macros
 	CLEAR_ICALL_FRAME;			\
 	} while (0)
 
-#define HANDLE_LOOP_PREPARE \
+// Do not do this often, but icall state can be manually managed.
+// SETUP_ICALL_FUNCTION
+// loop { // Does not have to be a loop.
+//    SETUP_ICALL_FRAME
+//    ..
+//    CLEAR_ICALL_FRAME
+// }
+//
+// As with HANDLE_FUNCTION_RETURN, you must not
+// skip CLEAR_ICALL_FRAME -- no break, continue, return, or goto (goto label at CLEAR_ICALL_FRAME is idiom).
+//
+#define SETUP_ICALL_FUNCTION \
 	MONO_DISABLE_WARNING(4459) /* declaration of 'identifier' hides global declaration */ \
 	/* There are deliberately locals and a constant NULL global with this same name. */ \
 	MonoThreadInfo *mono_thread_info_current_var = mono_thread_info_current () \
 	MONO_RESTORE_WARNING
+
+// The most common use of manual icall frame management is for loop.
+// It can also be used for conditionality, where only some paths
+// through a function allocate handles. For example: emit_invoke_call.
+//
+#define HANDLE_LOOP_PREPARE SETUP_ICALL_FUNCTION
 
 // Return a non-pointer or non-managed pointer, e.g. gboolean.
 #define HANDLE_FUNCTION_RETURN_VAL(VAL)		\
@@ -573,7 +590,7 @@ mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArr
 
 /* Pins the MonoArray using a gchandle and returns a pointer to the
  * element with the given index (where each element is of the given
- * size.  Call mono_gchandle_free to unpin.
+ * size). Call mono_gchandle_free to unpin.
  */
 gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
