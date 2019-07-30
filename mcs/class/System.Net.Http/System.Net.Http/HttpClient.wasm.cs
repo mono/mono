@@ -7,25 +7,16 @@ namespace System.Net.Http
     public partial class HttpClient
     {
 
-#pragma warning disable 649
-        private static Func<HttpMessageHandler> GetHttpMessageHandler;
-#pragma warning restore 649
-
         internal static HttpMessageHandler CreateDefaultHandler()
         {
-
-            if (GetHttpMessageHandler == null)
-            {
-                return WebAssembly.RuntimeOptions.GetHttpMessageHandler ();
-            }
-            else
-            {
-                var handler = GetHttpMessageHandler();
-                if (handler == null)
+                object ret = WebAssembly.RuntimeOptions.GetHttpMessageHandler ();
+                if (ret == null)
                     throw new PlatformNotSupportedException ($"Custom HttpMessageHandler is not valid");
 
+                var handler = ret as HttpMessageHandler;
+                if (handler == null)
+                    throw new PlatformNotSupportedException ($"{ret?.GetType()} is not a valid HttpMessageHandler");
                 return handler;
-            }
         }
     }
 }
