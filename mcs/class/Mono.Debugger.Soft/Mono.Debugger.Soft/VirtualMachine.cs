@@ -765,11 +765,11 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		internal ValueImpl[] EncodeFieldValues (IList<Value> values, FieldInfoMirror[] field_info, List<Value> duplicates, int isFixedSize) {
+		internal ValueImpl[] EncodeFieldValues (IList<Value> values, FieldInfoMirror[] field_info, List<Value> duplicates, int fixedSize) {
 			ValueImpl[] res = new ValueImpl [values.Count];
 			for (int i = 0; i < values.Count; ++i) {
-				if (isFixedSize > 1 || field_info [i].IsFixedSize > 1)
-					res [i] = EncodeValueFixedSize (values [i], duplicates, isFixedSize > 1 ? isFixedSize : field_info [i].IsFixedSize);
+				if (fixedSize > 1 || field_info [i].FixedSize > 1)
+					res [i] = EncodeValueFixedSize (values [i], duplicates, fixedSize > 1 ? fixedSize : field_info [i].FixedSize);
 				else
 					res [i] = EncodeValue (values [i], duplicates);
 			}

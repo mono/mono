@@ -923,13 +923,11 @@ namespace Mono.Debugger.Soft
 					throw new NotImplementedException ("Unable to handle type " + etype);
 				}
 			}
-			
-			public ValueImpl ReadValueFixedSize () {
+
+			ValueImpl ReadValueFixedSize () {
 				var lenFixedSize = 1;
 				ElementType etype = (ElementType)ReadByte ();
-				if (connection.Version.AtLeast (2, 53)) {
-					lenFixedSize = ReadInt ();
-				}
+				lenFixedSize = ReadInt ();
 				switch (etype) {
 					case ElementType.I1: {
 						var val = new sbyte[lenFixedSize];
@@ -940,19 +938,19 @@ namespace Mono.Debugger.Soft
 					case ElementType.U1: {
 						var val = new byte[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-								val[i] = (byte)ReadInt ();
+							val[i] = (byte)ReadInt ();
 						return new ValueImpl { Type = etype, Value = val };
 					}
 					case ElementType.Boolean: {
 						var val = new bool[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-								val[i] = (bool) (ReadInt () != 0);
+							val[i] = (bool) (ReadInt () != 0);
 						return new ValueImpl { Type = etype, Value = val };
 					}
 					case ElementType.I2: {
 						var val = new short[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-								val[i] = (short)ReadInt ();
+							val[i] = (short)ReadInt ();
 						return new ValueImpl { Type = etype, Value = val };
 					}
 					case ElementType.U2: {
@@ -976,7 +974,7 @@ namespace Mono.Debugger.Soft
 					case ElementType.U4: {
 						var val = new uint[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-								val[i] = (uint)ReadInt ();
+							val[i] = (uint)ReadInt ();
 						return new ValueImpl { Type = etype, Value = val };
 					}
 					case ElementType.I8: {
@@ -1000,7 +998,7 @@ namespace Mono.Debugger.Soft
 					case ElementType.R8: {
 						var val = new double[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-								val[i] = ReadDouble ();
+							val[i] = ReadDouble ();
 						return new ValueImpl { Type = etype, Value = val };
 					}
 				}
@@ -1203,7 +1201,7 @@ namespace Mono.Debugger.Soft
 				return this;
 			}
 
-			public PacketWriter WriteFixedSizeValue (ValueImpl v) {
+			PacketWriter WriteFixedSizeValue (ValueImpl v) {
 				ElementType t;
 
 				if (v.Value != null)

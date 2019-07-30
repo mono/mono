@@ -162,7 +162,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public int IsFixedSize
+		public int FixedSize
 		{
 			get
 			{
