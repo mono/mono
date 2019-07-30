@@ -676,14 +676,14 @@ mono_config_parse (const char *filename)
 
 	const char *cfg_dir = mono_get_config_dir ();
 	if (cfg_dir) {
-		char *mono_cfg = g_build_filename (cfg_dir, "mono", "config", NULL);
+		char *mono_cfg = g_build_filename (cfg_dir, "mono", "config", (const char *)NULL);
 		mono_config_parse_file (mono_cfg);
 		g_free (mono_cfg);
 	}
 
 #if !defined(TARGET_WIN32)
 	home = g_get_home_dir ();
-	char *user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", NULL);
+	char *user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", (const char *)NULL);
 	mono_config_parse_file (user_cfg);
 	g_free (user_cfg);
 #endif
