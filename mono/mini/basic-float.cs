@@ -94,11 +94,11 @@ class Tests
 		/* x86: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
 		if (ui != 0 && ui != ulong.MaxValue)
 			return 2;
-		/* FIXME: Still fails on Linux x64
 		d = Double.NegativeInfinity;
 		ui = (ulong)d;
-		if (ui != 0)
-			return 3;*/
+		/* x64: long.MaxValue + 1 (inconsistent with conversion to u4 but matches CLR) */
+		if (ui != 0 && ui != (ulong)long.MaxValue + 1)
+			return 3;
 		return 0;
 	}
 
@@ -110,7 +110,7 @@ class Tests
 			return 1;
 		d = Double.PositiveInfinity;
 		ui = (uint)d;
-		/* x86: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
+		/* x64: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
 		if (ui != 0 && ui != uint.MaxValue)
 			return 2;
 		d = Double.NegativeInfinity;
@@ -128,14 +128,14 @@ class Tests
 			return 1;
 		d = float.PositiveInfinity;
 		ui = (ulong)d;
-		/* x86: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
+		/* x64: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
 		if (ui != 0 && ui != ulong.MaxValue)
 			return 2;
-		/* FIXME: Still fails on Linux x64
 		d = float.NegativeInfinity;
 		ui = (ulong)d;
-		if (ui != 0)
-			return 3;*/
+		/* x64: long.MaxValue + 1 (inconsistent with conversion to u4 but matches CLR) */
+		if (ui != 0 && ui != (ulong)long.MaxValue + 1)
+			return 3;
 		return 0;
 	}
 
