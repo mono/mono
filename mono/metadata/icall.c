@@ -8380,8 +8380,10 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 
 	tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
 	siglen = strlen (tmpsig);
-	if (typelen + mlen + siglen + 6 > sizeof (mname))
+	if (typelen + mlen + siglen + 6 > sizeof (mname)) {
+		g_free (tmpsig);
 		return NULL;
+	}
 	sigstart [0] = '(';
 	memcpy (sigstart + 1, tmpsig, siglen);
 	sigstart [siglen + 1] = ')';
