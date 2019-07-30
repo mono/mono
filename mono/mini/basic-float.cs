@@ -80,30 +80,80 @@ class Tests
 		sbyte sb = (sbyte)a;
 		if (sb != 2)
 			return 6;
-		/* MS.NET special cases these */
-		double d = Double.NaN;
-		ui = (uint)d;
-		if (ui != 0)
-			return 7;
-		d = Double.PositiveInfinity;
-		ui = (uint)d;
-		if (ui != 0)
-			return 8;
-		d = Double.NegativeInfinity;
-		ui = (uint)d;
-		if (ui != 0)
-			return 9;
-		/* FIXME: This fails with llvm and with gcc -O2 on osx/linux */
-		/*
-		d = Double.MaxValue;
-		i = (int)d;
-		if (i != -2147483648)
-			return 10;
-		*/
-
 		return 0;
 	}
 
+	public static int test_0_fconv_u8 () {
+		double d = Double.NaN;
+		ulong ui;
+		ui = (ulong)d;
+		if (ui != 0)
+			return 1;
+		d = Double.PositiveInfinity;
+		ui = (ulong)d;
+		/* x86: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
+		if (ui != 0 && ui != ulong.MaxValue)
+			return 2;
+		d = Double.NegativeInfinity;
+		ui = (ulong)d;
+		if (ui != 0)
+			return 3;
+		return 0;
+	}
+
+	public static int test_0_fconv_u4 () {
+		double d = Double.NaN;
+		uint ui;
+		ui = (uint)d;
+		if (ui != 0)
+			return 1;
+		d = Double.PositiveInfinity;
+		ui = (uint)d;
+		/* x86: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
+		if (ui != 0 && ui != uint.MaxValue)
+			return 2;
+		d = Double.NegativeInfinity;
+		ui = (uint)d;
+		if (ui != 0)
+			return 3;
+		return 0;
+	}
+
+	public static int test_0_rconv_u8 () {
+		float d = float.NaN;
+		ulong ui;
+		ui = (ulong)d;
+		if (ui != 0)
+			return 1;
+		d = float.PositiveInfinity;
+		ui = (ulong)d;
+		/* x86: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
+		if (ui != 0 && ui != ulong.MaxValue)
+			return 2;
+		d = float.NegativeInfinity;
+		ui = (ulong)d;
+		if (ui != 0)
+			return 3;
+		return 0;
+	}
+
+	public static int test_0_rconv_u4 () {
+		float d = float.NaN;
+		uint ui;
+		ui = (uint)d;
+		if (ui != 0)
+			return 1;
+		d = float.PositiveInfinity;
+		ui = (uint)d;
+		/* x86: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
+		if (ui != 0 && ui != uint.MaxValue)
+			return 2;
+		d = float.NegativeInfinity;
+		ui = (uint)d;
+		if (ui != 0)
+			return 3;
+		return 0;
+	}
 	public static int test_5_conv_r4 () {
 		int i = 5;
 		float f = (float)i;
