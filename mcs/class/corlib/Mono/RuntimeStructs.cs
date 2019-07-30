@@ -49,6 +49,7 @@ namespace Mono {
 			internal int len;
 		}
 
+		// FIXME This is not used. Remove it.
 		// mono-error.h MonoError
 		struct MonoError {
 			ushort error_code;
