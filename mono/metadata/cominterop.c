@@ -2749,6 +2749,11 @@ cominterop_class_search_dispid (MonoClass* klass, const gchar* methodname,
 	for (i = 0; i < methodcount; i++) {
 		method = methods [i];
 
+		/* Ignore constructors */
+		if ((method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
+			strcmp(method->name, ".ctor") == 0)
+			continue;
+
 		if (strcmp(method->name, methodname) == 0) {
 			cinfo = mono_custom_attrs_from_method_checked (method, error);
 			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
