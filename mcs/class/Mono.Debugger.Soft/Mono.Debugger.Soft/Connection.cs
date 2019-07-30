@@ -855,228 +855,89 @@ namespace Mono.Debugger.Soft
 				return res;
 			}
 
-			public int ReadFixedSize () {
-				if (connection.Version.AtLeast (2, 53)) {
-					int lenFixedSize = 1;
-					lenFixedSize = ReadInt ();
-					return lenFixedSize;
-				}
-				else 
-					return 1;
-			}
-
-			public object ReadShortValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new short[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (short)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (short)ReadInt ();
-			}
-
-			public object ReadSbyteValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new sbyte[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (sbyte)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (sbyte)ReadInt ();
-			}
-
-			public object ReadByteValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new byte[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (byte)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (byte)ReadInt ();
-			}
-
-			public object ReadBolleanValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new bool[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (bool) (ReadInt () != 0);
-					}
-					return val;
-				}
-				else 
-					return (bool) (ReadInt () != 0);
-			}
-
-			public object ReadUShortValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new ushort[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (ushort)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (ushort)ReadInt ();
-			}
-
-			public object ReadCharValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new char[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (char)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (char)ReadInt ();
-			}
-
-			public object ReadUIntValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new uint[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (uint)ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return (uint)ReadInt ();
-			}
-
-			public object ReadIntValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new int[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = ReadInt ();
-					}
-					return val;
-				}
-				else 
-					return ReadInt ();
-			}
-
-			public object ReadLongValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new long[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = ReadLong ();
-					}
-					return val;
-				}
-				else 
-					return ReadLong ();
-			}
-
-			public object ReadULongValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new ulong[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = (ulong) ReadLong ();
-					}
-					return val;
-				}
-				else 
-					return (ulong) ReadLong ();
-			}
-
-			public object ReadFloatValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new float[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = ReadFloat ();
-					}
-					return val;
-				}
-				else 
-					return ReadFloatValue ();
-			}
-
-
-			public object ReadDoubleValue () {
-				var lenFixedSize = ReadFixedSize ();
-				if (lenFixedSize > 1)
-				{
-					var val = new double[lenFixedSize];
-					for (int i = 0; i < lenFixedSize; i++)
-					{
-							val[i] = ReadDouble ();
-					}
-					return val;
-				}
-				else 
-					return ReadDouble ();
-			}
 			public ValueImpl ReadValueFixedSize () {
+				var lenFixedSize = 1;
 				ElementType etype = (ElementType)ReadByte ();
+				if (connection.Version.AtLeast (2, 53)) {
+					lenFixedSize = ReadInt ();
+				}
 				switch (etype) {
-				case ElementType.Void:
-					return new ValueImpl { Type = etype };
-				case ElementType.I1:
-					return new ValueImpl { Type = etype, Value = ReadSbyteValue () };
-				case ElementType.U1:
-					return new ValueImpl { Type = etype, Value = ReadByteValue () };
-				case ElementType.Boolean:
-					return new ValueImpl { Type = etype, Value = ReadBolleanValue () };
-				case ElementType.I2:
-					return new ValueImpl { Type = etype, Value = ReadShortValue() };
-				case ElementType.U2:
-					return new ValueImpl { Type = etype, Value = ReadUShortValue () };
-				case ElementType.Char:
-					return new ValueImpl { Type = etype, Value = ReadCharValue () };
-				case ElementType.I4:
-					return new ValueImpl { Type = etype, Value = ReadIntValue () };
-				case ElementType.U4:
-					return new ValueImpl { Type = etype, Value = ReadUIntValue () };
-				case ElementType.I8:
-					return new ValueImpl { Type = etype, Value = ReadLongValue () };
-				case ElementType.U8:
-					return new ValueImpl { Type = etype, Value = ReadULongValue () };
-				case ElementType.R4:
-					return new ValueImpl { Type = etype, Value = ReadFloatValue () };
-				case ElementType.R8:
-					return new ValueImpl { Type = etype, Value = ReadDoubleValue () };
+					case ElementType.I1: {
+						var val = new sbyte[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = (sbyte)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.U1: {
+						var val = new byte[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+								val[i] = (byte)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.Boolean: {
+						var val = new bool[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+								val[i] = (bool) (ReadInt () != 0);
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.I2: {
+						var val = new short[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+								val[i] = (short)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.U2: {
+						var val = new ushort[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = (ushort)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.Char: {
+						var val = new char[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = (char)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.I4: {
+						var val = new int[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.U4: {
+						var val = new uint[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+								val[i] = (uint)ReadInt ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.I8: {
+						var val = new long[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = ReadLong ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.U8: {
+						var val = new ulong[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = (ulong) ReadLong ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.R4: {
+						var val = new float[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+							val[i] = ReadFloat ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
+					case ElementType.R8: {
+						var val = new double[lenFixedSize];
+						for (int i = 0; i < lenFixedSize; i++)
+								val[i] = ReadDouble ();
+						return new ValueImpl { Type = etype, Value = val };
+					}
 				}
 				throw new NotImplementedException ("Unable to handle type " + etype);
 			}
+
 			public ValueImpl ReadValue () {
 				ElementType etype = (ElementType)ReadByte ();
 				switch (etype) {
@@ -1267,14 +1128,6 @@ namespace Mono.Debugger.Soft
 				return this;
 			}
 
-			public T GetValue<T> (object v, int i, bool isFixedSize)
-			{
-				if (!isFixedSize)
-					return (T)v;
-				T[] arr = v as T[];
-				return arr[i];
-			}
-
 			public PacketWriter WriteFixedSizeValue (ValueImpl v) {
 				ElementType t;
 
@@ -1291,40 +1144,40 @@ namespace Mono.Debugger.Soft
 				{
 					switch (t) {
 						case ElementType.Boolean:
-							WriteInt (GetValue<bool> (v.Value, j, v.FixedSize > 1) ? 1 : 0);
+							WriteInt (((bool[])v.Value)[j]? 1 : 0);
 							break;
 						case ElementType.Char:
-							WriteInt ((int)GetValue<char> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((char[])v.Value)[j]);
 							break;
 						case ElementType.I1:
-							WriteInt ((int)GetValue<sbyte> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((sbyte[])v.Value)[j]);
 							break;
 						case ElementType.U1:
-							WriteInt ((int)GetValue<byte> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((byte[])v.Value)[j]);
 							break;
 						case ElementType.I2:
-							WriteInt ((int)GetValue<short> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((short[])v.Value)[j]);
 							break;
 						case ElementType.U2:
-							WriteInt ((int)GetValue<ushort> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((ushort[])v.Value)[j]);
 							break;
 						case ElementType.I4:
-							WriteInt ((int)GetValue<int> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((int[])v.Value)[j]);
 							break;
 						case ElementType.U4:
-							WriteInt ((int)GetValue<uint> (v.Value, j, v.FixedSize > 1));
+							WriteInt ((int)((uint[])v.Value)[j]);
 							break;
 						case ElementType.I8:
-							WriteLong ((long)GetValue<long> (v.Value, j, v.FixedSize > 1));
+							WriteLong ((long)((long[])v.Value)[j]);
 							break;
 						case ElementType.U8:
-							WriteLong ((long)GetValue<ulong> (v.Value, j, v.FixedSize > 1));
+							WriteLong ((long)((ulong[])v.Value)[j]);
 							break;
 						case ElementType.R4:
-							WriteFloat (GetValue<float> (v.Value, j, v.FixedSize > 1));
+							WriteFloat (((float[])v.Value)[j]);
 							break;
 						case ElementType.R8:
-							WriteDouble (GetValue<double> (v.Value, j, v.FixedSize > 1));
+							WriteDouble (((double[])v.Value)[j]);
 							break;
 						default:
 							throw new NotImplementedException ();
