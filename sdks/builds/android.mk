@@ -477,7 +477,7 @@ endef
 ifneq ($(UNAME),Windows)
 $(eval $(call AndroidCrossMXETemplate,cross-arm-win,x86_64,armv7,armeabi-v7a,llvm-llvmwin64,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,x86_64,x86,llvm-llvmwin64,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86-win,x86_64,i686,x86,llvm-llvmwin64,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 else
 $(eval $(call AndroidCrossMXETemplateStub,cross-arm-win,x86_64,armv7,armeabi-v7a,llvm-llvmwin64,armv7-none-linux-androideabi))
