@@ -855,6 +855,75 @@ namespace Mono.Debugger.Soft
 				return res;
 			}
 
+			public ValueImpl ReadValue () {
+				ElementType etype = (ElementType)ReadByte ();
+				switch (etype) {
+				case ElementType.Void:
+					return new ValueImpl { Type = etype };
+				case ElementType.I1:
+					return new ValueImpl { Type = etype, Value = (sbyte)ReadInt () };
+				case ElementType.U1:
+					return new ValueImpl { Type = etype, Value = (byte)ReadInt () };
+				case ElementType.Boolean:
+					return new ValueImpl { Type = etype, Value = ReadInt () != 0 };
+				case ElementType.I2:
+					return new ValueImpl { Type = etype, Value = (short)ReadInt () };
+				case ElementType.U2:
+					return new ValueImpl { Type = etype, Value = (ushort)ReadInt () };
+				case ElementType.Char:
+					return new ValueImpl { Type = etype, Value = (char)ReadInt () };
+				case ElementType.I4:
+					return new ValueImpl { Type = etype, Value = ReadInt () };
+				case ElementType.U4:
+					return new ValueImpl { Type = etype, Value = (uint)ReadInt () };
+				case ElementType.I8:
+					return new ValueImpl { Type = etype, Value = ReadLong () };
+				case ElementType.U8:
+					return new ValueImpl { Type = etype, Value = (ulong)ReadLong () };
+				case ElementType.R4:
+					return new ValueImpl { Type = etype, Value = ReadFloat () };
+				case ElementType.R8:
+					return new ValueImpl { Type = etype, Value = ReadDouble () };
+				case ElementType.I:
+				case ElementType.U:
+					// FIXME: The client and the debuggee might have different word sizes
+					return new ValueImpl { Type = etype, Value = ReadLong () };
+				case ElementType.Ptr:
+					long value = ReadLong ();
+					if (connection.Version.AtLeast (2, 46)) {
+						long pointerClass = ReadId ();
+						return new ValueImpl { Type = etype, Klass = pointerClass, Value = value };
+					} else {
+						return new ValueImpl { Type = etype, Value = value };
+					}
+				case ElementType.String:
+				case ElementType.SzArray:
+				case ElementType.Class:
+				case ElementType.Array:
+				case ElementType.Object:
+					long objid = ReadId ();
+					return new ValueImpl () { Type = etype, Objid = objid };
+				case ElementType.ValueType:
+					bool is_enum = ReadByte () == 1;
+					long klass = ReadId ();
+					long nfields = ReadInt ();
+					ValueImpl[] fields = new ValueImpl [nfields];
+					for (int i = 0; i < nfields; ++i)
+						fields [i] = ReadValue ();
+					return new ValueImpl () { Type = etype, Klass = klass, Fields = fields, IsEnum = is_enum };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
+					return new ValueImpl { Type = etype };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_TYPE:
+					return new ValueImpl () { Type = etype, Id = ReadId () };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
+					return new ValueImpl () { Type = etype, Index = ReadInt () };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY:
+					return ReadValueFixedSize ();
+				default:
+					throw new NotImplementedException ("Unable to handle type " + etype);
+				}
+			}
+			
 			public ValueImpl ReadValueFixedSize () {
 				var lenFixedSize = 1;
 				ElementType etype = (ElementType)ReadByte ();
@@ -936,75 +1005,6 @@ namespace Mono.Debugger.Soft
 					}
 				}
 				throw new NotImplementedException ("Unable to handle type " + etype);
-			}
-
-			public ValueImpl ReadValue () {
-				ElementType etype = (ElementType)ReadByte ();
-				switch (etype) {
-				case ElementType.Void:
-					return new ValueImpl { Type = etype };
-				case ElementType.I1:
-					return new ValueImpl { Type = etype, Value = (sbyte)ReadInt () };
-				case ElementType.U1:
-					return new ValueImpl { Type = etype, Value = (byte)ReadInt () };
-				case ElementType.Boolean:
-					return new ValueImpl { Type = etype, Value = ReadInt () != 0 };
-				case ElementType.I2:
-					return new ValueImpl { Type = etype, Value = (short)ReadInt () };
-				case ElementType.U2:
-					return new ValueImpl { Type = etype, Value = (ushort)ReadInt () };
-				case ElementType.Char:
-					return new ValueImpl { Type = etype, Value = (char)ReadInt () };
-				case ElementType.I4:
-					return new ValueImpl { Type = etype, Value = ReadInt () };
-				case ElementType.U4:
-					return new ValueImpl { Type = etype, Value = (uint)ReadInt () };
-				case ElementType.I8:
-					return new ValueImpl { Type = etype, Value = ReadLong () };
-				case ElementType.U8:
-					return new ValueImpl { Type = etype, Value = (ulong)ReadLong () };
-				case ElementType.R4:
-					return new ValueImpl { Type = etype, Value = ReadFloat () };
-				case ElementType.R8:
-					return new ValueImpl { Type = etype, Value = ReadDouble () };
-				case ElementType.I:
-				case ElementType.U:
-					// FIXME: The client and the debuggee might have different word sizes
-					return new ValueImpl { Type = etype, Value = ReadLong () };
-				case ElementType.Ptr:
-					long value = ReadLong ();
-					if (connection.Version.AtLeast (2, 46)) {
-						long pointerClass = ReadId ();
-						return new ValueImpl { Type = etype, Klass = pointerClass, Value = value };
-					} else {
-						return new ValueImpl { Type = etype, Value = value };
-					}
-				case ElementType.String:
-				case ElementType.SzArray:
-				case ElementType.Class:
-				case ElementType.Array:
-				case ElementType.Object:
-					long objid = ReadId ();
-					return new ValueImpl () { Type = etype, Objid = objid };
-				case ElementType.ValueType:
-					bool is_enum = ReadByte () == 1;
-					long klass = ReadId ();
-					long nfields = ReadInt ();
-					ValueImpl[] fields = new ValueImpl [nfields];
-					for (int i = 0; i < nfields; ++i)
-						fields [i] = ReadValue ();
-					return new ValueImpl () { Type = etype, Klass = klass, Fields = fields, IsEnum = is_enum };
-				case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
-					return new ValueImpl { Type = etype };
-				case (ElementType)ValueTypeId.VALUE_TYPE_ID_TYPE:
-					return new ValueImpl () { Type = etype, Id = ReadId () };
-				case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
-					return new ValueImpl () { Type = etype, Index = ReadInt () };
-				case (ElementType)ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY:
-					return ReadValueFixedSize ();
-				default:
-					throw new NotImplementedException ("Unable to handle type " + etype);
-				}
 			}
 
 			public long[] ReadIds (int n) {
