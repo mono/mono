@@ -11,7 +11,8 @@ utils = null
 
 if (monoBranch == 'master') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
-                pipelineTriggers([cron('0 3 * * *')])
+                pipelineTriggers([cron('0 3 * * *')]),
+                buildDiscarder(logRotator(numToKeepStr: '1'))  // delete skipped builds
     ])
 
     // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered
@@ -19,6 +20,9 @@ if (monoBranch == 'master') {
         echo "Skipping per-commit build on master."
         return
     }
+
+    // make sure this build isn't deleted by logRotator
+    currentBuild.setKeepLog(true)
 }
 
 try {
