@@ -4316,7 +4316,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U8_R8)
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_U8
-			sp [-1].data.l = mono_fconv_u8_2 (sp [-1].data.f_r4);
+			sp [-1].data.l = mono_fconv_u8_2 (sp [-1].data.f);
 #else
 			sp [-1].data.l = (guint64)sp [-1].data.f;
 #endif
