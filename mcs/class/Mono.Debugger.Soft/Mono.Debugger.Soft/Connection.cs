@@ -966,7 +966,7 @@ namespace Mono.Debugger.Soft
 				case ElementType.U8:
 					return new ValueImpl { Type = etype, Value = (ulong)ReadLong () };
 				case ElementType.R4:
-					return new ValueImpl { Type = etype, Value = ReadFloat ()  };
+					return new ValueImpl { Type = etype, Value = ReadFloat () };
 				case ElementType.R8:
 					return new ValueImpl { Type = etype, Value = ReadDouble () };
 				case ElementType.I:
