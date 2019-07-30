@@ -1839,7 +1839,7 @@ static mode_t convert_perms(guint32 sharemode)
 
 static gboolean already_shared(gboolean file_alread_shared, ino_t inode)
 {
-#if PLATFORM_MACOSX
+#if HOST_DARWIN
 	/* On macOS and FAT32 partitions, we will sometimes get this inode value
 	 * for more than one file. It means the file is empty (FILENO_EMPTY is
 	 * defined in an internal header).  When this happens, the hash table of
