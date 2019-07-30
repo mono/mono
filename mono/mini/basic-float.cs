@@ -91,7 +91,7 @@ class Tests
 			return 1;
 		d = Double.PositiveInfinity;
 		ui = (ulong)d;
-		/* x86: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
+		/* x64: 0, ARM64: ulong.MaxValue (verified against CoreCLR) */
 		if (ui != 0 && ui != ulong.MaxValue)
 			return 2;
 		d = Double.NegativeInfinity;
@@ -147,7 +147,7 @@ class Tests
 			return 1;
 		d = float.PositiveInfinity;
 		ui = (uint)d;
-		/* x86: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
+		/* x64: 0, ARM64: uint.MaxValue (verified against CoreCLR) */
 		if (ui != 0 && ui != uint.MaxValue)
 			return 2;
 		d = float.NegativeInfinity;
@@ -156,6 +156,7 @@ class Tests
 			return 3;
 		return 0;
 	}
+
 	public static int test_5_conv_r4 () {
 		int i = 5;
 		float f = (float)i;
