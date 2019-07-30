@@ -216,7 +216,7 @@ namespace Mono.Debugger.Soft
 		public bool IsEnum; // For ElementType.ValueType
 		public long Id; /* For VALUE_TYPE_ID_TYPE */
 		public int Index; /* For VALUE_TYPE_PARENT_VTYPE */
-		public int FixedSize = 1; 
+		public int FixedSize; 
 	}
 
 	class ModuleInfo {
@@ -941,8 +941,6 @@ namespace Mono.Debugger.Soft
 			public ValueImpl ReadValue () {
 				ElementType etype = (ElementType)ReadByte ();
 				switch (etype) {
-				case (ElementType)ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY:
-					return ReadValueFixedSize ();
 				case ElementType.Void:
 					return new ValueImpl { Type = etype };
 				case ElementType.I1:
@@ -1002,6 +1000,8 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl () { Type = etype, Id = ReadId () };
 				case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
 					return new ValueImpl () { Type = etype, Index = ReadInt () };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY:
+					return ReadValueFixedSize ();
 				default:
 					throw new NotImplementedException ("Unable to handle type " + etype);
 				}
@@ -1131,17 +1131,14 @@ namespace Mono.Debugger.Soft
 			public PacketWriter WriteFixedSizeValue (ValueImpl v) {
 				ElementType t;
 
-				if (v.Value != null) {
+				if (v.Value != null)
 					t = TypeCodeToElementType (Type.GetTypeCode (v.Value.GetType ()), v.Value.GetType ());
-				}
-				else {
+				else
 					t = v.Type;
-				}
 				WriteByte ((byte) ValueTypeId.VALUE_TYPE_ID_FIXED_ARRAY);
 				WriteByte ((byte)t);
 				WriteInt (v.FixedSize);
-				for (int j = 0 ; j < v.FixedSize; j++)
-				{
+				for (int j = 0 ; j < v.FixedSize; j++) {
 					switch (t) {
 						case ElementType.Boolean:
 							WriteInt (((bool[])v.Value)[j]? 1 : 0);
@@ -1189,14 +1186,11 @@ namespace Mono.Debugger.Soft
 			public PacketWriter WriteValue (ValueImpl v) {
 				ElementType t;
 
-				if (v.Value != null) {
+				if (v.Value != null) 
 					t = TypeCodeToElementType (Type.GetTypeCode (v.Value.GetType ()), v.Value.GetType ());
-				}
-				else {
+				else
 					t = v.Type;
-				}
-				if (v.FixedSize > 1 && t != ElementType.ValueType)
-				{
+				if (v.FixedSize > 1 && t != ElementType.ValueType) {
 					WriteFixedSizeValue (v);
 					return this;
 				}

@@ -551,9 +551,9 @@ typedef struct ReplyPacket {
 #define BUFFER_ADD_PRIMITIVE_VALUE() \
 	buffer_add_byte (buf, t->type); \
 	if (CHECK_PROTOCOL_VERSION (2, 53)) { \
-		buffer_add_int (buf, is_fixed_array ); \
+		buffer_add_int (buf, len_fixed_array ); \
 	} \
-	for (int i = 0; i < is_fixed_array; i++) 
+	for (int i = 0; i < len_fixed_array; i++) 
 /*
  * Globals
  */
@@ -5229,7 +5229,7 @@ debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoC
 
 static void 
 buffer_add_fixed_array (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
-					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 is_fixed_array)
+					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 len_fixed_array)
 {
 	buffer_add_byte (buf, VALUE_TYPE_ID_FIXED_ARRAY);
 	switch (t->type) {
@@ -5280,7 +5280,7 @@ buffer_add_fixed_array (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain
  */
 static void
 buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
-					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 is_fixed_array)
+					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 len_fixed_array)
 {
 	MonoObject *obj;
 	gboolean boxed_vtype = FALSE;
@@ -5295,7 +5295,6 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 		g_assert (*(void**)addr);
 		addr = *(void**)addr;
 	}
-
 
 	if (as_vtype) {
 		switch (t->type) {
@@ -5321,9 +5320,9 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 		}
 	}
 	
-	if (is_fixed_array > 1 && t->type != MONO_TYPE_VALUETYPE)
+	if (len_fixed_array > 1 && t->type != MONO_TYPE_VALUETYPE)
 	{
-		buffer_add_fixed_array(buf, t, addr, domain, as_vtype, parent_vtypes, is_fixed_array);
+		buffer_add_fixed_array(buf, t, addr, domain, as_vtype, parent_vtypes, len_fixed_array);
 		return;
 	}
 	switch (t->type) {
@@ -5444,7 +5443,7 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 				continue;
 			if (mono_field_is_deleted (f))
 				continue;
-			buffer_add_value_full (buf, f->type, mono_vtype_get_field_addr (addr, f), domain, FALSE, parent_vtypes, is_fixed_array != 1 ? is_fixed_array : isFixedSizeArray(f));
+			buffer_add_value_full (buf, f->type, mono_vtype_get_field_addr (addr, f), domain, FALSE, parent_vtypes, len_fixed_array != 1 ? len_fixed_array : isFixedSizeArray(f));
 		}
 
 		if (boxed_vtype) {
@@ -5489,7 +5488,6 @@ obj_is_of_type (MonoObject *obj, MonoType *t)
 	}
 	return TRUE;
 }
-
 
 static ErrorCode
 decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype);
