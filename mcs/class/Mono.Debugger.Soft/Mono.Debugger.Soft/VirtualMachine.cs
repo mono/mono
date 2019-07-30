@@ -760,9 +760,8 @@ namespace Mono.Debugger.Soft
 
 		internal ValueImpl[] EncodeValues (IList<Value> values, List<Value> duplicates = null) {
 			ValueImpl[] res = new ValueImpl [values.Count];
-			for (int i = 0; i < values.Count; ++i) {
+			for (int i = 0; i < values.Count; ++i)
 				res [i] = EncodeValue (values [i], duplicates);
-			}
 			return res;
 		}
 
