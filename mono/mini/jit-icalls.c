@@ -912,6 +912,14 @@ mono_fconv_u4_2 (double v)
 	// wrappers are only produced for one of them, breaking FullAOT.
 	return mono_fconv_u4 (v);
 }
+
+gint32
+mono_rconv_u4 (float v)
+{
+	if (mono_isinf (v) || mono_isnan (v))
+		return 0;
+	return (gint32)v;
+}
 #endif
 
 gint64
