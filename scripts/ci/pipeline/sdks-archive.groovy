@@ -63,12 +63,17 @@ parallel (
         }
     },
     "WASM Linux": {
-        if (xcode11) return
-        throttle(['provisions-wasm-toolchain']) {
-            node ("ubuntu-1804-amd64") {
-                archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget openjdk-8-jre python3-pip")
-            }
-        }
+        // Disable WebAssembly build on 2019-06.
+        // It misses an emscripten SDK update to make it work with the python offset
+        // tool on Linux. Since it isn't consumed by anyone from the 2019-06 branch,
+        // let's just disable it.
+
+        // if (xcode11) return
+        // throttle(['provisions-wasm-toolchain']) {
+        //     node ("ubuntu-1804-amd64") {
+        //         archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget openjdk-8-jre python3-pip")
+        //     }
+        // }
     }
 )
 
