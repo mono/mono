@@ -112,9 +112,9 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-# emsdk_env.sh calls emsdk construct_env which is racy so make a copy
+# emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
 emsdk_env.sh:
-	$(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && cp $(EMSCRIPTEN_SDK_DIR)/emsdk_set_env.sh $@
+	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
 driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h emsdk_env.sh
 	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o

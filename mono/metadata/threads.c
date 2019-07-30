@@ -1790,39 +1790,11 @@ ves_icall_System_Threading_Thread_GetDomainID (MonoError *error)
 }
 #endif
 
-/*
- * mono_thread_get_name:
- *
- *   Return the name of the thread. NAME_LEN is set to the length of the name.
- * Return NULL if the thread has no name. The returned memory is owned by the
- * caller.
- */
-gunichar2*
-mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
-{
-	gunichar2 *res;
-
-	LOCK_THREAD (this_obj);
-	
-	if (!this_obj->name) {
-		*name_len = 0;
-		res = NULL;
-	} else {
-		*name_len = this_obj->name_len;
-		res = g_new (gunichar2, this_obj->name_len);
-		memcpy (res, this_obj->name, sizeof (gunichar2) * this_obj->name_len);
-	}
-	
-	UNLOCK_THREAD (this_obj);
-
-	return res;
-}
-
 /**
  * mono_thread_get_name_utf8:
  * \returns the name of the thread in UTF-8.
  * Return NULL if the thread has no name.
- * The returned memory is owned by the caller.
+ * The returned memory is owned by the caller (g_free it).
  */
 char *
 mono_thread_get_name_utf8 (MonoThread *thread)
@@ -5092,7 +5064,7 @@ mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
-	MonoException *exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
+	MonoException * const exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
 	HANDLE_FUNCTION_RETURN_VAL (exc_raw);
 }
 
