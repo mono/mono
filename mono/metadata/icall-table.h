@@ -34,6 +34,7 @@ mono_icall_table_init (void);
 // It is generally difficult to know, and "ref" is safer.
 // Presently it does not matter.
 typedef gint32  *gint32_ptr;
+typedef gsize *gsize_ptr;
 typedef guchar *guchar_ptr;
 typedef const guchar *const_guchar_ptr;
 typedef gpointer *gpointer_ptr;
@@ -46,6 +47,7 @@ typedef int *int_ptr;
 typedef int **int_ptr_ref;
 typedef guint8 **guint8_ptr_ref;
 typedef GPtrArray *GPtrArray_ptr;
+typedef void *HANDLE;
 typedef MonoAssemblyName *MonoAssemblyName_ptr;
 typedef MonoBoolean *MonoBoolean_ptr;
 typedef MonoClass *MonoClass_ptr;
@@ -77,13 +79,13 @@ typedef MonoBoolean *MonoBoolean_ref;
 typedef MonoClassField *MonoClassField_ref;
 typedef MonoEvent *MonoEvent_ref;
 typedef MonoEventInfo *MonoEventInfo_ref;
+typedef MonoGenericParamInfo *MonoGenericParamInfo_ptr;
 typedef MonoMethod *MonoMethod_ref;
 typedef MonoMethodInfo *MonoMethodInfo_ref;
 typedef MonoResolveTokenError *MonoResolveTokenError_ref;
 typedef MonoType *MonoType_ref;
 typedef MonoTypedRef *MonoTypedRef_ref;
 typedef MonoW32ProcessInfo *MonoW32ProcessInfo_ref;
-typedef MonoGenericParamInfo *MonoGenericParamInfo_ptr;
 
 // Maybe do this in TYPED_HANDLE_DECL.
 typedef MonoArray MonoArrayOut;
@@ -180,14 +182,18 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoStackCrawlMark_ptr  	ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gint32_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gpointer_ptr		ICALL_HANDLES_WRAP_NONE
+#define MONO_HANDLE_TYPE_WRAP_HANDLE			ICALL_HANDLES_WRAP_NONE
 
 // Please keep this sorted (grep ICALL_HANDLES_WRAP_OBJ$ | sort)
 #define MONO_HANDLE_TYPE_WRAP_MonoAppContext 			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomain			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomainSetup		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoArray				ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCalendarData		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComInteropProxy		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComObject			ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCultureData		ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCultureInfo		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoDelegate			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionDynamicMethod 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoException			ICALL_HANDLES_WRAP_OBJ
@@ -210,6 +216,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionSigHelper		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionType		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionTypeBuilder		ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoRegionInfo		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoString			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoStringBuilder			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoThreadObject			ICALL_HANDLES_WRAP_OBJ

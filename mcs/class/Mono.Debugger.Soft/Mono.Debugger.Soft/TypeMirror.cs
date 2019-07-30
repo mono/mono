@@ -357,20 +357,18 @@ namespace Mono.Debugger.Soft
 		public string CSharpName {
 			get {
 				if (IsArray) {
-					if (GetArrayRank () == 1)
+					var ranks = GetArrayRank ();
+
+					if (ranks == 1)
 						return GetElementType ().CSharpName + "[]";
-					else {
-						string ranks = "";
-						for (int i = 0; i < GetArrayRank (); ++i)
-							ranks += ',';
-						return GetElementType ().CSharpName + "[" + ranks + "]";
-					}
+
+					return GetElementType ().CSharpName + "[" + new string(',', ranks - 1) + "]";
 				}
 				if (IsPrimitive) {
 					switch (Name) {
 					case "Byte":
 						return "byte";
-					case "Sbyte":
+					case "SByte":
 						return "sbyte";
 					case "Char":
 						return "char";

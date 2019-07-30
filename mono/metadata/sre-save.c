@@ -186,7 +186,7 @@ image_create_token_raw  (MonoDynamicImage *assembly, MonoObject* obj_raw, gboole
 	HANDLE_FUNCTION_ENTER (); /* FIXME callers of image_create_token_raw should use handles */
 	error_init (error);
 	MONO_HANDLE_DCL (MonoObject, obj);
-	guint32 result = mono_image_create_token (assembly, obj, create_methodspec, register_token, error);
+	guint32 const result = mono_image_create_token (assembly, obj, create_methodspec, register_token, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -2810,7 +2810,8 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 
 	assemblyb = mb->assemblyb;
 
-	mono_reflection_dynimage_basic_init (assemblyb);
+	mono_reflection_dynimage_basic_init (assemblyb, error);
+	return_val_if_nok (error, FALSE);
 	assembly = mb->dynamic_image;
 
 	assembly->pe_kind = assemblyb->pe_kind;

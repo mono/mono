@@ -24,6 +24,7 @@ corefx/SqlParameterCollection.cs
 corefx/TdsEnums.cs
 corefx/SR.cs
 corefx/SqlDependencyUtils.cs
+corefx/DataReaderExtensions.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs

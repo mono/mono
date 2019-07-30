@@ -38,4 +38,21 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	*stsize = pi.__pi_stackend - pi.__pi_stackaddr;
 }
 
+gboolean
+mono_threads_platform_is_main_thread (void)
+{
+	/* returns 1 on main thread, even if the kernel tid is diff */
+	return pthread_self () == 1;
+}
+
+guint64
+mono_native_thread_os_id_get (void)
+{
+	pthread_t t = pthread_self ();
+	struct __pthrdsinfo ti;
+	int err, size = 0;
+	err = pthread_getthrds_np (&t, PTHRDSINFO_QUERY_TID, &ti, sizeof (struct __pthrdsinfo), NULL, &size);
+	return (guint64)ti.__pi_tid;
+}
+
 #endif

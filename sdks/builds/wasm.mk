@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.36
+EMSCRIPTEN_VERSION=1.38.38
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -21,8 +21,9 @@ ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/zutil.h
 
 ifeq ($(UNAME),Darwin)
-# The c# offsets tool is 32 bit, and the 64 bit version doesn't work
-USE_OFFSETS_TOOL_PY = 1
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
+else ifeq ($(UNAME),Linux)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
 endif
 
 $(TOP)/sdks/builds/toolchains/emsdk:
@@ -70,7 +71,7 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -154,7 +155,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -186,7 +187,7 @@ $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-u
 #  $(6): offsets dumper abi
 define WasmCrossMXETemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
 

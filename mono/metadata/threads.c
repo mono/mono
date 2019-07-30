@@ -864,9 +864,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	mono_thread_info_set_internal_thread_gchandle (info, mono_gchandle_new_internal ((MonoObject*) internal, FALSE));
 
 	internal->handle = mono_threads_open_thread_handle (info->handle);
-#ifdef HOST_WIN32
-	internal->native_handle = OpenThread (THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId ());
-#endif
+	internal->native_handle = MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER (mono_threads_open_native_thread_handle (info->native_handle));
 	internal->tid = MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ());
 	internal->thread_info = info;
 	internal->small_id = info->small_id;
@@ -1459,6 +1457,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
 	LOCK_THREAD (internal);
 
 	res = create_thread (thread, internal, NULL, (MonoThreadStart) func, arg, flags, error);
+	(void)res;
 
 	UNLOCK_THREAD (internal);
 
@@ -1722,9 +1721,8 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		this_obj->handle = NULL;
 	}
 
-#if HOST_WIN32
-	CloseHandle (this_obj->native_handle);
-#endif
+	mono_threads_close_native_thread_handle (MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE (this_obj->native_handle));
+	this_obj->native_handle = NULL;
 
 	/* Possibly free synch_cs, if the thread already detached also. */
 	dec_longlived_thread_data (this_obj->longlived);
@@ -1793,39 +1791,11 @@ ves_icall_System_Threading_Thread_GetDomainID (MonoError *error)
 }
 #endif
 
-/*
- * mono_thread_get_name:
- *
- *   Return the name of the thread. NAME_LEN is set to the length of the name.
- * Return NULL if the thread has no name. The returned memory is owned by the
- * caller.
- */
-gunichar2*
-mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
-{
-	gunichar2 *res;
-
-	LOCK_THREAD (this_obj);
-	
-	if (!this_obj->name) {
-		*name_len = 0;
-		res = NULL;
-	} else {
-		*name_len = this_obj->name_len;
-		res = g_new (gunichar2, this_obj->name_len);
-		memcpy (res, this_obj->name, sizeof (gunichar2) * this_obj->name_len);
-	}
-	
-	UNLOCK_THREAD (this_obj);
-
-	return res;
-}
-
 /**
  * mono_thread_get_name_utf8:
  * \returns the name of the thread in UTF-8.
  * Return NULL if the thread has no name.
- * The returned memory is owned by the caller.
+ * The returned memory is owned by the caller (g_free it).
  */
 char *
 mono_thread_get_name_utf8 (MonoThread *thread)
@@ -5095,7 +5065,7 @@ mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
-	MonoException *exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
+	MonoException * const exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
 	HANDLE_FUNCTION_RETURN_VAL (exc_raw);
 }
 
@@ -6739,6 +6709,12 @@ ves_icall_System_Threading_Thread_InitInternal (MonoThreadObjectHandle thread_ha
 	init_internal_thread_object (internal);
 	internal->state = ThreadState_Unstarted;
 	MONO_OBJECT_SETREF_INTERNAL (internal, internal_thread, internal);
+}
+
+guint64
+ves_icall_System_Threading_Thread_GetCurrentOSThreadId (MonoError *error)
+{
+	return mono_native_thread_os_id_get ();
 }
 
 #endif

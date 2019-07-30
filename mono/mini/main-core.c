@@ -139,6 +139,7 @@ mono_core_preload_hook (MonoAssemblyName *aname, char **unused_apaths, void *use
 		if (!strcmp (basename, a->basenames[i])) {
 			MonoAssemblyOpenRequest req;
 			mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+			req.request.alc = mono_domain_default_alc (mono_get_root_domain ());
 			req.request.predicate = predicate;
 			req.request.predicate_ud = predicate_ud;
 
@@ -226,6 +227,12 @@ int STDAPICALLTYPE coreclr_initialize (const char* exePath, const char* appDomai
 	install_assembly_loader_hooks ();
 	if (native_lib_paths != NULL)
 		mono_set_pinvoke_search_directories (native_lib_paths->dir_count, native_lib_paths->dirs);
+
+	/*
+	 * Don't use Mono's legacy assembly name matching behavior - respect
+	 * the requested version and public key token.
+	 */
+	mono_loader_set_strict_strong_names (TRUE);
 
 	return 0;
 }

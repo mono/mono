@@ -49,6 +49,7 @@ namespace Mono.Security.Authenticode {
 	class AuthenticodeDeformatter : AuthenticodeBase {
 
 		private string filename;
+		private byte[] rawdata;
 		private byte[] hash;
 		private X509CertificateCollection coll;
 		private ASN1 signedHash;
@@ -74,17 +75,36 @@ namespace Mono.Security.Authenticode {
 			FileName = fileName;
 		}
 
+		public AuthenticodeDeformatter (byte[] rawData) : this ()
+		{
+			RawData = rawData;
+		}
+
 		public string FileName {
 			get { return filename; }
 			set { 
 				Reset ();
+				filename = value;
 				try {
-					CheckSignature (value); 
-				}
-				catch (SecurityException) {
+					CheckSignature ();
+				} catch (SecurityException) {
 					throw;
+				} catch {
+					reason = 1;
 				}
-				catch (Exception) {
+			}
+		}
+
+		public byte[] RawData {
+			get { return rawdata; }
+			set {
+				Reset ();
+				rawdata = value;
+				try {
+					CheckSignature ();
+				} catch (SecurityException) {
+					throw;
+				} catch {
 					reason = 1;
 				}
 			}
@@ -166,10 +186,13 @@ namespace Mono.Security.Authenticode {
 			get { return signingCertificate; }
 		}
 
-		private bool CheckSignature (string fileName) 
+		private bool CheckSignature ()
 		{
-			filename = fileName;
-			Open (filename);
+			if (filename != null) {
+				Open (filename);
+			} else {
+				Open (rawdata);
+			}
 			entry = GetSecurityEntry ();
 			if (entry == null) {
 				// no signature is present
@@ -462,6 +485,7 @@ namespace Mono.Security.Authenticode {
 		private void Reset ()
 		{
 			filename = null;
+			rawdata = null;
 			entry = null;
 			hash = null;
 			signedHash = null;

@@ -9,6 +9,8 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xamarin.ProcessControl;
+using System.Runtime.InteropServices;
+
 
 namespace Mono.WebAssembly.Build
 {
@@ -58,19 +60,21 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public string I18n { get; set; }
 
-		protected override string ToolName => "monolinker";
-
+		protected override string ToolName => (InvokeLinkerUsingMono) ? "mono" : "monolinker.exe";
+		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
+                                               .IsOSPlatform(OSPlatform.Windows);
+		bool InvokeLinkerUsingMono => (!IsWindows && !String.IsNullOrEmpty(GetNetCoreVersion()));
 		protected override string GenerateFullPathToTool ()
 		{
-			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
-			// Check if coming from nuget or local
-			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
-			if (File.Exists(toolsPath))
+			Log.LogMessage(MessageImportance.High, $"InvokeLinkerUsingMono {InvokeLinkerUsingMono}");
+			if (!InvokeLinkerUsingMono) {
+				var toolsPath = GetPathToMonoLinker ();
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath}");
 				return toolsPath;
-
-			return Path.Combine (dir, "monolinker.exe");
+			}
+			else
+				return ToolName;
 		}
-
 		protected override bool ValidateParameters ()
 		{
 			if (string.IsNullOrEmpty (OutputDir)) {
@@ -88,13 +92,23 @@ namespace Mono.WebAssembly.Build
 				return false;
 			}
 
-
 			return base.ValidateParameters ();
 		}
 
 		protected override string GenerateCommandLineCommands ()
 		{
-			ProcessArguments arguments = ProcessArguments.Create ("--verbose");
+
+			ProcessArguments arguments = null;
+			
+			if (!InvokeLinkerUsingMono) {
+				arguments = ProcessArguments.Create ("--verbose");
+			}
+			else {
+				var toolsPath = GetPathToMonoLinker();
+				Log.LogMessage(MessageImportance.High, $"Running monolinker from {toolsPath}.");
+				arguments = ProcessArguments.Create (toolsPath);
+				arguments = arguments.Add("--verbose");
+			}
 
 			// add exclude features
 			arguments = arguments.AddRange ("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
@@ -168,8 +182,40 @@ namespace Mono.WebAssembly.Build
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
 				arguments = arguments.AddRange ("-l", string.Join (",", vals));
 			}
-
 			return arguments.ToString ();
+		}
+
+		static string GetNetCoreVersion()
+		{
+			var assembly = typeof(System.Runtime.GCSettings).Assembly;
+			var assemblyPath = assembly.CodeBase.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+			int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
+			if (netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2)
+				return assemblyPath[netCoreAppIndex + 1];
+			return null;
+		}
+
+		string GetPathToMonoLinker () {
+			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
+			// Check if coming from nuget or local
+			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
+			if (!File.Exists(toolsPath))
+				toolsPath = Path.GetFullPath(Path.Combine (GetParentDirectoryOf(dir,6), "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
+			return toolsPath;
+		} 
+
+		static string GetParentDirectoryOf (string path, int up)
+		{
+			if (up == 0)
+				return path;
+			for (int i = path.Length -1; i >= 0; i--) {
+				if (path[i] == Path.DirectorySeparatorChar) {
+					up--;
+					if (up == 0)
+						return path.Substring (0, i);
+				}
+			}
+			return null;
 		}
 	}
 

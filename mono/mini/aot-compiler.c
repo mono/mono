@@ -1125,9 +1125,7 @@ arch_init (MonoAotCompile *acfg)
 
 		if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "ios")) {
 			g_string_append (acfg->llc_args, " -mattr=+v7");
-#ifdef LLVM_API_VERSION > 100
-			g_string_append (acfg->llc_args, " -exception-model=dwarf");
-#endif
+			g_string_append (acfg->llc_args, " -exception-model=dwarf -disable-fp-elim");
 		}
 
 #if defined(ARM_FPU_VFP_HARD)
@@ -1137,11 +1135,7 @@ arch_init (MonoAotCompile *acfg)
 		g_string_append (acfg->llc_args, " -mattr=+vfp2,-neon,+d16");
 		g_string_append (acfg->as_args, " -mfpu=vfp3");
 #else
-#ifdef LLVM_API_VERSION > 100
 		g_string_append (acfg->llc_args, " -mattr=+soft-float");
-#else
-		g_string_append (acfg->llc_args, " -soft-float");
-#endif
 #endif
 	}
 	if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "thumb"))
@@ -4176,6 +4170,8 @@ add_jit_icall_wrapper (MonoAotCompile *acfg, MonoJitICallInfo *callinfo)
 	add_method (acfg, mono_marshal_get_icall_wrapper (callinfo, TRUE));
 }
 
+#if ENABLE_LLVM
+
 static void
 add_lazy_init_wrappers (MonoAotCompile *acfg)
 {
@@ -4184,6 +4180,8 @@ add_lazy_init_wrappers (MonoAotCompile *acfg)
 	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_VTABLE));
 	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_THIS));
 }
+
+#endif
 
 static MonoMethod*
 get_runtime_invoke_sig (MonoMethodSignature *sig)
@@ -7195,7 +7193,7 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 		break;
 	}
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
-		debug_sym = g_strdup_printf ("%s_jit_icall_native_specific_trampoline_lazy_fetch_%lu", prefix, ji->data.uindex);
+		debug_sym = g_strdup_printf ("%s_jit_icall_native_specific_trampoline_lazy_fetch_%lu", prefix, (gulong)ji->data.uindex);
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 		debug_sym = g_strdup_printf ("%s_jit_icall_native_%s", prefix, mono_find_jit_icall_info (ji->data.jit_icall_id)->name);
@@ -9663,11 +9661,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	} else {
-#if LLVM_API_VERSION > 100
 		opts = g_strdup ("-O2 -disable-tail-calls -place-safepoints -spp-all-backedges");
-#else
-		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify -place-safepoints -spp-all-backedges");
-#endif
 	}
 
 	if (acfg->aot_opts.llvm_opts) {
@@ -9704,7 +9698,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (acfg->aot_opts.mtriple)
 		g_string_append_printf (acfg->llc_args, " -mtriple=%s", acfg->aot_opts.mtriple);
 
-#if defined(TARGET_X86_64_WIN32_MSVC) && LLVM_API_VERSION >= 600
+#if defined(TARGET_X86_64_WIN32_MSVC)
 	if (!acfg->aot_opts.mtriple)
 		g_string_append_printf (acfg->llc_args, " -mtriple=%s", "x86_64-pc-windows-msvc");
 #endif
@@ -9713,11 +9707,9 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	g_string_append_printf (acfg->llc_args, " -mono-eh-frame-symbol=%s%s", acfg->user_symbol_prefix, acfg->llvm_eh_frame_symbol);
 
-#if LLVM_API_VERSION > 100
 	g_string_append_printf (acfg->llc_args, " -disable-tail-calls");
-#endif
 
-#if LLVM_API_VERSION > 500 && (defined(TARGET_AMD64) || defined(TARGET_X86))
+#if defined(TARGET_AMD64) || defined(TARGET_X86)
 	/* This generates stack adjustments in the middle of functions breaking unwind info */
 	g_string_append_printf (acfg->llc_args, " -no-x86-call-frame-opt");
 #endif
@@ -10008,19 +10000,19 @@ emit_code (MonoAotCompile *acfg)
 	for (i = 0; i < acfg->nmethods; ++i) {
 		MonoCompile *cfg;
 		MonoMethod *method;
-		int index;
 
 		cfg = acfg->cfgs [i];
 		if (ignore_cfg (cfg))
 			continue;
 
 		method = cfg->orig_method;
+		(void)method;
 
 		if (mono_aot_mode_is_full (&acfg->aot_opts) && m_class_is_valuetype (cfg->orig_method->klass)) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
 			int call_size;
 
-			index = get_method_index (acfg, method);
+			const int index = get_method_index (acfg, method);
 			sprintf (symbol, "ut_%d", index);
 
 			arch_emit_direct_call (acfg, symbol, FALSE, acfg->thumb_mixed && cfg->compile_llvm, NULL, &call_size);
@@ -13383,10 +13375,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->aot_opts.asm_writer = TRUE;
 
 	if (acfg->aot_opts.soft_debug) {
-		MonoDebugOptions *opt = mini_get_debug_options ();
-
-		opt->mdb_optimizations = TRUE;
-		opt->gen_sdb_seq_points = TRUE;
+		mini_debug_options.mdb_optimizations = TRUE;
+		mini_debug_options.gen_sdb_seq_points = TRUE;
 
 		if (!mono_debug_enabled ()) {
 			aot_printerrf (acfg, "The soft-debug AOT option requires the --debug option.\n");
@@ -13545,7 +13535,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
-		LLVMModuleFlags flags = 0;
+		LLVMModuleFlags flags = (LLVMModuleFlags)0;
 #ifdef EMIT_DWARF_INFO
 		flags = LLVM_MODULE_FLAG_DWARF;
 #endif

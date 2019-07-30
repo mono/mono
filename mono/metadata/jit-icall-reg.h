@@ -77,6 +77,7 @@ MONO_JIT_ICALL (__emul_fconv_to_i4)	\
 MONO_JIT_ICALL (__emul_fconv_to_i8)	\
 MONO_JIT_ICALL (__emul_fconv_to_ovf_i8)	\
 MONO_JIT_ICALL (__emul_fconv_to_ovf_u8)	\
+MONO_JIT_ICALL (__emul_fconv_to_ovf_u8_un)	\
 MONO_JIT_ICALL (__emul_fconv_to_r4)	\
 MONO_JIT_ICALL (__emul_fconv_to_u)	\
 MONO_JIT_ICALL (__emul_fconv_to_u1)	\
@@ -114,6 +115,7 @@ MONO_JIT_ICALL (__emul_op_irem_un) \
 MONO_JIT_ICALL (__emul_rconv_to_i8) \
 MONO_JIT_ICALL (__emul_rconv_to_ovf_i8) \
 MONO_JIT_ICALL (__emul_rconv_to_ovf_u8) \
+MONO_JIT_ICALL (__emul_rconv_to_ovf_u8_un) \
 MONO_JIT_ICALL (__emul_rconv_to_u8) \
 MONO_JIT_ICALL (__emul_rrem) \
 MONO_JIT_ICALL (cominterop_get_ccw) \
@@ -232,6 +234,7 @@ MONO_JIT_ICALL (mono_llvmonly_init_delegate) \
 MONO_JIT_ICALL (mono_llvmonly_init_delegate_virtual) \
 MONO_JIT_ICALL (mono_marshal_asany) \
 MONO_JIT_ICALL (mono_marshal_check_domain_image) \
+MONO_JIT_ICALL (mono_marshal_clear_last_error) \
 MONO_JIT_ICALL (mono_marshal_free) \
 MONO_JIT_ICALL (mono_marshal_free_array) \
 MONO_JIT_ICALL (mono_marshal_free_asany) \

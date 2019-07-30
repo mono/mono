@@ -75,7 +75,20 @@ all:
 .PHONY: configure-mono
 configure-mono: $(TOP)/configure
 
-$(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
+
+ifeq ($(UNAME),Darwin)
+.stamp-ulimit-check:
+	@if [ $$(ulimit -n) -lt 1024 ] ; then \
+		echo "Error: Increase ulimit -n to at least 1024"; \
+		exit 1; \
+	fi
+	touch $@
+else
+.stamp-ulimit-check:
+	touch $@
+endif
+
+$(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh .stamp-ulimit-check
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh $(if $(wildcard $(TOP)/../mono-extensions),--enable-extension-module=xamarin --enable-extension-module)
 
 ## Archive targets
