@@ -235,15 +235,15 @@ static void debug_enter (InterpFrame *frame, int *tracing)
 static void
 set_resume_state (ThreadContext *context, InterpFrame *frame)
 {
+	/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */ \
+	while (frame->finally_ips &&
+		   frame->finally_ips->data >= context->handler_ei->try_start &&
+		   frame->finally_ips->data < context->handler_ei->try_end)
+		frame->finally_ips = g_slist_remove (frame->finally_ips, frame->finally_ips->data);
 	frame->ex = NULL;
 	context->has_resume_state = 0;
 	context->handler_frame = NULL;
 	context->handler_ei = NULL;
-	/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */ \
-	while (frame->finally_ips &&
-		   frame->finally_ips->data >= (context)->handler_ei->try_start &&
-		   frame->finally_ips->data < (context)->handler_ei->try_end)
-		frame->finally_ips = g_slist_remove (frame->finally_ips, frame->finally_ips->data);
 }
 
 /* Set the current execution state to the resume state in context */
