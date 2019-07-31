@@ -35,4 +35,4 @@ to
 
 ## Running with the mono runtime executable
 
-DYLD_LIBRARY_PATH=shared/Microsoft.NETCore.App/<dotnet version> MONO_PATH=shared/Microsoft.NETCore.App/<dotnet version> ../mono/mini/mono-sgen sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+DYLD_LIBRARY_PATH=shared/Microsoft.NETCore.App/<dotnet version> MONO_PATH=shared/Microsoft.NETCore.App/<dotnet version> ../mono/mini/mono-sgen --assembly-loader=strict sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
