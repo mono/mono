@@ -35,6 +35,8 @@
 
 #if HOST_WIN32
 
+#include "mono/metadata/w32subset.h"
+
 // This is compiler specific because of the use of __try / __except.
 #if _MSC_VER
 const DWORD MS_VC_EXCEPTION = 0x406D1388;
@@ -77,7 +79,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 {
-	SetThreadName (thread_hande, thread_name);
+	SetThreadName (thread_handle, thread_name);
 }
 
 #elif HAVE_SET_THREAD_DESCRIPTION
@@ -85,7 +87,7 @@ mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 {
-	SetThreadDescription (thread_hande, thread_name);
+	SetThreadDescription (thread_handle, thread_name);
 }
 
 #elif HAVE_LOADLIBRARY
@@ -132,7 +134,7 @@ mono_thread_set_name_windows_init (HANDLE thread_handle, PCWSTR thread_name)
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 {
-	(void)set_thread_description (thread_hande, thread_name);
+	(void)set_thread_description (thread_handle, thread_name);
 }
 
 #else // nothing
