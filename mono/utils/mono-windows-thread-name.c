@@ -10,6 +10,7 @@
 // XboxOne: SetThreadName(thread handle, unicode)
 //   This works with or without a debugger and can be retrieved with GetThreadName.
 //   Sometimes an inline function SetThreadDescription for source compat with next.
+//   https://github.com/microsoft/xbox-live-api/blob/90b38b434d9c13ce4916c116cd28a98b239e38e2/InProgressSamples/Kits/ATGTK/ThreadHelpers.h#L21
 //
 // Windows 10 1607 or newer (according to documentation, or Creators Update says https://randomascii.wordpress.com/2015/10/26/thread-naming-in-windows-time-for-something-better).
 //  SetThreadDescription(thread handle, unicode)
