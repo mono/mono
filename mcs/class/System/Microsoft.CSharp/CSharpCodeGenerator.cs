@@ -67,7 +67,8 @@ namespace Microsoft.CSharp
 
 			mcs.StartInfo.Arguments += BuildArgs (options, fileNames, _provOptions);
 
-			var mcsOutMutex = new Mutex ();
+			var stderr_completed = new ManualResetEvent (false);
+			var stdout_completed = new ManualResetEvent (false);
 /*		       
 			string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
 			if (monoPath != null)
@@ -89,19 +90,31 @@ namespace Microsoft.CSharp
 			 * reset MONO_GC_PARAMS - we are invoking compiler possibly with another GC that
 			 * may not handle some of the options causing compilation failure
 			 */
-			mcs.StartInfo.EnvironmentVariables ["MONO_GC_PARAMS"] = String.Empty;
+			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_GC_PARAMS");
+
+#if XAMMAC_4_5
+			/*/
+			 * reset MONO_CFG_DIR - we don't want to propagate the current config to another mono
+			 * since it's specific to the XM application and won't work on system mono.
+			 */
+			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_CFG_DIR");
+#endif
 
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
+			mcs.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
 			mcs.ErrorDataReceived += new DataReceivedEventHandler ((sender, args) => {
-				if (args.Data != null) {
-					mcsOutMutex.WaitOne ();
+				if (args.Data != null)
 					results.Output.Add (args.Data);
-					mcsOutMutex.ReleaseMutex ();
-				}
+				else
+					stderr_completed.Set ();
 			});
+			mcs.OutputDataReceived += new DataReceivedEventHandler ((sender, args) => {
+					if (args.Data == null)
+						stdout_completed.Set ();
+				});
 
 			// Use same text decoder as mcs and not user set values in Console
 			mcs.StartInfo.StandardOutputEncoding =
@@ -125,8 +138,8 @@ namespace Microsoft.CSharp
 				
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
-				mcs.CancelErrorRead ();
-				mcs.CancelOutputRead ();
+				stderr_completed.WaitOne (TimeSpan.FromSeconds (30));
+				stdout_completed.WaitOne (TimeSpan.FromSeconds (30));
 				mcs.Close();
 			}
 

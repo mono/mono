@@ -37,6 +37,8 @@ using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing {
 
 	[TestFixture]
@@ -365,7 +367,7 @@ namespace MonoTests.System.Drawing {
 		public void LoadIndexed_PngStream ()
 		{
 			// Tests that we can load an indexed file
-			using (Stream s = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("indexed.png")) {
+			using (Stream s = TestResourceHelper.GetStreamOfResource ("Test/resources/indexed.png")) {
 				using (Image img = Image.FromStream (s)) {
 					// however it's no more indexed once loaded
 					Assert.AreEqual (PixelFormat.Format32bppArgb, img.PixelFormat, "PixelFormat");
@@ -381,7 +383,7 @@ namespace MonoTests.System.Drawing {
 		public void LoadIndexed_BmpFile ()
 		{
 			// Tests that we can load an indexed file, but...
-			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver1bit.bmp");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver1bit.bmp");
 			// note: file is misnamed (it's a 4bpp bitmap)
 			using (Image img = Image.FromFile (sInFile)) {
 				Assert.AreEqual (PixelFormat.Format4bppIndexed, img.PixelFormat, "PixelFormat");

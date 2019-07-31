@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -186,11 +186,34 @@ namespace System.Reflection.Emit {
 		int GetToken (SignatureHelper helper);
 	}		
 
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ILGenerator))]
-	[ClassInterface (ClassInterfaceType.None)]
+#if !MOBILE
+	partial class ILGenerator : _ILGenerator
+	{
+		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
+
 	[StructLayout (LayoutKind.Sequential)]
-	public class ILGenerator: _ILGenerator {
+	public partial class ILGenerator {
 		private struct LabelFixup {
 			public int offset;    // The number of bytes between pos and the
 							      // offset of the jump
@@ -1132,26 +1155,6 @@ namespace System.Reflection.Emit {
 		public
 		virtual int ILOffset {
 			get { return code_len; }
-		}
-
-		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 	

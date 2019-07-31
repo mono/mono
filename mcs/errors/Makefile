@@ -34,26 +34,20 @@ TEST_SUPPORT_FILES = \
 	CS8009-lib.dll \
 	CSFriendAssembly-lib.dll \
 	dlls/first/CS1704-lib.dll \
-	dlls/second/CS1704-lib.dll
+	dlls/second/CS1704-lib.dll \
+	dlls/cs1703-2/System.dll
 
 -include $(mcs_topdir)/build/config.make
 
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
-ifdef VALID_PROFILE
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
+ifdef VALID_TEST_PROFILE
 
 qcheck: run-mcs-tests 
 
-# again, run-test is when the tests actually happen, so
-# don't compile on make test.
-
-test-local:
-	@:
-
-run-test-local: clean-local
-	$(MAKE) run-mcs-tests
+run-test-local: test-local qcheck
 
 check: run-test-local
 
@@ -66,8 +60,17 @@ TESTER_OPTIONS = -compiler-options:"-v --break-on-ice -d:NET_4_0;NET_4_5"
 COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
-run-mcs-tests: $(TEST_SUPPORT_FILES)
-	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)
+test-local: $(TEST_SUPPORT_FILES)
+
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/mcs-errors
+	cp -L -R dlls $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L *.cs *.inc *.dll *.snk *.pub $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L $(topdir)/class/lib/$(PROFILE)/compiler-tester.* $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L known-issues-$(PROFILE) $(TEST_BUNDLE_PATH)/tests/mcs-errors/known-issues-$(PROFILE)
+
+run-mcs-tests: test-local
+	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)
 
 endif
 
@@ -108,13 +111,17 @@ dlls/second/CS1703-lib.dll: dlls/second/CS1703-lib.cs
 dlls/second/CS1705-lib.dll: dlls/second/CS1705-lib.cs
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
-CS1701-lib.dll : CS1701-lib.cs
+dlls/cs1703-2/System.dll: $(topdir)/../external/binary-reference-assemblies/v2.0/System.dll
+	mkdir -p $(dir $@)
+	cp $< $@
+
+CS1701-lib.dll : CS1701-lib.cs dlls/first/CS1701-lib.dll
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
 
-CS1702-lib.dll : CS1702-lib.cs
+CS1702-lib.dll : CS1702-lib.cs dlls/first/CS1702-lib.dll
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1702-lib.dll /out:$@ $<
 
-CS1705-lib.dll : CS1705-lib.cs
+CS1705-lib.dll : CS1705-lib.cs dlls/first/CS1705-lib.dll
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1705-lib.dll /out:$@ $<
 
 CSFriendAssembly-lib.dll : CSFriendAssembly-lib.cs

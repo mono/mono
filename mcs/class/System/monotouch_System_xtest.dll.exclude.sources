@@ -1,0 +1,16 @@
+../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeObjects/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeStatements/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeTypeMembers/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Compiler/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Other/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/CSharp/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/VisualBasic/*.cs
+../../../external/corefx/src/System.CodeDom/tests/*.cs
+
+System/RemoteExecutorTests.cs
+
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/FileSystemWatcherTest.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs

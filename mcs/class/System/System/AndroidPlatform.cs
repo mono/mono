@@ -32,7 +32,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #if SECURITY_DEP
-using MSX = Mono.Security.X509;
+using Mono;
 #if MONO_FEATURE_BTLS
 using Mono.Btls;
 #endif
@@ -70,6 +70,7 @@ namespace System {
 							ignoreCase:false,
 							throwOnBindFailure:true);
 #endif  // MONO_FEATURE_BTLS
+			SystemDependencyProvider.Initialize ();
 #endif  // SECURITY_DEP
 			getDefaultProxy = (Func<IWebProxy>)Delegate.CreateDelegate (
 				typeof (Func<IWebProxy>), t, "GetDefaultProxy",

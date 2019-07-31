@@ -64,7 +64,9 @@ namespace Mono.ILASM {
                 {
                         switch (full_name) {
                         case "System.String":
+                        case "[System.Runtime]System.String":
                                 return new PrimitiveTypeRef (PEAPI.PrimitiveType.String, full_name);
+                        case "[System.Runtime]System.Object":
                         case "System.Object":
                                 return new PrimitiveTypeRef (PEAPI.PrimitiveType.Object, full_name);
                         default:

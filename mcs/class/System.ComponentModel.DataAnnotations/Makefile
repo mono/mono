@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ComponentModel.DataAnnotations.dll
-LIB_REFS = System System.Core System.Data System.Xml
+LIB_REFS = System System.Core System.Xml
 KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = -nowarn:414
 

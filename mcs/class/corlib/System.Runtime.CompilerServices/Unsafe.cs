@@ -36,7 +36,7 @@ using nint = System.Int32;
 
 namespace System.Runtime.CompilerServices
 {
-	static partial class Unsafe
+	unsafe static partial class Unsafe
 	{
 		public static ref T Add<T> (ref T source, int elementOffset)
 		{
@@ -133,6 +133,20 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
+		public static void WriteUnaligned<T>(void* destination, T value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsAddressGreaterThan<T>(ref T left, ref T right)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsAddressLessThan<T>(ref T left, ref T right)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		unsafe internal static ref T AddByteOffset<T> (ref T source, nuint byteOffset)

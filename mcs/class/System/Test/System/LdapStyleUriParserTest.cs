@@ -108,7 +108,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Ldapx ()
 		{
-			Uri uri = new Uri ("ldapx://www.mono-project.com/");
+			Uri uri = new Uri ("ldapx://www.example.com/");
 			Assert.AreEqual (3890, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -117,7 +117,7 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void Ldapx_Methods ()
 		{
-			Uri uri = new Uri ("ldapx://www.mono-project.com/");
+			Uri uri = new Uri ("ldapx://www.example.com/");
 			Assert.AreEqual (String.Empty, uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -127,7 +127,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureLdapx ()
 		{
-			Uri uri = new Uri ("sldapx://www.mono-project.com/");
+			Uri uri = new Uri ("sldapx://www.example.com/");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

@@ -33,6 +33,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class BuildPropertyTest {

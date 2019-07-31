@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mono.Cecil.Cil;
-using Mono.Cecil.Metadata;
 using System.IO;
 using System.Reflection;
+
+#if ENABLE_CECIL
+using Mono.Cecil.Cil;
+#else
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.Debugger.Soft
 {

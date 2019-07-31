@@ -37,7 +37,7 @@ using Mono.Security.X509;
 
 namespace Mono.Security {
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public

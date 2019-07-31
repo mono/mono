@@ -29,11 +29,9 @@
 #define BUFFER_SIZE 4096
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
+#define MONO_EXCEPTION -12
 
-#define z_malloc(size)          ((gpointer) malloc(size))
-#define z_malloc0(size)         ((gpointer) calloc(1,size))
-#define z_new(type,size)        ((type *) z_malloc (sizeof (type) * (size)))
-#define z_new0(type,size)       ((type *) z_malloc0 (sizeof (type)* (size)))
+#define z_new0(type)  ((type *) calloc (sizeof (type), 1))
 
 typedef gint (*read_write_func) (guchar *buffer, gint length, void *gchandle);
 struct _ZStream {
@@ -47,6 +45,7 @@ struct _ZStream {
 };
 typedef struct _ZStream ZStream;
 
+// FIXME? Names should start "mono"?
 MONO_API ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
 MONO_API gint CloseZStream (ZStream *zstream);
 MONO_API gint Flush (ZStream *stream);
@@ -57,7 +56,7 @@ static gint flush_internal (ZStream *stream, gboolean is_final);
 static void *
 z_alloc (void *opaque, unsigned int nitems, unsigned int item_size)
 {
-	return z_malloc0 (nitems * item_size);
+	return calloc (nitems, item_size);
 }
 
 static void
@@ -76,12 +75,7 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	if (func == NULL)
 		return NULL;
 
-#if !defined(ZLIB_VERNUM) || (ZLIB_VERNUM < 0x1204)
-	/* Older versions of zlib do not support raw deflate or gzip */
-	return NULL;
-#endif
-
-	z = z_new0 (z_stream, 1);
+	z = z_new0 (z_stream);
 	if (compress) {
 		retval = deflateInit2 (z, Z_DEFAULT_COMPRESSION, Z_DEFLATED, gzip ? 31 : -15, 8, Z_DEFAULT_STRATEGY);
 	} else {
@@ -94,12 +88,12 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	}
 	z->zalloc = z_alloc;
 	z->zfree = z_free;
-	result = z_new0 (ZStream, 1);
+	result = z_new0 (ZStream);
 	result->stream = z;
 	result->func = func;
 	result->gchandle = gchandle;
 	result->compress = compress;
-	result->buffer = z_new (guchar, BUFFER_SIZE);
+	result->buffer = (guchar*)malloc (BUFFER_SIZE);
 	result->stream->next_out = result->buffer;
 	result->stream->avail_out = BUFFER_SIZE;
 	result->stream->total_in = 0;
@@ -121,6 +115,10 @@ CloseZStream (ZStream *zstream)
 			do {
 				status = deflate (zstream->stream, Z_FINISH);
 				flush_status = flush_internal (zstream, TRUE);
+				if (flush_status == MONO_EXCEPTION) {
+					status = flush_status;
+					break;
+				}
 			} while (status == Z_OK); /* We want Z_STREAM_END or error here here */
 			if (status == Z_STREAM_END)
 				status = flush_status;
@@ -147,6 +145,8 @@ write_to_managed (ZStream *stream)
 		n = stream->func (stream->buffer, BUFFER_SIZE - zs->avail_out, stream->gchandle);
 		zs->next_out = stream->buffer;
 		zs->avail_out = BUFFER_SIZE;
+		if (n == MONO_EXCEPTION)
+			return n;
 		if (n < 0)
 			return IO_ERROR;
 	}
@@ -208,7 +208,9 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			stream->eof = TRUE;
 			break;
 		} else if (status == Z_BUF_ERROR && stream->total_in == zs->total_in) {
-			stream->eof = TRUE;
+			if (zs->avail_in != 0) {
+				stream->eof = TRUE;
+			}
 			break;
 		} else if (status != Z_OK) {
 			return status;

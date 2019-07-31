@@ -73,6 +73,9 @@ namespace System.Windows.Forms
 		
 		internal bool has_been_focused;
 
+		private bool			delayed_font_or_color_change;
+		private int				requested_height;
+
 		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
 		internal bool show_caret_w_selection;  // TextBox shows the caret when the selection is visible
 		internal int			canvas_width;
@@ -162,6 +165,8 @@ namespace System.Windows.Forms
 			document.ViewPortHeight = canvas_height;
 
 			Cursor = Cursors.IBeam;
+
+			requested_height = Height;
 
 			can_cache_preferred_size = true;
 		}
@@ -1008,6 +1013,9 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+			if (delayed_font_or_color_change) {
+				TextBoxBase_FontOrColorChanged (this, e);
+			}
 			FixupHeight ();
 		}
 
@@ -1467,20 +1475,13 @@ namespace System.Windows.Forms
 		{
 			// Make sure we don't get sized bigger than we want to be
 
+			if ((specified & BoundsSpecified.Height) != 0) {
+				requested_height = height;
+			}
+
 			if (!richtext) {
 				if (!document.multiline) {
-					if (height != PreferredHeight) {
-						// If the specified has Height, we need to store that in the
-						// ExplicitBounds because we are going to override it
-						if ((specified & BoundsSpecified.Height) != 0) {
-							Rectangle r = ExplicitBounds;
-							r.Height = height;
-							ExplicitBounds = r;
-							specified &= ~BoundsSpecified.Height;
-						}
-						
-						height = PreferredHeight;
-					}
+					height = PreferredHeight;
 				}
 			}
 
@@ -1763,13 +1764,15 @@ namespace System.Windows.Forms
 		private void FixupHeight ()
 		{
 			if (!richtext) {
+				int saved_requested_height = requested_height;
 				if (!document.multiline) {
 					if (PreferredHeight != Height) {
-						SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
+						SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.Height);
 					}
 				} else {
-					SetBoundsCore (Left, Top, Width, Math.Max(PreferredHeight, ExplicitBounds.Height), BoundsSpecified.None);
+					SetBoundsCore (Left, Top, Width, Math.Max(PreferredHeight, requested_height), BoundsSpecified.Height);
 				}
+				requested_height = saved_requested_height;
 			}
 		}
 
@@ -2238,8 +2241,10 @@ namespace System.Windows.Forms
 		{
 			Line	line;
 
-			if (!IsHandleCreated)
+			if (!IsHandleCreated) {
+				delayed_font_or_color_change = true;
 				return;
+			}
 
 			document.SuspendRecalc ();
 			// Font changes apply to the whole document

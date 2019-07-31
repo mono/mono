@@ -60,7 +60,7 @@ namespace Mono.Security.X509 {
 	 *	crlExtensions           [0] Extensions OPTIONAL }
 	 *		-- if present, MUST be v2
 	 */
-#if !INSIDE_CORLIB
+#if !INSIDE_CORLIB && !INSIDE_SYSTEM
 	public 
 #endif
 	class X509Crl {

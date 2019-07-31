@@ -476,29 +476,38 @@ namespace System {
 
 #if MONO
         // Converts a Span into an int
-        public static int ToInt32(ReadOnlySpan<byte> value)
+        public static unsafe int ToInt32(ReadOnlySpan<byte> value)
         {
             if (value.Length < sizeof(int))
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
-            return Unsafe.ReadUnaligned<int>(ref value.DangerousGetPinnableReference());
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<int>(bytesPtr);
+            }
         }
 
         // Convert a Span into a uint
         [CLSCompliant(false)]
-        public static uint ToUInt32(ReadOnlySpan<byte> value)
+        public static unsafe uint ToUInt32(ReadOnlySpan<byte> value)
         {
             if (value.Length < sizeof(uint))
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
-	        return Unsafe.ReadUnaligned<uint>(ref value.DangerousGetPinnableReference());
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<uint>(bytesPtr);
+            }
         }
 
         // Converts a Span into an unsigned long
         [CLSCompliant(false)]
-        public static ulong ToUInt64(ReadOnlySpan<byte> value)
+        public static unsafe ulong ToUInt64(ReadOnlySpan<byte> value)
         {
             if (value.Length < sizeof(ulong))
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
-            return Unsafe.ReadUnaligned<ulong>(ref value.DangerousGetPinnableReference());
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<ulong>(bytesPtr);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

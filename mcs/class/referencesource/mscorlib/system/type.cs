@@ -87,7 +87,6 @@ namespace System {
         // case-sensitive by default).
         ////  
 
-#if !MONO
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type GetType(String typeName, bool throwOnError, bool ignoreCase) {
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
@@ -106,7 +105,7 @@ namespace System {
 
             return RuntimeType.GetType(typeName, false, false, false, ref stackMark);
         }
-#endif
+
 #if !FEATURE_CORECLR
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type GetType(
@@ -141,14 +140,14 @@ namespace System {
             return TypeNameParser.GetType(typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
         }
 #endif //!FEATURE_CORECLR
-#if !MONO
+
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type ReflectionOnlyGetType(String typeName, bool throwIfNotFound, bool ignoreCase) 
         {
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return RuntimeType.GetType(typeName, throwIfNotFound, ignoreCase, true /*reflectionOnly*/, ref stackMark);
         }
-#endif
+
         public virtual Type MakePointerType() { throw new NotSupportedException(); }
         public virtual StructLayoutAttribute StructLayoutAttribute { get { throw new NotSupportedException(); } }
         public virtual Type MakeByRefType() { throw new NotSupportedException(); }
@@ -1890,7 +1889,10 @@ namespace System {
 
         // private convenience data
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
+#if !MONO
+        // now it's located in external/corefx/src/Common/src/CoreLib/System/Reflection/TypeInfo.cs
         internal const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+#endif
 
 #if MONO
         public virtual bool IsSZArray { get { throw new NotImplementedException (); } }

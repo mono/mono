@@ -144,10 +144,6 @@ namespace System.IO {
 					ok = FAMWatcher.GetInstance (out watcher, true);
 					watcher_handle = this;
 					break;
-				case 5: // inotify
-					ok = InotifyWatcher.GetInstance (out watcher, true);
-					watcher_handle = this;
-					break;
 				case 6: // CoreFX
 					ok = CoreFXFileSystemWatcherProxy.GetInstance (out watcher);
 					watcher_handle = (watcher as CoreFXFileSystemWatcherProxy).NewWatcher (this);
@@ -424,6 +420,8 @@ namespace System.IO {
 		}
 		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
 		{
+			if (disposed)
+				return;
 			if (ev == null)
 				return;
 
@@ -501,11 +499,15 @@ namespace System.IO {
 
 		internal void DispatchErrorEvents (ErrorEventArgs args)
 		{
+			if (disposed)
+				return;
 			OnError (args);
 		}
 
 		internal void DispatchEvents (FileAction act, string filename, ref RenamedEventArgs renamed)
 		{
+			if (disposed)
+				return;
 			if (waiting) {
 				lastData = new WaitForChangedResult ();
 			}

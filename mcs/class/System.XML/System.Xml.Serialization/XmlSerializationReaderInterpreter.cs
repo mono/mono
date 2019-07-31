@@ -204,11 +204,9 @@ namespace System.Xml.Serialization
 		{
 			if (isNullable && ReadNull()) return null;
 
-			if (checkType) 
-			{
-                System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t != null) 
-				{
+			if (checkType) {
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t != null) {
 					XmlTypeMapping realMap = typeMap.GetRealElementMap (t.Name, t.Namespace);
 					if (realMap == null) {
 						if (typeMap.TypeData.Type == typeof(object))
@@ -221,7 +219,12 @@ namespace System.Xml.Serialization
 				}
 				else if (typeMap.TypeData.Type == typeof(object))
 					return ReadTypedPrimitive (AnyType);
-            }
+				else {
+					XmlTypeMapping realMap = typeMap.GetRealElementMap (Reader.LocalName, Reader.NamespaceURI);
+					if (realMap != null && realMap != typeMap)
+						return ReadObject(realMap, false, false);
+				}
+			}
 
 			object ob = CreateInstance (typeMap.TypeData.Type, true);
 

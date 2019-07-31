@@ -536,6 +536,7 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void TestOrderByIdDescendingThenByNameAscending ()
 		{
 			var q = from d in CreateData ()

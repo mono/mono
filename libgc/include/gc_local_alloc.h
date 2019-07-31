@@ -49,6 +49,10 @@
 #ifndef GC_LOCAL_ALLOC_H
 #define GC_LOCAL_ALLOC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* We assume ANSI C for this interface.	*/
 
 GC_PTR GC_local_malloc(size_t bytes);
@@ -60,6 +64,10 @@ GC_PTR GC_local_malloc_atomic(size_t bytes);
 			     void * ptr_to_struct_containing_descr);
   GC_PTR GC_local_gcj_fast_malloc(size_t lw,
 			     void * ptr_to_struct_containing_descr);
+#endif
+
+#ifdef __cplusplus
+} // extern "C"
 #endif
 
 # ifdef GC_DEBUG

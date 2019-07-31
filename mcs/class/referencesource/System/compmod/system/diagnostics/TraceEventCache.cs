@@ -40,7 +40,11 @@ namespace System.Diagnostics {
 
         public Stack LogicalOperationStack {
             get {
+#if DISABLE_REMOTING
+                throw new PlatformNotSupportedException ();
+#else
                 return Trace.CorrelationManager.LogicalOperationStack;
+#endif
             }
         }
 

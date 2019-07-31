@@ -1,9 +1,9 @@
 ﻿-------------------------
 server
-http://www.go-mono.com/server
-http://www.go-mono.com/server
+http://www.example.com/server
+http://www.example.com/server
 http
-www.go-mono.com
+www.example.com
 /server
 
 80
@@ -14,15 +14,15 @@ False
 Dns
 /server
 /server
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/
-http://www.go-mono.com/server/
-http://www.go-mono.com/server/
+http://www.example.com/server/
+http://www.example.com/server/
 http
-www.go-mono.com
+www.example.com
 /server/
 
 80
@@ -33,15 +33,15 @@ False
 Dns
 /server/
 /server/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/maybe_file
-http://www.go-mono.com/server/maybe_file
-http://www.go-mono.com/server/maybe_file
+http://www.example.com/server/maybe_file
+http://www.example.com/server/maybe_file
 http
-www.go-mono.com
+www.example.com
 /server/maybe_file
 
 80
@@ -52,15 +52,15 @@ False
 Dns
 /server/maybe_file
 /server/maybe_file
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/directory/
-http://www.go-mono.com/server/directory/
-http://www.go-mono.com/server/directory/
+http://www.example.com/server/directory/
+http://www.example.com/server/directory/
 http
-www.go-mono.com
+www.example.com
 /server/directory/
 
 80
@@ -71,15 +71,15 @@ False
 Dns
 /server/directory/
 /server/directory/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com
-http://www.go-mono.com/server.com
-http://www.go-mono.com/server.com
+http://www.example.com/server.com
+http://www.example.com/server.com
 http
-www.go-mono.com
+www.example.com
 /server.com
 
 80
@@ -90,15 +90,15 @@ False
 Dns
 /server.com
 /server.com
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/
-http://www.go-mono.com/server.com/
-http://www.go-mono.com/server.com/
+http://www.example.com/server.com/
+http://www.example.com/server.com/
 http
-www.go-mono.com
+www.example.com
 /server.com/
 
 80
@@ -109,15 +109,15 @@ False
 Dns
 /server.com/
 /server.com/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/maybe_file
-http://www.go-mono.com/server.com/maybe_file
-http://www.go-mono.com/server.com/maybe_file
+http://www.example.com/server.com/maybe_file
+http://www.example.com/server.com/maybe_file
 http
-www.go-mono.com
+www.example.com
 /server.com/maybe_file
 
 80
@@ -128,15 +128,15 @@ False
 Dns
 /server.com/maybe_file
 /server.com/maybe_file
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/directory/
-http://www.go-mono.com/server.com/directory/
-http://www.go-mono.com/server.com/directory/
+http://www.example.com/server.com/directory/
+http://www.example.com/server.com/directory/
 http
-www.go-mono.com
+www.example.com
 /server.com/directory/
 
 80
@@ -147,7 +147,7 @@ False
 Dns
 /server.com/directory/
 /server.com/directory/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
@@ -228,10 +228,10 @@ server
 
 -------------------------
 server
-http://www.go-mono.com/server
-http://www.go-mono.com/server
+http://www.example.com/server
+http://www.example.com/server
 http
-www.go-mono.com
+www.example.com
 /server
 
 80
@@ -242,15 +242,15 @@ False
 Dns
 /server
 /server
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/
-http://www.go-mono.com/server/
-http://www.go-mono.com/server/
+http://www.example.com/server/
+http://www.example.com/server/
 http
-www.go-mono.com
+www.example.com
 /server/
 
 80
@@ -261,15 +261,15 @@ False
 Dns
 /server/
 /server/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/maybe_file
-http://www.go-mono.com/server/maybe_file
-http://www.go-mono.com/server/maybe_file
+http://www.example.com/server/maybe_file
+http://www.example.com/server/maybe_file
 http
-www.go-mono.com
+www.example.com
 /server/maybe_file
 
 80
@@ -280,15 +280,15 @@ False
 Dns
 /server/maybe_file
 /server/maybe_file
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/directory/
-http://www.go-mono.com/server/directory/
-http://www.go-mono.com/server/directory/
+http://www.example.com/server/directory/
+http://www.example.com/server/directory/
 http
-www.go-mono.com
+www.example.com
 /server/directory/
 
 80
@@ -299,15 +299,15 @@ False
 Dns
 /server/directory/
 /server/directory/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com
-http://www.go-mono.com/server.com
-http://www.go-mono.com/server.com
+http://www.example.com/server.com
+http://www.example.com/server.com
 http
-www.go-mono.com
+www.example.com
 /server.com
 
 80
@@ -318,15 +318,15 @@ False
 Dns
 /server.com
 /server.com
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 readme.txt
-http://www.go-mono.com/readme.txt
-http://www.go-mono.com/readme.txt
+http://www.example.com/readme.txt
+http://www.example.com/readme.txt
 http
-www.go-mono.com
+www.example.com
 /readme.txt
 
 80
@@ -337,15 +337,15 @@ False
 Dns
 /readme.txt
 /readme.txt
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/
-http://www.go-mono.com/server.com/
-http://www.go-mono.com/server.com/
+http://www.example.com/server.com/
+http://www.example.com/server.com/
 http
-www.go-mono.com
+www.example.com
 /server.com/
 
 80
@@ -356,15 +356,15 @@ False
 Dns
 /server.com/
 /server.com/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/maybe_file
-http://www.go-mono.com/server.com/maybe_file
-http://www.go-mono.com/server.com/maybe_file
+http://www.example.com/server.com/maybe_file
+http://www.example.com/server.com/maybe_file
 http
-www.go-mono.com
+www.example.com
 /server.com/maybe_file
 
 80
@@ -375,15 +375,15 @@ False
 Dns
 /server.com/maybe_file
 /server.com/maybe_file
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server.com/directory/
-http://www.go-mono.com/server.com/directory/
-http://www.go-mono.com/server.com/directory/
+http://www.example.com/server.com/directory/
+http://www.example.com/server.com/directory/
 http
-www.go-mono.com
+www.example.com
 /server.com/directory/
 
 80
@@ -394,15 +394,15 @@ False
 Dns
 /server.com/directory/
 /server.com/directory/
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 contoso.com?subject=uri
-http://www.go-mono.com/contoso.com?subject=uri
-http://www.go-mono.com/contoso.com?subject=uri
+http://www.example.com/contoso.com?subject=uri
+http://www.example.com/contoso.com?subject=uri
 http
-www.go-mono.com
+www.example.com
 /contoso.com
 ?subject=uri
 80
@@ -413,7 +413,7 @@ False
 Dns
 /contoso.com
 /contoso.com?subject=uri
-www.go-mono.com
+www.example.com
 
 
 -------------------------
@@ -456,10 +456,10 @@ myserver
 
 -------------------------
 www.contoso.com
-http://www.go-mono.com/www.contoso.com
-http://www.go-mono.com/www.contoso.com
+http://www.example.com/www.contoso.com
+http://www.example.com/www.contoso.com
 http
-www.go-mono.com
+www.example.com
 /www.contoso.com
 
 80
@@ -470,15 +470,15 @@ False
 Dns
 /www.contoso.com
 /www.contoso.com
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 www.contoso.com/foo/bar/index.html?x=0
-http://www.go-mono.com/www.contoso.com/foo/bar/index.html?x=0
-http://www.go-mono.com/www.contoso.com/foo/bar/index.html?x=0
+http://www.example.com/www.contoso.com/foo/bar/index.html?x=0
+http://www.example.com/www.contoso.com/foo/bar/index.html?x=0
 http
-www.go-mono.com
+www.example.com
 /www.contoso.com/foo/bar/index.html
 ?x=0
 80
@@ -489,7 +489,7 @@ False
 Dns
 /www.contoso.com/foo/bar/index.html
 /www.contoso.com/foo/bar/index.html?x=0
-www.go-mono.com
+www.example.com
 
 
 -------------------------
@@ -513,10 +513,10 @@ c:/tmp/hello.txt
 
 -------------------------
 mymachine/cygwin/tmp/hello.txt
-http://www.go-mono.com/mymachine/cygwin/tmp/hello.txt
-http://www.go-mono.com/mymachine/cygwin/tmp/hello.txt
+http://www.example.com/mymachine/cygwin/tmp/hello.txt
+http://www.example.com/mymachine/cygwin/tmp/hello.txt
 http
-www.go-mono.com
+www.example.com
 /mymachine/cygwin/tmp/hello.txt
 
 80
@@ -527,15 +527,15 @@ False
 Dns
 /mymachine/cygwin/tmp/hello.txt
 /mymachine/cygwin/tmp/hello.txt
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 one_file.txt
-http://www.go-mono.com/one_file.txt
-http://www.go-mono.com/one_file.txt
+http://www.example.com/one_file.txt
+http://www.example.com/one_file.txt
 http
-www.go-mono.com
+www.example.com
 /one_file.txt
 
 80
@@ -546,15 +546,15 @@ False
 Dns
 /one_file.txt
 /one_file.txt
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 cygwin/tmp/hello.txt
-http://www.go-mono.com/cygwin/tmp/hello.txt
-http://www.go-mono.com/cygwin/tmp/hello.txt
+http://www.example.com/cygwin/tmp/hello.txt
+http://www.example.com/cygwin/tmp/hello.txt
 http
-www.go-mono.com
+www.example.com
 /cygwin/tmp/hello.txt
 
 80
@@ -565,15 +565,15 @@ False
 Dns
 /cygwin/tmp/hello.txt
 /cygwin/tmp/hello.txt
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 server/filename.ext
-http://www.go-mono.com/server/filename.ext
-http://www.go-mono.com/server/filename.ext
+http://www.example.com/server/filename.ext
+http://www.example.com/server/filename.ext
 http
-www.go-mono.com
+www.example.com
 /server/filename.ext
 
 80
@@ -584,7 +584,7 @@ False
 Dns
 /server/filename.ext
 /server/filename.ext
-www.go-mono.com
+www.example.com
 
 
 -------------------------
@@ -608,10 +608,10 @@ server
 
 -------------------------
 1.2.3.4
-http://www.go-mono.com/1.2.3.4
-http://www.go-mono.com/1.2.3.4
+http://www.example.com/1.2.3.4
+http://www.example.com/1.2.3.4
 http
-www.go-mono.com
+www.example.com
 /1.2.3.4
 
 80
@@ -622,15 +622,15 @@ False
 Dns
 /1.2.3.4
 /1.2.3.4
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 1.2.3.4
-http://www.go-mono.com/1.2.3.4
-http://www.go-mono.com/1.2.3.4
+http://www.example.com/1.2.3.4
+http://www.example.com/1.2.3.4
 http
-www.go-mono.com
+www.example.com
 /1.2.3.4
 
 80
@@ -641,15 +641,15 @@ False
 Dns
 /1.2.3.4
 /1.2.3.4
-www.go-mono.com
+www.example.com
 
 
 -------------------------
 localhost/c#
-http://www.go-mono.com/localhost/c#
-http://www.go-mono.com/localhost/c#
+http://www.example.com/localhost/c#
+http://www.example.com/localhost/c#
 http
-www.go-mono.com
+www.example.com
 /localhost/c
 
 80
@@ -660,15 +660,15 @@ False
 Dns
 /localhost/c
 /localhost/c
-www.go-mono.com
+www.example.com
 #
 
 -------------------------
 localhost/c#bookmark
-http://www.go-mono.com/localhost/c#bookmark
-http://www.go-mono.com/localhost/c#bookmark
+http://www.example.com/localhost/c#bookmark
+http://www.example.com/localhost/c#bookmark
 http
-www.go-mono.com
+www.example.com
 /localhost/c
 
 80
@@ -679,15 +679,15 @@ False
 Dns
 /localhost/c
 /localhost/c
-www.go-mono.com
+www.example.com
 #bookmark
 
 -------------------------
 localhost/c#
-http://www.go-mono.com/localhost/c#
-http://www.go-mono.com/localhost/c#
+http://www.example.com/localhost/c#
+http://www.example.com/localhost/c#
 http
-www.go-mono.com
+www.example.com
 /localhost/c
 
 80
@@ -698,15 +698,15 @@ False
 Dns
 /localhost/c
 /localhost/c
-www.go-mono.com
+www.example.com
 #
 
 -------------------------
 c#
-http://www.go-mono.com/c#
-http://www.go-mono.com/c#
+http://www.example.com/c#
+http://www.example.com/c#
 http
-www.go-mono.com
+www.example.com
 /c
 
 80
@@ -717,7 +717,7 @@ False
 Dns
 /c
 /c
-www.go-mono.com
+www.example.com
 #
 
 -------------------------
@@ -741,10 +741,10 @@ c
 
 -------------------------
 c#bookmark
-http://www.go-mono.com/c#bookmark
-http://www.go-mono.com/c#bookmark
+http://www.example.com/c#bookmark
+http://www.example.com/c#bookmark
 http
-www.go-mono.com
+www.example.com
 /c
 
 80
@@ -755,7 +755,7 @@ False
 Dns
 /c
 /c
-www.go-mono.com
+www.example.com
 #bookmark
 
 -------------------------
@@ -874,10 +874,10 @@ cn_to_ja
 
 -------------------------
 web.app.com/test.cgi?value=あいうえお
-http://www.go-mono.com/web.app.com/test.cgi?value=あいうえお
-http://www.go-mono.com/web.app.com/test.cgi?value=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
+http://www.example.com/web.app.com/test.cgi?value=あいうえお
+http://www.example.com/web.app.com/test.cgi?value=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
 http
-www.go-mono.com
+www.example.com
 /web.app.com/test.cgi
 ?value=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
 80
@@ -888,7 +888,7 @@ False
 Dns
 /web.app.com/test.cgi
 /web.app.com/test.cgi?value=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
-www.go-mono.com
+www.example.com
 
 
 -------------------------

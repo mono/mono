@@ -30,11 +30,16 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Text;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public abstract class Formatter {
+	abstract class Formatter {
 
-		public static Formatter Current { get; set; }
+		public Formatter(State state)
+		{
+			State = state;
+		}
+
+		public State State { get; }
 
 		public abstract string LesserThan { get; }
 		public abstract string GreaterThan { get; }

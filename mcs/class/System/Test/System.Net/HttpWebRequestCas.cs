@@ -26,7 +26,7 @@ namespace MonoCasTests.System.Net {
 
 		static ManualResetEvent reset;
 		private string message;
-		private string uri = "http://www.google.com";
+		private string uri = "http://www.example.com";
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()

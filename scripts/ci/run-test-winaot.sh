@@ -1,13 +1,12 @@
 #!/bin/bash -e
 
-if test -n "${MONO_LLVMONLY}";
-then
-${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k llvmonlycheck
+if [[ ${CI_TAGS} == *'winaot_llvm'* ]]; then
+    ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmfullaotcheck
 else
-${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k fullaotcheck
+    ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
 fi
 
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
@@ -28,9 +27,11 @@ ${TESTCMD} --label=System.Runtime.Serialization --timeout=5m make -w -C mcs/clas
 ${TESTCMD} --label=System.ServiceModel --timeout=15m make -w -C mcs/class/System.ServiceModel run-test
 ${TESTCMD} --label=System.ServiceModel.Web --timeout=5m make -w -C mcs/class/System.ServiceModel.Web run-test
 ${TESTCMD} --label=System.ComponentModel.DataAnnotations --timeout=5m make -w -C mcs/class/System.ComponentModel.DataAnnotations run-test
-${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
+${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 
 rm -fr /tmp/jenkins-temp-aspnet*
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

@@ -81,13 +81,13 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				System.Web.UI.WebControls.HyperLinkColumn c_company = new System.Web.UI.WebControls.HyperLinkColumn();
 
 				c_id.DataTextField = "ID";
-				c_id.NavigateUrl = "http://www.google.com";
+				c_id.NavigateUrl = "http://www.example.com";
 				c_id.Target = "";
 				c_name.DataTextField = "Name";
-				c_name.NavigateUrl = "http://www.google.com";
+				c_name.NavigateUrl = "http://www.example.com";
 				c_name.Target = "_blank";
 				c_company.DataTextField = "Company";
-				c_company.NavigateUrl = "http://www.google.com";
+				c_company.NavigateUrl = "http://www.example.com";
 				c_company.Target = "skjfh skjf hkjd";
 
 				DataGrid1.Columns.Add(c_id);

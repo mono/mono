@@ -13,7 +13,11 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
+using System.Reflection;
+
 using NUnit.Framework;
+
+using System.Threading.Tasks;
 
 namespace MonoTests.System
 {
@@ -262,6 +266,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void GetObjectData ()
 		{
 			string msg = "MESSAGE";
@@ -379,6 +384,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void Source ()
 		{
 			Exception ex1 = new Exception ("MSG");
@@ -399,6 +405,198 @@ namespace MonoTests.System
 
 			Assert.IsNull (a.InnerException.Source);
 		}
+
+#if !MOBILE
+		void NestedStackTraces (int depth)
+		{
+			if (depth == 0)
+				throw new ArgumentException ("Depth 0 exception");
+
+			try {
+				NestedStackTraces (depth - 1);
+			} catch (Exception exc) {
+				throw new Exception (String.Format ("Depth {0} exception, expect nested",  depth), exc);
+			}
+		}
+		void StacktraceToStateTest (int depth)
+		{
+			try {
+				NestedStackTraces (depth);
+			} catch (Exception exc) {
+				var monoType = Type.GetType ("Mono.Runtime", false);
+				var convert = monoType.GetMethod("ExceptionToState", BindingFlags.NonPublic | BindingFlags.Static);
+				object [] convert_params = new object[] {exc};
+				var output = (Tuple<String, ulong, ulong>) convert.Invoke(null, convert_params);
+
+				var dump = output.Item1;
+				var portable_hash = output.Item2;
+				var unportable_hash = output.Item3;
+
+				// To see what we're working with
+				// Console.WriteLine (dump);
+
+				Assert.IsTrue (portable_hash != 0, "#1");
+				Assert.IsTrue (unportable_hash != 0, "#2");
+				Assert.IsTrue (dump.Length > 0, "#3");
+			}
+		}
+
+		// Ensure that we can convert a stacktrace to a
+		// telemetry message
+		//
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateBase ()
+		{
+			StacktraceToStateTest (0);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateDeeper ()
+		{
+			StacktraceToStateTest (2);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void StacktraceToStateOverflow ()
+		{
+			// We set a limit on 15 nested exceptions. Lets check that we're valid
+			// when exceeding that limit.
+			StacktraceToStateTest (20);
+		}
+
+		void DumpSingle ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("DumpStateSingle", BindingFlags.NonPublic | BindingFlags.Static);
+			var output = (Tuple<String, ulong, ulong>) convert.Invoke(null, Array.Empty<object> ());
+
+			var dump = output.Item1;
+			var portable_hash = output.Item2;
+			var unportable_hash = output.Item3;
+
+			Assert.IsTrue (portable_hash != 0, "#1");
+			Assert.IsTrue (unportable_hash != 0, "#2");
+			Assert.IsTrue (dump.Length > 0, "#3");
+		}
+
+		void DumpTotal ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("DumpStateTotal", BindingFlags.NonPublic | BindingFlags.Static);
+			var output = (Tuple<String, ulong, ulong>) convert.Invoke(null, Array.Empty<object> ());
+
+			var dump = output.Item1;
+			var portable_hash = output.Item2;
+			var unportable_hash = output.Item3;
+
+			Assert.IsTrue (portable_hash != 0, "#1");
+			Assert.IsTrue (unportable_hash != 0, "#2");
+			Assert.IsTrue (dump.Length > 0, "#3");
+		}
+
+		void DumpLogSet ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("EnableCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			convert.Invoke(null, new object[] { "./" });
+		}
+
+		void DumpLogUnset ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("EnableCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			convert.Invoke(null, new object[] { null });
+		}
+
+		void DumpLogCheck ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("CheckCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			var result = convert.Invoke(null, new object[] { "./", true });
+			var enumType = monoType.Assembly.GetType("Mono.Runtime+CrashReportLogLevel");
+			var doneEnum = Enum.Parse(enumType, "MonoSummaryDone");
+			Assert.AreEqual (doneEnum, result, "#DLC1");
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalLogged ()
+		{
+			DumpLogSet ();
+			DumpTotal ();
+			DumpLogUnset ();
+			DumpLogCheck ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleOnce ()
+		{
+			DumpSingle ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleConcurrent ()
+		{
+			// checks that self-dumping works in parallel, locklessly
+			int amt = 20;
+			var tasks = new Task [amt];
+			for (int i=0; i < amt; i++)
+				tasks [i] = Task.Run(() => DumpSingle ());
+			Task.WaitAll (tasks);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleAsync ()
+		{
+			// checks that dumping works in an async context
+			var t = Task.Run(() => DumpSingle ());
+			t.Wait ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalOnce ()
+		{
+			DumpTotal ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalRepeated ()
+		{
+			// checks that the state doesn't get broken with repeated use
+			DumpTotal ();
+			DumpTotal ();
+			DumpTotal ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalAsync ()
+		{
+			// checks that dumping works in an async context
+			var t = Task.Run(() => DumpTotal ());
+			t.Wait ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalConcurrent ()
+		{
+			int amt = 3;
+			var tasks = new Task [amt];
+			for (int i=0; i < amt; i++)
+				tasks [i] = Task.Run(() => DumpTotal ());
+			Task.WaitAll (tasks);
+		}
+
+#endif
 
 		[Test]
 		public void StackTrace ()

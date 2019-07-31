@@ -58,10 +58,12 @@ void
 mono_reflection_emit_init (void);
 
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb);
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error);
 
 gpointer
 mono_image_g_malloc0 (MonoImage *image, guint size);
+
+#define mono_image_g_malloc0(image, size) (g_cast (mono_image_g_malloc0 ((image), (size))))
 
 gboolean
 mono_is_sre_type_builder (MonoClass *klass);
@@ -89,6 +91,9 @@ mono_reflection_type_get_handle (MonoReflectionType *ref, MonoError *error);
 
 gpointer
 mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
+
+gpointer
+mono_reflection_resolve_object_handle (MonoImage *image, MonoObjectHandle obj, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
 MonoType* mono_type_array_get_and_resolve (MonoArrayHandle array, int idx, MonoError* error);
 

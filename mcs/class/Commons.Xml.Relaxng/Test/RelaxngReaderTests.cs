@@ -13,6 +13,8 @@ using System.Xml;
 using Commons.Xml.Relaxng;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
@@ -33,7 +35,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleRead ()
 		{
-			loadGrammarFromUrl ("Test/XmlFiles/SimpleElementPattern1.rng");
+			loadGrammarFromUrl (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/SimpleElementPattern1.rng"));
 			RelaxngPattern p = reader.ReadPattern ();
 
 			Assert.AreEqual (RelaxngPatternType.Element, p.PatternType);
@@ -42,7 +44,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void CompileRelaxngGrammar ()
 		{
-			loadGrammarFromUrl ("Test/XmlFiles/relaxng.rng");
+			loadGrammarFromUrl (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/relaxng.rng"));
 			RelaxngPattern p = reader.ReadPattern ();
 
 			Assert.AreEqual (RelaxngPatternType.Grammar, p.PatternType);

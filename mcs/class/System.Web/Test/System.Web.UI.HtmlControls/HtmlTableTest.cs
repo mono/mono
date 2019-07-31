@@ -278,9 +278,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			r.Cells.Add (c1);
 			HtmlTableCell c2 = new HtmlTableCell ();
 			c2.Align = "left";
-			c2.InnerHtml = "<a href=\"http://www.go-mono.com\">Mono</a>";
+			c2.InnerHtml = "<a href=\"http://www.example.com\">Example</a>";
 			r.Cells.Add (c2);
-			Assert.AreEqual (RemoveWS ("<table align=\"center\">\r\n\t<tr valign=\"top\">\r\n\t\t<td align=\"right\">Go</td>\r\n\t\t<td align=\"left\"><a href=\"http://www.go-mono.com\">Mono</a></td>\r\n\t</tr>\r\n</table>\r\n"), RemoveWS (t.Render ()));
+			Assert.AreEqual (RemoveWS ("<table align=\"center\">\r\n\t<tr valign=\"top\">\r\n\t\t<td align=\"right\">Go</td>\r\n\t\t<td align=\"left\"><a href=\"http://www.example.com\">Example</a></td>\r\n\t</tr>\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]

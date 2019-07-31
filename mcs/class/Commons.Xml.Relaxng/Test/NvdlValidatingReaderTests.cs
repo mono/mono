@@ -13,6 +13,8 @@ using System.Xml;
 using Commons.Xml.Nvdl;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
@@ -21,7 +23,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void ReadNvdlNvdl ()
 		{
-			using (TextReader r = File.OpenText ("Test/XmlFiles/nvdl.nvdl")) {
+			using (TextReader r = File.OpenText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/nvdl.nvdl"))) {
 				NvdlRules rules = NvdlReader.Read (
 					new XmlTextReader (r));
 			}
@@ -31,7 +33,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		public void ValidateNvdlNvdl ()
 		{
 			NvdlRules rules = null;
-			string path = "Test/XmlFiles/nvdl.nvdl";
+			string path = TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/nvdl.nvdl");
 			using (TextReader r = File.OpenText (path)) {
 				rules = NvdlReader.Read (
 					new XmlTextReader (path, r));

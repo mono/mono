@@ -91,6 +91,15 @@ public class Harness
 				Environment.Exit (1);
 		}
 
+		if (state_line.Contains ("unavailable")) {
+			// Created for an older version of xcode
+			var args = "simctl delete unavailable";
+			Console.WriteLine ("Running: " + "xcrun " + args);
+			var process = Process.Start ("xcrun", args);
+			process.WaitForExit ();
+			state_line = "";
+		}
+
 		bool need_start = false;
 		if (state_line == "") {
 			// Get the runtime type
@@ -195,7 +204,7 @@ public class Harness
 				break;
 		}
 
-		if (result_line != null && result_line.Contains ("Errors: 0"))
+		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
 		else
 			Environment.Exit (1);
@@ -271,7 +280,7 @@ public class Harness
 				break;
 		}
 
-		if (result_line != null && result_line.Contains ("Errors: 0"))
+		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
 		else
 			Environment.Exit (1);

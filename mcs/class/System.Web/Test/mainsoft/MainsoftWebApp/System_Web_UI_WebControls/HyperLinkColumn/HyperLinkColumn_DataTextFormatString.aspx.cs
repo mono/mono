@@ -86,13 +86,13 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 
 				c_id.DataTextField = "";
 				c_id.DataTextFormatString = "";
-				c_id.NavigateUrl = "http://www.google.com";
+				c_id.NavigateUrl = "http://www.example.com";
 				c_name.DataTextField = "Name";
 				c_name.DataTextFormatString = "(format str)";
-				c_name.NavigateUrl = "http://www.google.com";
+				c_name.NavigateUrl = "http://www.example.com";
 				c_company.DataTextField = "Company";
 				c_company.DataTextFormatString = "{0:c5}";
-				c_company.NavigateUrl = "http://www.google.com";
+				c_company.NavigateUrl = "http://www.example.com";
 
 				DataGrid1.Columns.Add(c_id);
 				DataGrid1.Columns.Add(c_name);
@@ -117,7 +117,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 
 				c_id.DataTextField = "ID";
 				c_id.DataTextFormatString = "{0:c5}";
-				c_id.NavigateUrl = "http://www.google.com";
+				c_id.NavigateUrl = "http://www.example.com";
 
 				DataGrid2.Columns.Add(c_id);
 

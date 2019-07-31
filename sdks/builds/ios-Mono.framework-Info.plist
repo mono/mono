@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>en</string>
+        <key>CFBundleIdentifier</key>
+        <string>xamarin.ios.mono-framework</string>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>CFBundleName</key>
+        <string>Mono</string>
+        <key>CFBundlePackageType</key>
+        <string>FMWK</string>
+        <key>CFBundleShortVersionString</key>
+        <string>1.0</string>
+        <key>CFBundleSignature</key>
+        <string>????</string>
+        <key>CFBundleVersion</key>
+        <string>3.12</string>
+        <key>NSPrincipalClass</key>
+        <string></string>
+        <key>CFBundleExecutable</key>
+        <string>Mono</string>
+
+        <key>BuildMachineOSBuild</key>
+        <string>13F34</string>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>en</string>
+        <key>CFBundleSupportedPlatforms</key>
+        <array>
+                <string>iPhoneOS</string>
+        </array>
+        <key>DTCompiler</key>
+        <string>com.apple.compilers.llvm.clang.1_0</string>
+        <key>DTPlatformBuild</key>
+        <string>12D508</string>
+        <key>DTPlatformName</key>
+        <string>iphoneos</string>
+        <key>DTPlatformVersion</key>
+        <string>8.2</string>
+        <key>DTSDKBuild</key>
+        <string>12D508</string>
+        <key>DTSDKName</key>
+        <string>iphoneos8.2</string>
+        <key>DTXcode</key>
+        <string>0620</string>
+        <key>DTXcodeBuild</key>
+        <string>6C131e</string>
+        <key>MinimumOSVersion</key>
+        <string>8.0</string>
+        <key>UIDeviceFamily</key>
+        <array>
+                <integer>1</integer>
+                <integer>2</integer>
+        </array>
+</dict>
+</plist>

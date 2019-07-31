@@ -13,136 +13,124 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Mono {
+namespace Mono
+{
+	unsafe struct RuntimeClassHandle
+	{
+		RuntimeStructs.MonoClass* value;
 
-	internal struct RuntimeClassHandle {
-		unsafe RuntimeStructs.MonoClass* value;
-
-		internal unsafe RuntimeClassHandle (RuntimeStructs.MonoClass* value) {
+		internal RuntimeClassHandle (RuntimeStructs.MonoClass* value)
+		{
 			this.value = value;
 		}
 
-		internal unsafe RuntimeClassHandle (IntPtr ptr) {
+		internal RuntimeClassHandle (IntPtr ptr)
+		{
 			this.value = (RuntimeStructs.MonoClass*) ptr;
 		}
 
-		internal unsafe RuntimeStructs.MonoClass* Value {
-			get { return value; }
-		}
+		internal RuntimeStructs.MonoClass* Value => value;
 
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
 				return false;
 
-			unsafe { return value == ((RuntimeClassHandle)obj).Value; }
+			return value == ((RuntimeClassHandle)obj).Value;
 		}
 
-		public override int GetHashCode ()
-		{
-			unsafe { return ((IntPtr)value).GetHashCode (); }
-		}
+		public override int GetHashCode () => ((IntPtr)value).GetHashCode ();
 
 		public bool Equals (RuntimeClassHandle handle)
 		{
-			unsafe { return value == handle.Value; }
+			return value == handle.Value;
 		}
 
-		public static bool operator == (RuntimeClassHandle left, Object right)
+		public static bool operator == (RuntimeClassHandle left, object right)
 		{
-			return (right != null) && (right is RuntimeClassHandle) && left.Equals ((RuntimeClassHandle)right);
+			return right != null && right is RuntimeClassHandle rch && left.Equals (rch);
 		}
 
-		public static bool operator != (RuntimeClassHandle left, Object right)
+		public static bool operator != (RuntimeClassHandle left, object right)
 		{
-			return (right == null) || !(right is RuntimeClassHandle) || !left.Equals ((RuntimeClassHandle)right);
+			return !(left == right);
 		}
 
-		public static bool operator == (Object left, RuntimeClassHandle right)
+		public static bool operator == (object left, RuntimeClassHandle right)
 		{
-			return (left != null) && (left is RuntimeClassHandle) && ((RuntimeClassHandle)left).Equals (right);
+			return left != null && left is RuntimeClassHandle rch && rch.Equals (right);
 		}
 
-		public static bool operator != (Object left, RuntimeClassHandle right)
+		public static bool operator != (object left, RuntimeClassHandle right)
 		{
-			return (left == null) || !(left is RuntimeClassHandle) || !((RuntimeClassHandle)left).Equals (right);
+			return !(left == right);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		internal unsafe extern static IntPtr GetTypeFromClass (RuntimeStructs.MonoClass *klass);
 
-		internal RuntimeTypeHandle GetTypeHandle ()
-		{
-			unsafe { return new RuntimeTypeHandle (GetTypeFromClass (value)); }
-		}
+		internal RuntimeTypeHandle GetTypeHandle () => new RuntimeTypeHandle (GetTypeFromClass (value));
 	}
 
-	internal struct RuntimeRemoteClassHandle {
-		unsafe RuntimeStructs.RemoteClass* value;
+	unsafe struct RuntimeRemoteClassHandle
+	{
+		RuntimeStructs.RemoteClass* value;
 
-		internal unsafe RuntimeRemoteClassHandle (RuntimeStructs.RemoteClass* value)
+		internal RuntimeRemoteClassHandle (RuntimeStructs.RemoteClass* value)
 		{
 			this.value = value;
 		}
 
 		internal RuntimeClassHandle ProxyClass {
 			get {
-				unsafe {
-					return new RuntimeClassHandle (value->proxy_class);
-				}
+				return new RuntimeClassHandle (value->proxy_class);
 			}
 		}
 	}
 
-	internal struct RuntimeGenericParamInfoHandle {
-		unsafe RuntimeStructs.GenericParamInfo* value;
+	unsafe struct RuntimeGenericParamInfoHandle
+	{
+		RuntimeStructs.GenericParamInfo* value;
 
-		internal unsafe RuntimeGenericParamInfoHandle (RuntimeStructs.GenericParamInfo* value)
+		internal RuntimeGenericParamInfoHandle (RuntimeStructs.GenericParamInfo* value)
 		{
 			this.value = value;
 		}
 
-		internal unsafe RuntimeGenericParamInfoHandle (IntPtr ptr)
+		internal RuntimeGenericParamInfoHandle (IntPtr ptr)
 		{
 			this.value = (RuntimeStructs.GenericParamInfo*) ptr;
 		}
 
+		internal Type[] Constraints => GetConstraints ();
 
-		internal Type[] Constraints { get { return GetConstraints (); } }
+		internal GenericParameterAttributes Attributes => (GenericParameterAttributes) value->flags;
 
-		internal GenericParameterAttributes Attributes {
-			get {
-				unsafe {
-					return (GenericParameterAttributes) value->flags;
-				}
-			}
-		}
-
-		Type[] GetConstraints () {
+		Type[] GetConstraints ()
+		{
 			int n = GetConstraintsCount ();
-			var a = new Type[n];
+			var a = new Type [n];
 			for (int i = 0; i < n; i++) {
-				unsafe {
-					RuntimeClassHandle c = new RuntimeClassHandle (value->constraints[i]);
-					a[i] = Type.GetTypeFromHandle (c.GetTypeHandle ());
-				}
+				RuntimeClassHandle c = new RuntimeClassHandle (value->constraints[i]);
+				a[i] = Type.GetTypeFromHandle (c.GetTypeHandle ());
 			}
+
 			return a;
 		}
 
-		int GetConstraintsCount () {
+		int GetConstraintsCount ()
+		{
 			int i = 0;
-			unsafe {
-				RuntimeStructs.MonoClass** p = value->constraints;
-				while (p != null && *p != null)  {
-					p++; i++;
-				}
+			RuntimeStructs.MonoClass** p = value->constraints;
+			while (p != null && *p != null)  {
+				p++; i++;
 			}
 			return i;
 		}
 	}
 
-	internal struct RuntimeEventHandle {
+	internal struct RuntimeEventHandle
+	{
 		IntPtr value;
 
 		internal RuntimeEventHandle (IntPtr v)
@@ -150,11 +138,7 @@ namespace Mono {
 			value = v;
 		}
 
-		public IntPtr Value {
-			get {
-				return value;
-			}
-		}
+		public IntPtr Value => value;
 
 		public override bool Equals (object obj)
 		{
@@ -185,7 +169,8 @@ namespace Mono {
 		}
 	}
 
-	internal struct RuntimePropertyHandle {
+	internal struct RuntimePropertyHandle
+	{
 		IntPtr value;
 
 		internal RuntimePropertyHandle (IntPtr v)
@@ -193,11 +178,7 @@ namespace Mono {
 			value = v;
 		}
 
-		public IntPtr Value {
-			get {
-				return value;
-			}
-		}
+		public IntPtr Value => value;
 
 		public override bool Equals (object obj)
 		{
@@ -228,47 +209,38 @@ namespace Mono {
 		}
 	}
 
-	internal struct RuntimeGPtrArrayHandle {
-		unsafe RuntimeStructs.GPtrArray* value;
+	unsafe struct RuntimeGPtrArrayHandle
+	{
+		RuntimeStructs.GPtrArray* value;
 
-		internal unsafe RuntimeGPtrArrayHandle (RuntimeStructs.GPtrArray* value)
+		internal RuntimeGPtrArrayHandle (RuntimeStructs.GPtrArray* value)
 		{
 			this.value = value;
 		}
 
-		internal unsafe RuntimeGPtrArrayHandle (IntPtr ptr)
+		internal RuntimeGPtrArrayHandle (IntPtr ptr)
 		{
 			this.value = (RuntimeStructs.GPtrArray*) ptr;
 		}
 
-		internal int Length {
-			get {
-				unsafe {
-					return value->len;
-				}
-			}
-		}
+		internal int Length => value->len;
 
-		internal IntPtr this[int i] => Lookup (i);
+		internal IntPtr this [int i] => Lookup (i);
 
 		internal IntPtr Lookup (int i)
 		{
 			if (i >= 0 && i < Length) {
-				unsafe {
-					return value->data[i];
-				}
+				return value->data[i];
 			} else
 				throw new IndexOutOfRangeException ();
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		unsafe extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value);
+		extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value);
 
 		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h) {
-			unsafe {
-				GPtrArrayFree (h.value);
-				h.value = null;
-			}
+			GPtrArrayFree (h.value);
+			h.value = null;
 		}
 	}
 }

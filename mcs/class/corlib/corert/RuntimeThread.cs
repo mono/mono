@@ -5,6 +5,9 @@ namespace Internal.Runtime.Augments
 {
 	sealed class RuntimeThread
 	{
+		// Note: Magic number copied from CoreRT's RuntimeThread.cs. See the original source code for an explanation.
+		internal static readonly int OptimalMaxSpinWaitsPerSpinIteration = 64;
+
 		readonly Thread thread;
 
 		RuntimeThread (Thread t) { thread = t; }
@@ -25,6 +28,8 @@ namespace Internal.Runtime.Augments
 		public void Start () => thread.Start ();
 
 		public void Start (object state) => thread.Start (state);
+
+		public static void Sleep(int millisecondsTimeout) => Thread.Sleep (millisecondsTimeout);
 
 		public static bool Yield () => Thread.Yield ();
 

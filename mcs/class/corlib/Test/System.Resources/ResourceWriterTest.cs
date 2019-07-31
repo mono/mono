@@ -16,6 +16,8 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
@@ -356,11 +358,11 @@ namespace MonoTests.System.Resources
 			stream.Write (buff, 0, buff.Length);
 			stream.Position = 0;
 
-			ResourceWriter rw = new ResourceWriter ("Test/resources/AddResource_Stream.resources");
+			ResourceWriter rw = new ResourceWriter (TestResourceHelper.GetFullPathOfResource ("Test/resources/AddResource_Stream.resources"));
 			rw.AddResource ("Name", (object)stream);
 			rw.Close ();
 
-			ResourceReader rr = new ResourceReader ("Test/resources/AddResource_Stream.resources");
+			ResourceReader rr = new ResourceReader (TestResourceHelper.GetFullPathOfResource ("Test/resources/AddResource_Stream.resources"));
 			IDictionaryEnumerator enumerator = rr.GetEnumerator ();
 
 			// Get the first element
@@ -587,7 +589,7 @@ namespace MonoTests.System.Resources
 		{
 			MemoryStream ms = new MemoryStream ();
 			using (ResourceReader xr = new ResourceReader (
-				"Test/resources/bug81759.resources")) {
+				TestResourceHelper.GetFullPathOfResource ("Test/resources/bug81759.resources"))) {
 				ResourceWriter rw = new ResourceWriter (ms);
 				foreach (DictionaryEntry de in xr)
 					rw.AddResource ((string) de.Key, de.Value);

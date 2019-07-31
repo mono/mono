@@ -283,6 +283,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test] // bug #81930
+		[Category ("NotWasm")]
 		public void IsReadOnly ()
 		{
 			CultureInfo ci;
@@ -504,6 +505,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void UseUserOverride_CurrentCulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
@@ -515,6 +517,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void UseUserOverride_CurrentUICulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
@@ -757,6 +760,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FlowCultureInfoFromParentThreadSinceNet46 ()
 		{
 			if (SynchronizationContext.Current != null) {
@@ -771,6 +775,24 @@ namespace MonoTests.System.Globalization
 			};
 
 			Assert.IsTrue (f ().Wait (5 * 1000), "#1");
+		}
+
+		[Test]
+		public void SpanToUpperInvariantDoesntUseCurrentCulture ()
+		{
+			string testStr = "test";
+			var dst = new Span<char> (new char [testStr.Length]);
+			CultureInfo savedCulture = CultureInfo.CurrentCulture;
+			CultureInfo.CurrentCulture = new InterceptingLocale ();
+			testStr.AsSpan ().ToUpperInvariant (dst); // should not throw InvalidOperationException ("Shouldn't be called.")
+			CultureInfo.CurrentCulture = savedCulture;
+			Assert.AreEqual ("TEST", dst.ToString ());
+		}
+
+		private class InterceptingLocale : CultureInfo
+		{
+			public InterceptingLocale () : base (string.Empty) { }
+			public override TextInfo TextInfo => throw new InvalidOperationException ("Shouldn't be called.");
 		}
 	}
 }

@@ -926,8 +926,8 @@ namespace Mono.Cecil.Signatures {
 
 		MarshalSig ReadMarshalSig (byte [] data)
 		{
-			int start;
-			MarshalSig ms = new MarshalSig ((NativeType) Utilities.ReadCompressedInteger (data, 0, out start));
+			MarshalSig ms = new MarshalSig ((NativeType) data[0]);
+			int start = 1;
 			switch (ms.NativeInstrinsic) {
 			case NativeType.ARRAY:
 				MarshalSig.Array ar = new MarshalSig.Array ();

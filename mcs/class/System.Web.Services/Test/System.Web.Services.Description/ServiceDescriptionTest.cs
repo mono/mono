@@ -18,13 +18,15 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Collections;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Services.Description
 {
 	[TestFixture]
 	public class ServiceDescriptionTest
 	{
 		[Test]
-		[Category ("MacNotWorking")] // https://bugzilla.xamarin.com/show_bug.cgi?id=51254
+		[Category ("NotOnMac")] // https://bugzilla.xamarin.com/show_bug.cgi?id=51254
 		public void SimpleWrite ()
 		{
 			ServiceDescription sd = new ServiceDescription ();
@@ -52,14 +54,14 @@ namespace MonoTests.System.Web.Services.Description
 		public void ReadAndRetrievalUrl ()
 		{
 			Assert.AreEqual (String.Empty, new ServiceDescription ().RetrievalUrl, "#1");
-			ServiceDescription sd = ServiceDescription.Read ("Test/System.Web.Services.Description/test2.wsdl");
+			ServiceDescription sd = ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test2.wsdl"));
 			Assert.AreEqual (String.Empty, sd.RetrievalUrl, "#2");
 		}
 
 		[Test]
 		public void Namespaces ()
 		{
-			FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
+			FileStream fs = new FileStream (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test.wsdl"), FileMode.Open, FileAccess.Read);
 			XmlTextReader xtr = new XmlTextReader (fs);
 
 			ServiceDescription sd = ServiceDescription.Read (xtr);
@@ -84,7 +86,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void ExtensibleAttributes ()
 		{
-		    FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
+		    FileStream fs = new FileStream (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test.wsdl"), FileMode.Open, FileAccess.Read);
 		    XmlTextReader xtr = new XmlTextReader(fs);
 
 		    ServiceDescription sd = ServiceDescription.Read(xtr);
@@ -105,7 +107,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void Extensions ()
 		{
-			FileStream fs = new FileStream("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
+			FileStream fs = new FileStream(TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test.wsdl"), FileMode.Open, FileAccess.Read);
 		    XmlTextReader xtr = new XmlTextReader(fs);
 
 		    ServiceDescription sd = ServiceDescription.Read(xtr);

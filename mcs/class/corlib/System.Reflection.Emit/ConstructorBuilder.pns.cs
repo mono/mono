@@ -26,15 +26,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+#if !MONO_FEATURE_SRE
 
 namespace System.Reflection.Emit
 {
-	public abstract class ConstructorBuilder : ConstructorInfo
+	public class ConstructorBuilder : ConstructorInfo
 	{
+		internal ConstructorBuilder () {}
+
 		public bool InitLocals { get; set; }
 
 		public override MethodAttributes Attributes { 
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override CallingConventions CallingConvention {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -46,7 +58,20 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Module Module {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string Name {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		[Obsolete]
+		public Type ReturnType {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -86,6 +111,25 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public string Signature => throw new PlatformNotSupportedException ();
+		public Module GetModule () => throw new PlatformNotSupportedException ();
+		public MethodToken GetToken () => throw new PlatformNotSupportedException ();
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups) => 
+				throw new PlatformNotSupportedException ();
+
+		public void AddDeclarativeSecurity (System.Security.Permissions.SecurityAction action, System.Security.PermissionSet pset) { throw new PlatformNotSupportedException (); }
+		public override System.Reflection.MethodImplAttributes GetMethodImplementationFlags() { throw new PlatformNotSupportedException (); }
+		public override System.RuntimeMethodHandle MethodHandle { get { throw new PlatformNotSupportedException (); } }
+		public override object Invoke(System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
+		public override bool IsDefined(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+		public override object[] GetCustomAttributes(bool inherit) { throw new PlatformNotSupportedException (); }
+		public override object[] GetCustomAttributes(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+		public override System.Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
+		public override object Invoke(object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
+		public void SetSymCustomAttribute (string name, byte[] data) { throw new PlatformNotSupportedException (); }
+		public override string ToString () { throw new PlatformNotSupportedException (); }
 	}
 }
 

@@ -34,8 +34,10 @@ namespace System {
         // parameter validation has already been done.  The count and offset
         // parameters here are in bytes.  If you want to use traditional
         // array element indices and counts, use Array.Copy.
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool InternalBlockCopy(Array src, int srcOffsetBytes,
             Array dst, int dstOffsetBytes, int byteCount);
@@ -131,11 +133,12 @@ namespace System {
         // This essentially does the following: 
         // return ((byte*)array) + index.
         //
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern byte _GetByte(Array array, int index);
-#if !MONO
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static byte GetByte(Array array, int index)
         {
@@ -160,11 +163,12 @@ namespace System {
         // This essentially does the following: 
         // *(((byte*)array) + index) = value.
         //
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void _SetByte(Array array, int index, byte value);
-#if !MONO
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void SetByte(Array array, int index, byte value)
         {
@@ -191,8 +195,10 @@ namespace System {
         // This essentially does the following: 
         // return array.length * sizeof(array.UnderlyingElementType).
         //
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern int _ByteLength(Array array);
 #if !MONO

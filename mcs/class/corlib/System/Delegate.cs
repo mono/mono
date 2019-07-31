@@ -47,8 +47,6 @@ namespace System
 		public bool curried_first_arg;
 	}
 
-	[ClassInterface (ClassInterfaceType.AutoDual)]
-	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Delegate : ICloneable, ISerializable
@@ -62,6 +60,8 @@ namespace System
 		private IntPtr delegate_trampoline;
 		private IntPtr extra_arg;
 		private IntPtr method_code;
+		private IntPtr interp_method;
+		private IntPtr interp_invoke_impl;
 		private MethodInfo method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.
@@ -227,7 +227,7 @@ namespace System
 			}
 			if (!argLengthMatch) {
 				if (throwOnBindFailure)
-					throw new ArgumentException ("method argument length mismatch");
+					throw new TargetParameterCountException ("Parameter count mismatch.");
 				else
 					return null;
 			}
@@ -350,7 +350,7 @@ namespace System
 
 			for (Type targetType = target; targetType != null; targetType = targetType.BaseType) {
 				MethodInfo mi = targetType.GetMethod (method, flags,
-					null, delargtypes, EmptyArray<ParameterModifier>.Value);
+					null, delargtypes, Array.Empty<ParameterModifier>());
 				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
 					info = mi;
 					break;
@@ -513,7 +513,7 @@ namespace System
 			} else {
 				if (method != IntPtr.Zero) {
 					if (!method_is_virtual)
-						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+						method_info = (MethodInfo)RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
 					else
 						method_info = GetVirtualMethod_internal ();
 				}
@@ -545,7 +545,7 @@ namespace System
 				return a;
 
 			if (a.GetType () != b.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
+				throw new ArgumentException (string.Format ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
 
 			return a.CombineImpl (b);
 		}
@@ -582,7 +582,7 @@ namespace System
 				return source;
 
 			if (source.GetType () != value.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", source.GetType ().FullName, value.GetType ().FullName));
+				throw new ArgumentException (string.Format ("Incompatible Delegate Types. First is {0} second is {1}.", source.GetType ().FullName, value.GetType ().FullName));
 
 			return source.RemoveImpl (value);
 		}
@@ -623,7 +623,7 @@ namespace System
 
 		internal bool IsTransparentProxy ()
 		{
-#if DISABLE_REMOTING
+#if !FEATURE_REMOTING
 			return false;
 #else
 			return RemotingServices.IsTransparentProxy (m_target);

@@ -99,12 +99,14 @@ public class AssemblyBuilderTest
 		return mb;
 	}
 
+#if !DISABLE_SECURITY
 	[Test]
 	[Category ("MobileNotWorking")]
 	public void DefaultCtor ()
 	{
 		Assert.IsNotNull (ab.Evidence, "#1");
 	}
+#endif
 
 	[Test]
 	[Category ("NotWorking")]
@@ -1789,8 +1791,7 @@ public class AssemblyBuilderTest
 
 			// load assembly in separate domain, so we can clean-up after the 
 			// test
-			newDomain = AppDomain.CreateDomain ("test2", currentDomain.Evidence,
-				currentDomain.SetupInformation);
+			newDomain = AppDomain.CreateDomain ("test2", null, currentDomain.SetupInformation);
 
 			Helper helper = new Helper (Path.Combine (tempDir, assemblyName.Name + ".dll"),
 				fullName);
@@ -1904,6 +1905,17 @@ public class AssemblyBuilderTest
 					h.StopHandling ();
 				}
 			});
+	}
+
+	[Test]
+	public void GetReflectionOnly ()
+	{
+		// Regression test for 13028.
+		// Asserts ReflectionOnly is actually implemented.
+		AssemblyBuilder ab1 = genAssembly ();
+		AssemblyBuilder ab2 = genAssembly (AssemblyBuilderAccess.ReflectionOnly);
+		Assert.IsFalse (ab1.ReflectionOnly, "#1");
+		Assert.IsTrue (ab2.ReflectionOnly, "#2");
 	}
 
 

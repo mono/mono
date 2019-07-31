@@ -35,3 +35,4 @@ System.Web.Services.Protocols/SoapHttpClientProtocolTest.cs
 System.Web.Services.Protocols/WebClientProtocolTest.cs
 System.Web.Services.Protocols/SoapServerTypeTest.cs
 ../../test-helpers/SocketResponder.cs
+../../test-helpers/TestResourceHelper.cs

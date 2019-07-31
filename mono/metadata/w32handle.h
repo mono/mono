@@ -10,19 +10,15 @@
 
 #ifdef HOST_WIN32
 #include <windows.h>
+#else
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 #endif
 
 #include "mono/utils/mono-coop-mutex.h"
-
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (gpointer)-1
-#endif
+#include "mono/utils/mono-error.h"
 
 #define MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS 64
-
-#ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
-#endif
 
 typedef enum {
 	MONO_W32TYPE_UNUSED = 0,
@@ -52,14 +48,16 @@ typedef enum {
 	MONO_W32HANDLE_WAIT_RET_ALERTED     = -1,
 	MONO_W32HANDLE_WAIT_RET_TIMEOUT     = -2,
 	MONO_W32HANDLE_WAIT_RET_FAILED      = -3,
+	MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS = -4,
+	MONO_W32HANDLE_WAIT_RET_NOT_OWNED_BY_CALLER = -5
 } MonoW32HandleWaitRet;
 
 typedef struct 
 {
-	void (*close)(gpointer handle, gpointer data);
+	void (*close)(gpointer data);
 
 	/* mono_w32handle_signal_and_wait */
-	void (*signal)(MonoW32Handle *handle_data);
+	gint32 (*signal)(MonoW32Handle *handle_data);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * with the handle locked (shared handles aren't locked.)
@@ -92,7 +90,7 @@ typedef struct
 	void (*details)(MonoW32Handle *handle_data);
 
 	/* Called to get the name of the handle type */
-	const gchar* (*typename) (void);
+	const char* (*type_name) (void);
 
 	/* Called to get the size of the handle type */
 	gsize (*typesize) (void);
@@ -112,7 +110,7 @@ void
 mono_w32handle_cleanup (void);
 
 void
-mono_w32handle_register_ops (MonoW32Type type, MonoW32HandleOps *ops);
+mono_w32handle_register_ops (MonoW32Type type, const MonoW32HandleOps *ops);
 
 gpointer
 mono_w32handle_new (MonoW32Type type, gpointer handle_specific);
@@ -160,7 +158,7 @@ MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable);
 
 MonoW32HandleWaitRet
-mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable);
+mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable, MonoError *error);
 
 MonoW32HandleWaitRet
 mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, guint32 timeout, gboolean alertable);
@@ -170,9 +168,9 @@ static inline MonoW32HandleWaitRet
 mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 {
 	if (res >= WAIT_OBJECT_0 && res <= WAIT_OBJECT_0 + numobjects - 1)
-		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + (res - WAIT_OBJECT_0);
+		return (MonoW32HandleWaitRet)(MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + (res - WAIT_OBJECT_0));
 	else if (res >= WAIT_ABANDONED_0 && res <= WAIT_ABANDONED_0 + numobjects - 1)
-		return MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + (res - WAIT_ABANDONED_0);
+		return (MonoW32HandleWaitRet)(MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + (res - WAIT_ABANDONED_0));
 	else if (res == WAIT_IO_COMPLETION)
 		return MONO_W32HANDLE_WAIT_RET_ALERTED;
 	else if (res == WAIT_TIMEOUT)

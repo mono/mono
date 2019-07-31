@@ -31,6 +31,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO.Compression.FileSystem
 {
 	[TestFixture]
@@ -55,7 +57,7 @@ namespace MonoTests.System.IO.Compression.FileSystem
 			if (File.Exists (tmpFile))
 				File.Delete (tmpFile);
 
-			ZipFile.CreateFromDirectory ("foo", tmpFile);
+			ZipFile.CreateFromDirectory (TestResourceHelper.GetFullPathOfResource ("Test/resources/foo"), tmpFile);
 			Assert.IsTrue(File.Exists(tmpFile));
 
 			using (var archive = new ZipArchive (File.Open (tmpFile, FileMode.Open),
@@ -75,7 +77,7 @@ namespace MonoTests.System.IO.Compression.FileSystem
 			if (File.Exists (tmpFile))
 				File.Delete (tmpFile);
 
-			ZipFile.CreateFromDirectory ("foo", tmpFile, CompressionLevel.Fastest,
+			ZipFile.CreateFromDirectory (TestResourceHelper.GetFullPathOfResource ("Test/resources/foo"), tmpFile, CompressionLevel.Fastest,
 				includeBaseDirectory: true);
 			Assert.IsTrue (File.Exists (tmpFile));
 
@@ -100,7 +102,7 @@ namespace MonoTests.System.IO.Compression.FileSystem
 			if (File.Exists (tmpFile))
 				File.Delete (tmpFile);
 
-			ZipFile.CreateFromDirectory ("foo", tmpFile);
+			ZipFile.CreateFromDirectory (TestResourceHelper.GetFullPathOfResource ("Test/resources/foo"), tmpFile);
 
 			ZipFile.ExtractToDirectory (tmpFile, extractDir);
 			Assert.IsTrue(Directory.Exists (extractDir));
@@ -120,7 +122,7 @@ namespace MonoTests.System.IO.Compression.FileSystem
 			if (File.Exists (tmpFile))
 				File.Delete (tmpFile);
 
-			var file = "foo/foo.txt";
+			var file = TestResourceHelper.GetFullPathOfResource ("Test/resources/foo/foo.txt");
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Create),
 				ZipArchiveMode.Update))
 			{

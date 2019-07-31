@@ -42,16 +42,29 @@ namespace System.Threading
 	public sealed class Mutex : WaitHandle 
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private unsafe static extern IntPtr CreateMutex_icall (bool initiallyOwned, char *name,
+			int name_length, out bool created);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private unsafe static extern IntPtr OpenMutex_icall (char *name, int name_length,
+			MutexRights rights, out MonoIOError error);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool ReleaseMutex_internal(IntPtr handle);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern IntPtr  CreateMutex_internal(
-		                                         bool initiallyOwned,
-		                                         string name,
-							 out bool created);
+		private unsafe static IntPtr CreateMutex_internal (bool initiallyOwned,
+			string name, out bool created)
+		{
+			fixed (char *fixed_name = name)
+				return CreateMutex_icall (initiallyOwned, fixed_name,
+					name?.Length ?? 0, out created);
+		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error);
+		private unsafe static IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error)
+		{
+			fixed (char *fixed_name = name)
+				return OpenMutex_icall (fixed_name, name?.Length ?? 0, rights, out error);
+		}
 
 		private Mutex (IntPtr handle)
 		{

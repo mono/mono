@@ -87,7 +87,10 @@ namespace Mono.Btls.Interface
 
 		public byte[] GetSerialNumber (bool mono_style)
 		{
-			return Instance.GetSerialNumber (mono_style);
+			var serial = Instance.GetSerialNumber (mono_style);
+			if (mono_style)
+				Array.Reverse (serial);
+			return serial;
 		}
 
 		public int GetVersion ()
@@ -97,7 +100,8 @@ namespace Mono.Btls.Interface
 
 		public Oid GetSignatureAlgorithm ()
 		{
-			return Instance.GetSignatureAlgorithm ();
+			var algorithm = Instance.GetSignatureAlgorithm ();
+			return Oid.FromOidValue (algorithm, OidGroup.SignatureAlgorithm);
 		}
 
 		public AsnEncodedData GetPublicKeyAsn1 ()

@@ -239,6 +239,9 @@ namespace System.Globalization
 					case "zh":
 						waCalendars = new int[] { calendarId, Calendar.CAL_TAIWAN };
 						break;
+					case "he":
+						waCalendars = new int[] { calendarId, Calendar.CAL_HEBREW };
+						break;
 					default:
 						waCalendars = new int [] { calendarId };
 						break;
@@ -247,6 +250,14 @@ namespace System.Globalization
 
 				return waCalendars;
 			}
+		}
+
+		internal CalendarId[] GetCalendarIds() 
+		{
+			var items = new CalendarId[CalendarIds.Length];
+			for (int i = 0; i < CalendarIds.Length; i++)
+				items[i] = (CalendarId)CalendarIds[i];
+			return items;
 		}
 
 		internal bool IsInvariantCulture {
@@ -433,6 +444,19 @@ namespace System.Globalization
 		// Date separator (derived from short date format)
 		internal String DateSeparator(int calendarId)
 		{
+#if MONO // see https://github.com/dotnet/coreclr/pull/19976
+			if (calendarId == (int)CalendarId.JAPAN && !AppContextSwitches.EnforceLegacyJapaneseDateParsing)
+			{
+				// The date separator is derived from the default short date pattern. So far this pattern is using
+				// '/' as date separator when using the Japanese calendar which make the formatting and parsing work fine.
+				// changing the default pattern is likely will happen in the near future which can easily break formatting
+				// and parsing.
+				// We are forcing here the date separator to '/' to ensure the parsing is not going to break when changing
+				// the default short date pattern. The application still can override this in the code by DateTimeFormatInfo.DateSeparartor.
+				return "/";
+			}
+#endif
+
 			return GetDateSeparator(ShortDates(calendarId)[0]);
 		}
 
@@ -600,7 +624,59 @@ namespace System.Globalization
 			return false;
 		}
 
-		internal void GetNFIValues (NumberFormatInfo nfi)
+		// mono/metadta/culture-info.h NumberFormatEntryManaged must match
+		// mcs/class/corlib/ReferenceSources/CultureData.cs NumberFormatEntryManaged.
+		// This is sorted alphabetically.
+		[StructLayout (LayoutKind.Sequential)]
+		internal struct NumberFormatEntryManaged
+		{
+			internal int currency_decimal_digits;
+			internal int currency_decimal_separator;
+			internal int currency_group_separator;
+			internal int currency_group_sizes0;
+			internal int currency_group_sizes1;
+			internal int currency_negative_pattern;
+			internal int currency_positive_pattern;
+			internal int currency_symbol;
+			internal int nan_symbol;
+			internal int negative_infinity_symbol;
+			internal int negative_sign;
+			internal int number_decimal_digits;
+			internal int number_decimal_separator;
+			internal int number_group_separator;
+			internal int number_group_sizes0;
+			internal int number_group_sizes1;
+			internal int number_negative_pattern;
+			internal int per_mille_symbol;
+			internal int percent_negative_pattern;
+			internal int percent_positive_pattern;
+			internal int percent_symbol;
+			internal int positive_infinity_symbol;
+			internal int positive_sign;
+		}
+
+		static private unsafe int strlen (byte* s)
+		{
+			int length = 0;
+			while (s [length] != 0)
+				++length;
+			return length;
+		}
+
+		static private unsafe string idx2string (byte* data, int idx)
+		{
+			return Encoding.UTF8.GetString (data + idx, strlen (data + idx));
+		}
+
+		private int [] create_group_sizes_array (int gs0, int gs1)
+		{
+			// group_sizes is an array of up to two integers, -1 terminated.
+			return (gs0 == -1) ? new int [ ] { }
+			     : (gs1 == -1) ? new int [ ] {gs0}
+					   : new int [ ] {gs0, gs1};
+		}
+
+		internal unsafe void GetNFIValues (NumberFormatInfo nfi)
 		{
 			if (this.IsInvariantCulture)
 			{
@@ -617,7 +693,29 @@ namespace System.Globalization
 				// PercentGroupSize
 				// PercentGroupSeparator
 				//
-				fill_number_data (nfi, numberIndex);
+				var nfe = new NumberFormatEntryManaged ();
+				byte* data = fill_number_data (numberIndex, ref nfe);
+				nfi.currencyGroupSizes = create_group_sizes_array (nfe.currency_group_sizes0, nfe.currency_group_sizes1);
+				nfi.numberGroupSizes = create_group_sizes_array (nfe.number_group_sizes0, nfe.number_group_sizes1);
+				nfi.NaNSymbol = idx2string (data, nfe.nan_symbol);
+				nfi.currencyDecimalDigits = nfe.currency_decimal_digits;
+				nfi.currencyDecimalSeparator = idx2string (data, nfe.currency_decimal_separator);
+				nfi.currencyGroupSeparator = idx2string (data, nfe.currency_group_separator);
+				nfi.currencyNegativePattern = nfe.currency_negative_pattern;
+				nfi.currencyPositivePattern = nfe.currency_positive_pattern;
+				nfi.currencySymbol = idx2string (data, nfe.currency_symbol);
+				nfi.negativeInfinitySymbol = idx2string (data, nfe.negative_infinity_symbol);
+				nfi.negativeSign = idx2string (data, nfe.negative_sign);
+				nfi.numberDecimalDigits = nfe.number_decimal_digits;
+				nfi.numberDecimalSeparator = idx2string (data, nfe.number_decimal_separator);
+				nfi.numberGroupSeparator = idx2string (data, nfe.number_group_separator);
+				nfi.numberNegativePattern = nfe.number_negative_pattern;
+				nfi.perMilleSymbol = idx2string (data, nfe.per_mille_symbol);
+				nfi.percentNegativePattern = nfe.percent_negative_pattern;
+				nfi.percentPositivePattern = nfe.percent_positive_pattern;
+				nfi.percentSymbol = idx2string (data, nfe.percent_symbol);
+				nfi.positiveInfinitySymbol = idx2string (data, nfe.positive_infinity_symbol);
+				nfi.positiveSign = idx2string (data, nfe.positive_sign);
 			}
 
 			//
@@ -630,6 +728,6 @@ namespace System.Globalization
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void fill_number_data (NumberFormatInfo nfi, int numberIndex);
+		extern unsafe static byte* fill_number_data (int index, ref NumberFormatEntryManaged nfe);
 	}
 }

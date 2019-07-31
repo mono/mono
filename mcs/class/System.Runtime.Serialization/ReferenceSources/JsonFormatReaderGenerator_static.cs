@@ -508,7 +508,9 @@ namespace System.Runtime.Serialization.Json
 					var jsonMemberName = XmlObjectSerializerReadContextComplexJson.GetJsonMemberName (xmlReader);
 					object key = null;
 
-					if (keyParseMode == KeyParseMode.UsingParseEnum)
+					if (keyParseMode == KeyParseMode.AsString)
+						key = jsonMemberName;
+					else if (keyParseMode == KeyParseMode.UsingParseEnum)
 						key = Enum.Parse (keyType, jsonMemberName);
 					else if (keyParseMode == KeyParseMode.UsingCustomParse)
 						key = keyDataContract.ParseMethod.Invoke (null, new object [] {jsonMemberName});

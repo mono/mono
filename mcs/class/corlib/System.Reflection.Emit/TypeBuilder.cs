@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Text;
 using System.Reflection;
@@ -48,11 +48,37 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit
 {
+#if !MOBILE
+	
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class TypeBuilder : _TypeBuilder
+	{
+		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class TypeBuilder : TypeInfo, _TypeBuilder
+	public sealed partial class TypeBuilder : TypeInfo
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
@@ -94,6 +120,7 @@ namespace System.Reflection.Emit
 			return attrs;
 		}
 
+		[PreserveDependency ("DoTypeBuilderResolve", "System.AppDomain")]
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
 			this.parent = null;
@@ -765,7 +792,7 @@ namespace System.Reflection.Emit
 					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
 						TypeBuilder tb = (TypeBuilder)ft;
 						if (!tb.is_created) {
-							AppDomain.CurrentDomain.DoTypeResolve (tb);
+							AppDomain.CurrentDomain.DoTypeBuilderResolve (tb);
 							if (!tb.is_created) {
 								// FIXME: We should throw an exception here,
 								// but mcs expects that the type is created
@@ -1868,27 +1895,6 @@ namespace System.Reflection.Emit
 				return res;
 		}
 
-
-		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		internal override bool IsUserType {
 			get {
 				return false;
@@ -2022,6 +2028,8 @@ namespace System.Reflection.Emit
 		{
 			throw new ArgumentException("Constant does not match the defined type.");
 		}
+
+		public override bool IsTypeDefinition => true;
 	}
 }
 #endif

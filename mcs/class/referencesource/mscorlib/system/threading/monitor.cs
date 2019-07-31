@@ -20,7 +20,9 @@
 namespace System.Threading {
 
     using System;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Runtime;
     using System.Runtime.Remoting;
     using System.Threading;
@@ -29,8 +31,10 @@ namespace System.Threading {
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
 
+#if !MONO
     [HostProtection(Synchronization=true, ExternalThreading=true)]
     [System.Runtime.InteropServices.ComVisible(true)]
+#endif
     public static partial class Monitor
     {
         /*=========================================================================
@@ -41,8 +45,10 @@ namespace System.Threading {
         **
         ** Exceptions: ArgumentNullException if object is null.
         =========================================================================*/
+#if !MONO
         [System.Security.SecuritySafeCritical]
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern void Enter(Object obj);
 
@@ -84,7 +90,9 @@ namespace System.Threading {
         **             own the lock.
         =========================================================================*/
         [System.Security.SecuritySafeCritical]
+#if !MONO
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         public static extern void Exit(Object obj);

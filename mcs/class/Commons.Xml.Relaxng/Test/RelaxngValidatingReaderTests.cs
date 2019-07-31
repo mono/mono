@@ -14,6 +14,7 @@ using Commons.Xml.Relaxng;
 using NUnit.Framework;
 
 using RVR = Commons.Xml.Relaxng.RelaxngValidatingReader;
+using MonoTests.Helpers;
 
 namespace MonoTests.Commons.Xml.Relaxng
 {
@@ -45,8 +46,8 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleElementPattern1 ()
 		{
-			SetupReaderFromUrl ("Test/XmlFiles/SimpleElementPattern1.xml",
-				"Test/XmlFiles/SimpleElementPattern1.rng");
+			SetupReaderFromUrl (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/SimpleElementPattern1.xml"),
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/SimpleElementPattern1.rng"));
 
 			while (!reader.EOF)
 				reader.Read ();
@@ -55,8 +56,8 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleElementPattern2 ()
 		{
-			SetupReaderFromUrl ("Test/XmlFiles/SimpleElementPattern2.xml",
-				"Test/XmlFiles/SimpleElementPattern2.rng");
+			SetupReaderFromUrl (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/SimpleElementPattern2.xml"),
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/SimpleElementPattern2.rng"));
 
 			while (!reader.EOF)
 				reader.Read ();
@@ -65,7 +66,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void ReadPracticalSample1 ()
 		{
-			SetupReaderFromUrl ("Test/XmlFiles/team.xml", "Test/XmlFiles/team.rng");
+			SetupReaderFromUrl (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/team.xml"), TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/team.rng"));
 			while (!reader.EOF)
 				reader.Read ();
 		}
@@ -75,8 +76,8 @@ namespace MonoTests.Commons.Xml.Relaxng
 		{
 			// validate relaxng.rng with relaxng.rng
 			RVR r = new RVR (
-				new XmlTextReader ("Test/XmlFiles/relaxng.rng"),
-				new XmlTextReader ("Test/XmlFiles/relaxng.rng"));
+				new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/relaxng.rng")),
+				new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/relaxng.rng")));
 			while (!r.EOF)
 				r.Read ();
 		}

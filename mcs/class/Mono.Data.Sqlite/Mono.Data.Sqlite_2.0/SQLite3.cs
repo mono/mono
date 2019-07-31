@@ -804,7 +804,7 @@ namespace Mono.Data.Sqlite
       int enc;
       IntPtr p = UnsafeNativeMethods.sqlite3_context_collseq(context, out type, out enc, out len);
 
-      if (p != null) seq.Name = UTF8ToString(p, len);
+      if (p != IntPtr.Zero) seq.Name = UTF8ToString(p, len);
       seq.Type = (CollationTypeEnum)type;
       seq._func = func;
       seq.Encoding = (CollationEncodingEnum)enc;

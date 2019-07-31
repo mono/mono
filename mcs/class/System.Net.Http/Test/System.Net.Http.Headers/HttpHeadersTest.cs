@@ -55,7 +55,15 @@ namespace MonoTests.System.Net.Http.Headers
 		{
 			headers.Add ("aa", "value");
 			headers.Add ("aa", "value");
-			headers.Add ("Expires", (string) null);
+
+			try {
+				headers.Add ("Expires", (string)null);
+				if (HttpClientTestHelpers.UsingSocketsHandler)
+					Assert.Fail ("#1");
+			} catch (FormatException) {
+				if (!HttpClientTestHelpers.UsingSocketsHandler)
+					throw;
+			}
 		}
 
 		[Test]

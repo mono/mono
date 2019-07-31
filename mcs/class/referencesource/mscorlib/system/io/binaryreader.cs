@@ -241,7 +241,9 @@ namespace System.IO {
         public virtual decimal ReadDecimal() {
             FillBuffer(16);
             try {
-                return Decimal.ToDecimal(m_buffer);
+                int[] ints = new int[4];
+                Buffer.BlockCopy(m_buffer, 0, ints, 0, 16);
+                return new decimal(ints);
             }
             catch (ArgumentException e) {
                 // ReadDecimal cannot leak out ArgumentException
@@ -508,6 +510,20 @@ namespace System.IO {
 
             return chars;
         }
+
+#if MONO
+        public virtual int Read(Span<char> buffer)
+        {
+            char[] bufferBytes = buffer.ToArray();
+            return Read(bufferBytes, 0, bufferBytes.Length);
+        }
+
+        public virtual int Read(Span<byte> buffer)
+        {
+            byte[] bufferBytes = buffer.ToArray();
+            return Read(bufferBytes, 0, bufferBytes.Length);
+        }
+#endif
 
         public virtual int Read(byte[] buffer, int index, int count) {
             if (buffer==null)

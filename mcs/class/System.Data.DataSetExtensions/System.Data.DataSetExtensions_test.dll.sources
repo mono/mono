@@ -1,3 +1,4 @@
+../../test-helpers/TestResourceHelper.cs
 System.Data/DataRowComparerTest.cs
 System.Data/DataRowExtensionsTest.cs
 System.Data/DataTableExtensionsTest.cs

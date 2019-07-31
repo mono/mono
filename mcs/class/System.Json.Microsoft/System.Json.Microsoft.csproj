@@ -9,7 +9,7 @@
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -20,10 +20,10 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -44,8 +44,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\RS.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Json\Extensions\JsonValueExtensions.cs" />
     <Compile Include="System.Json\GlobalSuppressions.cs" />
+    <Compile Include="System.Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System.Json\JsonArray.cs" />
     <Compile Include="System.Json\JsonObject.cs" />
     <Compile Include="System.Json\JsonPrimitive.cs" />
@@ -62,11 +64,18 @@
     <Compile Include="System.Json\JsonValueChangeEventArgs.cs" />
     <Compile Include="System.Json\JsonValueDynamicMetaObject.cs" />
     <Compile Include="System.Json\JsonValueLinqExtensions.cs" />
-    <Compile Include="System.Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System.Json\NGenWrapper.cs" />
     <Compile Include="System.Json\Properties\AssemblyInfo.cs" />
     <Compile Include="System.Json\Properties\Resources.Designer.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -84,4 +93,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

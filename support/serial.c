@@ -34,7 +34,7 @@
 
 /* sys/time.h (for timeval) is required when using osx 10.3 (but not 10.4) */
 /* IOKit is a private framework in iOS, so exclude there */
-#if defined(__APPLE__) && !defined(HOST_IOS) && !defined(HOST_WATCHOS) && !defined(HOST_APPLETVOS)
+#if defined(__APPLE__) && !defined(HOST_IOS) && !defined(HOST_WATCHOS) && !defined(HOST_TVOS)
 #define HAVE_IOKIT 1
 #endif
 

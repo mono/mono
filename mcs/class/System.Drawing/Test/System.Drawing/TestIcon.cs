@@ -37,6 +37,8 @@ using System.Reflection;
 using System.Security.Permissions;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing {
 
 	[TestFixture]	
@@ -57,15 +59,15 @@ namespace MonoTests.System.Drawing {
 		[SetUp]
 		public void SetUp ()		
 		{
-			String path = TestBitmap.getInFile ("bitmaps/smiley.ico");
+			String path = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/smiley.ico");
 			icon = new Icon (path);			
 			fs1 = new FileStream (path, FileMode.Open);
 
-			icon16 = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"));
-			icon32 = new Icon (TestBitmap.getInFile ("bitmaps/32x32x16.ico"));
-			icon48 = new Icon (TestBitmap.getInFile ("bitmaps/48x48x1.ico"));
-			icon64 = new Icon (TestBitmap.getInFile ("bitmaps/64x64x256.ico"));
-			icon96 = new Icon (TestBitmap.getInFile ("bitmaps/96x96x256.ico"));
+			icon16 = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"));
+			icon32 = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/32x32x16.ico"));
+			icon48 = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/48x48x1.ico"));
+			icon64 = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/64x64x256.ico"));
+			icon96 = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/96x96x256.ico"));
 		}
 
 		[TearDown]
@@ -131,7 +133,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_Icon_GetNormalSizeFromIconWith256 ()
 		{
-			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			string filepath = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/323511.ico");
 
 			Icon orig = new Icon (filepath);
 			Assert.AreEqual (32,orig.Height);
@@ -145,7 +147,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_Icon_DoesntReturn256Passing0 ()
 		{
-			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			string filepath = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/323511.ico");
 			
 			Icon orig = new Icon (filepath);
 			Assert.AreEqual (32,orig.Height);
@@ -159,7 +161,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_Icon_DoesntReturn256Passing1 ()
 		{
-			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			string filepath = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/323511.ico");
 			
 			Icon orig = new Icon (filepath);
 			Assert.AreEqual (32,orig.Height);
@@ -249,7 +251,7 @@ namespace MonoTests.System.Drawing {
 		private void XPIcon (int size)
 		{
 			// note: the Icon(string,Size) or Icon(string,int,int) doesn't exists under 1.x
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/32bpp.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/32bpp.ico"))) {
 				using (Icon xp = new Icon (fs, size, size)) {
 					Assert.AreEqual (size, xp.Height, "Height");
 					Assert.AreEqual (size, xp.Width, "Width");
@@ -286,7 +288,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void SelectFromUnusualSize_Small16 ()
 		{
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/80509.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/80509.ico"))) {
 				using (Icon xp = new Icon (fs, 16, 16)) {
 					Assert.AreEqual (16, xp.Height, "Height");
 					Assert.AreEqual (10, xp.Width, "Width");
@@ -299,7 +301,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void SelectFromUnusualSize_Normal32 ()
 		{
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/80509.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/80509.ico"))) {
 				using (Icon xp = new Icon (fs, 32, 32)) {
 					Assert.AreEqual (22, xp.Height, "Height");
 					Assert.AreEqual (11, xp.Width, "Width");
@@ -354,7 +356,7 @@ namespace MonoTests.System.Drawing {
 		[Test] // bug #410608
 		public void Save_256 ()
 		{
-			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			string filepath = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/323511.ico");
 
 			using (Icon icon = new Icon (filepath)) {
 				// bug #415809 fixed
@@ -448,7 +450,7 @@ namespace MonoTests.System.Drawing {
 		[Test] // bug #415581
 		public void Icon256ToBitmap ()
 		{
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/415581.ico"))) {
 				Icon icon = new Icon (fs, 48, 48);
 				using (Bitmap b = icon.ToBitmap ()) {
 					Assert.AreEqual (0, b.Palette.Entries.Length, "#A1");
@@ -460,7 +462,7 @@ namespace MonoTests.System.Drawing {
 				icon.Dispose ();
 			}
 
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/415581.ico"))) {
 				Icon icon = new Icon (fs, 256, 256);
 				using (Bitmap b = icon.ToBitmap ()) {
 					Assert.AreEqual (0, b.Palette.Entries.Length, "#B1");
@@ -476,7 +478,7 @@ namespace MonoTests.System.Drawing {
 		public void Icon256ToBitmap_Request0 ()
 		{
 			// 415581.ico has 2 images, the 256 and 48
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/415581.ico"))) {
 				Icon icon = new Icon (fs, 0, 0);
 				using (Bitmap b = icon.ToBitmap ()) {
 					Assert.AreEqual (0, b.Palette.Entries.Length, "#B1");
@@ -491,7 +493,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Only256InFile ()
 		{
-			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
+			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/only256.ico"))) {
 				Assert.Throws<Win32Exception> (() => new Icon (fs, 0, 0));
 			}
 		}
@@ -537,7 +539,7 @@ namespace MonoTests.System.Drawing {
 		public void HandleRoundtrip ()
 		{
 			IntPtr handle;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"))) {
 				Assert.AreEqual (16, icon.Height, "Original.Height");
 				Assert.AreEqual (16, icon.Width, "Original.Width");
 				handle = icon.Handle;
@@ -561,7 +563,7 @@ namespace MonoTests.System.Drawing {
 		public void CreateMultipleIconFromSameHandle ()
 		{
 			IntPtr handle;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"))) {
 				Assert.AreEqual (16, icon.Height, "Original.Height");
 				Assert.AreEqual (16, icon.Width, "Original.Width");
 				handle = icon.Handle;
@@ -586,7 +588,7 @@ namespace MonoTests.System.Drawing {
 		public void HiconRoundtrip ()
 		{
 			IntPtr handle;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"))) {
 				Assert.AreEqual (16, icon.Height, "Original.Height");
 				Assert.AreEqual (16, icon.Width, "Original.Width");
 				handle = icon.ToBitmap ().GetHicon ();
@@ -604,7 +606,7 @@ namespace MonoTests.System.Drawing {
 		public void CreateMultipleIconFromSameHICON ()
 		{
 			IntPtr handle;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"))) {
 				Assert.AreEqual (16, icon.Height, "Original.Height");
 				Assert.AreEqual (16, icon.Width, "Original.Width");
 				handle = icon.ToBitmap ().GetHicon ();

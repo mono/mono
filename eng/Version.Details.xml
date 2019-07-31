@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dependencies>
+  <ProductDependencies>
+    <Dependency Name="Microsoft.Private.CoreFx.NETCoreApp" Version="5.0.0-alpha1.19375.11">
+      <Uri>https://github.com/dotnet/corefx</Uri>
+      <Sha>97d5957fc71853961082e22873d926269b291b92</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.NETCore.App" Version="5.0.0-alpha1.19375.9">
+      <Uri>https://github.com/dotnet/core-setup</Uri>
+      <Sha>2977763fd35b8dc120f4eac94314aba7b05ae9ee</Sha>
+    </Dependency>
+  </ProductDependencies>
+  <ToolsetDependencies>
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="1.0.0-beta.19379.1">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>193793488c727c2d12a04b4abe5e6ea63ad20526</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="2.0.0-beta.19379.1">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>193793488c727c2d12a04b4abe5e6ea63ad20526</Sha>
+    </Dependency>
+  </ToolsetDependencies>
+</Dependencies>

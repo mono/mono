@@ -36,6 +36,8 @@ using NUnit.Framework;
 using System.IO;
 using System.Xml;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class TargetTest {
@@ -1038,7 +1040,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.Load (Path.Combine ("Test", Path.Combine ("resources", "TestReturns.csproj")));
+			project.Load (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestReturns.csproj"));
 
 			var logger = new TestMessageLogger ();
 			engine.RegisterLogger (logger);

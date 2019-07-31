@@ -82,6 +82,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void QueueUserWorkItem ()
 		{
 			int n = 100000;
@@ -102,6 +103,7 @@ namespace MonoTests.System.Threading
 		event WaitCallback e;
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void UnsafeQueueUserWorkItem_MulticastDelegate ()
 		{
 			CountdownEvent ev = new CountdownEvent (2);
@@ -119,6 +121,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetAndGetMinThreads ()
 		{
 			int workerThreads, completionPortThreads;
@@ -138,6 +141,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetAndGetMaxThreads ()
 		{
 			int cpuCount = Environment.ProcessorCount;
@@ -158,6 +162,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetMaxPossibleThreads ()
 		{
 			var maxPossibleThreads = 0x7fff;
@@ -175,24 +180,30 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetAvailableThreads ()
 		{
+			int cpuCount = Environment.ProcessorCount;
+
+			if (cpuCount > 16)
+				Assert.Inconclusive ("This test doesn't work well with a high number of processor cores.");
+
 			ManualResetEvent mre = new ManualResetEvent (false);
 			var sw = Stopwatch.StartNew ();
 			int i, workerThreads, completionPortThreads;
 
 			try {
-				Assert.IsTrue (ThreadPool.SetMaxThreads (Environment.ProcessorCount, Environment.ProcessorCount));
+				Assert.IsTrue (ThreadPool.SetMaxThreads (cpuCount, cpuCount));
 
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 					if (workerThreads == 0)
 						break;
 
-					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
-
-					if (sw.Elapsed.TotalSeconds >= 10)
+					if (sw.Elapsed.TotalSeconds >= 30) {
+						Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 						Assert.Fail ("did not reach 0 available threads");
+					}
 
 					ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
 					Thread.Sleep (1);
@@ -218,6 +229,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void AsyncLocalCapture ()
 		{
 			var asyncLocal = new AsyncLocal<int>();
@@ -283,6 +295,7 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetMinThreads ()
 		{
 			int workerThreads, cpThreads;

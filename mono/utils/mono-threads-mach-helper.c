@@ -8,14 +8,15 @@
  * (C) 2014 Xamarin Inc
  */
 
-#include "config.h"
-
 #if defined(__MACH__)
 
+#include "config.h"
+#include <glib.h>
 #include <stdio.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-publib.h>
 
 /*
  * We cannot include mono-threads.h as this includes io-layer internal types
@@ -24,7 +25,8 @@
 */
 void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
-void mono_thread_info_detach (void);
+MONO_API void
+mono_thread_info_detach (void);
 
 static Class nsobject, nsthread, mono_dead_letter_class;
 static SEL dealloc, release, currentThread, threadDictionary, init, alloc, objectForKey, setObjectForKey;
@@ -57,8 +59,13 @@ mono_dead_letter_dealloc (id self, SEL _cmd)
 {
 	struct objc_super super;
 	super.receiver = self;
+#if !defined(__cplusplus) && !__OBJC2__
 	super.class = nsobject;
-	objc_msgSendSuper (&super, dealloc);
+#else
+	super.super_class = nsobject;
+#endif
+	void (*objc_msgSendSuper_op)(struct objc_super *, SEL) = (void (*)(struct objc_super *, SEL)) objc_msgSendSuper;
+	objc_msgSendSuper_op (&super, dealloc);
 
 	mono_thread_info_detach ();
 }
@@ -75,19 +82,20 @@ mono_threads_install_dead_letter (void)
 	 * It doesn't hurt on other architectures either, so no need to #ifdef it only for ARM64.
 	 */
 
+	id (*id_objc_msgSend)(id, SEL) = (id (*)(id, SEL)) objc_msgSend;
 	id (*id_objc_msgSend_id)(id, SEL, id) = (id (*)(id, SEL, id)) objc_msgSend;
 	void (*objc_msgSend_id_id)(id, SEL, id, id) = (void (*)(id, SEL, id, id)) objc_msgSend;
 
-	cur = objc_msgSend ((id)nsthread, currentThread);
+	cur = id_objc_msgSend ((id)nsthread, currentThread);
 	if (!cur)
 		return;
-	dict = objc_msgSend (cur, threadDictionary);
+	dict = id_objc_msgSend (cur, threadDictionary);
 	if (dict && id_objc_msgSend_id (dict, objectForKey, mono_dead_letter_key) == nil) {
-		id value = objc_msgSend (objc_msgSend ((id)mono_dead_letter_class, alloc), init);
+		id value = id_objc_msgSend (id_objc_msgSend ((id)mono_dead_letter_class, alloc), init);
 
 		objc_msgSend_id_id (dict, setObjectForKey, value, mono_dead_letter_key);
 
-		objc_msgSend (value, release);
+		id_objc_msgSend (value, release);
 	}
 }
 
@@ -119,13 +127,15 @@ mono_threads_init_dead_letter (void)
 	class_addMethod (mono_dead_letter_class, dealloc, (IMP)mono_dead_letter_dealloc, "v@:");
 	objc_registerClassPair (mono_dead_letter_class);
 
+	id (*id_objc_msgSend)(id, SEL) = (id (*)(id, SEL)) objc_msgSend;
+
 	// create the dict key
-	pool = objc_msgSend (objc_msgSend (nsautoreleasepool, alloc), init);
+	pool = id_objc_msgSend (id_objc_msgSend (nsautoreleasepool, alloc), init);
 
 	id (*objc_msgSend_char)(id, SEL, const char*) = (id (*)(id, SEL, const char*)) objc_msgSend;
 	mono_dead_letter_key = objc_msgSend_char (nsstring, stringWithUTF8String, "mono-dead-letter");
 
-	objc_msgSend (mono_dead_letter_key, retain);
-	objc_msgSend (pool, release);
+	id_objc_msgSend (mono_dead_letter_key, retain);
+	id_objc_msgSend (pool, release);
 }
 #endif

@@ -729,48 +729,9 @@ namespace System.Xml {
                 return s_enableLegacyXmlSettings.Value;
             }
 
-            bool enableSettings = false; // default value
-#if !MOBILE
-            if (!ReadSettingsFromRegistry(Registry.LocalMachine, ref enableSettings))
-            {
-                // still ok if this call return false too as we'll use the default value which is false
-                ReadSettingsFromRegistry(Registry.CurrentUser, ref enableSettings);
-            }
-#endif
-
-            s_enableLegacyXmlSettings = enableSettings;
+            s_enableLegacyXmlSettings = false;
             return s_enableLegacyXmlSettings.Value;
         }
-
-#if !MOBILE
-        [RegistryPermission(SecurityAction.Assert, Unrestricted = true)]
-        [SecuritySafeCritical]
-        private static bool ReadSettingsFromRegistry(RegistryKey hive, ref bool value)
-        {
-            const string regValueName = "EnableLegacyXmlSettings";
-            const string regValuePath = @"SOFTWARE\Microsoft\.NETFramework\XML";
-
-            try
-            {                                                                     
-                using (RegistryKey xmlRegKey = hive.OpenSubKey(regValuePath, false))
-                {
-                    if (xmlRegKey != null)
-                    {
-                        if (xmlRegKey.GetValueKind(regValueName) == RegistryValueKind.DWord)
-                        {
-                            value = ((int)xmlRegKey.GetValue(regValueName)) == 1;
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch { /* use the default if we couldn't read the key */ }
-
-            return false;
-        }
-#endif // MOBILE
-
 #endif // SILVERLIGHT
-        
     }
 }

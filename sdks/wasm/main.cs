@@ -113,7 +113,12 @@ public class Driver {
 	}
 
 	static int run_count;
+	static string excludes = "";
+
 	public static string Send (string key, string val) {
+		if (key == "--exclude") {
+			excludes += val + ",";
+		}
 		if (key == "start-test") {
 			StartTest (val);
 			return "SUCCESS";
@@ -137,8 +142,8 @@ public class Driver {
 		new TestSuite () { Name = "mini", File = "managed/mini_tests.dll" },
 		new TestSuite () { Name = "binding", File = "managed/binding_tests.dll" },
 		new TestSuite () { Name = "corlib", File = "managed/wasm_corlib_test.dll" },
-		new TestSuite () { Name = "system", File = "managed/wasm_System_test.dll" },
-		new TestSuite () { Name = "system-core", File = "managed/wasm_System.Core_test.dll" },
+		new TestSuite () { Name = "System", File = "managed/wasm_System_test.dll" },
+		new TestSuite () { Name = "System.Core", File = "managed/wasm_System.Core_test.dll" },
 	};
 
 	static IncrementalTestRunner testRunner;
@@ -215,7 +220,7 @@ public class Driver {
 		// if (test_name != null)
 		// 	testRunner.RunTest (test_name);
 
-		testRunner.Exclude ("NotWasm,WASM,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingRuntimeInterpreter,MultiThreaded");
+		testRunner.Exclude ("NotWasm,WASM,NotWorking,CAS,InetAccess,NotWorkingRuntimeInterpreter,MultiThreaded,StackWalk,GetCallingAssembly,LargeFileSupport,MobileNotWorking,ManagedCollator," + excludes);
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 

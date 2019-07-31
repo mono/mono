@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -121,14 +121,14 @@ namespace System.Reflection.Emit
 				res = new ParameterInfo [cbuilder.parameters.Length];
 				for (int i = 0; i < cbuilder.parameters.Length; i++) {
 					Type type = instantiation.InflateType (cbuilder.parameters [i]);
-					res [i] = ParameterInfo.New (cbuilder.pinfo == null ? null : cbuilder.pinfo [i], type, this, i + 1);
+					res [i] = RuntimeParameterInfo.New (cbuilder.pinfo?[i], type, this, i + 1);
 				}
 			} else {
 				ParameterInfo[] parms = cb.GetParameters ();
 				res = new ParameterInfo [parms.Length];
 				for (int i = 0; i < parms.Length; i++) {
 					Type type = instantiation.InflateType (parms [i].ParameterType);
-					res [i] = ParameterInfo.New (parms [i], type, this, i + 1);
+					res [i] = RuntimeParameterInfo.New (parms [i], type, this, i + 1);
 				}
 			}
 			return res;

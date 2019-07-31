@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.ComponentModel.Composition.dll
 LIB_REFS = System System.Core
 
-NO_RESGEN := $(filter basic build, $(PROFILE))
+NO_RESGEN := $(filter build, $(PROFILE))
 ifndef NO_RESGEN
   RESOURCE_DEFS = Microsoft.Internal.Strings,src/ComponentModel/Strings.resx
 endif

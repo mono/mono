@@ -24,7 +24,7 @@ namespace MonoCasTests.System.Net {
 	[Category ("NotWorking")] // compiler (CSC) issue (on Windows)
 	public class DnsCas {
 
-		private const string site = "www.go-mono.com";
+		private const string site = "www.example.com";
 		private const int timeout = 30000;
 
 		static ManualResetEvent reset;

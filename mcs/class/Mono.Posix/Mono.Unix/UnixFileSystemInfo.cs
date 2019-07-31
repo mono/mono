@@ -325,8 +325,8 @@ namespace Mono.Unix {
 
 		public virtual void SetOwner (long owner, long group)
 		{
-			uint _owner = Convert.ToUInt32 (owner);
-			uint _group = Convert.ToUInt32 (group);
+			int _owner = Convert.ToInt32 (owner);
+			int _group = Convert.ToInt32 (group);
 			int r = Native.Syscall.chown (FullPath, _owner, _group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}

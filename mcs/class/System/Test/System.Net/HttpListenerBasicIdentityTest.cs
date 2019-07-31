@@ -37,7 +37,7 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Basic1 ()
 		{
-#if MONOTOUCH_WATCH || __WATCHOS__
+#if MONOTOUCH_WATCH
 			Assert.Ignore ("HttpListenerBasicIdentity is not supported on watchOS");
 #endif
 			HttpListenerBasicIdentity bi = new HttpListenerBasicIdentity (null, null);
@@ -46,7 +46,7 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Basic2 ()
 		{
-#if MONOTOUCH_WATCH || __WATCHOS__
+#if MONOTOUCH_WATCH
 			Assert.Ignore ("HttpListenerBasicIdentity is not supported on watchOS");
 #endif
 			HttpListenerBasicIdentity bi = new HttpListenerBasicIdentity ("", null);
@@ -59,7 +59,7 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Basic3 ()
 		{
-#if MONOTOUCH_WATCH || __WATCHOS__
+#if MONOTOUCH_WATCH
 			Assert.Ignore ("HttpListenerBasicIdentity is not supported on watchOS");
 #endif
 			HttpListenerBasicIdentity bi = new HttpListenerBasicIdentity ("hey", null);
@@ -72,7 +72,7 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Basic4 ()
 		{
-#if MONOTOUCH_WATCH || __WATCHOS__
+#if MONOTOUCH_WATCH
 			Assert.Ignore ("HttpListenerBasicIdentity is not supported on watchOS");
 #endif
 			HttpListenerBasicIdentity bi = new HttpListenerBasicIdentity ("hey", "pass");

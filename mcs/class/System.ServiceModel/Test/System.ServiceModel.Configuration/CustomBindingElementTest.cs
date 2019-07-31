@@ -37,13 +37,15 @@ using System.Net;
 using System.ServiceModel;
 using System.Net.Security;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
 	public class CustomBindingElementTest
 	{
 		CustomBindingCollectionElement OpenConfig () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/customBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/customBinding")).GetSectionGroup ("system.serviceModel");
 			Assert.AreEqual (7, config.Bindings.CustomBinding.Bindings.Count, "CustomBinding count");
 			return config.Bindings.CustomBinding;
 		}

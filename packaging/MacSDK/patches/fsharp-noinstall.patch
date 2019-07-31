@@ -1,0 +1,13 @@
+diff --git a/mono/build-mono.sh b/mono/build-mono.sh
+index 12e49fa..85145a9 100755
+--- a/mono/build-mono.sh
++++ b/mono/build-mono.sh
+@@ -3,6 +3,6 @@
+ # Bootstrap the compiler
+ # Install the compiler
+ ./mono/prepare-mono.sh && \
+-make && \
+-sudo make install
++make && make install
++
+ 

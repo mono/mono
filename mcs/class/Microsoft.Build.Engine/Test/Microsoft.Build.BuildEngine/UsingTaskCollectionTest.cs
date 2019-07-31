@@ -32,6 +32,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class UsingTaskCollectionTest {
@@ -45,7 +47,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -67,11 +69,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='FalseTestTask'
 					/>
 				</Project>
@@ -84,12 +86,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			IEnumerator en = project.UsingTasks.GetEnumerator ();
 			en.MoveNext ();
 
-			Assert.AreEqual ("Test/resources/TestTasks.dll", ((UsingTask) en.Current).AssemblyFile, "A1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ((UsingTask) en.Current).AssemblyFile, "A1");
 			Assert.AreEqual ("TrueTestTask", ((UsingTask) en.Current).TaskName, "A2");
 
 			en.MoveNext ();
 
-			Assert.AreEqual ("Test/resources/TestTasks.dll", ((UsingTask) en.Current).AssemblyFile, "A3");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll"), ((UsingTask) en.Current).AssemblyFile, "A3");
 			Assert.AreEqual ("FalseTestTask", ((UsingTask) en.Current).TaskName, "A4");
 
 			Assert.IsFalse (en.MoveNext ());
@@ -102,7 +104,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -123,7 +125,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -145,7 +147,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -167,7 +169,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -187,7 +189,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -207,7 +209,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>
@@ -230,7 +232,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/TestTasks.dll'
+						AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"'
 						TaskName='TrueTestTask'
 					/>
 				</Project>

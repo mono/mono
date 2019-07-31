@@ -33,7 +33,7 @@ using System;
 
 namespace System.Xml.Serialization 
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum)]
+	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Struct, AllowMultiple=false)]
 	public sealed class XmlSerializerAssemblyAttribute : Attribute
 	{	
 		string _assemblyName;

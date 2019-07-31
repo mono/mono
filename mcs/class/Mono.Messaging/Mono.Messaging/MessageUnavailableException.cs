@@ -9,7 +9,7 @@ using System;
 namespace Mono.Messaging
 {
 	
-	
+	[Serializable]
 	public class MessageUnavailableException : MonoMessagingException
 	{
 		public MessageUnavailableException () : base ()

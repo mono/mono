@@ -37,7 +37,11 @@ using System.Runtime.InteropServices;
 namespace System 
 {
 	[StructLayout (LayoutKind.Auto)]
-	public struct ArgIterator
+	public
+#if NETCORE
+	ref
+#endif
+	struct ArgIterator
 	{
 #pragma warning disable 169, 414
 		IntPtr sig;
@@ -54,6 +58,8 @@ namespace System
 			sig = IntPtr.Zero;
 			args = IntPtr.Zero;
 			next_arg = num_args = 0;
+			if (arglist.args == IntPtr.Zero)
+				throw new PlatformNotSupportedException ();
 			Setup (arglist.args, IntPtr.Zero);
 		}
 
@@ -63,6 +69,8 @@ namespace System
 			sig = IntPtr.Zero;
 			args = IntPtr.Zero;
 			next_arg = num_args = 0;
+			if (arglist.args == IntPtr.Zero)
+				throw new PlatformNotSupportedException ();
 			Setup (arglist.args, (IntPtr) ptr);
 		}
 
@@ -73,7 +81,7 @@ namespace System
 
 		public override bool Equals (object o)
 		{
-			throw new NotSupportedException (Locale.GetText ("ArgIterator does not support Equals."));
+			throw new NotSupportedException ("ArgIterator does not support Equals.");
 		}
 
 		public override int GetHashCode ()
@@ -85,28 +93,36 @@ namespace System
 		public TypedReference GetNextArg ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
-			return IntGetNextArg ();
+				throw new InvalidOperationException ("Invalid iterator position.");
+			TypedReference result = new TypedReference ();
+			unsafe {
+				IntGetNextArg (&result);
+			}
+			return result;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern TypedReference IntGetNextArg ();
+		extern unsafe void IntGetNextArg (void *res);
 
 		[CLSCompliant (false)]
 		public TypedReference GetNextArg (RuntimeTypeHandle rth)
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
-			return IntGetNextArg (rth.Value);
+				throw new InvalidOperationException ("Invalid iterator position.");
+			TypedReference result = new TypedReference ();
+			unsafe {
+				IntGetNextArgWithType (&result, rth.Value);
+			}
+			return result;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern TypedReference IntGetNextArg (IntPtr rth);
+		extern unsafe void IntGetNextArgWithType (void *res, IntPtr rth);
 
 		public RuntimeTypeHandle GetNextArgType ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
+				throw new InvalidOperationException ("Invalid iterator position.");
 			return new RuntimeTypeHandle (IntGetNextArgType ());
 		}
 

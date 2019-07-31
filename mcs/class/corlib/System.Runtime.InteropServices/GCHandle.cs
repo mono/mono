@@ -38,7 +38,7 @@ namespace System.Runtime.InteropServices
 {
 
 	[ComVisible(true)]
-	[MonoTODO("Struct should be [StructLayout(LayoutKind.Sequential)] but will need to be reordered for that.")]
+	// TODO Should be [StructLayout(LayoutKind.Sequential)] but will need to be reordered for that
 	public struct GCHandle 
 	{
 		// fields
@@ -77,7 +77,7 @@ namespace System.Runtime.InteropServices
 			get
 			{
 				if (!IsAllocated)
-					throw new InvalidOperationException (Locale.GetText ("Handle is not allocated"));
+					throw new InvalidOperationException ("Handle is not allocated");
 				return GetTarget (handle);
 			} 
 			set

@@ -1,0 +1,8 @@
+Mono.AppleTls/AppleCertificateHelper.cs
+Mono.AppleTls/AppleTlsContext.cs
+Mono.AppleTls/AppleTlsProvider.cs
+Mono.AppleTls/AppleTlsStream.cs
+Mono.AppleTls/SecureTransport.cs
+Mono.AppleTls/Policy.cs
+Mono.AppleTls/Trust.cs
+Mono.AppleTls/SslConnection.cs

@@ -39,8 +39,8 @@
 
     <Property Id="MSIFASTINSTALL" Value="7" />
 
-    <Condition Message="This application is only supported on Windows Vista or higher.">
-      <![CDATA[Installed OR (VersionNT >= 600)]]>
+    <Condition Message="This application is only supported on Windows 7 or higher.">
+      <![CDATA[Installed OR (VersionNT >= 601)]]>
     </Condition>
 
     <UIRef Id="WixUI_Minimal" />

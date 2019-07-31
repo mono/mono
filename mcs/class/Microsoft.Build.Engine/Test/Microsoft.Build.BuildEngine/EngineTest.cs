@@ -996,6 +996,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		// helper methods for TestGlobalProperties*
 		void WriteGlobalPropertiesProjects (string mainProject, string firstProject, string secondProject)
 		{
+			Directory.CreateDirectory (Path.Combine ("Test", "resources"));
 			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "main.proj")))) {
 				sw.Write (mainProject);
 			}

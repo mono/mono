@@ -1049,7 +1049,7 @@ namespace MonoTests.System.Xml
 //		public void LoadExternalUri ()
 //		{
 //			// set any URL of well-formed XML.
-//			document.Load ("http://www.go-mono.com/index.rss");
+//			document.Load ("http://www.example.com/index.rss");
 //		}
 
 //		[Test] comment out in the meantime.

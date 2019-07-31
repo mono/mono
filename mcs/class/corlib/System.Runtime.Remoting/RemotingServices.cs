@@ -100,7 +100,7 @@ namespace System.Runtime.Remoting
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
 
-#if DISABLE_REMOTING
+#if !FEATURE_REMOTING
 		public static bool IsTransparentProxy (object proxy)
 		{
 			throw new NotSupportedException ();
@@ -478,7 +478,7 @@ namespace System.Runtime.Remoting
 		{
 			const BindingFlags bfinst = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 			RuntimeType type = (RuntimeType) msg.MethodBase.DeclaringType;
-			return type.GetMethodsByName (msg.MethodName, bfinst, false, type).Length > 1;
+			return type.GetMethodsByName (msg.MethodName, bfinst, RuntimeType.MemberListType.CaseSensitive, type).Length > 1;
 		}
 
 		public static bool IsObjectOutOfAppDomain(object tp)

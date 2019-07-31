@@ -293,7 +293,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 					Assert.Fail ("Build failed");
 
 				string full_base_dir = Path.GetFullPath (basedir);
-				logger.CheckLoggedAny ("CI1: " + String.Join (";", files), MessageImportance.Normal, "A1");
 			} catch (AssertionException) {
 				logger.DumpMessages ();
 				throw;

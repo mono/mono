@@ -64,58 +64,6 @@ namespace System.Reflection {
 #pragma warning restore
 		}
 
-		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
-		{
-#pragma warning disable 414
-			Module module;
-#pragma warning restore
-
-			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
-				: base (pointer, length)
-			{
-				this.module = module;
-			}
-
-			protected override void Dispose (bool disposing)
-			{
-				if (_isOpen) {
-					/* 
-					 * The returned pointer points inside metadata, so
-					 * we have to increase the refcount of the module, and decrease
-					 * it when the stream is finalized.
-					 */
-					module = null;
-				}
-
-				base.Dispose (disposing);
-			}
-		}
-
-		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
-#pragma warning disable 649
-		internal IntPtr _mono_assembly;
-#pragma warning restore 649
-
-		private ResolveEventHolder resolve_event_holder;
-#if !MOBILE
-		private Evidence _evidence;
-		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
-		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
-		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
-		private PermissionSet _granted;		// for the resolved assembly granted permissions
-		private PermissionSet _denied;		// for the resolved assembly denied permissions
-#else
-		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
-#endif
-		private bool fromByteArray;
-		private string assemblyName;
-
-		protected
-		Assembly () 
-		{
-			resolve_event_holder = new ResolveEventHolder ();
-		}
-
 		//
 		// We can't store the event directly in this class, since the
 		// compiler would silently insert the fields before _mono_assembly
@@ -123,117 +71,72 @@ namespace System.Reflection {
 		public virtual event ModuleResolveEventHandler ModuleResolve {
 			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			add {
-				resolve_event_holder.ModuleResolve += value;
+				throw new NotImplementedException ();
 			}
 			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			remove {
-				resolve_event_holder.ModuleResolve -= value;
+				throw new NotImplementedException ();
 			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string get_code_base (bool escaped);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string get_fullname ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string get_location ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string InternalImageRuntimeVersion ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static internal extern string GetAotId ();
-
-		// SECURITY: this should be the only caller to icall get_code_base
-		private string GetCodeBase (bool escaped)
-		{
-			string cb = get_code_base (escaped);
-#if !MOBILE
-			if (SecurityManager.SecurityEnabled) {
-				// we cannot divulge local file informations
-				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
-					string file = cb.Substring (7);
-					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, file).Demand ();
-				}
-			}
-#endif
-			return cb;
 		}
 
 		public virtual string CodeBase {
-			get { return GetCodeBase (false); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public virtual string EscapedCodeBase {
-			get { return GetCodeBase (true); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public virtual string FullName {
 			get {
-				//
-				// FIXME: This is wrong, but it gets us going
-				// in the compiler for now
-				//
-				return ToString ();
+				throw new NotImplementedException ();
 			}
 		}
 
-		public virtual extern MethodInfo EntryPoint {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public virtual MethodInfo EntryPoint {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
-			get { return UnprotectedGetEvidence (); }
-		}
-
-		// note: the security runtime requires evidences but may be unable to do so...
-		internal Evidence UnprotectedGetEvidence ()
-		{
-#if MOBILE
-			return null;
-#else
-			// if the host (runtime) hasn't provided it's own evidence...
-			if (_evidence == null) {
-				// ... we will provide our own
-				lock (this) {
-					_evidence = Evidence.GetDefaultHostEvidence (this);
-				}
+			get {
+				throw new NotImplementedException ();
 			}
-			return _evidence;
-#endif
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern bool get_global_assembly_cache ();
+		internal virtual Evidence UnprotectedGetEvidence ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		internal bool FromByteArray {
-			set { fromByteArray = value; }
+		internal virtual IntPtr MonoAssembly {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		internal virtual bool FromByteArray {
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public virtual String Location {
 			get {
-				if (fromByteArray)
-					return String.Empty;
-
-				string loc = get_location ();
-#if !MOBILE
-				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
-					// we cannot divulge local file informations
-					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
-				}
-#endif
-				return loc;
+				throw new NotImplementedException ();
 			}
 		}
 
 		[ComVisible (false)]
 		public virtual string ImageRuntimeVersion {
 			get {
-				return InternalImageRuntimeVersion ();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -244,21 +147,18 @@ namespace System.Reflection {
 
 		public virtual bool IsDefined (Type attributeType, bool inherit)
 		{
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+			throw new NotImplementedException ();
 		}
 
 		public virtual object [] GetCustomAttributes (bool inherit)
 		{
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+			throw new NotImplementedException ();
 		}
 
 		public virtual object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+			throw new NotImplementedException ();
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern object GetFilesInternal (String name, bool getResourceModules);
 
 		public virtual FileStream[] GetFiles ()
 		{
@@ -267,89 +167,22 @@ namespace System.Reflection {
 
 		public virtual FileStream [] GetFiles (bool getResourceModules)
 		{
-			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
-			if (names == null)
-				return EmptyArray<FileStream>.Value;
-
-			string location = Location;
-
-			FileStream[] res;
-			if (location != String.Empty) {
-				res = new FileStream [names.Length + 1];
-				res [0] = new FileStream (location, FileMode.Open, FileAccess.Read);
-				for (int i = 0; i < names.Length; ++i)
-					res [i + 1] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
-			} else {
-				res = new FileStream [names.Length];
-				for (int i = 0; i < names.Length; ++i)
-					res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
-			}
-			return res;
+			throw new NotImplementedException ();
 		}
 
 		public virtual FileStream GetFile (String name)
 		{
-			if (name == null)
-				throw new ArgumentNullException (null, "Name cannot be null.");
-			if (name.Length == 0)
-				throw new ArgumentException ("Empty name is not valid");
-
-			string filename = (string)GetFilesInternal (name, true);
-			if (filename != null)
-				return new FileStream (filename, FileMode.Open, FileAccess.Read);
-			else
-				return null;
+			throw new NotImplementedException ();
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
 
 		public virtual Stream GetManifestResourceStream (String name)
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name.Length == 0)
-				throw new ArgumentException ("String cannot have zero length.",
-					"name");
-
-			ManifestResourceInfo info = GetManifestResourceInfo (name);
-			if (info == null) {
-				Assembly a = AppDomain.CurrentDomain.DoResourceResolve (name, this);
-				if (a != null && a != this)
-					return a.GetManifestResourceStream (name);
-				else
-					return null;
-			}
-
-			if (info.ReferencedAssembly != null)
-				return info.ReferencedAssembly.GetManifestResourceStream (name);
-			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
-				if (fromByteArray)
-					throw new FileNotFoundException (info.FileName);
-
-				string location = Path.GetDirectoryName (Location);
-				string filename = Path.Combine (location, info.FileName);
-				return new FileStream (filename, FileMode.Open, FileAccess.Read);
-			}
-
-			int size;
-			Module module;
-			IntPtr data = GetManifestResourceInternal (name, out size, out module);
-			if (data == (IntPtr) 0)
-				return null;
-			else {
-				UnmanagedMemoryStream stream;
-				unsafe {
-					stream = new UnmanagedMemoryStreamForModule ((byte*) data, size, module);
-				}
-				return stream;
-			}
+			throw new NotImplementedException ();
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
-			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-			return GetManifestResourceStream(type, name, false, ref stackMark);
+			throw new NotImplementedException ();
 		}
 
 		internal Stream GetManifestResourceStream (Type type, String name, bool skipSecurityCheck, ref StackCrawlMark stackMark)
@@ -412,7 +245,7 @@ namespace System.Reflection {
 
 		public virtual Type[] GetExportedTypes ()
 		{
-			return GetTypes (true);
+			throw new NotImplementedException ();
 		}
 
 		public virtual Type GetType (String name, Boolean throwOnError)
@@ -442,13 +275,7 @@ namespace System.Reflection {
 
 		public override string ToString ()
 		{
-			// note: ToString work without requiring CodeBase (so no checks are needed)
-
-			if (assemblyName != null)
-				return assemblyName;
-
-			assemblyName = get_fullname ();
-			return assemblyName;
+			return base.ToString ();
 		}
 
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
@@ -467,13 +294,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
+		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError, ref StackCrawlMark stackMark)
 		{
 			if (culture == null)
 				throw new ArgumentNullException("culture");
 			Contract.EndContractBlock();
 
-			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			String name = GetSimpleName() + ".resources";
 			return InternalGetSatelliteAssembly(name, culture, version, true, ref stackMark);
 		}
@@ -496,7 +322,7 @@ namespace System.Reflection {
 			Assembly assembly;
 
 			try {
-				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false);
+				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false, ref stackMark);
 				if (assembly != null)
 					return (RuntimeAssembly)assembly;
 			} catch (FileNotFoundException) {
@@ -512,7 +338,7 @@ namespace System.Reflection {
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
 
 			try {
-				return (RuntimeAssembly)LoadFrom (fullName);
+				return (RuntimeAssembly)LoadFrom (fullName, false, ref stackMark);
 			} catch {
 				if (!throwOnFileNotFound && !File.Exists (fullName))
 					return null;
@@ -529,20 +355,24 @@ namespace System.Reflection {
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
+		private extern static Assembly LoadFrom (String assemblyFile, bool refOnly, ref StackCrawlMark stackMark);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static Assembly LoadFile_internal (String assemblyFile);
+		private extern static Assembly LoadFile_internal (String assemblyFile, ref StackCrawlMark stackMark);
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFrom (String assemblyFile)
 		{
-			return LoadFrom (assemblyFile, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, false, ref stackMark);
 		}
 
 		[Obsolete]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
-			Assembly a = LoadFrom (assemblyFile, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			Assembly a = LoadFrom (assemblyFile, false, ref stackMark);
 #if !MOBILE
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
@@ -566,19 +396,23 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly UnsafeLoadFrom (String assemblyFile)
 		{
-			return LoadFrom (assemblyFile);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, false, ref stackMark);
 		}
 
 		[Obsolete]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			if (path == String.Empty)
 				throw new ArgumentException ("Path can't be empty", "path");
-			Assembly a = LoadFile_internal (path);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			Assembly a = LoadFile_internal (path, ref stackMark);
 			if (a != null && securityEvidence != null) {
 				throw new NotImplementedException ();
 			}
@@ -640,17 +474,21 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly ReflectionOnlyLoad (string assemblyString) 
 		{
-			return AppDomain.CurrentDomain.Load (assemblyString, null, true);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return AppDomain.CurrentDomain.Load (assemblyString, null, true, ref stackMark);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) 
 		{
 			if (assemblyFile == null)
 				throw new ArgumentNullException ("assemblyFile");
-			
-			return LoadFrom (assemblyFile, true);
+
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, true, ref stackMark);
 		}
 
         [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
@@ -747,12 +585,10 @@ namespace System.Reflection {
 			return GetModules (false);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal virtual extern Module[] GetModulesInternal ();
+		internal virtual Module[] GetModulesInternal () {
+			throw new NotImplementedException ();
+		}
 		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern virtual String[] GetManifestResourceNames ();
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly GetExecutingAssembly ();
 
@@ -761,6 +597,11 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
+
+		public virtual String[] GetManifestResourceNames ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		internal static AssemblyName[] GetReferencedAssemblies (Assembly module)
 		{
@@ -792,21 +633,9 @@ namespace System.Reflection {
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);
-
 		public virtual ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
-			if (resourceName == null)
-				throw new ArgumentNullException ("resourceName");
-			if (resourceName.Length == 0)
-				throw new ArgumentException ("String cannot have zero length.");
-			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
-			bool found = GetManifestResourceInfoInternal (resourceName, result);
-			if (found)
-				return result;
-			else
-				return null;
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("Currently it always returns zero")]
@@ -817,18 +646,15 @@ namespace System.Reflection {
 			get { return 0; }
 		}
 
-
 		internal virtual Module GetManifestModule () {
-			return GetManifestModuleInternal ();
+			throw new NotImplementedException ();
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Module GetManifestModuleInternal ();
-
 		[ComVisible (false)]
-		public virtual extern bool ReflectionOnly {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public virtual bool ReflectionOnly {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public override int GetHashCode ()
@@ -838,100 +664,26 @@ namespace System.Reflection {
 
 		public override bool Equals (object o)
 		{
-			if (((object) this) == o)
-				return true;
-
-			if (o == null)
-				return false;
-			
-			Assembly other = (Assembly) o;
-			return other._mono_assembly == _mono_assembly;
+			return base.Equals (o);
 		}
 
 #if !MOBILE
-		// Code Access Security
-
-		internal void Resolve () 
-		{
-			lock (this) {
-				// FIXME: As we (currently) delay the resolution until the first CAS
-				// Demand it's too late to evaluate the Minimum permission set as a 
-				// condition to load the assembly into the AppDomain
-				LoadAssemblyPermissions ();
-				Evidence e = new Evidence (UnprotectedGetEvidence ()); // we need a copy to add PRE
-				e.AddHost (new PermissionRequestEvidence (_minimum, _optional, _refuse));
-				_granted = SecurityManager.ResolvePolicy (e,
-					_minimum, _optional, _refuse, out _denied);
-			}
-		}
-
-		internal PermissionSet GrantedPermissionSet {
+		internal virtual PermissionSet GrantedPermissionSet {
 			get {
-				if (_granted == null) {
-					if (SecurityManager.ResolvingPolicyLevel != null) {
-						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
-							return DefaultPolicies.FullTrust;
-						else
-							return null; // we can't resolve during resolution
-					}
-					Resolve ();
-				}
-				return _granted;
+				throw new NotImplementedException ();
 			}
 		}
 
-		internal PermissionSet DeniedPermissionSet {
+		internal virtual PermissionSet DeniedPermissionSet {
 			get {
-				// yes we look for granted, as denied may be null
-				if (_granted == null) {
-					if (SecurityManager.ResolvingPolicyLevel != null) {
-						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
-							return null;
-						else
-							return DefaultPolicies.FullTrust; // deny unrestricted
-					}
-					Resolve ();
-				}
-				return _denied;
-			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern internal static bool LoadPermissions (Assembly a, 
-			ref IntPtr minimum, ref int minLength,
-			ref IntPtr optional, ref int optLength,
-			ref IntPtr refused, ref int refLength);
-
-		// Support for SecurityAction.RequestMinimum, RequestOptional and RequestRefuse
-		private void LoadAssemblyPermissions ()
-		{
-			IntPtr minimum = IntPtr.Zero, optional = IntPtr.Zero, refused = IntPtr.Zero;
-			int minLength = 0, optLength = 0, refLength = 0;
-			if (LoadPermissions (this, ref minimum, ref minLength, ref optional,
-				ref optLength, ref refused, ref refLength)) {
-
-				// Note: no need to cache these permission sets as they will only be created once
-				// at assembly resolution time.
-				if (minLength > 0) {
-					byte[] data = new byte [minLength];
-					Marshal.Copy (minimum, data, 0, minLength);
-					_minimum = SecurityManager.Decode (data);
-				}
-				if (optLength > 0) {
-					byte[] data = new byte [optLength];
-					Marshal.Copy (optional, data, 0, optLength);
-					_optional = SecurityManager.Decode (data);
-				}
-				if (refLength > 0) {
-					byte[] data = new byte [refLength];
-					Marshal.Copy (refused, data, 0, refLength);
-					_refuse = SecurityManager.Decode (data);
-				}
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public virtual PermissionSet PermissionSet {
-			get { return this.GrantedPermissionSet; }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 
@@ -946,7 +698,7 @@ namespace System.Reflection {
 		
 		public virtual IList<CustomAttributeData> GetCustomAttributesData ()
 		{
-			return CustomAttributeData.GetCustomAttributes (this);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -1039,5 +791,7 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
+
+		public virtual Type[] GetForwardedTypes() => throw new PlatformNotSupportedException();
 	}
 }

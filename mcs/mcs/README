@@ -16,12 +16,7 @@ Testing the Compiler
 	expected result, type:
 
 	  cd mcs		# The top-level 'mcs' directory
-	  make compiler-tests
-
-	If you want to test the installed compiler, you can run:
-
-	  cd mcs		# The top-level 'mcs' directory
-	  make test-installed-compiler
+	  make run-compiler-tests
 
 Full Bootstrap
 ==============

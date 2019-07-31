@@ -46,10 +46,10 @@ namespace System
 	[Serializable]
 	[CLSCompliant (false)]
 	[System.Runtime.InteropServices.ComVisible (true)]
-	public unsafe struct UIntPtr : ISerializable
+	public unsafe readonly struct UIntPtr : ISerializable, IEquatable<UIntPtr>
 	{
 		public static readonly UIntPtr Zero = new UIntPtr (0u);
-		private void* _pointer;
+		private readonly void* _pointer;
 	
 		public UIntPtr (ulong value)
 		{
@@ -180,6 +180,11 @@ namespace System
 		public static UIntPtr operator - (UIntPtr pointer, int offset)
 		{
 			return (UIntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+
+		bool IEquatable<UIntPtr>.Equals(UIntPtr other)
+		{
+			return _pointer == other._pointer;
 		}
 	}
 }

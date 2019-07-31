@@ -423,18 +423,21 @@ namespace TestRunner {
 	class Checker: MarshalByRefObject, IDisposable
 	{
 		protected ITester tester;
-		protected int success;
 		protected int total;
 		protected int ignored;
 		protected int syntax_errors;
 		string issue_file;
 		StreamWriter log_file;
+		StreamWriter result_xml;
 		protected string[] extra_compiler_options;
+		protected string reference_dir;
 		// protected string[] compiler_options;
 		// protected string[] dependencies;
 
 		protected ArrayList tests = new ArrayList ();
 		protected Hashtable test_hash = new Hashtable ();
+		protected Dictionary<string, StringBuilder> file_log_lines = new Dictionary<string, StringBuilder> ();
+		protected ArrayList succeeded = new ArrayList ();
 		protected ArrayList regression = new ArrayList ();
 		protected ArrayList know_issues = new ArrayList ();
 		protected ArrayList ignore_list = new ArrayList ();
@@ -464,6 +467,17 @@ namespace TestRunner {
 			}
 		}
 
+		public string ResultXml {
+			set {
+				this.result_xml = new StreamWriter (value, false);
+			}
+		}
+
+		public string Name {
+			get;
+			set;
+		}
+
 		public bool Verbose {
 			set {
 				verbose = value;
@@ -479,6 +493,12 @@ namespace TestRunner {
 		public string[] ExtraCompilerOptions {
 			set {
 				extra_compiler_options = value;
+			}
+		}
+
+		public string ReferenceDirectory {
+			set {
+				reference_dir = value;
 			}
 		}
 
@@ -519,7 +539,7 @@ namespace TestRunner {
 			if (index != -1) {
 				compiler_options = line.Substring (index + options.Length).Trim().Split (' ');
 				for (int i = 0; i < compiler_options.Length; i++)
-					compiler_options[i] = compiler_options[i].TrimStart ();
+					compiler_options[i] = compiler_options[i].TrimStart ().Replace ("$REF_DIR", reference_dir);
 			}
 			index = line.IndexOf (depends);
 			if (index != -1) {
@@ -535,6 +555,8 @@ namespace TestRunner {
 		{
 			if (test_hash.Contains (filename))
 				return true;
+
+			file_log_lines.Add (filename, new StringBuilder ());
 
 			if (verbose)
 				Log (filename + "...\t");
@@ -641,8 +663,8 @@ namespace TestRunner {
 			LogLine ("Done" + Environment.NewLine);
 			float rate = 0;
 			if (total > 0)
-				rate = (float) (success) / (float)total;
-			LogLine ("{0} test cases passed ({1:0.##%})", success, rate);
+				rate = (float) (succeeded.Count) / (float)total;
+			LogLine ("{0} test cases passed ({1:0.##%})", succeeded.Count, rate);
 
 			if (syntax_errors > 0)
 				LogLine ("{0} test(s) ignored because of wrong syntax !", syntax_errors);
@@ -666,6 +688,72 @@ namespace TestRunner {
 				foreach (string s in regression)
 					LogLine (s);
 			}
+		}
+
+		protected virtual void OutputResultXml ()
+		{
+			if (result_xml == null)
+				return;
+
+			var xmlWriter = new XmlTextWriter (result_xml);
+			xmlWriter.Formatting = Formatting.Indented;
+
+			xmlWriter.WriteStartDocument ();
+
+			xmlWriter.WriteStartElement ("assemblies");
+
+			xmlWriter.WriteStartElement ("assembly");
+
+			xmlWriter.WriteAttributeString ("name", Name);
+			xmlWriter.WriteAttributeString ("environment", $"compiler-tester-version: {Assembly.GetExecutingAssembly ().GetName ()}, clr-version: {Environment.Version}, os-version: {Environment.OSVersion}, platform: {Environment.OSVersion.Platform}, cwd: {Environment.CurrentDirectory}, machine-name: {Environment.MachineName}, user: {Environment.UserName}, user-domain: {Environment.UserDomainName}");
+			xmlWriter.WriteAttributeString ("test-framework", "compiler-tester");
+			xmlWriter.WriteAttributeString ("run-date", XmlConvert.ToString (DateTime.Now, "yyyy-MM-dd"));
+			xmlWriter.WriteAttributeString ("run-time", XmlConvert.ToString (DateTime.Now, "HH:mm:ss"));
+
+			xmlWriter.WriteAttributeString ("total", (succeeded.Count + regression.Count).ToString ()); // ignore known issues and ignored tests for now, we care mostly about failures
+			xmlWriter.WriteAttributeString ("errors", 0.ToString ());
+			xmlWriter.WriteAttributeString ("failed", (regression.Count).ToString ());
+			xmlWriter.WriteAttributeString ("skipped", 0.ToString ());
+
+			xmlWriter.WriteAttributeString ("passed", succeeded.Count.ToString ());
+
+			xmlWriter.WriteStartElement ("collection");
+			xmlWriter.WriteAttributeString ("name", "tests");
+
+			foreach (var t in succeeded) {
+				xmlWriter.WriteStartElement ("test");
+				xmlWriter.WriteAttributeString ("name", Name + ".tests." + t);
+				xmlWriter.WriteAttributeString ("type", Name + ".tests");
+				xmlWriter.WriteAttributeString ("method", t.ToString ());
+				xmlWriter.WriteAttributeString ("result", "Pass");
+				xmlWriter.WriteAttributeString ("time", "0");
+				xmlWriter.WriteEndElement (); // test element
+			}
+
+			foreach (var t in regression) {
+				xmlWriter.WriteStartElement ("test");
+				xmlWriter.WriteAttributeString ("name", Name + ".tests." + t);
+				xmlWriter.WriteAttributeString ("type", Name + ".tests");
+				xmlWriter.WriteAttributeString ("method", t.ToString ());
+				xmlWriter.WriteAttributeString ("result", "Fail");
+				xmlWriter.WriteAttributeString ("time", "0");
+
+				xmlWriter.WriteStartElement ("failure");
+				xmlWriter.WriteAttributeString ("exception-type", "CompilerTesterException");
+				xmlWriter.WriteStartElement ("message");
+				xmlWriter.WriteCData (file_log_lines[(string)t].ToString ());
+				xmlWriter.WriteEndElement (); // message element
+				xmlWriter.WriteEndElement(); // failure element
+
+				xmlWriter.WriteEndElement(); // test element
+			}
+
+			xmlWriter.WriteEndElement (); // collection
+			xmlWriter.WriteEndElement (); // assembly
+			xmlWriter.WriteEndElement (); // assemblies
+			xmlWriter.WriteEndDocument ();
+			xmlWriter.Flush ();
+			xmlWriter.Close ();
 		}
 
 		public int ResultCode
@@ -696,11 +784,24 @@ namespace TestRunner {
 				log_file.WriteLine (msg, rest);
 		}
 		
+		protected void LogLineForFile (string file, string msg)
+		{
+			file_log_lines[file].AppendLine (msg);
+			LogLine (msg);
+		}
+
+		protected void LogLineForFile (string file, string msg, params object [] rest)
+		{
+			file_log_lines[file].AppendLine (String.Format (msg, rest));
+			LogLine (msg, rest);
+		}
+
 		public void LogFileLine (string file, string msg)
 		{
 			string s = verbose ? msg : file + "...\t" + msg;
 
 			Console.WriteLine (s);
+			file_log_lines[file].AppendLine (s);
 			if (log_file != null)
 				log_file.WriteLine (s);
 		}
@@ -722,6 +823,7 @@ namespace TestRunner {
 		public virtual void CleanUp ()
 		{
 			PrintSummary ();
+			OutputResultXml ();
 		}
 	}
 
@@ -1138,7 +1240,7 @@ namespace TestRunner {
 		{
 			switch (status) {
 				case TestResult.Success:
-					success++;
+					succeeded.Add (file);
 					if (know_issues.Contains (file)) {
 						LogFileLine (file, "FIXED ISSUE");
 						return;
@@ -1196,7 +1298,7 @@ namespace TestRunner {
 			}
 
 			if (extra != null)
-				LogLine ("{0}", extra);
+				LogLineForFile (file, "{0}", extra);
 
 			if (!regression.Contains (file))
 				regression.Add (file);
@@ -1377,12 +1479,12 @@ namespace TestRunner {
 
 			CompilerError result_code = GetCompilerError (expected, tester.Output);
 			if (HandleFailure (filename, result_code)) {
-				success++;
+				succeeded.Add (filename);
 				return true;
 			}
 
 			if (result_code == CompilerError.Wrong)
-				LogLine (tester.Output);
+				LogLineForFile (filename, tester.Output);
 
 			return false;
 		}
@@ -1494,8 +1596,8 @@ namespace TestRunner {
 					}
 					else {
 						LogFileLine (file, "REGRESSION (CORRECT ERROR -> WRONG ERROR MESSAGE)");
-						LogLine ("Exp: {0}", expected_message);
-						LogLine ("Was: {0}", error_message);
+						LogLineForFile (file, "Exp: {0}", expected_message);
+						LogLineForFile (file, "Was: {0}", error_message);
 					}
 					break;
 
@@ -1573,6 +1675,8 @@ namespace TestRunner {
 				return 1;
 			}
 
+			compiler = Path.GetFullPath (compiler);
+
 			ITester tester;
 			try {
 				Console.WriteLine ("Loading " + compiler + " ...");
@@ -1624,10 +1728,14 @@ namespace TestRunner {
 				checker.IssueFile = temp;
 			if (GetOption ("log", args, true, out temp))
 				checker.LogFile = temp;
+			if (GetOption ("resultXml", args, true, out temp))
+				checker.ResultXml = temp;
 			if (GetOption ("verbose", args, false, out temp))
 				checker.Verbose = true;
 			if (GetOption ("safe-execution", args, false, out temp))
 				checker.SafeExecution = true;
+			if (GetOption ("reference-dir", args, true, out temp))
+				checker.ReferenceDirectory = temp;
 			if (GetOption ("compiler-options", args, true, out temp)) {
 				string[] extra = temp.Split (' ');
 				checker.ExtraCompilerOptions = extra;
@@ -1639,19 +1747,20 @@ namespace TestRunner {
 				return 1;
 			}
 
-			var files = new List<string> ();
+			var files = new List<FileInfo> ();
+			var test_directory = new DirectoryInfo (".");
 			switch (test_pattern) {
 			case "v1":
-				files.AddRange (Directory.GetFiles (".", positive ? "test*.cs" : "cs*.cs"));
+				files.AddRange (test_directory.EnumerateFiles (positive ? "test*.cs" : "cs*.cs"));
 				break;
 			case "v2":
-				files.AddRange (Directory.GetFiles (".", positive ? "gtest*.cs" : "gcs*.cs"));
+				files.AddRange (test_directory.EnumerateFiles (positive ? "gtest*.cs" : "gcs*.cs"));
 				goto case "v1";
 			case "v4":
-				files.AddRange (Directory.GetFiles (".", positive ? "dtest*.cs" : "dcs*.cs"));
+				files.AddRange (test_directory.EnumerateFiles (positive ? "dtest*.cs" : "dcs*.cs"));
 				goto case "v2";
 			default:
-				files.AddRange (Directory.GetFiles (".", test_pattern));
+				files.AddRange (test_directory.EnumerateFiles (test_pattern));
 				break;
 			}
 
@@ -1660,22 +1769,31 @@ namespace TestRunner {
 				return 2;
 			}
 
+			checker.Name = test_directory.Name;
 			checker.Initialize ();
-/*
+
 			files.Sort ((a, b) => {
-				if (a.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
-					if (!b.EndsWith ("-lib.cs", StringComparison.Ordinal))
+				if (a.Name.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
+					if (!b.Name.EndsWith ("-lib.cs", StringComparison.Ordinal))
 						return -1;
-				} else if (b.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
-					if (!a.EndsWith ("-lib.cs", StringComparison.Ordinal))
+				} else if (b.Name.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
+					if (!a.Name.EndsWith ("-lib.cs", StringComparison.Ordinal))
 						return 1;
 				}
 
-				return a.CompareTo (b);
+				if (a.Name.EndsWith ("-mod.cs", StringComparison.Ordinal)) {
+					if (!b.Name.EndsWith ("-mod.cs", StringComparison.Ordinal))
+						return -1;
+				} else if (b.Name.EndsWith ("-mod.cs", StringComparison.Ordinal)) {
+					if (!a.Name.EndsWith ("-mod.cs", StringComparison.Ordinal))
+						return 1;
+				}
+
+				return a.Name.CompareTo (b.Name);
 			});
-*/
-			foreach (string s in files) {
-				string filename = Path.GetFileName (s);
+
+			foreach (FileInfo s in files) {
+				string filename = s.Name;
 				if (Char.IsUpper (filename, 0)) { // Windows hack
 					continue;
 				}
@@ -1725,9 +1843,11 @@ namespace TestRunner {
 				"   \n" +
 				"   -compiler:FILE   The file which will be used to compiler tests\n" +
 				"   -compiler-options:OPTIONS  Add global compiler options\n" +
+				"   -reference-dir:DIRECTORY   Use this directory for $REF_DIR variable in tests\n" + 
 				"   -il:IL-FILE      XML file with expected IL details for each test\n" +
 				"   -issues:FILE     The list of expected failures\n" +
 				"   -log:FILE        Writes any output also to the file\n" +
+				"   -resultXml:FILE  Writes test result data in xUnit.net v2 format to the file\n" +
 				"   -help            Lists all options\n" +
 				"   -mode:[pos|neg]  Specifies compiler test mode\n" +
 				"   -safe-execution  Runs compiled executables in separate app-domain\n" +

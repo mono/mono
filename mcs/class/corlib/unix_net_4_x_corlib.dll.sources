@@ -1,0 +1,15 @@
+#include net_4_x_corlib.dll.sources
+#include unix_build_corlib.dll.sources
+
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
+
+corefx/TimeZoneInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.AdjustmentRule.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.StringSerializer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.TransitionTime.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.Unix.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.ResultCode.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.TimeZoneInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.Utils.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadLink.cs

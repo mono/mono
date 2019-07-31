@@ -8,7 +8,7 @@ namespace System.Diagnostics.CodeAnalysis
     /// enclosed methods and properties from code coverage collection.
     /// </summary>
     [AttributeUsage(
-        AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event,
+        AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Constructor | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Struct,
         Inherited = false,
         AllowMultiple = false
     )]

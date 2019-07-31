@@ -26,7 +26,7 @@ namespace MonoTests.System
 			sr = new StreamReader ("test-uri-relative-list.txt", Encoding.UTF8);
 			sw = new StreamWriter ("test-uri-relative-props.txt", false, Encoding.UTF8);
 
-			Uri baseUri = new Uri ("http://www.go-mono.com");
+			Uri baseUri = new Uri ("http://www.example.com");
 			GenerateResult (sr, sw, baseUri);
 		}
 

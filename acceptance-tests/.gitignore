@@ -4,3 +4,4 @@ Makefile
 *.dll
 *.mdb
 coreclr-testlist.txt
+microbench-perf.sh

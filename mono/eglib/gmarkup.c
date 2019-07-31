@@ -39,6 +39,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#include "config.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <glib.h>
@@ -53,13 +54,13 @@ typedef enum {
 	CLOSING_ELEMENT,
 	COMMENT,
 	SKIP_XML_DECLARATION
-} ParseState;
+} MonoGMarkupParseState;
 
 struct _GMarkupParseContext {
 	GMarkupParser  parser;
 	gpointer       user_data;
 	GDestroyNotify user_data_dnotify;
-	ParseState     state;
+	MonoGMarkupParseState state;
 
 	/* Stores the name of the current element, so we can issue the end_element */
 	GSList         *level;
@@ -447,7 +448,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			}
 			
-			text = current->data;
+			text = (char*)current->data;
 			if (context->parser.end_element != NULL){
 				context->parser.end_element (context, text, context->user_data, gerror);
 				if (gerror != NULL && *gerror != NULL){

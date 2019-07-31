@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -43,7 +44,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Constructor ()
 		{
-			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+			if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows))
 				Assert.Ignore ("The Jenkins builders don't have '/' mounted, just testing Windows for now.");
 
 			var drive = new DriveInfo ("C:\\");
@@ -54,7 +55,22 @@ namespace MonoTests.System.IO
 		[Test]
 		public void ConstructorThrowsOnNonExistingDrive ()
 		{
-			Assert.Throws<ArgumentException> (() => new DriveInfo ("/monodriveinfotest"));
+			Assert.Throws<ArgumentException> (() => new DriveInfo ("monodriveinfotest"));
+		}
+
+		[Test]
+		[Category ("NotWasm")] // it doesn't know about 'memfs' drive format
+		public void ConstructorGetsValidDriveFromNonDriveString ()
+		{
+			if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows) && !RuntimeInformation.IsOSPlatform (OSPlatform.OSX))
+				Assert.Ignore ("Some Linux-hosted CI builders don't have '/' mounted, just testing Windows and MacOS for now.");
+			
+			var tempPath = Path.GetTempPath ();
+			var drive = new DriveInfo (tempPath);
+			ValidateDriveInfo (drive);
+
+			drive = new DriveInfo (tempPath.ToUpper());
+			ValidateDriveInfo (drive);
 		}
 
 		[Test]
@@ -65,6 +81,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void GetDrivesValidInfo ()
 		{
 			var drives = DriveInfo.GetDrives ();
@@ -86,7 +103,6 @@ namespace MonoTests.System.IO
 			}
 
 			if (d.DriveType == DriveType.Fixed) { // just consider fixed drives for now
-				Assert.True (d.IsReady);
 				AssertHelper.GreaterOrEqual (d.AvailableFreeSpace, 0);
 				AssertHelper.GreaterOrEqual (d.TotalFreeSpace, 0);
 				AssertHelper.GreaterOrEqual (d.TotalSize, 0);

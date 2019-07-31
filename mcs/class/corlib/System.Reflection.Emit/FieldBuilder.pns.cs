@@ -26,60 +26,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !MONO_FEATURE_SRE
 
 namespace System.Reflection.Emit
 {
-	public abstract class FieldBuilder : FieldInfo
+	public sealed partial class FieldBuilder : System.Reflection.FieldInfo
 	{
-		public override FieldAttributes Attributes {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override Type FieldType {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override object GetValue (object obj)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetConstant (object defaultValue)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetOffset (int iOffset)
-		{
-			throw new PlatformNotSupportedException ();
-		}		
+		internal FieldBuilder() { throw new PlatformNotSupportedException (); } 
+		public override System.Reflection.FieldAttributes Attributes { get { throw null; } }
+		public override System.Type DeclaringType { get { throw null; } }
+		public override System.RuntimeFieldHandle FieldHandle { get { throw null; } }
+		public override System.Type FieldType { get { throw null; } }
+		public override string Name { get { throw null; } }
+		public override System.Type ReflectedType { get { throw null; } }
+		public override object[] GetCustomAttributes(bool inherit) { throw null; }
+		public override object[] GetCustomAttributes(System.Type attributeType, bool inherit) { throw null; }
+		public System.Reflection.Emit.FieldToken GetToken() { throw null; }
+		public override object GetValue(object obj) { throw null; }
+		public override bool IsDefined(System.Type attributeType, bool inherit) { throw null; }
+		public override int MetadataToken { get { throw new PlatformNotSupportedException (); } }
+		public override Module Module { get { throw new PlatformNotSupportedException (); } }
+		public void SetConstant(object defaultValue) { throw new PlatformNotSupportedException (); } 
+		public void SetCustomAttribute(System.Reflection.ConstructorInfo con, byte[] binaryAttribute) { throw new PlatformNotSupportedException (); } 
+		public void SetCustomAttribute(System.Reflection.Emit.CustomAttributeBuilder customBuilder) { throw new PlatformNotSupportedException (); } 
+		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+		public void SetMarshal (UnmanagedMarshal unmanagedMarshal) { throw new PlatformNotSupportedException (); }
+		public void SetOffset(int iOffset) { throw new PlatformNotSupportedException (); } 
+		public override void SetValue(object obj, object val, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); } 
 	}
 }
 

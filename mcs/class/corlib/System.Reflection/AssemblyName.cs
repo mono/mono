@@ -34,15 +34,15 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.IO;
 
 using Mono;
-using Mono.Security;
+#if !MOBILE && !NETCORE
 using Mono.Security.Cryptography;
+#endif
 
 namespace System.Reflection {
 
@@ -51,12 +51,14 @@ namespace System.Reflection {
 //	http://www.ietf.org/rfc/rfc2396.txt
 
 	[ComVisible (true)]
+#if !NETCORE
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
-	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+#endif
+	[Serializable]	
 	[StructLayout (LayoutKind.Sequential)]
-#if MOBILE
-	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+#if MOBILE || NETCORE
+	public sealed partial class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
 #else
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 #endif
@@ -110,7 +112,6 @@ namespace System.Reflection {
 			}
 		}
 		
-		[MonoLimitation ("Not used, as the values are too limited;  Mono supports more")]
 		public ProcessorArchitecture ProcessorArchitecture {
 			get {
 				return processor_architecture;
@@ -149,7 +150,8 @@ namespace System.Reflection {
 			get {
 				if (codebase == null)
 					return null;
-				return Uri.EscapeString (codebase, false, true, true);
+
+				return Mono.Security.Uri.EscapeString (codebase, false, true, true);
 			}
 		}
 
@@ -277,28 +279,18 @@ namespace System.Reflection {
 				switch (publicKey [0]) {
 				case 0x00: // public key inside a header
 					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
-#if MOBILE
+#if MOBILE || NETCORE
 						return true;
 #else
-						try {
-							CryptoConvert.FromCapiPublicKeyBlob (
-								publicKey, 12);
-							return true;
-						} catch (CryptographicException) {
-						}
+						return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 12);
 #endif
 					}
 					break;
 				case 0x06: // public key
-#if MOBILE
+#if MOBILE || NETCORE
 					return true;
 #else
-					try {
-						CryptoConvert.FromCapiPublicKeyBlob (publicKey);
-						return true;
-					} catch (CryptographicException) {
-					}
-					break;					
+					return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 0);
 #endif
 				case 0x07: // private key
 					break;
@@ -363,7 +355,6 @@ namespace System.Reflection {
 			keyToken = publicKeyToken;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -428,7 +419,7 @@ namespace System.Reflection {
 			return aname;
 		}
 
-#if !MOBILE
+#if !MOBILE && !NETCORE
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -482,8 +473,13 @@ namespace System.Reflection {
 
 			this.major = native->major;
 			this.minor = native->minor;
+#if NETCORE
+			this.build = native->build == 65535 ? -1 : native->build;
+			this.revision = native->revision == 65535 ? -1 : native->revision;
+#else
 			this.build = native->build;
 			this.revision = native->revision;
+#endif
 
 			this.flags = (AssemblyNameFlags)native->flags;
 
@@ -492,13 +488,29 @@ namespace System.Reflection {
 			this.versioncompat = AssemblyVersionCompatibility.SameMachine;
 			this.processor_architecture = (ProcessorArchitecture)native->arch;
 
+#if NETCORE
+			if (addVersion) {
+				if (this.build == -1)
+					this.version = new Version (this.major, this.minor);
+				else if (this.revision == -1)
+					this.version = new Version (this.major, this.minor, this.build);
+				else
+					this.version = new Version (this.major, this.minor, this.build, this.revision);
+			}
+#else
 			if (addVersion)
 				this.version = new Version (this.major, this.minor, this.build, this.revision);
+#endif
 
 			this.codebase = codeBase;
 
+#if NETCORE
+			if (native->culture != IntPtr.Zero)
+				this.cultureinfo = CultureInfo.GetCultureInfo (RuntimeMarshal.PtrToUtf8String (native->culture));
+#else
 			if (native->culture != IntPtr.Zero)
 				this.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), assemblyRef);
+#endif
 
 			if (native->public_key != IntPtr.Zero) {
 				this.publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
@@ -525,10 +537,16 @@ namespace System.Reflection {
 		{
 			AssemblyName aname = new AssemblyName ();
 			unsafe {
-				MonoAssemblyName *native = GetNativeName (assembly._mono_assembly);
+				MonoAssemblyName *native = GetNativeName (assembly.MonoAssembly);
 				aname.FillName (native, fillCodebase ? assembly.CodeBase : null, true, true, true, false);
 			}
 			return aname;
 		}
+
+#if NETCORE
+		internal static string EscapeCodeBase (string codebase) {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

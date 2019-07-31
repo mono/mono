@@ -112,7 +112,7 @@ namespace System.ServiceModel.Dispatcher
 			foreach (var type in OperationKnownTypes)
 				xmlImporter.IncludeType (type);
 			XmlMembersMapping [] partsMapping = new XmlMembersMapping [1];
-			partsMapping [0] = xmlImporter.ImportMembersMapping (desc.WrapperName, desc.WrapperNamespace, members, true);
+			partsMapping [0] = xmlImporter.ImportMembersMapping (desc.WrapperName, desc.WrapperNamespace, members, desc.WrapperName != null);
 			bodySerializers [desc] = XmlSerializer.FromMappings (partsMapping) [0];
 			return bodySerializers [desc];
 		}

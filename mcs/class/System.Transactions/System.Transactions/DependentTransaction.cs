@@ -21,6 +21,7 @@ namespace System.Transactions
 
 		internal DependentTransaction (Transaction parent,
 			DependentCloneOption option)
+			: base(parent.IsolationLevel)
 		{
 //			this.parent = parent;
 //			this.option = option;

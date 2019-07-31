@@ -1191,11 +1191,13 @@ void GC_mark_init()
  * Should only be used if there is no possibility of mark stack
  * overflow.
  */
-void GC_push_all(bottom, top)
-ptr_t bottom;
-ptr_t top;
+void GC_push_all(void_bottom, void_top)
+void* void_bottom;
+void* void_top;
 {
-    register word length;
+    ptr_t bottom = (ptr_t)void_bottom;
+    ptr_t top = (ptr_t)void_top;
+    word length;
     
     bottom = (ptr_t)(((word) bottom + ALIGNMENT-1) & ~(ALIGNMENT-1));
     top = (ptr_t)(((word) top) & ~(ALIGNMENT-1));

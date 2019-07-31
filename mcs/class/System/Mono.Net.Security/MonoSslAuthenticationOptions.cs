@@ -83,5 +83,9 @@ namespace Mono.Net.Security
 		public abstract bool ClientCertificateRequired {
 			get; set;
 		}
+
+		internal ServerCertSelectionCallback ServerCertSelectionDelegate {
+			get; set;
+		}
 	}
 }

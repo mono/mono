@@ -46,7 +46,11 @@ namespace System.Runtime.Remoting
 			{
 				serverType = typeof (MarshalByRefObject).AssemblyQualifiedName;
 				serverHierarchy = new string[0];
-				interfacesImplemented = new string[] { type.AssemblyQualifiedName };
+				Type[] interfaces = type.GetInterfaces();
+				interfacesImplemented = new string[interfaces.Length + 1];
+				for(int n=0; n<interfaces.Length; n++)
+					interfacesImplemented[n] = interfaces[n].AssemblyQualifiedName;
+				interfacesImplemented[interfaces.Length] = type.AssemblyQualifiedName;
 			}
 			else
 			{

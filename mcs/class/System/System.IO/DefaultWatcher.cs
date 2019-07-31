@@ -1,4 +1,4 @@
-// 
+//
 // System.IO.DefaultWatcher.cs: default IFileWatcher
 //
 // Authors:
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,7 +45,7 @@ namespace System.IO {
 		public DateTime DisabledTime;
 
 		public object FilesLock = new object ();
-		public Hashtable Files;
+		public Dictionary<string, FileData> Files;
 	}
 
 	class FileData {
@@ -65,7 +65,7 @@ namespace System.IO {
 		private DefaultWatcher ()
 		{
 		}
-		
+
 		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
@@ -78,7 +78,7 @@ namespace System.IO {
 			watcher = instance;
 			return true;
 		}
-		
+
 		public void StartDispatching (object handle)
 		{
 			var fsw = handle as FileSystemWatcher;
@@ -98,7 +98,7 @@ namespace System.IO {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data == null) {
 					data = new DefaultWatcherData ();
-					data.Files = new Hashtable ();
+					data.Files = new Dictionary<string, FileData>();
 					watches [fsw] = data;
 				}
 
@@ -124,12 +124,14 @@ namespace System.IO {
 			lock (this) {
 				if (watches == null) return;
 			}
-			
+
 			lock (watches) {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data != null) {
-					data.Enabled = false;
-					data.DisabledTime = DateTime.UtcNow;
+					lock (data.FilesLock) {
+						data.Enabled = false;
+						data.DisabledTime = DateTime.UtcNow;
+					}
 				}
 			}
 		}
@@ -146,7 +148,7 @@ namespace System.IO {
 
 			while (true) {
 				Thread.Sleep (750);
-				
+
 				Hashtable my_watches;
 				lock (watches) {
 					if (watches.Count == 0) {
@@ -154,10 +156,10 @@ namespace System.IO {
 							break;
 						continue;
 					}
-					
+
 					my_watches = (Hashtable) watches.Clone ();
 				}
-				
+
 				if (my_watches.Count != 0) {
 					zeroes = 0;
 					foreach (DefaultWatcherData data in my_watches.Values) {
@@ -173,7 +175,7 @@ namespace System.IO {
 				thread = null;
 			}
 		}
-		
+
 		bool UpdateDataAndDispatch (DefaultWatcherData data, bool dispatch)
 		{
 			if (!data.Enabled) {
@@ -221,23 +223,23 @@ namespace System.IO {
 			}
 
 			lock (data.FilesLock) {
-				IterateAndModifyFilesData (data, directory, dispatch, files);
+				if (data.Enabled)
+					IterateAndModifyFilesData (data, directory, dispatch, files);
 			}
 		}
 
 		void IterateAndModifyFilesData (DefaultWatcherData data, string directory, bool dispatch, string[] files)
 		{
 			/* Set all as untested */
-			foreach (string filename in data.Files.Keys) {
-				FileData fd = (FileData) data.Files [filename];
+			foreach (var entry in data.Files) {
+				FileData fd = entry.Value;
 				if (fd.Directory == directory)
 					fd.NotExists = true;
 			}
 
 			/* New files */
 			foreach (string filename in files) {
-				FileData fd = (FileData) data.Files [filename];
-				if (fd == null) {
+				if (!data.Files.TryGetValue (filename, out var fd)) {
 					try {
 						data.Files.Add (filename, CreateFileData (directory, filename));
 					} catch {
@@ -245,7 +247,7 @@ namespace System.IO {
 						data.Files.Remove (filename);
 						continue;
 					}
-					
+
 					if (dispatch)
 						DispatchEvents (data.FSW, FileAction.Added, filename);
 				} else if (fd.Directory == directory) {
@@ -258,8 +260,9 @@ namespace System.IO {
 
 			/* Removed files */
 			List<string> removed = null;
-			foreach (string filename in data.Files.Keys) {
-				FileData fd = (FileData) data.Files [filename];
+			foreach (var entry in data.Files) {
+				var filename = entry.Key;
+				FileData fd = entry.Value;
 				if (fd.NotExists) {
 					if (removed == null)
 						removed = new List<string> ();
@@ -277,8 +280,9 @@ namespace System.IO {
 			}
 
 			/* Changed files */
-			foreach (string filename in data.Files.Keys) {
-				FileData fd = (FileData) data.Files [filename];
+			foreach (var entry in data.Files) {
+				var filename = entry.Key;
+				FileData fd = entry.Value;
 				DateTime creation, write;
 				try {
 					creation = File.GetCreationTime (filename);
@@ -292,7 +296,7 @@ namespace System.IO {
 					DispatchEvents (data.FSW, FileAction.Removed, filename);
 					continue;
 				}
-				
+
 				if (creation != fd.CreationTime || write != fd.LastWriteTime) {
 					fd.CreationTime = creation;
 					fd.LastWriteTime = write;
@@ -319,4 +323,3 @@ namespace System.IO {
 		}
 	}
 }
-

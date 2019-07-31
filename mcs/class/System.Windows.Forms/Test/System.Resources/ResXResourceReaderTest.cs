@@ -20,6 +20,8 @@ using System.Runtime.Serialization;
 using NUnit.Framework;
 using System.Reflection;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResXResourceReaderTest : MonoTests.System.Windows.Forms.TestHelper
@@ -116,9 +118,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void Close_FileName ()
 		{
-			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx");
-			if (!File.Exists (fileName))
-				fileName = String.Format ("..{0}System.Resources{0}compat_1_1.resx", Path.DirectorySeparatorChar);
+			string fileName = TestResourceHelper.GetFullPathOfResource ("Test/System.Resources/compat_1_1.resx");
 
 			ResXResourceReader r1 = new ResXResourceReader (fileName);
 			r1.GetEnumerator ();
@@ -134,9 +134,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void Close_Reader ()
 		{
-			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx");
-			if (!File.Exists (fileName))
-				fileName = String.Format ("..{0}System.Resources{0}compat_1_1.resx", Path.DirectorySeparatorChar);
+			string fileName = TestResourceHelper.GetFullPathOfResource ("Test/System.Resources/compat_1_1.resx");
 
 			using (StreamReader sr = new StreamReader (fileName)) {
 				ResXResourceReader r = new ResXResourceReader (sr);
@@ -172,9 +170,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void Close_Stream ()
 		{
-			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx");
-			if (!File.Exists (fileName))
-				fileName = String.Format ("..{0}System.Resources{0}compat_1_1.resx", Path.DirectorySeparatorChar);
+			string fileName = TestResourceHelper.GetFullPathOfResource ("Test/System.Resources/compat_1_1.resx");
 
 			using (FileStream fs = File.OpenRead (fileName)) {
 				ResXResourceReader r = new ResXResourceReader (fs);
@@ -200,7 +196,7 @@ namespace MonoTests.System.Resources {
 		public void ExternalFileReference_Icon ()
 		{
 			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico"), refFile);
 
 			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
@@ -226,7 +222,7 @@ namespace MonoTests.System.Resources {
 			File.Delete (resxFile);
 
 			refFile = Path.Combine (_tempDirectory, "32x32.ICO");
-			WriteEmbeddedResource ("32x32.ico", refFile);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico"), refFile);
 
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
@@ -460,7 +456,7 @@ namespace MonoTests.System.Resources {
 		{
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-				"<o:Document xmlns:x=\"http://www.mono-project.com\" xmlns:o=\"http://tempuri.org\">" +
+				"<o:Document xmlns:x=\"http://www.example.com\" xmlns:o=\"http://tempuri.org\">" +
 				"	<o:Content>" +
 				"		<x:DaTa name=\"name\">" +
 				"			<o:value>de Icaza</o:value>" +
@@ -1473,8 +1469,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void UseResXDataNodes ()
 		{
-			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
+			string refFile = TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico");
 
 			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
@@ -1520,8 +1515,7 @@ namespace MonoTests.System.Resources {
 		{
 			// This test relies on a hashtable's enumerator being ordered,
 			// when the ordering is not guaranteed.
-			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
+			string refFile = TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico");
 
 			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
@@ -1545,8 +1539,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void GetMetadataEnumerator ()
 		{
-			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
+			string refFile = TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico");
 
 			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {

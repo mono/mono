@@ -17,13 +17,11 @@ win32_sources = \
 	w32semaphore-win32.c \
 	w32event-win32.c \
 	w32process-win32.c \
-	w32process-win32-internals.h \
 	w32socket-win32.c \
-	w32error-win32.c
+	w32error-win32.c \
+	w32subset.h
 
 platform_sources = $(win32_sources)
-
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 # Use -m here. This will use / as directory separator (C:/WINNT).
 # The files that use MONO_ASSEMBLIES and/or MONO_CFG_DIR replace the
@@ -63,9 +61,7 @@ unix_sources = \
 platform_sources = $(unix_sources)
 endif
 
-if HOST_ANDROID
-platform_sources += ../../support/libm/complex.c
-endif
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 if HOST_WASM
 platform_sources += threadpool-worker-wasm.c
@@ -93,7 +89,53 @@ if !ENABLE_ILGEN
 ilgen_libraries = libmono-ilgen.la
 endif
 
-noinst_LTLIBRARIES = libmonoruntime-config.la $(boehm_libraries) $(sgen_libraries)
+support_sources=empty.c
+
+if ENABLE_MONOTOUCH
+support_sources += ../../support/zlib-helper.c
+else
+if ENABLE_MONODROID
+support_sources += \
+	../../support/nl.c \
+	../../support/zlib-helper.c
+endif
+endif
+
+zlib_sources = \
+	../../support/adler32.c \
+	../../support/crc32.c \
+	../../support/crc32.h \
+	../../support/deflate.c \
+	../../support/deflate.h \
+	../../support/infback.c \
+	../../support/inffast.c \
+	../../support/inffast.h \
+	../../support/inffixed.h \
+	../../support/inflate.c \
+	../../support/inflate.h \
+	../../support/inftrees.c \
+	../../support/inftrees.h \
+	../../support/trees.c \
+	../../support/trees.h \
+	../../support/zconf.h \
+	../../support/zlib.h \
+	../../support/zutil.c \
+	../../support/zutil.h
+
+#
+# Support is a separate library because it is not valid C++.
+#
+if HOST_WIN32
+support_sources += $(zlib_sources)
+else
+if HAVE_ZLIB
+# See libmonoruntime_support_la_LDFLAGS
+else
+support_sources += $(zlib_sources)
+endif
+endif
+
+noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries)
 
 lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
@@ -115,7 +157,20 @@ mono-config-dirs.lo: Makefile
 libmonoruntime_config_la_SOURCES = \
 	mono-config-dirs.h		\
 	mono-config-dirs.c
-libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" -DMONO_RELOC_LIBDIR=\"../$(reloc_libdir)\"
+libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" -DMONO_RELOC_LIBDIR=\"../$(reloc_libdir)\" @CXX_ADD_CFLAGS@
+
+#
+# Support is a separate library because it is not valid C++.
+#
+libmonoruntime_support_la_SOURCES = $(support_sources)
+libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @ZLIB_CFLAGS@
+if HAVE_STATIC_ZLIB
+libmonoruntime_support_la_LDFLAGS = $(STATIC_ZLIB_PATH)
+else
+if HAVE_ZLIB
+libmonoruntime_support_la_LDFLAGS = -lz
+endif
+endif
 
 #
 # This library contains the icall tables if the runtime was configured with --disable-icall-tables
@@ -123,10 +178,15 @@ libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" 
 if DISABLE_ICALL_TABLES
 libmono_icall_table_la_SOURCES = \
 	icall-table.c
-libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_icall_table_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
+if WASM
+libmono_icall_table_la_LIBADD = # empty to avoid duplicate symbols when enabling dynamic linking
+else
 libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+endif
 endif
 endif
 
@@ -142,47 +202,18 @@ libmono_ilgen_la_SOURCES = \
 	marshal-ilgen.h	\
 	sgen-mono-ilgen.c \
 	sgen-mono-ilgen.h
-libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_ilgen_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
+if WASM
+libmono_ilgen_la_LIBADD =  # empty to avoid duplicate symbols when enabling dynamic linking
+else
 libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
 endif
 endif
-
-if !HOST_WIN32
-if !HOST_WASM
-if !ENABLE_MONODROID
-if !ENABLE_MONOTOUCH
-lib_LTLIBRARIES += libmono-system-native.la
-endif
-endif
-endif
 endif
 
-libmono_system_native_la_SOURCES = \
-	pal_config.h \
-	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
-	../../external/corefx/src/Native/Unix/Common/pal_safecrt.h \
-	../../external/corefx/src/Native/Unix/Common/pal_types.h \
-	../../external/corefx/src/Native/Unix/Common/pal_utilities.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_errno.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_errno.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_random.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_random.h
-
-libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition
 
 CLEANFILES = mono-bundle.stamp
 
@@ -213,6 +244,7 @@ endif
 common_sources = \
 	$(platform_sources)	\
 	appdomain.c	\
+	assembly-load-context.c	\
 	domain.c	\
 	appdomain-icalls.h	\
 	assembly.c		\
@@ -241,14 +273,13 @@ common_sources = \
 	debug-mono-symfile.c	\
 	debug-mono-ppdb.h	\
 	debug-mono-ppdb.c	\
-	decimal-ms.c		\
-	decimal-ms.h		\
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
+	external-only.h		\
 	w32file.c		\
 	w32file.h		\
 	w32file-internals.h \
@@ -256,13 +287,22 @@ common_sources = \
 	filewatcher.h		\
 	gc-internals.h		\
 	icall.c			\
-	icall-internals.h \
+	icalls.h		\
+	icall-decl.h		\
 	icall-def.h		\
+	icall-internals.h \
+	icall-signatures.h \
 	icall-table.h	\
 	image.c			\
 	image-internals.h	\
+	jit-icall-reg.h		\
 	jit-info.c		\
 	loader.c		\
+	loader-internals.h	\
+	loaded-images-internals.h		\
+	loaded-images.c		\
+	loaded-images-global.c	\
+	loaded-images-netcore.c	\
 	locales.c		\
 	locales.h		\
 	lock-tracer.c		\
@@ -281,12 +321,14 @@ common_sources = \
 	method-builder.c 	\
 	mono-basic-block.c	\
 	mono-basic-block.h	\
+	mono-config-internals.h	\
 	mono-config.c		\
 	mono-debug.h		\
 	mono-debug.c		\
 	debug-internals.h	\
 	mono-endian.c		\
 	mono-endian.h		\
+	mono-hash-internals.h	\
 	mono-hash.c		\
 	mono-hash.h		\
 	mono-conc-hash.c		\
@@ -302,8 +344,7 @@ common_sources = \
 	monitor.h		\
 	normalization-tables.h	\
 	number-formatter.h	\
-	number-ms.c		\
-	number-ms.h		\
+	number-ms.h             \
 	object.c	\
 	object-forward.h	\
 	object-internals.h	\
@@ -318,11 +359,13 @@ common_sources = \
 	w32process-internals.h		\
 	profiler.c		\
 	profiler-private.h	\
+	profiler-legacy.h	\
 	rand.h			\
 	rand.c			\
 	remoting.h		\
 	remoting.c		\
 	runtime.c		\
+	runtime.h		\
 	mono-security.c		\
 	security.h		\
 	security-core-clr.c	\
@@ -331,7 +374,6 @@ common_sources = \
 	security-manager.h	\
 	string-icalls.c 	\
 	string-icalls.h 	\
-	sysmath.h		\
 	sysmath.c		\
 	tabledefs.h 		\
 	threads.c		\
@@ -361,6 +403,7 @@ common_sources = \
 	seq-points-data.h	\
 	seq-points-data.c	\
 	handle.c	\
+	handle-decl.h	\
 	handle.h	\
 	w32mutex.h	\
 	w32semaphore.h	\
@@ -379,7 +422,9 @@ common_sources = \
 	fdhandle.h	\
 	fdhandle.c	\
 	callspec.h	\
-	callspec.c
+	callspec.c	\
+	abi.c
+
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -394,6 +439,7 @@ sgen_sources = \
 	sgen-bridge.c		\
 	sgen-bridge.h		\
 	sgen-bridge-internals.h	\
+	sgen-dynarray.h		\
 	sgen-old-bridge.c		\
 	sgen-new-bridge.c		\
 	sgen-tarjan-bridge.c		\
@@ -404,17 +450,26 @@ sgen_sources = \
 	sgen-mono.h		\
 	sgen-client-mono.h
 
+# Per-library to workaround CoreFX/native until/unless https://github.com/dotnet/corefx/pull/31342.
+#CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
-libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
-libmonoruntime_la_LIBADD = libmonoruntime-config.la
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) @CXX_ADD_CFLAGS@
+libmonoruntime_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(sgen_sources)
-libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES)
-libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
+libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
 # This list is sorted for easier searching.
+# These are public headers.
+# They may not use G_BEGIN_DECLS, guint, glib.h, etc.
+# debug-mono-symfile.h is an exception. It is only semi-public.
 libmonoruntimeinclude_HEADERS = \
 	appdomain.h		\
 	assembly.h		\
@@ -443,5 +498,6 @@ libmonoruntimeinclude_HEADERS = \
 	tokentype.h		\
 	verify.h		
 
-EXTRA_DIST = $(win32_sources) $(unix_sources) $(null_sources) runtime.h \
-		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c sgen-dynarray.h
+EXTRA_DIST = $(null_sources) \
+		external-only.c \
+		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c

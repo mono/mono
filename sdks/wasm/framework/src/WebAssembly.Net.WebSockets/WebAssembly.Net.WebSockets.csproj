@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SignAssembly>true</SignAssembly>
+    <Version>$(ClientWebSocketVersion)</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Net.WebSockets.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Net.WebSockets.xml</DocumentationFile>
+  </PropertyGroup>  
+  <ItemGroup>
+    <ProjectReference Include="..\WebAssembly.Bindings\WebAssembly.Bindings.csproj" />
+  </ItemGroup>
+</Project>

@@ -74,7 +74,7 @@ namespace System {
                 throw new ArgumentNullException("type");
             Contract.EndContractBlock();
 #if !FULL_AOT_RUNTIME
-            if (type is System.Reflection.Emit.TypeBuilder)
+            if (RuntimeFeature.IsDynamicCodeSupported && type is System.Reflection.Emit.TypeBuilder)
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_CreateInstanceWithTypeBuilder"));
 #endif
             // If they didn't specify a lookup, then we will provide the default lookup.
@@ -699,7 +699,7 @@ namespace System {
         }
 #endif // FEATURE_COMINTEROP                                  
 
-#if FEATURE_REMOTING || MOBILE_LEGACY
+#if !DISABLE_REMOTING && (FEATURE_REMOTING || MOBILE_LEGACY)
         //  This method is a helper method and delegates to the remoting 
         //  services to do the actual work. 
         [System.Security.SecurityCritical]  // auto-generated_required

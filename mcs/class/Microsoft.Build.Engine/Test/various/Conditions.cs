@@ -31,6 +31,8 @@ using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class Conditions {
@@ -297,7 +299,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						<B Condition="" 'on' == 'true' ""></B>
 						<C Condition="" 4 == 4.0 and 04 == 4""></C>
 						<D Condition="" !(false and false) ==  !false or !false ""></D>
-						<E Condition="" Exists ('Test\resources\Import.csproj') ""></E>
+						<E Condition="" Exists ('" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"') ""></E>
 					</PropertyGroup>
 				</Project>
 			";

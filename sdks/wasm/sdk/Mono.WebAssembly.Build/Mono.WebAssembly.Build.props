@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup Condition=" '$(EnableDefaultItems)' == 'true' And '$(EnableDefaultWebContentItems)' == 'true' ">
+    <_WasmItem Include="**\*.html;**\*.png;**\*.jpg;**\*.css;**\*.js" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <Content Include="@(_WasmItem)" />
+    <None Remove="@(_WasmItem)" Condition="'$(EnableDefaultNoneItems)' == 'true'" />
+    <_WasmItem Remove="@(_WasmItem)" />
+  </ItemGroup>
+</Project>

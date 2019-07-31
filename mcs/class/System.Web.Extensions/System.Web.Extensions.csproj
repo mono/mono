@@ -9,7 +9,7 @@
     <NoWarn>1699,436</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -20,10 +20,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -44,8 +44,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\System.Web\System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
     <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs" />
     <Compile Include="..\System.Web\System.Web.Util\MachineKeySectionUtils.cs" />
@@ -79,12 +80,12 @@
     <Compile Include="System.Web.Handlers\ScriptResourceHandler.cs" />
     <Compile Include="System.Web.Query.Dynamic\DynamicClass.cs" />
     <Compile Include="System.Web.Query.Dynamic\ParseException.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptConverter.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptTypeResolver.cs" />
     <Compile Include="System.Web.Script.Serialization\Json.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\JsonDeserializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JsonSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\ScriptIgnoreAttribute.cs" />
@@ -108,8 +109,8 @@
     <Compile Include="System.Web.UI.WebControls\DataPagerFieldCommandEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\DataPagerFieldItem.cs" />
     <Compile Include="System.Web.UI.WebControls\HelperExtensions.cs" />
-    <Compile Include="System.Web.UI.WebControls\InsertItemPosition.cs" />
     <Compile Include="System.Web.UI.WebControls\IPageableItemContainer.cs" />
+    <Compile Include="System.Web.UI.WebControls\InsertItemPosition.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSource.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSourceContextEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSourceDeleteEventArgs.cs" />
@@ -126,11 +127,11 @@
     <Compile Include="System.Web.UI.WebControls\ListViewCommandEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewContainer.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewDataItem.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewDeletedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewDeleteEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewDeletedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewEditEventArgs.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewInsertedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewInsertEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewInsertedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItem.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItemEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItemType.cs" />
@@ -139,8 +140,8 @@
     <Compile Include="System.Web.UI.WebControls\ListViewSortEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewTableCell.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewTableRow.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewUpdatedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewUpdateEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewUpdatedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\NextPreviousPagerField.cs" />
     <Compile Include="System.Web.UI.WebControls\NumericPagerField.cs" />
     <Compile Include="System.Web.UI.WebControls\PageEventArgs.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="System.Web.UI\UpdatePanelUpdateMode.cs" />
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -227,4 +229,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

@@ -37,6 +37,8 @@
 #  endif
 #endif
 
+//#define TEST_ICALL_SYMBOL_MAP 1
+
 /*
  * If the MONO_ENV_OPTIONS environment variable is set, it uses this as a
  * source of command line arguments that are passed to Mono before the
@@ -139,16 +141,18 @@ static GSList *bundle_library_paths;
 /* Directory where we unpacked dynamic libraries */
 static char *bundled_dylibrary_directory;
 
+#ifdef HAVE_ATEXIT
 static void
 delete_bundled_libraries (void)
 {
 	GSList *list;
 
 	for (list = bundle_library_paths; list != NULL; list = list->next){
-		unlink (list->data);
+		unlink ((const char*)list->data);
 	}
 	rmdir (bundled_dylibrary_directory);
 }
+#endif
 
 static void
 bundle_save_library_initialize (void)
@@ -159,7 +163,9 @@ bundle_save_library_initialize (void)
 	g_free (path);
 	if (bundled_dylibrary_directory == NULL)
 		return;
+#ifdef HAVE_ATEXIT
 	atexit (delete_bundled_libraries);
+#endif
 }
 
 static void
@@ -287,7 +293,8 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	for (i = 0; i < items; i++){
 		char *kind;
 		int strsize = STREAM_INT (p);
-		uint64_t offset, item_size;
+		uint64_t offset;
+		uint32_t item_size;
 		kind = p+4;
 		p += 4 + strsize;
 		offset = STREAM_LONG(p);
@@ -295,10 +302,15 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		item_size = STREAM_INT (p);
 		p += 4;
 		
-		if (mapaddress == NULL){
-			mapaddress = mono_file_map (directory_location-offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, offset, &maphandle);
-			if (mapaddress == NULL){
-				perror ("Error mapping file");
+		if (mapaddress == NULL) {
+			char *error_message = NULL;
+			mapaddress = (guchar*)mono_file_map_error (directory_location - offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE,
+				fd, offset, &maphandle, program, &error_message);
+			if (mapaddress == NULL) {
+				if (error_message)
+					fprintf (stderr, "Error mapping file: %s\n", error_message);
+				else
+					perror ("Error mapping file");
 				exit (1);
 			}
 			baseline = offset;
@@ -321,7 +333,9 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		} else if (strncmp (kind, "options:", strlen ("options:")) == 0){
 			mono_parse_options_from (load_from_region (fd, offset, item_size), ref_argc, ref_argv);
 		} else if (strncmp (kind, "config_dir:", strlen ("config_dir:")) == 0){
-			mono_set_dirs (getenv ("MONO_PATH"), load_from_region (fd, offset, item_size));
+			char *mono_path_value = g_getenv ("MONO_PATH");
+			mono_set_dirs (mono_path_value, load_from_region (fd, offset, item_size));
+			g_free (mono_path_value);
 		} else if (strncmp (kind, "machineconfig:", strlen ("machineconfig:")) == 0) {
 			mono_register_machine_config (load_from_region (fd, offset, item_size));
 		} else if (strncmp (kind, "env:", strlen ("env:")) == 0){
@@ -356,6 +370,15 @@ doclose:
 		close (fd);
 	return status;
 }
+
+#if TEST_ICALL_SYMBOL_MAP
+
+const char*
+mono_lookup_icall_symbol_internal (gpointer func);
+
+ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int);
+
+#endif
 
 #ifdef HOST_WIN32
 
@@ -393,6 +416,13 @@ int
 main (int argc, char* argv[])
 {
 	mono_build_date = build_date;
+
+#if TEST_ICALL_SYMBOL_MAP
+	const char *p  = mono_lookup_icall_symbol_internal (mono_lookup_icall_symbol_internal);
+	printf ("%s\n", p ? p : "null");
+	p  = mono_lookup_icall_symbol_internal (ves_icall_Interop_Sys_DoubleToString);
+	printf ("%s\n", p ? p : "null");
+#endif
 
 	probe_embedded (argv [0], &argc, &argv);
 	return mono_main_with_options (argc, argv);

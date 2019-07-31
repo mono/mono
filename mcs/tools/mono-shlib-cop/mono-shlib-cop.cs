@@ -232,7 +232,7 @@ namespace Mono.Unmanaged.Check {
 		public void CheckFile (string file, AssemblyCheckInfo report)
 		{
 			try {
-				Check (Assembly.LoadFile (file), report);
+				Check (Assembly.LoadFile (Path.GetFullPath (file)), report);
 			}
 			catch (FileNotFoundException e) {
 				report.Errors.Add (new MessageInfo (null, null, 

@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using System;
 using System.CodeDom;
@@ -36,6 +36,8 @@ using System.CodeDom.Compiler;
 using System.Data;
 using NUnit.Framework;
 using Microsoft.CSharp;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Data
 {
@@ -91,7 +93,7 @@ namespace MonoTests.System.Data
 		public void RelationConnectsSameTable ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/bug77248.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/bug77248.xsd"));
 			CodeNamespace cns = new CodeNamespace ();
 			TypedDataSetGenerator.Generate (ds, cns, gen);
 			CodeCompileUnit ccu = new CodeCompileUnit ();

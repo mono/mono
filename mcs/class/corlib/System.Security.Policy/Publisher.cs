@@ -38,7 +38,8 @@ namespace System.Security.Policy {
 	public sealed class Publisher :
 		EvidenceBase,
 		IIdentityPermissionFactory, IBuiltInEvidence {
-	
+
+		[NonSerialized]
 		private X509Certificate m_cert;
 
 		public Publisher (X509Certificate cert) 

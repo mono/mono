@@ -65,7 +65,6 @@
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
-./Mono.Security.Cryptography/MD5SHA1.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse2.cs
 ./Mono.Security.Protocol.Ntlm/MessageBase.cs
@@ -89,6 +88,7 @@
 ./Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/HandshakeState.cs
 ./Mono.Security.Protocol.Tls/HashAlgorithmType.cs
+./Mono.Security.Protocol.Tls/MD5SHA1.cs
 ./Mono.Security.Protocol.Tls/HttpsClientStream.cs
 ./Mono.Security.Protocol.Tls/RecordProtocol.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs

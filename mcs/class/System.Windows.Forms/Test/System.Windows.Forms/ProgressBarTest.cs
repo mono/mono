@@ -13,6 +13,8 @@ using System.Drawing;
 using System.Reflection;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -29,7 +31,7 @@ namespace MonoTests.System.Windows.Forms
 			// B
 			Assert.AreEqual ("Control", myProgressBar.BackColor.Name, "#B1");
 			Assert.AreEqual (null, myProgressBar.BackgroundImage, "#B3");
-			string gif = "M.gif";
+			string gif = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			myProgressBar.BackgroundImage = Image.FromFile (gif);
 			// comparing image objects fails on MS .Net so using Size property
 			Assert.AreEqual (Image.FromFile(gif, true).Size, myProgressBar.BackgroundImage.Size, "#B4");

@@ -40,6 +40,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -371,7 +373,7 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void WriteToWSA10 ()
 		{
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			EndpointAddress a = new EndpointAddress (
 				new Uri ("http://localhost:8080"),
 				new X509CertificateEndpointIdentity (cert));
@@ -387,7 +389,7 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void WriteContentsToWSA10 ()
 		{
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			EndpointAddress a = new EndpointAddress (
 				new Uri ("http://localhost:8080"),
 				new X509CertificateEndpointIdentity (cert));

@@ -25,7 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME || IOS_REFLECTION
+#if MONO_FEATURE_SRE
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public struct MethodToken {
+	public readonly struct MethodToken : IEquatable<MethodToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly MethodToken Empty = new MethodToken ();
 

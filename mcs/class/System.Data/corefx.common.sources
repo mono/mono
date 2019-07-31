@@ -24,6 +24,7 @@ corefx/SqlParameterCollection.cs
 corefx/TdsEnums.cs
 corefx/SR.cs
 corefx/SqlDependencyUtils.cs
+corefx/DataReaderExtensions.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
@@ -461,17 +462,8 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectManaged.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlUdtInfo.cs
 
-../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
-../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs
-../../../external/corefx/src/Common/src/System/Net/Security/SecurityBufferType.cs
-../../../external/corefx/src/Common/src/System/Net/Security/SecurityBuffer.cs
-../../../external/corefx/src/Common/src/System/Net/DebugSafeHandle.cs
-../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleMinusOneIsInvalid.cs
-../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
-../../../external/corefx/src/Common/src/System/Net/Logging/DebugThreadTracking.cs
-../../../external/corefx/src/Common/src/System/Net/InternalException.cs
-../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/DBConnectionString.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/NameValuePermission.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/SafeNativeMethods.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/ProviderBase/DbBuffer.cs
+corefx/DbProviderFactories.mobile.cs

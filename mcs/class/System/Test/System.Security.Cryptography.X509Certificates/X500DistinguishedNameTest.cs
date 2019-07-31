@@ -315,7 +315,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void RFC3280MandatoryAttributeTypes ()
 		{
-			string expected = "dnQualifier=CA, OID.2.5.4.5=345, S=Maryland, DC=testcertificates, DC=gov, O=Test Certificates, C=US";
+			string expected = "dnQualifier=CA, SERIALNUMBER=345, S=Maryland, DC=testcertificates, DC=gov, O=Test Certificates, C=US";
 			X509Certificate2 cert = new X509Certificate2 (RFC3280MandatoryAttributeTypesCACert_crt);
 			// note: strangely the (also CryptoAPI based) certificate viewer in Windows seems to resolve 2.5.4.5 as "Serial Number"
 			Assert.AreEqual (expected, cert.SubjectName.Name, "SubjectName");
@@ -347,7 +347,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 				0x13, 0x1D, 0x43, 0x56, 0x52, 0x3A, 0x31, 0x33, 0x34, 0x37, 0x31, 0x39, 0x36, 0x37, 0x2D, 0x55, 0x49, 0x44, 0x3A, 0x31, 0x32, 0x31, 
 				0x32, 0x31, 0x32, 0x31, 0x32, 0x31, 0x32, 0x31, 0x32 };
 			X500DistinguishedName dn = new X500DistinguishedName (sn);
-			string subject = "OID.2.5.4.5=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK";
+			string subject = "SERIALNUMBER=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK";
 			Assert.AreEqual (subject, dn.Name, "Name");
 		}
 	}

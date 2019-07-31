@@ -18,19 +18,13 @@
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
+#include <mono/metadata/icalls.h>
 
+ICALL_EXPORT
 void
 ves_icall_System_String_ctor_RedirectToCreateString (void);
 
-MonoString *
-ves_icall_System_String_InternalAllocateStr (gint32 length);
-
-MonoString  *
-ves_icall_System_String_InternalIntern (MonoString *str);
-
-MonoString * 
-ves_icall_System_String_InternalIsInterned (MonoString *str);
-
+ICALL_EXPORT
 int
 ves_icall_System_String_GetLOSLimit (void);
 

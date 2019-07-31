@@ -553,6 +553,39 @@ namespace MonoTests.Remoting
 			}
 		}
 
+		public interface IMarshalTest
+		{
+			void DoSomething();
+		}
+
+		public interface ITest2 : IMarshalTest
+		{
+			void DoSomethingElse();
+		}
+
+		public class TestClass : MarshalByRefObject, ITest2
+		{
+			public void DoSomething()
+			{
+			}
+
+			public void DoSomethingElse()
+			{
+			}
+		}
+
+		[Test]
+		public void MarshalBaseInterfaces()
+		{
+			TestClass test = new TestClass();
+			ObjRef obj = RemotingServices.Marshal(test, "TestClass", typeof(ITest2));
+			FieldInfo interfacesImplemented = obj.TypeInfo.GetType().GetField("interfacesImplemented", BindingFlags.NonPublic | BindingFlags.Instance);
+			string[] interfaces = (string[])interfacesImplemented.GetValue(obj.TypeInfo);
+			Assert.AreEqual(2, interfaces.Length);
+			Assert.IsTrue(interfaces[0].Contains("IMarshalTest"));
+			Assert.IsTrue(interfaces[1].Contains("ITest2"));
+		}
+
 		[Test]
 		[Ignore ("We cannot test RemotingConfiguration.Configure() because it keeps channels registered. If we really need to test it, do it as a standalone case")]
 		public void ConnectProxyCast ()

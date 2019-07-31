@@ -7,7 +7,7 @@
 // Copyright (C) 2008 Novell, Inc.
 //
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using NUnit.Framework;
 
@@ -20,6 +20,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Collections;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Services.Description
 {
 	[TestFixture]
@@ -31,7 +33,7 @@ namespace MonoTests.System.Web.Services.Description
 			BasicProfileViolationCollection bc = new BasicProfileViolationCollection ();
 			WebServicesInteroperability.CheckConformance (
 				WsiProfiles.BasicProfile1_1,
-				ServiceDescription.Read ("Test/System.Web.Services.Description/check-import.wsdl"), bc);
+				ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/check-import.wsdl")), bc);
 		}
 
 		[Test]
@@ -40,7 +42,7 @@ namespace MonoTests.System.Web.Services.Description
 			BasicProfileViolationCollection bc = new BasicProfileViolationCollection ();
 			WebServicesInteroperability.CheckConformance (
 				WsiProfiles.BasicProfile1_1,
-				ServiceDescription.Read ("Test/System.Web.Services.Description/443095.wsdl"), bc);
+				ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/443095.wsdl")), bc);
 		}
 
 		[Test]
@@ -49,7 +51,7 @@ namespace MonoTests.System.Web.Services.Description
 			BasicProfileViolationCollection bc = new BasicProfileViolationCollection ();
 			WebServicesInteroperability.CheckConformance (
 				WsiProfiles.BasicProfile1_1,
-				ServiceDescription.Read ("Test/System.Web.Services.Description/6041.wsdl"), bc);
+				ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/6041.wsdl")), bc);
 		}
 
 	}

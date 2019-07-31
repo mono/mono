@@ -1,0 +1,17 @@
+<linker>
+  
+  <!--
+  Preserve the entire assembly
+  -->
+  <assembly fullname="WebAssembly.Bindings" preserve="all"/>
+
+  <!--
+  Preserve System.Delegate.DynamicInvoke which is called from javascript
+  -->
+  <assembly fullname="mscorlib">
+    <type fullname="System.Delegate">
+      <method signature="System.Object DynamicInvoke(System.Object[])" />
+    </type>
+  </assembly>   
+    
+</linker>

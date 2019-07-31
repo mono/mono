@@ -89,6 +89,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			_location = storeLocation;
 		}
 
+		public X509Store (StoreName storeName, StoreLocation storeLocation, OpenFlags openFlags) 
+			: this (storeName, storeLocation)
+		{
+			_flags = openFlags;
+		}
+
+		public X509Store (string storeName, StoreLocation storeLocation, OpenFlags openFlags) 
+			: this (storeName, storeLocation)
+		{
+			_flags = openFlags;
+		}
+
 		[MonoTODO ("Mono's stores are fully managed. All handles are invalid.")]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public X509Store (IntPtr storeHandle)
@@ -137,7 +149,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		private bool IsOpen {
+		public bool IsOpen {
 			get { return (store != null); }
 		}
 
@@ -237,7 +249,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			foreach (MX.X509Certificate x in store.Certificates) {
 				var cert2 = new X509Certificate2 (x.RawData);
-				cert2.PrivateKey = x.RSA;
+				cert2.Impl.PrivateKey = x.RSA;
 				Certificates.Add (cert2);
 			}
 		}

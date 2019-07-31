@@ -128,9 +128,6 @@ namespace Mono.Interop
 
 		public override IMessage Invoke (IMessage msg)
 		{
-			Console.WriteLine ("Invoke");
-            Console.WriteLine (System.Environment.StackTrace);
-
 			throw new Exception ("The method or operation is not implemented.");
 		}
 

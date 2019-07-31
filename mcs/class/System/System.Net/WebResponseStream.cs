@@ -181,7 +181,16 @@ namespace System.Net
 				() => {
 					Operation.Abort ();
 					innerStream.Dispose ();
-				}, cancellationToken);
+				}, () => Operation.Aborted, cancellationToken);
+		}
+
+		protected override bool TryReadFromBufferedContent (byte[] buffer, int offset, int count, out int result)
+		{
+			if (bufferedEntireContent && innerStream is BufferedReadStream bufferedStream)
+				return bufferedStream.TryReadFromBuffer (buffer, offset, count, out result);
+
+			result = 0;
+			return false;
 		}
 
 		bool CheckAuthHeader (string headerName)
@@ -309,7 +318,7 @@ namespace System.Net
 						break;
 					ms.Write (buffer, 0, ret);
 				}
-				return ms.GetBuffer ();
+				return ms.ToArray ();
 			}
 		}
 
@@ -372,6 +381,7 @@ namespace System.Net
 				var buffer = await ReadAllAsyncInner (cancellationToken).ConfigureAwait (false);
 				var bos = new BufferOffsetSize (buffer, 0, buffer.Length, false);
 				innerStream = new BufferedReadStream (Operation, null, bos);
+				bufferedEntireContent = true;
 
 				nextReadCalled = true;
 				completion.TrySetCompleted ();
@@ -400,6 +410,8 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} CLOSE #1: read_eof={read_eof} bufferedEntireContent={bufferedEntireContent}");
 				if (read_eof || bufferedEntireContent) {
 					disposed = true;
+					innerStream?.Dispose ();
+					innerStream = null;
 					Operation.Finish (true);
 				} else {
 					// If we have not read all the contents
@@ -530,7 +542,7 @@ namespace System.Net
 					else
 						StatusDescription = string.Empty;
 
-					if (pos >= buffer.Size)
+					if (pos >= buffer.Offset)
 						return true;
 				}
 

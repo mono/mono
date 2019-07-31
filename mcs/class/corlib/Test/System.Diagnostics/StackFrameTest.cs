@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using NUnit.Framework;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 
 namespace MonoTests.System.Diagnostics
 {
@@ -90,6 +91,8 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
@@ -181,7 +184,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (135,
+			Assert.AreEqual (138,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 
@@ -214,6 +217,8 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsNotNull (frame1.GetMethod (),
@@ -321,7 +326,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (271,
+			Assert.AreEqual (276,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}
@@ -346,6 +351,7 @@ namespace MonoTests.System.Diagnostics
 		/// Test whether GetFrames contains the frames for nested exceptions
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
 		public void GetFramesAndNestedExc ()
 		{
 			try
@@ -377,10 +383,55 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+		[Test]
+		[Category("NotWasm")]
+		[Category("MobileNotWorking")]
+		// https://github.com/mono/mono/issues/12688
+		public async Task GetFrames_AsyncCalls ()
+		{
+			await StartAsyncCalls ();
+		}
+
+		private async Task StartAsyncCalls ()
+		{
+			try
+			{
+				await AsyncMethod1 ();
+			}
+			catch (Exception exception)
+			{
+				var stackTrace = new StackTrace (exception, true);
+				Assert.AreEqual (25, stackTrace.GetFrames ().Length);
+			}
+		}
+
+		private async Task<int> AsyncMethod1 ()
+		{
+			return await AsyncMethod2 ();
+		}
+
+		private async Task<int> AsyncMethod2 ()
+		{
+			return await AsyncMethod3 ();
+		}
+
+		private async Task<int> AsyncMethod3 ()
+		{
+			return await AsyncMethod4 ();
+		}
+
+		private async Task<int> AsyncMethod4 ()
+		{
+			await Task.Delay (10);
+			throw new Exception ("Test exception thrown!");
+		}
+
 		/// <summary>
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");

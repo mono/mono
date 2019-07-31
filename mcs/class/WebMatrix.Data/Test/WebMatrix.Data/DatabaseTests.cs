@@ -35,6 +35,8 @@ using WebMatrix.Data;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.WebMatrix.Data
 {
 	[TestFixtureAttribute]
@@ -46,7 +48,7 @@ namespace MonoTests.WebMatrix.Data
 		[SetUp]
 		public void Setup ()
 		{
-			dbPath = Path.Combine ("Test", "testsqlite.db");
+			dbPath = TestResourceHelper.GetFullPathOfResource ("Test/resources/testsqlite.db");
 			database = Database.OpenConnectionString ("Data Source="+dbPath+";Version=3;", "Mono.Data.Sqlite");
 		}
 

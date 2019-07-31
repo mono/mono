@@ -139,7 +139,7 @@ namespace System.Web.Security
 			}
 
 			// Get encryption and decryption key information from the configuration.
-			m_MachineKey = (MachineKeySection)WebConfigurationManager.GetSection("system.web/machineKey", null);
+			m_MachineKey = (MachineKeySection)WebConfigurationManager.GetSection("system.web/machineKey");
 
 			if (!m_PasswordFormat.Equals(MembershipPasswordFormat.Clear))
 			{

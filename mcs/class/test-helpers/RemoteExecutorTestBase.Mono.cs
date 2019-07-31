@@ -13,7 +13,7 @@ namespace System.Diagnostics
 		// protected static readonly string HostRunnerName = "mono";
 		protected static readonly string HostRunner = Process.GetCurrentProcess().MainModule.FileName;
 
-		// Should be ../lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
+		// Should be ../lib/$(PROFILE)/tests/RemoteExecutorConsoleApp.exe
 		static readonly string ExtraParameter = "--debug " + Environment.GetEnvironmentVariable ("REMOTE_EXECUTOR");
 	}
 }

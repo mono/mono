@@ -54,7 +54,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Test]
 		public void Constructor ()
 		{
-			Uri uri = new Uri ("http://mono-project.com");
+			Uri uri = new Uri ("http://example.com");
 			UrlSyndicationContent t = new UrlSyndicationContent (uri, null);
 			t = new UrlSyndicationContent (uri, "text/plain");
 			Assert.AreEqual (uri, t.Url, "#1");
@@ -64,7 +64,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Test]
 		public void Clone ()
 		{
-			Uri uri = new Uri ("http://mono-project.com");
+			Uri uri = new Uri ("http://example.com");
 			UrlSyndicationContent t = new UrlSyndicationContent (uri, "text/plain");
 			t = t.Clone () as UrlSyndicationContent;
 			Assert.AreEqual (uri, t.Url, "#1");
@@ -75,18 +75,18 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[Category("NotWorking")]
 		public void WriteTo ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/");
+			Uri uri = new Uri ("http://example.com/");
 			UrlSyndicationContent t = new UrlSyndicationContent (uri, null);
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				t.WriteTo (w, "root", String.Empty);
-			Assert.AreEqual ("<root type=\"\" src=\"http://mono-project.com/\" />", sw.ToString ());
+			Assert.AreEqual ("<root type=\"\" src=\"http://example.com/\" />", sw.ToString ());
 
 			t = new UrlSyndicationContent (uri, "application/xml+svg");
 			sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				t.WriteTo (w, "root", String.Empty);
-			Assert.AreEqual ("<root type=\"application/xml+svg\" src=\"http://mono-project.com/\" />", sw.ToString ());
+			Assert.AreEqual ("<root type=\"application/xml+svg\" src=\"http://example.com/\" />", sw.ToString ());
 		}
 
 		XmlWriter CreateWriter (StringWriter sw)

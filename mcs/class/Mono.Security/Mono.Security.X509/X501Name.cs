@@ -49,7 +49,7 @@ namespace Mono.Security.X509 {
 	 * 
 	 * RelativeDistinguishedName ::= SET OF AttributeTypeAndValue
 	 */
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
@@ -63,7 +63,7 @@ namespace Mono.Security.X509 {
 		static byte[] localityName = { 0x55, 0x04, 0x07 };
 		static byte[] stateOrProvinceName = { 0x55, 0x04, 0x08 };
 		static byte[] streetAddress = { 0x55, 0x04, 0x09 };
-		//static byte[] serialNumber = { 0x55, 0x04, 0x05 };
+		static byte[] serialNumber = { 0x55, 0x04, 0x05 };
 		static byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
 		static byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
 		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
@@ -160,6 +160,8 @@ namespace Mono.Security.X509 {
 					sb.Append ("G=");
 				else if (poid.CompareValue (initial))
 					sb.Append ("I=");
+				else if (poid.CompareValue (serialNumber))
+					sb.Append ("SERIALNUMBER=");					
 				else {
 					// unknown OID
 					sb.Append ("OID.");	// NOTE: Not present as RFC2253
@@ -180,14 +182,17 @@ namespace Mono.Security.X509 {
 						sValue = Encoding.UTF7.GetString (s.Value);
 					else
 						sValue = Encoding.UTF8.GetString (s.Value);
-					// in some cases we must quote (") the value
-					// Note: this doesn't seems to conform to RFC2253
-					char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
-					if (quotes) {
-						if ((sValue.IndexOfAny (specials, 0, sValue.Length) > 0) ||
-						    sValue.StartsWith (" ") || (sValue.EndsWith (" ")))
-							sValue = "\"" + sValue + "\"";
-					}
+				}
+
+				// in some cases we must quote (") the value
+				// Note: this doesn't seems to conform to RFC2253
+				// Set of characters that need quoting is taken from s_quoteNeedingChars
+				// in corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Pal.Unix/X500NameEncoder.cs
+				char[] specials = { ',', '+', '"', '=', '<', '>', ';', '#', '\n' };
+				if (quotes) {
+					if ((sValue.IndexOfAny (specials, 0, sValue.Length) > 0) ||
+					    sValue.StartsWith (" ") || (sValue.EndsWith (" ")))
+						sValue = "\"" + sValue.Replace ("\"", "") + "\"";
 				}
 
 				sb.Append (sValue);
@@ -231,6 +236,8 @@ namespace Mono.Security.X509 {
 					return new X520.GivenName ();
 				case "I":
 					return new X520.Initial ();
+				case "SERIALNUMBER":
+					return new X520.SerialNumber ();
 				default:
 					if (s.StartsWith ("OID.")) {
 						// MUST support it but it OID may be without it

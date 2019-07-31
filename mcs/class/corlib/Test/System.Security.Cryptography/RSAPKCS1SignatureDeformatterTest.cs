@@ -298,6 +298,9 @@ namespace MonoTests.System.Security.Cryptography {
 			catch (NullReferenceException) {
 				// this wasn't expected - but that's the result from framework 1.1
 			}
+			catch (ArgumentNullException) {
+				// CoreFX throws this.
+			}
 			catch (Exception e) {
 				Assert.Fail ("VerifySignatureHashNoKey - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
 			}
@@ -336,6 +339,9 @@ namespace MonoTests.System.Security.Cryptography {
 			catch (NullReferenceException) {
 				// this wasn't expected - but that's the result from framework 1.1
 			}
+			catch (ArgumentNullException) {
+				// CoreFX throws this.
+			}
 			catch (Exception e) {
 				Assert.Fail ("VerifySignatureSHA1HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
 			}
@@ -363,14 +369,17 @@ namespace MonoTests.System.Security.Cryptography {
 			badSignature[0] = (byte) ~md5Signature [0];
 			HashAlgorithm hash = MD5.Create ();
 			try {
-				fmt.VerifySignature (hash, md5Signature);
+				fmt.VerifySignature (hash, badSignature);
 				Assert.Fail ("VerifyBadSignatureMD5Hash - Expected CryptographicUnexpectedOperationException but none");
 			}
 			catch (CryptographicUnexpectedOperationException) {
 				// this was expected
 			}
 			catch (NullReferenceException) {
-				// this wasn't expected - but that's the result from framework 1.1
+				// this wasn't expected - but that's the result from .NET Framework
+			}
+			catch (ArgumentNullException) {
+				// CoreFX throws this.
 			}
 			catch (Exception e) {
 				Assert.Fail ("VerifyBadSignatureMD5Hash - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
@@ -385,14 +394,17 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] badSignature = new byte [md5Signature.Length-1];
 			HashAlgorithm hash = MD5.Create ();
 			try {
-				fmt.VerifySignature (hash, md5Signature);
+				fmt.VerifySignature (hash, badSignature);
 				Assert.Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but none");
 			}
 			catch (CryptographicUnexpectedOperationException) {
 				// this was expected
 			}
 			catch (NullReferenceException) {
-				// this wasn't expected - but that's the result from framework 1.1
+				// this wasn't expected - but that's the result from .NET Framework
+			}
+			catch (ArgumentNullException) {
+				// CoreFX throws this.
 			}
 			catch (Exception e) {
 				Assert.Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());

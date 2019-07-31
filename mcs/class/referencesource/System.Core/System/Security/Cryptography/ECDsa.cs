@@ -6,6 +6,9 @@
 
 using System;
 using System.IO;
+#if MONO
+using System.Buffers;
+#endif
 
 namespace System.Security.Cryptography {
     /// <summary>
@@ -217,5 +220,101 @@ namespace System.Security.Cryptography {
         internal static Exception HashAlgorithmNameNullOrEmpty() {
             return new ArgumentException(SR.GetString(SR.Cryptography_HashAlgorithmNameNullOrEmpty), "hashAlgorithm");
         }
+
+#if MONO // these methods were copied from CoreFX for NS2.1 support
+        protected virtual bool TryHashData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, out int bytesWritten)
+        {
+            byte[] array = ArrayPool<byte>.Shared.Rent(data.Length);
+            try
+            {
+                data.CopyTo(array);
+                byte[] hash = HashData(array, 0, data.Length, hashAlgorithm);
+                if (hash.Length <= destination.Length)
+                {
+                    new ReadOnlySpan<byte>(hash).CopyTo(destination);
+                    bytesWritten = hash.Length;
+                    return true;
+                }
+                else
+                {
+                    bytesWritten = 0;
+                    return false;
+                }
+            }
+            finally
+            {
+                Array.Clear(array, 0, data.Length);
+                ArrayPool<byte>.Shared.Return(array);
+            }
+        }
+
+        public virtual bool TrySignHash(ReadOnlySpan<byte> hash, Span<byte> destination, out int bytesWritten)
+        {
+            byte[] result = SignHash(hash.ToArray());
+            if (result.Length <= destination.Length)
+            {
+                new ReadOnlySpan<byte>(result).CopyTo(destination);
+                bytesWritten = result.Length;
+                return true;
+            }
+            else
+            {
+                bytesWritten = 0;
+                return false;
+            }
+        }
+
+        public virtual bool VerifyHash(ReadOnlySpan<byte> hash, ReadOnlySpan<byte> signature) =>
+            VerifyHash(hash.ToArray(), signature.ToArray());
+
+        public virtual bool TrySignData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, out int bytesWritten)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw new ArgumentException(SR.Cryptography_HashAlgorithmNameNullOrEmpty, nameof(hashAlgorithm));
+            }
+
+            if (TryHashData(data, destination, hashAlgorithm, out int hashLength) &&
+                TrySignHash(destination.Slice(0, hashLength), destination, out bytesWritten))
+            {
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool VerifyData(ReadOnlySpan<byte> data, ReadOnlySpan<byte> signature, HashAlgorithmName hashAlgorithm)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw new ArgumentException(SR.Cryptography_HashAlgorithmNameNullOrEmpty, nameof(hashAlgorithm));
+            }
+
+            for (int i = 256; ; i = checked(i * 2))
+            {
+                int hashLength = 0;
+                byte[] hash = ArrayPool<byte>.Shared.Rent(i);
+                try
+                {
+                    if (TryHashData(data, hash, hashAlgorithm, out hashLength))
+                    {
+                        return VerifyHash(new ReadOnlySpan<byte>(hash, 0, hashLength), signature);
+                    }
+                }
+                finally
+                {
+                    Array.Clear(hash, 0, hashLength);
+                    ArrayPool<byte>.Shared.Return(hash);
+                }
+            }
+        }
+
+        public virtual byte[] ExportECPrivateKey () => throw new PlatformNotSupportedException ();
+        
+        public virtual bool TryExportECPrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+        
+        public virtual void ImportECPrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+#endif
     }
 }

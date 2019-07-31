@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -23,7 +25,8 @@ namespace MonoTests.System.Windows.Forms
 			// this contains an and mask, it used to crash
 			//
 
-			new Cursor (typeof (CursorTest).Assembly.GetManifestResourceStream ("a.cur"));
+			var c = new Cursor (TestResourceHelper.GetStreamOfResource ("Test/resources/a.cur"));
+			Assert.NotNull (c);
 		}
 
 		[Test]

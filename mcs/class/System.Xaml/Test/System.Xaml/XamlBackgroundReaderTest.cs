@@ -35,6 +35,8 @@ using NUnit.Framework;
 
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xaml
 {
 	[TestFixture]
@@ -42,7 +44,7 @@ namespace MonoTests.System.Xaml
 	{
 		XamlReader GetReader (string filename)
 		{
-			return new XamlXmlReader (XmlReader.Create (Path.Combine ("Test/XmlFiles", filename), new XmlReaderSettings () { CloseInput =true }));
+			return new XamlXmlReader (XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/" + filename), new XmlReaderSettings () { CloseInput =true }));
 		}
 
 		void ReadTest (string filename)

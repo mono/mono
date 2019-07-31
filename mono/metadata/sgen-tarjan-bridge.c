@@ -446,7 +446,7 @@ mix_hash (uintptr_t source)
 
 	// Mix in highest bits on 64-bit systems only
 	if (sizeof (source) > 4)
-		hash = hash ^ (source >> 32);
+		hash = hash ^ ((source >> 31) >> 1);
 
 	return hash;
 }
@@ -1137,7 +1137,7 @@ processing_build_callback_data (int generation)
 		}
 	}
 
-	g_assert (xref_count == xref_index);
+	g_assertf (xref_count == xref_index, "xref_count is %d but we added %d xrefs", xref_count, xref_index);
 	xref_setup_time = step_timer (&curtime);
 
 #if defined (DUMP_GRAPH)

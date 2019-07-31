@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -1515,7 +1517,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.ProhibitDtd = false;
-			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml", s);
+			XmlReader xr = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/nested-dtd-test.xml"), s);
 			xr.Read ();
 			Assert.AreEqual (XmlNodeType.DocumentType, xr.NodeType, "#1");
 			xr.Read ();
@@ -1528,7 +1530,7 @@ namespace MonoTests.System.Xml
 		[ExpectedException (typeof (XmlException))]
 		public void CreateSimpleProhibitDtd ()
 		{
-			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml");
+			XmlReader xr = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/nested-dtd-test.xml"));
 			xr.Read ();
 		}
 

@@ -7,6 +7,7 @@
 #ifndef __MONO_METADATA_DOMAIN_INTERNALS_H__
 #define __MONO_METADATA_DOMAIN_INTERNALS_H__
 
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mempool.h>
@@ -16,7 +17,27 @@
 #include <mono/metadata/mono-conc-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/metadata/handle-decl.h>
+
+/* Mono appdomain support is deeply itegrated in the runtime, as a result, even
+ * though .NET Standard does not include System.AppDomain in
+ * System.Private.CoreLib, we still depend on having an appdomain class.
+ * So we move it to Mono.MonoDomain
+ *
+ */
+#ifndef ENABLE_NETCORE
+#define MONO_APPDOMAIN_CLASS_NAME_SPACE "System"
+#define MONO_APPDOMAIN_CLASS_NAME "AppDomain"
+#define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "System"
+#define MONO_APPDOMAIN_SETUP_CLASS_NAME "AppDomainSetup"
+#else
+#define MONO_APPDOMAIN_CLASS_NAME_SPACE "Mono"
+#define MONO_APPDOMAIN_CLASS_NAME "MonoDomain"
+#define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "Mono"
+#define MONO_APPDOMAIN_SETUP_CLASS_NAME "MonoDomainSetup"
+#endif
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -205,6 +226,8 @@ typedef enum {
 	JIT_INFO_HAS_UNWIND_INFO = (1 << 4)
 } MonoJitInfoFlags;
 
+G_ENUM_FUNCTIONS (MonoJitInfoFlags)
+
 struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
@@ -213,12 +236,12 @@ struct _MonoJitInfo {
 	union {
 		MonoMethod *method;
 		MonoImage *image;
-		gpointer aot_info;
-		gpointer tramp_info;
+		MonoAotModule *aot_info;
+		MonoTrampInfo *tramp_info;
 	} d;
 	union {
-		struct _MonoJitInfo *next_jit_code_hash;
-		struct _MonoJitInfo *next_tombstone;
+		MonoJitInfo *next_jit_code_hash;
+		MonoJitInfo *next_tombstone;
 	} n;
 	gpointer    code_start;
 	guint32     unwind_info;
@@ -249,6 +272,8 @@ struct _MonoJitInfo {
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
+
+	gpointer    seq_points;
 	
 	MonoJitExceptionInfo clauses [MONO_ZERO_LEN_ARRAY];
 	/* There is an optional MonoGenericJitInfo after the clauses */
@@ -351,6 +376,13 @@ struct _MonoDomain {
 	/* Needed by Thread:GetDomainID() */
 	gint32             domain_id;
 	gint32             shadow_serial;
+	/*
+	 * For framework Mono, this is every assembly loaded in this
+	 * domain. For netcore, this is every assembly loaded in every ALC in
+	 * this domain.  In netcore, the thread that adds an assembly to its
+	 * MonoAssemblyLoadContext:loaded_assemblies should also add it to this
+	 * list.
+	 */
 	GSList             *domain_assemblies;
 	MonoAssembly       *entry_assembly;
 	char               *friendly_name;
@@ -395,7 +427,10 @@ struct _MonoDomain {
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
-	
+
+	/* Information maintained by mono-debug.c */
+	gpointer debug_info;
+
 	/* Contains the compiled runtime invoke wrapper used by finalizers */
 	gpointer            finalize_runtime_invoke;
 
@@ -427,6 +462,12 @@ struct _MonoDomain {
 	gboolean throw_unobserved_task_exceptions;
 
 	guint32 execution_context_field_offset;
+
+#ifdef ENABLE_NETCORE
+	GSList *alcs;
+	MonoAssemblyLoadContext *default_alc;
+	MonoCoopMutex alcs_lock; /* Used when accessing 'alcs' */
+#endif
 };
 
 typedef struct  {
@@ -512,17 +553,27 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name);
 gpointer
 mono_domain_alloc  (MonoDomain *domain, guint size);
 
+#define mono_domain_alloc(domain, size) (g_cast (mono_domain_alloc ((domain), (size))))
+
 gpointer
 mono_domain_alloc0 (MonoDomain *domain, guint size);
+
+#define mono_domain_alloc0(domain, size) (g_cast (mono_domain_alloc0 ((domain), (size))))
 
 gpointer
 mono_domain_alloc0_lock_free (MonoDomain *domain, guint size);
 
+#define mono_domain_alloc0_lock_free(domain, size) (g_cast (mono_domain_alloc0_lock_free ((domain), (size))))
+
 void*
 mono_domain_code_reserve (MonoDomain *domain, int size) MONO_LLVM_INTERNAL;
 
+#define mono_domain_code_reserve(domain, size) (g_cast (mono_domain_code_reserve ((domain), (size))))
+
 void*
 mono_domain_code_reserve_align (MonoDomain *domain, int size, int alignment);
+
+#define mono_domain_code_reserve_align(domain, size, align) (g_cast (mono_domain_code_reserve_align ((domain), (size), (align))))
 
 void
 mono_domain_code_commit (MonoDomain *domain, void *data, int size, int newsize);
@@ -579,7 +630,8 @@ mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor,
 gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
-MonoImage *mono_assembly_open_from_bundle (const char *filename,
+MonoImage *mono_assembly_open_from_bundle (MonoAssemblyLoadContext *alc,
+					   const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly);
 
@@ -587,7 +639,7 @@ MonoAssembly *
 mono_try_assembly_resolve (MonoDomain *domain, const char *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
 MonoAssembly *
-mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly);
+mono_domain_assembly_postload_search (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
 void mono_domain_set_options_from_config (MonoDomain *domain);
 
@@ -601,12 +653,6 @@ MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer add
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
-MonoReflectionAssembly *
-mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error);
-
-MonoReflectionAssembly *
-mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilder *typebuilder, MonoError *error);
-
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error);
 
@@ -618,5 +664,33 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
+
+void
+mono_runtime_register_appctx_properties (int nprops, const char **keys,  const char **values);
+
+void
+mono_runtime_install_appctx_properties (void);
+
+gboolean 
+mono_domain_set_fast (MonoDomain *domain, gboolean force);
+
+MonoAssemblyLoadContext *
+mono_domain_default_alc (MonoDomain *domain);
+
+#ifdef ENABLE_NETCORE
+MonoAssemblyLoadContext *
+mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error);
+#endif
+
+static inline
+MonoAssemblyLoadContext *
+mono_domain_ambient_alc (MonoDomain *domain)
+{
+	/*
+	 * FIXME: All the callers of mono_domain_ambient_alc should get an ALC
+	 * passed to them from their callers.
+	 */
+	return mono_domain_default_alc (domain);
+}
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

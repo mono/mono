@@ -223,11 +223,11 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		string[] internetUrls = {
-			"http://www.go-mono.com",
+			"http://www.example.com",
 			"http://64.14.94.188/",
-			"HTTP://WWW.GO-MONO.COM",
-			"http://*.go-mono.com",
-			"http://www.go-mono.com:8080/index.html",
+			"HTTP://WWW.EXAMPLE.COM",
+			"http://*.example.com",
+			"http://www.example.com:8080/index.html",
 			"mono://unknown/protocol",
 			"/mono/index.html",
 		};

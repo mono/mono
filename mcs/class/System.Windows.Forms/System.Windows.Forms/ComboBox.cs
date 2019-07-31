@@ -767,7 +767,8 @@ namespace System.Windows.Forms
 
 				// set directly the passed value
 				if (dropdown_style != ComboBoxStyle.DropDownList)
-					textbox_ctrl.Text = value;
+					if (textbox_ctrl != null)
+						textbox_ctrl.Text = value;
 			}
 		}
 
@@ -1878,6 +1879,8 @@ namespace System.Windows.Forms
 
 		internal void SetControlText (string s, bool suppressTextChanged, bool supressAutoScroll)
 		{
+			if (textbox_ctrl == null)
+				return;
 			if (suppressTextChanged)
 				process_textchanged_event = false;
 			if (supressAutoScroll)

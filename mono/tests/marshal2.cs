@@ -35,7 +35,8 @@ public class Tests {
 		public SimpleObj emb2;
 		public string s2;
 		public double x;
-		[MarshalAs (UnmanagedType.ByValArray, SizeConst=2)] public char[] a2;
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst=2)]
+		public char[] a2;
 	}
 
 	[StructLayout (LayoutKind.Sequential, CharSet=CharSet.Ansi)]
@@ -333,6 +334,41 @@ public class Tests {
 			if(((int*)ptr)[4] == 5)
 				return 0;
 		}
+		return 1;
+	}
+
+	struct GenericStruct<T>
+	{
+		public T t1;
+		public T t2;
+		public bool b; // make struct non-blittable
+	}
+
+	struct NonGenericStruct
+	{
+		public int t1;
+		public int t2;
+		public bool b; // make struct non-blittable
+	}
+
+	struct StructWithGenericField
+	{
+		public GenericStruct<int> gs;
+	}
+
+	struct StructWithNonGenericField
+	{
+		public NonGenericStruct ngs;
+	}
+
+	public static int test_0_marshal_generic_struct () {
+		var structToMarshal = new StructWithNonGenericField () { ngs = new NonGenericStruct {t1 = 1, t2 =2} };
+		var ptr = Marshal.AllocHGlobal (Marshal.SizeOf (structToMarshal));
+		Marshal.StructureToPtr(structToMarshal, ptr, false);
+		var genericStruct = (StructWithGenericField)Marshal.PtrToStructure(ptr, typeof(StructWithGenericField));
+		if (genericStruct.gs.t1 == 1)
+			return 0;
+
 		return 1;
 	}
 }

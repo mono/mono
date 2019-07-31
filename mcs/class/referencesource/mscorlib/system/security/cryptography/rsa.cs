@@ -17,6 +17,9 @@ namespace System.Security.Cryptography {
     using System.Security.Util;
     using System.Globalization;
     using System.Diagnostics.Contracts;
+#if MONO
+    using System.Buffers;
+#endif
 
     // We allow only the public components of an RSAParameters object, the Modulus and Exponent
     // to be serializable.
@@ -338,5 +341,176 @@ namespace System.Security.Cryptography {
         abstract public RSAParameters ExportParameters(bool includePrivateParameters);
 
         abstract public void ImportParameters(RSAParameters parameters);
+
+#if MONO // these methods were copied from CoreFX for NS2.1 support
+        public static RSA Create(int keySizeInBits)
+        {
+            RSA rsa = Create();
+
+            try
+            {
+                rsa.KeySize = keySizeInBits;
+                return rsa;
+            }
+            catch
+            {
+                rsa.Dispose();
+                throw;
+            }
+        }
+
+        public static RSA Create(RSAParameters parameters)
+        {
+            RSA rsa = Create();
+
+            try
+            {
+                rsa.ImportParameters(parameters);
+                return rsa;
+            }
+            catch
+            {
+                rsa.Dispose();
+                throw;
+            }
+        }
+
+        public virtual bool TryDecrypt(ReadOnlySpan<byte> data, Span<byte> destination, RSAEncryptionPadding padding, out int bytesWritten)
+        {
+            byte[] result = Decrypt(data.ToArray(), padding);
+
+            if (destination.Length >= result.Length)
+            {
+                new ReadOnlySpan<byte>(result).CopyTo(destination);
+                bytesWritten = result.Length;
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool TryEncrypt(ReadOnlySpan<byte> data, Span<byte> destination, RSAEncryptionPadding padding, out int bytesWritten)
+        {
+            byte[] result = Encrypt(data.ToArray(), padding);
+
+            if (destination.Length >= result.Length)
+            {
+                new ReadOnlySpan<byte>(result).CopyTo(destination);
+                bytesWritten = result.Length;
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        protected virtual bool TryHashData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, out int bytesWritten)
+        {
+            byte[] result;
+            byte[] array = ArrayPool<byte>.Shared.Rent(data.Length);
+            try
+            {
+                data.CopyTo(array);
+                result = HashData(array, 0, data.Length, hashAlgorithm);
+            }
+            finally
+            {
+                Array.Clear(array, 0, data.Length);
+                ArrayPool<byte>.Shared.Return(array);
+            }
+
+            if (destination.Length >= result.Length)
+            {
+                new ReadOnlySpan<byte>(result).CopyTo(destination);
+                bytesWritten = result.Length;
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool TrySignHash(ReadOnlySpan<byte> hash, Span<byte> destination, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding, out int bytesWritten)
+        {
+            byte[] result = SignHash(hash.ToArray(), hashAlgorithm, padding);
+
+            if (destination.Length >= result.Length)
+            {
+                new ReadOnlySpan<byte>(result).CopyTo(destination);
+                bytesWritten = result.Length;
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool TrySignData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding, out int bytesWritten)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw HashAlgorithmNameNullOrEmpty();
+            }
+            if (padding == null)
+            {
+                throw new ArgumentNullException(nameof(padding));
+            }
+
+            if (TryHashData(data, destination, hashAlgorithm, out int hashLength) &&
+                TrySignHash(destination.Slice(0, hashLength), destination, hashAlgorithm, padding, out bytesWritten))
+            {
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool VerifyData(ReadOnlySpan<byte> data, ReadOnlySpan<byte> signature, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw HashAlgorithmNameNullOrEmpty();
+            }
+            if (padding == null)
+            {
+                throw new ArgumentNullException(nameof(padding));
+            }
+
+            for (int i = 256; ; i = checked(i * 2))
+            {
+                int hashLength = 0;
+                byte[] hash = ArrayPool<byte>.Shared.Rent(i);
+                try
+                {
+                    if (TryHashData(data, hash, hashAlgorithm, out hashLength))
+                    {
+                        return VerifyHash(new ReadOnlySpan<byte>(hash, 0, hashLength), signature, hashAlgorithm, padding);
+                    }
+                }
+                finally
+                {
+                    Array.Clear(hash, 0, hashLength);
+                    ArrayPool<byte>.Shared.Return(hash);
+                }
+            }
+        }
+
+        public virtual bool VerifyHash(ReadOnlySpan<byte> hash, ReadOnlySpan<byte> signature, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding) =>
+            VerifyHash(hash.ToArray(), signature.ToArray(), hashAlgorithm, padding);
+
+        public virtual byte[] ExportRSAPrivateKey () => throw new PlatformNotSupportedException ();
+        
+        public virtual byte[] ExportRSAPublicKey () => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportRSAPrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportRSAPublicKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportRSAPrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportRSAPublicKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+#endif
     }
 }

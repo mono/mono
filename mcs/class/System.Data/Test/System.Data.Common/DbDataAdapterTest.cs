@@ -32,12 +32,14 @@ using System.Data.Common;
 using System.Data.SqlClient;
 
 /*--For Bug 853 Test Begin--*/
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5 && WORKING_SQLITE
 using Mono.Data.Sqlite;
 #endif
 /*--For Bug 853 Test End--*/
 
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Data.Common
 {
@@ -189,12 +191,12 @@ namespace MonoTests.System.Data.Common
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5 && WORKING_SQLITE
 		[Test]
 		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
 		public void XimarinBugzillaBug853Test()
                 {
-                        const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory
+                        string connectionString = "URI = file:" + TestResourceHelper.GetFullPathOfResource ("Test/System.Data.Common/SqliteTest.db") + "; Version = 3";//will be in System.Data directory
                         SqliteConnection dbConnection = new SqliteConnection(connectionString);
                         dbConnection.Open();
 			SqliteCommand ClearTableEntry=new SqliteCommand("DELETE FROM Primus;",dbConnection);

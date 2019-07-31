@@ -200,7 +200,7 @@ namespace System.Windows.Forms
 
 			internal override void OnPaintInternal (PaintEventArgs e)
 			{
-				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), text_rect);
+				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), text_rect);
 				if (icon_image != null) {
 					e.Graphics.DrawIcon(icon_image, space_border, space_border);
 				}

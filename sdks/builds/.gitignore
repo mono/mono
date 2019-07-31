@@ -1,4 +1,3 @@
-# build artifacts
 .stamp-*
 *.mk.generated
 *.config.cache
@@ -7,6 +6,7 @@ llvm-llvm32/
 llvm-llvm64/
 llvm-llvmwin32/
 llvm-llvmwin64/
+llvm36-llvm32/
 android-armeabi-*/
 android-armeabi-v7a-*/
 android-arm64-v8a-*/
@@ -16,22 +16,36 @@ android-host-Darwin-*/
 android-host-Linux-*/
 android-host-mxe-Win32-*/
 android-host-mxe-Win64-*/
+android-cross-arm-*/
+android-cross-arm64-*/
+android-cross-x86-*/
+android-cross-x86_64-*/
+android-cross-arm-win-*/
+android-cross-arm64-win-*/
+android-cross-x86-win-*/
+android-cross-x86_64-win-*/
 ios-target32-*/
 ios-target32s-*/
 ios-target64-*/
 ios-targettv-*/
 ios-targetwatch-*/
+ios-targetwatch64_32-*/
 ios-cross32-*/
 ios-cross64-*/
 ios-crosswatch-*/
+ios-crosswatch64_32-*/
 ios-sim32-*/
 ios-sim64-*/
 ios-simtv-*/
 ios-simwatch-*/
-wasm-interp/
+mac-mac32-*/
+mac-mac64-*/
+wasm-runtime-*/
+wasm-cross-*/
+wasm-cross-win-*/
 bcl/
 desktop-x86/
 desktop-x86_64/
-
-# android toolchain
 toolchains/
+mxe-Win32.cmake
+mxe-Win64.cmake

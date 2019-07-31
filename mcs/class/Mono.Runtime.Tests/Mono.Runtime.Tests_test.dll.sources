@@ -1,15 +1,15 @@
 JitTests.cs
 ../../../../mono/mini/TestDriver.cs
+
 ../../../../mono/mini/basic.cs
-../../../../mono/mini/basic-calls.cs 
-../../../../mono/mini/basic-long.cs 
-../../../../mono/mini/bench.cs 
+../../../../mono/mini/basic-calls.cs
+../../../../mono/mini/basic-long.cs
+../../../../mono/mini/bench.cs
 ../../../../mono/mini/builtin-types.cs
-../../../../mono/mini/objects.cs 
+../../../../mono/mini/objects.cs
 ../../../../mono/mini/arrays.cs
 ../../../../mono/mini/basic-float.cs
 ../../../../mono/mini/basic-math.cs
-../../../../mono/mini/basic.cs
 ../../../../mono/mini/exceptions.cs
 ../../../../mono/mini/devirtualization.cs
 ../../../../mono/mini/generics.cs
@@ -18,6 +18,3 @@ JitTests.cs
 ../../../../mono/mini/aot-tests.cs
 ../../../../mono/mini/gc-test.cs
 ../../../../mono/mini/gshared.cs
-
-
-

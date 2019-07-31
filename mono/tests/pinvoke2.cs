@@ -172,6 +172,13 @@ public unsafe class Tests {
 		}
 	}
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct BStrStruct
+    {
+        [MarshalAs(UnmanagedType.BStr)]
+        public string bstr;
+    }
+
 	[DllImport ("libnot-found", EntryPoint="not_found")]
 	public static extern int mono_library_not_found ();
 
@@ -328,8 +335,11 @@ public unsafe class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_out_unicode", CharSet=CharSet.Unicode)]
 	public static extern void mono_test_marshal_stringbuilder_out_unicode (out StringBuilder sb);
 
-	[DllImport ("libtest", EntryPoint="mono_test_last_error", SetLastError=true)]
-	public static extern void mono_test_last_error (int err);
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_utf16_tolower", CharSet=CharSet.Unicode)]
+	public static extern void mono_test_marshal_stringbuilder_utf16_tolower (StringBuilder sb, int len);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_utf16_tolower", CharSet=CharSet.Unicode)]
+	public static extern void mono_test_marshal_stringbuilder_utf16_tolower_in ([In] StringBuilder sb, int len);
 
 	[DllImport ("libtest", EntryPoint="mono_test_asany")]
 	public static extern int mono_test_asany ([MarshalAs (UnmanagedType.AsAny)] object o, int what);
@@ -935,6 +945,28 @@ public unsafe class Tests {
 		return 0;
 	}
 
+	public static int test_0_marshal_stringbuilder_utf16_tolower () {
+		StringBuilder sb = new StringBuilder (3);
+		sb.Append ("ABC").Append ("DEF");
+		
+		mono_test_marshal_stringbuilder_utf16_tolower (sb, sb.Length);
+		if (sb.ToString () != "abcdef")
+			return 1;
+
+		return 0;
+	}
+
+	public static int test_0_marshal_stringbuilder_utf16_tolower_in () {
+		StringBuilder sb = new StringBuilder (3);
+		sb.Append ("ABC").Append ("DEF");
+		
+		mono_test_marshal_stringbuilder_utf16_tolower_in (sb, sb.Length);
+		if (sb.ToString () != "ABCDEF")
+			return 1;
+
+		return 0;
+	}
+
 	public static int test_0_marshal_empty_string_array () {
 		return mono_test_marshal_empty_string_array (null);
 	}
@@ -959,14 +991,6 @@ public unsafe class Tests {
 		if (sb2.ToString () != "ABC")
 			return 6;
 		return 0;
-	}
-
-	public static int test_0_last_error () {
-		mono_test_last_error (5);
-		if (Marshal.GetLastWin32Error () == 5)
-			return 0;
-		else
-			return 1;
 	}
 
 	public static int test_0_entry_point_not_found () {
@@ -1847,8 +1871,11 @@ public unsafe class Tests {
 		return 1;
 	}
 
-	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall")]
-	public static extern int mono_test_has_thiscall ();
+	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall_globals")]
+	public static extern int mono_test_has_thiscall_globals ();
+
+	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall_pointers")]
+	public static extern int mono_test_has_thiscall_pointers ();
 
 	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall1", CallingConvention=CallingConvention.ThisCall)]
 	public static extern int mono_test_native_thiscall (int a);
@@ -1870,7 +1897,7 @@ public unsafe class Tests {
 
 	public static int test_0_native_thiscall ()
 	{
-		if (mono_test_has_thiscall () == 0)
+		if (mono_test_has_thiscall_globals () == 0)
 			return 0;
 
 		if (mono_test_native_thiscall (1968329802) != 1968329802)
@@ -1985,7 +2012,7 @@ public unsafe class Tests {
 
 	public static int test_0_managed_thiscall ()
 	{
-		if (mono_test_has_thiscall () == 0)
+		if (mono_test_has_thiscall_pointers () == 0)
 			return 0;
 
 		if (mono_test_managed_thiscall (new ThisCallDelegate1 (thiscall_test_fn1), 517457506) != 263895844)
@@ -2091,5 +2118,17 @@ public unsafe class Tests {
 			return 2;
 		return 0;
 	}
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_bstr")]
+	public static extern int mono_test_marshal_bstr ([In] ref BStrStruct p);
+
+	public static int test_0_bstr () {
+		var p = new BStrStruct { bstr = "Hello" };
+
+		mono_test_marshal_bstr (ref p);
+
+		return 0;
+	}
+
 }
 

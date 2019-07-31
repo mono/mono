@@ -1144,6 +1144,11 @@ namespace Mono.Tools.LocaleBuilder
 				case "en-NZ":
 					df.AMDesignator = "a.m.";
 					break;
+				case "ko":
+				case "ko-KP":
+				case "ko-KR":
+					df.AMDesignator = "오전";
+					break;
 				default:
 					if (el != null)
 						df.AMDesignator = el.InnerText;
@@ -1161,6 +1166,11 @@ namespace Mono.Tools.LocaleBuilder
 					break;
 				case "en-NZ":
 					df.PMDesignator = "p.m.";
+					break;
+				case "ko":
+				case "ko-KP":
+				case "ko-KR":
+					df.PMDesignator = "오후";
 					break;
 				default:
 					if (el != null)

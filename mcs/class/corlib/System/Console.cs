@@ -150,7 +150,7 @@ namespace System
 				stdout = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding) { AutoFlush = true });
 				stderr = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding) { AutoFlush = true });
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
 				if (LogcatTextWriter.IsRunningOnAndroid ()) {
 					stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
 					stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
@@ -243,7 +243,7 @@ namespace System
 			if (newError == null)
 				throw new ArgumentNullException ("newError");
 
-			stderr = newError;
+			stderr = TextWriter.Synchronized (newError);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -252,7 +252,7 @@ namespace System
 			if (newIn == null)
 				throw new ArgumentNullException ("newIn");
 
-			stdin = newIn;
+			stdin = TextReader.Synchronized (newIn);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -261,7 +261,7 @@ namespace System
 			if (newOut == null)
 				throw new ArgumentNullException ("newOut");
 
-			stdout = newOut;
+			stdout = TextWriter.Synchronized (newOut);
 		}
 
 		public static void Write (bool value)

@@ -16,7 +16,9 @@
 #include "llvm-c/Core.h"
 #include "llvm-c/ExecutionEngine.h"
 
+#ifdef HAVE_UNWIND_H
 #include <unwind.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -102,7 +104,28 @@ void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
 void
+mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo);
+
+void
+mono_llvm_set_call_nonnull_ret (LLVMValueRef calli);
+
+void
+mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo);
+
+GSList *
+mono_llvm_calls_using (LLVMValueRef wrapped_local);
+
+LLVMValueRef *
+mono_llvm_call_args (LLVMValueRef calli);
+
+gboolean
+mono_llvm_is_nonnull (LLVMValueRef val);
+
+void
 mono_llvm_set_call_notailcall (LLVMValueRef call);
+
+void
+mono_llvm_set_call_noalias_ret (LLVMValueRef wrapped_calli);
 
 void
 mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind);
@@ -113,12 +136,10 @@ mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind);
 void
 mono_llvm_add_instr_attr (LLVMValueRef val, int index, AttrKind kind);
 
-_Unwind_Reason_Code 
-mono_debug_personality (int a, _Unwind_Action b,
+#if defined(ENABLE_LLVM) && defined(HAVE_UNWIND_H)
+G_EXTERN_C _Unwind_Reason_Code mono_debug_personality (int a, _Unwind_Action b,
 	uint64_t c, struct _Unwind_Exception *d, struct _Unwind_Context *e);
-
-void
-default_mono_llvm_unhandled_exception (void);
+#endif
 
 void*
 mono_llvm_create_di_builder (LLVMModuleRef module);
@@ -140,6 +161,9 @@ mono_llvm_di_builder_finalize (void *di_builder);
 
 void
 mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
+
+LLVMValueRef
+mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module);
 
 G_END_DECLS
 

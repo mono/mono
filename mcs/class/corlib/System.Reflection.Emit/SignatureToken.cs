@@ -25,7 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -35,9 +35,9 @@ namespace System.Reflection.Emit {
 	///  Represents the Token returned by the metadata to represent a Signature.
 	/// </summary>
 	[ComVisible (true)]
-	public struct SignatureToken {
+	public readonly struct SignatureToken : IEquatable<SignatureToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly SignatureToken Empty = new SignatureToken ();
 

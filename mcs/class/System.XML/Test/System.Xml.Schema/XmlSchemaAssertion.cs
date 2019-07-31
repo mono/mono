@@ -13,13 +13,15 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	public class XmlSchemaAssertion
 	{
-		public static XmlSchema GetSchema (string path)
+		public static XmlSchema GetSchema (string resourceName)
 		{
-			XmlTextReader reader = new XmlTextReader (path);
+			XmlTextReader reader = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (resourceName));
 			XmlSchema schema = XmlSchema.Read (reader, null);
 			reader.Close ();
 			return schema;

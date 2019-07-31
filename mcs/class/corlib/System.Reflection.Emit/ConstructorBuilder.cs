@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -43,11 +43,36 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
 
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ConstructorBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class ConstructorBuilder : _ConstructorBuilder
+	{
+		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class ConstructorBuilder : ConstructorInfo, _ConstructorBuilder {
+	public sealed partial class ConstructorBuilder : ConstructorInfo {
 	
 #pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
@@ -128,8 +153,7 @@ namespace System.Reflection.Emit {
 
 			ParameterInfo [] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++)
-				retval [i] = ParameterInfo.New (pinfo == null ? null
-					: pinfo [i + 1], parameters [i], this, i + 1);
+				retval [i] = RuntimeParameterInfo.New (pinfo?[i + 1], parameters [i], this, i + 1);
 
 			return retval;
 		}
@@ -420,26 +444,6 @@ namespace System.Reflection.Emit {
 		private Exception not_created ()
 		{
 			return new NotSupportedException ("The type is not yet created.");
-		}
-
-		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

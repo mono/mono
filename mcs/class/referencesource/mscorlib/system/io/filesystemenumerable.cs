@@ -794,7 +794,7 @@ namespace System.IO
             FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, permissionName, false, false);
 #endif
 #endif
-            DirectoryInfo di = new DirectoryInfo(name, false);
+            DirectoryInfo di = new DirectoryInfo(Path.GetFileName(name), fullPath: name, isNormalized: true);
             di.InitializeFrom(result.FindData);
             return di;
         }
@@ -833,7 +833,7 @@ namespace System.IO
                 FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, permissionName, false, false);
 #endif
 #endif
-                DirectoryInfo di = new DirectoryInfo(name, false);
+                DirectoryInfo di = new DirectoryInfo(Path.GetFileName(name), fullPath: name, isNormalized: true);
                 di.InitializeFrom(result.FindData);
                 return di;
             }

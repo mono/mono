@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -39,11 +39,37 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_CustomAttributeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class CustomAttributeBuilder : _CustomAttributeBuilder
+	{
+		void _CustomAttributeBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public class CustomAttributeBuilder : _CustomAttributeBuilder {
+	public partial class CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;
 		object [] args;
@@ -277,11 +303,24 @@ namespace System.Reflection.Emit {
 			return System.Text.Encoding.UTF8.GetString(data, pos, len);
 		}
 
+		internal static string decode_string (byte [] data, int pos, out int rpos)
+		{
+			if (data [pos] == 0xff) {
+				rpos = pos + 1;
+				return null;
+			} else {
+				int len = decode_len (data, pos, out pos);
+				string s = string_from_bytes (data, pos, len);
+				pos += len;
+				rpos = pos;
+				return s;
+			}
+		}
+
 		internal string string_arg ()
 		{
 			int pos = 2;
-			int len = decode_len (data, pos, out pos);
-			return string_from_bytes (data, pos, len);
+			return decode_string (data, pos, out pos);
 		}			
 
 		internal static UnmanagedMarshal get_umarshal (CustomAttributeBuilder customBuilder, bool is_field) {
@@ -309,18 +348,14 @@ namespace System.Reflection.Emit {
 				int paramType; // What is this ?
 				
 				/* Skip field/property signature */
-				pos ++;
+				int fieldPropSig = (int)data [pos ++];
 				/* Read type */
 				paramType = ((int)data [pos++]);
 				if (paramType == 0x55) {
 					/* enums, the value is preceeded by the type */
-					int len2 = decode_len (data, pos, out pos);
-					string_from_bytes (data, pos, len2);
-					pos += len2;
+					decode_string (data, pos, out pos);
 				}
-				int len = decode_len (data, pos, out pos);
-				string named_name = string_from_bytes (data, pos, len);
-				pos += len;
+				string named_name = decode_string (data, pos, out pos);
 
 				switch (named_name) {
 				case "ArraySubType":
@@ -349,9 +384,7 @@ namespace System.Reflection.Emit {
 					pos += 4;
 					break;
 				case "SafeArrayUserDefinedSubType":
-					len = decode_len (data, pos, out pos);
-					string_from_bytes (data, pos, len);
-					pos += len;
+					decode_string (data, pos, out pos);
 					break;
 				case "SizeParamIndex":
 					value = (int)data [pos++];
@@ -360,20 +393,15 @@ namespace System.Reflection.Emit {
 					hasSize = true;
 					break;
 				case "MarshalType":
-					len = decode_len (data, pos, out pos);
-					marshalTypeName = string_from_bytes (data, pos, len);
-					pos += len;
+					marshalTypeName = decode_string (data, pos, out pos);
 					break;
 				case "MarshalTypeRef":
-					len = decode_len (data, pos, out pos);
-					marshalTypeName = string_from_bytes (data, pos, len);
-					marshalTypeRef = Type.GetType (marshalTypeName);
-					pos += len;
+					marshalTypeName = decode_string (data, pos, out pos);
+					if (marshalTypeName != null)
+						marshalTypeRef = Type.GetType (marshalTypeName);
 					break;
 				case "MarshalCookie":
-					len = decode_len (data, pos, out pos);
-					marshalCookie = string_from_bytes (data, pos, len);
-					pos += len;
+					marshalCookie = decode_string (data, pos, out pos);
 					break;
 				default:
 					throw new Exception ("Unknown MarshalAsAttribute field: " + named_name);
@@ -537,26 +565,6 @@ namespace System.Reflection.Emit {
 			}
 
 			return info;
-		}
-
-		void _CustomAttributeBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _CustomAttributeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _CustomAttributeBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _CustomAttributeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 
 		static ParameterInfo [] GetParameters (ConstructorInfo ctor)

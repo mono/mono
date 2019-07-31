@@ -195,7 +195,7 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
-#if __WATCHOS__
+#if MONOTOUCH_WATCH || WASM
 			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
 			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 #elif !MONODROID
@@ -318,6 +318,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+		[Category ("NotWasm")]
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -332,6 +333,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+		[Category ("NotWasm")]
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -461,6 +463,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void LoadWithPartialName ()
 		{
 // FIXME?
@@ -524,8 +527,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				TempFolder,
-				AppDomain.CurrentDomain.Evidence);
+				TempFolder);
 			ab.Save (Path.GetFileName (assemblyFileName));
 
 			using (FileStream fs = File.OpenRead (assemblyFileName)) {
@@ -620,8 +622,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				Path.GetDirectoryName (assemblyFileName),
-				AppDomain.CurrentDomain.Evidence);
+				Path.GetDirectoryName (assemblyFileName));
 			ab.Save (Path.GetFileName (assemblyFileName));
 
 			using (FileStream fs = File.OpenRead (assemblyFileName)) {
@@ -661,8 +662,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				TempFolder,
-				AppDomain.CurrentDomain.Evidence);
+				TempFolder);
 			ab.AddResourceFile ("read", "readme.txt");
 			ab.Save (Path.GetFileName (assemblyFileNameA));
 
@@ -927,8 +927,7 @@ namespace MonoTests.System.Reflection
 			setup.ApplicationBase = baseDirectory;
 			setup.ApplicationName = "testdomain";
 
-			AppDomain ad = AppDomain.CreateDomain ("testdomain", 
-				AppDomain.CurrentDomain.Evidence, setup);
+			AppDomain ad = AppDomain.CreateDomain ("testdomain", null, setup);
 
 			if (assemblyResolver) {
 				Assembly ea = Assembly.GetExecutingAssembly ();
@@ -1022,8 +1021,7 @@ namespace MonoTests.System.Reflection
 				AssemblyBuilder ab = AppDomain.CurrentDomain
 					.DefineDynamicAssembly (assemblyName,
 					AssemblyBuilderAccess.Save,
-					Path.GetDirectoryName (assemblyFileName),
-					AppDomain.CurrentDomain.Evidence);
+					Path.GetDirectoryName (assemblyFileName));
 				ab.Save (Path.GetFileName (assemblyFileName));
 
 				Assembly assembly;
@@ -1037,7 +1035,7 @@ namespace MonoTests.System.Reflection
 
 				Assert.AreEqual (string.Empty, assembly.Location, "#1");
 
-				assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsFalse (assembly.Location == string.Empty, "#2");
 				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName(assembly.Location), "#3");
 				// note: we cannot check if directory names match, as MS.NET seems to 
@@ -1047,7 +1045,7 @@ namespace MonoTests.System.Reflection
 
 			public void bug78465 (string assemblyFileName)
 			{
-				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsFalse (assembly.Location == string.Empty, "#2");
 				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName (assembly.Location), "#3");
 				// note: we cannot check if directory names match, as MS.NET seems to 
@@ -1063,12 +1061,11 @@ namespace MonoTests.System.Reflection
 				AssemblyBuilder ab = AppDomain.CurrentDomain
 					.DefineDynamicAssembly (assemblyName,
 					AssemblyBuilderAccess.Save,
-					Path.GetDirectoryName (assemblyFileName),
-					AppDomain.CurrentDomain.Evidence);
+					Path.GetDirectoryName (assemblyFileName));
 				ab.AddResourceFile ("read", "readme.txt");
 				ab.Save (Path.GetFileName (assemblyFileName));
 
-				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsTrue (assembly.Location != string.Empty, "#B1");
 				string[] resNames = assembly.GetManifestResourceNames ();
 				Assert.IsNotNull (resNames, "#B2");
@@ -1133,7 +1130,7 @@ namespace MonoTests.System.Reflection
 			Module module = assembly.ManifestModule;
 			Assert.IsNotNull (module, "#1");
 
-			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
+			Assert.AreEqual ("RuntimeModule", module.GetType ().Name, "#2");
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
@@ -1244,6 +1241,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetCallingAssembly_Direct() {
 			var a = GetCallingAssemblyCallee.DirectCall ();
 			Assert.IsNotNull (a);
@@ -1252,6 +1250,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetCallingAssembly_SkipsReflection () {
 			// check that the calling assembly is this
 			// one, not mscorlib (aka, the reflection
@@ -1286,6 +1285,22 @@ namespace MonoTests.System.Reflection
 				Assert.Fail ("must throw");
 			} catch (NotImplementedException){
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LoadFileRelativeThrows ()
+		{
+			Assembly.LoadFile (Path.Combine ("non-existent", "relative", "path.dll"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void LoadFileAbsoluteNotFoundThrows ()
+		{
+			// have to use GetFullPath so we get C:\... on Windows
+			var abspath = Path.GetFullPath (Path.Combine ("non-existent", "absolute", "path.dll"));
+			Assembly.LoadFile (abspath);
 		}
 	}
 

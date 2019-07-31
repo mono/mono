@@ -37,11 +37,16 @@ namespace MonoTests.Mono.Profiler.Log {
 
 		static volatile int _id;
 
+		static string _testAssemblyPath;
+		static Process _currentProcess;
+
 		public ProfilerTestRun (string name, string options)
 		{
+			_testAssemblyPath = Path.Combine (Path.GetDirectoryName (System.Reflection.Assembly.GetExecutingAssembly ().Location), "log-profiler-test.exe");
+			_currentProcess = Process.GetCurrentProcess();
 			Name = name;
 			Options = options;
-			_output = $"test-{_id++}.mlpd";
+			_output = Path.GetFullPath ($"test-{_id++}.mlpd");
 		}
 
 		public void Run (Action<IReadOnlyList<LogEvent>> action)
@@ -57,8 +62,8 @@ namespace MonoTests.Mono.Profiler.Log {
 			using (var proc = new Process ()) {
 				proc.StartInfo = new ProcessStartInfo {
 					UseShellExecute = false,
-					FileName = Path.GetFullPath (Path.Combine ("..", "..", "..", "runtime", "mono-wrapper")),
-					Arguments = $"--debug --profile=log:nodefaults,output={_output},{Options} log-profiler-test.exe {Name}",
+					FileName = _currentProcess.MainModule.FileName,
+					Arguments = $"--debug --profile=log:nodefaults,output=\"{_output}\",{Options} {_testAssemblyPath} {Name}",
 				};
 
 				proc.Start ();

@@ -1,11 +1,66 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-WASM_INTERP_CONFIGURE_FLAGS = \
-	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
-	--prefix=$(TOP)/sdks/out/wasm-interp \
-	--enable-wasm \
-	--enable-interpreter \
+EMSCRIPTEN_VERSION=1.38.38
+EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+
+EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
+
+MONO_SUPPORT=$(TOP)/support
+
+ZLIB_HEADERS = \
+	$(MONO_SUPPORT)/crc32.h		\
+	$(MONO_SUPPORT)/deflate.h  	\
+	$(MONO_SUPPORT)/inffast.h  	\
+	$(MONO_SUPPORT)/inffixed.h  	\
+	$(MONO_SUPPORT)/inflate.h  	\
+	$(MONO_SUPPORT)/inftrees.h  	\
+	$(MONO_SUPPORT)/trees.h  	\
+	$(MONO_SUPPORT)/zconf.h  	\
+	$(MONO_SUPPORT)/zlib.h  	\
+	$(MONO_SUPPORT)/zutil.h
+
+ifeq ($(UNAME),Darwin)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
+else ifeq ($(UNAME),Linux)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
+endif
+
+$(TOP)/sdks/builds/toolchains/emsdk:
+	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
+
+.stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git pull
+	touch $@
+
+#This is a weird rule to workaround the circularity of the next rule.
+#.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION) depends on .emscripten and, at the same time, it updates it.
+#This is designed to force the .stamp target to rerun when a different emscripten version is selected, which causes .emscripten to be updated
+$(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
+	touch $@
+
+.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
+	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/emscripten-pr-8457.diff; exit 0)
+	touch $@
+
+.PHONY: provision-wasm
+
+ifeq ($(EMSCRIPTEN_SDK_DIR),$(EMSCRIPTEN_LOCAL_SDK_DIR))
+provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
+else
+provision-wasm:
+endif
+
+WASM_RUNTIME_AC_VARS= \
+	ac_cv_func_shm_open_working_with_mmap=no
+
+WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
+
+WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
 	--disable-nls \
 	--disable-boehm \
@@ -16,42 +71,170 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug \
-	--host=i386-apple-darwin10
+	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac \
+	--host=wasm32 \
+	--enable-llvm-runtime \
+	--enable-icall-export \
+	--disable-icall-tables \
+	--disable-crash-reporting \
+	--with-bitcode=yes \
+	$(if $(ENABLE_CXX),--enable-cxx)
 
+# $(1) - target
+define WasmRuntimeTemplate
 
-$(TOP)/sdks/builds/toolchains/emsdk:
-	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
+_wasm_$(1)_CONFIGURE_FLAGS = \
+	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
+	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
+	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
+	$$(wasm-$(1)_CONFIGURE_FLAGS) \
+	CFLAGS="$(WASM_RUNTIME_BASE_CFLAGS) $$(wasm_$(1)_CFLAGS)" \
+	CXXFLAGS="$(WASM_RUNTIME_BASE_CXXFLAGS) $$(wasm_$(1)_CXXFLAGS)"
 
-.stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.37.36-64bit
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.37.36-64bit
-	touch $@
+.stamp-wasm-$(1)-toolchain:
+	touch $$@
 
-.stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
-	touch $@
+.stamp-wasm-$(1)-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
+	mkdir -p $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)
+	cd $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) && source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $$(_wasm_$(1)_CONFIGURE_FLAGS)
+	touch $$@
 
-.stamp-wasm-interp-configure: $(TOP)/configure
-	mkdir -p $(TOP)/sdks/builds/wasm-interp
-	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
-	touch $@
+.PHONY: .stamp-wasm-$(1)-configure
+.stamp-wasm-$(1)-configure: .stamp-wasm-$(1)-$(CONFIGURATION)-configure
 
-build-custom-wasm-interp:
-	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && make -C wasm-interp
+.PHONY: build-custom-wasm-$(1)
+build-custom-wasm-$(1):
+	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C wasm-$(1)-$(CONFIGURATION)
 
-.PHONY: package-wasm-interp
-package-wasm-interp:
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-interp/mono install
+.PHONY: setup-custom-wasm-$(1)
+setup-custom-wasm-$(1):
+	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
 
-.PHONY: clean-wasm
-clean-wasm:
-	rm -rf .stamp-wasm-toolchain $(TOP)/sdks/builds/toolchains/emsdk
+# We do not build the support library but we will use the zlib headers to activate
+# zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
+.PHONY: package-wasm-$(1)
+package-wasm-$(1):
+	$(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
+	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
+	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
 
-.PHONY: clean-wasm-interp
-clean-wasm-interp: clean-wasm
-	rm -rf .stamp-wasm-interp-toolchain .stamp-wasm-interp-configure $(TOP)/sdks/builds/wasm $(TOP)/sdks/builds/wasm.config.cache $(TOP)/sdks/out/wasm-interp
+.PHONY: clean-wasm-$(1)
+clean-wasm-$(1):
+	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
 
-TARGETS += wasm-interp
+$(eval $(call TargetTemplate,wasm,$(1)))
 
+.PHONY: configure-wasm
+configure-wasm: configure-wasm-$(1)
 
+.PHONY: build-wasm
+build-wasm: build-wasm-$(1)
 
+.PHONY: archive-wasm
+archive-wasm: package-wasm-$(1)
+
+wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
+
+endef
+
+wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
+wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
+
+$(eval $(call WasmRuntimeTemplate,runtime))
+ifdef ENABLE_WASM_THREADS
+$(eval $(call WasmRuntimeTemplate,runtime-threads))
+endif
+
+##
+# Parameters
+#  $(1): target
+#  $(2): host arch
+#  $(3): target arch
+#  $(4): device target
+#  $(5): llvm
+#  $(6): offsets dumper abi
+define WasmCrossTemplate
+
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
+
+_wasm-$(1)_CONFIGURE_FLAGS= \
+	--disable-boehm \
+	--disable-btls \
+	--disable-mcs-build \
+	--disable-nls \
+	--disable-support-build \
+	--enable-maintainer-mode \
+	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
+	--with-cooperative-gc=no \
+	--enable-hybrid-suspend=no \
+	--with-cross-offsets=wasm32-unknown-none.h
+
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
+
+endef
+
+# 64 bit cross compiler
+$(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
+
+##
+# Parameters
+#  $(1): target
+#  $(2): host arch
+#  $(3): target arch
+#  $(4): device target
+#  $(5): llvm
+#  $(6): offsets dumper abi
+define WasmCrossMXETemplate
+
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
+
+_wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
+
+_wasm-$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ar
+_wasm-$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-as
+_wasm-$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-gcc
+_wasm-$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-g++
+_wasm-$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-dlltool
+_wasm-$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ld
+_wasm-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-objdump
+_wasm-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ranlib
+_wasm-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-strip
+
+_wasm-$(1)_CFLAGS= \
+	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
+	-static \
+	-static-libgcc
+
+_wasm-$(1)_CXXFLAGS= \
+	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
+	-static \
+	-static-libgcc \
+	-static-libstdc++
+
+_wasm-$(1)_LDFLAGS= \
+	-static \
+	-static-libgcc
+
+_wasm-$(1)_CONFIGURE_FLAGS= \
+	--disable-boehm \
+	--disable-btls \
+	--disable-mcs-build \
+	--disable-nls \
+	--disable-nls \
+	--disable-support-build \
+	--enable-maintainer-mode \
+	--enable-minimal=appdomains,com,remoting \
+	--with-tls=pthread \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm32-unknown-none.h
+
+.stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
+
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
+
+endef
+
+$(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin64,wasm32-unknown-unknown))
+
+$(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

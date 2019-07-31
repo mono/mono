@@ -84,6 +84,8 @@ namespace Mono.Net.Security
 				if (initialized)
 					return;
 
+				SystemDependencyProvider.Initialize ();
+
 				InitializeProviderRegistration ();
 
 				MSI.MonoTlsProvider provider;
@@ -99,8 +101,6 @@ namespace Mono.Net.Security
 				if (!providerCache.ContainsKey (provider.ID))
 					providerCache.Add (provider.ID, provider);
 
-				X509Helper2.Initialize ();
-
 				defaultProvider = provider;
 				initialized = true;
 			}
@@ -112,9 +112,10 @@ namespace Mono.Net.Security
 				if (initialized)
 					throw new NotSupportedException ("TLS Subsystem already initialized.");
 
+				SystemDependencyProvider.Initialize ();
+
 				defaultProvider = LookupProvider (provider, true);
 
-				X509Helper2.Initialize ();
 				initialized = true;
 			}
 		}

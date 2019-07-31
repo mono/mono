@@ -215,7 +215,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			EndpointAddress address = new EndpointAddress (
 				new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()),
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono")));
 
 			ChannelFactory<IRequestChannel> cf =
 				new ChannelFactory<IRequestChannel> (binding, address);
@@ -263,7 +263,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			EndpointAddress address = new EndpointAddress (
 				new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()),
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono")));
 
 			ChannelProtectionRequirements reqs =
 				new ChannelProtectionRequirements ();

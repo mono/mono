@@ -80,7 +80,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				System.Web.UI.WebControls.HyperLinkColumn c_company = new System.Web.UI.WebControls.HyperLinkColumn();
 
 				c_id.DataTextField = "ID";
-				c_id.NavigateUrl = "http://www.google.com";
+				c_id.NavigateUrl = "http://www.example.com";
 				c_name.DataTextField = "Name";
 				c_name.DataNavigateUrlField = "Name";
 				c_company.DataTextField = "Company";

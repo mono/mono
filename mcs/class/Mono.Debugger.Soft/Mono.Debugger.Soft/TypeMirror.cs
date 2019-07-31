@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 using System.Threading.Tasks;
+
+#if ENABLE_CECIL
+using C = Mono.Cecil;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -12,12 +14,11 @@ namespace Mono.Debugger.Soft
 	 * It might be better to make this a subclass of Type, but that could be
 	 * difficult as some of our methods like GetMethods () return Mirror objects.
 	 */
-	public class TypeMirror : Mirror
+	public class TypeMirror : Mirror, IInvokable
 	{
 		MethodMirror[] methods;
 		AssemblyMirror ass;
 		ModuleMirror module;
-		C.TypeDefinition meta;
 		FieldInfoMirror[] fields;
 		PropertyInfoMirror[] properties;
 		TypeInfo info;
@@ -29,6 +30,10 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] type_args;
 		bool cached_base_type;
 		bool inited;
+
+#if ENABLE_CECIL
+		C.TypeDefinition meta;
+#endif
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -352,20 +357,18 @@ namespace Mono.Debugger.Soft
 		public string CSharpName {
 			get {
 				if (IsArray) {
-					if (GetArrayRank () == 1)
+					var ranks = GetArrayRank ();
+
+					if (ranks == 1)
 						return GetElementType ().CSharpName + "[]";
-					else {
-						string ranks = "";
-						for (int i = 0; i < GetArrayRank (); ++i)
-							ranks += ',';
-						return GetElementType ().CSharpName + "[" + ranks + "]";
-					}
+
+					return GetElementType ().CSharpName + "[" + new string(',', ranks - 1) + "]";
 				}
 				if (IsPrimitive) {
 					switch (Name) {
 					case "Byte":
 						return "byte";
-					case "Sbyte":
+					case "SByte":
 						return "sbyte";
 					case "Char":
 						return "char";
@@ -613,6 +616,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
+#if ENABLE_CECIL
 		public C.TypeDefinition Metadata {
 			get {
 				if (meta == null) {
@@ -623,6 +627,7 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
+#endif
 
 		TypeInfo GetInfo () {
 			if (info == null)
@@ -705,8 +710,10 @@ namespace Mono.Debugger.Soft
 
 		void AppendCustomAttrs (IList<CustomAttributeDataMirror> attrs, TypeMirror type, bool inherit)
 		{
+#if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
+#endif
 
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
@@ -805,22 +812,15 @@ namespace Mono.Debugger.Soft
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			return ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
 		}
 
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
+			return ObjectMirror.InvokeMethodAsync (vm, thread, method, null, arguments, options);
+		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			return ObjectMirror.InvokeMethodAsyncWithResult (vm, thread, method, null, arguments, options);
 		}
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {

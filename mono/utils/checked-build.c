@@ -19,6 +19,7 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/loaded-images-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <glib.h>
@@ -134,7 +135,7 @@ backtrace_mutex_unlock (void)
 static CheckState*
 get_state (void)
 {
-	CheckState *state = mono_native_tls_get_value (thread_status);
+	CheckState *state = (CheckState*)mono_native_tls_get_value (thread_status);
 	if (!state) {
 		state = (CheckState*) g_malloc0 (sizeof (CheckState) + sizeof(ThreadTransition) * MAX_TRANSITIONS);
 		mono_native_tls_set_value (thread_status, state);
@@ -288,7 +289,7 @@ checked_build_thread_transition (const char *transition, void *info, int from_st
 		return;
 
 	/* We currently don't record external changes as those are hard to reason about. */
-	if (!mono_thread_info_is_current (info))
+	if (!mono_thread_info_is_current ((THREAD_INFO_TYPE*)info))
 		return;
 
 	CheckState *state = get_state ();
@@ -308,7 +309,7 @@ checked_build_thread_transition (const char *transition, void *info, int from_st
 }
 
 void
-mono_fatal_with_history (const char *msg, ...)
+mono_fatal_with_history (const char * volatile msg, ...)
 {
 	GString* err = g_string_sized_new (100);
 
@@ -573,7 +574,7 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 		int current_idx;
 		for(current_idx = 0; current_idx < current->len; current_idx++)
 		{
-			MonoImage *checking = g_ptr_array_index (current, current_idx); // CAST?
+			MonoImage *checking = (MonoImage*)g_ptr_array_index (current, current_idx);
 
 			mono_image_lock (checking);
 

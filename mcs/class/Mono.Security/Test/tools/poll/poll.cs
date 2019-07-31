@@ -45,10 +45,8 @@ class Poller : ICertificatePolicy {
 			}
 		} else {
 			// default sites to poll
-			_polledObjects.Add (new PolledObject ("https://www.google.com/"));
-			_polledObjects.Add (new PolledObject ("https://www.yahoo.com/"));
-			_polledObjects.Add (new PolledObject ("https://www.verisign.com/"));
-			_polledObjects.Add (new PolledObject ("https://www.thawte.com/"));
+			_polledObjects.Add (new PolledObject ("https://www.example.org/"));
+			_polledObjects.Add (new PolledObject ("https://www.example.com/"));
 		}
 	}
 

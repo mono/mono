@@ -595,7 +595,7 @@ namespace Mono.Globalization.Unicode
 		{
 			int size;
 			Module module;
-			return Assembly.GetExecutingAssembly ().GetManifestResourceInternal (name, out size, out module);
+			return ((RuntimeAssembly)Assembly.GetExecutingAssembly ()).GetManifestResourceInternal (name, out size, out module);
 		}
 #elif USE_C_HEADER
 		const int CollationTableIdxIgnorables = 0;

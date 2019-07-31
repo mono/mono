@@ -1,0 +1,4 @@
+<Project>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.targets" Condition="'$(MonoWasmTargetsPath)'!=''" />
+</Project>

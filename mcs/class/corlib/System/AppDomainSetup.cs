@@ -91,6 +91,10 @@ namespace System
 
 		byte [] serialized_non_primitives;
 
+		string manager_assembly;
+		string manager_type;
+		string [] partial_visible_assemblies;
+
 		public AppDomainSetup ()
 		{
 		}
@@ -118,6 +122,9 @@ namespace System
 			domain_initializer_args = setup.domain_initializer_args;
 			disallow_appbase_probe = setup.disallow_appbase_probe;
 			configuration_bytes = setup.configuration_bytes;
+			manager_assembly = setup.manager_assembly;
+			manager_type = setup.manager_type;
+			partial_visible_assemblies = setup.partial_visible_assemblies;
 		}
 
 		public AppDomainSetup (ActivationArguments activationArguments)
@@ -254,6 +261,31 @@ namespace System
 #else
 				loader_optimization = value;
 #endif
+			}
+		}
+
+		// AppDomainManagerAssembly, ManagerType, and PartialTrustVisibleAssemblies 
+		// don't really do anything within Mono, but will help with refsrc compat. 
+		public string AppDomainManagerAssembly {
+			get { return manager_assembly; }
+			set { manager_assembly = value; }
+		}
+
+		public string AppDomainManagerType {
+			get { return manager_type; }
+			set { manager_type = value; }
+		}
+
+		public string [] PartialTrustVisibleAssemblies {
+			get { return partial_visible_assemblies; }
+			set {
+				if (value != null) {
+					partial_visible_assemblies = (string [])value.Clone();
+					Array.Sort<string> (partial_visible_assemblies, StringComparer.OrdinalIgnoreCase);
+				}
+				else {
+					partial_visible_assemblies = null;
+				}
 			}
 		}
 

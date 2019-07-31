@@ -56,6 +56,8 @@ namespace System.Net
 		int tcp_keepalive_time;
 		int tcp_keepalive_interval;
 		bool disposed;
+		int connectionLeaseTimeout = -1;
+		int receiveBufferSize = -1;
 
 		// Constructors
 
@@ -83,23 +85,19 @@ namespace System.Net
 			get { return uri; }
 		}
 
-		static Exception GetMustImplement ()
-		{
-			return new NotImplementedException ();
-		}
-
 		public BindIPEndPoint BindIPEndPointDelegate {
 			get { return endPointCallback; }
 			set { endPointCallback = value; }
 		}
 
-		[MonoTODO]
 		public int ConnectionLeaseTimeout {
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
+			get { return connectionLeaseTimeout; }
+			set
+			{
+				if (value < Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value));
+
+				connectionLeaseTimeout = value;
 			}
 		}
 
@@ -146,13 +144,14 @@ namespace System.Net
 			get { return protocolVersion; }
 		}
 
-		[MonoTODO]
 		public int ReceiveBufferSize {
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
+			get { return receiveBufferSize; }
+			set
+			{
+				if (value < -1)
+					throw new ArgumentOutOfRangeException (nameof (value));
+
+				receiveBufferSize = value;
 			}
 		}
 

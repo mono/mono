@@ -262,48 +262,5 @@ namespace MonoTests.System.Runtime.Caching
 			}
 		}
 
-		[Test]
-		public void UniqueId ()
-		{
-			Tuple<string, string, string, IList<string>> setup = null;
-			try {
-				setup = SetupMonitoring ();
-				FileInfo fi;
-				var monitor = new HostFileChangeMonitor (setup.Item4);
-				var sb = new StringBuilder ();
-
-				fi = new FileInfo (setup.Item2);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item2,
-					fi.LastWriteTimeUtc.Ticks,
-					fi.Length);
-
-				fi = new FileInfo (setup.Item3);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item3,
-					fi.LastWriteTimeUtc.Ticks,
-					fi.Length);
-
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A1");
-
-				var list = new List<string> (setup.Item4);
-				list.Add (setup.Item1);
-
-				monitor = new HostFileChangeMonitor (list);
-				var di = new DirectoryInfo (setup.Item1);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item1,
-					di.LastWriteTimeUtc.Ticks,
-					-1L);
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A2");
-
-				list.Add (setup.Item1);
-				monitor = new HostFileChangeMonitor (list);
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A3");
-				monitor.Dispose ();
-			} finally {
-				CleanupMonitoring (setup);
-			}
-		}
 	}
 }

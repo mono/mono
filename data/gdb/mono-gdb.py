@@ -48,7 +48,7 @@ def stringify_class_name(ns, name):
     if ns == "":
         return name
     else:
-        return "{}.{}".format (ns, name)
+        return "{0}.{1}".format (ns, name)
 
 class ArrayPrinter:
     "Print a C# array"
@@ -61,7 +61,7 @@ class ArrayPrinter:
     def to_string(self):
         obj = self.val.cast (gdb.lookup_type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
-        return "{} [{}]".format (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
+        return "{0} [{1}]".format (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
         
 class ObjectPrinter:
     "Print a C# object"
@@ -91,7 +91,7 @@ class ObjectPrinter:
                     return (field.name, self.obj [field.name])
             except:
                 # Superclass
-                return (field.name, self.obj.cast (gdb.lookup_type ("{}".format (field.name))))
+                return (field.name, self.obj.cast (gdb.lookup_type ("{0}".format (field.name))))
 
     def children(self):
         # FIXME: It would be easier if gdb.Value would support iteration itself
@@ -105,7 +105,7 @@ class ObjectPrinter:
             if class_name [-2:len(class_name)] == "[]":
                 return {}.__iter__ ()
             try:
-                gdb_type = gdb.lookup_type ("struct {}_{}".format (class_ns.replace (".", "_"), class_name))
+                gdb_type = gdb.lookup_type ("struct {0}_{1}".format (class_ns.replace (".", "_"), class_name))
                 return self._iterator(obj.cast (gdb_type))
             except:
                 return {}.__iter__ ()
@@ -127,12 +127,12 @@ class ObjectPrinter:
                 return ArrayPrinter (self.val,class_ns,class_name).to_string ()
             if class_ns != "":
                 try:
-                    gdb_type = gdb.lookup_type ("struct {}.{}".format (class_ns, class_name))
+                    gdb_type = gdb.lookup_type ("struct {0}.{1}".format (class_ns, class_name))
                 except:
                     # Maybe there is no debug info for that type
-                    return "{}.{}".format (class_ns, class_name)
+                    return "{0}.{1}".format (class_ns, class_name)
                 #return obj.cast (gdb_type)
-                return "{}.{}".format (class_ns, class_name)
+                return "{0}.{1}".format (class_ns, class_name)
             return class_name
         except:
             print (sys.exc_info ()[0])
@@ -152,9 +152,9 @@ class MonoMethodPrinter:
         val = self.val.dereference ()
         klass = val ["klass"].dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        return "\"{}:{} ()\"".format (class_name, val ["name"].string ())
+        return "\"{0}:{1} ()\"".format (class_name, val ["name"].string ())
         # This returns more info but requires calling into the inferior
-        #return "\"{}\"".format (gdb.parse_and_eval ("mono_method_full_name ({}, 1)".format (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
+        #return "\"{0}\"".format (gdb.parse_and_eval ("mono_method_full_name ({0}, 1)".format (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
 
 class MonoClassPrinter:
     "Print a MonoClass structure"
@@ -168,11 +168,11 @@ class MonoClassPrinter:
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
         if add_quotes:
-            return "\"{}\"".format (class_name)
+            return "\"{0}\"".format (class_name)
         else:
             return class_name
         # This returns more info but requires calling into the inferior
-        #return "\"{}\"".format (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*){})->byval_arg)".format (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
+        #return "\"{0}\"".format (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*){0})->byval_arg)".format (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
 
     def to_string(self):
         try:
@@ -220,7 +220,7 @@ class MonoGenericClassPrinter:
         method_inst_str = ""
         if int(method_inst.cast (gdb.lookup_type ("guint64"))) != 0:
             method_inst_str  = str(method_inst)
-        return "{}, [{}], [{}]>".format (container_str, class_inst_str, method_inst_str)
+        return "{0}, [{1}], [{2}]>".format (container_str, class_inst_str, method_inst_str)
 
     def to_string(self):
         try:
@@ -250,9 +250,9 @@ class MonoTypePrinter:
                 info = str(t ["data"]["generic_class"])
 
             if info != "":
-                return "{{{}, {}}}".format (kind, info)
+                return "{{{0}, {1}}}".format (kind, info)
             else:
-                return "{{{}}}".format (kind)
+                return "{{{0}}}".format (kind)
         except:
             #print (sys.exc_info ()[0])
             #print (sys.exc_info ()[1])
@@ -281,7 +281,7 @@ class MonoMethodRgctxPrinter:
             if i > 0:
                 inst_str = inst_str + ", "
             inst_str = inst_str + type_printer.to_string ()
-        return "MRGCTX[{}, [{}]]".format (klass_printer.to_string(), inst_str)
+        return "MRGCTX[{0}, [{1}]]".format (klass_printer.to_string(), inst_str)
 
 class MonoVTablePrinter:
     "Print a MonoVTable structure"
@@ -296,7 +296,7 @@ class MonoVTablePrinter:
         klass = vtable ["klass"]
         klass_printer = MonoClassPrinter (klass)
 
-        return "vtable({})".format (klass_printer.to_string ())
+        return "vtable({0})".format (klass_printer.to_string ())
 
 def lookup_pretty_printer(val):
     t = str (val.type)

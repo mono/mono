@@ -205,6 +205,13 @@ Last this was checked was June-2017.
 
 Apple is at 106.
 Android is at 133.
+
+Haiku starts numbering at 0x8000_7000 (like HRESULT on Win32) for POSIX errno,
+but errors from BeAPI or custom user libraries could be lower or higher.
+(Technically, this is C and old POSIX compliant, but not new POSIX compliant.)
+The big problem with this is that it effectively means errors start at a
+negative offset. As such, disable the whole strerror caching mechanism.
+
 */
 #define MONO_ERRNO_MAX 200
 #define str(s) #s
@@ -213,6 +220,14 @@ Android is at 133.
 static pthread_mutex_t strerror_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
+#if defined(__HAIKU__)
+const gchar *
+g_strerror (gint errnum)
+{
+	/* returns a const char* on Haiku */
+	return strerror(errnum);
+}
+#else
 static char *error_messages [MONO_ERRNO_MAX];
 
 const gchar *
@@ -271,31 +286,34 @@ g_strerror (gint errnum)
 	}
 	return error_messages [errnum];
 }
+#endif
 
 gchar *
 g_strconcat (const gchar *first, ...)
 {
 	va_list args;
-	size_t total = 0;
 	char *s, *ret;
 	g_return_val_if_fail (first != NULL, NULL);
 
-	total += strlen (first);
+	size_t len = strlen (first);
 	va_start (args, first);
 	for (s = va_arg (args, char *); s != NULL; s = va_arg(args, char *)){
-		total += strlen (s);
+		len += strlen (s);
 	}
 	va_end (args);
 	
-	ret = g_malloc (total + 1);
+	ret = (char*)g_malloc (len + 1);
 	if (ret == NULL)
 		return NULL;
 
-	ret [total] = 0;
-	strcpy (ret, first);
+	ret [len] = 0;
+	len = strlen (first);
+	memcpy (ret, first, len);
 	va_start (args, first);
+	first = ret; // repurpose first as cursor
 	for (s = va_arg (args, char *); s != NULL; s = va_arg(args, char *)){
-		strcat (ret, s);
+		first += len;
+		memcpy ((char*)first, s, len = strlen (s));
 	}
 	va_end (args);
 
@@ -512,7 +530,7 @@ g_strjoin (const gchar *separator, ...)
 	if (slen > 0 && len > 0)
 		len -= slen;
 
-	res = g_malloc (len + 1);
+	res = (char*)g_malloc (len + 1);
 	va_start (args, separator);
 	s = va_arg (args, char *);
 	r = g_stpcpy (res, s);
@@ -724,9 +742,9 @@ decode (char p)
 	if (p >= '0' && p <= '9')
 		return p - '0';
 	if (p >= 'A' && p <= 'F')
-		return p - 'A';
+		return (p - 'A') + 10;
 	if (p >= 'a' && p <= 'f')
-		return p - 'a';
+		return (p - 'a') + 10;
 	g_assert_not_reached ();
 	return 0;
 }
@@ -914,22 +932,17 @@ g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii)
 	}
 }
 
-gchar *
-g_strdelimit (gchar *string, const gchar *delimiters, gchar new_delimiter)
+void
+g_strdelimit (gchar *string, gchar delimiter, gchar new_delimiter)
 {
 	gchar *ptr;
 
-	g_return_val_if_fail (string != NULL, NULL);
-
-	if (delimiters == NULL)
-		delimiters = G_STR_DELIMITERS;
+	g_return_if_fail (string != NULL);
 
 	for (ptr = string; *ptr; ptr++) {
-		if (strchr (delimiters, *ptr))
+		if (delimiter == *ptr)
 			*ptr = new_delimiter;
 	}
-	
-	return string;
 }
 
 gsize 
@@ -1060,4 +1073,25 @@ g_strnfill (gsize length, gchar fill_char)
 	memset (ret, fill_char, length);
 	ret [length] = 0;
 	return ret;
+}
+
+size_t
+g_utf16_len (const gunichar2 *a)
+{
+#ifdef G_OS_WIN32
+	return wcslen (a);
+#else
+	size_t length = 0;
+	while (a [length])
+		++length;
+	return length;
+#endif
+}
+
+gsize
+g_strnlen (const char* s, gsize n)
+{
+	gsize i;
+	for (i = 0; i < n && s [i]; ++i) ;
+	return i;
 }

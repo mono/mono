@@ -431,7 +431,11 @@ namespace System.Runtime.Remoting.Messaging {
 			ArrayList ret = null;
 
 			if (null != _serializedArgs) {
-				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				// Avoid cross domain refs between MemoryStream and _serializedArgs byte array
+				byte[] copyArray = new byte [_serializedArgs.Length];
+				Array.Copy (_serializedArgs, copyArray, _serializedArgs.Length);
+
+				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (copyArray));
 				ret = new ArrayList (oret);
 				_serializedArgs = null;
 			}
@@ -498,7 +502,11 @@ namespace System.Runtime.Remoting.Messaging {
 			ArrayList ret = null;
 
 			if (null != _serializedArgs) {
-				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				// Avoid cross domain refs between MemoryStream and _serializedArgs byte array
+				byte[] copyArray = new byte [_serializedArgs.Length];
+				Array.Copy (_serializedArgs, copyArray, _serializedArgs.Length);
+
+				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (copyArray));
 				ret = new ArrayList (oret);
 				_serializedArgs = null;
 			}

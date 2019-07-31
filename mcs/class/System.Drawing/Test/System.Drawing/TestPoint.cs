@@ -195,11 +195,11 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void GetHashCodeTest ()
 		{
-			Assert.AreEqual (0, pt1_1.GetHashCode (), "#1");
-			Assert.AreEqual (1, pt1_0.GetHashCode (), "#2");
+			Assert.AreEqual (32, pt1_1.GetHashCode (), "#1");
+			Assert.AreEqual (33, pt1_0.GetHashCode (), "#2");
 			Assert.AreEqual (1, pt0_1.GetHashCode (), "#3");
 			Point pt = new Point(0xFF, 0xFF00);
-			Assert.AreEqual (0xFFFF, pt.GetHashCode (), "#4");
+			Assert.AreEqual (57311, pt.GetHashCode (), "#4");
 		}
 
 		[Test]

@@ -920,7 +920,7 @@ namespace Mono.CSharp
 
 		public override bool ContainsEmitWithAwait ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -5679,6 +5679,12 @@ namespace Mono.CSharp
 				ConvCast.Emit (ec, enum_conversion);
 		}
 
+		public override void EmitPrepare (EmitContext ec)
+		{
+			Left.EmitPrepare (ec);
+			Right.EmitPrepare (ec);
+		}
+
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			if ((oper & Operator.LogicalMask) != 0 ||
@@ -6808,7 +6814,7 @@ namespace Mono.CSharp
 						"Cannot use fixed variable `{0}' inside an anonymous method, lambda expression or query expression",
 						GetSignatureForError ());
 				} else if (local_info.IsByRef || local_info.Type.IsByRefLike) {
-					if (ec.CurrentAnonymousMethod is StateMachineInitializer) {
+					if (local_info.Type.IsSpecialRuntimeType || ec.CurrentAnonymousMethod is StateMachineInitializer) {
 						// It's reported later as 4012/4013
 					} else {
 						ec.Report.Error (8175, loc,
@@ -13294,6 +13300,10 @@ namespace Mono.CSharp
 		public DefaultLiteralExpression (Location loc)
 		{
 			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

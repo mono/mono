@@ -15,14 +15,20 @@
 #define _DARWIN_C_SOURCE 1
 #endif
 
+#if defined (HOST_FUCHSIA)
+#include <zircon/syscalls.h>
+#endif
+
 #if defined (__HAIKU__)
 #include <os/kernel/OS.h>
 #endif
 
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads-debug.h>
+#include <mono/utils/mono-errno.h>
 
 #include <errno.h>
 
@@ -34,11 +40,22 @@
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if defined(_POSIX_VERSION) && !defined (TARGET_WASM)
+#if defined(_POSIX_VERSION) && !defined (HOST_WASM)
 
 #include <pthread.h>
 
+#include <sys/mman.h>
+#include <limits.h>    /* for PAGESIZE */
+#ifndef PAGESIZE
+#define PAGESIZE 4096
+#endif
+
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
+#endif
+
+static pthread_mutex_t memory_barrier_process_wide_mutex = PTHREAD_MUTEX_INITIALIZER;
+static void *memory_barrier_process_wide_helper_page;
 
 gboolean
 mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
@@ -111,7 +128,7 @@ mono_threads_platform_init (void)
 }
 
 gboolean
-mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
+mono_threads_platform_in_critical_region (THREAD_INFO_TYPE *info)
 {
 	return FALSE;
 }
@@ -128,8 +145,17 @@ mono_threads_platform_exit (gsize exit_code)
 	pthread_exit ((gpointer) exit_code);
 }
 
+#if HOST_FUCHSIA
 int
-ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
+mono_thread_info_get_system_max_stack_size (void)
+{
+	/* For now, we do not enforce any limits */
+	return INT_MAX;
+}
+
+#else
+int
+mono_thread_info_get_system_max_stack_size (void)
 {
 	struct rlimit lim;
 
@@ -141,6 +167,7 @@ ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
 		return INT_MAX;
 	return (int)lim.rlim_max;
 }
+#endif
 
 int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
@@ -156,7 +183,7 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 
 	if (result < 0) {
 		result = errno;
-		errno = old_errno;
+		mono_set_errno (old_errno);
 	}
 #elif defined (HAVE_PTHREAD_KILL)
 	result = pthread_kill (mono_thread_info_get_tid (info), signum);
@@ -209,6 +236,19 @@ gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	return pthread_create (tid, NULL, (void *(*)(void *)) func, arg) == 0;
+}
+
+size_t
+mono_native_thread_get_name (MonoNativeThreadId tid, char *name_out, size_t max_len)
+{
+#ifdef HAVE_PTHREAD_GETNAME_NP
+	int error = pthread_getname_np(tid, name_out, max_len);
+	if (error != 0)
+		return 0;
+	return strlen(name_out);
+#else
+	return 0;
+#endif
 }
 
 void
@@ -270,6 +310,36 @@ mono_native_thread_join (MonoNativeThreadId tid)
 	return !pthread_join (tid, &res);
 }
 
+void
+mono_memory_barrier_process_wide (void)
+{
+	int status;
+
+	status = pthread_mutex_lock (&memory_barrier_process_wide_mutex);
+	g_assert (status == 0);
+
+	if (memory_barrier_process_wide_helper_page == NULL) {
+		status = posix_memalign(&memory_barrier_process_wide_helper_page, PAGESIZE, PAGESIZE);
+		g_assert (status == 0);
+	}
+
+	// Changing a helper memory page protection from read / write to no access
+	// causes the OS to issue IPI to flush TLBs on all processors. This also
+	// results in flushing the processor buffers.
+	status = mprotect (memory_barrier_process_wide_helper_page, PAGESIZE, PROT_READ | PROT_WRITE);
+	g_assert (status == 0);
+
+	// Ensure that the page is dirty before we change the protection so that
+	// we prevent the OS from skipping the global TLB flush.
+	__sync_add_and_fetch ((size_t*)memory_barrier_process_wide_helper_page, 1);
+
+	status = mprotect (memory_barrier_process_wide_helper_page, PAGESIZE, PROT_NONE);
+	g_assert (status == 0);
+
+	status = pthread_mutex_unlock (&memory_barrier_process_wide_mutex);
+	g_assert (status == 0);
+}
+
 #endif /* defined(_POSIX_VERSION) */
 
 #if defined(USE_POSIX_BACKEND)
@@ -281,6 +351,13 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 
 	if (!mono_threads_pthread_kill (info, sig)) {
 		mono_threads_add_to_pending_operation_set (info);
+		return TRUE;
+	}
+	if (!mono_threads_transition_abort_async_suspend (info)) {
+		/* We raced with self suspend and lost so suspend can continue. */
+		g_assert (mono_threads_is_hybrid_suspension_enabled ());
+		info->suspend_can_continue = TRUE;
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (info));
 		return TRUE;
 	}
 	return FALSE;

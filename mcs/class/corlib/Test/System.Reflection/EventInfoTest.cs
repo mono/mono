@@ -123,7 +123,51 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (type.Module, ev.Module);
 		}
 
+		[Test]
+		public void MetadataToken ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("pub");
+			Assert.IsTrue ((int)ev.MetadataToken > 0);
+		}
+
+        [Test]
+        public void TestDerivedClassHidingEventWithPrivate ()
+        {
+			Type derived = typeof(Derived);
+			EventInfo[] events = derived.GetEvents (BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual(0, events.Length, "MyEvent event is private in derived class and should be hidden.");
+
+			Type staticDerived2 = typeof(StaticDerived2);
+			EventInfo[] events2 = staticDerived2.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			Console.WriteLine(events2.Length);
+		}
+
+        [Test]
+		public void TestDerivedClassOveridingEventWithStatic () {
+			Type staticDerived2 = typeof(StaticDerived2);
+			EventInfo[] events = staticDerived2.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual(0, events.Length, "MyEvent event is static in parent class and should be hidden.");
+		}
+
+		// https://github.com/mono/mono/issues/13350
+		[Test]
+		public void ReflectedType () {
+			Type type = typeof (B);
+			EventInfo eventInfo = type.GetEvent (nameof (A.Event));
+			MemberInfo memberInfo = eventInfo.AddMethod;
+			Assert.AreEqual (type, memberInfo.ReflectedType);
+		}
+
 #pragma warning disable 67
+		public class A
+		{
+			public event Action Event { add { } remove { } }
+		}
+
+		public class B : A
+		{
+		}
+
 		public class PrivateEvent
 		{
 			private static event EventHandler x;
@@ -140,6 +184,35 @@ namespace MonoTests.System.Reflection
 			private event EventHandler priv;
 		}
 
+		private abstract class Base
+		{
+			public event Action MyEvent { add { } remove { } }
+			public int MyProp { get; }
+		}
+
+		private abstract class Derived : Base
+		{
+			private new event Action MyEvent { add { } remove { } }
+			private new int MyProp { get; }
+		}
+
+		private abstract class Derived2 : Derived
+		{
+		}
+
+		private class StaticBase
+		{
+			public event Action MyEvent { add { } remove { } }
+		}
+
+		private class StaticDerived : StaticBase
+		{
+			public new static event Action MyEvent { add { } remove { } }
+		}
+
+		private class StaticDerived2 : StaticDerived
+		{
+		}
 #pragma warning restore 67
 	}
 }

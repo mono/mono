@@ -134,6 +134,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StartNewTest ()
 		{
 			bool result = false;
@@ -148,6 +149,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_Simple ()
 		{
 			var mre = new ManualResetEventSlim (false);
@@ -173,6 +175,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_WithMixedCompletionState ()
 		{
 			var mre = new ManualResetEventSlim ();
@@ -237,6 +240,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_WithExceptions ()
 		{
 			var t1 = Task.Factory.StartNew (() => { throw new ApplicationException ("Foo"); });
@@ -251,6 +255,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);
@@ -279,6 +284,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAny_WithResult ()
 		{
 			var tcs = new TaskCompletionSource<int>();
@@ -334,6 +340,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginInvoke_WithResult ()
 		{
 			bool result = false;
@@ -351,6 +358,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginMethod_DirectResult ()
 		{
 			bool result = false;
@@ -368,6 +376,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginMethod_Exception ()
 		{
 			bool result = false;
@@ -444,6 +453,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -457,6 +467,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedWithException ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -469,6 +480,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedCanceled ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -482,6 +494,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_SimpleAsyncResult ()
 		{
 			var result = new TestAsyncResult ();
@@ -496,6 +509,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_ResultException ()
 		{
 			var result = new TestAsyncResult ();
@@ -513,6 +527,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_ReturnInt ()
 		{
 			var result = new TestAsyncResult ();
@@ -529,6 +544,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_Scheduler_Explicit ()
 		{
 			var result = new TestAsyncResult ();
@@ -545,6 +561,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_Scheduler_Implicit ()
 		{
 			var result = new TestAsyncResult ();
@@ -565,6 +582,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_BeginCallback ()
 		{
 			bool called = false;
@@ -596,6 +614,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StartNewCancelled ()
 		{
 			var ct = new CancellationToken (true);

@@ -9,9 +9,9 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
+
+#if !ENABLE_NETCORE
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -27,6 +27,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/filewatcher.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/icall-decl.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/metadata/w32error.h>
@@ -43,11 +44,11 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	return 1;
 }
 
-gboolean
+int
 ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
-					       MonoString **filename,
-					       gint *code,
-					       gint *reqnum)
+											   MonoStringHandleOut filename,
+											   int *code,
+											   int *reqnum, MonoError *error)
 {
 	return FALSE;
 }
@@ -56,6 +57,10 @@ ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
 
 static int (*FAMNextEvent) (gpointer, gpointer);
 
+#if defined(HAVE_SYS_INOTIFY_H)
+#include <sys/inotify.h>
+#endif
+
 gint
 ves_icall_System_IO_FSW_SupportsFSW (void)
 {
@@ -63,20 +68,19 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	if (getenv ("MONO_DARWIN_USE_KQUEUE_FSW"))
 		return 3; /* kqueue */
 	else
-		return 6; /* FSEvent */
+		return 6; /* CoreFX */
+#elif defined(HAVE_SYS_INOTIFY_H)
+	int inotify_instance = inotify_init ();
+	if (inotify_instance == -1)
+		return  0; /* DefaultWatcher */
+	close (inotify_instance);
+	return 6; /* CoreFX */
 #elif HAVE_KQUEUE
 	return 3; /* kqueue */
 #else
 	MonoDl *fam_module;
 	int lib_used = 4; /* gamin */
-	int inotify_instance;
 	char *err;
-
-	inotify_instance = ves_icall_System_IO_InotifyWatcher_GetInotifyInstance ();
-	if (inotify_instance != -1) {
-		close (inotify_instance);
-		return 5; /* inotify */
-	}
 
 	fam_module = mono_dl_open ("libgamin-1.so", MONO_DL_LAZY, NULL);
 	if (fam_module == NULL) {
@@ -85,14 +89,14 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	}
 
 	if (fam_module == NULL)
-		return 0;
+		return 0; /* DefaultWatcher */
 
 	err = mono_dl_symbol (fam_module, "FAMNextEvent", (gpointer *) &FAMNextEvent);
 	g_free (err);
 	if (FAMNextEvent == NULL)
 		return 0;
 
-	return lib_used;
+	return lib_used; /* DefaultWatcher */
 #endif
 }
 
@@ -110,107 +114,24 @@ typedef struct FAMEvent {
 	gint code;
 } FAMEvent;
 
-gboolean
+int
 ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
-					       MonoString **filename,
-					       gint *code,
-					       gint *reqnum)
+											   MonoStringHandleOut filename,
+											   int *code,
+											   int *reqnum,
+											   MonoError *error)
 {
-	ERROR_DECL (error);
 	FAMEvent ev;
 
 	if (FAMNextEvent (conn, &ev) == 1) {
-		*filename = mono_string_new_checked (mono_domain_get (), ev.filename, error);
+		MONO_HANDLE_ASSIGN_RAW (filename, mono_string_new_checked (mono_domain_get (), ev.filename, error));
+		return_val_if_nok (error, FALSE);
 		*code = ev.code;
 		*reqnum = ev.fr.reqnum;
-		if (mono_error_set_pending_exception (error))
-			return FALSE;
 		return TRUE;
 	}
 
 	return FALSE;
-}
-#endif
-
-#ifndef HAVE_SYS_INOTIFY_H
-int ves_icall_System_IO_InotifyWatcher_GetInotifyInstance ()
-{
-	return -1;
-}
-
-int ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *directory, gint32 mask)
-{
-	return -1;
-}
-
-int ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor)
-{
-	return -1;
-}
-#else
-#include <sys/inotify.h>
-#include <errno.h>
-
-int
-ves_icall_System_IO_InotifyWatcher_GetInotifyInstance ()
-{
-	return inotify_init ();
-}
-
-int
-ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *name, gint32 mask)
-{
-	ERROR_DECL (error);
-	char *str, *path;
-	int retval;
-
-	if (name == NULL)
-		return -1;
-
-	str = mono_string_to_utf8_checked (name, error);
-	if (mono_error_set_pending_exception (error))
-		return -1;
-	path = mono_portability_find_file (str, TRUE);
-	if (!path)
-		path = str;
-
-	retval = inotify_add_watch (fd, path, mask);
-	if (retval < 0) {
-		switch (errno) {
-		case EACCES:
-			errno = ERROR_ACCESS_DENIED;
-			break;
-		case EBADF:
-			errno = ERROR_INVALID_HANDLE;
-			break;
-		case EFAULT:
-			errno = ERROR_INVALID_ACCESS;
-			break;
-		case EINVAL:
-			errno = ERROR_INVALID_DATA;
-			break;
-		case ENOMEM:
-			errno = ERROR_NOT_ENOUGH_MEMORY;
-			break;
-		case ENOSPC:
-			errno = ERROR_TOO_MANY_OPEN_FILES;
-			break;
-		default:
-			errno = ERROR_GEN_FAILURE;
-			break;
-		}
-		mono_marshal_set_last_error ();
-	}
-	if (path != str)
-		g_free (path);
-	g_free (str);
-	return retval;
-}
-
-int
-ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor)
-{
-	return inotify_rm_watch (fd, watch_descriptor);
 }
 #endif
 
@@ -219,7 +140,7 @@ ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor)
 static void
 interrupt_kevent (gpointer data)
 {
-	int *kq_ptr = data;
+	int *kq_ptr = (int*)data;
 
 	/* Interrupt the kevent () call by closing the fd */
 	close (*kq_ptr);
@@ -246,7 +167,7 @@ ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq_ptr, gpointer change
 	}
 
 	MONO_ENTER_GC_SAFE;
-	res = kevent (*kq_ptr, changelist, nchanges, eventlist, nevents, NULL);
+	res = kevent (*kq_ptr, (const struct kevent*)changelist, nchanges, (struct kevent*)eventlist, nevents, NULL);
 	MONO_EXIT_GC_SAFE;
 
 	mono_thread_info_uninstall_interrupt (&interrupted);
@@ -265,47 +186,4 @@ ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq_ptr, gpointer change
 
 #endif /* #if HAVE_KQUEUE */
 
-#if defined(__APPLE__)
-
-#include <CoreFoundation/CFRunLoop.h>
-
-static void
-interrupt_CFRunLoop (gpointer data)
-{
-	g_assert (data);
-	CFRunLoopStop(data);
-}
-
-void
-ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void)
-{
-	gpointer runloop_ref = CFRunLoopGetCurrent();
-	gboolean interrupted;
-	mono_thread_info_install_interrupt (interrupt_CFRunLoop, runloop_ref, &interrupted);
-
-	if (interrupted)
-		return;
-
-	MONO_ENTER_GC_SAFE;
-	CFRunLoopRun();
-	MONO_EXIT_GC_SAFE;
-
-	mono_thread_info_uninstall_interrupt (&interrupted);
-}
-
-#ifdef HOST_IOS
-
-MONO_API char* SystemNative_RealPath(const char* path)
-{
-    g_assert(path != NULL);
-    return realpath(path, NULL);
-}
-
-MONO_API void SystemNative_Sync(void)
-{
-    sync();
-}
-
-#endif // HOST_IOS
-
-#endif /* #if defined(__APPLE__) */
+#endif /* !ENABLE_NETCORE */

@@ -38,7 +38,7 @@ namespace MonoCasTests.System.Net.Sockets {
 		{
 			reset = new ManualResetEvent (false);
 
-			IPHostEntry host = Dns.Resolve ("www.google.com");
+			IPHostEntry host = Dns.Resolve ("www.example.com");
 			IPAddress ip = host.AddressList[0];
 			ep = new IPEndPoint (ip, 80);
 			socket = new Socket (ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);

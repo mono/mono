@@ -41,6 +41,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
@@ -128,7 +130,7 @@ namespace MonoTests.System.Data.Connected
 			sql.ConnectionString = sql.ConnectionString.Replace(sql.Connection.Database, DatabaseName);
 			sql.CloseConnection();
 
-			string query = File.ReadAllText(@"Test/ProviderTests/sql/sqlserver.sql");
+			string query = File.ReadAllText(TestResourceHelper.GetFullPathOfResource ("Test/ProviderTests/sql/sqlserver.sql"));
 
 			var queries = SplitSqlStatements(query);
 			foreach (var subQuery in queries)
@@ -144,7 +146,7 @@ namespace MonoTests.System.Data.Connected
 			odbc.Connection.ChangeDatabase(DatabaseName);
 			odbc.ConnectionString += $"database={DatabaseName}";
 
-			string query = File.ReadAllText("Test/ProviderTests/sql/MySQL_5.sql");
+			string query = File.ReadAllText(TestResourceHelper.GetFullPathOfResource ("Test/ProviderTests/sql/MySQL_5.sql"));
 
 			var groups = query.Replace("delimiter ", "")
 				.Split(new[] { "//\n" }, StringSplitOptions.RemoveEmptyEntries);

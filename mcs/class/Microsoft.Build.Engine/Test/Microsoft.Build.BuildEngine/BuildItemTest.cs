@@ -31,6 +31,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class BuildItemTest {
@@ -919,7 +921,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestBuildItemTransform ()
 		{
 			string projectText = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-				<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+				<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 
 				<ItemGroup>
 					<Foo Include='abc'/>

@@ -12,6 +12,8 @@ using Commons.Xml.Relaxng;
 using Commons.Xml.Relaxng.XmlSchema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
@@ -23,7 +25,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 			var datatypeLibrary = SetupMyDataProvider ();
 			XmlDocument xml = new XmlDocument ();
 			xml.LoadXml ("<root> <v1>mytype</v1> <v2>1</v2> </root>");
-			XmlDocument schemaXml = ReadDoc ("Test/XmlFiles/463264.rng");
+			XmlDocument schemaXml = ReadDoc (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/463264.rng"));
 			XmlReader reader = new RelaxngValidatingReader (new XmlNodeReader (xml), new XmlNodeReader (schemaXml), datatypeLibrary);
 			while (reader.Read ())
 				;
@@ -35,7 +37,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 			var datatypeLibrary = SetupMyDataProvider ();
 			XmlDocument xml = new XmlDocument ();
 			xml.LoadXml ("<root> <v2>1</v2> <v1>mytype</v1> </root>");
-			XmlDocument schemaXml = ReadDoc ("Test/XmlFiles/463267.rng");
+			XmlDocument schemaXml = ReadDoc (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/463267.rng"));
 			XmlReader reader = new RelaxngValidatingReader (new XmlNodeReader (xml), new XmlNodeReader (schemaXml), datatypeLibrary);
 			while (reader.Read ())
 				;

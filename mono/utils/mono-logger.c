@@ -9,26 +9,23 @@
 
 #include "mono-compiler.h"
 #include "mono-logger-internals.h"
+#include <mono/utils/mono-threads-debug.h>
+
 
 typedef struct {
 	GLogLevelFlags	level;
 	MonoTraceMask	mask;
 } MonoLogLevelEntry;
 
-GLogLevelFlags mono_internal_current_level	= INT_MAX;
-MonoTraceMask  mono_internal_current_mask	= ~((MonoTraceMask)0);
+GLogLevelFlags mono_internal_current_level	= (GLogLevelFlags)INT_MAX;
+MonoTraceMask  mono_internal_current_mask	= (MonoTraceMask)~0;
 gboolean mono_trace_log_header			= FALSE;
 
 static GQueue		*level_stack		= NULL;
 static const char	*mono_log_domain	= "Mono";
 static MonoPrintCallback print_callback, printerr_callback;
 
-static MonoLogCallParm logCallback = {
-	.opener = NULL,
-	.writer = NULL,
-	.closer = NULL,
-	.header = FALSE
-};
+static MonoLogCallParm logCallback;
 
 typedef struct {
    MonoLogCallback legacy_callback;
@@ -165,18 +162,29 @@ mono_trace_set_logdest_string (const char *dest)
 	logger.closer = mono_log_close_asl;
 	logger.dest   = (char*) dest;
 #else
-	if ((dest == NULL) || (strcmp("syslog", dest) != 0)) {
-		logger.opener = mono_log_open_logfile;
-		logger.writer = mono_log_write_logfile;
-		logger.closer = mono_log_close_logfile;
+	if (dest && !strcmp("flight-recorder", dest)) {
+		logger.opener = mono_log_open_recorder;
+		logger.writer = mono_log_write_recorder;
+		logger.closer = mono_log_close_recorder;
 		logger.dest   = (char *) dest;
-	} else {
+
+		// Increase log level with flight recorder
+		if (mono_internal_current_level == G_LOG_LEVEL_ERROR || mono_internal_current_level == G_LOG_LEVEL_CRITICAL)
+			mono_trace_set_level (G_LOG_LEVEL_WARNING);
+
+	} else if (dest && !strcmp("syslog", dest)) {
 		logger.opener = mono_log_open_syslog;
 		logger.writer = mono_log_write_syslog;
 		logger.closer = mono_log_close_syslog;
 		logger.dest   = (char *) dest;
+	} else {
+		logger.opener = mono_log_open_logfile;
+		logger.writer = mono_log_write_logfile;
+		logger.closer = mono_log_close_logfile;
+		logger.dest   = (char *) dest;
 	}
 #endif
+
 	mono_trace_set_log_handler_internal(&logger, NULL);
 }
 
@@ -296,17 +304,18 @@ mono_trace_set_mask_string (const char *value)
 		{ "io-layer-semaphore", MONO_TRACE_IO_LAYER_SEMAPHORE },
 		{ "io-layer-mutex", MONO_TRACE_IO_LAYER_MUTEX },
 		{ "io-layer-handle", MONO_TRACE_IO_LAYER_HANDLE },
-		{ "io-layer", MONO_TRACE_IO_LAYER_PROCESS
+		{ "io-layer", (MonoTraceMask)(MONO_TRACE_IO_LAYER_PROCESS
 		               | MONO_TRACE_IO_LAYER_SOCKET
 		               | MONO_TRACE_IO_LAYER_FILE
 		               | MONO_TRACE_IO_LAYER_EVENT
 		               | MONO_TRACE_IO_LAYER_SEMAPHORE
 		               | MONO_TRACE_IO_LAYER_MUTEX
-		               | MONO_TRACE_IO_LAYER_HANDLE },
+		               | MONO_TRACE_IO_LAYER_HANDLE) },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
-		{ "all", ~((MonoTraceMask)0) },
-		{ NULL, 0 },
+		{ "profiler", MONO_TRACE_PROFILER },
+		{ "all", (MonoTraceMask)~0 }, // FIXMEcxx there is a better way -- operator overloads of enums
+		{ NULL, (MonoTraceMask)0 },
 	};
 
 	if(!value)
@@ -382,7 +391,7 @@ log_level_get_name (GLogLevelFlags log_level)
 static void
 callback_adapter (const char *domain, GLogLevelFlags level, mono_bool fatal, const char *message)
 {
-	UserSuppliedLoggerUserData *ll =logCallback.user_data;
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)logCallback.user_data;
 
 	ll->legacy_callback (domain, log_level_get_name(level), message, fatal, ll->user_data);
 }
@@ -390,7 +399,7 @@ callback_adapter (const char *domain, GLogLevelFlags level, mono_bool fatal, con
 static void
 eglib_log_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
 {
-	UserSuppliedLoggerUserData *ll = logCallback.user_data;
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)logCallback.user_data;
 
 	ll->legacy_callback (log_domain, log_level_get_name (log_level), message, log_level & G_LOG_LEVEL_ERROR, ll->user_data);
 }
@@ -441,7 +450,7 @@ mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
 
 	if (logCallback.closer != NULL)
 		logCallback.closer();
-	UserSuppliedLoggerUserData *ll = g_malloc (sizeof (UserSuppliedLoggerUserData));
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)g_malloc (sizeof (UserSuppliedLoggerUserData));
 	ll->legacy_callback = callback;
 	ll->user_data = user_data;
 	logCallback.opener = legacy_opener;
@@ -519,4 +528,45 @@ mono_trace_set_printerr_handler (MonoPrintCallback callback)
 	g_assert (callback);
 	printerr_callback = callback;
 	g_set_printerr_handler (printerr_handler);
+}
+
+static gchar
+conv_ascii_char (gchar s)
+{
+	if (s < 0x20)
+		return '.';
+	if (s > 0x7e)
+		return '.';
+	return s;
+}
+
+/* No memfree because only called during crash */
+void
+mono_dump_mem (gpointer d, int len)
+{
+	guint8 *data = (guint8 *) d;
+
+	for (int off = 0; off < len; off += 0x10) {
+		g_async_safe_printf("%p  ", data + off);
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len) {
+				g_async_safe_printf("%s", "   ");
+			} else {
+				g_async_safe_printf("%02x ", data [off + i]);
+			}
+		}
+
+		g_async_safe_printf(" ");
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len) {
+				g_async_safe_printf("%s", " ");
+			} else {
+				g_async_safe_printf("%c", conv_ascii_char (data [off + i]));
+			}
+		}
+
+		g_async_safe_printf ("\n");
+	}
 }

@@ -112,7 +112,8 @@ namespace System.Security.Principal {
 
 			if (Environment.IsUnix) {
 				// note: Posix is always case-sensitive
-				return IsMemberOfGroupName (Token, role);
+				using (var rolePtr = new Mono.SafeStringMarshal (role))
+					return IsMemberOfGroupName (Token, rolePtr.Value);
 			}
 			else {
 				// Windows specific code that
@@ -168,6 +169,6 @@ namespace System.Security.Principal {
 
 		// note: never called by Win32 code (i.e. always return false)
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool IsMemberOfGroupName (IntPtr user, string group);
+		private extern static bool IsMemberOfGroupName (IntPtr user, IntPtr group);
 	}
 }

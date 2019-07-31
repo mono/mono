@@ -1,4 +1,3 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // Policy.cs: Implements the managed SecPolicy wrapper.
 //
@@ -84,4 +83,3 @@ namespace Mono.AppleTls {
 		}
 	}
 }
-#endif

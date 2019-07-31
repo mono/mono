@@ -1,0 +1,15 @@
+System.Net.NetworkInformation/UnixIcmpV4Statistics.cs
+System.Net.NetworkInformation/UnixIcmpV6Statistics.cs
+System.Net.NetworkInformation/UnixIPGlobalProperties.cs
+System.Net.NetworkInformation/UnixIPGlobalStatistics.cs
+System.Net.NetworkInformation/UnixIPInterfaceProperties.cs
+System.Net.NetworkInformation/UnixIPv4InterfaceProperties.cs
+System.Net.NetworkInformation/UnixNetworkInterface.cs
+System.Net.NetworkInformation/UnixNetworkInterfaceFactory.cs
+System.Net.NetworkInformation/UnixTcpStatistics.cs
+System.Net.NetworkInformation/UnixUdpStatistics.cs
+System.Net.NetworkInformation/AixIPInterfaceProperties.cs
+System.Net.NetworkInformation/AixIPv4InterfaceProperties.cs
+System.Net.NetworkInformation/AixIPv4InterfaceStatistics.cs
+System.Net.NetworkInformation/AixNetworkInterfaceMarshal.cs
+System.Net.NetworkInformation/AixNetworkInterface.cs

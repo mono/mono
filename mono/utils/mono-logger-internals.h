@@ -9,8 +9,6 @@
 #include <mono/utils/mono-compiler.h>
 #include "mono-logger.h"
 
-G_BEGIN_DECLS
-
 typedef enum {
 	MONO_TRACE_ASSEMBLY           = 1 << 0,
 	MONO_TRACE_TYPE               = 1 << 1,
@@ -29,10 +27,11 @@ typedef enum {
 	MONO_TRACE_IO_LAYER_MUTEX     = 1 << 14,
 	MONO_TRACE_IO_LAYER_HANDLE    = 1 << 15,
 	MONO_TRACE_TAILCALL           = 1 << 16,
+	MONO_TRACE_PROFILER           = 1 << 17,
 } MonoTraceMask;
 
-MONO_API extern GLogLevelFlags mono_internal_current_level;
-MONO_API extern MonoTraceMask mono_internal_current_mask;
+MONO_API_DATA GLogLevelFlags mono_internal_current_level;
+MONO_API_DATA MonoTraceMask mono_internal_current_mask;
 
 MONO_API void
 mono_trace_init (void);
@@ -153,9 +152,13 @@ void mono_log_close_logcat (void);
 void mono_log_open_asl (const char *path, void *userData);
 void mono_log_write_asl (const char *log_domain, GLogLevelFlags level, mono_bool hdr, const char *message);
 void mono_log_close_asl (void);
-
 #endif
 
-G_END_DECLS
+void mono_log_open_recorder (const char *path, void *userData);
+void mono_log_write_recorder (const char *log_domain, GLogLevelFlags level, mono_bool hdr, const char *message);
+void mono_log_close_recorder (void);
+void mono_log_dump_recorder (void);
+
+void mono_dump_mem (gpointer d, int len);
 
 #endif /* __MONO_LOGGER_INTERNAL_H__ */

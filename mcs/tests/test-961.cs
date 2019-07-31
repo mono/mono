@@ -5,6 +5,12 @@ using System;
 public static class B {
 	public static void Main ()
 	{
+		int lo = 1;
+		Bar (in lo);		
+	}
+
+	public static void Bar (in int arg)
+	{
 	}
 
 	static void Foo (this in int src)

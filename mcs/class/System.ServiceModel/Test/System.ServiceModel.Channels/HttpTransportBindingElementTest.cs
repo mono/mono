@@ -128,7 +128,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				ctx.BuildInnerChannelFactory<IRequestChannel> ();
 			f.Open (); // required
 			IChannel c = f.CreateChannel (new EndpointAddress (
-				"http://www.mono-project.com"));
+				"http://www.example.com"));
 		}
 
 		[Test]
@@ -143,7 +143,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			IChannelFactory<IRequestChannel> f =
 				ctx.BuildInnerChannelFactory<IRequestChannel> ();
 			IChannel c = f.CreateChannel (new EndpointAddress (
-				"http://www.mono-project.com"));
+				"http://www.example.com"));
 		}
 
 		[Test]

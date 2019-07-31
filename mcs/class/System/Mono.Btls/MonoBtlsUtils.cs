@@ -112,6 +112,9 @@ namespace Mono.Btls
 			case MonoBtlsX509NameEntryType.Initial:
 				sb.Append ("I=");
 				break;
+			case MonoBtlsX509NameEntryType.SerialNumber:
+				sb.Append ("SERIALNUMBER=");
+				break;
 			default:
 				// unknown OID
 				sb.Append ("OID.");     // NOTE: Not present as RFC2253

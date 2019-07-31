@@ -48,7 +48,7 @@ static char *assembly_directory[2];
 
 static MonoAssembly *pedump_preload (MonoAssemblyName *aname, gchar **assemblies_path, gpointer user_data);
 static void pedump_assembly_load_hook (MonoAssembly *assembly, gpointer user_data);
-static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data);
+static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
 /* unused
 static void
@@ -378,11 +378,11 @@ dump_verify_info (MonoImage *image, int flags, gboolean valid_only)
 			if (errors) {
 				MonoClass *klass = mono_method_get_class (method);
 				char *name = mono_type_full_name (m_class_get_byval_arg (klass));
-				if (mono_method_signature (method) == NULL) {
+				if (mono_method_signature_internal (method) == NULL) {
 					g_print ("In method: %s::%s(ERROR)\n", name, mono_method_get_name (method));
 				} else {
 					char *sig;
-					sig = mono_signature_get_desc (mono_method_signature (method), FALSE);	
+					sig = mono_signature_get_desc (mono_method_signature_internal (method), FALSE);	
 					g_print ("In method: %s::%s(%s)\n", name, mono_method_get_name (method), sig);
 					g_free (sig);
 				}
@@ -432,7 +432,7 @@ verify_image_file (const char *fname)
 	int i, count = 0;
 
 	if (!strstr (fname, "mscorlib.dll")) {
-		image = mono_image_open_raw (fname, &status);
+		image = mono_image_open_raw (mono_domain_default_alc (mono_get_root_domain ()), fname, &status);
 		if (!image) {
 			printf ("Could not open %s\n", fname);
 			return 1;
@@ -468,7 +468,7 @@ verify_image_file (const char *fname)
 
 		/*Finish initializing the runtime*/
 		mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
 
 		mono_init_version ("pedump", image->version);
 
@@ -479,7 +479,7 @@ verify_image_file (const char *fname)
 	} else {
 		/*Finish initializing the runtime*/
 		mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
 
 		mono_init_version ("pedump", NULL);
 
@@ -523,7 +523,7 @@ verify_image_file (const char *fname)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);
@@ -558,21 +558,22 @@ invalid_image:
 
 static gboolean
 try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
-					const gchar *path3, const gchar *path4, gboolean refonly)
+					const gchar *path3, const gchar *path4,
+					const MonoAssemblyOpenRequest *req)
 {
 	gchar *fullpath;
 
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
-		*assembly = mono_assembly_open_predicate (fullpath, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+		*assembly = mono_assembly_request_open (fullpath, req, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
 }
 
 static MonoAssembly *
-real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolean refonly)
+real_load (gchar **search_path, const gchar *culture, const gchar *name, const MonoAssemblyOpenRequest *req)
 {
 	MonoAssembly *result = NULL;
 	gchar **path;
@@ -596,22 +597,22 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolea
 		/* See test cases in bug #58992 and bug #57710 */
 		/* 1st try: [culture]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly))
+		if (try_load_from (&result, *path, local_culture, "", filename, req))
 			break;
 
 		/* 2nd try: [culture]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly))
+		if (try_load_from (&result, *path, local_culture, "", filename, req))
 			break;
 
 		/* 3rd try: [culture]/[name]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly))
+		if (try_load_from (&result, *path, local_culture, name, filename, req))
 			break;
 
 		/* 4th try: [culture]/[name]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly))
+		if (try_load_from (&result, *path, local_culture, name, filename, req))
 			break;
 	}
 
@@ -629,12 +630,15 @@ pedump_preload (MonoAssemblyName *aname,
 {
 	MonoAssembly *result = NULL;
 	gboolean refonly = GPOINTER_TO_UINT (user_data);
+	MonoAssemblyOpenRequest req;
+	mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+
 
 	if (assemblies_path && assemblies_path [0] != NULL) {
-		result = real_load (assemblies_path, aname->culture, aname->name, refonly);
+		result = real_load (assemblies_path, aname->culture, aname->name, &req);
 	}
 	if (!result)
-		result = real_load (assembly_directory, aname->culture, aname->name, refonly);
+		result = real_load (assembly_directory, aname->culture, aname->name, &req);
 
 	return result;
 }
@@ -648,7 +652,8 @@ pedump_assembly_load_hook (MonoAssembly *assembly, gpointer user_data)
 }
 
 static MonoAssembly *
-pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data)
+pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname,
+			     gboolean refonly, gboolean postload, gpointer user_data, MonoError *error)
 {
         GList *tmp;
 
@@ -784,6 +789,7 @@ main (int argc, char *argv [])
 	if (dump_data)
 		dump_dotnet_iinfo (image);
 	if (verify_pe) {
+		MonoAssemblyOpenRequest req;
 		MonoAssembly *assembly;
 		MonoImage *image;
 		MonoImageOpenStatus status;
@@ -791,7 +797,8 @@ main (int argc, char *argv [])
 
 		mono_verifier_set_mode (verifier_mode);
 
-		assembly = mono_assembly_open_predicate (file, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		assembly = mono_assembly_request_open (file, &req, NULL);
 		/*fake an assembly for netmodules so the verifier works*/
 		if (!assembly && (image = mono_image_open (file, &status)) && image->tables [MONO_TABLE_ASSEMBLY].rows == 0) {
 			assembly = g_new0 (MonoAssembly, 1);

@@ -1,0 +1,14 @@
+<Project>
+  <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
+
+<!--
+  The following target is to make sure the sdk\packages exist.
+  The build CI was failing without this.
+-->
+  <Target Name="_CreatePackagesDir" BeforeTargets="_GenerateRestoreProjectSpec" >
+    <PropertyGroup>
+        <_PackagesDirectory>$(MSBuildThisFileDirectory)packages</_PackagesDirectory>
+    </PropertyGroup>
+    <MakeDir Directories="$(_PackagesDirectory)" Condition="!Exists('$(_PackagesDirectory)')"/>
+  </Target>
+</Project>

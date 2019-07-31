@@ -559,7 +559,11 @@ namespace System {
 
       public static Decimal Abs(Decimal value)
       {
+#if MONO
+          return Decimal.Abs(ref value);
+#else
           return Decimal.Abs(value);
+#endif
       }
     
       /*================================MAX=========================================
@@ -641,7 +645,11 @@ namespace System {
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
       public static Decimal Max(Decimal val1, Decimal val2) {
+#if MONO
+        return Decimal.Max(ref val1, ref val2);
+#else
         return Decimal.Max(val1,val2);
+#endif
       }
 
       /*================================MIN=========================================
@@ -723,7 +731,7 @@ namespace System {
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
       public static Decimal Min(Decimal val1, Decimal val2) {
-        return Decimal.Min(val1,val2);
+        return Decimal.Min(ref val1, ref val2);
       }
     
       /*=====================================Log======================================

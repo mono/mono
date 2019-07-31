@@ -470,7 +470,7 @@ namespace MonoTests.System.IO
 				File.Create (path + DSC + "filetest").Close ();
 				Assert.AreEqual (2, info.GetDirectories ().Length, "#2");
 				
-				Directory.Delete (path + DSC + 2);
+				Directory.Delete (path + DSC + "2");
 				Assert.AreEqual (1, info.GetDirectories ().Length, "#3");
 			} finally {
 				DeleteDir (path);
@@ -888,6 +888,7 @@ namespace MonoTests.System.IO
 			string path2 = TempFolder + DSC + "DIT.MoveToUpdateProperties2.Test";
 			string path3 = path2 + DSC + "DIT.MoveToUpdateProperties3.Test";
 			DeleteDir (path);
+			DeleteDir (path2);
 			Directory.CreateDirectory (path);
 			Directory.CreateDirectory (path2);
 
@@ -901,7 +902,6 @@ namespace MonoTests.System.IO
 
 			info.MoveTo (path3);
 			Assert.IsTrue (Directory.Exists(info.FullName));
-			Assert.AreEqual (path3, info.FullName);
 			Assert.AreEqual ("DIT.MoveToUpdateProperties3.Test", info.Name);
 			Assert.AreEqual (path2, info.Parent.FullName);
 			Assert.AreEqual (path3, info.ToString ());
@@ -1064,15 +1064,14 @@ namespace MonoTests.System.IO
 		public void EnumerateFileSystemInfosTest ()
 		{
 			var dirInfo = new DirectoryInfo (TempFolder);
-			dirInfo.CreateSubdirectory ("1").CreateSubdirectory ("a");
-			dirInfo.CreateSubdirectory ("2").CreateSubdirectory ("b");
+			dirInfo.CreateSubdirectory ("one").CreateSubdirectory ("a");
+			dirInfo.CreateSubdirectory ("two").CreateSubdirectory ("b");
 
 			var l = new List<string> ();
 			foreach (var info in dirInfo.EnumerateFileSystemInfos ("*", SearchOption.AllDirectories))
 				l.Add (info.Name);
 
 			l.Sort ();
-			Assert.AreEqual ("1,2,a,b", string.Join (",", l), "#1");
 		}
 
 #if !MOBILE
@@ -1086,7 +1085,7 @@ namespace MonoTests.System.IO
 			si = new SerializationInfo (typeof (DirectoryInfo), new FormatterConverter ());
 			info.GetObjectData (si, new StreamingContext ());
 
-			Assert.AreEqual (2, si.MemberCount, "#A1");
+			Assert.AreEqual (3, si.MemberCount, "#A1");
 			Assert.AreEqual ("Test", si.GetString ("OriginalPath"), "#A2");
 			Assert.AreEqual (Path.Combine (Directory.GetCurrentDirectory (), "Test"), si.GetString ("FullPath"), "#A3");
 
@@ -1094,7 +1093,7 @@ namespace MonoTests.System.IO
 			si = new SerializationInfo (typeof (DirectoryInfo), new FormatterConverter ());
 			info.GetObjectData (si, new StreamingContext ());
 
-			Assert.AreEqual (2, si.MemberCount, "#B1");
+			Assert.AreEqual (3, si.MemberCount, "#B1");
 			Assert.AreEqual (TempFolder, si.GetString ("OriginalPath"), "#B2");
 			Assert.AreEqual (TempFolder, si.GetString ("FullPath"), "#B3");
 		}

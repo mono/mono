@@ -38,18 +38,6 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
-
-		int? _port;
-		int port {
-			get { return _port ?? (_port = NetworkHelpers.FindFreePort ()).Value; }
-		}
-
-		[TearDown]
-		public void Teardown ()
-		{
-			_port = null;
-		}
-
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
@@ -199,14 +187,8 @@ namespace MonoTests.System.Net {
 #endif
 		public void TwoListeners_SameAddress ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/");
-			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
-			listener1.Start ();
-			listener2.Start ();
+			HttpListener listener1 = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/");
+			HttpListener listener2 = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", port, "/hola/");
 		}
 
 		[Test]
@@ -215,17 +197,10 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TwoListeners_SameURL ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
-			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
-			listener1.Start ();
-			listener2.Start ();
+			HttpListener listener1 = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola/");
+			HttpListener listener2 = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", port, "/hola/");
 		}
 
 		[Test]
@@ -234,15 +209,10 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void MultipleSlashes ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + port + "/hola////");
 			// this one throws on Start(), not when adding it.
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola////");
 		}
 
 		[Test]
@@ -251,15 +221,9 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PercentSign ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + port + "/hola%3E/");
-			// this one throws on Start(), not when adding it.
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola%3E/");
 		}
 
 		[Test]
@@ -278,11 +242,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void CloseTwice ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola/");
 			listener.Close ();
 			listener.Close ();
 		}
@@ -293,11 +253,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void StartStopStart ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola/");
 			listener.Stop ();
 			listener.Start ();
 			listener.Close ();
@@ -309,11 +265,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void StartStopDispose ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			using (HttpListener listener = new HttpListener ()){
-				listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
-				listener.Start ();
+			using (HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola/")) {
 				listener.Stop ();
 			}
 		}
@@ -334,11 +286,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void AbortTwice ()
 		{
-			if (!CanOpenPort (port))
-				Assert.Ignore ("port");
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/hola/");
 			listener.Abort ();
 			listener.Abort ();
 		}
@@ -454,9 +402,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void CloseWhileBegin ()
 		{
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhilebegin/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var _, "/closewhilebegin/");
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
 			listener.Close ();
@@ -473,9 +419,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void AbortWhileBegin ()
 		{
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhilebegin/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var _, "/abortwhilebegin/");
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
 			listener.Abort ();
@@ -499,9 +443,7 @@ namespace MonoTests.System.Net {
 			//   at System.Net.HttpListener.GetContext()
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhileget/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var _, "/closewhileget/");
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Close), new object [0]);
 			rm.Start ();
 			HttpListenerContext ctx = listener.GetContext ();
@@ -520,9 +462,7 @@ namespace MonoTests.System.Net {
 			//   at System.Net.HttpListener.GetContext()
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhileget/");
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var _, "/abortwhileget/");
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Abort), new object [0]);
 			rm.Start ();
 			HttpListenerContext ctx = listener.GetContext ();
@@ -597,11 +537,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void ConnectionReuse ()
 		{
-			var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
-
-			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add (uri);
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri);
 
 			IPEndPoint expectedIpEndPoint = CreateListenerRequest (listener, uri);
 
@@ -657,11 +593,8 @@ namespace MonoTests.System.Net {
 #endif
 		public void UserHeaderWithDoubleMultiValue ()
 		{
-			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+			var l = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri);
 
-			var l = new HttpListener ();
-			l.Prefixes.Add (uri);
-			l.Start ();
 			l.BeginGetContext (ar => {
 				var ctx = l.EndGetContext (ar);
 
@@ -687,14 +620,9 @@ namespace MonoTests.System.Net {
 #endif
 		public void HttpClientIsDisconnectedCheckForWriteException()
 		{
-			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
-
 			AutoResetEvent exceptionOccuredEvent = new AutoResetEvent (false);
-			HttpListener listener = new HttpListener {
-				IgnoreWriteExceptions = false
-			};
-			listener.Prefixes.Add (uri);
-			listener.Start ();
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri,
+				initializer: (v) => v.IgnoreWriteExceptions = false);
 			listener.BeginGetContext (result =>
 			{
 				HttpListenerContext context = listener.EndGetContext (result);

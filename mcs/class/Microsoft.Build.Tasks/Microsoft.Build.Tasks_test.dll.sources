@@ -1,3 +1,4 @@
+../../test-helpers/TestResourceHelper.cs
 Microsoft.Build.Tasks/ALTest.cs
 Microsoft.Build.Tasks/AssignCultureTest.cs
 Microsoft.Build.Tasks/AssignProjectConfigurationTest.cs

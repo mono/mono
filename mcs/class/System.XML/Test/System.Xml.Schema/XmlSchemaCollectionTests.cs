@@ -14,14 +14,16 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
 	public class XmlSchemaCollectionTests
 	{
-		private XmlSchema GetSchema (string path)
+		private XmlSchema GetSchema (string resourceName)
 		{
-			return XmlSchema.Read (new XmlTextReader (path), null);
+			return XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource (resourceName)), null);
 		}
 
 		private XmlQualifiedName QName (string name, string ns)

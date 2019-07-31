@@ -652,7 +652,7 @@ impl_class_refs		: K_IMPLEMENTS generic_class_ref
                           {
                                 ArrayList al = (ArrayList) $1;
 
-                                al.Insert (0, $3);
+                                al.Add ($3);
                                 $$ = al;
                           }
  			;

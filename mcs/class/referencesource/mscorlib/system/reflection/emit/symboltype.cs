@@ -5,7 +5,7 @@
 // ==--==
 // <OWNER>Microsoft</OWNER>
 // 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 namespace System.Reflection.Emit 
 {
     using System.Runtime.InteropServices;

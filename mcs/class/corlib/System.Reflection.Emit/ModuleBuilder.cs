@@ -30,7 +30,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Collections;
@@ -43,14 +43,50 @@ using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class ModuleBuilder : _ModuleBuilder
+	{
+		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public class ModuleBuilder : Module, _ModuleBuilder {
+	public partial class ModuleBuilder : Module {
 
 #pragma warning disable 169, 414
 		#region Sync with object-internals.h
+		// This class inherits from Module, but the runtime expects it to have the same layout as MonoModule
+		#region Sync with MonoModule
+		internal IntPtr _impl; /* a pointer to a MonoImage */
+		internal Assembly assembly;
+		internal string fqname;
+		internal string name;
+		internal string scopename;
+		internal bool is_resource;
+		internal int token;
+		#endregion
 		private UIntPtr dynamic_image; /* GC-tracked */
 		private int num_types;
 		private TypeBuilder[] types;
@@ -141,7 +177,19 @@ namespace System.Reflection.Emit {
 			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
-		public override string FullyQualifiedName {get { return fqname;}}
+		public override string FullyQualifiedName {
+			get { 
+				string fullyQualifiedName = fqname;
+				if (fullyQualifiedName == null)
+					return null;
+				if (assemblyb.AssemblyDir != null) {
+					fullyQualifiedName = Path.Combine (assemblyb.AssemblyDir, fullyQualifiedName);
+					fullyQualifiedName = Path.GetFullPath (fullyQualifiedName);
+				}
+
+				return fullyQualifiedName;
+			}
+		}
 
 		public bool IsTransient () {
 			return transient;
@@ -1024,26 +1072,6 @@ namespace System.Reflection.Emit {
 			return mb.GetModuleVersionId ();
 		}
 
-		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -1078,78 +1106,41 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Field");
-			else
-				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
+			return RuntimeModule.ResolveField (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-
-			ResolveTokenError error;
-
-			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (m == null)
-				throw resolve_token_exception (metadataToken, error, "MemberInfo");
-			else
-				return m;
+			return RuntimeModule.ResolveMember (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		internal MemberInfo ResolveOrGetRegisteredToken (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
 		{
 			ResolveTokenError error;
-			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			MemberInfo m = RuntimeModule.ResolveMemberToken (_impl, metadataToken, RuntimeModule.ptrs_from_types (genericTypeArguments), RuntimeModule.ptrs_from_types (genericMethodArguments), out error);
 			if (m != null)
 				return m;
 
 			m = GetRegisteredToken (metadataToken) as MemberInfo;
 			if (m == null)
-				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+				throw RuntimeModule.resolve_token_exception (Name, metadataToken, error, "MemberInfo");
 			else
 				return m;
 		}
 
 		public override MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "MethodBase");
-			else
-				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
+			return RuntimeModule.ResolveMethod (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override string ResolveString (int metadataToken) {
-			ResolveTokenError error;
-
-			string s = ResolveStringToken (_impl, metadataToken, out error);
-			if (s == null)
-				throw resolve_token_exception (metadataToken, error, "string");
-			else
-				return s;
+			return RuntimeModule.ResolveString (this, _impl, metadataToken);
 		}
 
 		public override byte[] ResolveSignature (int metadataToken) {
-			ResolveTokenError error;
-
-		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
-			if (res == null)
-				throw resolve_token_exception (metadataToken, error, "signature");
-			else
-				return res;
+			return RuntimeModule.ResolveSignature (this, _impl, metadataToken);
 		}
 
 		public override Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Type");
-			else
-				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+			return RuntimeModule.ResolveType (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override bool Equals (object obj)
@@ -1217,7 +1208,7 @@ namespace System.Reflection.Emit {
 
 		public override int MetadataToken {
 			get {
-				return get_MetadataToken (this);
+				return RuntimeModule.get_MetadataToken (this);
 			}
 		}
 	}

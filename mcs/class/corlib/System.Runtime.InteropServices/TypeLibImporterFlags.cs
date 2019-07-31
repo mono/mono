@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 using System;
 
 namespace System.Runtime.InteropServices

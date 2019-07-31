@@ -148,6 +148,13 @@ namespace System.Runtime.Serialization {
             RuntimeType objectType = (RuntimeType)typeof(object);
             for (RuntimeType t1 = parentType; t1 != objectType; t1 = (RuntimeType)t1.BaseType)
             {
+#if MONO
+                // This should never happen
+                if (t1 == null) {
+                    throw new InvalidOperationException($"Type '{parentType}' of type '{parentType?.GetType()}' does not derive from System.Object");
+                }
+#endif
+
                 if (t1.IsInterface) continue;
                 string t1Name = t1.Name;
                 for(int i=0;unique && i<parentTypeCount;i++){

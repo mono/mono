@@ -1,0 +1,11 @@
+{
+  "license": "Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.",
+  "properties": {
+    "MonoWasmSdkPath": "Path to the `sdks` directory in a Mono build. Sets MonoWasmFrameworkPath, MonoWasmTargetsPath, MonoWasmRuntimePath and MonoWasmBindingsPath.",
+    "MonoWasmFrameworkPath": "Overrides the path to the Mono WebAssembly framework assemblies.",
+    "MonoWasmRuntimePath": "Overrides the path to the Mono WebAssembly runtime.",
+    "MonoWasmTargetsPath": "Overrides the path to the Mono WebAssembly build targets.",
+    "MonoWasmBindingsPath": "Overrides the path to the Mono WebAssembly binding assemblies (WebAssembly.Bindings and WebAssembly.Net.Http).",
+    "DisableImplicitWasmBindingReferences": "Whether to omit references to the WebAssembly binding assemblies (WebAssembly.Bindings and WebAssembly.Net.Http)"
+  }
+}

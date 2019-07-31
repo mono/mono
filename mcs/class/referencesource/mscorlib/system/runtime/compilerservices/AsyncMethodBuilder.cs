@@ -408,7 +408,7 @@ namespace System.Runtime.CompilerServices
         /// It must only be used by the debugger and tracing pruposes, and only in a single-threaded manner
         /// when no other threads are in the middle of accessing this property or this.Task.
         /// </remarks>
-        private object ObjectIdForDebugger { get { return this.Task; } }
+        internal object ObjectIdForDebugger { get { return this.Task; } }
     }
 
     /// <summary>
@@ -850,7 +850,6 @@ namespace System.Runtime.CompilerServices
 
         // This method is copy&pasted into the public Start methods to avoid size overhead of valuetype generic instantiations.
         // Ideally, we would build intrinsics to get the raw ref address and raw code address of MoveNext, and just use the shared implementation.
-#if false
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
@@ -880,7 +879,6 @@ namespace System.Runtime.CompilerServices
                 ecs.Undo();
             }
         }
-#endif
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
         /// <param name="stateMachine">The heap-allocated state machine object.</param>

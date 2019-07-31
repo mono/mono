@@ -1,3 +1,4 @@
+
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
@@ -51,6 +52,10 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
+if INSTALL_TESTING_AOT_FULL_INTERP
+build_profiles += testing_aot_full_interp
+endif
+
 if INSTALL_TESTING_AOT_HYBRID
 build_profiles += testing_aot_hybrid
 endif
@@ -61,6 +66,10 @@ endif
 
 if INSTALL_WINAOT
 build_profiles += winaot
+endif
+
+if INSTALL_TESTING_WINAOT_INTERP
+build_profiles += testing_winaot_interp
 endif
 
 if INSTALL_XAMMAC
@@ -76,38 +85,57 @@ build_profiles += unreal
 endif
 
 if INSTALL_WASM
-build_profiles += wasm
+build_profiles += wasm wasm_tools
 endif
 
-test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
+if ENABLE_NETCORE
+build_profiles += netcore
+endif
 
-if BUILD_MCS
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
 # The write check is to foil 'make distcheck'
-all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+all-mcs: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	cd $(mcs_topdir) && $(MAKE) $(MAKE_FLAGS) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
-# override automake
-install: install-exec install-data
+install-mcs: install-mcs-exec install-mcs-data
 
 # override automake
-install-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+install-mcs-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
-install-data:
+install-mcs-data:
 	@:
 
 # override automake
-uninstall:
+uninstall-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
-clean-local:
+clean-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' clean-profiles
 	-rm -fr $(etctmp) $(tmpinst)
+
+if BUILD_MCS
+
+all-local: all-mcs
+
+# override automake
+install: install-mcs
+
+# override automake
+install-exec: install-mcs-exec
+
+# override automake
+install-data: install-mcs-data
+
+# override automake
+uninstall: uninstall-mcs
+
+clean-local: clean-mcs
 
 endif BUILD_MCS
 
@@ -115,15 +143,41 @@ TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc
 
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' compiler-test-profiles
 
 mcs-do-xunit-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' xunit-test-profiles
 
 mcs-do-run-test-profiles: test-support-files
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-compiler-test-profiles
 
 mcs-do-xunit-run-test-profiles: test-support-files
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-xunit-test-profiles
+
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)/_tmpinst/bin
+	cp -L mono-test.sh $(TEST_BUNDLE_PATH)
+	cp -L -R etc $(TEST_BUNDLE_PATH)/_tmpinst
+	rm $(TEST_BUNDLE_PATH)/_tmpinst/etc/mono/config
+	sed -e 's,$$mono_libdir,$$test_root_dir,g' -e 's,target="$(libgdiplus_install_loc)",target="$$test_root_dir/mono-libgdiplus$(libsuffix)",g' $(top_builddir)/data/config > $(TEST_BUNDLE_PATH)/_tmpinst/etc/mono/config.tmpl
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/al.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/mcs.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/ilasm.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	for profile in $(test_profiles); do \
+		cp -L -R $(mcs_topdir)/class/lib/$$profile $(TEST_BUNDLE_PATH); \
+	done
+	cp -L $(top_srcdir)/external/xunit-binaries/*.dll $(top_srcdir)/external/xunit-binaries/*.exe $(top_srcdir)/external/xunit-binaries/*.config $(TEST_BUNDLE_PATH)/net_4_x/
+	$(MAKE) -C $(mcs_topdir)/tests test-bundle
+	$(MAKE) -C $(mcs_topdir)/errors test-bundle
+	$(MAKE) -C $(mcs_topdir)/packages test-bundle
+	$(MAKE) -C $(mcs_topdir)/tools/mono-symbolicate test-bundle
 
 if HOST_WIN32
 if CROSS_COMPILING
@@ -146,6 +200,9 @@ if HOST_WIN32
 VERIFY_TESTS_FILTER += Mono.WebBrowser.dll
 endif
 
+# fails to verify with "VTable setup of type Xunit.NetCore.Extensions.SkippedTestCase failed", not sure why
+VERIFY_TESTS_FILTER += Xunit.NetCore.Extensions.dll
+
 if FULL_AOT_TESTS
 #  ILASM.exe has features which a testing_aot_full runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
@@ -165,7 +222,7 @@ mcs-compileall: mono-wrapper etc/mono/config
 	  else \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  fi; \
-	  export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' $(foreach asm,$(VERIFY_TESTS_FILTER), | grep -v $(asm))` ; \
+	  export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | grep -v '\.dll\.dll$$' | grep -v '\.exe\.dll$$' $(foreach asm,$(VERIFY_TESTS_FILTER), | grep -v $(asm))` ; \
 	  export MONO_PATH; \
 	  for stub in $$verifiable_files; do \
 	  i=$(mcs_topdir)/class/lib/$$profile/$$stub ; \
@@ -200,12 +257,12 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	else \
 		echo "Unknown directory '$(abs_top_builddir)/support'" && false; \
 	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-native.la",' $@ > $@.tmp \
+	if test -d "$(abs_top_builddir)/mono/native"; then \
+		sed 's,target="$$mono_libdir/$(MONO_NATIVE_LIBRARY_NAME)$(libsuffix)",target="$(abs_top_builddir)/mono/native/$(MONO_NATIVE_LIBRARY_NAME).la",' $@ > $@.tmp \
 		 && mv $@.tmp $@ \
 		 ; \
 	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+		echo "Unknown directory '$(abs_top_builddir)/mono/native'" && false; \
 	fi
 	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
 		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \

@@ -21,9 +21,8 @@ namespace MonoTests.System.Net
 [TestFixture]
 public class ServicePointManagerTest
 {
-	private Uri googleUri;
-	private Uri yahooUri;
-	private Uri apacheUri;
+	private Uri exampleComUri;
+	private Uri exampleOrgUri;
 	private int maxIdle;
 	
 	[SetUp]
@@ -33,9 +32,8 @@ public class ServicePointManagerTest
 		maxIdle = ServicePointManager.MaxServicePointIdleTime;
 		ServicePointManager.MaxServicePointIdleTime = 10;
 #endif
-		googleUri = new Uri ("http://www.google.com");
-		yahooUri = new Uri ("http://www.yahoo.com");
-		apacheUri = new Uri ("http://www.apache.org");
+		exampleComUri = new Uri ("http://www.example.com");
+		exampleOrgUri = new Uri ("http://www.example.org");
 	}
 
 	[TearDown]
@@ -53,27 +51,21 @@ public class ServicePointManagerTest
         {
 		Assert.AreEqual (0, ServicePointManager.MaxServicePoints, "#1");
 		
-		DoWebRequest (googleUri);
+		DoWebRequest (exampleComUri);
 		Thread.Sleep (100);
-		DoWebRequest (yahooUri);
-		Thread.Sleep (100);
-		DoWebRequest (apacheUri);
+		DoWebRequest (exampleOrgUri);
 		Thread.Sleep (100);
 		
-		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri);
+		ServicePoint sp = ServicePointManager.FindServicePoint (exampleComUri);
 		//WriteServicePoint (sp);
-		sp = ServicePointManager.FindServicePoint (yahooUri);
-		//WriteServicePoint (sp);
-		sp = ServicePointManager.FindServicePoint (apacheUri);
+		sp = ServicePointManager.FindServicePoint (exampleOrgUri);
 		//WriteServicePoint (sp);
 		
 		ServicePointManager.MaxServicePoints = 1;
 
-		sp = ServicePointManager.FindServicePoint (googleUri);
+		sp = ServicePointManager.FindServicePoint (exampleComUri);
 		//WriteServicePoint (sp);
-		sp = ServicePointManager.FindServicePoint (yahooUri);
-		//WriteServicePoint (sp);
-		sp = ServicePointManager.FindServicePoint (apacheUri);
+		sp = ServicePointManager.FindServicePoint (exampleOrgUri);
 		//WriteServicePoint (sp);
 		
 		GC.Collect ();
@@ -94,8 +86,8 @@ public class ServicePointManagerTest
 	public void FindServicePoint ()
 	{
 		ServicePointManager.MaxServicePoints = 0;
-		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri, new WebProxy (apacheUri));
-		Assert.AreEqual (apacheUri, sp.Address, "#1");
+		ServicePoint sp = ServicePointManager.FindServicePoint (exampleComUri, new WebProxy (exampleOrgUri));
+		Assert.AreEqual (exampleOrgUri, sp.Address, "#1");
 #if MOBILE
 		Assert.AreEqual (10, sp.ConnectionLimit, "#2");
 #else

@@ -470,7 +470,7 @@ class MakeBundle {
 		// Modern bundling starts here
 		if (!custom_mode){
 			if (runtime != null){
-				// Nothing to do here, the user has chosen to manually specify --runtime nad libraries
+				// Nothing to do here, the user has chosen to manually specify --runtime and libraries
 			} else if (sdk_path != null) {
 				VerifySdk (sdk_path);
 			} else if (cross_target == "default" || cross_target == null){
@@ -486,6 +486,13 @@ class MakeBundle {
 		if (fetch_target != null){
 			var directory = Path.Combine (targets_dir, fetch_target);
 			var zip_download = Path.Combine (directory, "sdk.zip");
+
+			if(Directory.Exists(directory)){
+				if(!quiet)
+					Console.WriteLine ($"Deleting existing directory: {directory}");
+				Directory.Delete(directory, true);
+			}
+
 			Directory.CreateDirectory (directory);
 			var wc = new WebClient ();
 			var uri = new Uri ($"{target_server}{fetch_target}");
@@ -655,15 +662,28 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		const int align = 4096;
+		int align = 4096; // first non-Windows alignment, saving on average 30K
 		Stream package;
 		
-		public PackageMaker (string output)
+		public PackageMaker (string runtime, string output)
 		{
 			package = File.Create (output, 128*1024);
 			if (IsUnix){
 				File.SetAttributes (output, unchecked ((FileAttributes) 0x80000000));
 			}
+
+			Console.WriteLine ("Using runtime: " + runtime);
+
+			// Probe for MZ signature to decide if we are targeting Windows,
+			// so we can optimize an average of 30K away on Unix.
+			using (Stream runtimeStream = File.OpenRead (runtime)) {
+				var runtimeBuffer = new byte [2];
+				if (runtimeStream.Read (runtimeBuffer, 0, 2) == 2
+					&& runtimeBuffer [0] == (byte)'M'
+					&& runtimeBuffer [1] == (byte)'Z')
+					align = 1 << 16; // first Windows alignment
+			}
+			AddFile (runtime);
 		}
 
 		public int AddFile (string fname)
@@ -675,6 +695,7 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
+				align = 4096; // rest of alignment for all systems
 				return (int) ret;
 			}
 		}
@@ -688,14 +709,17 @@ class MakeBundle {
 
 		public void AddString (string entry, string text)
 		{
+			// FIXME Strings are over-aligned?
 			var bytes = Encoding.UTF8.GetBytes (text);
 			locations [entry] = Tuple.Create (package.Position, bytes.Length);
 			package.Write (bytes, 0, bytes.Length);
+			package.WriteByte (0);
 			package.Position = package.Position + (align - (package.Position % align));
 		}
 
 		public void AddStringPair (string entry, string key, string value)
 		{
+			// FIXME Strings are over-aligned?
 			var kbytes = Encoding.UTF8.GetBytes (key);
 			var vbytes = Encoding.UTF8.GetBytes (value);
 
@@ -785,9 +809,7 @@ class MakeBundle {
 			return false;
 		}
 		
-		var maker = new PackageMaker (output);
-		Console.WriteLine ("Using runtime: " + runtime);
-		maker.AddFile (runtime);
+		var maker = new PackageMaker (runtime, output);
 		
 		foreach (var url in files){
 			string fname = LocateFile (new Uri (url).LocalPath);
@@ -884,6 +906,7 @@ typedef struct {
 			template_stream.Dispose ();
 
 			if (compress) {
+				tc.WriteLine ("#define USE_COMPRESSED_ASSEMBLY\n");
 				tc.WriteLine ("typedef struct _compressed_data {");
 				tc.WriteLine ("\tMonoBundledAssembly assembly;");
 				tc.WriteLine ("\tint compressed_size;");
@@ -973,7 +996,7 @@ typedef struct {
 					FileStream cf = File.OpenRead (fname + ".config");
 					if (!quiet)
 						Console.WriteLine (" config from: " + fname + ".config");
-					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+					tc.WriteLine ("extern const char assembly_config_{0} [];", encoded);
 					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
 					WriteBuffer (ts, cf, buffer);
 					ts.WriteLine ();
@@ -1044,7 +1067,8 @@ typedef struct {
 				tc.WriteLine ("\textern const void *mono_aot_module_{0}_info;", asm);
 			}
 
-			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
+			tc.WriteLine ("\n#ifndef USE_COMPRESSED_ASSEMBLY\n");
+			tc.WriteLine ("static void install_aot_modules (void) {\n");
 			foreach (string asm in aot_names){
 				tc.WriteLine ("\tmono_api.mono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
 			}
@@ -1066,6 +1090,7 @@ typedef struct {
 			tc.WriteLine ("\tmono_api.mono_jit_set_aot_mode ({0});", enum_aot_mode);
 
 			tc.WriteLine ("\n}\n");
+			tc.WriteLine ("#endif\n");
 
 
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);

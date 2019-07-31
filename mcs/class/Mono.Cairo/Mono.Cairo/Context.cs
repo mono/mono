@@ -49,7 +49,7 @@ namespace Cairo {
 
 	public class Context : IDisposable
 	{
-		IntPtr handle = IntPtr.Zero;
+		IntPtr handle;
 
 		static int native_glyph_size, c_compiler_long_size;
 
@@ -103,6 +103,12 @@ namespace Cairo {
 		~Context ()
 		{
 			Dispose (false);
+		}
+
+		private void ThrowIfDisposed()
+		{
+			if (handle == IntPtr.Zero)
+				throw new ObjectDisposedException("Cairo.Context");
 		}
 
 		public void Dispose ()
@@ -307,9 +313,14 @@ namespace Cairo {
 
 		public void SetTarget (Surface target)
 		{
+			IntPtr newHandle = NativeMethods.cairo_create (target.Handle);
+			if (newHandle == IntPtr.Zero)
+				throw new InvalidOperationException ("Surface had an invalid handle.");
+
 			if (handle != IntPtr.Zero)
 				NativeMethods.cairo_destroy (handle);
-			handle = NativeMethods.cairo_create (target.Handle);
+
+			handle = newHandle;
 		}
 
 		[Obsolete("Use GetScaledFont/SetScaledFont")]
@@ -325,11 +336,13 @@ namespace Cairo {
 
 		public ScaledFont GetScaledFont ()
 		{
+			ThrowIfDisposed();
 			return new ScaledFont (NativeMethods.cairo_get_scaled_font (handle), false);
 		}
 
 		public void SetScaledFont (ScaledFont font)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_scaled_font (handle, font.Handle);
 		}
 
@@ -339,32 +352,38 @@ namespace Cairo {
 
 		public void SetSourceColor (Color color)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_rgba (handle, color.R, color.G, color.B, color.A);
 		}
 
 		public void SetSourceRGB (double r, double g, double b)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_rgb (handle, r, g, b);
 		}
 
 		public void SetSourceRGBA (double r, double g, double b, double a)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_rgba (handle, r, g, b, a);
 		}
 
 		//[Obsolete ("Use SetSource method (with double parameters)")]
 		public void SetSourceSurface (Surface source, int x, int y)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_surface (handle, source.Handle, x, y);
 		}
 
 		public void SetSource (Surface source, double x, double y)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_surface (handle, source.Handle, x, y);
 		}
 
 		public void SetSource (Surface source)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_set_source_surface (handle, source.Handle, 0, 0);
 		}
 
@@ -372,116 +391,139 @@ namespace Cairo {
 
 		public void NewPath ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_new_path (handle);
 		}
 
 		public void NewSubPath ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_new_sub_path (handle);
 		}
 
 		public void MoveTo (PointD p)
 		{
+			ThrowIfDisposed();
 			MoveTo (p.X, p.Y);
 		}
 
 		public void MoveTo (double x, double y)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_move_to (handle, x, y);
 		}
 
 		public void LineTo (PointD p)
 		{
+			ThrowIfDisposed();
 			LineTo (p.X, p.Y);
 		}
 
 		public void LineTo (double x, double y)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_line_to (handle, x, y);
 		}
 
 		public void CurveTo (PointD p1, PointD p2, PointD p3)
 		{
+			ThrowIfDisposed();
 			CurveTo (p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
 		}
 
 		public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_curve_to (handle, x1, y1, x2, y2, x3, y3);
 		}
 
 		public void RelMoveTo (Distance d)
 		{
+			ThrowIfDisposed();
 			RelMoveTo (d.Dx, d.Dy);
 		}
 
 		public void RelMoveTo (double dx, double dy)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_rel_move_to (handle, dx, dy);
 		}
 
 		public void RelLineTo (Distance d)
 		{
+			ThrowIfDisposed();
 			RelLineTo (d.Dx, d.Dy);
 		}
 
 		public void RelLineTo (double dx, double dy)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_rel_line_to (handle, dx, dy);
 		}
 
 		public void RelCurveTo (Distance d1, Distance d2, Distance d3)
 		{
+			ThrowIfDisposed();
 			RelCurveTo (d1.Dx, d1.Dy, d2.Dx, d2.Dy, d3.Dx, d3.Dy);
 		}
 
 		public void RelCurveTo (double dx1, double dy1, double dx2, double dy2, double dx3, double dy3)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_rel_curve_to (handle, dx1, dy1, dx2, dy2, dx3, dy3);
 		}
 
 		public void Arc (double xc, double yc, double radius, double angle1, double angle2)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_arc (handle, xc, yc, radius, angle1, angle2);
 		}
 
 		public void ArcNegative (double xc, double yc, double radius, double angle1, double angle2)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_arc_negative (handle, xc, yc, radius, angle1, angle2);
 		}
 
 		public void Rectangle (Rectangle rectangle)
 		{
+			ThrowIfDisposed();
 			Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 		}
 
 		public void Rectangle (PointD p, double width, double height)
 		{
+			ThrowIfDisposed();
 			Rectangle (p.X, p.Y, width, height);
 		}
 
 		public void Rectangle (double x, double y, double width, double height)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_rectangle (handle, x, y, width, height);
 		}
 
 		public void ClosePath ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_close_path (handle);
 		}
 
 		public Path CopyPath ()
 		{
+			ThrowIfDisposed();
 			return new Path (NativeMethods.cairo_copy_path (handle));
 		}
 
 		public Path CopyPathFlat ()
 		{
+			ThrowIfDisposed();
 			return new Path (NativeMethods.cairo_copy_path_flat (handle));
 		}
 
 		public void AppendPath (Path path)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_append_path (handle, path.Handle);
 		}
 
@@ -490,36 +532,43 @@ namespace Cairo {
 #region Painting Methods
 		public void Paint ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_paint (handle);
 		}
 
 		public void PaintWithAlpha (double alpha)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_paint_with_alpha (handle, alpha);
 		}
 
 		public void Mask (Pattern pattern)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_mask (handle, pattern.Handle);
 		}
 
 		public void MaskSurface (Surface surface, double surface_x, double surface_y)
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_mask_surface (handle, surface.Handle, surface_x, surface_y);
 		}
 
 		public void Stroke ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_stroke (handle);
 		}
 
 		public void StrokePreserve ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_stroke_preserve (handle);
 		}
 
 		public Rectangle StrokeExtents ()
 		{
+			ThrowIfDisposed();
 			double x1, y1, x2, y2;
 			NativeMethods.cairo_stroke_extents (handle, out x1, out y1, out x2, out y2);
 			return new Rectangle (x1, y1, x2 - x1, y2 - y1);
@@ -527,6 +576,7 @@ namespace Cairo {
 
 		public void Fill ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_fill (handle);
 		}
 
@@ -539,6 +589,7 @@ namespace Cairo {
 
 		public void FillPreserve ()
 		{
+			ThrowIfDisposed();
 			NativeMethods.cairo_fill_preserve (handle);
 		}
 

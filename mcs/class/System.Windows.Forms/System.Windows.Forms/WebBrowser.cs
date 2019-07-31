@@ -375,7 +375,7 @@ namespace System.Windows.Forms
 
 		public void GoSearch ()
 		{
-			string url = "http://www.google.com";
+			string url = "http://www.example.com";
 			try {
 				Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.CurrentUser.OpenSubKey (@"Software\Microsoft\Internet Explorer\Main\Search Page");
 				if (reg != null) {

@@ -59,13 +59,14 @@ namespace System.Windows.Forms {
 		public DataGridViewCheckBoxCell (bool threeState) : this()
 		{
 			this.threeState = threeState;
-			editingCellFormattedValue = CheckState.Unchecked;
+			if (threeState)
+				editingCellFormattedValue = CheckState.Unchecked;
 		}
 
 		public virtual object EditingCellFormattedValue {
 			get { return editingCellFormattedValue; }
 			set {
-				if (FormattedValueType == null || value == null || value.GetType() != FormattedValueType || !(value is Boolean) || !(value is CheckState)) {
+				if (FormattedValueType == null || value == null || !FormattedValueType.IsAssignableFrom(value.GetType())) {
 					throw new ArgumentException("Cannot set this property.");
 				}
 				editingCellFormattedValue = value;
@@ -192,7 +193,11 @@ namespace System.Windows.Forms {
 
 		public virtual void PrepareEditingCellForEdit (bool selectAll)
 		{
-			editingCellFormattedValue = GetCurrentValue ();
+			CheckState cs = GetCurrentValue();
+			if (threeState)
+				editingCellFormattedValue = cs;
+			else
+				editingCellFormattedValue = cs == CheckState.Checked;
 		}
 
 		public override string ToString ()

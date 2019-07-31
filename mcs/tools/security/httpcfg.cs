@@ -202,7 +202,8 @@ namespace Mono.Tools {
 		{
 			try {
 				X509Certificate2 x509 = new X509Certificate2 (cert);
-				x509.PrivateKey = PrivateKey.CreateFromFile (pvk).RSA;
+				var privateKey = PrivateKey.CreateFromFile (pvk).RSA;
+				x509 = x509.CopyWithPrivateKey ((RSA)privateKey);
 			} catch (Exception e) {
 				Console.Error.WriteLine ("error loading certificate or private key [{0}]", e.Message);
 				Help (true);

@@ -1,4 +1,6 @@
 #include monotouch_System.dll.sources
+#include apple-certificates.sources
+
 System.Net.Mail/SmtpClient.platformnotsupported.cs
 System.Net.Security/SslStream.platformnotsupported.cs
 System.Net.Sockets/TcpClient.platformnotsupported.cs
@@ -20,4 +22,25 @@ System.Net/HttpWebResponse.platformnotsupported.cs
 System.Net/ServicePoint.platformnotsupported.cs
 System.Net/ServicePointManager.platformnotsupported.cs
 System.Net.WebSockets/HttpListenerWebSocketContext.platformnotsupported.cs
+../Mono.Security/Mono.Security/PKCS7.cs
+../Mono.Security/Mono.Security.Cryptography/PKCS8.cs
 ../Mono.Security/Mono.Security.X509.Extensions/AuthorityKeyIdentifierExtension.cs
+../Mono.Security/Mono.Security.X509/PKCS12.cs
+../Mono.Security/Mono.Security.X509/X501Name.cs
+../Mono.Security/Mono.Security.X509/X509Certificate.cs
+../Mono.Security/Mono.Security.X509/X509CertificateCollection.cs
+../Mono.Security/Mono.Security.X509/X509Chain.cs
+../Mono.Security/Mono.Security.X509/X509ChainStatusFlags.cs
+../Mono.Security/Mono.Security.X509/X509CRL.cs
+../Mono.Security/Mono.Security.X509/X509Extension.cs
+../Mono.Security/Mono.Security.X509/X509Extensions.cs
+../Mono.Security/Mono.Security.X509/X509Store.cs
+../Mono.Security/Mono.Security.X509/X509Stores.cs
+../Mono.Security/Mono.Security.X509/X509StoreManager.cs
+../Mono.Security/Mono.Security.X509/X520Attributes.cs
+../Mono.Security/Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
+../Mono.Security/Mono.Security.X509.Extensions/KeyUsageExtension.cs
+../Mono.Security/Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
+System.Net.Security/SslApplicationProtocol.pns.cs
+System.Net.Security/SslClientAuthenticationOptions.pns.cs
+System.Net.Security/SslServerAuthenticationOptions.pns.cs

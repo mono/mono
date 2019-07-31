@@ -159,7 +159,7 @@ namespace System.IO {
             case Win32Native.ERROR_ALREADY_EXISTS:
                 if (str.Length == 0)
                     goto default;
-                throw new IOException(Environment.GetResourceString("IO.IO_AlreadyExists_Name", str), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                throw new IOException(Environment.GetResourceString("IO.IO_AlreadyExists_Name", str), Win32Native.MakeHRFromErrorCode(errorCode));
 
             case Win32Native.ERROR_FILENAME_EXCED_RANGE:
                 throw new PathTooLongException(Environment.GetResourceString("IO.PathTooLong"));
@@ -168,24 +168,24 @@ namespace System.IO {
                 throw new DriveNotFoundException(Environment.GetResourceString("IO.DriveNotFound_Drive", str));
 
             case Win32Native.ERROR_INVALID_PARAMETER:
-                throw new IOException(Win32Native.GetMessage(errorCode), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                throw new IOException(Win32Native.GetMessage(errorCode), Win32Native.MakeHRFromErrorCode(errorCode));
 
             case Win32Native.ERROR_SHARING_VIOLATION:
                 if (str.Length == 0)
-                    throw new IOException(Environment.GetResourceString("IO.IO_SharingViolation_NoFileName"), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                    throw new IOException(Environment.GetResourceString("IO.IO_SharingViolation_NoFileName"), Win32Native.MakeHRFromErrorCode(errorCode));
                 else
-                    throw new IOException(Environment.GetResourceString("IO.IO_SharingViolation_File", str), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                    throw new IOException(Environment.GetResourceString("IO.IO_SharingViolation_File", str), Win32Native.MakeHRFromErrorCode(errorCode));
 
             case Win32Native.ERROR_FILE_EXISTS:
                 if (str.Length == 0)
                     goto default;
-                throw new IOException(Environment.GetResourceString("IO.IO_FileExists_Name", str), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                throw new IOException(Environment.GetResourceString("IO.IO_FileExists_Name", str), Win32Native.MakeHRFromErrorCode(errorCode));
 
             case Win32Native.ERROR_OPERATION_ABORTED:
                 throw new OperationCanceledException();
 
             default:
-                throw new IOException(Win32Native.GetMessage(errorCode), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
+                throw new IOException(Win32Native.GetMessage(errorCode), Win32Native.MakeHRFromErrorCode(errorCode));
             }
         }
 #if !MONO

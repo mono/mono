@@ -1,0 +1,93 @@
+Mono uses third-party libraries or other resources that may be
+distributed under licenses different than the Mono software.
+
+Attributions and license notices for test cases originally authored by
+third parties can be found in the respective test directories.
+
+In the event that we accidentally failed to list a required notice, please
+bring it to our attention. Post an issue or email us:
+
+            dotnet@microsoft.com
+
+The attached notices are provided for information only.
+
+License notice for Daniel Morgan
+ --------------------------------
+ 
+ // Copyright (C) Daniel Morgan, 2003
+
+Use: https://github.com/mono/mono/blob/cd51491631380ed56723fdfc66945213f9864b5a/mcs/class/System.Data/Test/TestSqlConnection.cs
+
+License notice for Gonzalo Paniagua Javier, Daniel Morgan and Tim Coleman
+-------------------------------------------------------------------------
+
+ * Copyright (C) 2002 Gonzalo Paniagua Javier
+ * Copyright (C) 2002 Daniel Morgan
+ *
+ * ORIGINAL AUTHOR:
+ *	Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+ * PORTING FROM C TO C# AUTHOR:
+ *	Daniel Morgan <danmorg@sc.rr.com>
+ *
+ * Permission was given from the original author, Gonzalo Paniagua Javier,
+ * to port and include his original work in Mono.
+ * 
+ * The original work falls under the LGPL, but the port to C# falls
+ * under the X11 license.
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; see the file COPYING.  If not,
+ * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ 
+ Use: https://github.com/mono/mono/blob/cd51491631380ed56723fdfc66945213f9864b5a/mcs/class/System.Data/Test/PostgresTest.cs
+
+ * Copyright (C) 2002 Gonzalo Paniagua Javier
+ * Copyright (C) 2002 Daniel Morgan
+ * Copyright (C) 2002 Tim Coleman
+ *
+ * ORIGINAL AUTHOR:
+ *	Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+ * PORTING FROM C TO C# AUTHOR:
+ *	Daniel Morgan <danmorg@sc.rr.com>
+ * PORTING TO SQL SERVER AUTHOR:
+ *	Tim Coleman <tim@timcoleman.com>
+ *
+ * Permission was given from the original author, Gonzalo Paniagua Javier,
+ * to port and include his original work in Mono.
+ * 
+ * The original work falls under the LGPL, but the port to C# falls
+ * under the X11 license.
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; see the file COPYING.  If not,
+ * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+ 
+Use: https://github.com/mono/mono/blob/cd51491631380ed56723fdfc66945213f9864b5a/mcs/class/System.Data/Test/SqlTest.cs
+
+// (c)copyright 2002 Tim Coleman
+// (c)copyright 2002 Daniel Morgan
+
+Use: https://github.com/mono/mono/blob/8ece8b55cdd54b45153f696498f5bd9dee0ced19/mcs/class/System.Data/Test/TestSqlDataAdapter.cs

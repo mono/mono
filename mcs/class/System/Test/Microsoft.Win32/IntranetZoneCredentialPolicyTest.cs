@@ -81,7 +81,7 @@ namespace MonoTests.Microsoft.Win32 {
 		public void FixtureSetUp ()
 		{
 			policy = new IntranetZoneCredentialPolicy ();
-			uri = new Uri ("http://www.mono-project.com");
+			uri = new Uri ("http://www.example.com");
 			request = WebRequest.Create (uri);
 			credential = new NetworkCredential ("me", "mine");
 			module = new Module ("type", true, "token");

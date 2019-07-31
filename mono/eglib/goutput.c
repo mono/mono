@@ -40,6 +40,23 @@ static GPrintFunc stdout_handler, stderr_handler;
 static void default_stdout_handler (const gchar *string);
 static void default_stderr_handler (const gchar *string);
 
+static GAbortFunc internal_abort_func;
+
+void
+g_assertion_disable_global (GAbortFunc abort_func)
+{
+	internal_abort_func = abort_func;
+}
+
+void
+g_assert_abort (void)
+{
+	if (internal_abort_func)
+		internal_abort_func ();
+	else
+		abort ();
+}
+
 void
 g_printv (const gchar *format, va_list args)
 {
@@ -122,8 +139,12 @@ g_logv_nofree (const gchar *log_domain, GLogLevelFlags log_level, const gchar *f
 {
 	char *msg;
 
-	if (g_vasprintf (&msg, format, args) < 0)
+	if (internal_abort_func) {
+		g_async_safe_vprintf (format, args);
 		return NULL;
+	} else if (g_vasprintf (&msg, format, args) < 0) {
+		return NULL;
+	}
 
 	g_logstr (log_domain, log_level, msg);
 	return msg;
@@ -187,7 +208,7 @@ to_android_priority (GLogLevelFlags log_level)
 #define LOG_MESSAGE_MAX_LEN 4096
 
 static void
-android_log_line (gint log_priority, const gchar *log_domain, gchar *log_message, gint log_len)
+android_log_line (gint log_priority, const gchar *log_domain, const gchar *log_message, gint log_len)
 {
 	gchar log_buf [LOG_MESSAGE_MAX_LEN];
 
@@ -204,7 +225,7 @@ static void
 android_log (gint log_priority, const gchar *log_domain, const gchar *log_message)
 {
 	gint log_message_len, log_message_p_len;
-	gchar *log_message_p;
+	const gchar *log_message_p;
 
 	log_message_len = strlen (log_message);
 	if (log_message_len <= LOG_MESSAGE_MAX_LEN) {
@@ -213,7 +234,7 @@ android_log (gint log_priority, const gchar *log_domain, const gchar *log_messag
 	}
 
 	for (log_message_p = log_message; log_message_p < log_message + log_message_len;) {
-		gchar *p = strstr (log_message_p, "\n");
+		const gchar *p = strstr (log_message_p, "\n");
 		if (p == NULL) {
 			/* There is no more "\n". */
 			android_log_line (log_priority, log_domain, log_message_p, LOG_MESSAGE_MAX_LEN - 1);
@@ -236,7 +257,7 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 {
 	android_log (to_android_priority (log_level), log_domain, message);
 	if (log_level & fatal)
-		abort ();
+		g_assert_abort ();
 }
 
 static void
@@ -277,7 +298,7 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 {
 	asl_log (NULL, NULL, to_asl_priority (log_level), "%s", message);
 	if (log_level & fatal)
-		abort ();
+		g_assert_abort ();
 }
 
 static void
@@ -307,7 +328,7 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 	if (log_level & fatal) {
 		fflush (stdout);
 		fflush (stderr);
-		abort ();
+		g_assert_abort ();
 	}
 }
 

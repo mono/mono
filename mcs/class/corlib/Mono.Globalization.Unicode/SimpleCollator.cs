@@ -75,7 +75,7 @@ using COpt = System.Globalization.CompareOptions;
 
 namespace Mono.Globalization.Unicode
 {
-	internal class SimpleCollator
+	internal class SimpleCollator : ISimpleCollator
 	{
 /*
 		// this environment variable is for debugging quick check.
@@ -756,6 +756,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 */
+
+		int ISimpleCollator.Compare (string s1, int idx1, int len1,
+			string s2, int idx2, int len2, CompareOptions options)
+		{
+			return Compare (s1, idx1, len1, s2, idx2, len2, options);
+		}
+
 		internal unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{

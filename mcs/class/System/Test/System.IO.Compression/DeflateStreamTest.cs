@@ -15,6 +15,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO.Compression
 {
 	[TestFixture]
@@ -467,7 +469,7 @@ namespace MonoTests.System.IO.Compression
 		public void Bug44994_InflateByteByByte()
 		{
 			int byteCount = 0;
-			using (var fileStream = File.OpenRead(Path.Combine("Test", "compressed.bin")))
+			using (var fileStream = File.OpenRead(TestResourceHelper.GetFullPathOfResource ("Test/compressed.bin")))
 			{
 				using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress, false))
 				{
@@ -479,6 +481,61 @@ namespace MonoTests.System.IO.Compression
 			}
 
 			Assert.AreEqual(125387, byteCount);
+		}
+
+		[Test]
+		public void Issue10054_ZeroRead()
+		{
+			// "HelloWorld" as UTF8/DeflateStream(...,CompressionMode.Compress)
+			var buffer = new byte[] { 243, 72, 205, 201, 201, 15, 207, 47, 202, 73, 1, 0 };
+			var mem = new MemoryStream(buffer);
+			var chu = new ChunkedReader(mem);
+			var def = new DeflateStream(chu, CompressionMode.Decompress);
+			
+			var buffer2 = new byte[4096];
+			int read2 = 0;
+
+			chu.limit = 3;
+			read2 += def.Read(buffer2, read2, buffer2.Length - read2);
+			chu.limit = 100;
+			read2 += def.Read(buffer2, read2, buffer2.Length - read2);
+
+			var res = Encoding.UTF8.GetString(buffer2, 0, read2);
+			Assert.AreEqual("HelloWorld", res);
+		}
+
+		public class ChunkedReader : Stream
+		{
+			public int limit = 0;
+			private Stream baseStream;
+			
+			public ChunkedReader(Stream baseStream)
+			{
+				this.baseStream = baseStream;
+			}
+
+			public override int Read(byte[] buffer, int offset, int count)
+			{
+				int read = baseStream.Read(buffer, offset, Math.Min(count, this.limit));
+				this.limit -= read;
+				return read;
+			}
+
+			public override void Flush() => baseStream.Flush();
+			public override long Seek(long offset, SeekOrigin origin) => baseStream.Seek(offset, origin);
+			public override void SetLength(long value) => baseStream.SetLength(value);
+			public override void Write(byte[] buffer, int offset, int count) => baseStream.Write(buffer, offset, count);
+
+			public override bool CanRead => baseStream.CanRead;
+			public override bool CanSeek => baseStream.CanSeek;
+			public override bool CanWrite => baseStream.CanWrite;
+			public override long Length => baseStream.Length;
+
+			public override long Position
+			{
+				get => baseStream.Position;
+				set => baseStream.Position = value;
+			}
 		}
 	}
 }

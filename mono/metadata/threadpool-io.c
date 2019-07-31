@@ -10,10 +10,10 @@
  */
 
 #include <config.h>
+#include <glib.h>
+#include <mono/metadata/threadpool-io.h>
 
 #ifndef DISABLE_SOCKETS
-
-#include <glib.h>
 
 #if defined(HOST_WIN32)
 #include <windows.h>
@@ -23,9 +23,9 @@
 #endif
 
 #include <mono/metadata/gc-internals.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/threadpool.h>
-#include <mono/metadata/threadpool-io.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-lazy-init.h>
@@ -198,7 +198,7 @@ selector_thread_wakeup_drain_pipes (void)
 			break;
 		if (received == SOCKET_ERROR) {
 			if (WSAGetLastError () != WSAEINTR && WSAGetLastError () != WSAEWOULDBLOCK)
-				g_warning ("selector_thread_wakeup_drain_pipes: recv () failed, error (%d) %s\n", WSAGetLastError ());
+				g_warning ("selector_thread_wakeup_drain_pipes: recv () failed, error (%d)\n", WSAGetLastError ());
 			break;
 		}
 #endif
@@ -330,7 +330,7 @@ selector_thread (gpointer data)
 
 	MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool I/O Selector", error);
 	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (mono_thread_internal_current (), thread_name, FALSE, TRUE, error);
+	mono_thread_set_name_internal (mono_thread_internal_current (), thread_name, MonoSetThreadNameFlag_Reset, error);
 	mono_error_assert_ok (error);
 
 	if (mono_runtime_is_shutting_down ()) {
@@ -338,7 +338,7 @@ selector_thread (gpointer data)
 		return 0;
 	}
 
-	states = mono_g_hash_table_new_type (g_direct_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, NULL, "Thread Pool I/O State Table");
+	states = mono_g_hash_table_new_type_internal (g_direct_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, NULL, "Thread Pool I/O State Table");
 
 	while (!mono_runtime_is_shutting_down ()) {
 		gint i, j;
@@ -419,7 +419,10 @@ selector_thread (gpointer data)
 				domain = update->data.remove_domain.domain;
 				g_assert (domain);
 
-				FilterSockaresForDomainData user_data = { .domain = domain, .states = states };
+				FilterSockaresForDomainData user_data;
+				memset (&user_data, 0, sizeof (user_data));
+				user_data.domain = domain;
+				user_data.states = states;
 				mono_g_hash_table_foreach (states, filter_jobs_for_domain, &user_data);
 
 				for (j = i + 1; j < threadpool_io->updates_size; ++j) {
@@ -579,7 +582,7 @@ initialize (void)
 	io_selector_running = TRUE;
 
 	ERROR_DECL (error);
-	if (!mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK, error))
+	if (!mono_thread_create_internal (mono_get_root_domain (), (gpointer)selector_thread, NULL, (MonoThreadCreateFlags)(MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK), error))
 		g_error ("initialize: mono_thread_create_internal () failed due to %s", mono_error_get_message (error));
 
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
@@ -655,7 +658,7 @@ mono_threadpool_io_remove_socket (int fd)
 
 	update = update_get_new ();
 	update->type = UPDATE_REMOVE_SOCKET;
-	update->data.add.fd = fd;
+	update->data.remove_socket.fd = fd;
 	mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
 
 	selector_thread_wakeup ();

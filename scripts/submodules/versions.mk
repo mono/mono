@@ -71,7 +71,7 @@ reset-$(1)::
 			echo "*** git fetch `basename $$($(2)_PATH)`" && (cd $($(2)_PATH) && git fetch); \
 		fi;  \
 	else \
-		echo "*** git clone $(MODULE_$(2)) --recursive $(DIRECTORY_$(2))" && (cd `dirname $($(2)_PATH)` && git clone $(MODULE_$(2)) --recursive $(DIRECTORY_$(2)) || exit 1 ); \
+		echo "*** git clone $(MODULE_$(2)) -b $(NEEDED_$(2)_BRANCH) --recursive $(DIRECTORY_$(2))" && (cd `dirname $($(2)_PATH)` && git clone $(MODULE_$(2)) --recursive $(DIRECTORY_$(2)) || exit 1 ); \
 	fi
 	@if test x$$(IGNORE_$(2)_VERSION) = "x"; then \
 		echo "*** [$(1)] git checkout -f" $(NEEDED_$(2)_BRANCH) && (cd $($(2)_PATH) ; git checkout -f $(NEEDED_$(2)_BRANCH) || git checkout -f -b $($(2)_BRANCH_AND_REMOTE)); \

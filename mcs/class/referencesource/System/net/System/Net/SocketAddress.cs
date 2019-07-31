@@ -160,10 +160,14 @@ namespace System.Net {
                 }
             } else {
                 // IPv4 Address serialization
+#if MONO
+                ipAddress.TryWriteBytes(m_Buffer.AsSpan(4), out int bytesWritten);
+#else
                 m_Buffer[4] = unchecked((byte)(ipAddress.m_Address));
                 m_Buffer[5] = unchecked((byte)(ipAddress.m_Address >> 8));
                 m_Buffer[6] = unchecked((byte)(ipAddress.m_Address >> 16));
                 m_Buffer[7] = unchecked((byte)(ipAddress.m_Address >> 24));
+#endif
             }
         }
 
@@ -177,7 +181,11 @@ namespace System.Net {
             if (Family == AddressFamily.InterNetworkV6) {
                 Contract.Assert(Size >= IPv6AddressSize);
 
+#if MONO
+                byte[] address = new byte[IPAddressParserStatics.IPv6AddressBytes];
+#else
                 byte[] address = new byte[IPAddress.IPv6AddressBytes];
+#endif
                 for (int i = 0; i < address.Length; i++) {
                     address[i] = m_Buffer[i + 8];
                 }

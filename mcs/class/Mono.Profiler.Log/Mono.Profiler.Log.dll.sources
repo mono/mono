@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
-../../build/common/Locale.cs
+../corlib/Mono/DataConverter.cs
+
 Mono.Profiler.Log/LogBufferHeader.cs
 Mono.Profiler.Log/LogEnums.cs
 Mono.Profiler.Log/LogEvent.cs
@@ -12,3 +13,8 @@ Mono.Profiler.Log/LogProfiler.cs
 Mono.Profiler.Log/LogReader.cs
 Mono.Profiler.Log/LogStream.cs
 Mono.Profiler.Log/LogStreamHeader.cs
+Mono.Profiler.Aot/ProfileBase.cs
+Mono.Profiler.Aot/ProfileData.cs
+Mono.Profiler.Aot/ProfileReader.cs
+Mono.Profiler.Aot/ProfileWriter.cs
+Mono.Profiler.Aot/Records.cs

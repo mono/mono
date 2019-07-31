@@ -33,6 +33,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void TestCompare_Culture ()
 		{
 			CultureInfo originalCulture = Thread.CurrentThread.CurrentCulture;

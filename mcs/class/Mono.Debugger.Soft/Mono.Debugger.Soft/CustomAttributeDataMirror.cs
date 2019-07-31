@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft {
 
@@ -112,32 +111,34 @@ namespace Mono.Debugger.Soft {
 				var ctor_args = new object [attr.ctor_args.Length];
 				for (int j = 0; j < ctor_args.Length; ++j)
 					ctor_args [j] = CreateArg (vm, attr.ctor_args [j]);
-				var named_args = new object [attr.named_args.Length];
-				for (int j = 0; j < named_args.Length; ++j) {
+				var named_args = new List<object> (attr.named_args.Length);
+				for (int j = 0; j < attr.named_args.Length; ++j) {
 					CattrNamedArgInfo arg = attr.named_args [j];
 					CustomAttributeTypedArgumentMirror val;
+					CustomAttributeNamedArgumentMirror? named_arg = null;
 
 					val = CreateArg (vm, arg.value);
 
 					TypeMirror t = ctor.DeclaringType;
-					while (named_args [j] == null && t != null) {
+					while (named_arg == null && t != null) {
 						if (arg.is_property) {
 							foreach (var prop in t.GetProperties ()) {
 								if (prop.Id == arg.id)
-									named_args [j] = new CustomAttributeNamedArgumentMirror (prop, null, val);
+									named_arg = new CustomAttributeNamedArgumentMirror (prop, null, val);
 							}
-						} else {
+						} else if (vm.Version.AtLeast (2, 12)) { // we don't have the field ID before 2.12
 							foreach (var field in t.GetFields ()) {
 								if (field.Id == arg.id)
-									named_args [j] = new CustomAttributeNamedArgumentMirror (null, field, val);
+									named_arg = new CustomAttributeNamedArgumentMirror (null, field, val);
 							}
 						}
 						t = t.BaseType;
 					}
-					if (named_args [j] == null)
-						throw new NotImplementedException ();
+
+					if (named_arg.HasValue)
+						named_args.Add (named_arg.Value);
 				}
-				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args);
+				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args.ToArray ());
 			}
 
 			return res;

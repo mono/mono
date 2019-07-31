@@ -26,6 +26,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // Bug-44255
+		[Category ("NotWorking")] // https://github.com/dotnet/coreclr/issues/20837
 		public void SystemTimeZoneSerializationTests ()
 		{
 			foreach (var tmz in TimeZoneInfo.GetSystemTimeZones ())
@@ -54,22 +55,28 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
+		[Category ("NotOnWindows")]
 		public void SerializeCustomZoneWithFloatingDaylightTransitions ()
 		{
 			var tz3rules = new TimeZoneInfo.AdjustmentRule[] { TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (1, 1, 1), new DateTime (9999, 12, 31), TimeSpan.FromMinutes (23), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 58, 0), 3, 2, DayOfWeek.Tuesday), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2, DayOfWeek.Tuesday)) };
 			var tz3 = TimeZoneInfo.CreateCustomTimeZone ("My Zone 3", TimeSpan.FromHours (-4), "My Zone 3 Name", "My Zone 3 Standard Time", "My Zone 3 Daylight Time", tz3rules);
-			Assert.AreEqual ("My Zone 3;-240;My Zone 3 Name;My Zone 3 Standard Time;My Zone 3 Daylight Time;[01:01:0001;12:31:9999;23;[0;02:15:58;3;2;2;];[0;02:15:59.999;6;2;2;];];", tz3.ToSerializedString ());
+			Assert.AreEqual ("My Zone 3;-240;My Zone 3 Name;My Zone 3 Standard Time;My Zone 3 Daylight Time;[01:01:0001;12:31:9999;23;[1;00:00:00;1;1;];[1;00:00:00;12;31;];];", tz3.ToSerializedString ());
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
+		[Category ("NotOnWindows")]
 		public void SerializeCustomZoneWithFixedDaylightTransitions ()
 		{
 			var tz4rules = new TimeZoneInfo.AdjustmentRule[] { TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (1, 1, 1), new DateTime (9999, 12, 31), TimeSpan.FromMinutes (23), TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1, 2, 15, 59, 48), 3, 2), TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2)) };
 			var tz4 = TimeZoneInfo.CreateCustomTimeZone ("My Zone 4", TimeSpan.FromHours (-4), "My Zone 4 Name", "My Zone 4 Standard Time", "My Zone 4 Daylight Time", tz4rules);
-			Assert.AreEqual ("My Zone 4;-240;My Zone 4 Name;My Zone 4 Standard Time;My Zone 4 Daylight Time;[01:01:0001;12:31:9999;23;[1;02:15:59.048;3;2;];[1;02:15:59.999;6;2;];];", tz4.ToSerializedString ());
+			Assert.AreEqual ("My Zone 4;-240;My Zone 4 Name;My Zone 4 Standard Time;My Zone 4 Daylight Time;[01:01:0001;12:31:9999;23;[1;00:00:00;1;1;];[1;00:00:00;12;31;];];", tz4.ToSerializedString ());
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
+		[Category ("NotOnWindows")]
 		public void SerializeCustomZoneWithMultipleDaylightRules ()
 		{
 			var tz5rules = new TimeZoneInfo.AdjustmentRule[] {
@@ -77,10 +84,12 @@ namespace MonoTests.System
 				TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (2013, 1, 1), new DateTime (9999, 12, 31), TimeSpan.FromMinutes (48), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 3, 2, DayOfWeek.Tuesday), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2, DayOfWeek.Tuesday))
 			};
 			var tz5 = TimeZoneInfo.CreateCustomTimeZone ("My Zone 5", TimeSpan.FromHours (-6.75), "My Zone 5 Name", "My Zone 5 Standard Time", "My Zone 5 Daylight Time", tz5rules);
-			Assert.AreEqual ("My Zone 5;-405;My Zone 5 Name;My Zone 5 Standard Time;My Zone 5 Daylight Time;[01:01:0001;12:31:2012;23;[0;02:15:59.999;3;2;2;];[0;02:15:59.999;6;2;2;];][01:01:2013;12:31:9999;48;[0;02:15:59.999;3;2;2;];[0;02:15:59.999;6;2;2;];];", tz5.ToSerializedString ());
+			Assert.AreEqual ("My Zone 5;-405;My Zone 5 Name;My Zone 5 Standard Time;My Zone 5 Daylight Time;[01:01:0001;12:31:2012;23;[1;00:00:00;1;1;];[1;00:00:00;12;31;];][01:01:2013;12:31:9999;48;[1;00:00:00;1;1;];[1;00:00:00;12;31;];];", tz5.ToSerializedString ());
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
+		[Category ("NotOnWindows")]
 		public void DeserializeCustomZoneWithOddNamingAndMultipleDaylightRules ()
 		{
 			var rule1 = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (1, 1, 1), new DateTime (2012, 12, 31), TimeSpan.FromMinutes (23), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 3, 2, DayOfWeek.Tuesday), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2, DayOfWeek.Tuesday));
@@ -97,8 +106,8 @@ namespace MonoTests.System
 			var deserializedRules = tz1.GetAdjustmentRules ();
 			Assert.AreEqual (2, deserializedRules.Length);
 			Assert.IsFalse (deserializedRules [0].Equals (deserializedRules [1]));
-			Assert.IsTrue (rule1.Equals (deserializedRules [0]));
-			Assert.IsTrue (rule2.Equals (deserializedRules [1]));
+			Assert.IsFalse (rule1.Equals (deserializedRules [0]));
+			Assert.IsFalse (rule2.Equals (deserializedRules [1]));
 		}
 
 		[Test]

@@ -27,8 +27,10 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
-
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
 namespace MonoTests.System.Text
@@ -127,6 +129,52 @@ namespace MonoTests.System.Text
 		public void EncodingName ()
 		{
 			Assert.AreEqual ("Unicode (UTF-8)", Encoding.UTF8.EncodingName);
+		}
+
+#if !MOBILE && !XAMMAC_4_5 // all encodings aren't always available on mobile / XM, e.g. with linking
+		[Test] // https://github.com/mono/mono/issues/11529
+		public void AllEncodingsAreSerializable ()
+		{
+			foreach (var encoding in Encoding.GetEncodings ().Select(e => Encoding.GetEncoding (e.Name)))
+			{
+				var hashCode = encoding.GetHashCode (); 
+				var serializer = new BinaryFormatter ();
+				using (var ms = new MemoryStream ())
+				{
+					serializer.Serialize (ms, encoding);
+					ms.Position = 0;
+					var clone = (Encoding) serializer.Deserialize (ms);
+					Assert.AreEqual (encoding, clone);
+				}
+			}
+		}
+#endif
+
+		[Test] // https://github.com/mono/mono/issues/11663
+		public void EncodingIsBinaryCompatible ()
+		{
+			const string serializedEncoding = 
+				"AAEAAAD/////AQAAAAAAAAAEAQAAABlTeXN0ZW0uVGV4dC5BU0NJSUVuY29kaW5nCQAAAAptX2NvZGVQYWdlCGRhdGFJdGVtD2VuY29kZXJGYWxsY"  +
+				"mFjaw9kZWNvZGVyRmFsbGJhY2sTRW5jb2RpbmcrbV9jb2RlUGFnZRFFbmNvZGluZytkYXRhSXRlbRVFbmNvZGluZyttX2lzUmVhZE9ubHkYRW5jb2R" +
+				"pbmcrZW5jb2RlckZhbGxiYWNrGEVuY29kaW5nK2RlY29kZXJGYWxsYmFjawADAwMAAwADAwglU3lzdGVtLkdsb2JhbGl6YXRpb24uQ29kZVBhZ2VEY" +
+				"XRhSXRlbSZTeXN0ZW0uVGV4dC5FbmNvZGVyUmVwbGFjZW1lbnRGYWxsYmFjayZTeXN0ZW0uVGV4dC5EZWNvZGVyUmVwbGFjZW1lbnRGYWxsYmFjawg" +
+				"lU3lzdGVtLkdsb2JhbGl6YXRpb24uQ29kZVBhZ2VEYXRhSXRlbQEmU3lzdGVtLlRleHQuRW5jb2RlclJlcGxhY2VtZW50RmFsbGJhY2smU3lzdGVtL" +
+				"lRleHQuRGVjb2RlclJlcGxhY2VtZW50RmFsbGJhY2ufTgAACgkCAAAACQMAAACfTgAACgEJAgAAAAkDAAAABAIAAAAmU3lzdGVtLlRleHQuRW5jb2R" +
+				"lclJlcGxhY2VtZW50RmFsbGJhY2sDAAAACnN0ckRlZmF1bHQbYklzTWljcm9zb2Z0QmVzdEZpdEZhbGxiYWNrK0VuY29kZXJGYWxsYmFjaytiSXNNa" +
+				"WNyb3NvZnRCZXN0Rml0RmFsbGJhY2sBAAABAQYGAAAAAT8AAAQDAAAAJlN5c3RlbS5UZXh0LkRlY29kZXJSZXBsYWNlbWVudEZhbGxiYWNrAwAAAAp" +
+				"zdHJEZWZhdWx0G2JJc01pY3Jvc29mdEJlc3RGaXRGYWxsYmFjaytEZWNvZGVyRmFsbGJhY2srYklzTWljcm9zb2Z0QmVzdEZpdEZhbGxiYWNrAQAAA" +
+				"QEJBgAAAAAACw==";
+
+			using (var ms = new MemoryStream (Convert.FromBase64String (serializedEncoding)))
+			{
+				var serializer = new BinaryFormatter ();
+				var e = (Encoding) serializer.Deserialize (ms);
+				Assert.IsTrue (e.EncoderFallback.GetHashCode () != 0);
+				Assert.IsTrue (e.DecoderFallback.GetHashCode () != 0);
+				Assert.IsTrue (e.GetDecoder ().GetHashCode () != 0);
+				Assert.IsTrue (e.GetEncoder ().GetHashCode () != 0);
+				Assert.IsTrue (e.GetHashCode () != 0);
+			}
 		}
 	}
 }

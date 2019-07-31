@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
-ReferenceSources/Res.cs
+corefx/SR.cs
+corefx/SR.Helpers.cs
 ../referencesource/System.Web.Services/inc/InvariantComparer.cs
 ../referencesource/System.Web.Services/inc/PrivilegedConfigurationManager.cs
 ../referencesource/System.Web.Services/System/ComponentModel/CompModSwitches.cs

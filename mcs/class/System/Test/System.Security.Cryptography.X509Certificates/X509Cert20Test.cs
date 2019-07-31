@@ -320,9 +320,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.AreEqual ("System.Security.Cryptography.X509Certificates.X509Certificate", x.ToString (false), "ToString(false)");
 			Assert.IsTrue (x.Equals (x), "Equals(X509Certificate)");
 			Assert.IsTrue (x.Equals ((object) x), "Equals(object)");
-			x.Reset ();
-			x.Import (cert1);
-			Assert.AreEqual ("02720006E8", x.GetSerialNumberString (), "GetSerialNumberString");
 		}
 
 		[Test]
@@ -454,8 +451,9 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			new X509Certificate ().GetSerialNumberString ();
 		}
 
+#if !MOBILE
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void GetObjectData_Null ()
 		{
 			X509Certificate x = new X509Certificate ();
@@ -464,6 +462,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void GetObjectData ()
 		{
 			X509Certificate x = new X509Certificate (cert1);
@@ -471,26 +470,22 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.IsNotNull (s, "ISerializable");
 			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
 			s.GetObjectData (info, new StreamingContext (StreamingContextStates.All));
-			Assert.AreEqual (1, info.MemberCount, "MemberCount");
-			byte[] raw = (byte[]) info.GetValue ("RawData", typeof (byte[]));
 		}
+#endif
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void Ctor_Serialization_Null ()
 		{
 			new X509Certificate (null, new StreamingContext (StreamingContextStates.All));
 		}
 
 		[Test]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void Ctor_Serialization ()
 		{
 			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
-			info.AddValue ("RawData", cert1);
-			X509Certificate x = new X509Certificate (info, new StreamingContext (StreamingContextStates.All));
-			Assert.AreEqual (cert1, x.GetRawCertData (), "GetRawCertData");
-			// decoding is done too
-			Assert.AreEqual ("02720006E8", x.GetSerialNumberString (), "SerialNumber");
+			new X509Certificate (info, new StreamingContext (StreamingContextStates.All));
 		}
 
 
@@ -587,7 +582,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
-		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
+		[Category ("NotOnMac")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		[ExpectedException (typeof (CryptographicException))]
 		public void Pkcs12_1_WithoutPassword ()
 		{
@@ -602,7 +597,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
-		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
+		[Category ("NotOnMac")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		public void Pkcs12_2_Properties ()
 		{
 			CheckPkcs12 (new X509Certificate (farscape_nopwd_pfx));
@@ -734,19 +729,10 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
+		[Category ("NotOnMac")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		public void Pkcs7_Ctor ()
 		{
 			new X509Certificate (farscape_pkcs7);
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
-		public void Pkcs7_Import ()
-		{
-			X509Certificate x = new X509Certificate ();
-			x.Import (farscape_pkcs7);
 		}
 	}
 }

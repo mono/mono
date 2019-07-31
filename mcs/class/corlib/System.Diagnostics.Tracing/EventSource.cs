@@ -174,6 +174,10 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		internal void ReportOutOfBandMessage (string msg, bool flush)
+		{
+		}
+
 		protected void WriteEvent (int eventId)
 		{
 			WriteEvent (eventId, new object[] { } );
@@ -277,56 +281,56 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
 		{
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static Guid GetGuid (Type eventSourceType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GetName (Type eventSourceType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static IEnumerable<EventSource> GetSources ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SendCommand (EventSource eventSource, EventCommand command, IDictionary<string, string> commandArguments)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId, out Guid oldActivityThatWillContinue)
 		{
 			throw new NotImplementedException ();

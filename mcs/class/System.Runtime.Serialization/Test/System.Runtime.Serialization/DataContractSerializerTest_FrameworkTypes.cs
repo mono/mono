@@ -40,6 +40,8 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Xml;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Runtime.Serialization
 {
 	public class DataContractSerializerTest_FrameworkTypes
@@ -47,7 +49,7 @@ namespace MonoTests.System.Runtime.Serialization
 		protected void Test<T> () where T : new () {
 			T o = new T ();
 			Type t = o.GetType ();
-			string fileName = "Test/Resources/FrameworkTypes/" + t.FullName + ".xml";
+			string fileName = TestResourceHelper.GetFullPathOfResource ("Test/Resources/FrameworkTypes/" + t.FullName + ".xml");
 
 			DataContractSerializer serializer = new DataContractSerializer (t);
 			StringBuilder stringBuilder = new StringBuilder ();

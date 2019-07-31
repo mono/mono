@@ -52,7 +52,8 @@ EXTRA_DIST = \
 
 -include $(mcs_topdir)/build/config.make
 
-CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+DOC_PROFILE:=net_4_x
+CLASS=$(mcs_topdir)/class/lib/$(DOC_PROFILE)
 
 dist-hook:
 	$(mkdir_p)  $(distdir)/sources
@@ -68,7 +69,7 @@ clean-local:
 	-rm -f deploy/* convert.exe* AgilityPack.dll*
 	-rm -f $(ASSEMBLED_DOCS)
 
-TOOL_MAKE=$(MAKE) -f $(srcdir)/docs.make topdir=$(srcdir)/../mcs srcdir=$(srcdir)
+TOOL_MAKE=$(MAKE) -f $(srcdir)/docs.make topdir=$(srcdir)/../mcs srcdir=$(srcdir) PROFILE=$(DOC_PROFILE)
 
 monoapi.zip: monoapi.tree
 

@@ -156,7 +156,7 @@ namespace MonoTests.System
 		public void GetCommandLineArgs ()
 		{
 			string[] args = Environment.GetCommandLineArgs ();
-#if !__WATCHOS__
+#if !MONOTOUCH_WATCH
 			Assert.IsNotNull (args, "not null");
 			Assert.IsTrue (((args.Length > 0) && (args.Length < 256)), "reasonable");
 			Assert.IsNotNull (args [0], "application");
@@ -231,6 +231,19 @@ namespace MonoTests.System
 			Environment.SetEnvironmentVariable ("A3", "\0");
 			Assert.IsNull (Environment.GetEnvironmentVariables ()["A3"]);
 		}
+
+		[Test] // github issue #9839
+		public void MachineNameIsNotFullyQualifiedDomainName ()
+		{
+			Assert.IsNotNull (Environment.MachineName);
+			Assert.AreEqual (-1, Environment.MachineName.IndexOf("."));
+		}
 #endif
+
+		[Test] // https://github.com/mono/mono/issues/13030
+		public void GetLogicalDrivesNotEmpty ()
+		{
+			CollectionAssert.IsNotEmpty (Environment.GetLogicalDrives ());
+		}
 	}
 }

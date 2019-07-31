@@ -58,3 +58,13 @@
 [submodule "external/api-snapshot"]
 	path = external/api-snapshot
 	url = git://github.com/mono/api-snapshot.git
+[submodule "external/llvm"]
+	path = external/llvm
+	url = git://github.com/mono/llvm.git
+	branch = release_60
+[submodule "external/helix-binaries"]
+	path = external/helix-binaries
+	url = git://github.com/mono/helix-binaries.git
+[submodule "external/illinker-test-assets"]
+	path = external/illinker-test-assets
+	url = git://github.com/mono/illinker-test-assets.git

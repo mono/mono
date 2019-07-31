@@ -34,6 +34,8 @@ using Microsoft.Build.Tasks;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.Tasks {
 
 	class MCExtended : ManagedCompiler {
@@ -683,7 +685,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			mc.References = null;
 			Assert.IsTrue (mc.CheckAllReferencesExistOnDisk (), "A2");
 
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "test.cs");
+			string path = TestResourceHelper.GetFullPathOfResource ("Test/resources/test.cs");
 			mc.References = new ITaskItem [1] { new TaskItem (path) };
 			Assert.IsTrue (mc.CheckAllReferencesExistOnDisk (), "A3");
 

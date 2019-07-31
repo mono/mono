@@ -1,4 +1,5 @@
 ../../test-helpers/NunitHelpers.cs
+../../test-helpers/TestResourceHelper.cs
 Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs
 Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs
@@ -515,3 +516,4 @@ System.Collections.Concurrent/ParallelTestHelper.cs
 System.Net.WebSockets/ClientWebSocketTest.cs
 ../../test-helpers/NetworkHelpers.cs
 ../../test-helpers/SocketResponder.cs
+../../test-helpers/PathHelpers.cs

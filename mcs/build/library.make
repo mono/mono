@@ -14,12 +14,11 @@
 #                 command line.
 #
 
-# All dependent libs become dependent dirs for parallel builds
-# Have to rename to handle differences between assembly/directory names
-DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
-
 LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS)) $(DEFAULT_REFERENCES)
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
+
+# All dependent libs become dependent dirs for parallel builds
+DEP_LIBS = $(filter-out %=, $(subst =,= ,$(LIB_REFS)))
 
 ifdef TARGET_NET_REFERENCE
 # System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
@@ -61,10 +60,8 @@ endif
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY_SUBDIR),$(LIBRARY_SUBDIR)/)
 
 ifdef RESOURCE_STRINGS
-ifneq (basic, $(PROFILE))
 RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
 IL_REPLACE_FILES += $(IL_REPLACE:%=--ilreplace:%)
-endif
 endif
 
 ifdef ENFORCE_LIBRARY_WARN_AS_ERROR
@@ -75,16 +72,10 @@ endif
 endif
 endif
 
-#
-# The bare directory contains the plain versions of System and System.Xml
-#
-bare_libdir = $(the_libdir_base)bare
-
-#
-# The secxml directory contains the System version that depends on 
-# System.Xml and Mono.Security
-#
-secxml_libdir = $(the_libdir_base)secxml
+# add sourcelink information if we're building a portable PDB
+ifneq (, $(findstring debug:portable, $(PROFILE_MCS_FLAGS)))
+LIB_MCS_FLAGS += -sourcelink:$(topdir)/build/common/sourcelink.json
+endif
 
 the_libdir = $(the_libdir_base)$(intermediate)
 
@@ -136,6 +127,7 @@ csproj-library:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
@@ -236,11 +228,12 @@ ifdef RESOURCE_DEFS
 $(foreach pair,$(RESOURCE_DEFS), $(eval $(call RESOURCE_template,$(word 1, $(subst $(ccomma), ,$(pair))), $(word 2, $(subst $(ccomma), ,$(pair))))))
 endif
 
-DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
+DISTFILES = $(wildcard *.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
 
 ASSEMBLY      = $(LIBRARY)
 ASSEMBLY_EXT  = .dll
 the_assembly  = $(the_lib)
+
 include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
@@ -251,6 +244,7 @@ csproj-test:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \
@@ -295,22 +289,13 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
-
-gensources = $(topdir)/build/gensources.exe
-$(gensources): $(topdir)/build/gensources.cs
-	$(BOOTSTRAP_MCS) -noconfig -debug:portable -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
-
-ifdef PROFILE_RUNTIME
-GENSOURCES_RUNTIME = $(PROFILE_RUNTIME)
-else
-GENSOURCES_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"  $(RUNTIME)
-endif
+# TODO: depend on all *.sources (except tests) for now and figure out how to list only needed files later
+PROFILE_sources = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.sources))
+PROFILE_excludes = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.exclude.sources))
 
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
-	$(GENSOURCES_RUNTIME) --debug $(gensources) "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
@@ -367,7 +352,7 @@ library_CLEAN_FILES += $(PROFILE)_$(LIBRARY_NAME)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
-	$(Q_AOT) MONO_PATH='$(the_libdir_base)' > $(PROFILE)_$(LIBRARY_NAME)_aot.log 2>&1 $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
+	$(Q_AOT) MONO_PATH='$(the_libdir_base)' $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
 
 all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
@@ -402,5 +387,5 @@ ifneq ($(RESX_STRINGS),)
 endif
 
 update-corefx-sr: $(RESX_RESOURCE_STRING) $(XTEST_RESX_RESOURCE_STRING)
-	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" RESX_EXTRA_ARGUMENTS="$(RESX_EXTRA_ARGUMENTS)" update-corefx-sr-generic \
-	&& make SR_OUTPUT=corefx/SR.tests.cs RESX_STRINGS=$(XTEST_RESX_RESOURCE_STRING) update-corefx-sr-generic
+	$(MAKE) SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" RESX_EXTRA_ARGUMENTS="$(RESX_EXTRA_ARGUMENTS)" update-corefx-sr-generic \
+	&& $(MAKE) SR_OUTPUT=corefx/SR.tests.cs RESX_STRINGS=$(XTEST_RESX_RESOURCE_STRING) update-corefx-sr-generic

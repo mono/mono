@@ -86,6 +86,29 @@ namespace MonoTests.System.Windows.Forms
 		}
 		//[MonoTODO ("Test case for DrawItem")]	
 		//[MonoTODO ("Test case for PanelClick")]	
+
+		private class MyPanel: StatusBarPanel
+		{
+			public bool IsDisposed { get; private set; }
+
+			protected override void Dispose (bool disposing)
+			{
+				base.Dispose (disposing);
+				IsDisposed = true;
+			}
+		}
+
+		[Test]
+		public void DisposeTest ()
+		{
+			StatusBar sut = new StatusBar ();
+			MyPanel panel = new MyPanel ();
+			sut.Panels.Add (panel);
+
+			sut.Dispose ();
+
+			Assert.That (panel.IsDisposed, Is.True);
+		}
 	}
 	
 	[TestFixture]

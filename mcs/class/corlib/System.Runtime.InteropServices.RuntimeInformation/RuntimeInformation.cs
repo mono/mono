@@ -30,11 +30,99 @@
 
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices
 {
 	public static class RuntimeInformation
 	{
+		static readonly Architecture _osArchitecture;
+		static readonly Architecture _processArchitecture;
+		static readonly OSPlatform _osPlatform;
+
+		static RuntimeInformation ()
+		{
+			// we can use the runtime's compiled config options for DllMaps here
+			// process architecure for us is runtime architecture
+			// see for values: mono-config.c
+			var runtimeArchitecture = GetRuntimeArchitecture ();
+			var osName = GetOSName ();
+
+			// check OS/process architecture
+			switch (runtimeArchitecture) {
+			case "arm":
+				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.Arm64 : Architecture.Arm;
+				_processArchitecture = Architecture.Arm;
+				break;
+			case "armv8":
+				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.Arm64 : Architecture.Arm;
+				_processArchitecture = Architecture.Arm64;
+				break;
+			case "x86":
+				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				_processArchitecture = Architecture.X86;
+				break;
+			case "x86-64":
+				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				_processArchitecture = Architecture.X64;
+				break;
+			// upstream only has these values; try to pretend we're x86 if nothing matches
+			// want more? bug: https://github.com/dotnet/corefx/issues/30706
+			default:
+				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				_processArchitecture = Environment.Is64BitProcess ? Architecture.X64 : Architecture.X86;
+				break;
+			}
+
+			// check OS platform
+			switch (osName) {
+				case "linux":
+					_osPlatform = OSPlatform.Linux;
+					break;
+				case "osx":
+					_osPlatform = OSPlatform.OSX;
+					break;
+				case "windows":
+					_osPlatform = OSPlatform.Windows;
+					break;
+				case "solaris":
+					_osPlatform = OSPlatform.Create ("SOLARIS");
+					break;
+				case "freebsd":
+					_osPlatform = OSPlatform.Create ("FREEBSD");
+					break;
+				case "netbsd":
+					_osPlatform = OSPlatform.Create ("NETBSD");
+					break;
+				case "openbsd":
+					_osPlatform = OSPlatform.Create ("OPENBSD");
+					break;
+				case "aix":
+					_osPlatform = OSPlatform.Create ("AIX");
+					break;
+				case "hpux":
+					_osPlatform = OSPlatform.Create ("HPUX");
+					break;
+				case "haiku":
+					_osPlatform = OSPlatform.Create ("HAIKU");
+					break;
+				case "wasm":
+					_osPlatform = OSPlatform.Create ("WEBASSEMBLY");
+					break;
+				default:
+					_osPlatform = OSPlatform.Create ("UNKNOWN");
+					break;
+			}
+		}
+
+		/* gets the runtime's arch from the value it uses for DllMap */
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern string GetRuntimeArchitecture ();
+
+		/* gets the runtime's OS from the value it uses for DllMap */
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern string GetOSName ();
+
 		public static string FrameworkDescription {
 			get {
 				return "Mono " + Mono.Runtime.GetDisplayName ();
@@ -43,20 +131,7 @@ namespace System.Runtime.InteropServices
 
 		public static bool IsOSPlatform (OSPlatform osPlatform)
 		{
-#if WASM
-			return osPlatform == OSPlatform.Create ("WEBASSEMBLY"); 
-#else
-			switch (Environment.Platform) {
-			case PlatformID.Win32NT:
-				return osPlatform == OSPlatform.Windows;
-			case PlatformID.MacOSX:
-				return osPlatform == OSPlatform.OSX;
-			case PlatformID.Unix:
-				return osPlatform == OSPlatform.Linux;
-			default:
-				return false;
-			}
-#endif
+			return _osPlatform == osPlatform;
 		}
 
 		public static string OSDescription
@@ -75,8 +150,7 @@ namespace System.Runtime.InteropServices
 		{
 			get
 			{
-				// TODO: very barebones implementation, doesn't respect ARM
-				return Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				return _osArchitecture;
 			}
 		}
 
@@ -84,8 +158,7 @@ namespace System.Runtime.InteropServices
 		{
 			get
 			{
-				// TODO: very barebones implementation, doesn't respect ARM			
-				return Environment.Is64BitProcess ? Architecture.X64 : Architecture.X86;
+				return _processArchitecture;
 			}
 		}
 	}

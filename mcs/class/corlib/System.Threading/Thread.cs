@@ -27,11 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Permissions;
-using System.Security.Principal;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -42,6 +38,12 @@ using System.Security;
 using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 
+#if !NETCORE
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Contexts;
+using System.Security.Principal;
+#endif
+
 namespace System.Threading {
 	[StructLayout (LayoutKind.Sequential)]
 	sealed class InternalThread : CriticalFinalizerObject {
@@ -51,7 +53,6 @@ namespace System.Threading {
 		// stores a thread handle
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
-		IntPtr unused3;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
 		private int name_len; 
@@ -71,7 +72,7 @@ namespace System.Threading {
 		internal int _serialized_principal_version;
 		private IntPtr appdomain_refs;
 		private int interruption_requested;
-		private IntPtr synch_cs;
+		private IntPtr longlived;
 		internal bool threadpool_thread;
 		private bool thread_interrupt_requested;
 		/* These are used from managed code */
@@ -81,7 +82,6 @@ namespace System.Threading {
 		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private IntPtr unused4;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
@@ -89,12 +89,12 @@ namespace System.Threading {
 		private IntPtr owned_mutex;
 		private IntPtr suspended_event;
 		private int self_suspended;
-		/* 
-		 * These fields are used to avoid having to increment corlib versions
-		 * when a new field is added to the unmanaged MonoThread structure.
-		 */
-		private IntPtr unused1;
-		private IntPtr unused2;
+		private IntPtr thread_state;
+
+		// Unused fields to have same size as netcore.
+		private IntPtr netcore0;
+		private IntPtr netcore1;
+		private IntPtr netcore2;
 
 		/* This is used only to check that we are in sync between the representation
 		 * of MonoInternalThread in native and InternalThread in managed
@@ -115,7 +115,10 @@ namespace System.Threading {
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed partial class Thread {
+#if !NETCORE
+	public
+#endif
+	sealed partial class Thread {
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
@@ -123,9 +126,6 @@ namespace System.Threading {
 		object pending_exception;
 		#endregion
 #pragma warning restore 414
-
-		IPrincipal principal;
-		int principal_version;
 
 		// the name of current_thread is
 		// important because they are used by the runtime.
@@ -151,13 +151,6 @@ namespace System.Threading {
 			}
 		}
 
-		public static Context CurrentContext {
-			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
-			get {
-				return(AppDomain.InternalGetContext ());
-			}
-		}
-
 		/*
 		 * These two methods return an array in the target
 		 * domain with the same content as the argument.  If
@@ -169,6 +162,19 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
+
+#if !NETCORE
+#if !DISABLE_REMOTING
+		public static Context CurrentContext {
+			get {
+				return(AppDomain.InternalGetContext ());
+			}
+		}
+#endif
+
+#if !DISABLE_SECURITY
+		IPrincipal principal;
+		int principal_version;
 
 		static void DeserializePrincipal (Thread th)
 		{
@@ -266,7 +272,6 @@ namespace System.Threading {
 				th.principal_version = th.Internal._serialized_principal_version;
 				return th.principal;
 			}
-			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
 				Thread th = CurrentThread;
 
@@ -287,6 +292,17 @@ namespace System.Threading {
 				th.principal = value;
 			}
 		}
+#else
+		public static IPrincipal CurrentPrincipal {
+			get => throw new PlatformNotSupportedException ();
+			set => throw new PlatformNotSupportedException ();
+		}
+#endif
+
+		public static AppDomain GetDomain() {
+			return AppDomain.CurrentDomain;
+		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static Thread GetCurrentThread ();
@@ -306,10 +322,6 @@ namespace System.Threading {
 			get {
 				return (int)(CurrentThread.internal_thread.thread_id);
 			}
-		}
-
-		public static AppDomain GetDomain() {
-			return AppDomain.CurrentDomain;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -418,13 +430,11 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
 
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort () 
 		{
 			Abort_internal (Internal, null);
 		}
 
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort (object stateInfo) 
 		{
 			Abort_internal (Internal, stateInfo);
@@ -483,7 +493,7 @@ namespace System.Threading {
 			}
 		}
 
-		void StartInternal (IPrincipal principal, ref StackCrawlMark stackMark)
+		void StartInternal (object principal, ref StackCrawlMark stackMark)
 		{
 #if FEATURE_ROLE_BASED_SECURITY
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
@@ -724,5 +734,7 @@ namespace System.Threading {
 				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
 			return state;
 		}
+
+		public static int GetCurrentProcessorId() => global::Internal.Runtime.Augments.RuntimeThread.GetCurrentProcessorId();
 	}
 }

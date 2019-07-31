@@ -39,6 +39,8 @@ using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
@@ -56,13 +58,13 @@ namespace MonoTests.System.Drawing
 		[SetUp]
 		public void SetUp ()		
 		{
-			icon = new Icon (TestBitmap.getInFile ("bitmaps/VisualPng.ico"));
+			icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/VisualPng.ico"));
 			iconStr = icon.ToString ();
 		
 			icoConv = new IconConverter();
 			icoConvFrmTD = (IconConverter) TypeDescriptor.GetConverter (icon);
 			
-			Stream stream = new FileStream (TestBitmap.getInFile ("bitmaps/VisualPng1.ico"), FileMode.Open);
+			Stream stream = new FileStream (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/VisualPng1.ico"), FileMode.Open);
 			int length = (int) stream.Length;
 			iconBytes = new byte [length];
  			

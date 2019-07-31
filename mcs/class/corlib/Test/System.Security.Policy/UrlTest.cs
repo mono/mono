@@ -63,19 +63,19 @@ namespace MonoTests.System.Security.Policy {
 		public void Url_WellKnownProtocol () 
 		{
 			Url u1 = new Url ("file://mono/index.html");
-			Url u2 = new Url ("ftp://www.go-mono.com");
-			Url u3 = new Url ("http://www.go-mono.com");
-			Url u4 = new Url ("https://www.go-mono.com");
+			Url u2 = new Url ("ftp://www.example.com");
+			Url u3 = new Url ("http://www.example.com");
+			Url u4 = new Url ("https://www.example.com");
 			Assert.AreEqual ("file://mono/index.html", u1.Value, "file.Value");
-			Assert.AreEqual ("ftp://www.go-mono.com", u2.Value, "ftp.Value");
-			Assert.AreEqual ("http://www.go-mono.com", u3.Value, "http.Value");
-			Assert.AreEqual ("https://www.go-mono.com", u4.Value, "https.Value");
+			Assert.AreEqual ("ftp://www.example.com", u2.Value, "ftp.Value");
+			Assert.AreEqual ("http://www.example.com", u3.Value, "http.Value");
+			Assert.AreEqual ("https://www.example.com", u4.Value, "https.Value");
 		}
 
 		[Test]
 		public void Url_UnknownProtocol () 
 		{
-			string url = "mono://www.go-mono.com";
+			string url = "mono://www.example.com";
 			Url u = new Url (url);
 			// Fx 2.0 returns the original url, while 1.0/1.1 adds a '/' at it's end
 			Assert.IsTrue (u.Value.StartsWith (url), "mono.Value");
@@ -84,19 +84,19 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void Url_RelativePath () 
 		{
-			Url u = new Url ("http://www.go-mono.com/path/../newpath/index.html");
-			Assert.AreEqual ("http://www.go-mono.com/path/../newpath/index.html", u.Value, "Value");
+			Url u = new Url ("http://www.example.com/path/../newpath/index.html");
+			Assert.AreEqual ("http://www.example.com/path/../newpath/index.html", u.Value, "Value");
 		}
 
 		[Test]
 		public void Url_GoMonoWebUrl () 
 		{
-			string url = "http://www.go-mono.com";
+			string url = "http://www.example.com";
 			Url u = new Url (url);
 
 			Assert.IsTrue (u.Value.StartsWith (url), "Value");
 			// no spaces in XML, no ending '/' on url
-			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "<Url>http://www.go-mono.com</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
+			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "<Url>http://www.example.com</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
 			Url u2 = (Url) u.Copy ();
 			Assert.AreEqual (u.Value, u2.Value, "Copy.Value");
 			Assert.AreEqual (u.GetHashCode (), u2.GetHashCode (), "Copy.GetHashCode");
@@ -105,7 +105,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (u.Value, uip.Url, "CreateIdentityPermission");
 
 			Assert.IsTrue (u.Equals (u2), "Equals");
-			Url u3 = new Url ("go-mono.com");
+			Url u3 = new Url ("example.com");
 			Assert.IsFalse (u.Equals (u3), "!Equals");
 		}
 
@@ -119,16 +119,16 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void EqualsCaseSensitive () 
 		{
-			Url u1 = new Url ("http://www.go-mono.com");
-			Url u2 = new Url ("http://www.Go-Mono.com");
+			Url u1 = new Url ("http://www.example.com");
+			Url u2 = new Url ("http://www.Example.com");
 			Assert.IsTrue (u1.Equals (u2), "CaseSensitive");
 		}
 
 		[Test]
 		public void EqualsPartial () 
 		{
-			Url u1 = new Url ("http://www.go-mono.com/index.html");
-			Url u2 = new Url ("http://www.go-mono.com/*");
+			Url u1 = new Url ("http://www.example.com/index.html");
+			Url u2 = new Url ("http://www.example.com/*");
 			Assert.IsFalse (u1.Equals (u2), "Partial:1-2");
 			Assert.IsFalse (u2.Equals (u1), "Partial:2-1");
 		}
@@ -136,7 +136,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void EqualsNull () 
 		{
-			Url u = new Url ("http://www.go-mono.com");
+			Url u = new Url ("http://www.example.com");
 			Assert.IsFalse (u.Equals (null), "EqualsNull");
 		}
 

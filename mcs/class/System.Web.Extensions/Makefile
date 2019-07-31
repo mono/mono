@@ -39,7 +39,7 @@ NUNIT_RESOURCE_FILES= \
 CLASSLIB_DIR = $(topdir)/class/lib/$(PROFILE)
 
 STANDALONE_RUNNER_SUPPORT_ASSEMBLY = $(CLASSLIB_DIR)/standalone-runner-support.dll
-STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.Extensions.dll -r:$(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
+STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.Extensions.dll -r:$(topdir)/class/lib/$(PROFILE)/nunitlite.dll
 STANDALONE_TEST_ASSEMBLY = System.Web.Extensions_standalone_test_$(PROFILE).dll
 STANDALONE_TEST_MAKEFRAG = $(depsdir)/$(STANDALONE_TEST_ASSEMBLY).makefrag
 

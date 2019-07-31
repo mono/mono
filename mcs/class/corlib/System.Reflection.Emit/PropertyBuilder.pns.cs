@@ -26,83 +26,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !MONO_FEATURE_SRE
 
 namespace System.Reflection.Emit
 {
-	public abstract class PropertyBuilder : PropertyInfo
-	{
-		public override PropertyAttributes Attributes {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override bool CanRead {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override bool CanWrite {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-		
-		public override Type PropertyType {
-			get {
-				throw new PlatformNotSupportedException ();
-			}
-		}
-
-		public void AddOtherMethod (MethodBuilder mdBuilder)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetConstant (object defaultValue)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetGetMethod (MethodBuilder mdBuilder)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void SetSetMethod (MethodBuilder mdBuilder)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public override ParameterInfo[] GetIndexParameters ()
-		{
-			throw new PlatformNotSupportedException ();
-		}
-	}
+	public sealed partial class PropertyBuilder : System.Reflection.PropertyInfo
+    {
+        internal PropertyBuilder() { throw new PlatformNotSupportedException (); } 
+        public override System.Reflection.PropertyAttributes Attributes { get { throw new PlatformNotSupportedException (); } }
+        public override bool CanRead { get { throw new PlatformNotSupportedException (); } }
+        public override bool CanWrite { get { throw new PlatformNotSupportedException (); } }
+        public override System.Type DeclaringType { get { throw new PlatformNotSupportedException (); } }
+        public override System.Reflection.Module Module { get { throw new PlatformNotSupportedException (); } }
+        public override string Name { get { throw new PlatformNotSupportedException (); } }
+        public System.Reflection.Emit.PropertyToken PropertyToken { get { throw new PlatformNotSupportedException (); } }
+        public override System.Type PropertyType { get { throw new PlatformNotSupportedException (); } }
+        public override System.Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
+        public void AddOtherMethod(System.Reflection.Emit.MethodBuilder mdBuilder) { throw new PlatformNotSupportedException (); } 
+        public override System.Reflection.MethodInfo[] GetAccessors(bool nonPublic) { throw new PlatformNotSupportedException (); }
+        public override object[] GetCustomAttributes(bool inherit) { throw new PlatformNotSupportedException (); }
+        public override object[] GetCustomAttributes(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+        public override System.Reflection.MethodInfo GetGetMethod(bool nonPublic) { throw new PlatformNotSupportedException (); }
+        public override System.Reflection.ParameterInfo[] GetIndexParameters() { throw new PlatformNotSupportedException (); }
+        public override System.Reflection.MethodInfo GetSetMethod(bool nonPublic) { throw new PlatformNotSupportedException (); }
+        public override object GetValue(object obj, object[] index) { throw new PlatformNotSupportedException (); }
+        public override object GetValue(object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] index, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
+        public override bool IsDefined(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+        public void SetConstant(object defaultValue) { throw new PlatformNotSupportedException (); } 
+        public void SetCustomAttribute(System.Reflection.ConstructorInfo con, byte[] binaryAttribute) { throw new PlatformNotSupportedException (); } 
+        public void SetCustomAttribute(System.Reflection.Emit.CustomAttributeBuilder customBuilder) { throw new PlatformNotSupportedException (); } 
+        public void SetGetMethod(System.Reflection.Emit.MethodBuilder mdBuilder) { throw new PlatformNotSupportedException (); } 
+        public void SetSetMethod(System.Reflection.Emit.MethodBuilder mdBuilder) { throw new PlatformNotSupportedException (); } 
+        public override void SetValue(object obj, object value, object[] index) { throw new PlatformNotSupportedException (); } 
+        public override void SetValue(object obj, object value, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] index, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); } 
+    }
 }
 
 #endif
