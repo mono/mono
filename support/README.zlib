@@ -18,4 +18,4 @@ Sources of truth:
 	Possibly other mono commits.
 
 Debian matches master
-Ubuntu 1804 has one commit from master and one extra function for compat.
+Ubuntu 1804 has one commit from devel and one extra function for compat.
