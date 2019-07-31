@@ -548,12 +548,6 @@ typedef struct ReplyPacket {
 #define CHECK_PROTOCOL_VERSION(major,minor) \
 	(protocol_version_set && (major_version > (major) || (major_version == (major) && minor_version >= (minor))))
 
-#define BUFFER_ADD_PRIMITIVE_VALUE() \
-	buffer_add_byte (buf, t->type); \
-	if (CHECK_PROTOCOL_VERSION (2, 53)) { \
-		buffer_add_int (buf, len_fixed_array ); \
-	} \
-	for (int i = 0; i < len_fixed_array; i++) 
 /*
  * Globals
  */
@@ -3199,7 +3193,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 static gint32 isFixedSizeArray (MonoClassField *f)
 {
 	ERROR_DECL (error);
-	if (!CHECK_PROTOCOL_VERSION (2, 53)) {
+	if (!CHECK_PROTOCOL_VERSION (2, 53) || f->type->type != MONO_TYPE_VALUETYPE) {
 		return 1;
 	}
 	MonoCustomAttrInfo *cinfo;
@@ -5232,42 +5226,39 @@ buffer_add_fixed_array (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain
 					   gboolean as_vtype, GHashTable *parent_vtypes, gint32 len_fixed_array)
 {
 	buffer_add_byte (buf, VALUE_TYPE_ID_FIXED_ARRAY);
-	switch (t->type) {
-		case MONO_TYPE_VOID:
-			buffer_add_byte (buf, t->type);
-			break;
-		case MONO_TYPE_BOOLEAN:
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-			BUFFER_ADD_PRIMITIVE_VALUE ()
-			buffer_add_int (buf, ((gint8*)addr)[i]);
-			break;
-		case MONO_TYPE_CHAR:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-			BUFFER_ADD_PRIMITIVE_VALUE ()
-			buffer_add_int (buf, ((gint16*)addr)[i]);
-			break;
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_R4:
-			BUFFER_ADD_PRIMITIVE_VALUE ()
-			buffer_add_int (buf, ((gint32*)addr)[i]);
-			break;
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-		case MONO_TYPE_R8:
-			BUFFER_ADD_PRIMITIVE_VALUE ()
-			buffer_add_long (buf, ((gint64*)addr)[i]);
-			break;
-		case MONO_TYPE_PTR: {
-			gssize val = *(gssize*)addr;
-			
-			buffer_add_byte (buf, t->type);
-			buffer_add_long (buf, val);
-			if (CHECK_PROTOCOL_VERSION(2, 46))
-				buffer_add_typeid (buf, domain, mono_class_from_mono_type_internal (t));
-			break;
+	buffer_add_byte (buf, t->type);
+	buffer_add_int (buf, len_fixed_array );
+	for (int i = 0; i < len_fixed_array; i++) {
+		switch (t->type) {
+			case MONO_TYPE_BOOLEAN:
+			case MONO_TYPE_I1:
+			case MONO_TYPE_U1:
+				buffer_add_int (buf, ((gint8*)addr)[i]);
+				break;
+			case MONO_TYPE_CHAR:
+			case MONO_TYPE_I2:
+			case MONO_TYPE_U2:
+				buffer_add_int (buf, ((gint16*)addr)[i]);
+				break;
+			case MONO_TYPE_I4:
+			case MONO_TYPE_U4:
+			case MONO_TYPE_R4:
+				buffer_add_int (buf, ((gint32*)addr)[i]);
+				break;
+			case MONO_TYPE_I8:
+			case MONO_TYPE_U8:
+			case MONO_TYPE_R8:
+				buffer_add_long (buf, ((gint64*)addr)[i]);
+				break;
+			case MONO_TYPE_PTR: {
+				gssize val = *(gssize*)addr;
+				
+				buffer_add_byte (buf, t->type);
+				buffer_add_long (buf, val);
+				if (CHECK_PROTOCOL_VERSION(2, 46))
+					buffer_add_typeid (buf, domain, mono_class_from_mono_type_internal (t));
+				break;
+			}
 		}
 	}
 }
@@ -5320,7 +5311,7 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 		}
 	}
 	
-	if (len_fixed_array > 1 && t->type != MONO_TYPE_VALUETYPE)
+	if (len_fixed_array > 1 && t->type != MONO_TYPE_VALUETYPE && CHECK_PROTOCOL_VERSION (2, 53))
 	{
 		buffer_add_fixed_array(buf, t, addr, domain, as_vtype, parent_vtypes, len_fixed_array);
 		return;

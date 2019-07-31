@@ -944,7 +944,7 @@ namespace Mono.Debugger.Soft
 					case ElementType.Boolean: {
 						var val = new bool[lenFixedSize];
 						for (int i = 0; i < lenFixedSize; i++)
-							val[i] = (bool) (ReadInt () != 0);
+							val[i] = (ReadInt () != 0);
 						return new ValueImpl { Type = etype, Value = val };
 					}
 					case ElementType.I2: {
