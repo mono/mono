@@ -399,14 +399,7 @@ delegate_hash_table_new (void) {
 static void 
 delegate_hash_table_remove (MonoDelegate *d)
 {
-	if (mono_gc_is_moving ())
-		return;
-
-	mono_marshal_lock ();
-	if (delegate_hash_table == NULL)
-		delegate_hash_table = delegate_hash_table_new ();
-	g_hash_table_remove (delegate_hash_table, d->delegate_trampoline);
-	mono_marshal_unlock ();
+	// FIXME
 }
 
 static void
@@ -416,16 +409,12 @@ delegate_hash_table_add (MonoDelegateHandle d)
 	if (delegate_hash_table == NULL)
 		delegate_hash_table = delegate_hash_table_new ();
 	gpointer delegate_trampoline = MONO_HANDLE_GETVAL (d, delegate_trampoline);
-	if (mono_gc_is_moving ()) {
-		if (g_hash_table_lookup (delegate_hash_table, delegate_trampoline) == NULL) {
-			guint32 gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
-			// This delegate will always be associated with its delegate_trampoline in the table.
-			// We don't free this delegate object because it is too expensive to keep track of these
-			// pairs and avoid races with the delegate finalization.
-			g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
-		}
-	} else {
-		g_hash_table_insert (delegate_hash_table, delegate_trampoline, MONO_HANDLE_RAW (d));
+	if (g_hash_table_lookup (delegate_hash_table, delegate_trampoline) == NULL) {
+		guint32 gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
+		// This delegate will always be associated with its delegate_trampoline in the table.
+		// We don't free this delegate object because it is too expensive to keep track of these
+		// pairs and avoid races with the delegate finalization.
+		g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
 	}
 	mono_marshal_unlock ();
 }
@@ -488,16 +477,11 @@ mono_ftnptr_to_delegate_impl (MonoClass *klass, gpointer ftn, MonoError *error)
 	mono_marshal_lock ();
 	if (delegate_hash_table == NULL)
 		delegate_hash_table = delegate_hash_table_new ();
+	gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, ftn));
+	mono_marshal_unlock ();
+	if (gchandle)
+		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_CAST (MonoDelegate, mono_gchandle_get_target_handle (gchandle)));
 
-	if (mono_gc_is_moving ()) {
-		gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, ftn));
-		mono_marshal_unlock ();
-		if (gchandle)
-			MONO_HANDLE_ASSIGN (d, MONO_HANDLE_CAST (MonoDelegate, mono_gchandle_get_target_handle (gchandle)));
-	} else {
-		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, (MonoDelegate*)g_hash_table_lookup (delegate_hash_table, ftn)));
-		mono_marshal_unlock ();
-	}
 	if (MONO_HANDLE_IS_NULL (d)) {
 		/* This is a native function, so construct a delegate for it */
 		MonoMethodSignature *sig;
