@@ -1884,7 +1884,7 @@ word bytes;
     return(result);			  
 }
 
-void GC_win32_free_heap ()
+void GC_win32_free_heap (void)
 {
     if (GC_no_win32_dlls) {
  	while (GC_n_heap_bases > 0) {
