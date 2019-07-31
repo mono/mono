@@ -413,6 +413,10 @@ typedef struct {
 
 #define MONO_ARCH_EMULATE_CONV_R8_UN 1
 #define MONO_ARCH_EMULATE_FCONV_TO_U8 1
+// The Windows x64 FullAOT+LLVM fails to pass the basic-float tests without this.
+#ifdef defined(TARGET_WIN32)
+#define MONO_ARCH_EMULATE_FCONV_TO_U4 1
+#endif
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
