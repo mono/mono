@@ -399,7 +399,19 @@ delegate_hash_table_new (void) {
 static void 
 delegate_hash_table_remove (MonoDelegate *d)
 {
-	// FIXME
+	guint32 gchandle = 0;
+
+	if (!d->target)
+		return;
+
+	mono_marshal_lock ();
+	if (delegate_hash_table == NULL)
+		delegate_hash_table = delegate_hash_table_new ();
+	gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, d->delegate_trampoline));
+	g_hash_table_remove (delegate_hash_table, d->delegate_trampoline);
+	mono_marshal_unlock ();
+	if (gchandle)
+		mono_gchandle_free_internal (gchandle);
 }
 
 static void
@@ -409,12 +421,26 @@ delegate_hash_table_add (MonoDelegateHandle d)
 	if (delegate_hash_table == NULL)
 		delegate_hash_table = delegate_hash_table_new ();
 	gpointer delegate_trampoline = MONO_HANDLE_GETVAL (d, delegate_trampoline);
-	if (g_hash_table_lookup (delegate_hash_table, delegate_trampoline) == NULL) {
-		guint32 gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
-		// This delegate will always be associated with its delegate_trampoline in the table.
-		// We don't free this delegate object because it is too expensive to keep track of these
-		// pairs and avoid races with the delegate finalization.
-		g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
+	gboolean has_target = MONO_HANDLE_GETVAL (d, target) != NULL;
+	if (has_target) {
+		// If the delegate has an instance method there is 1 to 1 mapping between
+		// the delegate object and the delegate_trampoline
+		guint32 gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, delegate_trampoline));
+		if (gchandle) {
+			// Somehow, some other thread beat us to it ?
+			g_assert (mono_gchandle_target_equal (gchandle, MONO_HANDLE_CAST (MonoObject, d)));
+		} else {
+			gchandle = mono_gchandle_new_weakref_from_handle (MONO_HANDLE_CAST (MonoObject, d));
+			g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
+		}
+	} else {
+		if (g_hash_table_lookup (delegate_hash_table, delegate_trampoline) == NULL) {
+			guint32 gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
+			// This delegate will always be associated with its delegate_trampoline in the table.
+			// We don't free this delegate object because it is too expensive to keep track of these
+			// pairs and avoid races with the delegate finalization.
+			g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
+		}
 	}
 	mono_marshal_unlock ();
 }
