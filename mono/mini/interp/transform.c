@@ -3441,16 +3441,24 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			}
 			break;
 		}
-		case CEE_BR:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 5 + read32 (td->ip + 1));
+		case CEE_BR: {
+			int offset = read32 (td->ip + 1);
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 5 + offset);
+			}
 			td->ip += 5;
 			break;
-		case CEE_BR_S:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+		}
+		case CEE_BR_S: {
+			int offset = (gint8)td->ip [1];
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+			}
 			td->ip += 2;
 			break;
+		}
 		case CEE_BRFALSE:
 			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
