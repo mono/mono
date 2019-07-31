@@ -215,13 +215,13 @@ static void debug_enter (InterpFrame *frame, int *tracing)
 #define USE_COMPUTED_GOTO 1
 #endif
 #if USE_COMPUTED_GOTO
-#define MINT_IN_SWITCH(op) COUNT_OP(op); goto *in_labels[op];
+#define MINT_IN_SWITCH(op) COUNT_OP(op); goto *((char*)&&label0 + in_labels [op]);
 #define MINT_IN_CASE(x) LAB_ ## x:
-#define MINT_IN_DISPATCH(op) goto *in_labels[op];
+#define MINT_IN_DISPATCH(op) goto *((char*)&&label0 + in_labels [op]);
 #if DEBUG_INTERP
-#define MINT_IN_BREAK if (tracing > 1) MINT_IN_DISPATCH(*ip); else { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#define MINT_IN_BREAK if (tracing > 1) MINT_IN_DISPATCH(*ip); else { COUNT_OP(*ip); goto *((char*)&&label0 + in_labels [*ip]); }
 #else
-#define MINT_IN_BREAK { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#define MINT_IN_BREAK { COUNT_OP(*ip); goto *((char*)&&label0 + in_labels [*ip]); }
 #endif
 #define MINT_IN_DEFAULT mint_default: if (0) goto mint_default; /* make gcc shut up */
 #else
@@ -2938,13 +2938,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	MonoObject *o = NULL;
 	MonoClass *c;
 #if USE_COMPUTED_GOTO
-	static void *in_labels[] = {
+	static const int32_t in_labels [ ] = {
 #define OPDEF(a,b,c,d) \
-	&&LAB_ ## a,
+	(char*)&&LAB_ ## a - (char*)&&label0,
 #include "mintops.def"
-	0 };
+	};
 #endif
 
+label0:
 	frame->ex = NULL;
 	frame->finally_ips = NULL;
 	frame->endfinally_ip = NULL;
