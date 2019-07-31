@@ -1918,7 +1918,7 @@ mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoErr
 	if (ok) {
 		mono_identifier_unescape_info (info);
 	} else {
-		mono_error_set_argument_format (error, "typeName", "failed parse: %s", name);
+		mono_error_set_argument_format (error, "typeName@0", "failed parse: %s", name);
 	}
 	return (ok != 0);
 }

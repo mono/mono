@@ -4910,7 +4910,7 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHand
 		mono_reflection_free_type_info (&info);
 		mono_error_cleanup (parse_error);
 		if (throwOnError) {
-			mono_error_set_argument (error, "typeName", "failed to parse the type");
+			mono_error_set_argument (error, "typeName@0", "failed to parse the type");
 			goto fail;
 		}
 		/*g_print ("failed parse\n");*/
