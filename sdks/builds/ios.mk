@@ -327,7 +327,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  $(2): host arch (i386 or x86_64)
 #  $(3): target arch (arm or aarch64)
 #  $(4): device target (target32, target64, ...)
-#  $(5): llvm (llvm32 or llvm64)
+#  $(5): llvm
 #  $(6): offsets dumper abi
 #  $(7): sysroot path
 #
