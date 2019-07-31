@@ -9,7 +9,7 @@
 //
 // XboxOne: SetThreadName(thread handle, unicode)
 //   This works with or without a debugger and can be retrieved with GetThreadName.
-//   Sometimes a macro GetThreadDescription for source compat with next.
+//   Sometimes an inline function SetThreadDescription for source compat with next.
 //
 // Windows 10 1607 or newer (according to documentation, or Creators Update says https://randomascii.wordpress.com/2015/10/26/thread-naming-in-windows-time-for-something-better).
 //  SetThreadDescription(thread handle, unicode)
@@ -71,9 +71,15 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 #endif
 }
 
-#ifdef SetThreadDescription
+#if HAVE_SET_THREAD_NAME
 
-// If it is a macro, it works.
+void
+mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
+{
+	SetThreadName (thread_hande, thread_name);
+}
+
+#elif HAVE_SET_THREAD_DESCRIPTION
 
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
@@ -93,6 +99,7 @@ __stdcall
 mono_thread_set_name_windows_fallback_nop (HANDLE thread_handle, PCWSTR thread_name)
 {
 	// This function is called on older systems, when LoadLibrary / GetProcAddress fail.
+	return 0;
 }
 
 static
@@ -118,23 +125,20 @@ mono_thread_set_name_windows_init (HANDLE thread_handle, PCWSTR thread_name)
 	if (!local)
 		local = mono_thread_set_name_windows_fallback_nop;
 	set_thread_description = local;
-	local (thread_handle, thread_name);
+	return local (thread_handle, thread_name);
 }
 
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 {
-	set_thread_description (thread_hande, thread_name);
+	(void)set_thread_description (thread_hande, thread_name);
 }
 
-#else
+#else // nothing
 
 void
 mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name)
 {
-	// When Windows 10 1607 is the minimum supported, just call it directly.
-	// If LoadLibrary / GetProcAddress are made available to UWP, use that.
-	// SetThreadDescription (thread_hande, thread_name);
 }
 
 #endif

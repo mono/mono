@@ -218,3 +218,11 @@
 #define HAVE_LOADLIBRARY 0
 #endif
 #endif
+
+#ifndef HAVE_SET_THREAD_DESCRIPTION
+#define HAVE_SET_THREAD_DESCRIPTION 0
+#endif
+
+#ifndef HAVE_SET_THREAD_NAME
+#define HAVE_SET_THREAD_NAME 0
+#endif
