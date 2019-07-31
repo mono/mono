@@ -225,11 +225,9 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
-
-build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
@@ -410,7 +408,7 @@ run-ch-%: toolchain build-test-suite
 	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- $*)
+	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- --enable-gc $*)
 
 run-jsc-%: toolchain build-test-suite
 	(cd bin/test-suite && $(JSC) runtime.js -- $*)
