@@ -722,6 +722,8 @@ static void process_breakpoint_events (void *_evts, MonoMethod *method, MonoCont
 static int ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args);
 static void ss_args_destroy (SingleStepArgs *ss_args);
 
+static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer, "System.Runtime.CompilerServices", "FixedBufferAttribute")
+
 #ifndef DISABLE_SOCKET_TRANSPORT
 static void
 register_socket_transport (void);
@@ -3207,7 +3209,7 @@ static gint32 isFixedSizeArray (MonoClassField *f)
 	if (cinfo) {
 		for (aindex = 0; aindex < cinfo->num_attrs; ++aindex) {
 			MonoClass *ctor_class = cinfo->attrs [aindex].ctor->klass;
-			if (mono_class_has_parent (ctor_class,  mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.CompilerServices", "FixedBufferAttribute"))) {
+			if (mono_class_has_parent (ctor_class,  mono_class_get_fixed_buffer_class ())) {
 				attr = &cinfo->attrs [aindex];
 				gpointer *typed_args, *named_args;
 				CattrNamedArg *arginfo;
