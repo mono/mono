@@ -1048,6 +1048,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #endif
 }
 
+#if defined (MONO_ARCH_USE_SIGACTION) && !defined (MONO_CROSS_COMPILE)
 static MonoObject*
 restore_soft_guard_pages (void)
 {
@@ -1082,7 +1083,6 @@ prepare_for_guard_pages (MonoContext *mctx)
 	mctx->esp = (unsigned long)sp;
 }
 
-
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
@@ -1098,6 +1098,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 	}
 	mono_restore_context (&mctx);
 }
+#endif
 
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
