@@ -971,8 +971,6 @@ namespace System.Net.Sockets
 				e.socket_async_result.Complete (exc, true);
 				return false;
 			}
-
-			return true;
 		}
 
 		public static void CancelConnectAsync (SocketAsyncEventArgs e)
