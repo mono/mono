@@ -384,8 +384,6 @@ namespace System.Net.NetworkInformation {
 		public const int AF_INET = 2;
 		public const int AF_INET6 = 23;
 
-		// FIXME: it might be getting wrong table. I'm getting
-		// different results from .NET 2.0.
 		unsafe void FillTcpTable (out List<Win32_MIB_TCPROW> tab4, out List<Win32_MIB_TCP6ROW> tab6)
 		{
 			tab4 = new List<Win32_MIB_TCPROW> ();
@@ -651,16 +649,16 @@ namespace System.Net.NetworkInformation {
 		{
 			public TcpState State;
 			public uint LocalAddr;
-			public int LocalPort;
+			public uint LocalPort;
 			public uint RemoteAddr;
-			public int RemotePort;
+			public uint RemotePort;
 
 			public IPEndPoint LocalEndPoint {
-				get { return new IPEndPoint (LocalAddr, LocalPort); }
+				get { return new IPEndPoint (LocalAddr, ntohs((ushort)LocalPort)); }
 			}
 
 			public IPEndPoint RemoteEndPoint {
-				get { return new IPEndPoint (RemoteAddr, RemotePort); }
+				get { return new IPEndPoint (RemoteAddr, ntohs((ushort)RemotePort)); }
 			}
 
 			public TcpConnectionInformation TcpInfo {
@@ -674,17 +672,17 @@ namespace System.Net.NetworkInformation {
 			public TcpState State;
 			public Win32_IN6_ADDR LocalAddr;
 			public uint LocalScopeId;
-			public int LocalPort;
+			public uint LocalPort;
 			public Win32_IN6_ADDR RemoteAddr;
 			public uint RemoteScopeId;
-			public int RemotePort;
+			public uint RemotePort;
 
 			public IPEndPoint LocalEndPoint {
-				get { return new IPEndPoint (new IPAddress (LocalAddr.Bytes, LocalScopeId), LocalPort); }
+				get { return new IPEndPoint (new IPAddress (LocalAddr.Bytes, LocalScopeId), ntohs((ushort)LocalPort)); }
 			}
 
 			public IPEndPoint RemoteEndPoint {
-				get { return new IPEndPoint (new IPAddress (RemoteAddr.Bytes, RemoteScopeId), RemotePort); }
+				get { return new IPEndPoint (new IPAddress (RemoteAddr.Bytes, RemoteScopeId), ntohs((ushort)RemotePort)); }
 			}
 
 			public TcpConnectionInformation TcpInfo {
@@ -708,10 +706,10 @@ namespace System.Net.NetworkInformation {
 		{
 			public Win32_IN6_ADDR LocalAddr;
 			public uint LocalScopeId;
-			public int LocalPort;
+			public uint LocalPort;
 
 			public IPEndPoint LocalEndPoint {
-				get { return new IPEndPoint (new IPAddress (LocalAddr.Bytes, LocalScopeId), LocalPort); }
+				get { return new IPEndPoint (new IPAddress (LocalAddr.Bytes, LocalScopeId), ntohs((ushort)LocalPort)); }
 			}
 		}
 	}
