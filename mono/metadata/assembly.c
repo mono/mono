@@ -1746,7 +1746,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 		/* FIXME: can we establish that image->assembly is never NULL and this code is dead? */
 		reference = load_reference_by_aname_default_asmctx (&aname, mono_image_get_alc (image), image->assembly, &status);
 #else
-		g_assertf (image->assembly, "While loading reference %d MonoImage %s doesn't have a MonoAssemly", index, image->name);
+		g_assertf (image->assembly, "While loading reference %d MonoImage %s doesn't have a MonoAssembly", index, image->name);
 #endif
 	}
 
