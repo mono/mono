@@ -57,7 +57,7 @@ extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 #define W32_SEH_HANDLE_EX(_ex) \
 	if (_ex##_handler) _ex##_handler(er->ExceptionCode, &info, ctx)
 
-LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
 #ifndef MONO_CROSS_COMPILE
 	if (mono_old_win_toplevel_exception_filter) {
@@ -192,7 +192,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
