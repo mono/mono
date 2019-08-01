@@ -13,6 +13,21 @@ for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
+if [[ ${CI_TAGS} == *'pull-request'* ]]; then
+	# Skip lanes which are not affected by the PR
+	diff_url=`echo $ghprbPullLink`.diff
+	wget -O pr-contents.diff $diff_url
+	grep '^diff' pr-contents.diff > pr-files.txt
+	cat pr-files.txt
+
+	# FIXME: Add more
+	if ! grep -q -v a/netcore pr-files.txt; then
+		echo "NetCore only PR, skipping."
+		${TESTCMD} --label="Skipped on NETCORE." --timeout=60m --fatal sh -c 'exit 0'
+		exit 0
+	fi
+fi
+
 helix_set_env_vars
 helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
 
