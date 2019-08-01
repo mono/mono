@@ -26,7 +26,7 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 		echo "NetCore only PR, skipping."
 		${TESTCMD} --label="Skipped on NETCORE." --timeout=60m --fatal sh -c 'exit 0'
 	fi
-	exit 1
+	exit 0
 fi
 
 helix_set_env_vars
