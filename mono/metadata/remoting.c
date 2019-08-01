@@ -395,6 +395,8 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	/* skip the this pointer */
 	params++;
 
+	HANDLE_FUNCTION_ENTER ();
+
 	if (mono_class_is_contextbound (this_obj->remote_class->proxy_class) && this_obj->rp->context == (MonoObject *) mono_context_get ())
 	{
 		int i;
@@ -423,13 +425,13 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass)? mono_object_unbox_internal ((MonoObject*)this_obj): this_obj, mparams, error);
 		goto_if_nok (error, fail);
 
-		return res;
+		goto exit;
 	}
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	goto_if_nok (error, fail);
 
-	res = mono_remoting_invoke ((MonoObject *)this_obj->rp, msg, &exc, &out_args, error);
+	res = mono_remoting_invoke (MONO_HANDLE_NEW (MonoObject, (MonoObject *)this_obj->rp), msg, &exc, &out_args, error);
 	goto_if_nok (error, fail);
 
 	if (exc) {
@@ -442,11 +444,13 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, error);
 	goto_if_nok (error, fail);
 
-	return res;
+	goto exit;
 fail:
 	mono_error_set_pending_exception (error);
-	return NULL;
-} 
+	res = NULL;
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (res);
+}
 
 /*
  * Handles exception transformation at appdomain call boundary.

@@ -1175,13 +1175,17 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
 	MonoMethod *method;
+	MonoAsyncResult *result = NULL;
+
+	HANDLE_FUNCTION_ENTER ();
 
 	g_assert (delegate);
+
 	mcast_delegate = (MonoMulticastDelegate *) delegate;
 	if (mcast_delegate->delegates != NULL) {
 		mono_error_set_argument (error, NULL, "The delegate must have only one target");
 		mono_error_set_pending_exception (error);
-		return NULL;
+		goto return_null;
 	}
 
 #ifndef DISABLE_REMOTING
@@ -1201,40 +1205,47 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 
 			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (method), params, NULL, &async_callback, &state, error);
 			if (mono_error_set_pending_exception (error))
-				return NULL;
+				goto return_null;
 			ares = mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, error);
 			if (mono_error_set_pending_exception (error))
-				return NULL;
+				goto return_null;
 			MONO_OBJECT_SETREF_INTERNAL (ares, async_delegate, (MonoObject *)delegate);
 			MONO_OBJECT_SETREF_INTERNAL (ares, async_callback, (MonoObject *)async_callback);
 			MONO_OBJECT_SETREF_INTERNAL (msg, async_result, ares);
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
+			mono_remoting_invoke (MONO_HANDLE_NEW (MonoObject, (MonoObject *)tp->rp), msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
-				return NULL;
+				goto return_null;
 			}
 			if (exc)
 				mono_set_pending_exception ((MonoException *) exc);
-			return ares;
+			result = ares;
+			goto exit;
 		}
 	}
 #endif
 
 	klass = delegate->object.vtable->klass;
 
-	ERROR_DECL (begin_invoke_error);
-	method = mono_get_delegate_begin_invoke_checked (klass, begin_invoke_error);
-	mono_error_cleanup (begin_invoke_error); /* if we can't call BeginInvoke, fall back on Invoke */
+	{
+		ERROR_DECL (begin_invoke_error);
+		method = mono_get_delegate_begin_invoke_checked (klass, begin_invoke_error);
+		mono_error_cleanup (begin_invoke_error); /* if we can't call BeginInvoke, fall back on Invoke */
+	}
 	if (!method)
 		method = mono_get_delegate_invoke_internal (klass);
 	g_assert (method);
 
-	MonoAsyncResult *result = mono_threadpool_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params, error);
+	result = mono_threadpool_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params, error);
 	mono_error_set_pending_exception (error);
-	return result;
+	goto exit;
+return_null:
+	result = NULL;
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 static char*
@@ -1886,9 +1897,13 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	MonoMethod *method = NULL;
 	MonoMethodSignature *sig;
 	MonoMethodMessage *msg;
-	MonoObject *res, *exc;
+	MonoObject *exc;
 	MonoArray *out_args;
 	MonoClass *klass;
+
+	MonoObject* res = NULL;
+
+	HANDLE_FUNCTION_ENTER ();
 
 	g_assert (delegate);
 
@@ -1897,7 +1912,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		MonoReflectionMethod *rm = mono_method_get_object_checked (domain, delegate->method, NULL, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
-			return NULL;
+			goto return_null;
 		}
 		MONO_OBJECT_SETREF_INTERNAL (delegate, method_info, rm);
 	}
@@ -1915,20 +1930,20 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	if (mono_error_set_pending_exception (error))
-		return NULL;
+		goto return_null;
 
 	ares = (MonoAsyncResult *)mono_array_get_internal (msg->args, gpointer, sig->param_count - 1);
 	if (ares == NULL) {
 		mono_error_set_remoting (error, "The async result object is null or of an unexpected type.");
 		mono_error_set_pending_exception (error);
-		return NULL;
+		goto return_null;
 	}
 
 	if (ares->async_delegate != (MonoObject*)delegate) {
 		mono_error_set_invalid_operation (error,
 			"%s", "The IAsyncResult object provided does not match this delegate.");
 		mono_error_set_pending_exception (error);
-		return NULL;
+		goto return_null;
 	}
 
 #ifndef DISABLE_REMOTING
@@ -1937,24 +1952,24 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
-			return NULL;
+			goto return_null;
 		}
 		mono_message_init (domain, msg, delegate->method_info, NULL, error);
 		if (mono_error_set_pending_exception (error))
-			return NULL;
+			goto return_null;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF_INTERNAL (msg, async_result, ares);
-		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
+		res = mono_remoting_invoke (MONO_HANDLE_NEW (MonoObject, (MonoObject *)tp->rp), msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
-			return NULL;
+			goto return_null;
 		}
 	} else
 #endif
 	{
 		res = mono_threadpool_end_invoke (ares, &out_args, &exc, error);
 		if (mono_error_set_pending_exception (error))
-			return NULL;
+			goto return_null;
 	}
 
 	if (exc) {
@@ -1978,7 +1993,11 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
-	return res;
+	goto exit;
+return_null:
+	res = NULL;
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
 #ifndef ENABLE_ILGEN
