@@ -1595,6 +1595,10 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	aname = mono_assembly_apply_binding (aname, &mapped_name_pp);
 
 	MonoAssembly *reference = NULL;
+
+	gboolean is_satellite = !mono_assembly_name_culture_is_neutral (aname);
+	gboolean is_default = mono_alc_is_default (alc);
+
 	/*
 	 * Try these until one of them succeeds (by returning a non-NULL reference):
 	 * 1. Check if it's already loaded by the ALC.
@@ -1611,19 +1615,26 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	if (reference)
 		goto leave;
 
-	if (!mono_alc_is_default (alc))
+	if (!is_default)
 		reference = mono_alc_invoke_resolve_using_load_nofail (alc, aname);
 	if (reference)
 		goto leave;
 
-	MonoDomain *domain = mono_domain_get ();
-	MonoAssemblyByNameRequest req;
-	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
-	req.request.alc = mono_domain_default_alc (domain);
-	req.requesting_assembly = requesting;
-	reference = mono_assembly_request_byname (aname, &req, status);
-	if (reference)
-		goto leave;
+	if (is_default || !is_satellite) {
+		MonoAssemblyByNameRequest req;
+		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		req.request.alc = mono_domain_default_alc (mono_alc_domain (alc));
+		req.requesting_assembly = requesting;
+		reference = mono_assembly_request_byname (aname, &req, status);
+		if (reference)
+			goto leave;
+	}
+
+	if (is_satellite) {
+		reference = mono_alc_invoke_resolve_using_resolve_satellite_nofail (alc, aname);
+		if (reference)
+			goto leave;
+	}
 
 	reference = mono_alc_invoke_resolve_using_resolving_event_nofail (alc, aname);
 	if (reference)

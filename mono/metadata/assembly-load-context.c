@@ -68,7 +68,7 @@ ves_icall_System_Runtime_Loader_AssemblyLoadContext_GetLoadContextForAssembly (M
 gboolean
 mono_alc_is_default (MonoAssemblyLoadContext *alc)
 {
-	return alc == alc->domain->default_alc;
+	return alc == mono_alc_domain (alc)->default_alc;
 }
 
 static MonoAssembly*
