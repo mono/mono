@@ -12,7 +12,7 @@ using System.Net;
 
 namespace WsProxy {
 
-	internal class MonoCommands {
+	public class MonoCommands {
 		public const string GET_CALL_STACK = "MONO.mono_wasm_get_call_stack()";
 		public const string IS_RUNTIME_READY_VAR = "MONO.mono_wasm_runtime_is_ready";
 		public const string START_SINGLE_STEPPING = "MONO.mono_wasm_start_single_stepping({0})";
@@ -33,7 +33,7 @@ namespace WsProxy {
 	internal class MonoConstants {
 		public const string RUNTIME_IS_READY = "mono_wasm_runtime_ready";
 	}
-	class Frame {
+	public class Frame {
 		public Frame (MethodInfo method, SourceLocation location, int id)
 		{
 			this.Method = method;
@@ -47,7 +47,7 @@ namespace WsProxy {
 	}
 
 
-	class Breakpoint {
+	public class Breakpoint {
 		public SourceLocation Location { get; private set; }
 		public int LocalId { get; private set; }
 		public int RemoteId { get; set; }
@@ -61,22 +61,22 @@ namespace WsProxy {
 		}
 	}
 
-	enum BreakPointState {
+	public enum BreakPointState {
 		Active,
 		Disabled,
 		Pending
 	}
 
-	enum StepKind {
+	public enum StepKind {
 		Into,
 		Out,
 		Over
 	}
 
 	public class MonoProxy : WsProxy {
-		DebugStore store;
+		protected DebugStore store;
 		List<Breakpoint> breakpoints = new List<Breakpoint> ();
-		List<Frame> current_callstack;
+		protected List<Frame> current_callstack;
 		bool runtime_ready;
 		int local_breakpoint_id;
 		int ctx_id;
@@ -544,7 +544,7 @@ namespace WsProxy {
 			return res;
 		}
 
-		async Task RuntimeReady (CancellationToken token)
+		protected async Task RuntimeReady (CancellationToken token)
 		{
 
 			var o = JObject.FromObject (new {
