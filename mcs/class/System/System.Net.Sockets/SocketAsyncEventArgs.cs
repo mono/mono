@@ -30,114 +30,44 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 using System.Threading;
 
 namespace System.Net.Sockets
 {
-	public class SocketAsyncEventArgs : EventArgs, IDisposable
+	public partial class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
 		bool disposed;
 
 		internal volatile int in_progress;
-		EndPoint remote_ep;
-		Socket current_socket;
 
 		internal SocketAsyncResult socket_async_result = new SocketAsyncResult ();
 
-		public Exception ConnectByNameError {
-			get;
-			private set;
+#region Mono-specific settors for private fields
+
+		internal void SetConnectByNameError (Exception error)
+		{
+			_connectByNameError = error;
 		}
 
-		public Socket AcceptSocket {
-			get;
-			set;
+		internal void SetBytesTransferred (int value)
+		{
+			_bytesTransferred = value;
 		}
 
-		public byte[] Buffer {
-			get;
-			private set;
+		internal Socket CurrentSocket {
+			get { return _currentSocket; }
 		}
 
-		public Memory<byte> MemoryBuffer => Buffer;
-
-		IList<ArraySegment<byte>> m_BufferList;
-		public IList<ArraySegment<byte>> BufferList {
-			get { return m_BufferList; }
-			set {
-				if (Buffer != null && value != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				m_BufferList = value;
-			}
+		internal void SetCurrentSocket (Socket socket)
+		{
+			_currentSocket = socket;
 		}
 
-		public int BytesTransferred {
-			get;
-			private set;
-		}
-
-		public int Count {
-			get;
-			private set;
-		}
-
-		public bool DisconnectReuseSocket {
-			get;
-			set;
-		}
-
-		public SocketAsyncOperation LastOperation {
-			get;
-			private set;
-		}
-
-		public int Offset {
-			get;
-			private set;
-		}
-
-		public EndPoint RemoteEndPoint {
-			get { return remote_ep; }
-			set { remote_ep = value; }
-		}
-
-		public IPPacketInformation ReceiveMessageFromPacketInfo {
-			get;
-			private set;
-		}
-
-		public SendPacketsElement[] SendPacketsElements {
-			get;
-			set;
-		}
-
-		public TransmitFileOptions SendPacketsFlags {
-			get;
-			set;
-		}
-
-		[MonoTODO ("unused property")]
-		public int SendPacketsSendSize {
-			get;
-			set;
-		}
-
-		public SocketError SocketError {
-			get;
-			set;
-		}
-
-		public SocketFlags SocketFlags {
-			get;
-			set;
-		}
-
-		public object UserToken {
-			get;
-			set;
-		}
+#endregion
 
 		public Socket ConnectSocket {
 			get {
@@ -145,7 +75,7 @@ namespace System.Net.Sockets
 				case SocketError.AccessDenied:
 					return null;
 				default:
-					return current_socket;
+					return _currentSocket;
 				}
 			}
 		}
@@ -176,25 +106,6 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
-		internal void SetConnectByNameError (Exception error)
-		{
-			ConnectByNameError = error;
-		}
-
-		internal void SetBytesTransferred (int value)
-		{
-			BytesTransferred = value;
-		}
-
-		internal Socket CurrentSocket {
-			get { return current_socket; }
-		}
-
-		internal void SetCurrentSocket (Socket socket)
-		{
-			current_socket = socket;
-		}
-
 		internal void SetLastOperation (SocketAsyncOperation op)
 		{
 			if (disposed)
@@ -202,7 +113,7 @@ namespace System.Net.Sockets
 			if (Interlocked.Exchange (ref in_progress, 1) != 0)
 				throw new InvalidOperationException ("Operation already in progress");
 
-			LastOperation = op;
+			_completedOperation = op;
 		}
 
 		internal void Complete_internal ()
@@ -218,49 +129,12 @@ namespace System.Net.Sockets
 			
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
 			if (handler != null)
-				handler (e.current_socket, e);
-		}
-
-		internal void CopyBufferFrom (SocketAsyncEventArgs source)
-		{
-			Buffer = source.Buffer;
-			Offset = source.Offset;
-			Count = source.Count;
-		}
-
-		public void SetBuffer (int offset, int count)
-		{
-			SetBuffer (Buffer, offset, count);
-		}
-
-		public void SetBuffer (byte[] buffer, int offset, int count)
-		{
-			if (buffer != null) {
-				if (BufferList != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				
-				int buflen = buffer.Length;
-				if (offset < 0 || (offset != 0 && offset >= buflen))
-					throw new ArgumentOutOfRangeException ("offset");
-
-				if (count < 0 || count > buflen - offset)
-					throw new ArgumentOutOfRangeException ("count");
-
-				Count = count;
-				Offset = offset;
-			}
-
-			Buffer = buffer;
-		}
-
-		public void SetBuffer(Memory<byte> buffer)
-		{
-			SetBuffer(buffer.ToArray(), 0, buffer.Length);
+				handler (e._currentSocket, e);
 		}
 
 		internal void StartOperationCommon (Socket socket)
 		{
-			current_socket = socket;
+			_currentSocket = socket;
 		}
 
 		internal void StartOperationWrapperConnect (MultipleConnectAsync args)
@@ -274,8 +148,8 @@ namespace System.Net.Sockets
 		{
 			SetResults (exception, bytesTransferred, flags);
 
-			if (current_socket != null)
-				current_socket.is_connected = false;
+			if (_currentSocket != null)
+				_currentSocket.is_connected = false;
 			
 			Complete_internal ();
 		}
@@ -284,8 +158,8 @@ namespace System.Net.Sockets
 		{
 			SetResults (exception, bytesTransferred, flags);
 
-			if (current_socket != null)
-				current_socket.is_connected = false;
+			if (_currentSocket != null)
+				_currentSocket.is_connected = false;
 			
 			Complete_internal ();
 		}
@@ -293,37 +167,9 @@ namespace System.Net.Sockets
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
 		{
 			SetResults(SocketError.Success, bytesTransferred, flags);
-			current_socket = connectSocket;
+			_currentSocket = connectSocket;
 
 			Complete_internal ();
-		}
-
-		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)
-		{
-			SocketError = socketError;
-			ConnectByNameError = null;
-			BytesTransferred = bytesTransferred;
-			SocketFlags = flags;
-		}
-
-		internal void SetResults (Exception exception, int bytesTransferred, SocketFlags flags)
-		{
-			ConnectByNameError = exception;
-			BytesTransferred = bytesTransferred;
-			SocketFlags = flags;
-
-			if (exception == null)
-			{
-				SocketError = SocketError.Success;
-			}
-			else
-			{
-				var socketException = exception as SocketException;
-				if (socketException != null)
-					SocketError = socketException.SocketErrorCode;
-				else
-					SocketError = SocketError.SocketError;
-			}
 		}
 	}
 }
