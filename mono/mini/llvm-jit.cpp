@@ -18,7 +18,7 @@
 #include "mini-llvm-cpp.h"
 #include "llvm-jit.h"
 
-#if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 600
+#if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 600 && LLVM_API_VERSION < 900
 
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Host.h>
