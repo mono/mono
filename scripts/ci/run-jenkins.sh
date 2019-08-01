@@ -25,8 +25,8 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 	if ! grep -q -v a/netcore pr-files.txt; then
 		echo "NetCore only PR, skipping."
 		${TESTCMD} --label="Skipped on NETCORE." --timeout=60m --fatal sh -c 'exit 0'
+		exit 0
 	fi
-	exit 0
 fi
 
 helix_set_env_vars
