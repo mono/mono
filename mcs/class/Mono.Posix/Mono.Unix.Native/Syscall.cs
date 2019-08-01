@@ -151,7 +151,8 @@ namespace Mono.Unix.Native {
 		O_ASYNC     = 0x00002000,
 		O_LARGEFILE = 0x00008000,
 		O_CLOEXEC   = 0x00080000,
-		O_PATH      = 0x00200000
+		O_PATH      = 0x00200000,
+		O_NOATIME   = 0x00040000
 	}
 	
 	[Map][Flags]
@@ -4576,19 +4577,37 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int chown (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string path, uint owner, uint group);
+				string path, int owner, int group);
 
 		// fchown(2)
 		//    int fchown(int fd, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int fchown (int fd, uint owner, uint group);
+		public static extern int fchown (int fd, int owner, int group);
 
 		// lchown(2)
 		//    int lchown(const char *path, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int lchown (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string path, uint owner, uint group);
+				string path, int owner, int group);
+
+		#region UInt32 overloads for initial incorrect implementation
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int chown (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string path, uint owner, uint group);
+
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fchown (int fd, uint owner, uint group);
+
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int lchown (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string path, uint owner, uint group);
+		#endregion
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int chdir (
@@ -5161,13 +5180,28 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="fchownat")]
 		private static extern int sys_fchownat (int dirfd,
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string pathname, uint owner, uint group, int flags);
+				string pathname, int owner, int group, int flags);
 
+		public static int fchownat (int dirfd, string pathname, int owner, int group, AtFlags flags)
+		{
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_fchownat (dirfd, pathname, owner, group, _flags);
+		}
+
+		#region UInt32 overloads for initial incorrect implementation
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true, EntryPoint="fchownat")]
+		private static extern int sys_fchownat (int dirfd,
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string pathname, uint owner, uint group, int flags);
+
+		[Obsolete("Use Int32 overload")]
 		public static int fchownat (int dirfd, string pathname, uint owner, uint group, AtFlags flags)
 		{
 			int _flags = NativeConvert.FromAtFlags (flags);
 			return sys_fchownat (dirfd, pathname, owner, group, _flags);
 		}
+		#endregion
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="linkat")]
 		private static extern int sys_linkat (int olddirfd,

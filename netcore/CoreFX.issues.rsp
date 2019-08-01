@@ -12,9 +12,6 @@
 # https://github.com/mono/mono/issues/14854
 -nomethod Microsoft.VisualBasic.Tests.ErrObjectTests.Clear
 
-# Microsoft.VisualBasic.ApplicationServices.AssemblyInfo.LoadedAssemblies not implemented
--nomethod Microsoft.VisualBasic.ApplicationServices.Tests.AssemblyInfoTests.LoadedAssemblies
-
 ####################################################################
 ##  System.CodeDom.Tests
 ####################################################################
@@ -31,13 +28,6 @@
 -nomethod System.Collections.Specialized.Tests.NameValueCollectionCtorTests.Ctor_NegativeCapacity_ThrowsArgumentOutOfRangeException
 
 ####################################################################
-##  System.Collections.Tests
-####################################################################
-
-# tests pass when disabling inline, but fail by default. https://github.com/mono/mono/issues/14859
--nomethod Generic.Dictionary.DictionaryConcurrentAccessDetectionTests.DictionaryConcurrentAccessDetection_*
-
-####################################################################
 ##  System.Diagnostics.Process.Tests
 ####################################################################
 
@@ -47,14 +37,6 @@
 # times out waiting for remote process. Would it require system wide dotnet?
 # https://github.com/mono/mono/issues/14903
 -nomethod System.Diagnostics.Tests.ProcessTests.ProcessStart_UseShellExecute_ExecuteOrder
-
-####################################################################
-##  System.Diagnostics.Debug
-####################################################################
-
-# disabled in CoreCLR too
--nomethod System.Diagnostics.Tests.DebugTestsNoListeners.Print
--nomethod System.Diagnostics.Tests.DebugTestsUsingListeners.Print
 
 ####################################################################
 ##  System.Diagnostics.TraceSource.Tests
@@ -102,17 +84,6 @@
 # OOM Exception gets thrown for the 68 (currently) tests that fail.
 # https://github.com/mono/mono/issues/14912
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.NewArrayBounds*
-
-# Process crashes really hard.
-# https://github.com/mono/mono/issues/14913
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableFloatToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedFloatToNullableULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedFloatToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableFloatToNullableULongTest
-
-# Expected exception to be thrown.  None is
-# https://github.com/mono/mono/issues/14917
--nomethod System.Linq.Expressions.Tests.BindTests.GlobalField
 
 # Exceptions are different.
 # https://github.com/mono/mono/issues/14918
@@ -174,23 +145,11 @@
 # https://github.com/mono/mono/issues/14934
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.MultipleNegativeBoundErrorMessage
 
-# float conv.ovf.un opcodes not supported https://github.com/mono/mono/issues/14945
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToNullableULongTest
-
 # Delegate creation w/ reflection https://github.com/mono/mono/issues/14950
 -nomethod System.Linq.Expressions.Tests.CallTests.EnumArgAndReturn
 
 # Expected test Assertion fails https://github.com/mono/mono/issues/14951
 -nomethod System.Linq.Expressions.Tests.CallTests.MethodName_TypeArgsDontMatchConstraints_ThrowsArgumentException
-
-# flaky tests - Invalid IL code in (wrapper dynamic-method)
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyNullableTests.LambdaMultiplyNullableFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
--nomethod System.Linq.Expressions.Tests.OpAssign.AssignmentEquivalentsWithMemberAccess
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -203,23 +162,13 @@
 ##  System.Memory.Tests
 ####################################################################
 
-# System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
-# https://github.com/mono/mono/issues/14959
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
-
 # Reflection TargetException: Non-static method requires a target. 
 # https://github.com/mono/mono/issues/14962
 -nomethod System.SpanTests.SpanTests.ReadOnlyMemory_PropertyReturningReadOnlySpan
 
 # Should throw NotSupportedException, but we do not. 
 # https://github.com/mono/mono/issues/14993
--nomethod System.SpanTests.SpanTests.Span_StaticOperator
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Constructor
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Operator
 -nomethod System.SpanTests.SpanTests.Span_Constructor
 
 # Should throw NotSupportedException - Non static method requires a target
@@ -252,21 +201,6 @@
 
 # When test is run, xunit claims it's not a part of the test suite 
 #-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_ClientCertificates_Test.AutomaticOrManual_DoesntFailRegardlessOfWhetherClientCertsAreAvailable
-
-####################################################################
-##  System.Net.HttpListener.Tests
-####################################################################
-
-# TODO:
-# System.ArgumentException : Cannot bind to the target method because its signature is not compatible with that of the delegate type.
-# at System.Delegate.CreateDelegate(Type type, Object firstArgument, MethodInfo method, Boolean throwOnBindFailure, Boolean allowClosed)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method, Boolean throwOnBindFailure)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method)
-# at System.Reflection.RuntimeMethodInfo.CreateDelegate(Type delegateType)
-# at System.Net.CookieExtensions.IsRfc2965Variant(Cookie cookie)
-#
-# https://github.com/mono/mono/issues/15008
--noclass System.Net.Tests.HttpListenerResponseCookiesTests
 
 ####################################################################
 ##  System.Net.Sockets.Tests
@@ -425,10 +359,6 @@
 # https://github.com/mono/mono/issues/15021
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
 
-# The right versions are not being returned
-# https://github.com/mono/mono/issues/15022
--nomethod System.Reflection.Tests.AssemblyNameTests.Version
-
 # Typename string differs 
 # https://github.com/mono/mono/issues/15023
 -nomethod System.Reflection.Tests.GetTypeTests.GetType_EmptyString
@@ -464,11 +394,6 @@
 # https://github.com/mono/mono/issues/15037
 -nomethod System.Reflection.Tests.ParameterInfoTests.RawDefaultValueFromAttribute
 
-# AssemblyLoadContext.InternalLoad not implemented
-# https://github.com/mono/mono/issues/14830
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytes
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytesWithSymbols
-
 # Need to set ProcessorArchitecture in AssemblyName
 # https://github.com/mono/mono/issues/15068
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_ValidArchitectureName_Succeeds
@@ -480,18 +405,6 @@
 # https://github.com/mono/mono/issues/15069
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
 
-# typeof difference in the assertion 
-# https://github.com/mono/mono/issues/15070
--nomethod System.Reflection.Tests.MemberInfoTests.GenericMethodsInheritTheReflectedTypeOfTheirTemplate
-
-# Returns byte array when it should return null
-# https://github.com/mono/mono/issues/15072
--nomethod System.Reflection.Tests.AssemblyNameTests.SetPublicKeyToken_GetPublicKeyToken
-
-# AssemblyName functionality not fully implemented
-# https://github.com/mono/mono/issues/15073
--nomethod System.Reflection.Tests.AssemblyNameTests.FullName
-
 # Fails b/c it returns the wrong assembly string
 # https://github.com/mono/mono/issues/15074
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFile
@@ -500,9 +413,6 @@
 # https://github.com/mono/mono/issues/15076
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
 
-# throws a NRE
-# https://github.com/mono/mono/issues/15077
--nomethod System.Reflection.Tests.GetTypeTests.GetType
 
 # Assertion expects false, but we return true
 # https://github.com/mono/mono/issues/15080
@@ -597,10 +507,6 @@
 # https://github.com/mono/mono/issues/15097
 -nomethod System.Runtime.InteropServices.Tests.GetFunctionPointerForDelegateTests.GetFunctionPointer_GenericDelegate_ThrowsArgumentException
 
-# typeof(object).Assembly.ImageRuntimeVersion returns null because the corelib metadata version string is empty
-# https://github.com/mono/mono/issues/15100
--nomethod System.Runtime.InteropServices.RuntimeEnvironmentTests.RuntimeEnvironmentSysVersion
-
 # AE with The structure must not be a value class;
 # https://github.com/mono/mono/issues/15101
 -nomethod System.Runtime.InteropServices.Tests.PtrToStructureTests.PtrToStructure_ZeroPointer_ThrowsArgumentNullException
@@ -678,11 +584,11 @@
 
 # RuntimeAssembly.IsCollectible is not implemented yet
 # Implementation task https://github.com/mono/mono/issues/15142
--nomethod System.Reflection.Tests.IsCollectibleTests.MemberInfoGeneric_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleTrue_WhenUsingTestAssemblyLoadContext
--nomethod System.Reflection.Tests.IsCollectibleTests.MemberInfo_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoad
--nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoadContext
+-nomethod System.Reflection.Tests.IsCollectibleTests.*
+
+# Runtime crashes instead of TypeLoadException
+-nomethod System.Tests.TypeTestsExtended.GetTypeByName_NoSuchType_ThrowsTypeLoadException
+-nomethod System.Tests.TypeTestsExtended.GetTypeByNameCaseSensitiveTypeloadFailure
 
 # Mono ignores [Optional] attribute defined on parameters in delegates
 # https://github.com/mono/mono/issues/15148
@@ -694,12 +600,8 @@
 # and expects it to trigger domain.ProcessExit event
 -nomethod System.Tests.ExitCodeTests.SigTermExitCode
 
-# causes 'error: Return type can't be a byref type Parameter name: returnType':
-# while the test passes, xunit fails in the end if it's enabled
+# error: Invalid IL code in (wrapper dynamic-method) object:<xsl:apply-templates> (System.Xml.Xsl.Runtime.XmlQueryRuntime,System.Xml.XPath.XPathNavigator,double): IL_0179: ret
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
-
-# Boxed pointers are not supported? https://github.com/mono/mono/blob/ced517784b2a07fb851e2227dac04e0df2262d57/mcs/class/corlib/ReferenceSources/RuntimeType.cs#L229
--nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
 
 # throws ArgumentException
 # https://github.com/mono/mono/issues/15152
@@ -720,18 +622,6 @@
 # Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
-
-####################################################################
-##  System.Text.Json.Tests
-####################################################################
-
-# JsonSerializer.Parse<Enum>(...) generates invalid IL through DynamicMethod
-# Mono throws "System.MemberAccessException: Cannot create an abstract class: System.Enum" from System.Reflection.Emit.DynamicMethod.CreateDelegate
-# CoreCLR creates the delegate, but fails to execute it with "System.InvalidOperationException: Instances of abstract classes cannot be created."
--nomethod System.Text.Json.Serialization.Tests.ValueTests.ValueFail
-
-# The JSON value is not in a supported DateTime format
--nonamespace System.Text.Json.Serialization.Tests
 
 ####################################################################
 ##  System.Threading.Tests
@@ -762,10 +652,6 @@
 # Expects PlatformNotSupportedException but none thrown
 # https://github.com/mono/mono/issues/15161
 -nomethod System.Threading.Tests.SemaphoreTests.Ctor_NamesArentSupported_Unix
-
-# There is an attribute on the test itself to skip on Mono 
-# https://github.com/dotnet/corefx/blob/30ca4113ed07fc78060a0c9d3f95eee4fe8f8ee3/src/System.Threading/tests/SynchronizationContextTests.cs#L47
--nomethod System.Threading.Tests.SynchronizationContextTests.WaitNotificationTest
 
 ####################################################################
 ##  System.Threading.ThreadPool.Tests
@@ -800,6 +686,7 @@
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
 -nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_IMetadataViewWithDefaultedInt64
+-nomethod System.ComponentModel.Composition.ExportCollectionTests.ImportCollectionsFromContainerOnly
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -862,23 +749,6 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
 
-# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
--nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
--nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
--nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
--nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
-
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
 ####################################################################
@@ -940,15 +810,6 @@
 # FileNotFoundException
 # https://github.com/mono/mono/issues/15192
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFromStream_Location_IsEmpty
-
-####################################################################
-##  System.Reflection.Metadata.Tests
-####################################################################
-
-# Expected null, got a double byte array
-# https://github.com/mono/mono/issues/15193
--nomethod System.Reflection.Metadata.Tests.AssemblyDefinitionTests.ValidateAssemblyNameWithCultureSet
--nomethod System.Reflection.Metadata.Tests.AssemblyDefinitionTests.ValidateAssemblyNameForAssemblyDefinition
 
 ####################################################################
 ##  System.Reflection.TypeExtensions.CoreCLR.Tests
@@ -1119,11 +980,9 @@
 ##  System.Reflection.MetadataLoadContext.Tests
 ####################################################################
 
-# System.InvalidOperationException : Sequence contains no elements
-# https://github.com/mono/mono/issues/15339
-# 
 # https://github.com/mono/mono/issues/15340
--nomethod System.Reflection.Tests.CustomAttributeTests.*
+-nomethod System.Reflection.Tests.CustomAttributeTests.TestDllImportPseudoCustomAttribute
+-nomethod System.Reflection.Tests.CustomAttributeTests.TestMarshalAsPseudoCustomAttribute
 -nomethod System.Reflection.Tests.ParameterTests.TestPseudoCustomAttributes
 -nomethod System.Reflection.Tests.TypeTests.TestExplicitOffsetPseudoCustomAttribute
 
@@ -1180,6 +1039,7 @@
 # Xml differences... Looks like the parsing isn't working
 # https://github.com/mono/mono/issues/15353
 -nomethod System.Xml.Tests.CXmlResolverTest.TC_AbsolutePath_Transform
+-nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 
 ####################################################################
 ##  System.Net.Requests.Tests
@@ -1213,17 +1073,6 @@
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
 
 # requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
--nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
--nomethod System.Tests.GCTests.ReRegisterForFinalize
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetEnumerator_CollectedItemsNotEnumerated
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.AddRemove_DropValue
--nomethod System.Tests.WeakReferenceTests.NonGeneric
--nomethod System.Tests.WeakReferenceTests.Generic
--nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
--nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
--nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
-
-# Flaky tests https://github.com/mono/mono/issues/15238
--nonamespace System.Security.Cryptography.Pkcs
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest

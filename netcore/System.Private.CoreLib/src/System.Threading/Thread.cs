@@ -20,7 +20,6 @@ namespace System.Threading
 		// stores a thread handle
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
-		IntPtr unused3;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
 		private int name_len;
@@ -50,7 +49,6 @@ namespace System.Threading
 		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private IntPtr unused4;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
@@ -59,6 +57,7 @@ namespace System.Threading
 		private IntPtr suspended_event;
 		private int self_suspended;
 		private IntPtr thread_state;
+
 		private Thread self;
 		private object pending_exception;
 		private object start_obj;
@@ -90,7 +89,7 @@ namespace System.Threading
 
 		internal static ulong CurrentOSThreadId {
 			get {
-				throw new NotImplementedException ();
+				return GetCurrentOSThreadId ();
 			}
 		}
 
@@ -268,6 +267,9 @@ namespace System.Threading
 				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
 			return state;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static ulong GetCurrentOSThreadId ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static void InitInternal (Thread thread);

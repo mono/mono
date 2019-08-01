@@ -54,6 +54,18 @@ namespace System.Diagnostics.Tracing
 			internal set;
 		}
 
+		public long OSThreadId
+		{
+			get;
+			internal set;
+		}
+
+		public DateTime TimeStamp
+		{
+			get;
+			internal set;
+		}
+
 		public string EventName
 		{
 			get;

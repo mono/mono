@@ -253,5 +253,10 @@ namespace BindingsTestSuite
             return x;
         }
 
+        public static object ArrayPop () 
+        {
+            var arr = new WebAssembly.Core.Array();
+            return arr.Pop();
+        }
     }
 }

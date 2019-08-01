@@ -11,6 +11,7 @@ lib_LTLIBRARIES = 				\
 endif
 
 AM_CPPFLAGS =					\
+	@ZLIB_CFLAGS@				\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
 
@@ -82,6 +83,7 @@ ZLIB_SOURCES = \
 	crc32.c		\
 	uncompr.c	\
 	deflate.c	\
+	gzguts.h	\
 	trees.c		\
 	zutil.c		\
 	inflate.c	\

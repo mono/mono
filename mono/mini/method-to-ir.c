@@ -4040,7 +4040,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	int realidx1_reg = alloc_preg (cfg);
 	int realidx2_reg = alloc_preg (cfg);
 	int sum_reg = alloc_preg (cfg);
-	int index1, index2, tmpreg;
+	int index1, index2;
 	MonoInst *ins;
 	guint32 size;
 
@@ -4055,7 +4055,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	if (COMPILE_LLVM (cfg)) {
 		/* Not needed */
 	} else {
-		tmpreg = alloc_preg (cfg);
+		int tmpreg = alloc_preg (cfg);
 		MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, tmpreg, index1);
 		index1 = tmpreg;
 		tmpreg = alloc_preg (cfg);
@@ -4064,7 +4064,6 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 #else
 	// FIXME: Do we need to do something here for i8 indexes, like in ldelema_1_ins ?
-	tmpreg = -1;
 #endif
 
 	/* range checking */
@@ -5636,10 +5635,12 @@ handle_constrained_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 		 * A simple solution would be to box always and make a normal virtual call, but that would
 		 * be bad performance wise.
 		 */
-		if (mono_class_is_interface (cmethod->klass) && mono_class_is_ginst (cmethod->klass)) {
+		if (mono_class_is_interface (cmethod->klass) && mono_class_is_ginst (cmethod->klass) &&
+		    (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT)) {
 			/*
 			 * The parent classes implement no generic interfaces, so the called method will be a vtype method, so no boxing neccessary.
 			 */
+			/* If the method is not abstract, it's a default interface method, and we need to box */
 			need_box = FALSE;
 		}
 
@@ -7385,6 +7386,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 				}
 			}
+
+#ifdef ENABLE_NETCORE
+			if (save_last_error) {
+				mono_emit_jit_icall (cfg, mono_marshal_clear_last_error, NULL);
+			}
+#endif
 
 			/* Tail prefix / tailcall optimization */
 

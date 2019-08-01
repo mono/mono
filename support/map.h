@@ -797,6 +797,8 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_NONBLOCK  Mono_Posix_OpenFlags_O_NONBLOCK
 	Mono_Posix_OpenFlags_O_PATH            = 0x00200000,
 	#define Mono_Posix_OpenFlags_O_PATH      Mono_Posix_OpenFlags_O_PATH
+	Mono_Posix_OpenFlags_O_NOATIME         = 0x00040000,
+	#define Mono_Posix_OpenFlags_O_NOATIME   Mono_Posix_OpenFlags_O_NOATIME
 	Mono_Posix_OpenFlags_O_RDONLY          = 0x00000000,
 	#define Mono_Posix_OpenFlags_O_RDONLY    Mono_Posix_OpenFlags_O_RDONLY
 	Mono_Posix_OpenFlags_O_RDWR            = 0x00000002,

@@ -376,6 +376,9 @@ mono_marshal_ftnptr_eh_callback (guint32 gchandle);
 MONO_PAL_API void
 mono_marshal_set_last_error (void);
 
+void
+mono_marshal_clear_last_error (void);
+
 guint
 mono_type_to_ldind (MonoType *type);
 
@@ -595,10 +598,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr);
 ICALL_EXPORT
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr);
-
-ICALL_EXPORT
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);
 
 ICALL_EXPORT
 int

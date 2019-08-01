@@ -34,6 +34,7 @@ namespace System.Net.Http
 	public class HttpResponseMessage : IDisposable
 	{
 		HttpResponseHeaders headers;
+		HttpResponseHeaders trailingHeaders;
 		string reasonPhrase;
 		HttpStatusCode statusCode;
 		Version version;
@@ -136,6 +137,15 @@ namespace System.Net.Http
 			sb.Append ("}");
 			
 			return sb.ToString ();
+		}
+
+		public HttpResponseHeaders TrailingHeaders {
+			get {
+				if (trailingHeaders == null)
+					trailingHeaders = new HttpResponseHeaders ();
+
+				return trailingHeaders;
+			}
 		}
 	}
 }

@@ -7,13 +7,20 @@ ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
+android_TPN_DIR = $(TOP)/sdks/out/android-tpn
 android_HOST_DARWIN_LIB_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/lib
 android_HOST_DARWIN_BIN_DIR = $(TOP)/sdks/out/android-host-Darwin-$(CONFIGURATION)/bin
 android_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
+ifneq (,$(filter $(UNAME),Darwin Linux))
+android_ARCHIVE += android-sources android-tpn
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR) $(android_TPN_DIR)
+endif
+
 ifeq ($(UNAME),Darwin)
-android_ARCHIVE += android-sources
-ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
+ANDROID_LIBCLANG = $(ANDROID_TOOLCHAIN_DIR)/ndk/toolchains/llvm/prebuilt/darwin-x86_64/lib64/libclang.dylib
+else ifeq ($(UNAME),Linux)
+ANDROID_LIBCLANG = $(ANDROID_TOOLCHAIN_DIR)/ndk/toolchains/llvm/prebuilt/linux-x86_64/lib64/libclang.so.8svn
 endif
 
 ##
@@ -134,7 +141,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter \
+	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter,gac \
 	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-btls-android-api=$$(ANDROID_SDK_VERSION_$(1)) \
@@ -335,11 +342,11 @@ endif
 #  $(2): host arch
 #  $(3): target arch
 #  $(4): device target (armeabi-v7a, arm64-v8a, x86 or x86_64)
-#  $(5): llvm (llvm32, llvm64, llvmwin32 or llvmwin64)
+#  $(5): llvm (llvm64 or llvmwin64)
 #  $(6): offsets dumper abi
 define AndroidCrossTemplate
 
-_android-$(1)_OFFSETS_DUMPER_ARGS=--gen-android --android-ndk="$$(ANDROID_TOOLCHAIN_DIR)/ndk"
+_android-$(1)_OFFSETS_DUMPER_ARGS=--libclang="$$(ANDROID_LIBCLANG)" --sysroot="$$(ANDROID_TOOLCHAIN_DIR)/ndk/sysroot"
 
 _android-$(1)_AR=ar
 _android-$(1)_AS=as
@@ -377,7 +384,7 @@ endef
 #  $(2): host arch
 #  $(3): target arch
 #  $(4): device target (armeabi-v7a, arm64-v8a, x86 or x86_64)
-#  $(5): llvm (llvm32, llvm64, llvmwin32 or llvmwin64)
+#  $(5): llvm (llvm64 or llvmwin64)
 #  $(6): offsets dumper abi
 define AndroidCrossTemplateStub
 
@@ -386,9 +393,9 @@ $$(eval $$(call CrossRuntimeTemplateStub,android,$(1),$$(if $$(filter $$(UNAME),
 endef
 
 ifeq ($(UNAME),Windows)
-$(eval $(call AndroidCrossTemplateStub,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplateStub,cross-arm,x86_64,armv7,armeabi-v7a,llvm-llvm64,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossTemplateStub,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossTemplateStub,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplateStub,cross-x86,x86_64,i686,x86,llvm-llvm64,i686-none-linux-android))
 $(eval $(call AndroidCrossTemplateStub,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
 else
 $(eval $(call AndroidCrossTemplate,cross-arm,x86_64,armv7,armeabi-v7a,llvm-llvm64,armv7-none-linux-androideabi))
@@ -407,7 +414,7 @@ endif
 #  $(6): offsets dumper abi
 define AndroidCrossMXETemplate
 
-_android-$(1)_OFFSETS_DUMPER_ARGS=--gen-android --android-ndk="$$(ANDROID_TOOLCHAIN_DIR)/ndk"
+_android-$(1)_OFFSETS_DUMPER_ARGS=--libclang="$$(ANDROID_LIBCLANG)" --sysroot="$$(ANDROID_TOOLCHAIN_DIR)/ndk/sysroot"
 
 _android-$(1)_PATH=$$(MXE_PREFIX)/bin
 
@@ -468,14 +475,14 @@ $$(eval $$(call CrossRuntimeTemplateStub,android,$(1),$(2)-w64-mingw32,$(3)-linu
 endef
 
 ifneq ($(UNAME),Windows)
-$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossMXETemplate,cross-arm-win,x86_64,armv7,armeabi-v7a,llvm-llvmwin64,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86-win,x86_64,i686,x86,llvm-llvmwin64,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 else
-$(eval $(call AndroidCrossMXETemplateStub,cross-arm-win,i686,armv7,armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossMXETemplateStub,cross-arm-win,x86_64,armv7,armeabi-v7a,llvm-llvmwin64,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossMXETemplateStub,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplateStub,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplateStub,cross-x86-win,x86_64,i686,x86,llvm-llvmwin64,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplateStub,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 endif
 
@@ -491,6 +498,12 @@ $(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel f
 	cd $(TOP) && rsync -r --include='*.cs' --include="README.md" --include="*/" --exclude="*" external/linker $(android_SOURCES_DIR)/external
 
 $(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
+
+$(android_TPN_DIR)/LICENSE:
+	mkdir -p $(android_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(android_TPN_DIR)
+
+$(android_TPN_DIR): $(android_TPN_DIR)/LICENSE
 
 $(android_HOST_DARWIN_LIB_DIR)/.stamp-android-loader-path: package-android-host-Darwin
 	$(android_PLATFORM_BIN)/install_name_tool -id @loader_path/libmonosgen-2.0.dylib $(android_HOST_DARWIN_LIB_DIR)/libmonosgen-2.0.dylib

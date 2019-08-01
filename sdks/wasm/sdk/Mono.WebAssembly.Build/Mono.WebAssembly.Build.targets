@@ -51,10 +51,24 @@
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
 
+		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\threads-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\threads-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)threads-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
 		<ItemGroup>
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js" TargetPath="mono.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm" TargetPath="mono.wasm" />
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.worker.js" TargetPath="mono.worker.js" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm.map" TargetPath="mono.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js.mem" TargetPath="mono.js.mem" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
 		</ItemGroup>
 
 		<AssignTargetPath

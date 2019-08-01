@@ -14,6 +14,7 @@
  */
 #include <config.h>
 #include "mono/utils/mono-membar.h"
+#include "mono/metadata/assembly-internals.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/metadata-internals.h"
@@ -1520,7 +1521,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	while (g_ascii_isspace (*p))
 		p++;
 	while (*p) {
-		if (*p == 'V' && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
+		if ((*p == 'V' || *p == 'v') && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
 			p += 8;
 			assembly->major = strtoul (p, &s, 10);
 			if (s == p || *s != '.')
@@ -1538,7 +1539,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 			if (s == p)
 				return 1;
 			p = s;
-		} else if (*p == 'C' && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
+		} else if ((*p == 'C' || *p == 'c') && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
 			p += 8;
 			if (g_ascii_strncasecmp (p, "neutral", 7) == 0) {
 				assembly->culture = "";
@@ -1549,7 +1550,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 					p++;
 				}
 			}
-		} else if (*p == 'P' && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
+		} else if ((*p == 'P' || *p == 'p') && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
 			p += 15;
 			if (strncmp (p, "null", 4) == 0) {
 				p += 4;
@@ -1562,7 +1563,9 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 				len = (p - start + 1);
 				if (len > MONO_PUBLIC_KEY_TOKEN_LENGTH)
 					len = MONO_PUBLIC_KEY_TOKEN_LENGTH;
-				g_strlcpy ((char*)assembly->public_key_token, start, len);
+				char* pkt_lower = g_ascii_strdown (start, len);
+				g_strlcpy ((char*) assembly->public_key_token, pkt_lower, len);
+				g_free (pkt_lower);
 			}
 		} else {
 			while (*p && *p != ',')
@@ -1930,7 +1933,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 	error_init (error);
 
 	if (info->assembly.name) {
-		MonoAssembly *assembly = mono_assembly_loaded_full (&info->assembly, FALSE);
+		MonoAssembly *assembly = mono_assembly_loaded_internal (mono_domain_ambient_alc (mono_domain_get ()), &info->assembly, FALSE);
 		if (!assembly && image && image->assembly && mono_assembly_names_equal (&info->assembly, &image->assembly->aname))
 			/* 
 			 * This could happen in the AOT compiler case when the search hook is not

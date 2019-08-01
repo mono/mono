@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\..\mcs\class\Open.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+</Project>

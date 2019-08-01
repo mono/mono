@@ -5,3 +5,17 @@ systems that might have shipped older versions of zlib and to reduce
 dependencies.
 
 They were imported in Oct 22 2010.
+
+---------------------------------------------------------------------------------------------------
+
+Updated to 1.2.11 July 2019
+Sources of truth:
+	https://packages.ubuntu.com/disco/zlib1g (or newer, but you get the idea)
+	https://packages.debian.org/stretch/zlib1g-dev (or newer, but you get the idea)
+	https://github.com/madler/zlib/tree/master
+	https://github.com/madler/zlib/tree/develop
+	mono commit b5a0b8e0a8bb2fe790dc2f34a1a846f8efc470db (57ea99c5011aa2d9ce2be308041aafe76a469e5c)
+	Possibly other mono commits.
+
+Debian matches master
+Ubuntu 1804 has one commit from devel and one extra function for compat.

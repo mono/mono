@@ -224,8 +224,7 @@ mono_process_list (int *size)
 	*size = i;
 
 cleanup:
-	if (procs)
-		g_free (procs);
+	g_free (procs);
 	return buf;
 #else
 	const char *name;
@@ -980,7 +979,7 @@ mono_atexit (void (*func)(void))
 #ifndef HOST_WIN32
 
 gboolean
-mono_pe_file_time_date_stamp (gunichar2 *filename, guint32 *out)
+mono_pe_file_time_date_stamp (const gunichar2 *filename, guint32 *out)
 {
 	void *map_handle;
 	gint32 map_size;
@@ -1012,7 +1011,7 @@ mono_pe_file_time_date_stamp (gunichar2 *filename, guint32 *out)
 }
 
 gpointer
-mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
+mono_pe_file_map (const gunichar2 *filename, gint32 *map_size, void **handle)
 {
 	gchar *filename_ext = NULL;
 	gchar *located_filename = NULL;
@@ -1030,11 +1029,9 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	// This block was added to diagnose https://github.com/mono/mono/issues/14730, remove after resolved
 	if (G_UNLIKELY (filename_ext == NULL)) {
 		GString *raw_bytes = g_string_new (NULL);
-		char *p = (char*)filename;
-		while (*p != 0) {
-			g_string_append_printf (raw_bytes, "%02X ", (int)*p);
-			p++;
-		}
+		const gunichar2 *p = filename;
+		while (*p)
+			g_string_append_printf (raw_bytes, "%04X ", *p++);
 		g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; input was: %s", __func__, mono_error_get_message (error), raw_bytes->str);
 		g_string_free (raw_bytes, TRUE);
 	}

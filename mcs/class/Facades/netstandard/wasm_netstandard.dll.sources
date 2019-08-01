@@ -1,0 +1,4 @@
+#include netstandard.dll.sources
+
+../../../../external/corefx/src/System.Web.HttpUtility/src/System/Web/HttpUtility.cs
+../../../../external/corefx/src/System.Web.HttpUtility/src/System/Web/Util/*.cs
