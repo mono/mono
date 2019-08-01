@@ -1856,16 +1856,16 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 }
 #endif
 
-void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
+void
+mono_thread_set_name_internal (MonoInternalThread *this_obj,
+			       MonoString *name,
+			       MonoSetThreadNameFlags flags, MonoError *error)
 {
 	MonoNativeThreadId tid = 0;
 
 	LOCK_THREAD (this_obj);
 
-	error_init (error);
-
-	if (reset) {
+	if (flags & MonoSetThreadNameFlag_Reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
@@ -1881,7 +1881,7 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 		this_obj->name = g_memdup (mono_string_chars_internal (name), mono_string_length_internal (name) * sizeof (gunichar2));
 		this_obj->name_len = mono_string_length_internal (name);
 
-		if (permanent)
+		if (flags & MonoSetThreadNameFlag_Permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
 	}
 	else
@@ -1905,7 +1905,7 @@ void
 ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
 {
 	ERROR_DECL (error);
-	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, error);
+	mono_thread_set_name_internal (this_obj, name, MonoSetThreadNameFlag_Permanent, error);
 	mono_error_set_pending_exception (error);
 }
 
@@ -2994,24 +2994,6 @@ ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr)
 	return tmp;
 }
 
-gint8
-ves_icall_System_Threading_Volatile_Read1 (void *ptr)
-{
-	return mono_atomic_load_i8 ((volatile gint8 *)ptr);
-}
-
-gint16
-ves_icall_System_Threading_Volatile_Read2 (void *ptr)
-{
-	return mono_atomic_load_i16 ((volatile gint16 *)ptr);
-}
-
-gint32
-ves_icall_System_Threading_Volatile_Read4 (void *ptr)
-{
-	return mono_atomic_load_i32 ((volatile gint32 *)ptr);
-}
-
 gint64
 ves_icall_System_Threading_Volatile_Read8 (void *ptr)
 {
@@ -3042,12 +3024,6 @@ ves_icall_System_Threading_Volatile_ReadU8 (void *ptr)
 	return (guint64)mono_atomic_load_i64 ((volatile gint64 *)ptr);
 }
 
-void *
-ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr)
-{
-	return mono_atomic_load_ptr ((volatile gpointer *)ptr);
-}
-
 double
 ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 {
@@ -3066,22 +3042,6 @@ ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 	u.ival = mono_atomic_load_i64 ((volatile gint64 *)ptr);
 
 	return u.fval;
-}
-
-float
-ves_icall_System_Threading_Volatile_ReadFloat (void *ptr)
-{
-	IntFloatUnion u;
-
-	u.ival = mono_atomic_load_i32 ((volatile gint32 *)ptr);
-
-	return u.fval;
-}
-
-MonoObject*
-ves_icall_System_Threading_Volatile_Read_T (void *ptr)
-{
-	return (MonoObject *)mono_atomic_load_ptr ((volatile gpointer *)ptr);
 }
 
 void
@@ -3141,24 +3101,6 @@ ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float value)
 }
 
 void
-ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8 value)
-{
-	mono_atomic_store_i8 ((volatile gint8 *)ptr, value);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16 value)
-{
-	mono_atomic_store_i16 ((volatile gint16 *)ptr, value);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32 value)
-{
-	mono_atomic_store_i32 ((volatile gint32 *)ptr, value);
-}
-
-void
 ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64 value)
 {
 #if SIZEOF_VOID_P == 4
@@ -3189,12 +3131,6 @@ ves_icall_System_Threading_Volatile_WriteU8 (void *ptr, guint64 value)
 }
 
 void
-ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *value)
-{
-	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
-}
-
-void
 ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 {
 	LongDoubleUnion u;
@@ -3211,22 +3147,6 @@ ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 	u.fval = value;
 
 	mono_atomic_store_i64 ((volatile gint64 *)ptr, u.ival);
-}
-
-void
-ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float value)
-{
-	IntFloatUnion u;
-
-	u.fval = value;
-
-	mono_atomic_store_i32 ((volatile gint32 *)ptr, u.ival);
-}
-
-void
-ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value)
-{
-	mono_gc_wbarrier_generic_store_atomic_internal (ptr, value);
 }
 
 static void
@@ -4012,6 +3932,21 @@ collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
 	return ud.nthreads;
 }
 
+void
+mono_gstring_append_thread_name (GString* text, MonoInternalThread* thread)
+{
+	// FIXME Conversion here is temporary. thread->name will change to UTF8.
+	char* const name = thread->name
+				? g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, NULL)
+				: NULL;
+	g_string_append (text, "\n\"");
+	g_string_append (text,               name ? name :
+			thread->threadpool_thread ? "<threadpool thread>" :
+						    "<unnamed thread>");
+	g_string_append (text, "\"");
+	g_free (name);
+}
+
 static void
 dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_file)
 {
@@ -4033,17 +3968,7 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_fi
 	/*
 	 * Do all the non async-safe work outside of get_thread_dump.
 	 */
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &gerror);
-		g_assert (!gerror);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
-	else if (thread->threadpool_thread) {
-		g_string_append (text, "\n\"<threadpool thread>\"");
-	} else {
-		g_string_append (text, "\n\"<unnamed thread>\"");
-	}
+	mono_gstring_append_thread_name (text, thread);
 
 	for (i = 0; i < ud->nframes; ++i) {
 		MonoStackFrameInfo *frame = &ud->frames [i];
