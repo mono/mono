@@ -3635,6 +3635,12 @@ mono_assembly_name_get_version (MonoAssemblyName *aname, uint16_t *minor, uint16
 	return aname->major;
 }
 
+gboolean
+mono_assembly_name_culture_is_neutral (const MonoAssemblyName *aname)
+{
+	return (!aname->culture || aname->culture [0] == 0);
+}
+
 static MonoAssembly*
 probe_for_partial_name (const char *basepath, const char *fullname, MonoAssemblyName *aname, MonoImageOpenStatus *status)
 {
