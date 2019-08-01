@@ -4239,6 +4239,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
 				goto_if_nok (error, exit);
+				/* The constructor was not inlined, abort inlining of current method */
+				INLINE_FAILURE;
 
 				td->sp -= csignature->param_count;
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
