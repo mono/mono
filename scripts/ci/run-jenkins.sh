@@ -17,13 +17,12 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 	# Skip lanes which are not affected by the PR
 	diff_url=`echo $ghprbPullLink`.diff
 	wget -O pr-contents.diff $diff_url
-	grep '^diff' pr-contents.diff > pr-files.txt
+	# FIXME:
+	grep '^diff' pr-contents.diff | grep -v scripts > pr-files.txt
 	cat pr-files.txt
 
 	# FIXME: Add more
-	if grep -q -v a/netcore pr-files.txt; then
-		true;
-	else 
+	if ! grep -q -v a/netcore pr-files.txt; then
 		echo "NetCore only PR, skipping."
 		${TESTCMD} --label="Skipped on NETCORE." --timeout=60m --fatal sh -c 'exit 0'
 	fi
