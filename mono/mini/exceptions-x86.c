@@ -137,8 +137,6 @@ mono_win32_get_handle_stackoverflow (void)
 static void 
 win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 {
-	SYSTEM_INFO si;
-	DWORD page_size;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo rji;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
@@ -149,10 +147,6 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 	StackFrameInfo frame;
 
 	mono_sigctx_to_monoctx (sctx, &ctx);
-	
-	/* get our os page size */
-	GetSystemInfo(&si);
-	page_size = si.dwPageSize;
 
 	/* Let's walk the stack to recover
 	 * the needed stack space (if possible)
