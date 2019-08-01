@@ -26,6 +26,8 @@
 		  <method name="MonoResolveUsingLoad" />
 		  <!-- assembly-load-context.c: mono_alc_invoke_resolve_using_resolving_event -->
 		  <method name="MonoResolveUsingResolvingEvent" />
+		  <!-- assembly-load-context.c: mono_alc_invoke_resolve_using_resolve_satellite -->
+		  <method name="MonoResolveUsingResolveSatelliteAssembly" />
 		</type>
 		
 		<!-- marshal.c: emit_marshal_custom (should not be used on devices)

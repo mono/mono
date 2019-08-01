@@ -58,6 +58,9 @@ mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAss
 MonoAssembly*
 mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname);
 
+MonoAssembly*
+mono_alc_invoke_resolve_using_resolve_satellite_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname);
+
 #endif /* ENABLE_NETCORE */
 
 MonoLoadedImages *

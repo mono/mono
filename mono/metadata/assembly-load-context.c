@@ -163,4 +163,40 @@ mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *a
 
 	return result;
 }
+
+static MonoAssembly*
+mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
+{
+	static MonoMethod *resolve;
+
+	if (!resolve) {
+		ERROR_DECL (local_error);
+		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
+		g_assert (alc_class);
+		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
+		mono_error_assert_ok (local_error);
+		resolve = m;
+	}
+	g_assert (resolve);
+
+	return invoke_resolve_method (resolve, alc, aname, error);
+}
+
+MonoAssembly*
+mono_alc_invoke_resolve_using_resolve_satellite_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname)
+{
+	MonoAssembly *result = NULL;
+	ERROR_DECL (error);
+
+	result = mono_alc_invoke_resolve_using_resolve_satellite (alc, aname, error);
+	if (!is_ok (error))
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Error while invoking ALC ResolveSatelliteAssembly(\"%s\") method: '%s'", aname->name, mono_error_get_message (error));
+
+	mono_error_cleanup (error);
+
+	return result;
+}
+
+
+
 #endif /* ENABLE_NETCORE */

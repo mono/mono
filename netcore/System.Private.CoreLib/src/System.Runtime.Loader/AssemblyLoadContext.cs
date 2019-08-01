@@ -129,6 +129,14 @@ namespace System.Runtime.Loader
 			return ResolveUsingResolvingEvent (gchALC, new AssemblyName (assemblyName));
 		}
 
+		// Invoked by Mono to resolve using the Resolving event after
+		// trying the Load overried and TPA load context without
+		// success.
+		private static Assembly? MonoResolveUsingResolveSatelliteAssembly (IntPtr gchALC, string assemblyName)
+		{
+			return ResolveSatelliteAssembly (gchALC, new AssemblyName (assemblyName));
+		}
+
 
 #region Copied from AssemblyLoadContext.CoreCLR.cs
 		// WISH: let's share this code
