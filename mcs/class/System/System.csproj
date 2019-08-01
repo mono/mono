@@ -451,6 +451,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddressParser.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPEndPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\MultipleConnectAsync.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\ClientWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\ClientWebSocketOptions.cs" />
@@ -712,7 +713,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketType.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TransmitFileFlags.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UdpReceiveResult.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\Sockets\_MultipleConnectAsync.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\TransportContext.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\TransportType.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\UnicodeDecodingConformance.cs" />
