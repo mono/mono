@@ -47,4 +47,12 @@ ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalInitializeNativeALC 
 	return alc;
 }
 
+gpointer
+ves_icall_System_Runtime_Loader_AssemblyLoadContext_GetLoadContextForAssembly (MonoReflectionAssemblyHandle assm_obj, MonoError *error)
+{
+	MonoAssembly *assm = MONO_HANDLE_GETVAL (assm_obj, assembly);
+	MonoAssemblyLoadContext *alc = mono_assembly_get_alc (assm);
+
+	return GUINT_TO_POINTER (alc->gchandle);
+}
 #endif /* ENABLE_NETCORE */
