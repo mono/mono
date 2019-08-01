@@ -3878,7 +3878,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 #ifndef RUNTIME_IL2CPP
 					MonoDebugSourceInfo *sinfo;
 #endif // !RUNTIME_IL2CPP
-					char *source_file, *s;
+					char *s;
 					gboolean found = FALSE;
 					int i;
 					GPtrArray *source_file_list;
@@ -3902,7 +3902,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 						MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
 
 						if (minfo) {
-							mono_debug_get_seq_points (minfo, &source_file, &source_file_list, NULL, NULL, NULL);
+							mono_debug_get_seq_points (minfo, NULL, &source_file_list, NULL, NULL, NULL);
 							for (i = 0; i < source_file_list->len; ++i) {
 								sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, i);
 								found = find_source_file_in_hash_table(sinfo->source_file, mod->data.source_files);
