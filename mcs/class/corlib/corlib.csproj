@@ -1929,7 +1929,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -2453,7 +2455,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
@@ -2535,7 +2539,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
@@ -2788,7 +2794,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
@@ -3354,6 +3362,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
@@ -3609,6 +3618,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
@@ -3864,6 +3874,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
@@ -4117,7 +4128,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -4366,7 +4379,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -4615,7 +4630,9 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -5145,7 +5162,9 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
@@ -5398,7 +5417,9 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
@@ -5651,7 +5672,9 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Symlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
