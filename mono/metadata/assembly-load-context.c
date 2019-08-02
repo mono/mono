@@ -50,13 +50,13 @@ mono_alc_cleanup (MonoAssemblyLoadContext *alc)
 	 *     converting domain_assemblies to a doubly-linked list, ideally GQueue
 	 * + Close dynamic and then remaining assemblies, potentially nulling the data field depending on refcount
 	 * + Second pass to call mono_assembly_close_finish on remaining assemblies
+	 * + Free the loaded_assemblies list itself
 	 */
 
-	mono_loaded_images_free (alc->loaded_images);
-
-	g_slist_free (alc->loaded_assemblies);
 	alc->loaded_assemblies = NULL;
 	mono_coop_mutex_destroy (&alc->assemblies_lock);
+
+	mono_loaded_images_free (alc->loaded_images);
 
 	g_assert_not_reached ();
 }
