@@ -210,45 +210,57 @@ public unsafe struct NodeTestFixedArray
 	{
 		set
 		{
-			this.buffer[0] = (short)value.w;
-			this.buffer[1] = (short)value.x;
-			this.buffer[2] = (short)value.y;
-			this.buffer[3] = (short)value.z;
+			fixed (NodeTestFixedArray* p = &this) {
+				p->buffer[0] = (short)value.w;
+				p->buffer[1] = (short)value.x;
+				p->buffer[2] = (short)value.y;
+				p->buffer[3] = (short)value.z;
+			}
 		}
 	}
 	public char4 Buffer2
 	{
 		set
 		{
-			this.buffer2[0] = (char)value.w;
-			this.buffer2[1] = (char)value.x;
-			this.buffer2[2] = (char)value.y;
-			this.buffer2[3] = (char)value.z;
+			fixed (NodeTestFixedArray* p = &this) {
+				p->buffer2[0] = (char)value.w;
+				p->buffer2[1] = (char)value.x;
+				p->buffer2[2] = (char)value.y;
+				p->buffer2[3] = (char)value.z;
+			}
 		}
 	}
 	public String getBuffer0() {
-		return Convert.ToString(this.buffer[0]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[0]);
 	}
 	public String getBuffer1() {
-		return Convert.ToString(this.buffer[1]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[1]);
 	}
 	public String getBuffer2() {
-		return Convert.ToString(this.buffer[2]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[2]);
 	}
 	public String getBuffer3() {
-		return Convert.ToString(this.buffer[3]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[3]);
 	}
 	public String getBuffer2_0() {
-		return Char.ToString(this.buffer2[0]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[0]);
 	}
 	public String getBuffer2_1() {
-		return Char.ToString(this.buffer2[1]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[1]);
 	}
 	public String getBuffer2_2() {
-		return Char.ToString(this.buffer2[2]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[2]);
 	}
 	public String getBuffer2_3() {
-		return Char.ToString(this.buffer2[3]);
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[3]);
 	}
 }
 
