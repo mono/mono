@@ -3035,8 +3035,11 @@ unload_thread_main (void *arg)
 	}
 
 	/* Clear references to our vtables in class->runtime_info.
+	 * We also hold the loader lock because we're going to change		
+ 	 * class->runtime_info.
 	 */
 
+	mono_loader_lock ();
 	mono_domain_lock (domain);
 	/*
 	 * We need to make sure that we don't have any remsets
@@ -3057,6 +3060,7 @@ unload_thread_main (void *arg)
 	mono_assembly_cleanup_domain_bindings (domain->domain_id);
 
 	mono_domain_unlock (domain);
+	mono_loader_unlock ();
 
 	domain->state = MONO_APPDOMAIN_UNLOADED;
 
