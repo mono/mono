@@ -23,7 +23,6 @@ namespace System.Diagnostics {
     using Microsoft.Win32;        
     using Microsoft.Win32.SafeHandles;
     using System.Collections.Specialized;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Security;

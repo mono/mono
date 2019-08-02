@@ -29,13 +29,13 @@
     <ClInclude Include="$(MonoSourceLocation)\support\inffast.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\crc32.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\deflate.h" />
+    <ClInclude Include="$(MonoSourceLocation)\support\gzguts.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\inffixed.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\inflate.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\inftrees.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\map.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\minizip\crypt.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\minizip\ioapi.h" />
-    <ClInclude Include="$(MonoSourceLocation)\support\minizip\iowin32.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\minizip\unzip.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\minizip\zip.h" />
     <ClInclude Include="$(MonoSourceLocation)\support\mph.h" />
