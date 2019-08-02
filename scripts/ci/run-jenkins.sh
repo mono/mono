@@ -15,15 +15,17 @@ source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
 if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 	# Skip lanes which are not affected by the PR
-	diff_url=`echo $ghprbPullLink`.diff
-	wget -O pr-contents.diff $diff_url
+	wget -O pr-contents.diff "${ghprbPullLink}.diff"
 	grep '^diff' pr-contents.diff > pr-files.txt
+    echo "Files affected by the PR:"
 	cat pr-files.txt
 
 	# FIXME: Add more
 	if ! grep -q -v a/netcore pr-files.txt; then
 		echo "NetCore only PR, skipping."
 		${TESTCMD} --label="Skipped on NETCORE." --timeout=60m --fatal sh -c 'exit 0'
+        if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
+        if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
 		exit 0
 	fi
 fi
