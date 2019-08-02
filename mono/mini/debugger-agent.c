@@ -8665,19 +8665,14 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	   
 	switch (command) {
 	case CMD_THREAD_GET_NAME: {
-		guint32 name_len;
-		gunichar2 *s = mono_thread_get_name (thread, &name_len);
+		char *s = mono_thread_get_name_utf8 (thread_obj);
 
 		if (!s) {
 			buffer_add_int (buf, 0);
 		} else {
-			char *name;
-			glong len;
-
-			name = g_utf16_to_utf8 (s, name_len, NULL, &len, NULL);
-			g_assert (name);
+			const size_t len = strlen (s);
 			buffer_add_int (buf, len);
-			buffer_add_data (buf, (guint8*)name, len);
+			buffer_add_data (buf, (guint8*)s, len);
 			g_free (s);
 		}
 		break;
@@ -9681,7 +9676,7 @@ debugger_thread (void *arg)
 	MonoInternalThread *internal = mono_thread_internal_current ();
 	MonoString *str = mono_string_new_checked (mono_domain_get (), "Debugger agent", error);
 	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, str, TRUE, FALSE, error);
+	mono_thread_set_name_internal (internal, str, MonoSetThreadNameFlag_Permanent, error);
 	mono_error_assert_ok (error);
 
 	internal->state |= ThreadState_Background;

@@ -20,6 +20,7 @@ namespace System.Diagnostics {
     using System.IO;   
     using System.ComponentModel.Design;
     using System.Collections.Specialized;
+    using System.Collections.ObjectModel;
     using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
@@ -38,7 +39,8 @@ namespace System.Diagnostics {
     PermissionSet(SecurityAction.LinkDemand, Name="FullTrust"),
     HostProtection(SharedState=true, SelfAffectingProcessMgmt=true)
     ]
-    public sealed partial class ProcessStartInfo {
+	[StructLayout (LayoutKind.Sequential)]
+    public sealed class ProcessStartInfo {
         string fileName;
         string arguments;
         string directory;
@@ -65,6 +67,8 @@ namespace System.Diagnostics {
         bool createNoWindow = false;
         WeakReference weakParentProcess;
         internal StringDictionary environmentVariables;
+
+		static readonly string [] empty = new string [0];
 
         /// <devdoc>
         ///     Default constructor.  At least the <see cref='System.Diagnostics.ProcessStartInfo.FileName'/>
@@ -93,6 +97,17 @@ namespace System.Diagnostics {
         public ProcessStartInfo(string fileName, string arguments) {
             this.fileName = fileName;
             this.arguments = arguments;
+        }
+
+        Collection<string> _argumentList;
+
+        public Collection<string> ArgumentList {
+            get {
+                if (_argumentList == null) {
+                    _argumentList = new Collection<string>();
+                }
+                return _argumentList;
+            }
         }
 
         /// <devdoc>
@@ -457,6 +472,48 @@ namespace System.Diagnostics {
                     throw new InvalidEnumArgumentException("value", (int)value, typeof(ProcessWindowStyle));
                     
                 windowStyle = value;
+            }
+        }
+
+        internal bool HaveEnvVars {
+            get { return (environmentVariables != null); }
+        }
+
+        public Encoding StandardInputEncoding { get; set; }
+
+        [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+        public string[] Verbs {
+            get {
+#if MOBILE
+                return empty;
+#else
+                switch (System.Environment.OSVersion.Platform) {
+                case (PlatformID)4:
+                case (PlatformID)6:
+                case (PlatformID)128:
+                    return empty; // no verb on non-Windows
+                default:
+                    string ext = String.IsNullOrEmpty (fileName) ? null : Path.GetExtension (fileName);
+                    if (ext == null)
+                        return empty;
+
+                    RegistryKey rk = null, rk2 = null, rk3 = null;
+                    try {
+                        rk = Registry.ClassesRoot.OpenSubKey (ext);
+                        string k = rk != null ? rk.GetValue (null) as string : null;
+                        rk2 = k != null ? Registry.ClassesRoot.OpenSubKey (k) : null;
+                        rk3 = rk2 != null ? rk2.OpenSubKey ("shell") : null;
+                        return rk3 != null ? rk3.GetSubKeyNames () : null;
+                    } finally {
+                        if (rk3 != null)
+                            rk3.Close ();
+                        if (rk2 != null)
+                            rk2.Close ();
+                        if (rk != null)
+                            rk.Close ();
+                    }
+                }
+#endif
             }
         }
     }

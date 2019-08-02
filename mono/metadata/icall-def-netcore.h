@@ -57,7 +57,7 @@ HANDLES(ARRAY_13, "SetValueImpl",  ves_icall_System_Array_SetValueImpl, void, 3,
 HANDLES(ARRAY_14, "SetValueRelaxedImpl",  ves_icall_System_Array_SetValueRelaxedImpl, void, 3, (MonoArray, MonoObject, guint32))
 
 ICALL_TYPE(BUFFER, "System.Buffer", BUFFER_1)
-ICALL(BUFFER_1, "_ByteLength", ves_icall_System_Buffer_ByteLengthInternal)
+HANDLES(BUFFER_1, "_ByteLength", ves_icall_System_Buffer_ByteLengthInternal, gint32, 1, (MonoArray))
 NOHANDLES(ICALL(BUFFER_2, "__Memmove", ves_icall_System_Runtime_RuntimeImports_Memmove))
 
 ICALL_TYPE(DELEGATE, "System.Delegate", DELEGATE_1)
@@ -173,7 +173,6 @@ NOHANDLES(ICALL(MATHF_21, "Tanh", ves_icall_System_MathF_Tanh))
 
 ICALL_TYPE(OBJ, "System.Object", OBJ_1)
 HANDLES(OBJ_1, "GetType", ves_icall_System_Object_GetType, MonoReflectionType, 1, (MonoObject))
-ICALL(OBJ_2, "InternalGetHashCode", mono_object_hash_internal)
 HANDLES(OBJ_3, "MemberwiseClone", ves_icall_System_Object_MemberwiseClone, MonoObject, 1, (MonoObject))
 
 ICALL_TYPE(ASSEM, "System.Reflection.Assembly", ASSEM_2)
@@ -324,6 +323,7 @@ ICALL_TYPE(RUNH, "System.Runtime.CompilerServices.RuntimeHelpers", RUNH_1)
 HANDLES(RUNH_1, "GetObjectValue", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetObjectValue, MonoObject, 1, (MonoObject))
 HANDLES(RUNH_2, "GetUninitializedObjectInternal", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetUninitializedObjectInternal, MonoObject, 1, (MonoType_ptr))
 HANDLES(RUNH_3, "InitializeArray", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray, void, 2, (MonoArray, MonoClassField_ptr))
+ICALL(RUNH_7, "InternalGetHashCode", mono_object_hash_internal)
 HANDLES(RUNH_3a, "PrepareMethod", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_PrepareMethod, void, 3, (MonoMethod_ptr, gpointer, int))
 HANDLES(RUNH_4, "RunClassConstructor", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor, void, 1, (MonoType_ptr))
 HANDLES(RUNH_5, "RunModuleConstructor", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor, void, 1, (MonoImage_ptr))
@@ -366,11 +366,11 @@ HANDLES(MARSHAL_31, "SizeOfHelper", ves_icall_System_Runtime_InteropServices_Mar
 HANDLES(MARSHAL_32, "StringToHGlobalAnsi", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi, char_ptr, 2, (const_gunichar2_ptr, int))
 HANDLES(MARSHAL_33, "StringToHGlobalUni", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni, gunichar2_ptr, 2, (const_gunichar2_ptr, int))
 HANDLES(MARSHAL_34, "StructureToPtr", ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr, void, 3, (MonoObject, gpointer, MonoBoolean))
-ICALL(MARSHAL_35, "UnsafeAddrOfPinnedArrayElement", ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement)
 HANDLES(MARSHAL_41, "copy_from_unmanaged_fixed", ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged, void, 5, (gconstpointer, gint32, MonoArray, gint32, gpointer))
 HANDLES(MARSHAL_42, "copy_to_unmanaged_fixed", ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged, void, 5, (MonoArray, gint32, gpointer, gint32, gconstpointer))
 
-ICALL_TYPE(ALC, "System.Runtime.Loader.AssemblyLoadContext", ALC_2)
+ICALL_TYPE(ALC, "System.Runtime.Loader.AssemblyLoadContext", ALC_4)
+HANDLES(ALC_4, "InternalGetLoadedAssemblies", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies, MonoArray, 0, ())
 HANDLES(ALC_2, "InternalInitializeNativeALC", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalInitializeNativeALC, gpointer, 3, (gpointer, MonoBoolean, MonoBoolean))
 HANDLES(ALC_1, "InternalLoadFile", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFile, MonoReflectionAssembly, 3, (gpointer, MonoString, MonoStackCrawlMark_ptr))
 HANDLES(ALC_3, "InternalLoadFromStream", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFromStream, MonoReflectionAssembly, 5, (gpointer, gpointer, gint32, gpointer, gint32))

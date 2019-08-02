@@ -1282,35 +1282,13 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-MonoArrayHandle
-ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
+static MonoArrayHandle
+get_assembly_array_from_domain (MonoDomain *domain, MonoBoolean refonly, MonoError *error)
 {
-	error_init (error);
-	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
-	MonoAssembly* ass;
-	GSList *tmp;
 	int i;
 	GPtrArray *assemblies;
 
-	/* 
-	 * Make a copy of the list of assemblies because we can't hold the assemblies
-	 * lock while creating objects etc.
-	 */
-	assemblies = g_ptr_array_new ();
-	/* Need to skip internal assembly builders created by remoting */
-	mono_domain_assemblies_lock (domain);
-	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
-		ass = (MonoAssembly *)tmp->data;
-		MonoBoolean ass_refonly = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
-		/* .NET Framework GetAssemblies() includes LoadFrom and Load(byte[]) assemblies, too */
-		/* For netcore, this should return all the assemblies in the domain - from every ALC */
-		if (refonly != ass_refonly)
-			continue;
-		if (ass->corlib_internal)
-			continue;
-		g_ptr_array_add (assemblies, ass);
-	}
-	mono_domain_assemblies_unlock (domain);
+	assemblies = mono_domain_get_assemblies (domain, refonly);
 
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_class_get_assembly_class (), assemblies->len, error);
 	goto_if_nok (error, leave);
@@ -1323,6 +1301,22 @@ leave:
 	g_ptr_array_free (assemblies, TRUE);
 	return res;
 }
+
+#ifdef ENABLE_NETCORE
+MonoArrayHandle
+ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies (MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	return get_assembly_array_from_domain (domain, FALSE, error);
+}
+#else
+MonoArrayHandle
+ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
+{
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
+	return get_assembly_array_from_domain (domain, refonly, error);
+}
+#endif
 
 MonoAssembly*
 mono_try_assembly_resolve (MonoDomain *domain, const char *fname_raw, MonoAssembly *requesting, gboolean refonly, MonoError *error)
@@ -3014,7 +3008,7 @@ unload_thread_main (void *arg)
 
 	MonoString *thread_name_str = mono_string_new_checked (mono_domain_get (), "Domain unloader", error);
 	if (is_ok (error))
-		mono_thread_set_name_internal (internal, thread_name_str, TRUE, FALSE, error);
+		mono_thread_set_name_internal (internal, thread_name_str, MonoSetThreadNameFlag_Permanent, error);
 	if (!is_ok (error)) {
 		data->failure_reason = g_strdup (mono_error_get_message (error));
 		goto failure;

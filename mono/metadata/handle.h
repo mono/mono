@@ -217,6 +217,8 @@ Icall macros
 	MONO_RESTORE_WARNING
 
 // Return a non-pointer or non-managed pointer, e.g. gboolean.
+// VAL should be a local variable or at least not use handles in the current frame.
+// i.e. it is "val", not "expr".
 #define HANDLE_FUNCTION_RETURN_VAL(VAL)		\
 	CLEAR_ICALL_FRAME;			\
 	return (VAL);				\
@@ -540,9 +542,6 @@ MonoStringHandle mono_string_new_handle (MonoDomain *domain, const char *data, M
 MonoArrayHandle mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error);
 MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
-
-uintptr_t
-mono_array_handle_length (MonoArrayHandle arr);
 
 #define mono_array_handle_setref(array,index,value) MONO_HANDLE_ARRAY_SETREF ((array), (index), (value))
 

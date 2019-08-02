@@ -267,40 +267,13 @@ ICALL_EXPORT
 void ves_icall_System_Threading_Thread_VolatileWriteDouble (void *ptr, double);
 
 ICALL_EXPORT
-gint8 ves_icall_System_Threading_Volatile_Read1 (void *ptr);
-
-ICALL_EXPORT
-gint16 ves_icall_System_Threading_Volatile_Read2 (void *ptr);
-
-ICALL_EXPORT
-gint32 ves_icall_System_Threading_Volatile_Read4 (void *ptr);
-
-ICALL_EXPORT
 gint64 ves_icall_System_Threading_Volatile_Read8 (void *ptr);
 
 ICALL_EXPORT
 guint64 ves_icall_System_Threading_Volatile_ReadU8 (void *ptr);
 
 ICALL_EXPORT
-void * ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr);
-
-ICALL_EXPORT
 double ves_icall_System_Threading_Volatile_ReadDouble (void *ptr);
-
-ICALL_EXPORT
-float ves_icall_System_Threading_Volatile_ReadFloat (void *ptr);
-
-ICALL_EXPORT
-MonoObject* ves_icall_System_Threading_Volatile_Read_T (void *ptr);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32);
 
 ICALL_EXPORT
 void ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64);
@@ -309,16 +282,7 @@ ICALL_EXPORT
 void ves_icall_System_Threading_Volatile_WriteU8 (void *ptr, guint64);
 
 ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float);
-
-ICALL_EXPORT
 void ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value);
 
 ICALL_EXPORT
 void ves_icall_System_Threading_Thread_MemoryBarrier (void);
@@ -356,14 +320,40 @@ void mono_thread_cleanup_apartment_state (void);
 
 void mono_threads_set_shutting_down (void);
 
-gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len);
-
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 
 ICALL_EXPORT
 void ves_icall_thread_finish_async_abort (void);
 
-MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
+#if HOST_WIN32
+
+void
+mono_thread_set_name_windows (HANDLE thread_handle, PCWSTR thread_name);
+
+#define MONO_THREAD_NAME_WINDOWS_CONSTANT(x) L ## x
+
+#else
+
+#define mono_thread_set_name_windows(thread_handle, thread_name) /* nothing */
+
+#define MONO_THREAD_NAME_WINDOWS_CONSTANT(x) NULL
+
+#endif
+
+typedef enum {
+    MonoSetThreadNameFlag_None      = 0x0000,
+    MonoSetThreadNameFlag_Permanent = 0x0001,
+    MonoSetThreadNameFlag_Reset     = 0x0002,
+    //MonoSetThreadNameFlag_Constant  = 0x0004,
+} MonoSetThreadNameFlags;
+
+G_ENUM_FUNCTIONS (MonoSetThreadNameFlags)
+
+MONO_PROFILER_API
+void
+mono_thread_set_name_internal (MonoInternalThread *thread,
+			       MonoString *name,
+			       MonoSetThreadNameFlags flags, MonoError *error);
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);

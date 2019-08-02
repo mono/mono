@@ -335,6 +335,7 @@ class Driver {
 		public bool LinkerVerbose;
 		public bool EnableZLib;
 		public bool EnableThreads;
+		public bool NativeStrip;
 	}
 
 	int Run (string[] args) {
@@ -382,6 +383,7 @@ class Driver {
 				ILStrip = true,
 				LinkerVerbose = false,
 				EnableZLib = false,
+				NativeStrip = true
 			};
 
 		var p = new OptionSet () {
@@ -417,6 +419,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
+		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -693,6 +696,10 @@ class Driver {
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
 
+		string strip_cmd = "";
+		if (opts.NativeStrip)
+			strip_cmd = " && $wasm_strip $out_wasm";
+
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
 		// Defines
@@ -740,15 +747,15 @@ class Driver {
 		ninja.WriteLine ("  restat = true");
 		ninja.WriteLine ("  description = [CPIFDIFF] $in -> $out");
 		ninja.WriteLine ("rule create-emsdk-env");
-		ninja.WriteLine ("  command = $emscripten_sdkdir/emsdk_env.sh && cp $emscripten_sdkdir/emsdk_set_env.sh $out");
+		ninja.WriteLine ("  command = $emscripten_sdkdir/emsdk construct_env $out");
 		ninja.WriteLine ("rule emcc");
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' {strip_cmd}");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; else touch $$f; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
 		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /deterministic /out:$out /target:library aot-dummy.cs");

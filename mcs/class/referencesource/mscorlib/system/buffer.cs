@@ -136,10 +136,9 @@ namespace System {
 #if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
-#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern byte _GetByte(Array array, int index);
-#if !MONO
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static byte GetByte(Array array, int index)
         {
@@ -167,10 +166,9 @@ namespace System {
 #if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
-#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void _SetByte(Array array, int index, byte value);
-#if !MONO
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void SetByte(Array array, int index, byte value)
         {

@@ -181,7 +181,6 @@
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />
     <ProjectReference Include="../System.Core/System.Core.csproj" />
-    <ProjectReference Include="../System.Data/System.Data.csproj" />
     <ProjectReference Include="../System.XML/System.Xml.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
   </ItemGroup>
