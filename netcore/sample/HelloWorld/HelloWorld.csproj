@@ -4,7 +4,6 @@
     <OutputType>Exe</OutputType>
     <OutputPath>bin</OutputPath>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <DebugType>full</DebugType>
   </PropertyGroup>
 
 </Project>
