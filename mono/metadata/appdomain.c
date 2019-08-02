@@ -120,7 +120,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 
 
 static void
-mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data);
+mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out);
 
 static gboolean
 mono_domain_asmctx_from_path (const char *fname, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
@@ -311,7 +311,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_install_assembly_search_hook_v2 (mono_domain_assembly_search, GUINT_TO_POINTER (TRUE), TRUE, FALSE);
 	mono_install_assembly_search_hook_v2 (mono_domain_assembly_postload_search, GUINT_TO_POINTER (FALSE), FALSE, TRUE);
 	mono_install_assembly_search_hook_v2 (mono_domain_assembly_postload_search, GUINT_TO_POINTER (TRUE), TRUE, TRUE);
-	mono_install_assembly_load_hook (mono_domain_fire_assembly_load, NULL);
+	mono_install_assembly_load_hook_v2 (mono_domain_fire_assembly_load, NULL);
 	mono_install_assembly_asmctx_from_path_hook (mono_domain_asmctx_from_path, NULL);
 
 	mono_thread_init (start_cb, attach_cb);
@@ -363,7 +363,8 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_locks_tracer_init ();
 
 	/* mscorlib is loaded before we install the load hook */
-	mono_domain_fire_assembly_load (mono_defaults.corlib->assembly, NULL);
+	mono_domain_fire_assembly_load (mono_domain_default_alc (domain), mono_defaults.corlib->assembly, NULL, error);
+	goto_if_nok (error, exit);
 
 exit:
 	HANDLE_FUNCTION_RETURN ();
@@ -1489,14 +1490,13 @@ add_assembly_to_alc (MonoAssemblyLoadContext *alc, MonoAssembly *ass)
 #endif
 
 static void
-mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
+mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out)
 {
 	HANDLE_FUNCTION_ENTER ();
 	static MonoClassField *assembly_load_field;
 	static MonoMethod *assembly_load_method;
 	ERROR_DECL (error);
-	MonoDomain *domain = mono_domain_get ();
-	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (domain); // FIXME: pass alc via mono_assembly_invoke_load_hook
+	MonoDomain *domain = mono_alc_domain (alc);
 	MonoClass *klass;
 	MonoObjectHandle appdomain;
 
