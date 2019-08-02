@@ -178,9 +178,6 @@ archive-$(1): package-$(1)-$(2)
 endef
 
 
-$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
-	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
-
 ##
 # Parameters:
 #  $(1): product

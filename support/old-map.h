@@ -10,6 +10,7 @@
 #define Mono_Posix_OpenFlags_O_APPEND 0x00000040
 #define Mono_Posix_OpenFlags_O_NONBLOCK 0x00000080
 #define Mono_Posix_OpenFlags_O_SYNC 0x00000100
+#define Mono_Posix_OpenFlags_O_NOATIME 0x00000200
 
 #define Mono_Posix_FileMode_S_ISUID 0x00000800
 #define Mono_Posix_FileMode_S_ISGID 0x00000400

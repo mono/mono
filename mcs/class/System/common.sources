@@ -16,7 +16,6 @@ System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/Process.cs
 System.Diagnostics/ProcessModule.cs
 System.Diagnostics/ProcessPriorityClass.cs
-System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs

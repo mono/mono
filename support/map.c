@@ -4076,6 +4076,12 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_PATH */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_PATH */
+	if ((x & Mono_Posix_OpenFlags_O_NOATIME) == Mono_Posix_OpenFlags_O_NOATIME)
+#ifdef O_NOATIME
+		*r |= O_NOATIME;
+#else /* def O_NOATIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef O_NOATIME */
 	if ((x & Mono_Posix_OpenFlags_O_RDONLY) == Mono_Posix_OpenFlags_O_RDONLY)
 #ifdef O_RDONLY
 		*r |= O_RDONLY;

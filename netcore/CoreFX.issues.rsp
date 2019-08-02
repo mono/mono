@@ -122,15 +122,6 @@
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndex
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndexMethod
 
-# Expected Float to uint to be 2147483648 but got 0... https://github.com/mono/mono/issues/14931
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToNullableUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToNullableUIntTest
--noclass System.Linq.Expressions.Tests.LambdaTests
--noclass System.Linq.Expressions.Tests.LambdaDivideNullableTests
--nomethod System.Linq.Expressions.Tests.BinaryCoalesceTests.VerifyIL_NullableIntCoalesceToNullableInt
-
 # OOM Exception.  Weird
 # https://github.com/mono/mono/issues/14933
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.SingleNegativeBoundErrorMessage
@@ -138,12 +129,6 @@
 # Arithmetic operation resulted in an overflow.
 # https://github.com/mono/mono/issues/14934
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.MultipleNegativeBoundErrorMessage
-
-# float conv.ovf.un opcodes not supported https://github.com/mono/mono/issues/14945
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToNullableULongTest
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -352,10 +337,6 @@
 # Expected to throw FileLoadException, but we aren't
 # https://github.com/mono/mono/issues/15021
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
-
-# Typename string differs 
-# https://github.com/mono/mono/issues/15023
--nomethod System.Reflection.Tests.GetTypeTests.GetType_EmptyString
 
 # Expected ArgumentException, but none was thrown
 # https://github.com/mono/mono/issues/15024
@@ -766,15 +747,6 @@
 # Assertion differences.  Expects -1, got 0
 # https://github.com/mono/mono/issues/15187
 -nomethod System.Diagnostics.Tests.StackFrameTests.Ctor_SkipFrames_FNeedFileInfo
-
-####################################################################
-##  System.Drawing.Common.Tests
-####################################################################
-
-# Expects OOM, may be large array support?
-# https://github.com/mono/mono/issues/15189
--nomethod System.Drawing.Drawing2D.Tests.ColorBlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
--nomethod System.Drawing.Drawing2D.Tests.BlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
 
 ####################################################################
 ##  System.Numerics.Vectors.Tests
