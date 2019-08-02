@@ -45,6 +45,8 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 		if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
 		exit 0
 	fi
+
+    rm pr-files.txt
 fi
 
 helix_set_env_vars
