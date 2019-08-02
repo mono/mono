@@ -3035,7 +3035,7 @@ unload_thread_main (void *arg)
 	}
 
 	/* Clear references to our vtables in class->runtime_info.
-	 * We also hold the loader lock because we're going to change		
+	 * We also hold the loader lock because we're going to change
  	 * class->runtime_info.
 	 */
 

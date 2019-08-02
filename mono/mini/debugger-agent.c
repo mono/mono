@@ -2230,7 +2230,7 @@ get_agent_domain_info (MonoDomain *domain)
 	AgentDomainInfo *info = NULL;
 	MonoJitDomainInfo *jit_info = domain_jit_info (domain);
 
-	info = (AgentDomainInfo *)domain_jit_info (domain)->agent_info;
+	info = (AgentDomainInfo *)jit_info->agent_info;
 
 	if (info) {
 		mono_memory_read_barrier ();
@@ -2245,7 +2245,7 @@ get_agent_domain_info (MonoDomain *domain)
 
 	mono_memory_write_barrier ();
 
-	gpointer other_info = mono_atomic_cas_ptr (jit_info->agent_info, info, NULL);
+	gpointer other_info = mono_atomic_cas_ptr (&jit_info->agent_info, info, NULL);
 
 	if (other_info != NULL) {
 		g_hash_table_destroy (info->loaded_classes);
@@ -2255,7 +2255,7 @@ get_agent_domain_info (MonoDomain *domain)
 		g_free (info);
 	}
 
-	return jit_info->agent_info;
+	return (AgentDomainInfo *)jit_info->agent_info;
 }
 
 static int
