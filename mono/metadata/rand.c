@@ -49,4 +49,8 @@ ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpoint
 	mono_rand_close (handle);
 }
 
+#else
+
+MONO_EMPTY_SOURCE_FILE (rand);
+
 #endif /* ENABLE_NETCORE */
