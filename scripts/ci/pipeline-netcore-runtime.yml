@@ -106,7 +106,7 @@ jobs:
   - bash: |
       make -C netcore update-tests-corefx
     displayName: 'Download CoreFX Tests'
-    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
+    condition: and(eq(variables['System.TeamProject'], 'public'))
   
   - bash: |
       rm -rf .failures
@@ -119,14 +119,14 @@ jobs:
       done
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
-    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
+    condition: and(eq(variables['System.TeamProject'], 'public'))
 
   - task: PublishTestResults@2
     inputs:
       testRunTitle: $(poolname)
       testResultsFormat: 'XUnit'
       testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
-    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
+    condition: and(eq(variables['System.TeamProject'], 'public'))
 
   - bash: |
       make -C netcore xunit-summary
@@ -136,7 +136,7 @@ jobs:
       fi
     displayName: 'Validate test results'
     timeoutInMinutes: 90
-    condition: and(eq(variables['System.TeamProject'], 'public'), ne(variables['poolname'], 'Hosted VS2017'))
+    condition: and(eq(variables['System.TeamProject'], 'public'))
 
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
