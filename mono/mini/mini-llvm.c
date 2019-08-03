@@ -1297,7 +1297,7 @@ emit_memset (EmitContext *ctx, LLVMBuilderRef builder, LLVMValueRef v, LLVMValue
 	args [aindex ++] = LLVMConstInt (LLVMInt8Type (), 0, FALSE);
 	args [aindex ++] = size;
 #if LLVM_API_VERSION < 900
-	args [aindex ++] = LLVMConstInt (LLVMInt32Type (), MONO_ARCH_FRAME_ALIGNMENT, FALSE);
+	args [aindex ++] = LLVMConstInt (LLVMInt32Type (), alignment, FALSE);
 #endif
 	args [aindex ++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
 	LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMSET), args, aindex, "");
