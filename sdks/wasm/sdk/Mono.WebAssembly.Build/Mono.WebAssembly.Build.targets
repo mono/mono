@@ -95,6 +95,7 @@
 			LinkSkip="$(MonoWasmLinkSkip)"
 			Debug="$(_DebugSymbolsProduced)"
 			I18n="$(MonoWasmI18n)"
+			LinkDescriptions="@(LinkDescription)"
 		/>
 
 		<PropertyGroup>

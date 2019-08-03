@@ -1087,6 +1087,9 @@ type_from_op (MonoCompile *cfg, MonoInst *ins, MonoInst *src1, MonoInst *src2)
 		case STACK_I8:
 			ins->opcode = OP_LCONV_TO_R_UN; 
 			break;
+		case STACK_R8:
+			ins->opcode = OP_FMOVE;
+			break;
 		}
 		break;
 	case MONO_CEE_CONV_OVF_I1:
@@ -4040,7 +4043,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	int realidx1_reg = alloc_preg (cfg);
 	int realidx2_reg = alloc_preg (cfg);
 	int sum_reg = alloc_preg (cfg);
-	int index1, index2, tmpreg;
+	int index1, index2;
 	MonoInst *ins;
 	guint32 size;
 
@@ -4055,7 +4058,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	if (COMPILE_LLVM (cfg)) {
 		/* Not needed */
 	} else {
-		tmpreg = alloc_preg (cfg);
+		int tmpreg = alloc_preg (cfg);
 		MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, tmpreg, index1);
 		index1 = tmpreg;
 		tmpreg = alloc_preg (cfg);
@@ -4064,7 +4067,6 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 #else
 	// FIXME: Do we need to do something here for i8 indexes, like in ldelema_1_ins ?
-	tmpreg = -1;
 #endif
 
 	/* range checking */
