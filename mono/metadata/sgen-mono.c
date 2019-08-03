@@ -2217,14 +2217,127 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		   will raise a STATUS_GUARD_PAGE_VIOLATION and the process will crash. This code uses
 		   VirtualQuery() to determine whether stack_start points into the guard page and then
 		   updates aligned_stack_start to point at the next non-guard page. */
+		//
+		// The above comment is not clear, and somewhat inaccurate, but is on to something.
+		//
+		// Normally the guard page mechanism is transparent.
+		// That is, normally the guard page exception is handled by the kernel, by moving
+		// the guard page down one, and resuming the faulted instruction. No exception is
+		// made visible to the faulting thread.
+		//
+		// What makes this code different and correct, though it could be more efficient,
+		// is that we engage here in reading a thread's stack from another thread.
+		//
+		// The "transparent" case is only when a thread gets a guard page exception
+		// against its own stack. It is not transparent for cross-thread stack accesses.
+		//
+		// This could use some confirming. Ok, confirmed. This program demonstrates the problem:
+		//
+		// #include <windows.h>
+		// #include <stdio.h>
+		//
+		// #pragma optimize ("x", on)
+		//
+		// int volatile * volatile Event1;
+		// int volatile Event2;
+		// HANDLE ThreadHandle;
+		//
+		// DWORD __stdcall thread (void* x)
+		// {
+		// 	while (!Event1)
+		// 		_mm_pause ();
+		//
+		// 	__try {
+		// 		*Event1 = 0x123;
+		// 	} __except (GetExceptionCode () == STATUS_GUARD_PAGE_VIOLATION) {
+		// 		printf ("oops\n");
+		// 	}
+		// 	Event2 = 1;
+		// 	return 0;
+		// }
+		//
+		// int unlucky;
+		// int print = 1;
+		//
+		// __declspec (noinline)
+		// __declspec (safebuffers)
+		// void f (void)
+		// {
+		// 	int local [5];
+		//
+		// 	while (unlucky && ((size_t)_AddressOfReturnAddress () - 8) & 0xFFF)
+		// 		f ();
+		//
+		// 	unlucky = 0;
+		// 	Event1 = local;
+		//
+		// 	while (!Event2)
+		// 		_mm_pause ();
+		//
+		// 	if (print) {
+		// 		printf ("%X\n", local [0]);
+		// 		print = 0;
+		// 	}
+		//
+		// 	if (ThreadHandle) {
+		// 		WaitForSingleObject (ThreadHandle, INFINITE);
+		// 		ThreadHandle = NULL;
+		// 	}
+		// }
+		//
+		// int main (int argc, char** argv)
+		// {
+		// 	unlucky = argc > 1;
+		// 	ThreadHandle = CreateThread (0, 0, thread, 0, 0, 0);
+		// 	f ();
+		// }
+		//
+		// This would seem to be a problem otherwise, not just for garbage collectors.
+		//
+		// However we can do better.
+		// The extent that the stack has been commited, that guard pages
+		// have been touched and moved down, is recorded in NtCurrentTeb ()->StackLimit.
+		//
+		// So rather than pay for the VirtualQuery syscall, we can instead
+		// use the max of rsp and StackLimit. Nothing below StackLimit should be touched
+		// by the garbage collector. Nothing below StackLimit has been touched by the suspended thread.
+		//
+		// The inaccuracy in the comment is that, a crash is easily avoided.
+		// This thread can catch the guard page exception and reset the guard page.
+		//	Race condition, except, the other thread is suspended.
+		// The problem with that is that __try / __except does not work with gcc. It is also slow,
+		// but exceedingly rarely so.
+		//
+		// There is a narrow window generally between stack adjustments
+		// and local variable access, and this is only a problem when reaching new high water marks,
+		// and it only matters when return address is on a different page than locals. The combination
+		// of all three factors is presumably rare but cannot be ruled out.
+		//
+		// A vectored exception handler could also be used.
+		//
+		// VirtualProtect was not allowed in UWP but will be. There is also VirtualProtectFromApp.
+#if 0
 		MEMORY_BASIC_INFORMATION mem_info;
-		SIZE_T result = VirtualQuery(info->client_info.stack_start, &mem_info, sizeof(mem_info));
+		const SIZE_T result = VirtualQuery(info->client_info.stack_start, &mem_info, sizeof(mem_info));
 		g_assert (result != 0);
 		if (mem_info.Protect & PAGE_GUARD) {
 			aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
 		}
+#else // old code vs. new code
+#if 0 // _MSC_VER
+		__try {
+			*(volatile char*)aligned_stack_start;
+		} __except (GetExceptionCode () == STATUS_GUARD_PAGE_VIOLATION) {
+			MEMORY_BASIC_INFORMATION mem_info;
+			const SIZE_T result = VirtualQuery(aligned_stack_start, &mem_info, sizeof(mem_info));
+			g_assert (result >= sizeof (mem_info));
+			VirtualProtect (aligned_stack_start, 1, mem_info.Protect | PAGE_GUARD, &mem_info.Protect);
+		}
+#else // clang / gcc
+		aligned_stack_start = MAX (aligned_stack_start, ((PNT_TIB)info->client_info.info.windows_teb)->StackLimit);
 #endif
-
+#endif
+#endif // HOST_WIN32
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.info.stack_end, (char*)info->client_info.info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
 		if (mono_gc_get_gc_callbacks ()->thread_mark_func && !conservative_stack_mark) {

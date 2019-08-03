@@ -200,8 +200,12 @@ typedef struct _MonoThreadInfo {
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
 
-	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end[ */
+	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end) */
 	void *stack_start_limit, *stack_end;
+
+#if HOST_WIN32
+	struct _TEB* windows_teb;
+#endif
 
 	/* suspend machinery, fields protected by suspend_semaphore */
 	MonoSemType suspend_semaphore;
