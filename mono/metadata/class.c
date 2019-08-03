@@ -1720,15 +1720,6 @@ mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error)
 	return res;
 }
 
-static int
-compare_interface_ids (const void *p_key, const void *p_element)
-{
-	MonoClass *key = (MonoClass *)p_key;
-	MonoClass *element = *(MonoClass **)p_element;
-	
-	return (m_class_get_interface_id (key) - m_class_get_interface_id (element));
-}
-
 /*FIXME verify all callers if they should switch to mono_class_interface_offset_with_variance*/
 int
 mono_class_interface_offset (MonoClass *klass, MonoClass *itf)
@@ -4064,6 +4055,8 @@ mono_generic_param_get_base_type (MonoClass *klass)
 	g_assert (mono_type_is_generic_argument (type));
 
 	MonoGenericParam *gparam = type->data.generic_param;
+
+	g_assert (gparam->owner && !gparam->owner->is_anonymous);
 
 	MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
 

@@ -99,7 +99,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../../class/lib/wasm/Facades</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY;SYSTEM_WEB_IMPLEMENTATION</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -130,7 +130,13 @@
       <ItemGroup />
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
-      <ItemGroup />
+      <ItemGroup>
+        <Compile Include="..\..\..\..\external\corefx\src\System.Web.HttpUtility\src\System\Web\HttpUtility.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Web.HttpUtility\src\System\Web\Util\HttpEncoder.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Web.HttpUtility\src\System\Web\Util\HttpEncoderUtility.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Web.HttpUtility\src\System\Web\Util\UriUtil.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Web.HttpUtility\src\System\Web\Util\Utf16StringValidator.cs" />
+      </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
       <ItemGroup />
@@ -244,7 +250,6 @@
     <ProjectReference Include="../System.Drawing.Common/Facades_System.Drawing.Common.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
     <ProjectReference Include="../System.Drawing.Common/Facades_System.Drawing.Common.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->

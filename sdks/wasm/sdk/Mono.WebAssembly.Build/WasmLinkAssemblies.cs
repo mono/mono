@@ -65,6 +65,12 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public string I18n { get; set; }
 
+		/// <summary>
+		/// Custom Linker Configurations
+		/// </summary>
+		public ITaskItem[] LinkDescriptions { get; set; }
+
+
 		protected override string ToolName => (InvokeLinkerUsingMono) ? "mono" : "monolinker.exe";
 		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
                                                .IsOSPlatform(OSPlatform.Windows);
@@ -157,6 +163,15 @@ namespace Mono.WebAssembly.Build
 
 			arguments = arguments.AddRange ("-b", Debug.ToString());
 			arguments = arguments.AddRange ("-v", Debug.ToString());
+
+			// add custom link descriptions
+			// to ensure the type, methods and/or fields are not eliminated from your application.
+			if (LinkDescriptions != null) {
+				foreach (var desc in LinkDescriptions) {
+					var l = desc.GetMetadata ("FullPath");
+					arguments = arguments.AddRange ("-x", l);
+				}
+			}
 
 			arguments = arguments.AddRange ("-a", RootAssembly[0].GetMetadata ("FullPath"));
 

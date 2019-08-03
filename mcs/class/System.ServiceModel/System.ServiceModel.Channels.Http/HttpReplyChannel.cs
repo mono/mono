@@ -171,9 +171,9 @@ namespace System.ServiceModel.Channels.Http
 
 			Message msg = null;
 
-			if (ctxi.Request.HttpMethod == "POST")
+			if (ctxi.Request.HttpMethod == "POST" || ctxi.Request.HttpMethod == "PUT")
 				msg = CreatePostMessage (ctxi);
-			else if (ctxi.Request.HttpMethod == "GET")
+			else if (ctxi.Request.HttpMethod == "GET" || ctxi.Request.HttpMethod == "DELETE" || ctxi.Request.HttpMethod == "OPTIONS")
 				msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
 
 			if (msg == null)
