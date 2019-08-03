@@ -11,6 +11,8 @@
 
 #include <config.h>
 
+#ifndef ENABLE_NETCORE
+
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/image.h>
@@ -640,3 +642,5 @@ ves_icall_System_Security_SecureString_EncryptInternal (MonoArrayHandle data, Mo
 {
 	mono_invoke_protected_memory_method (data, scope, "Protect", &mono_method_securestring_encrypt, error);
 }
+
+#endif /* ENABLE_NETCORE */
