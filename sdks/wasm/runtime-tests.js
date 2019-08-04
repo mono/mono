@@ -165,7 +165,7 @@ var Module = {
 			function () {
 				App.init ();
 			},
-			function (asset ) 
+			function (asset)
 			{
 			  if (typeof window != 'undefined') {
 				return fetch (asset, { credentials: 'same-origin' });
@@ -291,6 +291,7 @@ var App = {
 
 			if (is_browser)
 				test_exit (0);
+
 			return;
 		}
 
