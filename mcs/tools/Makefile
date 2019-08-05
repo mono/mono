@@ -49,10 +49,6 @@ net_4_5_dirs := \
 	linker-analyzer \
 	gacutil
 
-ifndef MCS_MODE
-	net_4_5_dirs += mdoc
-endif
-
 build_SUBDIRS =
 build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
 monodroid_tools_SUBDIRS =
@@ -71,6 +67,10 @@ wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip
 DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 
 include ../build/rules.make
+
+ifndef MCS_MODE
+	net_4_5_dirs += mdoc
+endif
 
 DISTFILES = \
 	removecomments.sh
