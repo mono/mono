@@ -165,7 +165,13 @@ namespace System
 				if (string.IsNullOrEmpty(name))
 					name = GetLocalTimeZoneKeyNameWin32Fallback();
 				if (name != null)
-					return TimeZoneInfo.FindSystemTimeZoneById (name);
+				{
+					try{
+						return TimeZoneInfo.FindSystemTimeZoneById (name);
+					} catch (TimeZoneNotFoundException) {
+						return GetLocalTimeZoneInfoWinRTFallback();
+					}
+				}
 			} else if (IsWindows) {
 				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
