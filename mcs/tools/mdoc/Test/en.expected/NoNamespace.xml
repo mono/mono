@@ -1,6 +1,12 @@
 <Type Name="NoNamespace" FullName="NoNamespace">
   <TypeSignature Language="C#" Value="public class NoNamespace" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NoNamespace extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:NoNamespace" />
+  <TypeSignature Language="VB.NET" Value="Public Class NoNamespace" />
+  <TypeSignature Language="F#" Value="type NoNamespace = class" />
+  <TypeSignature Language="JavaScript" Value="function NoNamespace()" Usage="var noNamespace = new NoNamespace();" />
+  <TypeSignature Language="C++ CLI" Value="public ref class NoNamespace" />
+  <TypeSignature Language="C++ WINRT" Value="[Windows::Foundation::Metadata::WebHostHidden]&#xA;class NoNamespace" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +23,12 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NoNamespace ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:NoNamespace.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="JavaScript" Value="function NoNamespace()" Usage="var noNamespace = new NoNamespace();" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; NoNamespace();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; NoNamespace();" />
+      <MemberSignature Language="C++ WINRT" Value=" NoNamespace();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

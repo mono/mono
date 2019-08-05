@@ -35,7 +35,6 @@ net_4_5_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
-	mdoc		\
 	mod		\
 	installvst	\
 	lc		\
@@ -49,6 +48,10 @@ net_4_5_dirs := \
 	mono-symbolicate	\
 	linker-analyzer \
 	gacutil
+
+ifndef MCS_MODE
+	net_4_5_dirs += mdoc
+endif
 
 build_SUBDIRS =
 build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html

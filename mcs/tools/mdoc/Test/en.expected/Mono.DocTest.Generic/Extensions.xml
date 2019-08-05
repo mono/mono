@@ -1,6 +1,12 @@
 <Type Name="Extensions" FullName="Mono.DocTest.Generic.Extensions">
   <TypeSignature Language="C#" Value="public static class Extensions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Extensions extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.Extensions" />
+  <TypeSignature Language="VB.NET" Value="Public Module Extensions" />
+  <TypeSignature Language="F#" Value="type Extensions = class" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Extensions abstract sealed" />
+  <TypeSignature Language="C++ CX" Value="public ref class Extensions abstract sealed" />
+  <TypeSignature Language="C++ WINRT" Value="class Extensions abstract sealed" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +23,11 @@
     <Member MemberName="Bar&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static void Bar&lt;T&gt; (this Mono.DocTest.Generic.IFoo&lt;T&gt; self, string s);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Bar&lt;T&gt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt; self, string s) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.Extensions.Bar``1(Mono.DocTest.Generic.IFoo{``0},System.String)" />
+      <MemberSignature Language="VB.NET" Value="&lt;Extension()&gt;&#xA;Public Sub Bar(Of T) (self As IFoo(Of T), s As String)" />
+      <MemberSignature Language="F#" Value="static member Bar : Mono.DocTest.Generic.IFoo&lt;'T&gt; * string -&gt; unit" Usage="Mono.DocTest.Generic.Extensions.Bar (self, s)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA;[System::Runtime::CompilerServices::Extension]&#xA; static void Bar(Mono::DocTest::Generic::IFoo&lt;T&gt; ^ self, System::String ^ s);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename T&gt;&#xA;[System::Runtime::CompilerServices::Extension]&#xA; static void Bar(Mono::DocTest::Generic::IFoo&lt;T&gt; ^ self, Platform::String ^ s);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -42,6 +53,10 @@
     <Member MemberName="ForEach&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (this System.Collections.Generic.IEnumerable&lt;T&gt; self, Action&lt;T&gt; a);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ForEach&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; self, class System.Action`1&lt;!!T&gt; a) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.Extensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})" />
+      <MemberSignature Language="VB.NET" Value="&lt;Extension()&gt;&#xA;Public Sub ForEach(Of T) (self As IEnumerable(Of T), a As Action(Of T))" />
+      <MemberSignature Language="F#" Value="static member ForEach : seq&lt;'T&gt; * Action&lt;'T&gt; -&gt; unit" Usage="Mono.DocTest.Generic.Extensions.ForEach (self, a)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA;[System::Runtime::CompilerServices::Extension]&#xA; static void ForEach(System::Collections::Generic::IEnumerable&lt;T&gt; ^ self, Action&lt;T&gt; ^ a);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -67,6 +82,11 @@
     <Member MemberName="ToDouble">
       <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;double&gt; ToDouble (this System.Collections.Generic.IEnumerable&lt;int&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;float64&gt; ToDouble(class System.Collections.Generic.IEnumerable`1&lt;int32&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.Extensions.ToDouble(System.Collections.Generic.IEnumerable{System.Int32})" />
+      <MemberSignature Language="VB.NET" Value="&lt;Extension()&gt;&#xA;Public Function ToDouble (list As IEnumerable(Of Integer)) As IEnumerable(Of Double)" />
+      <MemberSignature Language="F#" Value="static member ToDouble : seq&lt;int&gt; -&gt; seq&lt;double&gt;" Usage="Mono.DocTest.Generic.Extensions.ToDouble list" />
+      <MemberSignature Language="JavaScript" Value="function toDouble(list)" Usage="var iEnumerable = Mono.DocTest.Generic.Extensions.toDouble(list)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;[System::Runtime::CompilerServices::Extension]&#xA; static System::Collections::Generic::IEnumerable&lt;double&gt; ^ ToDouble(System::Collections::Generic::IEnumerable&lt;int&gt; ^ list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -87,6 +107,11 @@
     <Member MemberName="ToDouble&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static double ToDouble&lt;T&gt; (this T val) where T : Mono.DocTest.Generic.IFoo&lt;T&gt;;" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 ToDouble&lt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt;) T&gt;(!!T val) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.Extensions.ToDouble``1(``0)" />
+      <MemberSignature Language="VB.NET" Value="&lt;Extension()&gt;&#xA;Public Function ToDouble(Of T As IFoo(Of T)) (val As T) As Double" />
+      <MemberSignature Language="F#" Value="static member ToDouble : 'T -&gt; double (requires 'T :&gt; Mono.DocTest.Generic.IFoo&lt;'T&gt;)" Usage="Mono.DocTest.Generic.Extensions.ToDouble val" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA; where T : Mono::DocTest::Generic::IFoo&lt;T&gt;[System::Runtime::CompilerServices::Extension]&#xA; static double ToDouble(T val);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename T&gt;&#xA; where T : Mono::DocTest::Generic::IFoo&lt;T&gt;[System::Runtime::CompilerServices::Extension]&#xA; static double ToDouble(T val);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -115,6 +140,10 @@
     <Member MemberName="ToEnumerable&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; ToEnumerable&lt;T&gt; (this T self);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; ToEnumerable&lt;T&gt;(!!T self) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.Extensions.ToEnumerable``1(``0)" />
+      <MemberSignature Language="VB.NET" Value="&lt;Extension()&gt;&#xA;Public Iterator Function ToEnumerable(Of T) (self As T) As IEnumerable(Of T)" />
+      <MemberSignature Language="F#" Value="static member ToEnumerable : 'T -&gt; seq&lt;'T&gt;" Usage="Mono.DocTest.Generic.Extensions.ToEnumerable self" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA;[System::Runtime::CompilerServices::Extension]&#xA; static System::Collections::Generic::IEnumerable&lt;T&gt; ^ ToEnumerable(T self);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

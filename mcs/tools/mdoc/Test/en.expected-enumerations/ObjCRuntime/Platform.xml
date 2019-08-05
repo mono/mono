@@ -28,6 +28,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>131072</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -42,6 +43,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>131584</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -56,6 +58,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>196608</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -70,6 +73,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>196864</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -84,6 +88,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>197120</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -98,6 +103,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>262144</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -112,6 +118,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>262400</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -126,6 +133,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>262656</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -140,6 +148,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>262912</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -154,6 +163,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>327680</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -168,6 +178,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>327936</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -182,6 +193,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>393216</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -196,6 +208,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>393472</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -210,6 +223,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>458752</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -224,6 +238,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>459008</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -238,6 +253,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>524288</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -252,6 +268,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>524544</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -266,6 +283,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>524800</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -280,6 +298,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>525056</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -294,6 +313,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>4278190080</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -308,6 +328,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>16777216</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -322,6 +343,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>33554432</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -336,6 +358,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>16777215</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -350,6 +373,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2814749767106560</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -364,6 +388,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2815849278734336</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -378,6 +403,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2825744883384320</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -392,6 +418,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2816948790362112</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -406,6 +433,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2818048301989888</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -420,6 +448,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2819147813617664</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -434,6 +463,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2820247325245440</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -448,6 +478,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2821346836873216</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -462,6 +493,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2822446348500992</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -476,6 +508,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2823545860128768</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -490,6 +523,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>2824645371756544</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -504,6 +538,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>18374686479671623680</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -518,6 +553,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>72057594037927936</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -532,6 +568,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>144115188075855872</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -546,6 +583,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>72057589742960640</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -560,6 +598,7 @@
       <ReturnValue>
         <ReturnType>ObjCRuntime.Platform</ReturnType>
       </ReturnValue>
+      <MemberValue>0</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
