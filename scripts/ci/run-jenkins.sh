@@ -163,7 +163,7 @@ then
 fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
-	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
+	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}64 NINJA=
 	exit 0
 fi
 
