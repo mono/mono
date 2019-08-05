@@ -35,6 +35,7 @@ net_4_5_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
+	mdoc		\
 	mod		\
 	installvst	\
 	lc		\
@@ -67,10 +68,6 @@ wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip
 DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 
 include ../build/rules.make
-
-ifndef MCS_MODE
-	net_4_5_dirs += mdoc
-endif
 
 DISTFILES = \
 	removecomments.sh
