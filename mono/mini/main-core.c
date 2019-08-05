@@ -138,8 +138,9 @@ mono_core_preload_hook (MonoAssemblyName *aname, char **unused_apaths, void *use
 	for (int i = 0; i < a->assembly_count; ++i) {
 		if (!strcmp (basename, a->basenames[i])) {
 			MonoAssemblyOpenRequest req;
-			mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
-			req.request.alc = mono_domain_default_alc (mono_get_root_domain ());
+			mono_assembly_request_prepare (&req.request, sizeof (req),
+			                               refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
+			                               mono_domain_default_alc (mono_get_root_domain ()));
 			req.request.predicate = predicate;
 			req.request.predicate_ud = predicate_ud;
 
