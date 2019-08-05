@@ -44,6 +44,12 @@ $(PROGRAM): $(PROGRAM_DEPS)
 
 PROGRAM_COMPILE = $(CSCOMPILE)
 
+ifdef MCS_MODE
+NO_INSTALL=1
+NO_BUILD=1
+NO_TEST=1
+endif
+
 include ../../build/executable.make
 
 MONO = \
