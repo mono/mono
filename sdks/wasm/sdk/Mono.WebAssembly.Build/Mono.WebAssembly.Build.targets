@@ -22,11 +22,11 @@
 		</CleanDependsOn>
 	</PropertyGroup>
 
-    <Target Name="_ValidateProjectProperties">
-        <Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
-                 Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
-                 Code="WASM0001"/>
-    </Target>
+	<Target Name="_ValidateProjectProperties">
+	<Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
+		 Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
+		 Code="WASM0001"/>
+	</Target>
 
 	<!-- suppress local copy for now, we don't want any local copied dlls -->
 	<Target Name="CopyFilesToOutputDirectory" DependsOnTargets="MonoWasmCopyOutput" />
