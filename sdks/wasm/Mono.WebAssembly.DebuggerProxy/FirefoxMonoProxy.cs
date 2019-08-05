@@ -90,7 +90,7 @@ namespace WsProxy {
 				}
 			}
 		}
-		private void ParseCommandFromIde (Byte [] bytes, int bytesRec, NetworkStream Browser, NetworkStream ide)
+		void ParseCommandFromIde (Byte [] bytes, int bytesRec, NetworkStream Browser, NetworkStream ide)
 		{
 			string str = Encoding.ASCII.GetString (bytes, 0, bytesRec);
 			int posColon = str.IndexOf (":");
@@ -143,9 +143,7 @@ namespace WsProxy {
 					goto Next;
 				}
 				if (message.Length > 0) {
-					var msg = message.Length.ToString ();
-					msg += ":";
-					msg += message;
+					var msg = $"{message.Length.ToString()}:{message}";
 					Browser.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 				}
 
@@ -156,17 +154,15 @@ namespace WsProxy {
 			}
 		}
 
-		private void SendNextToBrowser (JObject details, NetworkStream Browser, NetworkStream ide)
+		void SendNextToBrowser (JObject details, NetworkStream Browser, NetworkStream ide)
 		{
 			SendCommandToBrowser (actorName, "evaluateJS", string.Format (MonoCommands.START_SINGLE_STEPPING, (int)StepKind.Over), Browser, ide);
 			var message = "{ \"type\":\"resume\",\"resumeLimit\":null,\"rewind\":false,\"to\":\"" + details ["to"].ToString () + "\"}";
-			var msg = message.Length.ToString ();
-			msg += ":";
-			msg += message;
+			var msg = $"{message.Length}:{message}";
 			Browser.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 		}
 
-		private  void SendEnvironmentToIDE (JObject details, NetworkStream Browser, NetworkStream ide)
+		void SendEnvironmentToIDE (JObject details, NetworkStream Browser, NetworkStream ide)
 		{
 			var scope = current_callstack.FirstOrDefault (s => s.Id == int.Parse (details ["to"].ToString ().Substring ("dotnet:scope:".Length)));
 			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
@@ -214,13 +210,13 @@ namespace WsProxy {
 
 			}
 			var msg = env.ToString ();
-			msg = (msg.Length).ToString () + ":" + msg;
+			msg = $"{msg.Length}:{msg}";
 			//System.Console.WriteLine (msg);
 			ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 			readedBrowser = getRestOfMessage (Encoding.ASCII.GetString (bytes, 0, bytesRec));
 		}
 
-		private  JToken GetVariableValue (NetworkStream Browser, NetworkStream ide, string actor)
+		JToken GetVariableValue (NetworkStream Browser, NetworkStream ide, string actor)
 		{
 			Byte [] bytes = new Byte [100000];
 			SendCommandToBrowser (actor, "prototypeAndProperties", "", Browser, ide);
@@ -234,7 +230,7 @@ namespace WsProxy {
 			return (varObj ["ownProperties"]? ["value"]? ["value"]? ["preview"]? ["ownProperties"]? ["value"]? ["value"]);
 		}
 
-		private  void GetFramesAndSendToIde (global::System.Object details, NetworkStream Browser, NetworkStream ide, string from)
+		void GetFramesAndSendToIde (global::System.Object details, NetworkStream Browser, NetworkStream ide, string from)
 		{
 			SendCommandToBrowser (actorName, "evaluateJS", "MONO.mono_wasm_get_call_stack()", Browser, ide);
 			Byte [] bytes = new Byte [100000];
@@ -290,13 +286,13 @@ namespace WsProxy {
 			++frame_id;
 			current_callstack = framesList;
 			var msg = frames.ToString ();
-			msg = (msg.Length).ToString () + ":" + msg;
+			msg = $"{msg.Length}:{msg}";
 			//System.Console.WriteLine (msg);
 			ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 			readedBrowser = getRestOfMessage (Encoding.ASCII.GetString (bytes, 0, bytesRec));
 		}
 
-		private  void SendBreakpointToMono (JObject details, NetworkStream Browser, NetworkStream ide)
+		void SendBreakpointToMono (JObject details, NetworkStream Browser, NetworkStream ide)
 		{
 			if (store == null)
 				return;
@@ -308,6 +304,8 @@ namespace WsProxy {
 
 			BreakPointRequest req = BreakPointRequest.ParseFirefox (details, store);
 			var bp_loc = store.FindBestBreakpoint (req);
+			if (bp_loc == null)
+				return;
 			var bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakPointState.Pending);
 			var asm_name = bp.Location.CliLocation.Method.Assembly.Name;
 			var method_token = bp.Location.CliLocation.Method.Token;
@@ -317,14 +315,14 @@ namespace WsProxy {
 			SendCommandToBrowser (actorName, "evaluateJS", expression, Browser, ide);
 		}
 
-		private  void SendBreakpointPositionsCompressed (string script_id, NetworkStream Browser, NetworkStream ide, string line)
+		void SendBreakpointPositionsCompressed (string script_id, NetworkStream Browser, NetworkStream ide, string line)
 		{
 			string msg = ":{ \"positions\":{ \"" + line + "\":[0]},\"from\":\"" + script_id + "\"}";
 			msg = (msg.Length - 1).ToString () + msg;
 			//System.Console.WriteLine (msg);
 			ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 		}
-		private  void SendBreakableLinesToIde (string script_id, NetworkStream Browser, NetworkStream ide)
+		void SendBreakableLinesToIde (string script_id, NetworkStream Browser, NetworkStream ide)
 		{
 			Byte [] bytes = new Byte [100000];
 			var id = new SourceId (script_id);
@@ -353,7 +351,7 @@ namespace WsProxy {
 			//System.Console.WriteLine("O que achou do source:" + Encoding.ASCII.GetString(bytes, 0, bytesRec));
 			//107:{"lines":[15,16,17,19,20,22,23,25,27,29,30,31,32,33,35,36,38,39],"from":"server1.conn155.child28/source26"}
 		}
-		private  async Task SendFileToIde (string script_id, NetworkStream Browser, NetworkStream ide)
+		async Task SendFileToIde (string script_id, NetworkStream Browser, NetworkStream ide)
 		{
 			var id = new SourceId (script_id);
 			var src_file = store.GetFileById (id);
@@ -374,9 +372,7 @@ namespace WsProxy {
 						from = script_id
 					});
 					var str2 = o.ToString ();
-					var msg = str2.Length.ToString ();
-					msg += ":";
-					msg += str2;
+					var msg = $"{str2.Length}:{str2}";
 					ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 				} else if (src_file.SourceLinkUri != null) {
 					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
@@ -389,9 +385,7 @@ namespace WsProxy {
 					});
 
 					var str2 = o.ToString ();
-					var msg = str2.Length.ToString ();
-					msg += ":";
-					msg += str2;
+					var msg = $"{str2.Length}:{str2}";
 					ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 				} else {
 					var o = JObject.FromObject (new {
@@ -400,9 +394,7 @@ namespace WsProxy {
 						from = script_id
 					});
 					var str2 = o.ToString ();
-					var msg = str2.Length.ToString ();
-					msg += ":";
-					msg += str2;
+					var msg = $"{str2.Length}:{str2}";
 					ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 				}
 			} catch (Exception e) {
@@ -414,13 +406,11 @@ namespace WsProxy {
 					from = script_id
 				});
 				var str2 = o.ToString ();
-				var msg = str2.Length.ToString ();
-				msg += ":";
-				msg += str2;
+				var msg = $"{str2.Length}:{str2}";
 				ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 			}
 		}
-		private  void SendCommandToBrowser (string to, string type, string expr, NetworkStream Browser, NetworkStream ide)
+		void SendCommandToBrowser (string to, string type, string expr, NetworkStream Browser, NetworkStream ide)
 		{
 
 			var o = JObject.FromObject (new {
@@ -429,14 +419,12 @@ namespace WsProxy {
 				text = expr
 			});
 			var str = o.ToString ();
-			var msg = str.Length.ToString ();
-			msg += ":";
-			msg += str;
+			var msg = $"{str.Length}:{str}";
 			Browser.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 
 		}
 
-		private  void ParseSourceFiles (Byte [] bytes, int bytesRec)
+		void ParseSourceFiles (Byte [] bytes, int bytesRec)
 		{
 			string files = getFirstMessage (Encoding.ASCII.GetString (bytes, 0, bytesRec));
 			//System.Console.WriteLine ("PDBs:" + files);
@@ -447,21 +435,21 @@ namespace WsProxy {
 				store = new DebugStore (the_pdbs);
 			readedBrowser = getRestOfMessage (Encoding.ASCII.GetString (bytes, 0, bytesRec));
 		}
-		private  string getFirstMessage (string str)
+		string getFirstMessage (string str)
 		{
 			var posColon = str.IndexOf (":");
 			string size = str.Substring (0, posColon);
 			string message = str.Substring (posColon + 1, Convert.ToInt32 (size));
 			return message;
 		}
-		private  string getRestOfMessage (string str)
+		string getRestOfMessage (string str)
 		{
 			var posColon = str.IndexOf (":");
 			string size = str.Substring (0, posColon);
 			string message = str.Substring (posColon + 1 + Convert.ToInt32 (size));
 			return message;
 		}
-		private void ParseCommandFromBrowser (Byte [] bytes, int bytesRec, NetworkStream Browser, NetworkStream ide)
+		void ParseCommandFromBrowser (Byte [] bytes, int bytesRec, NetworkStream Browser, NetworkStream ide)
 		{
 			string str = Encoding.ASCII.GetString (bytes, 0, bytesRec);
 			int posColon = str.IndexOf (":");
@@ -487,9 +475,7 @@ namespace WsProxy {
 					}
 
 					var str2 = details.ToString ();
-					var msg = str2.Length.ToString ();
-					msg += ":";
-					msg += str2;
+					var msg = $"{str2.Length}:{str2}";
 					ide.Write (Encoding.ASCII.GetBytes (msg), 0, msg.Length);
 					goto Next;
 				}

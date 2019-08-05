@@ -33,7 +33,7 @@ namespace WsProxy {
 	internal class MonoConstants {
 		public const string RUNTIME_IS_READY = "mono_wasm_runtime_ready";
 	}
-	public class Frame {
+	internal class Frame {
 		public Frame (MethodInfo method, SourceLocation location, int id)
 		{
 			this.Method = method;
@@ -47,7 +47,7 @@ namespace WsProxy {
 	}
 
 
-	public class Breakpoint {
+	internal class Breakpoint {
 		public SourceLocation Location { get; private set; }
 		public int LocalId { get; private set; }
 		public int RemoteId { get; set; }
@@ -74,9 +74,9 @@ namespace WsProxy {
 	}
 
 	public class MonoProxy : WsProxy {
-		protected DebugStore store;
+		internal DebugStore store;
 		List<Breakpoint> breakpoints = new List<Breakpoint> ();
-		protected List<Frame> current_callstack;
+		internal List<Frame> current_callstack;
 		bool runtime_ready;
 		int local_breakpoint_id;
 		int ctx_id;

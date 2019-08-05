@@ -21,29 +21,28 @@ namespace WsProxy
 	}
 
 	public class Program {
-        public static void Main(string[] args)
+		public static void Main(string[] args)
 		{
-            if (args.Length > 0 && args[0].Equals("-firefox")) {
-                var proxy = new FirefoxMonoProxyServer(Convert.ToInt32(args[1]), Convert.ToInt32(args[2]));
-                proxy.Run();
-            }
-            else {
-                var host = new WebHostBuilder()
-                    .UseSetting(nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
-                    .UseKestrel()
-                    .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseStartup<Startup>()
-                    .ConfigureAppConfiguration((hostingContext, config) =>
-                    {
-                        config.AddCommandLine(args);
-                    })
-                    .UseDebugProxy()
-                    .Build();
+			if (args.Length > 0 && args[0].Equals("-firefox")) {
+				var proxy = new FirefoxMonoProxyServer(Convert.ToInt32(args[1]), Convert.ToInt32(args[2]));
+				proxy.Run();
+			} else {
+				var host = new WebHostBuilder()
+					.UseSetting(nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
+					.UseKestrel()
+					.UseContentRoot(Directory.GetCurrentDirectory())
+					.UseStartup<Startup>()
+					.ConfigureAppConfiguration((hostingContext, config) =>
+					{
+						config.AddCommandLine(args);
+					})
+					.UseDebugProxy()
+					.Build();
 
-                host.Run();
-            }
-        }
-    }
+				host.Run();
+			}
+		}
+	}
 
 	public static class MonoProxyExtensions {
 		public static IWebHostBuilder UseDebugProxy (this IWebHostBuilder host) =>
