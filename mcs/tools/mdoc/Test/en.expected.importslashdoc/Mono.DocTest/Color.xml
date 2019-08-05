@@ -26,6 +26,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>2</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -40,6 +41,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>1</MemberValue>
       <Docs>
         <summary>Insert Blue summary here</summary>
         <remarks>
@@ -56,6 +58,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>2</MemberValue>
       <Docs>
         <summary>Insert Green summary here</summary>
         <remarks>
@@ -72,6 +75,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>0</MemberValue>
       <Docs>
         <summary>Insert Red summary here</summary>
         <remarks>

@@ -131,11 +131,9 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotImplementedException">To be added; from:
-          <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
       </Docs>
     </Member>
-    <Member MemberName="ConvertAll&lt;T,U&gt;">
+    <Member MemberName="ConvertAll&lt;TInput,TOutput&gt;">
       <MemberSignature Language="C#" Value="public static TOutput[] ConvertAll&lt;TInput,TOutput&gt; (TInput[] array, Converter&lt;TInput,TOutput&gt; converter);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TOutput[] ConvertAll&lt;TInput, TOutput&gt;(!!TInput[] array, class System.Converter`2&lt;!!TInput, !!TOutput&gt; converter) cil managed" />
       <MemberType>Method</MemberType>
@@ -169,15 +167,13 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <remarks>
 							<para>The <see cref="T:System.Converter&lt;T,U&gt;" /> is a delegate that converts an array element to the target type.  The elements of  <paramref name="array" /> are individually passed to this converter, and the converted elements are saved in the new array. The source array remains unchanged.</para>
 						</remarks>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
         <exception cref="T:System.ArgumentNullException">
 							<paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
       </Docs>
     </Member>
     <Member MemberName="Resize&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static void Resize&lt;T&gt; (ref T[] array, int newSize);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Resize&lt;T&gt;(!!T[] array, int32 newSize) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Resize&lt;T&gt;(!!T[]&amp; array, int32 newSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -189,7 +185,7 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <TypeParameter Name="T" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="array" Type="T[]&amp;" RefType="ref" />
+        <Parameter Name="array" Type="T[]" RefType="ref" />
         <Parameter Name="newSize" Type="System.Int32" />
       </Parameters>
       <Docs>
@@ -198,8 +194,6 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <param name="newSize">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.Exception">To be added; from:
-          <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
       </Docs>
     </Member>
   </Members>
