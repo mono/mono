@@ -333,9 +333,17 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	case MONO_TYPE_VOID:
 		break;
 	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
+	case MONO_TYPE_U1: {
+		gint8 res = *arg_in_stack_slot (buf, gint8);
+		printf ("result=%d", res);
+		break;
+	}
 	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
+	case MONO_TYPE_U2: {
+		gint16 res = *arg_in_stack_slot (buf, gint16);
+		printf ("result=%d", res);
+		break;
+	}
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4: {
 		int res = *arg_in_stack_slot (buf, int);
