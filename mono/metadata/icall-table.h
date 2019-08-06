@@ -354,9 +354,9 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_FOREACH_TYPE_TYPED_8(t0, t1, t2, t3, t4, t5, t6, t7)     MONO_HANDLE_FOREACH_TYPE_TYPED_7 (t0, t1, t2, t3, t4, t5, t6)	,MONO_HANDLE_TYPE_TYPED (t7)
 #define MONO_HANDLE_FOREACH_TYPE_TYPED_9(t0, t1, t2, t3, t4, t5, t6, t7, t8) MONO_HANDLE_FOREACH_TYPE_TYPED_8 (t0, t1, t2, t3, t4, t5, t6, t7)	,MONO_HANDLE_TYPE_TYPED (t8)
 
-// Generate a parameter list, types and names, for a function accepting raw handles and no MonoError,
-// and returning a raw pointer.
-#define MONO_HANDLE_FOREACH_ARG_RAW_0()						void
+// Generate a parameter list, types and names, for a function accepting raw handles and a MonoError,
+// and returning a raw pointer. MonoError is not here, but added elsewhere.
+#define MONO_HANDLE_FOREACH_ARG_RAW_0()		  				/* nothing */
 #define MONO_HANDLE_FOREACH_ARG_RAW_1(t0) 	   	  			MONO_HANDLE_ARG_RAWHANDLE (t0, 0)
 #define MONO_HANDLE_FOREACH_ARG_RAW_2(t0, t1)	  				MONO_HANDLE_FOREACH_ARG_RAW_1 (t0),             		MONO_HANDLE_ARG_RAWHANDLE (t1, 1)
 #define MONO_HANDLE_FOREACH_ARG_RAW_3(t0, t1, t2)	  			MONO_HANDLE_FOREACH_ARG_RAW_2 (t0, t1),         		MONO_HANDLE_ARG_RAWHANDLE (t2, 2)
@@ -369,7 +369,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 
 // Generate a parameter list, types and names, for a function accepting raw pointers and no MonoError,
 // and returning a raw pointer.
-#define MONO_HANDLE_FOREACH_ARG_RAWPOINTER_0()						void
+#define MONO_HANDLE_FOREACH_ARG_RAWPOINTER_0()		  				/* nothing */
 #define MONO_HANDLE_FOREACH_ARG_RAWPOINTER_1(t0) 	   	  			MONO_HANDLE_ARG_RAWPOINTER (t0, 0)
 #define MONO_HANDLE_FOREACH_ARG_RAWPOINTER_2(t0, t1)	  				MONO_HANDLE_FOREACH_ARG_RAWPOINTER_1 (t0),             			MONO_HANDLE_ARG_RAWPOINTER (t1, 1)
 #define MONO_HANDLE_FOREACH_ARG_RAWPOINTER_3(t0, t1, t2)	  			MONO_HANDLE_FOREACH_ARG_RAWPOINTER_2 (t0, t1),         			MONO_HANDLE_ARG_RAWPOINTER (t2, 2)
@@ -416,15 +416,20 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_COMMA_8 ,
 #define MONO_HANDLE_COMMA_9 ,
 
-// Declare the function that takes/returns typed handles and a MonoError.
+// Declare the function that takes/returns typed handles.
 #define MONO_HANDLE_DECLARE(id, name, func, rettype, n, argtypes)	\
 MONO_HANDLE_TYPE_TYPED (rettype)					\
 func (MONO_HANDLE_FOREACH_TYPE_TYPED_ ## n argtypes MONO_HANDLE_COMMA_ ## n MonoError *error)
 
-// Declare the function wrapper that takes raw handles and returns a raw pointer.
+// Declare the function wrapper that takes raw handles and a MonoError and returns a raw pointer.
+//
+// FIXME The error variable is on the managed side instead of native
+// only to satisfy fragile test external/coreclr/tests/src/CoreMangLib/cti/system/weakreference/weakreferenceisaliveb.exe.
+// I.e. We should have ERROR_DECL instead of error_init and MonoError parameter
+// should be a local instead of a parameter. The different is minor.
 #define MONO_HANDLE_DECLARE_RAW(id, name, func, rettype, n, argtypes)	\
 ICALL_EXPORT MONO_HANDLE_TYPE_RAWPOINTER (rettype)				\
-func ## _raw ( MONO_HANDLE_FOREACH_ARG_RAW_ ## n argtypes)
+func ## _raw ( MONO_HANDLE_FOREACH_ARG_RAW_ ## n argtypes MONO_HANDLE_COMMA_ ## n MonoError *error1)
 
 // Implement ves_icall_foo_raw over ves_icall_foo.
 // Raw handles are converted to/from typed handles and the rest is passed through.
