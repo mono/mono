@@ -1,6 +1,11 @@
 <Type Name="GenericBase&lt;U&gt;" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;">
   <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit GenericBase`1&lt;U&gt; extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.GenericBase`1" />
+  <TypeSignature Language="VB.NET" Value="Public Class GenericBase(Of U)" />
+  <TypeSignature Language="F#" Value="type GenericBase&lt;'U&gt; = class" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename U&gt;&#xA;public ref class GenericBase" />
+  <TypeSignature Language="C++ WINRT" Value="template &lt;typename U&gt;&#xA;[Windows::Foundation::Metadata::WebHostHidden]&#xA;class GenericBase" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -21,6 +26,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public GenericBase ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.GenericBase`1.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; GenericBase();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; GenericBase();" />
+      <MemberSignature Language="C++ WINRT" Value=" GenericBase();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -34,6 +44,12 @@
     <Member MemberName="BaseMethod&lt;S&gt;">
       <MemberSignature Language="C#" Value="public U BaseMethod&lt;S&gt; (S genericParameter);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !U BaseMethod&lt;S&gt;(!!S genericParameter) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.GenericBase`1.BaseMethod``1(``0)" />
+      <MemberSignature Language="VB.NET" Value="Public Function BaseMethod(Of S) (genericParameter As S) As U" />
+      <MemberSignature Language="F#" Value="member this.BaseMethod : 'S -&gt; 'U" Usage="genericBase.BaseMethod genericParameter" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename S&gt;&#xA; U BaseMethod(S genericParameter);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename S&gt;&#xA; U BaseMethod(S genericParameter);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename S&gt;&#xA; U BaseMethod(S genericParameter);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -64,6 +80,11 @@
     <Member MemberName="ConstField1">
       <MemberSignature Language="C#" Value="public const int ConstField1;" />
       <MemberSignature Language="ILAsm" Value=".field public static literal int32 ConstField1" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Generic.GenericBase`1.ConstField1" />
+      <MemberSignature Language="VB.NET" Value="Public Const ConstField1 As Integer " />
+      <MemberSignature Language="F#" Value="val mutable ConstField1 : int" Usage="Mono.DocTest.Generic.GenericBase&lt;'U&gt;.ConstField1" />
+      <MemberSignature Language="C++ CLI" Value="public: int ConstField1;" />
+      <MemberSignature Language="C++ WINRT" Value="int ConstField1;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -79,6 +100,10 @@
     <Member MemberName="ItemChanged">
       <MemberSignature Language="C#" Value="public event Action&lt;Mono.DocTest.Generic.MyList&lt;U&gt;,Mono.DocTest.Generic.MyList&lt;U&gt;.Helper&lt;U,U&gt;&gt; ItemChanged;" />
       <MemberSignature Language="ILAsm" Value=".event class System.Action`2&lt;class Mono.DocTest.Generic.MyList`1&lt;!U&gt;, class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!U, !U, !U&gt;&gt; ItemChanged" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Generic.GenericBase`1.ItemChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Event ItemChanged As Action(Of MyList(Of U), MyList(Of U).Helper(Of U, U)) " />
+      <MemberSignature Language="F#" Value="member this.ItemChanged : Action&lt;Mono.DocTest.Generic.MyList&lt;'U&gt;, Mono.DocTest.Generic.MyList&lt;'U&gt;.Helper&lt;'U, 'U&gt;&gt; " Usage="member this.ItemChanged : System.Action&lt;Mono.DocTest.Generic.MyList&lt;'U&gt;, Mono.DocTest.Generic.MyList&lt;'U&gt;.Helper&lt;'U, 'U&gt;&gt; " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event Action&lt;Mono::DocTest::Generic::MyList&lt;U&gt; ^, Mono::DocTest::Generic::MyList&lt;U&gt;::Helper&lt;U, U&gt; ^&gt; ^ ItemChanged;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -89,208 +114,15 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArrayTypeMismatchException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.FormatException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.IndexOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidCastException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.MulticastNotSupportedException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.OutOfMemoryException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.RankException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
       </Docs>
     </Member>
     <Member MemberName="MyEvent">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;Mono.DocTest.Generic.GenericBase&lt;U&gt;.FooEventArgs&gt; MyEvent;" />
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class Mono.DocTest.Generic.GenericBase`1/FooEventArgs&lt;!U&gt;&gt; MyEvent" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Generic.GenericBase`1.MyEvent" />
+      <MemberSignature Language="VB.NET" Value="Public Event MyEvent As EventHandler(Of GenericBase(Of U).FooEventArgs) " />
+      <MemberSignature Language="F#" Value="member this.MyEvent : EventHandler&lt;Mono.DocTest.Generic.GenericBase&lt;'U&gt;.FooEventArgs&gt; " Usage="member this.MyEvent : System.EventHandler&lt;Mono.DocTest.Generic.GenericBase&lt;'U&gt;.FooEventArgs&gt; " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;Mono::DocTest::Generic::GenericBase&lt;U&gt;::FooEventArgs ^&gt; ^ MyEvent;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -301,208 +133,16 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArrayTypeMismatchException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.FormatException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.IndexOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidCastException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.MulticastNotSupportedException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.OutOfMemoryException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.RankException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
-      <MemberSignature Language="C#" Value="public static U op_Explicit (Mono.DocTest.Generic.GenericBase&lt;U&gt; list);" />
+      <MemberSignature Language="C#" Value="public static explicit operator U (Mono.DocTest.Generic.GenericBase&lt;U&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname !U op_Explicit(class Mono.DocTest.Generic.GenericBase`1&lt;!U&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.GenericBase`1.op_Explicit(Mono.DocTest.Generic.GenericBase{`0})~`0" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Narrowing Operator CType (list As GenericBase(Of U)) As U" />
+      <MemberSignature Language="F#" Value="static member op_Explicit : Mono.DocTest.Generic.GenericBase&lt;'U&gt; -&gt; 'U" Usage="Mono.DocTest.Generic.GenericBase&lt;'U&gt;.op_Explicit list" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static explicit operator U(Mono::DocTest::Generic::GenericBase&lt;U&gt; ^ list);" />
+      <MemberSignature Language="C++ WINRT" Value=" static explicit operator U(Mono::DocTest::Generic::GenericBase&lt;U&gt; const &amp; list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -523,6 +163,11 @@
     <Member MemberName="StaticField1">
       <MemberSignature Language="C#" Value="public static readonly Mono.DocTest.Generic.GenericBase&lt;U&gt; StaticField1;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly class Mono.DocTest.Generic.GenericBase`1&lt;!U&gt; StaticField1" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Generic.GenericBase`1.StaticField1" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly StaticField1 As GenericBase(Of U) " />
+      <MemberSignature Language="F#" Value=" staticval mutable StaticField1 : Mono.DocTest.Generic.GenericBase&lt;'U&gt;" Usage="Mono.DocTest.Generic.GenericBase&lt;'U&gt;.StaticField1" />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly Mono::DocTest::Generic::GenericBase&lt;U&gt; ^ StaticField1;" />
+      <MemberSignature Language="C++ WINRT" Value="static initonly Mono::DocTest::Generic::GenericBase&lt;U&gt; StaticField1;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

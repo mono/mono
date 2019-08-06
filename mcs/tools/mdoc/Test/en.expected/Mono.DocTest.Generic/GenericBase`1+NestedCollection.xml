@@ -1,6 +1,11 @@
 <Type Name="GenericBase&lt;U&gt;+NestedCollection" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+NestedCollection">
   <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;.NestedCollection" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit GenericBase`1/NestedCollection&lt;U&gt; extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.GenericBase`1.NestedCollection" />
+  <TypeSignature Language="VB.NET" Value="Public Class GenericBase(Of U).NestedCollection" />
+  <TypeSignature Language="F#" Value="type GenericBase&lt;'U&gt;.NestedCollection = class" />
+  <TypeSignature Language="C++ CLI" Value="public: ref class GenericBase&lt;U&gt;::NestedCollection" />
+  <TypeSignature Language="C++ WINRT" Value="[Windows::Foundation::Metadata::WebHostHidden]&#xA;class GenericBase&lt;U&gt;::NestedCollection" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +25,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NestedCollection ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.GenericBase`1.NestedCollection.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; NestedCollection();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; NestedCollection();" />
+      <MemberSignature Language="C++ WINRT" Value=" NestedCollection();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

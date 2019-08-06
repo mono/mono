@@ -1,6 +1,11 @@
 <Type Name="AsyncCallback" FullName="System.AsyncCallback">
   <TypeSignature Language="C#" Value="public delegate void AsyncCallback(IAsyncResult ar);" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AsyncCallback extends System.MulticastDelegate" />
+  <TypeSignature Language="DocId" Value="T:System.AsyncCallback" />
+  <TypeSignature Language="VB.NET" Value="Public Delegate Sub AsyncCallback(ar As IAsyncResult)" />
+  <TypeSignature Language="F#" Value="type AsyncCallback = delegate of IAsyncResult -&gt; unit" />
+  <TypeSignature Language="JavaScript" Usage="var asyncCallbackHandler = function(ar){&#xA;/* Your code */&#xA;}" />
+  <TypeSignature Language="C++ CLI" Value="public delegate void AsyncCallback(IAsyncResult ^ ar);" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
