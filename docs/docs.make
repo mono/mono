@@ -18,6 +18,27 @@ convert.exe: $(srcdir)/convert.cs AgilityPack.dll
 AgilityPack.dll:
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Xml.dll -target:library -out:$@ $(srcdir)/HtmlAgilityPack/*.cs
 
+ifdef MCS_MODE
+monoapi.zip:
+	touch $@
+
+monoapi.tree: monoapi.zip
+	touch $@
+
+mono-tools.zip:
+	touch $@
+
+mono-tools.tree: mono-tools.zip
+	touch $@
+
+mono-file-formats.zip:
+	touch $@
+
+mono-file-formats.tree: mono-file-formats.zip
+	touch $@
+
+else
+
 monoapi.zip: monoapi.tree
 	@test -f $@ || { rm -f $< && $(MAKE) $<; }
 
@@ -35,6 +56,8 @@ mono-file-formats.zip: mono-file-formats.tree
 
 mono-file-formats.tree: $(srcdir)/mono-file-formats.config $(srcdir)/docs.make
 	$(MDOC) assemble -o mono-file-formats -f man $<
+
+endif
 
 .doc-stamp:
 

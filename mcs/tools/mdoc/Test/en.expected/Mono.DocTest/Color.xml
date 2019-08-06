@@ -1,6 +1,13 @@
 <Type Name="Color" FullName="Mono.DocTest.Color">
   <TypeSignature Language="C#" Value="public enum Color" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Color extends System.Enum" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Color" />
+  <TypeSignature Language="VB.NET" Value="Public Enum Color" />
+  <TypeSignature Language="F#" Value="type Color = " />
+  <TypeSignature Language="JavaScript" Usage="var value = Mono.DocTest.Color.red" />
+  <TypeSignature Language="C++ CLI" Value="public enum class Color" />
+  <TypeSignature Language="C++ CX" Value="public enum class Color" />
+  <TypeSignature Language="C++ WINRT" Value="enum Color" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +23,12 @@
     <Member MemberName="AnotherGreen">
       <MemberSignature Language="C#" Value="AnotherGreen" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color AnotherGreen = int32(2)" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Color.AnotherGreen" />
+      <MemberSignature Language="VB.NET" Value="AnotherGreen" />
+      <MemberSignature Language="F#" Value="AnotherGreen = 2" Usage="Mono.DocTest.Color.AnotherGreen" />
+      <MemberSignature Language="C++ CLI" Value="AnotherGreen" />
+      <MemberSignature Language="C++ CX" Value="AnotherGreen" />
+      <MemberSignature Language="C++ WINRT" Value="AnotherGreen" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -23,6 +36,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>2</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -30,6 +44,12 @@
     <Member MemberName="Blue">
       <MemberSignature Language="C#" Value="Blue" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Blue = int32(1)" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Color.Blue" />
+      <MemberSignature Language="VB.NET" Value="Blue" />
+      <MemberSignature Language="F#" Value="Blue = 1" Usage="Mono.DocTest.Color.Blue" />
+      <MemberSignature Language="C++ CLI" Value="Blue" />
+      <MemberSignature Language="C++ CX" Value="Blue" />
+      <MemberSignature Language="C++ WINRT" Value="Blue" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -37,6 +57,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>1</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -44,6 +65,12 @@
     <Member MemberName="Green">
       <MemberSignature Language="C#" Value="Green" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Green = int32(2)" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Color.Green" />
+      <MemberSignature Language="VB.NET" Value="Green" />
+      <MemberSignature Language="F#" Value="Green = 2" Usage="Mono.DocTest.Color.Green" />
+      <MemberSignature Language="C++ CLI" Value="Green" />
+      <MemberSignature Language="C++ CX" Value="Green" />
+      <MemberSignature Language="C++ WINRT" Value="Green" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -51,6 +78,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>2</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
@@ -58,6 +86,12 @@
     <Member MemberName="Red">
       <MemberSignature Language="C#" Value="Red" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Red = int32(0)" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Color.Red" />
+      <MemberSignature Language="VB.NET" Value="Red" />
+      <MemberSignature Language="F#" Value="Red = 0" Usage="Mono.DocTest.Color.Red" />
+      <MemberSignature Language="C++ CLI" Value="Red" />
+      <MemberSignature Language="C++ CX" Value="Red" />
+      <MemberSignature Language="C++ WINRT" Value="Red" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -65,6 +99,7 @@
       <ReturnValue>
         <ReturnType>Mono.DocTest.Color</ReturnType>
       </ReturnValue>
+      <MemberValue>0</MemberValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>

@@ -1,6 +1,10 @@
 <Type Name="MyList&lt;T&gt;" FullName="Mono.DocTest.Generic.MyList&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class MyList&lt;T&gt; : Mono.DocTest.Generic.GenericBase&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;int[]&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyList`1&lt;T&gt; extends Mono.DocTest.Generic.GenericBase`1&lt;!T&gt; implements class System.Collections.Generic.IEnumerable`1&lt;int32[]&gt;, class System.Collections.IEnumerable" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.MyList`1" />
+  <TypeSignature Language="VB.NET" Value="Public Class MyList(Of T)&#xA;Inherits GenericBase(Of T)&#xA;Implements IEnumerable(Of Integer())" />
+  <TypeSignature Language="F#" Value="type MyList&lt;'T&gt; = class&#xA;    inherit GenericBase&lt;'T&gt;&#xA;    interface seq&lt;int[]&gt;&#xA;    interface IEnumerable" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename T&gt;&#xA;public ref class MyList : Mono::DocTest::Generic::GenericBase&lt;T&gt;, System::Collections::Generic::IEnumerable&lt;cli::array &lt;int&gt; ^&gt;" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -24,6 +28,9 @@
     <Interface>
       <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.Int32[]&gt;</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
@@ -34,6 +41,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MyList ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; MyList();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; MyList();" />
+      <MemberSignature Language="C++ WINRT" Value=" MyList();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -47,7 +59,14 @@
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;int[]&gt; GetEnumerator ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;int32[]&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetEnumerator () As IEnumerator(Of Integer())" />
+      <MemberSignature Language="F#" Value="abstract member GetEnumerator : unit -&gt; System.Collections.Generic.IEnumerator&lt;int[]&gt;&#xA;override this.GetEnumerator : unit -&gt; System.Collections.Generic.IEnumerator&lt;int[]&gt;" Usage="myList.GetEnumerator " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::Generic::IEnumerator&lt;cli::array &lt;int&gt; ^&gt; ^ GetEnumerator();" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.IEnumerable`1.GetEnumerator</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -64,6 +83,11 @@
     <Member MemberName="GetHelper&lt;U,V&gt;">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; GetHelper&lt;U,V&gt; ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!T, !!U, !!V&gt; GetHelper&lt;U, V&gt;() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.GetHelper``2" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetHelper(Of U, V) () As MyList(Of T).Helper(Of U, V)" />
+      <MemberSignature Language="F#" Value="member this.GetHelper : unit -&gt; Mono.DocTest.Generic.MyList&lt;'T&gt;.Helper&lt;'U, 'V&gt;" Usage="myList.GetHelper " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename U, typename V&gt;&#xA; Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; ^ GetHelper();" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U, typename V&gt;&#xA; Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; GetHelper();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -87,6 +111,11 @@
     <Member MemberName="Method&lt;U&gt;">
       <MemberSignature Language="C#" Value="public void Method&lt;U&gt; (T t, U u);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Method&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.Method``1(`0,``0)" />
+      <MemberSignature Language="F#" Value="member this.Method : 'T * 'U -&gt; unit" Usage="myList.Method (t, u)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename U&gt;&#xA; void Method(T t, U u);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename U&gt;&#xA; void Method(T t, U u);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U&gt;&#xA; void Method(T t, U u);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -111,7 +140,12 @@
     </Member>
     <Member MemberName="RefMethod&lt;U&gt;">
       <MemberSignature Language="C#" Value="public void RefMethod&lt;U&gt; (ref T t, ref U u);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RefMethod&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RefMethod&lt;U&gt;(!T&amp; t, !!U&amp; u) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.RefMethod``1(`0@,``0@)" />
+      <MemberSignature Language="F#" Value="member this.RefMethod :  *  -&gt; unit" Usage="myList.RefMethod (t, u)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename U&gt;&#xA; void RefMethod(T % t, U % u);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename U&gt;&#xA; void RefMethod(T &amp;  t, U &amp;  u);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U&gt;&#xA; void RefMethod(T &amp; t, U &amp; u);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -123,8 +157,8 @@
         <TypeParameter Name="U" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="t" Type="T&amp;" RefType="ref" />
-        <Parameter Name="u" Type="U&amp;" RefType="ref" />
+        <Parameter Name="t" Type="T" RefType="ref" />
+        <Parameter Name="u" Type="U" RefType="ref" />
       </Parameters>
       <Docs>
         <typeparam name="U">To be added.</typeparam>
@@ -137,7 +171,13 @@
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.System#Collections#IEnumerable#GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Function GetEnumerator () As IEnumerator Implements IEnumerable.GetEnumerator" />
+      <MemberSignature Language="C++ CLI" Value=" virtual System::Collections::IEnumerator ^ System.Collections.IEnumerable.GetEnumerator() = System::Collections::IEnumerable::GetEnumerator;" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.IEnumerable.GetEnumerator</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -154,6 +194,11 @@
     <Member MemberName="Test">
       <MemberSignature Language="C#" Value="public void Test (T t);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Test(!T t) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.Test(`0)" />
+      <MemberSignature Language="F#" Value="member this.Test : 'T -&gt; unit" Usage="myList.Test t" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Test(T t);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void Test(T t);" />
+      <MemberSignature Language="C++ WINRT" Value="void Test(T t);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -173,6 +218,11 @@
     <Member MemberName="UseHelper&lt;U,V&gt;">
       <MemberSignature Language="C#" Value="public void UseHelper&lt;U,V&gt; (Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; helper);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseHelper&lt;U, V&gt;(class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!T, !!U, !!V&gt; helper) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.UseHelper``2(Mono.DocTest.Generic.MyList`1.Helper{`0,``0,``1})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub UseHelper(Of U, V) (helper As MyList(Of T).Helper(Of U, V))" />
+      <MemberSignature Language="F#" Value="member this.UseHelper : Mono.DocTest.Generic.MyList&lt;'T&gt;.Helper&lt;'U, 'V&gt; -&gt; unit" Usage="myList.UseHelper helper" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename U, typename V&gt;&#xA; void UseHelper(Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; ^ helper);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U, typename V&gt;&#xA; void UseHelper(Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; const &amp; helper);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

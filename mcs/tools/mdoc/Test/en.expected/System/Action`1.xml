@@ -1,6 +1,10 @@
 <Type Name="Action&lt;T&gt;" FullName="System.Action&lt;T&gt;">
   <TypeSignature Language="C#" Value="public delegate void Action&lt;T&gt;(T obj);" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Action`1&lt;T&gt; extends System.MulticastDelegate" />
+  <TypeSignature Language="DocId" Value="T:System.Action`1" />
+  <TypeSignature Language="VB.NET" Value="Public Delegate Sub Action(Of T)(obj As T)" />
+  <TypeSignature Language="F#" Value="type Action&lt;'T&gt; = delegate of 'T -&gt; unit" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename T&gt;&#xA;public delegate void Action(T obj);" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
