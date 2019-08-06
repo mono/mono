@@ -1736,7 +1736,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 			reference = load_reference_by_aname_default_asmctx (&aname, mono_image_get_alc (image), image->assembly, &status);
 			break;
 		case MONO_ASMCTX_REFONLY:
-			reference = load_reference_by_aname_refonly_asmctx (&aname, imono_image_get_alc (image), mage->assembly, &status);
+			reference = load_reference_by_aname_refonly_asmctx (&aname, mono_image_get_alc (image), image->assembly, &status);
 			break;
 		case MONO_ASMCTX_LOADFROM:
 			reference = load_reference_by_aname_loadfrom_asmctx (&aname, mono_image_get_alc (image), image->assembly, &status);
