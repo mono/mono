@@ -65,4 +65,9 @@ which the app could then use to construct the stack trace objects. Returning onl
 data which the app writer explicitly added to the wasm module would help alleviate
 some of the security concerns with stack walks.
 
+## Noinline flag
 
+Currently, the LLVM 'noinline' flag has no corresponding wasm flag, so
+the wasm optimizer will inline functions which are marked inline. This
+causes problems for the mono interpreter because the inlined functions
+increase the stack size for the main interpreter function.
