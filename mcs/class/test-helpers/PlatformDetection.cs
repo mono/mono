@@ -24,6 +24,7 @@ namespace System
 		public static bool IsFedora => false;
 		public static bool IsRedHatFamily => false;
 		public static bool IsRedHatFamily6 => false;
+		public static bool IsRedHatFamily7 => false;
 		public static bool IsOpenSUSE => false;
 		public static bool IsUbuntu1404 => false;
 		public static bool IsNotRedHatFamily6 => true;
@@ -48,5 +49,7 @@ namespace System
 		public static bool IsNetCore => false;
 
 		public static int WindowsVersion => -1;
+
+		public static bool IsOSX => Platform.IsMacOS;
     }
 }
