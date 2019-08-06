@@ -169,7 +169,26 @@ unreal_dirs_parallel := \
 	$(mobile_common_dirs_parallel)
 
 wasm_dirs_parallel := \
-	$(mobile_common_dirs_parallel)
+	Mono.Security \
+	System	\
+	System.Core	\
+	System.XML	\
+	System.Security	\
+	I18N		\
+	System.Transactions	\
+	System.ServiceModel.Internals	\
+	System.Runtime.Serialization	\
+	System.Data	\
+	System.Xml.Linq	\
+	System.Numerics	\
+	System.Numerics.Vectors		\
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.ComponentModel.DataAnnotations \
+	System.ComponentModel.Composition.4.5 \
+	System.Net.Http	\
+	Microsoft.CSharp \
+	System.Runtime.CompilerServices.Unsafe
 
 wasm_tools_dirs_parallel := \
 	Mono.Cecil

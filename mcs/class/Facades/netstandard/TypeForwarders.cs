@@ -2100,8 +2100,15 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.TransactionScopeOption))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.TransactionStartedEventHandler))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.TransactionStatus))]
+#endif
+
+#if SYSTEM_WEB_IMPLEMENTATION
+// Implementation is included in .sources
+#else
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Web.HttpUtility))]
 #endif
+
+
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Windows.Input.ICommand))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.ConformanceLevel))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.DtdProcessing))]

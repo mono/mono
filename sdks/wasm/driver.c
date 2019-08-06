@@ -42,6 +42,8 @@ static MonoClass* datetime_class;
 static MonoClass* datetimeoffset_class;
 static MonoClass* safehandle_class;
 
+int mono_wasm_enable_gc;
+
 /* Not part of public headers */
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -666,4 +668,10 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_parse_runtime_options (int argc, char* argv[])
 {
 	mono_jit_parse_options (argc, argv);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_enable_on_demand_gc (void)
+{
+	mono_wasm_enable_gc = 1;
 }

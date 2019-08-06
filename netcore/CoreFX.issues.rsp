@@ -12,9 +12,6 @@
 # https://github.com/mono/mono/issues/14854
 -nomethod Microsoft.VisualBasic.Tests.ErrObjectTests.Clear
 
-# Microsoft.VisualBasic.ApplicationServices.AssemblyInfo.LoadedAssemblies not implemented
--nomethod Microsoft.VisualBasic.ApplicationServices.Tests.AssemblyInfoTests.LoadedAssemblies
-
 ####################################################################
 ##  System.CodeDom.Tests
 ####################################################################
@@ -56,11 +53,6 @@
 # System.SR needs implemented.
 # https://github.com/mono/mono/issues/14907
 -nomethod BasicEventSourceTests.TestsManifestNegative.Test_GenerateManifest_InvalidEventSources
-
-# Both tests below have a delegate binding error - signature is not compatible with that of the delegate type.
-# https://github.com/mono/mono/issues/14909
--nomethod BasicEventSourceTests.TestsWrite.Test_Write_T_EventListener
--nomethod BasicEventSourceTests.TestsWrite.Test_Write_T_EventListener_UseEvents
 
 ####################################################################
 ##  System.Dynamic.Runtime.Tests
@@ -127,18 +119,8 @@
 -nomethod System.Linq.Expressions.Tests.IndexExpressionTests.IndexedPropertyGetReturnsWrongType
 
 # Expected ArgumentException got IndexOutOfRangeException https://github.com/mono/mono/issues/14930
--nomethod System.Linq.Expressions.Tests.IndexExpressionTests.IndexedPropertySetterNoParams
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndex
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndexMethod
-
-# Expected Float to uint to be 2147483648 but got 0... https://github.com/mono/mono/issues/14931
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToNullableUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToNullableUIntTest
--noclass System.Linq.Expressions.Tests.LambdaTests
--noclass System.Linq.Expressions.Tests.LambdaDivideNullableTests
--nomethod System.Linq.Expressions.Tests.BinaryCoalesceTests.VerifyIL_NullableIntCoalesceToNullableInt
 
 # OOM Exception.  Weird
 # https://github.com/mono/mono/issues/14933
@@ -147,24 +129,6 @@
 # Arithmetic operation resulted in an overflow.
 # https://github.com/mono/mono/issues/14934
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.MultipleNegativeBoundErrorMessage
-
-# float conv.ovf.un opcodes not supported https://github.com/mono/mono/issues/14945
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToNullableULongTest
-
-# Delegate creation w/ reflection https://github.com/mono/mono/issues/14950
--nomethod System.Linq.Expressions.Tests.CallTests.EnumArgAndReturn
-
-# Expected test Assertion fails https://github.com/mono/mono/issues/14951
--nomethod System.Linq.Expressions.Tests.CallTests.MethodName_TypeArgsDontMatchConstraints_ThrowsArgumentException
-
-# flaky tests - Invalid IL code in (wrapper dynamic-method)
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyNullableTests.LambdaMultiplyNullableFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
--nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
--nomethod System.Linq.Expressions.Tests.OpAssign.AssignmentEquivalentsWithMemberAccess
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -176,14 +140,6 @@
 ####################################################################
 ##  System.Memory.Tests
 ####################################################################
-
-# System.BadImageFormatException : Cannot box IsByRefLike type 'System.Span`1'
-# https://github.com/mono/mono/issues/14959
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
 
 # Reflection TargetException: Non-static method requires a target. 
 # https://github.com/mono/mono/issues/14962
@@ -224,21 +180,6 @@
 
 # When test is run, xunit claims it's not a part of the test suite 
 #-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_ClientCertificates_Test.AutomaticOrManual_DoesntFailRegardlessOfWhetherClientCertsAreAvailable
-
-####################################################################
-##  System.Net.HttpListener.Tests
-####################################################################
-
-# TODO:
-# System.ArgumentException : Cannot bind to the target method because its signature is not compatible with that of the delegate type.
-# at System.Delegate.CreateDelegate(Type type, Object firstArgument, MethodInfo method, Boolean throwOnBindFailure, Boolean allowClosed)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method, Boolean throwOnBindFailure)
-# at System.Delegate.CreateDelegate(Type type, MethodInfo method)
-# at System.Reflection.RuntimeMethodInfo.CreateDelegate(Type delegateType)
-# at System.Net.CookieExtensions.IsRfc2965Variant(Cookie cookie)
-#
-# https://github.com/mono/mono/issues/15008
--noclass System.Net.Tests.HttpListenerResponseCookiesTests
 
 ####################################################################
 ##  System.Net.Sockets.Tests
@@ -397,10 +338,6 @@
 # https://github.com/mono/mono/issues/15021
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
 
-# Typename string differs 
-# https://github.com/mono/mono/issues/15023
--nomethod System.Reflection.Tests.GetTypeTests.GetType_EmptyString
-
 # Expected ArgumentException, but none was thrown
 # https://github.com/mono/mono/issues/15024
 -nomethod System.Reflection.Tests.MethodInfoTests.Invoke_OptionalParameterUnassingableFromMissing_WithMissingValue_ThrowsArgumentException
@@ -431,11 +368,6 @@
 # CustomConstantAttribute not supported
 # https://github.com/mono/mono/issues/15037
 -nomethod System.Reflection.Tests.ParameterInfoTests.RawDefaultValueFromAttribute
-
-# AssemblyLoadContext.InternalLoad not implemented
-# https://github.com/mono/mono/issues/14830
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytes
--nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytesWithSymbols
 
 # Need to set ProcessorArchitecture in AssemblyName
 # https://github.com/mono/mono/issues/15068
@@ -646,9 +578,6 @@
 # error: Invalid IL code in (wrapper dynamic-method) object:<xsl:apply-templates> (System.Xml.Xsl.Runtime.XmlQueryRuntime,System.Xml.XPath.XPathNavigator,double): IL_0179: ret
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
 
-# Boxed pointers are not supported? https://github.com/mono/mono/blob/ced517784b2a07fb851e2227dac04e0df2262d57/mcs/class/corlib/ReferenceSources/RuntimeType.cs#L229
--nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
-
 # throws ArgumentException
 # https://github.com/mono/mono/issues/15152
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
@@ -668,18 +597,6 @@
 # Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
-
-####################################################################
-##  System.Text.Json.Tests
-####################################################################
-
-# The JSON value is not in a supported DateTime format
--noclass System.Text.Json.Serialization.Tests.ObjectTests
--noclass System.Text.Json.Serialization.Tests.ArrayTests
--nomethod System.Text.Json.Serialization.Tests.DictionaryTests.DictionaryOfClasses
--nomethod System.Text.Json.Serialization.Tests.CacheTests.PropertyCacheWithMinInputsFirst
--nomethod System.Text.Json.Serialization.Tests.CacheTests.PropertyCacheWithMinInputsLast
--nomethod System.Text.Json.Serialization.Tests.ValueTests.ValueFail
 
 ####################################################################
 ##  System.Threading.Tests
@@ -807,23 +724,6 @@
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
 -nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
 
-# System.InvalidProgramException : Invalid IL code in (wrapper dynamic-method) System.Text.RegularExpressions.CompiledRegexRunner:Go3 (System.Text.RegularExpressions.RegexRunner): IL_01af: nop
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.GetEnumerator_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.Indexer_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Throws
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.SyncRoot_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.IsSynchronized_Success
--nomethod System.Data.SqlClient.Tests.SqlErrorCollectionTest.CopyTo_NonGeneric_Throws
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestOpenConnection
--nomethod System.Data.SqlClient.Tests.ExceptionTest.ExceptionTests
--nomethod System.Data.SqlClient.Tests.ExceptionTest.IndependentConnectionExceptionTestExecuteReader
--nomethod System.Data.SqlClient.Tests.ExceptionTest.NamedPipeInvalidConnStringTest_ManagedSNI
--nomethod System.Data.SqlClient.Tests.SqlConnectionBasicTests.ConnectionTest
--nomethod System.Data.SqlClient.Tests.CloneTests.CloneSqlConnection
-
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
 ####################################################################
@@ -847,15 +747,6 @@
 # Assertion differences.  Expects -1, got 0
 # https://github.com/mono/mono/issues/15187
 -nomethod System.Diagnostics.Tests.StackFrameTests.Ctor_SkipFrames_FNeedFileInfo
-
-####################################################################
-##  System.Drawing.Common.Tests
-####################################################################
-
-# Expects OOM, may be large array support?
-# https://github.com/mono/mono/issues/15189
--nomethod System.Drawing.Drawing2D.Tests.ColorBlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
--nomethod System.Drawing.Drawing2D.Tests.BlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
 
 ####################################################################
 ##  System.Numerics.Vectors.Tests
@@ -1047,9 +938,18 @@
 
 # relies on AssemblyLoadContext 
 -nomethod System.Runtime.Loader.Tests.SatelliteAssembliesTests.SatelliteLoadsCorrectly
--nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.*
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.GetLoadContextTest_ValidUserAssembly
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadAssemblyByPath_ValidUserAssembly
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Unsupported_FixedAddressValueType
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadAssemblyByStream_ValidUserAssembly
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadFromAssemblyName_ValidTrustedPlatformAssembly
 -nomethod System.Runtime.Loader.Tests.ContextualReflectionTest.*
 -nomethod System.Runtime.Loader.Tests.SatelliteAssembliesTests.describeLib
+
+# relies on collectible AssemblyLoadContext
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Unload_*
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Finalizer_CollectibleWithNoAssemblyLoaded
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.PublicConstructor_Theory
 
 ####################################################################
 ##  System.Reflection.MetadataLoadContext.Tests
@@ -1148,17 +1048,6 @@
 -nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
 
 # requires precise gc (to be ignored in dotnet/corefx, e.g. https://github.com/dotnet/corefx/pull/39176)
--nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
--nomethod System.Tests.GCTests.ReRegisterForFinalize
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetEnumerator_CollectedItemsNotEnumerated
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.AddRemove_DropValue
--nomethod System.Tests.WeakReferenceTests.NonGeneric
--nomethod System.Tests.WeakReferenceTests.Generic
--nomethod System.Diagnostics.TraceSourceTests.TraceSourceClassTests.PruneTest
--nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
--nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.context.*
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
-
-# Flaky tests https://github.com/mono/mono/issues/15238
--nonamespace System.Security.Cryptography.Pkcs
+-nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest

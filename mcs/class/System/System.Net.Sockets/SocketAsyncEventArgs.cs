@@ -213,6 +213,13 @@ namespace System.Net.Sockets
 				handler (e.current_socket, e);
 		}
 
+		internal void CopyBufferFrom (SocketAsyncEventArgs source)
+		{
+			Buffer = source.Buffer;
+			Offset = source.Offset;
+			Count = source.Count;
+		}
+
 		public void SetBuffer (int offset, int count)
 		{
 			SetBuffer (Buffer, offset, count);

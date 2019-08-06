@@ -912,26 +912,65 @@ namespace System.Net.Sockets
 			try {
 				IPAddress [] addresses;
 				SocketAsyncResult ares;
+				bool pending;
+
+				/*
+				 * Both BeginSConnect() and BeginMConnect() now return a `bool` indicating whether or
+				 * not an async operation is pending.
+				 */
 
 				if (!GetCheckedIPs (e, out addresses)) {
 					//NOTE: DualMode may cause Socket's RemoteEndpoint to differ in AddressFamily from the
 					// SocketAsyncEventArgs, but the SocketAsyncEventArgs itself is not changed
-					ares = (SocketAsyncResult) BeginConnect (e.RemoteEndPoint, ConnectAsyncCallback, e);
+
+					ares = new SocketAsyncResult (this, ConnectAsyncCallback, e, SocketOperation.Connect) {
+						EndPoint = e.RemoteEndPoint
+					};
+
+					pending = BeginSConnect (ares);
 				} else {
 					DnsEndPoint dep = (DnsEndPoint)e.RemoteEndPoint;
-					ares = (SocketAsyncResult) BeginConnect (addresses, dep.Port, ConnectAsyncCallback, e);
+
+					if (addresses == null)
+						throw new ArgumentNullException ("addresses");
+					if (addresses.Length == 0)
+						throw new ArgumentException ("Empty addresses list");
+					if (this.AddressFamily != AddressFamily.InterNetwork && this.AddressFamily != AddressFamily.InterNetworkV6)
+						throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
+					if (dep.Port <= 0 || dep.Port > 65535)
+						throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+
+					ares = new SocketAsyncResult (this, ConnectAsyncCallback, e, SocketOperation.Connect) {
+						Addresses = addresses,
+						Port = dep.Port,
+					};
+
+					is_connected = false;
+
+					pending = BeginMConnect (ares);
 				}
 
-				if (ares.IsCompleted && ares.CompletedSynchronously) {
-					ares.CheckIfThrowDelayedException ();
-					return false;
+				if (!pending) {
+					/*
+					 * On synchronous completion, the async callback will not be invoked.
+					 *
+					 * We need to call `EndConnect ()` here to close the socket and make sure
+					 * that any pending exceptions are properly propagated.
+					 *
+					 * Note that we're not calling `e.Complete ()` (or resetting `e.in_progress`) here.
+					 */
+					e.current_socket.EndConnect (ares);
 				}
+
+				return pending;
+			} catch (SocketException exc) {
+				e.SocketError = exc.SocketErrorCode;
+				e.socket_async_result.Complete (exc, true);
+				return false;
 			} catch (Exception exc) {
 				e.socket_async_result.Complete (exc, true);
 				return false;
 			}
-
-			return true;
 		}
 
 		public static void CancelConnectAsync (SocketAsyncEventArgs e)
@@ -1044,7 +1083,7 @@ namespace System.Net.Sockets
 			return sockares;
 		}
 
-		static void BeginMConnect (SocketAsyncResult sockares)
+		static bool BeginMConnect (SocketAsyncResult sockares)
 		{
 			Exception exc = null;
 
@@ -1053,17 +1092,18 @@ namespace System.Net.Sockets
 					sockares.CurrentAddress++;
 					sockares.EndPoint = new IPEndPoint (sockares.Addresses [i], sockares.Port);
 
-					BeginSConnect (sockares);
-					return;
+					return BeginSConnect (sockares);
 				} catch (Exception e) {
 					exc = e;
 				}
 			}
 
+			sockares.Complete (exc, true);
+			return false;
 			throw exc;
 		}
 
-		static void BeginSConnect (SocketAsyncResult sockares)
+		static bool BeginSConnect (SocketAsyncResult sockares)
 		{
 			EndPoint remoteEP = sockares.EndPoint;
 			// Bug #75154: Connect() should not succeed for .Any addresses.
@@ -1071,14 +1111,15 @@ namespace System.Net.Sockets
 				IPEndPoint ep = (IPEndPoint) remoteEP;
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
 					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
-					return;
+					return false;
 				}
 
 				sockares.EndPoint = remoteEP = sockares.socket.RemapIPEndPoint (ep);
 			}
 
 			if (!sockares.socket.CanTryAddressFamily(sockares.EndPoint.AddressFamily)) {
-				throw new ArgumentException(SR.net_invalidAddressList);
+				sockares.Complete (new ArgumentException(SR.net_invalidAddressList), true);
+				return false;
 			}
 
 			int error = 0;
@@ -1090,8 +1131,10 @@ namespace System.Net.Sockets
 				sockares.socket.connect_in_progress = false;
 				sockares.socket.m_Handle.Dispose ();
 				sockares.socket.m_Handle = new SafeSocketHandle (sockares.socket.Socket_internal (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
-				if (error != 0)
-					throw new SocketException (error);
+				if (error != 0) {
+					sockares.Complete (new SocketException (error), true);
+					return false;
+				}
 			}
 
 			bool blk = sockares.socket.is_blocking;
@@ -1106,7 +1149,7 @@ namespace System.Net.Sockets
 				sockares.socket.is_connected = true;
 				sockares.socket.is_bound = true;
 				sockares.Complete (true);
-				return;
+				return false;
 			}
 
 			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
@@ -1114,7 +1157,7 @@ namespace System.Net.Sockets
 				sockares.socket.is_connected = false;
 				sockares.socket.is_bound = false;
 				sockares.Complete (new SocketException (error), true);
-				return;
+				return false;
 			}
 
 			// continue asynch
@@ -1123,6 +1166,7 @@ namespace System.Net.Sockets
 			sockares.socket.connect_in_progress = true;
 
 			IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
+			return true;
 		}
 
 		static IOAsyncCallback BeginConnectCallback = new IOAsyncCallback (ares => {
@@ -2905,6 +2949,15 @@ namespace System.Net.Sockets
 
 			return false;
 #endif
+		}
+
+		internal void ReplaceHandleIfNecessaryAfterFailedConnect ()
+		{
+			/*
+			 * This is called from `DualSocketMultipleConnectAsync.GetNextAddress(out Socket)`
+			 * and `SingleSocketMultipleConnectAsync.GetNextAddress(out Socket)` when using
+			 * the CoreFX version of `MultipleConnectAsync`.
+			 */
 		}
 	}
 }

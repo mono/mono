@@ -17,7 +17,6 @@ win32_sources = \
 	w32semaphore-win32.c \
 	w32event-win32.c \
 	w32process-win32.c \
-	w32process-win32-internals.h \
 	w32socket-win32.c \
 	w32error-win32.c \
 	w32subset.h
@@ -108,6 +107,7 @@ zlib_sources = \
 	../../support/crc32.h \
 	../../support/deflate.c \
 	../../support/deflate.h \
+	../../support/gzguts.h	\
 	../../support/infback.c \
 	../../support/inffast.c \
 	../../support/inffast.h \

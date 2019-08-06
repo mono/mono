@@ -100,10 +100,9 @@ string_to_utf8_image_raw (MonoImage *image, MonoString *s_raw, MonoError *error)
 {
 	/* FIXME all callers to string_to_utf8_image_raw should use handles */
 	HANDLE_FUNCTION_ENTER ();
-	char* result = NULL;
 	error_init (error);
 	MONO_HANDLE_DCL (MonoString, s);
-	result = mono_string_to_utf8_image (image, s, error);
+	char* const result = mono_string_to_utf8_image (image, s, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1305,12 +1304,12 @@ assemblybuilderaccess_can_save (guint32 access)
  * of the helper hash table and the basic metadata streams.
  */
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoDynamicAssembly *assembly;
 	MonoDynamicImage *image;
 	MonoDomain *domain = mono_object_domain (assemblyb);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
 	
 	if (assemblyb->dynamic_assembly)
 		return;
@@ -1324,12 +1323,10 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->assembly.corlib_internal = assemblyb->corlib_internal;
 	assemblyb->assembly.assembly = (MonoAssembly*)assembly;
 	assembly->assembly.basedir = mono_string_to_utf8_checked_internal (assemblyb->dir, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	if (assemblyb->culture) {
 		assembly->assembly.aname.culture = mono_string_to_utf8_checked_internal (assemblyb->culture, error);
-		if (mono_error_set_pending_exception (error))
-			return;
+		return_if_nok (error);
 	} else
 		assembly->assembly.aname.culture = g_strdup ("");
 
@@ -1362,8 +1359,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->domain = domain;
 
 	char *assembly_name = mono_string_to_utf8_checked_internal (assemblyb->name, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	image = mono_dynamic_image_create (assembly, assembly_name, g_strdup ("RefEmit_YouForgotToDefineAModule"));
 	image->initial_image = TRUE;
 	assembly->assembly.aname.name = image->image.name;
@@ -1378,6 +1374,12 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	mono_domain_assemblies_lock (domain);
 	domain->domain_assemblies = g_slist_append (domain->domain_assemblies, assembly);
+#ifdef ENABLE_NETCORE
+	// TODO: potentially relax the locking here?
+	mono_alc_assemblies_lock (alc);
+	alc->loaded_assemblies = g_slist_append (alc->loaded_assemblies, assembly);
+	mono_alc_assemblies_unlock (alc);
+#endif
 	mono_domain_assemblies_unlock (domain);
 
 	register_assembly (mono_object_domain (assemblyb), &assemblyb->assembly, &assembly->assembly);
@@ -1672,7 +1674,7 @@ mono_reflection_type_get_handle (MonoReflectionType* ref_raw, MonoError *error)
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MONO_HANDLE_DCL (MonoReflectionType, ref);
-	MonoType *result = mono_reflection_type_handle_mono_type (ref, error);
+	MonoType * const result = mono_reflection_type_handle_mono_type (ref, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1780,7 +1782,7 @@ mono_type_array_get_and_resolve_raw (MonoArray* array_raw, int idx, MonoError *e
 	HANDLE_FUNCTION_ENTER(); /* FIXME callers of mono_type_array_get_and_resolve_raw should use handles */
 	error_init (error);
 	MONO_HANDLE_DCL (MonoArray, array);
-	MonoType *result = mono_type_array_get_and_resolve (array, idx, error);
+	MonoType * const result = mono_type_array_get_and_resolve (array, idx, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1923,7 +1925,7 @@ static MonoMethodSignature*
 ctor_builder_to_signature_raw (MonoImage *image, MonoReflectionCtorBuilder* ctor_raw, MonoError *error) {
 	HANDLE_FUNCTION_ENTER();
 	MONO_HANDLE_DCL (MonoReflectionCtorBuilder, ctor);
-	MonoMethodSignature *sig = ctor_builder_to_signature (image, ctor, error);
+	MonoMethodSignature * const sig = ctor_builder_to_signature (image, ctor, error);
 	HANDLE_FUNCTION_RETURN_VAL (sig);
 }
 /**
@@ -3264,7 +3266,7 @@ methodbuilder_to_mono_method_raw (MonoClass *klass, MonoReflectionMethodBuilder*
 	HANDLE_FUNCTION_ENTER (); /* FIXME change callers of methodbuilder_to_mono_method_raw to use handles */
 	error_init (error);
 	MONO_HANDLE_DCL (MonoReflectionMethodBuilder, mb);
-	MonoMethod *result = methodbuilder_to_mono_method (klass, mb, error);
+	MonoMethod * const result = methodbuilder_to_mono_method (klass, mb, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -4038,11 +4040,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 
 	error_init (error);
 
-	if (mono_runtime_is_shutting_down ()) {
-		mono_error_set_generic_error (error, "System", "InvalidOperationException", "");
-		return FALSE;
-	}
-
 	if (!(queue = dynamic_method_queue)) {
 		mono_loader_lock ();
 		if (!(queue = dynamic_method_queue))
@@ -4151,9 +4148,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 		}
 	}
 	g_slist_free (mb->referenced_by);
-
-	/* ilgen is no longer needed */
-	mb->ilgen = NULL;
 
 	domain = mono_domain_get ();
 	mono_domain_lock (domain);
@@ -4441,7 +4435,7 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
 }
 
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
 	g_error ("This mono runtime was configured with --enable-minimal=reflection_emit, so System.Reflection.Emit is not supported.");
 }
@@ -4596,9 +4590,11 @@ ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, Mono
 #endif
 
 void
-ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error)
 {
-	mono_reflection_dynimage_basic_init (assemblyb);
+	uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, assemblyb), TRUE);
+	mono_reflection_dynimage_basic_init (MONO_HANDLE_RAW (assemblyb), error);
+	mono_gchandle_free_internal (gchandle);
 }
 
 void

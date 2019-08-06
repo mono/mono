@@ -7867,7 +7867,7 @@ namespace System.Net.Sockets {
                 Socket attemptSocket = null;
                 MultipleConnectAsync multipleConnectAsync = null;
                 if (dnsEP.AddressFamily == AddressFamily.Unspecified) {
-                    multipleConnectAsync = new MultipleSocketMultipleConnectAsync(socketType, protocolType);
+                    multipleConnectAsync = new DualSocketMultipleConnectAsync(socketType, protocolType);
                 } else {
                     attemptSocket = new Socket(dnsEP.AddressFamily, socketType, protocolType);
                     multipleConnectAsync = new SingleSocketMultipleConnectAsync(attemptSocket, false);

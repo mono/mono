@@ -1,6 +1,8 @@
 isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
+jobName = env.JOB_NAME.split('/').first()
+xcode11 = (jobName == "archive-mono-xcode11" ? true : false)
+azureContainerName = (xcode11 ? "mono-sdks-xcode11" : "mono-sdks")
 
 if (monoBranch == 'master') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
@@ -16,6 +18,7 @@ if (monoBranch == 'master') {
 
 parallel (
     "Android Darwin (Debug)": {
+        if (xcode11) return
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "debug", "Darwin")
@@ -23,6 +26,7 @@ parallel (
         }
     },
     "Android Darwin (Release)": {
+        if (xcode11) return
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "release", "Darwin")
@@ -30,6 +34,7 @@ parallel (
         }
     },
     "Android Windows (Release)": {
+        if (xcode11) return
         throttle(['provisions-android-toolchain']) {
             node ("w64") {
                 archive ("android", "release", "Windows")
@@ -37,34 +42,37 @@ parallel (
         }
     },
     "Android Linux (Debug)": {
+        if (xcode11) return
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync", "/mnt/scratch")
+                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync python3-pip", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
+        if (xcode11) return
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync", "/mnt/scratch")
+                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync python3-pip", "/mnt/scratch")
             }
         }
     },
     "iOS": {
         throttle(['provisions-ios-toolchain']) {
-            node ("osx-devices") {
+            node (xcode11 ? "xcode11" : "osx-devices") {
                 archive ("ios", "release", "Darwin")
             }
         }
     },
     "Mac": {
         throttle(['provisions-mac-toolchain']) {
-            node ("osx-devices") {
+            node (xcode11 ? "xcode11" : "osx-devices") {
                 archive ("mac", "release", "Darwin")
             }
         }
     },
     "WASM Linux": {
+        if (xcode11) return
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
                 archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget openjdk-8-jre python3-pip")
@@ -104,7 +112,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
             }
             try {
                 stage('Build') {
-                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'PENDING', 'Building...')
+                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", env.BUILD_URL, 'PENDING', 'Building...')
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
@@ -112,7 +120,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make xamarin/xamarin-android-windeps/mingw-zlib"
                             sh "brew tap xamarin/xamarin-android-windeps"
                             sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
-                            sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
+                            sh "CI_TAGS=sdks-${product},no-tests,${configuration}${xcode11 ? ',xcode11' : ''} scripts/ci/run-jenkins.sh"
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
                                 command: "CI_TAGS=sdks-${product},no-tests,${configuration} ANDROID_TOOLCHAIN_DIR=/mnt/scratch/android-toolchain ANDROID_TOOLCHAIN_CACHE_DIR=/mnt/scratch/android-archives scripts/ci/run-jenkins.sh",
@@ -134,7 +142,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                 stage('Upload Archive to Azure') {
                     azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
                                 storageType: "blobstorage",
-                                containerName: "mono-sdks",
+                                containerName: azureContainerName,
                                 virtualPath: "",
                                 filesPath: "${packageFileName},${packageFileName}.sha1",
                                 allowAnonymousAccess: true,
@@ -145,10 +153,10 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 sh 'git clean -xdff'
 
-                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/mono-sdks/${packageFileName}", 'SUCCESS', packageFileName)
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${packageFileName}", 'SUCCESS', packageFileName)
             }
             catch (Exception e) {
-                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", env.BUILD_URL, 'FAILURE', "Build failed.")
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}${xcode11 ? '-xcode11' : ''}", env.BUILD_URL, 'FAILURE', "Build failed.")
                 throw e
             }
         }

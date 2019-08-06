@@ -3441,16 +3441,24 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			}
 			break;
 		}
-		case CEE_BR:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 5 + read32 (td->ip + 1));
+		case CEE_BR: {
+			int offset = read32 (td->ip + 1);
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 5 + offset);
+			}
 			td->ip += 5;
 			break;
-		case CEE_BR_S:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+		}
+		case CEE_BR_S: {
+			int offset = (gint8)td->ip [1];
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+			}
 			td->ip += 2;
 			break;
+		}
 		case CEE_BRFALSE:
 			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
@@ -4239,6 +4247,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
 				goto_if_nok (error, exit);
+				/* The constructor was not inlined, abort inlining of current method */
+				INLINE_FAILURE;
 
 				td->sp -= csignature->param_count;
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
@@ -4749,7 +4759,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I4);
 #endif
 			break;
-		case CEE_LDELEMA:
+		case CEE_LDELEMA: {
+			gint32 size;
 			CHECK_STACK (td, 2);
 			ENSURE_I4 (td, 1);
 			token = read32 (td->ip + 1);
@@ -4769,18 +4780,22 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				mono_class_setup_vtable (klass);
 				CHECK_TYPELOAD (klass);
 				interp_add_ins (td, MINT_LDELEMA_TC);
+				td->last_ins->data [0] = get_data_item_index (td, klass);
+				td->last_ins->data [1] = 2;
 			} else {
-				interp_add_ins (td, MINT_LDELEMA);
+				interp_add_ins (td, MINT_LDELEMA_FAST);
+				mono_class_init_internal (klass);
+				size = mono_class_array_element_size (klass);
+				WRITE32_INS (td->last_ins, 0, &size);
 			}
-			td->last_ins->data [0] = get_data_item_index (td, klass);
-			/* according to spec, ldelema bytecode is only used for 1-dim arrays */
-			td->last_ins->data [1] = 2;
+
 			readonly = FALSE;
 
 			td->ip += 5;
 			--td->sp;
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_MP);
 			break;
+		}
 		case CEE_LDELEM_I1:
 			CHECK_STACK (td, 2);
 			ENSURE_I4 (td, 1);
