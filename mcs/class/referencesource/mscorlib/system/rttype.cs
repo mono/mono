@@ -2385,7 +2385,7 @@ namespace System
         }
 
         // Only called by GetXXXCandidates, GetInterfaces, and GetNestedTypes when FilterHelper has set "prefixLookup" to true.
-        // Most of the plural GetXXX methods allow prefix lookups while the singular GetXXX methods mostly do not.        
+        // Most of the plural GetXXX methods allow prefix lookups while the singular GetXXX methods mostly do not.
         private static bool FilterApplyPrefixLookup(MemberInfo memberInfo, string name, bool ignoreCase)
         {
             Contract.Assert(name != null);
