@@ -356,6 +356,25 @@ mono_threadpool_worker_request (void)
 	mono_refcount_dec (&worker);
 }
 
+#if ENABLE_NETCORE
+gint64 mono_threadpool_worker_get_completed_threads_count (void)
+{
+	return worker.heuristic_completions;
+}
+
+gint64 mono_threadpool_worker_get_pending_threads_count (void)
+{
+	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
+	return counter._.starting;
+}
+
+gint32 mono_threadpool_worker_get_threads_count (void)
+{
+	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
+	return counter._.working;
+}
+#endif
+
 /* return TRUE if timeout, FALSE otherwise (worker unpark or interrupt) */
 static gboolean
 worker_park (void)

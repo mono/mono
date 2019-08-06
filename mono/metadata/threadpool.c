@@ -706,6 +706,24 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	return TRUE;
 }
 
+gint32
+ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_threads_count ();
+}
+
+gint64
+ves_icall_System_Threading_ThreadPool_PendingWorkItemCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_pending_threads_count ();
+}
+
+gint64
+ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_completed_threads_count ();
+}
+
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)
 {
