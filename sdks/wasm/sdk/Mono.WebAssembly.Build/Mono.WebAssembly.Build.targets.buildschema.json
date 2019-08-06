@@ -47,7 +47,7 @@
       "description": "Decide which version of the wasm runtime should be published.  Default: Tied to _DebugSymbolsProduced",
       "values": {
         "debug": "Publish the debug version of the runtime.",
-        "release": "Publis the release version of the runtime.",
+        "release": "Publish the release version of the runtime."
       }
     }
   }
