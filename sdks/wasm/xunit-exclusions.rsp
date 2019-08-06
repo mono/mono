@@ -34,3 +34,6 @@
 # OOM
 -nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeByteArrayOverflowingBitArray_ThrowsArgumentException
 -nomethod System.Collections.Tests.BitArray_CtorTests.Clone_LongLength_Works
+
+# Not supported
+-nonamespace System.IO.Pipes.Tests
