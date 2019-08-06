@@ -356,13 +356,13 @@ mono_threadpool_worker_request (void)
 	mono_refcount_dec (&worker);
 }
 
-#if ENABLE_NETCORE
+#ifdef ENABLE_NETCORE
 gint64 mono_threadpool_worker_get_completed_threads_count (void)
 {
 	return worker.heuristic_completions;
 }
 
-gint64 mono_threadpool_worker_get_pending_threads_count (void)
+gint64 mono_threadpool_worker_get_pending_unmanaged_work_item_count (void)
 {
 	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
 	return counter._.starting;

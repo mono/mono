@@ -522,7 +522,7 @@ HANDLES(THREADP_2, "GetAvailableThreadsNative", ves_icall_System_Threading_Threa
 HANDLES(THREADP_2a, "GetCompletedWorkItemCount", ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount, gint64, 0, ())
 HANDLES(THREADP_3, "GetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative, void, 2, (gint32_ref, gint32_ref))
 HANDLES(THREADP_4, "GetMinThreadsNative", ves_icall_System_Threading_ThreadPool_GetMinThreadsNative, void, 2, (gint32_ref, gint32_ref))
-HANDLES(THREADP_4a, "GetPendingWorkItemCount", ves_icall_System_Threading_ThreadPool_PendingWorkItemCount, gint64, 0, ())
+HANDLES(THREADP_4a, "GetPendingUnmanagedWorkItemCount", ves_icall_System_Threading_ThreadPool_GetPendingUnmanagedWorkItemCount, gint64, 0, ())
 HANDLES(THREADP_4b, "GetThreadCount", ves_icall_System_Threading_ThreadPool_GetThreadCount, gint32, 0, ())
 HANDLES(THREADP_5, "InitializeVMTp", ves_icall_System_Threading_ThreadPool_InitializeVMTp, void, 1, (MonoBoolean_ref))
 HANDLES(THREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_ThreadPool_NotifyWorkItemComplete, MonoBoolean, 0, ())

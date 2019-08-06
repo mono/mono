@@ -706,6 +706,7 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	return TRUE;
 }
 
+#ifdef ENABLE_NETCORE
 gint32
 ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
 {
@@ -713,9 +714,9 @@ ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
 }
 
 gint64
-ves_icall_System_Threading_ThreadPool_PendingWorkItemCount (MonoError *error)
+ves_icall_System_Threading_ThreadPool_GetPendingUnmanagedWorkItemCount (MonoError *error)
 {
-	return mono_threadpool_worker_get_pending_threads_count ();
+	return mono_threadpool_worker_get_pending_unmanaged_work_item_count ();
 }
 
 gint64
@@ -723,6 +724,7 @@ ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *erro
 {
 	return mono_threadpool_worker_get_completed_threads_count ();
 }
+#endif
 
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)
