@@ -78,8 +78,6 @@
    property.</para>
 							</block>
 						</remarks>
-        <exception cref="T:System.NotSupportedException">To be added; from:
-          <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
         <exception cref="T:System.ArgumentException">foo</exception>
         <permission cref="T:System.SomePermission">bar</permission>
         <altmember cref="T:System.SomeMember">alt member</altmember>

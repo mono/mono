@@ -608,15 +608,15 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.AcceptSocket = e.current_socket.EndAccept (ares);
+				e.AcceptSocket = e.CurrentSocket.EndAccept (ares);
 			} catch (SocketException ex) {
 				e.SocketError = ex.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
 				if (e.AcceptSocket == null)
-					e.AcceptSocket = new Socket (e.current_socket.AddressFamily, e.current_socket.SocketType, e.current_socket.ProtocolType, null);
-				e.Complete ();
+					e.AcceptSocket = new Socket (e.CurrentSocket.AddressFamily, e.CurrentSocket.SocketType, e.CurrentSocket.ProtocolType, null);
+				e.Complete_internal ();
 			}
 		});
 
@@ -959,7 +959,7 @@ namespace System.Net.Sockets
 					 *
 					 * Note that we're not calling `e.Complete ()` (or resetting `e.in_progress`) here.
 					 */
-					e.current_socket.EndConnect (ares);
+					e.CurrentSocket.EndConnect (ares);
 				}
 
 				return pending;
@@ -979,7 +979,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("e");
 
 			if (e.in_progress != 0 && e.LastOperation == SocketAsyncOperation.Connect)
-				e.current_socket?.Close ();
+				e.CurrentSocket?.Close ();
 		}
 
 		static AsyncCallback ConnectAsyncCallback = new AsyncCallback (ares => {
@@ -989,13 +989,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.current_socket.EndConnect (ares);
+				e.CurrentSocket.EndConnect (ares);
 			} catch (SocketException se) {
 				e.SocketError = se.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -1263,7 +1263,7 @@ namespace System.Net.Sockets
 					Array.Resize (ref addresses, last_valid);
 				return true;
 			} else {
-				e.ConnectByNameError = null;
+				e.SetConnectByNameError (null);
 				return false;
 			}
 		}
@@ -1316,13 +1316,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.current_socket.EndDisconnect (ares);
+				e.CurrentSocket.EndDisconnect (ares);
 			} catch (SocketException ex) {
 				e.SocketError = ex.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -1515,13 +1515,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.BytesTransferred = e.current_socket.EndReceive (ares);
+				e.SetBytesTransferred (e.CurrentSocket.EndReceive (ares));
 			} catch (SocketException se){
 				e.SocketError = se.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -1739,13 +1739,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.BytesTransferred = e.current_socket.EndReceiveFrom (ares, ref e.remote_ep);
+				e.SetBytesTransferred (e.CurrentSocket.EndReceiveFrom_internal ((SocketAsyncResult)ares, e));
 			} catch (SocketException ex) {
 				e.SocketError = ex.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -1810,7 +1810,20 @@ namespace System.Net.Sockets
 			return sockares.Total;
 		}
 
+		int EndReceiveFrom_internal (SocketAsyncResult sockares, SocketAsyncEventArgs ares)
+		{
+			ThrowIfDisposedAndClosed ();
 
+			if (Interlocked.CompareExchange (ref sockares.EndCalled, 1, 0) == 1)
+				throw new InvalidOperationException ("EndReceiveFrom can only be called once per asynchronous operation");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne ();
+
+			sockares.CheckIfThrowDelayedException ();
+			ares.RemoteEndPoint = sockares.EndPoint;
+			return sockares.Total;
+		}
 
 		static unsafe int ReceiveFrom_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking)
 		{
@@ -2005,13 +2018,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.BytesTransferred = e.current_socket.EndSend (ares);
+				e.SetBytesTransferred (e.CurrentSocket.EndSend (ares));
 			} catch (SocketException se){
 				e.SocketError = se.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -2229,13 +2242,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("No operation in progress");
 
 			try {
-				e.BytesTransferred = e.current_socket.EndSendTo (ares);
+				e.SetBytesTransferred (e.CurrentSocket.EndSendTo (ares));
 			} catch (SocketException ex) {
 				e.SocketError = ex.SocketErrorCode;
 			} catch (ObjectDisposedException) {
 				e.SocketError = SocketError.OperationAborted;
 			} finally {
-				e.Complete ();
+				e.Complete_internal ();
 			}
 		});
 
@@ -2866,10 +2879,10 @@ namespace System.Net.Sockets
 			if (e.AcceptSocket != null) {
 				e.socket_async_result.AcceptSocket = e.AcceptSocket;
 			}
-			e.current_socket = this;
+			e.SetCurrentSocket (this);
 			e.SetLastOperation (SocketOperationToSocketAsyncOperation (operation));
 			e.SocketError = SocketError.Success;
-			e.BytesTransferred = 0;
+			e.SetBytesTransferred (0);
 		}
 
 		SocketAsyncOperation SocketOperationToSocketAsyncOperation (SocketOperation op)

@@ -7851,7 +7851,7 @@ namespace System.Net.Sockets {
             if (s_LoggingEnabled) Logging.Enter(Logging.Sockets, null, "ConnectAsync", "");
 
             // Throw if multiple buffers specified.
-            if (e.m_BufferList != null) {
+            if (e.BufferList != null) {
                 throw new ArgumentException(SR.GetString(SR.net_multibuffernotsupported), "BufferList");
             }
 
