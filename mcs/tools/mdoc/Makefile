@@ -21,7 +21,7 @@ MONODOC_RESOURCES_COMMAND = $(foreach file,$(MONODOC_RESOURCES),/resource:../../
 
 LIB_REFS = monodoc System System.Xml System.Core Mono.Cecil ICSharpCode.SharpZipLib System.Xml.Linq System.Web
 	
-LOCAL_MCS_FLAGS = $(MDOC_RESOURCES_COMMAND) $(MONODOC_RESOURCES_COMMAND)
+LOCAL_MCS_FLAGS = $(MDOC_RESOURCES_COMMAND) $(MONODOC_RESOURCES_COMMAND) -define:NEW_CECIL
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mdoc.exe
 PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
 MSCORLIB = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
