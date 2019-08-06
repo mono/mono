@@ -2386,18 +2386,20 @@ namespace System
 
         // Only called by GetXXXCandidates, GetInterfaces, and GetNestedTypes when FilterHelper has set "prefixLookup" to true.
         // Most of the plural GetXXX methods allow prefix lookups while the singular GetXXX methods mostly do not.
+        //
+        // NOTE: A name with "*" gets chopped off to an empty string before calling this method.                 
         private static bool FilterApplyPrefixLookup(MemberInfo memberInfo, string name, bool ignoreCase)
         {
             Contract.Assert(name != null);
 
             if (ignoreCase)
             {
-                if (!memberInfo.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase))
+                if (!memberInfo.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase))                
                     return false;
             }
             else
             {
-                if (!memberInfo.Name.StartsWith(name, StringComparison.Ordinal))
+                if (!memberInfo.Name.StartsWith(name, StringComparison.Ordinal))                
                     return false;
             }            
 
@@ -2858,17 +2860,24 @@ namespace System
             return candidates;
         }
 
+        // Note the following assumptions on name:
+        // 1. Callers assume that null == "*"
+        // 2. FilterHelper chops off "*" 
+        //
         private ListBuilder<ConstructorInfo> GetConstructorCandidates(
             string name, BindingFlags bindingAttr, CallingConventions callConv, 
             Type[] types, bool allowPrefixLookup)
         {
             bool prefixLookup, ignoreCase;
             MemberListType listType;
+
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
-#if MONO
-            if (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
+#if MONO            
+            if ((!prefixLookup && name != null && name.Length == 0) ||
+                (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)) {
                 return new ListBuilder<ConstructorInfo> (0);
+            }
             RuntimeConstructorInfo[] cache = GetConstructors_internal (bindingAttr, this);
 #else
             RuntimeConstructorInfo[] cache = Cache.GetConstructorList(listType, name);
