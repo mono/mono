@@ -2872,7 +2872,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO            
-            if ((!prefixLookup && name != null && name.Length == 0) ||
+            if ((!prefixLookup && name?.Length == 0) ||
                 (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)) {
                 return new ListBuilder<ConstructorInfo> (0);
             }
