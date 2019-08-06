@@ -21,7 +21,11 @@ endif
 
 if ENABLE_NETCORE
 update_submodules = 
+if WASM
+SUBDIRS = mk llvm mono runtime
+else
 SUBDIRS = mk llvm mono runtime netcore
+endif
 else
 update_submodules = update_submodules
 SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests

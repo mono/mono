@@ -15,7 +15,11 @@
 #ifdef GEN_PINVOKE
 #include "pinvoke-table.h"
 #else
+#ifdef ENABLE_NETCORE
+#include "pinvoke-tables-default-netcore.h"
+#else
 #include "pinvoke-tables-default.h"
+#endif
 #endif
 
 #ifdef CORE_BINDINGS

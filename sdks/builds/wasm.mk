@@ -60,6 +60,11 @@ WASM_RUNTIME_AC_VARS= \
 WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
 WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
+ifneq ($(ENABLE_NETCORE),)
+NETCORE_CONFIGURE_FLAGS=--with-core=only
+WASM_OFFSET_DUMPER_ARGS=--define ENABLE_NETCORE
+endif
+
 WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
 	--disable-nls \
@@ -78,7 +83,8 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-icall-tables \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
-	$(if $(ENABLE_CXX),--enable-cxx)
+	$(if $(ENABLE_CXX),--enable-cxx) $(NETCORE_CONFIGURE_FLAGS) \
+	CFLAGS="$(WASM_RUNTIME_CFLAGS)"
 
 # $(1) - target
 define WasmRuntimeTemplate
@@ -155,7 +161,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)" $(WASM_OFFSET_DUMPER_ARGS)
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -168,7 +174,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-icall-symbol-map \
 	--with-cooperative-gc=no \
 	--enable-hybrid-suspend=no \
-	--with-cross-offsets=wasm32-unknown-none.h
+	--with-cross-offsets=wasm32-unknown-none.h $(NETCORE_CONFIGURE_FLAGS)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
@@ -187,7 +193,7 @@ $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-u
 #  $(6): offsets dumper abi
 define WasmCrossMXETemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)" $(WASM_OFFSET_DUMPER_ARGS)
 
 _wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
 
