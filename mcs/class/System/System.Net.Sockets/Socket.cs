@@ -466,13 +466,16 @@ namespace System.Net.Sockets
 			}
 		}
 
-		static void AddSockets (List<Socket> sockets, IList list, string name)
+		static void AddSockets (List<Socket> sockets, IList socketList, string name)
 		{
-			if (list != null) {
-				foreach (Socket sock in list) {
-					if (sock == null) // MS throws a NullRef
-						throw new ArgumentNullException (name, "Contains a null element");
-					sockets.Add (sock);
+			if (socketList != null) {
+				int listCount = socketList.Count;
+				for (int i = 0; i < listCount; i++) {
+					Socket socket = socketList[i] as Socket;
+					if (socket == null)
+						throw new ArgumentException (SR.Format (SR.net_sockets_select, socket?.GetType ().FullName ?? "null", typeof (Socket).FullName), nameof (socketList));
+
+					sockets.Add (socket);
 				}
 			}
 
@@ -774,21 +777,20 @@ namespace System.Net.Sockets
 
 			if (localEP == null)
 				throw new ArgumentNullException("localEP");
-				
-			var ipEndPoint = localEP as IPEndPoint;
-			if (ipEndPoint != null) {
-				localEP = RemapIPEndPoint (ipEndPoint);	
-			}
-			
+
+			// Ask the EndPoint to generate a SocketAddress that we can pass down to native code.
+			var endPointSnapshot = localEP;
+			var socketAddress = SnapshotAndSerialize (ref endPointSnapshot);
+
 			int error;
-			Bind_internal (m_Handle, localEP.Serialize(), out error);
+			Bind_internal (m_Handle, socketAddress, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
 			if (error == 0)
 				is_bound = true;
 
-			seed_endpoint = localEP;
+			seed_endpoint = endPointSnapshot;
 #endif // FEATURE_NO_BSD_SOCKETS
 		}
 
@@ -849,6 +851,20 @@ namespace System.Net.Sockets
 
 		public void Connect (IPAddress address, int port)
 		{
+			ThrowIfDisposedAndClosed ();
+
+			if (address == null)
+				throw new ArgumentNullException (nameof (address));
+
+			if (!TcpValidationHelpers.ValidatePortNumber (port))
+				throw new ArgumentOutOfRangeException (nameof (port));
+
+			if (is_listening)
+				throw new InvalidOperationException (SR.GetString (SR.net_sockets_mustnotlisten));
+
+			if (!CanTryAddressFamily (address.AddressFamily))
+				throw new NotSupportedException (SR.net_invalidversion);
+
 			Connect (new IPEndPoint (address, port));
 		}
 
@@ -862,7 +878,10 @@ namespace System.Net.Sockets
 			ThrowIfDisposedAndClosed ();
 
 			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
+				throw new ArgumentNullException (nameof (remoteEP));
+
+			if (is_listening)
+				throw new InvalidOperationException (SR.GetString (SR.net_sockets_mustnotlisten));
 
 			IPEndPoint ep = remoteEP as IPEndPoint;
 			/* Dgram uses Any to 'disconnect' */
@@ -871,20 +890,23 @@ namespace System.Net.Sockets
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 			}
 
-			if (is_listening)
-				throw new InvalidOperationException ();
-				
-			if (ep != null) {
-				remoteEP = RemapIPEndPoint (ep);
+			DnsEndPoint dnsEP = remoteEP as DnsEndPoint;
+			if (dnsEP != null) {
+				if (dnsEP.AddressFamily != AddressFamily.Unspecified && !CanTryAddressFamily (dnsEP.AddressFamily))
+					throw new NotSupportedException (SR.net_invalidversion);
+
+				Connect (dnsEP.Host, dnsEP.Port);
+				return;
 			}
 
-			SocketAddress serial = remoteEP.Serialize ();
+			EndPoint endPointSnapshot = remoteEP;
+			SocketAddress socketAddress = SnapshotAndSerialize (ref endPointSnapshot);
 
 			int error = 0;
-			Connect_internal (m_Handle, serial, out error, is_blocking);
+			Connect_internal (m_Handle, socketAddress, out error, is_blocking);
 
 			if (error == 0 || error == 10035)
-				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
+				seed_endpoint = endPointSnapshot; // Keep the ep around for non-blocking sockets
 
 			if (error != 0) {
 				if (is_closed)
@@ -939,6 +961,9 @@ namespace System.Net.Sockets
 						throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
 					if (dep.Port <= 0 || dep.Port > 65535)
 						throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+
+					if (dep.AddressFamily != AddressFamily.Unspecified && !CanTryAddressFamily (dep.AddressFamily))
+						throw new NotSupportedException (SR.net_invalidversion);
 
 					ares = new SocketAsyncResult (this, ConnectAsyncCallback, e, SocketOperation.Connect) {
 						Addresses = addresses,
@@ -1004,13 +1029,13 @@ namespace System.Net.Sockets
 			ThrowIfDisposedAndClosed ();
 
 			if (host == null)
-				throw new ArgumentNullException ("host");
-			if (addressFamily != AddressFamily.InterNetwork && addressFamily != AddressFamily.InterNetworkV6)
-				throw new NotSupportedException ("This method is valid only for sockets in the InterNetwork and InterNetworkV6 families");
-			if (port <= 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+				throw new ArgumentNullException (nameof (host));
+
+			if (!TcpValidationHelpers.ValidatePortNumber (port))
+				throw new ArgumentOutOfRangeException (nameof (port));
+
 			if (is_listening)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (SR.GetString (SR.net_sockets_mustnotlisten));
 
 			var callback = new AsyncCallback ((result) => {
 				var resultTask = ((Task<IPAddress[]>)result);
@@ -2563,11 +2588,8 @@ namespace System.Net.Sockets
 			int error;
 			SetSocketOption_internal (m_Handle, optionLevel, optionName, null, optionValue, 0, out error);
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, object optionValue)
@@ -2599,11 +2621,8 @@ namespace System.Net.Sockets
 				throw new ArgumentException ("Invalid value specified.", "optionValue");
 			}
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
@@ -2620,11 +2639,8 @@ namespace System.Net.Sockets
 			int error;
 			SetSocketOption_internal (m_Handle, optionLevel, optionName, null, null, optionValue, out error);
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		static void SetSocketOption_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error)
@@ -2692,6 +2708,9 @@ namespace System.Net.Sockets
 
 		public void Close (int timeout)
 		{
+			if (timeout < -1)
+				throw new ArgumentOutOfRangeException (nameof (timeout));
+
 			linger_timeout = timeout;
 			Dispose ();
 		}
@@ -2908,7 +2927,22 @@ namespace System.Net.Sockets
 				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 			}
 		}
-		
+
+		SocketAddress SnapshotAndSerialize (ref EndPoint remoteEP)
+		{
+			if (remoteEP is IPEndPoint ipSnapshot) {
+				// Snapshot to avoid external tampering and malicious derivations if IPEndPoint.
+				ipSnapshot = ipSnapshot.Snapshot ();
+
+				// DualMode: return an IPEndPoint mapped to an IPv6 address.
+				remoteEP = RemapIPEndPoint (ipSnapshot);
+			} else if (remoteEP is DnsEndPoint) {
+				throw new ArgumentException (SR.Format (SR.net_sockets_invalid_dnsendpoint, nameof (remoteEP)), nameof (remoteEP));
+			}
+
+			return IPEndPointExtensions.Serialize (remoteEP);
+		}
+
 		IPEndPoint RemapIPEndPoint (IPEndPoint input) {
 			// If socket is DualMode ensure we automatically handle mapping IPv4 addresses to IPv6.
 			if (IsDualMode && input.AddressFamily == AddressFamily.InterNetwork)
