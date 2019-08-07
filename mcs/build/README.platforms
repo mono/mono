@@ -11,9 +11,6 @@ PLATFORM_RUNTIME
 	The system runtime for executing CLR programs. Blank on Win32,
 	probably $(RUNTIME) (the Mono runtime) on everything else.
 
-PLATFORM_CORLIB
-	The name of the system's corlib. 'mscorlib.dll'
-
 PLATFORM_TWEAK_CORLIB_SOURCES
 	A command to futz around with the sources to mscorlib.dll. See linux.make
 	and win32.make for examples. Should be 'cat' unless you know what you're
