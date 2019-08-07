@@ -98,7 +98,7 @@
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_INCLUDE_DIR);$(LIBGC_CPPFLAGS_INCLUDE);$(GLIB_CFLAGS_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;Z_PREFIX;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <DisableSpecificWarnings>4996;4018;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -169,7 +169,7 @@
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_INCLUDE_DIR);$(LIBGC_CPPFLAGS_INCLUDE);$(GLIB_CFLAGS_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;Z_PREFIX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -207,7 +207,7 @@
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_INCLUDE_DIR);$(LIBGC_CPPFLAGS_INCLUDE);$(GLIB_CFLAGS_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;WIN64;Z_PREFIX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <PrecompiledHeader>
       </PrecompiledHeader>
