@@ -115,7 +115,7 @@ g_file_test (const gchar *filename, GFileTest test)
 
 	if ((test & G_FILE_TEST_IS_EXECUTABLE) != 0) {
 		size_t len = strlen (filename);
-		if (len > 4 && strcmp (filename + len-3, "exe"))
+		if (len > 4 && !strcmp (filename + len-3, "exe"))
 		    return TRUE;
 		    
 		return FALSE;
