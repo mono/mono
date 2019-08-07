@@ -46,7 +46,7 @@ gboolean verify_partial_md = FALSE;
 
 static char *assembly_directory[2];
 
-static MonoAssembly *pedump_preload (MonoAssemblyName *aname, gchar **assemblies_path, gpointer user_data);
+static MonoAssembly *pedump_preload (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, char **assemblies_path, gboolean refonly, gpointer user_data, MonoError *error);
 static void pedump_assembly_load_hook (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error);
 static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
@@ -472,7 +472,7 @@ verify_image_file (const char *fname)
 
 		mono_init_version ("pedump", image->version);
 
-		mono_install_assembly_preload_hook (pedump_preload, GUINT_TO_POINTER (FALSE));
+		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE);
 
 		mono_icall_init ();
 		mono_marshal_init ();
@@ -483,7 +483,7 @@ verify_image_file (const char *fname)
 
 		mono_init_version ("pedump", NULL);
 
-		mono_install_assembly_preload_hook (pedump_preload, GUINT_TO_POINTER (FALSE));
+		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE);
 
 		mono_icall_init ();
 		mono_marshal_init ();
@@ -624,17 +624,16 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
  * Try to load referenced assemblies from assemblies_path.
  */
 static MonoAssembly *
-pedump_preload (MonoAssemblyName *aname,
-				 gchar **assemblies_path,
-				 gpointer user_data)
+pedump_preload (MonoAssemblyLoadContext *alc,
+                MonoAssemblyName *aname,
+                gchar **assemblies_path,
+                gboolean refonly,
+                gpointer user_data,
+                MonoError *error)
 {
 	MonoAssembly *result = NULL;
-	gboolean refonly = GPOINTER_TO_UINT (user_data);
 	MonoAssemblyOpenRequest req;
-	mono_assembly_request_prepare (&req.request, sizeof (req),
-	                               refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
-	                               mono_domain_default_alc (mono_get_root_domain ()));
-
+	mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, alc);
 
 	if (assemblies_path && assemblies_path [0] != NULL) {
 		result = real_load (assemblies_path, aname->culture, aname->name, &req);
