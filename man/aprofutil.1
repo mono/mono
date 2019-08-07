@@ -1,0 +1,91 @@
+.TH aprofutil 1
+.SH NAME
+aprofutil \- Mono's AOT profile tool
+.SH SYNOPSIS
+.B aprofutil
+\fR[\fIoptions\fR] <\fIyour-aot-profile.aotprofile\fR>
+.SH DESCRIPTION
+AOT profile tool is a tool to inspect AOT profiler files.
+.PP
+It can be used to show, filter and write the profiler file content in readable text form.
+.SH OPTIONS
+.nf
+.RS
+  -h, --help, -?             Show this message and exit
+  -a, --all                  Show modules, types and methods in the profile
+  -d, --modules              Show modules in the profile
+      --filter-method=VALUE  Filter by method with regex VALUE
+      --filter-module=VALUE  Filter by module with regex VALUE
+      --filter-type=VALUE    Filter by type with regex VALUE
+  -m, --methods              Show methods in the profile
+  -o, --output=VALUE         Write profile to OUTPUT file
+  -s, --summary              Show summary of the profile
+  -t, --types                Show types in the profile
+  -v, --verbose              Output information about progress during the run
+                               of the tool
+.RE
+.fi
+.SH EXAMPLES
+Display modules and summary of XA startup profile
+.PP
+.nf
+.RS
+mono aprofutil.exe -sd startup.aotprofile
+.fi
+.RE
+.PP
+Output:
+.PP
+.nf
+.RS
+Modules:
+	41C38B0A-2032-45CE-8638-0299CED65330 mscorlib
+	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
+	8FB63BB4-1195-4173-A9ED-0EC341B07C32 System
+	74C06E06-C1C7-4A4C-B64E-EAC7DBB08BBC Java.Interop
+	11E2319F-6A26-461C-9C46-C972248BEE4B System.Core
+	7999CC4B-D566-4ECA-8A72-469344172CA3 Xamarin.Forms.Platform.Android
+	C5089213-328B-451D-BA87-D6585C120780 Xamarin.Forms.Performance.Integration.Droid
+	D754F8AE-503C-41C8-B16F-647FC662507A Xamarin.Android.Support.v7.AppCompat
+	929ECB6D-1171-4C66-8470-DD32AC608969 Xamarin.Android.Support.Fragment
+	F841E23B-59A8-4AE2-9A84-D2FC1D891B4A Xamarin.Forms.Core
+	945CCBF8-C2DB-468B-B3BD-D7ACA37B69AD Xamarin.Forms.Performance.Integration
+	AF20FA19-F07E-4BD4-B5ED-104706EA660E Xamarin.Forms.Xaml
+	629C84F8-0988-42EF-8BC5-872173A0A71F FormsViewGroup
+	60398815-8E62-487E-A553-781F56A0849D Xamarin.Android.Support.Design
+	F0C550D7-665A-40B5-A307-8E9B49976D87 Xamarin.Android.Support.Core.UI
+	23A34485-DE75-440E-BA9D-E235F664E990 Xamarin.Android.Support.Compat
+Summary:
+	Modules:         16
+	Types:          907
+	Methods:      4,230
+.fi
+.RE
+.PP
+Filter Java.Interop.Runtime type in XA startup profile
+.PP
+.nf
+.RS
+mono aprofutil.exe --filter-type Java.Interop.Runtime -sa startup.aotprofile
+.fi
+.RE
+.PP
+Output:
+.PP
+.nf
+.RS
+Modules:
+	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
+Types:
+	Java.Interop.Runtime
+Methods:
+	bool Java.Interop.Runtime:IsGCUserPeer (Android.Runtime.IJavaObject)
+	bool Java.Interop.Runtime:IsGCUserPeer (intptr)
+Summary:
+	Modules:          1  (of 16)
+	Types:            1  (of 907)
+	Methods:          2  (of 4230)
+.fi
+.RE
+.SH SEE ALSO
+\fBmono-profilers\fR(1)
