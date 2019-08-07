@@ -184,9 +184,9 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 		stream.next_in = ppdb_data;
 		stream.avail_out = ppdb_size;
 		stream.next_out = data;
-		int res = inflateInit2 (&stream, -15);
+		int res = z_inflateInit2 (&stream, -15);
 		g_assert (res == Z_OK);
-		res = inflate (&stream, Z_NO_FLUSH);
+		res = z_inflate (&stream, Z_NO_FLUSH);
 		g_assert (res == Z_STREAM_END);
 
 		g_assert (ppdb_size > 4);
