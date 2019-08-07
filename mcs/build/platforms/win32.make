@@ -9,13 +9,6 @@ PLATFORM_TEST_HARNESS_EXCLUDES = NotOnWindows
 
 EXTERNAL_RUNTIME = mono
 
-# Disabled since it needs the SDK
-#ILDISASM = ildasm.exe /test
-
-#ILDISASM = monodis.bat
-## Gross hack
-ILDISASM = $(topdir)/../mono/mono/dis/monodis
-
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
 PLATFORM_PATH_SEPARATOR = ;
 
