@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -12,6 +13,7 @@ namespace System
 		// Called by the runtime
 		internal static unsafe void Setup (char** pNames, char** pValues, int count)
 		{
+			s_dataStore = new Dictionary<string, object?>(count);
 			for (int i = 0; i < count; i++)
 				s_dataStore.Add (new string ((sbyte*)pNames[i]), new string ((sbyte*)pValues[i]));
 		}
