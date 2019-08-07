@@ -54,14 +54,14 @@
   </PropertyGroup>
   <PropertyGroup Label="SDK Version settings">
     <SDKPackageMajorVersion>0</SDKPackageMajorVersion>
-    <SDKPackageMinorVersion>1</SDKPackageMinorVersion>
+    <SDKPackageMinorVersion>2</SDKPackageMinorVersion>
     <SDKPackagePatchVersion>0</SDKPackagePatchVersion>
     <SDKPackagePreReleasePreviewNumber>1</SDKPackagePreReleasePreviewNumber>
     <SDKPackagePreReleaseVersionLabel>preview$(SDKPackagePreReleasePreviewNumber)</SDKPackagePreReleaseVersionLabel>
     <SDKPackagePreReleaseBrandingLabel>Preview $(SDKPackagePreReleasePreviewNumber)</SDKPackagePreReleaseBrandingLabel>
     <SDKPackageMajorMinorVersion>$(SDKPackageMajorVersion).$(SDKPackageMinorVersion)</SDKPackageMajorMinorVersion>
     <SDKPackageVersionPrefix>$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$(SDKPackagePatchVersion)</SDKPackageVersionPrefix>
-    <SDKPackageVersion>$(SDKPackageVersionPrefix)-$(SDKPackagePreReleaseVersionLabel)</SDKPackageVersion>
+    <SDKPackageVersion>$(SDKPackageVersionPrefix)</SDKPackageVersion>
     <PreviousSDKPackageReleaseVersion Condition=" '$(SDKPackagePatchVersion)' != '0' ">$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$([MSBuild]::Subtract($(SDKPackagePatchVersion), 1))</PreviousSDKPackageReleaseVersion>
   </PropertyGroup>
 
