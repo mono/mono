@@ -26,7 +26,7 @@ typedef enum
 	MintOpShortAndInt
 } MintOpArgType;
 
-#define OPDEF(a,b,c,d) a,
+#define OPDEF(a,b,c,d,e,f) a,
 enum {
 #include "mintops.def"
 };
@@ -53,9 +53,15 @@ enum {
 
 #define MINT_SWITCH_LEN(n) (3 + (n) * 2)
 
+#define MINT_POP_ALL	-2
+#define MINT_VAR_PUSH	-1
+#define MINT_VAR_POP	-1
+
 extern unsigned char const mono_interp_oplen[];
+extern int const mono_interp_oppop[];
+extern int const mono_interp_oppush[];
 extern MintOpArgType const mono_interp_opargtype[];
-extern char* mono_interp_dis_mintop(const unsigned short *base, const guint16 *ip);
+extern char* mono_interp_dis_mintop (const unsigned short *base, const guint16 *ip);
 extern const guint16* mono_interp_dis_mintop_len (const guint16 *ip);
 
 // This, instead of an array of pointers, to optimize away a pointer and a relocation per string.

@@ -3260,7 +3260,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	unsigned char *locals = NULL;
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
-#define OPDEF(a,b,c,d) &&LAB_ ## a,
+#define OPDEF(a,b,c,d,e,f) &&LAB_ ## a,
 #include "mintops.def"
 	};
 #endif
@@ -4837,10 +4837,8 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_INTRINS_RUNTIMEHELPERS_OBJECT_HAS_COMPONENT_SIZE) {
-			sp -= 1;
-			MonoObject *obj = sp [0].data.o;
-			sp [0].data.i = (obj->vtable->flags & MONO_VT_FLAG_ARRAY_OR_STRING) != 0;
-			sp ++;
+			MonoObject *obj = sp [-1].data.o;
+			sp [-1].data.i = (obj->vtable->flags & MONO_VT_FLAG_ARRAY_OR_STRING) != 0;
 			++ip;
 			MINT_IN_BREAK;
 		}
@@ -6014,12 +6012,6 @@ main_loop:
 			sp->data.o = mono_interp_new (frame->imethod->domain, (MonoClass*)frame->imethod->data_items [*(guint16 *)(ip + 1)]); // FIXME: do not swallow the error
 			ip += 2;
 			sp++;
-			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_MONO_FREE)
-			++ip;
-			--sp;
-			g_error ("that doesn't seem right");
-			g_free (sp->data.p);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_RETOBJ)
 			++ip;

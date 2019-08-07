@@ -12,31 +12,56 @@
 
 // This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 struct MonoInterpOpnameCharacters {
-#define OPDEF(a, b, c, d) char a [sizeof (b)];
+#define OPDEF(a,b,c,d,e,f) char a [sizeof (b)];
 #include "mintops.def"
 };
 #undef OPDEF
 
 extern const MonoInterpOpnameCharacters mono_interp_opname_characters = {
-#define OPDEF(a, b, c, d) b,
+#define OPDEF(a,b,c,d,e,f) b,
 #include "mintops.def"
 };
 #undef OPDEF
 
 extern const guint16 mono_interp_opname_offsets [] = {
-#define OPDEF(a, b, c, d) offsetof (MonoInterpOpnameCharacters, a),
+#define OPDEF(a,b,c,d,e,f) offsetof (MonoInterpOpnameCharacters, a),
 #include "mintops.def"
 #undef OPDEF
 };
 
-#define OPDEF(a, b, c, d) c,
+#define OPDEF(a,b,c,d,e,f) c,
 unsigned char const mono_interp_oplen [] = {
 #include "mintops.def"
 };
 #undef OPDEF
 
+#define Push0 0
+#define Push1 1
+#define Push2 2
+#define Pop0 0
+#define Pop1 1
+#define Pop2 2
+#define Pop3 3
+#define Pop4 4
+#define Pop5 5
+#define Pop6 6
+#define PopAll MINT_POP_ALL
+#define VarPush MINT_VAR_PUSH
+#define VarPop MINT_VAR_POP
 
-#define OPDEF(a, b, c, d) d,
+#define OPDEF(a,b,c,d,e,f) d,
+int const mono_interp_oppop[] = {
+#include "mintops.def"
+};
+#undef OPDEF
+
+#define OPDEF(a,b,c,d,e,f) e,
+int const mono_interp_oppush[] = {
+#include "mintops.def"
+};
+#undef OPDEF
+
+#define OPDEF(a,b,c,d,e,f) f,
 MintOpArgType const mono_interp_opargtype [] = {
 #include "mintops.def"
 };
