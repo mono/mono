@@ -3050,7 +3050,13 @@ mono_class_from_name_case_checked (MonoImage *image, const char *name_space, con
 		if (mono_utf8_strcasecmp (n, name) == 0 && mono_utf8_strcasecmp (nspace, name_space) == 0)
 			return mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | i, error);
 	}
-	return NULL;
+
+	/*
+	 * This function appears to work completely differently from the case-sensitive check and is somewhat broken.
+	 * Additionally, it's only really accessible from reflection or maybe VB.
+	 * Falling back to the case-sensitive check on failure solves a lot of missed lookups in practice.
+	 */
+	return mono_class_from_name_checked (image, name_space, name, error);
 }
 
 static MonoClass*
