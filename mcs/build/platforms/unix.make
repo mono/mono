@@ -16,9 +16,6 @@ ILDISASM = false
 
 PLATFORM_PATH_SEPARATOR = :
 
-# Define this if this ever will work on Unix
-# PLATFORM_MAKE_CORLIB_CMP = yes
-
 # This is for changing / to \ on windows
 PLATFORM_CHANGE_SEPARATOR_CMD = cat
 
