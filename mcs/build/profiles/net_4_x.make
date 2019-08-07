@@ -7,8 +7,6 @@ MCS = $(BOOTSTRAP_MCS)
 
 PLATFORMS = macos linux win32 unix
 
-# nuttzing!
-
 profile-check:
 	@:
 
