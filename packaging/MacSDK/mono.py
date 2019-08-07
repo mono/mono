@@ -49,8 +49,8 @@ class MonoMasterPackage(Package):
         self.custom_version_str = None
 
     def build(self):
-        self.make = '%s EXTERNAL_MCS=%s EXTERNAL_RUNTIME=%s' % (
-            self.make, self.profile.env.system_mcs, self.profile.env.system_mono)
+        self.make = '%s EXTERNAL_RUNTIME=%s' % (
+            self.make, self.profile.env.system_mono)
         Package.configure(self)
 
         if self.custom_version_str is not None:
