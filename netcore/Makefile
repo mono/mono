@@ -141,6 +141,11 @@ nupkg:
 clean:
 	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
 
+enable-rsp-tests:
+	sed -i.tmp -e 's/-nomethod/-method/g; s/-noclass/-class/g; s/-nonamespace/-namespace/g' CoreFX.issues.rsp && rm CoreFX.issues.rsp.tmp
+
+disable-rsp-tests:
+	sed -i.tmp -e 's/-method/-nomethod/g; s/-class/-noclass/g; s/-namespace/-nonamespace/g' CoreFX.issues.rsp && rm CoreFX.issues.rsp.tmp
 
 update-tests-corefx: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
@@ -180,6 +185,12 @@ run-tests-corefx-%: prepare update-tests-corefx
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
 		$(FIXTURE)
+
+# Enables all the tests in CoreFX.issues.rsp and runs them.  Good for testing what is skipped
+run-skipped-tests-corefx: enable-rsp-tests run-tests-corefx
+
+run-skipped-tests-corefx-%: enable-rsp-tests
+	$(MAKE) run-tests-corefx-$*
 
 # build a test assembly in COREFX_ROOT (path to a fully built corefx repo) and copy it to corefx/tests/extracted
 # e.g. `make build-test-corefx-System.Runtime COREFX_ROOT=/prj/corefx-master`

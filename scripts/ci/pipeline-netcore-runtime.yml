@@ -90,9 +90,9 @@ stages:
             for testdir in netcore/corefx/tests/extracted/*; do
               counter=$((counter+1))
               printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
-              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
+              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-skipped-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
             done
-          displayName: 'Run CoreFX Tests'
+          displayName: 'Run Skipped CoreFX Tests'
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
@@ -170,9 +170,9 @@ stages:
             for testdir in netcore/corefx/tests/extracted/*; do
               counter=$((counter+1))
               printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
-              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
+              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-skipped-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
             done
-          displayName: 'Run CoreFX Tests'
+          displayName: 'Run Skipped CoreFX Tests'
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
