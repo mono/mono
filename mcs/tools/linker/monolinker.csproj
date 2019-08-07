@@ -54,6 +54,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BlacklistStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CleanStep.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ClearInitLocals.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CodeRewriterStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\IStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\LoadI18nAssemblies.cs" />
