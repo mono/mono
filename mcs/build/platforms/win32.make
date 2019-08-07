@@ -19,7 +19,6 @@ EXTERNAL_RUNTIME = mono
 ## Gross hack
 ILDISASM = $(topdir)/../mono/mono/dis/monodis
 
-PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
 PLATFORM_PATH_SEPARATOR = ;
 
