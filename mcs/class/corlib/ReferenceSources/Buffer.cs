@@ -93,7 +93,7 @@ namespace System
 				dst += int.MaxValue;
 			}
 
-			memcpy1 (dst, src, (int) sourceBytesToCopy);
+			Memcpy (dst, src, (int) sourceBytesToCopy);
 		}
 
 		[CLSCompliantAttribute (false)]
