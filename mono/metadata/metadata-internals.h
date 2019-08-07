@@ -974,5 +974,7 @@ mono_signature_get_managed_fmt_string (MonoMethodSignature *sig);
 gboolean
 mono_type_in_image (MonoType *type, MonoImage *image);
 
+#define MONO_CLASS_IS_INTERFACE_INTERNAL(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || mono_type_is_generic_parameter (&c->byval_arg))
+
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

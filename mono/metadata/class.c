@@ -86,6 +86,8 @@ static gboolean mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_
 
 static gboolean class_kind_may_contain_generic_instances (MonoTypeKind kind);
 
+GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType");
+
 
 /*
 We use gclass recording to allow recursive system f types to be referenced by a parent.
@@ -1760,6 +1762,59 @@ type_has_references (MonoClass *klass, MonoType *ftype)
 	return FALSE;
 }
 
+/**
+ * mono_class_is_gparam_with_nonblittable_parent:
+ * \param klass  a generic parameter
+ *
+ * \returns TRUE if \p klass is definitely not blittable.
+ *
+ * A parameter is definitely not blittable if it has the IL 'reference'
+ * constraint, or if it has a class specified as a parent.  If it has an IL
+ * 'valuetype' constraint or no constraint at all or only interfaces as
+ * constraints, we return FALSE because the parameter may be instantiated both
+ * with blittable and non-blittable types.
+ *
+ * If the paramter is a generic sharing parameter, we look at its gshared_constraint->blittable bit.
+ */
+static gboolean
+mono_class_is_gparam_with_nonblittable_parent (MonoClass *klass)
+{
+	MonoType *type = &klass->byval_arg;
+	g_assert (mono_type_is_generic_parameter (type));
+	MonoGenericParam *gparam = type->data.generic_param;
+	if (mono_generic_param_info (gparam) != NULL)
+	{
+		if ((mono_generic_param_info (gparam)->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0)
+			return TRUE;
+		if ((mono_generic_param_info (gparam)->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0)
+			return FALSE;
+	}
+
+	if (gparam->gshared_constraint) {
+		MonoClass *constraint_class = mono_class_from_mono_type (gparam->gshared_constraint);
+		return !constraint_class->blittable;
+	}
+
+	if (mono_generic_param_owner (gparam)->is_anonymous)
+		return FALSE;
+
+	/* We could have:  T : U,  U : Base.  So have to follow the constraints. */
+	MonoClass *parent_class = mono_generic_param_get_base_type (klass);
+	g_assert (!MONO_CLASS_IS_INTERFACE_INTERNAL (parent_class));
+	/* Parent can only be: System.Object, System.ValueType or some specific base class.
+	 *
+	 * If the parent_class is ValueType, the valuetype constraint would be set, above, so
+	 * we wouldn't get here.
+	 *
+	 * If there was a reference constraint, the parent_class would be System.Object,
+	 * but we would have returned early above.
+	 *
+	 * So if we get here, there is either no base class constraint at all,
+	 * in which case parent_class would be set to System.Object, or there is none at all.
+	 */
+	return parent_class != mono_defaults.object_class;
+}
+
 /*
  * mono_class_layout_fields:
  * @class: a class
@@ -1876,6 +1931,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			continue;
 		if (blittable) {
 			if (field->type->byref || MONO_TYPE_IS_REFERENCE (field->type)) {
+				blittable = FALSE;
+			} else if (mono_type_is_generic_parameter (field->type) &&
+				mono_class_is_gparam_with_nonblittable_parent (mono_class_from_mono_type (field->type))) {
 				blittable = FALSE;
 			} else {
 				MonoClass *field_class = mono_class_from_mono_type (field->type);
@@ -8643,6 +8701,60 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 	/*FIXME properly handle nullables */
 	/*FIXME properly handle (M)VAR */
 	return FALSE;
+}
+
+/**
+ * mono_generic_param_get_base_type:
+ *
+ * Return the base type of the given generic parameter from its constraints.
+ *
+ * Could be another generic parameter, or it could be Object or ValueType.
+ */
+MonoClass*
+mono_generic_param_get_base_type (MonoClass *klass)
+{
+	MonoType *type = &klass->byval_arg;
+	g_assert (mono_type_is_generic_argument (type));
+
+	MonoGenericParam *gparam = type->data.generic_param;
+
+	g_assert (gparam->owner && !gparam->owner->is_anonymous);
+
+	MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
+
+	MonoClass *base_class = mono_defaults.object_class;
+
+	if (constraints) {
+		int i;
+		for (i = 0; constraints [i]; ++i) {
+			MonoClass *constraint = constraints[i];
+
+			if (MONO_CLASS_IS_INTERFACE_INTERNAL (constraint))
+				continue;
+
+			MonoType *constraint_type = &constraint->byval_arg;
+			if (mono_type_is_generic_argument (constraint_type)) {
+				MonoGenericParam *constraint_param = constraint_type->data.generic_param;
+				MonoGenericParamInfo *constraint_info = mono_generic_param_info (constraint_param);
+				if ((constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0 &&
+				    (constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) == 0)
+					continue;
+			}
+
+			base_class = constraint;
+		}
+
+	}
+
+	if (base_class == mono_defaults.object_class)
+	{
+		MonoGenericParamInfo *gparam_info = mono_generic_param_info (gparam);
+		if ((gparam_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0) {
+			base_class = mono_class_get_valuetype_class ();
+		}
+	}
+
+	return base_class;
 }
 
 /**

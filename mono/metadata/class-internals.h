@@ -1186,6 +1186,7 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (variant)
 #endif
 
 GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
 
 extern MonoDefaults mono_defaults;
 
@@ -1370,6 +1371,9 @@ mono_class_vtable_full (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate);
+
+MonoClass*
+mono_generic_param_get_base_type (MonoClass *klass);
 
 gboolean
 mono_class_has_variant_generic_params (MonoClass *klass);
