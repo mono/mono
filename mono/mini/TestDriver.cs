@@ -160,7 +160,10 @@ public class TestDriver {
 	}
 
 	static public int RunTests (Type type) {
-		return RunTests (type, null, null);
+		string[] process_args = Environment.GetCommandLineArgs ();
+		string[] args = new string [process_args.Length - 1];
+		Array.Copy (process_args, 1, args, 0, args.Length);
+		return RunTests (type, args, null);
 	}
 }
 
