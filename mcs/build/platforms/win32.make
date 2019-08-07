@@ -8,7 +8,6 @@ PLATFORM_RUNTIME =
 PLATFORM_CORLIB = mscorlib.dll
 PLATFORM_TEST_HARNESS_EXCLUDES = NotOnWindows
 
-EXTERNAL_MBAS = vbc.exe
 EXTERNAL_RUNTIME = mono
 
 # Disabled since it needs the SDK
