@@ -24,10 +24,3 @@ hidden_suffix =
 
 platform-check:
 	@:
-# I tried this but apparently Make's version strings aren't that
-# ... consistent between releases. Whatever.
-#
-#	@if ! $(MAKE) --version |grep '^GNU Make version 3' 1>/dev/null 2>&1 ; then \
-#	    echo "*** You need to build MCS with GNU make. Try \`gmake'" ; \
-#	    exit 1 ; \
-#	fi
