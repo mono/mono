@@ -4451,7 +4451,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("NotWorkingRuntimeInterpreter")]
 	public void SetIP2 () {
 		var bevent = run_until ("set_ip_1");
 
