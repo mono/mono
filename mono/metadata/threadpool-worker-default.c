@@ -362,12 +362,6 @@ gint64 mono_threadpool_worker_get_completed_threads_count (void)
 	return worker.heuristic_completions;
 }
 
-gint64 mono_threadpool_worker_get_pending_unmanaged_work_item_count (void)
-{
-	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
-	return counter._.starting;
-}
-
 gint32 mono_threadpool_worker_get_threads_count (void)
 {
 	ThreadPoolWorkerCounter const counter = COUNTER_READ ();

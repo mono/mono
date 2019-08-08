@@ -78,9 +78,6 @@ namespace System.Threading
 		static extern long GetCompletedWorkItemCount ();
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		static extern long GetPendingUnmanagedWorkItemCount();
-
-		[MethodImpl(MethodImplOptions.InternalCall)]
 		static extern int GetThreadCount ();
 		
 
@@ -115,7 +112,7 @@ namespace System.Threading
 		[CLSCompliant (false)]
 		public static unsafe bool UnsafeQueueNativeOverlapped (NativeOverlapped* overlapped)  => throw new NotImplementedException ();
 
-		static long PendingUnmanagedWorkItemCount => GetPendingUnmanagedWorkItemCount ();
+		static long PendingUnmanagedWorkItemCount => 0;
 		
 		public static long CompletedWorkItemCount => GetCompletedWorkItemCount ();
 

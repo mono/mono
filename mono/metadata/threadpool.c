@@ -714,12 +714,6 @@ ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
 }
 
 gint64
-ves_icall_System_Threading_ThreadPool_GetPendingUnmanagedWorkItemCount (MonoError *error)
-{
-	return mono_threadpool_worker_get_pending_unmanaged_work_item_count ();
-}
-
-gint64
 ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
 {
 	return mono_threadpool_worker_get_completed_threads_count ();

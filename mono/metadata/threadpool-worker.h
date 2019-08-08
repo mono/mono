@@ -25,9 +25,6 @@ mono_threadpool_worker_notify_completed (void);
 gint64
 mono_threadpool_worker_get_completed_threads_count (void);
 
-gint64
-mono_threadpool_worker_get_pending_unmanaged_work_item_count (void);
-
 gint32
 mono_threadpool_worker_get_threads_count (void);
 #endif
