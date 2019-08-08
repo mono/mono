@@ -695,7 +695,7 @@ case "$host" in
 		have_zlib=no
 		zlib_msg="bundled zlib"
 		;;
-	default)
+	*)
 		AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
 		if test x$have_zlib = xyes; then
 			AC_TRY_COMPILE([#include <zlib.h>], [
