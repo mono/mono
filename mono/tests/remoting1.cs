@@ -170,7 +170,8 @@ class Test {
 
 		o.test_field = 2;
 		
-		Console.WriteLine ("test_field: " + o.test_field);
+		Console.WriteLine ("test_field: ");
+		Console.WriteLine (o.test_field);
 		if (o.test_field != 2)
 			return 9;
 
