@@ -64,6 +64,7 @@ scripts_2_0 = \
 	wsdl2$(SCRIPT_SUFFIX)
 
 scripts_4_0 = \
+	aprofutil$(SCRIPT_SUFFIX)		\
 	disco$(SCRIPT_SUFFIX)			\
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
