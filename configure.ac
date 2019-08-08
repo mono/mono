@@ -706,7 +706,7 @@ case "$host" in
 			],[
 				AC_MSG_RESULT(Using system zlib)
 				zlib_msg="system zlib"
-				AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+				have_sys_zlib=yes
 			],[
 				AC_MSG_RESULT(Using embedded zlib)
 				have_zlib=no
@@ -724,7 +724,9 @@ fi
 
 AM_CONDITIONAL(HAVE_STATIC_ZLIB, test x$have_static_zlib = xyes)
 AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
-AC_DEFINE(HAVE_ZLIB,1,[Have system zlib])
+AM_CONDITIONAL(HAVE_SYS_ZLIB, test x$have_sys_zlib = xyes)
+AC_DEFINE(HAVE_ZLIB,1,[Have zlib])
+AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
 
 # for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS(elf.h)
