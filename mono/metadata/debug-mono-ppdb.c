@@ -32,7 +32,10 @@
 #if HOST_WIN32
 #include "../../support/zlib.h"
 #elif HAVE_SYS_ZLIB
+#undef Z_PREFIX
 #include <zlib.h>
+#define	z_inflate(strm, flush)			inflate(strm, flush)
+#define	z_inflateInit2(strm, windowBits)	inflateInit2(strm, windowBits)
 #endif
 
 #include "debug-mono-ppdb.h"
