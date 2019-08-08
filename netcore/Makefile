@@ -114,6 +114,14 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 		$(DOTNET) $$assembly ; \
 	done; \
 
+# run HelloWorld using --aot=llvm (requires `--enable-llvm` build)
+run-sample-local-dotnet-llvm: patch-local-dotnet
+	$(DOTNET) build -c Release sample/HelloWorld
+	PATH="../llvm/usr/bin/:$(PATH)" \
+	MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
