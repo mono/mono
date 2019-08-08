@@ -30,6 +30,7 @@ ROSLYN_FILES_TO_COPY_FOR_MSBUILD = \
 	$(ROSLYN_CSC_DIR)/Microsoft.Build.Tasks.CodeAnalysis.dll \
 	$(ROSLYN_CSC_DIR)/Microsoft.CSharp.Core.targets 	 \
 	$(ROSLYN_CSC_DIR)/Microsoft.Managed.Core.targets	 \
+	$(ROSLYN_CSC_DIR)/Microsoft.Managed.EditorConfig.targets \
 	$(ROSLYN_CSC_DIR)/Microsoft.VisualBasic.Core.targets
 
 DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) csi-test.csx
