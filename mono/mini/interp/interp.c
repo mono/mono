@@ -6425,6 +6425,23 @@ main_loop:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
+
+#define MOVLOC(argtype) \
+	* (argtype *)(locals + * (guint16 *)(ip + 2)) = * (argtype *)(locals + * (guint16 *)(ip + 1)); \
+	ip += 3;
+
+		MINT_IN_CASE(MINT_MOVLOC_1) MOVLOC(guint8); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_2) MOVLOC(guint16); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_4) MOVLOC(guint32); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_8) MOVLOC(guint64); MINT_IN_BREAK;
+
+		MINT_IN_CASE(MINT_MOVLOC_VT) {
+			int const i32 = READ32(ip + 3);
+			memcpy (locals + * (guint16 *)(ip + 2), locals + * (guint16*)(ip + 1), i32);
+			ip += 5;
+			MINT_IN_BREAK;
+		}
+
 		MINT_IN_CASE(MINT_LOCALLOC) {
 			if (sp != frame->stack + 1) /*FIX?*/
 				goto abort_label;

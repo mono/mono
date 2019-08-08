@@ -53,6 +53,9 @@ enum {
 
 #define MINT_SWITCH_LEN(n) (3 + (n) * 2)
 
+#define MINT_IS_LDLOC(op) ((op) >= MINT_LDLOC_I1 && (op) <= MINT_LDLOC_VT)
+#define MINT_IS_STLOC(op) ((op) >= MINT_STLOC_I1 && (op) <= MINT_STLOC_VT)
+
 #define MINT_POP_ALL	-2
 #define MINT_VAR_PUSH	-1
 #define MINT_VAR_POP	-1
