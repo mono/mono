@@ -488,6 +488,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Action.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Extension.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Function.cs" />
