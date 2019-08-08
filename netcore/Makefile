@@ -107,7 +107,7 @@ patch-local-dotnet: prepare
 
 # Precompile BCL libs in $(DOTNET) using LLVM (requires `--enable-llvm` build)
 patch-local-dotnet-aot-llvm: patch-local-dotnet
-	for assembly in $(SHAREDRUNTIME)/*.dll  ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
+	for assembly in ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
 		echo "[AOT] $$assembly"; \
 		PATH="../llvm/usr/bin/:$(PATH)" \
 		MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
