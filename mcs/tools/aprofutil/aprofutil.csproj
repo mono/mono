@@ -44,6 +44,7 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <!--End of common files-->
@@ -52,7 +53,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../../class/System/System.csproj" />
     <ProjectReference Include="../../class/System.Core/System.Core.csproj" />
-    <ProjectReference Include="../../class/Mono.Options/Mono.Options.csproj" />
     <ProjectReference Include="../../class/Mono.Profiler.Log/Mono.Profiler.Log.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
