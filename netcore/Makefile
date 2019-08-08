@@ -105,6 +105,15 @@ patch-local-dotnet: prepare
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 
+# Precompile BCL libs in $(DOTNET) using LLVM (requires `--enable-llvm` build)
+patch-local-dotnet-aot-llvm: patch-local-dotnet
+	for assembly in $(SHAREDRUNTIME)/*.dll  ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
+		echo "[AOT] $$assembly"; \
+		PATH="../llvm/usr/bin/:$(PATH)" \
+		MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+		$(DOTNET) $$assembly ; \
+	done; \
+
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
