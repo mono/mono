@@ -5946,7 +5946,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			*align = 16;
 			return 16;
 		} 
-#if ENABLE_NETCORE
+#ifdef ENABLE_NETCORE
 		else if (strcmp (m_class_get_name_space (klass), "System") == 0 && 
 			strcmp (m_class_get_name (klass), "Decimal") == 0) {
 			// Special case: despite the fact Decimal consists of 4 int32 fields, the alignment should be 8 on x64
