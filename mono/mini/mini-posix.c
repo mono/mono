@@ -460,8 +460,10 @@ mono_runtime_posix_install_handlers (void)
 	signal (SIGPIPE, SIG_IGN);
 	sigaddset (&signal_set, SIGPIPE);
 
+#if !defined (DISABLE_CRASH_REPORTING)
 	add_signal_handler (SIGABRT, sigabrt_signal_handler, 0);
 	sigaddset (&signal_set, SIGABRT);
+#endif
 
 	/* catch SIGSEGV */
 	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler, 0);

@@ -3292,7 +3292,7 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 	return FALSE;
 }
 
-#ifndef MONO_CROSS_COMPILE
+#if !defined(DISABLE_CRASH_REPORTING) && !defined(MONO_CROSS_COMPILE)
 static gboolean handle_crash_loop = FALSE;
 
 /*
@@ -3369,7 +3369,7 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 void
 mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
-	g_assert_not_reached ();
+	return;
 }
 
 #endif /* !MONO_CROSS_COMPILE */
