@@ -94,14 +94,16 @@ namespace WebAssembly {
 
 		static int BindJSObject (int js_id, bool ownsHandle, Type mappedType)
 		{
-			if (!bound_objects.TryGetValue (js_id, out var obj)) {
-				if (mappedType != null) {
-					return BindJSType (js_id, ownsHandle, mappedType);
-				} else {
-					bound_objects [js_id] = obj = new WeakReference (new JSObject ((IntPtr)js_id, ownsHandle), true);
+			lock (bound_objects) {
+				if (!bound_objects.TryGetValue (js_id, out var obj)) {
+					if (mappedType != null) {
+						return BindJSType (js_id, ownsHandle, mappedType);
+					} else {
+						bound_objects [js_id] = obj = new WeakReference (new JSObject ((IntPtr)js_id, ownsHandle), true);
+					}
 				}
+				return (int)(IntPtr)((JSObject)obj.Target).AnyRefHandle;
 			}
-			return (int)(IntPtr)((JSObject)obj.Target).AnyRefHandle;
 		}
 
 		static int BindCoreCLRObject (int js_id, int gcHandle)
@@ -110,55 +112,63 @@ namespace WebAssembly {
 			GCHandle h = (GCHandle)(IntPtr)gcHandle;
 			JSObject obj = (JSObject)h.Target;
 
-			if (bound_objects.TryGetValue (js_id, out var existingObj)) {
-				var instance = existingObj.Target as JSObject;
-				if (instance.AnyRefHandle != h && h.IsAllocated)
-					throw new JSException ($"Multiple handles pointing at js_id: {js_id}");
+			lock (bound_objects) {
+				if (bound_objects.TryGetValue (js_id, out var existingObj)) {
+					var instance = existingObj.Target as JSObject;
+					if (instance.AnyRefHandle != h && h.IsAllocated)
+						throw new JSException ($"Multiple handles pointing at js_id: {js_id}");
 
-				obj = instance;
-			} else
-				bound_objects [js_id] = new WeakReference(obj, true);
+					obj = instance;
+				} else
+					bound_objects [js_id] = new WeakReference (obj, true);
 
-			return (int)(IntPtr)obj.AnyRefHandle;
+				return (int)(IntPtr)obj.AnyRefHandle;
+			}
 		}
 
 		static int BindJSType (int js_id, bool ownsHandle, Type mappedType)
 		{
-			if (!bound_objects.TryGetValue (js_id, out var reference)) {
-				var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
-			    		null, new Type [] { typeof (IntPtr), typeof (bool) }, null);
+			lock (bound_objects) {
+				if (!bound_objects.TryGetValue (js_id, out var reference)) {
+					var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
+						    null, new Type [] { typeof (IntPtr), typeof (bool) }, null);
+				Console.WriteLine ($"BindJSType constructor: {jsobjectnew}");
+
 				bound_objects [js_id] = reference = new WeakReference ((JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id, ownsHandle }), true);
+				}
+				return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
 			}
-			return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
 		}
 
 		static int UnBindJSObject (int js_id)
 		{
-			if (bound_objects.TryGetValue (js_id, out var reference)) {
-				bound_objects.Remove (js_id);
-				return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
+			lock (bound_objects) {
+				if (bound_objects.TryGetValue (js_id, out var reference)) {
+					bound_objects.Remove (js_id);
+					return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
+				}
+				return 0;
 			}
-
-			return 0;
 		}
 
 		static void UnBindJSObjectAndFree (int js_id)
 		{
-			if (bound_objects.TryGetValue (js_id, out var reference)) {
-				if (!reference.IsAlive) {
-					bound_objects.Remove (js_id);
-				} else {
-					((JSObject)bound_objects [js_id].Target).RawObject = null;
-					bound_objects.Remove (js_id);
-					var instance = reference.Target as JSObject;
-					instance.SetHandleAsInvalid ();
-					instance.IsDisposed = true;
-					instance.RawObject = null;
-					instance.AnyRefHandle.Free ();
+			lock (bound_objects) {
+				if (bound_objects.TryGetValue (js_id, out var reference)) {
+					if (!reference.IsAlive) {
+						bound_objects.Remove (js_id);
+					} else {
+						((JSObject)bound_objects [js_id].Target).RawObject = null;
+						bound_objects.Remove (js_id);
+						var instance = reference.Target as JSObject;
+						instance.SetHandleAsInvalid ();
+						instance.IsDisposed = true;
+						instance.RawObject = null;
+						instance.AnyRefHandle.Free ();
+					}
+
 				}
-
 			}
-
 		}
 
 
@@ -524,17 +534,17 @@ namespace WebAssembly {
 #if DEBUG_HANDLE
 			Console.WriteLine ($"SafeHandleReleaseByHandle: {js_id}");
 #endif
-			if (bound_objects.TryGetValue (js_id, out var reference)) {
-				if (reference.Target != null) {
-					SafeHandleRelease ((AnyRef)reference.Target);
-				}
-				else {
-					Console.WriteLine ($"\tSafeHandleReleaseByHandle: did not find active target {js_id} / target: {reference.Target}");
-				}
+			lock (bound_objects) {
+				if (bound_objects.TryGetValue (js_id, out var reference)) {
+					if (reference.Target != null) {
+						SafeHandleRelease ((AnyRef)reference.Target);
+					} else {
+						Console.WriteLine ($"\tSafeHandleReleaseByHandle: did not find active target {js_id} / target: {reference.Target}");
+					}
 
-			}
-			else {
-				Console.WriteLine ($"\tSafeHandleReleaseByHandle: did not find reference for {js_id}");
+				} else {
+					Console.WriteLine ($"\tSafeHandleReleaseByHandle: did not find reference for {js_id}");
+				}
 			}
 
 		}
