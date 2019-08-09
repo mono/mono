@@ -4080,6 +4080,8 @@ mini_init (const char *filename, const char *runtime_version)
 
 	CHECKED_MONO_INIT ();
 
+	mono_threads_suspend_policy_init ();
+
 #if defined(__linux__)
 	if (access ("/proc/self/maps", F_OK) != 0) {
 		g_print ("Mono requires /proc to be mounted.\n");
