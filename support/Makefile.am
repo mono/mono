@@ -13,8 +13,7 @@ endif
 AM_CPPFLAGS =					\
 	@ZLIB_CFLAGS@				\
 	$(GLIB_CFLAGS)				\
-	-I$(top_srcdir)				\
-	-DZ_PREFIX
+	-I$(top_srcdir)
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
@@ -112,6 +111,7 @@ Z_LIBS= -lz
 else
 Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
+AM_CPPFLAGS = $(AM_CPPFLAGS) -DZ_PREFIX
 endif
 endif
 
