@@ -3119,7 +3119,7 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	g_assert (exc != NULL);
-	g_assert (obj || (method->flags & METHOD_ATTRIBUTE_STATIC));
+	g_assert ((obj == NULL) == ((method->flags & METHOD_ATTRIBUTE_STATIC) != 0));
 
 	if (mono_runtime_get_no_exec ())
 		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
