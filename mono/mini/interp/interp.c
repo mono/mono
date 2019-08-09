@@ -219,7 +219,7 @@ static void debug_enter (InterpFrame *frame, int *tracing)
 #define MINT_IN_CASE(x) LAB_ ## x:
 #define MINT_IN_DISPATCH(op) goto *in_labels[op];
 #if DEBUG_INTERP
-#define MINT_IN_BREAK if (tracing > 1) MINT_IN_DISPATCH(*ip); else { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#define MINT_IN_BREAK if (tracing > 1) { MINT_IN_DISPATCH(*ip); } else { COUNT_OP(*ip); goto *in_labels[*ip]; }
 #else
 #define MINT_IN_BREAK { COUNT_OP(*ip); goto *in_labels[*ip]; }
 #endif
@@ -6517,6 +6517,19 @@ interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExce
 	if (ei)
 		*(MonoException**)(context->handler_frame->locals + ei->exvar_offset) = ex;
 	context->handler_ip = (guint16*) handler_ip;
+}
+
+static void
+interp_get_resume_state (const MonoJitTlsData *jit_tls, gboolean *has_resume_state, MonoInterpFrameHandle *interp_frame, gpointer *handler_ip)
+{
+	g_assert (jit_tls);
+	ThreadContext *context = (ThreadContext*)jit_tls->interp_context;
+	g_assert (context);
+	*has_resume_state = context->has_resume_state;
+	if (context->has_resume_state) {
+		*interp_frame = context->handler_frame;
+		*handler_ip = context->handler_ip;
+	}
 }
 
 /*

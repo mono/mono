@@ -4275,6 +4275,7 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+INTERP_CFLAGS=""
 
 case "$host" in
 	wasm32*)
@@ -4284,6 +4285,10 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		with_tls=pthread
 		target_wasm=yes
+		if test "x$mono_cv_clang" = "xyes"; then
+		   INTERP_CFLAGS="-mllvm -join-liveintervals=false"
+		   AC_SUBST(INTERP_CFLAGS)
+		fi
 		;;
 	mips*)
 		TARGET=MIPS;
@@ -6468,6 +6473,22 @@ elif case $host_os in freebsd*) true;; *) false;; esac; then
 	AC_MSG_RESULT(freebsd)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_FREEBSD"
+elif case $host_os in netbsd*) true;; *) false;; esac; then
+	mono_native_text="NetBSD"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=netbsd
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(netbsd)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_NETBSD"
 elif case $host_os in haiku*) true;; *) false;; esac; then
 	mono_native_text="Haiku"
 	MONO_NATIVE_CC=$CC
@@ -6541,6 +6562,7 @@ AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_ANDROID, test x$MONO_NATIVE_PLATFORM = xandroid)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_FREEBSD, test x$MONO_NATIVE_PLATFORM = xfreebsd)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_NETBSD, test x$MONO_NATIVE_PLATFORM = xnetbsd)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_HAIKU, test x$MONO_NATIVE_PLATFORM = xhaiku)
 
 MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
@@ -6621,10 +6643,10 @@ fi
 #
 AC_MSG_CHECKING([for large file support])
 AC_COMPILE_IFELSE(
-	[
+	[AC_LANG_SOURCE([
 		#include <sys/types.h>
 		off64_t dummy = 0;
-	], [
+	])], [
 		AC_MSG_RESULT(yes)
 		# FIXME The ramifications of _LARGEFILE64_SOURCE are not understood.
 		# ZLIB_CFLAGS="$ZLIB_CFLAGS -D_LARGEFILE64_SOURCE=1"

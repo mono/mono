@@ -29,6 +29,7 @@
 ../../../external/linker/src/linker/Linker/TypeReferenceExtensions.cs
 ../../../external/linker/src/linker/Linker/XApiReader.cs
 ../../../external/linker/src/linker/Linker.Steps/BaseStep.cs
+../../../external/linker/src/linker/Linker.Steps/ClearInitLocals.cs
 ../../../external/linker/src/linker/Linker.Steps/LoadReferencesStep.cs
 ../../../external/linker/src/linker/Linker.Steps/LoadI18nAssemblies.cs
 ../../../external/linker/src/linker/Linker.Steps/ResolveFromXmlStep.cs

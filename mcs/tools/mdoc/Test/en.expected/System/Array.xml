@@ -1,6 +1,11 @@
 <Type Name="Array" FullName="System.Array">
   <TypeSignature Language="C#" Value="public class Array" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Array extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Array" />
+  <TypeSignature Language="VB.NET" Value="Public Class Array" />
+  <TypeSignature Language="F#" Value="type Array = class" />
+  <TypeSignature Language="JavaScript" Value="function Array()" Usage="var array = new Array();" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Array" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +22,12 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Array ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Array.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="JavaScript" Value="function Array()" Usage="var array = new Array();" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Array();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Array();" />
+      <MemberSignature Language="C++ WINRT" Value=" Array();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +41,10 @@
     <Member MemberName="AsReadOnly&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static System.Collections.ObjectModel.ReadOnlyCollection&lt;T&gt; AsReadOnly&lt;T&gt; (T[] array);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;!!T&gt; AsReadOnly&lt;T&gt;(!!T[] array) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Array.AsReadOnly``1(``0[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function AsReadOnly(Of T) (array As T()) As ReadOnlyCollection(Of T)" />
+      <MemberSignature Language="F#" Value="static member AsReadOnly : 'T[] -&gt; System.Collections.ObjectModel.ReadOnlyCollection&lt;'T&gt;" Usage="System.Array.AsReadOnly array" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA; static System::Collections::ObjectModel::ReadOnlyCollection&lt;T&gt; ^ AsReadOnly(cli::array &lt;T&gt; ^ array);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -49,13 +64,15 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotImplementedException">To be added; from:
-          <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
       </Docs>
     </Member>
     <Member MemberName="ConvertAll&lt;TInput,TOutput&gt;">
       <MemberSignature Language="C#" Value="public static TOutput[] ConvertAll&lt;TInput,TOutput&gt; (TInput[] array, Converter&lt;TInput,TOutput&gt; converter);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TOutput[] ConvertAll&lt;TInput, TOutput&gt;(!!TInput[] array, class System.Converter`2&lt;!!TInput, !!TOutput&gt; converter) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function ConvertAll(Of TInput, TOutput) (array As TInput(), converter As Converter(Of TInput, TOutput)) As TOutput()" />
+      <MemberSignature Language="F#" Value="static member ConvertAll : 'Input[] * Converter&lt;'Input, 'Output&gt; -&gt; 'Output[]" Usage="System.Array.ConvertAll (array, converter)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TInput, typename TOutput&gt;&#xA; static cli::array &lt;TOutput&gt; ^ ConvertAll(cli::array &lt;TInput&gt; ^ array, Converter&lt;TInput, TOutput&gt; ^ converter);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -79,13 +96,17 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Resize&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static void Resize&lt;T&gt; (ref T[] array, int newSize);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Resize&lt;T&gt;(!!T[] array, int32 newSize) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Resize&lt;T&gt;(!!T[]&amp; array, int32 newSize) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Array.Resize``1(``0[]@,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Resize(Of T) (ByRef array As T(), newSize As Integer)" />
+      <MemberSignature Language="F#" Value="static member Resize :  * int -&gt; unit" Usage="System.Array.Resize (array, newSize)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA; static void Resize(cli::array &lt;T&gt; ^ % array, int newSize);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename T&gt;&#xA; static void Resize(Platform::Array &lt;T&gt; ^ &amp;  array, int newSize);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename T&gt;&#xA; static void Resize(std::Array &lt;T&gt; const &amp; &amp; array, int newSize);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -97,7 +118,7 @@
         <TypeParameter Name="T" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="array" Type="T[]&amp;" RefType="ref" />
+        <Parameter Name="array" Type="T[]" RefType="ref" />
         <Parameter Name="newSize" Type="System.Int32" />
       </Parameters>
       <Docs>
@@ -106,8 +127,6 @@
         <param name="newSize">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.Exception">To be added; from:
-          <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
       </Docs>
     </Member>
   </Members>

@@ -31,10 +31,6 @@
         <param name="i">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ApplicationException">To be added; from:
-          <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
-        <exception cref="T:System.SystemException">To be added; from:
-          <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="total">

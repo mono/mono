@@ -2232,22 +2232,34 @@ static AgentDomainInfo*
 get_agent_domain_info (MonoDomain *domain)
 {
 	AgentDomainInfo *info = NULL;
+	MonoJitDomainInfo *jit_info = domain_jit_info (domain);
 
-	mono_domain_lock (domain);
+	info = (AgentDomainInfo *)jit_info->agent_info;
 
-	info = (AgentDomainInfo *)domain_jit_info (domain)->agent_info;
-	if (!info) {
-		info = g_new0 (AgentDomainInfo, 1);
-		domain_jit_info (domain)->agent_info = info;
-		info->loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
-		info->source_files = g_hash_table_new (mono_aligned_addr_hash, NULL);
-		info->source_file_to_class = g_hash_table_new (g_str_hash, g_str_equal);
-		info->source_file_to_class_ignorecase = g_hash_table_new (g_str_hash, g_str_equal);
+	if (info) {
+		mono_memory_read_barrier ();
+		return info;
 	}
 
-	mono_domain_unlock (domain);
+	info = g_new0 (AgentDomainInfo, 1);
+	info->loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->source_files = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->source_file_to_class = g_hash_table_new (g_str_hash, g_str_equal);
+	info->source_file_to_class_ignorecase = g_hash_table_new (g_str_hash, g_str_equal);
 
-	return info;
+	mono_memory_write_barrier ();
+
+	gpointer other_info = mono_atomic_cas_ptr (&jit_info->agent_info, info, NULL);
+
+	if (other_info != NULL) {
+		g_hash_table_destroy (info->loaded_classes);
+		g_hash_table_destroy (info->source_files);
+		g_hash_table_destroy (info->source_file_to_class);
+		g_hash_table_destroy (info->source_file_to_class_ignorecase);
+		g_free (info);
+	}
+
+	return (AgentDomainInfo *)jit_info->agent_info;
 }
 
 static int
@@ -3097,6 +3109,21 @@ no_seq_points_found (MonoMethod *method, int offset)
 	printf ("Unable to find seq points for method '%s', offset 0x%x.\n", mono_method_full_name (method, TRUE), offset);
 }
 
+static int
+calc_il_offset (MonoDomain *domain, MonoMethod *method, int native_offset, gboolean is_top_frame)
+{
+	int ret = -1;
+	if (is_top_frame) {
+		SeqPoint sp;
+		/* mono_debug_il_offset_from_address () doesn't seem to be precise enough (#2092) */
+		if (mono_find_prev_seq_point_for_native_offset (domain, method, native_offset, NULL, &sp))
+			ret = sp.il_offset;
+	}
+	if (ret == -1)
+		ret = mono_debug_il_offset_from_address (method, domain, native_offset);
+	return ret;
+}
+
 typedef struct {
 	DebuggerTlsData *tls;
 	GSList *frames;
@@ -3109,7 +3136,6 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	ComputeFramesUserData *ud = (ComputeFramesUserData *)user_data;
 	StackFrame *frame;
 	MonoMethod *method, *actual_method, *api_method;
-	SeqPoint sp;
 	int flags = 0;
 
 	mono_loader_lock ();
@@ -3143,13 +3169,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	}
 
 	if (info->il_offset == -1) {
-		/* mono_debug_il_offset_from_address () doesn't seem to be precise enough (#2092) */
-		if (ud->frames == NULL) {
-			if (mono_find_prev_seq_point_for_native_offset (info->domain, method, info->native_offset, NULL, &sp))
-				info->il_offset = sp.il_offset;
-		}
-		if (info->il_offset == -1)
-			info->il_offset = mono_debug_il_offset_from_address (method, info->domain, info->native_offset);
+		info->il_offset = calc_il_offset (info->domain, method, info->native_offset, ud->frames == NULL);
 	}
 
 	DEBUG_PRINTF (1, "\tFrame: %s:[il=0x%x, native=0x%x] %d\n", mono_method_full_name (method, TRUE), info->il_offset, info->native_offset, info->managed);
@@ -3374,6 +3394,21 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean f
 	tls->frames = new_frames;
 	tls->frame_count = new_frame_count;
 	tls->frames_up_to_date = TRUE;
+
+	if (CHECK_PROTOCOL_VERSION (2, 52)) {
+		MonoJitTlsData *jit_data = thread->thread_info->jit_data;
+		gboolean has_interp_resume_state = FALSE;
+		MonoInterpFrameHandle interp_resume_frame = NULL;
+		gpointer interp_resume_ip = 0;
+		mini_get_interp_callbacks ()->get_resume_state (jit_data, &has_interp_resume_state, &interp_resume_frame, &interp_resume_ip);
+		if (has_interp_resume_state && tls->frame_count > 0) {
+			StackFrame *top_frame = tls->frames [0];
+			if (interp_resume_frame == top_frame->interp_frame) {
+				int native_offset = (int) ((uintptr_t) interp_resume_ip - (uintptr_t) top_frame->de.ji->code_start);
+				top_frame->il_offset = calc_il_offset (top_frame->de.domain, top_frame->de.method, native_offset, TRUE);
+			}
+		}
+	}
 }
 
 /*
@@ -7378,7 +7413,7 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		domain = decode_domainid (p, &p, end, NULL, &err);
 		if (err != ERR_NONE)
 			return err;
-		mono_loader_lock (); // FIXME: should be the domain assemblies lock?
+		mono_domain_assemblies_lock (domain);
 		count = 0;
 		for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 			count ++;
@@ -7388,7 +7423,7 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			ass = (MonoAssembly *)tmp->data;
 			buffer_add_assemblyid (buf, domain, ass);
 		}
-		mono_loader_unlock ();
+		mono_domain_assemblies_unlock (domain);
 		break;
 	}
 	case CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY: {

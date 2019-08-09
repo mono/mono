@@ -135,7 +135,7 @@ class WasmRunner : IMessageSink
 		return true;
 	}
 
-	public int nrun, nfail, nfiltered;
+	public int nrun, nfail, nskipped, nfiltered;
 
 	public int Run () {
 		int state;
@@ -205,7 +205,7 @@ class WasmRunner : IMessageSink
 							object obj = null;
 							if (!method.IsStatic)
 								obj = Activator.CreateInstance (method.ReflectedType);
-							method.Invoke (obj, dataRow);
+							method.Invoke (obj, BindingFlags.Default, null, dataRow, null);
 						} catch (Exception ex) {
 							Console.WriteLine ("FAIL: " + ex);
 							nfail ++;
@@ -217,6 +217,10 @@ class WasmRunner : IMessageSink
 					continue;
 				}
 			} else {
+				if (!String.IsNullOrEmpty (tc.SkipReason)) {
+					nskipped ++;
+					continue;
+				}
 				nrun ++;
 				var name = tc.DisplayName;
 				if (name.Contains ("("))
@@ -229,7 +233,18 @@ class WasmRunner : IMessageSink
 					object obj = null;
 					if (!method.IsStatic)
 						obj = Activator.CreateInstance (method.ReflectedType);
-					method.Invoke (obj, tc.TestMethodArguments);
+
+					var args = tc.TestMethodArguments;
+					/*
+					if (args != null) {
+						var pars = method.GetParameters ();
+						for (int i = 0; i < args.Length; ++i) {
+							if (args [i] != null && pars [i].ParameterType != args [i].GetType () && (args [i] is IConvertible))
+								args [i] = Convert.ChangeType (args [i], pars [i].ParameterType);
+						}
+					}
+					*/
+					method.Invoke (obj, args);
 				} catch (Exception ex) {
 					Console.WriteLine ("FAIL: " + tc.DisplayName);
 					Console.WriteLine (ex);

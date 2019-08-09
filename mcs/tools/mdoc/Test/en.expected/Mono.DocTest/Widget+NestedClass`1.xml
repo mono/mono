@@ -1,6 +1,9 @@
 <Type Name="Widget+NestedClass&lt;T&gt;" FullName="Mono.DocTest.Widget+NestedClass&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class Widget.NestedClass&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit Widget/NestedClass`1&lt;T&gt; extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Widget.NestedClass`1" />
+  <TypeSignature Language="VB.NET" Value="Public Class Widget.NestedClass(Of T)" />
+  <TypeSignature Language="F#" Value="type Widget.NestedClass&lt;'T&gt; = class" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -21,6 +24,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NestedClass ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.NestedClass`1.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; NestedClass();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; NestedClass();" />
+      <MemberSignature Language="C++ WINRT" Value=" NestedClass();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -34,6 +42,12 @@
     <Member MemberName="M">
       <MemberSignature Language="C#" Value="public void M (int i);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M(int32 i) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.NestedClass`1.M(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub M (i As Integer)" />
+      <MemberSignature Language="F#" Value="member this.M : int -&gt; unit" Usage="nestedClass.M i" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void M(int i);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void M(int i);" />
+      <MemberSignature Language="C++ WINRT" Value="void M(int i);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -53,6 +67,11 @@
     <Member MemberName="value">
       <MemberSignature Language="C#" Value="public int value;" />
       <MemberSignature Language="ILAsm" Value=".field public int32 value" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.NestedClass`1.value" />
+      <MemberSignature Language="VB.NET" Value="Public value As Integer " />
+      <MemberSignature Language="F#" Value="val mutable value : int" Usage="Mono.DocTest.Widget.NestedClass&lt;'T&gt;.value" />
+      <MemberSignature Language="C++ CLI" Value="public: int value;" />
+      <MemberSignature Language="C++ WINRT" Value="int value;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
