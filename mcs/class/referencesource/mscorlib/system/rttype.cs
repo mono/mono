@@ -2858,17 +2858,24 @@ namespace System
             return candidates;
         }
 
+        // Note the following assumptions on name:
+        // 1. Callers assume that null == "*"
+        // 2. FilterHelper chops off "*" 
+        //
         private ListBuilder<ConstructorInfo> GetConstructorCandidates(
             string name, BindingFlags bindingAttr, CallingConventions callConv, 
             Type[] types, bool allowPrefixLookup)
         {
             bool prefixLookup, ignoreCase;
             MemberListType listType;
+
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
-#if MONO
-            if (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
+#if MONO            
+            if ((!prefixLookup && name?.Length == 0) ||
+                (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)) {
                 return new ListBuilder<ConstructorInfo> (0);
+            }
             RuntimeConstructorInfo[] cache = GetConstructors_internal (bindingAttr, this);
 #else
             RuntimeConstructorInfo[] cache = Cache.GetConstructorList(listType, name);
