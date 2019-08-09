@@ -132,7 +132,11 @@ else
 if HAVE_ZLIB
 # See libmonoruntime_support_la_LDFLAGS
 else
+if HOST_WASM
+# We don't build the support library on wasm, we shouldn't build zlib here either
+else
 support_sources += $(zlib_sources)
+endif
 endif
 endif
 
