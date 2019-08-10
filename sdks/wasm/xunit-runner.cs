@@ -62,7 +62,7 @@ class Discoverer : XunitTestFrameworkDiscoverer
 
 		using (var messageBus = new MsgBus (Sink)) {
 			var testClass = TestClassesEnumerator.Current;
-			Console.WriteLine (testClass.Class.Name);
+			//Console.WriteLine (testClass.Class.Name);
 			if (testClass.Class.Name == "System.Threading.ThreadPools.Tests.ThreadPoolTests")
 				// FIXME: This invokes the static ctor which creates threads
 				return true;
@@ -118,6 +118,23 @@ class WasmRunner : IMessageSink
 		executor = new XunitTestFrameworkExecutor (assembly.GetName (), new NullSourceInformationProvider (), this);
 	}
 
+	static object ConvertArg (object arg, Type argType) {
+		//if (args [i] != null && pars [i].ParameterType != args [i].GetType () && (args [i] is IConvertible))
+		//						args [i] = Convert.ChangeType (args [i], pars [i].ParameterType);
+		if (arg == null || arg.GetType () == argType)
+			return arg;
+		// Not clear what conversions should be done
+		// IEnumerable<T> -> T[]
+		if (argType.IsArray) {
+			Type t = typeof (IEnumerable<>).MakeGenericType (argType.GetElementType ());
+			if (t.IsAssignableFrom (arg.GetType ())) {
+				var m = typeof (Enumerable).GetMethod ("ToArray").MakeGenericMethod (new Type [] { argType.GetElementType () });
+				return m.Invoke (null, new object [] { arg });
+			}
+		}
+		return arg;
+	}
+
 	public virtual bool OnMessage (IMessageSinkMessage msg) {
 		if (msg is Xunit.Sdk.TestCaseDiscoveryMessage disc_msg) {
 			testCases.Add (disc_msg.TestCase);
@@ -170,6 +187,23 @@ class WasmRunner : IMessageSink
 				continue;
 			}
 
+			var itrait_attrs = tc.TestMethod.Method.GetCustomAttributes(typeof(ITraitAttribute));
+			// FIXME:
+			if (itrait_attrs.Count () > 0) {
+				Console.WriteLine ("SKIP (ITraitAttribute): " + tc.DisplayName);
+				nfiltered ++;
+				continue;
+			}
+			/*
+			foreach (var attr in itrait_attrs) {
+				Console.WriteLine (attr);
+				foreach (var disc_attr in attr.GetCustomAttributes (typeof (TraitDiscovererAttribute))) {
+					Console.WriteLine (disc_attr);
+
+				}
+			}
+			*/
+
 			var method = (tc.Method as ReflectionMethodInfo).MethodInfo;
 
 			if (method.ReflectedType.IsGenericTypeDefinition) {
@@ -179,6 +213,12 @@ class WasmRunner : IMessageSink
 			}
 
 			if (tc is Xunit.Sdk.XunitTheoryTestCase) {
+				if (method.IsGenericMethod) {
+					Console.WriteLine ("SKIP (generic): " + tc.DisplayName);
+					nfiltered ++;
+					continue;
+				}
+
 				// From XunitTheoryTestCaseRunner
 				var attrs = tc.TestMethod.Method.GetCustomAttributes(typeof(DataAttribute));
 				bool failed = false;
@@ -205,6 +245,9 @@ class WasmRunner : IMessageSink
 							object obj = null;
 							if (!method.IsStatic)
 								obj = Activator.CreateInstance (method.ReflectedType);
+							var pars = method.GetParameters ();
+							for (int i = 0; i < dataRow.Length; ++i)
+								dataRow [i] = ConvertArg (dataRow [i], pars [i].ParameterType);
 							method.Invoke (obj, BindingFlags.Default, null, dataRow, null);
 						} catch (Exception ex) {
 							Console.WriteLine ("FAIL: " + ex);
@@ -235,15 +278,12 @@ class WasmRunner : IMessageSink
 						obj = Activator.CreateInstance (method.ReflectedType);
 
 					var args = tc.TestMethodArguments;
-					/*
 					if (args != null) {
 						var pars = method.GetParameters ();
 						for (int i = 0; i < args.Length; ++i) {
-							if (args [i] != null && pars [i].ParameterType != args [i].GetType () && (args [i] is IConvertible))
-								args [i] = Convert.ChangeType (args [i], pars [i].ParameterType);
+							args [i] = ConvertArg (args [i], pars [i].ParameterType);
 						}
 					}
-					*/
 					method.Invoke (obj, args);
 				} catch (Exception ex) {
 					Console.WriteLine ("FAIL: " + tc.DisplayName);
