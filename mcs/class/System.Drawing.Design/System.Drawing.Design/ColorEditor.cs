@@ -55,7 +55,7 @@ namespace System.Drawing.Design
 		public override object EditValue (ITypeDescriptorContext context,
 			IServiceProvider provider, object value)
 		{
-			if (context != null && provider != null) {
+			if (provider != null) {
 				editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
 				if (editorService != null) {
 					if (editor_control == null)
