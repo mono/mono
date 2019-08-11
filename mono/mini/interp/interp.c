@@ -3137,7 +3137,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_JMP) {
 			InterpMethod *new_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
-			gboolean realloc_frame = new_method->alloca_size > imethod->alloca_size;
 
 			if (imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
 				MONO_PROFILER_RAISE (method_tail_call, (imethod->method, new_method->method));
@@ -3151,6 +3150,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				if (frame->ex)
 					goto exit_frame;
 			}
+			// Some compilers will save new_method to stack across preceding function calls.
+			// Refetch it to avoid that.
+			new_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+			gboolean realloc_frame = new_method->alloca_size > imethod->alloca_size;
 			ip += 2;
 			imethod = frame->imethod = new_method;
 			/*
@@ -3417,6 +3420,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				MonoException *ex = mono_error_convert_to_exception (error);
 				THROW_EX (ex, ip);
 			}
+
+			// Refetch to alleviate pressure on nonvolatiles and stack.
+			rmethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+
 			ip += 2;
 
 			CHECK_RESUME_STATE (context);
@@ -4395,7 +4402,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			guint16 param_count;
 			guint16 imethod_index = *(guint16*) (ip + 1);
 
-			const gboolean is_inlined = imethod_index == 0xffff;
+			gboolean is_inlined = imethod_index == 0xffff;
 
 			param_count = *(guint16*)(ip + 2);
 
@@ -4414,7 +4421,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			}
 
 			sp [0].data.o = frame_objref (frame);
+
+			// Refetch values after function call to alleviate pressure on non-volatile
+			// registers and stack.
+			imethod_index = *(guint16*) (ip + 1);
+			is_inlined = imethod_index == 0xffff;
+
 			if (is_inlined) {
+				param_count = *(guint16*)(ip + 2);
 				sp [1].data.o = frame_objref (frame);
 				sp += param_count + 2;
 			} else {
@@ -5234,20 +5248,24 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_GETITEM_SPAN) {
-			guint8 *span = (guint8 *) sp [-2].data.p;
-			int index = sp [-1].data.i;
-			gsize element_size = (gsize) *(gint16 *) (ip + 1);
-			gsize offset_length = (gsize) *(gint16 *) (ip + 2);
-			gsize offset_pointer = (gsize) *(gint16 *) (ip + 3);
+			guint8 * const span = (guint8 *) sp [-2].data.p;
+			const int index = sp [-1].data.i;
 			sp--;
 
 			NULL_CHECK (span);
 
-			gint32 length = *(gint32 *) (span + offset_length);
+			const gsize offset_length = (gsize) *(gint16 *) (ip + 2);
+
+			const gint32 length = *(gint32 *) (span + offset_length);
 			if (index < 0 || index >= length)
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 
-			gpointer pointer = *(gpointer *)(span + offset_pointer);
+			// Read these close to use in case compiler would save
+			// them to stack across e.g. the preceding error checking.
+			const gsize element_size = (gsize) *(gint16 *) (ip + 1);
+			const gsize offset_pointer = (gsize) *(gint16 *) (ip + 3);
+
+			const gpointer pointer = *(gpointer *)(span + offset_pointer);
 			sp [-1].data.p = (guint8 *) pointer + index * element_size;
 
 			ip += 4;
@@ -5282,7 +5300,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_LDELEMA)
 		MINT_IN_CASE(MINT_LDELEMA_TC) {
-			gboolean needs_typecheck = *ip == MINT_LDELEMA_TC;
 			
 			MonoClass *klass = (MonoClass*)imethod->data_items [*(guint16 *) (ip + 1)];
 			guint16 numargs = *(guint16 *) (ip + 2);
@@ -5291,6 +5308,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			o = sp [0].data.o;
 			NULL_CHECK (o);
+
+			gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
+
 			sp->data.p = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
 			if (frame->ex)
 				THROW_EX (frame->ex, ip);
@@ -5726,8 +5746,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY) {
 			ip ++;
-			int clause_index = *ip;
 			gboolean pending_abort = mono_threads_end_abort_protected_block ();
+
+			int clause_index = *ip;
 
 			if (clause_args && clause_index == clause_args->exit_clause)
 				goto exit_frame;
