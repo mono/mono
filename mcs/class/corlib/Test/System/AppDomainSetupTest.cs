@@ -198,6 +198,24 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void ApplicationBase9 ()
+		{
+			AppDomainSetup setup = new AppDomainSetup ();
+			string url = "file://";
+			if (Path.DirectorySeparatorChar != '/')
+			{
+				url += "/" + Environment.CurrentDirectory;
+				Assert.AreEqual (Environment.CurrentDirectory, setup.ApplicationBase);
+			}
+			else
+			{
+				url += "/home";
+				setup.ApplicationBase = url;
+				Assert.AreEqual ("/home", setup.ApplicationBase);
+			}
+		}
+
 #if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 #if MOBILE
