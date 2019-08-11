@@ -272,6 +272,43 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 		} \
 	} while (0);
 
+typedef enum MonoInterpResume {
+	MonoInterpResume_Continue = 0, // This must be zero due to boolean uses.
+	MonoInterpResume_Dispatch = 1,
+	MonoInterpResume_ExitFrame = 2,
+} MonoInterpResume;
+
+// CHECK_RESUME_STATE replacement for within helper functions. With SET_RESUME_STATE builtin.
+static MonoInterpResume
+mono_interp_check_resume (
+	// Parameters are sorted by name.
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	if (!context->has_resume_state)
+		return MonoInterpResume_Continue;
+
+	if (!(frame == context->handler_frame && (!clause_args || context->handler_ip < clause_args->end_at_ip)))
+		return MonoInterpResume_ExitFrame;
+
+	*pip = (const guint16*)context->handler_ip;
+	/* spec says stack should be empty at endfinally so it should be at the start too */
+	stackval* sp = frame->stack;
+	*pvt_sp = (unsigned char *) sp + imethod->stack_size;
+	if (frame->ex) {
+		sp->data.p = frame->ex;
+		++sp;
+	}
+	*psp = sp;
+	set_resume_state (context, frame);
+	return MonoInterpResume_Dispatch;
+}
+
 static void
 set_context (ThreadContext *context)
 {
@@ -937,6 +974,23 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gco
 		CHECK_RESUME_STATE(context); \
 	} while (0)
 
+static MonoInterpResume
+mono_interp_throw (
+	// Parameters are sorted by name.
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoException* exception,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp,
+	gboolean rethrow)
+{
+	interp_throw (context, exception, frame, *pip, rethrow);
+	return mono_interp_check_resume (clause_args, context, frame, imethod, pip, psp, pvt_sp);
+}
+
 #define THROW_EX(exception,ex_ip) THROW_EX_GENERAL ((exception), (ex_ip), FALSE)
 
 #define THROW_EX_OVF(ip) THROW_EX (mono_get_exception_overflow (), ip)
@@ -957,6 +1011,24 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gco
 		}									\
 	} while (0)
 
+static MonoInterpResume
+mono_interp_exception_checkpoint (
+	// Parameters are sorted by name.
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	if (*mono_thread_interruption_request_flag () && !mono_threads_is_critical_method (imethod->method)) {
+		MonoException *exc = mono_thread_interruption_checkpoint ();
+		if (exc)
+			return mono_interp_throw (clause_args, context, exc, frame, imethod, pip, psp, pvt_sp, FALSE);
+	}
+	return MonoInterpResume_Continue;
+}
 
 static MonoObject*
 ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackval *values, MonoError *error)
@@ -2907,6 +2979,171 @@ static int opcode_counts[512];
 #define frame_objref(frame) o
 #endif
 
+static MONO_NEVER_INLINE MonoInterpResume // Separate function to reduce stack use.
+mono_interp_newobj_vt (
+	// Parameters are sorted by name.
+	InterpFrame* child_frame,
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoError* error,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	const guint16* ip = *pip;
+	stackval* sp = *psp;
+	stackval valuetype_this;
+
+	frame->ip = ip;
+
+	child_frame->imethod = (InterpMethod*) imethod->data_items [*(guint16*)(ip + 1)];
+	const guint16 param_count = *(guint16*)(ip + 2);
+
+	if (param_count) {
+		sp -= param_count;
+		memmove (sp + 1, sp, param_count * sizeof (stackval));
+	}
+	child_frame->stack_args = sp;
+
+	const gboolean vtst = *ip == MINT_NEWOBJ_VTST_FAST;
+	if (vtst) {
+		unsigned char* vt_sp = *pvt_sp;
+		memset (vt_sp, 0, *(guint16*)(ip + 3));
+		sp->data.p = vt_sp;
+		valuetype_this.data.p = vt_sp;
+		ip += 4;
+	} else {
+		memset (&valuetype_this, 0, sizeof (stackval));
+		sp->data.p = &valuetype_this;
+		ip += 3;
+	}
+
+	interp_exec_method (child_frame, context, error);
+
+	const MonoInterpResume resume = mono_interp_check_resume (clause_args, context, frame, imethod, &ip, &sp, pvt_sp);
+	if (resume)
+		goto exit;
+
+	*sp = valuetype_this;
+	++sp;
+exit:
+	*pip = ip;
+	*psp = sp;
+	return resume;
+}
+
+static MONO_NEVER_INLINE MonoInterpResume // Separate function to reduce stack use.
+mono_interp_newobj (
+	// Parameters are sorted by name.
+	InterpFrame* child_frame,
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoError* error,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	MonoObject* o = NULL;
+	const guint16* ip = *pip;
+	stackval* sp = *psp;
+
+	MonoClass *newobj_class;
+	MonoMethodSignature *csig;
+	stackval valuetype_this;
+	guint32 token;
+	stackval retval;
+	MonoInterpResume resume = MonoInterpResume_Continue;
+
+	frame->ip = ip;
+
+	token = * (guint16 *)(ip + 1);
+	ip += 2;
+
+	child_frame->ip = NULL;
+	child_frame->ex = NULL;
+
+	child_frame->imethod = (InterpMethod*)imethod->data_items [token];
+	csig = mono_method_signature_internal (child_frame->imethod->method);
+	newobj_class = child_frame->imethod->method->klass;
+	/*if (profiling_classes) {
+		guint count = GPOINTER_TO_UINT (g_hash_table_lookup (profiling_classes, newobj_class));
+		count++;
+		g_hash_table_insert (profiling_classes, newobj_class, GUINT_TO_POINTER (count));
+	}*/
+
+	g_assert (csig->hasthis);
+	if (csig->param_count) {
+		sp -= csig->param_count;
+		memmove (sp + 1, sp, csig->param_count * sizeof (stackval));
+	}
+	child_frame->stack_args = sp;
+
+	/*
+	 * First arg is the object.
+	 */
+	if (m_class_is_valuetype (newobj_class)) {
+		MonoType *t = m_class_get_byval_arg (newobj_class);
+		memset (&valuetype_this, 0, sizeof (stackval));
+		if (!m_class_is_enumtype (newobj_class) && (t->type == MONO_TYPE_VALUETYPE || (t->type == MONO_TYPE_GENERICINST && mono_type_generic_inst_is_valuetype (t)))) {
+			unsigned char* vt_sp = *pvt_sp;
+			sp->data.p = vt_sp;
+			valuetype_this.data.p = vt_sp;
+		} else {
+			sp->data.p = &valuetype_this;
+		}
+	} else {
+		if (newobj_class != mono_defaults.string_class) {
+			MonoVTable *vtable = mono_class_vtable_checked (imethod->domain, newobj_class, error);
+			if (!mono_error_ok (error) || !mono_runtime_class_init_full (vtable, error)) {
+				if ((resume = mono_interp_throw (clause_args, context, mono_error_convert_to_exception (error), frame, imethod, &ip, &sp, pvt_sp, FALSE)))
+					goto exit;
+			}
+			frame_objref (frame) = mono_object_new_checked (imethod->domain, newobj_class, error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+			if ((resume = mono_interp_exception_checkpoint (clause_args, context, frame, imethod, &ip, &sp, pvt_sp)))
+				goto exit;
+
+			sp->data.o = frame_objref (frame);
+#ifndef DISABLE_REMOTING
+			if (mono_object_is_transparent_proxy (frame_objref (frame))) {
+				MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame->imethod->method, error);
+				mono_error_assert_ok (error);
+				child_frame->imethod = mono_interp_get_imethod (imethod->domain, remoting_invoke_method, error);
+				mono_error_assert_ok (error);
+			}
+#endif
+		} else {
+			sp->data.p = NULL;
+			child_frame->retval = &retval;
+		}
+	}
+
+	interp_exec_method (child_frame, context, error);
+
+	if ((resume = mono_interp_check_resume (clause_args, context, frame, imethod, &ip, &sp, pvt_sp)))
+		goto exit;
+
+	/*
+	 * a constructor returns void, but we need to return the object we created
+	 */
+	if (m_class_is_valuetype (newobj_class) && !m_class_is_enumtype (newobj_class)) {
+		*sp = valuetype_this;
+	} else if (newobj_class == mono_defaults.string_class) {
+		*sp = retval;
+	} else {
+		sp->data.o = frame_objref (frame);
+	}
+	++sp;
+exit:
+	*pip = ip;
+	*psp = sp;
+	return resume;
+}
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -4432,121 +4669,22 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_NEWOBJ_VT_FAST)
 		MINT_IN_CASE(MINT_NEWOBJ_VTST_FAST) {
-			guint16 param_count;
-			stackval valuetype_this;
-
-			frame->ip = ip;
-
-			child_frame.imethod = (InterpMethod*) imethod->data_items [*(guint16*)(ip + 1)];
-			param_count = *(guint16*)(ip + 2);
-
-			if (param_count) {
-				sp -= param_count;
-				memmove (sp + 1, sp, param_count * sizeof (stackval));
+			switch (mono_interp_newobj_vt (&child_frame, clause_args, context, error, frame, imethod, &ip, &sp, &vt_sp)) {
+			default:				g_assert_not_reached ();
+			case MonoInterpResume_Continue:		break;
+			case MonoInterpResume_Dispatch:		MINT_IN_DISPATCH (*ip);
+			case MonoInterpResume_ExitFrame:	goto exit_frame;
 			}
-			child_frame.stack_args = sp;
-
-			gboolean vtst = *ip == MINT_NEWOBJ_VTST_FAST;
-			if (vtst) {
-				memset (vt_sp, 0, *(guint16*)(ip + 3));
-				sp->data.p = vt_sp;
-				valuetype_this.data.p = vt_sp;
-				ip += 4;
-			} else {
-				memset (&valuetype_this, 0, sizeof (stackval));
-				sp->data.p = &valuetype_this;
-				ip += 3;
-			}
-
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			*sp = valuetype_this;
-			++sp;
 			MINT_IN_BREAK;
 		}
+
 		MINT_IN_CASE(MINT_NEWOBJ) {
-			MonoClass *newobj_class;
-			MonoMethodSignature *csig;
-			stackval valuetype_this;
-			guint32 token;
-			stackval retval;
-
-			frame->ip = ip;
-
-			token = * (guint16 *)(ip + 1);
-			ip += 2;
-
-			child_frame.ip = NULL;
-			child_frame.ex = NULL;
-
-			child_frame.imethod = (InterpMethod*)imethod->data_items [token];
-			csig = mono_method_signature_internal (child_frame.imethod->method);
-			newobj_class = child_frame.imethod->method->klass;
-			/*if (profiling_classes) {
-				guint count = GPOINTER_TO_UINT (g_hash_table_lookup (profiling_classes, newobj_class));
-				count++;
-				g_hash_table_insert (profiling_classes, newobj_class, GUINT_TO_POINTER (count));
-			}*/
-
-			g_assert (csig->hasthis);
-			if (csig->param_count) {
-				sp -= csig->param_count;
-				memmove (sp + 1, sp, csig->param_count * sizeof (stackval));
+			switch (mono_interp_newobj (&child_frame, clause_args, context, error, frame, imethod, &ip, &sp, &vt_sp)) {
+			default:				g_assert_not_reached ();
+			case MonoInterpResume_Continue:		break;
+			case MonoInterpResume_Dispatch:		MINT_IN_DISPATCH (*ip);
+			case MonoInterpResume_ExitFrame:	goto exit_frame;
 			}
-			child_frame.stack_args = sp;
-
-			/*
-			 * First arg is the object.
-			 */
-			if (m_class_is_valuetype (newobj_class)) {
-				MonoType *t = m_class_get_byval_arg (newobj_class);
-				memset (&valuetype_this, 0, sizeof (stackval));
-				if (!m_class_is_enumtype (newobj_class) && (t->type == MONO_TYPE_VALUETYPE || (t->type == MONO_TYPE_GENERICINST && mono_type_generic_inst_is_valuetype (t)))) {
-					sp->data.p = vt_sp;
-					valuetype_this.data.p = vt_sp;
-				} else {
-					sp->data.p = &valuetype_this;
-				}
-			} else {
-				if (newobj_class != mono_defaults.string_class) {
-					MonoVTable *vtable = mono_class_vtable_checked (imethod->domain, newobj_class, error);
-					if (!mono_error_ok (error) || !mono_runtime_class_init_full (vtable, error))
-						THROW_EX (mono_error_convert_to_exception (error), ip);
-					frame_objref (frame) = mono_object_new_checked (imethod->domain, newobj_class, error);
-					mono_error_cleanup (error); /* FIXME: don't swallow the error */
-					EXCEPTION_CHECKPOINT;
-					sp->data.o = frame_objref (frame);
-#ifndef DISABLE_REMOTING
-					if (mono_object_is_transparent_proxy (frame_objref (frame))) {
-						MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method, error);
-						mono_error_assert_ok (error);
-						child_frame.imethod = mono_interp_get_imethod (imethod->domain, remoting_invoke_method, error);
-						mono_error_assert_ok (error);
-					}
-#endif
-				} else {
-					sp->data.p = NULL;
-					child_frame.retval = &retval;
-				}
-			}
-
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			/*
-			 * a constructor returns void, but we need to return the object we created
-			 */
-			if (m_class_is_valuetype (newobj_class) && !m_class_is_enumtype (newobj_class)) {
-				*sp = valuetype_this;
-			} else if (newobj_class == mono_defaults.string_class) {
-				*sp = retval;
-			} else {
-				sp->data.o = frame_objref (frame);
-			}
-			++sp;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_NEWOBJ_MAGIC) {
