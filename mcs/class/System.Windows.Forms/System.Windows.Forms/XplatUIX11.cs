@@ -6215,9 +6215,9 @@ namespace System.Windows.Forms {
 
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints);
 
-				int[] atoms = new int[2];
-				atoms [0] = 1;			// Version 1
-				atoms [1] = 1;			// we want to be mapped
+				IntPtr[] atoms = new IntPtr[2];
+				atoms [0] = (IntPtr)1;			// Version 1
+				atoms [1] = (IntPtr)1;			// we want to be mapped
 
 				// This line cost me 3 days...
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _XEMBED_INFO, _XEMBED_INFO, 32, PropertyMode.Replace, atoms, 2);
