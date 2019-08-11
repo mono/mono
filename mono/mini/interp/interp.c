@@ -3632,7 +3632,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_JMP) {
 			InterpMethod *new_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
-			gboolean realloc_frame = new_method->alloca_size > imethod->alloca_size;
 
 			if (imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
 				MONO_PROFILER_RAISE (method_tail_call, (imethod->method, new_method->method));
@@ -3647,6 +3646,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 					goto exit_frame;
 			}
 			ip += 2;
+			const gboolean realloc_frame = new_method->alloca_size > imethod->alloca_size;
 			imethod = frame->imethod = new_method;
 			/*
 			 * We allocate the stack frame from scratch and store the arguments in the
@@ -5646,7 +5646,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_LDELEMA)
 		MINT_IN_CASE(MINT_LDELEMA_TC) {
-			gboolean needs_typecheck = *ip == MINT_LDELEMA_TC;
 			
 			MonoClass *klass = (MonoClass*)imethod->data_items [*(guint16 *) (ip + 1)];
 			guint16 numargs = *(guint16 *) (ip + 2);
@@ -5655,6 +5654,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			o = sp [0].data.o;
 			NULL_CHECK (o);
+
+			const gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
+
 			sp->data.p = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
 			if (frame->ex)
 				THROW_EX (frame->ex, ip);
@@ -6090,8 +6092,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY) {
 			ip ++;
-			int clause_index = *ip;
 			gboolean pending_abort = mono_threads_end_abort_protected_block ();
+
+			const int clause_index = *ip;
 
 			if (clause_args && clause_index == clause_args->exit_clause)
 				goto exit_frame;
