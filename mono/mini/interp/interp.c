@@ -1835,7 +1835,7 @@ interp_entry (InterpEntryData *data)
 
 	frame.ex = NULL;
 
-	args = g_newa (stackval, sig->param_count + (sig->hasthis ? 1 : 0));
+	args = g_newa (stackval, sig->param_count + sig->hasthis);
 	if (sig->hasthis)
 		args [0].data.p = data->this_arg;
 
@@ -3421,14 +3421,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_CALLI) {
 			MonoMethodSignature *csignature;
-			stackval *endsp = sp;
 
 			frame->ip = ip;
-			
+
 			csignature = (MonoMethodSignature*)imethod->data_items [* (guint16 *)(ip + 1)];
 			ip += 2;
 			--sp;
-			--endsp;
 			child_frame.imethod = (InterpMethod*)sp->data.p;
 
 			sp->data.p = vt_sp;
@@ -3457,9 +3455,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read again after interp_exec_method to conserve stack.
+			csignature = (MonoMethodSignature*)imethod->data_items [* (guint16 *)(ip - 2 + 1)];
+
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *endsp;
+				*sp = sp [csignature->param_count + csignature->hasthis];
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3488,7 +3489,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			ip += 3;
 			--sp;
-			--endsp;
 			guchar* const code = (guchar*)sp->data.p;
 			child_frame.imethod = NULL;
 
@@ -3509,9 +3509,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read again to conserve stack.
+			csignature = (MonoMethodSignature*)imethod->data_items [* (guint16 *)(ip - 3 + 1)];
+
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *endsp;
+				*sp = sp [csignature->param_count + csignature->hasthis];
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3520,7 +3523,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
 			MonoObject *this_arg;
 			InterpMethod *target_imethod;
-			stackval *endsp = sp;
 			int slot;
 
 			// FIXME Have it handle also remoting calls and use a single opcode for virtual calls
@@ -3540,6 +3542,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			this_arg = (MonoObject*)sp->data.p;
 
 			child_frame.imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
+
+			// Refetch after function all to conserve stack.
+			this_arg = (MonoObject*)sp->data.p;
+
 			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
 				/* unbox */
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
@@ -3550,26 +3556,28 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read after interp_exec_method to save stack.
 			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
+
 			if (!is_void) {
 				/* need to handle typedbyref ... */
-				*sp = *endsp;
+				// Read and recompute after interp_exec_method to save stack.
+				target_imethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip - 3 + 1)];
+				*sp = sp [target_imethod->param_count + target_imethod->hasthis];
 				sp++;
 			}
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
-			stackval *endsp = sp;
-			int num_varargs = 0;
-			MonoMethodSignature *csig;
-
 			frame->ip = ip;
 
-			child_frame.imethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+			InterpMethod* child_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+
+			child_frame.imethod = child_method;
 			/* The real signature for vararg calls */
-			csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
+			MonoMethodSignature *csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
-			num_varargs = csig->param_count - csig->sentinelpos;
+			int num_varargs = csig->param_count - csig->sentinelpos;
 			child_frame.varargs = (char*) vt_sp;
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
@@ -3585,8 +3593,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read again after interp_exec_method to save stack.
+			csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip - 3 + 2)];
+
 			if (csig->ret->type != MONO_TYPE_VOID) {
-				*sp = *endsp;
+				// Read and recompute after interp_exec_method to save stack.
+				child_method = ((InterpMethod*)imethod->data_items [* (guint16 *)(ip - 3 + 1)]);
+				num_varargs = csig->param_count - csig->sentinelpos;
+				*sp = sp [child_method->param_count + child_method->hasthis + num_varargs];
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3595,11 +3609,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_VCALL)
 		MINT_IN_CASE(MINT_CALLVIRT)
 		MINT_IN_CASE(MINT_VCALLVIRT) {
-			stackval *endsp = sp;
 
 			frame->ip = ip;
 
-			child_frame.imethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+			InterpMethod* child_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+
+			child_frame.imethod = child_method;
+
 			ip += 2;
 			sp->data.p = vt_sp;
 			child_frame.retval = sp;
@@ -3624,10 +3640,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read after interp_exec_method to save stack.
 			const gboolean is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
+
 			if (!is_void) {
+				// Read and recompute after interp_exec_method to save stack.
+				child_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip - 2 + 1)];
 				/* need to handle typedbyref ... */
-				*sp = *endsp;
+				*sp = sp [child_method->param_count + child_method->hasthis];
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3645,6 +3665,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
+			// Read again after do_jit_call to conserve stack.
+			rmethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip - 2 + 1)];
+
 			if (rmethod->rtype->type != MONO_TYPE_VOID)
 				sp++;
 
@@ -3653,21 +3676,22 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_CALLRUN) {
 			MonoMethod *target_method = (MonoMethod*) imethod->data_items [* (guint16 *)(ip + 1)];
 			MonoMethodSignature *sig = (MonoMethodSignature*) imethod->data_items [* (guint16 *)(ip + 2)];
-			stackval *retval;
 
 			sp->data.p = vt_sp;
-			retval = sp;
 
 			sp -= sig->param_count;
 			if (sig->hasthis)
 				sp--;
 
-			ves_imethod (frame, target_method, sig, sp, retval);
+			ves_imethod (frame, target_method, sig, sp, sp + sig->param_count + sig->hasthis);
 			if (frame->ex)
 				THROW_EX (frame->ex, ip);
 
+			// Read again after ves_imethod to save stack.
+			sig = (MonoMethodSignature*) imethod->data_items [* (guint16 *)(ip + 2)];
+
 			if (sig->ret->type != MONO_TYPE_VOID) {
-				*sp = *retval;
+				*sp = sp [sig->param_count + sig->hasthis];
 				sp++;
 			}
 			ip += 3;
@@ -4733,8 +4757,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			token = * (guint16 *)(ip + 1);
 			ip += 2;
 
-			InterpMethod *cmethod = (InterpMethod*)imethod->data_items [token];
-			csig = mono_method_signature_internal (cmethod->method);
+			InterpMethod *child_method = (InterpMethod*)imethod->data_items [token];
+			csig = mono_method_signature_internal (child_method->method);
 
 			g_assert (csig->hasthis);
 			sp -= csig->param_count;
