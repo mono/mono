@@ -19,6 +19,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-lazy-init.h>
+#include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-threads.h>
 #ifdef HAVE_BACKTRACE_SYMBOLS
 #include <execinfo.h>
@@ -359,7 +360,7 @@ mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, c
 	}
 
 	if (size > THIS_IS_AN_OK_NUMBER_OF_HANDLES)
-		g_warning ("%s USED %d handles\n", func_name, size);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "%s USED %d handles\n", func_name, size);
 }
 
 /*
