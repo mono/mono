@@ -3741,7 +3741,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
 			MonoObject *this_arg;
 			MonoClass *this_class;
-			gboolean is_void = *ip == MINT_VCALLVIRT_FAST;
 			InterpMethod *target_imethod;
 			stackval *endsp = sp;
 			int slot;
@@ -3773,6 +3772,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			interp_exec_method (&child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
+
+			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
 
 			if (!is_void) {
 				/* need to handle typedbyref ... */
