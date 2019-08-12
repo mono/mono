@@ -2282,7 +2282,7 @@ int
 mono_object_hash_internal (MonoObject* obj);
 
 void
-mono_value_copy_internal (void* dest, /*const*/ void* src, MonoClass *klass);
+mono_value_copy_internal (void* dest, const void* src, MonoClass *klass);
 
 void
 mono_value_copy_array_internal (MonoArray *dest, int dest_idx, const void* src, int count);

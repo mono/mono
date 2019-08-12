@@ -7029,11 +7029,11 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 }
 
 void
-mono_value_copy_internal (gpointer dest, gpointer src, MonoClass *klass)
+mono_value_copy_internal (gpointer dest, gconstpointer src, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	mono_gc_wbarrier_value_copy_internal (dest, src, 1, klass);
+	mono_gc_wbarrier_value_copy_internal (dest, (gpointer)src, 1, klass);
 }
 
 /**
