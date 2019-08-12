@@ -3908,12 +3908,10 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (mono_profiler_coverage_instrumentation_enabled (method))
 		return FALSE;
 
-#ifdef ENABLE_NETCORE
 	if (m_class_get_image (method->klass) == mono_defaults.corlib && 
 		!strcmp (m_class_get_name (method->klass), "ThrowHelper")) {
 		return FALSE;
 	}
-#endif
 		
 	return TRUE;
 }
