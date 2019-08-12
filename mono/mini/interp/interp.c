@@ -867,9 +867,7 @@ stackval_to_data (MonoType *type_, stackval *val, void *data, gboolean pinvoke)
 }
 
 static
-#if __clang__
 MONO_NEVER_INLINE // To use less stack.
-#endif
 guint64
 stackval_to_data_enum (MonoType *type, stackval *val)
 {
@@ -3263,9 +3261,7 @@ exit:
 }
 
 static
-#ifndef DISABLE_REMOTING
 MONO_NEVER_INLINE // To reduce stack.
-#endif
 MonoInterpResume
 mono_interp_load_remote_field (
 	// Parameters are sorted by name.
@@ -3310,9 +3306,7 @@ exit:
 }
 
 static
-#ifndef DISABLE_REMOTING
 MONO_NEVER_INLINE // To reduce stack.
-#endif
 MonoInterpResume
 mono_interp_load_remote_field_vt (
 	// Parameters are sorted by name.
