@@ -3309,9 +3309,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			child_frame.stack_args = sp;
 
 			this_arg = (MonoObject*)sp->data.p;
-			this_class = this_arg->vtable->klass;
 
 			child_frame.imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
+
+			this_arg = (MonoObject*)sp->data.p; // refetch to conserve stack
+			this_class = this_arg->vtable->klass;
+
 			if (m_class_is_valuetype (this_class) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
 				/* unbox */
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
