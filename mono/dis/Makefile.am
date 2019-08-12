@@ -57,11 +57,22 @@ libmonodismain_a_SOURCES =	\
 
 monodis_SOURCES =
 
+if !HOST_WIN32
+if HAVE_ZLIB
+Z_LIBS= -lz
+else
+Z_LIBS=
+endif
+else
+Z_LIBS=
+endif
+
 monodis_LDADD = 			\
 	libmonodismain_a-dump.$(OBJEXT)	\
 	libmonodismain_a-main.$(OBJEXT)	\
 	libmonodismain_a-declsec.$(OBJEXT) \
 	libmonodis.a			\
+	$(Z_LIBS)			\
 	$(runtime_lib)			\
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
