@@ -2410,8 +2410,8 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 	MONO_ENTER_GC_UNSAFE;
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req,
-					    refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
-					    mono_domain_default_alc (mono_domain_get ()));
+	                               refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
+	                               mono_domain_default_alc (mono_domain_get ()));
 	res = mono_assembly_request_open (filename, &req, status);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
@@ -4370,8 +4370,8 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req,
-					    refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
-					    mono_domain_default_alc (mono_domain_get ()));
+	                               refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
+	                               mono_domain_default_alc (mono_domain_get ()));
 
 	if (extra_gac_paths) {
 		paths = extra_gac_paths;
@@ -4726,8 +4726,8 @@ mono_assembly_load_full (MonoAssemblyName *aname, const char *basedir, MonoImage
 	MONO_ENTER_GC_UNSAFE;
 	MonoAssemblyByNameRequest req;
 	mono_assembly_request_prepare_byname (&req,
-					      refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
-					      mono_domain_default_alc (mono_domain_get ()));
+	                               refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT,
+	                               mono_domain_default_alc (mono_domain_get ()));
 	req.requesting_assembly = NULL;
 	req.basedir = basedir;
 	res = mono_assembly_request_byname (aname, &req, status);
