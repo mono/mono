@@ -675,7 +675,7 @@ get_virtual_method_fast (InterpMethod *imethod, MonoVTable *vtable, int offset)
 }
 
 static void inline
-stackval_from_data (MonoType *type_, stackval *result, void *data, gboolean pinvoke)
+stackval_from_data (MonoType *type_, stackval *result, const void *data, gboolean pinvoke)
 {
 	MonoType *type = mini_native_type_replace_type (type_);
 	if (type->byref) {
@@ -1009,6 +1009,11 @@ mono_interp_throw (
 #define NULL_CHECK(o) do { \
 	if (G_UNLIKELY (!(o))) \
 		THROW_EX (mono_get_exception_null_reference (), ip); \
+	} while (0)
+
+#define MONO_INTERP_NULL_CHECK_IN_HELPER_FUNCTION(o) do {	\
+	if (G_UNLIKELY (!(o)) && ((resume = mono_interp_throw (clause_args, context, mono_get_exception_null_reference (), frame, imethod, pip, psp, pvt_sp, FALSE)))) \
+		goto exit; \
 	} while (0)
 
 #define EXCEPTION_CHECKPOINT	\
@@ -3254,6 +3259,105 @@ exit:
 	return resume;
 }
 
+static
+#ifndef DISABLE_REMOTING
+MONO_NEVER_INLINE // To reduce stack.
+#endif
+MonoInterpResume
+mono_interp_load_remote_field (
+	// Parameters are sorted by name.
+	InterpFrame* child_frame,
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoError* error,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	const guint16* ip = *pip;
+	MonoInterpResume resume = MonoInterpResume_Continue;
+	stackval* sp = *psp;
+
+	MonoObject* o = sp [-1].data.o;
+	MONO_INTERP_NULL_CHECK_IN_HELPER_FUNCTION (o);
+
+	{
+		const void* addr;
+		MonoClassField* const field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 1)];
+		ip += 2;
+
+#ifndef DISABLE_REMOTING
+		gpointer tmp;
+		if (mono_object_is_transparent_proxy (o)) {
+			MonoClass * const klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
+
+			addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+		} else
+#endif
+			addr = (const char*)o + field->offset;
+		stackval_from_data (field->type, &sp [-1], addr, FALSE);
+	}
+exit:
+	*pip = ip;
+	*psp = sp;
+	return resume;
+}
+
+static
+#ifndef DISABLE_REMOTING
+MONO_NEVER_INLINE // To reduce stack.
+#endif
+MonoInterpResume
+mono_interp_load_remote_field_vt (
+	// Parameters are sorted by name.
+	InterpFrame* child_frame,
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoError* error,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp)
+{
+	const guint16* ip = *pip;
+	MonoInterpResume resume = MonoInterpResume_Continue;
+	stackval* sp = *psp;
+
+	MonoObject* o = sp [-1].data.o;
+	MONO_INTERP_NULL_CHECK_IN_HELPER_FUNCTION (o);
+
+	{
+		const void* addr;
+		MonoClassField* const field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 1)];
+		MonoClass* klass = mono_class_from_mono_type_internal (field->type);
+		int const i32 = mono_class_value_size (klass, NULL);
+
+		ip += 2;
+#ifndef DISABLE_REMOTING
+		gpointer tmp;
+		if (mono_object_is_transparent_proxy (o)) {
+			klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
+			addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+		} else
+#endif
+			addr = (const char*)o + field->offset;
+
+		unsigned char* const vt_sp = *pvt_sp;
+		sp [-1].data.p = vt_sp;
+		*pvt_sp = vt_sp + ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+		memcpy (sp [-1].data.p, addr, i32);
+	}
+exit:
+	*pip = ip;
+	*psp = sp;
+	return resume;
+}
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -5009,56 +5113,23 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_LDRMFLD) {
-			MonoClassField *field;
-			char *addr;
-
-			o = sp [-1].data.o;
-			NULL_CHECK (o);
-			field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 1)];
-			ip += 2;
-#ifndef DISABLE_REMOTING
-			gpointer tmp;
-			if (mono_object_is_transparent_proxy (o)) {
-				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
-
-				addr = (char*)mono_load_remote_field_checked (o, klass, field, &tmp, error);
-				mono_error_cleanup (error); /* FIXME: don't swallow the error */
-			} else
-#endif
-				addr = (char*)o + field->offset;
-
-			stackval_from_data (field->type, &sp [-1], addr, FALSE);
+		MINT_IN_CASE(MINT_LDRMFLD)
+			switch (mono_interp_load_remote_field (&child_frame, clause_args, context, error, frame, imethod, &ip, &sp, &vt_sp)) {
+			default:				g_assert_not_reached ();
+			case MonoInterpResume_Continue:		break;
+			case MonoInterpResume_Dispatch:		MINT_IN_DISPATCH (*ip);
+			case MonoInterpResume_ExitFrame:	goto exit_frame;
+			}
 			MINT_IN_BREAK;
-		}
 
-		MINT_IN_CASE(MINT_LDRMFLD_VT) {
-			MonoClassField *field;
-			char *addr;
-
-			o = sp [-1].data.o;
-			NULL_CHECK (o);
-
-			field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 1)];
-			MonoClass *klass = mono_class_from_mono_type_internal (field->type);
-			i32 = mono_class_value_size (klass, NULL);
-	
-			ip += 2;
-#ifndef DISABLE_REMOTING
-			gpointer tmp;
-			if (mono_object_is_transparent_proxy (o)) {
-				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
-				addr = (char*)mono_load_remote_field_checked (o, klass, field, &tmp, error);
-				mono_error_cleanup (error); /* FIXME: don't swallow the error */
-			} else
-#endif
-				addr = (char*)o + field->offset;
-
-			sp [-1].data.p = vt_sp;
-			vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-			memcpy(sp [-1].data.p, addr, i32);
+		MINT_IN_CASE(MINT_LDRMFLD_VT)
+			switch (mono_interp_load_remote_field_vt (&child_frame, clause_args, context, error, frame, imethod, &ip, &sp, &vt_sp)) {
+			default:				g_assert_not_reached ();
+			case MonoInterpResume_Continue:		break;
+			case MonoInterpResume_Dispatch:		MINT_IN_DISPATCH (*ip);
+			case MonoInterpResume_ExitFrame:	goto exit_frame;
+			}
 			MINT_IN_BREAK;
-		}
 
 #define STFLD_UNALIGNED(datamem, fieldtype, unaligned) \
 	o = sp [-2].data.o; \
