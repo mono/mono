@@ -234,8 +234,6 @@
     <Compile Include="System.Drawing.Text\PrivateFontCollection.cs" />
     <Compile Include="System.Drawing\Bitmap.cs" />
     <Compile Include="System.Drawing\Brushes.cs" />
-    <Compile Include="System.Drawing\BufferedGraphics.cs" />
-    <Compile Include="System.Drawing\BufferedGraphicsContext.cs" />
     <Compile Include="System.Drawing\BufferedGraphicsManager.cs" />
     <Compile Include="System.Drawing\CharacterRange.cs" />
     <Compile Include="System.Drawing\ColorTranslator.cs" />
@@ -281,6 +279,46 @@
     </ProjectReference>
   </ItemGroup>
   <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <!--Per-host-platform files-->
+      <Choose>
+        <When Condition="'$(HostPlatform)' == 'win32'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BufferedGraphics.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BufferedGraphicsContext.Windows.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'unix'">
+          <ItemGroup>
+            <Compile Include="System.Drawing\BufferedGraphics.cs" />
+            <Compile Include="System.Drawing\BufferedGraphicsContext.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'macos'">
+          <ItemGroup>
+            <Compile Include="System.Drawing\BufferedGraphics.cs" />
+            <Compile Include="System.Drawing\BufferedGraphicsContext.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'linux'">
+          <ItemGroup>
+            <Compile Include="System.Drawing\BufferedGraphics.cs" />
+            <Compile Include="System.Drawing\BufferedGraphicsContext.cs" />
+          </ItemGroup>
+        </When>
+      </Choose>
+      <!--End of per-host-platform files-->
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Compile Include="System.Drawing\BufferedGraphics.cs" />
+        <Compile Include="System.Drawing\BufferedGraphicsContext.cs" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
