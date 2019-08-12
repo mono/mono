@@ -42,6 +42,11 @@
 #endif
 #include <mono/metadata/icall-decl.h>
 
+#ifdef HOST_ANDROID
+#include <android/log.h>
+#include <jni.h>
+#endif
+
 #undef DEBUG
 
 /* Make sure computing VALUE doesn't cause a GC */
@@ -457,6 +462,69 @@ get_darwin_locale (void)
 }
 #endif
 
+#ifdef HOST_ANDROID
+static JavaVM *sJavaVM = NULL;
+
+JNIEXPORT jint JNI_OnLoad(JavaVM *jvm, void *reserved)
+{
+    __android_log_print(ANDROID_LOG_INFO, "Mono", "JNI_OnLoad called");
+    sJavaVM = jvm;
+    return JNI_VERSION_1_6;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM *jvm, void *reserved)
+{
+    __android_log_print(ANDROID_LOG_INFO, "Mono", "JNI_OnUnload called");
+    sJavaVM = NULL;
+}
+
+static gchar*
+get_android_locale (void)
+{
+    static gchar *cached_locale = NULL;
+    JNIEnv* env = NULL;
+    jint detached;
+    jclass localeClass;
+
+    if (cached_locale != NULL)
+        return g_strdup (cached_locale);
+
+    if (sJavaVM == NULL)
+    {
+        __android_log_print(ANDROID_LOG_INFO, "Mono", "Java VM not initialized");
+        return NULL;
+    }
+    detached = (*sJavaVM)->GetEnv(sJavaVM, (void**)&env, JNI_VERSION_1_2) == JNI_EDETACHED;
+    if (detached)
+    {
+        (*sJavaVM)->AttachCurrentThread(sJavaVM, &env, NULL);
+    }
+
+    localeClass = (*env)->FindClass(env, "java/util/Locale");
+    if (localeClass != NULL) {
+        jmethodID getDefault = (*env)->GetStaticMethodID(env, localeClass, "getDefault", "()Ljava/util/Locale;");
+        if (getDefault != NULL) {
+            jmethodID toLanguageTag;
+            jstring tag;
+            const char *nativeTag;
+            jobject def = (*env)->CallStaticObjectMethod(env, localeClass, getDefault);
+            toLanguageTag = (*env)->GetMethodID(env, localeClass, "toLanguageTag", "()Ljava/lang/String;");
+            tag = (jstring)(*env)->CallObjectMethod(env, def, toLanguageTag);
+            nativeTag = (*env)->GetStringUTFChars(env, tag, NULL);
+            __android_log_print(ANDROID_LOG_INFO, "Mono", "Locale %s", nativeTag);
+            cached_locale = g_strdup (nativeTag);
+            (*env)->ReleaseStringUTFChars(env, tag, nativeTag);
+        }
+    }
+
+    if (detached)
+        (*sJavaVM)->DetachCurrentThread(sJavaVM);
+
+    mono_memory_barrier ();
+    return cached_locale ? g_strdup (cached_locale) : NULL;
+}
+#endif
+
 static char *
 get_posix_locale (void)
 {
@@ -496,6 +564,11 @@ get_current_locale_name (void)
 	locale = get_darwin_locale ();
 	if (!locale)
 		locale = get_posix_locale ();
+#elif defined HOST_ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "MONO", "Getting locale");
+	locale = get_android_locale();
+	if (!locale)
+		locale = get_posix_locale();
 #else
 	locale = get_posix_locale ();
 #endif
