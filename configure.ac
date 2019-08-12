@@ -695,7 +695,7 @@ case "$host" in
 		have_zlib=no
 		zlib_msg="bundled zlib"
 		;;
-	default)
+	*)
 		AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
 		if test x$have_zlib = xyes; then
 			AC_TRY_COMPILE([#include <zlib.h>], [
@@ -706,12 +706,16 @@ case "$host" in
 			],[
 				AC_MSG_RESULT(Using system zlib)
 				zlib_msg="system zlib"
-				AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+				have_sys_zlib=yes
 			],[
-				AC_MSG_RESULT(Using embedded zlib)
+				AC_MSG_RESULT(zlib too old, using embedded zlib)
 				have_zlib=no
 				zlib_msg="bundled zlib"
 			])
+		else
+			AC_MSG_RESULT(zlib not found, using embedded zlib)
+			have_zlib=no
+			zlib_msg="bundled zlib"
 		fi
 		;;
 esac
@@ -724,8 +728,16 @@ fi
 
 AM_CONDITIONAL(HAVE_STATIC_ZLIB, test x$have_static_zlib = xyes)
 AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
-AC_DEFINE(HAVE_ZLIB,1,[Have system zlib])
-
+AM_CONDITIONAL(HAVE_SYS_ZLIB, test x$have_sys_zlib = xyes)
+if test x$have_static_zlib = xyes; then
+	AC_DEFINE(HAVE_STATIC_ZLIB, 1, [Use static zlib])
+fi
+if test x$have_zlib = xyes; then
+	AC_DEFINE(HAVE_ZLIB, 1, [Use zlib])
+fi
+if test x$have_sys_zlib = xyes; then
+	AC_DEFINE(HAVE_SYS_ZLIB, 1, [Use OS-provided zlib])
+fi
 # for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS(elf.h)
 
