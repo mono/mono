@@ -866,10 +866,13 @@ stackval_to_data (MonoType *type_, stackval *val, void *data, gboolean pinvoke)
 	}
 }
 
-static guint64
-stackval_to_enum (MonoType *type, stackval *val)
+static
+#if __clang__
+MONO_NEVER_INLINE // To use less stack.
+#endif
+guint64
+stackval_to_data_enum (MonoType *type, stackval *val)
 {
-	// This helper function conserves stack.
 	guint64 data = 0;
 	stackval_to_data (type, val, &data, FALSE);
 	return data;
@@ -6660,8 +6663,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 		MINT_IN_CASE(MINT_INTRINS_ENUM_HASFLAG) {
 			MonoClass *klass = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
-			const guint64 a_val = stackval_to_enum (m_class_get_byval_arg (klass), &sp [-2]);
-			const guint64 b_val = stackval_to_enum (m_class_get_byval_arg (klass), &sp [-1]);
+			const guint64 a_val = stackval_to_data_enum (m_class_get_byval_arg (klass), &sp [-2]);
+			const guint64 b_val = stackval_to_data_enum (m_class_get_byval_arg (klass), &sp [-1]);
 			sp--;
 			sp [-1].data.i = (a_val & b_val) == b_val;
 			ip += 2;
