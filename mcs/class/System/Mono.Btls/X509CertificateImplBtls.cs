@@ -198,7 +198,11 @@ namespace Mono.Btls
 			set {
 				if (nativePrivateKey != null)
 					nativePrivateKey.Dispose ();
-				nativePrivateKey = null;
+				if (value == null) {
+					nativePrivateKey = null;
+					return;
+				}
+				nativePrivateKey = MonoBtlsKey.CreateFromRSAPrivateKey ((RSA)value);
 			}
 		}
 
