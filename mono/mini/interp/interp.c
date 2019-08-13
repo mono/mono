@@ -946,18 +946,28 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
  * interp_throw:
  *   Throw an exception from the interpreter.
  */
-static void
-interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gconstpointer ip, gboolean rethrow)
+static MONO_NEVER_INLINE MonoInterpResume
+mono_interp_throw (
+	// Parameters are sorted by name.
+	FrameClauseArgs* clause_args,
+	ThreadContext* context,
+	MonoException* ex,
+	InterpFrame* frame,
+	InterpMethod* imethod,
+	const guint16** pip,
+	stackval** psp,
+	unsigned char** pvt_sp,
+	gboolean rethrow)
 {
 	ERROR_DECL (error);
 	MonoLMFExt ext;
 
 	interp_push_lmf (&ext, frame);
-	frame->ip = (const guint16*)ip;
+	frame->ip = *pip;
 	frame->ex = ex;
 
 	if (mono_object_isinst_checked ((MonoObject *) ex, mono_defaults.exception_class, error)) {
-		MonoException *mono_ex = (MonoException *) ex;
+		MonoException *mono_ex = ex;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
@@ -985,22 +995,7 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gco
 	interp_pop_lmf (&ext);
 
 	g_assert (context->has_resume_state);
-}
 
-static MONO_NEVER_INLINE MonoInterpResume
-mono_interp_throw (
-	// Parameters are sorted by name.
-	FrameClauseArgs* clause_args,
-	ThreadContext* context,
-	MonoException* exception,
-	InterpFrame* frame,
-	InterpMethod* imethod,
-	const guint16** pip,
-	stackval** psp,
-	unsigned char** pvt_sp,
-	gboolean rethrow)
-{
-	interp_throw (context, exception, frame, *pip, rethrow);
 	return mono_interp_check_resume_state (clause_args, context, frame, imethod, pip, psp, pvt_sp);
 }
 
