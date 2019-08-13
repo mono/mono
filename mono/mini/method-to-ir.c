@@ -7779,6 +7779,10 @@ call_end:
 			if (cmethod)
 				ins = handle_call_res_devirt (cfg, cmethod, ins);
 
+			if (noreturn) {
+				MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
 calli_end:
 			if ((tailcall_remove_ret || (common_call && tailcall)) && !cfg->llvm_only) {
 				link_bblock (cfg, cfg->cbb, end_bblock);
@@ -7864,11 +7868,6 @@ calli_end:
 						emitted_funccall_seq_point = TRUE;
 				}
 				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
-			}
-
-			if (noreturn) {
-				MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
-				MONO_ADD_INS (cfg->cbb, ins);
 			}
 			break;
 		}
