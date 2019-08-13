@@ -2948,11 +2948,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_INLINE);
 
-	// FIXME? Using this with mono debug info causes unwind.c to explode when
-	// parsing some of these registers saved by this call. Can't unwind through it.
-	// Not an issue with llvmonly because it doesn't use that DWARF
-	if (module->llvm_only)
-		set_cold_cconv (func);
+	set_cold_cconv (func);
 
 	entry_bb = LLVMAppendBasicBlock (func, "ENTRY");
 	builder = LLVMCreateBuilder ();
@@ -3237,8 +3233,7 @@ emit_init_method (EmitContext *ctx)
 	 * This enables llvm to keep arguments in their original registers/
 	 * scratch registers, since the call will not clobber them.
 	 */
-	if (ctx->llvm_only)
-		set_call_cold_cconv (call);
+	set_call_cold_cconv (call);
 
 	LLVMBuildBr (builder, inited_bb);
 	ctx->bblocks [cfg->bb_entry->block_num].end_bblock = inited_bb;
