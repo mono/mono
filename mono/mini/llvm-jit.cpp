@@ -31,6 +31,7 @@
 #include "llvm/ExecutionEngine/RTDyldMemoryManager.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
 #include "llvm/ExecutionEngine/JITSymbol.h"
+#include "llvm/Transforms/Scalar.h"
 
 #include <cstdlib>
 
@@ -314,6 +315,15 @@ public:
 
 	gpointer compile (Function *F, int nvars, LLVMValueRef *callee_vars, gpointer *callee_addrs, gpointer *eh_frame) {
 		F->getParent ()->setDataLayout (TM->createDataLayout ());
+
+		legacy::FunctionPassManager funcPassMngr(F->getParent ());
+		funcPassMngr.doInitialization(); // cache per module?
+		funcPassMngr.add(createSROAPass());
+		funcPassMngr.add(createInstructionCombiningPass());
+		// more passes? loop-vectorize, loop-unroll, GVN, etc..
+		funcPassMngr.run(*F);
+		funcPassMngr.doFinalization();
+
 		// Orc uses a shared_ptr to refer to modules so we have to save them ourselves to keep a ref
 		std::shared_ptr<Module> m (F->getParent ());
 		modules.push_back (m);
