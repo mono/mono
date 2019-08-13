@@ -1117,22 +1117,22 @@ simd_op_to_llvm_type (int opcode)
 }
 
 static void
-set_preserveall_cc (LLVMValueRef func)
+set_cold_cconv (LLVMValueRef func)
 {
 	/*
 	 * xcode10 (watchOS) and ARM/ARM64 doesn't seem to support preserveall, it fails with:
 	 * fatal error: error in backend: Unsupported calling convention
 	 */
 #if !defined(TARGET_WATCHOS) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
-	mono_llvm_set_preserveall_cc (func);
+	LLVMSetFunctionCallConv (func, LLVMColdCallConv);
 #endif
 }
 
 static void
-set_call_preserveall_cc (LLVMValueRef func)
+set_call_cold_cconv (LLVMValueRef func)
 {
 #if !defined(TARGET_WATCHOS) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
-	mono_llvm_set_call_preserveall_cc (func);
+	LLVMSetInstructionCallConv (func, LLVMColdCallConv);
 #endif
 }
 
@@ -2952,9 +2952,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	// parsing some of these registers saved by this call. Can't unwind through it.
 	// Not an issue with llvmonly because it doesn't use that DWARF
 	if (module->llvm_only)
-		set_preserveall_cc (func);
-	else
-		LLVMSetFunctionCallConv (func, LLVMMono1CallConv);
+		set_cold_cconv (func);
 
 	entry_bb = LLVMAppendBasicBlock (func, "ENTRY");
 	builder = LLVMCreateBuilder ();
@@ -3002,7 +3000,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 /*
  * Emit wrappers around the C icalls used to initialize llvm methods, to
  * make the calling code smaller and to enable usage of the llvm
- * PreserveAll calling convention.
+ * cold calling convention.
  */
 static void
 emit_init_icall_wrappers (MonoLLVMModule *module)
@@ -3045,7 +3043,7 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	func = mono_llvm_get_or_insert_gc_safepoint_poll (lmodule);
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_UNWIND);
 	LLVMSetLinkage (func, LLVMWeakODRLinkage);
-	// set_preserveall_cc (func);
+	// set_cold_cconv (func);
 
 	entry_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.entry");
 	poll_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.poll");
@@ -3239,11 +3237,8 @@ emit_init_method (EmitContext *ctx)
 	 * This enables llvm to keep arguments in their original registers/
 	 * scratch registers, since the call will not clobber them.
 	 */
-
 	if (ctx->llvm_only)
-		set_call_preserveall_cc (call);
-	else
-		LLVMSetInstructionCallConv (call, LLVMMono1CallConv);
+		set_call_cold_cconv (call);
 
 	LLVMBuildBr (builder, inited_bb);
 	ctx->bblocks [cfg->bb_entry->block_num].end_bblock = inited_bb;
@@ -3662,7 +3657,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	gboolean vretaddr;
 	LLVMTypeRef llvm_sig;
 	gpointer target;
-	gboolean is_virtual, calli, preserveall;
+	gboolean is_virtual, calli;
 	LLVMBuilderRef builder = *builder_ref;
 
 	/* If both imt and rgctx arg are required, only pass the imt arg, the rgctx trampoline will pass the rgctx */
@@ -3698,9 +3693,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	calli = !call->fptr_is_patch && (opcode == OP_VOIDCALL_REG || opcode == OP_CALL_REG
 		|| opcode == OP_VCALL_REG || opcode == OP_LCALL_REG || opcode == OP_FCALL_REG
 		|| opcode == OP_RCALL_REG || opcode == OP_TAILCALL_REG);
-
-	/* Unused */
-	preserveall = FALSE;
 
 	/* FIXME: Avoid creating duplicate methods */
 
@@ -3997,8 +3989,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	g_assert (!(call->rgctx_arg_reg && call->imt_arg_reg));
 	if (!sig->pinvoke && !cfg->llvm_only)
 		LLVMSetInstructionCallConv (lcall, LLVMMono1CallConv);
-	if (preserveall)
-		set_call_preserveall_cc (lcall);
 
 	if (cinfo->ret.storage == LLVMArgVtypeByRef)
 		mono_llvm_add_instr_attr (lcall, 1 + cinfo->vret_arg_pindex, LLVM_ATTR_STRUCT_RET);
@@ -6149,7 +6139,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			/*
 			 * if (!*sreg1)
 			 *   mono_threads_state_poll ();
-			 * FIXME: Use a preserveall wrapper
+			 * FIXME: Use a cold cconv wrapper
 			 */
 			val = mono_llvm_build_load (builder, convert (ctx, lhs, LLVMPointerType (IntPtrType (), 0)), "", TRUE);
 			cmp = LLVMBuildICmp (builder, LLVMIntEQ, val, LLVMConstNull (LLVMTypeOf (val)), "");
