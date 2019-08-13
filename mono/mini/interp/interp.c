@@ -1025,6 +1025,7 @@ mono_interp_throw (
 		goto exit; \
 	} while (0)
 
+// This is duplicated in mono_interp_exception_checkpoint.
 #define EXCEPTION_CHECKPOINT	\
 	do {										\
 		if (*mono_thread_interruption_request_flag () && !mono_threads_is_critical_method (imethod->method)) { \
@@ -1034,6 +1035,7 @@ mono_interp_throw (
 		}									\
 	} while (0)
 
+// A function form of EXCEPTION_CHECKPOINT.
 static MonoInterpResume
 mono_interp_exception_checkpoint (
 	// Parameters are sorted by name.
