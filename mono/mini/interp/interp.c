@@ -247,7 +247,7 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 }
 
 /* Set the current execution state to the resume state in context */
-// This macro is duplicated in mono_interp_check_resume.
+// This macro is duplicated in mono_interp_check_resume_state.
 #define SET_RESUME_STATE(context) do { \
 		ip = (const guint16*)(context)->handler_ip;						\
 		/* spec says stack should be empty at endfinally so it should be at the start too */ \
@@ -284,7 +284,7 @@ typedef enum MonoInterpResume {
 
 // CHECK_RESUME_STATE replacement for within helper functions. With SET_RESUME_STATE builtin.
 static MonoInterpResume
-mono_interp_check_resume (
+mono_interp_check_resume_state (
 	// Parameters are sorted by name.
 	FrameClauseArgs* clause_args,
 	ThreadContext* context,
@@ -941,7 +941,7 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
  * interp_throw:
  *   Throw an exception from the interpreter.
  */
-static MONO_NEVER_INLINE void
+static void
 interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gconstpointer ip, gboolean rethrow)
 {
 	ERROR_DECL (error);
@@ -982,13 +982,7 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gco
 	g_assert (context->has_resume_state);
 }
 
-#define THROW_EX_GENERAL(exception,ex_ip, rethrow)		\
-	do {							\
-		interp_throw (context, (exception), (frame), (ex_ip), (rethrow)); \
-		CHECK_RESUME_STATE(context); \
-	} while (0)
-
-static MonoInterpResume
+static MONO_NEVER_INLINE MonoInterpResume
 mono_interp_throw (
 	// Parameters are sorted by name.
 	FrameClauseArgs* clause_args,
@@ -1002,8 +996,18 @@ mono_interp_throw (
 	gboolean rethrow)
 {
 	interp_throw (context, exception, frame, *pip, rethrow);
-	return mono_interp_check_resume (clause_args, context, frame, imethod, pip, psp, pvt_sp);
+	return mono_interp_check_resume_state (clause_args, context, frame, imethod, pip, psp, pvt_sp);
 }
+
+#define THROW_EX_GENERAL(exception, ex_ip, rethrow)		\
+	do {							\
+		switch (mono_interp_throw (clause_args, context, exception, frame, imethod, &(ex_ip), &(sp), &(vt_sp), (rethrow))) {	\
+			default:				g_assert_not_reached ();					\
+			case MonoInterpResume_Continue:		break;								\
+			case MonoInterpResume_Dispatch:		MINT_IN_DISPATCH (*(ex_ip));					\
+			case MonoInterpResume_ExitFrame:	goto exit_frame;						\
+		}														\
+	} while (0)
 
 #define THROW_EX(exception,ex_ip) THROW_EX_GENERAL ((exception), (ex_ip), FALSE)
 
@@ -3041,7 +3045,7 @@ mono_interp_newobj_vt (
 
 	interp_exec_method (child_frame, context, error);
 
-	const MonoInterpResume resume = mono_interp_check_resume (clause_args, context, frame, imethod, &ip, &sp, pvt_sp);
+	const MonoInterpResume resume = mono_interp_check_resume_state (clause_args, context, frame, imethod, &ip, &sp, pvt_sp);
 	if (resume)
 		goto exit;
 
@@ -3143,7 +3147,7 @@ mono_interp_newobj (
 
 	interp_exec_method (child_frame, context, error);
 
-	if ((resume = mono_interp_check_resume (clause_args, context, frame, imethod, &ip, &sp, pvt_sp)))
+	if ((resume = mono_interp_check_resume_state (clause_args, context, frame, imethod, &ip, &sp, pvt_sp)))
 		goto exit;
 
 	/*
@@ -3442,8 +3446,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 		frame->ip = NULL;
 		do_transform_method (frame, context);
-		if (frame->ex)
-			THROW_EX (frame->ex, NULL);
+		if (frame->ex) {
+			ip = NULL;
+			THROW_EX (frame->ex, ip);
+		}
 		EXCEPTION_CHECKPOINT;
 	}
 
@@ -6578,14 +6584,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			memset (sp->data.vt, 0, READ32(ip + 1));
 			ip += 3;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_CPBLK)
+		MINT_IN_CASE(MINT_CPBLK) {
 			sp -= 3;
+			const guint16* ex_ip = ip - 1;
 			if (!sp [0].data.p || !sp [1].data.p)
-				THROW_EX (mono_get_exception_null_reference(), ip - 1);
+				THROW_EX (mono_get_exception_null_reference(), ex_ip);
 			++ip;
 			/* FIXME: value and size may be int64... */
 			memcpy (sp [0].data.p, sp [1].data.p, sp [2].data.i);
 			MINT_IN_BREAK;
+		}
 #if 0
 		MINT_IN_CASE(MINT_CONSTRAINED_) {
 			guint32 token;
