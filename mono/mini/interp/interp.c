@@ -230,9 +230,7 @@ int mono_interp_traceopt = 0;
 #endif
 
 static
-#if __clang__ // Inlining this function causes clang/amd64/Linux to use more stack.
-MONO_NEVER_INLINE
-#endif
+MONO_NEVER_INLINE // To reduce stack.
 void
 set_resume_state (ThreadContext *context, InterpFrame *frame)
 {
@@ -628,9 +626,7 @@ alloc_method_table (MonoVTable *vtable, int offset)
 }
 
 static
-#if __clang__ // Inlining this function causes clang/amd64/Linux to use more stack.
-MONO_NEVER_INLINE
-#endif
+MONO_NEVER_INLINE // To reduce stack.
 InterpMethod*
 get_virtual_method_fast (InterpMethod *imethod, MonoVTable *vtable, int offset)
 {
@@ -3374,9 +3370,7 @@ exit:
 // This function is outlined to help save stack in its caller, on the premise
 // that it is relatively rarely called.
 static
-#if __clang__ // Inlining this function causes clang/amd64/Linux to use more stack.
-MONO_NEVER_INLINE
-#endif
+MONO_NEVER_INLINE // To reduce stack.
 void
 mono_interp_calli_nat_dynamic_pinvoke (
 	// Parameters are sorted by name.
