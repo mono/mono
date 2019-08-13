@@ -372,6 +372,7 @@ static void emit_dbg_info (MonoLLVMModule *module, const char *filename, const c
 static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp);
 static LLVMValueRef get_intrins_by_name (EmitContext *ctx, const char *name);
 static LLVMValueRef get_intrins (EmitContext *ctx, int id);
+static LLVMValueRef get_intrins_from_module (MonoLLVMModule *module, int id);
 static void llvm_jit_finalize_method (EmitContext *ctx);
 static void mono_llvm_nonnull_state_update (EmitContext *ctx, LLVMValueRef lcall, MonoMethod *call_method, LLVMValueRef *args, int num_params);
 static void mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule *module);
@@ -3028,7 +3029,7 @@ static void
 emit_gc_safepoint_poll (MonoLLVMModule *module)
 {
 	LLVMModuleRef lmodule = module->lmodule;
-	LLVMValueRef func, indexes [2], got_entry_addr, flag_addr, val_ptr, callee, val, cmp;
+	LLVMValueRef func, indexes [2], got_entry_addr, flag_addr, val_ptr, callee, val, cmp, args [2];
 	LLVMBasicBlockRef entry_bb, poll_bb, exit_bb;
 	LLVMBuilderRef builder;
 	LLVMTypeRef sig;
@@ -3063,6 +3064,9 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	val_ptr = LLVMBuildLoad (builder, flag_addr, "");
 	val = LLVMBuildPtrToInt (builder, val_ptr, IntPtrType (), "");
 	cmp = LLVMBuildICmp (builder, LLVMIntEQ, val, LLVMConstNull (LLVMTypeOf (val)), "");
+	args [0] = cmp;
+	args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+	cmp = LLVMBuildCall (builder, get_intrins_from_module (module, INTRINS_EXPECT_I1), args, 2, "");
 	LLVMBuildCondBr (builder, cmp, exit_bb, poll_bb);
 
 	/* poll: */
@@ -5678,6 +5682,9 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				index = LLVMConstInt (LLVMInt32Type (), ins->inst_offset / size, FALSE);				
 				addr = LLVMBuildGEP (builder, convert (ctx, base, LLVMPointerType (t, 0)), &index, 1, "");
 			}
+			if (is_volatile && LLVMGetInstructionOpcode (base) == LLVMAlloca && !(ins->flags & MONO_INST_VOLATILE))
+				/* Storing to an alloca cannot fail */
+				is_volatile = FALSE;
 			emit_store (ctx, bb, &builder, size, convert (ctx, values [ins->sreg1], t), convert (ctx, addr, LLVMPointerType (t, 0)), base, is_volatile);
 			break;
 		}
@@ -8525,7 +8532,7 @@ add_intrinsic (LLVMModuleRef module, int id)
 }
 
 static LLVMValueRef
-get_intrins (EmitContext *ctx, int id)
+get_intrins_from_module (MonoLLVMModule *module, int id)
 {
 	const char *name = (const char*)g_hash_table_lookup (intrins_id_to_name, GINT_TO_POINTER (id));
 	g_assert (name);
@@ -8536,17 +8543,23 @@ get_intrins (EmitContext *ctx, int id)
 	 * Every method is emitted into its own module so
 	 * we can add intrinsics on demand.
 	 */
-	res = ctx->module->intrins_by_id [id];
+	res = module->intrins_by_id [id];
 	if (!res) {
-		res = LLVMGetNamedFunction (ctx->lmodule, name);
+		res = LLVMGetNamedFunction (module->lmodule, name);
 		if (!res) {
-			add_intrinsic (ctx->lmodule, id);
-			res = LLVMGetNamedFunction (ctx->lmodule, name);
+			add_intrinsic (module->lmodule, id);
+			res = LLVMGetNamedFunction (module->lmodule, name);
 			g_assert (res);
 		}
-		ctx->module->intrins_by_id [id] = res;
+		module->intrins_by_id [id] = res;
 	}
 	return res;
+}
+
+static LLVMValueRef
+get_intrins (EmitContext *ctx, int id)
+{
+	return get_intrins_from_module (ctx->module, id);
 }
 
 static LLVMValueRef
