@@ -2994,7 +2994,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	 * but it may be useful for debug
 	 */
 	while (1) {
-#ifndef USE_COMPUTED_GOTO
+#if !USE_COMPUTED_GOTO
 	main_loop:
 #endif
 		/* g_assert (sp >= frame->stack); */
