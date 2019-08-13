@@ -3925,9 +3925,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			sp->data.p = vt_sp;
 
-			sp -= sig->param_count;
-			if (sig->hasthis)
-				sp--;
+			sp -= sig->param_count + sig->hasthis;
 
 			ves_imethod (frame, target_method, sig, sp, sp + sig->param_count + sig->hasthis);
 			if (frame->ex)
