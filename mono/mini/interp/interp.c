@@ -3263,9 +3263,7 @@ mono_interp_leave (
 		sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
 		*pvt_sp = (unsigned char *) sp + imethod->stack_size;
 		resume = MonoInterpResume_Dispatch;
-		goto exit;
 	}
-
 exit:
 	*pip = ip;
 	*psp = sp;
@@ -3825,11 +3823,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_CALL_VARARG) {
 			frame->ip = ip;
 
-			InterpMethod* child_method = ((InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)]);
+			InterpMethod* child_method = (InterpMethod*)imethod->data_items [*(guint16*)(ip + 1)];
 
 			child_frame.imethod = child_method;
 			/* The real signature for vararg calls */
-			MonoMethodSignature *csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
+			MonoMethodSignature *csig = (MonoMethodSignature*)imethod->data_items [*(guint16*)(ip + 2)];
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
 			int num_varargs = csig->param_count - csig->sentinelpos;
 			child_frame.varargs = (char*) vt_sp;
@@ -3848,11 +3846,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			CHECK_RESUME_STATE (context);
 
 			// Read again after interp_exec_method to save stack.
-			csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip - 3 + 2)];
+			csig = (MonoMethodSignature*)imethod->data_items [*(guint16*)(ip - 3 + 2)];
 
 			if (csig->ret->type != MONO_TYPE_VOID) {
 				// Read and recompute after interp_exec_method to save stack.
-				child_method = ((InterpMethod*)imethod->data_items [* (guint16 *)(ip - 3 + 1)]);
+				child_method = (InterpMethod*)imethod->data_items [*(guint16*)(ip - 3 + 1)];
 				num_varargs = csig->param_count - csig->sentinelpos;
 				*sp = sp [child_method->param_count + child_method->hasthis + num_varargs];
 				sp++;
@@ -3867,7 +3865,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			frame->ip = ip;
 			
-			InterpMethod* child_method = ((InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)]);
+			InterpMethod* child_method = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
 
 			child_frame.imethod = child_method;
 			ip += 2;
@@ -3899,7 +3897,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			if (!is_void) {
 				// Read and recompute after interp_exec_method to save stack.
-				child_method = ((InterpMethod*)imethod->data_items [* (guint16 *)(ip - 2 + 1)]);
+				child_method = (InterpMethod*)imethod->data_items [*(guint16*)(ip - 2 + 1)];
 				/* need to handle typedbyref ... */
 				*sp = sp [child_method->param_count + child_method->hasthis];
 				sp++;
@@ -3920,7 +3918,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			CHECK_RESUME_STATE (context);
 
 			// Read again after do_jit_call to conserve stack.
-			rmethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip - 2 + 1)];
+			rmethod = (InterpMethod*)imethod->data_items [*(guint16*)(ip - 2 + 1)];
 
 			if (rmethod->rtype->type != MONO_TYPE_VOID)
 				sp++;
@@ -4969,8 +4967,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			token = * (guint16 *)(ip + 1);
 			ip += 2;
 
-			InterpMethod *child_method = (InterpMethod*)imethod->data_items [token];
-			csig = mono_method_signature_internal (child_method->method);
+			InterpMethod *cmethod = (InterpMethod*)imethod->data_items [token];
+			csig = mono_method_signature_internal (cmethod->method);
 
 			g_assert (csig->hasthis);
 			sp -= csig->param_count;
@@ -6609,16 +6607,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			memset (sp->data.vt, 0, READ32(ip + 1));
 			ip += 3;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_CPBLK) {
+		MINT_IN_CASE(MINT_CPBLK)
 			sp -= 3;
-			const guint16* ex_ip = ip - 1;
-			if (!sp [0].data.p || !sp [1].data.p)
+			if (!sp [0].data.p || !sp [1].data.p) {
+				const guint16* ex_ip = ip - 1;
 				THROW_EX (mono_get_exception_null_reference(), ex_ip);
+			}
 			++ip;
 			/* FIXME: value and size may be int64... */
 			memcpy (sp [0].data.p, sp [1].data.p, sp [2].data.i);
 			MINT_IN_BREAK;
-		}
 #if 0
 		MINT_IN_CASE(MINT_CONSTRAINED_) {
 			guint32 token;
