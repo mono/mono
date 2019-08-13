@@ -1091,12 +1091,18 @@ mono_debugger_get_generate_debug_info ()
 	return disable_optimizations;
 }
 
+// Declare transport_close2 method
+static void transport_close2(void);
+
 MONO_API void
 mono_debugger_disconnect ()
 {
-	stop_debugger_thread ();
-	transport_connect (agent_config.address);
-	start_debugger_thread ();
+	// We just need to close the debugger client socket since
+	// the thread is blocked in the RECV method. The debugger_thread
+	// loop already handles the debugger client disconnection properly,
+	// so calling transport_close2 method is enough since the method
+	// only closes the debugger client socket.
+	transport_close2();
 }
 
 typedef void (*MonoDebuggerAttachFunc)(gboolean attached);
