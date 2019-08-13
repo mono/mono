@@ -229,7 +229,10 @@ int mono_interp_traceopt = 0;
 #define MINT_IN_DEFAULT default:
 #endif
 
-static void
+static
+// Inlining this function causes clang/amd64/Linux to use more stack.
+MONO_NEVER_INLINE
+void
 set_resume_state (ThreadContext *context, InterpFrame *frame)
 {
 	/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */
@@ -244,6 +247,7 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 }
 
 /* Set the current execution state to the resume state in context */
+// This macro is duplicated in mono_interp_check_resume.
 #define SET_RESUME_STATE(context) do { \
 		ip = (const guint16*)(context)->handler_ip;						\
 		/* spec says stack should be empty at endfinally so it should be at the start too */ \
