@@ -7265,9 +7265,12 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				g_free (req);
 				return err;
 			}
-
-			DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, THREAD_TO_INTERNAL(step_thread));
 			
+			mono_loader_lock ();
+			DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, THREAD_TO_INTERNAL(step_thread));
+			mono_loader_unlock ();
+			g_assert (tls);
+		
 			if (tls->terminated) { 
 				/* if the thread is already terminated ignore the single step */
 				buffer_add_int (buf, req->id);
