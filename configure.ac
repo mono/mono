@@ -692,12 +692,12 @@ AC_CHECK_HEADERS(linux/serial.h)
 case "$host" in
 	# Use bundled zlib on Windows to be sure it is static.
 	*-mingw*|*-cygwin*)
-		have_zlib=no
+		have_sys_zlib=no
 		zlib_msg="bundled zlib"
 		;;
 	*)
-		AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
-		if test x$have_zlib = xyes; then
+		AC_CHECK_HEADER(zlib.h, [have_sys_zlib=yes], [have_sys_zlib=no])
+		if test x$have_sys_zlib = xyes; then
 			AC_TRY_COMPILE([#include <zlib.h>], [
 				#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
 				#else
@@ -709,12 +709,12 @@ case "$host" in
 				have_sys_zlib=yes
 			],[
 				AC_MSG_RESULT(zlib too old, using embedded zlib)
-				have_zlib=no
+				have_sys_zlib=no
 				zlib_msg="bundled zlib"
 			])
 		else
 			AC_MSG_RESULT(zlib not found, using embedded zlib)
-			have_zlib=no
+			have_sys_zlib=no
 			zlib_msg="bundled zlib"
 		fi
 		;;

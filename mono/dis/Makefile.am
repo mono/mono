@@ -57,14 +57,14 @@ libmonodismain_a_SOURCES =	\
 
 monodis_SOURCES =
 
-if !HOST_WIN32
 if HAVE_SYS_ZLIB
 Z_LIBS= -lz
 else
-Z_LIBS=
-endif
+if HAVE_STATIC_ZLIB
+Z_LIBS=$(STATIC_ZLIB_PATH)
 else
 Z_LIBS=
+endif
 endif
 
 monodis_LDADD = 			\
