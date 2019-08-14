@@ -223,8 +223,14 @@ namespace WebAssembly {
 
 		}
 
-		public static void FreeObject (object obj)
+		public static void FreeObject(object obj)
 		{
+			// We no longer need to free on delegates.
+			// Leave this here for now so it does not break code.
+			if (obj.GetType().IsSubclassOf(typeof(Delegate)))
+			{
+				return;
+			}
 			if (raw_to_js.TryGetValue (obj, out JSObject jsobj)) {
 				raw_to_js [obj].RawObject = null;
 				raw_to_js.Remove (obj);
