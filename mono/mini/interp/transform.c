@@ -5768,12 +5768,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, MINT_INITOBJ);
 					i32 = mono_class_value_size (klass, NULL);
 					WRITE32_INS (td->last_ins, 0, &i32);
+					--td->sp;
 				} else {
 					interp_add_ins (td, MINT_LDNULL);
+					PUSH_TYPE(td, STACK_TYPE_O, NULL);
 					interp_add_ins (td, MINT_STIND_REF);
+					td->sp -= 2;
 				}
 				td->ip += 5;
-				--td->sp;
 				break;
 			case CEE_CPBLK:
 				CHECK_STACK(td, 3);
