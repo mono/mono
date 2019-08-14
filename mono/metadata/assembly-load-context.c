@@ -11,9 +11,6 @@
 #include "mono/utils/mono-error-internals.h"
 #include "mono/utils/mono-logger-internals.h"
 
-static
-GENERATE_GET_CLASS_WITH_CACHE_DECL (assembly_load_context);
-
 GENERATE_GET_CLASS_WITH_CACHE (assembly_load_context, "System.Runtime.Loader", "AssemblyLoadContext");
 
 void

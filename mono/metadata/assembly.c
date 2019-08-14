@@ -1639,7 +1639,9 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	 *
 	 * 5. Call ALC Resolving event.
 	 *
-	 * 6. Return NULL.
+	 * 6. Call the ALC AssemblyResolve event (except for corlib satellite assemblies).
+	 *
+	 * 7. Return NULL.
 	 */
 
 	reference = mono_assembly_loaded_internal (alc, aname, FALSE);
@@ -1669,6 +1671,13 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	reference = mono_alc_invoke_resolve_using_resolving_event_nofail (alc, aname);
 	if (reference)
 		goto leave;
+
+	// See: https://github.com/dotnet/coreclr/blob/0a762eb2f3a299489c459da1ddeb69e042008f07/src/vm/appdomain.cpp#L5178-L5239
+	if (!(strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME) == 0 && is_satellite) && postload) {
+		reference = mono_assembly_invoke_search_hook_internal (alc, requesting, aname, FALSE, TRUE);
+		if (reference)
+			goto leave;
+	}
 
 leave:
 	return reference;
@@ -3901,9 +3910,7 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoAssemblyLoa
 	mono_assembly_name_free (aname);
 
 	if (!res) {
-		MonoDomain *domain = mono_domain_get ();
-
-		res = mono_try_assembly_resolve (domain, name, NULL, FALSE, error);
+		res = mono_try_assembly_resolve (alc, name, NULL, FALSE, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
 			if (*status == MONO_IMAGE_OK)
