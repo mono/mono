@@ -9,6 +9,9 @@ namespace WebAssembly {
 	public class JSObject : AnyRef, IJSObject, IDisposable {
 		internal object RawObject;
 
+		// Right now this is used for Delegates
+		internal WeakReference WeakRawObject;
+
 		// to detect redundant calls
 		public bool IsDisposed { get; internal set; }
 
@@ -142,10 +145,7 @@ namespace WebAssembly {
 
 		protected bool FreeHandle ()
 		{
-			Runtime.ReleaseHandle (JSHandle, out int exception);
-			if (exception != 0)
-				throw new JSException ($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle} raw '{RawObject != null})");
-			return true;
+			return Runtime.ReleaseJSObject (this);
 		}
 
 		public override bool Equals (System.Object obj)
@@ -183,13 +183,14 @@ namespace WebAssembly {
 					Console.WriteLine ($"ReleaseHandle failed. handle:{handle}");
 				}
 			}
+			//Runtime.DumpExistingObjects();
 #endif
 			return ret;
 		}
 
 		public override string ToString ()
 		{
-			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle}' raw '{RawObject != null}')";
+			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)AnyRefHandle}' raw '{RawObject != null}' weak_raw '{WeakRawObject != null}')";
 		}
 
 	}

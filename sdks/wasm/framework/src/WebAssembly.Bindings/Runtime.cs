@@ -59,6 +59,13 @@ namespace WebAssembly {
 		}
 
 		static readonly Dictionary<int, WeakReference> bound_objects = new Dictionary<int, WeakReference> ();
+
+		// weak_delegate_table is a ConditionalWeakTable with the Delegate and associated JSObject:
+		// Key Lifetime:
+		//	Once the key dies, the dictionary automatically removes
+		//	    the key/value entry.
+		// No need to lock as it is thread safe.
+		static readonly ConditionalWeakTable<Delegate, JSObject> weak_delegate_table = new ConditionalWeakTable<Delegate, JSObject> ();
 		static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject> ();
 
 		static Runtime ()
@@ -132,9 +139,9 @@ namespace WebAssembly {
 				if (!bound_objects.TryGetValue (js_id, out var reference)) {
 					var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
 						    null, new Type [] { typeof (IntPtr), typeof (bool) }, null);
-				Console.WriteLine ($"BindJSType constructor: {jsobjectnew}");
+				//Console.WriteLine ($"BindJSType constructor: {jsobjectnew}");
 
-				bound_objects [js_id] = reference = new WeakReference ((JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id, ownsHandle }), true);
+					bound_objects [js_id] = reference = new WeakReference ((JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id, ownsHandle }), true);
 				}
 				return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
 			}
@@ -155,22 +162,42 @@ namespace WebAssembly {
 		{
 			lock (bound_objects) {
 				if (bound_objects.TryGetValue (js_id, out var reference)) {
-					if (!reference.IsAlive) {
+					var instance = reference.Target;
+					if (instance == null) {
 						bound_objects.Remove (js_id);
 					} else {
 						((JSObject)bound_objects [js_id].Target).RawObject = null;
+						((JSObject)bound_objects [js_id].Target).WeakRawObject = null;
 						bound_objects.Remove (js_id);
-						var instance = reference.Target as JSObject;
-						instance.SetHandleAsInvalid ();
-						instance.IsDisposed = true;
-						instance.RawObject = null;
-						instance.AnyRefHandle.Free ();
+						var instanceJS = reference.Target as JSObject;
+						instanceJS.SetHandleAsInvalid ();
+						instanceJS.IsDisposed = true;
+						instanceJS.RawObject = null;
+						instanceJS.AnyRefHandle.Free ();
 					}
 
 				}
+				
 			}
 		}
 
+
+		internal static bool ReleaseJSObject (JSObject objToRelease)
+		{
+			Runtime.ReleaseHandle (objToRelease.JSHandle, out int exception);
+			if (exception != 0)
+				throw new JSException ($"Error releasing handle on (js-obj js '{objToRelease.JSHandle}' mono '{(IntPtr)objToRelease.AnyRefHandle} raw '{objToRelease.RawObject != null}' weak raw '{objToRelease.WeakRawObject?.Target != null}'   )");
+
+			lock (bound_objects) {
+				bound_objects.Remove (objToRelease.JSHandle);
+				objToRelease.SetHandleAsInvalid ();
+				objToRelease.IsDisposed = true;
+				objToRelease.RawObject = null;
+				objToRelease.WeakRawObject = null;
+				objToRelease.AnyRefHandle.Free ();
+			}
+			return true;
+		}
 
 		static void UnBindRawJSObjectAndFree (int gcHandle)
 		{
@@ -239,18 +266,55 @@ namespace WebAssembly {
 
 		static int BindExistingObject (object raw_obj, int js_id)
 		{
+			//var isDelegate = raw_obj.GetType ().IsSubclassOf (typeof (Delegate));
+			//Console.WriteLine ($"BindExistingObject: add to delegate table: {raw_obj} js_id: {js_id} IsDelegate {isDelegate}");
 			JSObject obj = raw_obj as JSObject;
+			if (raw_obj.GetType().IsSubclassOf(typeof(Delegate))) {
+				var dele = raw_obj as Delegate;
+				//Console.WriteLine ($"BindExistingObject: add to delegate table: {raw_obj} js_id: {js_id} IsDelegate {isDelegate} Target: {dele.Target}");
+				if (obj == null && !weak_delegate_table.TryGetValue(dele, out obj)) {
 
-			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
-				raw_to_js [raw_obj] = obj = new JSObject (js_id, raw_obj);
+					obj = new JSObject (js_id, true);
+					bound_objects [js_id] = new WeakReference (obj);
+					weak_delegate_table.Add(dele, obj);
+					obj.WeakRawObject = new WeakReference (dele, false);
+					//Console.WriteLine ($"BindExistingObject: add to weak delegate table: {obj}");
+				}
+
+			} else {
+				if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj)) {
+
+					raw_to_js [raw_obj] = obj = new JSObject (js_id, raw_obj);
+					//Console.WriteLine ($"BindExistingObject: new raw_obj: {obj}");
+				}
+
+
+			}
 
 			return (int)(IntPtr)obj.AnyRefHandle;
+		}
+
+		internal static void DumpExistingObjects ()
+		{
+			Console.WriteLine ($"  DumpExistingObjects:: bound_objects ");
+			foreach (var bo in bound_objects) {
+				Console.WriteLine ($"bound map: {bo}");
+			}
+
+			Console.WriteLine ($"  DumpExistingObjects:: raw_objects ");
+			foreach (var rr in raw_to_js) {
+				Console.WriteLine ($"raw map: {rr}");
+			}
 		}
 
 		static int GetJSObjectId (object raw_obj)
 		{
 			JSObject obj = raw_obj as JSObject;
 
+			if (obj == null && raw_obj.GetType ().IsSubclassOf (typeof (Delegate))) {
+				var dele = raw_obj as Delegate;
+				weak_delegate_table.TryGetValue (dele, out obj);
+			}
 			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
 				return -1;
 
@@ -259,8 +323,17 @@ namespace WebAssembly {
 
 		static object GetMonoObject (int gc_handle)
 		{
+			//Console.WriteLine ($"GetMonoObject: gc_handle {gc_handle}");
 			GCHandle h = (GCHandle)(IntPtr)gc_handle;
 			JSObject o = (JSObject)h.Target;
+
+			if (o != null && o.WeakRawObject != null) {
+				var target = o.WeakRawObject.Target;
+				if (target != null) {
+					return target;
+				}
+			}
+
 			if (o != null && o.RawObject != null)
 				return o.RawObject;
 			return o;
