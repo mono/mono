@@ -1928,7 +1928,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			 * the InterpMethod pointer. FIXME
 			 */
 			native = csignature->pinvoke || method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE;
-			--td->sp;
 
 			target_method = NULL;
 		} else {
@@ -2119,6 +2118,21 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	if (op == -1 && td->inlined_method)
 		return FALSE;
 
+	/* We need to convert delegate invoke to a indirect call on the interp_invoke_impl field */
+	if (target_method && m_class_get_parent (target_method->klass) == mono_defaults.multicastdelegate_class) {
+		const char *name = target_method->name;
+		if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
+			calli = TRUE;
+			interp_add_ins (td, MINT_LD_DELEGATE_INVOKE_IMPL);
+			td->last_ins->data [0] = csignature->param_count + 1;
+			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+		}
+	}
+
+	/* Pop the function pointer */
+	if (calli)
+		--td->sp;
+
 	td->sp -= csignature->param_count + !!csignature->hasthis;
 	for (i = 0; i < csignature->param_count; ++i) {
 		if (td->sp [i + !!csignature->hasthis].type == STACK_TYPE_VT) {
@@ -2151,16 +2165,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		PUSH_TYPE(td, stack_type[mt], klass);
 	} else
 		is_void = TRUE;
-
-	/* We need to convert delegate invoke to a indirect call on the interp_invoke_impl field */
-	if (target_method && m_class_get_parent (target_method->klass) == mono_defaults.multicastdelegate_class) {
-		const char *name = target_method->name;
-		if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
-			calli = TRUE;
-			interp_add_ins (td, MINT_LD_DELEGATE_INVOKE_IMPL);
-			td->last_ins->data [0] = csignature->param_count + 1;
-		}
-	}
 
 	if (op >= 0) {
 		interp_add_ins (td, op);
