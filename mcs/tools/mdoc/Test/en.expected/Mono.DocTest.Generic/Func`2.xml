@@ -1,6 +1,10 @@
 <Type Name="Func&lt;TArg,TRet&gt;" FullName="Mono.DocTest.Generic.Func&lt;TArg,TRet&gt;">
   <TypeSignature Language="C#" Value="public delegate TRet Func&lt;in TArg,out TRet&gt;(TArg a) where TArg : Exception;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`2&lt;(class System.Exception) - TArg, + TRet&gt; extends System.MulticastDelegate" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.Func`2" />
+  <TypeSignature Language="VB.NET" Value="Public Delegate Function Func(Of In TArg, Out TRet)(a As TArg) As TRet " />
+  <TypeSignature Language="F#" Value="type Func&lt;'Arg, 'Ret (requires 'Arg :&gt; Exception)&gt; = delegate of 'Arg -&gt; 'Ret" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename TArg, typename TRet&gt;&#xA; where TArg : Exceptionpublic delegate TRet Func(TArg a);" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

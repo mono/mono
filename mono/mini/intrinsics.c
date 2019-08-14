@@ -268,6 +268,9 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		g_assert (ctx);
 		g_assert (ctx->method_inst);
 
+		t = ctx->method_inst->type_argv [0];
+		if (mini_is_gsharedvt_variable_type (t))
+			return NULL;
 		if (ctx->method_inst->type_argc == 2) {
 			dreg = alloc_preg (cfg);
 			EMIT_NEW_UNALU (cfg, ins, OP_MOVE, dreg, args [0]->dreg);
@@ -1685,6 +1688,18 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return ins;
 		}
 	}
+
+#ifdef ENABLE_NETCORE
+	// Return false for IsSupported for all types in System.Runtime.Intrinsics.X86 
+	// as we don't support them now
+	if (in_corlib && 
+		!strcmp ("System.Runtime.Intrinsics.X86", cmethod_klass_name_space) && 
+		!strcmp (cmethod->name, "get_IsSupported")) {
+		EMIT_NEW_ICONST (cfg, ins, 0);
+		ins->type = STACK_I4;
+		return ins;
+	}
+#endif
 
 	ins = mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
 	if (ins)

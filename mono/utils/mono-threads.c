@@ -900,6 +900,9 @@ mono_thread_info_init (size_t info_size)
 	gboolean res;
 	thread_info_size = info_size;
 	char *sleepLimit;
+
+	mono_threads_suspend_policy_init ();
+
 #ifdef HOST_WIN32
 	res = mono_native_tls_alloc (&thread_info_key, NULL);
 	res = mono_native_tls_alloc (&thread_exited_key, NULL);
@@ -1678,7 +1681,7 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 		} while (1);
 	} else {
 		int ret;
-#if defined (__linux__) && !defined(HOST_ANDROID)
+#if defined (HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 		struct timespec start, target;
 
 		/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */

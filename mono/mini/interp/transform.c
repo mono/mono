@@ -857,7 +857,7 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
 		ERROR_DECL (error);
 		gpointer addr = mono_jit_compile_method_jit_only (method, error);
-		if (addr && mono_error_ok (error))
+		if (addr && is_ok (error))
 			return TRUE;
 	}
 
@@ -3441,16 +3441,24 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			}
 			break;
 		}
-		case CEE_BR:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 5 + read32 (td->ip + 1));
+		case CEE_BR: {
+			int offset = read32 (td->ip + 1);
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 5 + offset);
+			}
 			td->ip += 5;
 			break;
-		case CEE_BR_S:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+		}
+		case CEE_BR_S: {
+			int offset = (gint8)td->ip [1];
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+			}
 			td->ip += 2;
 			break;
+		}
 		case CEE_BRFALSE:
 			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
@@ -4239,6 +4247,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
 				goto_if_nok (error, exit);
+				/* The constructor was not inlined, abort inlining of current method */
+				INLINE_FAILURE;
 
 				td->sp -= csignature->param_count;
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
@@ -5467,8 +5477,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->ip += 5;
 				interp_add_ins (td, MINT_MONO_LDPTR);
 				td->last_ins->data [0] = get_data_item_index (td, mono_method_get_wrapper_data (method, token));
-				td->sp [0].type = STACK_TYPE_I;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 				break;
 			case CEE_MONO_OBJADDR:
 				CHECK_STACK (td, 1);
@@ -5481,8 +5490,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->ip += 5;
 				interp_add_ins (td, MINT_MONO_NEWOBJ);
 				td->last_ins->data [0] = get_data_item_index (td, mono_method_get_wrapper_data (method, token));
-				td->sp [0].type = STACK_TYPE_O;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_O);
 				break;
 			case CEE_MONO_RETOBJ:
 				CHECK_STACK (td, 1);
@@ -5536,8 +5544,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			case CEE_MONO_LDDOMAIN:
 				interp_add_ins (td, MINT_MONO_LDDOMAIN);
-				td->sp [0].type = STACK_TYPE_I;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 				++td->ip;
 				break;
 			case CEE_MONO_SAVE_LAST_ERROR:

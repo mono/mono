@@ -58,6 +58,7 @@
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-state.h>
 #include <mono/metadata/w32subset.h>
+#include <mono/metadata/mono-config.h>
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -1241,7 +1242,7 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 		mono_runtime_delegate_invoke_checked (start_delegate, args, error);
 #endif
 
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
 
 			g_assert (ex != NULL);
@@ -3210,11 +3211,13 @@ mono_threads_register_app_context (MonoAppContextHandle ctx, MonoError *error)
 	MONO_PROFILER_RAISE (context_loaded, (MONO_HANDLE_RAW (ctx)));
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContextHandle ctx, MonoError *error)
 {
 	mono_threads_register_app_context (ctx, error);
 }
+#endif
 
 void
 mono_threads_release_app_context (MonoAppContext* ctx, MonoError *error)
@@ -3230,11 +3233,13 @@ mono_threads_release_app_context (MonoAppContext* ctx, MonoError *error)
 	MONO_PROFILER_RAISE (context_unloaded, (ctx));
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContextHandle ctx, MonoError *error)
 {
 	mono_threads_release_app_context (MONO_HANDLE_RAW (ctx), error); /* FIXME use handles in mono_threads_release_app_context */
 }
+#endif
 
 void mono_thread_init (MonoThreadStartCB start_cb,
 		       MonoThreadAttachCB attach_cb)
@@ -3878,16 +3883,6 @@ collect_thread (gpointer key, gpointer value, gpointer user)
 		ud->threads [ud->nthreads ++] = mono_gchandle_new_internal (&thread->obj, TRUE);
 }
 
-static void
-collect_thread_id (gpointer key, gpointer value, gpointer user)
-{
-	CollectThreadIdsUserData *ud = (CollectThreadIdsUserData *)user;
-	MonoInternalThread *thread = (MonoInternalThread *)value;
-
-	if (ud->nthreads < ud->max_threads)
-		ud->threads [ud->nthreads ++] = thread_get_tid (thread);
-}
-
 /*
  * Collect running threads into the THREADS array.
  * THREADS should be an array allocated on the stack.
@@ -3913,27 +3908,6 @@ collect_threads (guint32 *thread_handles, int max_threads)
 	return ud.nthreads;
 }
 
-static int
-collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
-{
-	CollectThreadIdsUserData ud;
-
-	mono_memory_barrier ();
-	if (!threads)
-		return 0;
-
-	memset (&ud, 0, sizeof (ud));
-	/* This array contains refs, but its on the stack, so its ok */
-	ud.threads = thread_ids;
-	ud.max_threads = max_threads;
-
-	mono_threads_lock ();
-	mono_g_hash_table_foreach (threads, collect_thread_id, &ud);
-	mono_threads_unlock ();
-
-	return ud.nthreads;
-}
-
 void
 mono_gstring_append_thread_name (GString* text, MonoInternalThread* thread)
 {
@@ -3953,8 +3927,6 @@ static void
 dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_file)
 {
 	GString* text = g_string_new (0);
-	char *name;
-	GError *gerror = NULL;
 	int i;
 
 	ud->thread = thread;
@@ -6162,7 +6134,6 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	return success;
 }
 
-#define TIMEOUT_CRASH_REPORTER_FATAL 30
 #define MAX_NUM_THREADS 128
 typedef struct {
 	gint32 has_owner; // state of this memory
@@ -6178,7 +6149,7 @@ typedef struct {
 	gboolean silent; // print to stdout
 } SummarizerGlobalState;
 
-#if defined(HAVE_KILL) && !defined(HOST_ANDROID) && defined(HAVE_WAITPID) && ((!defined(HOST_DARWIN) && defined(SYS_fork)) || HAVE_FORK)
+#if defined(HAVE_KILL) && !defined(HOST_ANDROID) && defined(HAVE_WAITPID) && defined(HAVE_EXECVE) && ((!defined(HOST_DARWIN) && defined(SYS_fork)) || HAVE_FORK)
 #define HAVE_MONO_SUMMARIZER_SUPERVISOR 1
 #endif
 
@@ -6189,8 +6160,9 @@ typedef struct {
 } SummarizerSupervisorState;
 
 #ifndef HAVE_MONO_SUMMARIZER_SUPERVISOR
-static void
-summarizer_supervisor_wait (SummarizerSupervisorState *state)
+
+void
+mono_threads_summarize_init (const char *timeline_dir)
 {
 	return;
 }
@@ -6209,23 +6181,14 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 }
 
 #else
-static void
-summarizer_supervisor_wait (SummarizerSupervisorState *state)
+static const char *hang_watchdog_path;
+
+void
+mono_threads_summarize_init (const char *timeline_dir)
 {
-	sleep (TIMEOUT_CRASH_REPORTER_FATAL);
-
-	// If we haven't been SIGKILL'ed yet, we signal our parent
-	// and then exit
-#ifdef HAVE_KILL
-	g_async_safe_printf("Crash Reporter has timed out, sending SIGSEGV\n");
-	kill (state->pid, SIGSEGV);
-#else
-	g_error ("kill () is not supported by this platform");
-#endif
-
-	exit (1);
+	hang_watchdog_path = g_build_filename (mono_get_config_dir (), "..", "bin", "mono-hang-watchdog", NULL);
+	mono_summarize_set_timeline_dir (timeline_dir);
 }
-
 static pid_t
 summarizer_supervisor_start (SummarizerSupervisorState *state)
 {
@@ -6252,6 +6215,13 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 
 	if (pid != 0)
 		state->supervisor_pid = pid;
+	else {
+		char pid_str[20]; // pid is a uint64_t, 20 digits max in decimal form
+		sprintf (pid_str, "%llu", (uint64_t)state->pid);
+		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
+		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
+		g_assert_not_reached ();
+	}
 
 	return pid;
 }
@@ -6270,6 +6240,37 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 #endif
 }
 #endif
+
+static void
+collect_thread_id (gpointer key, gpointer value, gpointer user)
+{
+	CollectThreadIdsUserData *ud = (CollectThreadIdsUserData *)user;
+	MonoInternalThread *thread = (MonoInternalThread *)value;
+
+	if (ud->nthreads < ud->max_threads)
+		ud->threads [ud->nthreads ++] = thread_get_tid (thread);
+}
+
+static int
+collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
+{
+	CollectThreadIdsUserData ud;
+
+	mono_memory_barrier ();
+	if (!threads)
+		return 0;
+
+	memset (&ud, 0, sizeof (ud));
+	/* This array contains refs, but its on the stack, so its ok */
+	ud.threads = thread_ids;
+	ud.max_threads = max_threads;
+
+	mono_threads_lock ();
+	mono_g_hash_table_foreach (threads, collect_thread_id, &ud);
+	mono_threads_unlock ();
+
+	return ud.nthreads;
+}
 
 static gboolean
 summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
@@ -6565,8 +6566,6 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 				g_assert (mem);
 				success = mono_threads_summarize_execute_internal (ctx, out, hashes, silent, mem, provided_size, TRUE);
 				summarizer_supervisor_end (&synch);
-			} else {
-				summarizer_supervisor_wait (&synch);
 			}
 
 			if (!already_async)

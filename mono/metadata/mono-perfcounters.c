@@ -1946,6 +1946,8 @@ mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer data)
 
 #else
 
+#ifndef ENABLE_NETCORE
+
 void*
 mono_perfcounter_get_impl (const gunichar2 *category, gint32 category_length,
 		const gunichar2 *counter, gint32 counter_length,
@@ -2021,6 +2023,14 @@ mono_perfcounter_counter_names (const gunichar2 *category, gint32 category_lengt
 
 MonoArrayHandle
 mono_perfcounter_instance_names (const gunichar2 *category, gint32 category_length, MonoError *error)
+{
+	g_assert_not_reached ();
+}
+
+#endif /* ENABLE_NETCORE */
+
+void
+mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer data)
 {
 	g_assert_not_reached ();
 }

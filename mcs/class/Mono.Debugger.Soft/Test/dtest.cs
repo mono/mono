@@ -4451,7 +4451,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("NotWorkingRuntimeInterpreter")]
 	public void SetIP2 () {
 		var bevent = run_until ("set_ip_1");
 
@@ -5044,6 +5043,48 @@ public class DebuggerTests
 
 		ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (port);
 	}
+
+	[Test]
+	public void InvokeMethodFixedArray () {
+		Event e = run_until ("fixed_size_array");
+		var req = create_step (e);
+		req.Enable ();
+		step_once ();
+		step_over ();
+		step_over ();
+		var bp = step_over ();
+		var thread = bp.Thread;
+		var frame = thread.GetFrames()[0];
+
+		var local =  frame.GetVisibleVariableByName("n");
+		var n = (StructMirror)frame.GetValue(local);
+		var get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer0");
+		var min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("1", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer1");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("2", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("3", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer3");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("4", min.Value);
+
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_0");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("a", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_1");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("b", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_2");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("c", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_3");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("d", min.Value);
+	}
+
 #endif
 } // class DebuggerTests
 } // namespace

@@ -574,6 +574,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ilasm", "mcs/ilasm/ilasm.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "al", "mcs/tools/al/al.csproj", "{0A20671F-CCA9-457D-886C-0828C7D64128}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aprofutil", "mcs/tools/aprofutil/aprofutil.csproj", "{658B566B-CED1-4C42-9926-C1AA930BA368}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monolinker", "mcs/tools/linker/monolinker.csproj", "{D60432F1-3C12-4235-A1CC-4CA5575403BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "culevel", "mcs/tools/culevel/culevel.csproj", "{E8E246BD-CD0C-4734-A3C2-7F44796EC47B}"
@@ -10100,6 +10102,28 @@ Global
 		{0A20671F-CCA9-457D-886C-0828C7D64128}.Release|winaot.ActiveCfg = Release|net_4_x
 		{0A20671F-CCA9-457D-886C-0828C7D64128}.Debug|xammac.ActiveCfg = Debug|net_4_x
 		{0A20671F-CCA9-457D-886C-0828C7D64128}.Release|xammac.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|net_4_x.Build.0 = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|net_4_x.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|net_4_x.Build.0 = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|monodroid.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|monodroid.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|monotouch.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|monotouch.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|monotouch_tv.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|monotouch_tv.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|monotouch_watch.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|monotouch_watch.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|orbis.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|orbis.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|unreal.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|unreal.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|wasm.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|wasm.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|winaot.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|winaot.ActiveCfg = Release|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Debug|xammac.ActiveCfg = Debug|net_4_x
+		{658B566B-CED1-4C42-9926-C1AA930BA368}.Release|xammac.ActiveCfg = Release|net_4_x
 		{D60432F1-3C12-4235-A1CC-4CA5575403BD}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{D60432F1-3C12-4235-A1CC-4CA5575403BD}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{D60432F1-3C12-4235-A1CC-4CA5575403BD}.Release|net_4_x.ActiveCfg = Release|net_4_x

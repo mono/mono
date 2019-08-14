@@ -1,6 +1,7 @@
 <Type Name="MyClass" FullName="MyNamespace.MyClass">
   <TypeSignature Language="C#" Value="public class MyClass" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyClass extends System.Object" />
+  <TypeSignature Language="VB.NET" Value="Public Class MyClass" />
   <AssemblyInfo>
     <AssemblyName>DocTest-InternalInterface</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +18,7 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MyClass ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     <Member MemberName="Bar">
       <MemberSignature Language="C#" Value="public string Bar { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string Bar" />
+      <MemberSignature Language="VB.NET" Value="Public Property Bar As String" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -46,7 +49,11 @@
     <Member MemberName="BarMeth">
       <MemberSignature Language="C#" Value="public void BarMeth ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BarMeth() cil managed" />
+      <MemberSignature Language="VB.NET" Value="Public Sub BarMeth ()" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:MyNamespace.MyInternalInterface.BarMeth</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>

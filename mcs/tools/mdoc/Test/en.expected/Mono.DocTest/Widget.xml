@@ -1,6 +1,11 @@
 <Type Name="Widget" FullName="Mono.DocTest.Widget">
   <TypeSignature Language="C#" Value="public class Widget : Mono.DocTest.IProcess" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Widget extends System.Object implements class Mono.DocTest.IProcess" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Widget" />
+  <TypeSignature Language="VB.NET" Value="Public Class Widget&#xA;Implements IProcess" />
+  <TypeSignature Language="F#" Value="type Widget = class&#xA;    interface IProcess" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Widget : Mono::DocTest::IProcess" />
+  <TypeSignature Language="C++ WINRT" Value="[Windows::Foundation::Metadata::WebHostHidden]&#xA;class Widget : Mono::DocTest::IProcess" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -21,6 +26,12 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="JavaScript" Value="function Widget()" Usage="var widget = new Widget();" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Widget();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Widget();" />
+      <MemberSignature Language="C++ WINRT" Value=" Widget();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -34,6 +45,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget (Converter&lt;string,string&gt; c);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Converter`2&lt;string, string&gt; c) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.#ctor(System.Converter{System.String,System.String})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (c As Converter(Of String, String))" />
+      <MemberSignature Language="F#" Value="new Mono.DocTest.Widget : Converter&lt;string, string&gt; -&gt; Mono.DocTest.Widget" Usage="new Mono.DocTest.Widget c" />
+      <MemberSignature Language="JavaScript" Value="function Widget(c)" Usage="var widget = new Widget(c);" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Widget(Converter&lt;System::String ^, System::String ^&gt; ^ c);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -50,6 +66,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget (string s);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string s) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (s As String)" />
+      <MemberSignature Language="F#" Value="new Mono.DocTest.Widget : string -&gt; Mono.DocTest.Widget" Usage="new Mono.DocTest.Widget s" />
+      <MemberSignature Language="JavaScript" Value="function Widget(s)" Usage="var widget = new Widget(s);" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Widget(System::String ^ s);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Widget(Platform::String ^ s);" />
+      <MemberSignature Language="C++ WINRT" Value=" Widget(std::wstring const &amp; s);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -66,6 +89,12 @@
     <Member MemberName="AnEvent">
       <MemberSignature Language="C#" Value="public event Mono.DocTest.Widget.Del AnEvent;" />
       <MemberSignature Language="ILAsm" Value=".event class Mono.DocTest.Widget/Del AnEvent" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Widget.AnEvent" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event AnEvent As Widget.Del " />
+      <MemberSignature Language="F#" Value="member this.AnEvent : Mono.DocTest.Widget.Del " Usage="member this.AnEvent : Mono.DocTest.Widget.Del " />
+      <MemberSignature Language="JavaScript" Usage="function onAnEvent(eventArgs) { /* Your code */ }&#xA;widget.addEventListener(&quot;anevent&quot;, onAnEvent);&#xA;widget.removeEventListener(&quot;anevent&quot;, onAnEvent);&#xA;- or -&#xA;widget.onanevent = onAnEvent;" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event Mono::DocTest::Widget::Del ^ AnEvent;" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; event Mono::DocTest::Widget::Del ^ AnEvent;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -92,6 +121,11 @@
     <Member MemberName="AnotherEvent">
       <MemberSignature Language="C#" Value="protected event Mono.DocTest.Widget.Del AnotherEvent;" />
       <MemberSignature Language="ILAsm" Value=".event class Mono.DocTest.Widget/Del AnotherEvent" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Widget.AnotherEvent" />
+      <MemberSignature Language="VB.NET" Value="Protected Event AnotherEvent As Widget.Del " />
+      <MemberSignature Language="F#" Value="member this.AnotherEvent : Mono.DocTest.Widget.Del " Usage="member this.AnotherEvent : Mono.DocTest.Widget.Del " />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; event Mono::DocTest::Widget::Del ^ AnotherEvent;" />
+      <MemberSignature Language="C++ CX" Value="protected:&#xA; event Mono::DocTest::Widget::Del ^ AnotherEvent;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -102,208 +136,16 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArrayTypeMismatchException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.FormatException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.IndexOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidCastException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.MulticastNotSupportedException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.OutOfMemoryException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.RankException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
       </Docs>
     </Member>
     <Member MemberName="array1">
       <MemberSignature Language="C#" Value="public long[] array1;" />
       <MemberSignature Language="ILAsm" Value=".field public int64[] array1" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.array1" />
+      <MemberSignature Language="VB.NET" Value="Public array1 As Long() " />
+      <MemberSignature Language="F#" Value="val mutable array1 : int64[]" Usage="Mono.DocTest.Widget.array1" />
+      <MemberSignature Language="C++ CLI" Value="public: cli::array &lt;long&gt; ^ array1;" />
+      <MemberSignature Language="C++ WINRT" Value="std::Array &lt;long&gt; array1;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -319,6 +161,11 @@
     <Member MemberName="array2">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Widget[,] array2;" />
       <MemberSignature Language="ILAsm" Value=".field public class Mono.DocTest.Widget[,] array2" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.array2" />
+      <MemberSignature Language="VB.NET" Value="Public array2 As Widget(,) " />
+      <MemberSignature Language="F#" Value="val mutable array2 : Mono.DocTest.Widget[,]" Usage="Mono.DocTest.Widget.array2" />
+      <MemberSignature Language="C++ CLI" Value="public: cli::array &lt;Mono::DocTest::Widget ^, 2&gt; ^ array2;" />
+      <MemberSignature Language="C++ WINRT" Value="std::Array &lt;Mono::DocTest::Widget const &amp;, 2&gt; array2;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -334,6 +181,11 @@
     <Member MemberName="classCtorError">
       <MemberSignature Language="C#" Value="public static readonly string[] classCtorError;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly string[] classCtorError" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.classCtorError" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly classCtorError As String() " />
+      <MemberSignature Language="F#" Value=" staticval mutable classCtorError : string[]" Usage="Mono.DocTest.Widget.classCtorError" />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly cli::array &lt;System::String ^&gt; ^ classCtorError;" />
+      <MemberSignature Language="C++ WINRT" Value="static initonly std::Array &lt;std::wstring const &amp;&gt; classCtorError;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -349,6 +201,11 @@
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public void Default (int a = 1, int b = 2);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Default(int32 a, int32 b) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Default(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Default (Optional a As Integer = 1, Optional b As Integer = 2)" />
+      <MemberSignature Language="F#" Value="member this.Default : int * int -&gt; unit" Usage="widget.Default (a, b)" />
+      <MemberSignature Language="JavaScript" Value="function default(a, b)" Usage="widget.default(a, b)" />
+      <MemberSignature Language="C++ WINRT" Value="void Default(int a = 1, int b = 2);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -370,6 +227,11 @@
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public void Default (string a = &quot;a&quot;, char b = 'b');" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Default(string a, char b) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Default(System.String,System.Char)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Default (Optional a As String = &quot;a&quot;, Optional b As Char = 'b')" />
+      <MemberSignature Language="F#" Value="member this.Default : string * char -&gt; unit" Usage="widget.Default (a, b)" />
+      <MemberSignature Language="JavaScript" Value="function default(a, b)" Usage="widget.default(a, b)" />
+      <MemberSignature Language="C++ WINRT" Value="void Default(std::wstring const &amp; a = &quot;a&quot;, char b = 'b');" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -391,6 +253,12 @@
     <Member MemberName="defaultColor">
       <MemberSignature Language="C#" Value="protected static Mono.DocTest.Color defaultColor;" />
       <MemberSignature Language="ILAsm" Value=".field family static valuetype Mono.DocTest.Color defaultColor" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.defaultColor" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared defaultColor As Color " />
+      <MemberSignature Language="F#" Value=" staticval mutable defaultColor : Mono.DocTest.Color" Usage="Mono.DocTest.Widget.defaultColor" />
+      <MemberSignature Language="C++ CLI" Value="protected: static Mono::DocTest::Color defaultColor;" />
+      <MemberSignature Language="C++ CX" Value="protected: static Mono::DocTest::Color defaultColor;" />
+      <MemberSignature Language="C++ WINRT" Value="static Mono::DocTest::Color defaultColor;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -406,6 +274,13 @@
     <Member MemberName="Dynamic0">
       <MemberSignature Language="C#" Value="public dynamic Dynamic0 (dynamic a, dynamic b);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object Dynamic0(object a, object b) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Dynamic0(System.Object,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Dynamic0 (a As Object, b As Object) As Object" />
+      <MemberSignature Language="F#" Value="member this.Dynamic0 : obj * obj -&gt; obj" Usage="widget.Dynamic0 (a, b)" />
+      <MemberSignature Language="JavaScript" Value="function dynamic0(a, b)" Usage="var object = widget.dynamic0(a, b)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ Dynamic0(System::Object ^ a, System::Object ^ b);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Platform::Object ^ Dynamic0(Platform::Object ^ a, Platform::Object ^ b);" />
+      <MemberSignature Language="C++ WINRT" Value="winrt::Windows::Foundation::IInspectable Dynamic0(winrt::Windows::Foundation::IInspectable const &amp; a, winrt::Windows::Foundation::IInspectable const &amp; b);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -423,17 +298,16 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:System.Dynamic.Utils.ContractUtils.RequiresNotNull(System.Object,System.String)" />,
-          <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Dynamic.Utils.ContractUtils.RequiresNotNull(System.Object,System.String)" />,
-          <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Dynamic1">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;dynamic,string&gt; Dynamic1 (System.Collections.Generic.Dictionary&lt;dynamic,string&gt; value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.Dictionary`2&lt;object, string&gt; Dynamic1(class System.Collections.Generic.Dictionary`2&lt;object, string&gt; value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Dynamic1(System.Collections.Generic.Dictionary{System.Object,System.String})" />
+      <MemberSignature Language="VB.NET" Value="Public Function Dynamic1 (value As Dictionary(Of Object, String)) As Dictionary(Of Object, String)" />
+      <MemberSignature Language="F#" Value="member this.Dynamic1 : System.Collections.Generic.Dictionary&lt;obj, string&gt; -&gt; System.Collections.Generic.Dictionary&lt;obj, string&gt;" Usage="widget.Dynamic1 value" />
+      <MemberSignature Language="JavaScript" Value="function dynamic1(value)" Usage="var dictionary = widget.dynamic1(value)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Collections::Generic::Dictionary&lt;System::Object ^, System::String ^&gt; ^ Dynamic1(System::Collections::Generic::Dictionary&lt;System::Object ^, System::String ^&gt; ^ value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -454,6 +328,11 @@
     <Member MemberName="Dynamic2">
       <MemberSignature Language="C#" Value="public Func&lt;string,dynamic&gt; Dynamic2 (Func&lt;string,dynamic&gt; value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Func`2&lt;string, object&gt; Dynamic2(class System.Func`2&lt;string, object&gt; value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Dynamic2(System.Func{System.String,System.Object})" />
+      <MemberSignature Language="VB.NET" Value="Public Function Dynamic2 (value As Func(Of String, Object)) As Func(Of String, Object)" />
+      <MemberSignature Language="F#" Value="member this.Dynamic2 : Func&lt;string, obj&gt; -&gt; Func&lt;string, obj&gt;" Usage="widget.Dynamic2 value" />
+      <MemberSignature Language="JavaScript" Value="function dynamic2(value)" Usage="var func = widget.dynamic2(value)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Func&lt;System::String ^, System::Object ^&gt; ^ Dynamic2(Func&lt;System::String ^, System::Object ^&gt; ^ value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -474,6 +353,11 @@
     <Member MemberName="Dynamic3">
       <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic&gt;,Func&lt;dynamic,string&gt;&gt; Dynamic3 (Func&lt;Func&lt;string,dynamic&gt;,Func&lt;dynamic,string&gt;&gt; value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Func`2&lt;class System.Func`2&lt;string, object&gt;, class System.Func`2&lt;object, string&gt;&gt; Dynamic3(class System.Func`2&lt;class System.Func`2&lt;string, object&gt;, class System.Func`2&lt;object, string&gt;&gt; value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.Dynamic3(System.Func{System.Func{System.String,System.Object},System.Func{System.Object,System.String}})" />
+      <MemberSignature Language="VB.NET" Value="Public Function Dynamic3 (value As Func(Of Func(Of String, Object), Func(Of Object, String))) As Func(Of Func(Of String, Object), Func(Of Object, String))" />
+      <MemberSignature Language="F#" Value="member this.Dynamic3 : Func&lt;Func&lt;string, obj&gt;, Func&lt;obj, string&gt;&gt; -&gt; Func&lt;Func&lt;string, obj&gt;, Func&lt;obj, string&gt;&gt;" Usage="widget.Dynamic3 value" />
+      <MemberSignature Language="JavaScript" Value="function dynamic3(value)" Usage="var func = widget.dynamic3(value)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Func&lt;Func&lt;System::String ^, System::Object ^&gt; ^, Func&lt;System::Object ^, System::String ^&gt; ^&gt; ^ Dynamic3(Func&lt;Func&lt;System::String ^, System::Object ^&gt; ^, Func&lt;System::Object ^, System::String ^&gt; ^&gt; ^ value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -494,6 +378,11 @@
     <Member MemberName="DynamicE1">
       <MemberSignature Language="C#" Value="public event Func&lt;dynamic&gt; DynamicE1;" />
       <MemberSignature Language="ILAsm" Value=".event class System.Func`1&lt;object&gt; DynamicE1" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Widget.DynamicE1" />
+      <MemberSignature Language="VB.NET" Value="Public Event DynamicE1 As Func(Of Object) " />
+      <MemberSignature Language="F#" Value="member this.DynamicE1 : Func&lt;obj&gt; " Usage="member this.DynamicE1 : System.Func&lt;System.obj&gt; " />
+      <MemberSignature Language="JavaScript" Usage="function onDynamicE1(eventArgs) { /* Your code */ }&#xA;widget.addEventListener(&quot;dynamice1&quot;, onDynamicE1);&#xA;widget.removeEventListener(&quot;dynamice1&quot;, onDynamicE1);&#xA;- or -&#xA;widget.ondynamice1 = onDynamicE1;" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event Func&lt;System::Object ^&gt; ^ DynamicE1;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -509,208 +398,16 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.ArrayTypeMismatchException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.FormatException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.IndexOutOfRangeException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidCastException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.InvalidOperationException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.MulticastNotSupportedException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.OutOfMemoryException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
-        <exception cref="T:System.RankException">To be added; from:
-          <see cref="M:System.Array.Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)" />,
-          <see cref="M:System.Array.CreateArrayTypeMismatchException" />,
-          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
-          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
-          <see cref="M:System.String.FormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char*,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.AppendFormatHelper(System.IFormatProvider,System.String,System.ParamsArray)" />,
-          <see cref="M:System.Text.StringBuilder.ExpandByABlock(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.FormatError" />,
-          <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
-          <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
-          <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
-          <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
       </Docs>
     </Member>
     <Member MemberName="DynamicE2">
       <MemberSignature Language="C#" Value="public event Func&lt;dynamic&gt; DynamicE2;" />
       <MemberSignature Language="ILAsm" Value=".event class System.Func`1&lt;object&gt; DynamicE2" />
+      <MemberSignature Language="DocId" Value="E:Mono.DocTest.Widget.DynamicE2" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event DynamicE2 As Func(Of Object) " />
+      <MemberSignature Language="F#" Value="member this.DynamicE2 : Func&lt;obj&gt; " Usage="member this.DynamicE2 : System.Func&lt;System.obj&gt; " />
+      <MemberSignature Language="JavaScript" Usage="function onDynamicE2(eventArgs) { /* Your code */ }&#xA;widget.addEventListener(&quot;dynamice2&quot;, onDynamicE2);&#xA;widget.removeEventListener(&quot;dynamice2&quot;, onDynamicE2);&#xA;- or -&#xA;widget.ondynamice2 = onDynamicE2;" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event Func&lt;System::Object ^&gt; ^ DynamicE2;" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -726,6 +423,10 @@
     <Member MemberName="DynamicF">
       <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic,string&gt;,Func&lt;dynamic,Func&lt;dynamic&gt;,string&gt;&gt; DynamicF;" />
       <MemberSignature Language="ILAsm" Value=".field public class System.Func`2&lt;class System.Func`3&lt;string, object, string&gt;, class System.Func`3&lt;object, class System.Func`1&lt;object&gt;, string&gt;&gt; DynamicF" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.DynamicF" />
+      <MemberSignature Language="VB.NET" Value="Public DynamicF As Func(Of Func(Of String, Object, String), Func(Of Object, Func(Of Object), String)) " />
+      <MemberSignature Language="F#" Value="val mutable DynamicF : Func&lt;Func&lt;string, obj, string&gt;, Func&lt;obj, Func&lt;obj&gt;, string&gt;&gt;" Usage="Mono.DocTest.Widget.DynamicF" />
+      <MemberSignature Language="C++ CLI" Value="public: Func&lt;Func&lt;System::String ^, System::Object ^, System::String ^&gt; ^, Func&lt;System::Object ^, Func&lt;System::Object ^&gt; ^, System::String ^&gt; ^&gt; ^ DynamicF;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -741,6 +442,11 @@
     <Member MemberName="DynamicP">
       <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic,string&gt;,Func&lt;dynamic,Func&lt;dynamic&gt;,string&gt;&gt; DynamicP { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Func`2&lt;class System.Func`3&lt;string, object, string&gt;, class System.Func`3&lt;object, class System.Func`1&lt;object&gt;, string&gt;&gt; DynamicP" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.DynamicP" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property DynamicP As Func(Of Func(Of String, Object, String), Func(Of Object, Func(Of Object), String))" />
+      <MemberSignature Language="F#" Value="member this.DynamicP : Func&lt;Func&lt;string, obj, string&gt;, Func&lt;obj, Func&lt;obj&gt;, string&gt;&gt;" Usage="Mono.DocTest.Widget.DynamicP" />
+      <MemberSignature Language="JavaScript" Usage="var func = widget.dynamicP;" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Func&lt;Func&lt;System::String ^, System::Object ^, System::String ^&gt; ^, Func&lt;System::Object ^, Func&lt;System::Object ^&gt; ^, System::String ^&gt; ^&gt; ^ DynamicP { Func&lt;Func&lt;System::String ^, System::Object ^, System::String ^&gt; ^, Func&lt;System::Object ^, Func&lt;System::Object ^&gt; ^, System::String ^&gt; ^&gt; ^ get(); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -757,6 +463,11 @@
     <Member MemberName="Height">
       <MemberSignature Language="C#" Value="protected long Height { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int64 Height" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.Height" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property Height As Long" />
+      <MemberSignature Language="F#" Value="member this.Height : int64" Usage="Mono.DocTest.Widget.Height" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property long Height { long get(); };" />
+      <MemberSignature Language="C++ CX" Value="protected:&#xA; property long long Height { long long get(); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -778,6 +489,10 @@
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public int this[int i] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Item(int32)" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.Item(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Default Public Property Item(i As Integer) As Integer" />
+      <MemberSignature Language="F#" Value="member this.Item(int) : int with get, set" Usage="Mono.DocTest.Widget.Item" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int default[int] { int get(int i); void set(int i, int value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -806,6 +521,10 @@
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public int this[string s, int i] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Item(string, int32)" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.Item(System.String,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Default Public Property Item(s As String, i As Integer) As Integer" />
+      <MemberSignature Language="F#" Value="member this.Item(string * int) : int with get, set" Usage="Mono.DocTest.Widget.Item" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int default[System::String ^, int] { int get(System::String ^ s, int i); void set(System::String ^ s, int i, int value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -828,6 +547,13 @@
     <Member MemberName="M0">
       <MemberSignature Language="C#" Value="public static void M0 ();" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig void M0() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M0" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub M0 ()" />
+      <MemberSignature Language="F#" Value="static member M0 : unit -&gt; unit" Usage="Mono.DocTest.Widget.M0 " />
+      <MemberSignature Language="JavaScript" Value="function m0()" Usage="Mono.DocTest.Widget.m0()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void M0();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; static void M0();" />
+      <MemberSignature Language="C++ WINRT" Value=" static void M0();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -843,7 +569,12 @@
     </Member>
     <Member MemberName="M1">
       <MemberSignature Language="C#" Value="public void M1 (char c, out float f, ref Mono.DocTest.DocValueType v);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M1(char c, float32 f, valuetype Mono.DocTest.DocValueType v) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M1(char c, [out] float32&amp; f, valuetype Mono.DocTest.DocValueType&amp; v) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M1(System.Char,System.Single@,Mono.DocTest.DocValueType@)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub M1 (c As Char, ByRef f As Single, ByRef v As DocValueType)" />
+      <MemberSignature Language="F#" Value="member this.M1 : char *  *  -&gt; unit" Usage="widget.M1 (c, f, v)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void M1(char c, [Runtime::InteropServices::Out] float % f, Mono::DocTest::DocValueType % v);" />
+      <MemberSignature Language="C++ WINRT" Value="void M1(char c, [Runtime::InteropServices::Out] float &amp; f, Mono::DocTest::DocValueType &amp; v);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -869,14 +600,14 @@
             </Attribute>
           </Attributes>
         </Parameter>
-        <Parameter Name="f" Type="System.Single&amp;" RefType="out">
+        <Parameter Name="f" Type="System.Single" RefType="out">
           <Attributes>
             <Attribute>
               <AttributeName>Mono.DocTest.Doc("f", NonFlagsEnum=Mono.DocTest.Color.Red)</AttributeName>
             </Attribute>
           </Attributes>
         </Parameter>
-        <Parameter Name="v" Type="Mono.DocTest.DocValueType&amp;" RefType="ref">
+        <Parameter Name="v" Type="Mono.DocTest.DocValueType" RefType="ref">
           <Attributes>
             <Attribute>
               <AttributeName>Mono.DocTest.Doc("v")</AttributeName>
@@ -895,6 +626,12 @@
     <Member MemberName="M2">
       <MemberSignature Language="C#" Value="public void M2 (short[] x1, int[,] x2, long[][] x3);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M2(int16[] x1, int32[,] x2, int64[][] x3) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M2(System.Int16[],System.Int32[0:,0:],System.Int64[][])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub M2 (x1 As Short(), x2 As Integer(,), x3 As Long()())" />
+      <MemberSignature Language="F#" Value="member this.M2 : int16[] * int[,] * int64[][] -&gt; unit" Usage="widget.M2 (x1, x2, x3)" />
+      <MemberSignature Language="JavaScript" Value="function m2(x1, x2, x3)" Usage="widget.m2(x1, x2, x3)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void M2(cli::array &lt;short&gt; ^ x1, cli::array &lt;int, 2&gt; ^ x2, cli::array &lt;cli::array &lt;long&gt; ^&gt; ^ x3);" />
+      <MemberSignature Language="C++ WINRT" Value="void M2(std::Array &lt;short&gt; const &amp; x1, std::Array &lt;int, 2&gt; const &amp; x2, std::Array &lt;std::Array &lt;long&gt; const &amp;&gt; const &amp; x3);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -918,6 +655,12 @@
     <Member MemberName="M3">
       <MemberSignature Language="C#" Value="protected void M3 (long[][] x3, Mono.DocTest.Widget[,,][] x4);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M3(int64[][] x3, class Mono.DocTest.Widget[,,][] x4) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M3(System.Int64[][],Mono.DocTest.Widget[0:,0:,0:][])" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub M3 (x3 As Long()(), x4 As Widget(,,)())" />
+      <MemberSignature Language="F#" Value="member this.M3 : int64[][] * Mono.DocTest.Widget[,,][] -&gt; unit" Usage="widget.M3 (x3, x4)" />
+      <MemberSignature Language="JavaScript" Value="function m3(x3, x4)" Usage="widget.m3(x3, x4)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void M3(cli::array &lt;cli::array &lt;long&gt; ^&gt; ^ x3, cli::array &lt;cli::array &lt;Mono::DocTest::Widget ^, 3&gt; ^&gt; ^ x4);" />
+      <MemberSignature Language="C++ WINRT" Value="void M3(std::Array &lt;std::Array &lt;long&gt; const &amp;&gt; const &amp; x3, std::Array &lt;std::Array &lt;Mono::DocTest::Widget const &amp;, 3&gt; const &amp;&gt; const &amp; x4);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -939,6 +682,11 @@
     <Member MemberName="M4">
       <MemberSignature Language="C#" Value="protected void M4 (char* pc, Mono.DocTest.Color** ppf);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M4(char* pc, valuetype Mono.DocTest.Color** ppf) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M4(System.Char*,Mono.DocTest.Color**)" />
+      <MemberSignature Language="F#" Value="member this.M4 : nativeptr&lt;char&gt; * nativeptr&lt;nativeptr&lt;Mono.DocTest.Color&gt;&gt; -&gt; unit" Usage="widget.M4 (pc, ppf)" />
+      <MemberSignature Language="JavaScript" Value="function m4(pc, ppf)" Usage="widget.m4(pc, ppf)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void M4(char* pc, Mono::DocTest::Color** ppf);" />
+      <MemberSignature Language="C++ WINRT" Value="void M4(char* pc, Mono::DocTest::Color** ppf);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -960,6 +708,11 @@
     <Member MemberName="M5">
       <MemberSignature Language="C#" Value="protected void M5 (void* pv, double*[,][] pd);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M5(void* pv, float64*[,][] pd) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M5(System.Void*,System.Double*[0:,0:][])" />
+      <MemberSignature Language="F#" Value="member this.M5 : nativeptr&lt;unit&gt; * nativeptr&lt;double&gt;[,][] -&gt; unit" Usage="widget.M5 (pv, pd)" />
+      <MemberSignature Language="JavaScript" Value="function m5(pv, pd)" Usage="widget.m5(pv, pd)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void M5(void* pv, cli::array &lt;cli::array &lt;double*, 2&gt; ^&gt; ^ pd);" />
+      <MemberSignature Language="C++ WINRT" Value="void M5(void* pv, std::Array &lt;std::Array &lt;double*, 2&gt; const &amp;&gt; const &amp; pd);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -979,8 +732,13 @@
       </Docs>
     </Member>
     <Member MemberName="M6">
-      <MemberSignature Language="C#" Value="protected void M6 (int i, object[] args);" />
+      <MemberSignature Language="C#" Value="protected void M6 (int i, params object[] args);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M6(int32 i, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub M6 (i As Integer, ParamArray args As Object())" />
+      <MemberSignature Language="F#" Value="member this.M6 : int * obj[] -&gt; unit" Usage="widget.M6 (i, args)" />
+      <MemberSignature Language="JavaScript" Value="function m6(i, args)" Usage="widget.m6(i, args)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void M6(int i, ... cli::array &lt;System::Object ^&gt; ^ args);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1008,6 +766,12 @@
     <Member MemberName="M7">
       <MemberSignature Language="C#" Value="public void M7 (Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple a);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M7(class Mono.DocTest.Widget/NestedClass/Double/Triple/Quadruple a) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.M7(Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub M7 (a As Widget.NestedClass.Double.Triple.Quadruple)" />
+      <MemberSignature Language="F#" Value="member this.M7 : Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple -&gt; unit" Usage="widget.M7 a" />
+      <MemberSignature Language="JavaScript" Value="function m7(a)" Usage="widget.m7(a)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void M7(Mono::DocTest::Widget::NestedClass::Double::Triple::Quadruple ^ a);" />
+      <MemberSignature Language="C++ WINRT" Value="void M7(Mono::DocTest::Widget::NestedClass::Double::Triple::Quadruple const &amp; a);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1027,6 +791,11 @@
     <Member MemberName="message">
       <MemberSignature Language="C#" Value="public string message;" />
       <MemberSignature Language="ILAsm" Value=".field public string message" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.message" />
+      <MemberSignature Language="VB.NET" Value="Public message As String " />
+      <MemberSignature Language="F#" Value="val mutable message : string" Usage="Mono.DocTest.Widget.message" />
+      <MemberSignature Language="C++ CLI" Value="public: System::String ^ message;" />
+      <MemberSignature Language="C++ WINRT" Value="std::wstring message;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1040,8 +809,14 @@
       </Docs>
     </Member>
     <Member MemberName="monthlyAverage">
-      <MemberSignature Language="C#" Value="protected readonly double monthlyAverage;" />
+      <MemberSignature Language="C#" Value="protected internal readonly double monthlyAverage;" />
       <MemberSignature Language="ILAsm" Value=".field familyorassembly initonly float64 monthlyAverage" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.monthlyAverage" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend ReadOnly monthlyAverage As Double " />
+      <MemberSignature Language="F#" Value="val mutable monthlyAverage : double" Usage="Mono.DocTest.Widget.monthlyAverage" />
+      <MemberSignature Language="C++ CLI" Value="protected public: initonly double monthlyAverage;" />
+      <MemberSignature Language="C++ CX" Value="protected public: initonly double monthlyAverage;" />
+      <MemberSignature Language="C++ WINRT" Value="initonly double monthlyAverage;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1055,8 +830,13 @@
       </Docs>
     </Member>
     <Member MemberName="op_Addition">
-      <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget op_Addition (Mono.DocTest.Widget x1, Mono.DocTest.Widget x2);" />
+      <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget operator + (Mono.DocTest.Widget x1, Mono.DocTest.Widget x2);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class Mono.DocTest.Widget op_Addition(class Mono.DocTest.Widget x1, class Mono.DocTest.Widget x2) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.op_Addition(Mono.DocTest.Widget,Mono.DocTest.Widget)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator + (x1 As Widget, x2 As Widget) As Widget" />
+      <MemberSignature Language="F#" Value="static member ( + ) : Mono.DocTest.Widget * Mono.DocTest.Widget -&gt; Mono.DocTest.Widget" Usage="x1 + x2" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static Mono::DocTest::Widget ^ operator +(Mono::DocTest::Widget ^ x1, Mono::DocTest::Widget ^ x2);" />
+      <MemberSignature Language="C++ WINRT" Value=" static Mono::DocTest::Widget operator +(Mono::DocTest::Widget const &amp; x1, Mono::DocTest::Widget const &amp; x2);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1079,6 +859,11 @@
     <Member MemberName="op_Division">
       <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget op_Division;" />
       <MemberSignature Language="ILAsm" Value=".field public static class Mono.DocTest.Widget op_Division" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.op_Division" />
+      <MemberSignature Language="VB.NET" Value="Public Shared op_Division As Widget " />
+      <MemberSignature Language="F#" Value=" staticval mutable op_Division : Mono.DocTest.Widget" Usage="Mono.DocTest.Widget.op_Division" />
+      <MemberSignature Language="C++ CLI" Value="public: static Mono::DocTest::Widget ^ op_Division;" />
+      <MemberSignature Language="C++ WINRT" Value="static Mono::DocTest::Widget op_Division;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1092,8 +877,13 @@
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
-      <MemberSignature Language="C#" Value="public static int op_Explicit (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="C#" Value="public static explicit operator int (Mono.DocTest.Widget x);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname int32 op_Explicit(class Mono.DocTest.Widget x) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.op_Explicit(Mono.DocTest.Widget)~System.Int32" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Narrowing Operator CType (x As Widget) As Integer" />
+      <MemberSignature Language="F#" Value="static member op_Explicit : Mono.DocTest.Widget -&gt; int" Usage="Mono.DocTest.Widget.op_Explicit x" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static explicit operator int(Mono::DocTest::Widget ^ x);" />
+      <MemberSignature Language="C++ WINRT" Value=" static explicit operator int(Mono::DocTest::Widget const &amp; x);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1112,8 +902,13 @@
       </Docs>
     </Member>
     <Member MemberName="op_Implicit">
-      <MemberSignature Language="C#" Value="public static long op_Implicit (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="C#" Value="public static implicit operator long (Mono.DocTest.Widget x);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname int64 op_Implicit(class Mono.DocTest.Widget x) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.op_Implicit(Mono.DocTest.Widget)~System.Int64" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Widening Operator CType (x As Widget) As Long" />
+      <MemberSignature Language="F#" Value="static member op_Implicit : Mono.DocTest.Widget -&gt; int64" Usage="Mono.DocTest.Widget.op_Implicit x" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static operator long(Mono::DocTest::Widget ^ x);" />
+      <MemberSignature Language="C++ WINRT" Value=" static operator long(Mono::DocTest::Widget const &amp; x);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1132,8 +927,13 @@
       </Docs>
     </Member>
     <Member MemberName="op_UnaryPlus">
-      <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget op_UnaryPlus (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget operator + (Mono.DocTest.Widget x);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class Mono.DocTest.Widget op_UnaryPlus(class Mono.DocTest.Widget x) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.op_UnaryPlus(Mono.DocTest.Widget)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator + (x As Widget) As Widget" />
+      <MemberSignature Language="F#" Value="static member ( ~+ ) : Mono.DocTest.Widget -&gt; Mono.DocTest.Widget" Usage="+ x" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static Mono::DocTest::Widget ^ operator +(Mono::DocTest::Widget ^ x);" />
+      <MemberSignature Language="C++ WINRT" Value=" static Mono::DocTest::Widget operator +(Mono::DocTest::Widget const &amp; x);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1154,6 +954,10 @@
     <Member MemberName="pCount">
       <MemberSignature Language="C#" Value="public int* pCount;" />
       <MemberSignature Language="ILAsm" Value=".field public int32* pCount" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.pCount" />
+      <MemberSignature Language="F#" Value="val mutable pCount : nativeptr&lt;int&gt;" Usage="Mono.DocTest.Widget.pCount" />
+      <MemberSignature Language="C++ CLI" Value="public: int* pCount;" />
+      <MemberSignature Language="C++ WINRT" Value="int* pCount;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1167,8 +971,14 @@
       </Docs>
     </Member>
     <Member MemberName="PI">
-      <MemberSignature Language="C#" Value="protected const double PI = 3.14159;" />
+      <MemberSignature Language="C#" Value="protected internal const double PI = 3.14159;" />
       <MemberSignature Language="ILAsm" Value=".field familyorassembly static literal float64 PI = (3.14159)" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.PI" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Const PI As Double  = 3.14159" />
+      <MemberSignature Language="F#" Value="val mutable PI : double" Usage="Mono.DocTest.Widget.PI" />
+      <MemberSignature Language="C++ CLI" Value="protected public: double PI = 3.14159;" />
+      <MemberSignature Language="C++ CX" Value="protected public: double PI = 3.14159;" />
+      <MemberSignature Language="C++ WINRT" Value="double PI = 3.14159;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1185,6 +995,10 @@
     <Member MemberName="ppValues">
       <MemberSignature Language="C#" Value="public float** ppValues;" />
       <MemberSignature Language="ILAsm" Value=".field public float32** ppValues" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.Widget.ppValues" />
+      <MemberSignature Language="F#" Value="val mutable ppValues : nativeptr&lt;nativeptr&lt;single&gt;&gt;" Usage="Mono.DocTest.Widget.ppValues" />
+      <MemberSignature Language="C++ CLI" Value="public: float** ppValues;" />
+      <MemberSignature Language="C++ WINRT" Value="float** ppValues;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1200,6 +1014,12 @@
     <Member MemberName="Width">
       <MemberSignature Language="C#" Value="public int Width { get; protected set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Width" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.Width" />
+      <MemberSignature Language="VB.NET" Value="Public Property Width As Integer" />
+      <MemberSignature Language="F#" Value="member this.Width : int with get, set" Usage="Mono.DocTest.Widget.Width" />
+      <MemberSignature Language="JavaScript" Usage="var int32 = widget.width;" />
+      <MemberSignature Language="C++ CLI" Value="public:  property int Width {  public:&#xA;int get(); protected:&#xA; void set(int value); };" />
+      <MemberSignature Language="C++ CX" Value="public:  property int Width {  public:&#xA;int get(); protected:&#xA; void set(int value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1225,8 +1045,13 @@
       </Docs>
     </Member>
     <Member MemberName="X">
-      <MemberSignature Language="C#" Value="protected short X { set; }" />
+      <MemberSignature Language="C#" Value="protected internal short X { set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int16 X" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.X" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Property X As Short" />
+      <MemberSignature Language="F#" Value="member this.X : int16" Usage="Mono.DocTest.Widget.X" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; property short X {  void set(short value); };" />
+      <MemberSignature Language="C++ CX" Value="protected public:&#xA; property short X {  void set(short value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -1241,8 +1066,13 @@
       </Docs>
     </Member>
     <Member MemberName="Y">
-      <MemberSignature Language="C#" Value="protected double Y { get; set; }" />
+      <MemberSignature Language="C#" Value="protected internal double Y { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance float64 Y" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.Y" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Property Y As Double" />
+      <MemberSignature Language="F#" Value="member this.Y : double with get, set" Usage="Mono.DocTest.Widget.Y" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; property double Y { double get(); void set(double value); };" />
+      <MemberSignature Language="C++ CX" Value="protected public:&#xA; property double Y { double get(); void set(double value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

@@ -1318,7 +1318,7 @@ token_handler (MonoDisHelper *dh, MonoMethod *method, guint32 token)
 			klass = (MonoClass *)data;
 		} else {
 			klass = mono_class_get_checked (m_class_get_image (method->klass), token, error);
-			g_assert (mono_error_ok (error)); /* FIXME error handling */
+			g_assert (is_ok (error)); /* FIXME error handling */
 		}
 		res = g_strdup_printf ("<%s>", m_class_get_name (klass));
 		break;
@@ -1354,7 +1354,7 @@ token_handler (MonoDisHelper *dh, MonoMethod *method, guint32 token)
 			field = (MonoClassField *)data;
 		} else {
 			field = mono_field_from_token_checked (m_class_get_image (method->klass), token, &klass, NULL,  error);
-			g_assert (mono_error_ok (error)); /* FIXME error handling */
+			g_assert (is_ok (error)); /* FIXME error handling */
 		}
 		desc = mono_field_full_name (field);
 		res = g_strdup_printf ("<%s>", desc);
@@ -1519,7 +1519,7 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 	ln_array = g_new0 (MonoDebugLineNumberEntry, debug_info->num_line_numbers);
 	memcpy (ln_array, debug_info->line_numbers, debug_info->num_line_numbers * sizeof (MonoDebugLineNumberEntry));
 
-	qsort (ln_array, debug_info->num_line_numbers, sizeof (MonoDebugLineNumberEntry), (int (*)(const void *, const void *))compare_lne);
+	mono_qsort (ln_array, debug_info->num_line_numbers, sizeof (MonoDebugLineNumberEntry), (int (*)(const void *, const void *))compare_lne);
 
 	native_to_il_offset = g_new0 (int, code_size + 1);
 

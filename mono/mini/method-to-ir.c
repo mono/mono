@@ -162,7 +162,7 @@ mono_tailcall_print (const char *format, ...)
 	} while (0)
 
 #define CHECK_CFG_ERROR do {\
-		if (!mono_error_ok (&cfg->error)) { \
+		if (!is_ok (&cfg->error)) { \
 			mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);	\
 			goto mono_error_exit; \
 		} \
@@ -3908,9 +3908,11 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (mono_profiler_coverage_instrumentation_enabled (method))
 		return FALSE;
 
-#if ENABLE_NETCORE
-	if (!cfg->ret_var_set)
+#ifdef ENABLE_NETCORE
+	if (m_class_get_image (method->klass) == mono_defaults.corlib && 
+		!strcmp (m_class_get_name (method->klass), "ThrowHelper")) {
 		return FALSE;
+	}
 #endif
 		
 	return TRUE;
@@ -11180,7 +11182,7 @@ mono_error_exit:
 	if (cfg->verbose_level > 3)
 		g_print ("exiting due to error");
 
-	g_assert (!mono_error_ok (&cfg->error));
+	g_assert (!is_ok (&cfg->error));
 	goto cleanup;
  
  exception_exit:

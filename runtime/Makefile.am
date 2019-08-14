@@ -3,6 +3,8 @@ tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
+EXTRA_DIST = bin/mono-hang-watchdog.in
+
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
@@ -308,12 +310,3 @@ $(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile
 
 test-support-files: $(TEST_SUPPORT_FILES)
 	@:
-
-# the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
-MYDISTFILES = $(DIST_COMMON)
-distdir: $(MYDISTFILES)
-	rm -fr $(distdir)
-	mkdir $(distdir)
-	test -z '$(MYDISTFILES)' || for file in ''$(MYDISTFILES); do \
-	  cp -p $$file $(distdir) ; done
-	find $(distdir) -type f -exec chmod a+r {} ';'

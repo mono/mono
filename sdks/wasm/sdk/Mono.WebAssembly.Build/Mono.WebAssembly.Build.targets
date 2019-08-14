@@ -12,7 +12,10 @@
 		<EnableMonoWasmThreads Condition="'$(EnableMonoWasmThreads)'==''">None</EnableMonoWasmThreads>
 		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
 		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
-		<_LoadThreadsRuntime>false</_LoadThreadsRuntime>
+		<_LoadThreadsRuntime>false</_LoadThreadsRuntime>		
+		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'==''">$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
+		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'=='Debug'">true</_MonoWasmDebugRuntime>
+		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'=='Release'">false</_MonoWasmDebugRuntime>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -22,10 +25,16 @@
 		</CleanDependsOn>
 	</PropertyGroup>
 
+	<Target Name="_ValidateProjectProperties">
+	<Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
+		 Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
+		 Code="WASM0001"/>
+	</Target>
+
 	<!-- suppress local copy for now, we don't want any local copied dlls -->
 	<Target Name="CopyFilesToOutputDirectory" DependsOnTargets="MonoWasmCopyOutput" />
 
-	<Target Name="MonoWasmCopyOutput" DependsOnTargets="_MonoWasmAssemblyCollectOutput;_MonoWasmLink">
+	<Target Name="MonoWasmCopyOutput" DependsOnTargets="_ValidateProjectProperties;_MonoWasmAssemblyCollectOutput;_MonoWasmLink">
 		<Copy
 				SourceFiles="@(_WasmOutput)"
 				DestinationFiles="@(_WasmOutput->'$(OutputPath)%(TargetPath)')"
@@ -47,7 +56,6 @@
 			FIXME should this be decoupled from whether managed symbols are produced?
 		-->
 		<PropertyGroup Condition="Exists('$(MonoWasmRuntimePath)builds\')">
-			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
 			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\release\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\debug\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimeThreadsPath>$(MonoWasmRuntimePath)builds\threads-release\</_MonoWasmRuntimeThreadsPath>
@@ -55,14 +63,23 @@
 		</PropertyGroup>
 
 		<PropertyGroup Condition="!Exists('$(MonoWasmRuntimePath)builds\')">
-			<_MonoWasmDebugRuntime>$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
 			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)release\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)debug\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimeThreadsPath>$(MonoWasmRuntimePath)threads-release\</_MonoWasmRuntimeThreadsPath>
 			<_MonoWasmRuntimeThreadsPath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimeThreadsPath>
 		</PropertyGroup>
 
-		<ItemGroup Condition="'$(EnableMonoWasmThreads)'!='ThreadsOnly'">
+		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\threads-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\threads-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)threads-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<ItemGroup>
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js" TargetPath="mono.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm" TargetPath="mono.wasm" />
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm.map" TargetPath="mono.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
@@ -102,6 +119,7 @@
 		<WasmLinkAssemblies
 			RootAssembly="@(IntermediateAssembly)"
 			Assemblies="@(ReferencePath)"
+			RuntimeCopyLocalAssemblies="@(RuntimeCopyLocalItems)"
 			FrameworkDir="$(MonoWasmFrameworkPath)"
 			OutputDir="$(_MonoWasmManagedOutputDir)"
 			LinkMode="$(MonoWasmLinkMode)"

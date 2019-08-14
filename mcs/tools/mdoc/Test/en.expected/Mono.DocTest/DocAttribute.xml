@@ -1,6 +1,11 @@
 <Type Name="DocAttribute" FullName="Mono.DocTest.DocAttribute">
   <TypeSignature Language="C#" Value="public class DocAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DocAttribute extends System.Attribute" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.DocAttribute" />
+  <TypeSignature Language="VB.NET" Value="Public Class DocAttribute&#xA;Inherits Attribute" />
+  <TypeSignature Language="F#" Value="type DocAttribute = class&#xA;    inherit Attribute" />
+  <TypeSignature Language="JavaScript" Value="function DocAttribute(docs)" Usage="var docAttribute = new DocAttribute(docs);" />
+  <TypeSignature Language="C++ CLI" Value="public ref class DocAttribute : Attribute" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -22,6 +27,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DocAttribute (string docs);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string docs) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.DocAttribute.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (docs As String)" />
+      <MemberSignature Language="F#" Value="new Mono.DocTest.DocAttribute : string -&gt; Mono.DocTest.DocAttribute" Usage="new Mono.DocTest.DocAttribute docs" />
+      <MemberSignature Language="JavaScript" Value="function DocAttribute(docs)" Usage="var docAttribute = new DocAttribute(docs);" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; DocAttribute(System::String ^ docs);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; DocAttribute(Platform::String ^ docs);" />
+      <MemberSignature Language="C++ WINRT" Value=" DocAttribute(std::wstring const &amp; docs);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -33,13 +45,17 @@
         <param name="docs">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:Mono.DocTest.DocAttribute.#ctor(System.String)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Field">
       <MemberSignature Language="C#" Value="public bool Field;" />
       <MemberSignature Language="ILAsm" Value=".field public bool Field" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.DocAttribute.Field" />
+      <MemberSignature Language="VB.NET" Value="Public Field As Boolean " />
+      <MemberSignature Language="F#" Value="val mutable Field : bool" Usage="Mono.DocTest.DocAttribute.Field" />
+      <MemberSignature Language="C++ CLI" Value="public: bool Field;" />
+      <MemberSignature Language="C++ CX" Value="public: bool Field;" />
+      <MemberSignature Language="C++ WINRT" Value="bool Field;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -55,6 +71,11 @@
     <Member MemberName="FlagsEnum">
       <MemberSignature Language="C#" Value="public ConsoleModifiers FlagsEnum;" />
       <MemberSignature Language="ILAsm" Value=".field public valuetype System.ConsoleModifiers FlagsEnum" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.DocAttribute.FlagsEnum" />
+      <MemberSignature Language="VB.NET" Value="Public FlagsEnum As ConsoleModifiers " />
+      <MemberSignature Language="F#" Value="val mutable FlagsEnum : ConsoleModifiers" Usage="Mono.DocTest.DocAttribute.FlagsEnum" />
+      <MemberSignature Language="C++ CLI" Value="public: ConsoleModifiers FlagsEnum;" />
+      <MemberSignature Language="C++ CX" Value="public: ConsoleModifiers FlagsEnum;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -70,6 +91,12 @@
     <Member MemberName="NonFlagsEnum">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Color NonFlagsEnum;" />
       <MemberSignature Language="ILAsm" Value=".field public valuetype Mono.DocTest.Color NonFlagsEnum" />
+      <MemberSignature Language="DocId" Value="F:Mono.DocTest.DocAttribute.NonFlagsEnum" />
+      <MemberSignature Language="VB.NET" Value="Public NonFlagsEnum As Color " />
+      <MemberSignature Language="F#" Value="val mutable NonFlagsEnum : Mono.DocTest.Color" Usage="Mono.DocTest.DocAttribute.NonFlagsEnum" />
+      <MemberSignature Language="C++ CLI" Value="public: Mono::DocTest::Color NonFlagsEnum;" />
+      <MemberSignature Language="C++ CX" Value="public: Mono::DocTest::Color NonFlagsEnum;" />
+      <MemberSignature Language="C++ WINRT" Value="Mono::DocTest::Color NonFlagsEnum;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -85,6 +112,12 @@
     <Member MemberName="Property">
       <MemberSignature Language="C#" Value="public Type Property { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Type Property" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.DocAttribute.Property" />
+      <MemberSignature Language="VB.NET" Value="Public Property Property As Type" />
+      <MemberSignature Language="F#" Value="member this.Property : Type with get, set" Usage="Mono.DocTest.DocAttribute.Property" />
+      <MemberSignature Language="JavaScript" Usage="var type = docAttribute.property;&#xA;docAttribute.property = type;" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Type ^ Property { Type ^ get(); void set(Type ^ value); };" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; property Platform::Type ^ Property { Platform::Type ^ get(); void set(Platform::Type ^ value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

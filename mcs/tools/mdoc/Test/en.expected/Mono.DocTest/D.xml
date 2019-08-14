@@ -1,6 +1,11 @@
 <Type Name="D" FullName="Mono.DocTest.D">
   <TypeSignature Language="C#" Value="public delegate dynamic D(Func&lt;string,dynamic,object&gt; value);" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed D extends System.MulticastDelegate" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.D" />
+  <TypeSignature Language="VB.NET" Value="Public Delegate Function D(value As Func(Of String, Object, Object)) As Object " />
+  <TypeSignature Language="F#" Value="type D = delegate of Func&lt;string, obj, obj&gt; -&gt; obj" />
+  <TypeSignature Language="JavaScript" Usage="var dHandler = function(value){&#xA;/* Your code */&#xA;}" />
+  <TypeSignature Language="C++ CLI" Value="public delegate System::Object ^ D(Func&lt;System::String ^, System::Object ^, System::Object ^&gt; ^ value);" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
