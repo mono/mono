@@ -264,7 +264,6 @@ namespace WebAssembly.Net.WebSockets {
 												using (var binResult = (ArrayBuffer)target.GetObjectProperty ("result")) {
 													var mess = new ReceivePayload (binResult, WebSocketMessageType.Binary);
 													receiveMessageQueue.BufferPayload (mess);
-													Runtime.FreeObject (loadend);
 												}
 											}
 										}
@@ -327,19 +326,15 @@ namespace WebAssembly.Net.WebSockets {
 			// are possible leading to crashes.
 			if (onClose != null) {
 				innerWebSocket.SetObjectProperty ("onclose", "");
-				Runtime.FreeObject (onClose);
 			}
 			if (onError != null) {
 				innerWebSocket.SetObjectProperty ("onerror", "");
-				Runtime.FreeObject (onError);
 			}
 			if (onOpen != null) {
 				innerWebSocket.SetObjectProperty ("onopen", "");
-				Runtime.FreeObject (onOpen);
 			}
 			if (onMessage != null) {
 				innerWebSocket.SetObjectProperty ("onmessage", "");
-				Runtime.FreeObject (onMessage);
 			}
 			innerWebSocket?.Dispose ();
 		}
