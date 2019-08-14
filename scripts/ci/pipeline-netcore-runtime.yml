@@ -95,15 +95,11 @@ stages:
               printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
               scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
             done
+            if [ -e ".failures" ]; then
+              exit 1
+            fi
           displayName: 'Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
-
-        - task: PublishTestResults@2
-          inputs:
-            testRunTitle: $(poolname)
-            testResultsFormat: 'XUnit'
-            testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
           condition: eq(variables['System.TeamProject'], 'public')
 
         - bash: |
@@ -112,8 +108,15 @@ stages:
               printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
               exit 1
             fi
-          displayName: 'Validate test results'
+          displayName: 'Quick xunit summary'
           timeoutInMinutes: 90
+          condition: eq(variables['System.TeamProject'], 'public')
+
+        - task: PublishTestResults@2
+          inputs:
+            testRunTitle: $(poolname)
+            testResultsFormat: 'XUnit'
+            testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
           condition: eq(variables['System.TeamProject'], 'public')
 
         - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
