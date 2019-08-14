@@ -123,24 +123,20 @@ do { 							\
 } while (0)						\
 
 /*
- * Three macros to assert that a MonoError is ok:
+ * Macros to assert that a MonoError is ok:
  * 1. mono_error_assert_ok(e) when you just want to print the error's message on failure
- * 2. mono_error_assert_ok(e,msg) when you want to print "msg, due to <e's message>"
- * 3. mono_error_assertf_ok(e,fmt,args...) when you want to print "<formatted msg>, due to <e's message>"
+ * 2. mono_error_assertf_ok(e,fmt,args...) when you want to print "<formatted msg>, due to <e's message>"
  *    (fmt should specify the formatting just for args).
- *
- * What's the difference between mono_error_assert_msg_ok (e, "foo") and
- * mono_error_assertf_ok (e, "foo") ?  The former works as you expect, the
- * latter unhelpfully expands to
- *
- * g_assertf (is_ok (e), "foo, due to %s", ,  mono_error_get_message (err)).
- *
- * Note the double commas.  Turns out that to get rid of that extra comma
- * portably we would have to write really ugly preprocessor macros.
  */
 #define mono_error_assert_ok(error)            g_assertf (is_ok (error), "%s", mono_error_get_message (error))
-#define mono_error_assert_msg_ok(error, msg)   g_assertf (is_ok (error), msg ", due to %s", mono_error_get_message (error))
-#define mono_error_assertf_ok(error, fmt, ...) g_assertf (is_ok (error), fmt ", due to %s", __VA_ARGS__, mono_error_get_message (error))
+
+// Based on assertf, either use an older Visual C++ extension or a gcc/clang/newer-msvc extension,
+// to avoid double comma when __VA_ARGS__ is empty.
+#if _MSC_VER && _MSC_VER < 1910
+#define mono_error_assertf_ok(error, format, ...) g_assertf (is_ok (error), format ", due to %s", __VA_ARGS__, mono_error_get_message (error))
+#else
+#define mono_error_assertf_ok(error, format, ...) g_assertf (is_ok (error), format ", due to %s", ##__VA_ARGS__, mono_error_get_message (error))
+#endif
 
 void
 mono_error_dup_strings (MonoError *error, gboolean dup_strings);

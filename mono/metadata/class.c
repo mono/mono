@@ -1084,7 +1084,7 @@ mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *conte
 	ERROR_DECL (error);
 	error_init (error);
 	MonoMethod *res = mono_class_inflate_generic_method_full_checked (method, NULL, context, error);
-	mono_error_assert_msg_ok (error, "Could not inflate generic method");
+	mono_error_assertf_ok (error, "Could not inflate generic method");
 	return res;
 }
 
@@ -4114,7 +4114,7 @@ mono_class_get_cctor (MonoClass *klass)
 		 * not run for them.
 		 */
 		result = mono_class_get_method_from_name_checked (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME, error);
-		mono_error_assert_msg_ok (error, "Could not lookup class cctor in dynamic image");
+		mono_error_assertf_ok (error, "Could not lookup class cctor in dynamic image");
 		return result;
 	}
 
@@ -4125,18 +4125,18 @@ mono_class_get_cctor (MonoClass *klass)
 
 	if (mono_class_is_ginst (klass) && !m_class_get_methods (klass)) {
 		result = mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class), error);
-		mono_error_assert_msg_ok (error, "Could not lookup inflated class cctor"); /* FIXME do proper error handling */
+		mono_error_assertf_ok (error, "Could not lookup inflated class cctor"); /* FIXME do proper error handling */
 		return result;
 	}
 
 	if (mono_class_get_cached_class_info (klass, &cached_info)) {
 		result = mono_get_method_checked (m_class_get_image (klass), cached_info.cctor_token, klass, NULL, error);
-		mono_error_assert_msg_ok (error, "Could not lookup class cctor from cached metadata");
+		mono_error_assertf_ok (error, "Could not lookup class cctor from cached metadata");
 		return result;
 	}
 
 	result = mono_class_get_method_from_name_checked (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME, error);
-	mono_error_assert_msg_ok (error, "Could not lookup class cctor");
+	mono_error_assertf_ok (error, "Could not lookup class cctor");
 	return result;
 }
 
@@ -4159,7 +4159,7 @@ mono_class_get_finalizer (MonoClass *klass)
 	if (mono_class_get_cached_class_info (klass, &cached_info)) {
 		ERROR_DECL (error);
 		MonoMethod *result = mono_get_method_checked (cached_info.finalize_image, cached_info.finalize_token, NULL, NULL, error);
-		mono_error_assert_msg_ok (error, "Could not lookup finalizer from cached metadata");
+		mono_error_assertf_ok (error, "Could not lookup finalizer from cached metadata");
 		return result;
 	}else {
 		mono_class_setup_vtable (klass);

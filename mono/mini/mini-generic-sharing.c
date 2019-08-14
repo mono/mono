@@ -565,7 +565,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
 		gpointer result = mono_class_inflate_generic_type_with_mempool (temporary ? NULL : m_class_get_image (klass),
 			(MonoType *)data, context, error);
-		mono_error_assert_msg_ok (error, "Could not inflate generic type"); /* FIXME proper error handling */
+		mono_error_assertf_ok (error, "Could not inflate generic type"); /* FIXME proper error handling */
 		return result;
 	}
 
@@ -733,13 +733,13 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoDomain *domain = mono_domain_get ();
 
 		MonoType *t = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (dele_info->klass), context, error);
-		mono_error_assert_msg_ok (error, "Could not inflate generic type"); /* FIXME proper error handling */
+		mono_error_assertf_ok (error, "Could not inflate generic type"); /* FIXME proper error handling */
 
 		MonoClass *klass = mono_class_from_mono_type_internal (t);
 		mono_metadata_free_type (t);
 
 		MonoMethod *method = mono_class_inflate_generic_method_checked (dele_info->method, context, error);
-		mono_error_assert_msg_ok (error, "Could not inflate generic method"); /* FIXME proper error handling */
+		mono_error_assertf_ok (error, "Could not inflate generic method"); /* FIXME proper error handling */
 
 		// FIXME: Temporary
 		MonoDelegateClassMethodPair *res = (MonoDelegateClassMethodPair *)mono_domain_alloc0 (domain, sizeof (MonoDelegateClassMethodPair));

@@ -133,7 +133,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
 	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 0, 0, error);
-	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
+	mono_error_assertf_ok (error, "Could not lookup zero argument constructor");
 	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
 	if (m_class_is_valuetype (method->klass)) {
