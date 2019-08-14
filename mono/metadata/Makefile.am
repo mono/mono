@@ -129,13 +129,16 @@ zlib_sources = \
 if HOST_WIN32
 support_sources += $(zlib_sources)
 else
-if HAVE_ZLIB
+if HAVE_SYS_ZLIB
 # See libmonoruntime_support_la_LDFLAGS
 else
+if HAVE_STATIC_ZLIB
+# or here
 if HOST_WASM
 # We don't build the support library on wasm, we shouldn't build zlib here either
 else
 support_sources += $(zlib_sources)
+endif
 endif
 endif
 endif
@@ -172,7 +175,7 @@ libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @
 if HAVE_STATIC_ZLIB
 libmonoruntime_support_la_LDFLAGS = $(STATIC_ZLIB_PATH)
 else
-if HAVE_ZLIB
+if HAVE_SYS_ZLIB
 libmonoruntime_support_la_LDFLAGS = -lz
 endif
 endif

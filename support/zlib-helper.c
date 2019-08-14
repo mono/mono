@@ -7,7 +7,7 @@
  * (c) Copyright 2009 Novell, Inc.
  */
 #include <config.h>
-#if defined (HAVE_ZLIB)
+#if defined (HAVE_SYS_ZLIB)
 #include <zlib.h>
 #else
 #include "zlib.h"
