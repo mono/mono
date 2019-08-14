@@ -1874,16 +1874,15 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 			return(FALSE);
 		}
 
-		if (((file_existing_access & GENERIC_READ) &&
-		     !(sharemode & FILE_SHARE_READ)) ||
-		    ((file_existing_access & GENERIC_WRITE) &&
-		     !(sharemode & FILE_SHARE_WRITE))) {
-			/* New share mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
+		if (file_existing_share != sharemode &&
+				((sharemode | FILE_SHARE_READ) != sharemode) &&
+				((file_existing_share | sharemode) == file_existing_share)) {
+			/* Share mode is trying to be more strict */
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Can't restrict sharing mode: existing mode %d, requesting sharing mode: %d - the requested sharing mode is more strict", __func__, file_existing_share, sharemode);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
-		
+
 			return(FALSE);
 		}
 	} else {
