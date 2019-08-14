@@ -58,7 +58,7 @@ libmonodismain_a_SOURCES =	\
 monodis_SOURCES =
 
 if !HOST_WIN32
-if HAVE_ZLIB
+if HAVE_SYS_ZLIB
 Z_LIBS= -lz
 else
 Z_LIBS=
