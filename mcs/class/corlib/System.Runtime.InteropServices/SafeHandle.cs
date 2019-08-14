@@ -211,12 +211,12 @@ namespace System.Runtime.InteropServices
 					else
 						perform_release = true;
 
-					/* Attempt the update to the new state, fail and retry if the initial
-					 * state has been modified in the meantime. Decrement the ref count by
-					 * substracting SH_RefCountOne from the state then OR in the bits for
-					 * Dispose (if that's the reason for the Release) and closed (if the
-					 * initial ref count was 1). */
-					new_state = (old_state & RefCount_Mask) - RefCount_One;
+					// Not closed, let's propose an update (to the ref count, just add
+					// StateBits.RefCountOne to the state to effectively add 1 to the ref count).
+					// Continue doing this until the update succeeds (because nobody
+					// modifies the state field between the read and write operations) or
+					// the state moves to closed.
+					new_state = old_state - RefCount_One;
 					if ((old_state & RefCount_Mask) == RefCount_One)
 						new_state |= (int) State.Closed;
 					if (dispose)
