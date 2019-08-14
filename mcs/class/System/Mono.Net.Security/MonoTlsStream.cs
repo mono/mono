@@ -146,6 +146,7 @@ namespace Mono.Net.Security
 					await sslStream.WriteAsync (tunnel.Data, 0, tunnel.Data.Length, cancellationToken).ConfigureAwait (false);
 			} catch {
 				status = WebExceptionStatus.SendFailure;
+				sslStream.Dispose ();
 				sslStream = null;
 				throw;
 			}
