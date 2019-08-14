@@ -764,6 +764,7 @@ static MonoCoopMutex debug_mutex;
 
 static void transport_init (void);
 static void transport_connect (const char *address);
+static void transport_close2 (void);
 static gboolean transport_handshake (void);
 static void register_transport (DebuggerTransport *trans);
 
@@ -1090,9 +1091,6 @@ mono_debugger_get_generate_debug_info ()
 {
 	return disable_optimizations;
 }
-
-// Declare transport_close2 method
-static void transport_close2(void);
 
 MONO_API void
 mono_debugger_disconnect ()
