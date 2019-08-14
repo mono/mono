@@ -115,7 +115,6 @@ namespace WebAssembly {
 
 		static int BindCoreCLRObject (int js_id, int gcHandle)
 		{
-			//Console.WriteLine ($"Registering CLR Object {js_id} with handle {gcHandle}");
 			GCHandle h = (GCHandle)(IntPtr)gcHandle;
 			JSObject obj = (JSObject)h.Target;
 
@@ -139,8 +138,6 @@ namespace WebAssembly {
 				if (!bound_objects.TryGetValue (js_id, out var reference)) {
 					var jsobjectnew = mappedType.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
 						    null, new Type [] { typeof (IntPtr), typeof (bool) }, null);
-				//Console.WriteLine ($"BindJSType constructor: {jsobjectnew}");
-
 					bound_objects [js_id] = reference = new WeakReference ((JSObject)jsobjectnew.Invoke (new object [] { (IntPtr)js_id, ownsHandle }), true);
 				}
 				return (int)(IntPtr)((JSObject)reference.Target).AnyRefHandle;
@@ -272,26 +269,20 @@ namespace WebAssembly {
 
 		static int BindExistingObject (object raw_obj, int js_id)
 		{
-			//var isDelegate = raw_obj.GetType ().IsSubclassOf (typeof (Delegate));
-			//Console.WriteLine ($"BindExistingObject: add to delegate table: {raw_obj} js_id: {js_id} IsDelegate {isDelegate}");
 			JSObject obj = raw_obj as JSObject;
 			if (raw_obj.GetType().IsSubclassOf(typeof(Delegate))) {
 				var dele = raw_obj as Delegate;
-				//Console.WriteLine ($"BindExistingObject: add to delegate table: {raw_obj} js_id: {js_id} IsDelegate {isDelegate} Target: {dele.Target}");
 				if (obj == null && !weak_delegate_table.TryGetValue(dele, out obj)) {
 
 					obj = new JSObject (js_id, true);
 					bound_objects [js_id] = new WeakReference (obj);
 					weak_delegate_table.Add(dele, obj);
 					obj.WeakRawObject = new WeakReference (dele, false);
-					//Console.WriteLine ($"BindExistingObject: add to weak delegate table: {obj}");
 				}
 
 			} else {
 				if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj)) {
-
 					raw_to_js [raw_obj] = obj = new JSObject (js_id, raw_obj);
-					//Console.WriteLine ($"BindExistingObject: new raw_obj: {obj}");
 				}
 
 
@@ -329,7 +320,6 @@ namespace WebAssembly {
 
 		static object GetMonoObject (int gc_handle)
 		{
-			//Console.WriteLine ($"GetMonoObject: gc_handle {gc_handle}");
 			GCHandle h = (GCHandle)(IntPtr)gc_handle;
 			JSObject o = (JSObject)h.Target;
 
