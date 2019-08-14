@@ -169,6 +169,7 @@ var BindingSupportLib = {
 				throw new Error ("no idea on how to unbox value types");
 			case 5: { // delegate
 				var obj = this.extract_js_obj (mono_obj);
+				obj.__mono_delegate_alive__ = true;
 				return function () {
 					return BINDING.invoke_delegate (obj, arguments);
 				};
@@ -683,6 +684,12 @@ var BindingSupportLib = {
 		invoke_delegate: function (delegate_obj, js_args) {
 			this.bindings_lazy_init ();
 
+			// Check to make sure the delegate is still alive on the CLR side of things.
+			if (typeof delegate_obj.__mono_delegate_alive__ !== "undefined") {
+				if (!delegate_obj.__mono_delegate_alive__)
+					throw new Error("The delegate target that is being invoked is no longer available.  Please check if it has been prematurely GC'd.");
+			}
+
 			if (!this.delegate_dynamic_invoke) {
 				if (!this.corlib)
 					this.corlib = this.assembly_load ("mscorlib");
@@ -893,10 +900,16 @@ var BindingSupportLib = {
 
 				var gc_handle = obj.__mono_gchandle__;
 				if (typeof gc_handle  !== "undefined") {
-					this.wasm_unbind_js_obj_and_free(js_id);
+					//this.wasm_unbind_js_obj_and_free(js_id);
 
 					obj.__mono_gchandle__ = undefined;
 					obj.__mono_jshandle__ = undefined;
+
+					// If we are unregistering a delegate then mark it as not being alive
+					// this will be checked in the delegate invoke and throw an appropriate
+					// error.
+					if (typeof obj.__mono_delegate_alive__ !== "undefined")
+						obj.__mono_delegate_alive__ = false;
 
 					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
