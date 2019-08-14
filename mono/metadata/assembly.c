@@ -1611,10 +1611,8 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 }
 #else
 static MonoAssembly*
-netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoImageOpenStatus *status)
+netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, MonoAssembly *requesting, gboolean postload)
 {
-	g_assert (status != NULL);
-	g_assert (requesting != NULL);
 	g_assert (alc != NULL);
 
 	MonoAssemblyName mapped_aname;
@@ -1632,13 +1630,16 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	/*
 	 * Try these until one of them succeeds (by returning a non-NULL reference):
 	 * 1. Check if it's already loaded by the ALC.
+	 *
 	 * 2. If it's a non-default ALC, call the Load() method.
 	 *
-	 * 3. Try to load using the default ALC.
+	 * 3. Try to load using the default ALC (except for satellite requests).
 	 *
-	 * 4. Call ALC Resolving event.
+	 * 4. Call ALC ResolveSatelliteAssembly method (for satellite requests).
 	 *
-	 * 5. Return REFERNCE_MISSING
+	 * 5. Call ALC Resolving event.
+	 *
+	 * 6. Return NULL.
 	 */
 
 	reference = mono_assembly_loaded_internal (alc, aname, FALSE);
@@ -1654,7 +1655,7 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 		MonoAssemblyByNameRequest req;
 		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, mono_domain_default_alc (mono_alc_domain (alc)));
 		req.requesting_assembly = requesting;
-		reference = mono_assembly_request_byname (aname, &req, status);
+		reference = mono_assembly_request_byname (aname, &req, NULL);
 		if (reference)
 			goto leave;
 	}
@@ -1730,7 +1731,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 {
 	MonoAssembly *reference;
 	MonoAssemblyName aname;
-	MonoImageOpenStatus status;
+	MonoImageOpenStatus status = MONO_IMAGE_OK;
 
 	/*
 	 * image->references is shared between threads, so we need to access
@@ -1777,7 +1778,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 			break;
 		}
 #else
-		reference = netcore_load_reference (&aname, mono_image_get_alc (image), image->assembly, &status);
+		reference = netcore_load_reference (&aname, mono_image_get_alc (image), image->assembly, TRUE);
 #endif
 	} else {
 #ifndef ENABLE_NETCORE
@@ -4569,7 +4570,7 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
 				       const MonoAssemblyByNameRequest *req,
 				       MonoImageOpenStatus *status)
 {
-	MonoAssembly *result;
+	MonoAssembly *result = NULL;
 	MonoAssemblyName maped_aname;
 	MonoAssemblyName maped_name_pp;
 
@@ -4591,8 +4592,10 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
 		return result;
 	}
 
-	/* TODO: for netcore can we avoid calling this method?  There is no GAC and we also shouldn't need to load anything from the default path */
-	return mono_assembly_load_full_gac_base_default (aname, req->basedir, req->request.alc, req->request.asmctx, status);
+#ifndef ENABLE_NETCORE
+	result = mono_assembly_load_full_gac_base_default (aname, req->basedir, req->request.alc, req->request.asmctx, status);
+#endif
+	return result;
 }
 
 /* Like mono_assembly_request_byname_nosearch, but don't ask the preload look (ie,
@@ -4692,7 +4695,11 @@ mono_assembly_request_byname (MonoAssemblyName *aname, const MonoAssemblyByNameR
 {
 	MonoDomain *domain = mono_domain_get ();
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Request to load %s in (domain %p, alc %p)", aname->name, domain, (gpointer)req->request.alc);
-	MonoAssembly *result = mono_assembly_request_byname_nosearch (aname, req, status);
+	MonoAssembly *result;
+	if (status)
+		*status = MONO_IMAGE_OK;
+#ifndef ENABLE_NETCORE
+	result = mono_assembly_request_byname_nosearch (aname, req, status);
 	const gboolean refonly = req->request.asmctx == MONO_ASMCTX_REFONLY;
 
 	if (!result && !req->no_postload_search) {
@@ -4700,6 +4707,9 @@ mono_assembly_request_byname (MonoAssemblyName *aname, const MonoAssemblyByNameR
 		result = mono_assembly_invoke_search_hook_internal (req->request.alc, req->requesting_assembly, aname, refonly, TRUE);
 		result = prevent_reference_assembly_from_running (result, refonly);
 	}
+#else
+	result = netcore_load_reference (aname, req->request.alc, req->requesting_assembly, !req->no_postload_search);
+#endif
 	return result;
 }
 
