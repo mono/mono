@@ -2,6 +2,8 @@
 ../test-helpers/Configuration.Certificates.cs
 ../test-helpers/TestConfiguration.cs
 
+System/Platform.cs
+
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
