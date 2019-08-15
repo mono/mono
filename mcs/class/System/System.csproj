@@ -154,6 +154,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedStringFormatReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\WhitespaceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\RangeValidationHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />

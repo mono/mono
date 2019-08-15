@@ -58,7 +58,8 @@
 	url = git://github.com/mono/api-doc-tools.git
 [submodule "external/api-snapshot"]
 	path = external/api-snapshot
-	url = git://github.com/mono/api-snapshot.git
+	url = git://github.com/baulig/api-snapshot.git
+	branch = work-sprint-157
 [submodule "external/llvm"]
 	path = external/llvm
 	url = git://github.com/mono/llvm.git
