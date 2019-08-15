@@ -1657,7 +1657,7 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 		MonoAssemblyByNameRequest req;
 		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, mono_domain_default_alc (mono_alc_domain (alc)));
 		req.requesting_assembly = requesting;
-		reference = mono_assembly_request_byname (aname, &req, NULL);
+		reference = mono_assembly_request_byname_nosearch (aname, &req, NULL);
 		if (reference)
 			goto leave;
 	}
