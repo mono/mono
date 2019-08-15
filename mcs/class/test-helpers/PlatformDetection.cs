@@ -49,8 +49,6 @@ namespace System
 
 		public static int WindowsVersion => -1;
 
-		public static bool IsOSX => Platform.IsMacOS;
-
 		public static bool PlatformSupportsSocketMessages => false;
 	}
 }
