@@ -2477,6 +2477,7 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	 * other than for corlib satellite assemblies (which I've dealt with further down the call stack).
 	 */
 	//req.no_postload_search = TRUE;
+	req.requesting_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 
 	name = mono_string_handle_to_utf8 (name_handle, error);
 	goto_if_nok (error, fail);
