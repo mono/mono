@@ -1787,7 +1787,11 @@ mono_assembly_load_reference (MonoImage *image, int index)
 			break;
 		}
 #else
-		reference = netcore_load_reference (&aname, mono_image_get_alc (image), image->assembly, TRUE);
+		MonoAssemblyByNameRequest req;
+		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, mono_image_get_alc (image));
+		req.requesting_assembly = image->assembly;
+		//req.no_postload_search = TRUE; // FIXME: should this be set?
+		reference = mono_assembly_request_byname (&aname, &req, NULL);
 #endif
 	} else {
 #ifndef ENABLE_NETCORE
