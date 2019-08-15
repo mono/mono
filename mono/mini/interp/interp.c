@@ -3124,7 +3124,9 @@ mono_interp_newobj (
 				g_assert (exc);
 				return exc;
 			}
-			frame_objref (frame) = mono_interp_new (imethod->domain, newobj_class); // FIXME: do not swallow the error
+			ERROR_DECL (error);
+			frame_objref (frame) = mono_object_new_checked (imethod->domain, newobj_class, error);
+			mono_error_cleanup (error); // FIXME: do not swallow the error
 			EXCEPTION_CHECKPOINT_IN_HELPER_FUNCTION;
 			sp->data.o = frame_objref (frame);
 #ifndef DISABLE_REMOTING
