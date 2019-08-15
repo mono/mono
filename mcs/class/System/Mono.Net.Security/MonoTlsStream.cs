@@ -120,25 +120,21 @@ namespace Mono.Net.Security
 					ServicePointManager.CheckCertificateRevocationList).ConfigureAwait (false);
 
 				status = WebExceptionStatus.Success;
+
+				request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
 			} catch (Exception ex) {
 				WebConnection.Debug ($"MONO TLS STREAM ERROR: {socket.ID} {socket.CleanedUp} {ex.Message}");
 				if (socket.CleanedUp)
 					status = WebExceptionStatus.RequestCanceled;
+				else if (CertificateValidationFailed)
+					status = WebExceptionStatus.TrustFailure;
 				else
 					status = WebExceptionStatus.SecureChannelFailure;
-				throw;
-			} finally {
-				WebConnection.Debug ($"MONO TLS STREAM CREATE STREAM DONE: {socket.ID} {socket.CleanedUp}");
-				if (CertificateValidationFailed)
-					status = WebExceptionStatus.TrustFailure;
 
-				if (status == WebExceptionStatus.Success)
-					request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
-				else {
-					request.ServicePoint.UpdateClientCertificate (null);
-					sslStream.Dispose ();
-					sslStream = null;
-				}
+				request.ServicePoint.UpdateClientCertificate (null);
+				sslStream.Dispose ();
+				sslStream = null;
+				throw;
 			}
 
 			try {
