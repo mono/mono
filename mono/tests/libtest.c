@@ -3398,6 +3398,27 @@ struct MonoComObject
 	int m_ref;
 };
 
+typedef struct MonoDispatchObject MonoDispatchObject;
+
+typedef struct
+{
+	int (STDCALL *QueryInterface)(MonoDispatchObject* pDisp, gpointer riid, gpointer* ppv);
+	int (STDCALL *AddRef)(MonoDispatchObject* pDisp);
+	int (STDCALL *Release)(MonoDispatchObject* pDisp);
+	int (STDCALL *GetTypeInfoCount)(MonoDispatchObject* pDisp, guint32 *pctinfo);
+	int (STDCALL *GetTypeInfo)(MonoDispatchObject *pDisp, guint32 iTInfo, guint32 lcid, gpointer *ppTInfo);
+	int (STDCALL *GetIDsOfNames)(MonoDispatchObject *pDisp, gpointer riid,
+		gunichar2** rgszNames, guint32 cNames, guint32 lcid, gint32 *rgDispId);
+	int (STDCALL *Invoke)(MonoDispatchObject *pDisp, guint32 dispIdMember, gpointer riid, guint32 lcid,
+		guint16 wFlags, gpointer pDispParams, gpointer pVarResult, gpointer pExcepInfo, guint32 *puArgErr);
+} MonoIDispatch;
+
+struct MonoDispatchObject
+{
+	MonoIDispatch* vtbl;
+};
+
+static GUID IID_MonoNull = {0, 0, 0, {0,0,0,0,0,0,0,0}};
 static GUID IID_ITest = {0, 0, 0, {0,0,0,0,0,0,0,1}};
 static GUID IID_IMonoUnknown = {0, 0, 0, {0xc0,0,0,0,0,0,0,0x46}};
 static GUID IID_IMonoDispatch = {0x00020400, 0, 0, {0xc0,0,0,0,0,0,0,0x46}};
@@ -7737,6 +7758,19 @@ mono_test_cleanup_ftptr_eh_callback (void)
 {
 	mono_test_init_symbols ();
 	sym_mono_install_ftnptr_eh_callback (NULL);
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_getidofname (MonoDispatchObject *pDisp, gunichar2* name)
+{
+	gint32 result;
+	int hr;
+
+	hr = pDisp->vtbl->GetIDsOfNames (pDisp, &IID_MonoNull, &name, 1, 0, &result);
+
+	if (hr == S_OK)
+		return result;
+	return hr;
 }
 
 LIBTEST_API int STDCALL

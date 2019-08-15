@@ -146,8 +146,15 @@ GENERATE_GET_CLASS_WITH_CACHE (iunknown,      "Mono.Interop", "IUnknown")
 GENERATE_GET_CLASS_WITH_CACHE (com_object, "System", "__ComObject")
 GENERATE_GET_CLASS_WITH_CACHE (variant,    "System", "Variant")
 
+static GENERATE_GET_CLASS_WITH_CACHE (class_interface_attribute, "System.Runtime.InteropServices", "ClassInterfaceAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.InteropServices", "InterfaceTypeAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, "System.Runtime.InteropServices", "GuidAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (dispid_attribute, "System.Runtime.InteropServices", "DispIdAttribute")
+
+/* ClassInterfaceType values */
+#define CLASS_INTERFACE_NONE 0
+#define CLASS_INTERFACE_AUTODUAL 1
+#define CLASS_INTERFACE_AUTODISPATCH 2
 
 /* Upon creation of a CCW, only allocate a weak handle and set the
  * reference count to 0. If the unmanaged client code decides to addref and
@@ -169,6 +176,7 @@ typedef struct {
 typedef struct {
 	gpointer vtable;
 	MonoCCW* ccw;
+	MonoClass* iface;
 } MonoCCWInterface;
 
 /* IUnknown */
@@ -381,6 +389,12 @@ cominterop_get_com_slot_begin (MonoClass* klass)
 		return 7; /* 7 methods in IDispatch*/
 }
 
+static gboolean
+cominterop_interface_is_dispatch (MonoClass* klass)
+{
+	return (cominterop_get_com_slot_begin (klass) == 7);
+}
+
 /**
  * cominterop_get_method_interface:
  * @method: method being called
@@ -538,6 +552,26 @@ cominterop_com_visible (MonoClass* klass)
 	}
 	return visible;
 
+}
+
+static guint32
+cominterop_class_iface_type (MonoClass* klass)
+{
+	ERROR_DECL (error);
+	MonoCustomAttrInfo *cinfo;
+	guint32 result = CLASS_INTERFACE_AUTODISPATCH;
+
+	cinfo = mono_custom_attrs_from_class_checked (klass, error);
+	mono_error_assert_ok (error);
+	if (cinfo) {
+		MonoClassInterfaceAttribute *attr = (MonoClassInterfaceAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_class_interface_attribute_class (), error);
+		mono_error_assert_ok (error); /*FIXME proper error handling*/
+
+		if (attr)
+			result = attr->ifacetype;
+	}
+
+	return result;
 }
 
 static void
@@ -1618,10 +1652,15 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *
 static gboolean
 cominterop_can_support_dispatch (MonoClass* klass)
 {
-	if (!mono_class_is_public (klass))
+	guint32 visibility = (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK);
+	if (visibility != TYPE_ATTRIBUTE_PUBLIC &&
+		visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC)
 		return FALSE;
 
 	if (!cominterop_com_visible (klass))
+		return FALSE;
+
+	if (cominterop_class_iface_type (klass) == CLASS_INTERFACE_NONE)
 		return FALSE;
 
 	return TRUE;
@@ -2167,6 +2206,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		ccw_entry = g_new0 (MonoCCWInterface, 1);
 		ccw_entry->ccw = ccw;
 		ccw_entry->vtable = vtable;
+		ccw_entry->iface = iface;
 		g_hash_table_insert (ccw->vtable_hash, itf, ccw_entry);
 		g_hash_table_insert (ccw_interface_hash, ccw_entry, ccw);
 	}
@@ -2551,6 +2591,7 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 	MonoCCW* ccw = ccwe->ccw;
 	MonoClass* klass_iter = NULL;
 	MonoObjectHandle object = mono_gchandle_get_target_handle (ccw->gc_handle);
+	gboolean handling_idispatch = FALSE;
 	
 	g_assert (!MONO_HANDLE_IS_NULL (object));
 	MonoClass* const klass = mono_handle_class (object);
@@ -2572,14 +2613,15 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 
 	/* handle IDispatch special */
 	if (cominterop_class_guid_equal (riid, mono_class_get_idispatch_class ())) {
-		if (!cominterop_can_support_dispatch (klass))
-			return MONO_E_NOINTERFACE;
-		
-		*ppv = cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
-		mono_error_assert_ok (error);
-		/* remember to addref on QI */
-		cominterop_ccw_addref ((MonoCCWInterface *)*ppv);
-		return MONO_S_OK;
+		if (cominterop_can_support_dispatch (klass)) {
+			*ppv = cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
+			mono_error_assert_ok (error);
+			/* remember to addref on QI */
+			cominterop_ccw_addref ((MonoCCWInterface *)*ppv);
+			return MONO_S_OK;
+		}
+
+		handling_idispatch = TRUE;
 	}
 
 #ifdef HOST_WIN32
@@ -2598,7 +2640,9 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = NULL;
 				ic = (MonoClass *)g_ptr_array_index (ifaces, i);
-				if (cominterop_class_guid_equal (riid, ic)) {
+				if (handling_idispatch
+					? cominterop_interface_is_dispatch (ic)
+					: cominterop_class_guid_equal (riid, ic)) {
 					itf = ic;
 					break;
 				}
@@ -2660,59 +2704,122 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 	return result;
 }
 
+/* Common base value for sequential dispid's */
+#define MONO_DISPID_BASE 0x60020000
+
+#define MONO_DISPID_VALUE 0
+
+static gboolean
+cominterop_class_search_dispid (MonoClass* klass, const gchar* methodname,
+	gint32* result, int* slot_count)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	ERROR_DECL (error);
+	MonoCustomAttrInfo *cinfo = NULL;
+	int pos=0;
+	int i;
+	MonoMethod** methods = NULL;
+	int methodcount;
+	MonoMethod* method = NULL;
+
+	if (klass == mono_defaults.object_class) {
+		/* System.Object gets special treatment for some reason. */
+		if (strcmp (methodname, "ToString") == 0) {
+			*result = MONO_DISPID_VALUE;
+			return TRUE;
+		}
+		if (strcmp (methodname, "Equals") == 0) {
+			*result = MONO_DISPID_BASE+1;
+			return TRUE;
+		}
+		if (strcmp (methodname, "GetHashCode") == 0) {
+			*result = MONO_DISPID_BASE+2;
+			return TRUE;
+		}
+		if (strcmp (methodname, "GetType") == 0) {
+			*result = MONO_DISPID_BASE+3;
+			return TRUE;
+		}
+		/* Method not found, subclasses start counting at 4 */
+		*slot_count = 4;
+		return FALSE;
+	}
+
+	if (!mono_class_is_interface (klass)) {
+		if (cominterop_class_search_dispid (m_class_get_parent (klass), methodname, result, &pos))
+			return TRUE;
+	}
+
+	mono_class_setup_methods (klass);
+	methodcount = mono_class_get_method_count (klass);
+	methods = m_class_get_methods (klass);
+
+	for (i = 0; i < methodcount; i++) {
+		method = methods [i];
+
+		/* Ignore constructors */
+		if ((method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
+			strcmp(method->name, ".ctor") == 0)
+			continue;
+
+		if (strcmp(method->name, methodname) == 0) {
+			cinfo = mono_custom_attrs_from_method_checked (method, error);
+			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
+			if (cinfo) {
+				MonoDispIdAttribute *dispid = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_dispid_attribute_class (), error);
+				mono_error_assert_ok (error); /*FIXME proper error handling*/;
+
+				if (dispid)
+					*result = dispid->dispid;
+				else
+					*result = MONO_DISPID_BASE + pos;
+
+				if (!cinfo->cached)
+					mono_custom_attrs_free (cinfo);
+			}
+			else
+				*result = MONO_DISPID_BASE + pos;
+
+			return TRUE;
+		}
+
+		pos++;
+	}
+
+	*slot_count = pos;
+	return FALSE;
+}
+
 static int STDCALL 
 cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 				      gunichar2** rgszNames, guint32 cNames,
 				      guint32 lcid, gint32 *rgDispId)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	static MonoClass *ComDispIdAttribute = NULL;
-	ERROR_DECL (error);
-	MonoCustomAttrInfo *cinfo = NULL;
-	int i,ret = MONO_S_OK;
-	MonoMethod* method;
+	int i, dummy, ret = MONO_S_OK;
 	gchar* methodname;
-	MonoClass *klass = NULL;
+	MonoClass* iface = ccwe->iface;
 	MonoCCW* ccw = ccwe->ccw;
-	MonoObject* object = mono_gchandle_get_target_internal (ccw->gc_handle);
-
-	/* Handle DispIdAttribute */
-	if (!ComDispIdAttribute)
-		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
-
-	g_assert (object);
-	klass = mono_object_class (object);
+	MonoObject* object;
 
 	if (!mono_domain_get ())
 		 mono_thread_attach (mono_get_root_domain ());
 
+	if (iface == mono_class_get_idispatch_class ()) {
+		object = mono_gchandle_get_target_internal (ccw->gc_handle);
+		g_assert (object);
+		iface = mono_object_class (object);
+	}
+
 	for (i=0; i < cNames; i++) {
 		methodname = mono_unicode_to_external (rgszNames[i]);
 
-		method = mono_class_get_method_from_name_checked(klass, methodname, -1, 0, error);
-		if (method && is_ok (error)) {
-			cinfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
-			if (cinfo) {
-				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
-				mono_error_assert_ok (error); /*FIXME proper error handling*/;
-
-				if (result)
-					rgDispId[i] = *(gint32*)mono_object_unbox_internal (result);
-				else
-					rgDispId[i] = (gint32)method->token;
-
-				if (!cinfo->cached)
-					mono_custom_attrs_free (cinfo);
-			}
-			else
-				rgDispId[i] = (gint32)method->token;
-		} else {
-			mono_error_cleanup (error);
-			error_init (error); /* reuse for next iteration */
+		if (!cominterop_class_search_dispid (iface, methodname, &rgDispId[i], &dummy)) {
 			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
 			ret = MONO_E_DISP_E_UNKNOWNNAME;
 		}
+
+		g_free (methodname);
 	}
 
 	return ret;

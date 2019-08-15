@@ -651,6 +651,7 @@ TESTS_CS_SRC=		\
 	generic-type-builder.2.cs	\
 	dynamic-generic-size.cs	\
 	cominterop.cs	\
+	idispatch.cs	\
 	dynamic-method-access.2.cs	\
 	dynamic-method-finalize.2.cs	\
 	dynamic-method-stack-traces.cs	\
@@ -1388,6 +1389,7 @@ PROFILE_DISABLED_TESTS += \
 	generic-type-builder.2.exe	\
 	dynamic-generic-size.exe	\
 	cominterop.exe	\
+	idispatch.exe	\
 	dynamic-method-access.2.exe	\
 	dynamic-method-finalize.2.exe	\
 	dynamic-method-stack-traces.exe	\
@@ -1930,6 +1932,7 @@ INTERP_DISABLED_TESTS += \
 	bug445361.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
+	idispatch.exe	\
 	context-static.exe \
 	delegate-async-exit.exe \
 	delegate-delegate-exit.exe \
@@ -1972,6 +1975,7 @@ INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-80307.exe \
 	dim-diamondshape.exe \
+	idispatch.exe	\
 	pinvoke3.exe
 endif
 
@@ -1981,6 +1985,7 @@ INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-60862.exe \
 	cominterop.exe \
+	idispatch.exe	\
 	dim-diamondshape.exe \
 	pinvoke3.exe
 endif
@@ -2758,7 +2763,7 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe
 
 safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-2.2.exe pinvoke17.exe pinvoke13.exe \
 	pinvoke11.exe pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe pinvoke_ppcc.exe pinvoke.exe \
-	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
+	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe idispatch.exe bug-Xamarin-5278.exe \
 	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
 
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
