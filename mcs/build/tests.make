@@ -24,7 +24,7 @@ test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 test_nunit_lib = nunitlite.dll
 xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := netstandard System.Runtime
-xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
+xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs $(topdir)/../mcs/class/System/System/Platform.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 XTEST_REMOTE_EXECUTOR = $(test_lib_dir)/RemoteExecutorConsoleApp.exe
