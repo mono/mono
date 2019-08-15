@@ -2201,6 +2201,9 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(getresuid)
 	AC_CHECK_FUNCS(setresuid)
 	AC_CHECK_FUNCS(kqueue)
+	# IBM provides a compatibility library for i offering functions like this
+	AC_CHECK_LIB(util, backtrace_symbols)
+	# Two-step so it sets it in config.h
 	AC_CHECK_FUNCS(backtrace_symbols)
 	AC_CHECK_FUNCS(mkstemp)
 	AC_CHECK_FUNCS(mmap)
