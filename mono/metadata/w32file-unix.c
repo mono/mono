@@ -1849,7 +1849,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		 * when we looked it up, so be careful to put it back
 		 * if we conclude we can't use this file.
 		 */
-		if (file_existing_share == 0) {
+		if ((file_existing_share == FILE_SHARE_NONE) || (sharemode == FILE_SHARE_NONE)) {
 			/* Quick and easy, no possibility to share */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
 
@@ -1869,18 +1869,6 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 			file_share_release (*share_info);
 			*share_info = NULL;
 		
-			return(FALSE);
-		}
-
-		if (file_existing_share != sharemode &&
-				((sharemode | FILE_SHARE_READ) != sharemode) &&
-				((file_existing_share | sharemode) == file_existing_share)) {
-			/* Share mode is trying to be more strict */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Can't restrict sharing mode: existing mode %d, requesting sharing mode: %d - the requested sharing mode is more strict", __func__, file_existing_share, sharemode);
-
-			file_share_release (*share_info);
-			*share_info = NULL;
-
 			return(FALSE);
 		}
 	} else {
