@@ -84,7 +84,7 @@ stages:
         - bash: |
             make -C netcore update-tests-corefx
           displayName: 'Download CoreFX Tests'
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
         
         - bash: |
             rm -rf .failures
@@ -95,9 +95,13 @@ stages:
               printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
               scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
             done
+            if [ -e ".failures" ]; then
+              exit 1
+            fi
           displayName: 'Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
+          continueOnError: true
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
@@ -164,7 +168,7 @@ stages:
         - bash: |
             make -C netcore update-tests-corefx
           displayName: 'Download CoreFX Tests'
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
         
         - bash: |
             rm -rf .failures
@@ -175,9 +179,13 @@ stages:
               printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
               scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
             done
+            if [ -e ".failures" ]; then
+              exit 1
+            fi
           displayName: 'Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
+          continueOnError: true
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
