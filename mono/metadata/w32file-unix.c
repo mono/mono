@@ -1853,38 +1853,22 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		 */
 		if (file_existing_share == 0) {
 			/* Quick and easy, no possibility to share */
+			// FIXME What about fileaccess == 0?
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
-
-			file_share_release (*share_info);
-			*share_info = NULL;
-			
-			return(FALSE);
+			goto fail;
 		}
 
-		if (((file_existing_share == FILE_SHARE_READ) &&
-		     (fileaccess != GENERIC_READ)) ||
-		    ((file_existing_share == FILE_SHARE_WRITE) &&
-		     (fileaccess != GENERIC_WRITE))) {
-			/* New access mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, fileaccess, file_existing_share);
+		if (((fileaccess & GENERIC_READ) && !(file_existing_share & FILE_SHARE_READ))
+			|| ((file_existing_access & GENERIC_READ) && !(sharemode & FILE_SHARE_READ))
+			|| ((fileaccess & GENERIC_WRITE) && !(file_existing_share & FILE_SHARE_WRITE))
+			|| ((file_existing_access & GENERIC_WRITE) && !(sharemode & FILE_SHARE_WRITE))) {
 
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: failure fileaccess:%X sharemode:%X existing_access:%X existing_share:%X",
+				__func__, fileaccess, sharemode, file_existing_access, file_existing_share);
+fail:
 			file_share_release (*share_info);
 			*share_info = NULL;
-		
-			return(FALSE);
-		}
-
-		if (((file_existing_access & GENERIC_READ) &&
-		     !(sharemode & FILE_SHARE_READ)) ||
-		    ((file_existing_access & GENERIC_WRITE) &&
-		     !(sharemode & FILE_SHARE_WRITE))) {
-			/* New share mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
-
-			file_share_release (*share_info);
-			*share_info = NULL;
-		
-			return(FALSE);
+			return FALSE;
 		}
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: New file!", __func__);
@@ -1892,7 +1876,6 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 
 	return(TRUE);
 }
-
 
 static gboolean
 share_allows_delete (struct stat *statbuf, FileShare **share_info)
@@ -2056,6 +2039,10 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
 		return(INVALID_HANDLE_VALUE);
 	}
+
+	// Reduce sharing if applicable.
+	filehandle->share_info->sharemode &= sharemode;
+
 
 #ifdef HAVE_POSIX_FADVISE
 	if (attrs & FILE_FLAG_SEQUENTIAL_SCAN) {
