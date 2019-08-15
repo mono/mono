@@ -1665,8 +1665,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.Copy (fs.Name, target, true);
-			}
-			finally {
+			} finally {
 				fs.Dispose();
 			}
 
