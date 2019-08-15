@@ -67,12 +67,12 @@ typedef struct {
 		double f;
 #ifdef TARGET_WASM
 		MonoObject * volatile o;
+		gpointer volatile p; // native pointer; volatile in case code mistakes o for p.
 #else
 		MonoObject *o;
+		gpointer p; // native pointer
 #endif
-		/* native size integer and pointer types */
-		gpointer p;
-		mono_u nati;
+		mono_u nati; // native size integer
 		gpointer vt;
 	} data;
 #if defined(__ppc__) || defined(__powerpc__)
