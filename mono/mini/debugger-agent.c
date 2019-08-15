@@ -764,6 +764,7 @@ static MonoCoopMutex debug_mutex;
 
 static void transport_init (void);
 static void transport_connect (const char *address);
+static void transport_close2 (void);
 static gboolean transport_handshake (void);
 static void register_transport (DebuggerTransport *trans);
 
@@ -1094,9 +1095,12 @@ mono_debugger_get_generate_debug_info ()
 MONO_API void
 mono_debugger_disconnect ()
 {
-	stop_debugger_thread ();
-	transport_connect (agent_config.address);
-	start_debugger_thread ();
+	// We just need to close the debugger client socket since
+	// the thread is blocked in the RECV method. The debugger_thread
+	// loop already handles the debugger client disconnection properly,
+	// so calling transport_close2 method is enough since the method
+	// only closes the debugger client socket.
+	transport_close2();
 }
 
 typedef void (*MonoDebuggerAttachFunc)(gboolean attached);
