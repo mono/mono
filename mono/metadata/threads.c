@@ -6268,6 +6268,7 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 		sprintf (pid_str, "%llu", (uint64_t)state->pid);
 		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
 		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
+		g_async_safe_printf ("Could not exec hang watchdog program, expected on path '%s' (errno %d)\n", hang_watchdog_path, errno);
 		g_assert_not_reached ();
 	}
 
