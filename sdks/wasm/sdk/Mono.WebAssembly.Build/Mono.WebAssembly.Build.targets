@@ -12,7 +12,7 @@
 		<IncludeMonoWasmThreads Condition="'$(IncludeMonoWasmThreads)'==''">None</IncludeMonoWasmThreads>
 		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
 		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
-		<_LoadThreadsRuntime>false</_LoadThreadsRuntime>
+		<_ThreadsRuntimeAvailable>false</_ThreadsRuntimeAvailable>
 		<_AutoRuntimeLoading>false</_AutoRuntimeLoading>				
 		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'==''">$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
 		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'=='Debug'">true</_MonoWasmDebugRuntime>
@@ -52,7 +52,7 @@
 					AfterTargets="_CheckForCompileOutputs">
 
 		<PropertyGroup Condition="('$(IncludeMonoWasmThreads)'=='All')">
-			<_LoadThreadsRuntime>true</_LoadThreadsRuntime>
+			<_ThreadsRuntimeAvailable>true</_ThreadsRuntimeAvailable>
 		</PropertyGroup>
 
 		<PropertyGroup Condition="('$(EnableAutoRuntimeLoading)'=='true')">
@@ -153,7 +153,7 @@
 			VfsPrefix="$(MonoWasmManagedOutputDirName)"
 			InitBindings="$(_WasmHasBindingReference)"
 			EnableDebugging="$(_DebugSymbolsProduced)"
-			LoadThreadsRuntime="$(_LoadThreadsRuntime)"
+			ThreadsRuntimeAvailable="$(_ThreadsRuntimeAvailable)"
 			AutoRuntimeLoading="$(_AutoRuntimeLoading)"
 			FileList="@(_WasmOutputFiles)"
 			OutputFile="$(_MonoWasmRuntimeJs)"

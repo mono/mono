@@ -21,7 +21,7 @@ namespace Mono.WebAssembly.Build {
 public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
-public bool LoadThreadsRuntime { get; set; }
+public bool ThreadsRuntimeAvailable { get; set; }
 public bool AutoRuntimeLoading { get; set; }
 public IEnumerable<string> FileList { get; set; }
 
@@ -34,11 +34,11 @@ public IEnumerable<string> FileList { get; set; }
 
             #line 3 ""
             this.WriteLine("var Module = { ");
-            this.WriteLine($"{(LoadThreadsRuntime?"\tloadThreadsRuntime: true, ": "\tloadThreadsRuntime: false, ")}");
+            this.WriteLine($"{(ThreadsRuntimeAvailable?"\tthreadsRuntimeAvailable: true, ": "\tthreadsRuntimeAvailable: false, ")}");
             this.WriteLine($"{(AutoRuntimeLoading?"\tenableAutoRuntimeLoading: true, ": "\tenableAutoRuntimeLoading: false, ")}");
             this.WriteLine("\tlocateMonoThreads: function (path, pref) {\n\t\treturn pref + path;\n\t},");
             this.WriteLine("\tlocateFile: function (path, pref) {");
-            this.WriteLine("\t\tif (this.loadThreadsRuntime) {");
+            this.WriteLine("\t\tif (this.ThreadsRuntimeAvailable) {");
             this.WriteLine("\t\t\tif (typeof SharedArrayBuffer !== 'undefined') {");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.js\")) return this.locateMonoThreads (path, pref);");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.wasm\")) return this.locateMonoThreads (path, pref);");
@@ -117,7 +117,7 @@ public IEnumerable<string> FileList { get; set; }
             this.WriteLine("\tif (Module.enableAutoRuntimeLoading) {");
             this.WriteLine("\t\tvar __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = \"mono.js\";");
             this.WriteLine("\t\tvar __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];");
-            this.WriteLine("\t\tif (Module.loadThreadsRuntime && typeof SharedArrayBuffer !== 'undefined')");
+            this.WriteLine("\t\tif (Module.threadsRuntimeAvailable && typeof SharedArrayBuffer !== 'undefined')");
             this.WriteLine("\t\t\t__mono_wasm_monoScript_js__.src = \"threads/mono.js\";");
             this.WriteLine("\t\t__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);");
             this.WriteLine("\t}");

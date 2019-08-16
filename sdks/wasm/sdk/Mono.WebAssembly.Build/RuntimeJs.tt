@@ -1,12 +1,12 @@
 <#@ template inherits="TemplateBase" #>
 <#@ import namespace="System.Collections.Generic" #>
 var Module = {
-	loadThreadsRuntime: <#=LoadThreadsRuntime??false#>, 
+	threadsRuntimeAvailable: <#=ThreadsRuntimeAvailable??false#>, 
 	locateMonoThreads: function (path, pref) {
 		return pref + path;
 	},
 	locateFile: function (path, pref) {
-		if (this.loadThreadsRuntime) {
+		if (this.threadsRuntimeAvailable) {
 			if (typeof SharedArrayBuffer !== 'undefined') {
 				if (path.startsWith ("mono.js")) return this.locateMonoThreads (path, pref);
 				if (path.startsWith ("mono.wasm")) return this.locateMonoThreads (path, pref);
@@ -30,16 +30,18 @@ var Module = {
 };
 
 (function() {
-	var __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = "mono.js";
-	var __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];
-	if (Module.loadThreadsRuntime && typeof SharedArrayBuffer !== 'undefined')
-		__mono_wasm_monoScript_js__.src = "threads/mono.js";
-	__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);
+	if (Module.enableAutoRuntimeLoading) {
+		var __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = "mono.js";
+		var __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];
+		if (Module.threadsRuntimeAvailable && typeof SharedArrayBuffer !== 'undefined')
+			__mono_wasm_monoScript_js__.src = "threads/mono.js";
+		__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);
+	}
 })();
 <#+
 public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
-public bool LoadThreadsRuntime { get; set; }
+public bool ThreadsRuntimeAvailable { get; set; }
 public IEnumerable<string> FileList { get; set; }
 #>
