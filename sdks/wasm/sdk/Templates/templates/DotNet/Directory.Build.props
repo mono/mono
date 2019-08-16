@@ -2,6 +2,7 @@
   <PropertyGroup>
     <MonoWasmSdkPath>MONO_SDK</MonoWasmSdkPath>
     <MonoWasmLinkMode>Full</MonoWasmLinkMode>
-    <EnableMonoWasmThreads>None</EnableMonoWasmThreads>    
+    <IncludeMonoWasmThreads>None</IncludeMonoWasmThreads>
+    <EnableAutoRuntimeLoading>true</EnableAutoRuntimeLoading>      
   </PropertyGroup>
 </Project>

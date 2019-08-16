@@ -9,10 +9,11 @@
 		<MonoWasmIntermediateDir>$(IntermediateOutputPath)monowasm\</MonoWasmIntermediateDir>
 		<MonoWasmLinkMode Condition="'$(MonoWasmLinkMode)'==''">SdkOnly</MonoWasmLinkMode>
 		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
-		<EnableMonoWasmThreads Condition="'$(EnableMonoWasmThreads)'==''">None</EnableMonoWasmThreads>
+		<IncludeMonoWasmThreads Condition="'$(IncludeMonoWasmThreads)'==''">None</IncludeMonoWasmThreads>
 		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
 		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
-		<_LoadThreadsRuntime>false</_LoadThreadsRuntime>		
+		<_LoadThreadsRuntime>false</_LoadThreadsRuntime>
+		<_AutoRuntimeLoading>false</_AutoRuntimeLoading>				
 		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'==''">$(_DebugSymbolsProduced)</_MonoWasmDebugRuntime>
 		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'=='Debug'">true</_MonoWasmDebugRuntime>
 		<_MonoWasmDebugRuntime Condition="'$(MonoWasmRuntime)'=='Release'">false</_MonoWasmDebugRuntime>
@@ -29,9 +30,12 @@
 		<Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
 			Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
 			Code="WASM0001"/>
-		<Error Text="The property EnableMonoWasmThreads is invalid.  Valid values are 'None', 'ThreadsOnly' or 'All'."
-			Condition="'$(EnableMonoWasmThreads)'!='' and '$(EnableMonoWasmThreads)'!='None' and '$(EnableMonoWasmThreads)'!='ThreadsOnly' and '$(EnableMonoWasmThreads)'!='All'"
+		<Error Text="The property IncludeMonoWasmThreads is invalid.  Valid values are 'None', 'ThreadsOnly' or 'All'."
+			Condition="'$(IncludeMonoWasmThreads)'!='' and '$(IncludeMonoWasmThreads)'!='None' and '$(IncludeMonoWasmThreads)'!='ThreadsOnly' and '$(IncludeMonoWasmThreads)'!='All'"
 			Code="WASM0002"/>
+		<Error Text="The property EnableAutoRuntimeLoading is invalid.  Valid values are 'True' or 'False'."
+			Condition="'$(EnableAutoRuntimeLoading)'!='' and '$(EnableAutoRuntimeLoading)'!='True' and '$(EnableAutoRuntimeLoading)'!='False'"
+			Code="WASM0003"/>
 	</Target>
 
 	<!-- suppress local copy for now, we don't want any local copied dlls -->
@@ -47,9 +51,13 @@
 	<Target Name="_MonoWasmAssemblyCollectOutput"
 					AfterTargets="_CheckForCompileOutputs">
 
-		<PropertyGroup Condition="('$(EnableMonoWasmThreads)'=='All')">
+		<PropertyGroup Condition="('$(IncludeMonoWasmThreads)'=='All')">
 			<_LoadThreadsRuntime>true</_LoadThreadsRuntime>
 		</PropertyGroup>
+
+		<PropertyGroup Condition="('$(EnableAutoRuntimeLoading)'=='true')">
+			<_AutoRuntimeLoading>true</_AutoRuntimeLoading>
+		</PropertyGroup>		
 
 		<!-- 
 			Make sure we set the runtime paths correctly.
@@ -72,12 +80,12 @@
 			<_MonoWasmRuntimeThreadsPath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimeThreadsPath>
 		</PropertyGroup>
 
-		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
+		<PropertyGroup Condition="'$(IncludeMonoWasmThreads)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
 			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\threads-release\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\threads-debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
 
-		<PropertyGroup Condition="'$(EnableMonoWasmThreads)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
+		<PropertyGroup Condition="'$(IncludeMonoWasmThreads)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
 			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)threads-release\</_MonoWasmRuntimePath>
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
@@ -88,7 +96,7 @@
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm.map" TargetPath="mono.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
 		</ItemGroup>
 
-		<ItemGroup Condition="'$(EnableMonoWasmThreads)'=='All'">
+		<ItemGroup Condition="'$(IncludeMonoWasmThreads)'=='All'">
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.js" TargetPath="threads/mono.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.wasm" TargetPath="threads/mono.wasm" />
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.worker.js" TargetPath="threads/mono.worker.js"/>
@@ -96,7 +104,7 @@
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.js.mem" TargetPath="threads/mono.js.mem" />
 		</ItemGroup>
 
-		<ItemGroup Condition="'$(EnableMonoWasmThreads)'=='ThreadsOnly'">
+		<ItemGroup Condition="'$(IncludeMonoWasmThreads)'=='ThreadsOnly'">
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.js" TargetPath="mono.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.wasm" TargetPath="mono.wasm" />
 			<_WasmOutput Include="$(_MonoWasmRuntimeThreadsPath)mono.worker.js" TargetPath="mono.worker.js"/>
@@ -146,6 +154,7 @@
 			InitBindings="$(_WasmHasBindingReference)"
 			EnableDebugging="$(_DebugSymbolsProduced)"
 			LoadThreadsRuntime="$(_LoadThreadsRuntime)"
+			AutoRuntimeLoading="$(_AutoRuntimeLoading)"
 			FileList="@(_WasmOutputFiles)"
 			OutputFile="$(_MonoWasmRuntimeJs)"
 		/>

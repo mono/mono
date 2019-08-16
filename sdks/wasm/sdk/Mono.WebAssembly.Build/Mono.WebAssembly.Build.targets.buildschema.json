@@ -38,14 +38,19 @@
       "kind": "bool",
       "default": true
     },
-    "EnableMonoWasmThreads": {
+    "IncludeMonoWasmThreads": {
       "description": "Whether to include support for threads or not.",
       "values": {
-        "None": "Do not enable runtime for threads.",
-        "ThreadsOnly": "Only enable runtime for threads support.",
-        "All": "Enable runtimes for both thread and non thread support.",
+        "None": "Do not include runtime for threads.",
+        "ThreadsOnly": "Only include runtime for threads support.",
+        "All": "Include runtimes for both thread and non thread support.",
       },
       "default": "None"
+    },
+    "EnableAutoRuntimeLoading": {
+      "description": "Whether to enable support for automatically loading the correct wasm (threaded or non-threaded) runtime.",
+      "kind": "bool",
+      "default": false
     },
     "MonoWasmRuntime": {
       "description": "Decide which version of the wasm runtime should be published.  Default: Tied to _DebugSymbolsProduced",

@@ -2,12 +2,13 @@
   <PropertyGroup>
     <MonoWasmSdkPath>$(MSBuildThisFileDirectory)..\..\..\..\</MonoWasmSdkPath>
     <MonoWasmLinkMode>Full</MonoWasmLinkMode>
+    <EnableAutoRuntimeLoading>true</EnableAutoRuntimeLoading>      
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugThreads|AnyCPU' ">
-    <EnableMonoWasmThreads>ThreadsOnly</EnableMonoWasmThreads>  
+    <IncludeMonoWasmThreads>ThreadsOnly</IncludeMonoWasmThreads>  
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseThreads|AnyCPU' ">
-    <EnableMonoWasmThreads>ThreadsOnly</EnableMonoWasmThreads>  
+    <IncludeMonoWasmThreads>ThreadsOnly</IncludeMonoWasmThreads>  
   </PropertyGroup>
 
 </Project>

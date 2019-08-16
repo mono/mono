@@ -22,6 +22,7 @@ public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
 public bool LoadThreadsRuntime { get; set; }
+public bool AutoRuntimeLoading { get; set; }
 public IEnumerable<string> FileList { get; set; }
 
         #line default
@@ -34,6 +35,7 @@ public IEnumerable<string> FileList { get; set; }
             #line 3 ""
             this.WriteLine("var Module = { ");
             this.WriteLine($"{(LoadThreadsRuntime?"\tloadThreadsRuntime: true, ": "\tloadThreadsRuntime: false, ")}");
+            this.WriteLine($"{(AutoRuntimeLoading?"\tenableAutoRuntimeLoading: true, ": "\tenableAutoRuntimeLoading: false, ")}");
             this.WriteLine("\tlocateMonoThreads: function (path, pref) {\n\t\treturn pref + path;\n\t},");
             this.WriteLine("\tlocateFile: function (path, pref) {");
             this.WriteLine("\t\tif (this.loadThreadsRuntime) {");
@@ -112,11 +114,13 @@ public IEnumerable<string> FileList { get; set; }
             #line hidden
 
             this.WriteLine("(function() {");
-            this.WriteLine("\tvar __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = \"mono.js\";");
-            this.WriteLine("\tvar __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];");
-            this.WriteLine("\tif (Module.loadThreadsRuntime && typeof SharedArrayBuffer !== 'undefined')");
-            this.WriteLine("\t\t__mono_wasm_monoScript_js__.src = \"threads/mono.js\";");
-            this.WriteLine("\t__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);");
+            this.WriteLine("\tif (Module.enableAutoRuntimeLoading) {");
+            this.WriteLine("\t\tvar __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = \"mono.js\";");
+            this.WriteLine("\t\tvar __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];");
+            this.WriteLine("\t\tif (Module.loadThreadsRuntime && typeof SharedArrayBuffer !== 'undefined')");
+            this.WriteLine("\t\t\t__mono_wasm_monoScript_js__.src = \"threads/mono.js\";");
+            this.WriteLine("\t\t__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);");
+            this.WriteLine("\t}");
             this.WriteLine("})();");
 
             return this.GenerationEnvironment.ToString();
