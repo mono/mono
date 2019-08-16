@@ -114,7 +114,7 @@ public IEnumerable<string> FileList { get; set; }
             this.WriteLine("(function() {");
             this.WriteLine("\tvar __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = \"mono.js\";");
             this.WriteLine("\tvar __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];");
-            this.WriteLine("\tif (Module.loadFromThreads && typeof SharedArrayBuffer !== 'undefined')");
+            this.WriteLine("\tif (Module.loadThreadsRuntime && typeof SharedArrayBuffer !== 'undefined')");
             this.WriteLine("\t\t__mono_wasm_monoScript_js__.src = \"threads/mono.js\";");
             this.WriteLine("\t__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);");
             this.WriteLine("})();");
