@@ -104,5 +104,15 @@ describe("The WebAssembly Issues Test Suite",function(){
 
       );
     }, DEFAULT_TIMEOUT);  
+    it('IssuesTestSuite: https://github.com/mono/mono/issues/12917 IL Linker not working correctly with IQueryable extensions.', () => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+
+
+      var ret = _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:IssueIQueryable", []);
+      assert.equal(ret, 4, "result doesn't match 4");
+
+    }, DEFAULT_TIMEOUT); 
+
 
   });
