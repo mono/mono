@@ -188,7 +188,13 @@ _g_dladdr(void* s, _g_Dl_info* i) {
 			 * XXX: See if we can't frob usla's memory ranges for
 			 * const strings; but is quite difficult.
 			 */
-			sprintf(libname, "%s(%s)", file_part, member_part);
+			if (member_part[0] == '\0') {
+				/* Not an archive, just copy the file name. */
+				strcpy(libname, file_part);
+			} else {
+				/* It's an archive with member. */
+				sprintf(libname, "%s(%s)", file_part, member_part);
+			}
 			i->dli_fname = libname;
 
 			free(buf);
