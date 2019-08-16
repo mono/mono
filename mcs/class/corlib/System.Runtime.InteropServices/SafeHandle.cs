@@ -216,7 +216,8 @@ namespace System.Runtime.InteropServices
 					// Continue doing this until the update succeeds (because nobody
 					// modifies the state field between the read and write operations) or
 					// the state moves to closed.
-					new_state = old_state - RefCount_One;
+					new_state = (old_state & RefCount_Mask) - RefCount_One;
+					// new_state = old_state - RefCount_One;
 					if ((old_state & RefCount_Mask) == RefCount_One)
 						new_state |= (int) State.Closed;
 					if (dispose)
