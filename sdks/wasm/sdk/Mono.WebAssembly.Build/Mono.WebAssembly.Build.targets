@@ -26,9 +26,12 @@
 	</PropertyGroup>
 
 	<Target Name="_ValidateProjectProperties">
-	<Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
-		 Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
-		 Code="WASM0001"/>
+		<Error Text="The property MonoWasmRuntime is invalid.  Valid values are 'Debug' or 'Release'."
+			Condition="'$(MonoWasmRuntime)'!='' and '$(MonoWasmRuntime)'!='Debug' and '$(MonoWasmRuntime)'!='Release'"
+			Code="WASM0001"/>
+		<Error Text="The property EnableMonoWasmThreads is invalid.  Valid values are 'None', 'ThreadsOnly' or 'All'."
+			Condition="'$(EnableMonoWasmThreads)'!='' and '$(EnableMonoWasmThreads)'!='None' and '$(EnableMonoWasmThreads)'!='ThreadsOnly' and '$(EnableMonoWasmThreads)'!='All'"
+			Code="WASM0002"/>
 	</Target>
 
 	<!-- suppress local copy for now, we don't want any local copied dlls -->
