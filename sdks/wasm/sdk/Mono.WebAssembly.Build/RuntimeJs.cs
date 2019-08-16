@@ -38,7 +38,7 @@ public IEnumerable<string> FileList { get; set; }
             this.WriteLine($"{(AutoRuntimeLoading?"\tenableAutoRuntimeLoading: true, ": "\tenableAutoRuntimeLoading: false, ")}");
             this.WriteLine("\tlocateMonoThreads: function (path, pref) {\n\t\treturn pref + path;\n\t},");
             this.WriteLine("\tlocateFile: function (path, pref) {");
-            this.WriteLine("\t\tif (this.ThreadsRuntimeAvailable) {");
+            this.WriteLine("\t\tif (this.threadsRuntimeAvailable) {");
             this.WriteLine("\t\t\tif (typeof SharedArrayBuffer !== 'undefined') {");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.js\")) return this.locateMonoThreads (path, pref);");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.wasm\")) return this.locateMonoThreads (path, pref);");

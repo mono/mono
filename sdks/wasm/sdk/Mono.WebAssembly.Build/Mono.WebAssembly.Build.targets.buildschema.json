@@ -43,7 +43,7 @@
       "values": {
         "None": "Do not include runtime for threads.",
         "ThreadsOnly": "Only include runtime for threads support.",
-        "All": "Include runtimes for both thread and non thread support.",
+        "All": "Include runtimes for both thread and non thread support."
       },
       "default": "None"
     },
