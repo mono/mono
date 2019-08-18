@@ -132,7 +132,6 @@ struct _InterpFrame {
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
 	char           *args;
-	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	unsigned char  *locals;
@@ -149,6 +148,7 @@ struct _InterpFrame {
 	MonoException     *ex;
 	GSList *finally_ips;
 	const unsigned short *endfinally_ip;
+	gboolean varargs : 1;
 };
 
 typedef struct {

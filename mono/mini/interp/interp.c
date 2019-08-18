@@ -3246,6 +3246,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	locals = (unsigned char *) vt_sp + imethod->vt_stack_size;
 	frame->locals = locals;
 	child_frame.parent = frame;
+	child_frame.varargs = FALSE;
 
 	if (clause_args && clause_args->filter_exception) {
 		sp->data.p = clause_args->filter_exception;
@@ -3290,9 +3291,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ARGLIST)
-			g_assert (frame->varargs);
 			sp->data.p = vt_sp;
-			*(gpointer*)sp->data.p = frame->varargs;
+			g_assert (frame->varargs);
+			*(gpointer*)sp->data.p = frame->stack_args;
 			vt_sp += ALIGN_TO (sizeof (gpointer), MINT_VT_ALIGNMENT);
 			++ip;
 			++sp;
@@ -3586,7 +3587,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
 			num_varargs = csig->param_count - csig->sentinelpos;
-			child_frame.varargs = (char*) vt_sp;
+			child_frame.stack_args = (stackval*)vt_sp;
+			child_frame.varargs = TRUE;
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
 			ip += 3;
@@ -3598,6 +3600,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			child_frame.stack_args = sp;
 
 			interp_exec_method (&child_frame, context, error);
+
+			child_frame.varargs = FALSE;
 
 			CHECK_RESUME_STATE (context);
 
