@@ -128,12 +128,8 @@ typedef struct _InterpMethod
 } InterpMethod;
 
 struct _InterpFrame {
-	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
-	stackval       *retval; /* parent */
-	char           *varargs;
-	stackval       *stack_args; /* parent */
-	stackval       *stack;
+
 	/*
 	 * For GC tracking of local objrefs in exec_method ().
 	 * Storing into this field will keep the object pinned
@@ -145,9 +141,57 @@ struct _InterpFrame {
 	/* exception info */
 	const unsigned short  *ip;
 	MonoException     *ex;
+
+	// These are all pointers, but assumed to be within
+	// 2GB of the frame, i.e. all stack allocated, and the frame is too.
+	// This is a bit painful to debug, granted.
+	//
+	// As the pointers can be beyond 4GB, NULL has a special representation
+	// of 0. The values cannot coincide with frame itself, so that is not
+	// ambiguous.
+	//
+	// These are at the end of InterpFrame to sort by size, to minimize padding for alignment.
+	//
+	gint32 parent_offset;     // parent
+	gint32 retval_offset;     // parent
+	gint32 stack_args_offset; // parent
+	gint32 stack_offset;
+	gint32 varargs_offset;
 };
 
-#define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
+// "get" is implied, "set" is rarer and explicit.
+// "mono", "interp", "frame" could all be implied.
+#define MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS(name, type)		\
+											\
+static inline type*									\
+mono_interp_frame_ ## name (InterpFrame* frame)						\
+{											\
+	ptrdiff_t const offset = frame->name ## _offset;				\
+	type* const value = (type*)(offset ? ((char*)frame - offset) : NULL);		\
+	return value;									\
+}											\
+											\
+static inline void									\
+mono_interp_frame_set_ ## name (InterpFrame* frame, type* value)			\
+{											\
+	ptrdiff_t const offset = ((char*)frame) - ((char*)value);			\
+	gint32 const offset32 = (gint32)offset;						\
+	g_assert (!value || offset == offset32);					\
+	frame->name ## _offset = value ? offset32 : 0;					\
+}											\
+
+MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS (parent, InterpFrame)
+MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS (retval, stackval)
+MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS (stack, stackval)
+MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS (stack_args, stackval)
+MONO_INTERP_FRAME_COMPRESSED_STACK_POINTER_ACCESSORS (varargs, char)
+
+static inline guchar*
+mono_interp_frame_locals (InterpFrame* frame)
+{
+	InterpMethod* imethod = frame->imethod;
+	return (guchar*)mono_interp_frame_stack (frame) + imethod->stack_size + imethod->vt_stack_size;
+}
 
 typedef struct {
 	/* Resume state for resuming execution in mixed mode */

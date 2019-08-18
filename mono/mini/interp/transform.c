@@ -915,7 +915,7 @@ interp_generate_bie_throw (TransformData *td)
 /*
  * These are additional locals that can be allocated as we transform the code.
  * They are allocated past the method locals so they are accessed in the same
- * way, with an offset relative to the frame->locals.
+ * way, with an offset relative to frame_locals (frame).
  */
 static int
 create_interp_local (TransformData *td, MonoType *type)
