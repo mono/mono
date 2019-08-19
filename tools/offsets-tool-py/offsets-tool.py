@@ -179,7 +179,7 @@ class OffsetsTool:
 			"SgenThreadInfo",
 			"SgenClientThreadInfo",
 			"MonoProfilerCallContext",
-			"MonoError"
+			"MonoErrorExternal",
 		]
 		self.jit_type_names = [
 			"MonoLMF",

@@ -228,7 +228,7 @@ namespace System
 
             for (int i = 0; i < exceptionsCopy.Length; i++)
             {
-                var edi = innerExceptionInfos[i];
+                ExceptionDispatchInfo edi = innerExceptionInfos[i];
                 if (edi != null) exceptionsCopy[i] = edi.SourceException;
 
                 if (exceptionsCopy[i] == null)
@@ -306,10 +306,7 @@ namespace System
         /// Gets a read-only collection of the <see cref="System.Exception"/> instances that caused the
         /// current exception.
         /// </summary>
-        public ReadOnlyCollection<Exception> InnerExceptions
-        {
-            get { return m_innerExceptions; }
-        }
+        public ReadOnlyCollection<Exception> InnerExceptions => m_innerExceptions;
 
 
         /// <summary>
@@ -380,8 +377,7 @@ namespace System
             List<Exception> flattenedExceptions = new List<Exception>();
 
             // Create a list to remember all aggregates to be flattened, this will be accessed like a FIFO queue
-            List<AggregateException> exceptionsToFlatten = new List<AggregateException>();
-            exceptionsToFlatten.Add(this);
+            var exceptionsToFlatten = new List<AggregateException> { this };
             int nDequeueIndex = 0;
 
             // Continue removing and recursively flattening exceptions, until there are no more.
@@ -473,12 +469,6 @@ namespace System
         ///
         /// See https://docs.microsoft.com/en-us/visualstudio/debugger/using-the-debuggerdisplay-attribute
         /// </summary>
-        private int InnerExceptionCount
-        {
-            get
-            {
-                return InnerExceptions.Count;
-            }
-        }
+        private int InnerExceptionCount => InnerExceptions.Count;
     }
 }

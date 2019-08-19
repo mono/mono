@@ -37,11 +37,7 @@ namespace System.Resources
             _value = value;
         }
 
-        internal int DataPosition
-        {
-            get { return _dataPos; }
-            //set { _dataPos = value; }
-        }
+        internal int DataPosition => _dataPos;
 
         // Allows adding in profiling data in a future version, or a special
         // resource profiling build.  We could also use WeakReference.
@@ -496,8 +492,7 @@ namespace System.Resources
         {
             if (_version == 1)
                 return LoadObjectV1(pos);
-            ResourceTypeCode typeCode;
-            return LoadObjectV2(pos, out typeCode);
+            return LoadObjectV2(pos, out _);
         }
 
         internal object? LoadObject(int pos, out ResourceTypeCode typeCode)
