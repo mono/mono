@@ -31,7 +31,7 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: false
       variables:
-        - _BuildConfig: Release  # we only do Release builds of csproj in netcore/ and this needs to match for arcade to find logs
+        - _BuildConfig: Release
       jobs:
 
       ############ LINUX BUILD ############
@@ -79,6 +79,7 @@ stages:
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
 
         - bash: |
@@ -163,6 +164,7 @@ stages:
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
 
         - bash: |
@@ -254,6 +256,7 @@ stages:
             MKDIR mono\mini\.libs\
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
+            MKDIR artifacts\log\$(_BuildConfig)\
           displayName: 'Build (MSBuild and Make)'
           env:
             CHERE_INVOKING: yes
