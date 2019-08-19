@@ -37,7 +37,7 @@ stages:
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 90
+        timeoutInMinutes: 300
         strategy:
           matrix:
             x64:
@@ -72,6 +72,7 @@ stages:
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
+            git submodule update --init -- external/llvm
             cd netcore
             ./build.sh
           displayName: 'Build (Make)'
@@ -89,6 +90,7 @@ stages:
         - bash: |
             rm -rf .failures
             counter=0
+            export MONO_ENV_OPTIONS="--llvm"
             tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
             for testdir in netcore/corefx/tests/extracted/*; do
               counter=$((counter+1))
@@ -99,7 +101,7 @@ stages:
               exit 1
             fi
           displayName: 'Run CoreFX Tests'
-          timeoutInMinutes: 90
+          timeoutInMinutes: 300
           continueOnError: true
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
@@ -131,7 +133,7 @@ stages:
       ############ MACOS BUILD ############
       - job: Build_macOS
         displayName: macOS
-        timeoutInMinutes: 90
+        timeoutInMinutes: 300
         strategy:
           matrix:
             x64:
@@ -156,6 +158,7 @@ stages:
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
+            git submodule update --init -- external/llvm
             cd netcore
             ./build.sh
           displayName: 'Build (Make)'
@@ -173,6 +176,7 @@ stages:
         - bash: |
             rm -rf .failures
             counter=0
+            export MONO_ENV_OPTIONS="--llvm"
             tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
             for testdir in netcore/corefx/tests/extracted/*; do
               counter=$((counter+1))
@@ -183,7 +187,7 @@ stages:
               exit 1
             fi
           displayName: 'Run CoreFX Tests'
-          timeoutInMinutes: 90
+          timeoutInMinutes: 300
           continueOnError: true
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
