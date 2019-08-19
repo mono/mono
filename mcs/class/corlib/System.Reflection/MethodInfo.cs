@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[ComVisible(true)]
+	[Serializable]
 	[ComDefaultInterface(typeof(_MethodInfo))]
 	[ClassInterface(ClassInterfaceType.None)]
 #if MOBILE
@@ -54,5 +55,7 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 #endif
+
+		internal virtual int GenericParameterCount => GetGenericArguments ().Length;
 	}
 }
