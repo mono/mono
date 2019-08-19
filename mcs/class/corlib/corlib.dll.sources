@@ -248,6 +248,7 @@ System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
+System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
