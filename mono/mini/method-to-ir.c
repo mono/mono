@@ -878,7 +878,6 @@ handle_enum:
  * The following tables are used to quickly validate the IL code in type_from_op ().
  */
 #define IF_P8(v) (SIZEOF_VOID_P == 8 ? v : STACK_INV)
-#define INTPTR_TYPE (SIZEOF_VOID_P == 8 ? STACK_I8 : STACK_I4)
 #define IF_P8_I8 IF_P8(STACK_I8)
 #define IF_P8_PTR IF_P8(STACK_PTR)
 
@@ -1856,8 +1855,11 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		return 0;
 	case MONO_TYPE_PTR:
 		/* STACK_MP is needed when setting pinned locals */
-		if (arg->type != INTPTR_TYPE && arg->type != STACK_PTR && arg->type != STACK_MP)
-			return 1;
+		if (arg->type != STACK_I4 && arg->type != STACK_PTR && arg->type != STACK_MP)
+#if SIZEOF_VOID_P == 8
+			if (arg->type != STACK_I8)
+#endif
+				return 1;
 		return 0;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
@@ -1880,8 +1882,11 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		return 0;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-		if (arg->type != STACK_I8 && !(SIZEOF_VOID_P == 8 && arg->type == STACK_PTR))
-			return 1;
+		if (arg->type != STACK_I8)
+#if SIZEOF_VOID_P == 8
+			if (arg->type != STACK_PTR)
+#endif
+				return 1;
 		return 0;
 	case MONO_TYPE_R4:
 		if (arg->type != cfg->r4_stack_type)
