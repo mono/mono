@@ -10,6 +10,9 @@
  *
  * (C) 2001, 2002 Ximian, Inc.
  */
+
+#ifndef interp_exec_method_inner
+
 #ifndef __USE_ISOC99
 #define __USE_ISOC99
 #endif
@@ -109,8 +112,6 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	frame->ip = NULL;
 }
 
-#define interp_exec_method(frame, context, error) interp_exec_method_full ((frame), (context), NULL, error)
-
 /*
  * List of classes whose methods will be executed by transitioning to JITted code.
  * Used for testing.
@@ -123,7 +124,9 @@ static gboolean ss_enabled;
 
 static gboolean interp_init_done = FALSE;
 
-static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
+static void MONO_NEVER_INLINE interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
+static void MONO_NEVER_INLINE interp_exec_method (InterpFrame *frame, ThreadContext *context, MonoError *error);
+
 static InterpMethod* lookup_method_pointer (gpointer addr);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
@@ -3183,15 +3186,18 @@ mono_interp_enum_hasflag (stackval* sp, MonoClass* klass)
 	sp->data.i = (a_val & b_val) == b_val;
 }
 
+#endif
+#ifdef interp_exec_method_inner
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  * The ERROR argument is used to avoid declaring an error object for every interp frame, its not used
  * to return error information.
  */
-static void
-interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
-{
+//static void
+// interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
+// {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
 	const guint16 *endfinally_ip = NULL;
@@ -6600,18 +6606,18 @@ exit_frame:
 	error_init_reuse (error);
 
 	if (clause_args && clause_args->base_frame)
-		memcpy (clause_args->base_frame->stack, frame->stack, imethod->alloca_size);
+		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
 
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
-	    imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
+	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
 		MonoProfilerCallContext *prof_ctx = NULL;
 
-		if (imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
+		if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
 			prof_ctx = g_new0 (MonoProfilerCallContext, 1);
 			prof_ctx->interp_frame = frame;
-			prof_ctx->method = imethod->method;
+			prof_ctx->method = frame->imethod->method;
 
-			MonoType *rtype = mono_method_signature_internal (imethod->method)->ret;
+			MonoType *rtype = mono_method_signature_internal (frame->imethod->method)->ret;
 
 			switch (rtype->type) {
 			case MONO_TYPE_VOID:
@@ -6625,14 +6631,18 @@ exit_frame:
 			}
 		}
 
-		MONO_PROFILER_RAISE (method_leave, (imethod->method, prof_ctx));
+		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
 
 		g_free (prof_ctx);
-	} else if (frame->ex && imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
-		MONO_PROFILER_RAISE (method_exception_leave, (imethod->method, &frame->ex->object));
+	} else if (frame->ex && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
+		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
 
 	DEBUG_LEAVE ();
-}
+// }
+
+#endif
+
+#ifndef interp_exec_method_inner
 
 static void
 interp_parse_options (const char *options)
@@ -6965,3 +6975,20 @@ mono_ee_interp_init (const char *opts)
 
 	register_interp_stats ();
 }
+
+#define interp_exec_method_inner
+
+static MONO_NEVER_INLINE void
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
+{
+#include __FILE__
+}
+
+static MONO_NEVER_INLINE void
+interp_exec_method (InterpFrame *frame, ThreadContext *context, MonoError *error)
+{
+#define clause_args ((FrameClauseArgs*)NULL)
+#include __FILE__
+}
+
+#endif
