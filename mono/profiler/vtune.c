@@ -162,7 +162,7 @@ code_buffer_new (MonoProfiler *prof, void *buffer, int size, MonoProfilerCodeBuf
 }
 
 MONO_API void
-mono_profiler_init_vtune (const char *desc)
+mono_profiler_init_vtune (const char *desc);
 
 /* the entry point */
 void
