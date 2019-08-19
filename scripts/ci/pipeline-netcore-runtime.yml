@@ -31,7 +31,7 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: false
       variables:
-        - _BuildConfig: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
+        - _BuildConfig: Release  # we only do Release builds of csproj in netcore/ and this needs to match for arcade to find logs
       jobs:
 
       ############ LINUX BUILD ############
@@ -73,7 +73,7 @@ stages:
 
         - bash: |
             cd netcore
-            ./build.sh
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
@@ -120,11 +120,11 @@ stages:
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
+        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -157,7 +157,7 @@ stages:
 
         - bash: |
             cd netcore
-            ./build.sh
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
@@ -204,11 +204,11 @@ stages:
           timeoutInMinutes: 90
           condition: eq(variables['System.TeamProject'], 'public')
 
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
+        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -250,7 +250,7 @@ stages:
         - script: |
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
             CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
-            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
+            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl CORLIB_BUILD_FLAGS='-c $(_BuildConfig)'"
             MKDIR mono\mini\.libs\
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
@@ -258,11 +258,11 @@ stages:
           env:
             CHERE_INVOKING: yes
 
-        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
+        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -c $(_BuildConfig) -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
           displayName: Restore blob feed tasks
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - powershell: eng\common\msbuild.ps1 -ci $(Build.SourcesDirectory)\eng\publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - powershell: eng\common\msbuild.ps1 -ci $(Build.SourcesDirectory)\eng\publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
           condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
