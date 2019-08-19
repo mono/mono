@@ -47,7 +47,7 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
 
 #define MIN_PAGES 16
 
-#if _WIN32 // This turns out to be the same.
+#if _WIN32 // These are the same.
 #define MIN_ALIGN MEMORY_ALLOCATION_ALIGNMENT
 #elif defined(__x86_64__)
 /*
@@ -290,7 +290,7 @@ free_chunklist (CodeChunk *chunk)
 #if _WIN32
 			void* const heap = mono_code_manager_heap;
 			g_assert (heap);
-			HeapFree (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, dead->data);
+			HeapFree (heap, 0, dead->data);
 #else
 			dlfree (dead->data);
 #endif
@@ -438,7 +438,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 #if _WIN32
 		void* const heap = mono_code_manager_heap;
 		g_assert (heap);
-		ptr = HeapAlloc (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, malloc_size);
+		ptr = HeapAlloc (heap, 0, malloc_size);
 #else
 		ptr = dlmemalign (MIN_ALIGN, malloc_size);
 #endif
@@ -468,7 +468,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 #if _WIN32
 			void* const heap = mono_code_manager_heap;
 			g_assert (heap);
-			HeapFree (heap, 0 /* FIXME? HEAP_NO_SERIALIZE */, ptr);
+			HeapFree (heap, 0, ptr);
 #else
 			dlfree (ptr);
 #endif
