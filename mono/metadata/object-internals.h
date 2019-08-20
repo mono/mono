@@ -2262,11 +2262,20 @@ mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
         mono_gc_wbarrier_generic_store_internal (&((s)->field), (MonoObject*)(value)); \
     } while (0)
 
-mono_unichar2*
-mono_string_chars_internal (MonoString *s);
+static inline gunichar2*
+mono_string_chars_internal (MonoString *s)
+{
+	// MONO_REQ_GC_UNSAFE_MODE; //FIXME? too much trouble for now
 
-int
-mono_string_length_internal (MonoString *s);
+	return s->chars;
+}
+
+static inline int
+mono_string_length_internal (MonoString *s)
+{
+	// FIXME? MONO_REQ_GC_UNSAFE_MODE;
+	return s->length;
+}
 
 MonoString*
 mono_string_empty_internal (MonoDomain *domain);
