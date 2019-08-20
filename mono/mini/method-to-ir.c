@@ -7932,8 +7932,11 @@ calli_end:
 					emit_setret (cfg, *sp);
 				}
 			}
+			/* wine mono hack: MS's managed C++ compiler generates invalid void
+			 * functions which return with a non-empty stack. Allow this.
 			if (sp != stack_start)
 				UNVERIFIED;
+			*/
 			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->inst_target_bb = end_bblock;
 			MONO_ADD_INS (cfg->cbb, ins);
