@@ -3,7 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Reflection;
 using System.Collections.Generic;
+using Microsoft.Reflection;
+
+#if ES_BUILD_AGAINST_DOTNET_V35
+using Microsoft.Internal;
+#endif
 
 #if ES_BUILD_STANDALONE
 using System.Runtime.CompilerServices;
@@ -15,18 +21,11 @@ namespace Microsoft.Diagnostics.Tracing.Internal
 namespace System.Diagnostics.Tracing.Internal
 #endif
 {
-#if ES_BUILD_AGAINST_DOTNET_V35
-    using Microsoft.Internal;
-#endif
-    using Microsoft.Reflection;
-    using System.Reflection;
-
     internal static class Environment
     {
         public static readonly string NewLine = System.Environment.NewLine;
 
-        public static int TickCount
-        { get { return System.Environment.TickCount; } }
+        public static int TickCount => System.Environment.TickCount;
 
         public static string GetResourceString(string key, params object?[] args)
         {
@@ -174,8 +173,6 @@ namespace Microsoft.Internal
 
 namespace Microsoft.Reflection
 {
-    using System.Reflection;
-
 #if ES_BUILD_PCL
     [Flags]
     public enum BindingFlags

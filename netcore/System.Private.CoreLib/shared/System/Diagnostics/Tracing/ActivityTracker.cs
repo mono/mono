@@ -75,10 +75,10 @@ namespace System.Diagnostics.Tracing
 
             Debug.Assert((options & EventActivityOptions.Disable) == 0);
 
-            var currentActivity = m_current.Value;
-            var fullActivityName = NormalizeActivityName(providerName, activityName, task);
+            ActivityInfo? currentActivity = m_current.Value;
+            string fullActivityName = NormalizeActivityName(providerName, activityName, task);
 
-            var log = TplEventSource.Log;
+            TplEventSource log = TplEventSource.Log;
             if (log.Debug)
             {
                 log.DebugFacilityMessage("OnStartEnter", fullActivityName);
@@ -143,9 +143,9 @@ namespace System.Diagnostics.Tracing
             if (m_current == null)        // We are not enabled
                 return;
 
-            var fullActivityName = NormalizeActivityName(providerName, activityName, task);
+            string fullActivityName = NormalizeActivityName(providerName, activityName, task);
 
-            var log = TplEventSource.Log;
+            TplEventSource log = TplEventSource.Log;
             if (log.Debug)
             {
                 log.DebugFacilityMessage("OnStopEnter", fullActivityName);
@@ -243,7 +243,7 @@ namespace System.Diagnostics.Tracing
         /// <summary>
         /// An activity tracker is a singleton, this is how you get the one and only instance.
         /// </summary>
-        public static ActivityTracker Instance { get { return s_activityTrackerInstance; } }
+        public static ActivityTracker Instance => s_activityTrackerInstance;
 
 
         #region private
@@ -323,13 +323,7 @@ namespace System.Diagnostics.Tracing
                 CreateActivityPathGuid(out m_guid, out m_activityPathGuidOffset);
             }
 
-            public Guid ActivityId
-            {
-                get
-                {
-                    return m_guid;
-                }
-            }
+            public Guid ActivityId => m_guid;
 
             public static string Path(ActivityInfo? activityInfo)
             {

@@ -1650,6 +1650,29 @@ namespace MonoTests.System.IO
 			
 		}
 
+		// See https://github.com/mono/mono/issues/16032
+		[Test]
+		public void DeleteOnCloseWithFileCopy ()
+		{
+			string source = TempFolder + DSC + "source.txt";
+			string target = TempFolder + DSC + "target.txt";
+
+			File.WriteAllText (source, "text");
+			FileStream fs = new FileStream (source, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 2048,
+							FileOptions.DeleteOnClose);
+
+			Assert.AreEqual (true, File.Exists (source), "DCFC#1");
+
+			try {
+				File.Copy (fs.Name, target, true);
+			} finally {
+				fs.Dispose();
+			}
+
+			Assert.AreEqual (false, File.Exists (source), "DCFC#2");
+			Assert.AreEqual (true, File.Exists (target), "DCFC#3");
+		}
+
 		[Test]
 		public void OpenCharDeviceRepeatedly ()
 		{
