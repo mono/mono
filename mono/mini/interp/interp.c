@@ -5370,49 +5370,68 @@ main_loop:
 		}
 		MINT_IN_CASE(MINT_LDLEN) {
 			MonoObject* const o = sp [-1].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
-			sp [-1].data.nati = mono_array_length_internal ((MonoArray *)o);
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				sp [-1].data.nati = mono_array_length_internal ((MonoArray *)o);
+			}
 			++ip;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDLEN_SPAN) {
 			MonoObject* const o = sp [-1].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
-			gsize offset_length = (gsize) *(gint16 *) (ip + 1);
-			sp [-1].data.nati = *(gint32 *) ((guint8 *) o + offset_length);
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				gsize offset_length = (gsize) *(gint16 *) (ip + 1);
+				sp [-1].data.nati = *(gint32 *) ((guint8 *) o + offset_length);
+			}
 			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_GETCHR) {
+
 			MonoString *s;
 			s = (MonoString*)sp [-2].data.p;
-			NULL_CHECK (s);
-			int const i32 = sp [-1].data.i;
-			if (i32 < 0 || i32 >= mono_string_length_internal (s))
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
-			--sp;
-			sp [-1].data.i = mono_string_chars_internal (s)[i32];
+
+			if (G_UNLIKELY (!s)) {
+				NULL_CHECK (s);
+			} else {
+				int const i32 = sp [-1].data.i;
+				if (i32 < 0 || i32 >= mono_string_length_internal (s))
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				else {
+					--sp;
+					sp [-1].data.i = mono_string_chars_internal (s)[i32];
+				}
+			}
 			++ip;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_GETITEM_SPAN) {
+
 			guint8 * const span = (guint8 *) sp [-2].data.p;
-			const int index = sp [-1].data.i;
-			sp--;
 
-			NULL_CHECK (span);
+			if (G_UNLIKELY (!span)) {
+				--sp;
+				NULL_CHECK (span);
+			} else {
 
-			const gsize offset_length = (gsize) *(gint16 *) (ip + 2);
+				const gsize offset_length = (gsize) *(gint16 *) (ip + 2);
+				const gint32 length = *(gint32 *) (span + offset_length);
+				const int index = sp [-1].data.i;
+				--sp;
 
-			const gint32 length = *(gint32 *) (span + offset_length);
-			if (index < 0 || index >= length)
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				if (index < 0 || index >= length)
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				else {
+					const gsize element_size = (gsize) *(gint16 *) (ip + 1);
+					const gsize offset_pointer = (gsize) *(gint16 *) (ip + 3);
 
-			const gsize element_size = (gsize) *(gint16 *) (ip + 1);
-			const gsize offset_pointer = (gsize) *(gint16 *) (ip + 3);
-
-			const gpointer pointer = *(gpointer *)(span + offset_pointer);
-			sp [-1].data.p = (guint8 *) pointer + index * element_size;
+					const gpointer pointer = *(gpointer *)(span + offset_pointer);
+					sp [-1].data.p = (guint8 *) pointer + index * element_size;
+				}
+			}
 
 			ip += 4;
 			MINT_IN_BREAK;
@@ -5420,27 +5439,38 @@ main_loop:
 		MINT_IN_CASE(MINT_STRLEN) {
 			++ip;
 			MonoObject* const o = sp [-1].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
-			sp [-1].data.i = mono_string_length_internal ((MonoString*) o);
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				sp [-1].data.i = mono_string_length_internal ((MonoString*) o);
+			}
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_ARRAY_RANK) {
 			MonoObject* const o = sp [-1].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
-			sp [-1].data.i = m_class_get_rank (mono_object_class (sp [-1].data.p));
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				sp [-1].data.i = m_class_get_rank (mono_object_class (sp [-1].data.p));
+			}
 			ip++;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDELEMA_FAST) {
 			/* No bounds, one direction */
-			gint32 size = READ32 (ip + 1);
-			gint32 index = sp [-1].data.i;
 
 			MonoArray *ao = (MonoArray*)sp [-2].data.o;
-			NULL_CHECK (ao);
-			if (index >= ao->max_length)
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
-			sp [-2].data.p = mono_array_addr_with_size_fast (ao, size, index);
+			if (G_UNLIKELY (!ao)) {
+				NULL_CHECK (ao);
+			} else {
+				gint32 const index = sp [-1].data.i;
+				if (index >= ao->max_length)
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				else {
+					gint32 const size = READ32 (ip + 1);
+					sp [-2].data.p = mono_array_addr_with_size_fast (ao, size, index);
+				}
+			}
 			ip += 3;
 			sp --;
 
@@ -5454,14 +5484,16 @@ main_loop:
 			sp -= numargs;
 
 			MonoObject* const o = sp [0].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
-
-			MonoClass *klass = (MonoClass*)imethod->data_items [*(guint16 *) (ip - 3 + 1)];
-			const gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
-			sp->data.p = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
-			if (frame->ex)
-				THROW_EX (frame->ex, ip);
-			++sp;
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				MonoClass *klass = (MonoClass*)imethod->data_items [*(guint16 *) (ip - 3 + 1)];
+				const gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
+				sp->data.p = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
+				if (frame->ex)
+					THROW_EX (frame->ex, ip);
+				++sp;
+			}
 
 			MINT_IN_BREAK;
 		}
@@ -5477,67 +5509,68 @@ main_loop:
 		MINT_IN_CASE(MINT_LDELEM_R8) /* fall through */
 		MINT_IN_CASE(MINT_LDELEM_REF) /* fall through */
 		MINT_IN_CASE(MINT_LDELEM_VT) {
-			MonoArray *o;
-			mono_u aindex;
 
 			sp -= 2;
 
-			o = (MonoArray*)sp [0].data.p;
-			NULL_CHECK (o);
-
-			aindex = sp [1].data.i;
-			if (aindex >= mono_array_length_internal (o))
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
-
-			/*
-			 * FIXME: throw mono_get_exception_array_type_mismatch () if needed 
-			 */
-			switch (*ip) {
-			case MINT_LDELEM_I1:
-				sp [0].data.i = mono_array_get_fast (o, gint8, aindex);
-				break;
-			case MINT_LDELEM_U1:
-				sp [0].data.i = mono_array_get_fast (o, guint8, aindex);
-				break;
-			case MINT_LDELEM_I2:
-				sp [0].data.i = mono_array_get_fast (o, gint16, aindex);
-				break;
-			case MINT_LDELEM_U2:
-				sp [0].data.i = mono_array_get_fast (o, guint16, aindex);
-				break;
-			case MINT_LDELEM_I:
-				sp [0].data.nati = mono_array_get_fast (o, mono_i, aindex);
-				break;
-			case MINT_LDELEM_I4:
-				sp [0].data.i = mono_array_get_fast (o, gint32, aindex);
-				break;
-			case MINT_LDELEM_U4:
-				sp [0].data.i = mono_array_get_fast (o, guint32, aindex);
-				break;
-			case MINT_LDELEM_I8:
-				sp [0].data.l = mono_array_get_fast (o, guint64, aindex);
-				break;
-			case MINT_LDELEM_R4:
-				sp [0].data.f_r4 = mono_array_get_fast (o, float, aindex);
-				break;
-			case MINT_LDELEM_R8:
-				sp [0].data.f = mono_array_get_fast (o, double, aindex);
-				break;
-			case MINT_LDELEM_REF:
-				sp [0].data.p = mono_array_get_fast (o, gpointer, aindex);
-				break;
-			case MINT_LDELEM_VT: {
-				int const i32 = READ32 (ip + 1);
-				char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
-				sp [0].data.vt = vt_sp;
-				// Copying to vtstack. No wbarrier needed
-				memcpy (sp [0].data.vt, src_addr, i32);
-				vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-				ip += 2;
-				break;
-			}
-			default:
-				ves_abort();
+			MonoArray* o = (MonoArray*)sp [0].data.p;
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				mono_u aindex = sp [1].data.i;
+				if (aindex >= mono_array_length_internal (o))
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				else {
+					/*
+					 * FIXME: throw mono_get_exception_array_type_mismatch () if needed 
+					 */
+					switch (*ip) {
+					case MINT_LDELEM_I1:
+						sp [0].data.i = mono_array_get_fast (o, gint8, aindex);
+						break;
+					case MINT_LDELEM_U1:
+						sp [0].data.i = mono_array_get_fast (o, guint8, aindex);
+						break;
+					case MINT_LDELEM_I2:
+						sp [0].data.i = mono_array_get_fast (o, gint16, aindex);
+						break;
+					case MINT_LDELEM_U2:
+						sp [0].data.i = mono_array_get_fast (o, guint16, aindex);
+						break;
+					case MINT_LDELEM_I:
+						sp [0].data.nati = mono_array_get_fast (o, mono_i, aindex);
+						break;
+					case MINT_LDELEM_I4:
+						sp [0].data.i = mono_array_get_fast (o, gint32, aindex);
+						break;
+					case MINT_LDELEM_U4:
+						sp [0].data.i = mono_array_get_fast (o, guint32, aindex);
+						break;
+					case MINT_LDELEM_I8:
+						sp [0].data.l = mono_array_get_fast (o, guint64, aindex);
+						break;
+					case MINT_LDELEM_R4:
+						sp [0].data.f_r4 = mono_array_get_fast (o, float, aindex);
+						break;
+					case MINT_LDELEM_R8:
+						sp [0].data.f = mono_array_get_fast (o, double, aindex);
+						break;
+					case MINT_LDELEM_REF:
+						sp [0].data.p = mono_array_get_fast (o, gpointer, aindex);
+						break;
+					case MINT_LDELEM_VT: {
+						int const i32 = READ32 (ip + 1);
+						char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
+						sp [0].data.vt = vt_sp;
+						// Copying to vtstack. No wbarrier needed
+						memcpy (sp [0].data.vt, src_addr, i32);
+						vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+						ip += 2;
+						break;
+					}
+					default:
+						ves_abort();
+					}
+				}
 			}
 
 			++ip;
@@ -5555,67 +5588,70 @@ main_loop:
 		MINT_IN_CASE(MINT_STELEM_R8) /* fall through */
 		MINT_IN_CASE(MINT_STELEM_REF) /* fall through */
 		MINT_IN_CASE(MINT_STELEM_VT) {
-			mono_u aindex;
 
 			sp -= 3;
 
 			MonoObject* const o = sp [0].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
 
-			aindex = sp [1].data.i;
-			if (aindex >= mono_array_length_internal ((MonoArray *)o))
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
+			if (G_UNLIKELY (!o)) {
+				NULL_CHECK (o);
+			} else {
+				mono_u const aindex = sp [1].data.i;
+				if (aindex >= mono_array_length_internal ((MonoArray *)o))
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				else {
+					switch (*ip) {
+					case MINT_STELEM_I:
+						mono_array_set_fast ((MonoArray *)o, mono_i, aindex, sp [2].data.nati);
+						break;
+					case MINT_STELEM_I1:
+						mono_array_set_fast ((MonoArray *)o, gint8, aindex, sp [2].data.i);
+						break;
+					case MINT_STELEM_U1:
+						mono_array_set_fast ((MonoArray *) o, guint8, aindex, sp [2].data.i);
+						break;
+					case MINT_STELEM_I2:
+						mono_array_set_fast ((MonoArray *)o, gint16, aindex, sp [2].data.i);
+						break;
+					case MINT_STELEM_U2:
+						mono_array_set_fast ((MonoArray *)o, guint16, aindex, sp [2].data.i);
+						break;
+					case MINT_STELEM_I4:
+						mono_array_set_fast ((MonoArray *)o, gint32, aindex, sp [2].data.i);
+						break;
+					case MINT_STELEM_I8:
+						mono_array_set_fast ((MonoArray *)o, gint64, aindex, sp [2].data.l);
+						break;
+					case MINT_STELEM_R4:
+						mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f_r4);
+						break;
+					case MINT_STELEM_R8:
+						mono_array_set_fast ((MonoArray *)o, double, aindex, sp [2].data.f);
+						break;
+					case MINT_STELEM_REF: {
+						if (sp [2].data.p) {
+							MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.o, m_class_get_element_class (mono_object_class (o)), error);
+							mono_error_cleanup (error); /* FIXME: don't swallow the error */
+							if (!isinst_obj)
+								THROW_EX (mono_get_exception_array_type_mismatch (), ip);
+						}
+						mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
+						break;
+					}
+					case MINT_STELEM_VT: {
+						MonoClass *klass_vt = (MonoClass*)imethod->data_items [*(guint16 *) (ip + 1)];
+						int const i32 = READ32 (ip + 2);
+						char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 
-			switch (*ip) {
-			case MINT_STELEM_I:
-				mono_array_set_fast ((MonoArray *)o, mono_i, aindex, sp [2].data.nati);
-				break;
-			case MINT_STELEM_I1:
-				mono_array_set_fast ((MonoArray *)o, gint8, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_U1:
-				mono_array_set_fast ((MonoArray *) o, guint8, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I2:
-				mono_array_set_fast ((MonoArray *)o, gint16, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_U2:
-				mono_array_set_fast ((MonoArray *)o, guint16, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I4:
-				mono_array_set_fast ((MonoArray *)o, gint32, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I8:
-				mono_array_set_fast ((MonoArray *)o, gint64, aindex, sp [2].data.l);
-				break;
-			case MINT_STELEM_R4:
-				mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f_r4);
-				break;
-			case MINT_STELEM_R8:
-				mono_array_set_fast ((MonoArray *)o, double, aindex, sp [2].data.f);
-				break;
-			case MINT_STELEM_REF: {
-				if (sp [2].data.p) {
-					MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.o, m_class_get_element_class (mono_object_class (o)), error);
-					mono_error_cleanup (error); /* FIXME: don't swallow the error */
-					if (!isinst_obj)
-						THROW_EX (mono_get_exception_array_type_mismatch (), ip);
+						mono_value_copy_internal (dst_addr, sp [2].data.vt, klass_vt);
+						vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+						ip += 3;
+						break;
+					}
+					default:
+						ves_abort();
+					}
 				}
-				mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
-				break;
-			}
-			case MINT_STELEM_VT: {
-				MonoClass *klass_vt = (MonoClass*)imethod->data_items [*(guint16 *) (ip + 1)];
-				int const i32 = READ32 (ip + 2);
-				char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
-
-				mono_value_copy_internal (dst_addr, sp [2].data.vt, klass_vt);
-				vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-				ip += 3;
-				break;
-			}
-			default:
-				ves_abort();
 			}
 
 			++ip;
