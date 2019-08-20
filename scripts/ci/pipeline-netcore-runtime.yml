@@ -74,7 +74,7 @@ stages:
         - bash: |
             git submodule update --init -- external/llvm
             cd netcore
-            ./build.sh
+            ./build.sh --init
           displayName: 'Build (Make)'
 
         - bash: |
@@ -160,7 +160,7 @@ stages:
         - bash: |
             git submodule update --init -- external/llvm
             cd netcore
-            ./build.sh
+            ./build.sh --init
           displayName: 'Build (Make)'
 
         - bash: |
