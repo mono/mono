@@ -5,7 +5,7 @@ chown builder /mnt/jenkins /mnt/jenkins/pbuilder /mnt/scratch
 
 ## Set up our kernel modules
 for km in fdescfs linprocfs; do
-  kldload $km
+  kldload $km || true
 done
 ## Set up the appropriate mounts prior to pkg installation. It's easier this way.
 if [ ! -e /dev/fd ]; then
@@ -23,24 +23,22 @@ elif [ -e /compat/linux/proc ]; then
 fi
 
 ## Validate that pkg is working.
-pkg info > /dev/null 2&>1
-if [ $? -ne 0 ]; then
+if ! pkg info > /dev/null; then
   ## We can't possibly continue.
   echo "[FATAL] pkgng is non-functional; build impossible."
   exit 1
 fi
 
 ## These packages are MUST have.
-pkg install -y bash git gmake autoconf automake cmake libtool python27 python36 ca_root_nss
-## Kill the attempt quickly if we definitely cannot build.
-if [ $? -ne 0 ]; then
+if ! pkg install -y bash git gmake autoconf automake cmake libtool python27 python36 ca_root_nss; then
+  ## Kill the attempt quickly if we definitely cannot build.
   echo "[FATAL] Error installing critical packages. Aborting because building is impossible."
   exit 1
 fi
 
 ## These packages are NICE to have, so be more graceful.
 for pn in openjdk8 libgdiplus unixODBC sqlite3 xorgproto pango libinotify; do
-  pkg install -y $pn
+  pkg install -y $pn || true
 done
 
 # for compatibility with the mono build scripts, ideally shouldn't be necessary
