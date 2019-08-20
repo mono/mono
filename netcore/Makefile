@@ -188,7 +188,9 @@ run-tests-corefx: update-tests-corefx
 	tests_count=$(words $(dir $(wildcard corefx/tests/extracted/*/))); \
 	for testdir in corefx/tests/extracted/*; do \
 		counter=$$((counter+1)); \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}) TEST_COUNTER="($$counter / $$tests_count) " || echo $$(basename $$testdir) >> .failures; \
+		testname=$$(basename $$testdir); \
+		if [ -n "$$USE_TIMEOUT" ]; then timeoutcmd="../scripts/ci/run-step.sh --label=$$testname --timeout=10m --fatal"; fi; \
+		$$timeoutcmd $(MAKE) run-tests-corefx-$$testname TEST_COUNTER="($$counter / $$tests_count) " || echo $$testname >> .failures; \
 	done; \
 	$(MAKE) xunit-summary; \
 	if [ -e ".failures" ]; then \

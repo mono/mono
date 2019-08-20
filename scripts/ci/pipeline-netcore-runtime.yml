@@ -37,7 +37,7 @@ stages:
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -83,7 +83,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx
+            make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
@@ -106,7 +106,7 @@ stages:
       ############ MACOS BUILD ############
       - job: Build_macOS
         displayName: macOS
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -142,7 +142,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx
+            make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
@@ -165,7 +165,7 @@ stages:
       ############ WINDOWS BUILD ############
       - job: Build_Windows
         displayName: Windows
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
