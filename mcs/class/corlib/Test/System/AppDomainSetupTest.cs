@@ -203,9 +203,10 @@ namespace MonoTests.System
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			string url = "file://";
-			if (Path.DirectorySeparatorChar != '/')
+			if (RunningOnWindows)
 			{
 				url += "/" + Environment.CurrentDirectory;
+				setup.ApplicationBase = url;
 				Assert.AreEqual (Environment.CurrentDirectory, setup.ApplicationBase);
 			}
 			else
