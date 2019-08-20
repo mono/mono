@@ -2265,15 +2265,14 @@ mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
 static inline gunichar2*
 mono_string_chars_internal (MonoString *s)
 {
-	// MONO_REQ_GC_UNSAFE_MODE; //FIXME? too much trouble for now
-
+	MONO_REQ_GC_UNSAFE_MODE;
 	return s->chars;
 }
 
 static inline int
 mono_string_length_internal (MonoString *s)
 {
-	// FIXME? MONO_REQ_GC_UNSAFE_MODE;
+	MONO_REQ_GC_UNSAFE_MODE;
 	return s->length;
 }
 
