@@ -143,7 +143,7 @@ namespace System
 			if (appBase == null)
 				return null;
 
-			if (appBase.ToLower (CultureInfo.InvariantCulture).StartsWith ("file://")) {
+			if (appBase.StartsWith ("file://", StringComparison.OrdinalIgnoreCase)) {
 				appBase = new Mono.Security.Uri (appBase).LocalPath;
 				if (Path.DirectorySeparatorChar != '/')
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
