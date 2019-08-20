@@ -37,7 +37,7 @@ if ! pkg install -y bash git gmake autoconf automake cmake libtool python27 pyth
 fi
 
 ## These packages are NICE to have, so be more graceful.
-for pn in openjdk8 libgdiplus unixODBC sqlite3 xorgproto pango libinotify; do
+for pn in gettext-runtime gettext-tools cairo libdrm mesa-dri mesa-libs openjdk8 libgdiplus unixODBC sqlite3 xorgproto pango libinotify; do
   pkg install -y $pn || true
 done
 
