@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Reflection;
 using System.Net.Http;
+using System.Linq;
+using System.Linq.Expressions;
 using WebAssembly;
 
 namespace TestSuite
@@ -48,6 +50,31 @@ namespace TestSuite
             var k  = Math.Round(11.1, MidpointRounding.AwayFromZero);
             return k;        
         }
+
+        // https://github.com/mono/mono/issues/12917 IL Linker not working correctly with IQueryable extensions
+        public static int IssueIQueryable ()
+        {
+            return QueryableUsedViaExpression.TestExpression();
+        }
+
+        public class QueryableUsedViaExpression
+        {
+            public static int TestExpression()
+            {
+                var q = "Test".AsQueryable();
+                var count = CallQueryableCount(q);
+                return q.Count ();
+            }
+
+            public static int CallQueryableCount(IQueryable source)
+            {
+                return source.Provider.Execute<int>(
+                        Expression.Call(
+                                typeof(Queryable), "Count",
+                                new Type[] { source.ElementType }, source.Expression));
+            }
+        }
+
 
         static WebAssembly.Core.Array fetchResponse = new WebAssembly.Core.Array();
         public static async Task<object> IssueDoubleFetch ()

@@ -227,9 +227,9 @@ namespace System.Runtime.Loader
 
         public static AssemblyLoadContext Default => DefaultAssemblyLoadContext.s_loadContext;
 
-        public bool IsCollectible { get { return _isCollectible;} }
+        public bool IsCollectible => _isCollectible;
 
-        public string? Name { get { return _name;} }
+        public string? Name => _name;
 
         public override string ToString() => "\"" + Name + "\" " + GetType().ToString() + " #" + _id;
 
@@ -424,7 +424,7 @@ namespace System.Runtime.Loader
         {
             lock (s_allContexts)
             {
-                foreach (var alcAlive in s_allContexts)
+                foreach (KeyValuePair<long, WeakReference<AssemblyLoadContext>> alcAlive in s_allContexts)
                 {
                     if (alcAlive.Value.TryGetTarget(out AssemblyLoadContext? alc))
                     {
@@ -468,10 +468,7 @@ namespace System.Runtime.Loader
         ///
         /// For more details see https://github.com/dotnet/coreclr/blob/master/Documentation/design-docs/AssemblyLoadContext.ContextualReflection.md
         /// </remarks>
-        public static AssemblyLoadContext? CurrentContextualReflectionContext
-        {
-            get { return s_asyncLocalCurrent?.Value; }
-        }
+        public static AssemblyLoadContext? CurrentContextualReflectionContext => s_asyncLocalCurrent?.Value;
 
         private static void SetCurrentContextualReflectionContext(AssemblyLoadContext? value)
         {
