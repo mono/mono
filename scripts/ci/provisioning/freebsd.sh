@@ -44,7 +44,7 @@ done
 # for compatibility with the mono build scripts, ideally shouldn't be necessary
 ln -s /usr/local/bin/bash /bin/bash
 ## Do not remove, instead rename; otherwise it's impossible to support ports infrastructure testing
-mv /bin/make /bin/bsdmake && ln -s /usr/local/bin/gmake /sbin/make
+mv /usr/bin/make /usr/bin/bsdmake && ln -s /usr/local/bin/gmake /usr/bin/make
 
 ## XXX: System.Security-xunit failures are addressed here
 if [ ! -d /usr/share/.mono ]; then
