@@ -5387,10 +5387,10 @@ main_loop:
 			s = (MonoString*)sp [-2].data.p;
 			NULL_CHECK (s);
 			int const i32 = sp [-1].data.i;
-			if (i32 < 0 || i32 >= mono_string_length_internal (s))
+			if (i32 < 0 || i32 >= s->length)
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 			--sp;
-			sp [-1].data.i = mono_string_chars_internal (s)[i32];
+			sp [-1].data.i = s->chars [i32];
 			++ip;
 			MINT_IN_BREAK;
 		}
@@ -5420,7 +5420,7 @@ main_loop:
 			++ip;
 			MonoObject* const o = sp [-1].data.o; // See the comment about GC safety above.
 			NULL_CHECK (o);
-			sp [-1].data.i = mono_string_length_internal ((MonoString*) o);
+			sp [-1].data.i = ((MonoString*)o)->length;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_ARRAY_RANK) {
