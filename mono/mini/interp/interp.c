@@ -3216,6 +3216,20 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
 	} else
 #endif
 		mono_value_copy_internal ((char *) o + field->offset, sp [-1].data.p, klass);
+}
+
+static MONO_NEVER_INLINE int
+mono_interp_store_field_valuetype (InterpFrame* frame, const guint16* ip, stackval* sp)
+{
+	InterpMethod* const imethod = frame->imethod;
+	MonoObject* const o = sp [-2].data.o;
+	sp -= 2;
+
+	MonoClass *klass = (MonoClass*)imethod->data_items[*(const guint16*)(ip + 2)];
+	int const i32 = mono_class_value_size (klass, NULL);
+
+	guint16 offset = *(const guint16*)(ip + 1);
+	mono_value_copy_internal ((char *) o + offset, sp [1].data.p, klass);
 
 	return ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 }
@@ -5034,20 +5048,14 @@ main_loop:
 		MINT_IN_CASE(MINT_STFLD_R8_UNALIGNED) STFLD_UNALIGNED(f, double, TRUE); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STFLD_VT) {
-			MonoObject* const o = sp [-2].data.o; // See the comment about GC safety above.
-			NULL_CHECK (o);
+
+			NULL_CHECK (sp [-2].data.o);
+			vt_sp -= mono_interp_store_field_valuetype (frame, ip, sp);
 			sp -= 2;
-
-			MonoClass *klass = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 2)];
-			int const i32 = mono_class_value_size (klass, NULL);
-
-			guint16 offset = * (guint16 *)(ip + 1);
-			mono_value_copy_internal ((char *) o + offset, sp [1].data.p, klass);
-
-			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 3;
 			MINT_IN_BREAK;
 		}
+
 		MINT_IN_CASE(MINT_STRMFLD) {
 			MonoClassField *field;
 
