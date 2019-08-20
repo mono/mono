@@ -3048,7 +3048,7 @@ mono_interp_calli_nat_dynamic_pinvoke (
 // Leave is split into pieces in order to consume less stack,
 // but not have to change how exception handling macros access labels and locals.
 static MONO_NEVER_INLINE MonoException*
-mono_interp_leave (InterpFrame* child_frame)
+mono_interp_leave1 (InterpFrame* child_frame)
 {
 	stackval tmp_sp;
 	/*
@@ -3059,6 +3059,52 @@ mono_interp_leave (InterpFrame* child_frame)
 	do_icall_wrapper (child_frame, NULL, MINT_ICALL_V_P, &tmp_sp, (gpointer)mono_thread_get_undeniable_exception, FALSE);
 
 	return (MonoException*)tmp_sp.data.p;
+}
+
+static MONO_NEVER_INLINE const guint16*
+mono_interp_leave2 (InterpFrame* frame, const guint16* ip, stackval* sp, GSList** finally_ips, const guint16** endfinally_ip)
+{
+	GSList *old_list = *finally_ips;
+	InterpMethod* const imethod = frame->imethod;
+
+#if DEBUG_INTERP
+	if (global_tracing)
+		g_print ("* Handle finally IL_%04x\n", *endfinally_ip == NULL ? 0 : *endfinally_ip - imethod->code);
+#endif
+	guint32 const ip_offset = frame->ip - imethod->code;
+
+	if (*endfinally_ip != NULL)
+		*finally_ips = g_slist_prepend (*finally_ips, (void *)*endfinally_ip);
+
+	for (int i = imethod->num_clauses - 1; i >= 0; i--) {
+		MonoExceptionClause* const clause = &imethod->clauses [i];
+		if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (*endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, *endfinally_ip - imethod->code)))) {
+			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
+				ip = imethod->code + clause->handler_offset;
+				*finally_ips = g_slist_prepend (*finally_ips, (gpointer) ip);
+#if DEBUG_INTERP
+				if (global_tracing)
+					g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
+#endif
+			}
+		}
+	}
+
+	*endfinally_ip = NULL;
+
+	if (old_list != *finally_ips && *finally_ips) {
+		ip = (const guint16*)((*finally_ips)->data);
+		g_assert (ip);
+		*finally_ips = g_slist_remove (*finally_ips, ip);
+		// caller does this.
+		//sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
+		//vt_sp = (unsigned char *) sp + imethod->stack_size;
+		// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
+		// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
+		return ip;
+	}
+
+	return NULL; // abort
 }
 
 static MONO_NEVER_INLINE void
@@ -5938,7 +5984,7 @@ main_loop:
 			if (check && imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
 				child_frame.parent = frame;
 				child_frame.imethod = NULL;
-				MonoException *abort_exc = mono_interp_leave (&child_frame);
+				MonoException *abort_exc = mono_interp_leave1 (&child_frame);
 				if (abort_exc)
 					THROW_EX (abort_exc, frame->ip);
 			}
@@ -5946,8 +5992,9 @@ main_loop:
 			opcode = *ip; // Refetch to avoid register/stack pressure.
 			gboolean const short_offset = opcode == MINT_LEAVE_S || opcode == MINT_LEAVE_S_CHECK;
 			ip += short_offset ? (short)*(ip + 1) : (gint32)READ32 (ip + 1);
+
 			endfinally_ip = ip;
-			GSList *old_list = finally_ips;
+
 			MonoMethod *method = imethod->method;
 #if DEBUG_INTERP
 			if (tracing)
@@ -5958,30 +6005,11 @@ main_loop:
 					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
 				goto exit_frame;
 			}
-			guint32 const ip_offset = frame->ip - imethod->code;
 
-			if (endfinally_ip != NULL)
-				finally_ips = g_slist_prepend (finally_ips, (void *)endfinally_ip);
+			guint16 const * const next_ip = mono_interp_leave2 (frame, ip, sp, &finally_ips, &endfinally_ip);
 
-			for (int i = imethod->num_clauses - 1; i >= 0; i--) {
-				MonoExceptionClause* const clause = &imethod->clauses [i];
-				if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - imethod->code)))) {
-					if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
-						ip = imethod->code + clause->handler_offset;
-						finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
-#if DEBUG_INTERP
-						if (tracing)
-							g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
-#endif
-					}
-				}
-			}
-
-			endfinally_ip = NULL;
-
-			if (old_list != finally_ips && finally_ips) {
-				ip = (const guint16*)finally_ips->data;
-				finally_ips = g_slist_remove (finally_ips, ip);
+			if (next_ip) {
+				ip = next_ip;
 				sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
 				vt_sp = (unsigned char *) sp + imethod->stack_size;
 				// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
@@ -5990,6 +6018,7 @@ main_loop:
 			}
 
 			ves_abort();
+
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_ICALL_V_V) 
