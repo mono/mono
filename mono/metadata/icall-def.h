@@ -113,6 +113,11 @@
 
 ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
 NOHANDLES(ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString))
+#ifndef DISABLE_SOSOCKETS
+HANDLES(CLR_INTEROP_SYS_2, "Socket_Accept_internal", ves_icall_Interop_Sys_Socket_Accept_internal, gint32, 4, (gsize, char_ptr, gint32_ref, gpointer_ref))
+HANDLES(CLR_INTEROP_SYS_3, "Socket_GetBytesAvailable_internal", ves_icall_Interop_Sys_Socket_GetBytesAvailable_internal, gint32, 2, (gsize, gint32_ref))
+HANDLES(CLR_INTEROP_SYS_4, "Socket_ReceiveMessage_internal", ves_icall_Interop_Sys_Socket_ReceiveMessage_internal, gint32, 4, (gsize, char_ptr, gint32, gint64_ref))
+#endif
 
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
 // FIXME Much of this could be NOHANDLES().
@@ -541,6 +546,7 @@ ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_Network
 #ifndef DISABLE_SOCKETS
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 HANDLES(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal, gpointer, 3, (gsize, gint32_ref, MonoBoolean))
+HANDLES(SOCK_25, "Accept_internal2(intptr,byte*,int*,int&)", ves_icall_System_Net_Sockets_Socket_Accept_internal2, gpointer, 4, (gsize, char_ptr, gint32_ref, gint32_ref))
 HANDLES(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal, gint32, 2, (gsize, gint32_ref))
 HANDLES(SOCK_3, "Bind_internal(intptr,System.Net.SocketAddress,int&)", ves_icall_System_Net_Sockets_Socket_Bind_internal, void, 3, (gsize, MonoObject, gint32_ref))
 HANDLES(SOCK_4, "Blocking_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Blocking_internal, void, 3, (gsize, MonoBoolean, gint32_ref))
@@ -549,6 +555,8 @@ HANDLES(SOCK_6, "Connect_internal(intptr,System.Net.SocketAddress,int&,bool)", v
 HANDLES(SOCK_6a, "Disconnect_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Disconnect_internal, void, 3, (gsize, MonoBoolean, gint32_ref))
 HANDLES(SOCK_6b, "Duplicate_internal", ves_icall_System_Net_Sockets_Socket_Duplicate_internal, MonoBoolean, 4, (gpointer, gint32, gpointer_ref, gint32_ref))
 //FIXME The array is ref but the icall does not write to it.
+HANDLES(SOCK_22, "GetPeerName_internal(intptr,byte*,int&)", ves_icall_System_Net_Sockets_Socket_GetPeerName_internal, gint32, 3, (gsize, char_ptr, gint32_ref))
+HANDLES(SOCK_23, "GetSockName_internal(intptr,byte*,int&)", ves_icall_System_Net_Sockets_Socket_GetSockName_internal, gint32, 3, (gsize, char_ptr, gint32_ref))
 HANDLES(SOCK_7, "GetSocketOption_arr_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,byte[]&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal, void, 5, (gsize, gint32, gint32, MonoArray, gint32_ref))
 HANDLES(SOCK_8, "GetSocketOption_obj_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,object&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal, void, 5, (gsize, gint32, gint32, MonoObjectOut, gint32_ref))
 HANDLES(SOCK_21, "IOControl_internal(intptr,int,byte[],byte[],int&)", ves_icall_System_Net_Sockets_Socket_IOControl_internal, int, 5, (gsize, gint32, MonoArray, MonoArray, gint32_ref))
@@ -566,7 +574,8 @@ HANDLES(SOCK_16a, "Send_internal(intptr,System.Net.Sockets.Socket/WSABUF*,int,Sy
 HANDLES(SOCK_17, "Send_internal(intptr,byte*,int,System.Net.Sockets.SocketFlags,int&,bool)", ves_icall_System_Net_Sockets_Socket_Send_internal, gint32, 6, (gsize, char_ptr, gint32, gint32, gint32_ref, MonoBoolean))
 HANDLES(SOCK_18, "SetSocketOption_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,object,byte[],int,int&)", ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal, void, 7, (gsize, gint32, gint32, MonoObject, MonoArray, gint32, gint32_ref))
 HANDLES(SOCK_19, "Shutdown_internal(intptr,System.Net.Sockets.SocketShutdown,int&)", ves_icall_System_Net_Sockets_Socket_Shutdown_internal, void, 3, (gsize, gint32, gint32_ref))
-HANDLES(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal, gpointer, 5, (MonoObject, gint32, gint32, gint32, gint32_ref))
+HANDLES(SOCK_24, "SocketAddress_from_buffer(byte*,int,int&)", ves_icall_System_Net_Sockets_Socket_SocketAddress_from_buffer, MonoObject, 3, (char_ptr, gint32, gint32_ref))
+HANDLES(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal, gpointer, 4, (gint32, gint32, gint32, gint32_ref))
 HANDLES(SOCK_20a, "SupportsPortReuse", ves_icall_System_Net_Sockets_Socket_SupportPortReuse, MonoBoolean, 1, (MonoProtocolType))
 HANDLES(SOCK_21a, "cancel_blocking_socket_operation", ves_icall_cancel_blocking_socket_operation, void, 1, (MonoThreadObject))
 #endif

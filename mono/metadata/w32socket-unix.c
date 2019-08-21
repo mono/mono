@@ -1591,3 +1591,282 @@ mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *dup
 	*duplicate_handle = handle;
 	return TRUE;
 }
+
+//
+// Martin's new code below
+//
+
+SOCKET
+mono_w32socket_accept2 (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, int *error)
+{
+	SocketHandle *sockethandle, *accepted_socket_data;
+	MonoThreadInfo *info;
+	gint accepted_fd;
+
+	if (addr != NULL && *addrlen < sizeof(struct sockaddr)) {
+		mono_w32socket_set_last_error (WSAEFAULT);
+		if (error)
+			*error = EFAULT;
+		return INVALID_SOCKET;
+	}
+
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		if (error)
+			*error = ENOTSOCK;
+		return INVALID_SOCKET;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		if (error)
+			*error = ENOTSOCK;
+		return INVALID_SOCKET;
+	}
+
+	info = mono_thread_info_current ();
+
+	do {
+		MONO_ENTER_GC_SAFE;
+		accepted_fd = accept (((MonoFDHandle*) sockethandle)->fd, addr, addrlen);
+		MONO_EXIT_GC_SAFE;
+	} while (accepted_fd == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	if (accepted_fd == -1) {
+		gint sockerr = mono_w32socket_convert_error (errno);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SOCKET, "%s: accept error: %s", __func__, g_strerror(errno));
+		mono_w32socket_set_last_error (sockerr);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		if (error)
+			*error = errno;
+		return INVALID_SOCKET;
+	}
+
+	accepted_socket_data = socket_data_create (MONO_FDTYPE_SOCKET, accepted_fd);
+	accepted_socket_data->domain = sockethandle->domain;
+	accepted_socket_data->type = sockethandle->type;
+	accepted_socket_data->protocol = sockethandle->protocol;
+	accepted_socket_data->still_readable = 1;
+
+	if (error)
+		*error = 0;
+
+	mono_fdhandle_insert ((MonoFDHandle*) accepted_socket_data);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SOCKET, "%s: returning accepted handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) accepted_socket_data)->fd));
+
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+	return ((MonoFDHandle*) accepted_socket_data)->fd;
+}
+
+//
+// From pal_networking.c / pal_networking.h
+//
+
+// NOTE: the layout of this type is intended to exactly  match the layout of a `struct iovec`. There are
+//       assertions in pal_networking.cpp that validate this.
+struct IOVector
+{
+    uint8_t* Base;
+    uintptr_t Count;
+};
+
+struct MessageHeader
+{
+    uint8_t* SocketAddress;
+    struct IOVector* IOVectors;
+    uint8_t* ControlBuffer;
+    int32_t SocketAddressLen;
+    int32_t IOVectorCount;
+    int32_t ControlBufferLen;
+    int32_t Flags;
+};
+
+static int8_t IsStreamSocket(int socket)
+{
+    int type;
+    socklen_t length = sizeof(int);
+    return getsockopt(socket, SOL_SOCKET, SO_TYPE, &type, &length) == 0
+           && type == SOCK_STREAM;
+}
+
+static void ConvertMessageHeaderToMsghdr(struct msghdr* header, const struct MessageHeader* messageHeader, int socket)
+{
+    // sendmsg/recvmsg can return EMSGSIZE when msg_iovlen is greather than IOV_MAX.
+    // We avoid this for stream sockets by truncating msg_iovlen to IOV_MAX. This is ok since sendmsg is
+    // not required to send all data and recvmsg can be called again to receive more.
+    int iovlen = (int)messageHeader->IOVectorCount;
+    if (iovlen > IOV_MAX && IsStreamSocket(socket))
+    {
+        iovlen = (int)IOV_MAX;
+    }
+    header->msg_name = messageHeader->SocketAddress;
+    header->msg_namelen = (unsigned int)messageHeader->SocketAddressLen;
+    header->msg_iov = (struct iovec*)messageHeader->IOVectors;
+    header->msg_iovlen = (__typeof__(header->msg_iovlen))iovlen;
+    header->msg_control = messageHeader->ControlBuffer;
+    header->msg_controllen = (uint32_t)messageHeader->ControlBufferLen;
+    header->msg_flags = 0;
+}
+
+/*
+ * Socket flags.
+ *
+ * NOTE: these values are taken from System.Net.SocketFlags. Only values that are known to be usable on all target
+ *       platforms are represented here. Unsupported values are present as commented-out entries.
+ */
+
+enum SocketFlags
+{
+    SocketFlags_MSG_OOB = 0x0001,       // SocketFlags.OutOfBand
+    SocketFlags_MSG_PEEK = 0x0002,      // SocketFlags.Peek
+    SocketFlags_MSG_DONTROUTE = 0x0004, // SocketFlags.DontRoute
+    SocketFlags_MSG_TRUNC = 0x0100,     // SocketFlags.Truncated
+    SocketFlags_MSG_CTRUNC = 0x0200,    // SocketFlags.ControlDataTruncated
+};
+
+static int8_t ConvertSocketFlagsPalToPlatform(int32_t palFlags, int* platformFlags)
+{
+    const int32_t SupportedFlagsMask = SocketFlags_MSG_OOB | SocketFlags_MSG_PEEK | SocketFlags_MSG_DONTROUTE | SocketFlags_MSG_TRUNC | SocketFlags_MSG_CTRUNC;
+
+    if ((palFlags & ~SupportedFlagsMask) != 0)
+    {
+        return 0;
+    }
+
+    *platformFlags = ((palFlags & SocketFlags_MSG_OOB) == 0 ? 0 : MSG_OOB) | ((palFlags & SocketFlags_MSG_PEEK) == 0 ? 0 : MSG_PEEK) |
+                    ((palFlags & SocketFlags_MSG_DONTROUTE) == 0 ? 0 : MSG_DONTROUTE) |
+                    ((palFlags & SocketFlags_MSG_TRUNC) == 0 ? 0 : MSG_TRUNC) |
+                    ((palFlags & SocketFlags_MSG_CTRUNC) == 0 ? 0 : MSG_CTRUNC);
+
+    return 1;
+}
+
+static int32_t ConvertSocketFlagsPlatformToPal(int platformFlags)
+{
+    const int SupportedFlagsMask = MSG_OOB | MSG_PEEK | MSG_DONTROUTE | MSG_TRUNC | MSG_CTRUNC;
+
+    platformFlags &= SupportedFlagsMask;
+
+    return ((platformFlags & MSG_OOB) == 0 ? 0 : SocketFlags_MSG_OOB) | ((platformFlags & MSG_PEEK) == 0 ? 0 : SocketFlags_MSG_PEEK) |
+           ((platformFlags & MSG_DONTROUTE) == 0 ? 0 : SocketFlags_MSG_DONTROUTE) |
+           ((platformFlags & MSG_TRUNC) == 0 ? 0 : SocketFlags_MSG_TRUNC) |
+           ((platformFlags & MSG_CTRUNC) == 0 ? 0 : SocketFlags_MSG_CTRUNC);
+}
+
+#define Min(left,right) (((left) < (right)) ? (left) : (right))
+
+//
+// From pal_errno.h
+//
+enum Error
+{
+    Error_SUCCESS = 0,
+
+    Error_EFAULT = 0x10015,          // Bad address.
+    Error_ENOTSOCK = 0x1003C,        // Not a socket.
+    Error_ENOTSUP = 0x1003D,         // Not supported (same value as EOPNOTSUP).
+};
+
+//
+// Copied from System.Native, but adjusted for Mono.
+//
+
+int
+mono_w32socket_receive_message (SOCKET sock, void *messageHeaderPtr, int32_t flags, int64_t* received)
+{
+	struct MessageHeader *messageHeader = (struct MessageHeader *)messageHeaderPtr;
+	SocketHandle *sockethandle;
+	MonoThreadInfo *info;
+
+	if (messageHeader == NULL || received == NULL || messageHeader->SocketAddressLen < 0 ||
+		messageHeader->ControlBufferLen < 0 || messageHeader->IOVectorCount < 0)
+		return Error_EFAULT;
+
+	if (!mono_fdhandle_lookup_and_ref (sock, (MonoFDHandle**) &sockethandle))
+		return Error_ENOTSOCK;
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		return Error_ENOTSOCK;
+	}
+
+	info = mono_thread_info_current ();
+
+	int socketFlags;
+	if (!ConvertSocketFlagsPalToPlatform (flags, &socketFlags)) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		return Error_ENOTSUP;
+	}
+
+	struct msghdr header;
+	ConvertMessageHeaderToMsghdr (&header, messageHeader, ((MonoFDHandle*) sockethandle)->fd);
+
+	ssize_t res;
+	do {
+		MONO_ENTER_GC_SAFE;
+		res = recvmsg (((MonoFDHandle*) sockethandle)->fd, &header, socketFlags);
+		MONO_EXIT_GC_SAFE;
+	} while (res < 0 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	assert (header.msg_name == messageHeader->SocketAddress); // should still be the same location as set in ConvertMessageHeaderToMsghdr
+	assert (header.msg_control == messageHeader->ControlBuffer);
+
+	assert ((int32_t)header.msg_namelen <= messageHeader->SocketAddressLen);
+	messageHeader->SocketAddressLen = Min ((int32_t)header.msg_namelen, messageHeader->SocketAddressLen);
+
+	assert (header.msg_controllen <= (size_t)messageHeader->ControlBufferLen);
+	messageHeader->ControlBufferLen = Min ((int32_t)header.msg_controllen, messageHeader->ControlBufferLen);
+
+	messageHeader->Flags = ConvertSocketFlagsPlatformToPal (header.msg_flags);
+
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+
+	if (res != -1) {
+		*received = res;
+		return Error_SUCCESS;
+	}
+
+	*received = 0;
+	// FIXME: They call SystemNative_ConvertErrorPlatformToPal(errno), which we currently do from the managed side.
+	return errno;
+}
+
+int32_t
+mono_w32socket_get_bytes_available (SOCKET sock, int32_t* available)
+{
+	SocketHandle *sockethandle;
+	MonoThreadInfo *info;
+
+	if (available == NULL)
+		return Error_EFAULT;
+
+	info = mono_thread_info_current ();
+
+	if (!mono_fdhandle_lookup_and_ref (sock, (MonoFDHandle**) &sockethandle))
+		return Error_ENOTSOCK;
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		return Error_ENOTSOCK;
+	}
+
+	int result;
+	int err;
+	do {
+		MONO_ENTER_GC_SAFE;
+		err = ioctl (((MonoFDHandle*) sockethandle)->fd, FIONREAD, &result);
+		MONO_EXIT_GC_SAFE;
+	} while (err < 0 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+
+	if (err == -1) {
+		*available = 0;
+		return errno;
+	}
+
+	*available = (int32_t)result;
+	return Error_SUCCESS;
+}

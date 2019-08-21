@@ -42,6 +42,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Net.Sockets/src/Resources/Strings.resx	\
 	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Reflection.TypeExtensions/src/Resources/Strings.resx \

@@ -893,9 +893,11 @@ namespace System.Threading
         {
             if (executionContext == null)
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NullContext"));
+#if MARTIN_FIXME
             if (!executionContext.isNewCapture)
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotNewCaptureContext"));
-            
+#endif
+
             Run(executionContext, callback, state, false);
         }
 

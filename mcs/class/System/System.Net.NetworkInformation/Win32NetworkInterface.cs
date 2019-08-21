@@ -81,7 +81,7 @@ namespace System.Net.NetworkInformation {
 		private static int GetBestInterfaceForAddress (IPAddress addr) {
 			int index;
 			SocketAddress address = new SocketAddress (addr);
-			int error = (int) GetBestInterfaceEx (address.m_Buffer, out index);
+			int error = (int) GetBestInterfaceEx (address.Buffer, out index);
 			if (error != 0) {
 				throw new NetworkInformationException (error);
 			}

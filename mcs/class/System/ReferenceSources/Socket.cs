@@ -37,10 +37,10 @@ namespace System.Net.Sockets
 		// this version does not throw.
 		internal void InternalShutdown (SocketShutdown how)
 		{
-			if (!is_connected || CleanedUp)
+			if (!_isConnected || CleanedUp)
 				return;
 			int error;
-			Shutdown_internal (m_Handle, how, out error);
+			Shutdown_internal (_handle, how, out error);
 		}
 
 		internal IAsyncResult UnsafeBeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
@@ -94,7 +94,7 @@ namespace System.Net.Sockets
 
 			int error;
 
-			SetSocketOption_internal (m_Handle, optionLevel, optionName, null,
+			SetSocketOption_internal (_handle, optionLevel, optionName, null,
 				null, optionValue, out error);
 
 			if (!silent && error != 0)

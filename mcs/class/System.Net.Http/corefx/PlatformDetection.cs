@@ -2,7 +2,6 @@ namespace System
 {
 	static partial class PlatformDetection
 	{
-		public static bool IsOSX => true;
 		public static bool IsDebian => false;
 		internal static bool IsSsl2AndSsl3Supported => false;
 

@@ -57,7 +57,7 @@ namespace MonoTests.System.Net.Sockets {
 			Assert.IsNull (saea.SendPacketsElements, "SendPacketsElements");
 			Assert.AreEqual (TransmitFileOptions.UseDefaultWorkerThread, saea.SendPacketsFlags, "SendPacketsFlags");
 #endif
-			Assert.AreEqual (-1, saea.SendPacketsSendSize, "SendPacketsSendSize");
+			Assert.AreEqual (0, saea.SendPacketsSendSize, "SendPacketsSendSize");
 			Assert.AreEqual (SocketError.Success, saea.SocketError, "SocketError");
 			Assert.AreEqual (SocketFlags.None, saea.SocketFlags, "SocketFlags");
 			Assert.IsNull (saea.UserToken, "UserToken");

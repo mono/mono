@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 corefx/*.cs
+martin/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
 
@@ -266,6 +267,7 @@ ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
+ReferenceSources/SocketAddress.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -665,18 +667,25 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
 ../referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
 
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/BaseOverlappedAsyncResult.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/BaseOverlappedAsyncResult.Unix.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ConnectOverlappedAsyncResult.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ConnectOverlappedAsyncResult.Unix.cs
 ../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
 ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/LingerOption.cs
 ../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetEventSource.Sockets.cs
 ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
 ../referencesource/System/net/System/Net/Sockets/SelectMode.cs
 ../referencesource/System/net/System/Net/Sockets/Socket.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncEventArgs.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncEventArgs.Unix.cs
 ../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
 ../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
 ../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
@@ -812,11 +821,17 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/Net/ExceptionCheck.cs
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
+../../../external/corefx/src/Common/src/System/Net/RangeValidationHelpers.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+
+../../../external/corefx/src/Common/src/System/Net/Internals/IPAddressExtensions.cs
+../../../external/corefx/src/Common/src/System/Net/Internals/IPEndPointExtensions.cs
+../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs

@@ -15,7 +15,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Net.Sockets {
 
-	sealed class SafeSocketHandle : SafeHandleZeroOrMinusOneIsInvalid {
+	sealed class SafeSocketHandle : SafeCloseSocket {
 
 		List<Thread> blocking_threads;
 		Dictionary<Thread, StackTrace> threads_stacktraces;
@@ -42,6 +42,8 @@ namespace System.Net.Sockets {
 
 		protected override bool ReleaseHandle ()
 		{
+			InnerReleaseHandle ();
+
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);

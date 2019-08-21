@@ -173,7 +173,8 @@ namespace MonoTests.System.Net.Sockets
 				client.Connect (ipAddresses, NetworkHelpers.FindFreePort ());
 				Assert.Fail ("ConnectMultiAny #1");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10049, ex.ErrorCode, "ConnectMultiAny #2");
+				// Mono previously threw SocketError.AddressNotAvailable, but we now support multi-connects.
+				Assert.AreEqual (SocketError.ConnectionRefused, (SocketError)ex.ErrorCode, "ConnectMultiAny #2");
 			} catch {
 				Assert.Fail ("ConnectMultiAny #3");
 			}

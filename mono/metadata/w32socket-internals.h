@@ -146,4 +146,17 @@ mono_w32socket_convert_error (gint error);
 gboolean
 mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle);
 
+//
+// Martin's new code below
+//
+
+SOCKET
+mono_w32socket_accept2 (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, int *error);
+
+int
+mono_w32socket_receive_message (SOCKET sock, void *messageHeaderPtr, int32_t flags, int64_t* received);
+
+int32_t
+mono_w32socket_get_bytes_available (SOCKET sock, int32_t* available);
+
 #endif // __MONO_METADATA_W32SOCKET_INTERNALS_H__

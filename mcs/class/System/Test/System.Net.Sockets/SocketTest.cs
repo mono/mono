@@ -59,7 +59,8 @@ namespace MonoTests.System.Net.Sockets
 				}
 				Assert.Fail ("#3");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10049, ex.ErrorCode, "#4");
+				// Mono previously threw SocketError.AddressNotAvailable, but we now support multi-connects.
+				Assert.AreEqual (SocketError.ConnectionRefused, (SocketError)ex.ErrorCode, "#4");
 			}
 		}
 

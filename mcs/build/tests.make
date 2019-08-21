@@ -24,7 +24,7 @@ test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 test_nunit_lib = nunitlite.dll
 xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := netstandard System.Runtime
-xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
+xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs $(topdir)/../mcs/class/System/System/Platform.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 XTEST_REMOTE_EXECUTOR = $(test_lib_dir)/RemoteExecutorConsoleApp.exe
@@ -352,7 +352,7 @@ $(test_lib_dir)/xunit.execution.dotnet.dll: $(topdir)/build/tests.make $(topdir)
 
 run-xunit-test-lib: xunit-test-local
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) -notrait $(subst $(space), -notrait ,$(XTEST_NOTRAITS)) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(LOCAL_XTEST_HARNESS_FLAGS) $(XTEST_HARNESS_FLAGS) -notrait $(subst $(space), -notrait ,$(XTEST_NOTRAITS)) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
 
