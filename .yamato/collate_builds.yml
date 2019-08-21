@@ -22,6 +22,9 @@ triggers:
   branches:
     only:
       - "/.*/"
+  recurring:
+    - branch: unity-master
+      frequency: weekly
 
 artifacts: 
   builds:
