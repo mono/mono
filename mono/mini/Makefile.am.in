@@ -81,7 +81,7 @@ AM_CFLAGS = \
 	$(JEMALLOC_CFLAGS)	\
 	$(PLATFORM_CFLAGS) $(ARCH_CFLAGS) $(SHARED_CFLAGS)
 
-AM_CXXFLAGS = $(LLVM_CXXFLAGS) $(GLIB_CFLAGS)
+AM_CXXFLAGS = -I$(top_srcdir) $(LLVM_CXXFLAGS) $(GLIB_CFLAGS)
 
 if HOST_WIN32
 export HOST_CC
@@ -242,16 +242,6 @@ if LOADED_LLVM
 LLVMMONOF=
 else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
-endif
-
-if !HOST_WIN32
-if HAVE_ZLIB
-Z_LIBS= -lz
-else
-Z_LIBS=
-endif
-else
-Z_LIBS=
 endif
 
 mono_boehm_LDADD = \
@@ -494,9 +484,11 @@ common_sources = \
 	branch-opts.c		\
 	mini-generic-sharing.c	\
 	simd-methods.h		\
+	simd-methods-netcore.h	\
 	tasklets.c		\
 	tasklets.h		\
 	simd-intrinsics.c	\
+	simd-intrinsics-netcore.c	\
 	mini-native-types.c \
 	mini-unwind.h		\
 	unwind.c		\
@@ -702,7 +694,7 @@ libmonoldflags += $(JEMALLOC_LDFLAGS)
 endif
 
 libmono_ee_interp_la_SOURCES = $(interp_sources)
-libmono_ee_interp_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+libmono_ee_interp_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@ $(INTERP_CFLAGS)
 if BITCODE
 libmono_ee_interp_la_LDFLAGS = $(libmonoldflags)
 if DISABLE_INTERPRETER

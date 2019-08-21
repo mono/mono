@@ -579,7 +579,7 @@ clock_init (MonoProfilerSampleMode mode)
 	 * makes very little sense as we can only use nanosleep () to sleep on
 	 * real time.
 	 */
-#ifdef HAVE_CLOCK_NANOSLEEP
+#if defined(HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 		struct timespec ts = { 0 };
 
 		/*
@@ -619,7 +619,7 @@ clock_get_time_ns (void)
 static void
 clock_sleep_ns_abs (guint64 ns_abs)
 {
-#ifdef HAVE_CLOCK_NANOSLEEP
+#if defined(HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 	int ret;
 	struct timespec then;
 
@@ -689,12 +689,7 @@ sampling_thread_func (gpointer unused)
 
 	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	ERROR_DECL (error);
-
-	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name_constant_ignore_error (thread, "Profiler Sampler", MonoSetThreadNameFlag_None);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
@@ -862,9 +857,9 @@ mono_runtime_setup_stat_profiler (void)
 
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
 
-	MonoError error;
-	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
-	mono_error_assert_ok (&error);
+	ERROR_DECL (error);
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	mono_error_assert_ok (error);
 
 	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }

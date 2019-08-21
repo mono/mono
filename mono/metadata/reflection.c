@@ -520,7 +520,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	norm_type = mono_type_normalize (type);
 	if (norm_type != type) {
 		res = mono_type_get_object_checked (domain, norm_type, error);
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			return NULL;
@@ -561,7 +561,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	}
 	/* This is stored in vtables/JITted code so it has to be pinned */
 	res = (MonoReflectionType *)mono_object_new_pinned (domain, mono_defaults.runtimetype_class, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
 		return NULL;
@@ -1521,7 +1521,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	while (g_ascii_isspace (*p))
 		p++;
 	while (*p) {
-		if (*p == 'V' && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
+		if ((*p == 'V' || *p == 'v') && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
 			p += 8;
 			assembly->major = strtoul (p, &s, 10);
 			if (s == p || *s != '.')
@@ -1539,7 +1539,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 			if (s == p)
 				return 1;
 			p = s;
-		} else if (*p == 'C' && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
+		} else if ((*p == 'C' || *p == 'c') && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
 			p += 8;
 			if (g_ascii_strncasecmp (p, "neutral", 7) == 0) {
 				assembly->culture = "";
@@ -1550,7 +1550,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 					p++;
 				}
 			}
-		} else if (*p == 'P' && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
+		} else if ((*p == 'P' || *p == 'p') && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
 			p += 15;
 			if (strncmp (p, "null", 4) == 0) {
 				p += 4;
@@ -1563,7 +1563,9 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 				len = (p - start + 1);
 				if (len > MONO_PUBLIC_KEY_TOKEN_LENGTH)
 					len = MONO_PUBLIC_KEY_TOKEN_LENGTH;
-				g_strlcpy ((char*)assembly->public_key_token, start, len);
+				char* pkt_lower = g_ascii_strdown (start, len);
+				g_strlcpy ((char*) assembly->public_key_token, pkt_lower, len);
+				g_free (pkt_lower);
 			}
 		} else {
 			while (*p && *p != ',')
@@ -1916,7 +1918,11 @@ mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoErr
 	if (ok) {
 		mono_identifier_unescape_info (info);
 	} else {
+#if ENABLE_NETCORE
+		mono_error_set_argument_format (error, "typeName@0", "failed parse: %s", name);
+#else
 		mono_error_set_argument_format (error, "typeName", "failed parse: %s", name);
+#endif
 	}
 	return (ok != 0);
 }
@@ -2626,7 +2632,11 @@ reflection_bind_generic_method_parameters (MonoMethod *method, MonoArrayHandle t
 	mono_error_assert_ok (error);
 
 	if (!mono_verifier_is_method_valid_generic_instantiation (inflated)) {
+#if ENABLE_NETCORE
+		mono_error_set_argument (error, NULL, "Invalid generic arguments");
+#else
 		mono_error_set_argument (error, "typeArguments", "Invalid generic arguments");
+#endif
 		return NULL;
 	}
 

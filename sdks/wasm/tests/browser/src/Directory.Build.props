@@ -3,4 +3,11 @@
     <MonoWasmSdkPath>$(MSBuildThisFileDirectory)..\..\..\..\</MonoWasmSdkPath>
     <MonoWasmLinkMode>Full</MonoWasmLinkMode>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugThreads|AnyCPU' ">
+    <EnableMonoWasmThreads>true</EnableMonoWasmThreads>  
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseThreads|AnyCPU' ">
+    <EnableMonoWasmThreads>true</EnableMonoWasmThreads>  
+  </PropertyGroup>
+
 </Project>

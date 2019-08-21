@@ -17,7 +17,6 @@ win32_sources = \
 	w32semaphore-win32.c \
 	w32event-win32.c \
 	w32process-win32.c \
-	w32process-win32-internals.h \
 	w32socket-win32.c \
 	w32error-win32.c \
 	w32subset.h
@@ -102,12 +101,13 @@ support_sources += \
 endif
 endif
 
-zlib_sources = \
+ZLIB_SOURCES = \
 	../../support/adler32.c \
 	../../support/crc32.c \
 	../../support/crc32.h \
 	../../support/deflate.c \
 	../../support/deflate.h \
+	../../support/gzguts.h	\
 	../../support/infback.c \
 	../../support/inffast.c \
 	../../support/inffast.h \
@@ -123,16 +123,17 @@ zlib_sources = \
 	../../support/zutil.c \
 	../../support/zutil.h
 
-#
-# Support is a separate library because it is not valid C++.
-#
-if HOST_WIN32
-support_sources += $(zlib_sources)
+
+if HAVE_STATIC_ZLIB
+Z_SOURCE = 
+Z_LIBS = $(STATIC_ZLIB_PATH)
 else
-if HAVE_ZLIB
-# See libmonoruntime_support_la_LDFLAGS
+if HAVE_SYS_ZLIB
+Z_SOURCE = 
+Z_LIBS= -lz
 else
-support_sources += $(zlib_sources)
+Z_SOURCE = $(ZLIB_SOURCES)
+Z_LIBS=
 endif
 endif
 
@@ -163,15 +164,9 @@ libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" 
 #
 # Support is a separate library because it is not valid C++.
 #
-libmonoruntime_support_la_SOURCES = $(support_sources)
+libmonoruntime_support_la_SOURCES = $(support_sources) $(Z_SOURCE)
+libmonoruntime_support_la_LDFLAGS = $(Z_LIBS)
 libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @ZLIB_CFLAGS@
-if HAVE_STATIC_ZLIB
-libmonoruntime_support_la_LDFLAGS = $(STATIC_ZLIB_PATH)
-else
-if HAVE_ZLIB
-libmonoruntime_support_la_LDFLAGS = -lz
-endif
-endif
 
 #
 # This library contains the icall tables if the runtime was configured with --disable-icall-tables

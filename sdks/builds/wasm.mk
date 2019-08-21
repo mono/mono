@@ -20,7 +20,11 @@ ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/zlib.h  	\
 	$(MONO_SUPPORT)/zutil.h
 
-USE_OFFSETS_TOOL_PY = 1
+ifeq ($(UNAME),Darwin)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
+else ifeq ($(UNAME),Linux)
+WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
+endif
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
@@ -116,7 +120,13 @@ package-wasm-$(1):
 
 .PHONY: clean-wasm-$(1)
 clean-wasm-$(1):
-	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
+	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
+ifeq ($(KEEP_CONFIG_CACHE),)
+	rm -rf $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache
+endif
+
+clean-wasm-$(1)-cache:
+	rm -rf $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache
 
 $(eval $(call TargetTemplate,wasm,$(1)))
 
@@ -151,7 +161,7 @@ endif
 #  $(6): offsets dumper abi
 define WasmCrossTemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang-path="$$(EMSCRIPTEN_LOCAL_SDK_DIR)/upstream/lib"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -183,7 +193,7 @@ $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-u
 #  $(6): offsets dumper abi
 define WasmCrossMXETemplate
 
-_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang-path="$$(EMSCRIPTEN_LOCAL_SDK_DIR)/upstream/lib"
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
 
@@ -231,6 +241,6 @@ $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $
 
 endef
 
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+$(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin64,wasm32-unknown-unknown))
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

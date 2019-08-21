@@ -1,6 +1,12 @@
 <Type Name="Widget+IMenuItem" FullName="Mono.DocTest.Widget+IMenuItem">
   <TypeSignature Language="C#" Value="public interface Widget.IMenuItem" />
   <TypeSignature Language="ILAsm" Value=".class nested public interface auto ansi abstract Widget/IMenuItem" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Widget.IMenuItem" />
+  <TypeSignature Language="VB.NET" Value="Public Interface Widget.IMenuItem" />
+  <TypeSignature Language="F#" Value="type Widget.IMenuItem = interface" />
+  <TypeSignature Language="C++ CLI" Value="public: interface class Widget::IMenuItem" />
+  <TypeSignature Language="C++ CX" Value="public: interface class Widget::IMenuItem" />
+  <TypeSignature Language="C++ WINRT" Value="__interface Widget::IMenuItem" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -14,6 +20,12 @@
     <Member MemberName="A">
       <MemberSignature Language="C#" Value="public void A ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void A() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.IMenuItem.A" />
+      <MemberSignature Language="VB.NET" Value="Public Sub A ()" />
+      <MemberSignature Language="F#" Value="abstract member A : unit -&gt; unit" Usage="iMenuItem.A " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void A();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void A();" />
+      <MemberSignature Language="C++ WINRT" Value="void A();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +42,11 @@
     <Member MemberName="B">
       <MemberSignature Language="C#" Value="public int B { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 B" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Widget.IMenuItem.B" />
+      <MemberSignature Language="VB.NET" Value="Public Property B As Integer" />
+      <MemberSignature Language="F#" Value="member this.B : int with get, set" Usage="Mono.DocTest.Widget.IMenuItem.B" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int B { int get(); void set(int value); };" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; property int B { int get(); void set(int value); };" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

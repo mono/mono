@@ -17,6 +17,7 @@
 #include <config.h>
 #include <glib.h>
 #include "mono/metadata/assembly.h"
+#include "mono/metadata/assembly-internals.h"
 #include "mono/metadata/class-init.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/dynamic-image-internals.h"
@@ -100,10 +101,9 @@ string_to_utf8_image_raw (MonoImage *image, MonoString *s_raw, MonoError *error)
 {
 	/* FIXME all callers to string_to_utf8_image_raw should use handles */
 	HANDLE_FUNCTION_ENTER ();
-	char* result = NULL;
 	error_init (error);
 	MONO_HANDLE_DCL (MonoString, s);
-	result = mono_string_to_utf8_image (image, s, error);
+	char* const result = mono_string_to_utf8_image (image, s, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1120,7 +1120,7 @@ mono_image_create_method_token (MonoDynamicImage *assembly, MonoObjectHandle obj
 	mono_dynamic_image_register_token (assembly, token, obj, MONO_DYN_IMAGE_TOK_NEW);
 	return token;
 fail:
-	g_assert (!mono_error_ok (error));
+	g_assert (!is_ok (error));
 	return 0;
 }
 
@@ -1305,12 +1305,12 @@ assemblybuilderaccess_can_save (guint32 access)
  * of the helper hash table and the basic metadata streams.
  */
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoDynamicAssembly *assembly;
 	MonoDynamicImage *image;
 	MonoDomain *domain = mono_object_domain (assemblyb);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
 	
 	if (assemblyb->dynamic_assembly)
 		return;
@@ -1324,12 +1324,10 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->assembly.corlib_internal = assemblyb->corlib_internal;
 	assemblyb->assembly.assembly = (MonoAssembly*)assembly;
 	assembly->assembly.basedir = mono_string_to_utf8_checked_internal (assemblyb->dir, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	if (assemblyb->culture) {
 		assembly->assembly.aname.culture = mono_string_to_utf8_checked_internal (assemblyb->culture, error);
-		if (mono_error_set_pending_exception (error))
-			return;
+		return_if_nok (error);
 	} else
 		assembly->assembly.aname.culture = g_strdup ("");
 
@@ -1362,8 +1360,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly->domain = domain;
 
 	char *assembly_name = mono_string_to_utf8_checked_internal (assemblyb->name, error);
-	if (mono_error_set_pending_exception (error))
-		return;
+	return_if_nok (error);
 	image = mono_dynamic_image_create (assembly, assembly_name, g_strdup ("RefEmit_YouForgotToDefineAModule"));
 	image->initial_image = TRUE;
 	assembly->assembly.aname.name = image->image.name;
@@ -1378,13 +1375,19 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	mono_domain_assemblies_lock (domain);
 	domain->domain_assemblies = g_slist_append (domain->domain_assemblies, assembly);
+#ifdef ENABLE_NETCORE
+	// TODO: potentially relax the locking here?
+	mono_alc_assemblies_lock (alc);
+	alc->loaded_assemblies = g_slist_append (alc->loaded_assemblies, assembly);
+	mono_alc_assemblies_unlock (alc);
+#endif
 	mono_domain_assemblies_unlock (domain);
 
 	register_assembly (mono_object_domain (assemblyb), &assemblyb->assembly, &assembly->assembly);
 	
 	MONO_PROFILER_RAISE (assembly_loaded, (&assembly->assembly));
 	
-	mono_assembly_invoke_load_hook ((MonoAssembly*)assembly);
+	mono_assembly_invoke_load_hook_internal (alc, (MonoAssembly*)assembly);
 }
 
 #endif /* !DISABLE_REFLECTION_EMIT */
@@ -1672,7 +1675,7 @@ mono_reflection_type_get_handle (MonoReflectionType* ref_raw, MonoError *error)
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MONO_HANDLE_DCL (MonoReflectionType, ref);
-	MonoType *result = mono_reflection_type_handle_mono_type (ref, error);
+	MonoType * const result = mono_reflection_type_handle_mono_type (ref, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1780,7 +1783,7 @@ mono_type_array_get_and_resolve_raw (MonoArray* array_raw, int idx, MonoError *e
 	HANDLE_FUNCTION_ENTER(); /* FIXME callers of mono_type_array_get_and_resolve_raw should use handles */
 	error_init (error);
 	MONO_HANDLE_DCL (MonoArray, array);
-	MonoType *result = mono_type_array_get_and_resolve (array, idx, error);
+	MonoType * const result = mono_type_array_get_and_resolve (array, idx, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1923,7 +1926,7 @@ static MonoMethodSignature*
 ctor_builder_to_signature_raw (MonoImage *image, MonoReflectionCtorBuilder* ctor_raw, MonoError *error) {
 	HANDLE_FUNCTION_ENTER();
 	MONO_HANDLE_DCL (MonoReflectionCtorBuilder, ctor);
-	MonoMethodSignature *sig = ctor_builder_to_signature (image, ctor, error);
+	MonoMethodSignature * const sig = ctor_builder_to_signature (image, ctor, error);
 	HANDLE_FUNCTION_RETURN_VAL (sig);
 }
 /**
@@ -3264,7 +3267,7 @@ methodbuilder_to_mono_method_raw (MonoClass *klass, MonoReflectionMethodBuilder*
 	HANDLE_FUNCTION_ENTER (); /* FIXME change callers of methodbuilder_to_mono_method_raw to use handles */
 	error_init (error);
 	MONO_HANDLE_DCL (MonoReflectionMethodBuilder, mb);
-	MonoMethod *result = methodbuilder_to_mono_method (klass, mb, error);
+	MonoMethod * const result = methodbuilder_to_mono_method (klass, mb, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -3297,7 +3300,7 @@ fix_partial_generic_class (MonoClass *klass, MonoError *error)
 
 	if (klass->parent != gklass->parent) {
 		MonoType *parent_type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (m_class_get_parent (gklass)), &mono_class_get_generic_class (klass)->context, error);
-		if (mono_error_ok (error)) {
+		if (is_ok (error)) {
 			MonoClass *parent = mono_class_from_mono_type_internal (parent_type);
 			mono_metadata_free_type (parent_type);
 			if (parent != klass->parent) {
@@ -3578,18 +3581,77 @@ modulebuilder_get_next_table_index (MonoReflectionModuleBuilder *mb, gint32 tabl
 	return index;
 }
 
+static void
+typebuilder_setup_one_field (MonoDynamicImage *dynamic_image, MonoClass *klass, int32_t first_idx, MonoArray *tb_fields, int i, MonoFieldDefaultValue *def_value_out, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	{
+		MonoImage *image = klass->image;
+		MonoReflectionFieldBuilder *fb;
+		MonoClassField *field;
+		MonoArray *rva_data;
+
+		fb = (MonoReflectionFieldBuilder *)mono_array_get_internal (tb_fields, gpointer, i);
+		field = &klass->fields [i];
+		field->parent = klass;
+		field->name = string_to_utf8_image_raw (image, fb->name, error); /* FIXME use handles */
+		goto_if_nok (error, leave);
+		if (fb->attrs) {
+			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+			goto_if_nok (error, leave);
+			field->type = mono_metadata_type_dup (klass->image, type);
+			field->type->attrs = fb->attrs;
+		} else {
+			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+			goto_if_nok (error, leave);
+		}
+
+		if (!klass->enumtype && !mono_type_get_underlying_type (field->type)) {
+			mono_class_set_type_load_failure (klass, "Field '%s' is an enum type with a bad underlying type", field->name);
+			goto leave;
+		}
+
+		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
+			char *base = mono_array_addr_internal (rva_data, char, 0);
+			size_t size = mono_array_length_internal (rva_data);
+			char *data = (char *)mono_image_alloc (klass->image, size);
+			memcpy (data, base, size);
+			def_value_out->data = data;
+		}
+		if (fb->offset != -1)
+			field->offset = fb->offset;
+		fb->handle = field;
+		mono_save_custom_attrs (klass->image, field, fb->cattrs);
+
+		if (fb->def_value) {
+			guint32 len, idx;
+			const char *p, *p2;
+			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
+			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
+			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &def_value_out->def_type);
+			/* Copy the data from the blob since it might get realloc-ed */
+			p = assembly->blob.data + idx;
+			len = mono_metadata_decode_blob_size (p, &p2);
+			len += p2 - p;
+			def_value_out->data = (const char *)mono_image_alloc (image, len);
+			memcpy ((gpointer)def_value_out->data, p, len);
+		}
+
+		MonoObjectHandle field_builder_handle = MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_NEW (MonoReflectionFieldBuilder, fb));
+		mono_dynamic_image_register_token (dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
+	}
+leave:
+	HANDLE_FUNCTION_RETURN ();
+}
+
 /* This initializes the same data as mono_class_setup_fields () */
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 {
 	MonoReflectionTypeBuilder *tb = mono_class_get_ref_info_raw (klass); /* FIXME use handles */
-	MonoReflectionFieldBuilder *fb;
-	MonoClassField *field;
 	MonoFieldDefaultValue *def_values;
 	MonoImage *image = klass->image;
-	const char *p, *p2;
 	int i, instance_size, packing_size = 0;
-	guint32 len, idx;
 
 	error_init (error);
 
@@ -3629,54 +3691,9 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	klass->size_inited = 1;
 
 	for (i = 0; i < fcount; ++i) {
-		MonoArray *rva_data;
-		fb = (MonoReflectionFieldBuilder *)mono_array_get_internal (tb->fields, gpointer, i);
-		field = &klass->fields [i];
-		field->parent = klass;
-		field->name = string_to_utf8_image_raw (image, fb->name, error); /* FIXME use handles */
-		if (!mono_error_ok (error))
+		typebuilder_setup_one_field (tb->module->dynamic_image, klass, first_idx, tb->fields, i, &def_values[i], error);
+		if (!is_ok (error))
 			return;
-		if (fb->attrs) {
-			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
-			return_if_nok (error);
-			field->type = mono_metadata_type_dup (klass->image, type);
-			field->type->attrs = fb->attrs;
-		} else {
-			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
-			return_if_nok (error);
-		}
-
-		if (!klass->enumtype && !mono_type_get_underlying_type (field->type)) {
-			mono_class_set_type_load_failure (klass, "Field '%s' is an enum type with a bad underlying type", field->name);
-			continue;
-		}
-
-		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
-			char *base = mono_array_addr_internal (rva_data, char, 0);
-			size_t size = mono_array_length_internal (rva_data);
-			char *data = (char *)mono_image_alloc (klass->image, size);
-			memcpy (data, base, size);
-			def_values [i].data = data;
-		}
-		if (fb->offset != -1)
-			field->offset = fb->offset;
-		fb->handle = field;
-		mono_save_custom_attrs (klass->image, field, fb->cattrs);
-
-		if (fb->def_value) {
-			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
-			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
-			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &def_values [i].def_type);
-			/* Copy the data from the blob since it might get realloc-ed */
-			p = assembly->blob.data + idx;
-			len = mono_metadata_decode_blob_size (p, &p2);
-			len += p2 - p;
-			def_values [i].data = (const char *)mono_image_alloc (image, len);
-			memcpy ((gpointer)def_values [i].data, p, len);
-		}
-
-		MonoObjectHandle field_builder_handle = MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_NEW (MonoReflectionFieldBuilder, fb));
-		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
 	}
 
 	if (!mono_class_has_failure (klass))
@@ -3711,7 +3728,7 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 		properties [i].parent = klass;
 		properties [i].attrs = pb->attrs;
 		properties [i].name = string_to_utf8_image_raw (image, pb->name, error); /* FIXME use handles */
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return;
 		if (pb->get_method)
 			properties [i].get = pb->get_method->mhandle;
@@ -3762,7 +3779,7 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 		events [i].parent = klass;
 		events [i].attrs = eb->attrs;
 		events [i].name = string_to_utf8_image_raw (image, eb->name, error); /* FIXME use handles */
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return;
 		if (eb->add_method)
 			events [i].add = eb->add_method->mhandle;
@@ -4038,11 +4055,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 
 	error_init (error);
 
-	if (mono_runtime_is_shutting_down ()) {
-		mono_error_set_generic_error (error, "System", "InvalidOperationException", "");
-		return FALSE;
-	}
-
 	if (!(queue = dynamic_method_queue)) {
 		mono_loader_lock ();
 		if (!(queue = dynamic_method_queue))
@@ -4151,9 +4163,6 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 		}
 	}
 	g_slist_free (mb->referenced_by);
-
-	/* ilgen is no longer needed */
-	mb->ilgen = NULL;
 
 	domain = mono_domain_get ();
 	mono_domain_lock (domain);
@@ -4441,7 +4450,7 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
 }
 
 void
-mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb, MonoError *error)
 {
 	g_error ("This mono runtime was configured with --enable-minimal=reflection_emit, so System.Reflection.Emit is not supported.");
 }
@@ -4596,9 +4605,11 @@ ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, Mono
 #endif
 
 void
-ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
+ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error)
 {
-	mono_reflection_dynimage_basic_init (assemblyb);
+	uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, assemblyb), TRUE);
+	mono_reflection_dynimage_basic_init (MONO_HANDLE_RAW (assemblyb), error);
+	mono_gchandle_free_internal (gchandle);
 }
 
 void

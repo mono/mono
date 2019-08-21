@@ -1,6 +1,11 @@
 <Type Name="MyList&lt;T&gt;+Helper&lt;U,V&gt;" FullName="Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;">
   <TypeSignature Language="C#" Value="public class MyList&lt;T&gt;.Helper&lt;U,V&gt;" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit MyList`1/Helper`2&lt;T, U, V&gt; extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.MyList`1.Helper`2" />
+  <TypeSignature Language="VB.NET" Value="Public Class MyList(Of T).Helper(Of U, V)" />
+  <TypeSignature Language="F#" Value="type MyList&lt;'T&gt;.Helper&lt;'U, 'V&gt; = class" />
+  <TypeSignature Language="C++ CLI" Value="public: generic &lt;typename U, typename V&gt;&#xA;ref class MyList&lt;T&gt;::Helper" />
+  <TypeSignature Language="C++ WINRT" Value="template &lt;typename U, typename V&gt;&#xA;[Windows::Foundation::Metadata::WebHostHidden]&#xA;class MyList&lt;T&gt;::Helper" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +35,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Helper ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.Helper`2.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Helper();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Helper();" />
+      <MemberSignature Language="C++ WINRT" Value=" Helper();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -43,6 +53,12 @@
     <Member MemberName="UseT">
       <MemberSignature Language="C#" Value="public void UseT (T a, U b, V c);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseT(!T a, !U b, !V c) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`1.Helper`2.UseT(`0,`1,`2)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub UseT (a As T, b As U, c As V)" />
+      <MemberSignature Language="F#" Value="member this.UseT : 'T * 'U * 'V -&gt; unit" Usage="helper.UseT (a, b, c)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void UseT(T a, U b, V c);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void UseT(T a, U b, V c);" />
+      <MemberSignature Language="C++ WINRT" Value="void UseT(T a, U b, V c);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

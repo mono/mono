@@ -228,26 +228,9 @@ mono_llvm_set_is_constant (LLVMValueRef global_var)
 	unwrap<GlobalVariable>(global_var)->setConstant (true);
 }
 
-void
-mono_llvm_set_preserveall_cc (LLVMValueRef func)
-{
-	unwrap<Function>(func)->setCallingConv (CallingConv::PreserveAll);
-}
-
 // Note that in future versions of LLVM, CallInst and InvokeInst
 // share a CallBase parent class that would make the below methods
 // look much better
-
-void
-mono_llvm_set_call_preserveall_cc (LLVMValueRef wrapped_calli)
-{
-	Instruction *calli = unwrap<Instruction> (wrapped_calli);
-
-	if (isa<CallInst> (calli))
-		dyn_cast<CallInst>(calli)->setCallingConv (CallingConv::PreserveAll);
-	else
-		dyn_cast<InvokeInst>(calli)->setCallingConv (CallingConv::PreserveAll);
-}
 
 void
 mono_llvm_set_call_nonnull_arg (LLVMValueRef wrapped_calli, int argNo)
@@ -441,7 +424,11 @@ mono_llvm_di_create_function (void *di_builder, void *cu, LLVMValueRef func, con
 	// FIXME: Share DIFile
 	di_file = builder->createFile (file, dir);
 	type = builder->createSubroutineType (builder->getOrCreateTypeArray (ArrayRef<Metadata*> ()));
+#if LLVM_API_VERSION >= 900
+	di_func = builder->createFunction (di_file, name, mangled_name, di_file, line, type, 0);
+#else
 	di_func = builder->createFunction (di_file, name, mangled_name, di_file, line, type, true, true, 0);
+#endif
 
 	unwrap<Function>(func)->setMetadata ("dbg", di_func);
 
@@ -479,8 +466,13 @@ mono_llvm_di_builder_finalize (void *di_builder)
 LLVMValueRef
 mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 {
-	llvm::Constant *SafepointPollConstant;
+#if LLVM_API_VERSION >= 900
+
+	llvm::FunctionCallee callee = unwrap(module)->getOrInsertFunction("gc.safepoint_poll", FunctionType::get(unwrap(LLVMVoidType()), false));
+	return wrap (dyn_cast<llvm::Function> (callee.getCallee ()));
+#else
 	llvm::Function *SafepointPoll;
+	llvm::Constant *SafepointPollConstant;
 
 	SafepointPollConstant = unwrap(module)->getOrInsertFunction("gc.safepoint_poll", FunctionType::get(unwrap(LLVMVoidType()), false));
 	g_assert (SafepointPollConstant);
@@ -490,4 +482,5 @@ mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 	g_assert (SafepointPoll->empty());
 
 	return wrap(SafepointPoll);
+#endif
 }

@@ -73,6 +73,7 @@ WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
 WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
@@ -107,9 +108,9 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-# emsdk_env.sh calls emsdk construct_env which is racy so make a copy
+# emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
 emsdk_env.sh:
-	$(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && cp $(EMSCRIPTEN_SDK_DIR)/emsdk_set_env.sh $@
+	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
 driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h emsdk_env.sh
 	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o
@@ -224,14 +225,49 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
-build-test-suite: bin/test-suite/mono.js
+XUNIT_DIR = $(TOP)/external/xunit-binaries
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) build-sdk
+xunit-runner.exe: xunit-runner.cs
+	csc /out:$@ /r:$(XUNIT_DIR)/xunit.abstractions.dll /r:$(XUNIT_DIR)/xunit.core.dll /r:$(XUNIT_DIR)/xunit.console.exe /r:$(WASM_BCL_DIR)/Facades/System.Runtime.dll /r:$(WASM_BCL_DIR)/Facades/System.Reflection.dll /r:$(WASM_BCL_DIR)/Facades/System.Collections.dll /r:$(XUNIT_DIR)/xunit.execution.dotnet.dll /r:$(XUNIT_DIR)/xunit.runner.utility.net452.dll xunit-runner.cs
+
+#
+# Targets for running xunit tests
+# xunit-exclusions.rsp contains the exclusions
+#
+
+##
+# Parameters:
+# $(1) - make target suffix
+# $(2) - directory name
+# $(3) - test assembly filename
+# $(4) - command line arguments
+define XunitTestTemplate
+
+bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
+	mono packager.exe --debugrt --search-path=$(XUNIT_DIR) --search-path=$(WASM_BCL_DIR)/tests --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(XUNIT_DIR)/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+	ninja -v -C obj/$(2)
+
+build-$(1): bin/$(2)/mono.js
+
+run-$(1): bin/$(2)/mono.js
+	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.exe $(3) $(4) `cat xunit-exclusions.rsp | grep -v '#'`)
+
+endef
+
+$(eval $(call XunitTestTemplate,System.Core-xunit,System.Core-xunit,wasm_System.Core_xunit-test.dll))
+$(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
+
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
+$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
@@ -329,6 +365,24 @@ data.aotprofile: build-aot-profile
 ##
 # Parameters:
 # $(1) - make target suffix
+#
+define InterpTestTemplate
+build-interp-$(1): packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --template=runtime-tests.js --appdir=bin/interp-$(1) --builddir=obj/interp-$(1) --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	ninja -v -C obj/interp-$(1)
+
+clean-interp-$(1):
+	$(RM) -r obj/interp-$(1) bin/interp-$(1)
+endef
+
+$(eval $(call InterpTestTemplate,mini))
+$(eval $(call InterpTestTemplate,corlib))
+$(eval $(call InterpTestTemplate,System.Core))
+$(eval $(call InterpTestTemplate,System))
+
+##
+# Parameters:
+# $(1) - make target suffix
 # $(2) - test assembly filename
 # $(3) - main.exe argument
 # $(4) - extra args to packager
@@ -347,11 +401,11 @@ check-aot-$(1) run-aot-$(1): build-aot-$(1)
 endef
 
 $(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
-$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
-$(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,System.Core))
+$(eval $(call AotTestTemplate,System,wasm_System_test.dll,System))
 
 $(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
-$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
+$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,System.Core,--aot-interp --aot-assemblies=mscorlib))
 
 AOT_TEST_SUITES=corlib System.Core
 
@@ -386,7 +440,7 @@ run-ch-%: toolchain build-test-suite
 	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd bin/test-suite && $(D8) --expose_wasm runtime.js -- $*)
+	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- --enable-gc $*)
 
 run-jsc-%: toolchain build-test-suite
 	(cd bin/test-suite && $(JSC) runtime.js -- $*)
@@ -410,16 +464,15 @@ test-debugger: build-debugger-test-app build-dbg-testsuite
 run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
 
-clean: clean-sdk
+run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
+	(cd $(BROWSER_TEST_THREADS) && npm test)
+
+clean: clean-browser-tests
 	$(RM) -r *.o
 	$(RM) -r ./obj
 	$(RM) -r ./bin
 	$(RM) -r .stamp-build-debug-sample
 	$(RM) -r .stamp-build-test-suite
-	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
-	$(RM) -r $(BROWSER_TEST)/node-modules
-	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
 	$(RM) -r packager.exe
@@ -507,13 +560,15 @@ clean-sdk:
 	$(RM) -r sdk/**/**/bin
 	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
+	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
 	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
 
-clean-browser-tests: clean-sdk 
+clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
+	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish

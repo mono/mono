@@ -27,7 +27,7 @@ XTEST_RESOURCE_FILES = \
 	Test/TestData/testservereku.contoso.com.pfx
 
 USE_XTEST_REMOTE_EXECUTOR = YES
-XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
 LIB_MCS_FLAGS = -d:COREFX -d:CONFIGURATION_2_0 -d:SYSTEM_NET_PRIMITIVES_DLL -d:XML_DEP -d:SECURITY_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 XTEST_MCS_FLAGS += $(XTEST_RESOURCE_FILES:%=-resource:%)
 

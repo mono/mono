@@ -198,7 +198,14 @@ namespace Mono.Btls
 			set {
 				if (nativePrivateKey != null)
 					nativePrivateKey.Dispose ();
-				nativePrivateKey = null;
+				try {
+					// FIXME: there doesn't seem to be a public API to check whether it actually
+					//        contains a private key (apart from RSAManaged.PublicOnly).
+					if (value != null)
+						nativePrivateKey = MonoBtlsKey.CreateFromRSAPrivateKey ((RSA)value);
+				} catch {
+					nativePrivateKey = null;
+				}
 			}
 		}
 

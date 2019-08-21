@@ -693,8 +693,6 @@ compiler so that csc can be used.
 
 Always use `/r:foo.dll`, not `/r:foo`. Windows requires the former.
 
-Use `/r:$(corlib)`, not `/r:corlib`.
-
 If you're writing shell script code as part of a make rule, remember
 that Windows has command-line length limits. So something like
 

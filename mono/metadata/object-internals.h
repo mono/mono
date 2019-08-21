@@ -51,9 +51,7 @@
 #define MONO_CHECK_ARG_NULL(arg, retval) do { 			\
 	if (G_UNLIKELY (!(arg)))				\
 	{							\
-		ERROR_DECL (error);				\
 		mono_error_set_argument_null (error, #arg, "");	\
-		mono_error_set_pending_exception (error);	\
 		return retval;					\
 	}							\
 } while (0)
@@ -186,6 +184,15 @@ struct _MonoString {
  */
 #define mono_array_length_internal(array) ((array)->max_length)
 
+static inline
+uintptr_t
+mono_array_handle_length (MonoArrayHandle arr)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	return mono_array_length_internal (MONO_HANDLE_RAW (arr));
+}
+
 // Equivalent to mono_array_addr_with_size, except:
 // 1. A macro instead of a function -- the types of size and index are open.
 // 2. mono_array_addr_with_size could, but does not, do GC mode transitions.
@@ -260,6 +267,8 @@ typedef struct {
 	MonoObject *identity;
 #endif
 } MonoMarshalByRefObject;
+
+TYPED_HANDLE_DECL (MonoMarshalByRefObject);
 
 /* This is a copy of System.AppDomain */
 struct _MonoAppDomain {
@@ -343,6 +352,8 @@ typedef struct {
 	MonoException base;
 } MonoSystemException;
 
+TYPED_HANDLE_DECL (MonoSystemException);
+
 #ifndef ENABLE_NETCORE
 typedef struct {
 	MonoSystemException base;
@@ -366,10 +377,14 @@ typedef struct {
 	gint64	     add_time;
 } MonoAsyncResult;
 
+TYPED_HANDLE_DECL (MonoAsyncResult);
+
 typedef struct {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
 } MonoWaitHandle;
+
+TYPED_HANDLE_DECL (MonoWaitHandle);
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -413,6 +428,8 @@ typedef struct {
 	MonoReflectionType type;
 	MonoObject *type_info;
 } MonoReflectionMonoType;
+
+TYPED_HANDLE_DECL (MonoReflectionMonoType);
 
 typedef struct {
 	MonoObject  object;
@@ -491,6 +508,8 @@ typedef struct {
 	guint32	    call_type;
 } MonoMethodMessage;
 
+TYPED_HANDLE_DECL (MonoMethodMessage);
+
 /* Keep in sync with the System.MonoAsyncCall */
 typedef struct {
 	MonoObject object;
@@ -502,12 +521,16 @@ typedef struct {
 	MonoArray *out_args;
 } MonoAsyncCall;
 
+TYPED_HANDLE_DECL (MonoAsyncCall);
+
 typedef struct {
 	MonoObject obj;
 	MonoArray *frames;
 	MonoArray *captured_traces;
 	MonoBoolean debug_info;
 } MonoStackTrace;
+
+TYPED_HANDLE_DECL (MonoStackTrace);
 
 typedef struct {
 	MonoObject obj;
@@ -522,6 +545,8 @@ typedef struct {
 	MonoString *internal_method_name;
 } MonoStackFrame;
 
+TYPED_HANDLE_DECL (MonoStackFrame);
+
 typedef enum {
 	MONO_THREAD_FLAG_DONT_MANAGE = 1, // Don't wait for or abort this thread
 	MONO_THREAD_FLAG_NAME_SET = 2, // Thread name set from managed code
@@ -529,6 +554,17 @@ typedef enum {
 } MonoThreadFlags;
 
 struct _MonoThreadInfo;
+
+typedef struct MonoThreadName {
+	char* volatile chars;      // null check outside of lock
+	gsize volatile generation; // read outside of lock
+	gint32 free;
+	gint32 length;
+} MonoThreadName;
+
+void
+mono_gstring_append_thread_name (GString*, MonoInternalThread*);
+
 
 #ifdef ENABLE_NETCORE
 /*
@@ -539,13 +575,12 @@ struct _MonoThread {
 #else
 struct _MonoInternalThread {
 #endif
+	// FIXME: Mechanize keeping this in sync with managed.
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
 	MonoThreadHandle *handle;
 	gpointer native_handle;
-	gpointer unused3;
-	gunichar2  *name;
-	guint32	    name_len;
+	MonoThreadName name;
 	guint32	    state;      /* must be accessed while longlived->synch_cs is locked */
 	MonoException *abort_exc;
 	int abort_state_handle;
@@ -572,7 +607,6 @@ struct _MonoInternalThread {
 	gint32 managed_id;
 	guint32 small_id;
 	MonoThreadManageCallback manage_callback;
-	gpointer unused4;
 	gsize    flags;
 	gpointer thread_pinning_ref;
 	gsize __abort_protected_block_count;
@@ -580,20 +614,14 @@ struct _MonoInternalThread {
 	GPtrArray *owned_mutexes;
 	MonoOSEvent *suspended;
 	gint32 self_suspended; // TRUE | FALSE
-
 	gsize thread_state;
+
 #ifdef ENABLE_NETCORE
 	struct _MonoThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 #else
-	/* 
-	 * These fields are used to avoid having to increment corlib versions
-	 * when a new field is added to this structure.
-	 * Please synchronize any changes with InternalThread in Thread.cs, i.e. add the
-	 * same field there.
-	 */
-	gsize unused2;
+	void* unused [3]; // same size as netcore
 #endif
 	/* This is used only to check that we are in sync between the representation
 	 * of MonoInternalThread in native and InternalThread in managed
@@ -709,6 +737,8 @@ typedef struct {
 	MonoArray *GenitiveAbbreviatedMonthNames;
 } MonoCalendarData;
 
+TYPED_HANDLE_DECL (MonoCalendarData);
+
 typedef struct {
 	MonoObject obj;
 	MonoString *AMDesignator;
@@ -719,6 +749,8 @@ typedef struct {
 	guint32 FirstDayOfWeek;
 	guint32 CalendarWeekRule;
 } MonoCultureData;
+
+TYPED_HANDLE_DECL (MonoCultureData);
 
 typedef struct {
 	MonoObject obj;
@@ -744,6 +776,8 @@ typedef struct {
 	const void* text_info_data;
 } MonoCultureInfo;
 
+TYPED_HANDLE_DECL (MonoCultureInfo);
+
 typedef struct {
 	MonoObject obj;
 	gint32 geo_id;
@@ -757,7 +791,10 @@ typedef struct {
 	MonoString *currency_english_name;
 	MonoString *currency_native_name;
 } MonoRegionInfo;
-#endif
+
+TYPED_HANDLE_DECL (MonoRegionInfo);
+
+#endif /* !ENABLE_NETCORE */
 
 typedef struct {
 	MonoObject object;
@@ -2188,15 +2225,11 @@ void
 ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb);
 
 ICALL_EXPORT
-void
-ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb);
-
-ICALL_EXPORT
 MonoArray*
 ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues);
 
 MonoAssembly*
-mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
 gboolean
 mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);

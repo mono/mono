@@ -6,9 +6,7 @@
 // Don't override IsAlwaysNormalized because it is just a Unicode Transformation and could be confused.
 //
 
-using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Text
@@ -319,7 +317,7 @@ namespace System.Text
         // EncodingNLS, UTF7Encoding, UTF8Encoding, UTF32Encoding, ASCIIEncoding, UnicodeEncoding
 
         [CLSCompliant(false)]
-        public unsafe override int GetChars(byte* bytes, int byteCount, char* chars, int charCount)
+        public override unsafe int GetChars(byte* bytes, int byteCount, char* chars, int charCount)
         {
             // Validate Parameters
             if (bytes == null || chars == null)
@@ -981,7 +979,7 @@ namespace System.Text
                     Debug.Assert(bytes >= byteStart + 4 || chars == charStart,
                         "[UTF32Encoding.GetChars]Expected to have consumed bytes or throw (normal char)");
                     bytes -= 4;                                       // get back to where we were
-                    iChar = 0;                                        // Remembering nothing                    
+                    iChar = 0;                                        // Remembering nothing
                     ThrowCharsOverflow(decoder, chars == charStart);// Might throw, if no chars output
                     break;                                          // Stop here, didn't throw
                 }
@@ -1155,7 +1153,7 @@ namespace System.Text
             GetType() != typeof(UTF32Encoding) ? new ReadOnlySpan<byte>(GetPreamble()) : // in case a derived UTF32Encoding overrode GetPreamble
             !_emitUTF32ByteOrderMark ? default :
             _bigEndian ? (ReadOnlySpan<byte>)new byte[4] { 0x00, 0x00, 0xFE, 0xFF } : // uses C# compiler's optimization for static byte[] data
-            (ReadOnlySpan<byte>)new byte[4] { 0xFF, 0xFE, 0x00, 0x00 };      
+            (ReadOnlySpan<byte>)new byte[4] { 0xFF, 0xFE, 0x00, 0x00 };
 
         public override bool Equals(object? value)
         {
@@ -1198,14 +1196,9 @@ namespace System.Text
             }
 
             // Anything left in our decoder?
-            internal override bool HasState
-            {
-                get
-                {
-                    // ReadByteCount is our flag.  (iChar==0 doesn't mean much).
-                    return (this.readByteCount != 0);
-                }
-            }
+            internal override bool HasState =>
+                // ReadByteCount is our flag.  (iChar==0 doesn't mean much).
+                (this.readByteCount != 0);
         }
     }
 }

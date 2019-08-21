@@ -103,17 +103,17 @@ namespace System.Reflection.Emit {
 		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted, bool typeOwner)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 			if (returnType == null)
 				returnType = typeof (void);
 			if (owner == null && typeOwner)
 				throw new ArgumentNullException (nameof (owner));
 			if ((m == null) && !anonHosted)
-				throw new ArgumentNullException ("m");			
+				throw new ArgumentNullException (nameof (m));			
 			if (parameterTypes != null) {
 				for (int i = 0; i < parameterTypes.Length; ++i)
 					if (parameterTypes [i] == null)
-						throw new ArgumentException ("Parameter " + i + " is null", "parameterTypes");
+						throw new ArgumentException ($"Parameter {i} is null");
 			}
 			if (owner != null && (owner.IsArray || owner.IsInterface)) {
 				throw new ArgumentException ("Owner can't be an array or an interface.");
@@ -136,30 +136,33 @@ namespace System.Reflection.Emit {
 		private static extern void create_dynamic_method (DynamicMethod m);
 
 		private void CreateDynMethod () {
-			if (mhandle.Value == IntPtr.Zero) {
-				if (ilgen == null || ilgen.ILOffset == 0)
-					throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
+			// Clearing of ilgen in create_dynamic_method is not yet synchronized for multiple threads
+			lock (this) {
+				if (mhandle.Value == IntPtr.Zero) {
+					if (ilgen == null || ilgen.ILOffset == 0)
+						throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
 
-				ilgen.label_fixup (this);
+					ilgen.label_fixup (this);
 
-				// Have to create all DynamicMethods referenced by this one
-				try {
-					// Used to avoid cycles
-					creating = true;
-					if (refs != null) {
-						for (int i = 0; i < refs.Length; ++i) {
-							if (refs [i] is DynamicMethod) {
-								DynamicMethod m = (DynamicMethod)refs [i];
-								if (!m.creating)
-									m.CreateDynMethod ();
+					// Have to create all DynamicMethods referenced by this one
+					try {
+						// Used to avoid cycles
+						creating = true;
+						if (refs != null) {
+							for (int i = 0; i < refs.Length; ++i) {
+								if (refs [i] is DynamicMethod) {
+									DynamicMethod m = (DynamicMethod)refs [i];
+									if (!m.creating)
+										m.CreateDynMethod ();
+								}
 							}
 						}
+					} finally {
+						creating = false;
 					}
-				} finally {
-					creating = false;
+					create_dynamic_method (this);
+					ilgen = null;
 				}
-
-				create_dynamic_method (this);
 			}
 		}
 

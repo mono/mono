@@ -13,6 +13,8 @@ module.exports = function(config) {
             {pattern: './publish/netstandard2.0/issues-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/zip-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/mono.wasm', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/mono.worker.js', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/mono.js.mem', included: false, served: true, type: 'wasm'},
             {pattern: './publish/netstandard2.0/mono.js', included: false, served: true},
             {pattern: './publish/netstandard2.0/mono-config.js', included: false, served: true},
             {pattern: './publish/netstandard2.0/runtime.js', included: false, served: true},

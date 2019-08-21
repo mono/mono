@@ -83,6 +83,7 @@ ZLIB_SOURCES = \
 	crc32.c		\
 	uncompr.c	\
 	deflate.c	\
+	gzguts.h	\
 	trees.c		\
 	zutil.c		\
 	inflate.c	\
@@ -104,7 +105,7 @@ if HAVE_STATIC_ZLIB
 Z_SOURCE = zlib-helper.c
 Z_LIBS = $(STATIC_ZLIB_PATH)
 else
-if HAVE_ZLIB
+if HAVE_SYS_ZLIB
 Z_SOURCE = zlib-helper.c
 Z_LIBS= -lz
 else

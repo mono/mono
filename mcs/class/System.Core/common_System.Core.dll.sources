@@ -2,6 +2,8 @@
 ../../build/common/SR.cs
 ../../build/common/MonoTODOAttribute.cs
 
+../corlib/System.Runtime.CompilerServices/PreserveDependencyAttribute.cs
+
 Assembly/AssemblyInfo.cs
 System/Util.cs
 System.IO.MemoryMappedFiles/MemoryMappedFile.cs

@@ -18,6 +18,7 @@ usage()
   echo "  --pack                     Package build outputs into NuGet packages"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
   echo "  --rebuild                  Run ../.autogen.sh"
+  echo "  --llvm                     Enable LLVM support"
   echo "  --skipnative               Do not build runtime"
   echo "  --skipmscorlib             Do not build System.Private.CoreLib"
   echo ""
@@ -33,6 +34,7 @@ force_rebuild=false
 test=false
 skipmscorlib=false
 skipnative=false
+autogen_params=''
 
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
@@ -61,6 +63,9 @@ while [[ $# > 0 ]]; do
     -skipnative)
       skipnative=true
       ;;
+    -llvm)
+      autogen_params="$autogen_params --enable-llvm"
+      ;;
     -p:*|/p:*)
       properties="$properties $1"
       ;;
@@ -85,9 +90,17 @@ done
 
 CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
 
+if [[ "$configuration" == "Debug" ]]; then
+  EXTRA_CFLAGS="-O0 -ggdb3 -fno-omit-frame-pointer"
+  EXTRA_CXXFLAGS="-O0 -ggdb3 -fno-omit-frame-pointer"
+elif [[ "$configuration" == "Release" ]]; then
+  EXTRA_CFLAGS="-O2 -g"
+  EXTRA_CXXFLAGS="-O2 -g"
+fi
+
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
-  (cd .. && ./autogen.sh --with-core=only)
+  (cd .. && ./autogen.sh --with-core=only $autogen_params CFLAGS="$EXTRA_CFLAGS" CXXFLAGS="$EXTRA_CXXFLAGS")
   touch .configured
 fi
 

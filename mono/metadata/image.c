@@ -1055,10 +1055,8 @@ static gboolean
 pe_image_load_cli_data (MonoImage *image)
 {
 	MonoCLIImageInfo *iinfo;
-	MonoDotNetHeader *header;
 
 	iinfo = image->image_info;
-	header = &iinfo->cli_header;
 
 	/* Load the CLI header */
 	if (!mono_image_load_cli_header (image, iinfo))
@@ -1342,14 +1340,11 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		    gboolean care_about_cli, gboolean care_about_pecoff)
 {
 	ERROR_DECL (error);
-	MonoCLIImageInfo *iinfo;
 	GSList *l;
 
 	MONO_PROFILER_RAISE (image_loading, (image));
 
 	mono_image_init (image);
-
-	iinfo = image->image_info;
 
 	if (!image->metadata_only) {
 		for (l = image_loaders; l; l = l->next) {

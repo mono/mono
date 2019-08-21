@@ -33,20 +33,20 @@ namespace System
 			return length;
 		}
 
-		public static byte GetByte (Array array, int index)
+		public static unsafe byte GetByte (Array array, int index)
 		{
 			if (index < 0 || index >= ByteLength (array))
 				throw new ArgumentOutOfRangeException ("index");
 
-			return _GetByte (array, index);
+			return *(byte*)(Unsafe.AsPointer<byte> (ref Unsafe.Add<byte> (ref array.GetRawSzArrayData (), index)));
 		}
 
-		public static void SetByte (Array array, int index, byte value)
+		public static unsafe void SetByte (Array array, int index, byte value)
 		{
 			if (index < 0 || index >= ByteLength (array))
 				throw new ArgumentOutOfRangeException ("index");
 
-			_SetByte (array, index, value);
+			*(byte*)(Unsafe.AsPointer<byte> (ref Unsafe.Add<byte> (ref array.GetRawSzArrayData (), index))) = value;
 		}
 
 		public static void BlockCopy (Array src, int srcOffset, Array dst, int dstOffset, int count)
@@ -93,7 +93,7 @@ namespace System
 				dst += int.MaxValue;
 			}
 
-			memcpy1 (dst, src, (int) sourceBytesToCopy);
+			Memcpy (dst, src, (int) sourceBytesToCopy);
 		}
 
 		[CLSCompliantAttribute (false)]

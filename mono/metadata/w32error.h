@@ -45,6 +45,8 @@
 #define ERROR_IO_PENDING           997
 #define ERROR_CANT_RESOLVE_FILENAME 1921
 #define ERROR_ENCRYPTION_FAILED    6000
+#define WSA_INVALID_PARAMETER      ERROR_INVALID_PARAMETER
+#define WSA_INVALID_HANDLE         ERROR_INVALID_HANDLE
 #define WSAEINTR                   10004
 #define WSAEBADF                   10009
 #define WSAEACCES                  10013
@@ -74,6 +76,8 @@
 #define WSAESHUTDOWN               10058
 #define WSAETIMEDOUT               10060
 #define WSAECONNREFUSED            10061
+#define WSAELOOP                   10062
+#define WSAENAMETOOLONG            10063
 #define WSAEHOSTDOWN               10064
 #define WSAEHOSTUNREACH            10065
 #define WSASYSCALLFAILURE          10107

@@ -1,0 +1,4 @@
+#include System.Drawing.dll.sources
+
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/BufferedGraphics.Windows.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/BufferedGraphicsContext.Windows.cs

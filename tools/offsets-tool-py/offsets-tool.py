@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Mode: python; tab-width: 4; indent-tabs-mode: t; -*-
 
 from __future__ import print_function
 import os
@@ -7,6 +8,7 @@ import argparse
 import clang.cindex
 
 IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
+ANDROID_DEFINES = ["HOST_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"]
 
 class Target:
 	def __init__(self, arch, platform, others):
@@ -52,7 +54,7 @@ class OffsetsTool:
 				sys.exit (1)
 
 		parser = argparse.ArgumentParser ()
-		parser.add_argument ('--libclang-path', dest='libclang_path', help='path to directory where libclang.{so,dylib} lives')
+		parser.add_argument ('--libclang', dest='libclang', help='path to shared library of libclang.{so,dylib}')
 		parser.add_argument ('--emscripten-sdk', dest='emscripten_path', help='path to emscripten sdk')
 		parser.add_argument ('--outfile', dest='outfile', help='path to output file', required=True)
 		parser.add_argument ('--monodir', dest='mono_path', help='path to mono source tree', required=True)
@@ -61,8 +63,8 @@ class OffsetsTool:
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		args = parser.parse_args ()
 
-		if not args.libclang_path or not os.path.isdir (args.libclang_path):
-			print ("Libclang path '" + args.libclang_path + "' doesn't exist.", file=sys.stderr)
+		if not args.libclang or not os.path.isfile (args.libclang):
+			print ("Libclang '" + args.libclang + "' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 		if not os.path.isdir (args.mono_path):
 			print ("Mono directory '" + args.mono_path + "' doesn't exist.", file=sys.stderr)
@@ -74,6 +76,7 @@ class OffsetsTool:
 		self.sys_includes=[]
 		self.target = None
 		self.target_args = []
+		android_api_level = "-D__ANDROID_API=21"
 
 		if "wasm" in args.abi:
 			require_emscipten_path (args)
@@ -81,30 +84,55 @@ class OffsetsTool:
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
+		# iOS
 		elif "arm-apple-darwin10" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm"]
 			self.target_args += ["-isysroot", args.sysroot]
-
 		elif "aarch64-apple-darwin10" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_IOS", IOS_DEFINES)
 			self.target_args += ["-arch", "arm64"]
 			self.target_args += ["-isysroot", args.sysroot]
 
+		# watchOS
 		elif "armv7k-apple-darwin" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
 			self.target_args += ["-arch", "armv7k"]
 			self.target_args += ["-isysroot", args.sysroot]
-
 		elif "aarch64-apple-darwin10_ilp32" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + IOS_DEFINES)
 			self.target_args += ["-arch", "arm64_32"]
 			self.target_args += ["-isysroot", args.sysroot]
 
+		# Android
+		elif "i686-none-linux-android" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_X86", "TARGET_ANDROID", ANDROID_DEFINES)
+			self.target_args += ["--target=i386---android"]
+			self.target_args += ["-I", args.sysroot + "/usr/include/i686-linux-android"]
+		elif "x86_64-none-linux-android" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_AMD64", "TARGET_ANDROID", ANDROID_DEFINES)
+			self.target_args += ["--target=x86_64---android"]
+			self.target_args += ["-I", args.sysroot + "/usr/include/x86_64-linux-android"]
+		elif "armv7-none-linux-androideabi" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM", "TARGET_ANDROID", ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + ANDROID_DEFINES)
+			self.target_args += ["--target=arm---androideabi"]
+			self.target_args += ["-I", args.sysroot + "/usr/include/arm-linux-androideabi"]
+		elif "aarch64-v8a-linux-android" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM64", "TARGET_ANDROID", ANDROID_DEFINES)
+			self.target_args += ["--target=aarch64---android"]
+			self.target_args += ["-I", args.sysroot + "/usr/include/aarch64-linux-android"]
+
+		if self.target.platform_define == "TARGET_ANDROID":
+			self.target_args += [android_api_level]
+			self.target_args += ["-isysroot", args.sysroot]
 
 		if not self.target:
 			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
@@ -150,7 +178,8 @@ class OffsetsTool:
 			"MonoThreadsSync",
 			"SgenThreadInfo",
 			"SgenClientThreadInfo",
-			"MonoProfilerCallContext"
+			"MonoProfilerCallContext",
+			"MonoErrorExternal",
 		]
 		self.jit_type_names = [
 			"MonoLMF",
@@ -189,7 +218,7 @@ class OffsetsTool:
 		for define in self.target.get_clang_args ():
 			clang_args.append ("-D" + define)
 		
-		clang.cindex.Config.set_library_path (args.libclang_path)
+		clang.cindex.Config.set_library_file (args.libclang)
 		
 		for srcfile in srcfiles:
 			src = args.mono_path + "/" + srcfile
@@ -213,7 +242,7 @@ class OffsetsTool:
 				name = c.spelling
 				if c.kind == clang.cindex.CursorKind.TYPEDEF_DECL:
 					for c2 in c.get_children ():
-						if c2.kind == clang.cindex.CursorKind.STRUCT_DECL:
+						if c2.kind == clang.cindex.CursorKind.STRUCT_DECL or c2.kind == clang.cindex.CursorKind.UNION_DECL:
 							c = c2
 				type = c.type
 				if "struct _" in name:
@@ -290,8 +319,3 @@ tool = OffsetsTool ()
 tool.parse_args ()
 tool.run_clang ()
 tool.gen ()
-
-# Local Variables:
-# indent-tabs-mode: 1
-# tab-width: 4
-# End:

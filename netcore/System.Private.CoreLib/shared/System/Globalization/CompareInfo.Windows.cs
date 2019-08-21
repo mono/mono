@@ -6,8 +6,6 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-using Internal.Runtime.CompilerServices;
-
 namespace System.Globalization
 {
     public partial class CompareInfo
@@ -431,7 +429,6 @@ namespace System.Globalization
         private IntPtr _sortHandle;
 
         private const uint LCMAP_SORTKEY = 0x00000400;
-        private const uint LCMAP_HASH    = 0x00040000;
 
         private const int FIND_STARTSWITH = 0x00100000;
         private const int FIND_ENDSWITH = 0x00200000;

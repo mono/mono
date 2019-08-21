@@ -15,6 +15,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/mono-config-dirs.h>
 
 #include <sys/param.h>
 #include <fcntl.h>
@@ -41,6 +42,18 @@ extern GCStats mono_gc_stats;
 
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
+
+#ifdef TARGET_OSX
+// OSX 10.9 does not have MAP_ANONYMOUS
+#if !defined(MAP_ANONYMOUS)
+  #define NO_MAP_ANONYMOUS
+  #if defined(MAP_ANON)
+    #define MAP_ANONYMOUS MAP_ANON
+  #else
+    #define MAP_ANONYMOUS 0
+  #endif
+#endif
 #endif
 
 #ifdef HAVE_EXECINFO_H
@@ -929,6 +942,8 @@ mono_native_state_add_memory (MonoStateWriter *writer)
 
 #define MONO_CRASH_REPORTING_MAPPING_LINE_LIMIT 30
 
+#if !MONO_PRIVATE_CRASHES
+
 static void
 mono_native_state_add_process_map (MonoStateWriter *writer)
 {
@@ -983,6 +998,8 @@ mono_native_state_add_process_map (MonoStateWriter *writer)
 	close (handle);
 #endif
 }
+
+#endif
 
 static void
 mono_native_state_add_prologue (MonoStateWriter *writer)

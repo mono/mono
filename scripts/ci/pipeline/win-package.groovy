@@ -1,12 +1,13 @@
-def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
-def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
-def jobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono")
-def macJobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono/${monoBranch}")
-def packageFileNameX86 = null
-def packageFileNameX64 = null
-def commitHash = null
-def utils = null
+isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
+jobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono")
+macJobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono/${monoBranch}")
+packageFileNameX86 = null
+packageFileNameX64 = null
+commitHash = null
+utils = null
+
 // compression is incompatible with JEP-210 right now
 properties([ /* compressBuildLog() */])
 

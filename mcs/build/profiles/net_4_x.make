@@ -7,8 +7,6 @@ MCS = $(BOOTSTRAP_MCS)
 
 PLATFORMS = macos linux win32 unix
 
-# nuttzing!
-
 profile-check:
 	@:
 
@@ -25,7 +23,7 @@ ifeq ($(HOST_PLATFORM),win32)
 MX_WINCRYPTO=1
 endif
 
-ifdef PLATFORM_MACOS
+ifeq ($(HOST_PLATFORM),macos)
 MONO_FEATURE_APPLETLS=1
 ENABLE_GSS=1
 endif

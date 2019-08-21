@@ -2,6 +2,7 @@
 /al
 /al1
 /al2
+/aprofutil
 /caspol
 /cert-sync
 /cert2spc
@@ -37,7 +38,6 @@
 /makecert
 /Makefile
 /Makefile.in
-/mbas
 /mconfig
 /mcs
 /mcs1
