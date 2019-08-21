@@ -70,8 +70,6 @@ namespace MonoTests.System
 				case "Europe/Rome":
 				case "Europe/Vatican":
 					return "W. Europe Standard Time";
-				case "Canada/Eastern":
-					return "Eastern Standard Time";
 				case "Asia/Tehran":
 					return "Iran Standard Time";
 				case "Europe/Guernsey":
