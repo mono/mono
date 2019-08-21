@@ -203,10 +203,6 @@ typedef struct _MonoThreadInfo {
 	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end) */
 	void *stack_start_limit, *stack_end;
 
-#if HOST_WIN32
-	struct _TEB* windows_teb;
-#endif
-
 	/* suspend machinery, fields protected by suspend_semaphore */
 	MonoSemType suspend_semaphore;
 	int suspend_count;
@@ -277,6 +273,7 @@ typedef struct _MonoThreadInfo {
 
 #ifdef USE_WINDOWS_BACKEND
 	gint32 win32_apc_info;
+	PNT_TIB windows_tib;
 	gpointer win32_apc_info_io_handle;
 #endif
 

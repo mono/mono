@@ -460,9 +460,6 @@ register_thread (MonoThreadInfo *info)
 	mono_thread_info_get_stack_bounds (&staddr, &stsize);
 	g_assert (staddr);
 	g_assert (stsize);
-#if HOST_WIN32
-	info->windows_teb = NtCurrentTeb ();
-#endif
 	info->stack_start_limit = staddr;
 	info->stack_end = staddr + stsize;
 	info->stackdata = g_byte_array_new ();
@@ -472,6 +469,7 @@ register_thread (MonoThreadInfo *info)
 	info->profiler_signal_ack = 1;
 
 #ifdef USE_WINDOWS_BACKEND
+	info->windows_tib = (PNT_TIB)NtCurrentTeb ();
 	info->win32_apc_info = 0;
 	info->win32_apc_info_io_handle = INVALID_HANDLE_VALUE;
 #endif

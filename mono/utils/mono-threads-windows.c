@@ -470,8 +470,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	//
 	VirtualQuery (&info, &info, sizeof (info));
 	*staddr = (guint8*)info.AllocationBase;
-	// TEB starts with TIB.
-	// TIB is public, TEB is not.
+	// TEB starts with TIB. TIB is public, TEB is not.
 	*stsize = (size_t)((NT_TIB*)NtCurrentTeb ())->StackBase - (size_t)info.AllocationBase;
 #endif
 }
