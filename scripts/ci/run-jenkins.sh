@@ -31,6 +31,10 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 		skip_step="PPC"
 		skip=true
 	fi
+	if ! grep -q -v a/scripts/ci/provisioning pr-files.txt; then
+		skip_step="CI provisioning scripts"
+		skip=true
+	fi
 	if ! grep -q -v a/sdks/wasm pr-files.txt; then
 		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
 			true
