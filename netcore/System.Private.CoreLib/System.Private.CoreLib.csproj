@@ -14,7 +14,6 @@
     <DebugType>Portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
 
-    <Configurations>Debug;Release;Checked</Configurations>
     <Configuration>Release</Configuration>
     <Platforms>x64;x86;arm;arm64</Platforms>
 
@@ -31,7 +30,6 @@
 
   <!-- Compilation options -->
   <PropertyGroup>
-    <Configuration Condition=" '$(BuildType)' != '' ">$(BuildType)</Configuration>
     <Platform Condition=" '$(BuildArch)' != '' ">$(BuildArch)</Platform>
     <Platform Condition=" '$(Platform)' == 'armel' ">arm</Platform>
     <ProjectGuid>{DD18B4BA-3B49-437B-9E34-41EF8A640CE0}</ProjectGuid>
@@ -82,9 +80,8 @@
     <DefineConstants>BIT64;ARM64;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <!-- Configuration specific properties -->
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Checked'">
-    <Optimize Condition="'$(Optimize)' == '' and '$(Configuration)' == 'Debug'">false</Optimize>
-    <Optimize Condition="'$(Optimize)' == '' and '$(Configuration)' == 'Checked'">true</Optimize>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Optimize Condition="'$(Optimize)' == ''">false</Optimize>
     <DefineConstants>_LOGGING;DEBUG;$(DefineConstants)</DefineConstants>
     <DefineConstants Condition="'$(Platform)' == 'x86' or '$(Platform)' == 'x64'">CODE_ANALYSIS;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
