@@ -263,6 +263,30 @@ mono_code_manager_new_dynamic (void)
 	return mono_code_manager_new_internal (TRUE);
 }
 
+static gpointer
+mono_codeman_malloc (gsize n)
+{
+#if _WIN32
+	void* const heap = mono_code_manager_heap;
+	g_assert (heap);
+	return HeapAlloc (heap, 0, n);
+#else
+	return dlmemalign (MIN_ALIGN, n);
+#endif
+}
+
+static void
+mono_codeman_free (gpointer p)
+{
+#if _WIN32
+	void* const heap = mono_code_manager_heap;
+	g_assert (heap);
+	HeapFree (heap, 0, p);
+#else
+	dlfree (p);
+#endif
+}
+
 static void
 free_chunklist (CodeChunk *chunk)
 {
@@ -287,13 +311,7 @@ free_chunklist (CodeChunk *chunk)
 			codechunk_vfree (dead->data, dead->size);
 			/* valgrind_unregister(dead->data); */
 		} else if (dead->flags == CODE_FLAG_MALLOC) {
-#if _WIN32
-			void* const heap = mono_code_manager_heap;
-			g_assert (heap);
-			HeapFree (heap, 0, dead->data);
-#else
-			dlfree (dead->data);
-#endif
+			mono_codeman_free (dead->data);
 		}
 		code_memory_used -= dead->size;
 		g_free (dead);
@@ -434,14 +452,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
-		const int malloc_size = chunk_size + MIN_ALIGN - 1;
-#if _WIN32
-		void* const heap = mono_code_manager_heap;
-		g_assert (heap);
-		ptr = HeapAlloc (heap, 0, malloc_size);
-#else
-		ptr = dlmemalign (MIN_ALIGN, malloc_size);
-#endif
+		ptr = mono_codeman_malloc (chunk_size + MIN_ALIGN - 1);
 		if (!ptr)
 			return NULL;
 	} else {
@@ -464,15 +475,9 @@ new_codechunk (MonoCodeManager *cman, int size)
 
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
-		if (flags == CODE_FLAG_MALLOC) {
-#if _WIN32
-			void* const heap = mono_code_manager_heap;
-			g_assert (heap);
-			HeapFree (heap, 0, ptr);
-#else
-			dlfree (ptr);
-#endif
-		} else
+		if (flags == CODE_FLAG_MALLOC)
+			mono_codeman_free (ptr);
+		else
 			mono_vfree (ptr, chunk_size, MONO_MEM_ACCOUNT_CODE);
 		return NULL;
 	}
