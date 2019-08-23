@@ -608,7 +608,7 @@ namespace MonoTests.System
 
 				// Greece, Athens (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
 				CheckJumpingIntoDST ("Europe/Athens",
-									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
 									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
 
 				// Guernsey (UK)    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
