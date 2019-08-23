@@ -15,7 +15,7 @@
 
     ```
         .
-        |--- sdk/wasm/support                           
+        |--- sdk/wasm/src                           
             |--- driver.c           - WebAssembly main driver program.
             |                           - Native interops with the library_mono.js
             |                           - Initializing and starting mono/
