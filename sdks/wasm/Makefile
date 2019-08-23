@@ -112,10 +112,10 @@ toolchain: .stamp-jsvu
 emsdk_env.sh:
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
-driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h emsdk_env.sh
-	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o
+driver-dynamic.o: support/driver.c support/corebindings.c support/pinvoke-tables-default.h emsdk_env.sh
+	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 support/driver.c -c -o driver-dynamic.o
 
-corebindings-dynamic.o: corebindings.c emsdk_env.sh
+corebindings-dynamic.o: support/corebindings.c emsdk_env.sh
 	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $@
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
@@ -137,17 +137,17 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
+builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o support/library_mono.js support/binding_support.js support/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library support/library_mono.js --js-library support/binding_support.js --js-library support/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
 
-builds/$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
+builds/$(1)/driver.o: support/driver.c support/corebindings.c support/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 support/driver.c -c -o $$@
 
-builds/$(1)/corebindings.o: corebindings.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
+builds/$(1)/corebindings.o: support/corebindings.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 support/corebindings.c -c -o $$@
 
-builds/$(1)/zlib-helper.o: zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
+builds/$(1)/zlib-helper.o: support/zlib-helper.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support support/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
@@ -160,8 +160,8 @@ $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(E
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS)))
 endif
 
-#release-dynamic/.stamp-build: driver-dynamic.o corebindings-dynamic.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
-#	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver-dynamic.o corebindings-dynamic.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+#release-dynamic/.stamp-build: driver-dynamic.o corebindings-dynamic.o support/library_mono.js support/binding_support.js support/dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
+#	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library support/library_mono.js --js-library support/binding_support.js --js-library support/dotnet_support.js driver-dynamic.o corebindings-dynamic.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 #	touch $@
 
 runtime:
@@ -429,7 +429,7 @@ build-dbg-testsuite:
 build: build-native build-managed build-debugger-test-app
 
 gen-pinvoke-tables:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > pinvoke-tables-default.h
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > support/pinvoke-tables-default.h
 
 CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
@@ -499,14 +499,15 @@ package: build build-dbg-proxy
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
-	cp driver.c pinvoke-tables-default.h tmp/
-	cp corebindings.c tmp/
-	cp zlib-helper.c tmp/
-	cp pinvoke-tables-default.h tmp/
+	mkdir tmp/support
+	cp support/driver.c tmp/support
+	cp support/corebindings.c tmp/support
+	cp support/zlib-helper.c tmp/support
+	cp pinvoke-tables-default.h tmp/support
 	cp $(MONO_LIBS) tmp/
-	cp library_mono.js tmp/
-	cp binding_support.js tmp/
-	cp dotnet_support.js tmp/
+	cp support/library_mono.js tmp/support
+	cp support/binding_support.js tmp/support
+	cp support/dotnet_support.js tmp/support
 	cp -r builds tmp/
 	mkdir tmp/framework
 	cp framework/WebAssembly.Bindings.dll tmp/framework
