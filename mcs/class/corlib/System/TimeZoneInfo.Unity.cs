@@ -54,6 +54,12 @@ namespace System {
 			if(daylightNameCurrentYear != names[(int)TimeZoneNames.DaylightNameIdx])
 				return rulesForYear;
 
+			// If the first and second transition DateTime objects are the same, ValidateAdjustmentRule will throw
+			// an exception. I'm unsure why these would be the same, but we do see that occur for some locales.
+			// In that case, just exit early.
+			if (firstTransition.Equals(secondTransition))
+				return rulesForYear;
+
 			var beginningOfYear = new DateTime (year, 1, 1, 0, 0, 0, 0);
 			var endOfYearDay = new DateTime (year, 12, DateTime.DaysInMonth (year, 12));
 			var endOfYearMaxTimeout = new DateTime (year, 12, DateTime.DaysInMonth(year, 12), 23, 59, 59, 999);
