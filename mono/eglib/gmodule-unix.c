@@ -90,7 +90,7 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (ret == 0)
 		return FALSE;
 	/*
-	 * XXX: AIX reimplementation should be fixed to ensure constiness,
+	 * XXX: AIX/Win32 implementations should be fixed to ensure constiness,
 	 * until then, cast these to non-const strings
 	 */
 	if (file_name != NULL)
