@@ -554,7 +554,7 @@ namespace MonoTests.System
 				// Israel, Jerusalem (Israel ST):    Jumps ahead at 2:00 AM on 3/27/2020 to 3:00 AM
 				CheckJumpingIntoDST ("Asia/Jerusalem",
 									new DateTime (2020, 3, 27, 2, 0, 0), new DateTime (2020, 3, 27, 2, 30, 0), new DateTime (2020, 3, 27, 3, 0, 0),
-									new TimeSpan (3, 30, 0), new TimeSpan (4, 30, 0));
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
 
 				// Jordan, Amman (Eastern European ST):    Jumps ahead at 12:00 AM on 3/27/2020 to 1:00 AM
 				CheckJumpingIntoDST ("Asia/Amman",
