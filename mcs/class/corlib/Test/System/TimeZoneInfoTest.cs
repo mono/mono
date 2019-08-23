@@ -725,14 +725,14 @@ namespace MonoTests.System
 			void CheckJumpingIntoDST (string tzId, DateTime dstDeltaStart, DateTime inDstDelta, DateTime dstDeltaEnd, TimeSpan baseOffset, TimeSpan dstOffset)
 			{
 				var tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId (tzId));
-				Assert.IsFalse (tzi.IsDaylightSavingTime (dstDeltaStart));
-				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (dstDeltaStart));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (dstDeltaStart), $"{tzId}: #1");
+				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (dstDeltaStart), $"{tzId}: #2");
 
-				Assert.IsFalse (tzi.IsDaylightSavingTime (inDstDelta));
-				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (inDstDelta));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (inDstDelta), $"{tzId}: #3");
+				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (inDstDelta), $"{tzId}: #4");
 
-				Assert.IsTrue (tzi.IsDaylightSavingTime (dstDeltaEnd));
-				Assert.AreEqual (dstOffset, tzi.GetUtcOffset (dstDeltaEnd));
+				Assert.IsTrue (tzi.IsDaylightSavingTime (dstDeltaEnd), $"{tzId}: #5");
+				Assert.AreEqual (dstOffset, tzi.GetUtcOffset (dstDeltaEnd), $"{tzId}: #6");
 			}
 		}
 
