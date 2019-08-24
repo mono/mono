@@ -54,11 +54,11 @@ namespace MonoTests.System
 					return "New Zealand Standard Time";
 				case "Europe/Athens":
 					return "GTB Standard Time";
-				case "US/Eastern":
+				case "America/New_York":
 					return "Eastern Standard Time";
-				case "US/Central":
+				case "America/Chicago":
 					return "Central Standard Time";
-				case "US/Pacific":
+				case "America/Los_Angeles":
 					return "Pacific Standard Time";
 				case "Australia/Sydney":
 				case "Australia/Melbourne":
@@ -70,7 +70,7 @@ namespace MonoTests.System
 				case "Europe/Rome":
 				case "Europe/Vatican":
 					return "W. Europe Standard Time";
-				case "Canada/Eastern":
+				case "America/Toronto":
 					return "Eastern Standard Time";
 				case "Asia/Tehran":
 					return "Iran Standard Time";
@@ -744,8 +744,8 @@ namespace MonoTests.System
 			[Test (Description="Fix the bug https://bugzilla.xamarin.com/show_bug.cgi?id=1849")]
 			public void ConvertTime_AjustmentConvertTimeWithSourceTimeZone () {
 				
-				TimeZoneInfo easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Eastern"));
-				TimeZoneInfo pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Pacific"));
+				TimeZoneInfo easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("America/New_York"));
+				TimeZoneInfo pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("America/Los_Angeles"));
 
 				DateTime lastMidnight = new DateTime (new DateTime (2012, 06, 13).Ticks, DateTimeKind.Unspecified);
 				DateTime lastMidnightAsEST = TimeZoneInfo.ConvertTime (lastMidnight, pacificTimeZone, easternTimeZone);
@@ -1022,7 +1022,6 @@ namespace MonoTests.System
 					"Europe/Dublin", // Europe/Dublin has a DST offset of 34 minutes and 39 seconds in 1916.
 					"Europe/Amsterdam",
 					"America/St_Johns",
-					"Canada/Newfoundland",
 					"Europe/Moscow",
 					"Europe/Riga",
 				};
