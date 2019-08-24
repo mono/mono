@@ -2354,6 +2354,10 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 		ex2_bb = gen_bb (ctx, "EX2_BB");
 	noex_bb = gen_bb (ctx, "NOEX_BB");
 
+	args [0] = cmp;
+	args [1] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
+	cmp = LLVMBuildCall (ctx->builder, get_intrins_from_module (ctx->module, INTRINS_EXPECT_I1), args, 2, "");
+
 	LLVMBuildCondBr (ctx->builder, cmp, ex_bb, noex_bb);
 
 	/* Emit exception throwing code */
