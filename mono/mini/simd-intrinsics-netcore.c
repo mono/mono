@@ -641,6 +641,96 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 }
 #endif
 
+static guint16 vector_128_t_methods [] = {
+	SN_get_Count,
+};
+
+static MonoInst*
+emit_vector128_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+	MonoType *type, *etype;
+	MonoClass *klass;
+	int size, len, id;
+
+	id = lookup_intrins (vector_128_t_methods, sizeof (vector_128_t_methods), cmethod);
+	if (id == -1)
+		return NULL;
+
+	klass = cmethod->klass;
+	type = m_class_get_byval_arg (klass);
+	etype = mono_class_get_context (klass)->class_inst->type_argv [0];
+	size = mono_class_value_size (mono_class_from_mono_type_internal (etype), NULL);
+	g_assert (size);
+	len = 16 / size;
+
+	if (!MONO_TYPE_IS_PRIMITIVE (etype) || etype->type == MONO_TYPE_CHAR || etype->type == MONO_TYPE_BOOLEAN)
+		return NULL;
+
+	if (cfg->verbose_level > 1) {
+		char *name = mono_method_full_name (cmethod, TRUE);
+		printf ("  SIMD intrinsic %s\n", name);
+		g_free (name);
+	}
+
+	switch (id) {
+	case SN_get_Count:
+		if (!(fsig->param_count == 0 && fsig->ret->type == MONO_TYPE_I4))
+			break;
+		EMIT_NEW_ICONST (cfg, ins, len);
+		return ins;
+	default:
+		break;
+	}
+
+	return NULL;
+}
+
+static guint16 vector_256_t_methods [] = {
+	SN_get_Count,
+};
+
+static MonoInst*
+emit_vector256_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+	MonoType *type, *etype;
+	MonoClass *klass;
+	int size, len, id;
+
+	id = lookup_intrins (vector_256_t_methods, sizeof (vector_256_t_methods), cmethod);
+	if (id == -1)
+		return NULL;
+
+	klass = cmethod->klass;
+	type = m_class_get_byval_arg (klass);
+	etype = mono_class_get_context (klass)->class_inst->type_argv [0];
+	size = mono_class_value_size (mono_class_from_mono_type_internal (etype), NULL);
+	g_assert (size);
+	len = 32 / size;
+
+	if (!MONO_TYPE_IS_PRIMITIVE (etype) || etype->type == MONO_TYPE_CHAR || etype->type == MONO_TYPE_BOOLEAN)
+		return NULL;
+
+	if (cfg->verbose_level > 1) {
+		char *name = mono_method_full_name (cmethod, TRUE);
+		printf ("  SIMD intrinsic %s\n", name);
+		g_free (name);
+	}
+
+	switch (id) {
+	case SN_get_Count:
+		if (!(fsig->param_count == 0 && fsig->ret->type == MONO_TYPE_I4))
+			break;
+		EMIT_NEW_ICONST (cfg, ins, len);
+		return ins;
+	default:
+		break;
+	}
+
+	return NULL;
+}
+
 MonoInst*
 mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -671,6 +761,12 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
 		}
 		return ins;
+	}
+	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
+		if (!strcmp (class_name, "Vector128`1"))
+			return emit_vector128_t (cfg ,cmethod, fsig, args);
+		if (!strcmp (class_name, "Vector256`1"))
+		return emit_vector256_t (cfg ,cmethod, fsig, args);
 	}
 #ifdef TARGET_AMD64
 	if (cmethod->klass->nested_in)
