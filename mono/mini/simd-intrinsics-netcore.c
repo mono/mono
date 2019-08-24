@@ -271,7 +271,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	MonoInst *ins;
 	MonoType *type, *etype;
 	MonoClass *klass;
-	int size, len, id, index;
+	int size, len, id;
 	gboolean is_unsigned;
 
 	id = lookup_intrins (vector_t_methods, sizeof (vector_t_methods), cmethod);
@@ -309,12 +309,20 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		return emit_xcompare (cfg, klass, etype, ins, ins);
 	}
 	case SN_get_Item:
-		if (args [1]->opcode != OP_ICONST)
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [1]->dreg, len);
+		MONO_EMIT_NEW_COND_EXC (cfg, GE_UN, "IndexOutOfRangeException");
+		if (etype->type == MONO_TYPE_R4 || etype->type == MONO_TYPE_R8)
+			// FIXME:
 			return NULL;
-		index = args [1]->inst_c0;
-		if (index < 0 || index >= len)
-			return NULL;
-		return NULL;
+		// FIXME: Optimize constant case
+		gboolean is64 = etype->type == MONO_TYPE_I8 || etype->type == MONO_TYPE_U8;
+		MONO_INST_NEW (cfg, ins, is64 ? OP_XEXTRACT_I64 : OP_XEXTRACT_I32);
+		ins->dreg = is64 ? alloc_lreg (cfg) : alloc_ireg (cfg);
+		ins->sreg1 = load_simd_vreg (cfg, cmethod, args [0], NULL);
+		ins->sreg2 = args [1]->dreg;
+		ins->type = is64 ? STACK_I8 : STACK_I4;
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
 	case SN_ctor:
 		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
 			int dreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
