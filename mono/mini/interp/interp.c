@@ -3251,7 +3251,14 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
 static void
 interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
-	InterpFrame child_frame;
+	union {
+		InterpFrame child_frame;
+		struct {
+			GSList *old_list;
+			guint32 ip_offset;
+		} leave;
+	} u;
+	InterpFrame* const child_frame = &u.child_frame;
 	GSList *finally_ips = NULL;
 	const guint16 *endfinally_ip = NULL;
 	const guint16 *ip = NULL;
@@ -3304,7 +3311,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	vtalloc = vt_sp;
 #endif
 	locals = frame_locals (frame);
-	child_frame.parent = frame;
 
 	if (clause_args && clause_args->filter_exception) {
 		sp->data.p = clause_args->filter_exception;
@@ -3499,15 +3505,15 @@ main_loop:
 			csignature = (MonoMethodSignature*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
 			ip += 2;
 			--sp;
-			child_frame.imethod = (InterpMethod*)sp->data.p;
+			child_frame->imethod = (InterpMethod*)sp->data.p;
 
 			sp->data.p = vt_sp;
-			child_frame.retval = sp;
+			child_frame->retval = sp;
 			/* decrement by the actual number of args */
 			sp -= csignature->param_count;
 			if (csignature->hasthis)
 				--sp;
-			child_frame.stack_args = sp;
+			child_frame->stack_args = sp;
 
 			if (child_frame.imethod->method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 				child_frame.imethod = mono_interp_get_imethod (frame->imethod->domain, mono_marshal_get_native_wrapper (child_frame.imethod->method, FALSE, FALSE), error);
@@ -3523,13 +3529,14 @@ main_loop:
 				}
 			}
 
-			interp_exec_method (&child_frame, context, error);
+			child_frame->parent = frame;
+			interp_exec_method (child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
+				*sp = *child_frame->retval;
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3558,28 +3565,29 @@ main_loop:
 			ip += 3;
 			--sp;
 			guchar* const code = (guchar*)sp->data.p;
-			child_frame.imethod = NULL;
+			child_frame->imethod = NULL;
 
 			sp->data.p = vt_sp;
-			child_frame.retval = sp;
+			child_frame->retval = sp;
 			/* decrement by the actual number of args */
 			sp -= csignature->param_count;
 			if (csignature->hasthis)
 				--sp;
-			child_frame.stack_args = sp;
+			child_frame->stack_args = sp;
+			child_frame->parent = frame;
 
 			if (frame->imethod->method->dynamic && csignature->pinvoke) {
-				mono_interp_calli_nat_dynamic_pinvoke (&child_frame, code, context, csignature, error);
+				mono_interp_calli_nat_dynamic_pinvoke (child_frame, code, context, csignature, error);
 			} else {
 				const gboolean save_last_error = *(guint16 *)(ip - 3 + 2);
-				ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context, save_last_error);
+				ves_pinvoke_method (child_frame, csignature, (MonoFuncV) code, FALSE, context, save_last_error);
 			}
 
 			CHECK_RESUME_STATE (context);
 
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
+				*sp = *child_frame->retval;
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3598,29 +3606,30 @@ main_loop:
 			slot = *(gint16*)(ip + 2);
 			ip += 3;
 			sp->data.p = vt_sp;
-			child_frame.retval = sp;
+			child_frame->retval = sp;
 
 			/* decrement by the actual number of args */
 			sp -= target_imethod->param_count + target_imethod->hasthis;
-			child_frame.stack_args = sp;
+			child_frame->stack_args = sp;
 
 			this_arg = (MonoObject*)sp->data.p;
 
-			child_frame.imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
-			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
+			child_frame->imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
+			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
 				/* unbox */
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
 				sp [0].data.p = unboxed;
 			}
 
-			interp_exec_method (&child_frame, context, error);
+			child_frame->parent = frame;
+			interp_exec_method (child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
 			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
 			if (!is_void) {
 				/* need to handle typedbyref ... */
-				*sp = *child_frame.retval;
+				*sp = *child_frame->retval;
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3631,28 +3640,29 @@ main_loop:
 
 			frame->ip = ip;
 
-			child_frame.imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
+			child_frame->imethod = (InterpMethod*)frame->imethod->data_items [*(const guint16*)(ip + 1)];
 			/* The real signature for vararg calls */
 			csig = (MonoMethodSignature*) frame->imethod->data_items [* (guint16*) (ip + 2)];
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
 			num_varargs = csig->param_count - csig->sentinelpos;
-			child_frame.varargs = (char*) vt_sp;
+			child_frame->varargs = (char*) vt_sp;
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
 			ip += 3;
 			sp->data.p = vt_sp;
-			child_frame.retval = sp;
+			child_frame->retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis + num_varargs;
-			child_frame.stack_args = sp;
+			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis + num_varargs;
+			child_frame->stack_args = sp;
 
-			interp_exec_method (&child_frame, context, error);
+			child_frame->parent = frame;
+			interp_exec_method (child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
 			if (csig->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
+				*sp = *child_frame->retval;
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -3664,35 +3674,36 @@ main_loop:
 
 			frame->ip = ip;
 
-			child_frame.imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
+			child_frame->imethod = (InterpMethod*)frame->imethod->data_items [*(const guint16*)(ip + 1)];
 			ip += 2;
 			sp->data.p = vt_sp;
-			child_frame.retval = sp;
+			child_frame->retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis;
-			child_frame.stack_args = sp;
+			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis;
+			child_frame->stack_args = sp;
 
 			const gboolean is_virtual = ip [-2] == MINT_CALLVIRT || ip [-2] == MINT_VCALLVIRT;
 			if (is_virtual) {
 				MonoObject *this_arg = (MonoObject*)sp->data.p;
 
-				child_frame.imethod = get_virtual_method (child_frame.imethod, this_arg->vtable);
-				if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
+				child_frame->imethod = get_virtual_method (child_frame->imethod, this_arg->vtable);
+				if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
 					/* unbox */
 					gpointer unboxed = mono_object_unbox_internal (this_arg);
 					sp [0].data.p = unboxed;
 				}
 			}
 
-			interp_exec_method (&child_frame, context, error);
+			child_frame->parent = frame;
+			interp_exec_method (child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
 			const gboolean is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
 			if (!is_void) {
 				/* need to handle typedbyref ... */
-				*sp = *child_frame.retval;
+				*sp = *child_frame->retval;
 				sp++;
 			}
 			MINT_IN_BREAK;
@@ -4713,10 +4724,11 @@ main_loop:
 				InterpMethod *ctor_method = (InterpMethod*) frame->imethod->data_items [imethod_index];
 				frame->ip = ip;
 
-				child_frame.imethod = ctor_method;
-				child_frame.stack_args = sp;
+				child_frame->imethod = ctor_method;
+				child_frame->stack_args = sp;
 
-				interp_exec_method (&child_frame, context, error);
+				child_frame->parent = frame;
+				interp_exec_method (child_frame, context, error);
 				CHECK_RESUME_STATE (context);
 				sp [0].data.o = frame_objref (frame);
 				sp++;
@@ -4733,28 +4745,30 @@ main_loop:
 			//  - keep exception handling and resume mostly in the main function
 
 			frame->ip = ip;
-			child_frame.imethod = (InterpMethod*) frame->imethod->data_items [*(guint16*)(ip + 1)];
+			child_frame->imethod = (InterpMethod*)frame->imethod->data_items [*(const guint16*)(ip + 1)];
 			guint16 const param_count = *(guint16*)(ip + 2);
 
 			if (param_count) {
 				sp -= param_count;
 				memmove (sp + 1, sp, param_count * sizeof (stackval));
 			}
-			child_frame.stack_args = sp;
+			child_frame->stack_args = sp;
 			gboolean const vtst = *ip == MINT_NEWOBJ_VTST_FAST;
 			if (vtst) {
 				memset (vt_sp, 0, *(guint16*)(ip + 3));
 				sp->data.p = vt_sp;
 				ip += 4;
 
-				interp_exec_method (&child_frame, context, error);
+				child_frame->parent = frame;
+				interp_exec_method (child_frame, context, error);
 
 				CHECK_RESUME_STATE (context);
 				sp->data.p = vt_sp;
 
 			} else {
 				ip += 3;
-				mono_interp_newobj_vt (&child_frame, context, error);
+				child_frame->parent = frame;
+				mono_interp_newobj_vt (child_frame, context, error);
 				CHECK_RESUME_STATE (context);
 			}
 			++sp;
@@ -4772,10 +4786,10 @@ main_loop:
 			guint32 const token = * (guint16 *)(ip + 1);
 			ip += 2; // FIXME: Do this after throw?
 
-			child_frame.ip = NULL;
-			child_frame.ex = NULL;
+			child_frame->ip = NULL;
+			child_frame->ex = NULL;
 
-			child_frame.imethod = (InterpMethod*)frame->imethod->data_items [token];
+			child_frame->imethod = (InterpMethod*)frame->imethod->data_items [token];
 			MonoMethodSignature* const csig = mono_method_signature_internal (child_frame.imethod->method);
 
 			g_assert (csig->hasthis);
@@ -4784,9 +4798,10 @@ main_loop:
 				memmove (sp + 1, sp, csig->param_count * sizeof (stackval));
 			}
 
-			child_frame.stack_args = sp;
+			child_frame->stack_args = sp;
+			child_frame->parent = frame;
 
-			MonoException* const exc = mono_interp_newobj (&child_frame, context, error, vt_sp);
+			MonoException* const exc = mono_interp_newobj (child_frame, context, error, vt_sp);
 			if (exc)
 				THROW_EX (exc, ip);
 			CHECK_RESUME_STATE (context);
@@ -5944,9 +5959,9 @@ main_loop:
 			gboolean const check = opcode == MINT_LEAVE_CHECK || opcode == MINT_LEAVE_S_CHECK;
 
 			if (check && frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
-				child_frame.parent = frame;
-				child_frame.imethod = NULL;
-				MonoException *abort_exc = mono_interp_leave (&child_frame);
+				child_frame->parent = frame;
+				child_frame->imethod = NULL;
+				MonoException *abort_exc = mono_interp_leave (child_frame);
 				if (abort_exc)
 					THROW_EX (abort_exc, frame->ip);
 			}
@@ -5955,6 +5970,7 @@ main_loop:
 			gboolean const short_offset = opcode == MINT_LEAVE_S || opcode == MINT_LEAVE_S_CHECK;
 			ip += short_offset ? (short)*(ip + 1) : (gint32)READ32 (ip + 1);
 			endfinally_ip = ip;
+
 			GSList *old_list = finally_ips;
 			MonoMethod *method = frame->imethod->method;
 #if DEBUG_INTERP
@@ -5966,14 +5982,15 @@ main_loop:
 					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
 				goto exit_frame;
 			}
-			guint32 const ip_offset = frame->ip - frame->imethod->code;
+
+			u.leave.ip_offset = frame->ip - frame->imethod->code;
 
 			if (endfinally_ip != NULL)
 				finally_ips = g_slist_prepend (finally_ips, (void *)endfinally_ip);
 
 			for (int i = frame->imethod->num_clauses - 1; i >= 0; i--) {
 				MonoExceptionClause* const clause = &frame->imethod->clauses [i];
-				if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - frame->imethod->code)))) {
+				if (MONO_OFFSET_IN_CLAUSE (clause, u.leave.ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - frame->imethod->code)))) {
 					if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 						ip = frame->imethod->code + clause->handler_offset;
 						finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
@@ -5987,7 +6004,7 @@ main_loop:
 
 			endfinally_ip = NULL;
 
-			if (old_list != finally_ips && finally_ips) {
+			if (u.leave.old_list != finally_ips && finally_ips) {
 				ip = (const guint16*)finally_ips->data;
 				finally_ips = g_slist_remove (finally_ips, ip);
 				sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
