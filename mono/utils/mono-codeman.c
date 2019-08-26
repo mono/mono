@@ -15,9 +15,7 @@
 #include "mono-codeman.h"
 #include "mono-mmap.h"
 #include "mono-counters.h"
-#if _WIN32
-static void* mono_code_manager_heap;
-#else
+#if !_WIN32
 #define USE_DL_PREFIX 1
 #include "dlmalloc.h"
 #endif
@@ -39,7 +37,7 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
  * AMD64 processors maintain icache coherency only for pages which are 
  * marked executable. Also, windows DEP requires us to obtain executable memory from
  * malloc when using dynamic code managers. The system malloc can't do this so we use a 
- * slighly modified version of Doug Lea's Malloc package for this purpose:
+ * slightly modified version of Doug Lea's Malloc package for this purpose:
  * http://g.oswego.edu/dl/html/malloc.html
  *
  * Or on Windows, HeapCreate (HEAP_CREATE_ENABLE_EXECUTE).
@@ -83,17 +81,20 @@ struct _CodeChunck {
 	int pos;
 	int size;
 	CodeChunk *next;
-	unsigned int flags: 8;
+	unsigned reserved : 8;
 	/* this number of bytes is available to resolve addresses far in memory */
 	unsigned int bsize: 24;
 };
 
 struct _MonoCodeManager {
-	int dynamic;
-	int read_only;
 	CodeChunk *current;
 	CodeChunk *full;
 	CodeChunk *last;
+#if _WIN32
+	HANDLE win32heap;
+#endif
+	int dynamic : 1;
+	int read_only : 1;
 };
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
@@ -192,7 +193,7 @@ mono_code_manager_install_callbacks (const MonoCodeManagerCallbacks* callbacks)
 
 static
 int
-mono_codeman_get_allocation_type (MonoCodeManager const *cman)
+mono_codeman_allocation_type (MonoCodeManager const *cman)
 {
 #ifdef FORCE_MALLOC
 	return CODE_FLAG_MALLOC;
@@ -214,17 +215,10 @@ mono_code_manager_new_internal (gboolean dynamic)
 	if (cman) {
 		cman->dynamic = dynamic;
 #if _WIN32
-		// It would seem the heap should live and die with the codemanager,
-		// but that was failing, so try a global.
-		if (mono_codeman_get_allocation_type (cman) == CODE_FLAG_MALLOC && !mono_code_manager_heap) {
-			// This heap is leaked, similar to dlmalloc state.
-			void* const heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, 0, 0);
-			if (heap && mono_atomic_cas_ptr (&mono_code_manager_heap, heap, NULL))
-				HeapDestroy (heap);
-			if (!mono_code_manager_heap) {
-				mono_code_manager_destroy (cman);
-				cman = 0;
-			}
+		if (mono_codeman_allocation_type (cman) == CODE_FLAG_MALLOC
+			&& !(cman->win32heap = HeapCreate (HEAP_CREATE_ENABLE_EXECUTE, 0, 0))) {
+			mono_code_manager_destroy (cman);
+			cman = 0;
 		}
 #endif
 	}
@@ -264,34 +258,33 @@ mono_code_manager_new_dynamic (void)
 }
 
 static gpointer
-mono_codeman_malloc (gsize n)
+mono_codeman_malloc (MonoCodeManager* cman, gsize n)
 {
 #if _WIN32
-	void* const heap = mono_code_manager_heap;
-	g_assert (heap);
-	return HeapAlloc (heap, 0, n);
+	// FIXME no_serialize?
+	return HeapAlloc (cman->win32heap, 0, n);
 #else
 	return dlmemalign (MIN_ALIGN, n);
 #endif
 }
 
 static void
-mono_codeman_free (gpointer p)
+mono_codeman_free (MonoCodeManager* cman, gpointer p)
 {
 #if _WIN32
-	void* const heap = mono_code_manager_heap;
-	g_assert (heap);
-	HeapFree (heap, 0, p);
+	// FIXME no_serialize?
+	HeapFree (cman->win32heap, 0, p);
 #else
 	dlfree (p);
 #endif
 }
 
 static void
-free_chunklist (CodeChunk *chunk)
+free_chunklist (MonoCodeManager *cman, CodeChunk *chunk)
 {
 	CodeChunk *dead;
-	
+	const int allocation_type = mono_codeman_allocation_type (cman);
+
 #if defined(HAVE_VALGRIND_MEMCHECK_H) && defined (VALGRIND_JIT_UNREGISTER_MAP)
 	int valgrind_unregister = 0;
 	if (RUNNING_ON_VALGRIND)
@@ -307,11 +300,15 @@ free_chunklist (CodeChunk *chunk)
 		if (code_manager_callbacks)
 			code_manager_callbacks->chunk_destroy (dead->data);
 		chunk = chunk->next;
-		if (dead->flags == CODE_FLAG_MMAP) {
+		if (allocation_type == CODE_FLAG_MMAP) {
 			codechunk_vfree (dead->data, dead->size);
 			/* valgrind_unregister(dead->data); */
-		} else if (dead->flags == CODE_FLAG_MALLOC) {
-			mono_codeman_free (dead->data);
+		} else if (allocation_type == CODE_FLAG_MALLOC) {
+#if _WIN32
+			// Caller will mass-destroy with HeapDestroy.
+#else
+			mono_codeman_free (cman, dead->data);
+#endif
 		}
 		code_memory_used -= dead->size;
 		g_free (dead);
@@ -328,8 +325,13 @@ mono_code_manager_destroy (MonoCodeManager *cman)
 {
 	if (!cman)
 		return;
-	free_chunklist (cman->full);
-	free_chunklist (cman->current);
+
+	free_chunklist (cman, cman->full);
+	free_chunklist (cman, cman->current);
+#if _WIN32
+	if (mono_codeman_allocation_type (cman) == CODE_FLAG_MALLOC && cman->win32heap)
+		HeapDestroy (cman->win32heap);
+#endif
 	g_free (cman);
 }
 
@@ -411,7 +413,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 	CodeChunk *chunk;
 	void *ptr;
 
-	const int flags = mono_codeman_get_allocation_type (cman);
+	const int flags = mono_codeman_allocation_type (cman);
 	const int pagesize = mono_pagesize ();
 	const int valloc_granule = mono_valloc_granule ();
 
@@ -452,7 +454,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 #endif
 
 	if (flags == CODE_FLAG_MALLOC) {
-		ptr = mono_codeman_malloc (chunk_size + MIN_ALIGN - 1);
+		ptr = mono_codeman_malloc (cman, chunk_size + MIN_ALIGN - 1);
 		if (!ptr)
 			return NULL;
 	} else {
@@ -476,7 +478,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 	chunk = (CodeChunk *) g_malloc (sizeof (CodeChunk));
 	if (!chunk) {
 		if (flags == CODE_FLAG_MALLOC)
-			mono_codeman_free (ptr);
+			mono_codeman_free (cman, ptr);
 		else
 			mono_vfree (ptr, chunk_size, MONO_MEM_ACCOUNT_CODE);
 		return NULL;
@@ -484,7 +486,7 @@ new_codechunk (MonoCodeManager *cman, int size)
 	chunk->next = NULL;
 	chunk->size = chunk_size;
 	chunk->data = (char *) ptr;
-	chunk->flags = flags;
+	chunk->reserved = 0;
 	chunk->pos = bsize;
 	chunk->bsize = bsize;
 	if (code_manager_callbacks)
