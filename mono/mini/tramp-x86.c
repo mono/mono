@@ -98,6 +98,8 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	// next method, not the method including the call to patch. For this specific case, fallback to using a method_start of NULL.
 	gboolean can_write = mono_breakpoint_clean_code (method_start != orig_code ? method_start : NULL, orig_code, 8, buf, sizeof (buf));
 
+	// can_write is always true, but we check it anyway.
+
 	code = buf + 8;
 
 	/* go to the start of the call instruction

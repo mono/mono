@@ -2232,6 +2232,11 @@ mono_codegen (MonoCompile *cfg)
 		unwindlen = mono_arch_unwindinfo_init_method_unwind_info (cfg);
 #endif
 
+	if (cfg->thunk_area) {
+		// Give thunks some alignment.
+		cfg->code_size = ALIGN_TO (cfg->code_size, sizeof (target_mgreg_t));
+	}
+
 	if (cfg->method->dynamic) {
 		/* Allocate the code into a separate memory pool so it can be freed */
 		cfg->dynamic_info = g_new0 (MonoJitDynamicMethodInfo, 1);
