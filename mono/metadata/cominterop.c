@@ -3220,7 +3220,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 		}
 		break;
 	}
-	case MARSHAL_ACTION_MANAGED_CONV_IN:
+	case MARSHAL_ACTION_MANAGED_CONV_IN: {
 		if (!(t->attrs & PARAM_ATTRIBUTE_IN))
 			break;
 
@@ -3322,7 +3322,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 		mono_mb_emit_stloc (mb, conv_arg);
 
 		break;
-
+	}
 	default:
 		g_assert_not_reached ();
 	}
