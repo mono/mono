@@ -2583,14 +2583,16 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		case MONO_NATIVE_LPARRAY:
 			break;
 		case MONO_NATIVE_SAFEARRAY:
+#ifndef DISABLE_COM
 			if (spec->data.safearray_data.elem_type != MONO_VARIANT_VARIANT) {
 				char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
 				mono_mb_emit_exception_marshal_directive (mb, msg);
 				return conv_arg;
 			}
 			return mono_cominterop_emit_marshal_safearray (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+#endif
 		default: {
-			char *msg = g_strdup ("Only LPArray and Safearray marshalling to managed code is implemented.");
+			char *msg = g_strdup ("Unsupported array type marshalling to managed code.");
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			return conv_arg;
 		}
