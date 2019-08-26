@@ -5569,8 +5569,9 @@ LIBTEST_API int STDCALL
 mono_test_marshal_safearray_in_ccw(MonoComObject *pUnk)
 {
 	SAFEARRAY *array;
-	int index, ret;
 	VARIANT var;
+	long index;
+	int ret;
 
 	array = SafeArrayCreateVector(VT_VARIANT, 0, 2);
 
