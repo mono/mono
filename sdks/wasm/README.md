@@ -11,11 +11,11 @@
             |--- wasm_tools         - Contains the support tools used during build and distribution.       
     ```
 
-- Source / Binaries for custom building the Webassembly Runtime
+- Source support files for custom building the Webassembly Runtime
 
     ```
         .
-        |--- sdk/wasm                           
+        |--- sdk/wasm/src                           
             |--- driver.c           - WebAssembly main driver program.
             |                           - Native interops with the library_mono.js
             |                           - Initializing and starting mono/
@@ -37,7 +37,11 @@
             |                           
             |--- binding_support.js - Javascript low level backing support for `corebindings.c`.
             |                           
-            |--- zlib-helper.c      - Native interface providing support for zlib compression:
+            |--- dotnet_support.js  - Javascript low level backing support routines used by Blazor.
+            |                           
+            |--- zlib-helper.c      - Native interface providing support for zlib compression for System.IO.Compression.
+            |                           
+            |--- pinvoke-tables-default.h - Native pinvoke interface - this is a generated file.
 
     ```
 

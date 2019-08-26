@@ -1103,6 +1103,9 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			} else if (subtype == WRAPPER_SUBTYPE_AOT_INIT) {
 				guint32 init_type = decode_value (p, &p);
 				ref->method = mono_marshal_get_aot_init_wrapper ((MonoAotInitSubtype) init_type);
+			} else if (subtype == WRAPPER_SUBTYPE_LLVM_FUNC) {
+				guint32 init_type = decode_value (p, &p);
+				ref->method = mono_marshal_get_llvm_func_wrapper ((MonoLLVMFuncWrapperSubtype) init_type);
 			} else {
 				mono_error_set_bad_image_by_name (error, module->aot_name, "Invalid UNKNOWN wrapper subtype %d", subtype);
 				return FALSE;
@@ -1937,11 +1940,6 @@ get_call_table_entry (void *table, int index)
 	guint32 ins;
 	gint32 offset;
 
-	ins_addr = (guint32 *)table + (index * 2);
-	if ((guint32) *ins_addr == (guint32 ) 0xe51ff004) { // ldr pc, =<label>
-		return *((char **) (ins_addr + 1));
-	}
-
 	ins_addr = (guint32*)table + index;
 	ins = *ins_addr;
 	if ((ins >> ARMCOND_SHIFT) == ARMCOND_NV) {
@@ -1949,8 +1947,6 @@ get_call_table_entry (void *table, int index)
 		offset = (((int)(((ins & 0xffffff) << 1) | ((ins >> 24) & 0x1))) << 7) >> 7;
 		return (char*)ins_addr + (offset * 2) + 8 + 1;
 	} else {
-		g_assert ((ins >> ARMCOND_SHIFT) == ARMCOND_AL);
-		/* bl */
 		offset = (((int)ins & 0xffffff) << 8) >> 8;
 		return (char*)ins_addr + (offset * 4) + 8;
 	}
