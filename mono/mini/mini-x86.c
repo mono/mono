@@ -2518,6 +2518,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_membase (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
 		case OP_BREAK:
+		case OP_NOT_REACHED:
 			x86_breakpoint (code);
 			break;
  		case OP_RELAXED_NOP:
@@ -2532,7 +2533,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUMMY_ICONST:
 		case OP_DUMMY_R8CONST:
 		case OP_DUMMY_R4CONST:
- 		case OP_NOT_REACHED:
  		case OP_NOT_NULL:
  			break;
 		case OP_IL_SEQ_POINT:

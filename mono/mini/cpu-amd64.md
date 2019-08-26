@@ -482,7 +482,7 @@ dummy_iconst: dest:i len:0
 dummy_i8const: dest:i len:0
 dummy_r8const: dest:f len:0
 dummy_r4const: dest:f len:0
-not_reached: len:0
+not_reached: len:1
 not_null: src1:i len:0
 
 long_ceq: dest:c len:64
