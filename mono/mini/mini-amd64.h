@@ -96,7 +96,6 @@ typedef VOID (NTAPI* RtlDeleteGrowableFunctionTablePtr)(
 
 #ifdef sun    // Solaris x86
 #  undef SIGSEGV_ON_ALTSTACK
-#  define MONO_ARCH_NOMAP32BIT
 
 struct sigcontext {
         unsigned short gs, __gsh;
@@ -218,6 +217,8 @@ typedef struct MonoCompileArch {
 	MonoInst *ss_tramp_var;
 	MonoInst *bp_tramp_var;
 	MonoInst *lmf_var;
+	guint8 *thunks;
+	int thunks_size;
 #ifdef HOST_WIN32
 	struct _UNWIND_INFO* unwindinfo;
 #endif
@@ -392,10 +393,6 @@ typedef struct {
 #endif
 
 #endif /* !HOST_WIN32 */
-
-#if !defined(__linux__)
-#define MONO_ARCH_NOMAP32BIT 1
-#endif
 
 #ifdef TARGET_WIN32
 #define MONO_AMD64_ARG_REG1 AMD64_RCX

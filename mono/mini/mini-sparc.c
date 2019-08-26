@@ -4342,17 +4342,10 @@ mono_arch_tls_init (void)
 #endif
 }
 
-void
-mono_arch_finish_init (void)
-{
-}
-
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	MonoInst *ins = NULL;
-
-	return ins;
+	return NULL;
 }
 
 /*

@@ -87,19 +87,9 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	GSList *unwind_ops;
-	int buf_len;
+	const int buf_len = 32;
 
 	MonoDomain *domain = mono_domain_get ();
-
-#ifdef MONO_ARCH_NOMAP32BIT
-	buf_len = 32;
-#else
-	/* AOTed code could still have a non-32 bit address */
-	if ((((guint64)addr) >> 32) == 0)
-		buf_len = 16;
-	else
-		buf_len = 30;
-#endif
 
 	start = code = (guint8 *)mono_domain_code_reserve (domain, buf_len + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
@@ -141,15 +131,52 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	// last instruction of a function is the call (due to OP_NOT_REACHED) instruction and then directly followed by a
 	// different method. In that case current orig_code points into next method and method_start will also point into
 	// next method, not the method including the call to patch. For this specific case, fallback to using a method_start of NULL.
+	//
+	// FIXME? Calls should always have nop after them? Functions should always end with nop or ret or maybe jmp or int3?
+	// Calls can be followed by data, so always placing a nop is not quite right.
+	//
+	// Note that MSVC codegen does often follow calls with nop to disambiguate exception handling scope tables, so there
+	// is very good precedent for roughly this.
+	//
 	gboolean can_write = mono_breakpoint_clean_code (method_start != orig_code ? method_start : NULL, orig_code, 14, buf, sizeof (buf));
+
+	// can_write is always true, but we check it anyway.
 
 	code = buf + 14;
 
+	// First two cases are redundant?
+	//
+	// It is important to check for call/jmp [] before mov r11, because
+	// of the asesrt about orig_code - 11 being aligned, it can fail.
+	//
+	// Or can it be mov into r11 and then call a helper,
+	// and the call needs to be patched differently in that case?
+	//
+	if ((code [-7] == 0x41) && (code [-6] == 0xff) && (code [-5] == 0x15)) {
+		/* call *<OFFSET>(%rip) */
+		gpointer *got_entry = (gpointer*)((guint8*)orig_code + *(gint32*)(orig_code - 4));
+		if (can_write) {
+			g_assert ((guint64)(got_entry) % 8 == 0);
+			mono_atomic_xchg_ptr (got_entry, addr);
+			VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, sizeof (gpointer));
+		}
+	}
+	else if (code [-6] == 0xFF && (code [-5] == 0x15 || code [-5] == 0x25)) {
+		// call *<OFFSET>(%rip)
+		// jmp *<OFFSET>(%rip)
+		//
+		guint8** old = (guint8**)(orig_code + *(gint32*)(orig_code - 4));
+		g_assert (((guint64)old % 8) == 0);
+		if (can_write) {
+			*old = addr;
+			VALGRIND_DISCARD_TRANSLATIONS (orig_code - 6, 6);
+		}
+	}
 	/* mov 64-bit imm into r11 (followed by call reg?)  or direct call*/
-	if (((code [-13] == 0x49) && (code [-12] == 0xbb)) || (code [-5] == 0xe8)) {
+	else if (((code [-13] == 0x49) && (code [-12] == 0xbb)) || (code [-5] == 0xe8)) {
 		if (code [-5] != 0xe8) {
 			if (can_write) {
-				g_assert ((guint64)(orig_code - 11) % 8 == 0);
+				g_assertf ((guint64)(orig_code - 11) % 8 == 0, "orig_code:%p code[-13]:%X code[-12]:%X code[-5]:%X", orig_code, code [-13], code [-12], code [-5]);
 				mono_atomic_xchg_ptr ((gpointer*)(orig_code - 11), addr);
 				VALGRIND_DISCARD_TRANSLATIONS (orig_code - 11, sizeof (gpointer));
 			}
@@ -165,6 +192,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 				thunk_start = thunk_code = (guint8 *)mono_domain_code_reserve (mono_domain_get (), 32);
 				amd64_jump_membase (thunk_code, AMD64_RIP, 0);
 				*(guint64*)thunk_code = (guint64)addr;
+				g_assert ((guint64)(thunk_code) % 8 == 0);
 				addr = thunk_start;
 				g_assert ((((guint64)(addr)) >> 32) == 0);
 				mono_arch_flush_icache (thunk_start, thunk_code - thunk_start);
@@ -176,13 +204,8 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 			}
 		}
 	}
-	else if ((code [-7] == 0x41) && (code [-6] == 0xff) && (code [-5] == 0x15)) {
-		/* call *<OFFSET>(%rip) */
-		gpointer *got_entry = (gpointer*)((guint8*)orig_code + (*(guint32*)(orig_code - 4)));
-		if (can_write) {
-			mono_atomic_xchg_ptr (got_entry, addr);
-			VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, sizeof (gpointer));
-		}
+	else {
+		g_error ("unknown patch method_start:%p orig_code:%p addr:%p\n", method_start, orig_code, addr);
 	}
 }
 
@@ -602,9 +625,6 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	code = buf = (guint8 *)mono_domain_code_reserve_align (domain, size, 1);
 
 	if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
-#ifndef MONO_ARCH_NOMAP32BIT
-		g_assert_not_reached ();
-#endif
 		far_addr = TRUE;
 		size += 16;
 		code = buf = (guint8 *)mono_domain_code_reserve_align (domain, size, 1);

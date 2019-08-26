@@ -49,11 +49,7 @@
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 
-#ifdef MONO_XEN_OPT
-static gboolean optimize_for_xen = TRUE;
-#else
-#define optimize_for_xen 0
-#endif
+#define THUNK_SIZE (sizeof (target_mgreg_t))
 
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 
@@ -116,12 +112,12 @@ mono_arch_regname (int reg)
 	return "unknown";
 }
 
-static const char * packed_xmmregs [] = {
+static const char * const packed_xmmregs [] = {
 	"p:xmm0", "p:xmm1", "p:xmm2", "p:xmm3", "p:xmm4", "p:xmm5", "p:xmm6", "p:xmm7", "p:xmm8",
 	"p:xmm9", "p:xmm10", "p:xmm11", "p:xmm12", "p:xmm13", "p:xmm14", "p:xmm15"
 };
 
-static const char * single_xmmregs [] = {
+static const char * const single_xmmregs [] = {
 	"s:xmm0", "s:xmm1", "s:xmm2", "s:xmm3", "s:xmm4", "s:xmm5", "s:xmm6", "s:xmm7", "s:xmm8",
 	"s:xmm9", "s:xmm10", "s:xmm11", "s:xmm12", "s:xmm13", "s:xmm14", "s:xmm15"
 };
@@ -180,7 +176,7 @@ mono_x86_patch (unsigned char* code, gpointer target)
 }
 
 static void
-amd64_patch (unsigned char* code, gpointer target)
+amd64_patch_general (MonoCompile *cfg, guchar* code, gpointer target)
 {
 	// NOTE: Sometimes code has just been generated, is not running yet,
 	// and has no alignment requirements. Sometimes it could be running while we patch it,
@@ -208,18 +204,60 @@ amd64_patch (unsigned char* code, gpointer target)
 	}
 	else if (code [0] == 0xff && (code [1] == 0x15 || code [1] == 0x25)) {
 		/* call or jmp *<OFFSET>(%rip) */
-		// Patch the data, not the code.
-		g_assert (!2); // For possible use later.
-		*(void**)(code + 6 + *(gint32*)(code + 2)) = target;
+
+		g_assert (*(gint32*)(code + 2) != -1  || cfg);
+
+		// Patch the code to point at the pointer in the thunk area.
+		// This should only ever be code that is not yet running,
+		// and so the alignment does not matter.
+		//
+		// Offset is relative to the end of the instruction.
+		// -1 makes a good invalid value as it points into the instruction.
+		//
+		// Offset of 0 is valid for jmp or noreturn call, though
+		// is not likely in our construction.
+		//
+		if (*(gint32*)(code + 2) == -1) {
+
+			if (!cfg->arch.thunks) {
+				g_assert (!cfg->arch.thunks_size);
+				cfg->arch.thunks = cfg->thunks;
+				cfg->arch.thunks_size = cfg->thunk_area;
+			}
+
+			g_assert (cfg->arch.thunks);
+			g_assert (cfg->arch.thunks_size >= THUNK_SIZE);
+			g_assert (((gsize)cfg->arch.thunks % THUNK_SIZE) == 0);
+			g_assert (((gsize)cfg->arch.thunks_size % THUNK_SIZE) == 0);
+
+			ptrdiff_t const offset = cfg->arch.thunks - (code + 6);
+			g_assert (offset == (gint32)offset);
+			*(gint32*)(code + 2) = (gint32)offset;
+			cfg->arch.thunks += THUNK_SIZE;
+			cfg->arch.thunks_size -= THUNK_SIZE;
+		}
+
+		// Patch the data, possibly live while code is running.
+		// The data is aligned to enable atomic writes.
+		//
+		void* p = code + 6 + *(gint32*)(code + 2);
+		g_assert (((gsize)p % THUNK_SIZE) == 0);
+		*(gpointer*)p = target;
 	}
 	else
 		x86_patch (code, target);
 }
 
+static void
+amd64_patch (unsigned char* code, gpointer target)
+{
+	amd64_patch_general (NULL, code, target);
+}
+
 void
 mono_amd64_patch (unsigned char* code, gpointer target)
 {
-	amd64_patch (code, target);
+	amd64_patch_general (NULL, code, target);
 }
 
 #define DEBUG(a) if (cfg->verbose_level > 1) a
@@ -3040,10 +3078,14 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 } while (0);
 
 #ifndef DISABLE_JIT
+
 static guint8*
 emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJitICallId jit_icall_id)
 {
-	gboolean no_patch = FALSE;
+	// All calls are indirect.
+	// If they would be direct, they are indirect through a nearby pointer, the thunk (which is just data).
+	// This allows for easier atomic patching and eventually readonly full code pages.
+
 	MonoJumpInfoTarget patch;
 
 	// FIXME? This is similar to mono_call_to_patch, except it favors MONO_PATCH_INFO_ABS over call->jit_icall_id.
@@ -3052,135 +3094,44 @@ emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJitICallId ji
 		g_assert (!call);
 		patch.type = MONO_PATCH_INFO_JIT_ICALL_ID;
 		patch.target = GUINT_TO_POINTER (jit_icall_id);
+
+		// This calls mono_create_jit_trampoline. Does it matter?
+		mono_icall_get_wrapper (mono_find_jit_icall_info (jit_icall_id));
+
 	} else if (call->inst.flags & MONO_INST_HAS_METHOD) {
 		patch.type = MONO_PATCH_INFO_METHOD;
 		patch.target = call->method;
 	} else {
 		patch.type = MONO_PATCH_INFO_ABS;
 		patch.target = call->fptr;
+
+		MonoJumpInfo *jinfo = NULL;
+
+		if (cfg->abs_patches)
+			jinfo = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, call->fptr);
+
+		if (!jinfo) {
+
+			jit_icall_id = call->jit_icall_id;
+
+			if (jit_icall_id) {
+				// Change patch from MONO_PATCH_INFO_ABS to MONO_PATCH_INFO_JIT_ICALL_ID.
+				patch.type = MONO_PATCH_INFO_JIT_ICALL_ID;
+				patch.target = GUINT_TO_POINTER (jit_icall_id);
+			}
+		}
 	}
 
-	/* 
-	 * FIXME: Add support for thunks
-	 */
-	{
-		gboolean near_call = FALSE;
+	mono_add_patch_info (cfg, code - cfg->native_code, patch.type, patch.target);
 
-		/*
-		 * Indirect calls are expensive so try to make a near call if possible.
-		 * The caller memory is allocated by the code manager so it is 
-		 * guaranteed to be at a 32 bit offset.
-		 */
-
-		if (patch.type != MONO_PATCH_INFO_ABS) {
-
-			/* The target is in memory allocated using the code manager */
-			near_call = TRUE;
-
-			if (patch.type == MONO_PATCH_INFO_METHOD) {
-
-				MonoMethod* const method = call->method;
-
-				if (m_class_get_image (method->klass)->aot_module)
-					/* The callee might be an AOT method */
-					near_call = FALSE;
-				if (method->dynamic)
-					/* The target is in malloc-ed memory */
-					near_call = FALSE;
-			} else {
-				/* 
-				 * The call might go directly to a native function without
-				 * the wrapper.
-				 */
-				MonoJitICallInfo * const mi = mono_find_jit_icall_info (jit_icall_id);
-				gconstpointer target = mono_icall_get_wrapper (mi);
-				if ((((guint64)target) >> 32) != 0)
-					near_call = FALSE;
-			}
-		} else {
-			MonoJumpInfo *jinfo = NULL;
-
-			if (cfg->abs_patches)
-				jinfo = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, call->fptr);
-
-			if (jinfo) {
-				if (jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_info (jinfo->data.jit_icall_id);
-					if (mi && (((guint64)mi->func) >> 32) == 0)
-						near_call = TRUE;
-					no_patch = TRUE;
-				} else {
-					/* 
-					 * This is not really an optimization, but required because the
-					 * generic class init trampolines use R11 to pass the vtable.
-					 */
-					near_call = TRUE;
-				}
-			} else {
-				jit_icall_id = call->jit_icall_id;
-
-				if (jit_icall_id) {
-					MonoJitICallInfo const *info = mono_find_jit_icall_info (jit_icall_id);
-
-					// Change patch from MONO_PATCH_INFO_ABS to MONO_PATCH_INFO_JIT_ICALL_ID.
-					patch.type = MONO_PATCH_INFO_JIT_ICALL_ID;
-					patch.target = GUINT_TO_POINTER (jit_icall_id);
-
-					if (info->func == info->wrapper) {
-						/* No wrapper */
-						if ((((guint64)info->func) >> 32) == 0)
-							near_call = TRUE;
-					} else {
-						/* ?See the comment in mono_codegen ()? */
-						near_call = TRUE;
-					}
-				}
-				else if ((((guint64)patch.target) >> 32) == 0) {
-					near_call = TRUE;
-					no_patch = TRUE;
-				}
-			}
-		}
-
-		if (cfg->method->dynamic)
-			/* These methods are allocated using malloc */
-			near_call = FALSE;
-
-#ifdef MONO_ARCH_NOMAP32BIT
-		near_call = FALSE;
-#endif
-		/* The 64bit XEN kernel does not honour the MAP_32BIT flag. (#522894) */
-		if (optimize_for_xen)
-			near_call = FALSE;
-
-		if (cfg->compile_aot) {
-			near_call = TRUE;
-			no_patch = TRUE;
-		}
-
-		if (near_call) {
-			/* 
-			 * Align the call displacement to an address divisible by 4 so it does
-			 * not span cache lines. This is required for code patching to work on SMP
-			 * systems.
-			 */
-			if (!no_patch && ((guint32)(code + 1 - cfg->native_code) % 4) != 0) {
-				guint32 pad_size = 4 - ((guint32)(code + 1 - cfg->native_code) % 4);
-				amd64_padding (code, pad_size);
-			}
-			mono_add_patch_info (cfg, code - cfg->native_code, patch.type, patch.target);
-			amd64_call_code (code, 0);
-		}
-		else {
-			if (!no_patch && ((guint32)(code + 2 - cfg->native_code) % 8) != 0) {
-				guint32 pad_size = 8 - ((guint32)(code + 2 - cfg->native_code) % 8);
-				amd64_padding (code, pad_size);
-				g_assert ((guint64)(code + 2 - cfg->native_code) % 8 == 0);
-			}
-			mono_add_patch_info (cfg, code - cfg->native_code, patch.type, patch.target);
-			amd64_set_reg_template (code, GP_SCRATCH_REG);
-			amd64_call_reg (code, GP_SCRATCH_REG);
-		}
+	if (cfg->compile_aot) {
+		amd64_call_code (code, 0);
+	} else {
+		*code++ = 0xFF;
+		*code++ = 0x15; // 0x25 for jmp
+		*(gint32*)code = -1; // fill in later, after code size is accurate, and thunks follow code
+		code += 4;
+		cfg->thunk_area += THUNK_SIZE;
 	}
 
 	set_code_cursor (cfg, code);
@@ -3802,14 +3753,8 @@ mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 	x86_prefix (code, X86_GS_PREFIX);
 	amd64_mov_reg_mem (code, dreg, tls_gs_offset + (tls_offset * 8), 8);
 #else
-	if (optimize_for_xen) {
-		x86_prefix (code, X86_FS_PREFIX);
-		amd64_mov_reg_mem (code, dreg, 0, 8);
-		amd64_mov_reg_membase (code, dreg, dreg, tls_offset, 8);
-	} else {
-		x86_prefix (code, X86_FS_PREFIX);
-		amd64_mov_reg_mem (code, dreg, tls_offset, 8);
-	}
+	x86_prefix (code, X86_FS_PREFIX);
+	amd64_mov_reg_mem (code, dreg, tls_offset, 8);
 #endif
 	return code;
 }
@@ -3823,7 +3768,6 @@ mono_amd64_emit_tls_set (guint8 *code, int sreg, int tls_offset)
 	x86_prefix (code, X86_GS_PREFIX);
 	amd64_mov_mem_reg (code, tls_gs_offset + (tls_offset * 8), sreg, 8);
 #else
-	g_assert (!optimize_for_xen);
 	x86_prefix (code, X86_FS_PREFIX);
 	amd64_mov_mem_reg (code, tls_offset, sreg, 8);
 #endif
@@ -4838,18 +4782,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				int const reg = ins->sreg1;
 				g_assert (reg > -1);
 				amd64_mov_reg_membase (code, AMD64_RAX, reg, ins->inst_offset, 8);
+			} else if (cfg->compile_aot) { // FIXME AOT should make direct calls/jmps to within same assembly.
+				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RIP, 0, 8);
 			} else {
-				 if (cfg->compile_aot) {
-					mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RIP, 0, 8);
-				} else {
-					// FIXME Patch data instead of code.
-					guint32 pad_size = (guint32)((code + 2 - cfg->native_code) % 8);
-					if (pad_size)
-						amd64_padding (code, 8 - pad_size);
-					mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-					amd64_set_reg_template (code, AMD64_RAX);
-				}
+				// Handled later.
 			}
 
 			/* Restore callee saved registers */
@@ -4885,26 +4822,39 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			}
 
+			if (tailcall_reg || tailcall_membase || cfg->compile_aot) {
 #ifdef TARGET_WIN32
-			// Redundant REX byte indicates a tailcall to the native unwinder. It means nothing to the processor.
-			// https://github.com/dotnet/coreclr/blob/966dabb5bb3c4bf1ea885e1e8dc6528e8c64dc4f/src/unwinder/amd64/unwinder_amd64.cpp#L1394
-			// FIXME This should be jmp rip+32 for AOT direct to same assembly.
-			// FIXME This should be jmp [rip+32] for AOT direct to not-same assembly (through data).
-			// FIXME This should be jmp [rip+32] for JIT direct -- patch data instead of code.
-			// This is only close to ideal for tailcall_membase, and even then it should
-			// have a more dynamic register allocation.
-			x86_imm_emit8 (code, 0x48);
-			amd64_jump_reg (code, AMD64_RAX);
+				// Redundant REX byte indicates a tailcall to the native unwinder. It means nothing to the processor.
+				// https://github.com/dotnet/coreclr/blob/966dabb5bb3c4bf1ea885e1e8dc6528e8c64dc4f/src/unwinder/amd64/unwinder_amd64.cpp#L1394
+				// FIXME This should be jmp rip+32 for AOT direct to same assembly.
+				// FIXME This should be jmp [rip+32] for AOT direct to not-same assembly (through data).
+				// FIXME This should be jmp [rip+32] for JIT direct -- patch data instead of code.
+				// This is only close to ideal for tailcall_membase, and even then it should
+				// have a more dynamic register allocation.
+				x86_imm_emit8 (code, 0x48);
+				amd64_jump_reg (code, AMD64_RAX);
 #else
-			// NT does not have varargs rax use, and NT ABI does not have red zone.
-			// Use red-zone mov/jmp instead of push/ret to preserve call/ret speculation stack.
-			// FIXME Just like NT the direct cases are are not ideal.
-			amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RAX, 8);
-			code = amd64_handle_varargs_call (cfg, code, call, FALSE);
-			amd64_jump_membase (code, AMD64_RSP, -8);
+				// NT does not have varargs rax use, and NT ABI does not have red zone.
+				// Use red-zone mov/jmp instead of push/ret to preserve call/ret speculation stack.
+				// FIXME Just like NT the direct cases are are not ideal.
+				amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RAX, 8);
+				code = amd64_handle_varargs_call (cfg, code, call, FALSE);
+				amd64_jump_membase (code, AMD64_RSP, -8);
 #endif
+			} else {
+				// Indirect jmp through thunk area.
+				//
+				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				*code++ = 0xFF;
+				*code++ = 0x25; // 0x15 for call
+				*(gint32*)code = -1; // fill in later, after code size is accurate, and thunks follow code
+				code += 4;
+				cfg->thunk_area += THUNK_SIZE;
+				set_code_cursor (cfg, code);
+			}
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
+
 			break;
 		}
 		case OP_CHECK_THIS:
@@ -6876,7 +6826,7 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		}
 	}
 
-	amd64_patch (ip, (gpointer)target);
+	amd64_patch_general (cfg, ip, (gpointer)target);
 }
 
 #ifndef DISABLE_JIT
@@ -8012,14 +7962,6 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 	if (code)
 		mono_tramp_info_register (info, NULL);
 	return code;
-}
-
-void
-mono_arch_finish_init (void)
-{
-#if !defined(HOST_WIN32) && defined(MONO_XEN_OPT)
-	optimize_for_xen = access ("/proc/xen", F_OK) == 0;
-#endif
 }
 
 #define CMP_SIZE (6 + 1)

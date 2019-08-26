@@ -5469,11 +5469,6 @@ try_offset_access (void *value, guint32 idx)
 }
 #endif
 
-void
-mono_arch_finish_init (void)
-{
-}
-
 #define CMP_SIZE (PPC_LOAD_SEQUENCE_LENGTH + 4)
 #define BR_SIZE 4
 #define LOADSTORE_SIZE 4

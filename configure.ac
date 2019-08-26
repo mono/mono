@@ -1040,23 +1040,6 @@ AM_CONDITIONAL(SHARED_MONO, test x$with_shared_mono != xno)
 AC_ARG_ENABLE(mcs-build, [  --disable-mcs-build disable the build of the mcs directory], try_mcs_build=$enableval, enable_mcs_build=yes)
 AC_ARG_ENABLE(support-build, [  --disable-support-build disable the build of the support directory], try_support_build=$enableval, enable_support_build=yes)
 
-AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[],[with_xen_opt=yes])
-if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
-	AC_DEFINE(MONO_XEN_OPT, 1, [Xen-specific behaviour])
-	ORIG_CFLAGS=$CFLAGS
-	CFLAGS="$CFLAGS -mno-tls-direct-seg-refs"
-	AC_MSG_CHECKING(for -mno-tls-direct-seg-refs option to gcc)
-	AC_TRY_COMPILE([], [
-	], [
-	   AC_MSG_RESULT(yes)
-	   # Pass it to libgc as well
-	   CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
-	], [
-	   AC_MSG_RESULT(no)
-	   CFLAGS=$ORIG_CFLAGS
-	])
-fi
-
 AC_ARG_ENABLE(small-config, [  --enable-small-config Enable tweaks to reduce requirements (and capabilities)], enable_small_config=$enableval, enable_small_config=no)
 
 if test x$enable_small_config = xyes; then
