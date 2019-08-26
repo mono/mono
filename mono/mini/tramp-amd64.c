@@ -799,14 +799,15 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 guint8*
 mono_arch_get_call_target (guint8 *code)
 {
-	if (code [-5] == 0xe8) {
-		gint32 disp = *(gint32*)(code - 4);
-		guint8 *target = code + disp;
+	if (code [-5] == 0xe8)
+		return code + *(gint32*)(code - 4);
 
-		return target;
-	} else {
-		return NULL;
-	}
+	// FIXME?            -6 -5 -4 -3 -2 -1  0
+	g_error ("unknown %p %X %X %X %X %X %X %X",
+		 code,
+		 code [-6], code [-5], code [-4], code [-3],
+		 code [-2], code [-1], code [0]);
+	return NULL;
 }
 
 /*
