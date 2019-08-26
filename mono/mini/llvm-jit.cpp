@@ -288,7 +288,19 @@ public:
 		if (opts == NULL) {
 			// FIXME: find optimal mono specific order of passes
 			// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
-			opts = " -simplifycfg -sroa -early-cse -instcombine -correlated-propagation -instcombine -loop-simplify -lcssa -loop-rotate -licm -instcombine -lcssa -indvars -loop-deletion -instcombine -simplifycfg";
+			// the following order is based on a stripped version of "OPT -O2"
+			opts = 
+			" -simplifycfg"      // Remove redundant basic blocks mono emits (e.g BB0->BB1->code)
+			" -sroa"             // Scalar replacement of aggregates
+			" -early-cse"        // Eliminate trivially redundant instructions.
+			" -lower-expect"     // This pass replaces @llvm.expect (we use for safepoints) with metadata (weights for branches)
+			" -ipsccp"           // Sparse conditional constant propagation
+			" -instcombine"      // Peephole optimizations
+			" -licm"             // Loop Invariant Code Motion
+			" -indvars"          // Induction variable elimination
+			" -loop-deletion"    // Delete redundant loops
+			" -instcombine"      // Peephole optimizations
+			" -simplifycfg";     // Remove redundant basic blocks 
 		}
 
 		char **args = g_strsplit (opts, " ", -1);
