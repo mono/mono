@@ -53,8 +53,9 @@ namespace MonoTests.System
 				case "Pacific/Auckland":
 					return "New Zealand Standard Time";
 				case "Europe/Athens":
-				case "Europe/Chisinau":
 					return "GTB Standard Time";
+				case "Europe/Chisinau":
+					return "E. Europe Standard Time";
 				case "US/Eastern":
 					return "Eastern Standard Time";
 				case "US/Central":
