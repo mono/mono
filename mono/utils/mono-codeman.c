@@ -304,9 +304,9 @@ free_chunklist (MonoCodeManager *cman, CodeChunk *chunk)
 			codechunk_vfree (dead->data, dead->size);
 			/* valgrind_unregister(dead->data); */
 		} else if (allocation_type == CODE_FLAG_MALLOC) {
+			memset (dead->data, 0xCC, dead->size); // temporary bug hunting
 #if _WIN32
 			// Caller will mass-destroy with HeapDestroy.
-			memset (dead->data, 0xCC, dead->size); // temporary bug hunting
 #else
 			mono_codeman_free (cman, dead->data);
 #endif
