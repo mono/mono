@@ -366,7 +366,7 @@ typedef union {
 		switch (*(unsigned char*)(ins)) {	\
 		case 0xe8: case 0xe9: ++size; break; /* call, jump32 */	\
 		case 0x0f: if (!(*pos >= 0x80 && *pos <= 0x8f)) assert (0);	\
-		   ++size; ++pos; break; /* prefix for 32-bit disp */	\
+		   ++size; ++pos; break; /* prefix for conditional jumps with 32-bit disp */ \
 		case 0xe0: case 0xe1: case 0xe2: /* loop */	\
 		case 0xeb: /* jump8 */	\
 		/* conditional jump opcodes */	\
