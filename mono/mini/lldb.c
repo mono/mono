@@ -279,7 +279,7 @@ add_entry (EntryType type, Buffer *buf)
 	guint8 *data;
 	int size = buffer_len (buf);
 
-	data = g_malloc (size);
+	data = (guint8*)g_malloc (size);
 	memcpy (data, buf->buf, size);
 
 	entry = g_malloc0 (sizeof (DebugEntry));

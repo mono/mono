@@ -460,7 +460,7 @@ mono_dynimage_alloc_table (MonoDynamicTable *table, guint nrows)
 				table->alloc_rows *= 2;
 		}
 
-		table->values = (guint32 *)g_renew (guint32, table->values, (table->alloc_rows) * table->columns);
+		table->values = g_renew (guint32, table->values, table->alloc_rows * table->columns);
 	}
 }
 

@@ -830,7 +830,7 @@ mono_ppdb_get_sourcelink (MonoDebugHandle *handle)
 	if (!blob)
 		return NULL;
 	int blob_len = mono_metadata_decode_blob_size (blob, &blob);
-	res = g_malloc (blob_len + 1);
+	res = (char*)g_malloc (blob_len + 1);
 	memcpy (res, blob, blob_len);
 	res [blob_len] = '\0';
 	return res;

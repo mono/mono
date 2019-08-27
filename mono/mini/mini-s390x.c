@@ -5394,7 +5394,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (method->save_lmf)
 		cfg->code_size += 200;
 
-	cfg->native_code = code = g_malloc (cfg->code_size);
+	cfg->native_code = code = (guint8*)g_malloc (cfg->code_size);
 
 	mono_emit_unwind_op_def_cfa (cfg, code, STK_BASE, 0);
 	emit_unwind_regs(cfg, code, s390_r6, s390_r14, S390_REG_SAVE_OFFSET);

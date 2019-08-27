@@ -1002,7 +1002,7 @@ dump_header (void)
 	const char *arch = mono_config_get_cpu ();
 	const char *os = mono_config_get_os ();
 
-	char *hbuf = g_malloc (
+	char *hbuf = (char*)g_malloc (
 		sizeof (gint32) /* header id */ +
 		sizeof (gint8) /* major version */ +
 		sizeof (gint8) /* minor version */ +

@@ -316,7 +316,7 @@ test_convert (void)
 	if (!(srcdir = getenv ("srcdir")) && !(srcdir = getenv ("PWD")))
 		return FAILED ("srcdir not defined!");
 	
-	expected = g_malloc (sizeof (convert_result_t *) * G_N_ELEMENTS (charsets));
+	expected = (convert_result_t*)g_malloc (sizeof (convert_result_t *) * G_N_ELEMENTS (charsets));
 	
 	/* first load all our test samples... */
 	for (i = 0; i < G_N_ELEMENTS (charsets); i++) {
@@ -335,7 +335,7 @@ test_convert (void)
 			return FAILED ("Failed to load content for %s: %s", charsets[i], err->message);
 		}
 		
-		expected[i] = g_malloc (sizeof (convert_result_t));
+		expected[i] = (convert_result_t*)g_malloc (sizeof (convert_result_t));
 		expected[i]->content = content;
 		expected[i]->length = length;
 	}

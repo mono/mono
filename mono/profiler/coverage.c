@@ -948,7 +948,7 @@ parse_args (const char *desc)
 	const char *p;
 	gboolean in_quotes = FALSE;
 	char quote_char = '\0';
-	char *buffer = g_malloc (strlen (desc) + 1);
+	char *buffer = (char*)g_malloc (strlen (desc) + 1);
 	int buffer_pos = 0;
 
 	for (p = desc; *p; p++){

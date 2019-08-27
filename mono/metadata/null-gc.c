@@ -196,7 +196,7 @@ mono_gc_free_fixed (void* addr)
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
-	MonoObject *obj = g_calloc (1, size);
+	MonoObject *obj = (MonoObject*)g_calloc (1, size);
 
 	obj->vtable = vtable;
 
@@ -206,7 +206,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
-	MonoArray *obj = g_calloc (1, size);
+	MonoArray *obj = (MonoArray*)g_calloc (1, size);
 
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
@@ -217,7 +217,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
-	MonoArray *obj = g_calloc (1, size);
+	MonoArray *obj = (MonoArray*)g_calloc (1, size);
 
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
@@ -231,7 +231,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
-	MonoString *obj = g_calloc (1, size);
+	MonoString *obj = (MonoString*)g_calloc (1, size);
 
 	obj->object.vtable = vtable;
 	obj->length = len;

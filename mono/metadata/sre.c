@@ -1031,7 +1031,7 @@ mono_image_insert_string (MonoReflectionModuleBuilderHandle ref_module, MonoStri
 		const char *p = (const char*)mono_string_chars_internal (MONO_HANDLE_RAW (str));
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	{
-		char *swapped = g_malloc (2 * length);
+		char *swapped = (char*)g_malloc (2 * length);
 
 		swap_with_size (swapped, p, 2, length);
 		mono_image_add_stream_data (&assembly->us, swapped, length * 2);

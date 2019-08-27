@@ -153,7 +153,7 @@ read_pipes (int outfd, gchar **out_str, int errfd, gchar **err_str, GError **ger
 		res = select (MAX (outfd, errfd) + 1, &rfds, NULL, NULL, NULL);
 		if (res > 0) {
 			if (buffer == NULL)
-				buffer = g_malloc (1024);
+				buffer = (char*)g_malloc (1024);
 			if (!out_closed && FD_ISSET (outfd, &rfds)) {
 				nread = safe_read (outfd, buffer, 1024, gerror);
 				if (nread < 0) {

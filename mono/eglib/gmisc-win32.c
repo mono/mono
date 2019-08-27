@@ -53,19 +53,19 @@ g_getenv(const gchar *variable)
 	gint32 buffer_size = 1024;
 	gint32 retval;
 	var = u8to16(variable); 
-	buffer = g_malloc(buffer_size*sizeof(gunichar2));
+	buffer = (gunichar2*)g_malloc(buffer_size*sizeof(gunichar2));
 	retval = GetEnvironmentVariableW (var, buffer, buffer_size);
 	if (retval != 0) {
 		if (retval > buffer_size) {
 			g_free (buffer);
 			buffer_size = retval;
-			buffer = g_malloc(buffer_size*sizeof(gunichar2));
+			buffer = (gunichar2*)g_malloc(buffer_size*sizeof(gunichar2));
 			retval = GetEnvironmentVariableW (var, buffer, buffer_size);
 		}
 		val = u16to8 (buffer);
 	} else {
 		if (GetLastError () != ERROR_ENVVAR_NOT_FOUND){
-			val = g_malloc (1);
+			val = (char*)g_malloc (1);
 			*val = 0;
 		}
 	}
@@ -170,7 +170,7 @@ g_get_home_dir (void)
 		const gchar *path = g_getenv ("HOMEPATH");
 
 		if (drive && path) {
-			home_dir = g_malloc (strlen (drive) + strlen (path) + 1);
+			home_dir = (char*)g_malloc (strlen (drive) + strlen (path) + 1);
 			if (home_dir) {
 				sprintf (home_dir, "%s%s", drive, path);
 			}

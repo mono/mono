@@ -4722,7 +4722,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	
 	sig = mono_method_signature_internal (method);
 	cfg->code_size = 768 + sig->param_count * 20;
-	code = cfg->native_code = g_malloc (cfg->code_size);
+	code = cfg->native_code = (guint8*)g_malloc (cfg->code_size);
 
 	/* 
 	 * compute max_offset in order to use short forward jumps.

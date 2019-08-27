@@ -42,7 +42,7 @@ mono_w32process_get_name (pid_t pid)
 	if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0)
 		return(ret);
 
-	if ((pi = g_malloc (size)) == NULL)
+	if ((pi = (struct kinfo_proc*)g_malloc (size)) == NULL)
 		return(ret);
 
 	if (sysctl (mib, 4, pi, &size, NULL, 0) < 0) {

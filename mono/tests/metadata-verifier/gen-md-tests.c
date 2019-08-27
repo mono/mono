@@ -582,7 +582,7 @@ process_test_entry (test_set_t *test_set, test_entry_t *entry)
 	FILE *f;
 
 	init_test_set (test_set);
-	entry->data = g_memdup (test_set->assembly_data, test_set->assembly_size);
+	entry->data = (char*)g_memdup (test_set->assembly_data, test_set->assembly_size);
 	entry->data_size = test_set->assembly_size;
 	entry->test_set = test_set;
 
@@ -686,7 +686,7 @@ token_text_dup (scanner_t *scanner, token_t *token)
 {
 	int len = token->end - token->start;
 	
-	char *str = g_memdup (scanner->input + token->start, len + 1);
+	char *str = (char*)g_memdup (scanner->input + token->start, len + 1);
 	str [len] = 0;
 	return str;
 }

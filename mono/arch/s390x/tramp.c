@@ -549,12 +549,12 @@ alloc_code_memory (guint code_size)
 	guint8 *p;
 
 #ifdef NEED_MPROTECT
-	p = g_malloc (code_size + PAGESIZE - 1);
+	p = (guint8*)g_malloc (code_size + PAGESIZE - 1);
 
 	/* Align to a multiple of PAGESIZE, assumed to be a power of two */
 	p = (char *)(((int) p + PAGESIZE-1) & ~(PAGESIZE-1));
 #else
-	p = g_malloc (code_size);
+	p = (guint8*)g_malloc (code_size);
 #endif
 	DEBUG (printf ("           align: %p (%d)\n", p, (guint)p % 4));
 
@@ -801,7 +801,7 @@ mono_arch_create_method_pointer (MonoMethod *method)
 
 	sig = method->signature;
 
-	p = code_buffer = g_malloc (sz.code_size);
+	p = code_buffer = (guint8*)g_malloc (sz.code_size);
 
 	DEBUG (printf ("\nDelegate [start emiting] %s at 0x%08x\n", 
 		       method->name,p));

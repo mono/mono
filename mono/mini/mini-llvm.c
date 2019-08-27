@@ -9756,7 +9756,7 @@ mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule
 		// Add root to work queue
 		for (int i = 0; call_site_union && i < call_site_union->len; i++) {
 			if (g_array_index (call_site_union, gint32, i) == 0) {
-					NonnullPropWorkItem *item = g_malloc (sizeof (NonnullPropWorkItem));
+					NonnullPropWorkItem *item = (NonnullPropWorkItem*)g_malloc (sizeof (NonnullPropWorkItem));
 					item->lmethod = lmethod;
 					item->argument = i;
 					queue = g_slist_prepend (queue, item);
@@ -9833,7 +9833,7 @@ mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule
 
 					// If we caused that callee's parameter to become newly nullable, add to work queue
 					if (*nullable_count == 0) {
-						NonnullPropWorkItem *item = g_malloc (sizeof (NonnullPropWorkItem));
+						NonnullPropWorkItem *item = (NonnullPropWorkItem*)g_malloc (sizeof (NonnullPropWorkItem));
 						item->lmethod = callee_lmethod;
 						item->argument = call_argument;
 						queue = g_slist_prepend (queue, item);

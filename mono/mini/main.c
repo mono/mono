@@ -118,7 +118,7 @@ load_from_region (int fd, uint64_t offset, uint64_t size)
 	} while (loc == -1 && errno == EINTR);
 	if (loc == -1)
 		return NULL;
-	buffer = g_malloc (size + 1);
+	buffer = (char*)g_malloc (size + 1);
 	if (buffer == NULL)
 		return NULL;
 	buffer [size] = 0;
@@ -280,7 +280,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
 		goto doclose;
 	directory_size = sigstart-directory_location;
-	directory = g_malloc (directory_size);
+	directory = (char*)g_malloc (directory_size);
 	if (directory == NULL)
 		goto doclose;
 	if (read (fd, directory, directory_size) == -1)

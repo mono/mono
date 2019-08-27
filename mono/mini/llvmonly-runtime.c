@@ -398,7 +398,7 @@ mini_llvmonly_get_vtable_trampoline (MonoVTable *vt, int slot_index, int index)
 	if (slot_index < 0) {
 		/* Initialize the IMT trampoline to a 'trampoline' so the generated code doesn't have to initialize it */
 		// FIXME: Memory management
-		gpointer *ftndesc = g_malloc (2 * sizeof (gpointer));
+		gpointer *ftndesc = (gpointer*)g_malloc (2 * sizeof (gpointer));
 		IMTTrampInfo *info = g_new0 (IMTTrampInfo, 1);
 		info->vtable = vt;
 		info->slot = index;

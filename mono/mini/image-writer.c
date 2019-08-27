@@ -629,7 +629,7 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 
 	if (!acfg->fp) {
 		acfg->out_buf_size = file_size;
-		acfg->out_buf = g_malloc (acfg->out_buf_size);
+		acfg->out_buf = (guint8*)g_malloc (acfg->out_buf_size);
 	}
 
 	bin_writer_fwrite (acfg, &header, sizeof (header), 1);

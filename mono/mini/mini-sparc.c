@@ -3880,7 +3880,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	guint32 i, offset;
 
 	cfg->code_size = 256;
-	cfg->native_code = g_malloc (cfg->code_size);
+	cfg->native_code = (guint32*)g_malloc (cfg->code_size);
 	code = (guint32*)cfg->native_code;
 
 	/* FIXME: Generate intermediate code instead */

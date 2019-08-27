@@ -167,7 +167,7 @@ add_mono_string_to_blob_cached (MonoDynamicImage *assembly, MonoString *str)
 	mono_metadata_encode_value (len, b, &b);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	{
-		char *swapped = g_malloc (2 * mono_string_length_internal (str));
+		char *swapped = (char*)g_malloc (2 * mono_string_length_internal (str));
 		const char *p = (const char*)mono_string_chars_internal (str);
 
 		swap_with_size (swapped, p, 2, mono_string_length_internal (str));

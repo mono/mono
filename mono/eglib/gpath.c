@@ -120,7 +120,7 @@ g_path_get_dirname (const gchar *filename)
 	if (p == filename)
 		return g_strdup ("/");
 	count = p - filename;
-	r = g_malloc (count + 1);
+	r = (char*)g_malloc (count + 1);
 	strncpy (r, filename, count);
 	r [count] = 0;
 

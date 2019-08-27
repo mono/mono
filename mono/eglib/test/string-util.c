@@ -557,7 +557,7 @@ test_strlcpy (void)
 	gchar *dest;
 	gsize i;
 
-	dest = g_malloc (strlen (src) + 1);
+	dest = (char*)g_malloc (strlen (src) + 1);
 	memset (dest, 0, strlen (src) + 1);
 	i = g_strlcpy (dest, src, (gsize)-1);
 	if (i != strlen (src))
@@ -669,7 +669,7 @@ test_strdupv (void)
 	if (one)
 		return FAILED ("Should have been NULL");
 
-	one = g_malloc (sizeof (gchar *));
+	one = (char*)g_malloc (sizeof (gchar *));
 	*one = NULL;
 	two = g_strdupv (one);
 	if (!two)

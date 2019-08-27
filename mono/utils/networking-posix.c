@@ -328,7 +328,7 @@ mono_get_local_interfaces (int family, int *interface_count)
 		if_count++;
 	}
 
-	result_ptr = result = g_malloc (if_count * mono_address_size_for_family (family));
+	result_ptr = result = (char*)g_malloc (if_count * mono_address_size_for_family (family));
 	for (cur = ifap; cur; cur = cur->ifa_next) {
 		if (!cur->ifa_addr)
 			continue;

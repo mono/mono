@@ -77,29 +77,29 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots)
 	case ArgInIReg:
 	case ArgVtypeByRef:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (sreg);
 		break;
 	case ArgVtypeByRefOnStack:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_stack_slot (sslot);
 		break;
 	case ArgInFReg:
 	case ArgInFRegR4:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_freg (sreg);
 		break;
 	case ArgHFA:
 		nsrc = ainfo->nregs;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		for (i = 0; i < ainfo->nregs; ++i)
 			src [i] = map_freg (sreg + i);
 		break;
 	case ArgVtypeInIRegs:
 		nsrc = ainfo->nregs;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		for (i = 0; i < ainfo->nregs; ++i)
 			src [i] = map_reg (sreg + i);
 		break;
@@ -107,12 +107,12 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots)
 	case ArgOnStackR4:
 	case ArgOnStackR8:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_stack_slot (sslot);
 		break;
 	case ArgVtypeOnStack:
 		nsrc = ainfo->size / 8;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		for (i = 0; i < nsrc; ++i)
 			src [i] = map_stack_slot (sslot + i);
 		break;

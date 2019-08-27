@@ -55,7 +55,7 @@ g_dir_open (const gchar *path, guint flags, GError **gerror)
 
 	dir = g_new0 (GDir, 1);
 	path_utf16 = u8to16 (path);
-	path_utf16_search = g_malloc ((wcslen(path_utf16) + 3)*sizeof(gunichar2));
+	path_utf16_search = (gunichar2*)g_malloc ((wcslen(path_utf16) + 3)*sizeof(gunichar2));
 	wcscpy (path_utf16_search, path_utf16);
 	wcscat (path_utf16_search, L"\\*");
 

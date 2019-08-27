@@ -57,7 +57,7 @@ string_array_append(StringArray *array, gchar *string)
 	if (array == NULL) {
 		array = g_new0(StringArray, 1);
 		array->length = 1;
-		array->strings = g_malloc(sizeof(gchar *) * 2);
+		array->strings = (char**)g_malloc(sizeof(gchar *) * 2);
 	} else {
 		array->length++;
 		array->strings = g_realloc(array->strings, sizeof(gchar *)

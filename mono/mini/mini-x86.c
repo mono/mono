@@ -4954,7 +4954,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	cfg->code_size = MAX (cfg->header->code_size * 4, 10240);
 
-	code = cfg->native_code = g_malloc (cfg->code_size);
+	code = cfg->native_code = (guint8*)g_malloc (cfg->code_size);
 
 #if 0
 	{

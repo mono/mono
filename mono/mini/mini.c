@@ -4277,7 +4277,7 @@ mini_realloc_code_slow (MonoCompile *cfg, int size)
 	if (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE)) {
 		while (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE))
 			cfg->code_size = cfg->code_size * 2 + EXTRA_CODE_SPACE;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+		cfg->native_code = (guint8*)g_realloc (cfg->native_code, cfg->code_size);
 		cfg->stat_code_reallocs++;
 	}
 	return cfg->native_code + cfg->code_len;

@@ -115,7 +115,7 @@ GModule *
 g_module_open (const gchar *file, GModuleFlags flags)
 {
 	GModule *module;
-	module = g_malloc (sizeof (GModule));
+	module = (GModule*)g_malloc (sizeof (GModule));
 	if (module == NULL)
 		return NULL;
 
