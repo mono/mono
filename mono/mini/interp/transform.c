@@ -6292,7 +6292,8 @@ interp_cprop (TransformData *td)
 static void
 interp_optimize_code (TransformData *td)
 {
-	interp_cprop (td);
+	if (mono_interp_opt & INTERP_OPT_CPROP)
+		interp_cprop (td);
 }
 
 static void

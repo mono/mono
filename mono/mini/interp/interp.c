@@ -117,7 +117,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
  */
 GSList *mono_interp_jit_classes;
 /* Optimizations enabled with interpreter */
-int mono_interp_opt = INTERP_OPT_INLINE;
+int mono_interp_opt = INTERP_OPT_DEFAULT;
 /* If TRUE, interpreted code will be interrupted at function entry/backward branches */
 static gboolean ss_enabled;
 
@@ -6686,10 +6686,12 @@ interp_parse_options (const char *options)
 
 		if (strncmp (arg, "jit=", 4) == 0)
 			mono_interp_jit_classes = g_slist_prepend (mono_interp_jit_classes, arg + 4);
-		if (strncmp (arg, "interp-only=", 4) == 0)
+		if (strncmp (arg, "interp-only=", strlen ("interp-only=")) == 0)
 			mono_interp_only_classes = g_slist_prepend (mono_interp_only_classes, arg + strlen ("interp-only="));
 		if (strncmp (arg, "-inline", 7) == 0)
 			mono_interp_opt &= ~INTERP_OPT_INLINE;
+		if (strncmp (arg, "-cprop", 6) == 0)
+			mono_interp_opt &= ~INTERP_OPT_CPROP;
 	}
 }
 
