@@ -8898,8 +8898,8 @@ mono_load_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField *
  * used to store the result.
  * \returns an address pointing to the value of field.  On failure returns NULL and sets \p error.
  */
-static gpointer
-mono_load_remote_field_frame (MonoThreadInfo *mono_thread_info_current_var, MonoObject *this_obj, MonoClass *klass, MonoClassField *field, gpointer *res, MonoError *error)
+gpointer
+mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, gpointer *res, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -8909,7 +8909,6 @@ mono_load_remote_field_frame (MonoThreadInfo *mono_thread_info_current_var, Mono
 
 	MonoDomain *domain = mono_domain_get ();
 	MonoTransparentProxy *tp = (MonoTransparentProxy *) this_obj;
-
 	MonoClass *field_class;
 	MonoMethodMessage *msg;
 	MonoArray *out_args;
@@ -8919,15 +8918,9 @@ mono_load_remote_field_frame (MonoThreadInfo *mono_thread_info_current_var, Mono
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 	g_assert (res != NULL);
 
-	if (mono_class_is_contextbound (tp->remote_class->proxy_class)) {
-
-		MonoObject* const context = MONO_HANDLE_RAW (MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_context_get ()));
-
-		if (tp->rp->context == context) {
-			MONO_HANDLE_NEW (MonoObject, tp->rp->unwrapped_server);
-			mono_field_get_value_internal (tp->rp->unwrapped_server, field, res);
-			return res;
-		}
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
+		mono_field_get_value_internal (tp->rp->unwrapped_server, field, res);
+		return res;
 	}
 	
 	if (!getter) {
@@ -8942,36 +8935,24 @@ mono_load_remote_field_frame (MonoThreadInfo *mono_thread_info_current_var, Mono
 	field_class = mono_class_from_mono_type_internal (field->type);
 
 	msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
-	MONO_HANDLE_NEW (MonoMethodMessage, msg);
 	return_val_if_nok (error, NULL);
-
 	out_args = mono_array_new_checked (domain, mono_defaults.object_class, 1, error);
-	MONO_HANDLE_NEW (MonoArray, out_args);
 	return_val_if_nok (error, NULL);
-
 	MonoReflectionMethod *rm = mono_method_get_object_checked (domain, getter, NULL, error);
-	MONO_HANDLE_NEW (MonoReflectionMethod, rm);
 	return_val_if_nok (error, NULL);
-
 	mono_message_init (domain, msg, rm, out_args, error);
 	return_val_if_nok (error, NULL);
 
 	full_name = mono_type_get_full_name (klass);
 	MonoString *full_name_str = mono_string_new_checked (domain, full_name, error);
-	MONO_HANDLE_NEW (MonoString, full_name_str);
 	g_free (full_name);
-
 	return_val_if_nok (error, NULL);
 	mono_array_setref_internal (msg->args, 0, full_name_str);
 	MonoString *field_name = mono_string_new_checked (domain, mono_field_get_name (field), error);
-	MONO_HANDLE_NEW (MonoString, field_name);
 	return_val_if_nok (error, NULL);
-
 	mono_array_setref_internal (msg->args, 1, field_name);
 
-	MONO_HANDLE_NEW (MonoRealProxy, tp->rp);
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args, error);
-	MONO_HANDLE_NEW (MonoArray, out_args);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
@@ -8988,16 +8969,6 @@ mono_load_remote_field_frame (MonoThreadInfo *mono_thread_info_current_var, Mono
 		return mono_object_get_data ((MonoObject*)*res);
 	} else
 		return res;
-}
-
-gpointer
-mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, gpointer *res, MonoError *error)
-{
-	HANDLE_FUNCTION_ENTER ();
-
-	res = (gpointer*)mono_load_remote_field_frame (mono_thread_info_current_var, this_obj, klass, field, res, error);
-
-	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
 /**
