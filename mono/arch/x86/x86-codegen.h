@@ -1009,7 +1009,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x88); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x89); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_mem_emit ((inst), (reg), (mem));	\
 	} while (0)
@@ -1021,7 +1021,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x88); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x89); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_regp_emit ((inst), (reg), (regp));	\
 	} while (0)
@@ -1033,7 +1033,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x88); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x89); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_membase_emit ((inst), (reg), (basereg), (disp));	\
 	} while (0)
@@ -1045,7 +1045,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x88); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x89); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_memindex_emit ((inst), (reg), (basereg), (disp), (indexreg), (shift));	\
 	} while (0)
@@ -1059,7 +1059,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 			case 1: x86_byte (inst, 0x8a); break;	\
 			case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 			case 4: x86_byte (inst, 0x8b); break;	\
-			default: g_assert (0);	\
+			default: assert (0);	\
 			}	\
 			x86_reg_emit ((inst), (dreg), (reg));	\
 		} \
@@ -1082,7 +1082,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x8a); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x8b); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_mem_emit ((inst), (reg), (mem));	\
 	} while (0)
@@ -1096,7 +1096,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x8a); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x8b); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_membase_emit ((inst), (reg), (basereg), (disp));	\
 	} while (0)
@@ -1108,7 +1108,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		case 1: x86_byte (inst, 0x8a); break;	\
 		case 2: x86_prefix((inst), X86_OPERAND_PREFIX); /* fall through */	\
 		case 4: x86_byte (inst, 0x8b); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 		x86_memindex_emit ((inst), (reg), (basereg), (disp), (indexreg), (shift));	\
 	} while (0)
@@ -1990,7 +1990,7 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 			x86_byte (inst, 0x24); x86_byte (inst, 0x00);	\
 			x86_byte (inst, 0x00); x86_byte (inst, 0x00);	\
 			x86_byte (inst, 0x00); break;	\
-		default: g_assert (0);	\
+		default: assert (0);	\
 		}	\
 	} while (0)
 
