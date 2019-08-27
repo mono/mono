@@ -8284,7 +8284,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 
 		if (!ac->msg->exc) {
 			MonoException *ex = mono_error_convert_to_exception (error);
-			ac->msg->exc = (MonoObject *)ex;
+			MONO_OBJECT_SETREF_INTERNAL (ac->msg, exc, (MonoObject *)ex);
 		} else {
 			mono_error_cleanup (error);
 		}
