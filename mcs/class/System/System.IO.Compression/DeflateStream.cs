@@ -140,7 +140,7 @@ namespace System.IO.Compression
 
 		internal ValueTask<int> ReadAsyncMemory (Memory<byte> destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.ReadAsync(destination, cancellationToken);
 		}
 
 		internal int ReadCore (Span<byte> destination)
@@ -180,7 +180,7 @@ namespace System.IO.Compression
 
 		internal ValueTask WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.WriteAsync(source, cancellationToken);
 		}
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
