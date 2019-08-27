@@ -742,18 +742,8 @@ load_local_general (TransformData *td, int offset, MonoType *type)
 		WRITE32_INS (td->last_ins, 1, &size);
 	} else {
 		g_assert (mt < MINT_TYPE_VT);
-		if (!td->gen_sdb_seq_points &&
-				mt == MINT_TYPE_I4 && !td->is_bb_start [td->in_start - td->il_code] && td->last_ins != NULL &&
-				td->last_ins->opcode == MINT_STLOC_I4 && td->last_ins->data [0] == offset) {
-			td->last_ins->opcode = MINT_STLOC_NP_I4;
-		} else if (!td->gen_sdb_seq_points &&
-				mt == MINT_TYPE_O && !td->is_bb_start [td->in_start - td->il_code] && td->last_ins != NULL &&
-				td->last_ins->opcode == MINT_STLOC_O && td->last_ins->data [0] == offset) {
-			td->last_ins->opcode = MINT_STLOC_NP_O;
-		} else {
-			interp_add_ins (td, MINT_LDLOC_I1 + (mt - MINT_TYPE_I1));
-			td->last_ins->data [0] = offset; /*FIX for large offset */
-		}
+		interp_add_ins (td, MINT_LDLOC_I1 + (mt - MINT_TYPE_I1));
+		td->last_ins->data [0] = offset; /*FIX for large offset */
 		if (mt == MINT_TYPE_O)
 			klass = mono_class_from_mono_type_internal (type);
 	}
@@ -6239,7 +6229,10 @@ interp_cprop (TransformData *td)
 		int pop, push;
 		int il_offset = ins->il_offset;
 		// Optimizations take place only inside a single basic block
-		if (il_offset != -1 && td->stack_height [il_offset] >= 0 && il_offset != last_il_offset) {
+		// If two instructions have the same il_offset, then the second one
+		// cannot be part the start of a basic block.
+		gboolean is_bb_start = il_offset != -1 && td->is_bb_start [il_offset] && il_offset != last_il_offset;
+		if (is_bb_start && td->stack_height [il_offset] >= 0) {
 			sp = stack + td->stack_height [il_offset];
 			g_assert (sp >= stack);
 			memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
@@ -6247,9 +6240,25 @@ interp_cprop (TransformData *td)
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
 		if (MINT_IS_LDLOC (ins->opcode)) {
-//			if (prev is stloc)
-//			convert stloc_np
-			sp->ins = ins;
+			int replace_op = 0;
+			if (!is_bb_start && MINT_IS_STLOC (ins->prev->opcode) && ins->prev->data [0] == ins->data [0]) {
+				int mt = ins->prev->opcode - MINT_STLOC_I1;
+				if (ins->opcode - MINT_LDLOC_I1 == mt) {
+					if (mt == MINT_TYPE_I4)
+						replace_op = MINT_STLOC_NP_I4;
+					else if (mt == MINT_TYPE_O)
+						replace_op = MINT_STLOC_NP_O;
+					if (replace_op) {
+						if (td->verbose_level)
+							g_print ("Add stloc : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
+						interp_clear_ins (td, ins->prev);
+						ins->opcode = replace_op;
+					}
+				}
+			}
+			// Save the ldloc on the stack if it wasn't optimized already
+			if (!replace_op)
+				sp->ins = ins;
 			sp++;
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			sp--;
