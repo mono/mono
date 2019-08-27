@@ -8268,9 +8268,9 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 	} else {
 		gpointer wait_event = NULL;
 
-		ac->msg->exc = NULL;
-
 		MONO_HANDLE_NEW (MonoMethodMessage, ac->msg);
+
+		ac->msg->exc = NULL;
 
 		MONO_HANDLE_ASSIGN_RAW (res, mono_message_invoke (mono_thread_info_current_var,
 								  ares->async_delegate,
