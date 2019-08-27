@@ -444,7 +444,12 @@ namespace MonoTests.System
 			[Test]
 			public void Bug_9664 ()
 			{
-				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				TimeZoneInfo tzi;
+				try {
+					tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				} catch (TimeZoneNotFoundException e) {
+					Assert.Ignore ("Timezone US/Central not found.");
+				}
 				var date = new DateTime (2019, 3, 9, 21, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
