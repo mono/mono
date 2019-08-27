@@ -68,7 +68,7 @@ Handle macros/functions
 			MONO_ALWAYS_INLINE					\
 			TYPE * GetRaw () const { return __raw ? *__raw : NULL; } \
 		)								\
-		TYPE * volatile *__raw;						\
+		TYPE** __raw;							\
 	} TYPED_HANDLE_NAME (TYPE),						\
 	  TYPED_OUT_HANDLE_NAME (TYPE),						\
 	  TYPED_IN_OUT_HANDLE_NAME (TYPE);					\

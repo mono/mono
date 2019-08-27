@@ -99,11 +99,11 @@ typedef struct {
 } HandleStackMark;
 
 // There are two types of handles.
-//  Pointers to volatile pointers in managed frames.
+//  Pointers to pointers in managed frames.
 //    These are allocated by icall wrappers in marshal-ilgen.c.
-//  Pointers to non-volatile pointers in TLS.
+//  Pointers to pointers in TLS.
 //    These are allocated by MONO_HANDLE_NEW.
-typedef void volatile * MonoRawHandle;
+typedef void* MonoRawHandle;
 
 typedef void (*GcScanFunc) (gpointer*, gpointer);
 
