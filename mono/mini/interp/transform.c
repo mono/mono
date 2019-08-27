@@ -6293,7 +6293,7 @@ static void
 interp_optimize_code (TransformData *td)
 {
 	if (mono_interp_opt & INTERP_OPT_CPROP)
-		interp_cprop (td);
+		MONO_TIME_TRACK (mono_interp_stats.cprop_time, interp_cprop (td));
 }
 
 static void
