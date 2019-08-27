@@ -59,7 +59,7 @@ namespace MonoTests.System
 				case "America/Chicago":
 					return "Central Standard Time";
 				case "US/Central":
-					return "Central Standard Time"
+					return "Central Standard Time";
 				case "America/Los_Angeles":
 					return "Pacific Standard Time";
 				case "Australia/Sydney":
