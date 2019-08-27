@@ -5503,7 +5503,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5569,7 +5569,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);

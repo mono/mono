@@ -686,7 +686,7 @@ token_text_dup (scanner_t *scanner, token_t *token)
 {
 	int len = token->end - token->start;
 	
-	char *str = g_memdup (scanner->input + token->start, len + 1);
+	char *str = (char*)g_memdup (scanner->input + token->start, len + 1);
 	str [len] = 0;
 	return str;
 }
