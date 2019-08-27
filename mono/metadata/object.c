@@ -8270,10 +8270,14 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 
 		ac->msg->exc = NULL;
 
+		MONO_HANDLE_NEW (MonoMethodMessage, ac->msg);
+
 		MONO_HANDLE_ASSIGN_RAW (res, mono_message_invoke (mono_thread_info_current_var,
 								  ares->async_delegate,
-								  MONO_HANDLE_RAW (MONO_HANDLE_NEW (MonoMethodMessage, ac->msg)),
-								  &ac->msg->exc, &ac->out_args, error));
+								  ac->msg,
+								  &ac->msg->exc,
+								  &ac->out_args,
+								  error));
 
 		/* The exit side of the invoke must not be aborted as it would leave the runtime in an undefined state */
 		mono_threads_begin_abort_protected_block ();
