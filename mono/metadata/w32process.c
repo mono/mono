@@ -33,16 +33,42 @@ mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 siz
 	return EnumProcessModules (process, modules, size, needed);
 }
 
-static guint32
-mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
+static gunichar *
+mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len)
 {
-	return GetModuleBaseNameW (process, (HMODULE)module, basename, size);
+	gunichar2 *basename = NULL;
+	guint32 size = MAX_PATH; // reasonable length to start with given historical behavior
+
+	basename = g_malloc0 (size * 2); // multiply because of unicode
+	*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
+	while (*len == size) {
+		if (*len == 0)
+			return NULL;
+		size *= 2; // double the buffer and try again
+		g_free (basename);
+		basename = g_malloc0 (size * 2);
+		*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
+	}
+	return basename;
 }
 
-static guint32
-mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
+static gunichar *
+mono_w32process_module_get_filename (gpointer process, gpointer module, guint32 *len)
 {
-	return GetModuleFileNameExW (process, (HMODULE)module, basename, size);
+	gunichar2 *basename = NULL;
+	guint32 size = MAX_PATH; // reasonable length to start with given historical behavior
+
+	basename = g_malloc0 (size * 2); // multiply because of unicode
+	*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
+	while (*len == size) {
+		if (*len == 0)
+			return NULL;
+		size *= 2; // double the buffer and try again
+		g_free (basename);
+		basename = g_malloc0 (size * 2);
+		*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
+	}
+	return basename;
 }
 
 static gboolean
@@ -526,8 +552,10 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 	MonoArrayHandle temp_arr = NULL_HANDLE_ARRAY;
 	MonoArrayHandle arr = NULL_HANDLE_ARRAY;
 	HMODULE mods [1024];
-	gunichar2 filename [MAX_PATH]; // FIXME (MAX_PATH)
-	gunichar2 modname [MAX_PATH]; // FIXME (MAX_PATH)
+	gunichar2 *filename = NULL;
+	gunichar2 *modname = NULL;
+	guint32 filename_len = 0;
+	guint32 modname_len = 0;
 	DWORD needed = 0;
 	guint32 count = 0;
 	guint32 module_count = 0;
@@ -558,9 +586,9 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	for (i = 0; i < module_count; i++) {
-		if (mono_w32process_module_get_name (process, mods [i], modname, MAX_PATH)
-			 && mono_w32process_module_get_filename (process, mods [i], filename, MAX_PATH))
-		{
+		modname = mono_w32process_module_get_name (process, mods [i], &modname_len);
+		filename = mono_w32process_module_get_filename (process, mods [i], &filename_len);
+		if (modname && filename) {
 			process_add_module (module, filever, str, process, mods [i], filename, modname, get_process_module_class (), error);
 			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 			MONO_HANDLE_ARRAY_SETREF (temp_arr, num_added++, module);
@@ -595,16 +623,17 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 MonoStringHandle
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoError *error)
 {
-	gunichar2 name [MAX_PATH]; // FIXME (MAX_PATH)
+	gunichar2 *name = NULL;
 	HMODULE mod = 0;
 	DWORD needed = 0;
+	guint32 len = 0;
 
 	if (!mono_w32process_try_get_modules (process, &mod, sizeof (mod), &needed))
 		return NULL_HANDLE_STRING;
 
-	const guint32 len = mono_w32process_module_get_name (process, mod, name, MAX_PATH);
+	name = mono_w32process_module_get_name (process, mod, &len);
 
-	return len ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
+	return name ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
 }
 
 #endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32)
