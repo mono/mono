@@ -6253,6 +6253,7 @@ interp_cprop (TransformData *td)
 							g_print ("Add stloc : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
 						interp_clear_ins (td, ins->prev);
 						ins->opcode = replace_op;
+						mono_interp_stats.killed_instructions++;
 					}
 				}
 			}
@@ -6278,6 +6279,7 @@ interp_cprop (TransformData *td)
 					ins->data [1] = dest_local;
 					if (ins->opcode == MINT_MOVLOC_VT)
 						ins->data [2] = sp->ins->data [1];
+					mono_interp_stats.killed_instructions++;
 				}
 			}
 			clear_stack_content_info_for_local (stack, sp, ins->data [1]);
