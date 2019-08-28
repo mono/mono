@@ -39,14 +39,16 @@ mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len
 	gunichar2 *basename = NULL;
 	guint32 size = MAX_PATH; // reasonable length to start with given historical behavior
 
-	basename = g_malloc0 (size * 2); // multiply because of unicode
+	basename = g_new0 (gunichar2, size);
 	*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
 	while (*len == size) {
-		if (*len == 0)
+		if (*len == 0) {
+			g_free (basename);
 			return NULL;
+		}
 		size *= 2; // double the buffer and try again
 		g_free (basename);
-		basename = g_malloc0 (size * 2);
+		basename = g_new0 (gunichar2, size);
 		*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
 	}
 	return basename;
@@ -58,14 +60,16 @@ mono_w32process_module_get_filename (gpointer process, gpointer module, guint32 
 	gunichar2 *basename = NULL;
 	guint32 size = MAX_PATH; // reasonable length to start with given historical behavior
 
-	basename = g_malloc0 (size * 2); // multiply because of unicode
+	basename = g_new0 (gunichar2, size);
 	*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
 	while (*len == size) {
-		if (*len == 0)
+		if (*len == 0) {
+			g_free (basename);
 			return NULL;
+		}
 		size *= 2; // double the buffer and try again
 		g_free (basename);
-		basename = g_malloc0 (size * 2);
+		basename = g_new0 (gunichar2, size);
 		*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
 	}
 	return basename;
