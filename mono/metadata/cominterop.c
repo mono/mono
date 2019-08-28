@@ -3239,7 +3239,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 						}
 						while (mono_marshal_safearray_next(safearray, indices));
 					} // label2
-					mono_marshal_safearray_end(safearray, indices);
+					mono_marshal_safearray_free_indices(indices);
 				} // label1
 		*/
 
@@ -3312,9 +3312,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 		mono_mb_patch_short_branch (mb, label2);
 
-		mono_mb_emit_ldarg (mb, argnum);
 		mono_mb_emit_ldloc (mb, indices_var);
-		mono_mb_emit_icall (mb, mono_marshal_safearray_end);
+		mono_mb_emit_icall (mb, mono_marshal_safearray_free_indices);
 
 		mono_mb_patch_short_branch (mb, label1);
 
