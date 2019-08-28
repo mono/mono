@@ -927,7 +927,7 @@ mono_w32process_module_get_filename (gpointer handle, gpointer module, guint32 *
 
 	proc_path = mono_unicode_from_external (path, &bytes);
 
-	*len = bytes / 2;
+	*len = bytes / sizeof (gunichar2);
 
 	g_free (path);
 	return proc_path;
@@ -1017,7 +1017,7 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 			return NULL;
 		}
 
-		*len = bytes / 2;
+		*len = bytes / sizeof (gunichar2);
 
 		g_free (procname_ext);
 		mono_w32handle_unref (handle_data);
