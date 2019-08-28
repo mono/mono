@@ -33,7 +33,7 @@ mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 siz
 	return EnumProcessModules (process, modules, size, needed);
 }
 
-static gunichar *
+static gunichar2 *
 mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len)
 {
 	gunichar2 *basename = NULL;
@@ -54,7 +54,7 @@ mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len
 	return basename;
 }
 
-static gunichar *
+static gunichar2 *
 mono_w32process_module_get_filename (gpointer process, gpointer module, guint32 *len)
 {
 	gunichar2 *basename = NULL;
