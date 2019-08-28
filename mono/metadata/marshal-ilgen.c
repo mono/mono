@@ -2776,7 +2776,6 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		if (param_num == -1) {
 			if (num_elem <= 0) {
-				g_print ("%s\n", klass->name);
 				//g_assert_not_reached ();
 			}
 		}
