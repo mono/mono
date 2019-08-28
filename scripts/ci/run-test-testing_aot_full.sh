@@ -9,11 +9,12 @@ if test -n "${MONO_LLVMONLY}";
 then
 ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmonlycheck
 else
-${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
 if [[ ${CI_TAGS} == *'_llvm'* ]]; then
-	${TESTCMD} --label=mini-aotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmaotcheck
-	# FIXME: https://github.com/mono/mono/issues/15999
-	# ${TESTCMD} --label=mini-aotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmfullaotcheck
+	${TESTCMD} --label=mini-llvmaotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmaotcheck
+	${TESTCMD} --label=mini-llvmfullaotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmfullaotcheck
+else
+	${TESTCMD} --label=mini-fullaotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
+	${TESTCMD} --label=mini-fullaotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
 fi
 fi
 
