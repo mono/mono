@@ -110,16 +110,14 @@ gpointer
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadUnmanagedDllFromPath (MonoStringHandle fname, MonoError *error)
 {
 	gpointer res = NULL;
-
-	HANDLE_FUNCTION_ENTER ();
+	MonoDl *lib = NULL;
+	char *filename = NULL;
+	char *local_error = NULL;
 
 	g_assert (!MONO_HANDLE_IS_NULL (fname)); // should have already been checked in managed, so we assert
 
-	MonoDl *lib = NULL;
-	char *filename, *local_error;
-
 	filename = mono_string_handle_to_utf8 (fname, error);
-	goto_if_nok (error, leave);
+	goto_if_nok (error, exit);
 
 	g_assert (g_path_is_absolute (filename)); // again, checked in managed
 
@@ -127,15 +125,16 @@ ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadUnmanagedDllFrom
 
 	if (lib == NULL) {
 		mono_error_set_file_not_found (error, filename, "%s", local_error);
-		goto leave;
+		goto exit;
 	}
 
 	res = lib->handle;
 
-leave:
+exit:
 	g_free (lib);
 	g_free (filename);
-	HANDLE_FUNCTION_RETURN_VAL (res);
+	g_free (local_error);
+	return res;
 }
 
 gboolean
