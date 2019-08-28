@@ -1117,6 +1117,11 @@ arch_init (MonoAotCompile *acfg)
 	acfg->align_pad_value = 0x90;
 #endif
 
+	if (mono_use_fast_math) {
+		// same parameters are passed to opt and LLVM JIT
+		g_string_append (acfg->llc_args, " -fp-contract=fast -enable-no-infs-fp-math -enable-no-nans-fp-math -enable-no-signed-zeros-fp-math -enable-no-trapping-fp-math -enable-unsafe-fp-math");
+	}
+
 #ifdef TARGET_ARM
 	if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "darwin")) {
 		g_string_append (acfg->llc_args, "-mattr=+v6");
@@ -7778,7 +7783,7 @@ clean_path (gchar * path)
 	if (g_str_has_suffix (path, G_DIR_SEPARATOR_S))
 		return path;
 
-	gchar *clean = g_strconcat (path, G_DIR_SEPARATOR_S, NULL);
+	gchar *clean = g_strconcat (path, G_DIR_SEPARATOR_S, (const char*)NULL);
 	g_free (path);
 
 	return clean;
@@ -9644,6 +9649,11 @@ emit_llvm_file (MonoAotCompile *acfg)
 		opts = g_strdup_printf ("%s -mcpu=native", opts);
 	}
 
+	if (mono_use_fast_math) {
+		// same parameters are passed to llc and LLVM JIT
+		opts = g_strdup_printf ("%s -fp-contract=fast -enable-no-infs-fp-math -enable-no-nans-fp-math -enable-no-signed-zeros-fp-math -enable-no-trapping-fp-math -enable-unsafe-fp-math", opts);
+	}
+
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
 	aot_printf (acfg, "Executing opt: %s\n", command);
 	if (execute_system (command) != 0)
@@ -10415,10 +10425,10 @@ emit_exception_info (MonoAotCompile *acfg)
 
 	if (seq_points_to_file) {
 		char *aotid = mono_guid_to_string_minimal (acfg->image->aotid);
-		char *dir = g_build_filename (acfg->aot_opts.gen_msym_dir_path, aotid, NULL);
+		char *dir = g_build_filename (acfg->aot_opts.gen_msym_dir_path, aotid, (const char*)NULL);
 		char *image_basename = g_path_get_basename (acfg->image->name);
 		char *aot_file = g_strdup_printf("%s%s", image_basename, SEQ_POINT_AOT_EXT);
-		char *aot_file_path = g_build_filename (dir, aot_file, NULL);
+		char *aot_file_path = g_build_filename (dir, aot_file, (const char*)NULL);
 
 		if (g_ensure_directory_exists (aot_file_path) == FALSE) {
 			fprintf (stderr, "AOT : failed to create msym directory: %s\n", aot_file_path);
@@ -13705,7 +13715,7 @@ emit_aot_image (MonoAotCompile *acfg)
 				acfg->temp_dir_to_delete = g_strdup (temp_path);
 			}
 				
-			acfg->tmpbasename = g_build_filename (temp_path, "temp", NULL);
+			acfg->tmpbasename = g_build_filename (temp_path, "temp", (const char*)NULL);
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
 			acfg->llvm_sfile = g_strdup_printf ("%s-llvm.s", acfg->tmpbasename);
 			acfg->llvm_ofile = g_strdup_printf ("%s-llvm." AS_OBJECT_FILE_SUFFIX, acfg->tmpbasename);
@@ -13726,7 +13736,7 @@ emit_aot_image (MonoAotCompile *acfg)
 			int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
 			acfg->fp = fdopen (i, "w+");
 		} else {
-			acfg->tmpbasename = g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+			acfg->tmpbasename = g_build_filename (acfg->aot_opts.temp_path, "temp", (const char*)NULL);
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
 			acfg->fp = fopen (acfg->tmpfname, "w+");
 		}

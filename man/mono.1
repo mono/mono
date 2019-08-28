@@ -558,6 +558,10 @@ generation engine to JIT or AOT compile.
 .Sp
 For more information, consult: http://www.mono-project.com/docs/advanced/mono-llvm/
 .TP
+\fB--ffast-math\fR
+This flag allows Mono and LLVM to apply aggressive floating point optimizations.
+Can break IEEE754 compliance.
+.TP
 \fB--nollvm\fR
 When using a Mono that has been compiled with LLVM support, it forces
 Mono to fallback to its JIT engine and not use the LLVM backend.
