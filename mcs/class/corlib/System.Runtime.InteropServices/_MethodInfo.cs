@@ -58,7 +58,7 @@ namespace System.Runtime.InteropServices
 		bool IsAbstract { get; }
 		bool IsSpecialName { get; }
 		bool IsConstructor { get; }
-		Object Invoke(Object obj, [In, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] Object[] parameters);
+		Object Invoke(Object obj, Object[] parameters);
 
 		Type ReturnType { get; }
 		ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
