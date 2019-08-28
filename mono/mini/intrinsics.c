@@ -119,17 +119,27 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			opcode = OP_ABSF;
 		else if (!strcmp (cmethod->name, "Sqrt"))
 			opcode = OP_SQRTF;
+		else if (!strcmp (cmethod->name, "Floor"))
+			opcode = OP_FLOORF;
+		else if (!strcmp (cmethod->name, "Ceiling"))
+			opcode = OP_CEILF;
+		else if (!strcmp (cmethod->name, "FusedMultiplyAdd"))
+			opcode = OP_FMAF;
 		else if (!strcmp (cmethod->name, "Max"))
 			opcode = OP_RMAX;
 		else if (!strcmp (cmethod->name, "Pow"))
 			opcode = OP_RPOW;
-		if (opcode) {
+		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
-			if (fsig->param_count == 2)
+			if (fsig->param_count == 2) { // POW
 				ins->sreg2 = args [1]->dreg;
+			} else if (fsig->param_count == 3) { // FMA
+				ins->sreg2 = args [1]->dreg;
+				ins->sreg3 = args [2]->dreg;
+			}
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}
@@ -141,15 +151,25 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			opcode = OP_COS;
 		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
 			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Floor") == 0) {
+			opcode = OP_FLOOR;
+		} else if (strcmp (cmethod->name, "Ceiling") == 0) {
+			opcode = OP_CEIL;
+		} else if (strcmp (cmethod->name, "FusedMultiplyAdd") == 0) {
+			opcode = OP_FMA;
 		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_ABS;
 		}
 
-		if (opcode && fsig->param_count == 1) {
+		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
+			if (fsig->param_count == 3) { // FMA
+				ins->sreg2 = args [1]->dreg;
+				ins->sreg3 = args [2]->dreg;
+			}
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 

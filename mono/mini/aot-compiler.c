@@ -230,6 +230,7 @@ typedef struct MonoAotOptions {
 	char *logfile;
 	char *llvm_opts;
 	char *llvm_llc;
+	gboolean use_current_cpu;
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
@@ -1103,7 +1104,7 @@ arch_init (MonoAotCompile *acfg)
 	acfg->user_symbol_prefix = "";
 
 #if TARGET_X86 || TARGET_AMD64
-	const gboolean has_custom_args = !!acfg->aot_opts.llvm_llc;
+	const gboolean has_custom_args = !!acfg->aot_opts.llvm_llc || acfg->aot_opts.use_current_cpu;
 #endif
 
 #if defined(TARGET_X86)
@@ -8058,6 +8059,15 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->no_opt = TRUE;
 		} else if (str_begins_with (arg, "clangxx=")) {
 			opts->clangxx = g_strdup (arg + strlen ("clangxx="));
+		} else if (str_begins_with (arg, "cpu=")) {
+			if (!strcmp(arg, "cpu=native")) {
+				opts->use_current_cpu = TRUE;
+			} else if (!strcmp(arg, "cpu=generic")) {
+				opts->use_current_cpu = FALSE;
+			} else {
+				printf ("cpu can only be 'native' or 'generic' (default).\n");
+				exit (0);
+			}
 		} else if (str_begins_with (arg, "depfile=")) {
 			opts->depfile = g_strdup (arg + strlen ("depfile="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
@@ -8454,6 +8464,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_DIRECT_PINVOKE);
 	if (acfg->aot_opts.interp)
 		flags = (JitFlags)(flags | JIT_FLAG_INTERP);
+	if (acfg->aot_opts.use_current_cpu)
+		flags = (JitFlags)(flags | JIT_FLAG_USE_CURRENT_CPU);
 
 	jit_time_start = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
@@ -9646,6 +9658,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 		opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
 	}
 
+	if (acfg->aot_opts.use_current_cpu) {
+		opts = g_strdup_printf ("%s -mcpu=native", opts);
+	}
+
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
 	aot_printf (acfg, "Executing opt: %s\n", command);
 	if (execute_system (command) != 0)
@@ -9711,6 +9727,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.llvm_llc) {
 		g_string_append_printf (acfg->llc_args, " %s", acfg->aot_opts.llvm_llc);
+	}
+
+	if (acfg->aot_opts.use_current_cpu) {
+		g_string_append (acfg->llc_args, " -mcpu=native");
 	}
 
 	command = g_strdup_printf ("\"%sllc\" %s -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.llvm_path, acfg->llc_args->str, output_fname, acfg->tmpbasename);
