@@ -959,7 +959,7 @@ mono_gc_get_restart_signal (void)
 }
 
 #if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
-// Look at history around late June 2019 if this is to be restored.
+// Look at history around late August 2019 if this is to be restored.
 // The code was effectively dead, not merely deleted to avoid maintaining it.
 #endif
 
