@@ -375,8 +375,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (response, client.SendAsync (request).Result, "#1");
 		}
 
-		[Test]
-		[Category ("NotWorking")]
+		[Test]		
 		public void Send_BaseAddress ()
 		{
 			var mh = new HttpMessageHandlerMock ();

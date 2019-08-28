@@ -1336,14 +1336,11 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		    gboolean care_about_cli, gboolean care_about_pecoff)
 {
 	ERROR_DECL (error);
-	MonoCLIImageInfo *iinfo;
 	GSList *l;
 
 	MONO_PROFILER_RAISE (image_loading, (image));
 
 	mono_image_init (image);
-
-	iinfo = image->image_info;
 
 	if (!image->metadata_only) {
 		for (l = image_loaders; l; l = l->next) {
@@ -1831,6 +1828,7 @@ mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, gu
 	image->storage = storage;
 	mono_image_init_raw_data (image, storage);
 	image->name = (name == NULL) ? g_strdup_printf ("data-%p", datac) : g_strdup(name);
+	image->filename = name ? g_strdup (name) : NULL;
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->ref_only = refonly;
@@ -1930,6 +1928,7 @@ mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->name = fname;
+	image->filename = g_strdup (image->name);
 	image->ref_count = has_entry_point ? 0 : 1;
 #ifdef ENABLE_NETCORE
 	image->alc = alc;
