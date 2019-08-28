@@ -90,7 +90,7 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 	guint32 token;
 	int target;
 
-	g_string_append_printf (str, "IL_%04x: %-10s", (int)(ip - base), mono_interp_opname (*ip));
+	g_string_append_printf (str, "IR_%04x: %-10s", (int)(ip - base), mono_interp_opname (*ip));
 	switch (mono_interp_opargtype [*ip]) {
 	case MintOpNoArgs:
 		break;
@@ -130,11 +130,11 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 	}
 	case MintOpShortBranch:
 		target = ip + * (short *)(ip + 1) - base;
-		g_string_append_printf (str, " IL_%04x", target);
+		g_string_append_printf (str, " IR_%04x", target);
 		break;
 	case MintOpBranch:
 		target = ip + (gint32)READ32 (ip + 1) - base;
-		g_string_append_printf (str, " IL_%04x", target);
+		g_string_append_printf (str, " IR_%04x", target);
 		break;
 	case MintOpSwitch: {
 		const guint16 *p = ip + 1;
@@ -147,7 +147,7 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 			if (i > 0)
 				g_string_append_printf (str, ", ");
 			offset = (gint32)READ32 (p);
-			g_string_append_printf (str, "IL_%04x", (int)(p + offset - base));
+			g_string_append_printf (str, "IR_%04x", (int)(p + offset - base));
 			p += 2;
 		}
 		g_string_append_printf (str, ")");
