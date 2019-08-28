@@ -5352,7 +5352,6 @@ main_loop:
 			if (!is_ok (error)) {
 				THROW_EX (mono_error_convert_to_exception (error), ip);
 			}
-			mono_interp_error_cleanup (error); /* FIXME: don't swallow the error */
 			ip += 2;
 			/*if (profiling_classes) {
 				guint count = GPOINTER_TO_UINT (g_hash_table_lookup (profiling_classes, o->vtable->klass));
