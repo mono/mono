@@ -8046,13 +8046,13 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->no_opt = TRUE;
 		} else if (str_begins_with (arg, "clangxx=")) {
 			opts->clangxx = g_strdup (arg + strlen ("clangxx="));
-		} else if (str_begins_with (arg, "cpu=")) {
-			if (!strcmp(arg, "cpu=native")) {
+		} else if (str_begins_with (arg, "mcpu=")) {
+			if (!strcmp(arg, "mcpu=native")) {
 				opts->use_current_cpu = TRUE;
-			} else if (!strcmp(arg, "cpu=generic")) {
+			} else if (!strcmp(arg, "mcpu=generic")) {
 				opts->use_current_cpu = FALSE;
 			} else {
-				printf ("cpu can only be 'native' or 'generic' (default).\n");
+				printf ("mcpu can only be 'native' or 'generic' (default).\n");
 				exit (0);
 			}
 		} else if (str_begins_with (arg, "depfile=")) {
