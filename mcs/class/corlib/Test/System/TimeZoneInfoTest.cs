@@ -451,22 +451,20 @@ namespace MonoTests.System
 					tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				} catch (TimeZoneNotFoundException e) {
 					Assert.Ignore ("Timezone US/Central not found.");
+					return;
 				}
 				var date = new DateTime (2019, 3, 9, 21, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 2, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 2, 30, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 3, 0, 0);
 				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
