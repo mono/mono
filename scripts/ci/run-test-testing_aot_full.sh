@@ -10,6 +10,11 @@ then
 ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmonlycheck
 else
 ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
+if [[ ${CI_TAGS} == *'_llvm'* ]]; then
+	${TESTCMD} --label=mini-aotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmaotcheck
+	# FIXME: https://github.com/mono/mono/issues/15999
+	# ${TESTCMD} --label=mini-aotcheck --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmfullaotcheck
+fi
 fi
 
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
