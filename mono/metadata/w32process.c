@@ -37,7 +37,7 @@ static gunichar2 *
 mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len)
 {
 	gunichar2 *basename = NULL;
-	guint32 size = 2; // reasonable length to start with given historical behavior
+	guint32 size = 260; // reasonable length to start with given historical behavior
 
 	basename = g_new0 (gunichar2, size);
 	*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
@@ -58,7 +58,7 @@ static gunichar2 *
 mono_w32process_module_get_filename (gpointer process, gpointer module, guint32 *len)
 {
 	gunichar2 *basename = NULL;
-	guint32 size = 2; // reasonable length to start with given historical behavior
+	guint32 size = 260; // reasonable length to start with given historical behavior
 
 	basename = g_new0 (gunichar2, size);
 	*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
