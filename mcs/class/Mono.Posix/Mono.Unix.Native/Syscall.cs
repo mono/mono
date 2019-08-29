@@ -212,22 +212,25 @@ namespace Mono.Unix.Native {
 	[CLSCompliant (false)]
 	public enum FcntlCommand : int {
 		// Form /usr/include/bits/fcntl.h
-		F_DUPFD    =    0, // Duplicate file descriptor.
-		F_GETFD    =    1, // Get file descriptor flags.
-		F_SETFD    =    2, // Set file descriptor flags.
-		F_GETFL    =    3, // Get file status flags.
-		F_SETFL    =    4, // Set file status flags.
-		F_GETLK    =   12, // Get record locking info. [64]
-		F_SETLK    =   13, // Set record locking info (non-blocking). [64]
-		F_SETLKW   =   14, // Set record locking info (blocking). [64]
-		F_SETOWN   =    8, // Set owner of socket (receiver of SIGIO).
-		F_GETOWN   =    9, // Get owner of socket (receiver of SIGIO).
-		F_SETSIG   =   10, // Set number of signal to be sent.
-		F_GETSIG   =   11, // Get number of signal to be sent.
-		F_NOCACHE  =   48, // OSX: turn data caching off/on for this fd.
-		F_SETLEASE = 1024, // Set a lease.
-		F_GETLEASE = 1025, // Enquire what lease is active.
-		F_NOTIFY   = 1026, // Required notifications on a directory
+		F_DUPFD      =    0, // Duplicate file descriptor.
+		F_GETFD      =    1, // Get file descriptor flags.
+		F_SETFD      =    2, // Set file descriptor flags.
+		F_GETFL      =    3, // Get file status flags.
+		F_SETFL      =    4, // Set file status flags.
+		F_GETLK      =   12, // Get record locking info. [64]
+		F_SETLK      =   13, // Set record locking info (non-blocking). [64]
+		F_SETLKW     =   14, // Set record locking info (blocking). [64]
+		F_OFD_GETLK  =   36, // Get open file description locking info.
+		F_OFD_SETLK  =   37, // Set open file description locking info (non-blocking).
+		F_OFD_SETLKW =   38, // Set open file description locking info (blocking).
+		F_SETOWN     =    8, // Set owner of socket (receiver of SIGIO).
+		F_GETOWN     =    9, // Get owner of socket (receiver of SIGIO).
+		F_SETSIG     =   10, // Set number of signal to be sent.
+		F_GETSIG     =   11, // Get number of signal to be sent.
+		F_NOCACHE    =   48, // OSX: turn data caching off/on for this fd.
+		F_SETLEASE   = 1024, // Set a lease.
+		F_GETLEASE   = 1025, // Enquire what lease is active.
+		F_NOTIFY     = 1026, // Required notifications on a directory
 	}
 
 	[Map]
