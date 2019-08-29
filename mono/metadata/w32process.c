@@ -41,7 +41,8 @@ mono_w32process_module_get_name (gpointer process, gpointer module, guint32 *len
 
 	basename = g_new0 (gunichar2, size);
 	*len = GetModuleBaseNameW (process, (HMODULE)module, basename, size);
-	while (*len == size) {
+	// GetModuleBaseNameW will set the null byte but include it in the returned length
+	while (*len >= size) {
 		if (*len == 0) {
 			g_free (basename);
 			return NULL;
@@ -62,7 +63,8 @@ mono_w32process_module_get_filename (gpointer process, gpointer module, guint32 
 
 	basename = g_new0 (gunichar2, size);
 	*len = GetModuleFileNameExW (process, (HMODULE)module, basename, size);
-	while (*len == size) {
+	// GetModuleFileNameExW will set the null byte but _not_ include it in the returned length
+	while (*len >= (size - 1)) {
 		if (*len == 0) {
 			g_free (basename);
 			return NULL;
