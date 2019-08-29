@@ -8724,18 +8724,12 @@ add_intrinsic (LLVMModuleRef module, int id)
 		AddFunc (module, name, LLVMFloatType (), params, 1);
 		break;
 	}
-	case INTRINS_POWF: {
-		LLVMTypeRef params [] = { LLVMFloatType (), LLVMFloatType () };
-
-		AddFunc (module, name, LLVMFloatType (), params, 2);
+	case INTRINS_POWF:
+		AddFunc2 (module, name, LLVMFloatType (), LLVMFloatType (), LLVMFloatType ());
 		break;
-	}
-	case INTRINS_POW: {
-		LLVMTypeRef params [] = { LLVMDoubleType (), LLVMDoubleType () };
-
-		AddFunc (module, name, LLVMDoubleType (), params, 2);
+	case INTRINS_POW:
+		AddFunc2 (module, name, LLVMDoubleType (), LLVMDoubleType (), LLVMDoubleType ());
 		break;
-	}
 	case INTRINS_EXPECT_I8:
 		AddFunc2 (module, name, LLVMInt8Type (), LLVMInt8Type (), LLVMInt8Type ());
 		break;

@@ -425,6 +425,7 @@ mono_llvm_create_ee (AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb,
 
 	EnableMonoEH = true;
 	MonoEHFrameSymbol = "mono_eh_frame";
+	EngineBuilder EB;
 
 	if (mono_use_fast_math) {
 		TargetOptions opts;
@@ -437,7 +438,6 @@ mono_llvm_create_ee (AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb,
 		EB.setTargetOptions (opts);
 	}
 
-	EngineBuilder EB;
 	EB.setOptLevel(CodeGenOpt::Aggressive);
 	EB.setMCPU(sys::getHostCPUName());
 	auto TM = EB.selectTarget ();
