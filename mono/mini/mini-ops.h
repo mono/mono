@@ -674,6 +674,9 @@ MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
 MINI_OP(OP_RMAX,     "rmax", FREG, FREG, FREG)
 MINI_OP(OP_RMIN,     "rmin", FREG, FREG, FREG)
 MINI_OP(OP_RPOW,     "rpow", FREG, FREG, FREG)
+MINI_OP(OP_RMAXF,    "rmaxf", FREG, FREG, FREG)
+MINI_OP(OP_RMINF,    "rminf", FREG, FREG, FREG)
+MINI_OP(OP_RPOWF,    "rpowf", FREG, FREG, FREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
