@@ -28,8 +28,6 @@ System.IO.Compression/DeflateStream.cs
 
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
-System.IO/FileSystemEventArgs.cs
-System.IO/FileSystemEventHandler.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/InvalidDataException.cs
 System.IO/IODescriptionAttribute.cs
@@ -872,13 +870,15 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventHandler.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
 
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 
 # Everything except compiled
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
