@@ -599,7 +599,11 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 		filename = mono_w32process_module_get_filename (process, mods [i], &filename_len);
 		if (modname && filename) {
 			process_add_module (module, filever, str, process, mods [i], filename, modname, get_process_module_class (), error);
-			return_val_if_nok (error, NULL_HANDLE_ARRAY);
+			if (!is_ok (error)) {
+				g_free (modname);
+				g_free (filename);
+				return NULL_HANDLE_ARRAY;
+			}
 			MONO_HANDLE_ARRAY_SETREF (temp_arr, num_added++, module);
 		}
 		g_free (modname);
