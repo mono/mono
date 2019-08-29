@@ -919,6 +919,11 @@ mono_w32process_module_get_filename (gpointer handle, gpointer module, guint32 *
 	gchar *path;
 	gunichar2 *proc_path;
 
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module file name, process handle %p module %p " G_GUINT32_FORMAT,
+	            __func__, handle, module);
+
+	*len = 0;
+
 	pid = mono_w32process_get_pid (handle);
 	if (pid == 0)
 		return NULL;
@@ -950,6 +955,8 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module base name, process handle %p module %p " G_GUINT32_FORMAT,
 		   __func__, handle, module);
+
+	*len = 0;
 
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unknown handle %p", __func__, handle);
