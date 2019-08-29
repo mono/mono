@@ -126,7 +126,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		else if (!strcmp (cmethod->name, "FusedMultiplyAdd"))
 			opcode = OP_FMAF;
 		else if (!strcmp (cmethod->name, "Pow"))
-			opcode = OP_RPOWF;
+			opcode = OP_FPOW;
 		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
@@ -165,9 +165,9 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_RMIN;
 		} else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
-			opcode = OP_RMAXF; 
+			opcode = OP_FMAX; 
 		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
-			opcode = OP_RMINF;
+			opcode = OP_FMIN;
 		} else if (strcmp (cmethod->name, "Pow") == 0) {
 			opcode = OP_RPOW;
 		}

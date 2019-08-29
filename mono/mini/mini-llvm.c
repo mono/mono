@@ -6043,7 +6043,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #endif
 			break;
 		}
-		case OP_RPOWF: {
+		case OP_FPOW: {
 			LLVMValueRef args [2];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
@@ -6068,8 +6068,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_LMIN_UN:
 		case OP_IMAX_UN:
 		case OP_LMAX_UN:
-		case OP_RMINF:
-		case OP_RMAXF:
+		case OP_FMIN:
+		case OP_FMAX:
 		case OP_RMIN:
 		case OP_RMAX: {
 			LLVMValueRef v;
@@ -6094,11 +6094,11 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			case OP_LMAX_UN:
 				v = LLVMBuildICmp (builder, LLVMIntUGE, lhs, rhs, "");
 				break;
-			case OP_RMAXF:
+			case OP_FMAX:
 			case OP_RMAX:
 				v = LLVMBuildFCmp (builder, LLVMRealUGE, lhs, rhs, "");
 				break;
-			case OP_RMINF:
+			case OP_FMIN:
 			case OP_RMIN:
 				v = LLVMBuildFCmp (builder, LLVMRealULE, lhs, rhs, "");
 				break;
