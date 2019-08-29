@@ -47,7 +47,6 @@ class MonoReleaseProfile(DarwinProfile):
         'gtk-engines',
         'murrine',
         'xamarin-gtk-theme',
-        'gtk-quartz-engine',
 
         # Mono
         'mono',
