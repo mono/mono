@@ -22,7 +22,7 @@ typedef enum {
 	MONO_VALUE_NULLNESS_MASK = 1,
 
 	/*
-	 * If this bit is set, and then enclosing MonoSummarizedValue is a
+	 * If this bit is set, and the enclosing MonoSummarizedValue is a
 	 * MONO_VARIABLE_SUMMARIZED_VALUE, then the "nullness" value is related
 	 * to the variable referenced in MonoSummarizedVariableValue. Otherwise,
 	 * the "nullness" value is constant.

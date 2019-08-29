@@ -277,7 +277,7 @@ get_relation_from_ins (MonoVariableRelationsEvaluationArea *area, MonoInst *ins,
 		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
 		value->value.variable.variable = ins->sreg1;
 		value->value.variable.delta = 0;
-		value->value.variable.nullness = MONO_VALUE_IS_VARIABLE | MONO_VALUE_MAYBE_NULL;
+		value->value.variable.nullness = (MonoValueNullness) (MONO_VALUE_IS_VARIABLE | MONO_VALUE_MAYBE_NULL);
 		break;
 	case OP_SEXT_I4:
 		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
@@ -559,7 +559,7 @@ clean_contexts (MonoVariableRelationsEvaluationArea *area, int number)
 static void
 union_nullness (MonoRelationsEvaluationRange *range, MonoValueNullness n)
 {
-	range->nullness = range->nullness & (MONO_VALUE_NULLNESS_MASK & n);
+	range->nullness = (MonoValueNullness) (range->nullness & (MONO_VALUE_NULLNESS_MASK & n));
 }
 
 static void
@@ -572,7 +572,7 @@ intersect_nullness (MonoRelationsEvaluationRange *range, MonoValueNullness n, Mo
 		range->nullness = MONO_VALUE_MAYBE_NULL;
 		break;
 	default:
-		range->nullness = range->nullness | (MONO_VALUE_NULLNESS_MASK & n);
+		range->nullness = (MonoValueNullness) (range->nullness | (MONO_VALUE_NULLNESS_MASK & n));
 	}
 }
 
