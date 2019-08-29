@@ -135,3 +135,8 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 	return g_string_free (str, FALSE);
 }
 
+const char*
+mono_interp_opname (int op)
+{
+	return ((const char*)&mono_interp_opname_characters) + mono_interp_opname_offsets [op];
+}

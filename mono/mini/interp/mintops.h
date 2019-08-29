@@ -63,8 +63,7 @@ extern const guint16 mono_interp_opname_offsets [ ];
 typedef struct MonoInterpOpnameCharacters MonoInterpOpnameCharacters;
 extern const MonoInterpOpnameCharacters mono_interp_opname_characters;
 
-#define mono_interp_opname(x) (((const char*)&mono_interp_opname_characters) + mono_interp_opname_offsets [x])
-
+const char*
+mono_interp_opname (int op);
 
 #endif
-
