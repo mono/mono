@@ -3244,7 +3244,6 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 		return;
 	}
 
-	g_assert_not_reached ();
 }
 
 #if defined(MONO_ARCH_USE_SIGACTION) || defined(HOST_WIN32)
