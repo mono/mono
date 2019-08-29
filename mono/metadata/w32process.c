@@ -643,7 +643,7 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 	if (!name)
 		return NULL_HANDLE_STRING;
 
-	MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), name, len, error)
+	MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), name, len, error);
 	g_free (name);
 	return res;
 }
