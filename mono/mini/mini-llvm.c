@@ -6043,7 +6043,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #endif
 			break;
 		}
-		case OP_FPOW: {
+		case OP_RPOW: {
 			LLVMValueRef args [2];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
@@ -6051,7 +6051,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_POWF), args, 2, dname);
 			break;
 		}
-		case OP_RPOW: {
+		case OP_FPOW: {
 			LLVMValueRef args [2];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());

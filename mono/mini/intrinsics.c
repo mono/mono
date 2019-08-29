@@ -126,7 +126,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		else if (!strcmp (cmethod->name, "FusedMultiplyAdd"))
 			opcode = OP_FMAF;
 		else if (!strcmp (cmethod->name, "Pow"))
-			opcode = OP_FPOW;
+			opcode = OP_RPOW;
 		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
@@ -161,15 +161,17 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 		// Max and Min can only be optimized in fast math mode
 		else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
-			opcode = OP_RMAX; 
-		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
-			opcode = OP_RMIN;
-		} else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
 			opcode = OP_FMAX; 
-		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
+		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_FMIN;
+		}
+		// Math.Max/Min also have float overloads (MathF.Max/Min just redirect to them)
+		else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
+			opcode = OP_RMAX; 
+		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
+			opcode = OP_RMIN;
 		} else if (strcmp (cmethod->name, "Pow") == 0) {
-			opcode = OP_RPOW;
+			opcode = OP_FPOW;
 		}
 
 		if (opcode && fsig->param_count > 0) {
