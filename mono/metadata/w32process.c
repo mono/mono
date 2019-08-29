@@ -602,6 +602,8 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_
 			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 			MONO_HANDLE_ARRAY_SETREF (temp_arr, num_added++, module);
 		}
+		g_free (modname);
+		g_free (filename);
 	}
 
 	if (assemblies) {
@@ -641,8 +643,12 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 		return NULL_HANDLE_STRING;
 
 	name = mono_w32process_module_get_name (process, mod, &len);
+	if (!name)
+		return NULL_HANDLE_STRING;
 
-	return name ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
+	MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), name, len, error)
+	g_free (name);
+	return res;
 }
 #endif /* ENABLE_NETCORE */
 
