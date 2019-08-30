@@ -37,7 +37,7 @@ stages:
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 300
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -56,7 +56,6 @@ stages:
         - bash: |
             git clean -ffdx
             git reset --hard HEAD
-            git submodule update --init -- external/llvm
           displayName: 'Clean up working directory'
 
         - bash: |
@@ -74,7 +73,7 @@ stages:
 
         - bash: |
             cd netcore
-            ./build.sh -c $(_BuildConfig) --llvm
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
@@ -86,7 +85,7 @@ stages:
         - bash: |
             make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
-          timeoutInMinutes: 300
+          timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
@@ -107,7 +106,7 @@ stages:
       ############ MACOS BUILD ############
       - job: Build_macOS
         displayName: macOS
-        timeoutInMinutes: 300
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -119,7 +118,6 @@ stages:
         - bash: |
             git clean -ffdx
             git reset --hard HEAD
-            git submodule update --init -- external/llvm
           displayName: 'Clean up working directory'
         - bash: |
             brew install autoconf automake libtool gnu-sed
@@ -134,7 +132,7 @@ stages:
 
         - bash: |
             cd netcore
-            ./build.sh -c $(_BuildConfig) --llvm
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
@@ -146,7 +144,7 @@ stages:
         - bash: |
             make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
-          timeoutInMinutes: 300
+          timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
