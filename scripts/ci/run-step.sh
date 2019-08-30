@@ -8,7 +8,7 @@ export MONO_BABYSITTER_LOG_FILE=babysitter_report.json_lines
 
 helptext ()
 {
-    echo "run-step.sh {--label=LABEL} {--skip|--timeout=TIMEOUT [--fatal]} command to run with arguments"
+    echo "run-step.sh {--label=LABEL} {--skip|--timeout=TIMEOUT [--fatal] [--retry=NUM]} command to run with arguments"
 }
 
 for i in "$@"
@@ -25,6 +25,10 @@ case $i in
     --timeout=*)
     TIMEOUT="${i#*=}"
     shift # past argument=value
+    ;;
+    --retry=*)
+    RETRY="${i#*=}"
+    shift
     ;;
     --fatal)
     FATAL="true"
@@ -52,9 +56,29 @@ if [ -z "${LABEL}" ] || [ -z "${TIMEOUT}" ]
     exit 1
 fi
 STARTTIME=`date +%s`
-echo "*** start: ${LABEL}"
-if [ -n "${FATAL}" ]; then
-    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || (echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[41mFailed\e[0m" && exit 1)
-else
-    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[43mUnstable\e[0m"
+
+COUNT=1
+if [ -n "${RETRY}" ]; then
+    COUNT=${RETRY}
 fi
+
+ITER=0
+while [ ${ITER} -lt ${COUNT} ]; do
+    if [ ${ITER} -eq 0 ]; then
+        ITER_LABEL=${LABEL}
+    else
+        ITER_LABEL="${LABEL} (retry ${ITER})"
+    fi
+    echo "*** start: ${ITER_LABEL}"
+    if [ -n "${FATAL}" ]; then
+        ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${ITER_LABEL}: \e[42mPassed\e[0m" || (echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${ITER_LABEL}: \e[41mFailed\e[0m" && exit 1)
+    else
+        ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${ITER_LABEL}: \e[42mPassed\e[0m"
+        if [ $? != 0 ]; then
+            echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${ITER_LABEL}: \e[43mUnstable\e[0m"
+        else
+            break
+        fi
+    fi
+    ITER=`expr ${ITER} + 1`
+done
