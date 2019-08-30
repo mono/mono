@@ -2086,14 +2086,16 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		/*
 		 * For vararg calls, ArgIterator expects the signature and the varargs to be
 		 * stored in a linear memory. We allocate the necessary vt_stack space for
-		 * this. All varargs will be pushed to the vt_stack at call site.
+		 * this. All varargs will be pushed to the vt_stack at call site. At the end
+		 * we push the signature again so the child frame can find it.
 		 */
 		vararg_stack += sizeof (gpointer);
 		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
 			int align, arg_size;
 			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vararg_stack += arg_size;
+			vararg_stack += ALIGN_TO (arg_size, align);
 		}
+		vararg_stack += sizeof (gpointer);
 		vt_stack_used += ALIGN_TO (vararg_stack, MINT_VT_ALIGNMENT);
 		PUSH_VT (td, vararg_stack);
 	}
