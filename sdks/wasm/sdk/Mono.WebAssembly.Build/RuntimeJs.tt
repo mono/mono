@@ -29,15 +29,15 @@ var Module = {
 	},
 };
 
-(function() {
+(function () {
 	if (Module.enableAutoRuntimeLoading) {
-		var __mono_wasm_monoScript_js__ = document.createElement('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = "mono.js";
-		var __mono_wasm_monoScript__ = document.getElementsByTagName('script')[0];
+		var __mono_wasm_monoScript_js__ = document.createElement ('script'); __mono_wasm_monoScript_js__.type = 'text/javascript'; __mono_wasm_monoScript_js__.async = true; __mono_wasm_monoScript_js__.src = "mono.js";
+		var __mono_wasm_monoScript__ = document.getElementsByTagName ('script')[0];
 		if (Module.threadsRuntimeAvailable && typeof SharedArrayBuffer !== 'undefined')
 			__mono_wasm_monoScript_js__.src = "threads/mono.js";
-		__mono_wasm_monoScript__.parentNode.insertBefore(__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);
+		__mono_wasm_monoScript__.parentNode.insertBefore (__mono_wasm_monoScript_js__, __mono_wasm_monoScript__);
 	}
-})();
+}) ();
 <#+
 public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
