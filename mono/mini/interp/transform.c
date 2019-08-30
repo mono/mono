@@ -5875,17 +5875,15 @@ exit:
 	goto exit_ret;
 }
 
-// We are trying to branch to an il offset that has no associated ir instruction with it.
-// We will branch instead to the next instruction that we find
+// Find the offset of the first interp instruction generated starting il_offset
+// This is needed to find the end of clauses.
 static int
-resolve_in_offset (TransformData *td, int il_offset)
+find_in_offset (TransformData *td, int il_offset)
 {
 	int i = il_offset;
-	g_assert (!td->in_offsets [il_offset]);
 	while (!td->in_offsets [i])
 		i++;
-	td->in_offsets [il_offset] = td->in_offsets [i];
-	return td->in_offsets [il_offset];
+	return td->in_offsets [i] - 1;
 }
 
 // We store in the in_offset array the native_offset + 1, so 0 can mean only that the il
@@ -5894,9 +5892,8 @@ static int
 get_in_offset (TransformData *td, int il_offset)
 {
 	int target_offset = td->in_offsets [il_offset];
-	if (target_offset)
-		return target_offset - 1;
-	return resolve_in_offset (td, il_offset) - 1;
+	g_assert (target_offset);
+	return target_offset - 1;
 }
 
 static void
@@ -6170,11 +6167,11 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 		MonoExceptionClause *c = rtm->clauses + i;
 		int end_off = c->try_offset + c->try_len;
 		c->try_offset = get_in_offset (td, c->try_offset);
-		c->try_len = get_in_offset (td, end_off) - c->try_offset;
+		c->try_len = find_in_offset (td, end_off) - c->try_offset;
 		g_assert ((c->try_offset + c->try_len) < code_len);
 		end_off = c->handler_offset + c->handler_len;
 		c->handler_offset = get_in_offset (td, c->handler_offset);
-		c->handler_len = get_in_offset (td, end_off) - c->handler_offset;
+		c->handler_len = find_in_offset (td, end_off) - c->handler_offset;
 		g_assert (c->handler_len >= 0 && (c->handler_offset + c->handler_len) <= code_len);
 		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER)
 			c->data.filter_offset = get_in_offset (td, c->data.filter_offset);
