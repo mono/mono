@@ -91,9 +91,10 @@ namespace System.Windows.Forms {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				
-				OnUIACollectionChanged (CollectionChangeAction.Remove, nodes [index]);
+				var removedNode = nodes [index];
 				nodes [index] = value;
-				
+
+				OnUIACollectionChanged (CollectionChangeAction.Remove, removedNode);
 				SetupNode (value);
 			}
 		}
