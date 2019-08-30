@@ -453,7 +453,7 @@ void
 mono_llvm_set_fast_math (LLVMBuilderRef builder)
 {
 	FastMathFlags flags;
-	flags.setFast();
+	flags.setFast ();
 	unwrap(builder)->setFastMathFlags (flags);
 }
 
