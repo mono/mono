@@ -6800,9 +6800,9 @@ AC_MSG_RESULT($enable_compiler_server)
 
 if test x$enable_compiler_server = xyes; then
    if test x$force_enable_compiler_server = xyes; then
-       AC_MSG_WARN([forcing compiler server to stay enabled])   
-	 elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin])
+       AC_MSG_WARN([forcing compiler server to stay enabled])
+   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
        enable_compiler_server=no;
    elif test x$csc_compiler = xmcs; then
        AC_MSG_WARN([mcs does not support the compiler server])
