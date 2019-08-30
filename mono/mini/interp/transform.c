@@ -5855,9 +5855,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			g_error ("transform.c: Unimplemented opcode: %02x at 0x%x\n", *td->ip, td->ip-header->code);
 		}
 
-		// No IR instructions were added as part of the IL instruction. Extend bb_start
+		// No IR instructions were added as part of a bb_start IL instruction. Add a MINT_NOP
+		// so we always have an instruction associated with a bb_start. This is simple and avoids
+		// any complications associated with il_offset tracking.
 		if (prev_last_ins == td->last_ins && (!inlining && td->is_bb_start [in_offset]) && td->ip < end)
-			td->is_bb_start [td->ip - td->il_code] = 1;
+			interp_add_ins (td, MINT_NOP);
 	}
 
 	g_assert (td->ip == end);
