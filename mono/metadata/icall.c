@@ -6119,11 +6119,12 @@ ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes (MonoReflectionAsse
 }
 
 static void
-get_top_level_forwarded_type (guint32 *cols, MonoImage *image, MonoTableInfo *table, int i, MonoArrayHandle types, MonoArrayHandle exceptions, int *aindex, int *exception_count)
+get_top_level_forwarded_type (MonoImage *image, MonoTableInfo *table, int i, MonoArrayHandle types, MonoArrayHandle exceptions, int *aindex, int *exception_count)
 {
 	HANDLE_FUNCTION_ENTER ();
 
 	ERROR_DECL (local_error);
+	guint32 cols [MONO_EXP_TYPE_SIZE];
 	
 	mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
 	if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
@@ -6176,7 +6177,6 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 {
 	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
 	MonoImage *image = assembly->image;
-	guint32 cols [MONO_EXP_TYPE_SIZE];
 	int count = 0;
 
 	g_assert (!assembly_is_dynamic (assembly));
@@ -6194,7 +6194,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 	int aindex = 0;
 	int exception_count = 0;
 	for (int i = 0; i < table->rows; ++i) {
-		get_top_level_forwarded_type (cols, image, table, i, types, exceptions, &aindex, &exception_count);
+		get_top_level_forwarded_type (image, table, i, types, exceptions, &aindex, &exception_count);
 	}
 
 	if (exception_count > 0) {
