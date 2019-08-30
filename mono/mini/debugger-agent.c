@@ -4929,8 +4929,12 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &args->sp);
 				if (!found_sp)
 					no_seq_points_found (frame->de.method, frame->de.native_offset);
-				g_assert (found_sp);
-				method = frame->de.method;
+#if !defined(HOST_ANDROID) && !defined(TARGET_ANDROID)					
+				g_assert (found_sp);				
+#else
+				if (found_sp) //it will not find the next sp if it is a "DynamicMethodNameCounter" from Android.Runtime
+#endif				
+					method = frame->de.method;
 			}
 		}
 	}
