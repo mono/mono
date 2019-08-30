@@ -339,18 +339,13 @@ interp_insert_ins (TransformData *td, InterpInst *prev_ins, guint16 opcode)
 }
 
 static void
-interp_remove_ins (TransformData *td, InterpInst *ins)
+interp_clear_ins (TransformData *td, InterpInst *ins)
 {
-	if (ins->prev) {
-		ins->prev->next = ins->next;
-	} else {
-		td->first_ins = ins->next;
-	}
-	if (ins->next) {
-		ins->next->prev = ins->prev;
-	} else {
-		td->last_ins =  ins->prev;
-	}
+	// Clearing instead of removing from the list makes everything easier.
+	// We don't change structure of the instruction list, we don't need
+	// to worry about updating the il_offset, or whether this instruction
+	// was at the start of a basic block etc.
+	ins->opcode = MINT_NOP;
 }
 
 #define CHECK_STACK(td, n) \
@@ -1470,8 +1465,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			base_klass = mono_class_from_mono_type_internal (base_type);
 
 			// Remove the boxing of valuetypes
-			interp_remove_ins (td, td->last_ins->prev->prev);
-			interp_remove_ins (td, td->last_ins);
+			interp_clear_ins (td, td->last_ins->prev->prev);
+			interp_clear_ins (td, td->last_ins);
 
 			intrinsify = TRUE;
 		} else if (td->last_ins && td->last_ins->opcode == MINT_BOX &&
@@ -1486,8 +1481,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			int mt = mint_type (m_class_get_byval_arg (base_klass));
 
 			// Remove boxing and load the value of this
-			interp_remove_ins (td, td->last_ins);
-			interp_insert_ins (td, td->last_ins->prev, interp_get_ldind_for_mt (mt));
+			interp_clear_ins (td, td->last_ins);
+			interp_insert_ins (td, td->last_ins->prev->prev, interp_get_ldind_for_mt (mt));
 
 			intrinsify = TRUE;
 		}
@@ -3995,7 +3990,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_I4: {
 				if (interp_ins_is_ldc (td->last_ins) && (inlining || !td->is_bb_start [in_offset])) {
 					gint64 ct = interp_ldc_i4_get_const (td->last_ins);
-					interp_remove_ins (td, td->last_ins);
+					interp_clear_ins (td, td->last_ins);
 
 					interp_add_ins (td, MINT_LDC_I8);
 					WRITE64_INS (td->last_ins, 0, &ct);
@@ -4064,7 +4059,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_I4:
 				if (interp_ins_is_ldc (td->last_ins) && (inlining || !td->is_bb_start [in_offset])) {
 					gint64 ct = (guint32)interp_ldc_i4_get_const (td->last_ins);
-					interp_remove_ins (td, td->last_ins);
+					interp_clear_ins (td, td->last_ins);
 
 					interp_add_ins (td, MINT_LDC_I8);
 					WRITE64_INS (td->last_ins, 0, &ct);
