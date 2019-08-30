@@ -3328,10 +3328,8 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NOP)
-			++ip;
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NIY)
-			g_error ("mint_niy: instruction not implemented yet.  This shouldn't happen.");
+			g_assert_not_reached ();
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;

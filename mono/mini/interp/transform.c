@@ -291,9 +291,8 @@ static InterpInst*
 interp_new_ins (TransformData *td, guint16 opcode, int len)
 {
 	InterpInst *new_inst;
-	g_assert (len);
 	// Size of data region of instruction is length of instruction minus 1 (the opcode slot)
-	new_inst = mono_mempool_alloc0 (td->mempool, sizeof (InterpInst) + sizeof (guint16) * (len - 1));
+	new_inst = mono_mempool_alloc0 (td->mempool, sizeof (InterpInst) + sizeof (guint16) * ((len > 0) ? (len - 1) : 0));
 	new_inst->opcode = opcode;
 	// opcodes from inlined methods don't have il offset associated with them since the offset
 	// stored here is relevant only for the original method
@@ -5963,6 +5962,9 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 		lne.il_offset = ins->il_offset;
 		g_array_append_val (td->line_numbers, lne);
 	}
+
+	if (opcode == MINT_NOP)
+		return ip;
 
 	*ip++ = opcode;
 	if (opcode == MINT_SWITCH) {

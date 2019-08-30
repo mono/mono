@@ -8,7 +8,7 @@
 
 /* OPDEF (opsymbol, opstring, oplength (in uint16s), optype) */
 
-OPDEF(MINT_NOP, "nop", 1, MintOpNoArgs)
+OPDEF(MINT_NOP, "nop", 0, MintOpNoArgs)
 OPDEF(MINT_NIY, "niy", 1, MintOpNoArgs)
 OPDEF(MINT_BREAK, "break", 1, MintOpNoArgs)
 OPDEF(MINT_BREAKPOINT, "breakpoint", 1, MintOpNoArgs)
