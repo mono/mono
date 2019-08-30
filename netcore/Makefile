@@ -118,6 +118,12 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 		$(DOTNET) $$assembly ; \
 	done; \
 
+# run 'dotnet/performance' benchmarks
+# e.g. 'make run-benchmarks DOTNET_PERF_REPO=/prj/performance'
+run-benchmarks: patch-local-dotnet
+	cd $(DOTNET_PERF_REPO)/src/benchmarks/micro/ && \
+	$(DOTNET) run -c Release -f netcoreapp5.0 --cli $(CURDIR)/../.dotnet/dotnet
+
 # run HelloWorld using --aot=llvm (requires `--enable-llvm` build)
 run-sample-local-dotnet-llvm: patch-local-dotnet
 	$(DOTNET) build -c Release sample/HelloWorld
