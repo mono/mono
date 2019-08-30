@@ -6127,7 +6127,7 @@ get_top_level_forwarded_type (guint32 *cols, MonoImage *image, MonoTableInfo *ta
 	
 	mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
 	if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
-		return;
+		goto exit;
 	guint32 impl = cols [MONO_EXP_TYPE_IMPLEMENTATION];
 	const char *name = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAME]);
 	const char *nspace = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAMESPACE]);
@@ -6143,7 +6143,7 @@ get_top_level_forwarded_type (guint32 *cols, MonoImage *image, MonoTableInfo *ta
 		MONO_HANDLE_ARRAY_SETREF (types, *aindex, NULL_HANDLE);
 		MONO_HANDLE_ARRAY_SETREF (exceptions, *aindex, ex);
 		(*exception_count)++; (*aindex)++;
-		return;
+		goto exit;
 	}
 	MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, local_error);
 	if (!is_ok (local_error)) {
@@ -6152,7 +6152,7 @@ get_top_level_forwarded_type (guint32 *cols, MonoImage *image, MonoTableInfo *ta
 		MONO_HANDLE_ARRAY_SETREF (exceptions, *aindex, ex);
 		mono_error_cleanup (local_error);
 		(*exception_count)++; (*aindex)++;
-		return;
+		goto exit;
 	}
 	MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), local_error);
 	if (!is_ok (local_error)) {
@@ -6161,12 +6161,13 @@ get_top_level_forwarded_type (guint32 *cols, MonoImage *image, MonoTableInfo *ta
 		MONO_HANDLE_ARRAY_SETREF (exceptions, *aindex, ex);
 		mono_error_cleanup (local_error);
 		(*exception_count)++; (*aindex)++;
-		return;
+		goto exit;
 	}
 	MONO_HANDLE_ARRAY_SETREF (types, *aindex, rt);
 	MONO_HANDLE_ARRAY_SETREF (exceptions, *aindex, NULL_HANDLE);
 	(*aindex)++;
 
+exit:
 	HANDLE_FUNCTION_RETURN ();
 }
 
