@@ -42,7 +42,7 @@ public IEnumerable<string> FileList { get; set; }
             this.WriteLine("\t\t\tif (typeof SharedArrayBuffer !== 'undefined') {");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.js\")) return this.locateMonoThreads (path, pref);");
             this.WriteLine("\t\t\t\tif (path.startsWith (\"mono.wasm\")) return this.locateMonoThreads (path, pref);");
-            this.WriteLine("\t\t\t\tif (path === (\"mono.worker.js\")) return this.locateMonoThreads (path, pref);");
+            this.WriteLine("\t\t\t\tif (path === \"mono.worker.js\") return this.locateMonoThreads (path, pref);");
             this.WriteLine("\t\t\t}");
             this.WriteLine("\t\t\t\treturn pref + \"../\" + path;");
             this.WriteLine("\t\t}");

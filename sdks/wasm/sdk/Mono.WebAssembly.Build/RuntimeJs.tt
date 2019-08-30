@@ -10,7 +10,7 @@ var Module = {
 			if (typeof SharedArrayBuffer !== 'undefined') {
 				if (path.startsWith ("mono.js")) return this.locateMonoThreads (path, pref);
 				if (path.startsWith ("mono.wasm")) return this.locateMonoThreads (path, pref);
-				if (path === ("mono.worker.js")) return this.locateMonoThreads (path, pref);
+				if (path === "mono.worker.js") return this.locateMonoThreads (path, pref);
 			}
 			return pref + "../" + path;
 		}
