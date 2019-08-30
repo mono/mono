@@ -131,11 +131,9 @@ struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	char           *args;
 	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
-	unsigned char  *locals;
 	/*
 	 * For GC tracking of local objrefs in exec_method ().
 	 * Storing into this field will keep the object pinned
@@ -149,13 +147,15 @@ struct _InterpFrame {
 	MonoException     *ex;
 };
 
+#define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
+
 typedef struct {
 	/* Resume state for resuming execution in mixed mode */
 	gboolean       has_resume_state;
 	/* Frame to resume execution at */
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
-	guint16 *handler_ip;
+	const guint16 *handler_ip;
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
 } ThreadContext;

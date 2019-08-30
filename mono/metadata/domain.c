@@ -127,9 +127,6 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image);
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
 
-MonoAssembly *
-mono_domain_assembly_open_internal (MonoDomain *domain, const char *name);
-
 static void
 mono_domain_alcs_destroy (MonoDomain *domain);
 
@@ -617,7 +614,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	if ((status != MONO_IMAGE_OK) || (ass == NULL)) {
 		switch (status){
 		case MONO_IMAGE_ERROR_ERRNO: {
-			char *corlib_file = g_build_filename (mono_assembly_getrootdir (), "mono", current_runtime->framework_version, "mscorlib.dll", NULL);
+			char *corlib_file = g_build_filename (mono_assembly_getrootdir (), "mono", current_runtime->framework_version, "mscorlib.dll", (const char*)NULL);
 			g_print ("The assembly mscorlib.dll was not found or could not be loaded.\n");
 			g_print ("It should have been installed in the `%s' directory.\n", corlib_file);
 			g_free (corlib_file);
@@ -1024,13 +1021,14 @@ mono_domain_assembly_open (MonoDomain *domain, const char *name)
 {
 	MonoAssembly *result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_domain_assembly_open_internal (domain, name);
+	result = mono_domain_assembly_open_internal (domain, mono_domain_default_alc (domain), name);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
+// Uses the domain on legacy mono and the ALC on current
 MonoAssembly *
-mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
+mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext *alc, const char *name)
 {
 	MonoDomain *current;
 	MonoAssembly *ass;
@@ -1038,6 +1036,17 @@ mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
 
 	MONO_REQ_GC_UNSAFE_MODE;
 
+#ifdef ENABLE_NETCORE
+	mono_alc_assemblies_lock (alc);
+	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
+		ass = (MonoAssembly *)tmp->data;
+		if (strcmp (name, ass->aname.name) == 0) {
+			mono_alc_assemblies_unlock (alc);
+			return ass;
+		}
+	}
+	mono_alc_assemblies_unlock (alc);
+#else
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
@@ -1047,10 +1056,10 @@ mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
 		}
 	}
 	mono_domain_assemblies_unlock (domain);
+#endif
 
 	MonoAssemblyOpenRequest req;
-	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
-	req.request.alc = mono_domain_default_alc (domain);
+	mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
 	if (domain != mono_domain_get ()) {
 		current = mono_domain_get ();
 
@@ -1081,6 +1090,8 @@ unregister_vtable_reflection_type (MonoVTable *vtable)
  * This releases the resources associated with the specific domain.
  * This is a low-level function that is invoked by the AppDomain infrastructure
  * when necessary.
+ *
+ * In theory, this is dead code on netcore and thus does not need to be ALC-aware.
  */
 void
 mono_domain_free (MonoDomain *domain, gboolean force)
@@ -1838,7 +1849,7 @@ app_config_parse (const char *exe_filename)
 		text = g_strdup (bundled_config);
 		len = strlen (text);
 	} else {
-		config_filename = g_strconcat (exe_filename, ".config", NULL);
+		config_filename = g_strconcat (exe_filename, ".config", (const char*)NULL);
 
 		if (!g_file_get_contents (config_filename, &text, &len, NULL)) {
 			g_free (config_filename);
@@ -2098,6 +2109,7 @@ mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, g
 {
 	g_assert (!collectible); /* TODO: implement collectible ALCs */
 	MonoAssemblyLoadContext *alc = create_alc (domain, FALSE);
+	alc->gchandle = this_gchandle;
 	return alc;
 }
 #endif

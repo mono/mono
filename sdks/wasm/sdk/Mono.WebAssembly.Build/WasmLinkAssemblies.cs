@@ -28,6 +28,11 @@ namespace Mono.WebAssembly.Build
 		public ITaskItem[] Assemblies { get; set; }
 
 		/// <summary>
+		/// Full paths to managed assemblies from packages to run against.
+		/// </summary>
+		public ITaskItem[] RuntimeCopyLocalAssemblies { get; set; }
+
+		/// <summary>
 		/// The directory containing the framework assemblies.
 		/// </summary>
 		[Required]
@@ -59,6 +64,12 @@ namespace Mono.WebAssembly.Build
 		/// Internationalization code pages to be supported
 		/// </summary>
 		public string I18n { get; set; }
+
+		/// <summary>
+		/// Custom Linker Configurations
+		/// </summary>
+		public ITaskItem[] LinkDescriptions { get; set; }
+
 
 		protected override string ToolName => (InvokeLinkerUsingMono) ? "mono" : "monolinker.exe";
 		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
@@ -153,9 +164,18 @@ namespace Mono.WebAssembly.Build
 			arguments = arguments.AddRange ("-b", Debug.ToString());
 			arguments = arguments.AddRange ("-v", Debug.ToString());
 
+			// add custom link descriptions
+			// to ensure the type, methods and/or fields are not eliminated from your application.
+			if (LinkDescriptions != null) {
+				foreach (var desc in LinkDescriptions) {
+					var l = desc.GetMetadata ("FullPath");
+					arguments = arguments.AddRange ("-x", l);
+				}
+			}
+
 			arguments = arguments.AddRange ("-a", RootAssembly[0].GetMetadata ("FullPath"));
 
-			//we'll normally have to check most of the because the SDK references most framework asm by default
+			//we'll normally have to check most of the files because the SDK references most framework asm by default
 			//so let's enumerate upfront
 			var frameworkAssemblies = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			foreach (var f in Directory.EnumerateFiles (FrameworkDir)) {
@@ -165,12 +185,32 @@ namespace Mono.WebAssembly.Build
 				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
 			}
 
+			// Load the runtime assemblies to be replaced in the references below
+			var runtimeCopyLocal = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+			if (RuntimeCopyLocalAssemblies != null) {
+				foreach (var copyAsm in RuntimeCopyLocalAssemblies) {
+					var p = copyAsm.GetMetadata ("FullPath");
+					
+					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
+						continue;
+					}
+					runtimeCopyLocal.Add(Path.GetFileNameWithoutExtension (p), p);
+				}
+			}
+
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
 					var p = asm.GetMetadata ("FullPath");
 					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
+					}
+
+					if (runtimeCopyLocal.TryGetValue(Path.GetFileNameWithoutExtension (p), out var runtimePath))
+					{
+						// Just in case
+						if (File.Exists(runtimePath))
+							p = runtimePath;
 					}
 					arguments = arguments.AddRange ("-r", p);
 				}

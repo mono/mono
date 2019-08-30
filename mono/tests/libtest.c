@@ -3389,6 +3389,8 @@ typedef struct
 	int (STDCALL *ITestIn)(MonoComObject* pUnk, MonoComObject* pUnk2);
 	int (STDCALL *ITestOut)(MonoComObject* pUnk, MonoComObject* *ppUnk);
 	int (STDCALL *Return22NoICall)(MonoComObject* pUnk);
+	int (STDCALL *IntOut)(MonoComObject* pUnk, int *a);
+	int (STDCALL *ArrayIn)(MonoComObject* pUnk, void *array);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3512,6 +3514,17 @@ Return22NoICall(MonoComObject* pUnk)
 	return 22;
 }
 
+LIBTEST_API int STDCALL
+IntOut(MonoComObject* pUnk, int *a)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+ArrayIn(MonoComObject* pUnk, void *array)
+{
+	return S_OK;
+}
 
 static void create_com_object (MonoComObject** pOut);
 
@@ -3545,6 +3558,8 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ITestOut = ITestOut;
 	(*pOut)->vtbl->get_ITest = get_ITest;
 	(*pOut)->vtbl->Return22NoICall = Return22NoICall;
+	(*pOut)->vtbl->IntOut = IntOut;
+	(*pOut)->vtbl->ArrayIn = ArrayIn;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3651,6 +3666,29 @@ mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
 	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
 	if (hr != 0)
 		return 4;
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_retval_ccw_itest (MonoComObject *pUnk, int test_null)
+{
+	int hr = 0, i = 0;
+
+	if (!pUnk)
+		return 1;
+
+	hr = pUnk->vtbl->IntOut (pUnk, &i);
+	if (hr != 0)
+		return 2;
+	if (i != 33)
+		return 3;
+	if (test_null)
+	{
+		hr = pUnk->vtbl->IntOut (pUnk, NULL);
+		if (hr != 0)
+			return 4;
+	}
 
 	return 0;
 }
@@ -5525,6 +5563,33 @@ mono_test_marshal_safearray_mixed(
 		hr = mono_test_marshal_safearray_in_out_byref_3dim_vt_bstr(safearray4);
 
 	return hr;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_safearray_in_ccw(MonoComObject *pUnk)
+{
+	SAFEARRAY *array;
+	VARIANT var;
+	long index;
+	int ret;
+
+	array = SafeArrayCreateVector(VT_VARIANT, 0, 2);
+
+	var.vt = VT_BSTR;
+	var.bstrVal = marshal_bstr_alloc("Test");
+	index = 0;
+	SafeArrayPutElement(array, &index, &var);
+
+	var.vt = VT_I4;
+	var.intVal = 2345;
+	index = 1;
+	SafeArrayPutElement(array, &index, &var);
+
+	ret = pUnk->vtbl->ArrayIn (pUnk, (void *)array);
+
+	SafeArrayDestroy(array);
+
+	return ret;
 }
 
 #endif

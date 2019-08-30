@@ -391,6 +391,7 @@ cleanup:
 
 #endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObjectHandle this_obj,
 		const gunichar2 *filename, int filename_length, MonoError *error)
@@ -404,6 +405,7 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	process_set_field_utf16 (this_obj, str, "filename", filename, filename_length, error);
 }
+#endif
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
@@ -423,6 +425,8 @@ get_domain_assemblies (MonoDomain *domain)
 
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = (MonoAssembly *)tmp->data;
+		// TODO: the reasoning behind this check being used is unclear to me. Maybe replace with mono_domain_get_assemblies()?
+		// Added in https://github.com/mono/mono/commit/46dc6758c67528fa7bc5590d1cfb4c119b69bc2b#diff-7017648b60461e8902a36d22782f4a14R451
 		if (m_image_is_fileio_used (ass->image))
 			continue;
 		g_ptr_array_add (assemblies, ass);
@@ -517,6 +521,7 @@ exit:
 	HANDLE_FUNCTION_RETURN ();
 }
 
+#ifndef ENABLE_NETCORE
 /* Returns an array of System.Diagnostics.ProcessModule */
 MonoArrayHandle
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, HANDLE process, MonoError *error)
@@ -604,6 +609,7 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 
 	return len ? mono_string_new_utf16_handle (mono_domain_get (), name, len, error) : NULL_HANDLE_STRING;
 }
+#endif /* ENABLE_NETCORE */
 
 #endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32)
 

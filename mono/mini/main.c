@@ -37,6 +37,8 @@
 #  endif
 #endif
 
+//#define TEST_ICALL_SYMBOL_MAP 1
+
 /*
  * If the MONO_ENV_OPTIONS environment variable is set, it uses this as a
  * source of command line arguments that are passed to Mono before the
@@ -156,7 +158,7 @@ static void
 bundle_save_library_initialize (void)
 {
 	bundle_save_library_initialized = 1;
-	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX", NULL);
+	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX", (const char*)NULL);
 	bundled_dylibrary_directory = g_mkdtemp (path);
 	g_free (path);
 	if (bundled_dylibrary_directory == NULL)
@@ -174,7 +176,7 @@ save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 	if (!bundle_save_library_initialized)
 		bundle_save_library_initialize ();
 	
-	file = g_build_filename (bundled_dylibrary_directory, destfname, NULL);
+	file = g_build_filename (bundled_dylibrary_directory, destfname, (const char*)NULL);
 	buffer = load_from_region (fd, offset, size);
 	g_file_set_contents (file, buffer, size, NULL);
 
@@ -184,7 +186,7 @@ save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 		exit (1);
 	}
 	// Register the name with "." as this is how it will be found when embedded
-	internal_path = g_build_filename (".", destfname, NULL);
+	internal_path = g_build_filename (".", destfname, (const char*)NULL);
  	mono_loader_register_module (internal_path, lib);
 	g_free (internal_path);
 	bundle_library_paths = g_slist_append (bundle_library_paths, file);
@@ -369,6 +371,15 @@ doclose:
 	return status;
 }
 
+#if TEST_ICALL_SYMBOL_MAP
+
+const char*
+mono_lookup_icall_symbol_internal (gpointer func);
+
+ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int);
+
+#endif
+
 #ifdef HOST_WIN32
 
 #include <shellapi.h>
@@ -405,6 +416,13 @@ int
 main (int argc, char* argv[])
 {
 	mono_build_date = build_date;
+
+#if TEST_ICALL_SYMBOL_MAP
+	const char *p  = mono_lookup_icall_symbol_internal (mono_lookup_icall_symbol_internal);
+	printf ("%s\n", p ? p : "null");
+	p  = mono_lookup_icall_symbol_internal (ves_icall_Interop_Sys_DoubleToString);
+	printf ("%s\n", p ? p : "null");
+#endif
 
 	probe_embedded (argv [0], &argc, &argv);
 	return mono_main_with_options (argc, argv);

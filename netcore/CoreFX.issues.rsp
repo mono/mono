@@ -54,11 +54,6 @@
 # https://github.com/mono/mono/issues/14907
 -nomethod BasicEventSourceTests.TestsManifestNegative.Test_GenerateManifest_InvalidEventSources
 
-# Both tests below have a delegate binding error - signature is not compatible with that of the delegate type.
-# https://github.com/mono/mono/issues/14909
--nomethod BasicEventSourceTests.TestsWrite.Test_Write_T_EventListener
--nomethod BasicEventSourceTests.TestsWrite.Test_Write_T_EventListener_UseEvents
-
 ####################################################################
 ##  System.Dynamic.Runtime.Tests
 ####################################################################
@@ -75,7 +70,7 @@
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
 
 # flaky test (The process cannot access the file ...)
--nomethod System.IO.Tests.File_Copy_str_str.CopyFileWithData_MemberData
+-nomethod System.IO.Tests.*.CopyFileWithData_MemberData
 
 ####################################################################
 ##  System.Linq.Expressions.Tests
@@ -124,18 +119,8 @@
 -nomethod System.Linq.Expressions.Tests.IndexExpressionTests.IndexedPropertyGetReturnsWrongType
 
 # Expected ArgumentException got IndexOutOfRangeException https://github.com/mono/mono/issues/14930
--nomethod System.Linq.Expressions.Tests.IndexExpressionTests.IndexedPropertySetterNoParams
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndex
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndexMethod
-
-# Expected Float to uint to be 2147483648 but got 0... https://github.com/mono/mono/issues/14931
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToNullableUIntTest
--nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToNullableUIntTest
--noclass System.Linq.Expressions.Tests.LambdaTests
--noclass System.Linq.Expressions.Tests.LambdaDivideNullableTests
--nomethod System.Linq.Expressions.Tests.BinaryCoalesceTests.VerifyIL_NullableIntCoalesceToNullableInt
 
 # OOM Exception.  Weird
 # https://github.com/mono/mono/issues/14933
@@ -144,18 +129,6 @@
 # Arithmetic operation resulted in an overflow.
 # https://github.com/mono/mono/issues/14934
 -nomethod System.Linq.Expressions.Tests.ArrayBoundsTests.MultipleNegativeBoundErrorMessage
-
-# float conv.ovf.un opcodes not supported https://github.com/mono/mono/issues/14945
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToULongTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableDoubleToNullableULongTest
-
-# Delegate creation w/ reflection https://github.com/mono/mono/issues/14950
--nomethod System.Linq.Expressions.Tests.CallTests.EnumArgAndReturn
-
-# Expected test Assertion fails https://github.com/mono/mono/issues/14951
--nomethod System.Linq.Expressions.Tests.CallTests.MethodName_TypeArgsDontMatchConstraints_ThrowsArgumentException
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -361,14 +334,6 @@
 ##  System.Reflection.Tests
 ####################################################################
 
-# Expected to throw FileLoadException, but we aren't
-# https://github.com/mono/mono/issues/15021
--nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
-
-# Typename string differs 
-# https://github.com/mono/mono/issues/15023
--nomethod System.Reflection.Tests.GetTypeTests.GetType_EmptyString
-
 # Expected ArgumentException, but none was thrown
 # https://github.com/mono/mono/issues/15024
 -nomethod System.Reflection.Tests.MethodInfoTests.Invoke_OptionalParameterUnassingableFromMissing_WithMissingValue_ThrowsArgumentException
@@ -400,37 +365,12 @@
 # https://github.com/mono/mono/issues/15037
 -nomethod System.Reflection.Tests.ParameterInfoTests.RawDefaultValueFromAttribute
 
-# Need to set ProcessorArchitecture in AssemblyName
-# https://github.com/mono/mono/issues/15068
--nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_ValidArchitectureName_Succeeds
-
 # SKIPPED
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
 
 # Assertion failed... Not sure why 
 # https://github.com/mono/mono/issues/15069
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
-
-# Fails b/c it returns the wrong assembly string
-# https://github.com/mono/mono/issues/15074
--nomethod System.Reflection.Tests.AssemblyTests.LoadFile
-
-# Returns the same string, but still fails.  
-# https://github.com/mono/mono/issues/15076
--nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
-
-
-# Assertion expects false, but we return true
-# https://github.com/mono/mono/issues/15080
--nomethod System.Reflection.Tests.TypeInfoTests.IsAssignableFrom
-
-####################################################################
-##  System.Resources.ResourceManager.Tests
-####################################################################
-
-# TODO: Missing assembly resolve events on AppDomain and AssemblyLoadContext
-# https://github.com/mono/mono/issues/15081
--nomethod System.Resources.Tests.ResourceManagerTests.GetString_ExpectEvents
 
 ####################################################################
 ##  System.Runtime.InteropServices.Tests
@@ -488,18 +428,6 @@
 -nomethod System.Runtime.InteropServices.Tests.DestroyStructureTests.DestroyStructure_NonRuntimeType_ThrowsArgumentException
 -nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NotMarshallable_ThrowsArgumentException
 -nomethod System.Runtime.InteropServices.Tests.SizeOfTests.SizeOf_InvalidType_ThrowsArgumentException
-
-# Check that the name in the argument exception is null or different
-# https://github.com/mono/mono/issues/15090
--nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NullFieldName_ThrowsArgumentNullException
-
-# Returns type instead of expected fieldName 
-# https://github.com/mono/mono/issues/15091
--nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NonRuntimeField_ThrowsArgumentException
-
-# Hardcodes offsets
-# https://github.com/mono/mono/issues/15092
--nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_Decimal_ReturnsExpected
 
 # Wants exception messages to be non-empty
 # https://github.com/mono/mono/issues/15093
@@ -592,10 +520,6 @@
 # Implementation task https://github.com/mono/mono/issues/15142
 -nomethod System.Reflection.Tests.IsCollectibleTests.*
 
-# Runtime crashes instead of TypeLoadException
--nomethod System.Tests.TypeTestsExtended.GetTypeByName_NoSuchType_ThrowsTypeLoadException
--nomethod System.Tests.TypeTestsExtended.GetTypeByNameCaseSensitiveTypeloadFailure
-
 # Mono ignores [Optional] attribute defined on parameters in delegates
 # https://github.com/mono/mono/issues/15148
 -nomethod System.Tests.DelegateTests.DynamicInvoke_OptionalParameterUnassingableFromMissing_WithMissingValue
@@ -629,6 +553,9 @@
 # https://github.com/mono/mono/issues/15153
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
 
+# flaky test, System.ArgumentNullException : Key cannot be null. Parameter name: key
+-nomethod System.Tests.GetEnvironmentVariable.EnvironmentVariablesAreHashtable
+
 ####################################################################
 ##  System.Threading.Tests
 ####################################################################
@@ -660,6 +587,13 @@
 -nomethod System.Threading.Tests.SemaphoreTests.Ctor_NamesArentSupported_Unix
 
 ####################################################################
+##  System.Threading.Tests
+####################################################################
+
+# Requires precise GC (should be ignored in dotnet/corefx for mono)
+-nomethod System.Threading.Tasks.Tests.ExecutionContextFlowTest.TaskCompletionSourceDoesntCaptureExecutionContext
+
+####################################################################
 ##  System.Threading.ThreadPool.Tests
 ####################################################################
 
@@ -676,10 +610,6 @@
 # Explicitly skipped if it's MonoVM (SkipOnTargetFramework)
 -nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.SetMinMaxThreadsTest_ChangedInDotNetCore
 
-# ThreadPool.CompletedWorkItemCount is not implemented
-# https://github.com/mono/mono/issues/14829
--nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.MetricsTest
-
 ####################################################################
 ##  System.ComponentModel.Composition.Tests
 ####################################################################
@@ -693,6 +623,10 @@
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
 -nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_IMetadataViewWithDefaultedInt64
 -nomethod System.ComponentModel.Composition.ExportCollectionTests.ImportCollectionsFromContainerOnly
+# disable the whole namespace, https://github.com/mono/mono/issues/16417
+-nonamespace System.ComponentModel.Composition
+# same issue (only System.ComponentModel.Composition uses this namespace)
+-nonamespace Tests.Integration
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -700,9 +634,7 @@
 
 # Missing assembly Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 # https://github.com/mono/mono/issues/15170
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssemblies_AssembliesAndConvention_ThrowsCompositionFailedExceptionOnCreation
 -nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssemblies_Assemblies_ThrowsCompositionFailedExceptionOnCreation
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssembly_AssemblyConventions_ThrowsCompositionFailedExceptionOnCreation
 -nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssembly_Assembly_ThrowsCompositionFailedExceptionOnCreation
 
 ####################################################################
@@ -779,14 +711,9 @@
 # https://github.com/mono/mono/issues/15187
 -nomethod System.Diagnostics.Tests.StackFrameTests.Ctor_SkipFrames_FNeedFileInfo
 
-####################################################################
-##  System.Drawing.Common.Tests
-####################################################################
-
-# Expects OOM, may be large array support?
-# https://github.com/mono/mono/issues/15189
--nomethod System.Drawing.Drawing2D.Tests.ColorBlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
--nomethod System.Drawing.Drawing2D.Tests.BlendTests.Ctor_LargeCount_ThrowsOutOfMemoryException
+# JIT should not inline custom throw helpers
+-nomethod System.Diagnostics.Tests.StackTraceTests.Ctor_Exception_SkipFrames
+-nomethod System.Diagnostics.Tests.StackTraceTests.Ctor_Exception_SkipFrames_FNeedFileInfo
 
 ####################################################################
 ##  System.Numerics.Vectors.Tests
@@ -808,14 +735,6 @@
 -nomethod System.Reflection.Context.Tests.CustomReflectionContextTests.MapType_MemberAttributes_Success
 -nomethod System.Reflection.Context.Tests.CustomReflectionContextTests.MapType_ParameterAttributes_Success
 -nomethod System.Reflection.Context.Tests.CustomReflectionContextTests.MapType_Interface_Throws
-
-####################################################################
-##  System.Reflection.CoreCLR.Tests
-####################################################################
-
-# FileNotFoundException
-# https://github.com/mono/mono/issues/15192
--nomethod System.Reflection.Tests.AssemblyTests.LoadFromStream_Location_IsEmpty
 
 ####################################################################
 ##  System.Reflection.TypeExtensions.CoreCLR.Tests
@@ -893,12 +812,9 @@
 # https://github.com/mono/mono/issues/15315
 -nomethod System.Tests.EnvironmentStackTrace.StackTraceTest
 
-# AssemblyLoadContext.InternalLoad is not implemented
--nomethod System.Tests.AppDomainTests.LoadBytes
-
 # These events are not wired up in mono
+# https://github.com/mono/mono/issues/16246
 -nomethod System.Tests.AppDomainTests.TypeResolve
--nomethod System.Tests.AppDomainTests.GetAssemblies
 -nomethod System.Tests.AppDomainTests.ResourceResolve
 -nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
@@ -965,22 +881,18 @@
 # https://github.com/mono/mono/issues/15334
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.SetX_NegativeInputSize_ThrowsArgumentOutOfRangeException
 
-# Expected null, but got parameterTypes
-# https://github.com/mono/mono/issues/15335
--nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.NullObjectInParameterTypes_ThrowsArgumentException
-
 ####################################################################
 ##  System.Runtime.Loader.Tests
 ####################################################################
 
-# NOTE: Not run
+# NOTE: Not run (relies on collectible ALCs)
 -nomethod System.Runtime.Loader.Tests.ContextualReflectionTest.*
 
-# relies on AssemblyLoadContext 
--nomethod System.Runtime.Loader.Tests.SatelliteAssembliesTests.SatelliteLoadsCorrectly
--nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.*
--nomethod System.Runtime.Loader.Tests.ContextualReflectionTest.*
--nomethod System.Runtime.Loader.Tests.SatelliteAssembliesTests.describeLib
+# relies on collectible AssemblyLoadContext
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Unload_*
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Finalizer_CollectibleWithNoAssemblyLoaded
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.PublicConstructor_Theory
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Unsupported_FixedAddressValueType
 
 ####################################################################
 ##  System.Reflection.MetadataLoadContext.Tests
@@ -1018,10 +930,6 @@
 ####################################################################
 ##  System.ComponentModel.Composition.Registration.Tests
 ####################################################################
-
-# All have NRE
-# https://github.com/mono/mono/issues/15352
--nomethod System.ComponentModel.Composition.Registration.Tests.PartBuilderInheritanceTests.*
 
 # System.ComponentModel.Composition.Registration APIs are not supported on this platform.
 -nomethod System.ComponentModel.Composition.Registration.Tests.RegistrationBuilderTests.*
@@ -1082,3 +990,9 @@
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
 -nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
+
+# Flaky test (FileSystemWatcher)
+-nomethod System.IO.Tests.Directory_NotifyFilter_Tests.FileSystemWatcher_Directory_NotifyFilter_LastWriteTime
+
+# Flaky test
+-nomethod System.Security.Cryptography.Rsa.Tests.RSAKeyFileTests.ReadEncryptedRsa16384

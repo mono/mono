@@ -2556,8 +2556,8 @@ namespace MonoTests.System.Drawing {
 					using (StringFormat format = new StringFormat ()) {
 						format.Alignment = StringAlignment.Center;
 						SizeF sz = g.MeasureString (text, font, 80, format);
-						Assert.IsTrue (sz.Width < 80, "Width");
-						Assert.IsTrue (sz.Height > font.Height * 2, "Height");
+						Assert.IsTrue (sz.Width <= 80, "Width");
+						Assert.IsTrue (sz.Height >= font.Height * 2, "Height");
 					}
 				}
 			}

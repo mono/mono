@@ -120,7 +120,13 @@ package-wasm-$(1):
 
 .PHONY: clean-wasm-$(1)
 clean-wasm-$(1):
-	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
+	rm -rf .stamp-wasm-$(1)-toolchain .stamp-wasm-$(1)-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
+ifeq ($(KEEP_CONFIG_CACHE),)
+	rm -rf $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache
+endif
+
+clean-wasm-$(1)-cache:
+	rm -rf $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache
 
 $(eval $(call TargetTemplate,wasm,$(1)))
 
@@ -235,6 +241,6 @@ $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $
 
 endef
 
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+$(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin64,wasm32-unknown-unknown))
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

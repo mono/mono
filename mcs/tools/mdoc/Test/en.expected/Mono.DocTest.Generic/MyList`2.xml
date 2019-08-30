@@ -1,6 +1,10 @@
 <Type Name="MyList&lt;A,B&gt;" FullName="Mono.DocTest.Generic.MyList&lt;A,B&gt;">
   <TypeSignature Language="C#" Value="public class MyList&lt;A,B&gt; : Mono.DocTest.Generic.GenericBase&lt;System.Collections.Generic.Dictionary&lt;A,B&gt;&gt;, Mono.DocTest.Generic.IFoo&lt;A&gt;, System.Collections.Generic.ICollection&lt;A&gt;, System.Collections.Generic.IEnumerable&lt;A&gt;, System.Collections.Generic.IEnumerator&lt;A&gt; where A : class, IList&lt;B&gt;, new() where B : class, A" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyList`2&lt;class .ctor (class System.Collections.Generic.IList`1&lt;!B&gt;) A, class (!A) B&gt; extends Mono.DocTest.Generic.GenericBase`1&lt;class System.Collections.Generic.Dictionary`2&lt;!A, !B&gt;&gt; implements class Mono.DocTest.Generic.IFoo`1&lt;!A&gt;, class System.Collections.Generic.ICollection`1&lt;!A&gt;, class System.Collections.Generic.IEnumerable`1&lt;!A&gt;, class System.Collections.Generic.IEnumerator`1&lt;!A&gt;, class System.Collections.IEnumerable, class System.Collections.IEnumerator, class System.IDisposable" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.MyList`2" />
+  <TypeSignature Language="VB.NET" Value="Public Class MyList(Of A, B)&#xA;Inherits GenericBase(Of Dictionary(Of A, B))&#xA;Implements ICollection(Of A), IEnumerable(Of A), IEnumerator(Of A), IFoo(Of A)" />
+  <TypeSignature Language="F#" Value="type MyList&lt;'A, #'A (requires 'A : null and 'A :&gt; IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt; = class&#xA;    inherit GenericBase&lt;Dictionary&lt;'A, #'A&gt;&gt;&#xA;    interface seq&lt;'A (requires 'A : null and 'A :&gt; IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;&#xA;    interface IEnumerable&#xA;    interface IEnumerator&lt;'A (requires 'A : null and 'A :&gt; IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;&#xA;    interface IDisposable&#xA;    interface IEnumerator&#xA;    interface ICollection&lt;'A (requires 'A : null and 'A :&gt; IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;&#xA;    interface IFoo&lt;'A (requires 'A : null and 'A :&gt; IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename A, typename B&gt;&#xA; where A : class, IList&lt;B&gt;, gcnew() where B : class, Apublic ref class MyList : Mono::DocTest::Generic::GenericBase&lt;System::Collections::Generic::Dictionary&lt;A, B&gt; ^&gt;, Mono::DocTest::Generic::IFoo&lt;A&gt;, System::Collections::Generic::ICollection&lt;A&gt;, System::Collections::Generic::IEnumerable&lt;A&gt;, System::Collections::Generic::IEnumerator&lt;A&gt;" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -37,7 +41,19 @@
       <InterfaceName>System.Collections.Generic.IEnumerable&lt;A&gt;</InterfaceName>
     </Interface>
     <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;T&gt;</InterfaceName>
+    </Interface>
+    <Interface>
       <InterfaceName>System.Collections.Generic.IEnumerator&lt;A&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerator</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
@@ -50,6 +66,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MyList ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; MyList();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; MyList();" />
+      <MemberSignature Language="C++ WINRT" Value=" MyList();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -63,6 +84,12 @@
     <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public void CopyTo (A[] array, int arrayIndex);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(!A[] array, int32 arrayIndex) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.CopyTo(`0[],System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CopyTo (array As A(), arrayIndex As Integer)" />
+      <MemberSignature Language="F#" Value="abstract member CopyTo : 'A[] * int -&gt; unit&#xA;override this.CopyTo : 'A[] * int -&gt; unit" Usage="myList.CopyTo (array, arrayIndex)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void CopyTo(cli::array &lt;A&gt; ^ array, int arrayIndex);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void CopyTo(Platform::Array &lt;A&gt; ^ array, int arrayIndex);" />
+      <MemberSignature Language="C++ WINRT" Value="void CopyTo(std::Array &lt;A&gt; const &amp; array, int arrayIndex);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -84,7 +111,15 @@
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Generic.MyList`2.Count" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Count As Integer" />
+      <MemberSignature Language="F#" Value="member this.Count : int" Usage="Mono.DocTest.Generic.MyList&lt;'A, #'A (requires 'A : null and 'A :&gt; System.Collections.Generic.IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;.Count" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Count { int get(); };" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; property int Count { int get(); };" />
       <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.ICollection`1.Count</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -100,7 +135,15 @@
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public A Current { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance !A Current" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Generic.MyList`2.Current" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Current As A" />
+      <MemberSignature Language="F#" Value="member this.Current : 'A" Usage="Mono.DocTest.Generic.MyList&lt;'A, #'A (requires 'A : null and 'A :&gt; System.Collections.Generic.IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;.Current" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property A Current { A get(); };" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; property A Current { A get(); };" />
       <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.IEnumerator`1.Current</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -116,7 +159,16 @@
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.Dispose" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Dispose ()" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : unit -&gt; unit&#xA;override this.Dispose : unit -&gt; unit" Usage="myList.Dispose " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Dispose();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void Dispose();" />
+      <MemberSignature Language="C++ WINRT" Value="void Dispose();" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -132,6 +184,10 @@
     <Member MemberName="Foo">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyValuePair&lt;System.Collections.Generic.IEnumerable&lt;A&gt;,System.Collections.Generic.IEnumerable&lt;B&gt;&gt; Foo ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.Collections.Generic.IEnumerable`1&lt;!A&gt;, class System.Collections.Generic.IEnumerable`1&lt;!B&gt;&gt; Foo() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.Foo" />
+      <MemberSignature Language="VB.NET" Value="Public Function Foo () As KeyValuePair(Of IEnumerable(Of A), IEnumerable(Of B))" />
+      <MemberSignature Language="F#" Value="member this.Foo : unit -&gt; System.Collections.Generic.KeyValuePair&lt;seq&lt;'A&gt;, seq&lt;#'A&gt;&gt;" Usage="myList.Foo " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Collections::Generic::KeyValuePair&lt;System::Collections::Generic::IEnumerable&lt;A&gt; ^, System::Collections::Generic::IEnumerable&lt;B&gt; ^&gt; Foo();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -149,6 +205,10 @@
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;A&gt;.Enumerator GetEnumerator ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Collections.Generic.List`1/Enumerator&lt;!A&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetEnumerator () As List(Of A).Enumerator" />
+      <MemberSignature Language="F#" Value="member this.GetEnumerator : unit -&gt; System.Collections.Generic.List&lt;'A (requires 'A : null and 'A :&gt; System.Collections.Generic.IList&lt;#'A&gt; and 'A : (new : unit -&gt; 'A))&gt;.Enumerator" Usage="myList.GetEnumerator " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Collections::Generic::List&lt;A&gt;::Enumerator GetEnumerator();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -166,7 +226,14 @@
     <Member MemberName="Mono.DocTest.Generic.IFoo&lt;A&gt;.Method&lt;U&gt;">
       <MemberSignature Language="C#" Value="A IFoo&lt;A&gt;.Method&lt;U&gt; (A a, U u);" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance !A Mono.DocTest.Generic.IFoo&lt;A&gt;.Method&lt;U&gt;(!A a, !!U u) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.Mono#DocTest#Generic#IFoo{A}#Method``1(`0,``0)" />
+      <MemberSignature Language="C++ CLI" Value="generic &lt;typename U&gt;&#xA; virtual A Mono.DocTest.Generic.IFoo&lt;A&gt;.Method(A a, U u) = Mono::DocTest::Generic::IFoo&lt;A&gt;::Method;" />
+      <MemberSignature Language="C++ CX" Value="generic &lt;typename U&gt;&#xA; virtual A Mono.DocTest.Generic.IFoo&lt;A&gt;.Method(A a, U u) = Mono::DocTest::Generic::IFoo&lt;A&gt;::Method;" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U&gt;&#xA; A Mono.DocTest.Generic.IFoo&lt;A&gt;.Method(A a, U u);" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:Mono.DocTest.Generic.IFoo`1.Method``1(`0,``0)</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -192,7 +259,16 @@
     <Member MemberName="MoveNext">
       <MemberSignature Language="C#" Value="public bool MoveNext ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.MoveNext" />
+      <MemberSignature Language="VB.NET" Value="Public Function MoveNext () As Boolean" />
+      <MemberSignature Language="F#" Value="abstract member MoveNext : unit -&gt; bool&#xA;override this.MoveNext : unit -&gt; bool" Usage="myList.MoveNext " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool MoveNext();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; bool MoveNext();" />
+      <MemberSignature Language="C++ WINRT" Value="bool MoveNext();" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.IEnumerator.MoveNext</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -209,7 +285,16 @@
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.Reset" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Reset ()" />
+      <MemberSignature Language="F#" Value="abstract member Reset : unit -&gt; unit&#xA;override this.Reset : unit -&gt; unit" Usage="myList.Reset " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Reset();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; void Reset();" />
+      <MemberSignature Language="C++ WINRT" Value="void Reset();" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.IEnumerator.Reset</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -225,7 +310,15 @@
     <Member MemberName="System.Collections.Generic.ICollection&lt;A&gt;.Add">
       <MemberSignature Language="C#" Value="void ICollection&lt;A&gt;.Add (A item);" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.Generic.ICollection&lt;A&gt;.Add(!A item) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Add(`0)" />
+      <MemberSignature Language="VB.NET" Value="Sub Add (item As A) Implements ICollection(Of A).Add" />
+      <MemberSignature Language="C++ CLI" Value=" virtual void System.Collections.Generic.ICollection&lt;A&gt;.Add(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Add;" />
+      <MemberSignature Language="C++ CX" Value=" virtual void System.Collections.Generic.ICollection&lt;A&gt;.Add(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Add;" />
+      <MemberSignature Language="C++ WINRT" Value="void System.Collections.Generic.ICollection&lt;A&gt;.Add(A item);" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Add(`0)</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -244,7 +337,15 @@
     <Member MemberName="System.Collections.Generic.ICollection&lt;A&gt;.Clear">
       <MemberSignature Language="C#" Value="void ICollection&lt;A&gt;.Clear ();" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.Generic.ICollection&lt;A&gt;.Clear() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Clear" />
+      <MemberSignature Language="VB.NET" Value="Sub Clear () Implements ICollection(Of A).Clear" />
+      <MemberSignature Language="C++ CLI" Value=" virtual void System.Collections.Generic.ICollection&lt;A&gt;.Clear() = System::Collections::Generic::ICollection&lt;A&gt;::Clear;" />
+      <MemberSignature Language="C++ CX" Value=" virtual void System.Collections.Generic.ICollection&lt;A&gt;.Clear() = System::Collections::Generic::ICollection&lt;A&gt;::Clear;" />
+      <MemberSignature Language="C++ WINRT" Value="void System.Collections.Generic.ICollection&lt;A&gt;.Clear();" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Clear</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -260,7 +361,15 @@
     <Member MemberName="System.Collections.Generic.ICollection&lt;A&gt;.Contains">
       <MemberSignature Language="C#" Value="bool ICollection&lt;A&gt;.Contains (A item);" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.Generic.ICollection&lt;A&gt;.Contains(!A item) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Contains(`0)" />
+      <MemberSignature Language="VB.NET" Value="Function Contains (item As A) As Boolean Implements ICollection(Of A).Contains" />
+      <MemberSignature Language="C++ CLI" Value=" virtual bool System.Collections.Generic.ICollection&lt;A&gt;.Contains(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Contains;" />
+      <MemberSignature Language="C++ CX" Value=" virtual bool System.Collections.Generic.ICollection&lt;A&gt;.Contains(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Contains;" />
+      <MemberSignature Language="C++ WINRT" Value="bool System.Collections.Generic.ICollection&lt;A&gt;.Contains(A item);" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Contains(`0)</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -280,7 +389,15 @@
     <Member MemberName="System.Collections.Generic.ICollection&lt;A&gt;.IsReadOnly">
       <MemberSignature Language="C#" Value="bool System.Collections.Generic.ICollection&lt;A&gt;.IsReadOnly { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool System.Collections.Generic.ICollection&lt;A&gt;.IsReadOnly" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#IsReadOnly" />
+      <MemberSignature Language="VB.NET" Value=" ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of A).IsReadOnly" />
+      <MemberSignature Language="F#" Usage="System.Collections.Generic.ICollection&lt;A&gt;.IsReadOnly" />
+      <MemberSignature Language="C++ CLI" Value="property bool System::Collections::Generic::ICollection&lt;A&gt;::IsReadOnly { bool get(); };" />
+      <MemberSignature Language="C++ CX" Value="property bool System::Collections::Generic::ICollection&lt;A&gt;::IsReadOnly { bool get(); };" />
       <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.ICollection`1.IsReadOnly</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -296,7 +413,15 @@
     <Member MemberName="System.Collections.Generic.ICollection&lt;A&gt;.Remove">
       <MemberSignature Language="C#" Value="bool ICollection&lt;A&gt;.Remove (A item);" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.Generic.ICollection&lt;A&gt;.Remove(!A item) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Remove(`0)" />
+      <MemberSignature Language="VB.NET" Value="Function Remove (item As A) As Boolean Implements ICollection(Of A).Remove" />
+      <MemberSignature Language="C++ CLI" Value=" virtual bool System.Collections.Generic.ICollection&lt;A&gt;.Remove(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Remove;" />
+      <MemberSignature Language="C++ CX" Value=" virtual bool System.Collections.Generic.ICollection&lt;A&gt;.Remove(A item) = System::Collections::Generic::ICollection&lt;A&gt;::Remove;" />
+      <MemberSignature Language="C++ WINRT" Value="bool System.Collections.Generic.ICollection&lt;A&gt;.Remove(A item);" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Remove(`0)</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -316,7 +441,13 @@
     <Member MemberName="System.Collections.Generic.IEnumerable&lt;A&gt;.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.Generic.IEnumerator&lt;A&gt; IEnumerable&lt;A&gt;.GetEnumerator ();" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;!A&gt; System.Collections.Generic.IEnumerable&lt;A&gt;.GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerable{A}#GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Function GetEnumerator () As IEnumerator(Of A) Implements IEnumerable(Of A).GetEnumerator" />
+      <MemberSignature Language="C++ CLI" Value=" virtual System::Collections::Generic::IEnumerator&lt;A&gt; ^ System.Collections.Generic.IEnumerable&lt;A&gt;.GetEnumerator() = System::Collections::Generic::IEnumerable&lt;A&gt;::GetEnumerator;" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.IEnumerable`1.GetEnumerator</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -333,7 +464,15 @@
     <Member MemberName="System.Collections.Generic.IEnumerator&lt;A&gt;.Current">
       <MemberSignature Language="C#" Value="A System.Collections.Generic.IEnumerator&lt;A&gt;.Current { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance !A System.Collections.Generic.IEnumerator&lt;A&gt;.Current" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerator{A}#Current" />
+      <MemberSignature Language="VB.NET" Value=" ReadOnly Property Current As A Implements IEnumerator(Of A).Current" />
+      <MemberSignature Language="F#" Usage="System.Collections.Generic.IEnumerator&lt;A&gt;.Current" />
+      <MemberSignature Language="C++ CLI" Value="property A System::Collections::Generic::IEnumerator&lt;A&gt;::Current { A get(); };" />
+      <MemberSignature Language="C++ CX" Value="property A System::Collections::Generic::IEnumerator&lt;A&gt;::Current { A get(); };" />
       <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.IEnumerator`1.Current</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -349,7 +488,13 @@
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerable#GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Function GetEnumerator () As IEnumerator Implements IEnumerable.GetEnumerator" />
+      <MemberSignature Language="C++ CLI" Value=" virtual System::Collections::IEnumerator ^ System.Collections.IEnumerable.GetEnumerator() = System::Collections::IEnumerable::GetEnumerator;" />
       <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.IEnumerable.GetEnumerator</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -366,7 +511,15 @@
     <Member MemberName="System.Collections.IEnumerator.Current">
       <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IEnumerator.Current" />
+      <MemberSignature Language="DocId" Value="P:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerator#Current" />
+      <MemberSignature Language="VB.NET" Value=" ReadOnly Property Current As Object Implements IEnumerator.Current" />
+      <MemberSignature Language="F#" Usage="System.Collections.IEnumerator.Current" />
+      <MemberSignature Language="C++ CLI" Value="property System::Object ^ System::Collections::IEnumerator::Current { System::Object ^ get(); };" />
+      <MemberSignature Language="C++ CX" Value="property Platform::Object ^ System::Collections::IEnumerator::Current { Platform::Object ^ get(); };" />
       <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.IEnumerator.Current</InterfaceMember>
+      </Implements>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>

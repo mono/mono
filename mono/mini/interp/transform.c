@@ -532,7 +532,7 @@ binary_arith_op(TransformData *td, int mint_op)
 	if (type1 != type2) {
 		g_warning("%s.%s: %04x arith type mismatch %s %d %d", 
 			m_class_get_name (td->method->klass), td->method->name,
-			td->ip - td->il_code, mono_interp_opname[mint_op], type1, type2);
+			td->ip - td->il_code, mono_interp_opname (mint_op), type1, type2);
 	}
 	op = mint_op + type1 - STACK_TYPE_I4;
 	CHECK_STACK(td, 2);
@@ -857,7 +857,7 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
 		ERROR_DECL (error);
 		gpointer addr = mono_jit_compile_method_jit_only (method, error);
-		if (addr && mono_error_ok (error))
+		if (addr && is_ok (error))
 			return TRUE;
 	}
 
@@ -908,7 +908,7 @@ interp_generate_bie_throw (TransformData *td)
 {
 	MonoJitICallInfo *info = &mono_get_jit_icall_info ()->mono_throw_bad_image;
 
-	interp_add_ins (td, MINT_ICALL_PP_V);
+	interp_add_ins (td, MINT_ICALL_V_V);
 	td->last_ins->data [0] = get_data_item_index (td, (gpointer)info->func);
 }
 
@@ -1928,7 +1928,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			 * the InterpMethod pointer. FIXME
 			 */
 			native = csignature->pinvoke || method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE;
-			--td->sp;
 
 			target_method = NULL;
 		} else {
@@ -2119,6 +2118,21 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	if (op == -1 && td->inlined_method)
 		return FALSE;
 
+	/* We need to convert delegate invoke to a indirect call on the interp_invoke_impl field */
+	if (target_method && m_class_get_parent (target_method->klass) == mono_defaults.multicastdelegate_class) {
+		const char *name = target_method->name;
+		if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
+			calli = TRUE;
+			interp_add_ins (td, MINT_LD_DELEGATE_INVOKE_IMPL);
+			td->last_ins->data [0] = csignature->param_count + 1;
+			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+		}
+	}
+
+	/* Pop the function pointer */
+	if (calli)
+		--td->sp;
+
 	td->sp -= csignature->param_count + !!csignature->hasthis;
 	for (i = 0; i < csignature->param_count; ++i) {
 		if (td->sp [i + !!csignature->hasthis].type == STACK_TYPE_VT) {
@@ -2151,16 +2165,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		PUSH_TYPE(td, stack_type[mt], klass);
 	} else
 		is_void = TRUE;
-
-	/* We need to convert delegate invoke to a indirect call on the interp_invoke_impl field */
-	if (target_method && m_class_get_parent (target_method->klass) == mono_defaults.multicastdelegate_class) {
-		const char *name = target_method->name;
-		if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
-			calli = TRUE;
-			interp_add_ins (td, MINT_LD_DELEGATE_INVOKE_IMPL);
-			td->last_ins->data [0] = csignature->param_count + 1;
-		}
-	}
 
 	if (op >= 0) {
 		interp_add_ins (td, op);
@@ -3441,16 +3445,24 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			}
 			break;
 		}
-		case CEE_BR:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 5 + read32 (td->ip + 1));
+		case CEE_BR: {
+			int offset = read32 (td->ip + 1);
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 5 + offset);
+			}
 			td->ip += 5;
 			break;
-		case CEE_BR_S:
-			INLINE_FAILURE;
-			handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+		}
+		case CEE_BR_S: {
+			int offset = (gint8)td->ip [1];
+			if (offset) {
+				INLINE_FAILURE;
+				handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
+			}
 			td->ip += 2;
 			break;
+		}
 		case CEE_BRFALSE:
 			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
@@ -4239,6 +4251,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
 				goto_if_nok (error, exit);
+				/* The constructor was not inlined, abort inlining of current method */
+				INLINE_FAILURE;
 
 				td->sp -= csignature->param_count;
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
@@ -5467,8 +5481,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->ip += 5;
 				interp_add_ins (td, MINT_MONO_LDPTR);
 				td->last_ins->data [0] = get_data_item_index (td, mono_method_get_wrapper_data (method, token));
-				td->sp [0].type = STACK_TYPE_I;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 				break;
 			case CEE_MONO_OBJADDR:
 				CHECK_STACK (td, 1);
@@ -5481,8 +5494,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->ip += 5;
 				interp_add_ins (td, MINT_MONO_NEWOBJ);
 				td->last_ins->data [0] = get_data_item_index (td, mono_method_get_wrapper_data (method, token));
-				td->sp [0].type = STACK_TYPE_O;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_O);
 				break;
 			case CEE_MONO_RETOBJ:
 				CHECK_STACK (td, 1);
@@ -5536,8 +5548,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			case CEE_MONO_LDDOMAIN:
 				interp_add_ins (td, MINT_MONO_LDDOMAIN);
-				td->sp [0].type = STACK_TYPE_I;
-				++td->sp;
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 				++td->ip;
 				break;
 			case CEE_MONO_SAVE_LAST_ERROR:
@@ -5757,12 +5768,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, MINT_INITOBJ);
 					i32 = mono_class_value_size (klass, NULL);
 					WRITE32_INS (td->last_ins, 0, &i32);
+					--td->sp;
 				} else {
 					interp_add_ins (td, MINT_LDNULL);
+					PUSH_TYPE(td, STACK_TYPE_O, NULL);
 					interp_add_ins (td, MINT_STIND_REF);
+					td->sp -= 2;
 				}
 				td->ip += 5;
-				--td->sp;
 				break;
 			case CEE_CPBLK:
 				CHECK_STACK(td, 3);

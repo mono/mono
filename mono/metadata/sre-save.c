@@ -232,7 +232,7 @@ mono_image_add_cattrs (MonoDynamicImage *assembly, guint32 idx, guint32 type, Mo
 				token = mono_image_get_methodref_token (assembly, method, FALSE);
 		} else {
 			token = image_create_token_raw (assembly, (MonoObject*)cattr->ctor, FALSE, FALSE, error); /* FIXME use handles */
-			if (!mono_error_ok (error)) goto fail;
+			if (!is_ok (error)) goto fail;
 		}
 		type = mono_metadata_token_index (token);
 		type <<= MONO_CUSTOM_ATTR_TYPE_BITS;
@@ -1305,7 +1305,7 @@ mono_image_fill_export_table_from_module (MonoDomain *domain, MonoReflectionModu
 	for (i = 0; i < t->rows; ++i) {
 		ERROR_DECL (error);
 		MonoClass *klass = mono_class_get_checked (image, mono_metadata_make_token (MONO_TABLE_TYPEDEF, i + 1), error);
-		g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+		g_assert (is_ok (error)); /* FIXME don't swallow the error */
 
 		if (mono_class_is_public (klass))
 			mono_image_fill_export_table_from_class (domain, klass, module_index, 0, assembly);
@@ -1502,7 +1502,7 @@ build_compressed_metadata (MonoDynamicImage *assembly, MonoError *error)
 
 	error_init (error);
 
-	qsort (assembly->gen_params->pdata, assembly->gen_params->len, sizeof (gpointer), compare_genericparam);
+	mono_qsort (assembly->gen_params->pdata, assembly->gen_params->len, sizeof (gpointer), compare_genericparam);
 	for (i = 0; i < assembly->gen_params->len; i++) {
 		GenericParamTableEntry *entry = (GenericParamTableEntry *)g_ptr_array_index (assembly->gen_params, i);
 		if (!write_generic_param_entry (assembly, entry, error))
@@ -1642,26 +1642,26 @@ build_compressed_metadata (MonoDynamicImage *assembly, MonoError *error)
 	/* sort the tables that still need sorting */
 	table = &assembly->tables [MONO_TABLE_CONSTANT];
 	if (table->rows)
-		qsort (table->values + MONO_CONSTANT_SIZE, table->rows, sizeof (guint32) * MONO_CONSTANT_SIZE, compare_constants);
+		mono_qsort (table->values + MONO_CONSTANT_SIZE, table->rows, sizeof (guint32) * MONO_CONSTANT_SIZE, compare_constants);
 	table = &assembly->tables [MONO_TABLE_METHODSEMANTICS];
 	if (table->rows)
-		qsort (table->values + MONO_METHOD_SEMA_SIZE, table->rows, sizeof (guint32) * MONO_METHOD_SEMA_SIZE, compare_semantics);
+		mono_qsort (table->values + MONO_METHOD_SEMA_SIZE, table->rows, sizeof (guint32) * MONO_METHOD_SEMA_SIZE, compare_semantics);
 	table = &assembly->tables [MONO_TABLE_CUSTOMATTRIBUTE];
 	if (table->rows)
-		qsort (table->values + MONO_CUSTOM_ATTR_SIZE, table->rows, sizeof (guint32) * MONO_CUSTOM_ATTR_SIZE, compare_custom_attrs);
+		mono_qsort (table->values + MONO_CUSTOM_ATTR_SIZE, table->rows, sizeof (guint32) * MONO_CUSTOM_ATTR_SIZE, compare_custom_attrs);
 	table = &assembly->tables [MONO_TABLE_FIELDMARSHAL];
 	if (table->rows)
-		qsort (table->values + MONO_FIELD_MARSHAL_SIZE, table->rows, sizeof (guint32) * MONO_FIELD_MARSHAL_SIZE, compare_field_marshal);
+		mono_qsort (table->values + MONO_FIELD_MARSHAL_SIZE, table->rows, sizeof (guint32) * MONO_FIELD_MARSHAL_SIZE, compare_field_marshal);
 	table = &assembly->tables [MONO_TABLE_NESTEDCLASS];
 	if (table->rows)
-		qsort (table->values + MONO_NESTED_CLASS_SIZE, table->rows, sizeof (guint32) * MONO_NESTED_CLASS_SIZE, compare_nested);
+		mono_qsort (table->values + MONO_NESTED_CLASS_SIZE, table->rows, sizeof (guint32) * MONO_NESTED_CLASS_SIZE, compare_nested);
 	/* Section 21.11 DeclSecurity in Partition II doesn't specify this to be sorted by MS implementation requires it */
 	table = &assembly->tables [MONO_TABLE_DECLSECURITY];
 	if (table->rows)
-		qsort (table->values + MONO_DECL_SECURITY_SIZE, table->rows, sizeof (guint32) * MONO_DECL_SECURITY_SIZE, compare_declsecurity_attrs);
+		mono_qsort (table->values + MONO_DECL_SECURITY_SIZE, table->rows, sizeof (guint32) * MONO_DECL_SECURITY_SIZE, compare_declsecurity_attrs);
 	table = &assembly->tables [MONO_TABLE_INTERFACEIMPL];
 	if (table->rows)
-		qsort (table->values + MONO_INTERFACEIMPL_SIZE, table->rows, sizeof (guint32) * MONO_INTERFACEIMPL_SIZE, compare_interface_impl);
+		mono_qsort (table->values + MONO_INTERFACEIMPL_SIZE, table->rows, sizeof (guint32) * MONO_INTERFACEIMPL_SIZE, compare_interface_impl);
 
 	/* compress the tables */
 	for (i = 0; i < MONO_TABLE_NUM; i++){
@@ -2480,7 +2480,7 @@ leave_types:
 	mono_ptr_array_destroy (types);
 leave:
 
-	return mono_error_ok (error);
+	return is_ok (error);
 }
 
 #else /* DISABLE_REFLECTION_EMIT_SAVE */

@@ -1389,6 +1389,20 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
+static inline
+void
+mono_qsort (void* base, size_t num, size_t size, int (*compare)(const void*, const void*))
+{
+	g_assert (compare);
+	g_assert (size);
+	if (num < 2 || !size || !base)
+		return;
+	qsort (base, num, size, compare);
+}
+
+#define MONO_DECL_CALLBACK(prefix, ret, name, sig) ret (*name) sig;
+#define MONO_INIT_CALLBACK(prefix, ret, name, sig) prefix ## _ ## name,
+
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.
 // However these are also already macros.

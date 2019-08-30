@@ -1,6 +1,12 @@
 <Type Name="IFoo&lt;T&gt;" FullName="Mono.DocTest.Generic.IFoo&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IFoo&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFoo`1&lt;T&gt;" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.IFoo`1" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IFoo(Of T)" />
+  <TypeSignature Language="F#" Value="type IFoo&lt;'T&gt; = interface" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename T&gt;&#xA;public interface class IFoo" />
+  <TypeSignature Language="C++ CX" Value="public interface class IFoo" />
+  <TypeSignature Language="C++ WINRT" Value="template &lt;typename T&gt;&#xA;__interface IFoo" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -18,6 +24,11 @@
     <Member MemberName="Method&lt;U&gt;">
       <MemberSignature Language="C#" Value="public T Method&lt;U&gt; (T t, U u);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !T Method&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.IFoo`1.Method``1(`0,``0)" />
+      <MemberSignature Language="F#" Value="abstract member Method : 'T * 'U -&gt; 'T" Usage="iFoo.Method (t, u)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename U&gt;&#xA; T Method(T t, U u);" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA;generic &lt;typename U&gt;&#xA; T Method(T t, U u);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename U&gt;&#xA; T Method(T t, U u);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

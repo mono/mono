@@ -455,13 +455,13 @@ mono_native_thread_join (MonoNativeThreadId tid)
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-#if _WIN32_WINNT >= 0x0602 // Windows 8 or newer.
+#if _WIN32_WINNT >= 0x0602 // Windows 8 or newer and very fast, just a few instructions, no syscall.
 	ULONG_PTR low;
 	ULONG_PTR high;
 	GetCurrentThreadStackLimits (&low, &high);
 	*staddr = (guint8*)low;
 	*stsize = high - low;
-#else // Win7 and older.
+#else // Win7 and older (or newer, still works, but much slower).
 	MEMORY_BASIC_INFORMATION info;
 	// Windows stacks are commited on demand, one page at time.
 	// teb->StackBase is the top from which it grows down.
@@ -470,6 +470,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	//
 	VirtualQuery (&info, &info, sizeof (info));
 	*staddr = (guint8*)info.AllocationBase;
+	// TEB starts with TIB. TIB is public, TEB is not.
 	*stsize = (size_t)((NT_TIB*)NtCurrentTeb ())->StackBase - (size_t)info.AllocationBase;
 #endif
 }
@@ -561,38 +562,6 @@ mono_thread_info_get_system_max_stack_size (void)
 {
 	//FIXME
 	return INT_MAX;
-}
-
-#if defined(_MSC_VER)
-const DWORD MS_VC_EXCEPTION=0x406D1388;
-#pragma pack(push,8)
-typedef struct tagTHREADNAME_INFO
-{
-   DWORD dwType; // Must be 0x1000.
-   LPCSTR szName; // Pointer to name (in user addr space).
-   DWORD dwThreadID; // Thread ID (-1=caller thread).
-  DWORD dwFlags; // Reserved for future use, must be zero.
-} THREADNAME_INFO;
-#pragma pack(pop)
-#endif
-
-void
-mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
-{
-#if defined(_MSC_VER)
-	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = name;
-	info.dwThreadID = tid;
-	info.dwFlags = 0;
-
-	__try {
-		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),       (ULONG_PTR*)&info );
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER) {
-	}
-#endif
 }
 
 void

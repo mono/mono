@@ -1,6 +1,10 @@
 <Type Name="Environment" FullName="System.Environment">
   <TypeSignature Language="C#" Value="public static class Environment" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Environment extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Environment" />
+  <TypeSignature Language="VB.NET" Value="Public Class Environment" />
+  <TypeSignature Language="F#" Value="type Environment = class" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Environment abstract sealed" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +21,11 @@
     <Member MemberName="GetFolderPath">
       <MemberSignature Language="C#" Value="public static string GetFolderPath (Environment.SpecialFolder folder);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetFolderPath(valuetype System.Environment/SpecialFolder folder) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetFolderPath (folder As Environment.SpecialFolder) As String" />
+      <MemberSignature Language="F#" Value="static member GetFolderPath : Environment.SpecialFolder -&gt; string" Usage="System.Environment.GetFolderPath folder" />
+      <MemberSignature Language="JavaScript" Value="function getFolderPath(folder)" Usage="var string = System.Environment.getFolderPath(folder)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::String ^ GetFolderPath(Environment::SpecialFolder folder);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -32,8 +41,6 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotSupportedException">To be added; from:
-          <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
       </Docs>
     </Member>
   </Members>

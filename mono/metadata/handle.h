@@ -210,11 +210,30 @@ Icall macros
 	CLEAR_ICALL_FRAME;			\
 	} while (0)
 
-#define HANDLE_LOOP_PREPARE \
+// Do not do this often, but icall state can be manually managed.
+//
+// SETUP_ICALL_FUNCTION
+// loop { // Does not have to be a loop.
+//    SETUP_ICALL_FRAME
+//    ..
+//    CLEAR_ICALL_FRAME
+// }
+//
+// As with HANDLE_FUNCTION_RETURN, you must not
+// skip CLEAR_ICALL_FRAME -- no break, continue, return, or goto (goto label at CLEAR_ICALL_FRAME is idiom).
+//
+#define SETUP_ICALL_FUNCTION \
 	MONO_DISABLE_WARNING(4459) /* declaration of 'identifier' hides global declaration */ \
 	/* There are deliberately locals and a constant NULL global with this same name. */ \
 	MonoThreadInfo *mono_thread_info_current_var = mono_thread_info_current () \
 	MONO_RESTORE_WARNING
+
+// A common use of manual icall frame management is for loop.
+// It can also be used for conditionality, where only some paths
+// through a function allocate handles and frame teardown does
+// coincide with function return. For example: emit_invoke_call.
+//
+#define HANDLE_LOOP_PREPARE SETUP_ICALL_FUNCTION
 
 // Return a non-pointer or non-managed pointer, e.g. gboolean.
 // VAL should be a local variable or at least not use handles in the current frame.
@@ -322,6 +341,10 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #define MONO_TYPEOF_CAST(typeexpr, expr) ((__typeof__ (typeexpr))(expr))
 #endif
 
+/*
+ * Create handle for the object OBJECT.
+ * The handle will keep the object alive and pinned.
+ */
 #ifndef MONO_HANDLE_TRACK_OWNER
 
 #define MONO_HANDLE_NEW(type, object) \
@@ -335,6 +358,12 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #endif
 
 #define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
+
+/*
+ * Return the raw object reference stored in the handle.
+ * The objref is valid while the handle is alive and
+ * points to it.
+ */
 #ifdef __cplusplus
 #define MONO_HANDLE_RAW(handle)     ((handle).GetRaw())
 #else
@@ -550,7 +579,7 @@ mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintp
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
 
-#define mono_handle_vtable(o) MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))->vtable)
+#define mono_handle_vtable(o) MONO_HANDLE_GETVAL (o, vtable)
 
 /* Local handles to global GC handles and back */
 

@@ -28,6 +28,7 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include "abi-details.h"
+#include "cominterop.h"
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-memory-model.h>
@@ -3549,7 +3550,7 @@ mono_metadata_inflate_generic_inst (MonoGenericInst *ginst, MonoGenericContext *
 
 	for (i = 0; i < ginst->type_argc; i++) {
 		type_argv [i] = mono_class_inflate_generic_type_checked (ginst->type_argv [i], context, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			goto cleanup;
 		++count;
 	}
@@ -6757,6 +6758,12 @@ handle_enum:
 			*conv = MONO_MARSHAL_CONV_SAFEHANDLE;
 			return MONO_NATIVE_INT;
 		}
+#ifndef DISABLE_COM
+		if (t == MONO_TYPE_CLASS && mono_cominterop_is_interface (type->data.klass)){
+			*conv = MONO_MARSHAL_CONV_OBJECT_INTERFACE;
+			return MONO_NATIVE_INTERFACE;
+		}
+#endif
 		*conv = MONO_MARSHAL_CONV_OBJECT_STRUCT;
 		return MONO_NATIVE_STRUCT;
 	}

@@ -125,6 +125,8 @@ int mini_verbose = 0;
  */
 gboolean mono_use_llvm = FALSE;
 
+gboolean mono_use_fast_math = FALSE;
+
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
 
@@ -1264,6 +1266,7 @@ mono_patch_info_hash (gconstpointer data)
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
 		g_assert_not_reached ();
+	case MONO_PATCH_INFO_NONE:
 		return 0;
 	}
 }
@@ -1331,6 +1334,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig);
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+	case MONO_PATCH_INFO_NONE:
 		return 1;
 	}
 
@@ -1376,7 +1380,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_METHOD_JUMP:
 		target = mono_create_jump_trampoline (domain, patch_info->data.method, FALSE, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		break;
 	case MONO_PATCH_INFO_METHOD:
@@ -1385,7 +1389,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		} else {
 			/* get the trampoline to the method from the domain */
 			target = mono_create_jit_trampoline (domain, patch_info->data.method, error);
-			if (!mono_error_ok (error))
+			if (!is_ok (error))
 				return NULL;
 		}
 		break;
@@ -1518,13 +1522,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		mono_class_init_internal (handle_class);
 		mono_class_init_internal (mono_class_from_mono_type_internal ((MonoType *)handle));
 
 		target = mono_type_get_object_checked (domain, (MonoType *)handle, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		break;
 	}
@@ -2324,7 +2328,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 			method = info->d.synchronized_inner.method;
 			if (ctx) {
 				method = mono_class_inflate_generic_method_checked (method, ctx, error);
-				g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+				g_assert (is_ok (error)); /* FIXME don't swallow the error */
 			}
 		}
 	}
@@ -2397,7 +2401,7 @@ lookup_start:
 	if (!code) {
 		code = compile_special (method, target_domain, error);
 
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 	}
 
@@ -2408,7 +2412,7 @@ lookup_start:
 		}
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 	}
 
@@ -2433,7 +2437,7 @@ lookup_start:
 		code = mono_jit_compile_method_inner (method, target_domain, opt, error);
 		unregister_method_for_compile (method, target_domain);
 	}
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		return NULL;
 
 	if (!code && mono_llvm_only) {
@@ -2756,7 +2760,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 	invoke = mono_marshal_get_runtime_invoke (method, FALSE);
 	(void)invoke;
 	info->vtable = mono_class_vtable_checked (domain, method->klass, error);
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		goto exit;
 	g_assert (info->vtable);
 
@@ -2861,7 +2865,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				g_free (wrapper_sig);
 
 				info->compiled_method = mono_jit_compile_method (wrapper, error);
-				if (!mono_error_ok (error))
+				if (!is_ok (error))
 					goto exit;
 			} else {
 				/* Gsharedvt methods can be invoked the same way */
@@ -2875,7 +2879,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 			}
 		}
 		info->runtime_invoke = mono_jit_compile_method (invoke, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			goto exit;
 	}
 
@@ -2892,10 +2896,8 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	MonoMethodSignature *sig = info->sig;
 	MonoDomain *domain = mono_domain_get ();
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
-	gpointer *args;
 	gpointer retval_ptr;
 	guint8 retval [256];
-	gpointer *param_refs;
 	int i, pindex;
 
 	error_init (error);
@@ -2910,8 +2912,10 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	 * This code also handles invocation of gsharedvt methods directly, no
 	 * out wrappers are used in that case.
 	 */
-	args = (void **)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
-	param_refs = (gpointer*)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
+	// allocate param_refs = param_count and args = param_count + hasthis + 2.
+	int const param_count = sig->param_count;
+	gpointer* const param_refs = g_newa (gpointer, param_count * 2 + sig->hasthis + 2);
+	gpointer* const args = param_refs + param_count;
 	pindex = 0;
 	/*
 	 * The runtime invoke wrappers expects pointers to primitive types, so have to
@@ -2920,7 +2924,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	if (sig->hasthis)
 		args [pindex ++] = &obj;
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		retval_ptr = (gpointer)&retval;
+		retval_ptr = &retval;
 		args [pindex ++] = &retval_ptr;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
@@ -3042,7 +3046,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		if (callee) {
 			compiled_method = mono_jit_compile_method_jit_only (callee, error);
 			if (!compiled_method) {
-				g_assert (!mono_error_ok (error));
+				g_assert (!is_ok (error));
 
 				if (mono_use_interpreter)
 					use_interp = TRUE;
@@ -3064,7 +3068,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		}
 
 		info = create_runtime_invoke_info (domain, method, compiled_method, callee_gsharedvt, use_interp, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 
 		mono_domain_lock (domain);
@@ -3109,7 +3113,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 			if (!dyn_runtime_invoke && mono_use_interpreter) {
 				info->use_interp = TRUE;
 				info->dyn_call_info = NULL;
-			} else if (!mono_error_ok (error)) {
+			} else if (!is_ok (error)) {
 				mono_domain_unlock (domain);
 				return NULL;
 			}
@@ -4073,8 +4077,12 @@ mini_init (const char *filename, const char *runtime_version)
 {
 	ERROR_DECL (error);
 	MonoDomain *domain;
+
 	MonoRuntimeCallbacks callbacks;
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
+
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_INIT_CALLBACK, mono)
+	};
 
 	MONO_VES_INIT_BEGIN ();
 
@@ -4167,12 +4175,6 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 	mono_install_callbacks (&callbacks);
-
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.setup_async_callback = mono_setup_async_callback;
-	ticallbacks.thread_state_init_from_sigctx = mono_thread_state_init_from_sigctx;
-	ticallbacks.thread_state_init_from_handle = mono_thread_state_init_from_handle;
-	ticallbacks.thread_state_init = mono_thread_state_init;
 
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
@@ -4468,9 +4470,14 @@ register_icalls (void)
 	register_opcode_emulation (OP_FDIV, __emul_fdiv, mono_icall_sig_double_double_double, mono_fdiv, FALSE);
 #endif
 
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U8
 	register_opcode_emulation (OP_FCONV_TO_U8, __emul_fconv_to_u8, mono_icall_sig_ulong_double, mono_fconv_u8_2, FALSE);
 	register_opcode_emulation (OP_RCONV_TO_U8, __emul_rconv_to_u8, mono_icall_sig_ulong_float, mono_rconv_u8, FALSE);
+#endif
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U4
 	register_opcode_emulation (OP_FCONV_TO_U4, __emul_fconv_to_u4, mono_icall_sig_uint32_double, mono_fconv_u4_2, FALSE);
+	register_opcode_emulation (OP_RCONV_TO_U4, __emul_rconv_to_u4, mono_icall_sig_uint32_float, mono_rconv_u4, FALSE);
+#endif
 	register_opcode_emulation (OP_FCONV_TO_OVF_I8, __emul_fconv_to_ovf_i8, mono_icall_sig_long_double, mono_fconv_ovf_i8, FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_U8, __emul_fconv_to_ovf_u8, mono_icall_sig_ulong_double, mono_fconv_ovf_u8, FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_U8_UN, __emul_fconv_to_ovf_u8_un, mono_icall_sig_ulong_double, mono_fconv_ovf_u8_un, FALSE);

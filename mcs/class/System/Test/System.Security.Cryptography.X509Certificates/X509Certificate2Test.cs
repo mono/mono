@@ -1908,6 +1908,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			}
 		}
 
+#if !MONOTOUCH_WATCH
 		private void CheckAuthenticode (X509Certificate2 x)
 		{
 			DateTime expectedNotAfter = new DateTime (632118306520000000,
@@ -1975,6 +1976,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 					File.Delete (tempFile);
 			}
 		}
+#endif
 
 		private bool RunningOnWindows ()
 		{
@@ -2052,7 +2054,9 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 
 			Assert.AreEqual (X509ContentType.Pkcs7, X509Certificate2.GetCertContentType (farscape_pkcs7), "1-Pkcs7");
 
+#if !MONOTOUCH_WATCH
 			Assert.AreEqual (X509ContentType.Authenticode, X509Certificate2.GetCertContentType (helloworld_signed), "Authenticode");
+#endif
 		}
 
 		[Test]

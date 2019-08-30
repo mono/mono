@@ -1,6 +1,10 @@
 <Type Name="Environment+SpecialFolder" FullName="System.Environment+SpecialFolder">
   <TypeSignature Language="C#" Value="public enum Environment.SpecialFolder" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Environment/SpecialFolder extends System.Enum" />
+  <TypeSignature Language="DocId" Value="T:System.Environment.SpecialFolder" />
+  <TypeSignature Language="VB.NET" Value="Public Enum Environment.SpecialFolder" />
+  <TypeSignature Language="F#" Value="type Environment.SpecialFolder = " />
+  <TypeSignature Language="C++ CLI" Value="public: enum class Environment::SpecialFolder" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

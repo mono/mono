@@ -1009,14 +1009,12 @@ void
 mono_arch_allocate_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
-	MonoMethodHeader *header;
 	MonoInst *inst;
 	guint32 locals_stack_size, locals_stack_align;
 	int i, offset;
 	gint32 *offsets;
 	CallInfo *cinfo;
 
-	header = cfg->header;
 	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
@@ -5535,7 +5533,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	if (!fail_tramp)
 		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
-	g_assert (code - start <= size);
+	g_assertf (code - start <= size, "%d %d", (int)(code - start), size);
 
 #if DEBUG_IMT
 	{
@@ -5764,8 +5762,6 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		x86_mov_reg_membase (code, X86_ECX, X86_EAX, MONO_STRUCT_OFFSET (MonoDelegate, target), 4);
 		x86_mov_membase_reg (code, X86_ESP, 4, X86_ECX, 4);
 		x86_jump_membase (code, X86_EAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
-
-		g_assert ((code - start) < code_reserve);
 	} else {
 		int i = 0;
 		/* 8 for mov_reg and jump, plus 8 for each parameter */
@@ -5798,9 +5794,9 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		}
 
 		x86_jump_membase (code, X86_ECX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
-
-		g_assert ((code - start) < code_reserve);
 	}
+
+	g_assertf ((code - start) <= code_reserve, "%d %d", (int)(code - start), code_reserve);
 
 	if (has_target) {
 		*info = mono_tramp_info_create ("delegate_invoke_impl_has_target", start, code - start, NULL, unwind_ops);
@@ -5860,6 +5856,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	x86_mov_reg_membase (code, X86_EAX, X86_ECX, MONO_STRUCT_OFFSET (MonoObject, vtable), 4);
 	x86_jump_membase (code, X86_EAX, offset);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);

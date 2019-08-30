@@ -400,7 +400,7 @@ typedef union MonoInstSpec { // instruction specification
 	char bytes[MONO_INST_MAX];
 } MonoInstSpec;
 
-extern const char mini_ins_info[];
+extern const char mini_ins_info[] MONO_LLVM_INTERNAL;
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
@@ -656,7 +656,9 @@ typedef enum {
 	LLVMArgFpStruct,
 	LLVMArgVtypeByRef,
 	/* Vtype returned as an int */
-	LLVMArgVtypeAsScalar
+	LLVMArgVtypeAsScalar,
+	/* Address to local vtype passed as argument (using register or stack). */
+	LLVMArgVtypeAddr
 } LLVMArgStorage;
 
 typedef struct {
@@ -1218,6 +1220,8 @@ typedef enum {
 	JIT_FLAG_DISCARD_RESULTS = (1 << 8),
 	/* Whenever to generate code which can work with the interpreter */
 	JIT_FLAG_INTERP = (1 << 9),
+	/* Allow AOT to use all current CPU instructions */
+	JIT_FLAG_USE_CURRENT_CPU = (1 << 10),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -1431,6 +1435,7 @@ typedef struct {
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
 	guint            interp : 1;
+	guint            use_current_cpu : 1;
 	guint            domainvar_inited : 1;
 	guint8           uses_simd_intrinsics;
 	int              r4_stack_type;
@@ -1570,7 +1575,8 @@ typedef struct {
 	guint32 gc_map_size;
 
 	/* Error handling */
-	MonoError error;
+	MonoError* error;
+	MonoErrorInternal error_value;
 
 	/* pointer to context datastructure used for graph dumping */
 	MonoGraphDumper *gdump_ctx;
@@ -2781,8 +2787,20 @@ enum {
 	/* this value marks the end of the bit indexes used in 
 	 * this emum.
 	 */
-	SIMD_VERSION_INDEX_END = 6 
+	SIMD_VERSION_INDEX_END = 6
 };
+
+typedef enum {
+	/* Used for lazy initialization */
+	MONO_CPU_INITED = 1 << 0,
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+	MONO_CPU_X86_POPCNT = 1 << 1,
+	MONO_CPU_X86_LZCNT = 1 << 2,
+	MONO_CPU_X86_AVX = 1 << 3,
+	MONO_CPU_X86_BMI1 = 1 << 4,
+	MONO_CPU_X86_BMI2 = 1 << 5,
+#endif
+} MonoCPUFeatures;
 
 enum {
 	SIMD_COMP_EQ,

@@ -1,6 +1,12 @@
 <Type Name="IProcess" FullName="Mono.DocTest.IProcess">
   <TypeSignature Language="C#" Value="public interface IProcess" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IProcess" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.IProcess" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IProcess" />
+  <TypeSignature Language="F#" Value="type IProcess = interface" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IProcess" />
+  <TypeSignature Language="C++ CX" Value="public interface class IProcess" />
+  <TypeSignature Language="C++ WINRT" Value="__interface IProcess" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

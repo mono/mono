@@ -1463,6 +1463,7 @@ mono_w32socket_convert_error (gint error)
 #ifdef ECONNRESET
 	case ECONNRESET: return WSAECONNRESET;
 #endif
+	case EDOM: return WSAEINVAL; /* not a precise match, best wecan do. */
 	case EFAULT: return WSAEFAULT;
 #ifdef EHOSTUNREACH
 	case EHOSTUNREACH: return WSAEHOSTUNREACH;
@@ -1472,23 +1473,23 @@ mono_w32socket_convert_error (gint error)
 #endif
 	case EINTR: return WSAEINTR;
 	case EINVAL: return WSAEINVAL;
-	/*FIXME: case EIO: return WSAE????; */
+	case EIO: return WSA_INVALID_HANDLE; /* not a precise match, best we can do. */
 #ifdef EISCONN
 	case EISCONN: return WSAEISCONN;
 #endif
-	/* FIXME: case ELOOP: return WSA????; */
+	case ELOOP: return WSAELOOP;
+	case ENFILE: return WSAEMFILE; /* not a precise match, best we can do. */
 	case EMFILE: return WSAEMFILE;
 #ifdef EMSGSIZE
 	case EMSGSIZE: return WSAEMSGSIZE;
 #endif
-	/* FIXME: case ENAMETOOLONG: return WSAEACCES; */
+	case ENAMETOOLONG: return WSAENAMETOOLONG;
 #ifdef ENETUNREACH
 	case ENETUNREACH: return WSAENETUNREACH;
 #endif
 #ifdef ENOBUFS
 	case ENOBUFS: return WSAENOBUFS; /* not documented */
 #endif
-	/* case ENOENT: return WSAE????; */
 	case ENOMEM: return WSAENOBUFS;
 #ifdef ENOPROTOOPT
 	case ENOPROTOOPT: return WSAENOPROTOOPT;
@@ -1499,7 +1500,7 @@ mono_w32socket_convert_error (gint error)
 #ifdef ENOTCONN
 	case ENOTCONN: return WSAENOTCONN;
 #endif
-	/*FIXME: case ENOTDIR: return WSAE????; */
+	case ENOTDIR: return WSA_INVALID_PARAMETER; /* not a precise match, best we can do. */
 #ifdef ENOTSOCK
 	case ENOTSOCK: return WSAENOTSOCK;
 #endif
@@ -1554,6 +1555,7 @@ mono_w32socket_convert_error (gint error)
 	}
 }
 
+#ifndef ENABLE_NETCORE
 MonoBoolean
 ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, MonoError *error)
 {
@@ -1569,6 +1571,7 @@ ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, Mo
 	return FALSE;
 #endif
 }
+#endif
 
 gboolean
 mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)

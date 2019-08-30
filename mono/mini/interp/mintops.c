@@ -10,28 +10,35 @@
 #include <stdio.h>
 #include "mintops.h"
 
-#define OPDEF(a,b,c,d) \
-	b,
-const char *mono_interp_opname[] = {
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
+struct MonoInterpOpnameCharacters {
+#define OPDEF(a, b, c, d) char a [sizeof (b)];
 #include "mintops.def"
-	""
 };
 #undef OPDEF
 
-#define OPDEF(a,b,c,d) \
-	c,
-unsigned char mono_interp_oplen[] = {
+extern const MonoInterpOpnameCharacters mono_interp_opname_characters = {
+#define OPDEF(a, b, c, d) b,
 #include "mintops.def"
-	0
+};
+#undef OPDEF
+
+extern const guint16 mono_interp_opname_offsets [] = {
+#define OPDEF(a, b, c, d) offsetof (MonoInterpOpnameCharacters, a),
+#include "mintops.def"
+#undef OPDEF
+};
+
+#define OPDEF(a, b, c, d) c,
+unsigned char const mono_interp_oplen [] = {
+#include "mintops.def"
 };
 #undef OPDEF
 
 
-#define OPDEF(a,b,c,d) \
-	d,
-MintOpArgType mono_interp_opargtype[] = {
+#define OPDEF(a, b, c, d) d,
+MintOpArgType const mono_interp_opargtype [] = {
 #include "mintops.def"
-	(MintOpArgType)0
 };
 #undef OPDEF
 
@@ -58,7 +65,7 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 	guint32 token;
 	int target;
 
-	g_string_append_printf (str, "IL_%04x: %-10s", (int)(ip - base), mono_interp_opname [*ip]);
+	g_string_append_printf (str, "IL_%04x: %-10s", (int)(ip - base), mono_interp_opname (*ip));
 	switch (mono_interp_opargtype [*ip]) {
 	case MintOpNoArgs:
 		break;
@@ -128,3 +135,8 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 	return g_string_free (str, FALSE);
 }
 
+const char*
+mono_interp_opname (int op)
+{
+	return ((const char*)&mono_interp_opname_characters) + mono_interp_opname_offsets [op];
+}

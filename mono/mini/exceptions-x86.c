@@ -57,7 +57,7 @@ extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 #define W32_SEH_HANDLE_EX(_ex) \
 	if (_ex##_handler) _ex##_handler(er->ExceptionCode, &info, ctx)
 
-LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
 #ifndef MONO_CROSS_COMPILE
 	if (mono_old_win_toplevel_exception_filter) {
@@ -85,8 +85,10 @@ mono_win32_get_handle_stackoverflow (void)
 	if (start)
 		return start;
 
+	const int size = 128;
+
 	/* restore_contect (void *sigctx) */
-	start = code = mono_global_codeman_reserve (128);
+	start = code = mono_global_codeman_reserve (size);
 
 	/* load context into ebx */
 	x86_mov_reg_membase (code, X86_EBX, X86_ESP, 4, 4);
@@ -115,6 +117,8 @@ mono_win32_get_handle_stackoverflow (void)
 	/* return */
 	x86_ret (code);
 
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
@@ -137,8 +141,6 @@ mono_win32_get_handle_stackoverflow (void)
 static void 
 win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 {
-	SYSTEM_INFO si;
-	DWORD page_size;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo rji;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
@@ -149,10 +151,6 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 	StackFrameInfo frame;
 
 	mono_sigctx_to_monoctx (sctx, &ctx);
-	
-	/* get our os page size */
-	GetSystemInfo(&si);
-	page_size = si.dwPageSize;
 
 	/* Let's walk the stack to recover
 	 * the needed stack space (if possible)
@@ -192,7 +190,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
@@ -296,7 +294,9 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	/* restore_contect (MonoContext *ctx) */
 
-	start = code = mono_global_codeman_reserve (128);
+	const int size = 128;
+
+	start = code = mono_global_codeman_reserve (size);
 	
 	/* load ctx */
 	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
@@ -361,6 +361,8 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 		g_slist_free (unwind_ops);
 	}
 
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
@@ -381,7 +383,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	guint kMaxCodeSize = 64;
+	const int kMaxCodeSize = 64;
 
 	/* call_filter (MonoContext *ctx, unsigned long eip) */
 	start = code = mono_global_codeman_reserve (kMaxCodeSize);
@@ -442,7 +444,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
-	g_assert ((code - start) < kMaxCodeSize);
+	g_assertf ((code - start) <= kMaxCodeSize, "%d %d", (int)(code - start), kMaxCodeSize);
 	return start;
 }
 
@@ -545,7 +547,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 	int i, stack_size, stack_offset, arg_offsets [5], regs_offset;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	guint kMaxCodeSize = 192;
+	const int kMaxCodeSize = 192;
 
 	start = code = mono_global_codeman_reserve (kMaxCodeSize);
 
@@ -671,7 +673,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 	}
 	x86_breakpoint (code);
 
-	g_assert ((code - start) < kMaxCodeSize);
+	g_assertf ((code - start) <= kMaxCodeSize, "%d %d", (int)(code - start), kMaxCodeSize);
 
 	if (info)
 		*info = mono_tramp_info_create (name, start, code - start, ji, unwind_ops);
@@ -951,7 +953,9 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 	GSList *unwind_ops = NULL;
 	int stack_size;
 
-	start = code = mono_global_codeman_reserve (128);
+	const int size = 128;
+
+	start = code = mono_global_codeman_reserve (size);
 
 	/* FIXME no unwind before we push ip */
 	/* Caller ip */
@@ -971,7 +975,7 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 	/* Branch to target */
 	x86_call_reg (code, X86_EDX);
 
-	g_assert ((code - start) < 128);
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
 
 	if (info)
 		*info = mono_tramp_info_create ("x86_signal_exception_trampoline", start, code - start, ji, unwind_ops);
@@ -982,6 +986,8 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 			g_free (l->data);
 		g_slist_free (unwind_ops);
 	}
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
 
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
@@ -1054,6 +1060,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #endif
 }
 
+#if defined (MONO_ARCH_USE_SIGACTION) && !defined (MONO_CROSS_COMPILE)
 static MonoObject*
 restore_soft_guard_pages (void)
 {
@@ -1088,7 +1095,6 @@ prepare_for_guard_pages (MonoContext *mctx)
 	mctx->esp = (unsigned long)sp;
 }
 
-
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
@@ -1104,6 +1110,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 	}
 	mono_restore_context (&mctx);
 }
+#endif
 
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
@@ -1172,7 +1179,10 @@ mono_tasklets_arch_restore (void)
 
 	if (saved)
 		return (MonoContinuationRestore)saved;
-	code = start = mono_global_codeman_reserve (48);
+
+	const int size = 48;
+
+	code = start = mono_global_codeman_reserve (size);
 	/* the signature is: restore (MonoContinuation *cont, int state, MonoLMF **lmf_addr) */
 	/* put cont in edx */
 	x86_mov_reg_membase (code, X86_EDX, X86_ESP, 4, 4);
@@ -1200,6 +1210,8 @@ mono_tasklets_arch_restore (void)
 	x86_mov_membase_reg (code, X86_ECX, 0, X86_EDX, 4);*/
 
 	x86_jump_membase (code, X86_EDX, MONO_STRUCT_OFFSET (MonoContinuation, return_ip));
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
 
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));

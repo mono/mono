@@ -27,7 +27,6 @@ TEST_CASES := \
 
 ifdef INCLUDE_DISABLED
 TEST_CASES += \
-	System.Core/test-queryable-01.cs \
 	System.Runtime.Serialization/test-dcs-01.cs \
 	mscorlib/test-marshaling.cs
 endif
@@ -41,7 +40,9 @@ endif
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \
 	mscorlib/test-remoting.cs \
-	mscorlib/test-reflection.cs
+	mscorlib/test-reflection.cs \
+	System.Core/test-queryable-01.cs \
+	System.Core/test-queryable-02.cs
 endif
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll

@@ -1,21 +1,30 @@
 using System;
-using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Linq;
 
-public class QueryableUsedViaExpression {
+public class TestQueryableOrderBy
+{
 	public static void Main ()
 	{
-		var q = "Test".AsQueryable ();
-		var count = CallQueryableCount (q);
-		q.Count ();
-		//Console.WriteLine ($"count: {count}");
+		Test ();
 	}
 
-	public static int CallQueryableCount (IQueryable source)
+	class Pet
 	{
-		return source.Provider.Execute<int> (
-			Expression.Call (
-				typeof (Queryable), "Count",
-				new Type [] { source.ElementType }, source.Expression));
+		public string Name { get; set; }
+		public int Age { get; set; }
+	}
+
+	static void Test ()
+	{
+		Pet[] pets = { new Pet { Name="Barley", Age=8 },
+					   new Pet { Name="Boots", Age=4 },
+					   new Pet { Name="Whiskers", Age=1 }
+		};
+
+		var query = pets.AsQueryable ().OrderByDescending (pet => pet.Age);
+
+		foreach (Pet pet in query)
+			Console.WriteLine("{0} - {1}", pet.Name, pet.Age);
 	}
 }

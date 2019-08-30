@@ -42,11 +42,9 @@ COMPILER_SERVER_ARGS = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(COMPILER
 CSC_LOCATION = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(SERVER_CSC_LOCATION),$(STANDALONE_CSC_LOCATION))
 
 USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
-USE_MBAS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
 CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) --gc-params=nursery-size=64m --clr-memory-model
-BASCOMPILE = $(MBAS) $(USE_MBAS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
 BOOT_COMPILE = $(Q_MCS) $(BOOTSTRAP_MCS) $(USE_MCS_FLAGS)
 INSTALL = $(SHELL) $(topdir)/../mono/install-sh
@@ -54,7 +52,6 @@ INSTALL_DATA = $(INSTALL) -c -m 644
 INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
-INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
 INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
 
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
@@ -100,9 +97,6 @@ include $(topdir)/build/platforms/$(BUILD_PLATFORM).make
 PROFILE_PLATFORM = $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
 PROFILE_DIRECTORY = $(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))
 
-ifdef PLATFORM_CORLIB
-corlib = $(PLATFORM_CORLIB)
-endif
 # Useful
 
 ifeq ($(PLATFORM_RUNTIME),$(RUNTIME))

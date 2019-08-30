@@ -903,7 +903,7 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
 	method = mono_class_inflate_generic_method_checked (method, &context, error);
-	g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+	g_assert (is_ok (error)); /* FIXME don't swallow the error */
 
 	return method;
 }
@@ -1054,7 +1054,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 	for (i = skip; i < len; i++) {
 		MonoJitInfo *ji;
 		MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, error);
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
 		}
@@ -1097,7 +1097,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 		else {
 			MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, error);
-			if (!mono_error_ok (error)) {
+			if (!is_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
@@ -1854,7 +1854,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	}
 
 	MonoReflectionMethod *rm = mono_method_get_object_checked (domain, actual_method, NULL, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
@@ -2641,7 +2641,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				G_BREAKPOINT ();
 			mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 
-			if (mini_debug_options.suspend_on_unhandled) {
+			if (mini_debug_options.suspend_on_unhandled && mono_object_class (obj) != mono_defaults.threadabortexception_class) {
 				mono_runtime_printf_err ("Unhandled exception, suspending...");
 				while (1)
 					;
@@ -3380,23 +3380,13 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	MonoContext ctx;
 	GString* text;
-	char *name;
-	GError *gerror = NULL;
 
 	if (!thread)
 		return;
 
 	text = g_string_new (0);
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &gerror);
-		g_assert (!gerror);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
-	else if (thread->threadpool_thread)
-		g_string_append (text, "\n\"<threadpool thread>\"");
-	else
-		g_string_append (text, "\n\"<unnamed thread>\"");
+
+	mono_gstring_append_thread_name (text, thread);
 
 	g_string_append_printf (text, " tid=%p this=%p ", (gpointer)(gsize)thread->tid, thread);
 	mono_thread_internal_describe (thread, text);

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DocTest-DropNS-classic-secondary</name>
+    </assembly>
+    <members>
+        <member name="T:MyFramework.MyOtherNamespace.MyOtherClass">
+            <summary>Make sure the namespace in this assembly doesn't get 'dropped'</summary>
+        </member>
+    </members>
+</doc>

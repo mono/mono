@@ -100,6 +100,7 @@ print("Arguments: " + testArguments);
 profilers = [];
 setenv = {};
 runtime_args = [];
+enable_gc = false;
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -118,10 +119,14 @@ while (true) {
 		var arg = args [0].substring ("--runtime-arg=".length);
 		runtime_args.push (arg);
 		args = args.slice (1);
+	} else if (args [0] == "--enable-gc") {
+		enable_gc = true;
+		args = args.slice (1);
 	} else {
 		break;
 	}
 }
+testArguments = args;
 
 if (typeof window == "undefined")
   load ("mono-config.js");
@@ -147,6 +152,11 @@ var Module = {
 			MONO.mono_wasm_setenv (variable, setenv [variable]);
 		}
 
+		if (enable_gc) {
+			var f = Module.cwrap ('mono_wasm_enable_on_demand_gc', 'void', []);
+			f ();
+		}
+
 		MONO.mono_load_runtime_and_bcl (
 			config.vfs_prefix,
 			config.deploy_prefix,
@@ -155,7 +165,7 @@ var Module = {
 			function () {
 				App.init ();
 			},
-			function (asset ) 
+			function (asset)
 			{
 			  if (typeof window != 'undefined') {
 				return fetch (asset, { credentials: 'same-origin' });
@@ -281,6 +291,7 @@ var App = {
 
 			if (is_browser)
 				test_exit (0);
+
 			return;
 		}
 

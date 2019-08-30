@@ -3,7 +3,8 @@ include $(top_srcdir)/mk/common.mk
 AM_CPPFLAGS = \
 	-DSUPPRESSION_DIR=\""$(datadir)/mono-$(API_VER)/mono/profiler"\" \
 	-I$(top_srcdir) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	$(SHARED_CFLAGS)
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
@@ -100,7 +101,7 @@ endif
 if HAVE_STATIC_ZLIB
 zlib_dep = $(STATIC_ZLIB_PATH)
 else
-if HAVE_ZLIB
+if HAVE_SYS_ZLIB
 # The log profiler uses zlib for output compression when available.
 zlib_dep = -lz
 else

@@ -1,7 +1,11 @@
 <linker>
   
   <!--
-  Preserve the entire assembly
+  Preserve the GetHttpMessageHandler method
   -->
-  <assembly fullname="WebAssembly.Net.Http" preserve="all"/>
+    <assembly fullname="WebAssembly.Net.Http" >
+        <type fullname="WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler" >
+            <method name="GetHttpMessageHandler" />
+        </type>
+    </assembly>
 </linker>

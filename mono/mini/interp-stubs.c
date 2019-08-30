@@ -87,6 +87,12 @@ stub_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExcept
 	g_assert_not_reached ();
 }
 
+static void
+stub_get_resume_state (const MonoJitTlsData *jit_tls, gboolean *has_resume_state, MonoInterpFrameHandle *interp_frame, gpointer *handler_ip)
+{
+	*has_resume_state = FALSE;
+}
+
 static gboolean
 stub_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip, gpointer handler_ip_end)
 {
@@ -172,7 +178,7 @@ g_assert_not_reached ();
 }
 
 static void
-stub_data_to_frame_arg (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer data)
+stub_data_to_frame_arg (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gconstpointer data)
 {
 	g_assert_not_reached ();
 }
