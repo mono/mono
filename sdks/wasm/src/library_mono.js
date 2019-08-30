@@ -383,7 +383,7 @@ var MonoSupportLib = {
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
 		debugger;
-	}	
+	}
 };
 
 autoAddDeps(MonoSupportLib, '$MONO')
