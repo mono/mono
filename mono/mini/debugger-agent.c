@@ -4970,7 +4970,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 #if !defined(HOST_ANDROID) && !defined(TARGET_ANDROID)					
 				g_assert (found_sp);				
 #else
-				if (found_sp) //it will not find the next sp if it is a "DynamicMethodNameCounter" from Android.Runtime
+				if (found_sp) //it will not find the sp if it is a method of class Android.Runtime.DynamicMethodNameCounter
 #endif				
 					method = frame->de.method;
 			}
