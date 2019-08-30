@@ -5215,7 +5215,7 @@ main_loop:
 
 			memcpy (addr, sp [-1].data.vt, i32);
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-			ip += 4;
+			ip += 5;
 			--sp;
 			MINT_IN_BREAK;
 		}
