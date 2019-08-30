@@ -96,6 +96,7 @@ typedef struct
 	InterpInst *last_ins, *first_ins;
 	int code_size;
 	int *in_offsets;
+	int current_il_offset;
 	StackInfo **stack_state;
 	int *stack_height;
 	int *vt_stack_size;
@@ -294,12 +295,7 @@ interp_new_ins (TransformData *td, guint16 opcode, int len)
 	// Size of data region of instruction is length of instruction minus 1 (the opcode slot)
 	new_inst = mono_mempool_alloc0 (td->mempool, sizeof (InterpInst) + sizeof (guint16) * ((len > 0) ? (len - 1) : 0));
 	new_inst->opcode = opcode;
-	// opcodes from inlined methods don't have il offset associated with them since the offset
-	// stored here is relevant only for the original method
-	if (!td->inlined_method)
-		new_inst->il_offset = td->in_start - td->il_code;
-	else
-		new_inst->il_offset = -1;
+	new_inst->il_offset = td->current_il_offset;
 	return new_inst;
 }
 
@@ -3074,6 +3070,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		g_assert (td->sp >= td->stack);
 		g_assert (td->vt_sp < 0x10000000);
 		in_offset = td->ip - header->code;
+		if (!inlining)
+			td->current_il_offset = in_offset;
 		td->in_start = td->ip;
 		InterpInst *prev_last_ins = td->last_ins;
 
@@ -6139,6 +6137,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	td->sp = td->stack;
 	td->max_stack_height = 0;
 	td->line_numbers = g_array_new (FALSE, TRUE, sizeof (MonoDebugLineNumberEntry));
+	td->current_il_offset = -1;
 
 	generate_code (td, method, header, generic_context, error);
 	goto_if_nok (error, exit);
