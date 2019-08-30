@@ -369,6 +369,7 @@ MONO_API_DATA const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
 MONO_API_DATA gboolean mono_use_llvm;
+MONO_API_DATA gboolean mono_use_fast_math;
 MONO_API_DATA gboolean mono_use_interpreter;
 extern const char* mono_interp_opts_string;
 extern gboolean mono_do_single_method_regression;
@@ -481,7 +482,7 @@ void mini_patch_llvm_jit_callees            (MonoDomain *domain, MonoMethod *met
 gpointer  mono_jit_search_all_backends_for_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method_with_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method     (MonoDomain *domain, MonoMethod *method);
-gpointer  mono_jit_compile_method           (MonoMethod *method, MonoError *error);
+gpointer  mono_jit_compile_method           (MonoMethod *method, MonoError *error) MONO_LLVM_INTERNAL;
 gpointer  mono_jit_compile_method_jit_only  (MonoMethod *method, MonoError *error);
 
 void      mono_set_bisect_methods          (guint32 opt, const char *method_list_filename);

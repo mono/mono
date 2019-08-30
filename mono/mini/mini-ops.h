@@ -672,7 +672,11 @@ MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
 MINI_OP(OP_LMIN, "long_min", LREG, LREG, LREG)
 MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
 MINI_OP(OP_RMAX,     "rmax", FREG, FREG, FREG)
+MINI_OP(OP_RMIN,     "rmin", FREG, FREG, FREG)
 MINI_OP(OP_RPOW,     "rpow", FREG, FREG, FREG)
+MINI_OP(OP_FMAX,     "fmax", FREG, FREG, FREG)
+MINI_OP(OP_FMIN,     "fmin", FREG, FREG, FREG)
+MINI_OP(OP_FPOW,     "fpow", FREG, FREG, FREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
@@ -711,10 +715,16 @@ MINI_OP(OP_TAN,     "tan", FREG, FREG, NONE)
 MINI_OP(OP_ATAN,    "atan", FREG, FREG, NONE)
 MINI_OP(OP_SQRT,    "sqrt", FREG, FREG, NONE)
 MINI_OP(OP_ROUND,   "round", FREG, FREG, NONE)
+MINI_OP(OP_CEIL,    "ceil", FREG, FREG, NONE)
+MINI_OP(OP_FLOOR,   "floor", FREG, FREG, NONE)
+MINI_OP3(OP_FMA,     "fma", FREG, FREG, FREG, FREG)
 MINI_OP(OP_SINF,     "sinf", FREG, FREG, NONE)
 MINI_OP(OP_COSF,     "cosf", FREG, FREG, NONE)
 MINI_OP(OP_ABSF,     "absf", FREG, FREG, NONE)
 MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
+MINI_OP(OP_CEILF,    "ceilf", FREG, FREG, NONE)
+MINI_OP(OP_FLOORF,   "floorf", FREG, FREG, NONE)
+MINI_OP3(OP_FMAF,     "fmaf", FREG, FREG, FREG, FREG)
 
 /* Operations that can be computed at constants at JIT time  */
 MINI_OP(OP_ACOS,     "acos", FREG, FREG, NONE)
@@ -1354,3 +1364,28 @@ MINI_OP(OP_GET_LAST_ERROR, "get_last_error", IREG, NONE, NONE)
  * should be enough to locate arguments and variables.
  */
 MINI_OP(OP_FILL_PROF_CALL_CTX, "fill_prof_call_ctx", NONE, IREG, NONE)
+
+/* LLVM only, compare 2 vectors for equality, set dreg to 1/0 */
+MINI_OP(OP_XEQUAL, "xequal", IREG, XREG, XREG)
+/* Per element compate, inst_c0 contains a CompRelation */
+MINI_OP(OP_XCOMPARE, "xcompare", XREG, XREG, XREG)
+MINI_OP(OP_XCOMPARE_FP, "xcompare_fp", XREG, XREG, XREG)
+/* Binary op, inst_c0 contains the operation */
+MINI_OP(OP_XBINOP, "xbinop", XREG, XREG, XREG)
+MINI_OP(OP_XCAST, "xcast", XREG, XREG, NONE)
+
+MINI_OP(OP_LZCNT32, "lzcnt32", IREG, IREG, NONE)
+MINI_OP(OP_LZCNT64, "lzcnt64", LREG, LREG, NONE)
+MINI_OP(OP_POPCNT32, "popcnt32", IREG, IREG, NONE)
+MINI_OP(OP_POPCNT64, "popcnt64", LREG, LREG, NONE)
+
+/* Count trailing zeroes, return 32/64 if the input is 0 */
+MINI_OP(OP_CTTZ32, "cttz32", IREG, IREG, NONE)
+MINI_OP(OP_CTTZ64, "cttz64", LREG, LREG, NONE)
+/* Intel BMI2 PEXT */
+MINI_OP(OP_PEXT32, "pext32", IREG, IREG, IREG)
+MINI_OP(OP_PEXT64, "pext64", LREG, LREG, LREG)
+/* Intel BMI2 PDEP */
+MINI_OP(OP_PDEP32, "pdep32", IREG, IREG, IREG)
+MINI_OP(OP_PDEP64, "pdep64", LREG, LREG, LREG)
+

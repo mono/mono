@@ -1857,7 +1857,7 @@ try_load_from (MonoAssembly **assembly,
 	gchar *fullpath;
 
 	*assembly = NULL;
-	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
+	fullpath = g_build_filename (path1, path2, path3, path4, (const char*)NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
 		*assembly = mono_assembly_request_open (fullpath, req, NULL);
 
@@ -1880,7 +1880,7 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
 		local_culture = culture;
 	}
 
-	filename =  g_strconcat (name, ".dll", NULL);
+	filename =  g_strconcat (name, ".dll", (const char*)NULL);
 	len = strlen (filename);
 
 	for (path = search_path; *path; path++) {
@@ -1980,14 +1980,20 @@ usage (void)
 }
 
 static void
-thread_state_init (MonoThreadUnwindState *ctx)
+monodis_thread_state_init (MonoThreadUnwindState *ctx)
 {
 }
+
+#define monodis_setup_async_callback          NULL
+#define monodis_thread_state_init_from_sigctx NULL
+#define monodis_thread_state_init_from_handle NULL
 
 int
 main (int argc, char *argv [])
 {
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_INIT_CALLBACK, monodis)
+	};
 
 	GList *input_files = NULL, *l;
 	int i, j;
@@ -2042,8 +2048,6 @@ main (int argc, char *argv [])
 	CHECKED_MONO_INIT ();
 	mono_counters_init ();
 	mono_tls_init_runtime_keys ();
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.thread_state_init = thread_state_init;
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif

@@ -27,10 +27,8 @@ namespace System.Runtime.Loader
 		{
 		}
 
-		static IntPtr InternalLoadUnmanagedDllFromPath (string unmanagedDllPath)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static IntPtr InternalLoadUnmanagedDllFromPath (string unmanagedDllPath);
 
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		Assembly InternalLoadFromPath (string assemblyPath, string nativeImagePath)
@@ -49,7 +47,7 @@ namespace System.Runtime.Loader
 				fixed (byte* ptrAssembly = arrAssembly, ptrSymbols = arrSymbols)
 				{
 					return InternalLoadFromStream (NativeALC, new IntPtr (ptrAssembly), arrAssembly.Length,
-								       new IntPtr (ptrSymbols), symbolsLength);
+									   new IntPtr (ptrSymbols), symbolsLength);
 				}
 			}
 		}
@@ -134,5 +132,16 @@ namespace System.Runtime.Loader
 		{
 			return ResolveSatelliteAssembly (gchALC, new AssemblyName (assemblyName));
 		}
+
+#region Copied from AssemblyLoadContext.CoreCLR.cs, modified until our AssemblyBuilder implementation is functional
+		private static RuntimeAssembly? GetRuntimeAssembly(Assembly? asm)
+		{
+			return
+				asm == null ? null :
+				asm is RuntimeAssembly rtAssembly ? rtAssembly :
+				//asm is System.Reflection.Emit.AssemblyBuilder ab ? ab.InternalAssembly :
+				null;
+		}
+#endregion
 	}
 }

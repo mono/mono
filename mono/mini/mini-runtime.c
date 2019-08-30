@@ -125,6 +125,8 @@ int mini_verbose = 0;
  */
 gboolean mono_use_llvm = FALSE;
 
+gboolean mono_use_fast_math = FALSE;
+
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
 
@@ -1264,6 +1266,7 @@ mono_patch_info_hash (gconstpointer data)
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
 		g_assert_not_reached ();
+	case MONO_PATCH_INFO_NONE:
 		return 0;
 	}
 }
@@ -1331,6 +1334,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig);
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+	case MONO_PATCH_INFO_NONE:
 		return 1;
 	}
 
@@ -2892,10 +2896,8 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	MonoMethodSignature *sig = info->sig;
 	MonoDomain *domain = mono_domain_get ();
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
-	gpointer *args;
 	gpointer retval_ptr;
 	guint8 retval [256];
-	gpointer *param_refs;
 	int i, pindex;
 
 	error_init (error);
@@ -2910,8 +2912,10 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	 * This code also handles invocation of gsharedvt methods directly, no
 	 * out wrappers are used in that case.
 	 */
-	args = (void **)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
-	param_refs = (gpointer*)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
+	// allocate param_refs = param_count and args = param_count + hasthis + 2.
+	int const param_count = sig->param_count;
+	gpointer* const param_refs = g_newa (gpointer, param_count * 2 + sig->hasthis + 2);
+	gpointer* const args = param_refs + param_count;
 	pindex = 0;
 	/*
 	 * The runtime invoke wrappers expects pointers to primitive types, so have to
@@ -2920,7 +2924,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	if (sig->hasthis)
 		args [pindex ++] = &obj;
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		retval_ptr = (gpointer)&retval;
+		retval_ptr = &retval;
 		args [pindex ++] = &retval_ptr;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
@@ -4073,8 +4077,12 @@ mini_init (const char *filename, const char *runtime_version)
 {
 	ERROR_DECL (error);
 	MonoDomain *domain;
+
 	MonoRuntimeCallbacks callbacks;
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
+
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_INIT_CALLBACK, mono)
+	};
 
 	MONO_VES_INIT_BEGIN ();
 
@@ -4167,12 +4175,6 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 	mono_install_callbacks (&callbacks);
-
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.setup_async_callback = mono_setup_async_callback;
-	ticallbacks.thread_state_init_from_sigctx = mono_thread_state_init_from_sigctx;
-	ticallbacks.thread_state_init_from_handle = mono_thread_state_init_from_handle;
-	ticallbacks.thread_state_init = mono_thread_state_init;
 
 #ifndef HOST_WIN32
 	mono_w32handle_init ();

@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=2cfaeda3-94a9-44e5-8fcb-51979a3398c9
+MONO_CORLIB_VERSION=90c44d62-c1dd-4a52-bf0e-ac282fcc8be8
 
 #
 # Put a quoted #define in config.h.
@@ -1361,7 +1361,6 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_com='yes'
    mono_feature_disable_gac='yes'
    mono_feature_disable_perfcounters='yes'
-   mono_feature_disable_sockets='yes'
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then

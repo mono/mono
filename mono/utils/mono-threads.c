@@ -64,7 +64,7 @@ static MonoSemType global_suspend_semaphore;
 
 static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
-static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
+const MonoThreadInfoRuntimeCallbacks *mono_runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, thread_exited_key;
 #ifdef MONO_KEYWORD_THREAD
 static MONO_KEYWORD_THREAD gint32 tls_small_id = -1;
@@ -462,7 +462,6 @@ register_thread (MonoThreadInfo *info)
 	g_assert (stsize);
 	info->stack_start_limit = staddr;
 	info->stack_end = staddr + stsize;
-
 	info->stackdata = g_byte_array_new ();
 
 	info->internal_thread_gchandle = G_MAXUINT32;
@@ -470,6 +469,7 @@ register_thread (MonoThreadInfo *info)
 	info->profiler_signal_ack = 1;
 
 #ifdef USE_WINDOWS_BACKEND
+	info->windows_tib = (PNT_TIB)NtCurrentTeb ();
 	info->win32_apc_info = 0;
 	info->win32_apc_info_io_handle = INVALID_HANDLE_VALUE;
 #endif
@@ -957,15 +957,9 @@ mono_thread_info_signals_init (void)
 }
 
 void
-mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks)
+mono_thread_info_runtime_init (const MonoThreadInfoRuntimeCallbacks *callbacks)
 {
-	runtime_callbacks = *callbacks;
-}
-
-MonoThreadInfoRuntimeCallbacks *
-mono_threads_get_runtime_callbacks (void)
-{
-	return &runtime_callbacks;
+	mono_runtime_callbacks = callbacks;
 }
 
 static gboolean

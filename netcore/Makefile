@@ -89,6 +89,10 @@ run-sample: prepare
 	$(DOTNET) build sample/HelloWorld
 	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 
+run-sample-dbg: prepare
+	$(DOTNET) build sample/HelloWorld
+	MONO_ENV_OPTIONS="--debug --debugger-agent=transport=dt_socket,address=127.0.0.1:1235,server=y,suspend=y" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+
 run-sample-coreclr:
 	cd sample/HelloWorld && $(DOTNET) run
 
@@ -105,12 +109,31 @@ patch-local-dotnet: prepare
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 
+# Precompile BCL libs in $(DOTNET) using LLVM (requires `--enable-llvm` build)
+patch-local-dotnet-aot-llvm: patch-local-dotnet
+	for assembly in ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
+		echo "[AOT] $$assembly"; \
+		PATH="../llvm/usr/bin/:$(PATH)" \
+		MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+		$(DOTNET) $$assembly ; \
+	done; \
+
+# run HelloWorld using --aot=llvm (requires `--enable-llvm` build)
+run-sample-local-dotnet-llvm: patch-local-dotnet
+	$(DOTNET) build -c Release sample/HelloWorld
+	PATH="../llvm/usr/bin/:$(PATH)" \
+	MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
+
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
 System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in config.make
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
+
+CORLIB_BUILD_FLAGS?=-c Release
 
 bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
 	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
@@ -161,15 +184,28 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 # Running individual test: MONO_ENV_OPTIONS="--debug" make run-tests-corefx-System.Collections.Tests
 #
 
-run-tests-corefx: update-tests-corefx
+run-tests-corefx: prepare update-tests-corefx
+	@rm -f .failures; \
+	counter=0; \
+	tests_count=$(words $(dir $(wildcard corefx/tests/extracted/*/))); \
 	for testdir in corefx/tests/extracted/*; do \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}) || true; \
+		counter=$$((counter+1)); \
+		testname=$$(basename $$testdir); \
+		if [ -n "$$USE_TIMEOUT" ]; then timeoutcmd="../scripts/ci/run-step.sh --label=$$testname --timeout=10m --fatal"; fi; \
+		$$timeoutcmd $(MAKE) run-tests-corefx-$$testname TEST_COUNTER="($$counter / $$tests_count) " || echo $$testname >> .failures; \
 	done; \
-	$(MAKE) xunit-summary
+	$(MAKE) xunit-summary; \
+	if [ -e ".failures" ]; then \
+		echo ""; \
+		echo "Failures in test suites:"; \
+		cat .failures; \
+		echo ""; \
+ 		exit 1; \
+	fi
 
 run-tests-corefx-%: prepare update-tests-corefx
 	@echo ""
-	@echo "***************** $* *********************"
+	@echo "***************** $* $${TEST_COUNTER}*********************"
 	@cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
 	@cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.deps.json
 	@cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/$*.runtimeconfig.dev.json

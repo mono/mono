@@ -16,6 +16,8 @@
 #include "llvm-c/Core.h"
 #include "llvm-c/ExecutionEngine.h"
 
+#include "mini.h"
+
 #ifdef HAVE_UNWIND_H
 #include <unwind.h>
 #endif
@@ -36,7 +38,7 @@ typedef void (ExceptionTableCb) (void *data);
 typedef void* MonoEERef;
 
 MonoEERef
-mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee);
+mono_llvm_create_ee (AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee);
 
 void
 mono_llvm_dispose_ee (MonoEERef *mono_ee);
@@ -46,6 +48,9 @@ mono_llvm_compile_method (MonoEERef mono_ee, LLVMValueRef method, int nvars, LLV
 
 void
 mono_llvm_set_unhandled_exception_handler (void);
+
+MonoCPUFeatures
+mono_llvm_get_cpu_features (void);
 
 G_END_DECLS
 

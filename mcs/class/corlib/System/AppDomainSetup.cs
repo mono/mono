@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -142,9 +143,8 @@ namespace System
 			if (appBase == null)
 				return null;
 
-			int len = appBase.Length;
-			if (len >= 8 && appBase.ToLower ().StartsWith ("file://")) {
-				appBase = appBase.Substring (7);
+			if (appBase.StartsWith ("file://", StringComparison.OrdinalIgnoreCase)) {
+				appBase = new Mono.Security.Uri (appBase).LocalPath;
 				if (Path.DirectorySeparatorChar != '/')
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
 			}

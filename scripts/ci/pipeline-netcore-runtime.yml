@@ -31,13 +31,13 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: false
       variables:
-        - _BuildConfig: Debug  # we only do Debug builds of csproj in netcore/ and this needs to match for arcade to find logs
+        - _BuildConfig: Release
       jobs:
 
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -62,72 +62,51 @@ stages:
             sudo apt update
             sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
           displayName: 'Prepare Linux dependencies'
-          condition: eq(variables['prepareDependencies'], 'true')
+          condition: and(succeeded(), eq(variables['prepareDependencies'], 'true'))
 
         - bash: |
             sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
             cd netcore
-            ./build.sh
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore update-tests-corefx
-          displayName: 'Download CoreFX Tests'
-          condition: eq(variables['System.TeamProject'], 'public')
-        
-        - bash: |
-            rm -rf .failures
-            counter=0
-            tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
-            for testdir in netcore/corefx/tests/extracted/*; do
-              counter=$((counter+1))
-              printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
-              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
-            done
-          displayName: 'Run CoreFX Tests'
+            make -C netcore run-tests-corefx USE_TIMEOUT=1
+          displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
             testRunTitle: $(poolname)
             testResultsFormat: 'XUnit'
             testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
 
-        - bash: |
-            make -C netcore xunit-summary
-            if [ -e ".failures" ]; then
-              printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
-              exit 1
-            fi
-          displayName: 'Validate test results'
-          timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
-
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
+        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
       ############ MACOS BUILD ############
       - job: Build_macOS
         displayName: macOS
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -140,7 +119,7 @@ stages:
             git clean -ffdx
             git reset --hard HEAD
           displayName: 'Clean up working directory'
-        - bash: |  
+        - bash: |
             brew install autoconf automake libtool gnu-sed
           displayName: 'Prepare macOS dependencies'
 
@@ -149,65 +128,44 @@ stages:
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
             cd netcore
-            ./build.sh
+            ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
 
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore update-tests-corefx
-          displayName: 'Download CoreFX Tests'
-          condition: eq(variables['System.TeamProject'], 'public')
-        
-        - bash: |
-            rm -rf .failures
-            counter=0
-            tests_count=$(ls -1 netcore/corefx/tests/extracted | wc -l)
-            for testdir in netcore/corefx/tests/extracted/*; do
-              counter=$((counter+1))
-              printf "\nProcessing ($counter / $tests_count) $(basename $testdir)\n";
-              scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m --fatal make -C netcore run-tests-corefx-$(basename $testdir) || echo $(basename $testdir) >> .failures;
-            done
-          displayName: 'Run CoreFX Tests'
+            make -C netcore run-tests-corefx USE_TIMEOUT=1
+          displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
             testRunTitle: $(poolname)
             testResultsFormat: 'XUnit'
             testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
-          condition: eq(variables['System.TeamProject'], 'public')
+          condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
 
-        - bash: |
-            make -C netcore xunit-summary
-            if [ -e ".failures" ]; then
-              printf "\n\nFailures in $(<.failures)\nSee 'Run CoreFX tests' logs if Test View shows 0 failures.\n\n";
-              exit 1
-            fi
-          displayName: 'Validate test results'
-          timeoutInMinutes: 90
-          condition: eq(variables['System.TeamProject'], 'public')
-
-        - script: ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
+        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
           displayName: Restore blob feed tasks
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
       ############ WINDOWS BUILD ############
       - job: Build_Windows
         displayName: Windows
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         strategy:
           matrix:
             x64:
@@ -220,7 +178,7 @@ stages:
             git clean -ffdx
             git reset --hard HEAD
           displayName: 'Clean up working directory'
-        
+
         - script: |
             choco install msys2 --params="/InstallDir:%CD:~0,2%\msys64 /NoUpdate /NoPath"
             %CD:~0,2%\msys64\usr\bin\pacman --noconfirm -Syyuu
@@ -237,26 +195,27 @@ stages:
           env:
             dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
           displayName: 'Rewrite .gitmodules'
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - script: |
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
             CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
-            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
+            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl CORLIB_BUILD_FLAGS='-c $(_BuildConfig)'"
             MKDIR mono\mini\.libs\
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
+            MKDIR artifacts\log\$(_BuildConfig)\
           displayName: 'Build (MSBuild and Make)'
           env:
             CHERE_INVOKING: yes
 
-        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
+        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -c $(_BuildConfig) -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
           displayName: Restore blob feed tasks
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - powershell: eng\common\msbuild.ps1 -ci $(Build.SourcesDirectory)\eng\publishwitharcade.proj /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
+        - powershell: eng\common\msbuild.ps1 -ci $(Build.SourcesDirectory)\eng\publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
           displayName: Publish packages to blob feed
-          condition: and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
 
 # - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:

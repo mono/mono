@@ -5044,7 +5044,7 @@ replace_shadow_path (MonoDomain *domain, gchar *dirname, gchar **filename)
 
 	/* Check for shadow-copied assembly */
 	if (mono_is_shadow_copy_enabled (domain, dirname)) {
-		shadow_ini_file = g_build_filename (dirname, "__AssemblyInfo__.ini", NULL);
+		shadow_ini_file = g_build_filename (dirname, "__AssemblyInfo__.ini", (const char*)NULL);
 		content = NULL;
 		if (!g_file_get_contents (shadow_ini_file, &content, &len, NULL) ||
 			!g_file_test (content, G_FILE_TEST_IS_REGULAR)) {
@@ -5074,7 +5074,7 @@ ves_icall_System_Reflection_RuntimeAssembly_get_code_base (MonoReflectionAssembl
 		absolute = g_strdup (mass->image->name);
 		dirname = g_path_get_dirname (absolute);
 	} else {
-		absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
+		absolute = g_build_filename (mass->basedir, mass->image->name, (const char*)NULL);
 		dirname = g_strdup (mass->basedir);
 	}
 
@@ -5088,7 +5088,7 @@ ves_icall_System_Reflection_RuntimeAssembly_get_code_base (MonoReflectionAssembl
 		uri = g_filename_to_uri (absolute, NULL, NULL);
 	} else {
 		const gchar *prepend = mono_icall_get_file_path_prefix (absolute);
-		uri = g_strconcat (prepend, absolute, NULL);
+		uri = g_strconcat (prepend, absolute, (const char*)NULL);
 	}
 
 	g_free (absolute);
@@ -5138,7 +5138,8 @@ ves_icall_System_Reflection_RuntimeAssembly_get_location (MonoReflectionAssembly
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refassembly);
 	MonoAssembly *assembly = MONO_HANDLE_GETVAL (refassembly, assembly);
-	return mono_string_new_handle (domain, mono_image_get_filename (assembly->image), error);
+	const char *image_name = m_image_get_filename (assembly->image);
+	return mono_string_new_handle (domain, image_name != NULL ? image_name : "", error);
 }
 
 MonoBoolean
@@ -5296,9 +5297,9 @@ g_concat_dir_and_file (const char *dir, const char *file)
 	 * to add one so we get a proper path to the file
 	 */
 	if (dir [strlen(dir) - 1] != G_DIR_SEPARATOR)
-		return g_strconcat (dir, G_DIR_SEPARATOR_S, file, NULL);
+		return g_strconcat (dir, G_DIR_SEPARATOR_S, file, (const char*)NULL);
 	else
-		return g_strconcat (dir, file, NULL);
+		return g_strconcat (dir, file, (const char*)NULL);
 }
 
 void *
@@ -5870,7 +5871,7 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 
 		const gchar *prepend = mono_icall_get_file_path_prefix (codebase);
 
-		result = g_strconcat (prepend, codebase, NULL);
+		result = g_strconcat (prepend, codebase, (const char*)NULL);
 		g_free (codebase);
 		codebase = result;
 	}
@@ -6382,7 +6383,7 @@ void
 ves_icall_Mono_Runtime_EnableCrashReportingLog (const char *directory, MonoError *error)
 {
 #ifndef DISABLE_CRASH_REPORTING
-	mono_threads_summarize_init (directory);
+	mono_summarize_set_timeline_dir (directory);
 #endif
 }
 
@@ -7995,7 +7996,7 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError 
 	if (!mono_cfg_dir)
 		return mono_string_new_handle (mono_domain_get (), "", error);
 
-	path = g_build_path (G_DIR_SEPARATOR_S, mono_cfg_dir, "mono", mono_get_runtime_info ()->framework_version, "machine.config", NULL);
+	path = g_build_path (G_DIR_SEPARATOR_S, mono_cfg_dir, "mono", mono_get_runtime_info ()->framework_version, "machine.config", (const char*)NULL);
 
 	mono_icall_make_platform_path (path);
 
@@ -8322,7 +8323,6 @@ ves_icall_System_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 void
 ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, MonoObjectHandle target, MonoArrayHandle fields, MonoReflectionTypeHandle last_field, MonoError *error)
 {
-	MonoClass *klass;
 	MonoType *ftype = NULL;
 	int i;
 
@@ -8330,7 +8330,7 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 
 	g_assert (mono_array_handle_length (fields) > 0);
 
-	klass = mono_handle_class (target);
+	(void)mono_handle_class (target);
 
 	int offset = 0;
 	for (i = 0; i < mono_array_handle_length (fields); ++i) {
@@ -8343,7 +8343,7 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 			offset = f->offset;
 		else
 			offset += f->offset - sizeof (MonoObject);
-		klass = mono_class_from_mono_type_internal (f->type);
+		(void)mono_class_from_mono_type_internal (f->type);
 		ftype = f->type;
 	}
 

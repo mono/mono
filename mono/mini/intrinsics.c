@@ -119,17 +119,26 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			opcode = OP_ABSF;
 		else if (!strcmp (cmethod->name, "Sqrt"))
 			opcode = OP_SQRTF;
-		else if (!strcmp (cmethod->name, "Max"))
-			opcode = OP_RMAX;
+		else if (!strcmp (cmethod->name, "Floor"))
+			opcode = OP_FLOORF;
+		else if (!strcmp (cmethod->name, "Ceiling"))
+			opcode = OP_CEILF;
+		else if (!strcmp (cmethod->name, "FusedMultiplyAdd"))
+			opcode = OP_FMAF;
 		else if (!strcmp (cmethod->name, "Pow"))
 			opcode = OP_RPOW;
-		if (opcode) {
+		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
-			if (fsig->param_count == 2)
+			if (fsig->param_count > 1) { // POW
 				ins->sreg2 = args [1]->dreg;
+			}
+			if (fsig->param_count > 2) { // FMA
+				ins->sreg3 = args [2]->dreg;
+			}
+			g_assert (fsig->param_count <= 3);
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}
@@ -141,15 +150,42 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			opcode = OP_COS;
 		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
 			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Floor") == 0) {
+			opcode = OP_FLOOR;
+		} else if (strcmp (cmethod->name, "Ceiling") == 0) {
+			opcode = OP_CEIL;
+		} else if (strcmp (cmethod->name, "FusedMultiplyAdd") == 0) {
+			opcode = OP_FMA;
 		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_ABS;
 		}
+		// Max and Min can only be optimized in fast math mode
+		else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_FMAX; 
+		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_FMIN;
+		}
+		// Math.Max/Min also have float overloads (MathF.Max/Min just redirect to them)
+		else if (strcmp (cmethod->name, "Max") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
+			opcode = OP_RMAX; 
+		} else if (strcmp (cmethod->name, "Min") == 0 && mono_use_fast_math && fsig->params [0]->type == MONO_TYPE_R4) {
+			opcode = OP_RMIN;
+		} else if (strcmp (cmethod->name, "Pow") == 0) {
+			opcode = OP_FPOW;
+		}
 
-		if (opcode && fsig->param_count == 1) {
+		if (opcode && fsig->param_count > 0) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
+			if (fsig->param_count > 1) { // POW, MIN, MAX
+				ins->sreg2 = args [1]->dreg;
+			}
+			if (fsig->param_count > 2) { // FMA
+				ins->sreg3 = args [2]->dreg;
+			}
+			g_assert (fsig->param_count <= 3);
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 
@@ -1689,6 +1725,15 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 	}
 
+	/* Workaround for the compiler server IsMemoryAvailable. */
+	if (!strcmp ("Microsoft.CodeAnalysis.CompilerServer", cmethod_klass_name_space) && !strcmp ("MemoryHelper", cmethod_klass_name)) {
+		if (!strcmp (cmethod->name, "IsMemoryAvailable")) {
+			EMIT_NEW_ICONST (cfg, ins, 1);
+			ins->type = STACK_I4;
+			return ins;
+		}
+	}
+
 #ifdef ENABLE_NETCORE
 	// Return false for IsSupported for all types in System.Runtime.Intrinsics.X86 
 	// as we don't support them now
@@ -1865,7 +1910,13 @@ mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
 		is_le = (TARGET_BYTE_ORDER == G_LITTLE_ENDIAN);
 		EMIT_NEW_ICONST (cfg, ins, is_le);
 		return ins;
+	} 
+#ifdef ENABLE_NETCORE
+	else if ((klass == mono_defaults.int_class || klass == mono_defaults.uint_class) && strcmp (field->name, "Zero") == 0) {
+		EMIT_NEW_PCONST (cfg, ins, 0);
+		return ins;
 	}
+#endif
 	return NULL;
 }
 #else

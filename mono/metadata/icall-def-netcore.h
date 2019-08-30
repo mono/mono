@@ -194,7 +194,7 @@ HANDLES(MCATTR_2, "GetCustomAttributesInternal", ves_icall_MonoCustomAttrs_GetCu
 HANDLES(MCATTR_3, "IsDefinedInternal", ves_icall_MonoCustomAttrs_IsDefinedInternal, MonoBoolean, 2, (MonoObject, MonoReflectionType))
 
 ICALL_TYPE(CATTR_DATA, "System.Reflection.CustomAttributeData", CATTR_DATA_1)
-ICALL(CATTR_DATA_1, "ResolveArgumentsInternal", ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal)
+HANDLES(CATTR_DATA_1, "ResolveArgumentsInternal", ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal, void, 6, (MonoReflectionMethod, MonoReflectionAssembly, gpointer, guint32, MonoArrayOut, MonoArrayOut))
 
 ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_1)
 HANDLES(ASSEMB_1, "UpdateNativeCustomAttributes", ves_icall_AssemblyBuilder_UpdateNativeCustomAttributes, void, 1, (MonoReflectionAssemblyBuilder))
@@ -375,6 +375,7 @@ HANDLES(ALC_4, "InternalGetLoadedAssemblies", ves_icall_System_Runtime_Loader_As
 HANDLES(ALC_2, "InternalInitializeNativeALC", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalInitializeNativeALC, gpointer, 3, (gpointer, MonoBoolean, MonoBoolean))
 HANDLES(ALC_1, "InternalLoadFile", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFile, MonoReflectionAssembly, 3, (gpointer, MonoString, MonoStackCrawlMark_ptr))
 HANDLES(ALC_3, "InternalLoadFromStream", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFromStream, MonoReflectionAssembly, 5, (gpointer, gpointer, gint32, gpointer, gint32))
+HANDLES(ALC_6, "InternalLoadUnmanagedDllFromPath", ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadUnmanagedDllFromPath, gpointer, 1, (MonoString))
 
 ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
 NOHANDLES(ICALL(RUNIMPORT_1, "RhBulkMoveWithWriteBarrier", ves_icall_System_Runtime_RuntimeImports_RhBulkMoveWithWriteBarrier))
@@ -480,14 +481,15 @@ NOHANDLES(ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlo
 NOHANDLES(ICALL(ILOCK_22, "MemoryBarrierProcessWide", ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide))
 NOHANDLES(ICALL(ILOCK_23, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long))
 
-ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_8)
-ICALL(MONIT_8, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter)
+ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_0)
+ICALL(MONIT_0, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter)
 ICALL(MONIT_1, "Exit", mono_monitor_exit_internal)
 ICALL(MONIT_2, "Monitor_pulse", ves_icall_System_Threading_Monitor_Monitor_pulse)
 ICALL(MONIT_3, "Monitor_pulse_all", ves_icall_System_Threading_Monitor_Monitor_pulse_all)
 ICALL(MONIT_4, "Monitor_test_owner", ves_icall_System_Threading_Monitor_Monitor_test_owner)
 ICALL(MONIT_5, "Monitor_test_synchronised", ves_icall_System_Threading_Monitor_Monitor_test_synchronised)
 ICALL(MONIT_7, "Monitor_wait", ves_icall_System_Threading_Monitor_Monitor_wait)
+NOHANDLES(ICALL(MONIT_8, "get_LockContentionCount", ves_icall_System_Threading_Monitor_Monitor_LockContentionCount))
 ICALL(MONIT_9, "try_enter_with_atomic_var", ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var)
 
 ICALL_TYPE(MUTEX, "System.Threading.Mutex", MUTEX_1)
@@ -509,7 +511,7 @@ HANDLES(THREAD_4, "InitInternal", ves_icall_System_Threading_Thread_InitInternal
 HANDLES(THREAD_5, "InitializeCurrentThread", ves_icall_System_Threading_Thread_GetCurrentThread, MonoThreadObject, 0, ())
 HANDLES(THREAD_6, "InterruptInternal", ves_icall_System_Threading_Thread_Interrupt_internal, void, 1, (MonoThreadObject))
 HANDLES(THREAD_7, "JoinInternal", ves_icall_System_Threading_Thread_Join_internal, MonoBoolean, 2, (MonoThreadObject, int))
-ICALL(THREAD_8, "SetName", ves_icall_System_Threading_Thread_SetName_internal)
+HANDLES(THREAD_8, "SetName_icall", ves_icall_System_Threading_Thread_SetName_icall, void, 3, (MonoInternalThread, const_gunichar2_ptr, gint32))
 HANDLES(THREAD_9, "SetPriority", ves_icall_System_Threading_Thread_SetPriority, void, 2, (MonoThreadObject, int))
 HANDLES(THREAD_10, "SetState", ves_icall_System_Threading_Thread_SetState, void, 2, (MonoInternalThread, guint32))
 HANDLES(THREAD_11, "SleepInternal", ves_icall_System_Threading_Thread_Sleep_internal, void, 1, (gint32))
@@ -519,8 +521,10 @@ NOHANDLES(ICALL(THREAD_14, "YieldInternal", ves_icall_System_Threading_Thread_Yi
 
 ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_2)
 HANDLES(THREADP_2, "GetAvailableThreadsNative", ves_icall_System_Threading_ThreadPool_GetAvailableThreadsNative, void, 2, (gint32_ref, gint32_ref))
+HANDLES(THREADP_2a, "GetCompletedWorkItemCount", ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount, gint64, 0, ())
 HANDLES(THREADP_3, "GetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative, void, 2, (gint32_ref, gint32_ref))
 HANDLES(THREADP_4, "GetMinThreadsNative", ves_icall_System_Threading_ThreadPool_GetMinThreadsNative, void, 2, (gint32_ref, gint32_ref))
+HANDLES(THREADP_4a, "GetThreadCount", ves_icall_System_Threading_ThreadPool_GetThreadCount, gint32, 0, ())
 HANDLES(THREADP_5, "InitializeVMTp", ves_icall_System_Threading_ThreadPool_InitializeVMTp, void, 1, (MonoBoolean_ref))
 HANDLES(THREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_ThreadPool_NotifyWorkItemComplete, MonoBoolean, 0, ())
 HANDLES(THREADP_8, "NotifyWorkItemProgressNative", ves_icall_System_Threading_ThreadPool_NotifyWorkItemProgressNative, void, 0, ())

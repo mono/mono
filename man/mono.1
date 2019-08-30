@@ -246,6 +246,9 @@ program that comes with Mono, and calling it like this:
 
 .fi
 .TP
+.I mcpu=[native o generic]
+cpu=native allows AOT mode to use all instructions current CPU supports, e.g. AVX2, SSE42, etc.
+Default value is 'generic'.
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
@@ -554,6 +557,10 @@ in all configurations), Mono will use the LLVM optimization and code
 generation engine to JIT or AOT compile.     
 .Sp
 For more information, consult: http://www.mono-project.com/docs/advanced/mono-llvm/
+.TP
+\fB--ffast-math\fR
+This flag allows Mono and LLVM to apply aggressive floating point optimizations.
+Can break IEEE754 compliance.
 .TP
 \fB--nollvm\fR
 When using a Mono that has been compiled with LLVM support, it forces
