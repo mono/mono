@@ -319,17 +319,22 @@ interp_add_ins (TransformData *td, guint16 opcode)
 	return interp_add_ins_explicit (td, opcode, mono_interp_oplen [opcode]);
 }
 
-// Inserts a new instruction inside the instruction stream
+// This instruction will have the il_offset of the previous instruction
 static InterpInst*
 interp_insert_ins (TransformData *td, InterpInst *prev_ins, guint16 opcode)
 {
 	InterpInst *new_inst = interp_new_ins (td, opcode, mono_interp_oplen [opcode]);
-	g_assert (prev_ins && prev_ins->next);
+	g_assert (prev_ins);
+	new_inst->il_offset = prev_ins->il_offset;
 
 	new_inst->prev = prev_ins;
 	new_inst->next = prev_ins->next;
 	prev_ins->next = new_inst;
-	new_inst->next->prev = new_inst;
+
+	if (new_inst->next == NULL)
+		td->last_ins = new_inst;
+	else
+		new_inst->next->prev = new_inst;
 
 	return new_inst;
 }
@@ -460,18 +465,14 @@ two_arg_branch(TransformData *td, int mint_op, int offset)
 	int short_op = long_op + MINT_BEQ_I4_S - MINT_BEQ_I4;
 	CHECK_STACK(td, 2);
 	if (type1 == STACK_TYPE_I4 && type2 == STACK_TYPE_I8) {
-		interp_add_ins (td, MINT_CONV_I8_I4);
 		// The il instruction starts with the actual branch, and not with the conversion opcodes
-		td->last_ins->il_offset = -1;
+		interp_insert_ins (td, td->last_ins, MINT_CONV_I8_I4);
 	} else if (type1 == STACK_TYPE_I8 && type2 == STACK_TYPE_I4) {
-		interp_add_ins (td, MINT_CONV_I8_I4_SP);
-		td->last_ins->il_offset = -1;
+		interp_insert_ins (td, td->last_ins, MINT_CONV_I8_I4_SP);
 	} else if (type1 == STACK_TYPE_R4 && type2 == STACK_TYPE_R8) {
-		interp_add_ins (td, MINT_CONV_R8_R4);
-		td->last_ins->il_offset = -1;
+		interp_insert_ins (td, td->last_ins, MINT_CONV_R8_R4);
 	} else if (type1 == STACK_TYPE_R8 && type2 == STACK_TYPE_R4) {
-		interp_add_ins (td, MINT_CONV_R8_R4_SP);
-		td->last_ins->il_offset = -1;
+		interp_insert_ins (td, td->last_ins, MINT_CONV_R8_R4_SP);
 	} else if (type1 != type2) {
 		g_warning("%s.%s: branch type mismatch %d %d", 
 			m_class_get_name (td->method->klass), td->method->name,
