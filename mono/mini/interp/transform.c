@@ -2954,6 +2954,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		td->stack_height [c->handler_offset] = 0;
 		td->vt_stack_size [c->handler_offset] = 0;
 		td->is_bb_start [c->handler_offset] = 1;
+		td->is_bb_start [c->try_offset] = 1;
 
 		td->stack_height [c->handler_offset] = 1;
 		td->stack_state [c->handler_offset] = (StackInfo*)g_malloc0(sizeof(StackInfo));
@@ -5362,6 +5363,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			td->sp = td->stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			td->last_ins->data [0] = td->clause_indexes [in_offset];
+			// next instructions are always part of new bb
+			td->is_bb_start [td->ip - header->code] = 1;
 			break;
 		}
 		case CEE_LEAVE:
