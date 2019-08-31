@@ -10,8 +10,6 @@
 // We need to override some stuff in LLVM, but this cannot be done using the C
 // interface, so we have to use some C++ code here.
 // The things which we override are:
-// - the default JIT code manager used by LLVM doesn't allocate memory using
-//   MAP_32BIT, we require it.
 // - add some callbacks so we can obtain the size of methods and their exception
 //   tables.
 //

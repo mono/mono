@@ -415,12 +415,6 @@ mono_arch_cpu_init (void)
 }
 
 void
-mono_arch_finish_init (void)
-{
-	// printf ("mono_arch_finish_init\n");
-}
-
-void
 mono_arch_init (void)
 {
 	// printf ("mono_arch_init\n");

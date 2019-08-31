@@ -36,11 +36,6 @@ mono_arch_init (void)
 }
 
 void
-mono_arch_finish_init (void)
-{
-}
-
-void
 mono_arch_register_lowlevel_calls (void)
 {
 }

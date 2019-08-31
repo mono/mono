@@ -63,12 +63,6 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
 #define MAX_WASTAGE 32
 #define MIN_BSIZE 32
 
-#ifdef __x86_64__
-#define ARCH_MAP_FLAGS MONO_MMAP_32BIT
-#else
-#define ARCH_MAP_FLAGS 0
-#endif
-
 #define MONO_PROT_RWX (MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC|MONO_MMAP_JIT)
 
 typedef struct _CodeChunk CodeChunk;
@@ -125,9 +119,9 @@ codechunk_valloc (void *preferred, guint32 size)
 		freelist = g_slist_delete_link (freelist, freelist);
 		g_hash_table_insert (valloc_freelists, GUINT_TO_POINTER (size), freelist);
 	} else {
-		ptr = mono_valloc (preferred, size, MONO_PROT_RWX | ARCH_MAP_FLAGS, MONO_MEM_ACCOUNT_CODE);
+		ptr = mono_valloc (preferred, size, MONO_PROT_RWX, MONO_MEM_ACCOUNT_CODE);
 		if (!ptr && preferred)
-			ptr = mono_valloc (NULL, size, MONO_PROT_RWX | ARCH_MAP_FLAGS, MONO_MEM_ACCOUNT_CODE);
+			ptr = mono_valloc (NULL, size, MONO_PROT_RWX, MONO_MEM_ACCOUNT_CODE);
 	}
 	mono_os_mutex_unlock (&valloc_mutex);
 	return ptr;

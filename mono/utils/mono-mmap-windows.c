@@ -164,9 +164,7 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 	if (flags & MONO_MMAP_ANON)
 		mflags |= MAP_ANONYMOUS;
 	if (flags & MONO_MMAP_FIXED)
-		mflags |= MAP_FIXED;
-	if (flags & MONO_MMAP_32BIT)
-		mflags |= MAP_32BIT;*/
+		mflags |= MAP_FIXED;*/
 	int const mflags = (flags & MONO_MMAP_WRITE) ? FILE_MAP_COPY : FILE_MAP_READ;
 	HANDLE const file = (HANDLE)_get_osfhandle (fd);
 	const char *failed_function = NULL;

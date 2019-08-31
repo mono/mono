@@ -269,11 +269,6 @@ mono_arch_register_lowlevel_calls (void)
 {
 }
 
-void
-mono_arch_finish_init (void)
-{
-}
-
 /* The maximum length is 2 instructions */
 static guint8*
 emit_imm (guint8 *code, int dreg, int imm)

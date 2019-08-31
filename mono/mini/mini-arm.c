@@ -6852,11 +6852,6 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 #endif /* #ifndef DISABLE_JIT */
 
-void
-mono_arch_finish_init (void)
-{
-}
-
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
