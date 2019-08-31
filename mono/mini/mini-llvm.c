@@ -5911,9 +5911,9 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #if LLVM_API_VERSION < 900
 			args [argn++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE); // alignment
 #endif
-			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE); // is_volatile
+			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);  // is_volatile
 
-			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn++, "");
+			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn, "");
 			break;
 		}
 		case OP_NOT_REACHED:
@@ -8683,11 +8683,11 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_MEMMOVE: {
 #if LLVM_API_VERSION >= 900
 		/* No alignment argument */
-		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt64Type (), LLVMInt32Type (), LLVMInt1Type () };
-		AddFunc (module, name, LLVMVoidType (), params, 5);
-#else
 		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt64Type (), LLVMInt1Type () };
 		AddFunc (module, name, LLVMVoidType (), params, 4);
+#else
+		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt64Type (), LLVMInt32Type (), LLVMInt1Type () };
+		AddFunc (module, name, LLVMVoidType (), params, 5);
 #endif
 		break;
 	}
