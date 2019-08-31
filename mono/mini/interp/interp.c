@@ -2381,11 +2381,13 @@ copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, guchar *vt_sp)
 {
 	stackval *first_arg = sp - csig->param_count;
 
+	guchar * const start = vt_sp;
+
 	/*
 	 * We need to have the varargs linearly on the stack so the ArgIterator
-	 * can iterate over them. We copy them one by one on the vtstack and then
-	 * pass the signature last so the callee can find it by going backwards
-	 * from the top of vtstack.
+	 * can iterate over them. We pass the signature first and then copy them
+	 * one by one on the vtstack and then pass the previous vt_sp
+	 * so the start of the parameters is easily found (by get_varargs_pointer).
 	 */
 	*(gpointer*)vt_sp = csig;
 	vt_sp += sizeof (gpointer);
@@ -2399,26 +2401,21 @@ copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, guchar *vt_sp)
 		vt_sp += arg_size;
 	}
 
-	*(gpointer*)vt_sp = csig;
 	vt_sp += sizeof (gpointer);
+	vt_sp = (guchar*)ALIGN_PTR_TO (vt_sp, MINT_VT_ALIGNMENT);
 
-	return (guchar*)ALIGN_PTR_TO (vt_sp, MINT_VT_ALIGNMENT);
+	// Backwards access does not respect alignment in the usual way.
+	g_static_assert (__alignof__ (gpointer) <= MINT_VT_ALIGNMENT);
+
+	((guchar**)vt_sp) [-1] = start;
+
+	return vt_sp;
 }
 
 static MONO_NEVER_INLINE guchar*
 get_varargs_pointer (guchar *vt_sp)
 {
-	vt_sp -= sizeof (gpointer);
-	MonoMethodSignature *csig = *(MonoMethodSignature**)vt_sp;
-
-	for (int i = csig->param_count - 1; i >= csig->sentinelpos; i--) {
-		int align, arg_size;
-		arg_size = mono_type_stack_size (csig->params [i], &align);
-		arg_size = ALIGN_TO (arg_size, align);
-		vt_sp -= arg_size;
-	}
-	vt_sp -= sizeof (gpointer);
-	return vt_sp;
+	return ((guchar**)vt_sp) [-1];
 }
 
 /*
