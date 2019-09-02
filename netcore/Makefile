@@ -87,6 +87,7 @@ run-sample-coreclr:
 # build any app in "self contained" mode and patch coreclr.dll and corelib with mono bits
 # e.g. `make patch-app APP_PATH=/my/aspnetapp`
 patch-app: prepare
+	@if test -z "$(APP_PATH)"; then echo "APP_PATH is not set"; exit 1; fi
 	cp NuGet.config $(APP_PATH)
 	cd $(APP_PATH) && $(DOTNET) publish -c Release -r $(RID) -f netcoreapp3.0
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)	
