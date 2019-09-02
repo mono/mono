@@ -311,6 +311,8 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		return emit_xcompare (cfg, klass, etype, ins, ins);
 	}
 	case SN_get_Item:
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [1]->dreg, len);
 		MONO_EMIT_NEW_COND_EXC (cfg, GE_UN, "IndexOutOfRangeException");
 		int opcode = -1;
@@ -433,7 +435,8 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		if (id == SN_op_Inequality) {
 			int sreg = ins->dreg;
 			int dreg = alloc_ireg (cfg);
-			EMIT_NEW_UNALU (cfg, ins, OP_INOT, dreg, sreg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, sreg, 0);
+			EMIT_NEW_UNALU (cfg, ins, OP_CEQ, dreg, -1);
 		}
 		return ins;
 	case SN_GreaterThan:
@@ -472,6 +475,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		if (!(fsig->param_count == 2 && mono_metadata_type_equal (fsig->ret, type) && mono_metadata_type_equal (fsig->params [0], type) && mono_metadata_type_equal (fsig->params [1], type)))
 			return NULL;
 		ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
+		ins->inst_c1 = etype->type;
 		if (etype->type == MONO_TYPE_R4 || etype->type == MONO_TYPE_R8) {
 			switch (id) {
 			case SN_op_Addition:
@@ -560,6 +564,9 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	int id;
 	gboolean supported, is_64bit;
 	MonoClass *klass = cmethod->klass;
+
+	if (!COMPILE_LLVM (cfg))
+		return NULL;
 
 	class_ns = m_class_get_name_space (klass);
 	class_name = m_class_get_name (klass);
@@ -776,8 +783,6 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	MonoImage *image = m_class_get_image (cmethod->klass);
 
 	if (image != mono_get_corlib ())
-		return NULL;
-	if (!COMPILE_LLVM (cfg))
 		return NULL;
 	// FIXME:
 	if (cfg->compile_aot)
