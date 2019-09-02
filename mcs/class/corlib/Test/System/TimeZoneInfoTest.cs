@@ -537,7 +537,7 @@ namespace MonoTests.System
 									new TimeSpan (-5, 0, 0), new TimeSpan (-4, 0, 0));
 
 				// US, Kansas City, MO (US Central Time):    Jumps ahead at 2:00 AM on 3/8/2020 to 3:00 AM
-				CheckJumpingIntoDST ("America/Chicago"
+				CheckJumpingIntoDST ("America/Chicago",
 									new DateTime (2020, 3, 8, 2, 0, 0), new DateTime (2020, 3, 8, 2, 30, 0), new DateTime (2020, 3, 8, 3, 0, 0),
 									new TimeSpan (-6, 0, 0), new TimeSpan (-5, 0, 0));
 
