@@ -3617,6 +3617,7 @@ ves_icall_InternalInvoke (MonoReflectionMethodHandle method_handle, MonoObjectHa
 	if (!(m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		if (!mono_class_vtable_checked (mono_object_domain (method), m->klass, error)) {
 			mono_error_cleanup (error); /* FIXME does this make sense? */
+			error_init_reuse (error);
 			exception = mono_class_get_exception_for_failure (m->klass);
 			goto return_null;
 		}
