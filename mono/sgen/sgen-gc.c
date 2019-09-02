@@ -1446,10 +1446,12 @@ job_scan_major_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (atv);
 	sgen_major_collector.scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx, job_data->job_index, job_data->job_split_count, job_data->data);
 	SGEN_TV_GETTIME (btv);
-	time_minor_scan_major_blocks += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_major_blocks, elapsed_time);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->major_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
 }
 
 static void
@@ -1463,10 +1465,12 @@ job_scan_los_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (atv);
 	sgen_los_scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx, job_data->job_index, job_data->job_split_count);
 	SGEN_TV_GETTIME (btv);
-	time_minor_scan_los += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, elapsed_time);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->los_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
 }
 
 static void
@@ -1481,10 +1485,12 @@ job_scan_major_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJo
 	SGEN_TV_GETTIME (atv);
 	sgen_major_collector.scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx, job_data->job_index, job_data->job_split_count, job_data->data);
 	SGEN_TV_GETTIME (btv);
-	time_major_scan_mod_union_blocks += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, time_major_scan_mod_union_blocks);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->major_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
 }
 
 static void
@@ -1499,10 +1505,12 @@ job_scan_los_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJob 
 	SGEN_TV_GETTIME (atv);
 	sgen_los_scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx, job_data->job_index, job_data->job_split_count);
 	SGEN_TV_GETTIME (btv);
-	time_major_scan_mod_union_los += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, time_major_scan_mod_union_los);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->los_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
 }
 
 static void
