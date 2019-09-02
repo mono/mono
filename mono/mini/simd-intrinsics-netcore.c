@@ -164,6 +164,32 @@ type_to_expand_op (MonoType *type)
 	}
 }
 
+static int
+type_to_extract_op (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_I1:
+		return OP_EXTRACT_I1;
+	case MONO_TYPE_U1:
+		return OP_EXTRACT_U1;
+	case MONO_TYPE_I2:
+		return OP_EXTRACT_I2;
+	case MONO_TYPE_U2:
+		return OP_EXTRACT_U2;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_R4:
+		return OP_EXTRACT_I4;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_EXTRACT_I8;
+	case MONO_TYPE_R8:
+		return OP_EXTRACT_R8;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
 /*
  * Return a simd vreg for the simd value represented by SRC.
  * SRC is the 'this' argument to methods.
@@ -316,7 +342,10 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		index = args [1]->inst_c0;
 		if (index < 0 || index >= len)
 			return NULL;
-		return NULL;
+		int sreg1 = load_simd_vreg (cfg, cmethod, args [0], NULL);
+		ins = emit_simd_ins (cfg, klass, type_to_extract_op (etype), sreg1, -1);
+		ins->inst_c0 = index;
+		return ins;
 	case SN_ctor:
 		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
 			int dreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
