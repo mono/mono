@@ -43,7 +43,17 @@ namespace System.Globalization
 		static bool nativeGetCalendarData (CalendarData data, string localeName, int calendarId)
 		{
 			// TODO: Convert calendar-id to mono runtime calendar-id when it's used
-			return data.fill_calendar_data (localeName.ToLowerInvariant (), calendarId);
+			if (data.fill_calendar_data (localeName.ToLowerInvariant (), calendarId)) {
+				if ((CalendarId)calendarId == CalendarId.HEBREW) {
+					// HACK: Generate leap month names because the native code does not do it
+					// and tests would fail to round-trip dates on leap years.
+					// https://github.com/mono/mono/issues/16623
+					data.saMonthNames = new[] { "Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Cheshvan", "Kislev", "Tevet", "Shevat", "Adar", "" };
+					data.saLeapYearMonthNames = new[] { "Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Cheshvan", "Kislev", "Tevet", "Shevat", "Adar I", "Adar II" };
+				}
+				return true;
+			}
+			return false;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
