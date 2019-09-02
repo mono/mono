@@ -46,12 +46,17 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/emscripten-pr-8457.diff; exit 0)
 	touch $@
 
+.stamp-wasm-install-tools:
+ifeq ($(UNAME),Darwin)
+	$(shell ./init-tools.sh)
+endif
+
 .PHONY: provision-wasm
 
 ifeq ($(EMSCRIPTEN_SDK_DIR),$(EMSCRIPTEN_LOCAL_SDK_DIR))
-provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
+provision-wasm: .stamp-wasm-install-tools .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
 else
-provision-wasm:
+provision-wasm: .stamp-wasm-install-tools
 endif
 
 WASM_RUNTIME_AC_VARS= \
