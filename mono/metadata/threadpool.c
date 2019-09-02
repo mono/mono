@@ -102,7 +102,7 @@ static ThreadPool threadpool;
 		} while (mono_atomic_cas_i32 (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
 	} while (0)
 
-static inline ThreadPoolCounter
+static ThreadPoolCounter
 COUNTER_READ (void)
 {
 	ThreadPoolCounter counter;
@@ -110,13 +110,13 @@ COUNTER_READ (void)
 	return counter;
 }
 
-static inline void
+static void
 domains_lock (void)
 {
 	mono_coop_mutex_lock (&threadpool.domains_lock);
 }
 
-static inline void
+static void
 domains_unlock (void)
 {
 	mono_coop_mutex_unlock (&threadpool.domains_lock);
@@ -724,6 +724,20 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	mono_refcount_dec (&threadpool);
 	return TRUE;
 }
+
+#ifdef ENABLE_NETCORE
+gint32
+ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_threads_count ();
+}
+
+gint64
+ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_completed_threads_count ();
+}
+#endif
 
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)

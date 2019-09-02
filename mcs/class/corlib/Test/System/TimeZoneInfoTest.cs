@@ -56,11 +56,12 @@ namespace MonoTests.System
 					return "GTB Standard Time";
 				case "Europe/Chisinau":
 					return "E. Europe Standard Time";
-				case "US/Eastern":
+				case "America/New_York":
 					return "Eastern Standard Time";
+				case "America/Chicago":
 				case "US/Central":
 					return "Central Standard Time";
-				case "US/Pacific":
+				case "America/Los_Angeles":
 					return "Pacific Standard Time";
 				case "Australia/Sydney":
 				case "Australia/Melbourne":
@@ -83,7 +84,7 @@ namespace MonoTests.System
 				case "Europe/Oslo":
 				case "Europe/San_Marino":
 					return "W. Europe Standard Time";
-				case "Canada/Eastern":
+				case "America/Toronto":
 					return "Eastern Standard Time";
 				case "Asia/Tehran":
 					return "Iran Standard Time";
@@ -485,22 +486,25 @@ namespace MonoTests.System
 			[Test]
 			public void Bug_9664 ()
 			{
-				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				TimeZoneInfo tzi;
+				try {
+					tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				} catch (TimeZoneNotFoundException e) {
+					Assert.Ignore ("Timezone US/Central not found.");
+					return;
+				}
 				var date = new DateTime (2019, 3, 9, 21, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 2, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 2, 30, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
 
-				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
 				date = new DateTime (2019, 3, 10, 3, 0, 0);
 				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
@@ -533,7 +537,7 @@ namespace MonoTests.System
 									new TimeSpan (-5, 0, 0), new TimeSpan (-4, 0, 0));
 
 				// US, Kansas City, MO (US Central Time):    Jumps ahead at 2:00 AM on 3/8/2020 to 3:00 AM
-				CheckJumpingIntoDST ("US/Central", // "America/Chicago"
+				CheckJumpingIntoDST ("America/Chicago"
 									new DateTime (2020, 3, 8, 2, 0, 0), new DateTime (2020, 3, 8, 2, 30, 0), new DateTime (2020, 3, 8, 3, 0, 0),
 									new TimeSpan (-6, 0, 0), new TimeSpan (-5, 0, 0));
 
@@ -997,8 +1001,8 @@ namespace MonoTests.System
 			[Test (Description="Fix the bug https://bugzilla.xamarin.com/show_bug.cgi?id=1849")]
 			public void ConvertTime_AjustmentConvertTimeWithSourceTimeZone () {
 				
-				TimeZoneInfo easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Eastern"));
-				TimeZoneInfo pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Pacific"));
+				TimeZoneInfo easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("America/New_York"));
+				TimeZoneInfo pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("America/Los_Angeles"));
 
 				DateTime lastMidnight = new DateTime (new DateTime (2012, 06, 13).Ticks, DateTimeKind.Unspecified);
 				DateTime lastMidnightAsEST = TimeZoneInfo.ConvertTime (lastMidnight, pacificTimeZone, easternTimeZone);
@@ -1275,7 +1279,6 @@ namespace MonoTests.System
 					"Europe/Dublin", // Europe/Dublin has a DST offset of 34 minutes and 39 seconds in 1916.
 					"Europe/Amsterdam",
 					"America/St_Johns",
-					"Canada/Newfoundland",
 					"Europe/Moscow",
 					"Europe/Riga",
 				};

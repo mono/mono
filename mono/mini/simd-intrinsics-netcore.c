@@ -245,6 +245,7 @@ emit_xcompare (MonoCompile *cfg, MonoClass *klass, MonoType *etype, MonoInst *ar
 
 static guint16 vector_t_methods [] = {
 	SN_ctor,
+	SN_CopyTo,
 	SN_Equals,
 	SN_GreaterThan,
 	SN_LessThan,
@@ -323,6 +324,66 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 			ins->dreg = dreg;
 			return ins;
 		}
+		if ((fsig->param_count == 1 || fsig->param_count == 2) && (fsig->params [0]->type == MONO_TYPE_SZARRAY)) {
+			MonoInst *array_ins = args [1];
+			MonoInst *index_ins;
+			MonoInst *ldelema_ins;
+			MonoInst *var;
+			int end_index_reg;
+
+			if (args [0]->opcode != OP_LDADDR)
+				return NULL;
+
+			/* .ctor (T[]) or .ctor (T[], index) */
+
+			if (fsig->param_count == 2) {
+				index_ins = args [2];
+			} else {
+				EMIT_NEW_ICONST (cfg, index_ins, 0);
+			}
+
+			/* Emit index check for the end (index + len - 1 < array length) */
+			end_index_reg = alloc_ireg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_IADD_IMM, end_index_reg, index_ins->dreg, len - 1);
+			MONO_EMIT_BOUNDS_CHECK (cfg, array_ins->dreg, MonoArray, max_length, end_index_reg);
+
+			/* Load the array slice into the simd reg */
+			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
+			g_assert (args [0]->opcode == OP_LDADDR);
+			var = (MonoInst*)args [0]->inst_p0;
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
+			ins->klass = cmethod->klass;
+			return args [0];
+		}
+		break;
+	case SN_CopyTo:
+		if ((fsig->param_count == 1 || fsig->param_count == 2) && (fsig->params [0]->type == MONO_TYPE_SZARRAY)) {
+			MonoInst *array_ins = args [1];
+			MonoInst *index_ins;
+			MonoInst *ldelema_ins;
+			int val_vreg, end_index_reg;
+
+			val_vreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
+
+			/* CopyTo (T[]) or CopyTo (T[], index) */
+
+			if (fsig->param_count == 2) {
+				index_ins = args [2];
+			} else {
+				EMIT_NEW_ICONST (cfg, index_ins, 0);
+			}
+
+			/* Emit index check for the end (index + len - 1 < array length) */
+			end_index_reg = alloc_ireg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_IADD_IMM, end_index_reg, index_ins->dreg, len - 1);
+			MONO_EMIT_BOUNDS_CHECK (cfg, array_ins->dreg, MonoArray, max_length, end_index_reg);
+
+			/* Load the array slice into the simd reg */
+			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
+			EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREX_MEMBASE, ldelema_ins->dreg, 0, val_vreg);
+			ins->klass = cmethod->klass;
+			return ins;
+		}
 		break;
 	case SN_Equals:
 		if (fsig->param_count == 1 && fsig->ret->type == MONO_TYPE_BOOLEAN && mono_metadata_type_equal (fsig->params [0], type)) {
@@ -363,7 +424,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		}
 		return ins;
 	case SN_op_Explicit:
-		return emit_simd_ins (cfg, klass, OP_XMOVE, args [0]->dreg, -1);
+		return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
 	case SN_op_Addition:
 	case SN_op_Subtraction:
 	case SN_op_Division:
@@ -437,6 +498,11 @@ static guint16 popcnt_methods [] = {
 	SN_get_IsSupported
 };
 
+static guint16 lzcnt_methods [] = {
+	SN_LeadingZeroCount,
+	SN_get_IsSupported
+};
+
 static guint16 bmi1_methods [] = {
 	SN_TrailingZeroCount,
 	SN_get_IsSupported,
@@ -477,6 +543,31 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			if (!supported)
 				return NULL;
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_POPCNT64 : OP_POPCNT32);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		default:
+			return NULL;
+		}
+	}
+	if (!strcmp (class_name, "Lzcnt") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Lzcnt"))) {
+		id = lookup_intrins (lzcnt_methods, sizeof (lzcnt_methods), cmethod);
+		if (id == -1)
+			return NULL;
+
+		supported = (get_cpu_features () & MONO_CPU_X86_LZCNT) != 0;
+		is_64bit = !strcmp (class_name, "X64");
+
+		switch (id) {
+		case SN_get_IsSupported:
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			ins->type = STACK_I4;
+			return ins;
+		case SN_LeadingZeroCount:
+			if (!supported)
+				return NULL;
+			MONO_INST_NEW (cfg, ins, is_64bit ? OP_LZCNT64 : OP_LZCNT32);
 			ins->dreg = alloc_ireg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
@@ -567,8 +658,13 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 	class_ns = m_class_get_name_space (cmethod->klass);
 	class_name = m_class_get_name (cmethod->klass);
-	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector"))
-		return emit_sys_numerics_vector (cfg, cmethod, fsig, args);
+	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector")) {
+		MonoInst *ins = emit_sys_numerics_vector (cfg, cmethod, fsig, args);
+		if (!ins) {
+			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
+		}
+		return ins;
+	}
 	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector`1")) {
 		MonoInst *ins = emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
 		if (!ins) {

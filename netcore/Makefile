@@ -11,7 +11,7 @@ ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
 # runtime version used by $(DOTNET) - local .net core sdk to bootstrap stuff
 # it doesn't match NETCOREAPP_VERSION
-BOOTSTRAP_RUNTIME = $(shell ls ../.dotnet/shared/Microsoft.NETCore.App)
+BOOTSTRAP_RUNTIME = $(shell ls ../.dotnet/shared/Microsoft.NETCore.App | tail -1)
 
 ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
@@ -184,7 +184,7 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 # Running individual test: MONO_ENV_OPTIONS="--debug" make run-tests-corefx-System.Collections.Tests
 #
 
-run-tests-corefx: update-tests-corefx
+run-tests-corefx: prepare update-tests-corefx
 	@rm -f .failures; \
 	counter=0; \
 	tests_count=$(words $(dir $(wildcard corefx/tests/extracted/*/))); \
@@ -200,7 +200,7 @@ run-tests-corefx: update-tests-corefx
 		echo "Failures in test suites:"; \
 		cat .failures; \
 		echo ""; \
- 		exit 1; \
+		exit 1; \
 	fi
 
 run-tests-corefx-%: prepare update-tests-corefx

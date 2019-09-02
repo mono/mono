@@ -21,6 +21,7 @@ ${TESTCMD} --label=compile-bcl-tests --timeout=40m make -w -C runtime -j ${CI_CP
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+${TESTCMD} --label=runtime-eglib-tests --timeout=5m make -w -C mono/eglib/test -k check
 if [[ ${CI_TAGS} == *'linux'* ]]; then ${TESTCMD} --label=fullaot-mixed --timeout=10m make -w -C mono/tests/fullaot-mixed -j ${CI_CPU_COUNT} check; fi
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=llvmonly-mixed --timeout=10m make -w -C mono/tests/llvmonly-mixed -j ${CI_CPU_COUNT} check; fi
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi

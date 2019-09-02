@@ -2686,6 +2686,24 @@ int Mono_Posix_FromFcntlCommand (int x, int *r)
 #else /* def F_NOTIFY */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_NOTIFY */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_GETLK)
+#ifdef F_OFD_GETLK
+		{*r = F_OFD_GETLK; return 0;}
+#else /* def F_OFD_GETLK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_GETLK */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_SETLK)
+#ifdef F_OFD_SETLK
+		{*r = F_OFD_SETLK; return 0;}
+#else /* def F_OFD_SETLK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_SETLK */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_SETLKW)
+#ifdef F_OFD_SETLKW
+		{*r = F_OFD_SETLKW; return 0;}
+#else /* def F_OFD_SETLKW */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_SETLKW */
 	if (x == Mono_Posix_FcntlCommand_F_SETFD)
 #ifdef F_SETFD
 		{*r = F_SETFD; return 0;}
@@ -2774,6 +2792,18 @@ int Mono_Posix_ToFcntlCommand (int x, int *r)
 	if (x == F_NOTIFY)
 		{*r = Mono_Posix_FcntlCommand_F_NOTIFY; return 0;}
 #endif /* ndef F_NOTIFY */
+#ifdef F_OFD_GETLK
+	if (x == F_OFD_GETLK)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_GETLK; return 0;}
+#endif /* ndef F_OFD_GETLK */
+#ifdef F_OFD_SETLK
+	if (x == F_OFD_SETLK)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_SETLK; return 0;}
+#endif /* ndef F_OFD_SETLK */
+#ifdef F_OFD_SETLKW
+	if (x == F_OFD_SETLKW)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_SETLKW; return 0;}
+#endif /* ndef F_OFD_SETLKW */
 #ifdef F_SETFD
 	if (x == F_SETFD)
 		{*r = Mono_Posix_FcntlCommand_F_SETFD; return 0;}
@@ -4052,6 +4082,12 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_LARGEFILE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_LARGEFILE */
+	if ((x & Mono_Posix_OpenFlags_O_NOATIME) == Mono_Posix_OpenFlags_O_NOATIME)
+#ifdef O_NOATIME
+		*r |= O_NOATIME;
+#else /* def O_NOATIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef O_NOATIME */
 	if ((x & Mono_Posix_OpenFlags_O_NOCTTY) == Mono_Posix_OpenFlags_O_NOCTTY)
 #ifdef O_NOCTTY
 		*r |= O_NOCTTY;
@@ -4076,12 +4112,6 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_PATH */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_PATH */
-	if ((x & Mono_Posix_OpenFlags_O_NOATIME) == Mono_Posix_OpenFlags_O_NOATIME)
-#ifdef O_NOATIME
-		*r |= O_NOATIME;
-#else /* def O_NOATIME */
-		{errno = EINVAL; return -1;}
-#endif /* ndef O_NOATIME */
 	if ((x & Mono_Posix_OpenFlags_O_RDONLY) == Mono_Posix_OpenFlags_O_RDONLY)
 #ifdef O_RDONLY
 		*r |= O_RDONLY;
@@ -4154,6 +4184,10 @@ int Mono_Posix_ToOpenFlags (int x, int *r)
 	if ((x & O_LARGEFILE) == O_LARGEFILE)
 		*r |= Mono_Posix_OpenFlags_O_LARGEFILE;
 #endif /* ndef O_LARGEFILE */
+#ifdef O_NOATIME
+	if ((x & O_NOATIME) == O_NOATIME)
+		*r |= Mono_Posix_OpenFlags_O_NOATIME;
+#endif /* ndef O_NOATIME */
 #ifdef O_NOCTTY
 	if ((x & O_NOCTTY) == O_NOCTTY)
 		*r |= Mono_Posix_OpenFlags_O_NOCTTY;
@@ -9330,3 +9364,4 @@ int Mono_Posix_ToXattrFlags (int x, int *r)
 #endif /* ndef XATTR_REPLACE */
 	return 0;
 }
+

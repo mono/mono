@@ -13,6 +13,7 @@
 #include <llvm-c/ExecutionEngine.h>
 
 #include "mini-llvm-cpp.h"
+#include "mini-runtime.h"
 #include "llvm-jit.h"
 
 #if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 600
@@ -249,7 +250,7 @@ init_mono_llvm_jit ()
 }
 
 static MonoLLVMJIT *
-make_mono_llvm_jit (TargetMachine *target_machine, LLVMModuleProviderRef mp)
+make_mono_llvm_jit (TargetMachine *target_machine)
 {
 	return new MonoLLVMJIT{target_machine};
 }
@@ -269,11 +270,11 @@ public:
 	typedef IRCompileLayer<ObjLayerT, SimpleCompiler> CompileLayerT;
 	typedef CompileLayerT::ModuleHandleT ModuleHandleT;
 
-	MonoLLVMJIT (TargetMachine *TM, MonoJitMemoryManager *mm, LLVMModuleProviderRef mp)
+	MonoLLVMJIT (TargetMachine *TM, MonoJitMemoryManager *mm)
 		: TM(TM), ObjectLayer([=] { return std::shared_ptr<RuntimeDyld::MemoryManager> (mm); }),
 		  CompileLayer (ObjectLayer, SimpleCompiler (*TM)),
 		  modules(),
-		  fpm (unwrap (mp)) {
+		  fpm (NULL) {
 		initPassManager ();
 	}
 
@@ -284,11 +285,11 @@ public:
 		initializeInstCombine(registry);
 		initializeTarget(registry);
 
-		char *opts = g_getenv ("MONO_LLVM_OPT");
+		const char *opts = g_getenv ("MONO_LLVM_OPT");
 		if (opts == NULL) {
 			// FIXME: find optimal mono specific order of passes
 			// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
-			opts = " -simplifycfg -sroa -instcombine -gvn";
+			opts = " -simplifycfg -sroa -lower-expect -instcombine -gvn";
 		}
 
 		char **args = g_strsplit (opts, " ", -1);
@@ -405,9 +406,9 @@ init_mono_llvm_jit ()
 }
 
 static MonoLLVMJIT *
-make_mono_llvm_jit (TargetMachine *target_machine, LLVMModuleProviderRef mp)
+make_mono_llvm_jit (TargetMachine *target_machine)
 {
-	return new MonoLLVMJIT(target_machine, mono_mm, mp);
+	return new MonoLLVMJIT(target_machine, mono_mm);
 }
 
 #endif
@@ -415,7 +416,7 @@ make_mono_llvm_jit (TargetMachine *target_machine, LLVMModuleProviderRef mp)
 static MonoLLVMJIT *jit;
 
 MonoEERef
-mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee)
+mono_llvm_create_ee (AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee)
 {
 	alloc_code_mem_cb = alloc_cb;
 
@@ -424,16 +425,26 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 
 	EnableMonoEH = true;
 	MonoEHFrameSymbol = "mono_eh_frame";
-
 	EngineBuilder EB;
+
+	if (mono_use_fast_math) {
+		TargetOptions opts;
+		opts.NoInfsFPMath = true;
+		opts.NoNaNsFPMath = true;
+		opts.NoSignedZerosFPMath = true;
+		opts.NoTrappingFPMath = true;
+		opts.UnsafeFPMath = true;
+		opts.AllowFPOpFusion = FPOpFusion::Fast;
+		EB.setTargetOptions (opts);
+	}
+
 	EB.setOptLevel(CodeGenOpt::Aggressive);
 	EB.setMCPU(sys::getHostCPUName());
-
 	auto TM = EB.selectTarget ();
 	assert (TM);
 
 	init_mono_llvm_jit ();
-	jit = make_mono_llvm_jit (TM, MP);
+	jit = make_mono_llvm_jit (TM);
 
 	return NULL;
 }
@@ -465,6 +476,8 @@ mono_llvm_get_cpu_features (void)
 		if (llvm::sys::getHostCPUFeatures(HostFeatures)) {
 			if (HostFeatures ["popcnt"])
 				f |= MONO_CPU_X86_POPCNT;
+			if (HostFeatures ["lzcnt"])
+				f |= MONO_CPU_X86_LZCNT;
 			if (HostFeatures ["avx"])
 				f |= MONO_CPU_X86_AVX;
 			if (HostFeatures ["bmi"])
@@ -494,7 +507,7 @@ mono_llvm_set_unhandled_exception_handler (void)
 }
 
 MonoEERef
-mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee)
+mono_llvm_create_ee (AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, LLVMExecutionEngineRef *ee)
 {
 	g_error ("LLVM JIT not supported on this platform.");
 	return NULL;

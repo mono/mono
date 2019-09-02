@@ -863,10 +863,6 @@ MONO_COLD void mono_set_pending_exception (MonoException *exc);
 MonoAsyncResult *
 mono_async_result_new	    (MonoDomain *domain, gpointer handle, 
 			     MonoObject *state, gpointer data, MonoObject *object_data, MonoError *error);
-ICALL_EXPORT
-MonoObject *
-ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
-
 MonoWaitHandle *
 mono_wait_handle_new	    (MonoDomain *domain, gpointer handle, MonoError *error);
 
@@ -876,10 +872,6 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle);
 gboolean
 mono_message_init	    (MonoDomain *domain, MonoMethodMessage *this_obj, 
 			     MonoReflectionMethod *method, MonoArray *out_args, MonoError *error);
-
-MonoObject *
-mono_message_invoke	    (MonoObject *target, MonoMethodMessage *msg, 
-			     MonoObject **exc, MonoArray **out_args, MonoError *error);
 
 MonoMethodMessage *
 mono_method_call_message_new (MonoMethod *method, gpointer *params, MonoMethod *invoke, 
@@ -1636,6 +1628,11 @@ typedef struct {
 	MonoBoolean visible;
 } MonoReflectionComVisibleAttribute;
 
+typedef struct {
+	MonoObject object;
+	MonoReflectionType *type;
+} MonoReflectionComDefaultInterfaceAttribute;
+
 enum {
 	RESOURCE_LOCATION_EMBEDDED = 1,
 	RESOURCE_LOCATION_ANOTHER_ASSEMBLY = 2,
@@ -1710,7 +1707,6 @@ ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type);
 
 void        mono_reflection_register_with_runtime (MonoReflectionType *type);
 
-void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args_out, MonoArray **named_args_out, CattrNamedArg **named_arg_info, MonoError *error);
 MonoMethodSignature * mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token, MonoError *error);
 
 MonoArrayHandle mono_param_get_objects_internal  (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
@@ -1734,10 +1730,6 @@ mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean 
 
 gboolean
 mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, MonoError *error);
-
-ICALL_EXPORT
-void
-ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoReflectionMethod *method, MonoReflectionAssembly *assembly, gpointer data, guint32 data_length, MonoArray **ctor_args, MonoArray ** named_args);
 
 gboolean
 mono_image_build_metadata (MonoReflectionModuleBuilder *module, MonoError *error);
@@ -2262,11 +2254,19 @@ mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
         mono_gc_wbarrier_generic_store_internal (&((s)->field), (MonoObject*)(value)); \
     } while (0)
 
-mono_unichar2*
-mono_string_chars_internal (MonoString *s);
+static inline gunichar2*
+mono_string_chars_internal (MonoString *s)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	return s->chars;
+}
 
-int
-mono_string_length_internal (MonoString *s);
+static inline int
+mono_string_length_internal (MonoString *s)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	return s->length;
+}
 
 MonoString*
 mono_string_empty_internal (MonoDomain *domain);
@@ -2283,12 +2283,11 @@ mono_string_equal_internal (MonoString *s1, MonoString *s2);
 unsigned
 mono_string_hash_internal (MonoString *s);
 
-ICALL_EXPORT
 int
 mono_object_hash_internal (MonoObject* obj);
 
 void
-mono_value_copy_internal (void* dest, /*const*/ void* src, MonoClass *klass);
+mono_value_copy_internal (void* dest, const void* src, MonoClass *klass);
 
 void
 mono_value_copy_array_internal (MonoArray *dest, int dest_idx, const void* src, int count);
@@ -2399,7 +2398,7 @@ void
 mono_gc_wbarrier_set_arrayref_internal  (MonoArray *arr, void* slot_ptr, MonoObject* value);
 
 void
-mono_gc_wbarrier_arrayref_copy_internal (void* dest_ptr, void* src_ptr, int count);
+mono_gc_wbarrier_arrayref_copy_internal (void* dest_ptr, const void* src_ptr, int count);
 
 void
 mono_gc_wbarrier_generic_store_internal (void* ptr, MonoObject* value);
@@ -2411,7 +2410,7 @@ void
 mono_gc_wbarrier_generic_nostore_internal (void* ptr);
 
 void
-mono_gc_wbarrier_value_copy_internal (void* dest, /*const*/ void* src, int count, MonoClass *klass);
+mono_gc_wbarrier_value_copy_internal (void* dest, const void* src, int count, MonoClass *klass);
 
 void
 mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src);

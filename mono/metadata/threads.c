@@ -470,7 +470,7 @@ mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboole
 	return sync || !(new_state & ABORT_PROT_BLOCK_MASK);
 }
 
-static inline MonoNativeThreadId
+static MonoNativeThreadId
 thread_get_tid (MonoInternalThread *thread)
 {
 	/* We store the tid as a guint64 to keep the object layout constant between platforms */
@@ -515,7 +515,7 @@ dec_longlived_thread_data (MonoLongLivedThreadData *lltd)
 	mono_refcount_dec (lltd);
 }
 
-static inline void
+static void
 lock_thread (MonoInternalThread *thread)
 {
 	g_assert (thread->longlived);
@@ -524,7 +524,7 @@ lock_thread (MonoInternalThread *thread)
 	mono_coop_mutex_lock (thread->longlived->synch_cs);
 }
 
-static inline void
+static void
 unlock_thread (MonoInternalThread *thread)
 {
 	mono_coop_mutex_unlock (thread->longlived->synch_cs);
@@ -542,7 +542,7 @@ unlock_thread_handle (MonoInternalThreadHandle thread)
 	unlock_thread (mono_internal_thread_handle_ptr (thread));
 }
 
-static inline gboolean
+static gboolean
 is_appdomainunloaded_exception (MonoClass *klass)
 {
 #ifdef ENABLE_NETCORE
@@ -552,7 +552,7 @@ is_appdomainunloaded_exception (MonoClass *klass)
 #endif
 }
 
-static inline gboolean
+static gboolean
 is_threadabort_exception (MonoClass *klass)
 {
 	return klass == mono_defaults.threadabortexception_class;
@@ -6135,6 +6135,11 @@ mono_set_thread_dump_dir (gchar* dir) {
 }
 
 #ifdef DISABLE_CRASH_REPORTING
+void
+mono_threads_summarize_init (void)
+{
+}
+
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
@@ -6201,6 +6206,9 @@ typedef struct {
 #define HAVE_MONO_SUMMARIZER_SUPERVISOR 1
 #endif
 
+static void
+summarizer_supervisor_init (void);
+
 typedef struct {
 	MonoSemType supervisor;
 	pid_t pid;
@@ -6210,7 +6218,7 @@ typedef struct {
 #ifndef HAVE_MONO_SUMMARIZER_SUPERVISOR
 
 void
-mono_threads_summarize_init (const char *timeline_dir)
+summarizer_supervisor_init (void)
 {
 	return;
 }
@@ -6232,11 +6240,12 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 static const char *hang_watchdog_path;
 
 void
-mono_threads_summarize_init (const char *timeline_dir)
+summarizer_supervisor_init (void)
 {
 	hang_watchdog_path = g_build_filename (mono_get_config_dir (), "..", "bin", "mono-hang-watchdog", NULL);
-	mono_summarize_set_timeline_dir (timeline_dir);
+	g_assert (hang_watchdog_path);
 }
+
 static pid_t
 summarizer_supervisor_start (SummarizerSupervisorState *state)
 {
@@ -6268,7 +6277,8 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 		sprintf (pid_str, "%llu", (uint64_t)state->pid);
 		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
 		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
-		g_assert_not_reached ();
+		g_async_safe_printf ("Could not exec mono-hang-watchdog, expected on path '%s' (errno %d)\n", hang_watchdog_path, errno);
+		exit (1);
 	}
 
 	return pid;
@@ -6564,6 +6574,12 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	mono_state_free_mem (&mem);
 
 	return TRUE;
+}
+
+void
+mono_threads_summarize_init (void)
+{
+	summarizer_supervisor_init ();
 }
 
 gboolean

@@ -504,38 +504,44 @@ int Mono_Posix_FromErrno (int x, int *r);
 int Mono_Posix_ToErrno (int x, int *r);
 
 enum Mono_Posix_FcntlCommand {
-	Mono_Posix_FcntlCommand_F_DUPFD          = 0x00000000,
-	#define Mono_Posix_FcntlCommand_F_DUPFD    Mono_Posix_FcntlCommand_F_DUPFD
-	Mono_Posix_FcntlCommand_F_GETFD          = 0x00000001,
-	#define Mono_Posix_FcntlCommand_F_GETFD    Mono_Posix_FcntlCommand_F_GETFD
-	Mono_Posix_FcntlCommand_F_GETFL          = 0x00000003,
-	#define Mono_Posix_FcntlCommand_F_GETFL    Mono_Posix_FcntlCommand_F_GETFL
-	Mono_Posix_FcntlCommand_F_GETLEASE       = 0x00000401,
-	#define Mono_Posix_FcntlCommand_F_GETLEASE Mono_Posix_FcntlCommand_F_GETLEASE
-	Mono_Posix_FcntlCommand_F_GETLK          = 0x0000000c,
-	#define Mono_Posix_FcntlCommand_F_GETLK    Mono_Posix_FcntlCommand_F_GETLK
-	Mono_Posix_FcntlCommand_F_GETOWN         = 0x00000009,
-	#define Mono_Posix_FcntlCommand_F_GETOWN   Mono_Posix_FcntlCommand_F_GETOWN
-	Mono_Posix_FcntlCommand_F_GETSIG         = 0x0000000b,
-	#define Mono_Posix_FcntlCommand_F_GETSIG   Mono_Posix_FcntlCommand_F_GETSIG
-	Mono_Posix_FcntlCommand_F_NOCACHE        = 0x00000030,
-	#define Mono_Posix_FcntlCommand_F_NOCACHE  Mono_Posix_FcntlCommand_F_NOCACHE
-	Mono_Posix_FcntlCommand_F_NOTIFY         = 0x00000402,
-	#define Mono_Posix_FcntlCommand_F_NOTIFY   Mono_Posix_FcntlCommand_F_NOTIFY
-	Mono_Posix_FcntlCommand_F_SETFD          = 0x00000002,
-	#define Mono_Posix_FcntlCommand_F_SETFD    Mono_Posix_FcntlCommand_F_SETFD
-	Mono_Posix_FcntlCommand_F_SETFL          = 0x00000004,
-	#define Mono_Posix_FcntlCommand_F_SETFL    Mono_Posix_FcntlCommand_F_SETFL
-	Mono_Posix_FcntlCommand_F_SETLEASE       = 0x00000400,
-	#define Mono_Posix_FcntlCommand_F_SETLEASE Mono_Posix_FcntlCommand_F_SETLEASE
-	Mono_Posix_FcntlCommand_F_SETLK          = 0x0000000d,
-	#define Mono_Posix_FcntlCommand_F_SETLK    Mono_Posix_FcntlCommand_F_SETLK
-	Mono_Posix_FcntlCommand_F_SETLKW         = 0x0000000e,
-	#define Mono_Posix_FcntlCommand_F_SETLKW   Mono_Posix_FcntlCommand_F_SETLKW
-	Mono_Posix_FcntlCommand_F_SETOWN         = 0x00000008,
-	#define Mono_Posix_FcntlCommand_F_SETOWN   Mono_Posix_FcntlCommand_F_SETOWN
-	Mono_Posix_FcntlCommand_F_SETSIG         = 0x0000000a,
-	#define Mono_Posix_FcntlCommand_F_SETSIG   Mono_Posix_FcntlCommand_F_SETSIG
+	Mono_Posix_FcntlCommand_F_DUPFD            = 0x00000000,
+	#define Mono_Posix_FcntlCommand_F_DUPFD      Mono_Posix_FcntlCommand_F_DUPFD
+	Mono_Posix_FcntlCommand_F_GETFD            = 0x00000001,
+	#define Mono_Posix_FcntlCommand_F_GETFD      Mono_Posix_FcntlCommand_F_GETFD
+	Mono_Posix_FcntlCommand_F_GETFL            = 0x00000003,
+	#define Mono_Posix_FcntlCommand_F_GETFL      Mono_Posix_FcntlCommand_F_GETFL
+	Mono_Posix_FcntlCommand_F_GETLEASE         = 0x00000401,
+	#define Mono_Posix_FcntlCommand_F_GETLEASE   Mono_Posix_FcntlCommand_F_GETLEASE
+	Mono_Posix_FcntlCommand_F_GETLK            = 0x0000000c,
+	#define Mono_Posix_FcntlCommand_F_GETLK      Mono_Posix_FcntlCommand_F_GETLK
+	Mono_Posix_FcntlCommand_F_GETOWN           = 0x00000009,
+	#define Mono_Posix_FcntlCommand_F_GETOWN     Mono_Posix_FcntlCommand_F_GETOWN
+	Mono_Posix_FcntlCommand_F_GETSIG           = 0x0000000b,
+	#define Mono_Posix_FcntlCommand_F_GETSIG     Mono_Posix_FcntlCommand_F_GETSIG
+	Mono_Posix_FcntlCommand_F_NOCACHE          = 0x00000030,
+	#define Mono_Posix_FcntlCommand_F_NOCACHE    Mono_Posix_FcntlCommand_F_NOCACHE
+	Mono_Posix_FcntlCommand_F_NOTIFY           = 0x00000402,
+	#define Mono_Posix_FcntlCommand_F_NOTIFY     Mono_Posix_FcntlCommand_F_NOTIFY
+	Mono_Posix_FcntlCommand_F_OFD_GETLK        = 0x00000024,
+	#define Mono_Posix_FcntlCommand_F_OFD_GETLK  Mono_Posix_FcntlCommand_F_OFD_GETLK
+	Mono_Posix_FcntlCommand_F_OFD_SETLK        = 0x00000025,
+	#define Mono_Posix_FcntlCommand_F_OFD_SETLK  Mono_Posix_FcntlCommand_F_OFD_SETLK
+	Mono_Posix_FcntlCommand_F_OFD_SETLKW       = 0x00000026,
+	#define Mono_Posix_FcntlCommand_F_OFD_SETLKW Mono_Posix_FcntlCommand_F_OFD_SETLKW
+	Mono_Posix_FcntlCommand_F_SETFD            = 0x00000002,
+	#define Mono_Posix_FcntlCommand_F_SETFD      Mono_Posix_FcntlCommand_F_SETFD
+	Mono_Posix_FcntlCommand_F_SETFL            = 0x00000004,
+	#define Mono_Posix_FcntlCommand_F_SETFL      Mono_Posix_FcntlCommand_F_SETFL
+	Mono_Posix_FcntlCommand_F_SETLEASE         = 0x00000400,
+	#define Mono_Posix_FcntlCommand_F_SETLEASE   Mono_Posix_FcntlCommand_F_SETLEASE
+	Mono_Posix_FcntlCommand_F_SETLK            = 0x0000000d,
+	#define Mono_Posix_FcntlCommand_F_SETLK      Mono_Posix_FcntlCommand_F_SETLK
+	Mono_Posix_FcntlCommand_F_SETLKW           = 0x0000000e,
+	#define Mono_Posix_FcntlCommand_F_SETLKW     Mono_Posix_FcntlCommand_F_SETLKW
+	Mono_Posix_FcntlCommand_F_SETOWN           = 0x00000008,
+	#define Mono_Posix_FcntlCommand_F_SETOWN     Mono_Posix_FcntlCommand_F_SETOWN
+	Mono_Posix_FcntlCommand_F_SETSIG           = 0x0000000a,
+	#define Mono_Posix_FcntlCommand_F_SETSIG     Mono_Posix_FcntlCommand_F_SETSIG
 };
 int Mono_Posix_FromFcntlCommand (int x, int *r);
 int Mono_Posix_ToFcntlCommand (int x, int *r);
@@ -789,6 +795,8 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_EXCL      Mono_Posix_OpenFlags_O_EXCL
 	Mono_Posix_OpenFlags_O_LARGEFILE       = 0x00008000,
 	#define Mono_Posix_OpenFlags_O_LARGEFILE Mono_Posix_OpenFlags_O_LARGEFILE
+	Mono_Posix_OpenFlags_O_NOATIME         = 0x00040000,
+	#define Mono_Posix_OpenFlags_O_NOATIME   Mono_Posix_OpenFlags_O_NOATIME
 	Mono_Posix_OpenFlags_O_NOCTTY          = 0x00000100,
 	#define Mono_Posix_OpenFlags_O_NOCTTY    Mono_Posix_OpenFlags_O_NOCTTY
 	Mono_Posix_OpenFlags_O_NOFOLLOW        = 0x00020000,
@@ -797,8 +805,6 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_NONBLOCK  Mono_Posix_OpenFlags_O_NONBLOCK
 	Mono_Posix_OpenFlags_O_PATH            = 0x00200000,
 	#define Mono_Posix_OpenFlags_O_PATH      Mono_Posix_OpenFlags_O_PATH
-	Mono_Posix_OpenFlags_O_NOATIME         = 0x00040000,
-	#define Mono_Posix_OpenFlags_O_NOATIME   Mono_Posix_OpenFlags_O_NOATIME
 	Mono_Posix_OpenFlags_O_RDONLY          = 0x00000000,
 	#define Mono_Posix_OpenFlags_O_RDONLY    Mono_Posix_OpenFlags_O_RDONLY
 	Mono_Posix_OpenFlags_O_RDWR            = 0x00000002,

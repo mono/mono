@@ -2347,6 +2347,8 @@ mono_main (int argc, char* argv[])
 #endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
+		} else if (strcmp (argv [i], "--ffast-math") == 0){
+			mono_use_fast_math = TRUE;
 		} else if ((strcmp (argv [i], "--interpreter") == 0) || !strcmp (argv [i], "--interp")) {
 			mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP);
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
@@ -3129,13 +3131,13 @@ mono_win32_parse_options (const char *options, int *ref_argc, char **ref_argv []
 	return NULL;
 }
 
-static inline char *
+static char *
 mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
 {
 	return mono_win32_parse_options (options, ref_argc, ref_argv, prepend);
 }
 #else
-static inline char *
+static char *
 mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
 {
 	return mono_parse_options (options, ref_argc, ref_argv, prepend);

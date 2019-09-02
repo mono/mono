@@ -154,7 +154,7 @@ debug_omit_fp (void)
 #endif
 }
 
-static inline gboolean
+static gboolean
 amd64_is_near_call (guint8 *code)
 {
 	/* Skip REX */
@@ -164,13 +164,19 @@ amd64_is_near_call (guint8 *code)
 	return code [0] == 0xe8;
 }
 
-static inline gboolean
+static gboolean
 amd64_use_imm32 (gint64 val)
 {
 	if (mini_debug_options.single_imm_size)
 		return FALSE;
 
 	return amd64_is_imm32 (val);
+}
+
+void
+mono_x86_patch (unsigned char* code, gpointer target)
+{
+	mono_x86_patch_inline (code, target);
 }
 
 static void
@@ -195,23 +201,22 @@ amd64_patch (unsigned char* code, gpointer target)
 	}
 	else if ((code [0] == 0x8b) && rex && x86_modrm_mod (code [1]) == 0 && x86_modrm_rm (code [1]) == 5) {
 		/* mov 0(%rip), %dreg */
-		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
+		g_assert (!1); // Historical code was incorrect.
+		ptrdiff_t const offset = (guchar*)target - (code + 6);
+		g_assert (offset == (gint32)offset);
+		*(gint32*)(code + 2) = (gint32)offset;
 	}
 	else if (code [0] == 0xff && (code [1] == 0x15 || code [1] == 0x25)) {
 		/* call or jmp *<OFFSET>(%rip) */
-		*(guint32*)(code + 2) = ((guint32)(guint64)target) - 7;
-	}
-	else if (code [0] == 0xe8 || code [0] == 0xe9) {
-		/* call or jmp <DISP> */
-		gint64 disp = (guint8*)target - (guint8*)code;
-		g_assert (amd64_is_imm32 (disp));
-		x86_patch (code, (unsigned char*)target);
+		// Patch the data, not the code.
+		g_assert (!2); // For possible use later.
+		*(void**)(code + 6 + *(gint32*)(code + 2)) = target;
 	}
 	else
-		x86_patch (code, (unsigned char*)target);
+		x86_patch (code, target);
 }
 
-void 
+void
 mono_amd64_patch (unsigned char* code, gpointer target)
 {
 	amd64_patch (code, target);
@@ -452,13 +457,13 @@ allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_clas
 	return result;
 }
 
-static inline gboolean
+static gboolean
 allocate_parameter_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, param_regs, PARAM_REGS, float_param_regs, FLOAT_PARAM_REGS, current_int_reg, current_float_reg);
 }
 
-static inline gboolean
+static gboolean
 allocate_return_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, return_regs, RETURN_REGS, float_return_regs, FLOAT_RETURN_REGS, current_int_reg, current_float_reg);
@@ -2070,7 +2075,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 }
 
 #ifdef ENABLE_LLVM
-static inline LLVMArgStorage
+static LLVMArgStorage
 arg_storage_to_llvm_arg_storage (MonoCompile *cfg, ArgStorage storage)
 {
 	switch (storage) {
@@ -2190,7 +2195,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 			break;
 		case ArgValuetypeAddrInIReg:
 		case ArgValuetypeAddrOnStack:
-			linfo->args [i].storage = LLVMArgVtypeByRef;
+			linfo->args [i].storage = LLVMArgVtypeAddr;
 			break;
 		default:
 			cfg->exception_message = g_strdup ("ainfo->storage");
@@ -3973,6 +3978,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		const guint offset = code - cfg->native_code;
 		set_code_cursor (cfg, code);
 		int max_len = ins_get_size (ins->opcode);
+
 		code = realloc_code (cfg, max_len);
 
 		if (cfg->debug_info)
@@ -6812,11 +6818,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 		}
 
-		if ((code - cfg->native_code - offset) > max_len) {
-			g_warning ("wrong maximal instruction length of instruction %s (expected %d, got %ld)",
-				   mono_inst_name (ins->opcode), max_len, code - cfg->native_code - offset);
-			g_assert_not_reached ();
-		}
+		g_assertf ((code - cfg->native_code - offset) <= max_len,
+			   "wrong maximal instruction length of instruction %s (expected %d, got %d)",
+			   mono_inst_name (ins->opcode), max_len, (int)(code - cfg->native_code - offset));
 	}
 
 	set_code_cursor (cfg, code);
@@ -7801,19 +7805,18 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 	unwind_ops = mono_arch_get_cie_program ();
 
+	const int size = 64;
+
+	start = code = (guint8 *)mono_global_codeman_reserve (size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
+
 	if (has_target) {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 		/* Replace the this argument with the target */
 		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_ARG_REG1, 8);
 		amd64_mov_reg_membase (code, AMD64_ARG_REG1, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, target), 8);
 		amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	} else {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
-
 		if (param_count == 0) {
 			amd64_jump_membase (code, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		} else {
@@ -7832,9 +7835,10 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 			amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		}
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	}
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -7867,7 +7871,7 @@ static gpointer
 get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, int offset)
 {
 	guint8 *code, *start;
-	int size = 20;
+	const int size = 20;
 	char *tramp_name;
 	GSList *unwind_ops;
 
@@ -7890,6 +7894,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoObject, vtable), 8);
 	amd64_jump_membase (code, AMD64_RAX, offset);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
@@ -8168,7 +8175,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 			else
 				x86_branch32 (code, X86_CC_GE, 0, FALSE);
 		}
-		g_assert (code - item->code_target <= item->chunk_size);
+		g_assertf (code - item->code_target <= item->chunk_size, "%X %X", (guint)(code - item->code_target), (guint)item->chunk_size);
 	}
 	/* patch the branches to get to the target items */
 	for (i = 0; i < count; ++i) {
