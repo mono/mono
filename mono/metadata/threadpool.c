@@ -289,10 +289,19 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
-static gsize
+static void
 set_thread_name (MonoInternalThread *thread)
 {
-	return mono_thread_set_name_constant_ignore_error (thread, "Thread Pool Worker", MonoSetThreadNameFlag_Reset);
+	// Any thread can set any other thread name at any time.
+	// So this is unavoidably racy.
+	// This only partly fights against that -- i.e. not atomic and not a loop.
+	// It is reliable against the thread setting its own name, and somewhat
+	// reliable against other threads setting this thread's name.
+	static const char name [ ] = "Thread Pool Worker";
+	if (name != thread->name.chars)
+		mono_thread_set_name (thread, name, G_N_ELEMENTS (name) - 1,
+			MONO_THREAD_NAME_WINDOWS_CONSTANT ("Thread Pool Worker"),
+			MonoSetThreadNameFlag_Reset | MonoSetThreadNameFlag_Constant, NULL);
 }
 
 static void
@@ -330,10 +339,8 @@ worker_callback (void)
 	 */
 	mono_defaults.threadpool_perform_wait_callback_method->save_lmf = TRUE;
 
-	gsize name_generation = thread->name.generation;
 	/* Set the name if this is the first call to worker_callback on this thread */
-	if (name_generation == 0)
-	   name_generation = set_thread_name (thread);
+	set_thread_name (thread);
 
 	domains_lock ();
 
@@ -366,13 +373,7 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		// Any thread can set any other thread name at any time.
-		// So this is unavoidably racy.
-		// This only partly fights against that -- i.e. not atomic and not a loop.
-		// It is reliable against the thread setting its own name, and somewhat
-		// reliable against other threads setting this thread's name.
-		if (name_generation != thread->name.generation)
-			name_generation = set_thread_name (thread);
+		set_thread_name (thread);
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,
@@ -400,8 +401,7 @@ worker_callback (void)
 		mono_thread_pop_appdomain_ref ();
 
 		/* Reset name after every callback */
-		if (name_generation != thread->name.generation)
-			name_generation = set_thread_name (thread);
+		set_thread_name (thread);
 
 		domains_lock ();
 
