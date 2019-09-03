@@ -8059,8 +8059,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		cinfo = mono_custom_attrs_from_class_checked (klass, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			err = ERR_LOADER_ERROR;
-			goto exit;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
@@ -8083,8 +8082,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		cinfo = mono_custom_attrs_from_field_checked (klass, field, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			err = ERR_LOADER_ERROR;
-			goto exit;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
@@ -8107,8 +8105,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		cinfo = mono_custom_attrs_from_property_checked (klass, prop, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			err = ERR_LOADER_ERROR;
-			goto exit;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
@@ -8145,16 +8142,13 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (err != ERR_NONE)
 				goto exit;
 
-			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC))
+				goto invalid_fieldid;
+
 			special_static_type = mono_class_field_get_special_static_type (f);
 			if (special_static_type != SPECIAL_STATIC_NONE) {
-				if (!(thread && special_static_type == SPECIAL_STATIC_THREAD)) {
-					err = ERR_INVALID_FIELDID;
-					goto exit;
-				}
+				if (!(thread && special_static_type == SPECIAL_STATIC_THREAD))
+					goto invalid_fieldid;
 			}
 
 			/* Check that the field belongs to the object */
@@ -8165,22 +8159,16 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 					break;
 				}
 			}
-			if (!found) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!found)
+				goto invalid_fieldid;
 
 			vtable = mono_class_vtable_checked (domain, f->parent, error);
-			if (!is_ok (error)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			goto_if_nok (error, invalid_fieldid);
+
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val, error);
-			if (!is_ok (error)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			goto_if_nok (error, invalid_fieldid);
+
 			buffer_add_value (buf, f->type, val, domain);
 			g_free (val);
 		}
@@ -8200,15 +8188,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (err != ERR_NONE)
 				goto exit;
 
-			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC))
+				goto invalid_fieldid;
 
-			if (mono_class_field_is_special_static (f)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (mono_class_field_is_special_static (f))
+				goto invalid_fieldid;
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
@@ -8218,18 +8202,14 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 					break;
 				}
 			}
-			if (!found) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!found)
+				goto invalid_fieldid;
 
 			// FIXME: Check for literal/const
 
 			vtable = mono_class_vtable_checked (domain, f->parent, error);
-			if (!is_ok (error)) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			goto_if_nok (error, invalid_fieldid);
+
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 			err = decode_value (f->type, domain, val, p, &p, end, TRUE);
 			if (err != ERR_NONE) {
@@ -8248,8 +8228,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoObject *o = (MonoObject*)mono_type_get_object_checked (domain, m_class_get_byval_arg (klass), error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
-			err = ERR_INVALID_OBJECT;
-			goto exit;
+			goto invalid_object;
 		}
 		buffer_add_objid (buf, o);
 		break;
@@ -8303,8 +8282,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, mlisttype, TRUE, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
-			err = ERR_LOADER_ERROR;
-			goto exit;
+			goto loader_error;
 		}
 		buffer_add_int (buf, array->len);
 		for (i = 0; i < array->len; ++i) {
@@ -8326,15 +8304,10 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		for (parent = tclass; parent; parent = m_class_get_parent (parent)) {
 			mono_class_setup_interfaces (parent, error);
-			if (!is_ok (error)) {
-				err = ERR_LOADER_ERROR;
-				goto exit;
-			}
+			goto_if_nok (error, loader_error);
+
 			collect_interfaces (parent, iface_hash, error);
-			if (!is_ok (error)) {
-				err = ERR_LOADER_ERROR;
-				goto exit;
-			}
+			goto_if_nok (error, loader_error);
 		}
 
 		buffer_add_int (buf, g_hash_table_size (iface_hash));
@@ -8362,10 +8335,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 				goto exit;
 
 			ioffset = mono_class_interface_offset_with_variance (klass, iclass, &variance_used);
-			if (ioffset == -1) {
-				err = ERR_INVALID_ARGUMENT;
-				goto exit;
-			}
+			if (ioffset == -1)
+				goto invalid_argument;
 
 			nmethods = mono_class_num_methods (iclass);
 			buffer_add_int (buf, nmethods);
@@ -8382,10 +8353,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	}
 	case CMD_TYPE_IS_INITIALIZED: {
 		MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
-		if (!is_ok (error)) {
-			err = ERR_LOADER_ERROR;
-			goto exit;
-		}
+		goto_if_nok (error, loader_error);
 
 		if (vtable)
 			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
@@ -8415,6 +8383,19 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	}
 
 	err = ERR_NONE;
+	goto exit;
+invalid_argument:
+	err = ERR_INVALID_ARGUMENT;
+	goto exit;
+invalid_fieldid:
+	err = ERR_INVALID_FIELDID;
+	goto exit;
+invalid_object:
+	err = ERR_INVALID_OBJECT;
+	goto exit;
+loader_error:
+	err = ERR_LOADER_ERROR;
+	goto exit;
 exit:
 	return err;
 }
@@ -9507,33 +9488,27 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					break;
 				}
 			}
-			if (!found) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!found)
+				goto invalid_fieldid;
 
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
-				if (mono_class_field_is_special_static (f)) {
-					err = ERR_INVALID_FIELDID;
-					goto exit;
-				}
+				if (mono_class_field_is_special_static (f))
+					goto invalid_fieldid;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
 				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error);
-					err = ERR_INVALID_OBJECT;
-					goto exit;
+					goto invalid_object;
 				}
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 				mono_field_static_get_value_checked (vtable, f, val, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error); /* FIXME report the error */
-					err = ERR_INVALID_OBJECT;
-					goto exit;
+					goto invalid_object;
 				}
 				buffer_add_value (buf, f->type, val, obj->vtable->domain);
 				g_free (val);
@@ -9547,8 +9522,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					field_value = mono_load_remote_field_checked(obj, obj_type, f, &field_storage, error);
 					if (!is_ok (error)) {
 						mono_error_cleanup (error); /* FIXME report the error */
-						err = ERR_INVALID_OBJECT;
-						goto exit;
+						goto invalid_object;
 					}
 #else
 					g_assert_not_reached ();
@@ -9576,26 +9550,21 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					break;
 				}
 			}
-			if (!found) {
-				err = ERR_INVALID_FIELDID;
-				goto exit;
-			}
+			if (!found)
+				goto invalid_fieldid;
 
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
-				if (mono_class_field_is_special_static (f)) {
-					err = ERR_INVALID_FIELDID;
-					goto exit;
-				}
+				if (mono_class_field_is_special_static (f))
+					goto invalid_fieldid;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
 				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error);
-					err = ERR_INVALID_FIELDID;
-					goto exit;
+					goto invalid_fieldid;
 				}
 
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
@@ -9629,6 +9598,13 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	}
 
 	err = ERR_NONE;
+	goto exit;
+invalid_fieldid:
+	err = ERR_INVALID_FIELDID;
+	goto exit;
+invalid_object:
+	err = ERR_INVALID_OBJECT;
+	goto exit;
 exit:
 	return err;
 }
