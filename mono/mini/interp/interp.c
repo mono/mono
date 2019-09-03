@@ -98,7 +98,7 @@ typedef struct {
 	InterpFrame *base_frame;
 } FrameClauseArgs;
 
-static inline void
+static void
 init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
 {
 	frame->parent = parent_frame;
@@ -117,7 +117,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
  */
 GSList *mono_interp_jit_classes;
 /* Optimizations enabled with interpreter */
-int mono_interp_opt = INTERP_OPT_INLINE;
+int mono_interp_opt = INTERP_OPT_DEFAULT;
 /* If TRUE, interpreted code will be interrupted at function entry/backward branches */
 static gboolean ss_enabled;
 
@@ -2355,14 +2355,16 @@ do_transform_method (InterpFrame *frame, ThreadContext *context)
 }
 
 static MONO_NEVER_INLINE guchar*
-copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, guchar *vt_sp)
+copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, guchar *vt_sp_start)
 {
 	stackval *first_arg = sp - csig->param_count;
+	guchar *vt_sp = vt_sp_start;
 
 	/*
 	 * We need to have the varargs linearly on the stack so the ArgIterator
 	 * can iterate over them. We pass the signature first and then copy them
-	 * one by one on the vtstack.
+	 * one by one on the vtstack. At the end we pass the original vt_stack
+	 * so the callee (MINT_ARGLIST) can find the varargs space.
 	 */
 	*(gpointer*)vt_sp = csig;
 	vt_sp += sizeof (gpointer);
@@ -2376,7 +2378,12 @@ copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, guchar *vt_sp)
 		vt_sp += arg_size;
 	}
 
-	return (guchar*)ALIGN_PTR_TO (vt_sp, MINT_VT_ALIGNMENT);
+	vt_sp += sizeof (gpointer);
+	vt_sp = (guchar*)ALIGN_PTR_TO (vt_sp, MINT_VT_ALIGNMENT);
+
+	((gpointer*)vt_sp) [-1] = vt_sp_start;
+
+	return vt_sp;
 }
 
 /*
@@ -3243,6 +3250,8 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  * The ERROR argument is used to avoid declaring an error object for every interp frame, its not used
  * to return error information.
+ *
+ * Currently this method uses 0x88 of stack space on 64bit gcc. Make sure to keep it under control.
  */
 static void
 interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
@@ -3260,7 +3269,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	unsigned char *locals = NULL;
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
-#define OPDEF(a,b,c,d) &&LAB_ ## a,
+#define OPDEF(a,b,c,d,e,f) &&LAB_ ## a,
 #include "mintops.def"
 	};
 #endif
@@ -3324,10 +3333,8 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NOP)
-			++ip;
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NIY)
-			g_error ("mint_niy: instruction not implemented yet.  This shouldn't happen.");
+			g_assert_not_reached ();
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;
@@ -3343,9 +3350,8 @@ main_loop:
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ARGLIST)
-			g_assert (frame->varargs);
 			sp->data.p = vt_sp;
-			*(gpointer*)sp->data.p = frame->varargs;
+			*(gpointer*)sp->data.p = ((gpointer*)frame->retval->data.p) [-1];
 			vt_sp += ALIGN_TO (sizeof (gpointer), MINT_VT_ALIGNMENT);
 			++ip;
 			++sp;
@@ -3632,7 +3638,6 @@ main_loop:
 			csig = (MonoMethodSignature*) frame->imethod->data_items [* (guint16*) (ip + 2)];
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
 			num_varargs = csig->param_count - csig->sentinelpos;
-			child_frame.varargs = (char*) vt_sp;
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
 			ip += 3;
@@ -4839,10 +4844,8 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_INTRINS_RUNTIMEHELPERS_OBJECT_HAS_COMPONENT_SIZE) {
-			sp -= 1;
-			MonoObject *obj = sp [0].data.o;
-			sp [0].data.i = (obj->vtable->flags & MONO_VT_FLAG_ARRAY_OR_STRING) != 0;
-			sp ++;
+			MonoObject *obj = sp [-1].data.o;
+			sp [-1].data.i = (obj->vtable->flags & MONO_VT_FLAG_ARRAY_OR_STRING) != 0;
 			++ip;
 			MINT_IN_BREAK;
 		}
@@ -5213,7 +5216,7 @@ main_loop:
 
 			memcpy (addr, sp [-1].data.vt, i32);
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-			ip += 4;
+			ip += 5;
 			--sp;
 			MINT_IN_BREAK;
 		}
@@ -6017,12 +6020,6 @@ main_loop:
 			ip += 2;
 			sp++;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_MONO_FREE)
-			++ip;
-			--sp;
-			g_error ("that doesn't seem right");
-			g_free (sp->data.p);
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_RETOBJ)
 			++ip;
 			sp--;
@@ -6435,6 +6432,23 @@ main_loop:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
+
+#define MOVLOC(argtype) \
+	* (argtype *)(locals + * (guint16 *)(ip + 2)) = * (argtype *)(locals + * (guint16 *)(ip + 1)); \
+	ip += 3;
+
+		MINT_IN_CASE(MINT_MOVLOC_1) MOVLOC(guint8); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_2) MOVLOC(guint16); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_4) MOVLOC(guint32); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MOVLOC_8) MOVLOC(guint64); MINT_IN_BREAK;
+
+		MINT_IN_CASE(MINT_MOVLOC_VT) {
+			int const i32 = READ32(ip + 3);
+			memcpy (locals + * (guint16 *)(ip + 2), locals + * (guint16*)(ip + 1), i32);
+			ip += 5;
+			MINT_IN_BREAK;
+		}
+
 		MINT_IN_CASE(MINT_LOCALLOC) {
 			if (sp != frame->stack + 1) /*FIX?*/
 				goto abort_label;
@@ -6679,10 +6693,12 @@ interp_parse_options (const char *options)
 
 		if (strncmp (arg, "jit=", 4) == 0)
 			mono_interp_jit_classes = g_slist_prepend (mono_interp_jit_classes, arg + 4);
-		if (strncmp (arg, "interp-only=", 4) == 0)
+		if (strncmp (arg, "interp-only=", strlen ("interp-only=")) == 0)
 			mono_interp_only_classes = g_slist_prepend (mono_interp_only_classes, arg + strlen ("interp-only="));
 		if (strncmp (arg, "-inline", 7) == 0)
 			mono_interp_opt &= ~INTERP_OPT_INLINE;
+		if (strncmp (arg, "-cprop", 6) == 0)
+			mono_interp_opt &= ~INTERP_OPT_CPROP;
 	}
 }
 
@@ -6966,6 +6982,8 @@ register_interp_stats (void)
 {
 	mono_counters_init ();
 	mono_counters_register ("Total transform time", MONO_COUNTER_INTERP | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_interp_stats.transform_time);
+	mono_counters_register ("Total cprop time", MONO_COUNTER_INTERP | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_interp_stats.cprop_time);
+	mono_counters_register ("Instructions optimized away", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.killed_instructions);
 	mono_counters_register ("Methods inlined", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.inlined_methods);
 	mono_counters_register ("Inline failures", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.inline_failures);
 }

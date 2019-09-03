@@ -88,8 +88,6 @@ free_handle_chunk (HandleChunk *chunk)
 	g_free (chunk);
 }
 
-const MonoObjectHandle mono_null_value_handle = { 0 };
-
 #define THIS_IS_AN_OK_NUMBER_OF_HANDLES 100
 
 static HandleChunkElem*
@@ -165,6 +163,7 @@ mono_handle_new (MonoObject *obj, MonoThreadInfo *info, const char *owner)
 #endif
 {
 	info = info ? info : mono_thread_info_current ();
+
 	HandleStack *handles = info->handle_stack;
 	HandleChunk *top = handles->top;
 #ifdef MONO_HANDLE_TRACK_SP
@@ -339,9 +338,11 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, g
 	}
 }
 
-void
+MonoThreadInfo*
 mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name)
 {
+	info = info ? info : mono_thread_info_current ();
+
 	HandleStack *handles = info->handle_stack;
 	HandleChunk *cur = stackmark->chunk;
 	int size = -stackmark->size; //discard the starting point of the stack
@@ -354,6 +355,8 @@ mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, c
 
 	if (size > THIS_IS_AN_OK_NUMBER_OF_HANDLES)
 		g_warning ("%s USED %d handles\n", func_name, size);
+
+	return info;
 }
 
 /*

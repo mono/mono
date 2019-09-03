@@ -4183,14 +4183,7 @@ if test "x$enable_llvm" = "xyes"; then
 			AC_MSG_ERROR([LLVM executable $EXTERNAL_LLVM_CONFIG not found.])
 		fi
 	else
-		if test x$host_win32 = xyes; then
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config.exe, no)
-		else
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config, no)
-		fi
-		if test "x$EXTERNAL_LLVM_CONFIG" = "xno"; then
-			internal_llvm=yes
-		fi
+		internal_llvm=yes
 	fi
 
 	LLVM_CODEGEN_LIBS="x86codegen"
@@ -6801,8 +6794,8 @@ AC_MSG_RESULT($enable_compiler_server)
 if test x$enable_compiler_server = xyes; then
    if test x$force_enable_compiler_server = xyes; then
        AC_MSG_WARN([forcing compiler server to stay enabled])
-   elif test x$host_darwin = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin])
+   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
        enable_compiler_server=no;
    elif test x$csc_compiler = xmcs; then
        AC_MSG_WARN([mcs does not support the compiler server])

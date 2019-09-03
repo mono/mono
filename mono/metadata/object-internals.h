@@ -1628,6 +1628,11 @@ typedef struct {
 	MonoBoolean visible;
 } MonoReflectionComVisibleAttribute;
 
+typedef struct {
+	MonoObject object;
+	MonoReflectionType *type;
+} MonoReflectionComDefaultInterfaceAttribute;
+
 enum {
 	RESOURCE_LOCATION_EMBEDDED = 1,
 	RESOURCE_LOCATION_ANOTHER_ASSEMBLY = 2,
@@ -2203,18 +2208,6 @@ mono_runtime_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *
 int
 mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc);
 
-ICALL_EXPORT
-void
-ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, gpointer file);
-
-ICALL_EXPORT
-void
-ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb);
-
-ICALL_EXPORT
-MonoArray*
-ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues);
-
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
@@ -2278,7 +2271,6 @@ mono_string_equal_internal (MonoString *s1, MonoString *s2);
 unsigned
 mono_string_hash_internal (MonoString *s);
 
-ICALL_EXPORT
 int
 mono_object_hash_internal (MonoObject* obj);
 
@@ -2397,7 +2389,7 @@ void
 mono_gc_wbarrier_arrayref_copy_internal (void* dest_ptr, const void* src_ptr, int count);
 
 void
-mono_gc_wbarrier_generic_store_internal (void* ptr, MonoObject* value);
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value);
 
 void
 mono_gc_wbarrier_generic_store_atomic_internal (void *ptr, MonoObject *value);

@@ -222,6 +222,17 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 	}
 
+	if (in_corlib && !strcmp (m_class_get_name (cmethod->klass), "Buffer")) {
+		if (!strcmp (cmethod->name, "Memmove") && fsig->param_count == 3 && fsig->params [0]->type == MONO_TYPE_PTR && fsig->params [1]->type == MONO_TYPE_PTR) {
+			opcode = OP_MEMMOVE;
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->sreg1 = args [0]->dreg; // i1* dst
+			ins->sreg2 = args [1]->dreg; // i1* src
+			ins->sreg3 = args [2]->dreg; // i32/i64 len
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+	}
+
 	return ins;
 }
 
@@ -479,6 +490,16 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		ins->type = STACK_PTR;
 		return ins;
 	}
+#ifdef ENABLE_NETCORE
+	else if (!strcmp (cmethod->name, "InitBlockUnaligned")) {
+		g_assert (fsig->param_count == 3);
+
+		mini_emit_memory_init_bytes (cfg, args [0], args [1], args [2], MONO_INST_UNALIGNED);
+ 		MONO_INST_NEW (cfg, ins, OP_NOP);
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	}
+#endif
 
 	return NULL;
 }

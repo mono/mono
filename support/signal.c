@@ -177,7 +177,7 @@ static void release_mutex (pthread_mutex_t *mutex)
 	}
 }
 
-static inline int
+static int
 keep_trying (int r)
 {
 	return r == -1 && errno == EINTR;
@@ -199,7 +199,7 @@ keep_trying (int r)
 #define PIPELOCK_GET_COUNT(x)      ((x) & PIPELOCK_COUNT_MASK)
 #define PIPELOCK_INCR_COUNT(x, by) (((x) & PIPELOCK_TEARDOWN_BIT) | (PIPELOCK_GET_COUNT (PIPELOCK_GET_COUNT (x) + (by))))
 
-static inline void
+static void
 acquire_pipelock_teardown (int *lock)
 {
 	int lockvalue_draining;
@@ -220,7 +220,7 @@ acquire_pipelock_teardown (int *lock)
 	}
 }
 
-static inline void
+static void
 release_pipelock_teardown (int *lock)
 {
 	while (1) {
@@ -233,7 +233,7 @@ release_pipelock_teardown (int *lock)
 }
 
 // Return 1 for success
-static inline int
+static int
 acquire_pipelock_handler (int *lock)
 {
 	while (1) {
@@ -246,7 +246,7 @@ acquire_pipelock_handler (int *lock)
 	}
 }
 
-static inline void
+static void
 release_pipelock_handler (int *lock)
 {
 	while (1) {

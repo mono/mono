@@ -90,8 +90,12 @@ namespace System.Windows.Forms {
 			set {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
-				SetupNode (value);
+				
+				var removedNode = nodes [index];
 				nodes [index] = value;
+
+				OnUIACollectionChanged (CollectionChangeAction.Remove, removedNode);
+				SetupNode (value);
 			}
 		}
 
@@ -107,7 +111,7 @@ namespace System.Windows.Forms {
 
 		bool UsingSorting {
 			get {
-				TreeView tv = owner == null ? null : owner.TreeView;
+				TreeView tv = TreeView;
 				return tv != null && (tv.Sorted || tv.TreeViewNodeSorter != null);
 			}
 		}
@@ -125,11 +129,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException("node");
 
 			int index;
-			TreeView tree_view = null;
-
-			if (owner != null)
-				tree_view = owner.TreeView;
-				
+			TreeView tree_view = TreeView;
 			if (tree_view != null && UsingSorting) {
 				index = AddSorted (node);
 			} else {
@@ -142,9 +142,6 @@ namespace System.Windows.Forms {
 
 			SetupNode (node);
 
-			// UIA Framework Event: Collection Changed
-			if (tree_view != null)
-				tree_view.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (CollectionChangeAction.Add, node));
 			return index;
 		}
 
@@ -206,14 +203,11 @@ namespace System.Windows.Forms {
 			Array.Clear (nodes, 0, count);
 			count = 0;
 
-			TreeView tree_view = null;
-			if (owner != null) {
-				tree_view = owner.TreeView;
-				if (tree_view != null) {
-					tree_view.UpdateBelow (owner);
-					tree_view.RecalculateVisibleOrder (owner);
-					tree_view.UpdateScrollBars (false);
-				}
+			TreeView tree_view = TreeView;
+			if (tree_view != null) {
+				tree_view.UpdateBelow (owner);
+				tree_view.RecalculateVisibleOrder (owner);
+				tree_view.UpdateScrollBars (false);
 			}
 		}
 
@@ -273,7 +267,7 @@ namespace System.Windows.Forms {
 
 			// If we can use sorting, it means we have an owner *and* a TreeView
 			if (UsingSorting)
-				Sort (owner.TreeView.TreeViewNodeSorter);
+				Sort (TreeView.TreeViewNodeSorter);
 
 			SetupNode (node);
 		}
@@ -345,10 +339,7 @@ namespace System.Windows.Forms {
 			bool re_set_selected = false;
 			bool visible = removed.IsVisible;
 
-			TreeView tree_view = null;
-			if (owner != null)
-				tree_view = owner.TreeView;
-
+			TreeView tree_view = TreeView;
 			if (tree_view != null) {
 				tree_view.RecalculateVisibleOrder (prev);
 
@@ -388,9 +379,7 @@ namespace System.Windows.Forms {
 				tree_view.UpdateBelow (parent);
 			}
 
-			// UIA Framework Event: Collection Changed
-			if (tree_view != null)
-				tree_view.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
+			OnUIACollectionChanged (CollectionChangeAction.Remove, removed);
 		}
 
 		public virtual void RemoveByKey (string key)
@@ -418,10 +407,7 @@ namespace System.Windows.Forms {
 
 			node.parent = owner;
 
-			TreeView tree_view = null;
-			if (owner != null)
-				tree_view = owner.TreeView;
-
+			TreeView tree_view = TreeView;
 			if (tree_view != null) {
 				// We may need to invalidate this entire node collection if sorted.
 				TreeNode prev = UsingSorting ? owner : GetPrevNode (node);
@@ -433,6 +419,8 @@ namespace System.Windows.Forms {
 
 				tree_view.UpdateBelow (owner);
 			}
+
+			OnUIACollectionChanged (CollectionChangeAction.Add, node);
 		}
 
 		int IList.Add (object node)
@@ -465,7 +453,7 @@ namespace System.Windows.Forms {
 			if (count >= nodes.Length)
 				Grow ();
 
-			TreeView tree_view = owner.TreeView;
+			TreeView tree_view = TreeView;
 			if (tree_view.TreeViewNodeSorter != null) { // Custom sorting
 				nodes [count++] = node;
 				Sort (tree_view.TreeViewNodeSorter);
@@ -507,7 +495,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Sorted may have been set to false even if TreeViewNodeSorter is being used.
-			TreeView tv = owner == null ? null : owner.TreeView;
+			TreeView tv = TreeView;
 			if (tv != null)
 				tv.sorted = true;
 		}
@@ -554,6 +542,17 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+		}
+
+		// UIA Framework Event: Collection Changed
+		private void OnUIACollectionChanged (CollectionChangeAction action, TreeNode node)
+		{
+			TreeView?.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (action, node));
+		}
+
+		private TreeView TreeView
+		{
+			get { return owner?.TreeView; }
 		}
 
 		internal class TreeNodeEnumerator : IEnumerator {

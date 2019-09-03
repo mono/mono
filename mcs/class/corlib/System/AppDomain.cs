@@ -758,7 +758,7 @@ namespace System {
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			string cb = assemblyRef.CodeBase;
-			if (cb.ToLower (CultureInfo.InvariantCulture).StartsWith ("file://"))
+			if (cb.StartsWith ("file://", StringComparison.OrdinalIgnoreCase))
 				cb = new Mono.Security.Uri (cb).LocalPath;
 
 			try {

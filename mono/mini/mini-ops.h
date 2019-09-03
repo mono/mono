@@ -755,6 +755,8 @@ MINI_OP(OP_MEMSET, "memset", NONE, NONE, NONE)
 MINI_OP(OP_SAVE_LMF, "save_lmf", NONE, NONE, NONE)
 MINI_OP(OP_RESTORE_LMF, "restore_lmf", NONE, NONE, NONE)
 
+MINI_OP3(OP_MEMMOVE, "memmove", NONE, IREG, IREG, IREG)
+
 /* write barrier */
 MINI_OP(OP_CARD_TABLE_WBARRIER, "card_table_wbarrier", NONE, IREG, IREG)
 
@@ -1373,6 +1375,10 @@ MINI_OP(OP_XCOMPARE_FP, "xcompare_fp", XREG, XREG, XREG)
 /* Binary op, inst_c0 contains the operation */
 MINI_OP(OP_XBINOP, "xbinop", XREG, XREG, XREG)
 MINI_OP(OP_XCAST, "xcast", XREG, XREG, NONE)
+/* Extract element of vector */
+/* The index is assumed to be in range */
+MINI_OP(OP_XEXTRACT_I32, "xextract_i32", IREG, XREG, IREG)
+MINI_OP(OP_XEXTRACT_I64, "xextract_i64", LREG, XREG, IREG)
 
 MINI_OP(OP_LZCNT32, "lzcnt32", IREG, IREG, NONE)
 MINI_OP(OP_LZCNT64, "lzcnt64", LREG, LREG, NONE)

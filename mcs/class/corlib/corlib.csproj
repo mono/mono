@@ -336,6 +336,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DaylightTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DigitShapes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\HebrewNumber.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\InternalGlobalizationHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\NumberStyles.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\SortVersion.cs" />
@@ -1072,7 +1073,6 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\gregoriancalendarhelper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\gregoriancalendartypes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\hebrewcalendar.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\hebrewnumber.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\hijricalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\japanesecalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\japaneselunisolarcalendar.cs" />

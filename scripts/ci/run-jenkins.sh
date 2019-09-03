@@ -330,7 +330,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
-        echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
+        #echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
@@ -356,7 +356,8 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
             #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            ${TESTCMD} --label=v8-corlib --timeout=20m $gnumake -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done

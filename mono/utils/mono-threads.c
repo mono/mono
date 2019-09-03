@@ -337,7 +337,7 @@ mono_threads_wait_pending_operations (void)
 
 //Thread initialization code
 
-static inline void
+static void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 {
 	if (retain != 0)
@@ -1569,8 +1569,10 @@ mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	/* Sanity check the result */
 	g_assert ((current > *staddr) && (current < *staddr + *stsize));
 
+#ifndef TARGET_WASM
 	/* When running under emacs, sometimes staddr is not aligned to a page size */
 	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+#endif
 }
 
 gboolean
@@ -1598,7 +1600,7 @@ sleep_interrupt (gpointer data)
 	mono_coop_mutex_unlock (&sleep_mutex);
 }
 
-static inline guint32
+static guint32
 sleep_interruptable (guint32 ms, gboolean *alerted)
 {
 	gint64 now, end;

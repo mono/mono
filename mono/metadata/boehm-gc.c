@@ -906,7 +906,7 @@ mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_pt
 }
 
 void
-mono_gc_wbarrier_generic_store_internal (gpointer ptr, MonoObject* value)
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
 }
@@ -1319,17 +1319,17 @@ mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
 
 #define BITMAP_SIZE (sizeof (*((HandleData *)NULL)->bitmap) * CHAR_BIT)
 
-static inline gboolean
+static gboolean
 slot_occupied (HandleData *handles, guint slot) {
 	return handles->bitmap [slot / BITMAP_SIZE] & (1 << (slot % BITMAP_SIZE));
 }
 
-static inline void
+static void
 vacate_slot (HandleData *handles, guint slot) {
 	handles->bitmap [slot / BITMAP_SIZE] &= ~(1 << (slot % BITMAP_SIZE));
 }
 
-static inline void
+static void
 occupy_slot (HandleData *handles, guint slot) {
 	handles->bitmap [slot / BITMAP_SIZE] |= 1 << (slot % BITMAP_SIZE);
 }

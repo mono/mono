@@ -39,7 +39,9 @@ enum {
 };
 
 enum {
-	INTERP_OPT_INLINE = 1
+	INTERP_OPT_INLINE = 1,
+	INTERP_OPT_CPROP = 2,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
 };
 
 #if SIZEOF_VOID_P == 4
@@ -131,7 +133,6 @@ struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	/*
@@ -162,6 +163,8 @@ typedef struct {
 
 typedef struct {
 	gint64 transform_time;
+	gint64 cprop_time;
+	gint32 killed_instructions;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

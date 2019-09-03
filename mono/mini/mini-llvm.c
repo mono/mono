@@ -278,6 +278,7 @@ static LLVMRealPredicate fpcond_to_llvm_cond [] = {
 typedef enum {
 	INTRINS_MEMSET,
 	INTRINS_MEMCPY,
+	INTRINS_MEMMOVE,
 	INTRINS_SADD_OVF_I32,
 	INTRINS_UADD_OVF_I32,
 	INTRINS_SSUB_OVF_I32,
@@ -1769,6 +1770,8 @@ static LLVMBuilderRef
 create_builder (EmitContext *ctx)
 {
 	LLVMBuilderRef builder = LLVMCreateBuilder ();
+	if (mono_use_fast_math)
+		mono_llvm_set_fast_math (builder);
 
 	ctx->builders = g_slist_prepend_mempool (ctx->cfg->mempool, ctx->builders, builder);
 
@@ -5901,6 +5904,20 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				set_nonnull_load_flag (values [ins->dreg]);
 			break;
 		}
+		case OP_MEMMOVE: {
+			int argn = 0;
+			LLVMValueRef args [5];
+			args [argn++] = convert (ctx, values [ins->sreg1], LLVMPointerType (LLVMInt8Type (), 0));
+			args [argn++] = convert (ctx, values [ins->sreg2], LLVMPointerType (LLVMInt8Type (), 0));
+			args [argn++] = convert (ctx, values [ins->sreg3], LLVMInt64Type ());
+#if LLVM_API_VERSION < 900
+			args [argn++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE); // alignment
+#endif
+			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);  // is_volatile
+
+			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn, "");
+			break;
+		}
 		case OP_NOT_REACHED:
 			LLVMBuildUnreachable (builder);
 			has_terminator = TRUE;
@@ -7286,6 +7303,34 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			}
 			break;
 		}
+		case OP_XEXTRACT_I32:
+		case OP_XEXTRACT_I64: {
+			LLVMBasicBlockRef bbs [64];
+			LLVMValueRef switch_ins;
+			LLVMValueRef phi_values [64];
+			int nelems = LLVMGetVectorSize (LLVMTypeOf (lhs));
+			int i;
+
+			g_assert (nelems <= 64);
+			for (i = 0; i < nelems; ++i)
+				bbs [i] = gen_bb (ctx, "XEXTRACT_CASE_BB");
+			cbb = gen_bb (ctx, "XEXTRACT_COND_BB");
+
+			switch_ins = LLVMBuildSwitch (builder, rhs, bbs [0], 0);
+			for (i = 0; i < nelems; ++i) {
+				LLVMAddCase (switch_ins, LLVMConstInt (LLVMInt32Type (), i, FALSE), bbs [i]);
+				LLVMPositionBuilderAtEnd (builder, bbs [i]);
+				phi_values [i] = LLVMBuildExtractElement (builder, lhs, LLVMConstInt (LLVMInt32Type (), i, FALSE), "");
+				LLVMBuildBr (builder, cbb);
+			}
+
+			LLVMPositionBuilderAtEnd (builder, cbb);
+			values [ins->dreg] = LLVMBuildPhi (builder, LLVMTypeOf (phi_values [0]), "");
+			LLVMAddIncoming (values [ins->dreg], phi_values, bbs, nelems);
+
+			ctx->bblocks [bb->block_num].end_bblock = cbb;
+			break;
+		}
 		case OP_POPCNT32:
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CTPOP_I32), &lhs, 1, "");
 			break;
@@ -8522,6 +8567,7 @@ typedef struct {
 static IntrinsicDesc intrinsics[] = {
 	{INTRINS_MEMSET, "llvm.memset.p0i8.i32"},
 	{INTRINS_MEMCPY, "llvm.memcpy.p0i8.p0i8.i32"},
+	{INTRINS_MEMMOVE, "llvm.memmove.p0i8.p0i8.i64"},
 	{INTRINS_SADD_OVF_I32, "llvm.sadd.with.overflow.i32"},
 	{INTRINS_UADD_OVF_I32, "llvm.uadd.with.overflow.i32"},
 	{INTRINS_SSUB_OVF_I32, "llvm.ssub.with.overflow.i32"},
@@ -8660,6 +8706,17 @@ add_intrinsic (LLVMModuleRef module, int id)
 #else
 		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt32Type (), LLVMInt32Type (), LLVMInt1Type () };
 
+		AddFunc (module, name, LLVMVoidType (), params, 5);
+#endif
+		break;
+	}
+	case INTRINS_MEMMOVE: {
+#if LLVM_API_VERSION >= 900
+		/* No alignment argument */
+		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt64Type (), LLVMInt1Type () };
+		AddFunc (module, name, LLVMVoidType (), params, 4);
+#else
+		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt64Type (), LLVMInt32Type (), LLVMInt1Type () };
 		AddFunc (module, name, LLVMVoidType (), params, 5);
 #endif
 		break;
