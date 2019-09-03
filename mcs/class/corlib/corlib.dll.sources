@@ -1105,7 +1105,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendartypes.cs
 ../referencesource/mscorlib/system/globalization/hebrewcalendar.cs
-../referencesource/mscorlib/system/globalization/hebrewnumber.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/HebrewNumber.cs
 ../referencesource/mscorlib/system/globalization/hijricalendar.cs
 ../referencesource/mscorlib/system/globalization/japanesecalendar.cs
 ../referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
