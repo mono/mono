@@ -3584,7 +3584,7 @@ ves_icall_RuntimeMethodInfo_GetGenericArguments (MonoReflectionMethodHandle ref_
 
 MonoObjectHandle
 ves_icall_InternalInvoke (MonoReflectionMethodHandle method_handle, MonoObjectHandle this_arg_handle,
-			  MonoArrayHandle params_handle, MonoExceptionHandleOut exception_out, MonoError* error)
+			  MonoArrayHandle params_handle, MonoExceptionHandleOut exception_out, MonoError *error)
 {
 	MonoReflectionMethod* const method = MONO_HANDLE_RAW (method_handle);
 	MonoObject* const this_arg = MONO_HANDLE_RAW (this_arg_handle);
@@ -3595,17 +3595,17 @@ ves_icall_InternalInvoke (MonoReflectionMethodHandle method_handle, MonoObjectHa
 	 * is stupid), mono_runtime_invoke_*() calls the provided method, allowing
 	 * greater flexibility.
 	 */
-	MonoMethod* m = method->method;
+	MonoMethod *m = method->method;
 	MonoMethodSignature* const sig = mono_method_signature_internal (m);
-	MonoImage* image = NULL;
+	MonoImage *image = NULL;
 	int pcount = 0;
-	void* obj = this_arg;
-	char* this_name = NULL;
-	char* target_name = NULL;
-	char* msg = NULL;
-	MonoObject* result = NULL;
-	MonoArray* arr = NULL;
-	MonoException* exception = NULL;
+	void *obj = this_arg;
+	char *this_name = NULL;
+	char *target_name = NULL;
+	char *msg = NULL;
+	MonoObject *result = NULL;
+	MonoArray *arr = NULL;
+	MonoException *exception = NULL;
 
 	*MONO_HANDLE_REF (exception_out) = NULL;
 
