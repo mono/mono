@@ -22,8 +22,7 @@ MXE_PREFIX:=$(shell brew --prefix)
 
 .PHONY: provision-mxe
 provision-mxe:
-	brew tap xamarin/xamarin-android-windeps
-	brew install mingw-w64 xamarin/xamarin-android-windeps/mingw-zlib
+	brew install mingw-w64
 endif
 
 .PHONY: provision
