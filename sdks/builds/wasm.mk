@@ -48,7 +48,7 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 
 .stamp-wasm-install-tools:
 ifeq ($(UNAME),Darwin)
-	$(shell ./init-tools.sh)
+	$(shell ./init-tools.sh > /dev/null)
 endif
 
 .PHONY: provision-wasm
