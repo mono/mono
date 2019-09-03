@@ -1400,7 +1400,7 @@ mono_get_module_filename_ex (gpointer process, gpointer mod, gunichar2 **pstr, g
 // g_free the result
 // No MAX_PATH limit.
 gboolean
-mono_get_module_basename (gpointer process, gpointer mod, gunichar2** pstr, guint32* plength);
+mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength);
 
 // g_free the result
 // No MAX_PATH limit.
