@@ -34,7 +34,7 @@
 /external/corefx @akoeplinger @marek-safar @egorbo @steveisok
 /external/corert @akoeplinger @marek-safar @egorbo @steveisok
 /external/linker @marek-safar
-/external/llvm @SamMonoRT @vargaz
+/external/llvm @SamMonoRT @vargaz @imhameed
 /external/nuget-buildtasks @radical @akoeplinger
 /external/roslyn-binaries @kg @marek-safar @akoeplinger @lewing
 
