@@ -105,7 +105,6 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	frame->stack_args = method_args;
 	frame->retval = method_retval;
 	frame->imethod = rmethod;
-	frame->ex = NULL;
 	frame->ip = NULL;
 }
 
@@ -232,17 +231,19 @@ int mono_interp_traceopt = 0;
 // FIXME The inlining of this needs to be reevaluated in the context of later changes.
 // Also there is now only one caller, so consider inlining it manually.
 static MONO_NEVER_INLINE GSList* // Inlining this causes caller to use more stack.
-set_resume_state (ThreadContext *context, InterpFrame *frame, GSList* finally_ips)
+clear_resume_state (ThreadContext *context, InterpFrame *frame, GSList* finally_ips)
 {
 	/* We have thrown an exception from a finally block. Some of the leave targets were unwound already */
 	while (finally_ips &&
 		   finally_ips->data >= context->handler_ei->try_start &&
 		   finally_ips->data < context->handler_ei->try_end)
 		finally_ips = g_slist_remove (finally_ips, finally_ips->data);
-	frame->ex = NULL;
 	context->has_resume_state = 0;
 	context->handler_frame = NULL;
 	context->handler_ei = NULL;
+	g_assert (context->exc_gchandle);
+	mono_gchandle_free_internal (context->exc_gchandle);
+	context->exc_gchandle = 0;
 	return finally_ips;
 }
 
@@ -893,7 +894,6 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, con
 
 	interp_push_lmf (&ext, frame);
 	frame->ip = ip;
-	frame->ex = ex;
 
 	if (mono_object_isinst_checked ((MonoObject *) ex, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = ex;
@@ -1055,7 +1055,7 @@ ves_array_get (InterpFrame *frame, stackval *sp, stackval *retval, MonoMethodSig
 	return NULL;
 }
 
-static MONO_NEVER_INLINE gpointer
+static MONO_NEVER_INLINE MonoException*
 ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArray *ao, stackval *sp, gboolean needs_typecheck)
 {
 	MonoClass *ac = ((MonoObject *) ao)->vtable->klass;
@@ -1365,8 +1365,6 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 	MonoLMFExt ext;
 	gpointer args;
 
-	frame->ex = NULL;
-
 	g_assert (!frame->imethod);
 
 	static MonoPIFunc entry_func = NULL;
@@ -1403,13 +1401,13 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 	interp_pop_lmf (&ext);
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
-	if (!frame->ex)
+	if (!context->has_resume_state)
 		mono_arch_get_native_call_context_ret (&ccontext, frame, sig);
 
 	if (ccontext.stack != NULL)
 		g_free (ccontext.stack);
 #else
-	if (!frame->ex && !MONO_TYPE_ISSTRUCT (sig->ret))
+	if (!context->has_resume_state && !MONO_TYPE_ISSTRUCT (sig->ret))
 		stackval_from_data (sig->ret, frame->retval, (char*)&frame->retval->data.p, sig->pinvoke);
 
 	g_free (margs->iargs);
@@ -1721,8 +1719,6 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	if (exc)
 		*exc = NULL;
 
-	frame.ex = NULL;
-
 	MonoDomain *domain = mono_domain_get ();
 
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
@@ -1748,12 +1744,13 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 
 	interp_exec_method (&frame, context, error);
 
-	if (frame.ex) {
-		if (exc) {
-			*exc = (MonoObject*) frame.ex;
-			return NULL;
-		}
-		mono_error_set_exception_instance (error, frame.ex);
+	if (context->has_resume_state) {
+		// This can happen on wasm !?
+		MonoException *thrown_exc = (MonoException*) mono_gchandle_get_target_internal (context->exc_gchandle);
+		if (exc)
+			*exc = (MonoObject*)thrown_exc;
+		else
+			mono_error_set_exception_instance (error, thrown_exc);
 		return NULL;
 	}
 	return (MonoObject*)result.data.p;
@@ -1800,8 +1797,6 @@ interp_entry (InterpEntryData *data)
 	// FIXME: Optimize this
 
 	//printf ("%s\n", mono_method_full_name (method, 1));
-
-	frame.ex = NULL;
 
 	args = g_newa (stackval, sig->param_count + (sig->hasthis ? 1 : 0));
 	if (sig->hasthis)
@@ -1854,14 +1849,16 @@ interp_entry (InterpEntryData *data)
 	ERROR_DECL (error);
 	interp_exec_method (&frame, context, error);
 
+	g_assert (!context->has_resume_state);
+
 	if (rmethod->needs_thread_attach)
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
 
 	if (mono_llvm_only) {
-		if (frame.ex)
-			mono_llvm_reraise_exception (frame.ex);
+		if (context->has_resume_state)
+			mono_llvm_reraise_exception ((MonoException*)mono_gchandle_get_target_internal (context->exc_gchandle));
 	} else {
-		g_assert (frame.ex == NULL);
+		g_assert (!context->has_resume_state);
 	}
 
 	type = rmethod->rtype;
@@ -2564,8 +2561,6 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	method = rmethod->method;
 	sig = mono_method_signature_internal (method);
 
-	frame.ex = NULL;
-
 	args = (stackval*)alloca (sizeof (stackval) * (sig->param_count + (sig->hasthis ? 1 : 0)));
 
 	init_frame (&frame, NULL, rmethod, args, &result);
@@ -2585,11 +2580,10 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	ERROR_DECL (error);
 	interp_exec_method (&frame, context, error);
 
+	g_assert (!context->has_resume_state);
+
 	if (rmethod->needs_thread_attach)
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
-
-	// FIXME:
-	g_assert (frame.ex == NULL);
 
 	/* Write back the return value */
 	mono_arch_set_native_call_context_ret (ccontext, &frame, sig);
@@ -3261,7 +3255,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	};
 #endif
 
-	frame->ex = NULL;
 #if DEBUG_INTERP
 	debug_enter (frame, &tracing);
 #endif
@@ -3455,9 +3448,9 @@ main_loop:
 
 				frame->ip = ip;
 				mono_interp_transform_method (new_method, context, error);
-				frame->ex = mono_error_convert_to_exception (error);
-				if (frame->ex)
-					goto exit_frame;
+				MonoException *ex = mono_error_convert_to_exception (error);
+				if (ex)
+					THROW_EX (ex, ip);
 			}
 			ip += 2;
 			const gboolean realloc_frame = new_method->alloca_size > frame->imethod->alloca_size;
@@ -4761,7 +4754,6 @@ main_loop:
 			ip += 2; // FIXME: Do this after throw?
 
 			child_frame.ip = NULL;
-			child_frame.ex = NULL;
 
 			child_frame.imethod = (InterpMethod*)frame->imethod->data_items [token];
 			MonoMethodSignature* const csig = mono_method_signature_internal (child_frame.imethod->method);
@@ -5958,7 +5950,7 @@ main_loop:
 						finally_ips = g_slist_prepend (finally_ips, (gpointer) ip);
 #if DEBUG_INTERP
 						if (tracing)
-							g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, frame->ex? "yes": "no");
+							g_print ("* Found finally at IL_%04x with exception: %s\n", clause->handler_offset, context->has_resume_state ? "yes": "no");
 #endif
 					}
 				}
@@ -6606,16 +6598,13 @@ resume:
 		/* spec says stack should be empty at endfinally so it should be at the start too */
 		sp = frame->stack;
 		vt_sp = (guchar*)sp + frame->imethod->stack_size;
-		if (frame->ex) {
-			sp->data.p = frame->ex;
-			++sp;
-		}
+		g_assert (context->exc_gchandle);
+		sp->data.p = mono_gchandle_get_target_internal (context->exc_gchandle);
+		++sp;
 
-		// FIXME Reevaluate if this should be inlined.
-		finally_ips = set_resume_state (context, frame, finally_ips);
+		finally_ips = clear_resume_state (context, frame, finally_ips);
 		// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
 		// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
-		//
 		goto main_loop;
 	}
 	// fall through
@@ -6625,7 +6614,7 @@ exit_frame:
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
 
-	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
+	if (!context->has_resume_state && MONO_PROFILER_ENABLED (method_leave) &&
 	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
 		MonoProfilerCallContext *prof_ctx = NULL;
 
@@ -6651,8 +6640,8 @@ exit_frame:
 		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
 
 		g_free (prof_ctx);
-	} else if (frame->ex && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
-		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
+	} else if (context->has_resume_state && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
+		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, mono_gchandle_get_target_internal (context->exc_gchandle)));
 
 	DEBUG_LEAVE ();
 }
@@ -6695,8 +6684,9 @@ interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExce
 	context->has_resume_state = TRUE;
 	context->handler_frame = (InterpFrame*)interp_frame;
 	context->handler_ei = ei;
-	/* This is on the stack, so it doesn't need a wbarrier */
-	context->handler_frame->ex = ex;
+	if (context->exc_gchandle)
+		mono_gchandle_free_internal (context->exc_gchandle);
+	context->exc_gchandle = mono_gchandle_new_internal ((MonoObject*)ex, FALSE);
 	/* Ditto */
 	if (ei)
 		*(MonoException**)(frame_locals (context->handler_frame) + ei->exvar_offset) = ex;
