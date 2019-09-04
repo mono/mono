@@ -2021,6 +2021,7 @@ static MonoMarshalSpec*
 cominterop_get_ccw_default_mspec (const MonoType *param_type)
 {
 	MonoMarshalSpec *result = NULL;
+	MonoMarshalVariant elem_type = 0;
 	MonoMarshalNative native;
 
 	switch (param_type->type) {
@@ -2036,6 +2037,12 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 	case MONO_TYPE_BOOLEAN:
 		native = MONO_NATIVE_VARIANTBOOL;
 		break;
+	case MONO_TYPE_SZARRAY:
+		/* object[] -> SAFEARRAY(VARIANT) */
+		native = MONO_NATIVE_SAFEARRAY;
+		if (param_type->data.array->eklass == mono_defaults.object_class)
+			elem_type = MONO_VARIANT_VARIANT;
+		break;
 	default:
 		native = 0;
 	}
@@ -2043,6 +2050,8 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 	if (native) {
 		result = g_new0 (MonoMarshalSpec, 1);
 		result->native = native;
+		if (native == MONO_NATIVE_SAFEARRAY)
+			result->data.safearray_data.elem_type = elem_type;
 	}
 
 	return result;
