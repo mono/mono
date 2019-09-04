@@ -2946,6 +2946,20 @@ mono_image_add_to_name_cache (MonoImage *image, const char *nspace,
 
 typedef struct {
 	gconstpointer key;
+	GSList *values;
+} FindAllUserData;
+
+static void
+find_all_nocase (gpointer key, gpointer value, gpointer user_data)
+{
+	char *name = (char*)key;
+	FindAllUserData *data = (FindAllUserData*)user_data;
+	if (mono_utf8_strcasecmp (name, (char*)data->key) == 0)
+		data->values = g_slist_prepend (data->values, value);
+}
+
+typedef struct {
+	gconstpointer key;
 	gpointer value;
 } FindUserData;
 
@@ -3132,22 +3146,25 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 		if (nspace_table)
 			token = GPOINTER_TO_UINT (g_hash_table_lookup (nspace_table, name));
 	} else {
-		FindUserData user_data;
-		user_data.key = name_space;
-		user_data.value = NULL;
+		FindAllUserData all_user_data = { name_space, NULL };
+		FindUserData user_data = { name, NULL };
+		GSList *values;
 
-		g_hash_table_foreach (image->name_cache, find_nocase, &user_data);
+		// We're forced to check all matching namespaces, not just the first one found,
+		// because our desired type could be in any of the ones that match case-insensitively.
+		g_hash_table_foreach (image->name_cache, find_all_nocase, &all_user_data);
 
-		if (user_data.value) {
-			nspace_table = (GHashTable*)user_data.value;
-			user_data.key = name;
-			user_data.value = NULL;
-
+		values = all_user_data.values;
+		while (values && !user_data.value) {
+			nspace_table = (GHashTable*)values->data;
 			g_hash_table_foreach (nspace_table, find_nocase, &user_data);
-
-			if (user_data.value)
-				token = GPOINTER_TO_UINT (user_data.value);
+			values = values->next;
 		}
+
+		g_slist_free (all_user_data.values);
+
+		if (user_data.value)
+			token = GPOINTER_TO_UINT (user_data.value);
 	}
 
 	mono_image_unlock (image);
