@@ -341,6 +341,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		ins->dreg = dreg;
 		ins->sreg1 = load_simd_vreg (cfg, cmethod, args [0], NULL);
 		ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = etype->type;
 		mini_type_to_eval_stack_type (cfg, etype, ins);
 		MONO_ADD_INS (cfg->cbb, ins);
 		return ins;
