@@ -150,7 +150,9 @@ endef
 
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS)))
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
+ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
+endif
 ifdef ENABLE_WASM_THREADS
 $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS)))
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS)))
