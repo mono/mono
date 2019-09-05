@@ -33,8 +33,8 @@ else
 DOTNET_BUILD := $(shell ./init-tools.sh | tail -1)
 endif
 
-DOTNET_BUILD+= build
 DOTNET_PACK=$(DOTNET_BUILD) pack
+DOTNET_BUILD+= build
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
