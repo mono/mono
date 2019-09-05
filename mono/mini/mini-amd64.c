@@ -1502,6 +1502,20 @@ mono_arch_cpu_enumerate_simd_versions (void)
 	return sse_opts;
 }
 
+MonoCPUFeatures
+mono_arch_get_cpu_features (void)
+{
+	MonoCPUFeatures features = MONO_CPU_INITED;
+
+	if (mono_hwcap_x86_has_popcnt)
+		features |= MONO_CPU_X86_POPCNT;
+
+	if (mono_hwcap_x86_has_lzcnt)
+		features |= MONO_CPU_X86_LZCNT;
+
+	return features;
+}
+
 #ifndef DISABLE_JIT
 
 GList *
@@ -7198,6 +7212,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_roundpd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
 #endif
+
+		case OP_LZCNT32:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_LZCNT64:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_POPCNT32:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_POPCNT64:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+
 		case OP_LIVERANGE_START: {
 			if (cfg->verbose_level > 1)
 				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
