@@ -1505,7 +1505,7 @@ mono_arch_cpu_enumerate_simd_versions (void)
 MonoCPUFeatures
 mono_arch_get_cpu_features (void)
 {
-	MonoCPUFeatures features = MONO_CPU_INITED;
+	guint64 features = MONO_CPU_INITED;
 
 	if (mono_hwcap_x86_has_popcnt)
 		features |= MONO_CPU_X86_POPCNT;
@@ -1513,7 +1513,7 @@ mono_arch_get_cpu_features (void)
 	if (mono_hwcap_x86_has_lzcnt)
 		features |= MONO_CPU_X86_LZCNT;
 
-	return features;
+	return (MonoCPUFeatures)features;
 }
 
 #ifndef DISABLE_JIT
