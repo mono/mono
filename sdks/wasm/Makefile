@@ -486,6 +486,7 @@ clean: clean-browser-tests
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
+	$(RM) .configured
 
 package: build build-dbg-proxy
 	rm -rf tmp
