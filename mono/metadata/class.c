@@ -3121,8 +3121,8 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 	}
 
 	/* FIXME: get_class_from_name () can't handle types in the EXPORTEDTYPE table */
-	if (get_class_from_name && image->tables [MONO_TABLE_EXPORTEDTYPE].rows == 0) {
-		// FIXME: current get_class_from_name implementation is always case-sensitive
+	// The AOT cache in get_class_from_name is case-sensitive, so don't bother with it for case-insensitive lookups
+	if (get_class_from_name && image->tables [MONO_TABLE_EXPORTEDTYPE].rows == 0 && case_sensitive) {
 		gboolean res = get_class_from_name (image, name_space, name, &klass);
 		if (res) {
 			if (!klass) {
