@@ -166,6 +166,8 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 	}
 }
 
+#if defined (ENABLE_COPY_STACK_DATA)
+
 static volatile gpointer* dummy_global;
 
 static MONO_NEVER_INLINE
@@ -207,7 +209,6 @@ copy_stack_data_internal (MonoThreadInfo *info, MonoStackData *stackdata_begin, 
 	state->gc_stackdata_size = stackdata_size;
 }
 
-#if defined (ENABLE_COPY_STACK_DATA)
 #ifdef _MSC_VER
 typedef void (*CopyStackDataFunc)(MonoThreadInfo *, MonoStackData *, gconstpointer, gconstpointer);
 
@@ -243,7 +244,7 @@ copy_stack_data_internal_win32_wrapper (MonoThreadInfo *info, MonoStackData *sta
 		jmp edx
 	};
 }
-#endif
+#endif /* TARGET_AMD64 */
 
 static void
 copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
@@ -257,13 +258,13 @@ copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 {
 	copy_stack_data_internal (info, stackdata_begin, NULL, NULL);
 }
-#endif
+#endif /* _MSC_VER */
 #else
 static void
 copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 {
 }
-#endif
+#endif /* ENABLE_COPY_STACK_DATA */
 
 static gpointer
 mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata);
