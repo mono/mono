@@ -7190,7 +7190,7 @@ ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArra
 	MONO_ENTER_NO_SAFEPOINTS;
 
 	guint8 const * const src_buf = (guint8*)MONO_HANDLE_RAW (src)->vector + src_offset;
-	guint8* const dst_buf = (guint8*)MONO_HANDLE_RAW (dest)->vector + dest_offset;
+	guint8* const dst_buf = (guint8*)MONO_HANDLE_RAW (dst)->vector + dst_offset;
 
 	memmove (dst_buf, src_buf, count);
 
