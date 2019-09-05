@@ -481,13 +481,6 @@ wait_for_any (signal_info** signals, int count, int *currfd, struct pollfd* fd_s
 	// Poll until one of this signal_info's pipes is ready to read.
 	// Once a second, stop to check if the VM is shutting down.
 	do {
-		struct timeval tv;
-		struct timeval *ptv = NULL;
-		if (timeout != -1) {
-			tv.tv_sec  = timeout / 1000;
-			tv.tv_usec = (timeout % 1000)*1000;
-			ptv = &tv;
-		}
 		r = poll (fd_structs, count, timeout);
 	} while (keep_trying (r) && !shutting_down ());
 
