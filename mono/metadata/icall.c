@@ -7161,8 +7161,8 @@ mono_array_get_byte_length (MonoArrayHandle array)
 void
 ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArrayHandle dst, int dst_offset, int count, MonoError *error)
 {
-	MONO_CHECK_ARG_NULL_HANDLE (src, FALSE);
-	MONO_CHECK_ARG_NULL_HANDLE (dst, FALSE);
+	MONO_CHECK_ARG_NULL_HANDLE (src,);
+	MONO_CHECK_ARG_NULL_HANDLE (dst,);
 
 	if (src_offset < 0 || dst_offset < 0 || count < 0) {
 		mono_error_set_index_out_of_range (error);
@@ -7189,10 +7189,10 @@ ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArra
 
 	MONO_ENTER_NO_SAFEPOINTS;
 
-	const guint8* src_buf =  (guint8*)MONO_HANDLE_RAW (src)->vector + src_offset;
-	const guint8* dest_buf = (guint8*)MONO_HANDLE_RAW (dst)->vector + dst_offset;
+	guint8 const * const src_buf = (guint8*)MONO_HANDLE_RAW (src)->vector + src_offset;
+	guint8* const dst_buf = (guint8*)MONO_HANDLE_RAW (dest)->vector + dest_offset;
 
-	memmove (dest_buf, src_buf, count);
+	memmove (dst_buf, src_buf, count);
 
 	MONO_EXIT_NO_SAFEPOINTS;
 
