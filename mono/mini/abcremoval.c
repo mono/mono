@@ -182,7 +182,9 @@ print_evaluation_context_status (MonoRelationsEvaluationStatus status) {
 
 static void
 print_evaluation_context_ranges (MonoRelationsEvaluationRanges *ranges) {
-	printf ("(ranges: zero [%d,%d], variable [%d,%d])", ranges->zero.lower, ranges->zero.upper, ranges->variable.lower, ranges->variable.upper);
+	printf ("(ranges: zero [%d,%d] (not-null = %d), variable [%d,%d])",
+		ranges->zero.lower, ranges->zero.upper, ranges->zero.nullness,
+		ranges->variable.lower, ranges->variable.upper);
 }
 
 static void
@@ -1407,13 +1409,17 @@ mono_perform_abc_removal (MonoCompile *cfg)
 		if (area.relations [i].related_value.type == MONO_VARIABLE_SUMMARIZED_VALUE) {
 			int related_index = cfg->next_vreg + i;
 			int related_variable = area.relations [i].related_value.value.variable.variable;
+			MonoValueNullness symmetric_nullness = MONO_VALUE_MAYBE_NULL;
+			if (area.relations [i].related_value.value.variable.nullness & MONO_VALUE_IS_VARIABLE) {
+				symmetric_nullness = area.relations [i].related_value.value.variable.nullness;
+			}
 			
 			area.relations [related_index].relation = MONO_EQ_RELATION;
 			area.relations [related_index].relation_is_static_definition = TRUE;
 			area.relations [related_index].related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
 			area.relations [related_index].related_value.value.variable.variable = i;
 			area.relations [related_index].related_value.value.variable.delta = - area.relations [i].related_value.value.variable.delta;
-			area.relations [related_index].related_value.value.variable.nullness = MONO_VALUE_MAYBE_NULL;
+			area.relations [related_index].related_value.value.variable.nullness = symmetric_nullness;
 			
 			area.relations [related_index].next = area.relations [related_variable].next;
 			area.relations [related_variable].next = &(area.relations [related_index]);
