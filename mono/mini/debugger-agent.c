@@ -9539,6 +9539,9 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// FIXME:
 		g_assert (domain == domain2);
 
+		if (!klass->valuetype)
+			return ERR_INVALID_ARGUMENT;
+
 		o = mono_object_new_checked (domain, klass, &error);
 		mono_error_assert_ok (&error);
 
