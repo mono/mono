@@ -20,7 +20,7 @@ namespace System
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern int _ByteLength (Array array);
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern bool IsPrimitiveTypeArray (Array array);
 
 		internal static unsafe void Memcpy (byte* dest, byte* src, int len) => Memmove (dest, src, (nuint) len);
