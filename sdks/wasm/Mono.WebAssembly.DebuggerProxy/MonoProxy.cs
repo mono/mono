@@ -759,6 +759,9 @@ namespace WsProxy {
 				}
 			} catch (Exception e) {
 				var o = JObject.FromObject (new {
+					// discuss: "Ensure DebugType is set to portable"
+					// discuss: "Ensure DebugSymbols is set to true"
+					// discuss: "Ensure DEBUG is defined in DefineConstants"
 					scriptSource = $"// Unable to read document ({e.Message})\n" +
 								$"Local path: {src_file?.SourceUri}\n" +
 								$"SourceLink path: {src_file?.SourceLinkUri}\n"
