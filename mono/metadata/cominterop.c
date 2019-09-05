@@ -2020,9 +2020,9 @@ cominterop_setup_marshal_context (EmitMarshalContext *m, MonoMethod *method)
 static MonoMarshalSpec*
 cominterop_get_ccw_default_mspec (const MonoType *param_type)
 {
-	MonoMarshalSpec *result = NULL;
-	MonoMarshalVariant elem_type = 0;
+	MonoMarshalVariant elem_type;
 	MonoMarshalNative native;
+	MonoMarshalSpec *result;
 
 	switch (param_type->type) {
 	case MONO_TYPE_OBJECT:
@@ -2042,17 +2042,17 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 		native = MONO_NATIVE_SAFEARRAY;
 		if (param_type->data.array->eklass == mono_defaults.object_class)
 			elem_type = MONO_VARIANT_VARIANT;
+		else
+			return NULL;
 		break;
 	default:
-		native = 0;
+		return NULL;
 	}
 
-	if (native) {
-		result = g_new0 (MonoMarshalSpec, 1);
-		result->native = native;
-		if (native == MONO_NATIVE_SAFEARRAY)
-			result->data.safearray_data.elem_type = elem_type;
-	}
+	result = g_new0 (MonoMarshalSpec, 1);
+	result->native = native;
+	if (native == MONO_NATIVE_SAFEARRAY)
+		result->data.safearray_data.elem_type = elem_type;
 
 	return result;
 }
