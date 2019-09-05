@@ -7157,6 +7157,7 @@ mono_array_get_byte_length (MonoArrayHandle array)
 	}
 }
 
+#ifdef ENABLE_NETCORE
 void
 ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArrayHandle dst, int dst_offset, int count, MonoError *error)
 {
@@ -7202,6 +7203,7 @@ ves_icall_System_Buffer_IsPrimitiveTypeArray (MonoArrayHandle array, MonoError* 
 	MonoClass * const klass = m_class_get_element_class (MONO_HANDLE_GETVAL (array, obj.vtable)->klass);
 	return m_class_is_valuetype (klass);
 }
+#endif
 
 gint32
 ves_icall_System_Buffer_ByteLengthInternal (MonoArrayHandle array, MonoError* error)
