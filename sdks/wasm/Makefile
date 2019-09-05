@@ -25,8 +25,16 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
-DOTNET_BUILD?=dotnet build
-DOTNET_PACK?=dotnet pack
+
+ifeq ($(HOST_PLATFORM),win32)
+DOTNET_BUILD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
+DOTNET_BUILD := "$(subst \,/,$(DOTNET))"
+else
+DOTNET_BUILD := $(shell ./init-tools.sh | tail -1)
+endif
+
+DOTNET_BUILD+= build
+DOTNET_PACK=$(DOTNET_BUILD) pack
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
