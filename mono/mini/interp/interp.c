@@ -3394,6 +3394,21 @@ mono_interp_callvirt_fast (InterpFrame *frame, InterpFrame *child_frame, const g
 	return sp;
 }
 
+static MONO_NEVER_INLINE int
+mono_interp_stfld_vt (InterpFrame *frame, MonoObject* o, const guint16 *ip, stackval *sp)
+{
+	MonoClass *klass = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 2)];
+	int const i32 = mono_class_value_size (klass, NULL);
+
+	sp -= 2;
+
+	guint16 offset = * (guint16 *)(ip + 1);
+
+	mono_value_copy_internal ((char *) o + offset, sp [1].data.p, klass);
+
+	return ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+}
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -5178,25 +5193,14 @@ main_loop:
 
 		MINT_IN_CASE(MINT_STFLD_VT) {
 
-			MonoObject* o = sp [-2].data.o; // See the comment about GC safety above.
+			MonoObject* const o = sp [-2].data.o; // See the comment about GC safety above.
 			NULL_CHECK (o);
-
-			MonoClass *klass = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 2)];
-			(void)mono_class_value_size (klass, NULL);
-
-			o = sp [-2].data.o; // See the comment about GC safety above. Refetch to conserve stack (or outline).
+			vt_sp -= mono_interp_stfld_vt (frame, o, ip, sp);
 			sp -= 2;
-
-			guint16 offset = * (guint16 *)(ip + 1);
-
-			mono_value_copy_internal ((char *) o + offset, sp [1].data.p, klass);
-
-			int const i32 = mono_class_value_size (klass, NULL);
-
-			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 3;
 			MINT_IN_BREAK;
 		}
+
 		MINT_IN_CASE(MINT_STRMFLD) {
 			MonoClassField *field;
 
