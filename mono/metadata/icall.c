@@ -7165,17 +7165,17 @@ ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArra
 	MONO_CHECK_ARG_NULL_HANDLE (dst,);
 
 	if (src_offset < 0) {
-		mono_exception_new_argument_out_of_range (error, "srcOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		mono_error_set_argument_out_of_range (error, "srcOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
 		return;
 	}
 
 	if (dst_offset < 0) {
-		mono_exception_new_argument_out_of_range (error, "dstOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		mono_error_set_argument_out_of_range (error, "dstOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
 		return;
 	}
 
 	if (count < 0) {
-		mono_exception_new_argument_out_of_range (error, "count", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		mono_error_set_argument_out_of_range (error, "count", "Value must be non-negative and less than or equal to Int32.MaxValue.");
 		return;
 	}
 
