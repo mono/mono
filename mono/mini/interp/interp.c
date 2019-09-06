@@ -3327,6 +3327,73 @@ mono_interp_stobj_vt (InterpFrame* frame, const guint16* ip, stackval* sp)
 	return ALIGN_TO (size, MINT_VT_ALIGNMENT);
 }
 
+static MONO_NEVER_INLINE stackval*
+mono_interp_call (InterpFrame *frame, InterpFrame *child_frame, const guint16 *ip, stackval *sp, guchar *vt_sp)
+{
+	frame->ip = ip;
+
+	child_frame->imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
+	ip += 2;
+	sp->data.p = vt_sp;
+	child_frame->retval = sp;
+
+	/* decrement by the actual number of args */
+	sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis;
+	child_frame->stack_args = sp;
+
+	const gboolean is_virtual = ip [-2] == MINT_CALLVIRT || ip [-2] == MINT_VCALLVIRT;
+	if (is_virtual) {
+		MonoObject *this_arg = (MonoObject*)sp->data.p;
+
+		child_frame->imethod = get_virtual_method (child_frame->imethod, this_arg->vtable);
+
+		if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
+			/* unbox */
+			gpointer unboxed = mono_object_unbox_internal (this_arg);
+			sp [0].data.p = unboxed;
+		}
+	}
+
+	child_frame->parent = frame;
+
+	return sp;
+}
+
+static MONO_NEVER_INLINE stackval*
+mono_interp_callvirt_fast (InterpFrame *frame, InterpFrame *child_frame, const guint16 *ip, stackval *sp, guchar *vt_sp)
+{
+	MonoObject *this_arg;
+	InterpMethod *target_imethod;
+	int slot;
+
+	// FIXME Have it handle also remoting calls and use a single opcode for virtual calls
+
+	frame->ip = ip;
+
+	target_imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
+	slot = *(gint16*)(ip + 2);
+	sp->data.p = vt_sp;
+	child_frame->retval = sp;
+
+	/* decrement by the actual number of args */
+	sp -= target_imethod->param_count + target_imethod->hasthis;
+	child_frame->stack_args = sp;
+
+	this_arg = (MonoObject*)sp->data.p;
+
+	child_frame->imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
+
+	if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
+		/* unbox */
+		gpointer unboxed = mono_object_unbox_internal (this_arg);
+		sp [0].data.p = unboxed;
+	}
+
+	child_frame->parent = frame;
+
+	return sp;
+}
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -3668,47 +3735,24 @@ main_loop:
 		}
 		MINT_IN_CASE(MINT_CALLVIRT_FAST)
 		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
-			MonoObject *this_arg;
-			InterpMethod *target_imethod;
-			int slot;
 
 			// FIXME Have it handle also remoting calls and use a single opcode for virtual calls
 
-			frame->ip = ip;
+			sp = mono_interp_callvirt_fast (frame, &u.child_frame, ip, sp, vt_sp);
 
-			target_imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
-			slot = *(gint16*)(ip + 2);
 			ip += 3;
-			sp->data.p = vt_sp;
-			u.child_frame.retval = sp;
 
-			/* decrement by the actual number of args */
-			sp -= target_imethod->param_count + target_imethod->hasthis;
-			u.child_frame.stack_args = sp;
-
-			this_arg = (MonoObject*)sp->data.p;
-
-			u.child_frame.imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
-
-			this_arg = (MonoObject*)sp->data.p; // Refetch to conserve stack.
-
-			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (u.child_frame.imethod->method->klass)) {
-				/* unbox */
-				gpointer unboxed = mono_object_unbox_internal (this_arg);
-				sp [0].data.p = unboxed;
-			}
-
-			u.child_frame.parent = frame;
 			interp_exec_method (&u.child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
-			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
+			const gboolean is_void = frame->ip [0] == MINT_VCALLVIRT_FAST;
 			if (!is_void) {
 				/* need to handle typedbyref ... */
 				*sp = *u.child_frame.retval;
 				sp++;
 			}
+
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
@@ -3749,43 +3793,22 @@ main_loop:
 		MINT_IN_CASE(MINT_VCALL)
 		MINT_IN_CASE(MINT_CALLVIRT)
 		MINT_IN_CASE(MINT_VCALLVIRT) {
-			frame->ip = ip;
 
-			u.child_frame.imethod = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
+			sp = mono_interp_call (frame, &u.child_frame, ip, sp, vt_sp);
+
 			ip += 2;
-			sp->data.p = vt_sp;
-			u.child_frame.retval = sp;
 
-			/* decrement by the actual number of args */
-			sp -= u.child_frame.imethod->param_count + u.child_frame.imethod->hasthis;
-			u.child_frame.stack_args = sp;
-
-			const gboolean is_virtual = ip [-2] == MINT_CALLVIRT || ip [-2] == MINT_VCALLVIRT;
-			if (is_virtual) {
-				MonoObject *this_arg = (MonoObject*)sp->data.p;
-
-				u.child_frame.imethod = get_virtual_method (u.child_frame.imethod, this_arg->vtable);
-
-				this_arg = (MonoObject*)sp->data.p; // Refetch to conserve stack.
-
-				if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (u.child_frame.imethod->method->klass)) {
-					/* unbox */
-					gpointer unboxed = mono_object_unbox_internal (this_arg);
-					sp [0].data.p = unboxed;
-				}
-			}
-
-			u.child_frame.parent = frame;
 			interp_exec_method (&u.child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
 
-			const gboolean is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
+			const gboolean is_void = frame->ip [0] == MINT_VCALL || frame->ip [0] == MINT_VCALLVIRT;
 			if (!is_void) {
 				/* need to handle typedbyref ... */
 				*sp = *u.child_frame.retval;
 				sp++;
 			}
+
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
