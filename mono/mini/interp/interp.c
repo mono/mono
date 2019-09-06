@@ -3642,8 +3642,6 @@ main_loop:
 
 			CHECK_RESUME_STATE (context);
 
-			csignature = (MonoMethodSignature*)frame->imethod->data_items [*(guint16*)(ip - 3 + 1)]; // Refetch to conserve stack (do not outline).
-
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
 				*sp = *u.child_frame.retval;
@@ -3708,7 +3706,6 @@ main_loop:
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
-			csig = (MonoMethodSignature*) frame->imethod->data_items [*(guint16*)(ip + 2)];  // Refetch to conserve stack.
 			int const num_varargs = csig->param_count - csig->sentinelpos;
 
 			ip += 3;
@@ -3723,8 +3720,6 @@ main_loop:
 			interp_exec_method (&u.child_frame, context, error);
 
 			CHECK_RESUME_STATE (context);
-
-			csig = (MonoMethodSignature*) frame->imethod->data_items [*(guint16*)(ip - 3 + 2)]; // Refetch to conserve stack.
 
 			if (csig->ret->type != MONO_TYPE_VOID) {
 				*sp = *u.child_frame.retval;
@@ -3807,8 +3802,6 @@ main_loop:
 			MonoException *ex = ves_imethod (frame, target_method, sig, sp, sp + sig->param_count + sig->hasthis);
 			if (ex)
 				THROW_EX (ex, ip);
-
-			sig = (MonoMethodSignature*) frame->imethod->data_items [*(guint16*)(ip + 2)]; // Refetch to conserve stack.
 
 			if (sig->ret->type != MONO_TYPE_VOID) {
 				*sp = sp [sig->param_count + sig->hasthis];
@@ -5151,8 +5144,6 @@ main_loop:
 			MonoClass *klass = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 2)];
 			(void)mono_class_value_size (klass, NULL);
 
-			klass = (MonoClass*)frame->imethod->data_items[*(guint16*)(ip + 2)]; // Refetch to conserve stack (or outline).
-
 			o = sp [-2].data.o; // See the comment about GC safety above. Refetch to conserve stack (or outline).
 			sp -= 2;
 
@@ -5160,8 +5151,7 @@ main_loop:
 
 			mono_value_copy_internal ((char *) o + offset, sp [1].data.p, klass);
 
-			klass = (MonoClass*)frame->imethod->data_items[*(guint16*)(ip + 2)]; // Refetch to conserve stack (or outline).
-			int const i32 = mono_class_value_size (klass, NULL); // Recompute to conserve stack (or outline).
+			int const i32 = mono_class_value_size (klass, NULL);
 
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 3;
@@ -5353,9 +5343,8 @@ main_loop:
 			guint32 offset = READ32(ip + 1);
 			gpointer addr = mono_get_special_static_data (offset);
 			--sp;
-			int size = READ32 (ip + 3);
+			int const size = READ32 (ip + 3);
 			memcpy (addr, sp->data.vt, size);
-			size = READ32 (ip + 3); // Refetch to conserve stack (or outline).
 			vt_sp -= ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			ip += 5;
 			MINT_IN_BREAK;
@@ -6373,10 +6362,9 @@ leave_common:		;
 		MINT_IN_CASE(MINT_STARG_P) STARG(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STARG_VT) {
-			int i32 = READ32 (ip + 2);
+			int const i32 = READ32 (ip + 2);
 			--sp;
 			memcpy (frame->stack_args [* (guint16 *)(ip + 1)].data.p, sp->data.p, i32);
-			i32 = READ32 (ip + 2); // Refetch to conserve stack (or outline).
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 4;
 			MINT_IN_BREAK;
@@ -6499,10 +6487,9 @@ leave_common:		;
 		MINT_IN_CASE(MINT_STLOC_NP_O) STLOC_NP(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STLOC_VT) {
-			int i32 = READ32 (ip + 2);
+			int const i32 = READ32 (ip + 2);
 			--sp;
 			memcpy (locals + * (guint16 *)(ip + 1), sp->data.p, i32);
-			i32 = READ32 (ip + 2); // Refetch to conserve stack (or outline).
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 4;
 			MINT_IN_BREAK;
