@@ -17,10 +17,6 @@ TYPED_HANDLE_DECL (MonoIOSelectorJob);
 
 ICALL_EXPORT
 void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error);
-
-ICALL_EXPORT
-void
 ves_icall_System_IOSelector_Remove (gpointer handle);
 
 void
