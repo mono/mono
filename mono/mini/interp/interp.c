@@ -228,6 +228,23 @@ int mono_interp_traceopt = 0;
 #define MINT_IN_DEFAULT default:
 #endif
 
+static GSList*
+clear_resume_state (ThreadContext *context, InterpFrame *frame, GSList* finally_ips)
+{
+	/* We have thrown an exception from a finally block. Some of the leave targets were unwound already */
+	while (finally_ips &&
+		   finally_ips->data >= context->handler_ei->try_start &&
+		   finally_ips->data < context->handler_ei->try_end)
+		finally_ips = g_slist_remove (finally_ips, finally_ips->data);
+	context->has_resume_state = 0;
+	context->handler_frame = NULL;
+	context->handler_ei = NULL;
+	g_assert (context->exc_gchandle);
+	mono_gchandle_free_internal (context->exc_gchandle);
+	context->exc_gchandle = 0;
+	return finally_ips;
+}
+
 /*
  * If this bit is set, it means the call has thrown the exception, and we
  * reached this point because the EH code in mono_handle_exception ()
@@ -6304,7 +6321,7 @@ leave_common:		;
 			InterpMethod *m = (InterpMethod*)frame->imethod->data_items [* (guint16 *)(ip + 1)];
 			--sp;
 			NULL_CHECK (sp->data.p);
-
+	
 			sp->data.p = get_virtual_method (m, sp->data.o->vtable);
 			ip += 2;
 			++sp;
@@ -6694,18 +6711,7 @@ resume:
 		sp->data.p = mono_gchandle_get_target_internal (context->exc_gchandle);
 		++sp;
 
-		// Formerly clear_resume_state, now inlined.
-		/* We have thrown an exception from a finally block. Some of the leave targets were unwound already */
-		while (finally_ips &&
-			   finally_ips->data >= context->handler_ei->try_start &&
-			   finally_ips->data < context->handler_ei->try_end)
-			finally_ips = g_slist_remove (finally_ips, finally_ips->data);
-		context->has_resume_state = 0;
-		context->handler_frame = NULL;
-		context->handler_ei = NULL;
-		g_assert (context->exc_gchandle);
-		mono_gchandle_free_internal (context->exc_gchandle);
-		context->exc_gchandle = 0;
+		finally_ips = clear_resume_state (context, frame, finally_ips);
 		// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
 		// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
 		goto main_loop;
