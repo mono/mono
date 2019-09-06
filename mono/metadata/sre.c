@@ -50,9 +50,7 @@
 #include "icall-decl.h"
 
 static GENERATE_GET_CLASS_WITH_CACHE (marshal_as_attribute, "System.Runtime.InteropServices", "MarshalAsAttribute");
-#ifndef DISABLE_REFLECTION_EMIT
 static GENERATE_GET_CLASS_WITH_CACHE (module_builder, "System.Reflection.Emit", "ModuleBuilder");
-#endif
 
 static char* string_to_utf8_image_raw (MonoImage *image, MonoString *s, MonoError *error);
 
@@ -2430,31 +2428,12 @@ encode_named_val (MonoReflectionAssembly *assembly, char *buffer, char *p, char 
  * \returns a \c Byte array representing the blob of data.
  */
 MonoArray*
-mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues)
+mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues) 
 {
-	HANDLE_FUNCTION_ENTER ();
-
-	MonoArrayHandle result;
-
-	MONO_ENTER_GC_UNSAFE;
-
 	ERROR_DECL (error);
-
-	MONO_HANDLE_NEW (MonoReflectionAssembly, assembly);
-	MONO_HANDLE_NEW (MonoObject, ctor);
-	MONO_HANDLE_NEW (MonoArray, ctorArgs);
-	MONO_HANDLE_NEW (MonoArray, properties);
-	MONO_HANDLE_NEW (MonoArray, propValues);
-	MONO_HANDLE_NEW (MonoArray, fields);
-	MONO_HANDLE_NEW (MonoArray, fieldValues);
-
-	result = mono_reflection_get_custom_attrs_blob_checked (assembly, ctor, ctorArgs, properties, propValues, fields, fieldValues, error);
-
+	MonoArray *result = mono_reflection_get_custom_attrs_blob_checked (assembly, ctor, ctorArgs, properties, propValues, fields, fieldValues, error);
 	mono_error_cleanup (error);
-
-	MONO_EXIT_GC_UNSAFE;
-
-	HANDLE_FUNCTION_RETURN_OBJ (result);
+	return result;
 }
 
 /**
@@ -2470,21 +2449,18 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
  * the custom attributed described by \p ctor, \p ctorArgs etc.
  * \returns a \c Byte array representing the blob of data.  On failure returns NULL and sets \p error.
  */
-MonoArrayHandle
-mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues, MonoError *error)
+MonoArray*
+mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues, MonoError *error) 
 {
-	MonoArrayHandle result = NULL_HANDLE_INIT;
+	MonoArray *result = NULL;
 	MonoMethodSignature *sig;
 	MonoMethodSignature *sig_free = NULL;
 	MonoObject *arg;
 	char *buffer = NULL;
 	char *p;
 	guint32 buflen, i;
-	MonoObjectHandle h1 = NULL_HANDLE_INIT;
-	MonoObjectHandle h2 = NULL_HANDLE_INIT;
-	MonoObjectHandle argh = NULL_HANDLE_INIT;
 
-	HANDLE_FUNCTION_ENTER ();
+	error_init (error);
 
 	if (strcmp (ctor->vtable->klass->name, "RuntimeConstructorInfo")) {
 		/* sig is freed later so allocate it in the heap */
@@ -2501,12 +2477,8 @@ mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly,
 	/* write the prolog */
 	*p++ = 1;
 	*p++ = 0;
-
-	argh = MONO_HANDLE_NEW (MonoObject, NULL);
-
 	for (i = 0; i < sig->param_count; ++i) {
 		arg = mono_array_get_internal (ctorArgs, MonoObject*, i);
-		MONO_HANDLE_ASSIGN_RAW (argh, arg);
 		encode_cattr_value (assembly->assembly, buffer, p, &buffer, &p, &buflen, sig->params [i], arg, NULL, error);
 		goto_if_nok (error, leave);
 	}
@@ -2517,55 +2489,33 @@ mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly,
 		i += mono_array_length_internal (fields);
 	*p++ = i & 0xff;
 	*p++ = (i >> 8) & 0xff;
-
-	if (properties || fields) {
-		h1 = MONO_HANDLE_NEW (MonoObject, NULL);
-		h2 = MONO_HANDLE_NEW (MonoObject, NULL);
-	}
-
 	if (properties) {
-
 		MonoObject *prop;
-
 		for (i = 0; i < mono_array_length_internal (properties); ++i) {
 			MonoType *ptype;
 			char *pname;
 
 			prop = (MonoObject *)mono_array_get_internal (properties, gpointer, i);
-			MONO_HANDLE_ASSIGN_RAW (h1, prop);
-
 			get_prop_name_and_type (prop, &pname, &ptype, error);
 			goto_if_nok (error, leave);
 			*p++ = 0x54; /* PROPERTY signature */
-
-			prop = (MonoObject*)mono_array_get_internal (propValues, gpointer, i);
-			MONO_HANDLE_ASSIGN_RAW (h2, prop);
-
-			encode_named_val (assembly, buffer, p, &buffer, &p, &buflen, ptype, pname, prop, error);
+			encode_named_val (assembly, buffer, p, &buffer, &p, &buflen, ptype, pname, (MonoObject*)mono_array_get_internal (propValues, gpointer, i), error);
 			g_free (pname);
 			goto_if_nok (error, leave);
 		}
 	}
 
 	if (fields) {
-
 		MonoObject *field;
-
 		for (i = 0; i < mono_array_length_internal (fields); ++i) {
 			MonoType *ftype;
 			char *fname;
 
 			field = (MonoObject *)mono_array_get_internal (fields, gpointer, i);
-			MONO_HANDLE_ASSIGN_RAW (h1, field);
-
 			get_field_name_and_type (field, &fname, &ftype, error);
 			goto_if_nok (error, leave);
 			*p++ = 0x53; /* FIELD signature */
-
-			field = (MonoObject*)mono_array_get_internal (fieldValues, gpointer, i);
-			MONO_HANDLE_ASSIGN_RAW (h2, field);
-
-			encode_named_val (assembly, buffer, p, &buffer, &p, &buflen, ftype, fname, field, error);
+			encode_named_val (assembly, buffer, p, &buffer, &p, &buflen, ftype, fname, (MonoObject*)mono_array_get_internal (fieldValues, gpointer, i), error);
 			g_free (fname);
 			goto_if_nok (error, leave);
 		}
@@ -2573,15 +2523,14 @@ mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly,
 
 	g_assert (p - buffer <= buflen);
 	buflen = p - buffer;
-	result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
+	result = mono_array_new_checked (mono_domain_get (), mono_defaults.byte_class, buflen, error);
 	goto_if_nok (error, leave);
-	p = mono_array_addr_internal (MONO_HANDLE_RAW (result), char, 0);
+	p = mono_array_addr_internal (result, char, 0);
 	memcpy (p, buffer, buflen);
 leave:
 	g_free (buffer);
 	g_free (sig_free);
-
-	HANDLE_FUNCTION_RETURN_REF (MonoArray, result);
+	return result;
 }
 
 static gboolean
@@ -4493,7 +4442,7 @@ mono_reflection_resolve_object_handle (MonoImage *image, MonoObjectHandle obj, M
 #else /* DISABLE_REFLECTION_EMIT */
 
 MonoArray*
-mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues)
+mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues) 
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -4527,7 +4476,7 @@ mono_image_create_method_token (MonoDynamicImage *assembly, MonoObjectHandle obj
 }
 
 guint32
-mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj,
+mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj, 
 			 gboolean create_open_instance, gboolean register_token, MonoError *error)
 {
 	g_assert_not_reached ();
@@ -4549,7 +4498,7 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, 
 	return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 }
 
-void
+void 
 ves_icall_DynamicMethod_create_dynamic_method (MonoReflectionDynamicMethodHandle mb, MonoError *error)
 {
 	error_init (error);
@@ -4586,6 +4535,7 @@ mono_sre_generic_param_table_entry_free (GenericParamTableEntry *entry)
 gint32
 ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, MonoBoolean create_open_instance, MonoError *error)
 {
+	error_init (error);
 	if (MONO_HANDLE_IS_NULL (obj)) {
 		mono_error_set_argument_null (error, "obj", "");
 		return 0;
@@ -4599,6 +4549,7 @@ ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
 					MonoArrayHandle opt_param_types,
 					MonoError *error)
 {
+	error_init (error);
 	if (MONO_HANDLE_IS_NULL (method)) {
 		mono_error_set_argument_null (error, "method", "");
 		return 0;
@@ -4609,21 +4560,26 @@ ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
 
 #ifndef ENABLE_NETCORE
 void
-ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilderHandle mb, HANDLE file, MonoError* error)
+ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, HANDLE file)
 {
-	mono_image_create_pefile (MONO_HANDLE_RAW (mb), file, error);
+	ERROR_DECL (error);
+	mono_image_create_pefile (mb, file, error);
+	mono_error_set_pending_exception (error);
 }
 
 void
-ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilderHandle mb, MonoError* error)
+ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb)
 {
-	mono_image_build_metadata (MONO_HANDLE_RAW (mb), error);
+	ERROR_DECL (error);
+	mono_image_build_metadata (mb, error);
+	mono_error_set_pending_exception (error);
 }
 #endif
 
 void
 ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, guint32 token, MonoError *error)
 {
+	error_init (error);
 	/* This function may be called by ModuleBuilder.FixupTokens to update
 	 * an existing token, so replace is okay here. */
 	mono_dynamic_image_register_token (MONO_HANDLE_GETVAL (mb, dynamic_image), token, obj, MONO_DYN_IMAGE_TOK_REPLACE);
@@ -4637,19 +4593,14 @@ ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilderHandle mb
 }
 
 #ifndef DISABLE_REFLECTION_EMIT
-
-MonoArrayHandle
-ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssemblyHandle assembly, MonoObjectHandle ctor,
-					  MonoArrayHandle ctorArgs, MonoArrayHandle properties,
-					  MonoArrayHandle propValues, MonoArrayHandle fields,
-					  MonoArrayHandle fieldValues, MonoError* error)
+MonoArray*
+ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues)
 {
-	return mono_reflection_get_custom_attrs_blob_checked (MONO_HANDLE_RAW (assembly), MONO_HANDLE_RAW (ctor),
-							      MONO_HANDLE_RAW (ctorArgs), MONO_HANDLE_RAW (properties),
-							      MONO_HANDLE_RAW (propValues), MONO_HANDLE_RAW (fields),
-							      MONO_HANDLE_RAW (fieldValues), error);
+	ERROR_DECL (error);
+	MonoArray *result = mono_reflection_get_custom_attrs_blob_checked (assembly, ctor, ctorArgs, properties, propValues, fields, fieldValues, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
-
 #endif
 
 void
@@ -4677,12 +4628,14 @@ ves_icall_EnumBuilder_setup_enum_type (MonoReflectionTypeHandle enumtype,
 				       MonoReflectionTypeHandle t,
 				       MonoError *error)
 {
+	error_init (error);
 	MONO_HANDLE_SETVAL (enumtype, type, MonoType*, MONO_HANDLE_GETVAL (t, type));
 }
 
 void
 ves_icall_ModuleBuilder_basic_init (MonoReflectionModuleBuilderHandle moduleb, MonoError *error)
 {
+	error_init (error);
 	mono_image_module_basic_init (moduleb, error);
 }
 
@@ -4695,6 +4648,7 @@ ves_icall_ModuleBuilder_getUSIndex (MonoReflectionModuleBuilderHandle module, Mo
 void
 ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle moduleb, MonoReflectionTypeHandle ref_type, MonoError *error)
 {
+	error_init (error);
 	MonoDynamicImage *image = MONO_HANDLE_GETVAL (moduleb, dynamic_image);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 
