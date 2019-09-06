@@ -7183,12 +7183,12 @@ ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArra
 	MonoClass * const dst_class = m_class_get_element_class (MONO_HANDLE_GETVAL (dst, obj.vtable)->klass);
 
 	if (!m_class_is_primitive (src_class)) {
-		mono_error_set_argument (error, "dst", "Object must be an array of primitives.");
+		mono_error_set_argument (error, "src", "Object must be an array of primitives.");
 		return;
 	}
 
 	if (!m_class_is_primitive (dst_class)) {
-		mono_error_set_argument (error, "src", "Object must be an array of primitives.");
+		mono_error_set_argument (error, "dst", "Object must be an array of primitives.");
 		return;
 	}
 
