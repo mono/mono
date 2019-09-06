@@ -3226,6 +3226,15 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
 	return ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 }
 
+static int
+mono_interp_stobj_vt (InterpFrame *frame, const guint16 *ip, stackval *sp)
+{
+	MonoClass* const c = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 1)];
+	int const size = mono_class_value_size (c, NULL);
+	mono_value_copy_internal (sp [-2].data.p, sp [-1].data.p, c);
+	return ALIGN_TO (size, MINT_VT_ALIGNMENT);
+}
+
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
@@ -5239,16 +5248,12 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_STOBJ_VT) {
-			int size;
-			MonoClass* const c = (MonoClass*)frame->imethod->data_items[* (guint16 *)(ip + 1)];
+		MINT_IN_CASE(MINT_STOBJ_VT)
+			vt_sp -= mono_interp_stobj_vt (frame, ip, sp);
 			ip += 2;
-			size = mono_class_value_size (c, NULL);
-			mono_value_copy_internal (sp [-2].data.p, sp [-1].data.p, c);
-			vt_sp -= ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			sp -= 2;
 			MINT_IN_BREAK;
-		}
+
 		MINT_IN_CASE(MINT_CONV_OVF_I4_UN_R8)
 			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT32)
 				goto overflow_label;
