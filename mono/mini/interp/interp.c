@@ -4324,7 +4324,7 @@ main_loop:
 
 #define BINOP(datamem, op) \
 	--sp; \
-	sp [-1].data.datamem op ## = sp [0].data.datamem; \
+	sp [-1].data.datamem = sp [-1].data.datamem op sp [0].data.datamem; \
 	++ip;
 
 		MINT_IN_CASE(MINT_ADD_I4)
