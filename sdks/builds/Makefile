@@ -37,17 +37,17 @@ endif
 
 ifneq ($(UNAME),Darwin)
 # iOS and Mac requires Xcode to be available, and Xcode is only available on macOS
-DISABLE_IOS=1
-DISABLE_MAC=1
+ENABLE_IOS=
+ENABLE_MAC=
 endif
 
 # On Windows, we will just trigger LLVM and Android builds using this Makefile.
 ifeq ($(UNAME),Windows)
-DISABLE_IOS=1
-DISABLE_MAC=1
-DISABLE_WASM=1
-DISABLE_WASM_CROSS=1
-DISABLE_DESKTOP=1
+ENABLE_IOS=
+ENABLE_MAC=
+ENABLE_WASM=
+ENABLE_WASM_CROSS=
+ENABLE_DESKTOP=
 DISABLE_CCACHE=1
 DISABLE_LIBTOOLIZE=1
 IGNORE_PROVISION_MXE=1
@@ -93,19 +93,19 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh .stamp-ulimit-check
 
 ## Archive targets
 
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 android_ARCHIVE=
 endif
 
-ifndef DISABLE_IOS
+ifdef ENABLE_IOS
 ios_ARCHIVE=
 endif
 
-ifndef DISABLE_MAC
+ifdef ENABLE_MAC
 mac_ARCHIVE=
 endif
 
-ifndef DISABLE_WASM
+ifdef ENABLE_WASM
 wasm_ARCHIVE=
 endif
 
@@ -126,19 +126,19 @@ archive-$(1):
 	cd $$(TOP)/sdks/out && 7z a $$(_$(1)_COMPRESSION_ARGS) $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$($(1)_ARCHIVE))
 endef
 
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 $(eval $(call ArchiveTemplate,android,7z))
 endif
 
-ifndef DISABLE_IOS
+ifdef ENABLE_IOS
 $(eval $(call ArchiveTemplate,ios,7z))
 endif
 
-ifndef DISABLE_MAC
+ifdef ENABLE_MAC
 $(eval $(call ArchiveTemplate,mac,7z))
 endif
 
-ifndef DISABLE_WASM
+ifdef ENABLE_WASM
 $(eval $(call ArchiveTemplate,wasm,zip))
 endif
 
@@ -209,27 +209,27 @@ endif
 include llvm.mk
 
 ## Android targets
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 include android.mk
 endif
 
 ## iOS targets
-ifndef DISABLE_IOS
+ifdef ENABLE_IOS
 include ios.mk
 endif
 
 ## Mac targets
-ifndef DISABLE_MAC
+ifdef ENABLE_MAC
 include mac.mk
 endif
 
 ## Desktop targets
 ## To run host-side tests
-ifndef DISABLE_DESKTOP
+ifdef ENABLE_DESKTOP
 include desktop.mk
 endif
 
 ## WASM targets
-ifndef DISABLE_WASM
+ifdef ENABLE_WASM
 include wasm.mk
 endif
