@@ -21,7 +21,7 @@ namespace System.IO {
 
 		const int INTERRUPT_MS = 300;
 
-		protected void Operation (Action<IDictionary<object, C>, ConditionalWeakTable<object, M>, IDictionary<object, object>, Handle> map_op = null, Action<C, M> object_op = null, object handle = null, Action<C, M> cancel_op = null)
+		protected static void Operation (Action<IDictionary<object, C>, ConditionalWeakTable<object, M>, IDictionary<object, object>, Handle> map_op = null, Action<C, M> object_op = null, object handle = null, Action<C, M> cancel_op = null)
 		{
 			C internal_fsw = null;
 			M fsw = null;
@@ -69,7 +69,7 @@ namespace System.IO {
 			catch (Exception e) { throw new InvalidOperationException (nameof(object_op), e); };
 		}
 
-		protected void ProxyDispatch (object sender, FileAction action, FileSystemEventArgs args)
+		protected static void ProxyDispatch (object sender, FileAction action, FileSystemEventArgs args)
 		{
 			RenamedEventArgs renamed =
 				action == FileAction.RenamedNewName ? (RenamedEventArgs) args : null;
@@ -89,7 +89,7 @@ namespace System.IO {
 					}, handle: handle);
 		}
 
-		protected void ProxyDispatchError (object sender, ErrorEventArgs args)
+		protected static void ProxyDispatchError (object sender, ErrorEventArgs args)
 		{
 			object handle = null;
 
@@ -114,7 +114,7 @@ namespace System.IO {
 								Task.Run (() => ProxyDispatch (o, FileAction.RenamedNewName, args));
 
 			result.Error += (object o, ErrorEventArgs args) =>
-								Task.Run (() => ProxyDispatchError (handle, args));
+								Task.Run (() => ProxyDispatchError (o, args));
 
 			Operation (map_op: (in_map, out_map, event_map, _) => {
 				in_map.Add (handle, result);
