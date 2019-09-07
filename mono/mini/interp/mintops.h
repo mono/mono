@@ -27,9 +27,9 @@ typedef enum
 } MintOpArgType;
 
 #define OPDEF(a,b,c,d,e,f) a,
-enum {
+typedef enum {
 #include "mintops.def"
-};
+} MintOpcode;
 #undef OPDEF
 
 #if NO_UNALIGNED_ACCESS

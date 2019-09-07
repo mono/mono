@@ -129,22 +129,49 @@ typedef struct _InterpMethod
 	MonoProfilerCallInstrumentationFlags prof_flags;
 } InterpMethod;
 
+// InterpFrame also serves to communicate state
+// between interp_exec_method_full and interp_exec_method_inner.
+//
+// A separate struct would be reasonable here.
+// Either way copy out to local variables is probably good.
+// Either child_frame must be vacated in interp_exec_method_full
+// for the recursion.
 struct _InterpFrame {
-	InterpFrame *parent; /* parent */
+	union {
+		InterpFrame *parent; /* parent */
+
+		/*
+		 * For GC tracking of local objrefs in exec_method ().
+		 * Storing into this field will keep the object pinned
+		 * until the objref can be stored into stackval->data.o.
+		 *
+		 * Usually this field is only used on wasm,
+		 * exept for cross-function use. Then objref is used.
+		 */
+#ifdef TARGET_WASM
+		MonoObject* volatile o;
+#endif
+		MonoObject* volatile objref; /* child */
+		guchar *code; ; /* child MINT_CALLI_NAT */
+	};
+
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	stackval       *stack_args; /* parent */
-	stackval       *stack;
-	/*
-	 * For GC tracking of local objrefs in exec_method ().
-	 * Storing into this field will keep the object pinned
-	 * until the objref can be stored into stackval->data.o.
-	 */
-#ifdef TARGET_WASM
-	MonoObject* volatile o;
-#endif
+
+	union {
+		stackval       *stack_args; /* parent */
+		stackval       *sp; /* child */
+	};
+	union {
+		stackval       *stack;
+		unsigned char *vt_sp; /* child */
+	};
+
 	/* exception info */
-	const unsigned short  *ip;
+	union {
+		const unsigned short *ip;
+		GSList *finally_ips; /* child */
+	};
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
