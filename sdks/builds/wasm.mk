@@ -241,6 +241,8 @@ $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $
 
 endef
 
+ifdef ENABLE_WINDOWS
 $(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin64,wasm32-unknown-unknown))
+endif
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

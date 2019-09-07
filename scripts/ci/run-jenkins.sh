@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# -*- mode: shell-script; indent-tabs-mode: nil; -*-
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
@@ -195,9 +196,8 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_IOS=1" > sdks/Make.config
+        echo "ENABLE_MAC=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
@@ -249,10 +249,7 @@ then
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
-    echo "DISABLE_IOS=1" > sdks/Make.config
-    echo "DISABLE_ANDROID=1" >> sdks/Make.config
-    echo "DISABLE_WASM=1" >> sdks/Make.config
-    echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+    echo "ENABLE_MAC=1" > sdks/Make.config
     if [[ ${CI_TAGS} == *'cxx'* ]]; then
         echo "ENABLE_CXX=1" >> sdks/Make.config
     fi
@@ -269,10 +266,7 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
-        echo "DISABLE_IOS=1" > sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
@@ -320,10 +314,8 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_IOS=1" >> sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_WASM=1" > sdks/Make.config
+        echo "ENABLE_WINDOWS=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
