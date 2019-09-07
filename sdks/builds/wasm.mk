@@ -87,7 +87,7 @@ _wasm_$(1)_CONFIGURE_FLAGS = \
 	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
 	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
-	$$(wasm-$(1)_CONFIGURE_FLAGS) \
+	$$(wasm_$(1)_CONFIGURE_FLAGS) \
 	CFLAGS="$(WASM_RUNTIME_BASE_CFLAGS) $$(wasm_$(1)_CFLAGS)" \
 	CXXFLAGS="$(WASM_RUNTIME_BASE_CXXFLAGS) $$(wasm_$(1)_CXXFLAGS)"
 
@@ -143,6 +143,7 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime-netcore_CONFIGURE_FLAGS=--with-core=only
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
 
@@ -155,6 +156,8 @@ $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
 
 ##
@@ -252,3 +255,16 @@ $(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin6
 endif
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
+
+ifdef ENABLE_WASM_NETCORE
+
+build-wasm-bcl-netcore: build-wasm-runtime-netcore
+	cp wasm-runtime-netcore-release/netcore/config.make ../../netcore/config.make
+	make -C ../../netcore
+
+package-wasm-bcl-netcore: build-wasm-bcl-netcore
+	mkdir -p ../out/wasm-bcl/netcore
+	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
+
+endif
+
