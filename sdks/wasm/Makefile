@@ -132,38 +132,49 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 # Interpreter builds
 #
 
+MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a}
+MONO_NETCORE_LIBS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a} netcore-System.Native.bc
+NETCORE_CFLAGS=-DENABLE_NETCORE
+
 # $(1) - name
 # $(2) - runtime dir
 # $(3) - EMCC_FLAGS
+# $(4) - libs
 define InterpBuildTemplate
 
 builds/$(1)/:
 	mkdir -p $$@
 
 builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/mono.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
 
 builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
+	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
 
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
+	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
 endef
 
-$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS)))
-$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS)))
-ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
-endif
+$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
 ifdef ENABLE_WASM_THREADS
-$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS)))
-$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS)))
+$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_LIBS)))
+endif
+ifdef ENABLE_WASM_DYNAMIC_RUNTIME
+$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_LIBS)))
+endif
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS)))
+$(eval $(call InterpBuildTemplate,netcore-release,wasm-runtime-netcore-release,$(EMCC_RELEASE_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS)))
+
+builds/netcore-debug/mono.js builds/netcore-release/mono.js: netcore-System.Native.bc
 endif
 
 runtime:
@@ -174,6 +185,44 @@ cross:
 
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
+
+ifdef ENABLE_WASM_NETCORE
+
+NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
+NETCOREAPP_DIR=../../netcore/shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
+
+.PHONY: runtime-netcore
+runtime-netcore:
+	$(MAKE) -C ../builds package-wasm-runtime-netcore
+
+.PHONY: bcl-netcore
+bcl-netcore:
+	$(MAKE) -C ../builds package-wasm-bcl-netcore
+
+build-managed: bcl-netcore
+
+# Set COREFX_ROOT to a compatible corefx source repo
+# Apply netcore-corefx.diff
+netcore-System.Native.bc:
+	@if test x$(COREFX_ROOT) == x; then echo "Set COREFX_ROOT."; exit 1; fi
+	cd $(COREFX_ROOT)/src/Native && touch _version.c && cd Unix && mkdir -p build && cd build && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcmake cmake "-DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1" "-DCMAKE_TOOLCHAIN_FILE=$(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -G Ninja -DCMAKE_BUILD_TYPE=Debug .. && ninja && cp System.Native/System.Native.bc $(PWD)/$@
+
+src/pinvoke-tables-default-netcore.h:
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(NETCOREAPP_DIR)/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/System.Console.dll > $@
+
+samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
+	netcore build samples/hello -f netcoreapp3.0
+
+build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	mono --debug packager.exe --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	ninja -v -C obj/hello-netcore
+
+bin/hello-netcore/bin/mono.js: build-hello-netcore
+
+run-hello-netcore: bin/hello-netcore/bin/mono.js
+	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
+
+endif
 
 runtime-threads:
 	$(MAKE) -C ../builds package-wasm-runtime-threads
