@@ -16,10 +16,11 @@ usage()
 
   echo "Actions:"
   echo "  --clean                    Clean up the clean targets"
-  echo "  --reconfigure              Force provision and configure"
+  echo "  --cxx                      Enable CXX"
+  echo "  --reconfigure              Force provision and configure"  
   echo "  --test                     Run all tests (short: -t)"
-  echo "  --skiparchive              Do not archive"
-  echo "  --skipbuild                Do not build"
+  echo "  --thread                   Enable WASM threads"
+  echo "  --win                      Enable Windows cross build"
   echo ""
 
   echo "Command line arguments starting with '/p:' are passed through to MSBuild."
@@ -27,11 +28,12 @@ usage()
 }
 
 cleanall=false
+cxx=false
 configuration='Release'
 force_reconfigure=false
 test=false
-skiparchive=false
-skipbuild=false
+thread=false
+win=false
 
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
@@ -43,6 +45,9 @@ while [[ $# > 0 ]]; do
     -clean)
       cleanall=true
       ;;
+    -cxx)
+      cxx=true
+      ;;
     -configuration|-c)
       configuration=$2
       shift
@@ -53,11 +58,11 @@ while [[ $# > 0 ]]; do
     -test|-t)
       test=true
       ;;
-    -skiparchive)
-      skiparchive=true
+    -thread)
+      thread=true
       ;;
-    -skipbuild)
-      skipbuild=true
+    -win)
+      win=true
       ;;
     *)
       echo "Invalid argument: $1"
@@ -80,30 +85,31 @@ fi
 # provision and configuration
 if [[ "$force_reconfigure" == "true" || ! -f .configured ]]; then
   # re-create Make.config
-  echo "DISABLE_ANDROID=1" > ../Make.config
-  echo "DISABLE_IOS=1" >> ../Make.config
-  echo "DISABLE_MAC=1" >> ../Make.config
-  echo "DISABLE_DESKTOP=1" >> ../Make.config
-  #echo "ENABLE_CXX=1" >> ../Make.config
+  echo "ENABLE_WASM=1" > ../Make.config
+
+  if [ "$win" == "true" ]; then
+    echo "ENABLE_WINDOWS=1" >> ../Make.config
+  fi
+  
+  if [ "$cxx" == "true" ]; then
+    echo "ENABLE_CXX=1" >> ../Make.config
+  fi
+  
+  if [ "$thread" == "true" ]; then
+    echo "ENABLE_WASM_THREADS=1" >> ../Make.config
+  fi
+  
   if [[ "$configuration" == "Debug" ]]; then
     echo "CONFIGURATION=debug" >> ../Make.config
   fi
-  #echo "ENABLE_WASM_THREADS=1" >> ../Make.config
 
   make -C ../builds provision-wasm
   make -j ${CPU_COUNT} -C ../builds configure-wasm NINJA=
   touch .configured
 fi
 
-# build
-if [ "$skipbuild" = "false" ]; then
-  make -j ${CPU_COUNT} -C ../builds build-wasm NINJA=
-fi
-
-# archive
-if [ "$skiparchive" = "false" ]; then
-  make -j ${CPU_COUNT} -C ../builds archive-wasm NINJA=
-fi
+make -j ${CPU_COUNT} -C ../builds archive-wasm NINJA=
+make -C ../wasm runtime
 
 # run all tests
 if [ "$test" = "true" ]; then
@@ -112,10 +118,7 @@ if [ "$test" = "true" ]; then
   export xunit_test_suites="System.Core corlib"
 
   make -j ${CPU_COUNT} build
-  make run-ch-mini
-  make run-v8-mini
-  make run-sm-mini
-  make run-jsc-mini
+  make run-all-mini
   make run-all-corlib
   #The following tests are not passing yet, so enabling them would make us perma-red
   #make run-all-System
@@ -125,7 +128,6 @@ if [ "$test" = "true" ]; then
   #make test-debugger
   make run-browser-tests
   #make run-browser-threads-tests
-  make run-v8-corlib
   make -j ${CPU_COUNT} run-aot-mini
   make -j ${CPU_COUNT} build-aot-all
   for suite in ${aot_test_suites}; do make run-aot-${suite}; done
