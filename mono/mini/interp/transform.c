@@ -984,9 +984,6 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 static gboolean
 interp_is_bb_start (TransformData *td, InterpInst *start, InterpInst *end)
 {
-	// Only single basic blocks are inlined.
-	if (td->inlined_method)
-		return FALSE;
 	InterpInst *ins = start;
 	while (ins != end) {
 		if (ins->il_offset != -1) {
