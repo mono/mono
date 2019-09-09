@@ -6237,7 +6237,6 @@ interp_cprop (TransformData *td)
 	StackContentInfo *sp = stack;
 	InterpInst *ins;
 	int last_il_offset = -1;
-	gboolean const inlining = td->inlined_method != NULL;
 
 	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
 		int pop, push;
