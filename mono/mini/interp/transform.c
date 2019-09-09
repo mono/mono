@@ -984,6 +984,9 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 static gboolean
 interp_is_bb_start (TransformData *td, InterpInst *start, InterpInst *end)
 {
+	// Only single basic blocks are inlined.
+	if (td->inlined_method)
+		return FALSE;
 	InterpInst *ins = start;
 	while (ins != end) {
 		if (ins->il_offset != -1) {
@@ -1051,6 +1054,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	gboolean in_corlib = m_class_get_image (target_method->klass) == mono_defaults.corlib;
 	const char *klass_name_space = m_class_get_name_space (target_method->klass);
 	const char *klass_name = m_class_get_name (target_method->klass);
+	gboolean const inlining = td->inlined_method != NULL;
 
 	if (target_method->klass == mono_defaults.string_class) {
 		if (tm [0] == 'g') {
@@ -1450,7 +1454,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				td->last_ins->prev->prev && td->last_ins->prev->prev->opcode == MINT_BOX &&
 				td->sp [-2].klass == td->sp [-1].klass &&
 				!interp_is_bb_start (td, td->last_ins->prev->prev, NULL) &&
-				!td->is_bb_start [td->in_start - td->il_code]) {
+				(inlining || !td->is_bb_start [td->in_start - td->il_code])) {
 			// csc pattern : box, ldc, box, call HasFlag
 			g_assert (m_class_is_enumtype (td->sp [-2].klass));
 			MonoType *base_type = mono_type_get_underlying_type (m_class_get_byval_arg (td->sp [-2].klass));
@@ -1465,7 +1469,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				td->last_ins->prev && interp_ins_is_ldc (td->last_ins->prev) &&
 				constrained_class && td->sp [-1].klass == constrained_class &&
 				!interp_is_bb_start (td, td->last_ins->prev, NULL) &&
-				!td->is_bb_start [td->in_start - td->il_code]) {
+				(inlining || !td->is_bb_start [td->in_start - td->il_code])) {
 			// mcs pattern : ldc, box, constrained Enum, call HasFlag
 			g_assert (m_class_is_enumtype (constrained_class));
 			MonoType *base_type = mono_type_get_underlying_type (m_class_get_byval_arg (constrained_class));
@@ -1785,6 +1789,9 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_param_area = (StackInfo*)g_malloc (nargs * sizeof (StackInfo));
 	memcpy (prev_param_area, &td->sp [-nargs], nargs * sizeof (StackInfo));
 
+	int const prev_code_size = td->code_size;
+	td->code_size = header->code_size;
+
 	if (td->verbose_level)
 		g_print ("Inline start method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 	ret = generate_code (td, target_method, header, generic_context, error);
@@ -1830,6 +1837,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	td->in_start = prev_in_start;
 	td->il_code = prev_il_code;
 	td->inlined_method = prev_inlined_method;
+	td->code_size = prev_code_size;
 
 	g_free (td->in_offsets);
 	td->in_offsets = prev_in_offsets;
@@ -3250,7 +3258,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			PUSH_SIMPLE_TYPE(td, STACK_TYPE_I4);
 			break;
 		case CEE_LDC_I4_0:
-			if (td->ip - td->il_code + 2 < td->code_size && !td->is_bb_start [td->ip + 1 - td->il_code] && td->ip [1] == 0xfe && td->ip [2] == CEE_CEQ &&
+			// Only single basic block functions are inlined.
+			if (td->ip - td->il_code + 2 < td->code_size && (inlining || !td->is_bb_start [td->ip + 1 - td->il_code]) && td->ip [1] == 0xfe && td->ip [2] == CEE_CEQ &&
 				td->sp > td->stack && td->sp [-1].type == STACK_TYPE_I4) {
 				SIMPLE_OP(td, MINT_CEQ0_I4);
 				td->ip += 2;
@@ -3260,7 +3269,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			}
 			break;
 		case CEE_LDC_I4_1:
-			if (td->ip - td->il_code + 1 < td->code_size && !td->is_bb_start [td->ip + 1 - td->il_code] &&
+			// Only single basic block functions are inlined.
+			if (td->ip - td->il_code + 1 < td->code_size && (inlining || !td->is_bb_start [td->ip + 1 - td->il_code]) &&
 				(td->ip [1] == CEE_ADD || td->ip [1] == CEE_SUB) && td->sp [-1].type == STACK_TYPE_I4) {
 				interp_add_ins (td, td->ip [1] == CEE_ADD ? MINT_ADD1_I4 : MINT_SUB1_I4);
 				td->ip += 2;
@@ -5309,7 +5319,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			const unsigned char *next_ip = td->ip + 5;
 			MonoMethod *cmethod;
 			if (next_ip < end &&
-					!td->is_bb_start [next_ip - td->il_code] &&
+					(inlining || !td->is_bb_start [next_ip - td->il_code]) &&
 					(*next_ip == CEE_CALL || *next_ip == CEE_CALLVIRT) &&
 					(cmethod = mono_get_method_checked (image, read32 (next_ip + 1), NULL, generic_context, error)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
@@ -5360,6 +5370,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			td->last_ins->data [0] = td->clause_indexes [in_offset];
 			// next instructions, if they exist, are always part of new bb
+			// endfinally can be the last instruction in a function.
+			// functions with clauses/endfinally are never inlined.
+			// is_bb_start is not valid while inlining.
+			g_assert (!inlining);
 			if (td->ip - td->il_code < td->code_size)
 				td->is_bb_start [td->ip - header->code] = 1;
 			break;
@@ -6227,6 +6241,7 @@ interp_cprop (TransformData *td)
 	StackContentInfo *sp = stack;
 	InterpInst *ins;
 	int last_il_offset = -1;
+	gboolean const inlining = td->inlined_method != NULL;
 
 	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
 		int pop, push;
@@ -6234,7 +6249,8 @@ interp_cprop (TransformData *td)
 		// Optimizations take place only inside a single basic block
 		// If two instructions have the same il_offset, then the second one
 		// cannot be part the start of a basic block.
-		gboolean is_bb_start = il_offset != -1 && td->is_bb_start [il_offset] && il_offset != last_il_offset;
+		// Only single basic blocks are inlined.
+		gboolean is_bb_start = il_offset != -1 && (inlining || td->is_bb_start [il_offset]) && il_offset != last_il_offset;
 		if (is_bb_start && td->stack_height [il_offset] >= 0) {
 			sp = stack + td->stack_height [il_offset];
 			g_assert (sp >= stack);
