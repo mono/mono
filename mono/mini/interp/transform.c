@@ -1054,7 +1054,6 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	gboolean in_corlib = m_class_get_image (target_method->klass) == mono_defaults.corlib;
 	const char *klass_name_space = m_class_get_name_space (target_method->klass);
 	const char *klass_name = m_class_get_name (target_method->klass);
-	gboolean const inlining = td->inlined_method != NULL;
 
 	if (target_method->klass == mono_defaults.string_class) {
 		if (tm [0] == 'g') {
@@ -1454,7 +1453,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				td->last_ins->prev->prev && td->last_ins->prev->prev->opcode == MINT_BOX &&
 				td->sp [-2].klass == td->sp [-1].klass &&
 				!interp_is_bb_start (td, td->last_ins->prev->prev, NULL) &&
-				(inlining || !td->is_bb_start [td->in_start - td->il_code])) {
+				!td->is_bb_start [td->in_start - td->il_code]) {
 			// csc pattern : box, ldc, box, call HasFlag
 			g_assert (m_class_is_enumtype (td->sp [-2].klass));
 			MonoType *base_type = mono_type_get_underlying_type (m_class_get_byval_arg (td->sp [-2].klass));
@@ -1469,7 +1468,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				td->last_ins->prev && interp_ins_is_ldc (td->last_ins->prev) &&
 				constrained_class && td->sp [-1].klass == constrained_class &&
 				!interp_is_bb_start (td, td->last_ins->prev, NULL) &&
-				(inlining || !td->is_bb_start [td->in_start - td->il_code])) {
+				!td->is_bb_start [td->in_start - td->il_code]) {
 			// mcs pattern : ldc, box, constrained Enum, call HasFlag
 			g_assert (m_class_is_enumtype (constrained_class));
 			MonoType *base_type = mono_type_get_underlying_type (m_class_get_byval_arg (constrained_class));
@@ -6249,8 +6248,7 @@ interp_cprop (TransformData *td)
 		// Optimizations take place only inside a single basic block
 		// If two instructions have the same il_offset, then the second one
 		// cannot be part the start of a basic block.
-		// Only single basic blocks are inlined.
-		gboolean is_bb_start = il_offset != -1 && (inlining || td->is_bb_start [il_offset]) && il_offset != last_il_offset;
+		gboolean is_bb_start = il_offset != -1 && td->is_bb_start [il_offset] && il_offset != last_il_offset;
 		if (is_bb_start && td->stack_height [il_offset] >= 0) {
 			sp = stack + td->stack_height [il_offset];
 			g_assert (sp >= stack);
