@@ -146,9 +146,15 @@ endef
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
 
+wasm_runtime-dynamic_CFLAGS=-s WASM_OBJECT_FILES=0
+wasm_runtime-dynamic_CXXFLAGS=-s WASM_OBJECT_FILES=0
+
 $(eval $(call WasmRuntimeTemplate,runtime))
 ifdef ENABLE_WASM_THREADS
 $(eval $(call WasmRuntimeTemplate,runtime-threads))
+endif
+ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+$(eval $(call WasmRuntimeTemplate,runtime-dynamic))
 endif
 
 ##

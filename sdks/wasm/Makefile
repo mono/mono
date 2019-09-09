@@ -112,17 +112,12 @@ toolchain: .stamp-jsvu
 emsdk_env.sh:
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
-driver-dynamic.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h emsdk_env.sh
-	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o driver-dynamic.o
-
-corebindings-dynamic.o: src/corebindings.c emsdk_env.sh
-	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $@
-
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
-EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com
+EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0
 EMCC_DEBUG_FLAGS =-g4 -Os -s -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
+EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
 
 #
@@ -141,7 +136,7 @@ builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
+	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
 
 builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
@@ -155,14 +150,13 @@ endef
 
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS)))
+ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
+endif
 ifdef ENABLE_WASM_THREADS
 $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS)))
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS)))
 endif
-
-#release-dynamic/.stamp-build: driver-dynamic.o corebindings-dynamic.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
-#	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js driver-dynamic.o corebindings-dynamic.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
-#	touch $@
 
 runtime:
 	$(MAKE) -C ../builds package-wasm-runtime

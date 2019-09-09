@@ -20,6 +20,12 @@
                 |--- mono.js                - Mono WebAssembly implementations
                 |--- mono.wasm              - Mono WebAssembly implementations
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+            |--- release-dynamic         - Release build of the runtime with dynamic linking enabled
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- threads-debug          - Debug build that includes pthreads.
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
@@ -221,6 +227,35 @@ During the main build two directories will be created:
 
 _Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files  must be deployed with the rest of the generated code files if using these two runtimes.
 
+# Dynamic Linking support
+
+To build the runtime with WebAssebly dynamic linking support use the following make target:
+
+``` bash
+make -C sdks/wasm runtime-dynamic
+```
+
+-- or --
+
+```bash
+make -C sdks/builds package-wasm-runtime-dynamic
+```
+
+During the main build one directory will be created:
+
+```
+    .
+    |--- sdk/wasm/builds                           
+        |--- release-dynamic        - Release build that includes dynamic linking support.
+            |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+            |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+            |--- mono.js                - Mono WebAssembly implementations
+            |--- mono.wasm              - Mono WebAssembly implementations
+            |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
+            |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+
+```
 
 # AOT support
 
