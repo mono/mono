@@ -34,13 +34,13 @@ using StackCrawlMark = System.Threading.StackCrawlMark;
 namespace System
 {
 	[Serializable]
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Type))]
 	[ClassInterface(ClassInterfaceType.None)]
-#if MOBILE
-	partial class Type : MemberInfo
-#else
 	partial class Type : MemberInfo, _Type
+#else
+	partial class Type : MemberInfo
 #endif
 	{
 		internal RuntimeTypeHandle _impl;

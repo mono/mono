@@ -23,14 +23,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-	[ComVisible(true)]
 	[Serializable]
+#if !MOBILE
+	[ComVisible(true)]
 	[ComDefaultInterface(typeof(_MethodInfo))]
 	[ClassInterface(ClassInterfaceType.None)]
-#if MOBILE
-	partial class MethodInfo
-#else
 	partial class MethodInfo : _MethodInfo
+#else
+	partial class MethodInfo
 #endif
 	{
 #if !MOBILE
