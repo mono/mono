@@ -106,6 +106,12 @@ get_method_nofail (MonoClass *klass, const char *method_name, int param_count, i
 #define EMIT_WIN32_UNWIND_INFO
 #endif
 
+#if defined(TARGET_ANDROID) || defined(__linux__)
+#define RODATA_REL_SECT ".data.rel.ro"
+#else
+#define RODATA_REL_SECT ".text"
+#endif
+
 #if defined(__linux__)
 #define RODATA_SECT ".rodata"
 #elif defined(TARGET_MACH)
@@ -9938,13 +9944,13 @@ emit_code (MonoAotCompile *acfg)
 	 * To work around linker issues, we emit a table of branches, and disassemble them at runtime.
 	 * This is PIE code, and the linker can update it if needed.
 	 */
-	
+
 	sprintf (symbol, "method_addresses");
-	emit_section_change (acfg, ".text", 1);
+	emit_section_change (acfg, RODATA_REL_SECT, 0);
 	emit_alignment_code (acfg, 8);
-	emit_info_symbol (acfg, symbol, TRUE);
+	emit_info_symbol (acfg, symbol, FALSE);
 	if (acfg->aot_opts.write_symbols)
-		emit_local_symbol (acfg, symbol, "method_addresses_end", TRUE);
+		emit_local_symbol (acfg, symbol, "method_addresses_end", FALSE);
 	emit_unset_mode (acfg);
 	if (acfg->need_no_dead_strip)
 		fprintf (acfg->fp, "	.no_dead_strip %s\n", symbol);
