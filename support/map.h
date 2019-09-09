@@ -760,13 +760,6 @@ enum Mono_Posix_MountFlags {
 int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
 int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
 
-enum Mono_Posix_MremapFlags {
-	Mono_Posix_MremapFlags_MREMAP_MAYMOVE       = 0x0000000000000001,
-	#define Mono_Posix_MremapFlags_MREMAP_MAYMOVE Mono_Posix_MremapFlags_MREMAP_MAYMOVE
-};
-int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r);
-int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r);
-
 enum Mono_Posix_MsyncFlags {
 	Mono_Posix_MsyncFlags_MS_ASYNC            = 0x00000001,
 	#define Mono_Posix_MsyncFlags_MS_ASYNC      Mono_Posix_MsyncFlags_MS_ASYNC
@@ -2157,6 +2150,7 @@ int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_Cmsghdr_getsize (void);
 int Mono_Posix_FromIn6Addr (struct Mono_Posix_In6Addr* source, void* destination);
 int Mono_Posix_FromInAddr (struct Mono_Posix_InAddr* source, void* destination);
+int Mono_Posix_FromMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
 int Mono_Posix_FromSockaddr (struct Mono_Posix__SockaddrHeader* source, void* destination);
 int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
@@ -2374,6 +2368,7 @@ int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToIn6Addr (void* source, struct Mono_Posix_In6Addr* destination);
 int Mono_Posix_ToInAddr (void* source, struct Mono_Posix_InAddr* destination);
+int Mono_Posix_ToMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_ToSockaddr (void* source, gint64 size, struct Mono_Posix__SockaddrHeader* destination);
 int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
