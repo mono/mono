@@ -153,7 +153,7 @@ $(eval $(call WasmRuntimeTemplate,runtime))
 ifdef ENABLE_WASM_THREADS
 $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
-ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
 endif
 
