@@ -35,7 +35,7 @@ namespace System.Collections.ObjectModel
 
         public T this[int index]
         {
-            get { return items[index]; }
+            get => items[index];
             set
             {
                 if (items.IsReadOnly)
@@ -240,12 +240,12 @@ namespace System.Collections.ObjectModel
 
         object? IList.this[int index]
         {
-            get { return items[index]; }
+            get => items[index];
             set
             {
                 ThrowHelper.IfNullAndNullsAreIllegalThenThrow<T>(value, ExceptionArgument.value);
 
-                T item = default(T)!;
+                T item = default!;
 
                 try
                 {
@@ -286,7 +286,7 @@ namespace System.Collections.ObjectModel
             }
             ThrowHelper.IfNullAndNullsAreIllegalThenThrow<T>(value, ExceptionArgument.value);
 
-            T item = default(T)!;
+            T item = default!;
 
             try
             {
@@ -328,7 +328,7 @@ namespace System.Collections.ObjectModel
             }
             ThrowHelper.IfNullAndNullsAreIllegalThenThrow<T>(value, ExceptionArgument.value);
 
-            T item = default(T)!;
+            T item = default!;
 
             try
             {

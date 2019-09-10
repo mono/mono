@@ -2,15 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#if ES_BUILD_STANDALONE
 using System;
-using System.Collections.Generic;
-using Interlocked = System.Threading.Interlocked;
-
-#if !ES_BUILD_AGAINST_DOTNET_V35
-using Contract = System.Diagnostics.Contracts.Contract;
-#else
-using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
 #endif
+using System.Collections.Generic;
 
 #if ES_BUILD_STANDALONE
 namespace Microsoft.Diagnostics.Tracing
@@ -235,7 +230,7 @@ namespace System.Diagnostics.Tracing
                 throw new ArgumentNullException(nameof(typeInfos));
             }
 
-            return (TraceLoggingTypeInfo[])typeInfos.Clone(); ;
+            return (TraceLoggingTypeInfo[])typeInfos.Clone();
         }
 
 #if FEATURE_PERFTRACING

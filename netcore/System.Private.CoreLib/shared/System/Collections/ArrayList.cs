@@ -12,7 +12,6 @@
 **
 ===========================================================*/
 
-using System.Security;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -91,10 +90,7 @@ namespace System.Collections
         //
         public virtual int Capacity
         {
-            get
-            {
-                return _items.Length;
-            }
+            get => _items.Length;
             set
             {
                 if (value < _size)
@@ -767,7 +763,7 @@ namespace System.Collections
 
             public override int Capacity
             {
-                get { return _list.Count; }
+                get => _list.Count;
                 set
                 {
                     if (value < Count) throw new ArgumentOutOfRangeException(nameof(value), SR.ArgumentOutOfRange_SmallCapacity);
@@ -785,10 +781,7 @@ namespace System.Collections
 
             public override object? this[int index]
             {
-                get
-                {
-                    return _list[index];
-                }
+                get => _list[index];
                 set
                 {
                     _list[index] = value;
@@ -818,8 +811,7 @@ namespace System.Collections
                 if (Count - index < count)
                     throw new ArgumentException(SR.Argument_InvalidOffLen);
 
-                if (comparer == null)
-                    comparer = Comparer.Default;
+                comparer ??= Comparer.Default;
 
                 int lo = index;
                 int hi = index + count - 1;
@@ -911,7 +903,6 @@ namespace System.Collections
                 return _list.IndexOf(value);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex)
             {
                 return IndexOf(value, startIndex, _list.Count - startIndex);
@@ -977,13 +968,11 @@ namespace System.Collections
                 return LastIndexOf(value, _list.Count - 1, _list.Count);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex)
             {
                 return LastIndexOf(value, startIndex, startIndex + 1);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex, int count)
             {
                 if (_list.Count == 0)
@@ -1223,7 +1212,6 @@ namespace System.Collections
                         return _list.Capacity;
                     }
                 }
-                [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
                 set
                 {
                     lock (_root)
@@ -1297,7 +1285,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int BinarySearch(int index, int count, object? value, IComparer? comparer)
             {
                 lock (_root)
@@ -1346,7 +1333,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void CopyTo(int index, Array array, int arrayIndex, int count)
             {
                 lock (_root)
@@ -1363,7 +1349,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override IEnumerator GetEnumerator(int index, int count)
             {
                 lock (_root)
@@ -1380,7 +1365,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex)
             {
                 lock (_root)
@@ -1389,7 +1373,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex, int count)
             {
                 lock (_root)
@@ -1406,7 +1389,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void InsertRange(int index, ICollection c)
             {
                 lock (_root)
@@ -1423,7 +1405,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex)
             {
                 lock (_root)
@@ -1432,7 +1413,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex, int count)
             {
                 lock (_root)
@@ -1457,7 +1437,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void RemoveRange(int index, int count)
             {
                 lock (_root)
@@ -1466,7 +1445,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Reverse(int index, int count)
             {
                 lock (_root)
@@ -1475,7 +1453,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void SetRange(int index, ICollection c)
             {
                 lock (_root)
@@ -1484,7 +1461,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override ArrayList GetRange(int index, int count)
             {
                 lock (_root)
@@ -1509,7 +1485,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Sort(int index, int count, IComparer? comparer)
             {
                 lock (_root)
@@ -1526,7 +1501,6 @@ namespace System.Collections
                 }
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override Array ToArray(Type type)
             {
                 lock (_root)
@@ -1681,14 +1655,8 @@ namespace System.Collections
 
             public virtual object? this[int index]
             {
-                get
-                {
-                    return _list[index];
-                }
-                set
-                {
-                    _list[index] = value;
-                }
+                get => _list[index];
+                set => _list[index] = value;
             }
 
             public virtual object SyncRoot => _list.SyncRoot;
@@ -1759,10 +1727,7 @@ namespace System.Collections
 
             public override object? this[int index]
             {
-                get
-                {
-                    return _list[index];
-                }
+                get => _list[index];
                 set
                 {
                     _list[index] = value;
@@ -1782,7 +1747,6 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int BinarySearch(int index, int count, object? value, IComparer? comparer)
             {
                 return _list.BinarySearch(index, count, value, comparer);
@@ -1790,10 +1754,8 @@ namespace System.Collections
 
             public override int Capacity
             {
-                get { return _list.Capacity; }
-                [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
-                set
-                { throw new NotSupportedException(SR.NotSupported_FixedSizeCollection); }
+                get => _list.Capacity;
+                set => throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
             }
 
             public override void Clear()
@@ -1818,7 +1780,6 @@ namespace System.Collections
                 _list.CopyTo(array, index);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void CopyTo(int index, Array array, int arrayIndex, int count)
             {
                 _list.CopyTo(index, array, arrayIndex, count);
@@ -1829,7 +1790,6 @@ namespace System.Collections
                 return _list.GetEnumerator();
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override IEnumerator GetEnumerator(int index, int count)
             {
                 return _list.GetEnumerator(index, count);
@@ -1840,13 +1800,11 @@ namespace System.Collections
                 return _list.IndexOf(value);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex)
             {
                 return _list.IndexOf(value, startIndex);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex, int count)
             {
                 return _list.IndexOf(value, startIndex, count);
@@ -1857,7 +1815,6 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void InsertRange(int index, ICollection c)
             {
                 throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
@@ -1868,13 +1825,11 @@ namespace System.Collections
                 return _list.LastIndexOf(value);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex)
             {
                 return _list.LastIndexOf(value, startIndex);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex, int count)
             {
                 return _list.LastIndexOf(value, startIndex, count);
@@ -1890,13 +1845,11 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void RemoveRange(int index, int count)
             {
                 throw new NotSupportedException(SR.NotSupported_FixedSizeCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void SetRange(int index, ICollection c)
             {
                 _list.SetRange(index, c);
@@ -1913,14 +1866,12 @@ namespace System.Collections
                 return new Range(this, index, count);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Reverse(int index, int count)
             {
                 _list.Reverse(index, count);
                 _version = _list._version;
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Sort(int index, int count, IComparer? comparer)
             {
                 _list.Sort(index, count, comparer);
@@ -1932,7 +1883,6 @@ namespace System.Collections
                 return _list.ToArray();
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override Array ToArray(Type type)
             {
                 return _list.ToArray(type);
@@ -1963,14 +1913,8 @@ namespace System.Collections
 
             public virtual object? this[int index]
             {
-                get
-                {
-                    return _list[index];
-                }
-                set
-                {
-                    throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
-                }
+                get => _list[index];
+                set => throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
             public virtual object SyncRoot => _list.SyncRoot;
@@ -2040,14 +1984,8 @@ namespace System.Collections
 
             public override object? this[int index]
             {
-                get
-                {
-                    return _list[index];
-                }
-                set
-                {
-                    throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
-                }
+                get => _list[index];
+                set => throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override object SyncRoot => _list.SyncRoot;
@@ -2062,7 +2000,6 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int BinarySearch(int index, int count, object? value, IComparer? comparer)
             {
                 return _list.BinarySearch(index, count, value, comparer);
@@ -2071,10 +2008,8 @@ namespace System.Collections
 
             public override int Capacity
             {
-                get { return _list.Capacity; }
-                [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
-                set
-                { throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection); }
+                get => _list.Capacity;
+                set => throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override void Clear()
@@ -2099,7 +2034,6 @@ namespace System.Collections
                 _list.CopyTo(array, index);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void CopyTo(int index, Array array, int arrayIndex, int count)
             {
                 _list.CopyTo(index, array, arrayIndex, count);
@@ -2110,7 +2044,6 @@ namespace System.Collections
                 return _list.GetEnumerator();
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override IEnumerator GetEnumerator(int index, int count)
             {
                 return _list.GetEnumerator(index, count);
@@ -2121,13 +2054,11 @@ namespace System.Collections
                 return _list.IndexOf(value);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex)
             {
                 return _list.IndexOf(value, startIndex);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int IndexOf(object? value, int startIndex, int count)
             {
                 return _list.IndexOf(value, startIndex, count);
@@ -2138,7 +2069,6 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void InsertRange(int index, ICollection c)
             {
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
@@ -2149,13 +2079,11 @@ namespace System.Collections
                 return _list.LastIndexOf(value);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex)
             {
                 return _list.LastIndexOf(value, startIndex);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex, int count)
             {
                 return _list.LastIndexOf(value, startIndex, count);
@@ -2171,13 +2099,11 @@ namespace System.Collections
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void RemoveRange(int index, int count)
             {
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void SetRange(int index, ICollection c)
             {
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
@@ -2193,13 +2119,11 @@ namespace System.Collections
                 return new Range(this, index, count);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Reverse(int index, int count)
             {
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void Sort(int index, int count, IComparer? comparer)
             {
                 throw new NotSupportedException(SR.NotSupported_ReadOnlyCollection);
@@ -2210,7 +2134,6 @@ namespace System.Collections
                 return _list.ToArray();
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override Array ToArray(Type type)
             {
                 return _list.ToArray(type);
@@ -2356,10 +2279,7 @@ namespace System.Collections
 
             public override int Capacity
             {
-                get
-                {
-                    return _baseList.Capacity;
-                }
+                get => _baseList.Capacity;
 
                 set
                 {
@@ -2554,13 +2474,11 @@ namespace System.Collections
                 return -1;
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex)
             {
                 return LastIndexOf(value, startIndex, startIndex + 1);
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override int LastIndexOf(object? value, int startIndex, int count)
             {
                 InternalUpdateRange();
@@ -2619,7 +2537,6 @@ namespace System.Collections
                 InternalUpdateVersion();
             }
 
-            [SuppressMessage("Microsoft.Contracts", "CC1055")]  // Skip extra error checking to avoid *potential* AppCompat problems.
             public override void SetRange(int index, ICollection c)
             {
                 InternalUpdateRange();

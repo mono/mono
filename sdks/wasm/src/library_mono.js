@@ -349,6 +349,8 @@ var MonoSupportLib = {
 		++MONO.pump_count;
 		if (ENVIRONMENT_IS_WEB) {
 			window.setTimeout (MONO.pump_message, 0);
+		} else if (ENVIRONMENT_IS_WORKER) {
+			self.setTimeout (MONO.pump_message, 0);
 		}
 	},
 
@@ -357,6 +359,10 @@ var MonoSupportLib = {
 			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", 'void', [ 'number' ]);
 		if (ENVIRONMENT_IS_WEB) {
 			window.setTimeout (function () {
+				this.mono_set_timeout_exec (id);
+			}, timeout);
+		} else if (ENVIRONMENT_IS_WORKER) {
+			self.setTimeout (function () {
 				this.mono_set_timeout_exec (id);
 			}, timeout);
 		} else {

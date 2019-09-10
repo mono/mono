@@ -13,7 +13,6 @@
 ===========================================================*/
 
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
 
@@ -369,9 +368,9 @@ namespace System.Collections
 
         protected Hashtable(SerializationInfo info, StreamingContext context)
         {
-            //We can't do anything with the keys and values until the entire graph has been deserialized
-            //and we have a reasonable estimate that GetHashCode is not going to fail.  For the time being,
-            //we'll just cache this.  The graph is not valid until OnDeserialization has been called.
+            // We can't do anything with the keys and values until the entire graph has been deserialized
+            // and we have a reasonable estimate that GetHashCode is not going to fail.  For the time being,
+            // we'll just cache this.  The graph is not valid until OnDeserialization has been called.
             HashHelpers.SerializationInfoTable.Add(this, info);
         }
 
@@ -659,7 +658,7 @@ namespace System.Collections
                 {
                     int currentversion;
 
-                    //     A read operation on hashtable has three steps:
+                    // A read operation on hashtable has three steps:
                     //        (1) calculate the hash and find the slot number.
                     //        (2) compare the hashcode, if equal, go to step 3. Otherwise end.
                     //        (3) compare the key, if equal, go to step 4. Otherwise end.
@@ -700,10 +699,7 @@ namespace System.Collections
                 return null;
             }
 
-            set
-            {
-                Insert(key, value, false);
-            }
+            set => Insert(key, value, false);
         }
 
         // Increases the bucket count of this hashtable. This method is called from
@@ -834,15 +830,7 @@ namespace System.Collections
         // to the hash table are reflected in this collection.  It is not
         // a static copy of all the keys in the hash table.
         //
-        public virtual ICollection Keys
-        {
-            get
-            {
-                if (_keys == null)
-                    _keys = new KeyCollection(this);
-                return _keys;
-            }
-        }
+        public virtual ICollection Keys => _keys ??= new KeyCollection(this);
 
         // Returns a collection representing the values of this hashtable. The
         // order in which the returned collection represents the values is
@@ -854,15 +842,7 @@ namespace System.Collections
         // to the hash table are reflected in this collection.  It is not
         // a static copy of all the keys in the hash table.
         //
-        public virtual ICollection Values
-        {
-            get
-            {
-                if (_values == null)
-                    _values = new ValueCollection(this);
-                return _values;
-            }
-        }
+        public virtual ICollection Values => _values ??= new ValueCollection(this);
 
         // Inserts an entry into this hashtable. This method is called from the Set
         // and Add methods. If the add parameter is true and the given key already
@@ -898,7 +878,7 @@ namespace System.Collections
                 // that once contained an entry and also has had a collision.
                 // We need to search this entire collision chain because we have to ensure that there are no
                 // duplicate entries in the table.
-                if (emptySlotNumber == -1 && (_buckets[bucketNumber].key == _buckets) && (_buckets[bucketNumber].hash_coll < 0))//(((buckets[bucketNumber].hash_coll & unchecked(0x80000000))!=0)))
+                if (emptySlotNumber == -1 && (_buckets[bucketNumber].key == _buckets) && (_buckets[bucketNumber].hash_coll < 0))// (((buckets[bucketNumber].hash_coll & unchecked(0x80000000))!=0)))
                     emptySlotNumber = bucketNumber;
 
                 // Insert the key/value pair into this bucket if this bucket is empty and has never contained an entry
@@ -1113,7 +1093,7 @@ namespace System.Collections
                 }
 #pragma warning restore 618
 
-                info.AddValue(HashSizeName, _buckets.Length); //This is the length of the bucket array.
+                info.AddValue(HashSizeName, _buckets.Length); // This is the length of the bucket array.
                 object[] serKeys = new object[_count];
                 object[] serValues = new object[_count];
                 CopyKeys(serKeys, 0);
@@ -1329,10 +1309,7 @@ namespace System.Collections
 
             public override object? this[object key]
             {
-                get
-                {
-                    return _table[key];
-                }
+                get => _table[key];
                 set
                 {
                     lock (_table.SyncRoot)

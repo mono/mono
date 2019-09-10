@@ -216,7 +216,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -292,18 +292,13 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -327,7 +322,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -409,19 +404,14 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -448,7 +438,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -536,20 +526,15 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    3 => Item4,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                3 => Item4,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -579,7 +564,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -673,21 +658,16 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    3 => Item4,
-                    4 => Item5,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                3 => Item4,
+                4 => Item5,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -720,7 +700,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -820,22 +800,17 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    3 => Item4,
-                    4 => Item5,
-                    5 => Item6,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                3 => Item4,
+                4 => Item5,
+                5 => Item6,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -871,7 +846,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -977,23 +952,18 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    3 => Item4,
-                    4 => Item5,
-                    5 => Item6,
-                    6 => Item7,
-                    _ => throw new IndexOutOfRangeException(),
-                };
-            }
-        }
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                3 => Item4,
+                4 => Item5,
+                5 => Item6,
+                6 => Item7,
+                _ => throw new IndexOutOfRangeException(),
+            };
     }
 
     [Serializable]
@@ -1037,7 +1007,7 @@ namespace System
 
         public override bool Equals(object? obj)
         {
-            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default); ;
+            return ((IStructuralEquatable)this).Equals(obj, EqualityComparer<object>.Default);
         }
 
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
@@ -1171,23 +1141,18 @@ namespace System
         /// <summary>
         /// Get the element at position <param name="index"/>.
         /// </summary>
-        object? ITuple.this[int index]
-        {
-            get
+        object? ITuple.this[int index] =>
+            index switch
             {
-                return index switch
-                {
-                    0 => Item1,
-                    1 => Item2,
-                    2 => Item3,
-                    3 => Item4,
-                    4 => Item5,
-                    5 => Item6,
-                    6 => Item7,
+                0 => Item1,
+                1 => Item2,
+                2 => Item3,
+                3 => Item4,
+                4 => Item5,
+                5 => Item6,
+                6 => Item7,
 
-                    _ => ((ITupleInternal)Rest)[index - 7],
-                };
-            }
-        }
+                _ => ((ITupleInternal)Rest)[index - 7],
+            };
     }
 }

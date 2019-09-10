@@ -671,7 +671,7 @@ namespace System
         // Determines whether two Strings match.
         public static bool Equals(string? a, string? b)
         {
-            if (object.ReferenceEquals(a,b))
+            if (object.ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -724,15 +724,9 @@ namespace System
             }
         }
 
-        public static bool operator ==(string? a, string? b)
-        {
-            return string.Equals(a, b);
-        }
+        public static bool operator ==(string? a, string? b) => string.Equals(a, b);
 
-        public static bool operator !=(string? a, string? b)
-        {
-            return !string.Equals(a, b);
-        }
+        public static bool operator !=(string? a, string? b) => !string.Equals(a, b);
 
         // Gets a hash code for this string.  If strings A and B are such that A.Equals(B), then
         // they will return the same hash code.

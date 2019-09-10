@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.38
+EMSCRIPTEN_VERSION=1.38.43
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -146,9 +146,15 @@ endef
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
 
+wasm_runtime-dynamic_CFLAGS=-s WASM_OBJECT_FILES=0
+wasm_runtime-dynamic_CXXFLAGS=-s WASM_OBJECT_FILES=0
+
 $(eval $(call WasmRuntimeTemplate,runtime))
 ifdef ENABLE_WASM_THREADS
 $(eval $(call WasmRuntimeTemplate,runtime-threads))
+endif
+ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+$(eval $(call WasmRuntimeTemplate,runtime-dynamic))
 endif
 
 ##
@@ -241,6 +247,8 @@ $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $
 
 endef
 
+ifdef ENABLE_WINDOWS
 $(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin64,wasm32-unknown-unknown))
+endif
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

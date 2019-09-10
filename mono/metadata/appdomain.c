@@ -97,8 +97,8 @@ static gboolean no_exec = FALSE;
 
 #ifdef ENABLE_NETCORE
 static int n_appctx_props;
-static char **appctx_keys;
-static char **appctx_values;
+static gunichar2 **appctx_keys;
+static gunichar2 **appctx_values;
 #endif
 
 static const char *
@@ -130,8 +130,12 @@ mono_domain_asmctx_from_path (const char *fname, MonoAssembly *requesting_assemb
 static void
 add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *hash);
 
+#if ENABLE_NETCORE
+
 static void
 add_assembly_to_alc (MonoAssemblyLoadContext *alc, MonoAssembly *ass);
+
+#endif
 
 static MonoAppDomainHandle
 mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHandle setup, MonoError *error);
@@ -308,13 +312,16 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_gc_init_icalls ();
 
 	mono_install_assembly_preload_hook_v2 (mono_domain_assembly_preload, GUINT_TO_POINTER (FALSE), FALSE);
-	mono_install_assembly_preload_hook_v2 (mono_domain_assembly_preload, GUINT_TO_POINTER (TRUE), TRUE);
 	mono_install_assembly_search_hook_v2 (mono_domain_assembly_search, GUINT_TO_POINTER (FALSE), FALSE, FALSE);
-	mono_install_assembly_search_hook_v2 (mono_domain_assembly_search, GUINT_TO_POINTER (TRUE), TRUE, FALSE);
 	mono_install_assembly_search_hook_v2 (mono_domain_assembly_postload_search, GUINT_TO_POINTER (FALSE), FALSE, TRUE);
-	mono_install_assembly_search_hook_v2 (mono_domain_assembly_postload_search, GUINT_TO_POINTER (TRUE), TRUE, TRUE);
 	mono_install_assembly_load_hook_v2 (mono_domain_fire_assembly_load, NULL);
+
+#ifndef ENABLE_NETCORE // refonly hooks
+	mono_install_assembly_preload_hook_v2 (mono_domain_assembly_preload, GUINT_TO_POINTER (TRUE), TRUE);
+	mono_install_assembly_search_hook_v2 (mono_domain_assembly_search, GUINT_TO_POINTER (TRUE), TRUE, FALSE);
+	mono_install_assembly_search_hook_v2 (mono_domain_assembly_postload_search, GUINT_TO_POINTER (TRUE), TRUE, TRUE);
 	mono_install_assembly_asmctx_from_path_hook (mono_domain_asmctx_from_path, NULL);
+#endif
 
 	mono_thread_init (start_cb, attach_cb);
 
@@ -355,10 +362,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 		mono_runtime_install_appctx_properties ();
 #endif
 
-#ifndef DISABLE_SOCKETS
 	mono_network_init ();
-#endif
-	
 	mono_console_init ();
 	mono_attach_init ();
 
@@ -520,10 +524,7 @@ mono_runtime_cleanup (MonoDomain *domain)
 	mono_gc_cleanup ();
 
 	mono_thread_cleanup ();
-
-#ifndef DISABLE_SOCKETS
 	mono_network_cleanup ();
-#endif
 	mono_marshal_cleanup ();
 
 	mono_type_initialization_cleanup ();
@@ -1639,7 +1640,7 @@ set_domain_search_path (MonoDomain *domain)
 			search_path = domain->private_bin_path;
 		else {
 			gchar *tmp2 = search_path;
-			search_path = g_strjoin (";", search_path, domain->private_bin_path, NULL);
+			search_path = g_strjoin (";", search_path, domain->private_bin_path, (const char*)NULL);
 			g_free (tmp2);
 		}
 	}
@@ -1707,7 +1708,7 @@ set_domain_search_path (MonoDomain *domain)
 		if (g_path_is_absolute (pvt_split [i - 1])) {
 			tmp [i] = g_strdup (pvt_split [i - 1]);
 		} else {
-			tmp [i] = g_build_filename (tmp [0], pvt_split [i - 1], NULL);
+			tmp [i] = g_build_filename (tmp [0], pvt_split [i - 1], (const char*)NULL);
 		}
 
 		if (strchr (tmp [i], '.')) {
@@ -1771,7 +1772,7 @@ make_sibling_path (const gchar *path, gint pathlen, const char *extension, Shado
 	gchar *result = NULL;
 	switch (extopt) {
 	case SHADOW_COPY_SIBLING_EXT_APPEND: {
-		result = g_strconcat (path, extension, NULL);
+		result = g_strconcat (path, extension, (const char*)NULL);
 		break;
 	}
 	case SHADOW_COPY_SIBLING_EXT_REPLACE: {
@@ -1885,10 +1886,10 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 			return NULL;
 		}
 
-		location = g_build_filename (cache_path, appname, "assembly", "shadow", NULL);
+		location = g_build_filename (cache_path, appname, "assembly", "shadow", (const char*)NULL);
 	} else {
 		userdir = g_strdup_printf ("%s-mono-cachepath", g_get_user_name ());
-		location = g_build_filename (g_get_tmp_dir (), userdir, "assembly", "shadow", NULL);
+		location = g_build_filename (g_get_tmp_dir (), userdir, "assembly", "shadow", (const char*)NULL);
 	}
 	g_free (appname);
 	g_free (cache_path);
@@ -1920,7 +1921,7 @@ get_shadow_assembly_location (const char *filename, MonoError *error)
 		return NULL;
 	}
 
-	location = g_build_filename (tmploc, name_hash, path_hash, bname, NULL);
+	location = g_build_filename (tmploc, name_hash, path_hash, bname, (const char*)NULL);
 	g_free (tmploc);
 	g_free (bname);
 	g_free (dirname);
@@ -1974,7 +1975,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	gchar *full_path = NULL;
 
 	char *dir_name = g_path_get_dirname (shadow);
-	char *ini_file = g_build_filename (dir_name, "__AssemblyInfo__.ini", NULL);
+	char *ini_file = g_build_filename (dir_name, "__AssemblyInfo__.ini", (const char*)NULL);
 	g_free (dir_name);
 	result = g_file_test (ini_file, G_FILE_TEST_IS_REGULAR);
 	if (result)
@@ -2238,7 +2239,7 @@ try_load_from (MonoAssembly **assembly,
 	gboolean found = FALSE;
 	
 	*assembly = NULL;
-	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
+	fullpath = g_build_filename (path1, path2, path3, path4, (const char*)NULL);
 
 	if (IS_PORTABILITY_SET) {
 		gchar *new_fullpath = mono_portability_find_file (fullpath, TRUE);
@@ -2273,7 +2274,7 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
 		local_culture = culture;
 	}
 
-	filename =  g_strconcat (name, ".dll", NULL);
+	filename =  g_strconcat (name, ".dll", (const char*)NULL);
 	len = strlen (filename);
 
 	for (path = search_path; *path; path++) {
@@ -2321,11 +2322,11 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 			      gpointer user_data,
 			      MonoError *error)
 {
-	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *domain = mono_alc_domain (alc);
 	MonoAssembly *result = NULL;
 #ifdef ENABLE_NETCORE
 	g_assert (alc);
-	g_assert (mono_alc_domain (alc) == domain);
+	g_assert (domain == mono_domain_get ());
 #endif
 
 	set_domain_search_path (domain);
@@ -2432,7 +2433,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	}
 	mono_alc_assemblies_unlock (alc);
 #else
-	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *domain = mono_alc_domain (alc);
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
@@ -2456,7 +2457,6 @@ MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle, MonoStackCrawlMark *stack_mark, gpointer load_Context, MonoError *error)
 {
 	error_init (error);
-	MonoDomain *domain = mono_domain_get ();
 	MonoAssembly *ass = NULL;
 	MonoAssemblyName aname;
 	MonoAssemblyByNameRequest req;
@@ -2465,9 +2465,15 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	gboolean parsed;
 	char *name;
 
+	MonoAssembly *requesting_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 	MonoAssemblyLoadContext *alc = (MonoAssemblyLoadContext *)load_Context;
+
 	if (!alc)
-		alc = mono_domain_default_alc (domain);
+		alc = mono_assembly_get_alc (requesting_assembly);
+	if (!alc)
+		g_assert_not_reached ();
+	
+	MonoDomain *domain = mono_alc_domain (alc);
 	g_assert (alc);
 	asmctx = MONO_ASMCTX_DEFAULT;
 	mono_assembly_request_prepare_byname (&req, asmctx, alc);
@@ -2477,7 +2483,7 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	 * other than for corlib satellite assemblies (which I've dealt with further down the call stack).
 	 */
 	//req.no_postload_search = TRUE;
-	req.requesting_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
+	req.requesting_assembly = requesting_assembly;
 
 	name = mono_string_handle_to_utf8 (name_handle, error);
 	goto_if_nok (error, fail);
@@ -2603,9 +2609,9 @@ leave:
 MonoReflectionAssemblyHandle
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFile (gpointer alc_ptr, MonoStringHandle fname, MonoStackCrawlMark *stack_mark, MonoError *error)
 {
-	MonoDomain *domain = mono_domain_get ();
 	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
 	MonoAssemblyLoadContext *alc = (MonoAssemblyLoadContext *)alc_ptr;
+	MonoDomain *domain = mono_alc_domain (alc);
 
 	MonoAssembly *executing_assembly;
 	executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
@@ -2626,10 +2632,11 @@ mono_alc_load_raw_bytes (MonoAssemblyLoadContext *alc, guint8 *raw_assembly, gui
 MonoReflectionAssemblyHandle
 ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalLoadFromStream (gpointer native_alc, gpointer raw_assembly_ptr, gint32 raw_assembly_len, gpointer raw_symbols_ptr, gint32 raw_symbols_len, MonoError *error)
 {
-	MonoDomain *domain = mono_domain_get ();
+	MonoAssemblyLoadContext *alc = (MonoAssemblyLoadContext *)native_alc;
+	MonoDomain *domain = mono_alc_domain (alc);
 	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
 	MonoAssembly *assm = NULL;
-	assm = mono_alc_load_raw_bytes ((MonoAssemblyLoadContext *)native_alc, (guint8 *)raw_assembly_ptr, raw_assembly_len, (guint8 *)raw_symbols_ptr, raw_symbols_len, FALSE, error);
+	assm = mono_alc_load_raw_bytes (alc, (guint8 *)raw_assembly_ptr, raw_assembly_len, (guint8 *)raw_symbols_ptr, raw_symbols_len, FALSE, error);
 	goto_if_nok (error, leave);
 
 	result = mono_assembly_get_object_handle (domain, assm, error);
@@ -3095,7 +3102,6 @@ unload_thread_main (void *arg)
 {
 	unload_data *data = (unload_data*)arg;
 	MonoDomain *domain = data->domain;
-	MonoInternalThread *internal;
 	int i;
 	gsize result = 1; // failure
 
@@ -3328,12 +3334,12 @@ void
 mono_runtime_register_appctx_properties (int nprops, const char **keys,  const char **values)
 {
 	n_appctx_props = nprops;
-	appctx_keys = g_new0 (char*, nprops);
-	appctx_values = g_new0 (char*, nprops);
+	appctx_keys = g_new0 (gunichar2*, nprops);
+	appctx_values = g_new0 (gunichar2*, nprops);
 
 	for (int i = 0; i < nprops; ++i) {
-		appctx_keys [i] = g_strdup (keys [i]);
-		appctx_values [i] = g_strdup (values [i]);
+		appctx_keys [i] = g_utf8_to_utf16 (keys [i], strlen (keys [i]), NULL, NULL, NULL);
+		appctx_values [i] = g_utf8_to_utf16 (values [i], strlen (values [i]), NULL, NULL, NULL);
 	}
 }
 

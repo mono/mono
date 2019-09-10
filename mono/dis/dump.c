@@ -247,13 +247,13 @@ dump_table_memberref (MonoImage *m)
 		case 0:
 			ks = "TypeDef";
 			xx = get_typedef (m, idx);
-			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), NULL);
+			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), (const char*)NULL);
 			g_free (xx);
 			break;
 		case 1:
 			ks = "TypeRef";
 			xx = get_typeref (m, idx);
-			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), NULL);
+			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), (const char*)NULL);
 			g_free (xx);
 			break;
 		case 2:
@@ -265,7 +265,7 @@ dump_table_memberref (MonoImage *m)
 		case 4:
 			ks = "TypeSpec";
 			xx = get_typespec (m, idx, FALSE, NULL);
-			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), NULL);
+			x = g_strconcat (xx, ".", mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]), (const char*)NULL);
 			g_free (xx);
 			break;
 		default:
@@ -794,6 +794,9 @@ has_cattr_get_table (MonoImage *m, guint32 val)
 	case MONO_CUSTOM_ATTR_GENERICPAR:
 		table = "GenericParam";
 		break;
+	case MONO_CUSTOM_ATTR_GENERICPARAMCONSTRAINT:
+		table = "GenericParamConstraint";
+		break;
 	default:
 		table = "Unknown";
 		break;
@@ -858,9 +861,6 @@ handle_enum:
 			p += 4;
 			break;
 		case MONO_TYPE_U8:
-			g_string_append_printf (res, "%lld", (long long)read64 (p));
-			p += 8;
-			break;
 		case MONO_TYPE_I8:
 			g_string_append_printf (res, "%lld", (long long)read64 (p));
 			p += 8;

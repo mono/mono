@@ -154,7 +154,7 @@ debug_omit_fp (void)
 #endif
 }
 
-static inline gboolean
+static gboolean
 amd64_is_near_call (guint8 *code)
 {
 	/* Skip REX */
@@ -164,13 +164,19 @@ amd64_is_near_call (guint8 *code)
 	return code [0] == 0xe8;
 }
 
-static inline gboolean
+static gboolean
 amd64_use_imm32 (gint64 val)
 {
 	if (mini_debug_options.single_imm_size)
 		return FALSE;
 
 	return amd64_is_imm32 (val);
+}
+
+void
+mono_x86_patch (unsigned char* code, gpointer target)
+{
+	mono_x86_patch_inline (code, target);
 }
 
 static void
@@ -195,23 +201,22 @@ amd64_patch (unsigned char* code, gpointer target)
 	}
 	else if ((code [0] == 0x8b) && rex && x86_modrm_mod (code [1]) == 0 && x86_modrm_rm (code [1]) == 5) {
 		/* mov 0(%rip), %dreg */
-		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
+		g_assert (!1); // Historical code was incorrect.
+		ptrdiff_t const offset = (guchar*)target - (code + 6);
+		g_assert (offset == (gint32)offset);
+		*(gint32*)(code + 2) = (gint32)offset;
 	}
 	else if (code [0] == 0xff && (code [1] == 0x15 || code [1] == 0x25)) {
 		/* call or jmp *<OFFSET>(%rip) */
-		*(guint32*)(code + 2) = ((guint32)(guint64)target) - 7;
-	}
-	else if (code [0] == 0xe8 || code [0] == 0xe9) {
-		/* call or jmp <DISP> */
-		gint64 disp = (guint8*)target - (guint8*)code;
-		g_assert (amd64_is_imm32 (disp));
-		x86_patch (code, (unsigned char*)target);
+		// Patch the data, not the code.
+		g_assert (!2); // For possible use later.
+		*(void**)(code + 6 + *(gint32*)(code + 2)) = target;
 	}
 	else
-		x86_patch (code, (unsigned char*)target);
+		x86_patch (code, target);
 }
 
-void 
+void
 mono_amd64_patch (unsigned char* code, gpointer target)
 {
 	amd64_patch (code, target);
@@ -452,13 +457,13 @@ allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_clas
 	return result;
 }
 
-static inline gboolean
+static gboolean
 allocate_parameter_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, param_regs, PARAM_REGS, float_param_regs, FLOAT_PARAM_REGS, current_int_reg, current_float_reg);
 }
 
-static inline gboolean
+static gboolean
 allocate_return_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, return_regs, RETURN_REGS, float_return_regs, FLOAT_RETURN_REGS, current_int_reg, current_float_reg);
@@ -1497,6 +1502,20 @@ mono_arch_cpu_enumerate_simd_versions (void)
 	return sse_opts;
 }
 
+MonoCPUFeatures
+mono_arch_get_cpu_features (void)
+{
+	guint64 features = MONO_CPU_INITED;
+
+	if (mono_hwcap_x86_has_popcnt)
+		features |= MONO_CPU_X86_POPCNT;
+
+	if (mono_hwcap_x86_has_lzcnt)
+		features |= MONO_CPU_X86_LZCNT;
+
+	return (MonoCPUFeatures)features;
+}
+
 #ifndef DISABLE_JIT
 
 GList *
@@ -2070,7 +2089,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 }
 
 #ifdef ENABLE_LLVM
-static inline LLVMArgStorage
+static LLVMArgStorage
 arg_storage_to_llvm_arg_storage (MonoCompile *cfg, ArgStorage storage)
 {
 	switch (storage) {
@@ -2190,7 +2209,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 			break;
 		case ArgValuetypeAddrInIReg:
 		case ArgValuetypeAddrOnStack:
-			linfo->args [i].storage = LLVMArgVtypeByRef;
+			linfo->args [i].storage = LLVMArgVtypeAddr;
 			break;
 		default:
 			cfg->exception_message = g_strdup ("ainfo->storage");
@@ -3370,9 +3389,256 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 
 #define NEW_INS(cfg,ins,dest,op) do {	\
 		MONO_INST_NEW ((cfg), (dest), (op)); \
-        (dest)->cil_code = (ins)->cil_code; \
-        mono_bblock_insert_before_ins (bb, ins, (dest)); \
+		(dest)->cil_code = (ins)->cil_code; \
+		mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
+
+#define NEW_SIMD_INS(cfg,ins,dest,op,d,s1,s2) do {	\
+		MONO_INST_NEW ((cfg), (dest), (op)); \
+		(dest)->cil_code = (ins)->cil_code; \
+		(dest)->dreg = d; \
+		(dest)->sreg1 = s1; \
+		(dest)->sreg2 = s2; \
+		(dest)->type = STACK_VTYPE; \
+		(dest)->klass = ins->klass; \
+		mono_bblock_insert_before_ins (bb, ins, (dest)); \
+	} while (0)
+
+static int
+simd_type_to_comp_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_PCMPEQB;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PCMPEQW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PCMPEQD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PCMPEQQ; // SSE 4.1
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_sub_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_PSUBB;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PSUBW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PSUBD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PSUBQ;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_shl_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PSHLW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PSHLD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PSHLQ;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_gt_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_PCMPGTB;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PCMPGTW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PCMPGTD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PCMPGTQ; // SSE 4.2
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_max_un_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_U1:
+		return OP_PMAXB_UN;
+	case MONO_TYPE_U2:
+		return OP_PMAXW_UN; // SSE 4.1
+	case MONO_TYPE_U4:
+		return OP_PMAXD_UN; // SSE 4.1
+	//case MONO_TYPE_U8:
+	//	return OP_PMAXQ_UN; // AVX
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_add_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_PADDB;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PADDW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PADDD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PADDQ;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static void
+emit_simd_comp_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
+{
+	MonoInst *temp;
+
+	if (!mono_hwcap_x86_has_sse42 && (ins->inst_c1 == MONO_TYPE_I8 || ins->inst_c1 == MONO_TYPE_U8)) {
+		int temp_reg1 = mono_alloc_ireg (cfg);
+		int temp_reg2 = mono_alloc_ireg (cfg);
+
+		NEW_SIMD_INS (cfg, ins, temp, OP_PCMPEQD, temp_reg1, sreg1, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PSHUFLED, temp_reg2, temp_reg1, -1);
+		temp->inst_c0 = 0xB1;
+		NEW_SIMD_INS (cfg, ins, temp, OP_ANDPD, dreg, temp_reg1, temp_reg2);
+	} else {
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_comp_op (type), dreg, sreg1, sreg2);
+	}
+}
+
+static void
+emit_simd_gt_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2);
+
+static void
+emit_simd_gt_un_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
+{
+	MonoInst *temp;
+
+	switch (type) {
+		case MONO_TYPE_U2:
+		case MONO_TYPE_U4:
+			if (mono_hwcap_x86_has_sse41)
+				goto USE_MAX;
+			goto USE_SIGNED_GT;
+
+		case MONO_TYPE_U1:
+		USE_MAX: {
+			// dreg = max(sreg1, sreg2) != sreg2
+			
+			int temp_reg1 = mono_alloc_ireg (cfg);
+			int temp_reg2 = mono_alloc_ireg (cfg);
+			int temp_reg3 = mono_alloc_ireg (cfg);
+
+			NEW_SIMD_INS (cfg, ins, temp, simd_type_to_max_un_op (type), temp_reg1, sreg1, sreg2);
+			emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, temp_reg2, temp_reg1, ins->sreg2);
+			NEW_SIMD_INS (cfg, ins, temp, OP_XONES, temp_reg3, -1, -1);
+			NEW_SIMD_INS (cfg, ins, temp, OP_XORPD, dreg, temp_reg2, temp_reg3);
+			break;
+		}
+
+		case MONO_TYPE_U8:
+		USE_SIGNED_GT: {
+			// convert to signed integer by subtracting (1 << (size - 1)) from each operand
+			// and then use signed comparison
+
+			int temp_c0 = mono_alloc_ireg (cfg);
+			int temp_c80 = mono_alloc_ireg (cfg);
+			int temp_s1 = mono_alloc_ireg (cfg);
+			int temp_s2 = mono_alloc_ireg (cfg);
+
+			NEW_SIMD_INS (cfg, ins, temp, OP_XONES, temp_c0, -1, -1);
+			NEW_SIMD_INS (cfg, ins, temp, simd_type_to_shl_op (type), temp_c80, temp_c0, -1);
+			temp->inst_imm = type == MONO_TYPE_U2 ? 15 : (type == MONO_TYPE_U4 ? 31 : 63);
+			NEW_SIMD_INS (cfg, ins, temp, simd_type_to_sub_op (type), temp_s1, sreg1, temp_c80);
+			NEW_SIMD_INS (cfg, ins, temp, simd_type_to_sub_op (type), temp_s2, sreg2, temp_c80);
+			emit_simd_gt_op (cfg, bb, ins, type, dreg, temp_s1, temp_s2);
+			break;
+		}
+	}
+}
+
+static void
+emit_simd_gt_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
+{
+	MonoInst *temp;
+
+	if (!mono_hwcap_x86_has_sse42 && (type == MONO_TYPE_I8 || type == MONO_TYPE_U8)) {
+		// Decompose 64-bit greater than to 32-bit
+		//
+		// t = (v1 > v2)
+		// u = (v1 == v2)
+		// v = (v1 > v2) unsigned
+		//
+		// z = shuffle(t, (3, 3, 1, 1))
+		// t1 = shuffle(v, (2, 2, 0, 0))
+		// u1 = shuffle(u, (3, 3, 1, 1))
+		// w = and(t1, u1)
+		// result = bitwise_or(z, w)
+
+		int temp_t = mono_alloc_ireg (cfg);
+		int temp_u = mono_alloc_ireg (cfg);
+		int temp_v = mono_alloc_ireg (cfg);
+		int temp_z = temp_t;
+		int temp_t1 = temp_v;
+		int temp_u1 = temp_u;
+		int temp_w = temp_t1;
+
+		NEW_SIMD_INS (cfg, ins, temp, OP_PCMPGTD, temp_t, sreg1, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PCMPEQD, temp_u, sreg1, sreg2);
+		emit_simd_gt_un_op (cfg, bb, ins, MONO_TYPE_U4, temp_v, sreg1, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PSHUFLED, temp_z, temp_t, -1);
+		temp->inst_c0 = 0xF5;
+		NEW_SIMD_INS (cfg, ins, temp, OP_PSHUFLED, temp_t1, temp_v, -1);
+		temp->inst_c0 = 0xA0;
+		NEW_SIMD_INS (cfg, ins, temp, OP_PSHUFLED, temp_u1, temp_u, -1);
+		temp->inst_c0 = 0xF5;
+		NEW_SIMD_INS (cfg, ins, temp, OP_ANDPD, temp_w, temp_t1, temp_u1);
+		NEW_SIMD_INS (cfg, ins, temp, OP_ORPD, dreg, temp_z, temp_w);
+	} else {
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_gt_op (type), dreg, sreg1, sreg2);
+	}
+}
 
 /*
  * mono_arch_lowering_pass:
@@ -3439,27 +3705,204 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 #ifdef MONO_ARCH_SIMD_INTRINSICS
 		case OP_EXPAND_I1: {
+			int temp_reg1 = mono_alloc_ireg (cfg);
+			int temp_reg2 = mono_alloc_ireg (cfg);
+			int original_reg = ins->sreg1;
+
+			NEW_INS (cfg, ins, temp, OP_ICONV_TO_U1);
+			temp->sreg1 = original_reg;
+			temp->dreg = temp_reg1;
+
+			NEW_INS (cfg, ins, temp, OP_SHL_IMM);
+			temp->sreg1 = temp_reg1;
+			temp->dreg = temp_reg2;
+			temp->inst_imm = 8;
+
+			NEW_INS (cfg, ins, temp, OP_LOR);
+			temp->sreg1 = temp->dreg = temp_reg2;
+			temp->sreg2 = temp_reg1;
+
+ 			ins->opcode = OP_EXPAND_I2;
+			ins->sreg1 = temp_reg2;
+			break;
+		}
+
+		case OP_XEQUAL: {
+			int temp_reg1 = mono_alloc_ireg (cfg);
+			int temp_reg2 = mono_alloc_ireg (cfg);
+
+			NEW_SIMD_INS (cfg, ins, temp, OP_PCMPEQD, temp_reg1, ins->sreg1, ins->sreg2);
+			NEW_SIMD_INS (cfg, ins, temp, OP_EXTRACT_MASK, temp_reg2, temp_reg1, -1);
+			temp->type = STACK_I4;
+			NEW_INS (cfg, ins, temp, OP_COMPARE_IMM);
+			temp->sreg1 = temp_reg2;
+			temp->inst_imm = 0xFFFF;
+			temp->klass = ins->klass;
+			ins->opcode = OP_CEQ;
+			ins->sreg1 = -1;
+			ins->sreg2 = -1;
+			break;
+		}
+
+		case OP_XCOMPARE: {
+			int temp_reg;
+
+			switch (ins->inst_c0)
+			{
+			case CMP_EQ:
+				emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, ins->dreg, ins->sreg1, ins->sreg2);
+				NULLIFY_INS (ins);
+				break;
+
+			case CMP_NE: {
 				int temp_reg1 = mono_alloc_ireg (cfg);
 				int temp_reg2 = mono_alloc_ireg (cfg);
-				int original_reg = ins->sreg1;
 
-				NEW_INS (cfg, ins, temp, OP_ICONV_TO_U1);
-				temp->sreg1 = original_reg;
-				temp->dreg = temp_reg1;
-
-				NEW_INS (cfg, ins, temp, OP_SHL_IMM);
-				temp->sreg1 = temp_reg1;
-				temp->dreg = temp_reg2;
-				temp->inst_imm = 8;
-
-				NEW_INS (cfg, ins, temp, OP_LOR);
-				temp->sreg1 = temp->dreg = temp_reg2;
-				temp->sreg2 = temp_reg1;
-
- 				ins->opcode = OP_EXPAND_I2;
+				emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, temp_reg1, ins->sreg1, ins->sreg2);
+				NEW_SIMD_INS (cfg, ins, temp, OP_XONES, temp_reg2, -1, -1);
+				ins->opcode = OP_XORPD;
+				ins->sreg1 = temp_reg1;
 				ins->sreg1 = temp_reg2;
+				break;
+			}
+
+			case CMP_LT:
+				temp_reg = ins->sreg1;
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = temp_reg;
+			case CMP_GT:
+				emit_simd_gt_op (cfg, bb, ins, ins->inst_c1, ins->dreg, ins->sreg1, ins->sreg2);
+				NULLIFY_INS (ins);
+				break;
+
+			case CMP_LE:
+				temp_reg = ins->sreg1;
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = temp_reg;
+			case CMP_GE: {
+				int temp_reg1 = mono_alloc_ireg (cfg);
+				int temp_reg2 = mono_alloc_ireg (cfg);
+
+				emit_simd_gt_op (cfg, bb, ins, ins->inst_c1, temp_reg1, ins->sreg1, ins->sreg2);
+				emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, temp_reg2, ins->sreg1, ins->sreg2);
+				ins->opcode = OP_POR;
+				ins->sreg1 = temp_reg1;
+				ins->sreg2 = temp_reg2;
+				break;
+			}
+
+			case CMP_LE_UN:
+				temp_reg = ins->sreg1;
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = temp_reg;
+			case CMP_GE_UN:
+				if (mono_hwcap_x86_has_sse41 && ins->inst_c1 != MONO_TYPE_U8) {
+					int temp_reg1 = mono_alloc_ireg (cfg);
+
+					NEW_SIMD_INS (cfg, ins, temp, simd_type_to_max_un_op (ins->inst_c1), temp_reg1, ins->sreg1, ins->sreg2);
+					emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, ins->dreg, temp_reg1, ins->sreg1);
+					NULLIFY_INS (ins);
+				} else {
+					int temp_reg1 = mono_alloc_ireg (cfg);
+					int temp_reg2 = mono_alloc_ireg (cfg);
+
+					emit_simd_gt_un_op (cfg, bb, ins, ins->inst_c1, temp_reg1, ins->sreg1, ins->sreg2);
+					emit_simd_comp_op (cfg, bb, ins, ins->inst_c1, temp_reg2, ins->sreg1, ins->sreg2);
+					ins->opcode = OP_POR;
+					ins->sreg1 = temp_reg1;
+					ins->sreg2 = temp_reg2;
+				}
+				break;
+
+			case CMP_LT_UN:
+				temp_reg = ins->sreg1;
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = temp_reg;
+			case CMP_GT_UN: {
+				emit_simd_gt_un_op (cfg, bb, ins, ins->inst_c1, ins->dreg, ins->sreg1, ins->sreg2);
+				NULLIFY_INS (ins);
+				break;
+			}
+
+			default:
+				g_assert_not_reached();
+				break;
+			}
+
+			ins->type = STACK_VTYPE;
+			ins->inst_c0 = 0;
+			break;
+		}
+
+		case OP_XCOMPARE_FP: {
+			ins->opcode = ins->inst_c1 == MONO_TYPE_R4 ? OP_COMPPS : OP_COMPPD;
+
+			switch (ins->inst_c0)
+			{
+			case CMP_EQ: ins->inst_c0 = 0; break;
+			case CMP_NE: ins->inst_c0 = 4; break;
+			case CMP_LT: ins->inst_c0 = 1; break;
+			case CMP_LE: ins->inst_c0 = 2; break;
+			case CMP_GT: ins->inst_c0 = 6; break;
+			case CMP_GE: ins->inst_c0 = 5; break;
+			default:
+				g_assert_not_reached();
+				break;
+			}
+
+			break;
+		}
+
+		case OP_XCAST: {
+			ins->opcode = OP_XMOVE;
+			break;
+		}
+
+		case OP_XBINOP: {
+			switch (ins->inst_c0)
+			{
+			case OP_ISUB:
+				ins->opcode = simd_type_to_sub_op (ins->inst_c1);
+				break;
+			case OP_IADD:
+				ins->opcode = simd_type_to_add_op (ins->inst_c1);
+				break;
+			case OP_IAND:
+				ins->opcode = OP_ANDPD;
+				break;
+			case OP_IXOR:
+				ins->opcode = OP_XORPD;
+				break;
+			case OP_IOR:
+				ins->opcode = OP_ORPD;
+				break;
+			case OP_FSUB:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_SUBPD : OP_SUBPS;
+				break;
+			case OP_FADD:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_ADDPD : OP_ADDPS;
+				break;
+			case OP_FDIV:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_DIVPD : OP_DIVPS;
+				break;
+			case OP_FMUL:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_MULPD : OP_MULPS;
+				break;
+			default:
+				g_assert_not_reached();
+				break;
 			}
 			break;
+		}
+
+		case OP_XEXTRACT_R4:
+		case OP_XEXTRACT_R8:
+		case OP_XEXTRACT_I32:
+		case OP_XEXTRACT_I64: {
+			// TODO
+			g_assert_not_reached();
+			break;
+		}
 #endif
 		default:
 			break;
@@ -3973,6 +4416,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		const guint offset = code - cfg->native_code;
 		set_code_cursor (cfg, code);
 		int max_len = ins_get_size (ins->opcode);
+
 		code = realloc_code (cfg, max_len);
 
 		if (cfg->debug_info)
@@ -4131,7 +4575,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_COMPARE_IMM:
 #if defined(MONO_ARCH_ILP32)
-                        /* Comparison of pointer immediates should be 4 bytes to avoid sign-extend problems */
+			/* Comparison of pointer immediates should be 4 bytes to avoid sign-extend problems */
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm_size (code, X86_CMP, ins->sreg1, ins->inst_imm, 4);
 			break;
@@ -6768,6 +7212,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_roundpd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
 #endif
+
+		case OP_LZCNT32:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_LZCNT64:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_POPCNT32:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_POPCNT64:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+
 		case OP_LIVERANGE_START: {
 			if (cfg->verbose_level > 1)
 				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
@@ -6812,11 +7270,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 		}
 
-		if ((code - cfg->native_code - offset) > max_len) {
-			g_warning ("wrong maximal instruction length of instruction %s (expected %d, got %ld)",
-				   mono_inst_name (ins->opcode), max_len, code - cfg->native_code - offset);
-			g_assert_not_reached ();
-		}
+		g_assertf ((code - cfg->native_code - offset) <= max_len,
+			   "wrong maximal instruction length of instruction %s (expected %d, got %d)",
+			   mono_inst_name (ins->opcode), max_len, (int)(code - cfg->native_code - offset));
 	}
 
 	set_code_cursor (cfg, code);
@@ -7801,19 +8257,18 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 	unwind_ops = mono_arch_get_cie_program ();
 
+	const int size = 64;
+
+	start = code = (guint8 *)mono_global_codeman_reserve (size + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
+
 	if (has_target) {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
 
 		/* Replace the this argument with the target */
 		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_ARG_REG1, 8);
 		amd64_mov_reg_membase (code, AMD64_ARG_REG1, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, target), 8);
 		amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	} else {
-		start = code = (guint8 *)mono_global_codeman_reserve (64 + MONO_TRAMPOLINE_UNWINDINFO_SIZE(0));
-
 		if (param_count == 0) {
 			amd64_jump_membase (code, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		} else {
@@ -7832,9 +8287,10 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 
 			amd64_jump_membase (code, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		}
-		g_assert ((code - start) < 64);
-		g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 	}
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -7867,7 +8323,7 @@ static gpointer
 get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, int offset)
 {
 	guint8 *code, *start;
-	int size = 20;
+	const int size = 20;
 	char *tramp_name;
 	GSList *unwind_ops;
 
@@ -7890,6 +8346,9 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoObject, vtable), 8);
 	amd64_jump_membase (code, AMD64_RAX, offset);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
@@ -8168,7 +8627,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 			else
 				x86_branch32 (code, X86_CC_GE, 0, FALSE);
 		}
-		g_assert (code - item->code_target <= item->chunk_size);
+		g_assertf (code - item->code_target <= item->chunk_size, "%X %X", (guint)(code - item->code_target), (guint)item->chunk_size);
 	}
 	/* patch the branches to get to the target items */
 	for (i = 0; i < count; ++i) {

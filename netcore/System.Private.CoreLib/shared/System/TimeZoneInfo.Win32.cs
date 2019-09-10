@@ -7,13 +7,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Security;
-using System.Text;
 using System.Threading;
 
 using Microsoft.Win32.SafeHandles;
 
 using Internal.Win32;
-using Internal.Runtime.CompilerServices;
 
 using REG_TZI_FORMAT = Interop.Kernel32.REG_TZI_FORMAT;
 using TIME_ZONE_INFORMATION = Interop.Kernel32.TIME_ZONE_INFORMATION;
@@ -671,8 +669,8 @@ namespace System
                 dtzi = default;
                 return false;
             }
-            fixed (byte * pBytes = &regValue[0])
-                dtzi = *(REG_TZI_FORMAT *)pBytes;
+            fixed (byte* pBytes = &regValue[0])
+                dtzi = *(REG_TZI_FORMAT*)pBytes;
             return true;
         }
 

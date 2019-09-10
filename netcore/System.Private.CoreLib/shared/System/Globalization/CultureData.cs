@@ -2,17 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text;
+using System.Collections.Generic;
 using System.Diagnostics;
-
-#if CORERT
-#pragma warning restore nullable
-using StringStringDictionary = LowLevelDictionary<string, string>;
-using StringCultureDataDictionary = LowLevelDictionary<string, CultureData>;
-#else
-using StringStringDictionary = System.Collections.Generic.Dictionary<string, string>;
-using StringCultureDataDictionary = System.Collections.Generic.Dictionary<string, System.Globalization.CultureData>;
-#endif
+using System.Text;
 
 namespace System.Globalization
 {
@@ -71,7 +63,7 @@ namespace System.Globalization
         private string? _sNativeLanguage; // Native name of this language
         private string? _sAbbrevLang; // abbreviated language name (Windows Language Name) ex: ENU
         private string? _sConsoleFallbackName; // The culture name for the console fallback UI culture
-        private int    _iInputLanguageHandle=undef;// input language handle
+        private int _iInputLanguageHandle = undef; // input language handle
 
         // Region
         private string? _sRegionName; // (RegionInfo)
@@ -80,7 +72,7 @@ namespace System.Globalization
         private string? _sNativeCountry; // native country name
         private string? _sISO3166CountryName; // ISO 3166 (RegionInfo), ie: US
         private string? _sISO3166CountryName2; // 3 char ISO 3166 country name 2 2(RegionInfo) ex: USA (ISO)
-        private int    _iGeoId = undef; // GeoId
+        private int _iGeoId = undef; // GeoId
 
         // Numbers
         private string? _sPositiveSign; // (user can override) positive sign
@@ -158,9 +150,9 @@ namespace System.Globalization
         /// <remarks>
         /// Using a property so we avoid creating the dictionary until we need it
         /// </remarks>
-        private static StringStringDictionary RegionNames =>
+        private static Dictionary<string, string> RegionNames =>
             s_regionNames ??=
-            new StringStringDictionary(211 /* prime */)
+            new Dictionary<string, string>(211 /* prime */)
             {
                 { "029", "en-029" },
                 { "AE", "ar-AE" },
@@ -293,8 +285,8 @@ namespace System.Globalization
             };
 
         // Cache of regions we've already looked up
-        private static volatile StringCultureDataDictionary? s_cachedRegions;
-        private static volatile StringStringDictionary? s_regionNames;
+        private static volatile Dictionary<string, CultureData>? s_cachedRegions;
+        private static volatile Dictionary<string, string>? s_regionNames;
 
         internal static CultureData? GetCultureDataForRegion(string? cultureName, bool useUserOverride)
         {
@@ -319,12 +311,12 @@ namespace System.Globalization
 
             // Try the hash table next
             string hashName = AnsiToLower(useUserOverride ? cultureName : cultureName + '*');
-            StringCultureDataDictionary? tempHashTable = s_cachedRegions;
+            Dictionary<string, CultureData>? tempHashTable = s_cachedRegions;
 
             if (tempHashTable == null)
             {
                 // No table yet, make a new one
-                tempHashTable = new StringCultureDataDictionary();
+                tempHashTable = new Dictionary<string, CultureData>();
             }
             else
             {
@@ -553,7 +545,7 @@ namespace System.Globalization
         private static volatile CultureData? s_Invariant;
 
         // Cache of cultures we've already looked up
-        private static volatile StringCultureDataDictionary? s_cachedCultures;
+        private static volatile Dictionary<string, CultureData>? s_cachedCultures;
         private static readonly object s_lock = new object();
 
         internal static CultureData? GetCultureData(string? cultureName, bool useUserOverride)
@@ -566,11 +558,11 @@ namespace System.Globalization
 
             // Try the hash table first
             string hashName = AnsiToLower(useUserOverride ? cultureName : cultureName + '*');
-            StringCultureDataDictionary? tempHashTable = s_cachedCultures;
+            Dictionary<string, CultureData>? tempHashTable = s_cachedCultures;
             if (tempHashTable == null)
             {
                 // No table yet, make a new one
-                tempHashTable = new StringCultureDataDictionary();
+                tempHashTable = new Dictionary<string, CultureData>();
             }
             else
             {
@@ -627,7 +619,7 @@ namespace System.Globalization
                 if (name[i] >= 'A' && name[i] <= 'Z')
                 {
                     // lowercase characters before '-'
-                    normalizedName[i] = (char) (((int)name[i]) + 0x20);
+                    normalizedName[i] = (char)(((int)name[i]) + 0x20);
                     changed = true;
                 }
                 else
@@ -647,7 +639,7 @@ namespace System.Globalization
             {
                 if (name[i] >= 'a' && name[i] <= 'z')
                 {
-                    normalizedName[i] = (char) (((int)name[i]) - 0x20);
+                    normalizedName[i] = (char)(((int)name[i]) - 0x20);
                     changed = true;
                 }
                 else
@@ -1888,10 +1880,7 @@ namespace System.Globalization
             int calendarIndex = (int)calendarId - 1;
 
             // Have to have calendars
-            if (_calendars == null)
-            {
-                _calendars = new CalendarData[CalendarData.MAX_CALENDARS];
-            }
+            _calendars ??= new CalendarData[CalendarData.MAX_CALENDARS];
 
             // we need the following local variable to avoid returning null
             // when another thread creates a new array of CalendarData (above)
@@ -2165,16 +2154,10 @@ namespace System.Globalization
                 switch (str[i])
                 {
                     case '\'':
-                        if (result == null)
-                        {
-                            result = new StringBuilder(str, start, i - start, str.Length);
-                        }
+                        result ??= new StringBuilder(str, start, i - start, str.Length);
                         break;
                     case '\\':
-                        if (result == null)
-                        {
-                            result = new StringBuilder(str, start, i - start, str.Length);
-                        }
+                        result ??= new StringBuilder(str, start, i - start, str.Length);
                         ++i;
                         if (i < str.Length)
                         {
@@ -2182,10 +2165,7 @@ namespace System.Globalization
                         }
                         break;
                     default:
-                        if (result != null)
-                        {
-                            result.Append(str[i]);
-                        }
+                        result?.Append(str[i]);
                         break;
                 }
             }
@@ -2204,7 +2184,7 @@ namespace System.Globalization
         /// </summary>
         private static string GetTimeSeparator(string format)
         {
-            //  Find the time separator so that we can pretend we know TimeSeparator.
+            // Find the time separator so that we can pretend we know TimeSeparator.
             return GetSeparator(format, "Hhms");
         }
 
@@ -2214,7 +2194,7 @@ namespace System.Globalization
         /// </summary>
         private static string GetDateSeparator(string format)
         {
-            //  Find the date separator so that we can pretend we know DateSeparator.
+            // Find the date separator so that we can pretend we know DateSeparator.
             return GetSeparator(format, "dyM");
         }
 
@@ -2273,7 +2253,7 @@ namespace System.Globalization
                                 case '\\':
                                     break;
                                 default:
-                                    --i; //backup since we will move over this next
+                                    --i; // backup since we will move over this next
                                     break;
                             }
                         }

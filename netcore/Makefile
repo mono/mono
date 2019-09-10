@@ -6,12 +6,9 @@ NETCORETESTS_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*Microsof
 NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 ROSLYN_VERSION:=  $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNetCompilersVersion>\(.*\)<\/MicrosoftNetCompilersVersion.*/\1/p' )
 
-# Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
-ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
-
 # runtime version used by $(DOTNET) - local .net core sdk to bootstrap stuff
 # it doesn't match NETCOREAPP_VERSION
-BOOTSTRAP_RUNTIME = $(shell ls ../.dotnet/shared/Microsoft.NETCore.App)
+BOOTSTRAP_RUNTIME = $(shell ls ../.dotnet/shared/Microsoft.NETCore.App | tail -1)
 
 ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
@@ -49,9 +46,7 @@ DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
 
 NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
-ASPNETCORESDK_FILE := aspnetcore-runtime-$(ASPNETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
 NETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSION)/$(NETCORESDK_FILE)
-ASPNETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$(ASPNETCOREAPP_VERSION)/$(ASPNETCORESDK_FILE)
 FEED_BASE_URL := https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_PATH := corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_PLATFORM)/netcoreapp/corefx-test-assets.xml
 
@@ -66,13 +61,6 @@ $(NETCORESDK_FILE):
 	rm -rf shared/Microsoft.NETCore.App
 	$(UNZIPCMD) $(NETCORESDK_FILE)
 	$(ON_RUNTIME_EXTRACT)
-
-# AspNetCoreApp contains its own .NET Core Runtime but we don't need it so let's remove it 
-# and update version in Microsoft.AspNetCore.App.runtimeconfig.json to NETCOREAPP_VERSION
-$(ASPNETCORESDK_FILE):
-	curl $(ASPNETCORE_URL) --output $(ASPNETCORESDK_FILE)
-	$(UNZIPCMD) $(ASPNETCORESDK_FILE)
-	sed -e 's/.*version.*/\"version\": \"$(NETCOREAPP_VERSION)\"/' < shared/Microsoft.AspNetCore.App/$(ASPNETCOREAPP_VERSION)/Microsoft.AspNetCore.App.runtimeconfig.json > 2 && mv 2 shared/Microsoft.AspNetCore.App/$(ASPNETCOREAPP_VERSION)/Microsoft.AspNetCore.App.runtimeconfig.json
 
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
@@ -96,12 +84,15 @@ run-sample-dbg: prepare
 run-sample-coreclr:
 	cd sample/HelloWorld && $(DOTNET) run
 
-run-aspnet-sample: prepare
-	rm -rf sample/AspNetCore/{bin,obj}
-	$(DOTNET) publish sample/AspNetCore -c Debug -r $(RID)
-	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
-	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/
-	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(ASPNETCOREAPP_VERSION)" sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/AspNetCore.dll
+# build any app in "self contained" mode and patch coreclr.dll and corelib with mono bits
+# e.g. `make patch-app APP_PATH=/my/aspnetapp`
+patch-app: prepare
+	@if test -z "$(APP_PATH)"; then echo "APP_PATH is not set"; exit 1; fi
+	cp NuGet.config $(APP_PATH)
+	cd $(APP_PATH) && $(DOTNET) publish -c Release -r $(RID) -f netcoreapp3.0
+	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)	
+	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish
+	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish
 
 # makes $(DOTNET) to use mono runtime (to run real-world apps using '$(DOTNET) run')
 patch-local-dotnet: prepare
@@ -118,6 +109,18 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 		$(DOTNET) $$assembly ; \
 	done; \
 
+# run 'dotnet/performance' benchmarks
+# e.g. 'make run-benchmarks DOTNET_PERF_REPO=/prj/performance'
+# you can append BDN parameters at the end, e.g. ` -- --filter Burgers --keepFiles`
+# NOTE: we have to delete a couple of System.Drawing files to make it work
+run-benchmarks: patch-local-dotnet
+	cd $(DOTNET_PERF_REPO)/src/benchmarks/micro/ && \
+	> corefx/System.Drawing/Perf_Color.cs && \
+	> corefx/System.Drawing/Perf_Graphics_DrawBeziers.cs && \
+	> corefx/System.Drawing/Perf_Graphics_Transforms.cs && \
+	> corefx/System.Drawing/Perf_Image_Load.cs && \
+	$(DOTNET) run -c Release -f netcoreapp5.0 --cli $(CURDIR)/../.dotnet/dotnet
+
 # run HelloWorld using --aot=llvm (requires `--enable-llvm` build)
 run-sample-local-dotnet-llvm: patch-local-dotnet
 	$(DOTNET) build -c Release sample/HelloWorld
@@ -132,6 +135,8 @@ SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in config.make
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
+
+CORLIB_BUILD_FLAGS?=-c Release
 
 bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
 	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
@@ -153,14 +158,14 @@ $(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb $(SHAREDRUNTIME)
 	touch $@
 
-prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
+prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
 	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 
 clean:
-	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
+	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
 
 update-tests-corefx: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
@@ -182,22 +187,36 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 # Running individual test: MONO_ENV_OPTIONS="--debug" make run-tests-corefx-System.Collections.Tests
 #
 
-run-tests-corefx: update-tests-corefx
+run-tests-corefx: prepare update-tests-corefx
+	@rm -f .failures; \
+	counter=0; \
+	tests_count=$(words $(dir $(wildcard corefx/tests/extracted/*/))); \
 	for testdir in corefx/tests/extracted/*; do \
-		$(MAKE) run-tests-corefx-$$(basename $${testdir}) || true; \
+		counter=$$((counter+1)); \
+		testname=$$(basename $$testdir); \
+		if [ -n "$$USE_TIMEOUT" ]; then timeoutcmd="../scripts/ci/run-step.sh --label=$$testname --timeout=10m --fatal"; fi; \
+		$$timeoutcmd $(MAKE) run-tests-corefx-$$testname TEST_COUNTER="($$counter / $$tests_count) " || echo $$testname >> .failures; \
 	done; \
-	$(MAKE) xunit-summary
+	$(MAKE) xunit-summary; \
+	if [ -e ".failures" ]; then \
+		echo ""; \
+		echo "Failures in test suites:"; \
+		cat .failures; \
+		echo ""; \
+		exit 1; \
+	fi
 
 run-tests-corefx-%: prepare update-tests-corefx
 	@echo ""
-	@echo "***************** $* *********************"
-	@cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
-	@cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.deps.json
+	@echo "***************** $* $${TEST_COUNTER}*********************"
+	@cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/$*.deps.json
 	@cp corefx/restore/corefx-restore.runtimeconfig.dev.json corefx/tests/extracted/$*/$*.runtimeconfig.dev.json
 	@cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
 	@sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec --runtimeconfig $*.runtimeconfig.json --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
+	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
+		--runtimeconfig $*.runtimeconfig.json --additional-deps $*.deps.json \
+		--fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
 		$(FIXTURE)
@@ -215,3 +234,4 @@ xunit-summary:
 endif
 
 distdir:
+distclean:

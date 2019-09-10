@@ -139,6 +139,7 @@ namespace Mono.Attach
 			else {
 				writer.Write ((sbyte)PrimitiveType.PRIM_TYPE_STRING);
 				writer.Write (s);
+				writer.Write ((byte)0);
 			}
 		}
 

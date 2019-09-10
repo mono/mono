@@ -184,7 +184,7 @@ static ThreadPoolWorker worker;
 		} while (mono_atomic_cas_i64 (&worker.counters.as_gint64, (var).as_gint64, __old.as_gint64) != __old.as_gint64); \
 	} while (0)
 
-static inline ThreadPoolWorkerCounter
+static ThreadPoolWorkerCounter
 COUNTER_READ (void)
 {
 	ThreadPoolWorkerCounter counter;
@@ -348,6 +348,19 @@ mono_threadpool_worker_request (void)
 
 	mono_refcount_dec (&worker);
 }
+
+#ifdef ENABLE_NETCORE
+gint64 mono_threadpool_worker_get_completed_threads_count (void)
+{
+	return worker.heuristic_completions;
+}
+
+gint32 mono_threadpool_worker_get_threads_count (void)
+{
+	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
+	return counter._.working;
+}
+#endif
 
 /* return TRUE if timeout, FALSE otherwise (worker unpark or interrupt) */
 static gboolean

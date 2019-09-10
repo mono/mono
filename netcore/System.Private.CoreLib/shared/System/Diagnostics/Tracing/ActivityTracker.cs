@@ -2,20 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+
+#if ES_BUILD_STANDALONE
 using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Runtime.CompilerServices;
-#if !ES_BUILD_AGAINST_DOTNET_V35
-using Contract = System.Diagnostics.Contracts.Contract;
 #else
-using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
+using System.Threading.Tasks;
 #endif
+using System.Threading;
 
 #if ES_BUILD_STANDALONE
 namespace Microsoft.Diagnostics.Tracing
 #else
-using System.Threading.Tasks;
 namespace System.Diagnostics.Tracing
 #endif
 {
@@ -152,7 +150,7 @@ namespace System.Diagnostics.Tracing
                 log.DebugFacilityMessage("OnStopEnterActivityState", ActivityInfo.LiveActivities(m_current.Value));
             }
 
-            for (; ; ) // This is a retry loop.
+            while (true) // This is a retry loop.
             {
                 ActivityInfo? currentActivity = m_current.Value;
                 ActivityInfo? newCurrentActivity = null;               // if we have seen any live activities (orphans), at he first one we have seen.
@@ -186,8 +184,7 @@ namespace System.Diagnostics.Tracing
                     if (orphan.CanBeOrphan())
                     {
                         // We can't pop anything after we see a valid orphan, remember this for later when we update m_current.
-                        if (newCurrentActivity == null)
-                            newCurrentActivity = orphan;
+                        newCurrentActivity ??= orphan;
                     }
                     else
                     {
@@ -203,8 +200,7 @@ namespace System.Diagnostics.Tracing
                     // I succeeded stopping this activity. Now we update our m_current pointer
 
                     // If I haven't yet determined the new current activity, it is my creator.
-                    if (newCurrentActivity == null)
-                        newCurrentActivity = activityToStop.m_creator;
+                    newCurrentActivity ??= activityToStop.m_creator;
 
                     m_current.Value = newCurrentActivity;
 
@@ -231,8 +227,9 @@ namespace System.Diagnostics.Tracing
                 {
                     m_current = new AsyncLocal<ActivityInfo?>(ActivityChanging);
                 }
-                catch (NotImplementedException) {
-#if (!ES_BUILD_PCL && ! ES_BUILD_PN)
+                catch (NotImplementedException)
+                {
+#if (!ES_BUILD_PCL && !ES_BUILD_PN)
                     // send message to debugger without delay
                     System.Diagnostics.Debugger.Log(0, null, "Activity Enabled() called but AsyncLocals Not Supported (pre V4.6).  Ignoring Enable");
 #endif

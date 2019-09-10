@@ -8,7 +8,7 @@ static mono_pollfd *poll_fds;
 static guint poll_fds_capacity;
 static guint poll_fds_size;
 
-static inline void
+static void
 POLL_INIT_FD (mono_pollfd *poll_fd, gint fd, gint events)
 {
 	poll_fd->fd = fd;
@@ -29,6 +29,12 @@ poll_init (gint wakeup_pipe_fd)
 	POLL_INIT_FD (&poll_fds [0], wakeup_pipe_fd, MONO_POLLIN);
 
 	return TRUE;
+}
+
+static gboolean
+poll_can_register_fd (int fd)
+{
+	return 	mono_poll_can_add (poll_fds, poll_fds_size, fd);
 }
 
 static void
@@ -75,6 +81,7 @@ poll_register_fd (gint fd, gint events, gboolean is_new)
 	}
 
 	POLL_INIT_FD (&poll_fds [poll_fds_size - 1], fd, poll_event);
+
 }
 
 static void
@@ -106,7 +113,7 @@ poll_remove_fd (gint fd)
 		poll_fds_size -= 1;
 }
 
-static inline gint
+static gint
 poll_mark_bad_fds (mono_pollfd *fds, gint size)
 {
 	gint i, ready = 0;
@@ -214,6 +221,7 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 
 static ThreadPoolIOBackend backend_poll = {
 	poll_init,
+	poll_can_register_fd,
 	poll_register_fd,
 	poll_remove_fd,
 	poll_event_wait,

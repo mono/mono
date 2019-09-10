@@ -2,16 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
-using System.Security;
 using System.Text;
-using System.Threading;
 
 namespace System
 {
@@ -342,11 +339,7 @@ namespace System
                 // exceptions (to be rethrown later) and add it.
                 if (!predicate(m_innerExceptions[i]))
                 {
-                    if (unhandledExceptions == null)
-                    {
-                        unhandledExceptions = new List<Exception>();
-                    }
-
+                    unhandledExceptions ??= new List<Exception>();
                     unhandledExceptions.Add(m_innerExceptions[i]);
                 }
             }

@@ -16,7 +16,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign subdir-objects]
+AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign]
                  m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
                              *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
                              esac]))                                     # TODO: remove this hack once we require automake 1.11+
@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=69f9feb5-e6ef-4d90-8722-17346c85efb6
+MONO_CORLIB_VERSION=8E172F4D-82A3-4F55-8D7C-C8E8E0FA58AE
 
 #
 # Put a quoted #define in config.h.
@@ -4183,14 +4183,7 @@ if test "x$enable_llvm" = "xyes"; then
 			AC_MSG_ERROR([LLVM executable $EXTERNAL_LLVM_CONFIG not found.])
 		fi
 	else
-		if test x$host_win32 = xyes; then
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config.exe, no)
-		else
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config, no)
-		fi
-		if test "x$EXTERNAL_LLVM_CONFIG" = "xno"; then
-			internal_llvm=yes
-		fi
+		internal_llvm=yes
 	fi
 
 	LLVM_CODEGEN_LIBS="x86codegen"
@@ -6801,8 +6794,8 @@ AC_MSG_RESULT($enable_compiler_server)
 if test x$enable_compiler_server = xyes; then
    if test x$force_enable_compiler_server = xyes; then
        AC_MSG_WARN([forcing compiler server to stay enabled])
-   elif test x$host_darwin = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin])
+   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
        enable_compiler_server=no;
    elif test x$csc_compiler = xmcs; then
        AC_MSG_WARN([mcs does not support the compiler server])

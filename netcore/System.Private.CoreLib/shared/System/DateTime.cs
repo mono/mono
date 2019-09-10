@@ -2,16 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Globalization;
-using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Runtime.Versioning;
-using System.Security;
 using CultureInfo = System.Globalization.CultureInfo;
 using Calendar = System.Globalization.Calendar;
 
@@ -104,9 +99,9 @@ namespace System
         private const int DatePartDay = 3;
 
         private static readonly int[] s_daysToMonth365 = {
-            0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+            0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
         private static readonly int[] s_daysToMonth366 = {
-            0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
+            0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
 
         public static readonly DateTime MinValue = new DateTime(MinTicks, DateTimeKind.Unspecified);
         public static readonly DateTime MaxValue = new DateTime(MaxTicks, DateTimeKind.Unspecified);
@@ -446,7 +441,7 @@ namespace System
             double millis_double = value * (double)scale + (value >= 0 ? 0.5 : -0.5);
 
             if (millis_double <= (double)-MaxMillis || millis_double >= (double)MaxMillis)
-                 throw new ArgumentOutOfRangeException(nameof(value), SR.ArgumentOutOfRange_AddValue);
+                throw new ArgumentOutOfRangeException(nameof(value), SR.ArgumentOutOfRange_AddValue);
 
             return AddTicks((long)millis_double * TicksPerMillisecond);
         }
@@ -567,7 +562,7 @@ namespace System
             long ticks = InternalTicks;
             if (value > MaxTicks - ticks || value < MinTicks - ticks)
             {
-                result = default(DateTime);
+                result = default;
                 return false;
             }
             result = new DateTime((ulong)(ticks + value) | InternalKind);
@@ -653,8 +648,8 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static long TimeToTicks(int hour, int minute, int second)
         {
-            //TimeSpan.TimeToTicks is a family access function which does no error checking, so
-            //we need to put some error checking out here.
+            // TimeSpan.TimeToTicks is a family access function which does no error checking, so
+            // we need to put some error checking out here.
             if ((uint)hour >= 24 || (uint)minute >= 60 || (uint)second >= 60)
             {
                 ThrowHelper.ThrowArgumentOutOfRange_BadHourMinuteSecond();
@@ -1423,40 +1418,19 @@ namespace System
             return new DateTime((ulong)(ticks - valueTicks) | d.InternalKind);
         }
 
-        public static TimeSpan operator -(DateTime d1, DateTime d2)
-        {
-            return new TimeSpan(d1.InternalTicks - d2.InternalTicks);
-        }
+        public static TimeSpan operator -(DateTime d1, DateTime d2) => new TimeSpan(d1.InternalTicks - d2.InternalTicks);
 
-        public static bool operator ==(DateTime d1, DateTime d2)
-        {
-            return d1.InternalTicks == d2.InternalTicks;
-        }
+        public static bool operator ==(DateTime d1, DateTime d2) => d1.InternalTicks == d2.InternalTicks;
 
-        public static bool operator !=(DateTime d1, DateTime d2)
-        {
-            return d1.InternalTicks != d2.InternalTicks;
-        }
+        public static bool operator !=(DateTime d1, DateTime d2) => d1.InternalTicks != d2.InternalTicks;
 
-        public static bool operator <(DateTime t1, DateTime t2)
-        {
-            return t1.InternalTicks < t2.InternalTicks;
-        }
+        public static bool operator <(DateTime t1, DateTime t2) => t1.InternalTicks < t2.InternalTicks;
 
-        public static bool operator <=(DateTime t1, DateTime t2)
-        {
-            return t1.InternalTicks <= t2.InternalTicks;
-        }
+        public static bool operator <=(DateTime t1, DateTime t2) => t1.InternalTicks <= t2.InternalTicks;
 
-        public static bool operator >(DateTime t1, DateTime t2)
-        {
-            return t1.InternalTicks > t2.InternalTicks;
-        }
+        public static bool operator >(DateTime t1, DateTime t2) => t1.InternalTicks > t2.InternalTicks;
 
-        public static bool operator >=(DateTime t1, DateTime t2)
-        {
-            return t1.InternalTicks >= t2.InternalTicks;
-        }
+        public static bool operator >=(DateTime t1, DateTime t2) => t1.InternalTicks >= t2.InternalTicks;
 
 
         // Returns a string array containing all of the known date and time options for the

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace System.Threading.Tasks
 {
@@ -773,7 +772,7 @@ namespace System.Threading.Tasks
 
             try
             {
-                //if we don't require synchronization, a faster set result path is taken
+                // if we don't require synchronization, a faster set result path is taken
                 IAsyncResult asyncResult = beginMethod(iar =>
                 {
                     if (!iar.CompletedSynchronously)
@@ -890,7 +889,7 @@ namespace System.Threading.Tasks
 
             try
             {
-                //if we don't require synchronization, a faster set result path is taken
+                // if we don't require synchronization, a faster set result path is taken
                 IAsyncResult asyncResult = beginMethod(arg1, iar =>
                 {
                     if (!iar.CompletedSynchronously)
@@ -1015,7 +1014,7 @@ namespace System.Threading.Tasks
 
             try
             {
-                //if we don't require synchronization, a faster set result path is taken
+                // if we don't require synchronization, a faster set result path is taken
                 IAsyncResult asyncResult = beginMethod(arg1, arg2, iar =>
                 {
                     if (!iar.CompletedSynchronously)
@@ -1148,7 +1147,7 @@ namespace System.Threading.Tasks
 
             try
             {
-                //if we don't require synchronization, a faster set result path is taken
+                // if we don't require synchronization, a faster set result path is taken
                 IAsyncResult asyncResult = beginMethod(arg1, arg2, arg3, iar =>
                 {
                     if (!iar.CompletedSynchronously)
@@ -1607,7 +1606,7 @@ namespace System.Threading.Tasks
             // check arguments
             TaskFactory.CheckMultiTaskContinuationOptions(continuationOptions);
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
-            //ArgumentNullException of continuationFunction or continuationAction is checked by the caller
+            // ArgumentNullException of continuationFunction or continuationAction is checked by the caller
             Debug.Assert((continuationFunction != null) != (continuationAction != null), "Expected exactly one of endFunction/endAction to be non-null");
             if (scheduler == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.scheduler);
 
@@ -1629,7 +1628,6 @@ namespace System.Threading.Tasks
             if (continuationFunction != null)
             {
                 return starter.ContinueWith<TResult>(
-                   // use a cached delegate
                    GenericDelegateCache<TAntecedentResult, TResult>.CWAllFuncDelegate,
                    continuationFunction, scheduler, cancellationToken, continuationOptions);
             }
@@ -1638,7 +1636,6 @@ namespace System.Threading.Tasks
                 Debug.Assert(continuationAction != null);
 
                 return starter.ContinueWith<TResult>(
-                   // use a cached delegate
                    GenericDelegateCache<TAntecedentResult, TResult>.CWAllActionDelegate,
                    continuationAction, scheduler, cancellationToken, continuationOptions);
             }
@@ -1653,7 +1650,7 @@ namespace System.Threading.Tasks
             // check arguments
             TaskFactory.CheckMultiTaskContinuationOptions(continuationOptions);
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
-            //ArgumentNullException of continuationFunction or continuationAction is checked by the caller
+            // ArgumentNullException of continuationFunction or continuationAction is checked by the caller
             Debug.Assert((continuationFunction != null) != (continuationAction != null), "Expected exactly one of endFunction/endAction to be non-null");
             if (scheduler == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.scheduler);
 
@@ -1675,9 +1672,6 @@ namespace System.Threading.Tasks
             if (continuationFunction != null)
             {
                 return starter.ContinueWith(
-                    //the following delegate avoids closure capture as much as possible
-                    //completedTasks.Result == tasksCopy;
-                    //state == continuationFunction
                     (completedTasks, state) =>
                     {
                         completedTasks.NotifyDebuggerOfWaitCompletionIfNecessary();
@@ -1690,13 +1684,10 @@ namespace System.Threading.Tasks
             {
                 Debug.Assert(continuationAction != null);
                 return starter.ContinueWith<TResult>(
-                   //the following delegate avoids closure capture as much as possible
-                   //completedTasks.Result == tasksCopy;
-                   //state == continuationAction
                    (completedTasks, state) =>
                    {
                        completedTasks.NotifyDebuggerOfWaitCompletionIfNecessary();
-                        Debug.Assert(state is Action<Task[]>);
+                       Debug.Assert(state is Action<Task[]>);
                        ((Action<Task[]>)state)(completedTasks.Result); return default!;
                    },
                    continuationAction, scheduler, cancellationToken, continuationOptions);
@@ -1984,7 +1975,7 @@ namespace System.Threading.Tasks
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
             if (tasks.Length == 0) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_EmptyTaskList, ExceptionArgument.tasks);
 
-            //ArgumentNullException of continuationFunction or continuationAction is checked by the caller
+            // ArgumentNullException of continuationFunction or continuationAction is checked by the caller
             Debug.Assert((continuationFunction != null) != (continuationAction != null), "Expected exactly one of endFunction/endAction to be non-null");
             if (scheduler == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.scheduler);
 
@@ -2003,8 +1994,6 @@ namespace System.Threading.Tasks
             if (continuationFunction != null)
             {
                 return starter.ContinueWith(
-                     //the following delegate avoids closure capture as much as possible
-                     //completedTask.Result is the winning task; state == continuationAction
                      (completedTask, state) =>
                      {
                          Debug.Assert(state is Func<Task, TResult>);
@@ -2016,8 +2005,6 @@ namespace System.Threading.Tasks
             {
                 Debug.Assert(continuationAction != null);
                 return starter.ContinueWith<TResult>(
-                    //the following delegate avoids closure capture as much as possible
-                    //completedTask.Result is the winning task; state == continuationAction
                     (completedTask, state) =>
                     {
                         Debug.Assert(state is Action<Task>);
@@ -2039,7 +2026,7 @@ namespace System.Threading.Tasks
             TaskFactory.CheckMultiTaskContinuationOptions(continuationOptions);
             if (tasks == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tasks);
             if (tasks.Length == 0) ThrowHelper.ThrowArgumentException(ExceptionResource.Task_MultiTaskContinuation_EmptyTaskList, ExceptionArgument.tasks);
-            //ArgumentNullException of continuationFunction or continuationAction is checked by the caller
+            // ArgumentNullException of continuationFunction or continuationAction is checked by the caller
             Debug.Assert((continuationFunction != null) != (continuationAction != null), "Expected exactly one of endFunction/endAction to be non-null");
             if (scheduler == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.scheduler);
 
@@ -2058,7 +2045,6 @@ namespace System.Threading.Tasks
             if (continuationFunction != null)
             {
                 return starter.ContinueWith<TResult>(
-                    // Use a cached delegate
                     GenericDelegateCache<TAntecedentResult, TResult>.CWAnyFuncDelegate,
                     continuationFunction, scheduler, cancellationToken, continuationOptions);
             }
@@ -2066,7 +2052,6 @@ namespace System.Threading.Tasks
             {
                 Debug.Assert(continuationAction != null);
                 return starter.ContinueWith<TResult>(
-                    // Use a cached delegate
                     GenericDelegateCache<TAntecedentResult, TResult>.CWAnyActionDelegate,
                     continuationAction, scheduler, cancellationToken, continuationOptions);
             }

@@ -470,7 +470,7 @@ mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboole
 	return sync || !(new_state & ABORT_PROT_BLOCK_MASK);
 }
 
-static inline MonoNativeThreadId
+static MonoNativeThreadId
 thread_get_tid (MonoInternalThread *thread)
 {
 	/* We store the tid as a guint64 to keep the object layout constant between platforms */
@@ -515,7 +515,7 @@ dec_longlived_thread_data (MonoLongLivedThreadData *lltd)
 	mono_refcount_dec (lltd);
 }
 
-static inline void
+static void
 lock_thread (MonoInternalThread *thread)
 {
 	g_assert (thread->longlived);
@@ -524,7 +524,7 @@ lock_thread (MonoInternalThread *thread)
 	mono_coop_mutex_lock (thread->longlived->synch_cs);
 }
 
-static inline void
+static void
 unlock_thread (MonoInternalThread *thread)
 {
 	mono_coop_mutex_unlock (thread->longlived->synch_cs);
@@ -542,7 +542,7 @@ unlock_thread_handle (MonoInternalThreadHandle thread)
 	unlock_thread (mono_internal_thread_handle_ptr (thread));
 }
 
-static inline gboolean
+static gboolean
 is_appdomainunloaded_exception (MonoClass *klass)
 {
 #ifdef ENABLE_NETCORE
@@ -552,7 +552,7 @@ is_appdomainunloaded_exception (MonoClass *klass)
 #endif
 }
 
-static inline gboolean
+static gboolean
 is_threadabort_exception (MonoClass *klass)
 {
 	return klass == mono_defaults.threadabortexception_class;
@@ -787,6 +787,10 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 	max = sched_get_priority_max (policy);
 #endif
 	MONO_EXIT_GC_SAFE;
+
+	/* Not tunable. Bail out */
+	if ((min == -1) || (max == -1))
+		return;
 
 	if (max > 0 && min >= 0 && max > min) {
 		double srange, drange, sposition, dposition;
@@ -1868,7 +1872,6 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 	// This is a little racy, ok.
 
 	if (this_obj->name.chars) {
-
 		LOCK_THREAD (this_obj);
 
 		if (this_obj->name.chars)
@@ -4091,20 +4094,30 @@ mono_threads_perform_thread_dump (void)
 }
 
 /* Obtain the thread dump of all threads */
-static gboolean
-mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_frames, MonoError *error)
+void
+ves_icall_System_Threading_Thread_GetStackTraces (MonoArrayHandleOut out_threads_handle, MonoArrayHandleOut out_stack_frames_handle, MonoError *error)
 {
+	MONO_HANDLE_ASSIGN_RAW (out_threads_handle, NULL);
+	MONO_HANDLE_ASSIGN_RAW (out_stack_frames_handle, NULL);
+
+	guint32 handle = 0;
+
+	MonoStackFrameHandle stack_frame_handle = MONO_HANDLE_NEW (MonoStackFrame, NULL);
+	MonoReflectionMethodHandle reflection_method_handle = MONO_HANDLE_NEW (MonoReflectionMethod, NULL);
+	MonoStringHandle filename_handle = MONO_HANDLE_NEW (MonoString, NULL);
+	MonoArrayHandle thread_frames_handle = MONO_HANDLE_NEW (MonoArray, NULL);
 
 	ThreadDumpUserData ud;
 	guint32 thread_array [128];
 	MonoDomain *domain = mono_domain_get ();
 	MonoDebugSourceLocation *location;
 	int tindex, nthreads;
-
-	error_init (error);
 	
-	*out_threads = NULL;
-	*out_stack_frames = NULL;
+	MonoArray* out_threads = NULL;
+	MonoArray* out_stack_frames = NULL;
+
+	MONO_HANDLE_ASSIGN_RAW (out_threads_handle, NULL);
+	MONO_HANDLE_ASSIGN_RAW (out_stack_frames_handle, NULL);
 
 	/* Make a copy of the threads hash to avoid doing work inside threads_lock () */
 	nthreads = collect_threads (thread_array, 128);
@@ -4113,13 +4126,17 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 	ud.frames = g_new0 (MonoStackFrameInfo, 256);
 	ud.max_frames = 256;
 
-	*out_threads = mono_array_new_checked (domain, mono_defaults.thread_class, nthreads, error);
+	out_threads = mono_array_new_checked (domain, mono_defaults.thread_class, nthreads, error);
 	goto_if_nok (error, leave);
-	*out_stack_frames = mono_array_new_checked (domain, mono_defaults.array_class, nthreads, error);
+	MONO_HANDLE_ASSIGN_RAW (out_threads_handle, out_threads);
+	out_stack_frames = mono_array_new_checked (domain, mono_defaults.array_class, nthreads, error);
 	goto_if_nok (error, leave);
+	MONO_HANDLE_ASSIGN_RAW (out_stack_frames_handle, out_stack_frames);
 
 	for (tindex = 0; tindex < nthreads; ++tindex) {
-		guint32 handle = thread_array [tindex];
+
+		mono_gchandle_free_internal (handle);
+		handle = thread_array [tindex];
 		MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target_internal (handle);
 
 		MonoArray *thread_frames;
@@ -4135,16 +4152,18 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 			mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), FALSE, get_thread_dump, &ud);
 		}
 
-		mono_array_setref_fast (*out_threads, tindex, mono_thread_current_for_thread (thread));
+		mono_array_setref_fast (out_threads, tindex, mono_thread_current_for_thread (thread));
 
 		thread_frames = mono_array_new_checked (domain, mono_defaults.stack_frame_class, ud.nframes, error);
+		MONO_HANDLE_ASSIGN_RAW (thread_frames_handle, thread_frames);
 		goto_if_nok (error, leave);
-		mono_array_setref_fast (*out_stack_frames, tindex, thread_frames);
+		mono_array_setref_fast (out_stack_frames, tindex, thread_frames);
 
 		for (i = 0; i < ud.nframes; ++i) {
 			MonoStackFrameInfo *frame = &ud.frames [i];
 			MonoMethod *method = NULL;
 			MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, error);
+			MONO_HANDLE_ASSIGN_RAW (stack_frame_handle, sf);
 			goto_if_nok (error, leave);
 
 			sf->native_offset = frame->native_offset;
@@ -4156,6 +4175,7 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 				sf->method_address = (gsize) frame->ji->code_start;
 
 				MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, error);
+				MONO_HANDLE_ASSIGN_RAW (reflection_method_handle, rm);
 				goto_if_nok (error, leave);
 				MONO_OBJECT_SETREF_INTERNAL (sf, method, rm);
 
@@ -4165,6 +4185,7 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 
 					if (location->source_file) {
 						MonoString *filename = mono_string_new_checked (domain, location->source_file, error);
+						MONO_HANDLE_ASSIGN_RAW (filename_handle, filename);
 						goto_if_nok (error, leave);
 						MONO_OBJECT_SETREF_INTERNAL (sf, filename, filename);
 						sf->line = location->row;
@@ -4179,11 +4200,12 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 		}
 
 		mono_gchandle_free_internal (handle);
+		handle = 0;
 	}
 
 leave:
+	mono_gchandle_free_internal (handle);
 	g_free (ud.frames);
-	return is_ok (error);
 }
 
 /**
@@ -5949,14 +5971,6 @@ mono_thread_internal_unhandled_exception (MonoObject* exc)
 	}
 }
 
-void
-ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces)
-{
-	ERROR_DECL (error);
-	mono_threads_get_thread_dump (out_threads, out_stack_traces, error);
-	mono_error_set_pending_exception (error);
-}
-
 /*
  * mono_threads_attach_coop_internal: called by native->managed wrappers
  *
@@ -6132,6 +6146,11 @@ mono_set_thread_dump_dir (gchar* dir) {
 }
 
 #ifdef DISABLE_CRASH_REPORTING
+void
+mono_threads_summarize_init (void)
+{
+}
+
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
@@ -6198,6 +6217,9 @@ typedef struct {
 #define HAVE_MONO_SUMMARIZER_SUPERVISOR 1
 #endif
 
+static void
+summarizer_supervisor_init (void);
+
 typedef struct {
 	MonoSemType supervisor;
 	pid_t pid;
@@ -6207,7 +6229,7 @@ typedef struct {
 #ifndef HAVE_MONO_SUMMARIZER_SUPERVISOR
 
 void
-mono_threads_summarize_init (const char *timeline_dir)
+summarizer_supervisor_init (void)
 {
 	return;
 }
@@ -6229,11 +6251,12 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 static const char *hang_watchdog_path;
 
 void
-mono_threads_summarize_init (const char *timeline_dir)
+summarizer_supervisor_init (void)
 {
 	hang_watchdog_path = g_build_filename (mono_get_config_dir (), "..", "bin", "mono-hang-watchdog", NULL);
-	mono_summarize_set_timeline_dir (timeline_dir);
+	g_assert (hang_watchdog_path);
 }
+
 static pid_t
 summarizer_supervisor_start (SummarizerSupervisorState *state)
 {
@@ -6265,7 +6288,8 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 		sprintf (pid_str, "%llu", (uint64_t)state->pid);
 		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
 		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
-		g_assert_not_reached ();
+		g_async_safe_printf ("Could not exec mono-hang-watchdog, expected on path '%s' (errno %d)\n", hang_watchdog_path, errno);
+		exit (1);
 	}
 
 	return pid;
@@ -6561,6 +6585,12 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	mono_state_free_mem (&mem);
 
 	return TRUE;
+}
+
+void
+mono_threads_summarize_init (void)
+{
+	summarizer_supervisor_init ();
 }
 
 gboolean

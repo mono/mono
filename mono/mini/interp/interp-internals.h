@@ -39,7 +39,9 @@ enum {
 };
 
 enum {
-	INTERP_OPT_INLINE = 1
+	INTERP_OPT_INLINE = 1,
+	INTERP_OPT_CPROP = 2,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
 };
 
 #if SIZEOF_VOID_P == 4
@@ -131,7 +133,6 @@ struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	/*
@@ -144,24 +145,27 @@ struct _InterpFrame {
 #endif
 	/* exception info */
 	const unsigned short  *ip;
-	MonoException     *ex;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
 
 typedef struct {
-	/* Resume state for resuming execution in mixed mode */
-	gboolean       has_resume_state;
+	/* Lets interpreter know it has to resume execution after EH */
+	gboolean has_resume_state;
 	/* Frame to resume execution at */
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
-	guint16 *handler_ip;
+	const guint16 *handler_ip;
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
+	/* Exception that is being thrown. Set with rest of resume state */
+	guint32 exc_gchandle;
 } ThreadContext;
 
 typedef struct {
 	gint64 transform_time;
+	gint64 cprop_time;
+	gint32 killed_instructions;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

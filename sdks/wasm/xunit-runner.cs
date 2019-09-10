@@ -119,8 +119,6 @@ class WasmRunner : IMessageSink
 	}
 
 	static object ConvertArg (object arg, Type argType) {
-		//if (args [i] != null && pars [i].ParameterType != args [i].GetType () && (args [i] is IConvertible))
-		//						args [i] = Convert.ChangeType (args [i], pars [i].ParameterType);
 		if (arg == null || arg.GetType () == argType)
 			return arg;
 		// Not clear what conversions should be done
@@ -131,6 +129,11 @@ class WasmRunner : IMessageSink
 				var m = typeof (Enumerable).GetMethod ("ToArray").MakeGenericMethod (new Type [] { argType.GetElementType () });
 				return m.Invoke (null, new object [] { arg });
 			}
+		}
+		try {
+			if (arg != null && arg is IConvertible)
+				arg = Convert.ChangeType (arg, argType);
+		} catch {
 		}
 		return arg;
 	}

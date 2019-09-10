@@ -264,7 +264,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 	case PROTOCOL_ID(method): { \
 		const int pes_size G_GNUC_UNUSED = 0; \
 		PrintEntry pes [1] G_GNUC_UNUSED; \
-		printf ("%s", #method + strlen ("binary_protocol_"));
+		printf ("%s", &#method [sizeof ("binary_protocol_") - 1]);
 #define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \

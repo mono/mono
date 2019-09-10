@@ -12,7 +12,6 @@
 **
 ===========================================================*/
 
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -210,40 +209,22 @@ namespace System
         }
 
         [NonVersionable]
-        public static bool operator ==(double left, double right)
-        {
-            return left == right;
-        }
+        public static bool operator ==(double left, double right) => left == right;
 
         [NonVersionable]
-        public static bool operator !=(double left, double right)
-        {
-            return left != right;
-        }
+        public static bool operator !=(double left, double right) => left != right;
 
         [NonVersionable]
-        public static bool operator <(double left, double right)
-        {
-            return left < right;
-        }
+        public static bool operator <(double left, double right) => left < right;
 
         [NonVersionable]
-        public static bool operator >(double left, double right)
-        {
-            return left > right;
-        }
+        public static bool operator >(double left, double right) => left > right;
 
         [NonVersionable]
-        public static bool operator <=(double left, double right)
-        {
-            return left <= right;
-        }
+        public static bool operator <=(double left, double right) => left <= right;
 
         [NonVersionable]
-        public static bool operator >=(double left, double right)
-        {
-            return left >= right;
-        }
+        public static bool operator >=(double left, double right) => left >= right;
 
         public bool Equals(double obj)
         {
@@ -254,9 +235,8 @@ namespace System
             return IsNaN(obj) && IsNaN(m_value);
         }
 
-        //The hashcode for a double is the absolute value of the integer representation
-        //of that double.
-        //
+        // The hashcode for a double is the absolute value of the integer representation
+        // of that double.
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // 64-bit constants make the IL unusually large that makes the inliner to reject the method
         public override int GetHashCode()
         {

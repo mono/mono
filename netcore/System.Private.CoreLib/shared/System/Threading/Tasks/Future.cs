@@ -10,11 +10,9 @@
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 
 namespace System.Threading.Tasks
 {
@@ -105,13 +103,6 @@ namespace System.Threading.Tasks
                 m_result = result;
             }
         }
-
-        // Uncomment if/when we want Task.FromException
-        //// Construct a pre-faulted Task<TResult>
-        //internal Task(Exception exception)
-        //    : base(exception)
-        //{
-        //}
 
         /// <summary>
         /// Initializes a new <see cref="Task{TResult}"/> with the specified function.

@@ -15,26 +15,15 @@
 #endif
 
 #if ES_BUILD_STANDALONE
+using System;
+using System.Diagnostics;
 using Environment = Microsoft.Diagnostics.Tracing.Internal.Environment;
 using EventDescriptor = Microsoft.Diagnostics.Tracing.EventDescriptor;
 #endif
-
-using System;
-using System.Diagnostics;
-using System.Resources;
-using System.Runtime.InteropServices;
-using System.Security;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-#if !ES_BUILD_AGAINST_DOTNET_V35
-using Contract = System.Diagnostics.Contracts.Contract;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
-#else
-using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
-using System.Collections.Generic;
-using System.Text;
-#endif
 
 #if ES_BUILD_STANDALONE
 namespace Microsoft.Diagnostics.Tracing
@@ -542,10 +531,10 @@ namespace System.Diagnostics.Tracing
                 }
 
 #if FEATURE_PERFTRACING
-                    IntPtr eventHandle = nameInfo.GetOrCreateEventHandle(m_eventPipeProvider, m_eventHandleTable, descriptor, eventTypes);
-                    Debug.Assert(eventHandle != IntPtr.Zero);
+                IntPtr eventHandle = nameInfo.GetOrCreateEventHandle(m_eventPipeProvider, m_eventHandleTable, descriptor, eventTypes);
+                Debug.Assert(eventHandle != IntPtr.Zero);
 #else
-                    IntPtr eventHandle = IntPtr.Zero;
+                IntPtr eventHandle = IntPtr.Zero;
 #endif
 
                 // We make a descriptor for each EventData, and because we morph strings to counted strings
@@ -639,7 +628,7 @@ namespace System.Diagnostics.Tracing
 #endif // FEATURE_MANAGED_ETW
 
 #if (!ES_BUILD_PCL && !ES_BUILD_PN)
-                    System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions();
+                        System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions();
 #endif
                         EventOpcode opcode = (EventOpcode)descriptor.Opcode;
 
@@ -725,9 +714,9 @@ namespace System.Diagnostics.Tracing
         {
             EventWrittenEventArgs eventCallbackArgs = new EventWrittenEventArgs(this);
             eventCallbackArgs.EventName = eventName;
-            eventCallbackArgs.m_level = (EventLevel) eventDescriptor.Level;
-            eventCallbackArgs.m_keywords = (EventKeywords) eventDescriptor.Keywords;
-            eventCallbackArgs.m_opcode = (EventOpcode) eventDescriptor.Opcode;
+            eventCallbackArgs.m_level = (EventLevel)eventDescriptor.Level;
+            eventCallbackArgs.m_keywords = (EventKeywords)eventDescriptor.Keywords;
+            eventCallbackArgs.m_opcode = (EventOpcode)eventDescriptor.Opcode;
             eventCallbackArgs.m_tags = tags;
 
             // Self described events do not have an id attached. We mark it internally with -1.

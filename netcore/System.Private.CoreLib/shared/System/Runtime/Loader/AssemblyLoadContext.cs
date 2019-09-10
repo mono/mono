@@ -405,7 +405,7 @@ namespace System.Runtime.Loader
         // This function needs to return the HMODULE of the dll it loads
         protected virtual IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
-            //defer to default coreclr policy of loading unmanaged dll
+            // defer to default coreclr policy of loading unmanaged dll
             return IntPtr.Zero;
         }
 
@@ -552,6 +552,7 @@ namespace System.Runtime.Loader
             }
         }
 
+#if !CORERT
         // This method is invoked by the VM when using the host-provided assembly load context
         // implementation.
         private static Assembly? Resolve(IntPtr gchManagedAssemblyLoadContext, AssemblyName assemblyName)
@@ -656,6 +657,49 @@ namespace System.Runtime.Loader
 
             return assembly;
         }
+
+        // This method is called by the VM.
+        private static void OnAssemblyLoad(RuntimeAssembly assembly)
+        {
+            AssemblyLoad?.Invoke(AppDomain.CurrentDomain, new AssemblyLoadEventArgs(assembly));
+        }
+
+        // This method is called by the VM.
+        private static RuntimeAssembly? OnResourceResolve(RuntimeAssembly assembly, string resourceName)
+        {
+            return InvokeResolveEvent(ResourceResolve, assembly, resourceName);
+        }
+
+        // This method is called by the VM
+        private static RuntimeAssembly? OnTypeResolve(RuntimeAssembly assembly, string typeName)
+        {
+            return InvokeResolveEvent(TypeResolve, assembly, typeName);
+        }
+
+        // This method is called by the VM.
+        private static RuntimeAssembly? OnAssemblyResolve(RuntimeAssembly assembly, string assemblyFullName)
+        {
+            return InvokeResolveEvent(AssemblyResolve, assembly, assemblyFullName);
+        }
+
+        private static RuntimeAssembly? InvokeResolveEvent(ResolveEventHandler? eventHandler, RuntimeAssembly assembly, string name)
+        {
+            if (eventHandler == null)
+                return null;
+
+            var args = new ResolveEventArgs(name, assembly);
+
+            foreach (ResolveEventHandler handler in eventHandler.GetInvocationList())
+            {
+                Assembly? asm = handler(AppDomain.CurrentDomain, args);
+                RuntimeAssembly? ret = GetRuntimeAssembly(asm);
+                if (ret != null)
+                    return ret;
+            }
+
+            return null;
+        }
+#endif // !CORERT
 
         private Assembly? ResolveSatelliteAssembly(AssemblyName assemblyName)
         {

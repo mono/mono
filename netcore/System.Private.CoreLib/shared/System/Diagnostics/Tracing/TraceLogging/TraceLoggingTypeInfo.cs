@@ -2,14 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#if ES_BUILD_STANDALONE
 using System;
-using System.Collections.Generic;
-
-#if !ES_BUILD_AGAINST_DOTNET_V35
-using Contract = System.Diagnostics.Contracts.Contract;
-#else
-using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
 #endif
+using System.Collections.Generic;
 
 #if ES_BUILD_STANDALONE
 namespace Microsoft.Diagnostics.Tracing
@@ -166,13 +162,12 @@ namespace System.Diagnostics.Tracing
 
         public static TraceLoggingTypeInfo GetInstance(Type type, List<Type>? recursionCheck)
         {
-            Dictionary<Type, TraceLoggingTypeInfo> cache = threadCache ?? (threadCache = new Dictionary<Type, TraceLoggingTypeInfo>());
+            Dictionary<Type, TraceLoggingTypeInfo> cache = threadCache ??= new Dictionary<Type, TraceLoggingTypeInfo>();
 
             TraceLoggingTypeInfo? instance;
             if (!cache.TryGetValue(type, out instance))
             {
-                if (recursionCheck == null)
-                    recursionCheck = new List<Type>();
+                recursionCheck ??= new List<Type>();
                 int recursionCheckCount = recursionCheck.Count;
                 instance = Statics.CreateDefaultTypeInfo(type, recursionCheck);
                 cache[type] = instance;

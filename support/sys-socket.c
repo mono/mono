@@ -582,19 +582,19 @@ Mono_Posix_Syscall_sendmsg (int socket, struct Mono_Posix_Syscall__Msghdr* messa
 	return r;
 }
 
-static inline void make_msghdr (struct msghdr* hdr, unsigned char* msg_control, gint64 msg_controllen)
+static void make_msghdr (struct msghdr* hdr, unsigned char* msg_control, gint64 msg_controllen)
 {
 	memset (hdr, 0, sizeof (struct msghdr));
 	hdr->msg_control = msg_control;
 	hdr->msg_controllen = msg_controllen;
 }
-static inline struct cmsghdr* from_offset (unsigned char* msg_control, gint64 offset)
+static struct cmsghdr* from_offset (unsigned char* msg_control, gint64 offset)
 {
 	if (offset == -1)
 		return NULL;
 	return (struct cmsghdr*) (msg_control + offset);
 }
-static inline gint64 to_offset (unsigned char* msg_control, void* hdr)
+static gint64 to_offset (unsigned char* msg_control, void* hdr)
 {
 	if (!hdr)
 		return -1;

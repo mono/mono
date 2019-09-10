@@ -11,7 +11,6 @@
 **
 ===========================================================*/
 
-using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -108,8 +107,7 @@ namespace System
 
             if (_fusionLog != null)
             {
-                if (s == null)
-                    s = " ";
+                s ??= " ";
                 s += Environment.NewLine;
                 s += Environment.NewLine;
                 s += _fusionLog;

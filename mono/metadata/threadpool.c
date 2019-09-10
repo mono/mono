@@ -102,7 +102,7 @@ static ThreadPool threadpool;
 		} while (mono_atomic_cas_i32 (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
 	} while (0)
 
-static inline ThreadPoolCounter
+static ThreadPoolCounter
 COUNTER_READ (void)
 {
 	ThreadPoolCounter counter;
@@ -110,13 +110,13 @@ COUNTER_READ (void)
 	return counter;
 }
 
-static inline void
+static void
 domains_lock (void)
 {
 	mono_coop_mutex_lock (&threadpool.domains_lock);
 }
 
-static inline void
+static void
 domains_unlock (void)
 {
 	mono_coop_mutex_unlock (&threadpool.domains_lock);
@@ -285,6 +285,12 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
+static gsize
+set_thread_name (MonoInternalThread *thread)
+{
+	return mono_thread_set_name_constant_ignore_error (thread, "Thread Pool Worker", MonoSetThreadNameFlag_Reset);
+}
+
 static void
 worker_callback (void)
 {
@@ -320,11 +326,14 @@ worker_callback (void)
 	 */
 	mono_defaults.threadpool_perform_wait_callback_method->save_lmf = TRUE;
 
+	gsize name_generation = thread->name.generation;
+	/* Set the name if this is the first call to worker_callback on this thread */
+	if (name_generation == 0)
+	   name_generation = set_thread_name (thread);
+
 	domains_lock ();
 
 	previous_tpdomain = NULL;
-
-	gsize name_generation = ~thread->name.generation;
 
 	while (!mono_runtime_is_shutting_down ()) {
 		gboolean retire = FALSE;
@@ -359,7 +368,7 @@ worker_callback (void)
 		// It is reliable against the thread setting its own name, and somewhat
 		// reliable against other threads setting this thread's name.
 		if (name_generation != thread->name.generation)
-			name_generation = mono_thread_set_name_constant_ignore_error (thread, "Thread Pool Worker", MonoSetThreadNameFlag_Reset);
+			name_generation = set_thread_name (thread);
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,
@@ -385,6 +394,10 @@ worker_callback (void)
 			mono_domain_set_fast (mono_get_root_domain (), TRUE);
 		}
 		mono_thread_pop_appdomain_ref ();
+
+		/* Reset name after every callback */
+		if (name_generation != thread->name.generation)
+			name_generation = set_thread_name (thread);
 
 		domains_lock ();
 
@@ -711,6 +724,20 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	mono_refcount_dec (&threadpool);
 	return TRUE;
 }
+
+#ifdef ENABLE_NETCORE
+gint32
+ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_threads_count ();
+}
+
+gint64
+ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
+{
+	return mono_threadpool_worker_get_completed_threads_count ();
+}
+#endif
 
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)
