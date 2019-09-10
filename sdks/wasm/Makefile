@@ -10,7 +10,7 @@ MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-#Use either 'release' or 'debug' dependending on what you need
+#Use either 'release' or 'debug' depending on what you need
 DRIVER_CONF=release
 
 CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)

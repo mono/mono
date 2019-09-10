@@ -9,7 +9,7 @@
 -noclass System.Tests.ProgressTests
 -nonamespace System.Threading.Tests
 -nonamespace System.Threading.Tasks
--nonamespace Sytem.Threading.Tasks
+-nonamespace System.Threading.Tasks
 -nonamespace System.Collections.Concurrent
 -noclass System.IO.Tests.StreamAPMTests
 -noclass System.Collections.Tests.Hashtable_ItemThreadSafetyTests
