@@ -341,13 +341,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
             ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
             ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
+            ${TESTCMD} --label=corlib --timeout=60m $gnu$gnumake -C sdks/wasm run-all-corlib
             #The following tests are not passing yet, so enabling them would make us perma-red
-            #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
-            #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-System
-            ${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-System.Core
-            ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-System.Core
-            ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-System.Core
-            ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-System.Core
+            #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
+            ${TESTCMD} --label=system-core --timeout=20m $gnumake -C sdks/wasm run-all-System.Core
             for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
             #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
