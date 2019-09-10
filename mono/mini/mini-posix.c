@@ -947,8 +947,10 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
 			g_async_safe_printf ("\t%p - %s : %s\n", ip, fname, sname);
+#ifdef _AIX
 			if (fname != NULL)
 				free (fname);
+#endif
 		}
 	}
 
