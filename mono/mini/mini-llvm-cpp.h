@@ -88,6 +88,12 @@ mono_llvm_replace_uses_of (LLVMValueRef var, LLVMValueRef v);
 LLVMValueRef
 mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef addr, LLVMValueRef comparand, LLVMValueRef value);
 
+LLVMValueRef
+mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVMBasicBlockRef t, LLVMBasicBlockRef f, uint32_t t_weight, uint32_t f_weight);
+
+void
+mono_llvm_set_implicit_branch (LLVMBuilderRef builder, LLVMValueRef branch);
+
 void
 mono_llvm_set_must_tailcall (LLVMValueRef call_ins);
 
@@ -96,12 +102,6 @@ mono_llvm_create_constant_data_array (const uint8_t *data, int len);
 
 void
 mono_llvm_set_is_constant (LLVMValueRef global_var);
-
-void
-mono_llvm_set_preserveall_cc (LLVMValueRef func);
-
-void
-mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
 void
 mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo);
@@ -158,6 +158,9 @@ mono_llvm_di_create_location (void *di_builder, void *scope, int row, int column
 
 void
 mono_llvm_di_builder_finalize (void *di_builder);
+
+void
+mono_llvm_set_fast_math (LLVMBuilderRef builder);
 
 void
 mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);

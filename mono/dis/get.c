@@ -223,7 +223,7 @@ get_typespec (MonoImage *m, guint32 idx, gboolean is_def, MonoGenericContainer *
 	case MONO_TYPE_FNPTR: {
 		ERROR_DECL (error);
 		sig = mono_metadata_parse_method_signature_full (m, container, 0, ptr, &ptr, error);
-		g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
+		g_assert (is_ok (error)); /*FIXME don't swallow the error message*/
 		s = dis_stringify_function_ptr (m, sig);
 		g_string_append (res, "method ");
 		g_string_append (res, s);
@@ -442,9 +442,9 @@ get_custom_mod (MonoImage *m, const char *ptr, char **return_value)
 		 * "int32 modopt (Foo) modopt (Bar)" is encoded as "cmod_opt [typedef_or_ref "Bar"] cmod_opt [typedef_or_ref "Foo"] I4"
 		 */
 		if (*return_value == NULL)
-			*return_value = g_strconcat (" ", mod, " (", s, ")", NULL);
+			*return_value = g_strconcat (" ", mod, " (", s, ")", (const char*)NULL);
 		else
-			*return_value = g_strconcat (mod, " (", s, ") ", *return_value, NULL);
+			*return_value = g_strconcat (mod, " (", s, ") ", *return_value, (const char*)NULL);
 		g_free (s);
 	}
 	return ptr;
@@ -506,7 +506,7 @@ dis_stringify_array (MonoImage *m, MonoArrayType *array, gboolean is_def)
 	type = dis_stringify_type (m, m_class_get_byval_arg (array->eklass), is_def);
 	arr_str = stringify_array (array->rank, array->numsizes, array->numlobounds, array->sizes, array->lobounds);
 
-	ret = g_strconcat (type, arr_str, NULL);
+	ret = g_strconcat (type, arr_str, (const char*)NULL);
 	
 	g_free (arr_str);
 	g_free (type);
@@ -541,9 +541,9 @@ dis_stringify_param (MonoImage *m, MonoType *param)
 	const char *in = param->attrs & PARAM_ATTRIBUTE_IN ? "[in]" : "";
 	const char *out = param->attrs & PARAM_ATTRIBUTE_OUT ? "[out]": "";
 	const char *opt = param->attrs & PARAM_ATTRIBUTE_OPTIONAL ? "[opt]": "";
-	attribs = g_strconcat(in, out, opt, NULL);
+	attribs = g_strconcat(in, out, opt, (const char*)NULL);
 	t = dis_stringify_type (m, param, TRUE);
-	result = g_strjoin(attribs[0] ? " ":"", attribs, t, NULL);
+	result = g_strjoin(attribs[0] ? " ":"", attribs, t, (const char*)NULL);
 	g_free (t);
 	g_free (attribs);
 	return result;
@@ -905,12 +905,12 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 			container = mono_metadata_load_generic_params (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container, NULL);
 			if (container) {
 				mono_metadata_load_generic_param_constraints_checked (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container, error);
-				g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
+				g_assert (is_ok (error)); /*FIXME don't swallow the error message*/
 			}
 
 			mono_metadata_decode_blob_size (sig, &sig);
 			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig, error);
-			g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
+			g_assert (is_ok (error)); /*FIXME don't swallow the error message*/
 			free_method = 1;
 		}
 
@@ -1259,7 +1259,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 		/* bare is NULL, for <Module> */
 		return bare;
 		
-	result = g_strconcat (bare, byref, pinned, mods ? mods : "", NULL);
+	result = g_strconcat (bare, byref, pinned, mods ? mods : "", (const char*)NULL);
 
 	g_free (bare);
 
@@ -3146,7 +3146,7 @@ get_method_override (MonoImage *m, guint32 token, MonoGenericContainer *containe
 				g_free (meth_str);
 				return ret;
 			} else {
-				if (!mono_error_ok (error)) {
+				if (!is_ok (error)) {
 					char *meth_str = get_method_core (m, decl, FALSE, container);
 					char *ret = g_strdup_printf ("Could not decode method override %s due to %s", meth_str, mono_error_get_message (error));
 

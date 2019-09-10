@@ -16,7 +16,9 @@
 
 #include <config.h>
 
-#ifndef DISABLE_SOCKETS
+#include <mono/metadata/w32socket.h>
+
+#if !defined(DISABLE_SOCKETS) && !defined(ENABLE_NETCORE)
 
 #if defined(__APPLE__) || defined(__FreeBSD__)
 #define __APPLE_USE_RFC_3542
@@ -66,7 +68,6 @@
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
 #include <mono/metadata/w32handle.h>
-#include <mono/metadata/w32socket.h>
 #include <mono/metadata/w32socket-internals.h>
 #include <mono/metadata/w32error.h>
 
@@ -721,11 +722,12 @@ get_socket_assembly (void)
 	
 	if (domain->socket_assembly == NULL) {
 		MonoImage *socket_assembly;
+		MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
 
-		socket_assembly = mono_image_loaded_internal (mono_domain_default_alc (domain), "System", FALSE);
+		socket_assembly = mono_image_loaded_internal (alc, "System", FALSE);
 		if (!socket_assembly) {
 			MonoAssemblyOpenRequest req;
-			mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+			mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
 			MonoAssembly *sa = mono_assembly_request_open ("System.dll", &req, NULL);
 		
 			if (!sa) {
@@ -1849,10 +1851,11 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 		static MonoImage *mono_posix_image = NULL;
 		
 		if (mono_posix_image == NULL) {
-			mono_posix_image = mono_image_loaded_internal (mono_domain_default_alc (domain), "Mono.Posix", FALSE);
+			MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
+			mono_posix_image = mono_image_loaded_internal (alc, "Mono.Posix", FALSE);
 			if (!mono_posix_image) {
 				MonoAssemblyOpenRequest req;
-				mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+				mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
 				MonoAssembly *sa = mono_assembly_request_open ("Mono.Posix.dll", &req, NULL);
 				if (!sa) {
 					*werror = WSAENOPROTOOPT;
@@ -2651,6 +2654,18 @@ ves_icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoE
 
 	guint64 tid = mono_internal_thread_handle_ptr (internal)->tid;
 	mono_thread_info_abort_socket_syscall_for_close (MONO_UINT_TO_NATIVE_THREAD_ID (tid));
+}
+
+#else
+
+void
+mono_network_init (void)
+{
+}
+
+void
+mono_network_cleanup (void)
+{
 }
 
 #endif /* #ifndef DISABLE_SOCKETS */

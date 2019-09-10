@@ -707,8 +707,8 @@ SgenMinorCollector* sgen_get_minor_collector (void);
 
 typedef struct _SgenRememberedSet {
 	void (*wbarrier_set_field) (GCObject *obj, gpointer field_ptr, GCObject* value);
-	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
-	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
+	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gconstpointer src_ptr, int count);
+	void (*wbarrier_value_copy) (gpointer dest, gconstpointer src, int count, size_t element_size);
 	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
 	void (*wbarrier_generic_nostore) (gpointer ptr);
 	void (*record_pointer) (gpointer ptr);
@@ -728,7 +728,7 @@ SgenRememberedSet *sgen_get_remset (void);
  * These must be kept in sync with object.h.  They're here for using SGen independently of
  * Mono.
  */
-void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count);
+void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, /*const*/ void* src_ptr, int count);
 void mono_gc_wbarrier_generic_nostore (gpointer ptr);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
@@ -932,7 +932,7 @@ void sgen_clear_nursery_fragments (void);
 void sgen_nursery_allocator_prepare_for_pinning (void);
 void sgen_nursery_allocator_set_nursery_bounds (char *nursery_start, size_t min_size, size_t max_size);
 void sgen_resize_nursery (gboolean need_shrink);
-mword sgen_build_nursery_fragments (GCMemSection *nursery_section, SgenGrayQueue *unpin_queue);
+mword sgen_build_nursery_fragments (GCMemSection *nursery_section);
 void sgen_init_nursery_allocator (void);
 void sgen_nursery_allocator_init_heavy_stats (void);
 void sgen_init_allocator (void);
@@ -1093,7 +1093,7 @@ void sgen_check_whole_heap_stw (void)
 	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_check_objref (char *obj);
 void sgen_check_heap_marked (gboolean nursery_must_be_pinned);
-void sgen_check_nursery_objects_pinned (gboolean pinned);
+void sgen_check_nursery_objects_untag (void);
 void sgen_check_for_xdomain_refs (void);
 GCObject* sgen_find_object_for_ptr (char *ptr);
 

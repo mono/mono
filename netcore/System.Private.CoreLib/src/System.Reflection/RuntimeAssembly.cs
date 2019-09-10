@@ -234,7 +234,7 @@ namespace System.Reflection
 				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0)
-				throw new ArgumentException ("name", "Name cannot be empty");
+				throw new ArgumentException ("Name cannot be empty");
 
 			return InternalGetType (null, name, throwOnError, ignoreCase);
 		}
@@ -441,5 +441,11 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern object GetFilesInternal (String name, bool getResourceModules);
+
+		internal string? GetSimpleName ()
+		{
+			// TODO: Make this cheaper and faster
+			return GetName ().Name;
+		}
 	}
 }

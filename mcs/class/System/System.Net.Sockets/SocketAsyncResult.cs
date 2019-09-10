@@ -153,7 +153,7 @@ namespace System.Net.Sockets
 			Socket completedSocket = socket;
 			SocketOperation completedOperation = operation;
 
-			if (this.AsyncCallback != null) {
+			if (!CompletedSynchronously && AsyncCallback != null) {
 				ThreadPool.UnsafeQueueUserWorkItem(state => ((SocketAsyncResult)state).AsyncCallback((SocketAsyncResult)state), this);
 			}
 

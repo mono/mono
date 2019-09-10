@@ -219,28 +219,48 @@ namespace System.Net.Sockets
         {
             try
             {
-                Socket attemptSocket = null;
+                Socket attemptSocket;
                 IPAddress attemptAddress = GetNextAddress(out attemptSocket);
 
                 if (attemptAddress == null)
                 {
-                    return new SocketException(SocketError.NoData);
+                    return new SocketException((int)SocketError.NoData);
                 }
-
-                GlobalLog.Assert(attemptSocket != null, "MultipleConnectAsync.AttemptConnection: attemptSocket is null!");
 
                 internalArgs.RemoteEndPoint = new IPEndPoint(attemptAddress, endPoint.Port);
 
-                if (!attemptSocket.ConnectAsync(internalArgs))
+                return AttemptConnection(attemptSocket, internalArgs);
+            }
+            catch (Exception e)
+            {
+                if (e is ObjectDisposedException)
                 {
-                    return new SocketException(internalArgs.SocketError);
+                    NetEventSource.Fail(this, "unexpected ObjectDisposedException");
+                }
+                return e;
+            }
+        }
+
+        private Exception AttemptConnection(Socket attemptSocket, SocketAsyncEventArgs args)
+        {
+            try
+            {
+                if (attemptSocket == null)
+                {
+                    NetEventSource.Fail(null, "attemptSocket is null!");
+                }
+
+                bool pending = attemptSocket.ConnectAsync(args);
+                if (!pending)
+                {
+                    InternalConnectCallback(null, args);
                 }
             }
             catch (ObjectDisposedException)
             {
-                // This can happen if the user closes the socket, and is equivalent to a call 
+                // This can happen if the user closes the socket, and is equivalent to a call
                 // to CancelConnectAsync
-                return new SocketException(SocketError.OperationAborted);
+                return new SocketException((int)SocketError.OperationAborted);
             }
             catch (Exception e)
             {

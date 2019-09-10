@@ -104,9 +104,14 @@ namespace System.IO.Compression
 		{
 		}		
 
+		~DeflateStream () => Dispose (false);
+
 		protected override void Dispose (bool disposing)
 		{
-			native.Dispose (disposing);
+			if (disposing)
+				GC.SuppressFinalize (this);
+
+			native?.Dispose (disposing);
 
 			if (disposing && !disposed) {
 				disposed = true;
@@ -135,7 +140,7 @@ namespace System.IO.Compression
 
 		internal ValueTask<int> ReadAsyncMemory (Memory<byte> destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.ReadAsync(destination, cancellationToken);
 		}
 
 		internal int ReadCore (Span<byte> destination)
@@ -175,7 +180,7 @@ namespace System.IO.Compression
 
 		internal ValueTask WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.WriteAsync(source, cancellationToken);
 		}
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
@@ -380,18 +385,18 @@ namespace System.IO.Compression
 			if (disposing && !disposed) {
 				disposed = true;
 				GC.SuppressFinalize (this);
-			
-				io_buffer = null;
 			} else {
 				// When we are in the finalizer we don't want to access the underlying stream anymore
 				base_stream = Stream.Null;
 			}
+			
+			io_buffer = null;
 
-			if (z_stream != null) {
+			if (z_stream != null && !z_stream.IsInvalid) {
 				z_stream.Dispose();
 			}
 
-			if (data.IsAllocated) {
+			if (data != null && data.IsAllocated) {
 				data.Free ();
 			}
 		}

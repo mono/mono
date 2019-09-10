@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Mode: python; tab-width: 4; indent-tabs-mode: t; -*-
 
 from __future__ import print_function
 import os
@@ -79,7 +80,7 @@ class OffsetsTool:
 
 		if "wasm" in args.abi:
 			require_emscipten_path (args)
-			self.sys_includes = [args.emscripten_path + "/system/include/libc"]
+			self.sys_includes = [args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
@@ -177,7 +178,8 @@ class OffsetsTool:
 			"MonoThreadsSync",
 			"SgenThreadInfo",
 			"SgenClientThreadInfo",
-			"MonoProfilerCallContext"
+			"MonoProfilerCallContext",
+			"MonoErrorExternal",
 		]
 		self.jit_type_names = [
 			"MonoLMF",
@@ -240,7 +242,7 @@ class OffsetsTool:
 				name = c.spelling
 				if c.kind == clang.cindex.CursorKind.TYPEDEF_DECL:
 					for c2 in c.get_children ():
-						if c2.kind == clang.cindex.CursorKind.STRUCT_DECL:
+						if c2.kind == clang.cindex.CursorKind.STRUCT_DECL or c2.kind == clang.cindex.CursorKind.UNION_DECL:
 							c = c2
 				type = c.type
 				if "struct _" in name:
@@ -317,8 +319,3 @@ tool = OffsetsTool ()
 tool.parse_args ()
 tool.run_clang ()
 tool.gen ()
-
-# Local Variables:
-# indent-tabs-mode: 1
-# tab-width: 4
-# End:

@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.5.0],
+AC_INIT(mono, [6.7.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -16,7 +16,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign subdir-objects]
+AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign]
                  m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
                              *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
                              esac]))                                     # TODO: remove this hack once we require automake 1.11+
@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=21aeaa06-293b-4279-82ce-2a32285a3ea3
+MONO_CORLIB_VERSION=8E172F4D-82A3-4F55-8D7C-C8E8E0FA58AE
 
 #
 # Put a quoted #define in config.h.
@@ -142,7 +142,6 @@ case "$host" in
 	wasm32*)
 		CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -s WASM=1"
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -s WASM=1"
-		libdl="-ldl"
 		libgc_threads=pthreads
 		platform_wasm=yes
 		;;
@@ -181,7 +180,6 @@ case "$host" in
 		LDFLAGS="$LDFLAGS $WIN32_LDFLAGS"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
-		libdl=
 		libgc_threads=win32
 		with_sigaltstack=no
 		with_tls=pthread
@@ -198,7 +196,6 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -DHOST_BSD"
 		libmono_ldflags="-pthread"
 		need_link_unlink=yes
-		libdl="-ldl"
 		libgc_threads=pthreads
 		with_sigaltstack=no
 		use_sigposix=yes
@@ -208,7 +205,6 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP -DUSE_MUNMAP -DTHREAD_LOCAL_ALLOC -pthread"
 		libmono_cflags="-D_REENTRANT -DTHREAD_LOCAL_ALLOC -pthread"
 		libmono_ldflags="-lpthread -pthread"
-		libdl="-ldl"
 		libgc_threads=pthreads
 		need_link_unlink=yes
 		with_sigaltstack=no
@@ -235,7 +231,6 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -DHOST_BSD -D_WITH_GETLINE"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
-		libdl=
 		libgc_threads=pthreads
 		use_sigposix=yes
 		has_dtrace=yes
@@ -261,7 +256,6 @@ case "$host" in
 		LDFLAGS="$LDFLAGS -pthread"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
-		libdl=
 		libgc_threads=pthreads
 		with_tls=pthread
 		with_sigaltstack=no
@@ -278,7 +272,6 @@ case "$host" in
 			CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
 		fi
 		libmono_cflags="-D_REENTRANT"
-		libdl="-ldl"
 		libgc_threads=pthreads
 		use_sigposix=yes
 
@@ -316,7 +309,6 @@ case "$host" in
 			CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
 		fi
 		libmono_cflags="-D_REENTRANT"
-		libdl="-ldl"
 		libgc_threads=pthreads
 		CORETARGETS="-p:TargetsUnix=true"
 		use_sigposix=yes
@@ -411,7 +403,6 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		AC_DEFINE(USE_MACH_SEMA, 1, [...])
 		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
-		libdl=
 		libgc_threads=pthreads
 		has_dtrace=yes
 		if test "x$cross_compiling" = "xyes"; then
@@ -453,7 +444,6 @@ case "$host" in
 		dnl BSD_SOURCE is for getifaddrs
 		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_REENTRANT -D_THREAD_SAFE"
 		libmono_cflags="-D_REENTRANT -D_THREAD_SAFE"
-		libdl=
 		LIBS="$LIBS -lnetwork -ltextencoding"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
@@ -544,7 +534,6 @@ case "$host" in
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
-		libdl="-ldl"
 		;;
 esac
 
@@ -703,12 +692,12 @@ AC_CHECK_HEADERS(linux/serial.h)
 case "$host" in
 	# Use bundled zlib on Windows to be sure it is static.
 	*-mingw*|*-cygwin*)
-		have_zlib=no
+		have_sys_zlib=no
 		zlib_msg="bundled zlib"
 		;;
-	default)
-		AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
-		if test x$have_zlib = xyes; then
+	*)
+		AC_CHECK_HEADER(zlib.h, [have_sys_zlib=yes], [have_sys_zlib=no])
+		if test x$have_sys_zlib = xyes; then
 			AC_TRY_COMPILE([#include <zlib.h>], [
 				#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
 				#else
@@ -717,12 +706,16 @@ case "$host" in
 			],[
 				AC_MSG_RESULT(Using system zlib)
 				zlib_msg="system zlib"
-				AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+				have_sys_zlib=yes
 			],[
-				AC_MSG_RESULT(Using embedded zlib)
-				have_zlib=no
+				AC_MSG_RESULT(zlib too old, using embedded zlib)
+				have_sys_zlib=no
 				zlib_msg="bundled zlib"
 			])
+		else
+			AC_MSG_RESULT(zlib not found, using embedded zlib)
+			have_sys_zlib=no
+			zlib_msg="bundled zlib"
 		fi
 		;;
 esac
@@ -730,13 +723,19 @@ esac
 AC_ARG_WITH(static-zlib, [  --with-static-zlib=PATH    use the specified static zlib instead of -lz],[STATIC_ZLIB_PATH=$with_static_zlib],[STATIC_ZLIB_PATH=])
 if test "x$STATIC_ZLIB_PATH" != "x"; then
 	have_static_zlib=yes
+	have_sys_zlib=no
+	zlib_msg="static zlib from $STATIC_ZLIB_PATH"
 	AC_SUBST(STATIC_ZLIB_PATH)
 fi
 
 AM_CONDITIONAL(HAVE_STATIC_ZLIB, test x$have_static_zlib = xyes)
-AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
-AC_DEFINE(HAVE_ZLIB,1,[Have system zlib])
-
+AM_CONDITIONAL(HAVE_SYS_ZLIB, test x$have_sys_zlib = xyes)
+if test x$have_static_zlib = xyes; then
+	AC_DEFINE(HAVE_STATIC_ZLIB, 1, [Use static zlib])
+fi
+if test x$have_sys_zlib = xyes; then
+	AC_DEFINE(HAVE_SYS_ZLIB, 1, [Use OS-provided zlib])
+fi
 # for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS(elf.h)
 
@@ -1361,6 +1360,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_mdb='yes'
    mono_feature_disable_com='yes'
    mono_feature_disable_gac='yes'
+   mono_feature_disable_perfcounters='yes'
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
@@ -1661,7 +1661,7 @@ AM_CONDITIONAL(INSTALL_NETCORE, [test "x$with_core" != "xno"])
 
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xtesting_aot_bitcode"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
-AM_CONDITIONAL(FULL_AOT_INTERP_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp"] || [test "x$TEST_PROFILE" = "xtesting_aot_bitcode_interp"] || [test "x$TEST_PROFILE" == "xtesting_winaot_interp"])
+AM_CONDITIONAL(FULL_AOT_INTERP_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp"] || [test "x$TEST_PROFILE" = "xtesting_aot_bitcode_interp"] || [test "x$TEST_PROFILE" = "xtesting_winaot_interp"])
 AM_CONDITIONAL(DEFAULT_TESTS, [test "x$TEST_PROFILE" = "xnet_4_x"])
 
 default_profile=net_4_x
@@ -4183,14 +4183,7 @@ if test "x$enable_llvm" = "xyes"; then
 			AC_MSG_ERROR([LLVM executable $EXTERNAL_LLVM_CONFIG not found.])
 		fi
 	else
-		if test x$host_win32 = xyes; then
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config.exe, no)
-		else
-			AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config, no)
-		fi
-		if test "x$EXTERNAL_LLVM_CONFIG" = "xno"; then
-			internal_llvm=yes
-		fi
+		internal_llvm=yes
 	fi
 
 	LLVM_CODEGEN_LIBS="x86codegen"
@@ -4284,6 +4277,7 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+INTERP_CFLAGS=""
 
 case "$host" in
 	wasm32*)
@@ -4293,6 +4287,10 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		with_tls=pthread
 		target_wasm=yes
+		if test "x$mono_cv_clang" = "xyes"; then
+		   INTERP_CFLAGS="-mllvm -join-liveintervals=false"
+		   AC_SUBST(INTERP_CFLAGS)
+		fi
 		;;
 	mips*)
 		TARGET=MIPS;
@@ -6041,8 +6039,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0-release/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0-release/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -6079,6 +6077,7 @@ AC_CONFIG_FILES([po/mcs/Makefile.in])
 AC_CONFIG_FILES([acceptance-tests/microbench-perf.sh],[chmod +x acceptance-tests/microbench-perf.sh])
 AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
 AC_CONFIG_FILES([runtime/monodis-wrapper],[chmod +x runtime/monodis-wrapper])
+AC_CONFIG_FILES([runtime/bin/mono-hang-watchdog],[chmod +x runtime/bin/mono-hang-watchdog])
 
 AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
 [   depth=../../../..
@@ -6477,6 +6476,38 @@ elif case $host_os in freebsd*) true;; *) false;; esac; then
 	AC_MSG_RESULT(freebsd)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_FREEBSD"
+elif case $host_os in netbsd*) true;; *) false;; esac; then
+	mono_native_text="NetBSD"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=netbsd
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(netbsd)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_NETBSD"
+elif case $host_os in haiku*) true;; *) false;; esac; then
+	mono_native_text="Haiku"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=haiku
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(haiku)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_HAIKU"
 elif test x$platform_android = xyes; then
 	mono_native_text="Android"
 	MONO_NATIVE_CC=$CC
@@ -6534,6 +6565,8 @@ AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_ANDROID, test x$MONO_NATIVE_PLATFORM = xandroid)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_FREEBSD, test x$MONO_NATIVE_PLATFORM = xfreebsd)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_NETBSD, test x$MONO_NATIVE_PLATFORM = xnetbsd)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_HAIKU, test x$MONO_NATIVE_PLATFORM = xhaiku)
 
 MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
 MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"
@@ -6613,10 +6646,10 @@ fi
 #
 AC_MSG_CHECKING([for large file support])
 AC_COMPILE_IFELSE(
-	[
+	[AC_LANG_SOURCE([
 		#include <sys/types.h>
 		off64_t dummy = 0;
-	], [
+	])], [
 		AC_MSG_RESULT(yes)
 		# FIXME The ramifications of _LARGEFILE64_SOURCE are not understood.
 		# ZLIB_CFLAGS="$ZLIB_CFLAGS -D_LARGEFILE64_SOURCE=1"
@@ -6716,6 +6749,7 @@ tools/Makefile
 tools/locale-builder/Makefile
 tools/sgen/Makefile
 tools/pedump/Makefile
+tools/mono-hang-watchdog/Makefile
 runtime/Makefile
 msvc/Makefile
 po/Makefile
@@ -6760,8 +6794,8 @@ AC_MSG_RESULT($enable_compiler_server)
 if test x$enable_compiler_server = xyes; then
    if test x$force_enable_compiler_server = xyes; then
        AC_MSG_WARN([forcing compiler server to stay enabled])
-   elif test x$host_darwin = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin])
+   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
        enable_compiler_server=no;
    elif test x$csc_compiler = xmcs; then
        AC_MSG_WARN([mcs does not support the compiler server])
@@ -6791,9 +6825,7 @@ fi
     echo "sysconfdir=$sysconfdir" >> $mcs_topdir/build/config.make
     echo 'mono_libdir=${exec_prefix}/lib' >> $mcs_topdir/build/config.make
     echo "mono_build_root=$mono_build_root" >> $mcs_topdir/build/config.make
-    echo 'IL_FLAGS = /debug' >> $mcs_topdir/build/config.make
     echo "RUNTIME = $mono_build_root/runtime/mono-wrapper" >> $mcs_topdir/build/config.make
-    echo "ILDISASM = $mono_build_root/runtime/monodis-wrapper" >> $mcs_topdir/build/config.make
     echo "JAY_CFLAGS = $JAY_CFLAGS" >> $mcs_topdir/build/config.make
     echo "VERSION = $VERSION" >> $mcs_topdir/build/config.make
 
@@ -6935,7 +6967,7 @@ if test x$buildsgen = xyes; then
 	fi
 fi
 
-if test "x$with_core" == "xonly"; then
+if test "x$with_core" = "xonly"; then
   echo "VERSION = $VERSION" > netcore/config.make
   echo "RID = $RID" >> netcore/config.make
   echo "COREARCH = $COREARCH" >> netcore/config.make

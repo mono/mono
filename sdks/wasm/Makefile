@@ -112,17 +112,12 @@ toolchain: .stamp-jsvu
 emsdk_env.sh:
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
-driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h emsdk_env.sh
-	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o
-
-corebindings-dynamic.o: corebindings.c emsdk_env.sh
-	$(EMCC) -g -Os -fPIC -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $@
-
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
-EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com
-EMCC_DEBUG_FLAGS =-g4 -Os -s -s ASSERTIONS=1
+EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0
+EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
+EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
 
 #
@@ -137,17 +132,17 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
+builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(TOP)/sdks/out/${2}/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a} -o builds/$(1)/mono.js
 
-builds/$(1)/driver.o: driver.c corebindings.c pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o $$@
+builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
 
-builds/$(1)/corebindings.o: corebindings.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o $$@
+builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
 
-builds/$(1)/zlib-helper.o: zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support zlib-helper.c -c -o $$@
+builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
+	$(EMCC) $(EMCC_FLAGS) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
@@ -155,14 +150,13 @@ endef
 
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS)))
+ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
+endif
 ifdef ENABLE_WASM_THREADS
 $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS)))
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS)))
 endif
-
-#release-dynamic/.stamp-build: driver-dynamic.o corebindings-dynamic.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
-#	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver-dynamic.o corebindings-dynamic.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
-#	touch $@
 
 runtime:
 	$(MAKE) -C ../builds package-wasm-runtime
@@ -225,11 +219,41 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
-build-test-suite: bin/test-suite/mono.js
+XUNIT_DIR = $(TOP)/external/xunit-binaries
+
+xunit-runner.exe: xunit-runner.cs
+	csc /out:$@ /r:$(XUNIT_DIR)/xunit.abstractions.dll /r:$(XUNIT_DIR)/xunit.core.dll /r:$(XUNIT_DIR)/xunit.console.exe /r:$(WASM_BCL_DIR)/Facades/System.Runtime.dll /r:$(WASM_BCL_DIR)/Facades/System.Reflection.dll /r:$(WASM_BCL_DIR)/Facades/System.Collections.dll /r:$(XUNIT_DIR)/xunit.execution.dotnet.dll /r:$(XUNIT_DIR)/xunit.runner.utility.net452.dll xunit-runner.cs
+
+#
+# Targets for running xunit tests
+# xunit-exclusions.rsp contains the exclusions
+#
+
+##
+# Parameters:
+# $(1) - make target suffix
+# $(2) - directory name
+# $(3) - test assembly filename
+# $(4) - command line arguments
+define XunitTestTemplate
+
+bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
+	mono packager.exe --debugrt --search-path=$(XUNIT_DIR) --search-path=$(WASM_BCL_DIR)/tests --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(XUNIT_DIR)/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+	ninja -v -C obj/$(2)
+
+build-$(1): bin/$(2)/mono.js
+
+run-$(1): bin/$(2)/mono.js
+	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.exe $(3) $(4) `cat xunit-exclusions.rsp | grep -v '#'`)
+
+endef
+
+$(eval $(call XunitTestTemplate,System.Core-xunit,System.Core-xunit,wasm_System.Core_xunit-test.dll))
+$(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
@@ -335,6 +359,24 @@ data.aotprofile: build-aot-profile
 ##
 # Parameters:
 # $(1) - make target suffix
+#
+define InterpTestTemplate
+build-interp-$(1): packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono packager.exe --template=runtime-tests.js --appdir=bin/interp-$(1) --builddir=obj/interp-$(1) --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	ninja -v -C obj/interp-$(1)
+
+clean-interp-$(1):
+	$(RM) -r obj/interp-$(1) bin/interp-$(1)
+endef
+
+$(eval $(call InterpTestTemplate,mini))
+$(eval $(call InterpTestTemplate,corlib))
+$(eval $(call InterpTestTemplate,System.Core))
+$(eval $(call InterpTestTemplate,System))
+
+##
+# Parameters:
+# $(1) - make target suffix
 # $(2) - test assembly filename
 # $(3) - main.exe argument
 # $(4) - extra args to packager
@@ -353,11 +395,11 @@ check-aot-$(1) run-aot-$(1): build-aot-$(1)
 endef
 
 $(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
-$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
-$(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,System.Core))
+$(eval $(call AotTestTemplate,System,wasm_System_test.dll,System))
 
 $(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
-$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
+$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,System.Core,--aot-interp --aot-assemblies=mscorlib))
 
 AOT_TEST_SUITES=corlib System.Core
 
@@ -381,7 +423,7 @@ build-dbg-testsuite:
 build: build-native build-managed build-debugger-test-app
 
 gen-pinvoke-tables:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > pinvoke-tables-default.h
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > src/pinvoke-tables-default.h
 
 CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
@@ -392,7 +434,7 @@ run-ch-%: toolchain build-test-suite
 	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd bin/test-suite && $(D8) --expose_wasm runtime.js -- $*)
+	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- --enable-gc $*)
 
 run-jsc-%: toolchain build-test-suite
 	(cd bin/test-suite && $(JSC) runtime.js -- $*)
@@ -438,6 +480,7 @@ clean: clean-browser-tests
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
+	$(RM) .configured
 
 package: build build-dbg-proxy
 	rm -rf tmp
@@ -451,14 +494,8 @@ package: build build-dbg-proxy
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
-	cp driver.c pinvoke-tables-default.h tmp/
-	cp corebindings.c tmp/
-	cp zlib-helper.c tmp/
-	cp pinvoke-tables-default.h tmp/
+	cp -r src/ tmp/src
 	cp $(MONO_LIBS) tmp/
-	cp library_mono.js tmp/
-	cp binding_support.js tmp/
-	cp dotnet_support.js tmp/
 	cp -r builds tmp/
 	mkdir tmp/framework
 	cp framework/WebAssembly.Bindings.dll tmp/framework
@@ -523,4 +560,4 @@ clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish	
+	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish

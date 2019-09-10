@@ -47,7 +47,10 @@ typedef int *int_ptr;
 typedef int **int_ptr_ref;
 typedef guint8 **guint8_ptr_ref;
 typedef GPtrArray *GPtrArray_ptr;
-typedef void *HANDLE;
+// HANDLE is not used just to avoid duplicate typedef warnings with some compilers.
+// gpointer == void* == HANDLE == FILE_HANDLE == PROCESS_HANDLE.
+typedef gpointer PROCESS_HANDLE;
+typedef gpointer FILE_HANDLE;
 typedef MonoAssemblyName *MonoAssemblyName_ptr;
 typedef MonoBoolean *MonoBoolean_ptr;
 typedef MonoClass *MonoClass_ptr;
@@ -90,16 +93,18 @@ typedef MonoW32ProcessInfo *MonoW32ProcessInfo_ref;
 // Maybe do this in TYPED_HANDLE_DECL.
 typedef MonoArray MonoArrayOut;
 typedef MonoArray MonoArrayInOut;
+typedef MonoArrayHandle MonoArrayOutHandle;
+typedef MonoArrayHandle MonoArrayInOutHandle;
+typedef MonoException MonoExceptionOut;
+typedef MonoExceptionHandle MonoExceptionOutHandle;
 typedef MonoObject MonoObjectOut;
 typedef MonoObject MonoObjectInOut;
 typedef MonoObjectHandle MonoObjectOutHandle;
 typedef MonoObjectHandle MonoObjectInOutHandle;
-typedef MonoArrayHandle MonoArrayOutHandle;
-typedef MonoArrayHandle MonoArrayInOutHandle;
-typedef MonoString MonoStringOut;
-typedef MonoStringHandle MonoStringOutHandle;
 typedef MonoReflectionModule MonoReflectionModuleOut;
 typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
+typedef MonoString MonoStringOut;
+typedef MonoStringHandle MonoStringOutHandle;
 
 // How the arguments and return value of an icall should be wrapped.
 // The names and meanings are from marshal-ilgen.c.
@@ -171,8 +176,11 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_guint8_ptr_ref		ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_MonoResolveTokenError_ref	ICALL_HANDLES_WRAP_VALUETYPE_REF
 
+// HANDLE is not used just to avoid duplicate typedef warnings with some compilers.
+// gpointer == void* == HANDLE == FILE_HANDLE == PROCESS_HANDLE.
 #define MONO_HANDLE_TYPE_WRAP_char_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_const_char_ptr		ICALL_HANDLES_WRAP_NONE
+#define MONO_HANDLE_TYPE_WRAP_FILE_HANDLE		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoClass_ptr  		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoEvent_ptr		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoGenericParamInfo_ptr	ICALL_HANDLES_WRAP_NONE
@@ -182,13 +190,14 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoStackCrawlMark_ptr  	ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gint32_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gpointer_ptr		ICALL_HANDLES_WRAP_NONE
-#define MONO_HANDLE_TYPE_WRAP_HANDLE			ICALL_HANDLES_WRAP_NONE
+#define MONO_HANDLE_TYPE_WRAP_PROCESS_HANDLE		ICALL_HANDLES_WRAP_NONE
 
 // Please keep this sorted (grep ICALL_HANDLES_WRAP_OBJ$ | sort)
 #define MONO_HANDLE_TYPE_WRAP_MonoAppContext 			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomain			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomainSetup		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoArray				ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoAsyncResult			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoCalendarData		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComInteropProxy		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComObject			ICALL_HANDLES_WRAP_OBJ
@@ -198,6 +207,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionDynamicMethod 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoException			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoInternalThread		ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoIOSelectorJob			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoObject			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoManifestResourceInfo 		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoMulticastDelegate		ICALL_HANDLES_WRAP_OBJ
@@ -220,8 +230,10 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoString			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoStringBuilder			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoThreadObject			ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoTransparentProxy			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoW32ProcessStartInfo		ICALL_HANDLES_WRAP_OBJ
 
+#define MONO_HANDLE_TYPE_WRAP_MonoExceptionOut		ICALL_HANDLES_WRAP_OBJ_OUT
 #define MONO_HANDLE_TYPE_WRAP_MonoObjectOut		ICALL_HANDLES_WRAP_OBJ_OUT
 #define MONO_HANDLE_TYPE_WRAP_MonoStringOut		ICALL_HANDLES_WRAP_OBJ_OUT
 #define MONO_HANDLE_TYPE_WRAP_MonoArrayOut		ICALL_HANDLES_WRAP_OBJ_OUT
@@ -441,7 +453,8 @@ MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 	HANDLE_FUNCTION_ENTER ();						\
 										\
 	/* FIXME Should be ERROR_DECL but for fragile test. */			\
-	error_init (error);							\
+	/* Managed wrapper already does this. */				\
+	/* error_init (error); */						\
 										\
 	MONO_HANDLE_RETURN_BEGIN (rettype)					\
 										\

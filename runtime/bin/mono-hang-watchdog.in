@@ -1,0 +1,3 @@
+#! /bin/sh
+r='@mono_build_root@'
+exec "$r/tools/mono-hang-watchdog/mono-hang-watchdog" "$@"

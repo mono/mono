@@ -82,10 +82,7 @@ namespace System
                 members = GetMember(defaultMemberName);
             }
 
-            if (members == null)
-                members = Array.Empty<MemberInfo>();
-
-            return members;
+            return members ?? Array.Empty<MemberInfo>();
         }
 
         public override Type GetElementType() => RuntimeTypeHandle.GetElementType(this);
@@ -282,7 +279,7 @@ namespace System
         protected override bool IsValueTypeImpl()
         {
             // We need to return true for generic parameters with the ValueType constraint.
-            // So we cannot use the faster RuntimeTypeHandle.IsValueType because it returns 
+            // So we cannot use the faster RuntimeTypeHandle.IsValueType because it returns
             // false for all generic parameters.
             if (this == typeof(ValueType) || this == typeof(Enum))
                 return false;
@@ -392,6 +389,6 @@ namespace System
             }
 
             return RuntimeTypeHandle.GetBaseType(this);
-        }        
+        }
     }
 }

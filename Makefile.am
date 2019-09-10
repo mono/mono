@@ -46,9 +46,10 @@ EXTRA_DIST= \
 	winconfig.h 		\
 	code_of_conduct.md 	\
 	external		\
+	netcore/Makefile	\
 	mcs/class/referencesource
 
-DISTCHECK_CONFIGURE_FLAGS = EXTERNAL_MCS=false EXTERNAL_RUNTIME=false
+DISTCHECK_CONFIGURE_FLAGS = EXTERNAL_RUNTIME=false
 
 # Distribute the 'mcs' tree too
 GIT_DIR ?= $(srcdir)/.git

@@ -26,12 +26,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NEW_CECIL;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NEW_CECIL;NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -49,11 +49,80 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\AssemblySet.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkEntry.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkIndex.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkTypeEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Consts.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Framework\FrameworkIndexHelper.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Framework\FrameworkNamespaceModel.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Framework\FrameworkTypeModel.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MDocException.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MDocUpdater.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MDocValidator.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DocUtils.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DocsNodeInfo.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DocumentationEnumerator.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DocumentationImporter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DocumentationMember.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\DynamicParserContext.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\EcmaDocumentationEnumerator.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\EcmaDocumentationImporter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\ApplePlatformEnumFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\AttributeValueFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CSharpFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CSharpMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CSharpNativeTypeMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppCxFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppCxMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppWinRtFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\CppFormatters\CppWinRtMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\DefaultAttributeValueFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\DocIdFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\DocTypeFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\DocTypeMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\FSharpFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\FSharpFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\FSharpMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\FSharpUsageFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\FileNameMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\ILFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\ILMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\ILNativeTypeMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\JsFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\JsMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\JsUsageFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\MemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\MsxdocSlashDocMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\SlashDocCSharpMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\SlashDocMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\StandardFlagsEnumFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\VBFullMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Formatters\VBMemberFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\AssemblySet.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\FXUtils.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\FrameworkEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\FrameworkIndex.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\FrameworkTypeEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\MDocMetadataResolver.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Frameworks\MDocResolver.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\MemberFormatterState.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\MsxdocDocumentationImporter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\ResolvedTypeInfo.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsCollector.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsFormatter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsItem.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsMetrics.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsSaver.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Updater\Statistics\StatisticsStorage.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\ApiStyle.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\AttachedEntitiesHelper.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\AttachedEventDefinition.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\AttachedEventReference.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\AttachedPropertyDefinition.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\AttachedPropertyReference.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\CecilExtensions.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Util\NativeTypeManager.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
@@ -62,26 +131,16 @@
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\frameworksbootstrapper.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\index.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\mdoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2slashdoc.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\msitomsx.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\normalize.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\validate.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\webdoc.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\ObjectRocks.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\StreamRocks.cs" />
     <Compile Include="..\..\..\external\cecil\rocks\Mono.Cecil.Rocks\DocCommentId.cs" />
-    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="cecil.mixin.cs" />
-    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
-      <Name>genconsts</Name>
-      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Private>false</Private>
-    </ProjectReference>
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->

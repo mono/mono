@@ -200,7 +200,7 @@ typedef struct _MonoThreadInfo {
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
 
-	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end[ */
+	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end) */
 	void *stack_start_limit, *stack_end;
 
 	/* suspend machinery, fields protected by suspend_semaphore */
@@ -273,6 +273,7 @@ typedef struct _MonoThreadInfo {
 
 #ifdef USE_WINDOWS_BACKEND
 	gint32 win32_apc_info;
+	PNT_TIB windows_tib;
 	gpointer win32_apc_info_io_handle;
 #endif
 
@@ -317,11 +318,14 @@ typedef struct {
 	void (*thread_flags_changed) (MonoThreadInfoFlags old, MonoThreadInfoFlags new_);
 } MonoThreadInfoCallbacks;
 
+#define MONO_THREAD_INFO_RUNTIME_CALLBACKS(macro, prefix) \
+	macro (prefix, void, setup_async_callback, (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)) \
+	macro (prefix, gboolean, thread_state_init_from_sigctx, (MonoThreadUnwindState *state, void *sigctx)) \
+	macro (prefix, gboolean, thread_state_init_from_handle, (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx)) \
+	macro (prefix, void, thread_state_init, (MonoThreadUnwindState *tctx)) \
+
 typedef struct {
-	void (*setup_async_callback) (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
-	gboolean (*thread_state_init_from_sigctx) (MonoThreadUnwindState *state, void *sigctx);
-	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx);
-	void (*thread_state_init) (MonoThreadUnwindState *tctx);
+	MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_DECL_CALLBACK, unused)
 } MonoThreadInfoRuntimeCallbacks;
 
 //Not using 0 and 1 to ensure callbacks are not returning bad data
@@ -406,10 +410,11 @@ void
 mono_thread_info_signals_init (void);
 
 void
-mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
+mono_thread_info_runtime_init (const MonoThreadInfoRuntimeCallbacks *callbacks);
 
-MonoThreadInfoRuntimeCallbacks *
-mono_threads_get_runtime_callbacks (void);
+extern const MonoThreadInfoRuntimeCallbacks *mono_runtime_callbacks;
+
+#define mono_threads_get_runtime_callbacks() (mono_runtime_callbacks)
 
 MONO_API int
 mono_thread_info_register_small_id (void);

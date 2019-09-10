@@ -66,11 +66,11 @@ static gboolean is_attached = FALSE;
 static MonoDebugHandle     *mono_debug_open_image      (MonoImage *image, const guint8 *raw_contents, int size);
 
 static MonoDebugHandle     *mono_debug_get_image      (MonoImage *image);
-static void                 add_assembly    (MonoAssembly *assembly, gpointer user_data);
+static void                 add_assembly    (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error);
 
 static MonoDebugHandle     *open_symfile_from_bundle   (MonoImage *image);
 
-static inline DebugDomainInfo*
+static DebugDomainInfo*
 get_domain_info (MonoDomain *domain)
 {
 	g_assert (domain->debug_info);
@@ -114,7 +114,7 @@ mono_debug_init (MonoDebugFormat format)
 	mono_debug_handles = g_hash_table_new_full
 		(NULL, NULL, NULL, (GDestroyNotify) free_debug_handle);
 
-	mono_install_assembly_load_hook (add_assembly, NULL);
+	mono_install_assembly_load_hook_v2 (add_assembly, NULL);
 
 	mono_debugger_unlock ();
 }
@@ -245,7 +245,7 @@ mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 }
 
 static void
-add_assembly (MonoAssembly *assembly, gpointer user_data)
+add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error)
 {
 	MonoDebugHandle *handle;
 	MonoImage *image;
@@ -351,7 +351,7 @@ mono_debug_image_has_debug_info (MonoImage *image)
 	return data.found;
 }
 
-static inline void
+static void
 write_leb128 (guint32 value, guint8 *ptr, guint8 **rptr)
 {
 	do {
@@ -365,7 +365,7 @@ write_leb128 (guint32 value, guint8 *ptr, guint8 **rptr)
 	*rptr = ptr;
 }
 
-static inline void
+static void
 write_sleb128 (gint32 value, guint8 *ptr, guint8 **rptr)
 {
 	gboolean more = 1;
@@ -526,7 +526,7 @@ mono_debug_add_delegate_trampoline (gpointer code, int size)
 {
 }
 
-static inline guint32
+static guint32
 read_leb128 (guint8 *ptr, guint8 **rptr)
 {
 	guint32 result = 0, shift = 0;
@@ -544,7 +544,7 @@ read_leb128 (guint8 *ptr, guint8 **rptr)
 	return result;
 }
 
-static inline gint32
+static gint32
 read_sleb128 (guint8 *ptr, guint8 **rptr)
 {
 	gint32 result = 0;

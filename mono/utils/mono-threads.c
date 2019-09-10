@@ -64,7 +64,7 @@ static MonoSemType global_suspend_semaphore;
 
 static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
-static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
+const MonoThreadInfoRuntimeCallbacks *mono_runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, thread_exited_key;
 #ifdef MONO_KEYWORD_THREAD
 static MONO_KEYWORD_THREAD gint32 tls_small_id = -1;
@@ -337,7 +337,7 @@ mono_threads_wait_pending_operations (void)
 
 //Thread initialization code
 
-static inline void
+static void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 {
 	if (retain != 0)
@@ -462,7 +462,6 @@ register_thread (MonoThreadInfo *info)
 	g_assert (stsize);
 	info->stack_start_limit = staddr;
 	info->stack_end = staddr + stsize;
-
 	info->stackdata = g_byte_array_new ();
 
 	info->internal_thread_gchandle = G_MAXUINT32;
@@ -470,6 +469,7 @@ register_thread (MonoThreadInfo *info)
 	info->profiler_signal_ack = 1;
 
 #ifdef USE_WINDOWS_BACKEND
+	info->windows_tib = (PNT_TIB)NtCurrentTeb ();
 	info->win32_apc_info = 0;
 	info->win32_apc_info_io_handle = INVALID_HANDLE_VALUE;
 #endif
@@ -522,14 +522,18 @@ unregister_thread (void *arg)
 	g_assert (mono_thread_info_is_current (info));
 	g_assert (mono_thread_info_is_live (info));
 
+	/* We only enter the GC unsafe region, as when exiting this function, the thread
+	 * will be detached, and the current MonoThreadInfo* will be destroyed. */
+	mono_threads_enter_gc_unsafe_region_unbalanced_with_info (info, &gc_unsafe_stackdata);
+
+	/* Need to be in GC Unsafe to pump the HP queue - some of the cleanup
+	 * methods need to use coop-aware locks. For example: jit_info_table_free_duplicate.
+	 */
+
 	/* Pump the HP queue while the thread is alive.*/
 	mono_thread_hazardous_try_free_some ();
 
 	small_id = info->small_id;
-
-	/* We only enter the GC unsafe region, as when exiting this function, the thread
-	 * will be detached, and the current MonoThreadInfo* will be destroyed. */
-	mono_threads_enter_gc_unsafe_region_unbalanced_with_info (info, &gc_unsafe_stackdata);
 
 	THREADS_DEBUG ("unregistering info %p\n", info);
 
@@ -896,6 +900,9 @@ mono_thread_info_init (size_t info_size)
 	gboolean res;
 	thread_info_size = info_size;
 	char *sleepLimit;
+
+	mono_threads_suspend_policy_init ();
+
 #ifdef HOST_WIN32
 	res = mono_native_tls_alloc (&thread_info_key, NULL);
 	res = mono_native_tls_alloc (&thread_exited_key, NULL);
@@ -950,15 +957,9 @@ mono_thread_info_signals_init (void)
 }
 
 void
-mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks)
+mono_thread_info_runtime_init (const MonoThreadInfoRuntimeCallbacks *callbacks)
 {
-	runtime_callbacks = *callbacks;
-}
-
-MonoThreadInfoRuntimeCallbacks *
-mono_threads_get_runtime_callbacks (void)
-{
-	return &runtime_callbacks;
+	mono_runtime_callbacks = callbacks;
 }
 
 static gboolean
@@ -1568,8 +1569,10 @@ mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	/* Sanity check the result */
 	g_assert ((current > *staddr) && (current < *staddr + *stsize));
 
+#ifndef TARGET_WASM
 	/* When running under emacs, sometimes staddr is not aligned to a page size */
 	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+#endif
 }
 
 gboolean
@@ -1597,7 +1600,7 @@ sleep_interrupt (gpointer data)
 	mono_coop_mutex_unlock (&sleep_mutex);
 }
 
-static inline guint32
+static guint32
 sleep_interruptable (guint32 ms, gboolean *alerted)
 {
 	gint64 now, end;
@@ -1674,7 +1677,7 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 		} while (1);
 	} else {
 		int ret;
-#if defined (__linux__) && !defined(HOST_ANDROID)
+#if defined (HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 		struct timespec start, target;
 
 		/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */

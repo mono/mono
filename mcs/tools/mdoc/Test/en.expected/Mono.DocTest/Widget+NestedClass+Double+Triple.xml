@@ -1,6 +1,11 @@
 <Type Name="Widget+NestedClass+Double+Triple" FullName="Mono.DocTest.Widget+NestedClass+Double+Triple">
   <TypeSignature Language="C#" Value="public class Widget.NestedClass.Double.Triple" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit Widget/NestedClass/Double/Triple extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Widget.NestedClass.Double.Triple" />
+  <TypeSignature Language="VB.NET" Value="Public Class Widget.NestedClass.Double.Triple" />
+  <TypeSignature Language="F#" Value="type Widget.NestedClass.Double.Triple = class" />
+  <TypeSignature Language="C++ CLI" Value="public: ref class Widget::NestedClass::Double::Triple" />
+  <TypeSignature Language="C++ WINRT" Value="[Windows::Foundation::Metadata::WebHostHidden]&#xA;class Widget::NestedClass::Double::Triple" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +22,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Triple ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Widget.NestedClass.Double.Triple.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Triple();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; Triple();" />
+      <MemberSignature Language="C++ WINRT" Value=" Triple();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

@@ -99,7 +99,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-dtrace=no \
 	--enable-icall-export \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters,gac \
+	--enable-minimal=ssa,com,interpreter,jit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters,gac \
 	--enable-monotouch \
 	--with-lazy-gc-thread-creation=yes \
 	--with-tls=pthread \
@@ -327,7 +327,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  $(2): host arch (i386 or x86_64)
 #  $(3): target arch (arm or aarch64)
 #  $(4): device target (target32, target64, ...)
-#  $(5): llvm (llvm32 or llvm64)
+#  $(5): llvm
 #  $(6): offsets dumper abi
 #  $(7): sysroot path
 #

@@ -15,6 +15,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/mono-config-dirs.h>
 
 #include <sys/param.h>
 #include <fcntl.h>
@@ -41,6 +42,18 @@ extern GCStats mono_gc_stats;
 
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
+
+#ifdef TARGET_OSX
+// OSX 10.9 does not have MAP_ANONYMOUS
+#if !defined(MAP_ANONYMOUS)
+  #define NO_MAP_ANONYMOUS
+  #if defined(MAP_ANON)
+    #define MAP_ANONYMOUS MAP_ANON
+  #else
+    #define MAP_ANONYMOUS 0
+  #endif
+#endif
 #endif
 
 #ifdef HAVE_EXECINFO_H
@@ -441,12 +454,10 @@ mono_native_state_add_frame (MonoStateWriter *writer, MonoFrameSummary *frame)
 	mono_state_writer_printf(writer, "{\n");
 	writer->indent++;
 
-	if (frame->is_managed) {
-		assert_has_space (writer);
-		mono_state_writer_indent (writer);
-		mono_state_writer_object_key (writer, "is_managed");
-		mono_state_writer_printf(writer, "\"%s\",", frame->is_managed ? "true" : "false");
-	}
+	assert_has_space (writer);
+	mono_state_writer_indent (writer);
+	mono_state_writer_object_key (writer, "is_managed");
+	mono_state_writer_printf(writer, "\"%s\",", frame->is_managed ? "true" : "false");
 
 	if (frame->unmanaged_data.is_trampoline) {
 		mono_state_writer_printf(writer, "\n");

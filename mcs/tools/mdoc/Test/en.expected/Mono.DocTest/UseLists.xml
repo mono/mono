@@ -1,6 +1,12 @@
 <Type Name="UseLists" FullName="Mono.DocTest.UseLists">
   <TypeSignature Language="C#" Value="public class UseLists" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UseLists extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.UseLists" />
+  <TypeSignature Language="VB.NET" Value="Public Class UseLists" />
+  <TypeSignature Language="F#" Value="type UseLists = class" />
+  <TypeSignature Language="JavaScript" Value="function UseLists()" Usage="var useLists = new UseLists();" />
+  <TypeSignature Language="C++ CLI" Value="public ref class UseLists" />
+  <TypeSignature Language="C++ WINRT" Value="[Windows::Foundation::Metadata::WebHostHidden]&#xA;class UseLists" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -17,6 +23,12 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UseLists ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="JavaScript" Value="function UseLists()" Usage="var useLists = new UseLists();" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; UseLists();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; UseLists();" />
+      <MemberSignature Language="C++ WINRT" Value=" UseLists();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +42,10 @@
     <Member MemberName="GetValues&lt;T&gt;">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Generic.MyList&lt;T&gt; GetValues&lt;T&gt; (T value) where T : struct;" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.DocTest.Generic.MyList`1&lt;!!T&gt; GetValues&lt;struct .ctor (class System.ValueType) T&gt;(!!T value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.GetValues``1(``0)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetValues(Of T As Structure) (value As T) As MyList(Of T)" />
+      <MemberSignature Language="F#" Value="member this.GetValues : 'T -&gt; Mono.DocTest.Generic.MyList&lt;'T (requires 'T : struct)&gt; (requires 'T : struct)" Usage="useLists.GetValues value" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA; where T : value class Mono::DocTest::Generic::MyList&lt;T&gt; ^ GetValues(T value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -60,6 +76,11 @@
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (Mono.DocTest.Generic.MyList&lt;int&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class Mono.DocTest.Generic.MyList`1&lt;int32&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.Process(Mono.DocTest.Generic.MyList{System.Int32})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Process (list As MyList(Of Integer))" />
+      <MemberSignature Language="F#" Value="member this.Process : Mono.DocTest.Generic.MyList&lt;int&gt; -&gt; unit" Usage="useLists.Process list" />
+      <MemberSignature Language="JavaScript" Value="function process(list)" Usage="useLists.process(list)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Process(Mono::DocTest::Generic::MyList&lt;int&gt; ^ list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -79,6 +100,11 @@
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (System.Collections.Generic.List&lt;int&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class System.Collections.Generic.List`1&lt;int32&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Process (list As List(Of Integer))" />
+      <MemberSignature Language="F#" Value="member this.Process : System.Collections.Generic.List&lt;int&gt; -&gt; unit" Usage="useLists.Process list" />
+      <MemberSignature Language="JavaScript" Value="function process(list)" Usage="useLists.process(list)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Process(System::Collections::Generic::List&lt;int&gt; ^ list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -93,13 +119,16 @@
         <param name="list">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.Exception">To be added; from:
-          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (System.Collections.Generic.List&lt;Predicate&lt;int&gt;&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class System.Collections.Generic.List`1&lt;class System.Predicate`1&lt;int32&gt;&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Process (list As List(Of Predicate(Of Integer)))" />
+      <MemberSignature Language="F#" Value="member this.Process : System.Collections.Generic.List&lt;Predicate&lt;int&gt;&gt; -&gt; unit" Usage="useLists.Process list" />
+      <MemberSignature Language="JavaScript" Value="function process(list)" Usage="useLists.process(list)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Process(System::Collections::Generic::List&lt;Predicate&lt;int&gt; ^&gt; ^ list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -114,18 +143,15 @@
         <param name="list">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
-          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />,
-          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
-          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Process&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void Process&lt;T&gt; (System.Collections.Generic.List&lt;Predicate&lt;T&gt;&gt; list);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process&lt;T&gt;(class System.Collections.Generic.List`1&lt;class System.Predicate`1&lt;!!T&gt;&gt; list) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Process(Of T) (list As List(Of Predicate(Of T)))" />
+      <MemberSignature Language="F#" Value="member this.Process : System.Collections.Generic.List&lt;Predicate&lt;'T&gt;&gt; -&gt; unit" Usage="useLists.Process list" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T&gt;&#xA; void Process(System::Collections::Generic::List&lt;Predicate&lt;T&gt; ^&gt; ^ list);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -144,15 +170,16 @@
         <param name="list">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from:
-          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="UseHelper&lt;T,U,V&gt;">
       <MemberSignature Language="C#" Value="public void UseHelper&lt;T,U,V&gt; (Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; helper);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseHelper&lt;T, U, V&gt;(class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!!T, !!U, !!V&gt; helper) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList`1.Helper{``0,``1,``2})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub UseHelper(Of T, U, V) (helper As MyList(Of T).Helper(Of U, V))" />
+      <MemberSignature Language="F#" Value="member this.UseHelper : Mono.DocTest.Generic.MyList&lt;'T&gt;.Helper&lt;'U, 'V&gt; -&gt; unit" Usage="useLists.UseHelper helper" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename T, typename U, typename V&gt;&#xA; void UseHelper(Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; ^ helper);" />
+      <MemberSignature Language="C++ WINRT" Value="template &lt;typename T, typename U, typename V&gt;&#xA; void UseHelper(Mono::DocTest::Generic::MyList&lt;T&gt;::Helper&lt;U, V&gt; const &amp; helper);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

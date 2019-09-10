@@ -810,8 +810,8 @@ mono_arch_init (void)
 		if (!mono_aot_only)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
-		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
-		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
+		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, MONO_MEM_ACCOUNT_OTHER);
+		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, MONO_MEM_ACCOUNT_OTHER);
 		mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 	}
 
@@ -1214,7 +1214,7 @@ add_float (guint *fpr, guint *stack_size, ArgInfo *ainfo, gboolean is_double, gi
 		ainfo->reg = ARMREG_SP;
 		ainfo->storage = RegTypeBase;
 
-		*stack_size += 8;
+		*stack_size += is_double ? 8 : 4;
 	}
 }
 
@@ -1431,11 +1431,13 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		t = mini_get_underlying_type (sig->params [i]);
 		switch (t->type) {
 		case MONO_TYPE_I1:
+			cinfo->args [n].is_signed = 1;
 		case MONO_TYPE_U1:
 			cinfo->args [n].size = 1;
 			add_general (&gr, &stack_size, ainfo, TRUE);
 			break;
 		case MONO_TYPE_I2:
+			cinfo->args [n].is_signed = 1;
 		case MONO_TYPE_U2:
 			cinfo->args [n].size = 2;
 			add_general (&gr, &stack_size, ainfo, TRUE);

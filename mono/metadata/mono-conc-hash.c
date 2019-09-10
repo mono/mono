@@ -65,6 +65,8 @@ conc_table_new (MonoConcGHashTable *hash, int size)
 static void
 conc_table_free (gpointer ptr)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	conc_table *table = (conc_table *)ptr;
 	if (table->gc_type & MONO_HASH_KEY_GC)
 		mono_gc_deregister_root ((char*)table->keys);
@@ -106,7 +108,7 @@ mix_hash (int hash)
 }
 
 
-static inline void
+static void
 set_key (conc_table *table, int slot, gpointer key)
 {
 	gpointer *key_addr = &table->keys [slot];
@@ -116,7 +118,7 @@ set_key (conc_table *table, int slot, gpointer key)
 		*key_addr = key;
 }
 
-static inline void
+static void
 set_key_to_tombstone (conc_table *table, int slot)
 {
 	gpointer *key_addr = &table->keys [slot];
@@ -126,7 +128,7 @@ set_key_to_tombstone (conc_table *table, int slot)
 		*key_addr = PTR_TOMBSTONE;
 }
 
-static inline void
+static void
 set_value (conc_table *table, int slot, gpointer value)
 {
 	gpointer *value_addr = &table->values [slot];

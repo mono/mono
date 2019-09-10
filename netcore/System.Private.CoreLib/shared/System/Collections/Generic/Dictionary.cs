@@ -145,72 +145,24 @@ namespace System.Collections.Generic
             HashHelpers.SerializationInfoTable.Add(this, info);
         }
 
-        public IEqualityComparer<TKey> Comparer
-        {
-            get
-            {
-                return (_comparer == null || _comparer is NonRandomizedStringEqualityComparer) ? EqualityComparer<TKey>.Default : _comparer;
-            }
-        }
+        public IEqualityComparer<TKey> Comparer =>
+            (_comparer == null || _comparer is NonRandomizedStringEqualityComparer) ?
+                EqualityComparer<TKey>.Default :
+                _comparer;
 
-        public int Count
-        {
-            get { return _count - _freeCount; }
-        }
+        public int Count => _count - _freeCount;
 
-        public KeyCollection Keys
-        {
-            get
-            {
-                if (_keys == null) _keys = new KeyCollection(this);
-                return _keys;
-            }
-        }
+        public KeyCollection Keys => _keys ??= new KeyCollection(this);
 
-        ICollection<TKey> IDictionary<TKey, TValue>.Keys
-        {
-            get
-            {
-                if (_keys == null) _keys = new KeyCollection(this);
-                return _keys;
-            }
-        }
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys => _keys ??= new KeyCollection(this);
 
-        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys
-        {
-            get
-            {
-                if (_keys == null) _keys = new KeyCollection(this);
-                return _keys;
-            }
-        }
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _keys ??= new KeyCollection(this);
 
-        public ValueCollection Values
-        {
-            get
-            {
-                if (_values == null) _values = new ValueCollection(this);
-                return _values;
-            }
-        }
+        public ValueCollection Values => _values ??= new ValueCollection(this);
 
-        ICollection<TValue> IDictionary<TKey, TValue>.Values
-        {
-            get
-            {
-                if (_values == null) _values = new ValueCollection(this);
-                return _values;
-            }
-        }
+        ICollection<TValue> IDictionary<TKey, TValue>.Values => _values ??= new ValueCollection(this);
 
-        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
-        {
-            get
-            {
-                if (_values == null) _values = new ValueCollection(this);
-                return _values;
-            }
-        }
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => _values ??= new ValueCollection(this);
 
         public TValue this[TKey key]
         {
@@ -679,7 +631,7 @@ namespace System.Collections.Generic
 
             if (siInfo == null)
             {
-                // We can return immediately if this function is called twice. 
+                // We can return immediately if this function is called twice.
                 // Note we remove the serialization info from the table at the end of this method.
                 return;
             }
@@ -999,12 +951,12 @@ namespace System.Collections.Generic
 
         /// <summary>
         /// Sets the capacity of this dictionary to what it would be if it had been originally initialized with all its entries
-        /// 
-        /// This method can be used to minimize the memory overhead 
-        /// once it is known that no new elements will be added. 
-        /// 
+        ///
+        /// This method can be used to minimize the memory overhead
+        /// once it is known that no new elements will be added.
+        ///
         /// To allocate minimum size storage array, execute the following statements:
-        /// 
+        ///
         /// dictionary.Clear();
         /// dictionary.TrimExcess();
         /// </summary>
@@ -1013,9 +965,9 @@ namespace System.Collections.Generic
 
         /// <summary>
         /// Sets the capacity of this dictionary to hold up 'capacity' entries without any further expansion of its backing storage
-        /// 
-        /// This method can be used to minimize the memory overhead 
-        /// once it is known that no new elements will be added. 
+        ///
+        /// This method can be used to minimize the memory overhead
+        /// once it is known that no new elements will be added.
         /// </summary>
         public void TrimExcess(int capacity)
         {
@@ -1290,7 +1242,7 @@ namespace System.Collections.Generic
         [DebuggerDisplay("Count = {Count}")]
         public sealed class KeyCollection : ICollection<TKey>, ICollection, IReadOnlyCollection<TKey>
         {
-            private Dictionary<TKey, TValue> _dictionary;
+            private readonly Dictionary<TKey, TValue> _dictionary;
 
             public KeyCollection(Dictionary<TKey, TValue> dictionary)
             {
@@ -1473,7 +1425,7 @@ namespace System.Collections.Generic
         [DebuggerDisplay("Count = {Count}")]
         public sealed class ValueCollection : ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
         {
-            private Dictionary<TKey, TValue> _dictionary;
+            private readonly Dictionary<TKey, TValue> _dictionary;
 
             public ValueCollection(Dictionary<TKey, TValue> dictionary)
             {

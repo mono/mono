@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -8,7 +8,6 @@ using Internal.Runtime.CompilerServices;
 #endif
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics.Hashing;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -61,13 +60,7 @@ namespace System.Numerics
             get
             {
                 ThrowHelper.ThrowForUnsupportedVectorBaseType<T>();
-#if PROJECTN
-                // Hits an active bug in ProjectN (887908). This code path is actually only used rarely,
-                // since get_Count is an intrinsic.
-                throw new NotImplementedException();
-#else
                 return Unsafe.SizeOf<Vector<T>>() / Unsafe.SizeOf<T>();
-#endif
             }
         }
 
@@ -77,10 +70,7 @@ namespace System.Numerics
         public static Vector<T> Zero
         {
             [Intrinsic]
-            get
-            {
-                return s_zero;
-            }
+            get => s_zero;
         }
         private static readonly Vector<T> s_zero = new Vector<T>();
 
@@ -90,20 +80,14 @@ namespace System.Numerics
         public static Vector<T> One
         {
             [Intrinsic]
-            get
-            {
-                return s_one;
-            }
+            get => s_one;
         }
         private static readonly Vector<T> s_one = new Vector<T>(GetOneValue());
 
         internal static Vector<T> AllOnes
         {
             [Intrinsic]
-            get
-            {
-                return s_allOnes;
-            }
+            get => s_allOnes;
         }
         private static readonly Vector<T> s_allOnes = new Vector<T>(GetAllBitsSetValue());
         #endregion Static Members
@@ -734,7 +718,7 @@ namespace System.Numerics
             }
             this = Unsafe.ReadUnaligned<Vector<T>>(ref MemoryMarshal.GetReference(values));
         }
-        
+
         /// <summary>
         /// Constructs a vector from the given <see cref="ReadOnlySpan{T}"/>. The span must contain at least <see cref="Vector{T}.Count"/> elements.
         /// </summary>
@@ -803,7 +787,7 @@ namespace System.Numerics
         /// <exception cref="ArgumentNullException">If the destination array is null</exception>
         /// <exception cref="ArgumentException">If number of elements in source vector is greater than those available in destination array</exception>
         [Intrinsic]
-        public unsafe readonly void CopyTo(T[] destination)
+        public readonly unsafe void CopyTo(T[] destination)
         {
             CopyTo(destination, 0);
         }
@@ -817,7 +801,7 @@ namespace System.Numerics
         /// <exception cref="ArgumentOutOfRangeException">If index is greater than end of the array or index is less than zero</exception>
         /// <exception cref="ArgumentException">If number of elements in source vector is greater than those available in destination array</exception>
         [Intrinsic]
-        public unsafe readonly void CopyTo(T[] destination, int startIndex)
+        public readonly unsafe void CopyTo(T[] destination, int startIndex)
         {
             if (destination == null)
             {
@@ -1090,7 +1074,7 @@ namespace System.Numerics
         /// <summary>
         /// Returns the element at the given index.
         /// </summary>
-        public unsafe readonly T this[int index]
+        public readonly unsafe T this[int index]
         {
             [Intrinsic]
             get
@@ -1339,7 +1323,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((byte)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((byte)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1347,7 +1331,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((sbyte)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((sbyte)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1355,7 +1339,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((ushort)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((ushort)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1363,7 +1347,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((short)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((short)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1371,7 +1355,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((uint)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((uint)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1379,7 +1363,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((int)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((int)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1387,7 +1371,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((ulong)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((ulong)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1395,7 +1379,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((long)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((long)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1403,7 +1387,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((float)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((float)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1411,7 +1395,7 @@ namespace System.Numerics
                 {
                     for (int g = 0; g < Count; g++)
                     {
-                        hash = HashHelpers.Combine(hash, ((double)(object)this[g]).GetHashCode());
+                        hash = HashCode.Combine(hash, ((double)(object)this[g]).GetHashCode());
                     }
                     return hash;
                 }
@@ -1422,110 +1406,37 @@ namespace System.Numerics
             }
             else
             {
-                if (typeof(T) == typeof(byte))
+                if (typeof(T) == typeof(byte) ||
+                    typeof(T) == typeof(sbyte) ||
+                    typeof(T) == typeof(ushort) ||
+                    typeof(T) == typeof(short) ||
+                    typeof(T) == typeof(int) ||
+                    typeof(T) == typeof(uint))
                 {
-                    hash = HashHelpers.Combine(hash, this.register.byte_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_3.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_4.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_5.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_6.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_7.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_8.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_9.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_10.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_11.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_12.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_13.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_14.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.byte_15.GetHashCode());
-                    return hash;
+                    return HashCode.Combine(
+                        this.register.int32_0.GetHashCode(),
+                        this.register.int32_1.GetHashCode(),
+                        this.register.int32_2.GetHashCode(),
+                        this.register.int32_3.GetHashCode());
                 }
-                else if (typeof(T) == typeof(sbyte))
+                else if (typeof(T) == typeof(long) || typeof(T) == typeof(ulong))
                 {
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_3.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_4.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_5.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_6.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_7.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_8.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_9.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_10.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_11.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_12.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_13.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_14.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.sbyte_15.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(ushort))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.uint16_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_3.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_4.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_5.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_6.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint16_7.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(short))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.int16_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_3.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_4.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_5.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_6.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int16_7.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(uint))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.uint32_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint32_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint32_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint32_3.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(int))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.int32_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int32_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int32_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int32_3.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(ulong))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.uint64_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.uint64_1.GetHashCode());
-                    return hash;
-                }
-                else if (typeof(T) == typeof(long))
-                {
-                    hash = HashHelpers.Combine(hash, this.register.int64_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.int64_1.GetHashCode());
-                    return hash;
+                    return HashCode.Combine(
+                        this.register.int64_0.GetHashCode(),
+                        this.register.int64_1.GetHashCode());
                 }
                 else if (typeof(T) == typeof(float))
                 {
-                    hash = HashHelpers.Combine(hash, this.register.single_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.single_1.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.single_2.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.single_3.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.single_0.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.single_1.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.single_2.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.single_3.GetHashCode());
                     return hash;
                 }
                 else if (typeof(T) == typeof(double))
                 {
-                    hash = HashHelpers.Combine(hash, this.register.double_0.GetHashCode());
-                    hash = HashHelpers.Combine(hash, this.register.double_1.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.double_0.GetHashCode());
+                    hash = HashCode.Combine(hash, this.register.double_1.GetHashCode());
                     return hash;
                 }
                 else
@@ -2259,10 +2170,8 @@ namespace System.Numerics
         /// <param name="factor">The scalar value.</param>
         /// <returns>The scaled vector.</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static Vector<T> operator *(Vector<T> value, T factor)
-        {
-            return new Vector<T>(factor) * value;
-        }
+        public static Vector<T> operator *(Vector<T> value, T factor) =>
+            new Vector<T>(factor) * value;
 
         /// <summary>
         /// Multiplies a vector by the given scalar.
@@ -2271,10 +2180,8 @@ namespace System.Numerics
         /// <param name="value">The source vector.</param>
         /// <returns>The scaled vector.</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static Vector<T> operator *(T factor, Vector<T> value)
-        {
-            return new Vector<T>(factor) * value;
-        }
+        public static Vector<T> operator *(T factor, Vector<T> value) =>
+            new Vector<T>(factor) * value;
 
         // This method is intrinsic only for certain types. It cannot access fields directly unless we are sure the context is unaccelerated.
         /// <summary>
@@ -2494,10 +2401,7 @@ namespace System.Numerics
         /// </summary>
         /// <param name="value">The source vector.</param>
         /// <returns>The negated vector.</returns>
-        public static Vector<T> operator -(Vector<T> value)
-        {
-            return Zero - value;
-        }
+        public static Vector<T> operator -(Vector<T> value) => Zero - value;
         #endregion Arithmetic Operators
 
         #region Bitwise Operators
@@ -2600,10 +2504,8 @@ namespace System.Numerics
         /// <param name="value">The source vector.</param>
         /// <returns>The one's complement vector.</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static Vector<T> operator ~(Vector<T> value)
-        {
-            return s_allOnes ^ value;
-        }
+        public static Vector<T> operator ~(Vector<T> value) =>
+            s_allOnes ^ value;
         #endregion Bitwise Operators
 
         #region Logical Operators
@@ -2615,10 +2517,8 @@ namespace System.Numerics
         /// <returns>True if all elements are equal; False otherwise.</returns>
         [Intrinsic]
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(Vector<T> left, Vector<T> right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(Vector<T> left, Vector<T> right) =>
+            left.Equals(right);
 
         /// <summary>
         /// Returns a boolean indicating whether any single pair of elements in the given vectors are not equal.
@@ -2628,10 +2528,7 @@ namespace System.Numerics
         /// <returns>True if left and right are not equal; False otherwise.</returns>
         [Intrinsic]
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(Vector<T> left, Vector<T> right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Vector<T> left, Vector<T> right) => !(left == right);
         #endregion Logical Operators
 
         #region Conversions
@@ -2641,10 +2538,8 @@ namespace System.Numerics
         /// <param name="value">The source vector</param>
         /// <returns>The reinterpreted vector.</returns>
         [Intrinsic]
-        public static explicit operator Vector<byte>(Vector<T> value)
-        {
-            return new Vector<byte>(ref value.register);
-        }
+        public static explicit operator Vector<byte>(Vector<T> value) =>
+            new Vector<byte>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2653,10 +2548,8 @@ namespace System.Numerics
         /// <returns>The reinterpreted vector.</returns>
         [CLSCompliant(false)]
         [Intrinsic]
-        public static explicit operator Vector<sbyte>(Vector<T> value)
-        {
-            return new Vector<sbyte>(ref value.register);
-        }
+        public static explicit operator Vector<sbyte>(Vector<T> value) =>
+            new Vector<sbyte>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2665,10 +2558,8 @@ namespace System.Numerics
         /// <returns>The reinterpreted vector.</returns>
         [CLSCompliant(false)]
         [Intrinsic]
-        public static explicit operator Vector<ushort>(Vector<T> value)
-        {
-            return new Vector<ushort>(ref value.register);
-        }
+        public static explicit operator Vector<ushort>(Vector<T> value) =>
+            new Vector<ushort>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2676,33 +2567,8 @@ namespace System.Numerics
         /// <param name="value">The source vector</param>
         /// <returns>The reinterpreted vector.</returns>
         [Intrinsic]
-        public static explicit operator Vector<short>(Vector<T> value)
-        {
-            return new Vector<short>(ref value.register);
-        }
-
-        /// <summary>
-        /// Reinterprets the bits of the given vector into those of another type.
-        /// </summary>
-        /// <param name="value">The source vector</param>
-        /// <returns>The reinterpreted vector.</returns>
-        [CLSCompliant(false)]
-        [Intrinsic]
-        public static explicit operator Vector<uint>(Vector<T> value)
-        {
-            return new Vector<uint>(ref value.register);
-        }
-
-        /// <summary>
-        /// Reinterprets the bits of the given vector into those of another type.
-        /// </summary>
-        /// <param name="value">The source vector</param>
-        /// <returns>The reinterpreted vector.</returns>
-        [Intrinsic]
-        public static explicit operator Vector<int>(Vector<T> value)
-        {
-            return new Vector<int>(ref value.register);
-        }
+        public static explicit operator Vector<short>(Vector<T> value) =>
+            new Vector<short>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2711,10 +2577,8 @@ namespace System.Numerics
         /// <returns>The reinterpreted vector.</returns>
         [CLSCompliant(false)]
         [Intrinsic]
-        public static explicit operator Vector<ulong>(Vector<T> value)
-        {
-            return new Vector<ulong>(ref value.register);
-        }
+        public static explicit operator Vector<uint>(Vector<T> value) =>
+            new Vector<uint>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2722,10 +2586,18 @@ namespace System.Numerics
         /// <param name="value">The source vector</param>
         /// <returns>The reinterpreted vector.</returns>
         [Intrinsic]
-        public static explicit operator Vector<long>(Vector<T> value)
-        {
-            return new Vector<long>(ref value.register);
-        }
+        public static explicit operator Vector<int>(Vector<T> value) =>
+            new Vector<int>(ref value.register);
+
+        /// <summary>
+        /// Reinterprets the bits of the given vector into those of another type.
+        /// </summary>
+        /// <param name="value">The source vector</param>
+        /// <returns>The reinterpreted vector.</returns>
+        [CLSCompliant(false)]
+        [Intrinsic]
+        public static explicit operator Vector<ulong>(Vector<T> value) =>
+            new Vector<ulong>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2733,10 +2605,8 @@ namespace System.Numerics
         /// <param name="value">The source vector</param>
         /// <returns>The reinterpreted vector.</returns>
         [Intrinsic]
-        public static explicit operator Vector<float>(Vector<T> value)
-        {
-            return new Vector<float>(ref value.register);
-        }
+        public static explicit operator Vector<long>(Vector<T> value) =>
+            new Vector<long>(ref value.register);
 
         /// <summary>
         /// Reinterprets the bits of the given vector into those of another type.
@@ -2744,10 +2614,17 @@ namespace System.Numerics
         /// <param name="value">The source vector</param>
         /// <returns>The reinterpreted vector.</returns>
         [Intrinsic]
-        public static explicit operator Vector<double>(Vector<T> value)
-        {
-            return new Vector<double>(ref value.register);
-        }
+        public static explicit operator Vector<float>(Vector<T> value) =>
+            new Vector<float>(ref value.register);
+
+        /// <summary>
+        /// Reinterprets the bits of the given vector into those of another type.
+        /// </summary>
+        /// <param name="value">The source vector</param>
+        /// <returns>The reinterpreted vector.</returns>
+        [Intrinsic]
+        public static explicit operator Vector<double>(Vector<T> value) =>
+            new Vector<double>(ref value.register);
 
         #endregion Conversions
 

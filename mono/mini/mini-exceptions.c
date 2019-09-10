@@ -133,6 +133,7 @@ static void mono_summarize_managed_stack (MonoThreadSummary *out);
 static void mono_summarize_unmanaged_stack (MonoThreadSummary *out);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 static void mono_crash_reporting_register_native_library (const char *module_path, const char *module_name);
+static void mono_crash_reporting_allow_all_native_libraries (void);
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -161,14 +162,14 @@ mono_thread_get_managed_sp (void)
 	return addr;
 }
 
-static inline void
+static void
 mini_clear_abort_threshold (void)
 {
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
 	jit_tls->abort_exc_stack_threshold = NULL;
 }
 
-static inline void
+static void
 mini_set_abort_threshold (StackFrameInfo *frame)
 {
 	gpointer sp = frame->frame_addr;
@@ -185,7 +186,7 @@ mini_set_abort_threshold (StackFrameInfo *frame)
 // Note: In the case that the frame is above where the thread abort
 // was set we bump the threshold so that functions called from the new,
 // higher threshold don't trigger the thread abort exception
-static inline gboolean
+static gboolean
 mini_above_abort_threshold (void)
 {
 	gpointer sp = mono_thread_get_managed_sp ();
@@ -244,6 +245,7 @@ mono_exceptions_init (void)
 	cbs.mono_summarize_unmanaged_stack = mono_summarize_unmanaged_stack;
 	cbs.mono_summarize_exception = mono_summarize_exception;
 	cbs.mono_register_native_library = mono_crash_reporting_register_native_library;
+	cbs.mono_allow_all_native_libraries = mono_crash_reporting_allow_all_native_libraries;
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -903,7 +905,7 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
 	method = mono_class_inflate_generic_method_checked (method, &context, error);
-	g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+	g_assert (is_ok (error)); /* FIXME don't swallow the error */
 
 	return method;
 }
@@ -1054,7 +1056,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 	for (i = skip; i < len; i++) {
 		MonoJitInfo *ji;
 		MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, error);
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
 		}
@@ -1097,7 +1099,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 		else {
 			MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, error);
-			if (!mono_error_ok (error)) {
+			if (!is_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
@@ -1402,6 +1404,12 @@ mono_crash_reporting_register_native_library (const char *module_path, const cha
 	return;
 }
 
+static void
+mono_crash_reporting_allow_all_native_libraries ()
+{
+	return;
+}
+
 
 #else
 
@@ -1433,6 +1441,7 @@ typedef struct {
 } MonoLibWhitelistEntry;
 
 static GList *native_library_whitelist;
+static gboolean allow_all_native_libraries = FALSE;
 
 static void
 mono_crash_reporting_register_native_library (const char *module_path, const char *module_name)
@@ -1446,12 +1455,23 @@ mono_crash_reporting_register_native_library (const char *module_path, const cha
 	native_library_whitelist = g_list_append (native_library_whitelist, entry);
 }
 
+static void
+mono_crash_reporting_allow_all_native_libraries ()
+{
+	allow_all_native_libraries = TRUE;
+}
+
 static gboolean
 check_whitelisted_module (const char *in_name, const char **out_module)
 {
 #ifndef MONO_PRIVATE_CRASHES
 		return TRUE;
 #else
+	if (allow_all_native_libraries) {
+		if (out_module)
+			*out_module = "<external module>";
+		return TRUE;
+	}
 	if (g_str_has_suffix (in_name, "mono-sgen")) {
 		if (out_module)
 			*out_module = "mono";
@@ -1854,7 +1874,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	}
 
 	MonoReflectionMethod *rm = mono_method_get_object_checked (domain, actual_method, NULL, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
@@ -2641,7 +2661,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				G_BREAKPOINT ();
 			mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 
-			if (mini_debug_options.suspend_on_unhandled) {
+			if (mini_debug_options.suspend_on_unhandled && mono_object_class (obj) != mono_defaults.threadabortexception_class) {
 				mono_runtime_printf_err ("Unhandled exception, suspending...");
 				while (1)
 					;
@@ -3380,23 +3400,13 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	MonoContext ctx;
 	GString* text;
-	char *name;
-	GError *gerror = NULL;
 
 	if (!thread)
 		return;
 
 	text = g_string_new (0);
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &gerror);
-		g_assert (!gerror);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
-	else if (thread->threadpool_thread)
-		g_string_append (text, "\n\"<threadpool thread>\"");
-	else
-		g_string_append (text, "\n\"<unnamed thread>\"");
+
+	mono_gstring_append_thread_name (text, thread);
 
 	g_string_append_printf (text, " tid=%p this=%p ", (gpointer)(gsize)thread->tid, thread);
 	mono_thread_internal_describe (thread, text);
