@@ -274,6 +274,10 @@ build-aot-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-sample
 
+build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-sample
+
 zlibtest.exe: zlibtest.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
 
