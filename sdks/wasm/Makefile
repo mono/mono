@@ -27,14 +27,14 @@ API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
 
 ifeq ($(HOST_PLATFORM),win32)
-DOTNET_BUILD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
-DOTNET_BUILD := "$(subst \,/,$(DOTNET))"
+DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
+DOTNET_CMD := "$(subst \,/,$(DOTNET))"
 else
-DOTNET_BUILD := $(shell ./init-tools.sh | tail -1)
+DOTNET_CMD := $(shell ./init-tools.sh | tail -1)
 endif
 
-DOTNET_PACK=$(DOTNET_BUILD) pack
-DOTNET_BUILD+= build
+DOTNET_PACK=$(DOTNET_CMD) pack
+DOTNET_BUILD=$(DOTNET_CMD) build
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
