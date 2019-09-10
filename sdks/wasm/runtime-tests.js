@@ -224,11 +224,11 @@ var App = {
 		}
 
 		if (args[0] == "--regression") {
-			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
+			var exec_regression = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
 
 			var res = 0;
 				try {
-					res = exec_regresion (10, args[1]);
+					res = exec_regression (10, args[1]);
 					Module.print ("REGRESSION RESULT: " + res);
 				} catch (e) {
 					Module.print ("ABORT: " + e);

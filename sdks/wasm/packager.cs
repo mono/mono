@@ -87,7 +87,7 @@ class Driver {
 		public string linkout_path;
 		// AOT input path
 		public string aotin_path;
-		// Finaly output path after IL strip
+		// Final output path after IL strip
 		public string final_path;
 		// Whenever to AOT this assembly
 		public bool aot;
