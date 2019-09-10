@@ -9,7 +9,6 @@
 -noclass System.Tests.ProgressTests
 -nonamespace System.Threading.Tests
 -nonamespace System.Threading.Tasks
-# It's 'Sytem' here due to the typo in the test class name
 -nonamespace Sytem.Threading.Tasks
 -nonamespace System.Collections.Concurrent
 -noclass System.IO.Tests.StreamAPMTests
