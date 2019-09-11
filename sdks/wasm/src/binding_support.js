@@ -7,6 +7,10 @@ var BindingSupportLib = {
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
 		mono_wasm_marshal_enum_as_int: false,
+		mono_wasm_estimated_memory_stack_base: 0,
+		mono_wasm_highest_js_stack_size: 0,
+		mono_wasm_highest_memory_stack_size: 0,
+
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -18,6 +22,32 @@ var BindingSupportLib = {
 			module ["mono_method_resolve"] = BINDING.resolve_method_fqn.bind(BINDING);
 			module ["mono_bind_static_method"] = BINDING.bind_static_method.bind(BINDING);
 			module ["mono_call_static_method"] = BINDING.call_static_method.bind(BINDING);
+			module ["mono_wasm_stack_probe"] = BINDING.mono_wasm_stack_probe.bind(BINDING);
+
+			this.mono_wasm_estimated_memory_stack_base = Module.stackSave();
+		},
+
+		mono_wasm_stack_probe: function () {
+			if (Module.disableStackProbing || false)
+				return;
+
+			var js_stack = null;
+			try {
+				throw new Error("");
+			} catch (exc) {
+				js_stack = exc.stack;
+			}
+			var js_stack_size = js_stack.split("\n").length;
+			var memory_stack_offset = Module.stackSave();
+			var memory_stack_size = memory_stack_offset - this.mono_wasm_estimated_memory_stack_base;
+			if (
+				(this.mono_wasm_highest_js_stack_size < js_stack_size) ||
+				(this.mono_wasm_highest_memory_stack_size < memory_stack_size)
+			) {
+				console.log("js stack size", js_stack_size, "memory stack size", memory_stack_size);
+			}
+			this.mono_wasm_highest_js_stack_size = Math.max(this.mono_wasm_highest_js_stack_size, js_stack_size);
+			this.mono_wasm_highest_memory_stack_size = Math.max(this.mono_wasm_highest_memory_stack_size, memory_stack_size);
 		},
 
 		bindings_lazy_init: function () {
@@ -101,6 +131,8 @@ var BindingSupportLib = {
 		},		
 
 		get_js_obj: function (js_handle) {
+			this.mono_wasm_stack_probe();
+
 			if (js_handle > 0)
 				return this.mono_wasm_require_handle(js_handle);
 			return null;
@@ -123,6 +155,8 @@ var BindingSupportLib = {
 		},
 
 		mono_array_to_js_array: function (mono_array) {
+			this.mono_wasm_stack_probe();
+
 			if (mono_array == 0)
 				return null;
 
@@ -141,6 +175,8 @@ var BindingSupportLib = {
 		},
 
 		js_array_to_mono_array: function (js_array) {
+			this.mono_wasm_stack_probe();
+
 			var mono_array = this.mono_obj_array_new (js_array.length);
 			for (var i = 0; i < js_array.length; ++i) {
 				this.mono_obj_array_set (mono_array, i, this.js_to_mono_obj (js_array [i]));
@@ -149,6 +185,8 @@ var BindingSupportLib = {
 		},
 
 		unbox_mono_obj: function (mono_obj) {
+			this.mono_wasm_stack_probe();
+
 			if (mono_obj == 0)
 				return undefined;
 			var type = this.mono_get_obj_type (mono_obj);
@@ -235,6 +273,8 @@ var BindingSupportLib = {
 		},
 
 		set_task_result: function (tcs, result) {
+			this.mono_wasm_stack_probe();
+
 			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_result, null, "oo", [ tcs, result ]);
 			if (tcs.is_mono_tcs_task_bound)
@@ -242,6 +282,8 @@ var BindingSupportLib = {
 		},
 
 		set_task_failure: function (tcs, reason) {
+			this.mono_wasm_stack_probe();
+
 			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
 			if (tcs.is_mono_tcs_task_bound)
@@ -250,6 +292,8 @@ var BindingSupportLib = {
 
 		// https://github.com/Planeshifter/emscripten-examples/blob/master/01_PassingArrays/sum_post.js
 		js_typedarray_to_heap: function(typedArray){
+			this.mono_wasm_stack_probe();
+
 			var numBytes = typedArray.length * typedArray.BYTES_PER_ELEMENT;
 			var ptr = Module._malloc(numBytes);
 			var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
@@ -257,6 +301,8 @@ var BindingSupportLib = {
 			return heapBytes;
 		},
 		js_to_mono_obj: function (js_obj) {
+			this.mono_wasm_stack_probe();
+
 	  		this.bindings_lazy_init ();
 
 			if (js_obj == null || js_obj == undefined)
@@ -294,6 +340,7 @@ var BindingSupportLib = {
 			return this.extract_mono_obj (js_obj);
 		},
 		js_typed_array_to_array : function (js_obj) {
+			this.mono_wasm_stack_probe();
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -339,6 +386,7 @@ var BindingSupportLib = {
 		// Copy the existing typed array to the heap pointed to by the pinned array address
 		// 	 typed array memory -> copy to heap -> address of managed pinned array
 		typedarray_copy_to : function (typed_array, pinned_array, begin, end, bytes_per_element) {
+			this.mono_wasm_stack_probe();
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -382,6 +430,7 @@ var BindingSupportLib = {
 		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typedarray_copy_from : function (typed_array, pinned_array, begin, end, bytes_per_element) {
+			this.mono_wasm_stack_probe();
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -423,6 +472,7 @@ var BindingSupportLib = {
 		// Creates a new typed array from pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typed_array_from : function (pinned_array, begin, end, bytes_per_element, type) {
+			this.mono_wasm_stack_probe();
 
 			// typed array
 			var newTypedArray = 0;
@@ -466,6 +516,8 @@ var BindingSupportLib = {
     
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
+
+			this.mono_wasm_stack_probe();
 
 			var monoObj = this.js_to_mono_obj(js_obj);
 			// Check enum contract
@@ -520,6 +572,7 @@ var BindingSupportLib = {
 		},
 
 		get_task_and_bind: function (tcs, js_obj) {
+			this.mono_wasm_stack_probe();
 			var gc_handle = this.mono_wasm_free_list.length ? this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
@@ -547,6 +600,8 @@ var BindingSupportLib = {
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 
+			this.mono_wasm_stack_probe();
+
 			if (!js_obj.is_mono_bridged_obj) {
 				var gc_handle = this.mono_wasm_register_obj(js_obj);
 				return this.wasm_get_raw_obj (gc_handle);
@@ -559,6 +614,8 @@ var BindingSupportLib = {
 		extract_js_obj: function (mono_obj) {
 			if (mono_obj == 0)
 				return null;
+
+			this.mono_wasm_stack_probe();
 
 			var js_id = this.wasm_get_js_id (mono_obj);
 			if (js_id > 0)
@@ -590,6 +647,7 @@ var BindingSupportLib = {
 		additionally you can append 'm' to args_marshal beyond `args.length` if you don't want the return value marshaled
 		*/
 		call_method: function (method, this_arg, args_marshal, args) {
+			this.mono_wasm_stack_probe();
 			this.bindings_lazy_init ();
 
 			var extra_args_mem = 0;
@@ -664,6 +722,7 @@ var BindingSupportLib = {
 		},
 
 		invoke_delegate: function (delegate_obj, js_args) {
+			this.mono_wasm_stack_probe();
 			this.bindings_lazy_init ();
 
 			if (!this.delegate_dynamic_invoke) {
@@ -715,6 +774,7 @@ var BindingSupportLib = {
 		},
 
 		call_static_method: function (fqn, args, signature) {
+			this.mono_wasm_stack_probe();
 			this.bindings_lazy_init ();
 
 			var method = this.resolve_method_fqn (fqn);
@@ -726,6 +786,7 @@ var BindingSupportLib = {
 		},
 
 		bind_static_method: function (fqn, signature) {
+			this.mono_wasm_stack_probe();
 			this.bindings_lazy_init ();
 
 			var method = this.resolve_method_fqn (fqn);
@@ -742,6 +803,7 @@ var BindingSupportLib = {
 			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
 		},
 		get_wasm_type: function(obj) {
+			this.mono_wasm_stack_probe();
 			var coreType = obj[Symbol.for("wasm type")];
 			if (typeof coreType === "undefined") {
 				switch (obj.constructor.name) {
@@ -856,6 +918,7 @@ var BindingSupportLib = {
 			return gc_handle;
 		},
 		mono_wasm_require_handle: function(handle) {
+			this.mono_wasm_stack_probe();
 			if (handle > 0)
 				return this.mono_wasm_object_registry[handle - 1];
 			return null;
@@ -905,6 +968,7 @@ var BindingSupportLib = {
 			return obj;
 		},
 		mono_wasm_get_global: function() {
+			this.mono_wasm_stack_probe();
 			function testGlobal(obj) {
 				obj['___mono_wasm_global___'] = obj;
 				var success = typeof ___mono_wasm_global___ === 'object' && obj['___mono_wasm_global___'] === obj;
@@ -934,6 +998,7 @@ var BindingSupportLib = {
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var obj = BINDING.get_js_obj (js_handle);
@@ -966,6 +1031,7 @@ var BindingSupportLib = {
 		}
 	},
 	mono_wasm_get_object_property: function(js_handle, property_name, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var obj = BINDING.mono_wasm_require_handle (js_handle);
@@ -996,7 +1062,7 @@ var BindingSupportLib = {
 		}
 	},
     mono_wasm_set_object_property: function (js_handle, property_name, value, createIfNotExist, hasOwnProperty, is_exception) {
-
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
@@ -1041,6 +1107,7 @@ var BindingSupportLib = {
         return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
 	},
 	mono_wasm_get_by_index: function(js_handle, property_index, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var obj = BINDING.mono_wasm_require_handle (js_handle);
@@ -1061,6 +1128,7 @@ var BindingSupportLib = {
 		}
 	},
 	mono_wasm_set_by_index: function(js_handle, property_index, value, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var obj = BINDING.mono_wasm_require_handle (js_handle);
@@ -1083,6 +1151,7 @@ var BindingSupportLib = {
 		}
 	},
 	mono_wasm_get_global_object: function(global_name, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var js_name = BINDING.conv_string (global_name);
@@ -1140,6 +1209,7 @@ var BindingSupportLib = {
 		return gc_handle;
 	},
 	mono_wasm_new: function (core_name, args, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var js_name = BINDING.conv_string (core_name);
@@ -1185,6 +1255,7 @@ var BindingSupportLib = {
 
 	},
 	mono_wasm_new_object: function(object_handle_or_function, args, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		if (!object_handle_or_function) {
@@ -1231,6 +1302,7 @@ var BindingSupportLib = {
 
 	},
 	mono_wasm_typed_array_to_array: function(js_handle, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
@@ -1242,6 +1314,7 @@ var BindingSupportLib = {
 		return BINDING.js_typed_array_to_array(requireObject);
 	},
 	mono_wasm_typed_array_copy_to: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
@@ -1254,11 +1327,13 @@ var BindingSupportLib = {
 		return BINDING.js_to_mono_obj (res)
 	},
 	mono_wasm_typed_array_from: function(pinned_array, begin, end, bytes_per_element, type, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 		var res = BINDING.typed_array_from(pinned_array, begin, end, bytes_per_element, type);
 		return BINDING.js_to_mono_obj (res)
 	},
 	mono_wasm_typed_array_copy_from: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
+		BINDING.mono_wasm_stack_probe();
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
