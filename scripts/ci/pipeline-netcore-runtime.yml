@@ -117,8 +117,7 @@ stages:
             make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
-          condition: eq(variables['llvm'], 'true')
+          condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
