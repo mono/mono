@@ -169,14 +169,43 @@ typedef struct _InterpMethod
 	MonoProfilerCallInstrumentationFlags prof_flags;
 } InterpMethod;
 
+// FIXME union here is confusing.
+
 struct _InterpFrame {
-	InterpFrame *parent; /* parent */
+	// child_frame is used by a few recursive cases in interp_exec_method_inner.
+	// Repurpose for output.
+	union {
+		InterpFrame *parent; /* parent */
+		GSList		*finally_ips;
+	};
+
+	// child_frame->imethod and child_frame->retval are returned by interp_exec_method_inner.
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	stackval       *stack_args; /* parent */
-	stackval       *stack;
+
+	// stack_args is either equal to sp, or unused by interp_exec_method_inner,
+	// so can be equal.
+	union {
+		stackval	*stack_args; /* parent */
+		stackval	*sp;
+	};
+
+	// stack is unused by interp_exec_method_inner, so repurpose.
+	union {
+		stackval	*stack;
+		guchar		*vt_sp;
+	};
+
+	/*
+	 * For GC tracking of local objrefs in exec_method ().
+	 * Storing into this field will keep the object pinned
+	 * until the objref can be stored into stackval->data.o.
+	 */
+#ifdef TARGET_WASM
+	MonoObject* volatile o;
+#endif
 	/* exception info */
-	const unsigned short  *ip;
+	const guint16	*ip;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
