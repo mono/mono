@@ -110,8 +110,7 @@ stages:
             make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
-          condition: ne(variables['llvm'], 'true')
+          condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
         - bash: |
             make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1
