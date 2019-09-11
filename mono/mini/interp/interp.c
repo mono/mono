@@ -108,11 +108,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	frame->ip = NULL;
 }
 
-FrameClauseArgs *clause_args;
-
-#define interp_exec_method(frame, context, error) \
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000); \
-	interp_exec_method_full ((frame), (context), NULL, error)
+#define interp_exec_method(frame, context, error) interp_exec_method_full ((frame), (context), NULL, error)
 
 /*
  * List of classes whose methods will be executed by transitioning to JITted code.
@@ -217,17 +213,11 @@ int mono_interp_traceopt = 0;
 #if USE_COMPUTED_GOTO
 #define MINT_IN_SWITCH(op) COUNT_OP(op); goto *in_labels[op];
 #define MINT_IN_CASE(x) LAB_ ## x:
-#define MINT_IN_DISPATCH(op) \
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000); \
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000); \
-	goto *in_labels[op];
+#define MINT_IN_DISPATCH(op) goto *in_labels[op];
 #if DEBUG_INTERP
-#define MINT_IN_BREAK \
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000); \
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000); \
-	if (tracing > 1) { MINT_IN_DISPATCH(*ip); } else { COUNT_OP(*ip); goto *in_labels[*ip]; }
+#define MINT_IN_BREAK if (tracing > 1) { MINT_IN_DISPATCH(*ip); } else { COUNT_OP(*ip); goto *in_labels[*ip]; }
 #else
-#define MINT_IN_BREAK { COUNT_OP(*ip); g_assert (*pclause_args != (gpointer)(gsize)0x1300000000); g_assert (clause_args != (gpointer)(gsize)0x1300000000); goto *in_labels[*ip]; }
+#define MINT_IN_BREAK { COUNT_OP(*ip); goto *in_labels[*ip]; }
 #endif
 #define MINT_IN_DEFAULT mint_default: if (0) goto mint_default; /* make gcc shut up */
 #else
@@ -3244,7 +3234,7 @@ typedef struct InterpInner {
 } InterpInner;
 
 static MONO_NEVER_INLINE int
-interp_exec_method_inner (InterpFrame *frame, InterpInner *inner, InterpFrame *child_frame, ThreadContext *context, FrameClauseArgs **pclause_args, MonoError *error);
+interp_exec_method_inner (InterpFrame *frame, InterpInner *inner, InterpFrame *child_frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
 
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
@@ -3310,19 +3300,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	while (TRUE) {
 main_loop:
 		;
-		InterpInner inner;// = { finally_ips, ip, sp, vt_sp };
+		InterpInner inner = { finally_ips, ip, sp, vt_sp };
 
-	g_assert (!clause_args || clause_args->end_at_ip);
-//	FrameClauseArgs * volatile clause_args2 = clause_args;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	inner.finally_ips = finally_ips;
-	inner.ip = ip;
-	inner.sp = sp;
-	inner.vt_sp = vt_sp;
-
-		int const opcode = interp_exec_method_inner (frame, &inner, &child_frame, context, &clause_args, error);
-
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
+		int const opcode = interp_exec_method_inner (frame, &inner, &child_frame, context, clause_args, error);
 
 		finally_ips = inner.finally_ips;
 		ip = inner.ip;
@@ -3420,7 +3400,6 @@ main_loop:
 			break;
 		}
 		case MINT_NEWOBJ_VT_FAST:
-			ip += 3;
 			child_frame.parent = frame;
 			mono_interp_newobj_vt (&child_frame, context, error);
 			CHECK_RESUME_STATE (context);
@@ -3480,7 +3459,6 @@ resume:
 	// fall through
 exit_frame:
 	error_init_reuse (error);
-
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
 
@@ -3523,10 +3501,8 @@ exit_frame:
  * This function is allowed to use a lot of stack.
  */
 static MONO_NEVER_INLINE int
-interp_exec_method_inner (InterpFrame *frame, InterpInner *inner, InterpFrame *child_frame, ThreadContext *context, FrameClauseArgs **pclause_args, MonoError *error)
+interp_exec_method_inner (InterpFrame *frame, InterpInner *inner, InterpFrame *child_frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
-FrameClauseArgs *clause_args = *pclause_args;
-
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
 #define OPDEF(a,b,c,d,e,f) &&LAB_ ## a,
@@ -3538,7 +3514,7 @@ FrameClauseArgs *clause_args = *pclause_args;
 	const guint16 *ip = inner->ip;
 	stackval *sp = inner->sp;
 	guchar *vt_sp = inner->vt_sp;
-	guchar *locals = vt_sp + frame->imethod->vt_stack_size;
+	guchar *locals = frame_locals (frame);
 
 #if DEBUG_INTERP
 	gint const tracing = global_tracing;
@@ -3556,11 +3532,6 @@ main_loop:
 		/* g_assert (sp >= frame->stack); */
 		/* g_assert(vt_sp - vtalloc <= frame->imethod->vt_stack_size); */
 		DUMP_INSTR();
-
-	g_assert (!clause_args || clause_args->end_at_ip);
-//	FrameClauseArgs * volatile clause_args2 = clause_args;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-
 		MINT_IN_SWITCH (*ip) {
 		MINT_IN_CASE(MINT_INITLOCALS)
 			memset (locals, 0, frame->imethod->locals_size);
@@ -3591,23 +3562,15 @@ main_loop:
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_VTRESULT) {
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			int ret_size = ip [1];
 			unsigned char *ret_vt_sp = vt_sp;
 			vt_sp -= READ32(ip + 2);
 			if (ret_size > 0) {
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				memmove (vt_sp, ret_vt_sp, ret_size);
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				sp [-1].data.p = vt_sp;
 				vt_sp += ALIGN_TO (ret_size, MINT_VT_ALIGNMENT);
 			}
 			ip += 4;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			MINT_IN_BREAK;
 		}
 #define LDC(n) do { sp->data.i = (n); ++ip; ++sp; } while (0)
@@ -3701,6 +3664,7 @@ main_loop:
 		}
 		MINT_IN_CASE(MINT_JMP) {
 
+			frame->ip = ip;
 			g_assert (sp == frame->stack); // or throw invalid il?
 			InterpMethod *new_method = (InterpMethod*)frame->imethod->data_items [ip [1]];
 
@@ -3709,13 +3673,12 @@ main_loop:
 
 			if (!new_method->transformed) {
 				error_init_reuse (error);
-				frame->ip = ip;
 				mono_interp_transform_method (new_method, context, error);
 				MonoException *ex = mono_error_convert_to_exception (error);
 				if (ex)
 					THROW_EX (ex, ip);
 			}
-			ip += 2;
+			ip = frame->imethod->code;
 			const gboolean realloc_frame = new_method->alloca_size > frame->imethod->alloca_size;
 			frame->imethod = new_method;
 			/*
@@ -3724,22 +3687,15 @@ main_loop:
 			 * than the callee stack frame (at the interp level)
 			 */
 			if (realloc_frame) {
-#if 0
 				// alloca must be in caller.
 				opcode = MINT_JMP;
 				goto recurse;
-#else
-				frame->stack = (stackval*)g_alloca (frame->imethod->alloca_size);
-				memset (frame->stack, 0, frame->imethod->alloca_size);
-				sp = frame->stack;
-#endif
 			}
 			vt_sp = (guchar*)sp + frame->imethod->stack_size;
 #if DEBUG_INTERP
 			vtalloc = vt_sp;
 #endif
 			locals = vt_sp + frame->imethod->vt_stack_size;
-			ip = frame->imethod->code;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALLI) {
@@ -3770,24 +3726,8 @@ main_loop:
 					sp [0].data.p = unboxed;
 				}
 			}
-#if 0
 			opcode = MINT_CALLI;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
-#else
-			child_frame->parent = frame;
-			interp_exec_method (child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			/* need to handle typedbyref ... */
-			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame->retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
-#endif
 		}
 		MINT_IN_CASE(MINT_CALLI_NAT_FAST) {
 			gpointer target_ip = sp [-1].data.p;
@@ -3871,25 +3811,8 @@ main_loop:
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
 				sp [0].data.p = unboxed;
 			}
-#if 0
 			opcode = ip [-3];
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
-#else
-			child_frame->parent = frame;
-			interp_exec_method (child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
-			if (!is_void) {
-				/* need to handle typedbyref ... */
-				*sp = *child_frame->retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
-#endif
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
 			int num_varargs = 0;
@@ -3911,25 +3834,8 @@ main_loop:
 			/* decrement by the actual number of args */
 			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis + num_varargs;
 			child_frame->stack_args = sp;
-#if 0
 			opcode = MINT_CALL_VARARG;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
-#else
-			child_frame->parent = frame;
-			interp_exec_method (child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			csig = (MonoMethodSignature*) frame->imethod->data_items [ip [-3 + 2]];
-
-			if (csig->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame->retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
-#endif
 		}
 		MINT_IN_CASE(MINT_CALL)
 		MINT_IN_CASE(MINT_VCALL)
@@ -3958,25 +3864,8 @@ main_loop:
 					sp [0].data.p = unboxed;
 				}
 			}
-#if 0
 			opcode = ip [-2];
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
-#else
-			child_frame->parent = frame;
-			interp_exec_method (child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			const gboolean is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
-			if (!is_void) {
-				/* need to handle typedbyref ... */
-				*sp = *child_frame->retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
-#endif
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
 			InterpMethod *rmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
@@ -4024,27 +3913,17 @@ main_loop:
 			*frame->retval = *sp;
 			if (sp > frame->stack)
 				g_warning ("ret: more values on stack: %d", sp-frame->stack);
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
 			if (sp > frame->stack)
 				g_warning ("ret.void: more values on stack: %d %s", sp-frame->stack, mono_method_full_name (frame->imethod->method, TRUE));
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT) {
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			int const i32 = READ32 (ip + 1);
 			--sp;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			memcpy(frame->retval->data.p, sp->data.p, i32);
 			if (sp > frame->stack)
 				g_warning ("ret.vt: more values on stack: %d", sp-frame->stack);
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		}
 		MINT_IN_CASE(MINT_BR_S)
@@ -5007,18 +4886,8 @@ main_loop:
 
 				child_frame->imethod = ctor_method;
 				child_frame->stack_args = sp;
-#if 0
 				opcode = MINT_NEWOBJ_FAST;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				goto recurse;
-#else
-				child_frame->parent = frame;
-				interp_exec_method (child_frame, context, error);
-				CHECK_RESUME_STATE (context);
-				sp [0].data.o = frame_objref (frame);
-				sp++;
-#endif
 			}
 			ip += 4;
 			MINT_IN_BREAK;
@@ -5040,29 +4909,12 @@ main_loop:
 				memset (vt_sp, 0, ip [3]);
 				sp->data.p = vt_sp;
 				ip += 4;
-#if 0
 				opcode = MINT_NEWOBJ_VTST_FAST;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				goto recurse;
-#else
-				child_frame->parent = frame;
-				interp_exec_method (child_frame, context, error);
-				CHECK_RESUME_STATE (context);
-				sp->data.p = vt_sp;
-#endif
 			} else {
 				ip += 3;
-#if 0
 				opcode = MINT_NEWOBJ_VT_FAST;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				goto recurse;
-#else
-				child_frame->parent = frame;
-				mono_interp_newobj_vt (child_frame, context, error);
-				CHECK_RESUME_STATE (context);
-#endif
 			}
 			++sp;
 			MINT_IN_BREAK;
@@ -5089,8 +4941,6 @@ main_loop:
 			child_frame->stack_args = sp;
 #if 0
 			opcode = MINT_NEWOBJ;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
 #else
 			child_frame->parent = frame;
@@ -5249,17 +5099,12 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SAFEPOINT)
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
 
 			/* Do synchronous checking of abort requests */
 			EXCEPTION_CHECKPOINT;
 
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-
 			/* Poll safepoint */
 			mono_threads_safepoint ();
-
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
 
 			++ip;
 			MINT_IN_BREAK;
@@ -6212,8 +6057,6 @@ main_loop:
 			const int clause_index = *ip;
 
 			if (clause_args && clause_index == clause_args->exit_clause) {
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				goto exit_frame;
 			}
 
@@ -6274,8 +6117,6 @@ main_loop:
 			// FIXME Null check for frame->imethod follows deref.
 			if (frame->imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 				goto exit_frame;
 			}
 			guint32 const ip_offset = frame->ip - frame->imethod->code;
@@ -6344,8 +6185,6 @@ main_loop:
 				 mono_method_signature_internal (frame->imethod->method)->pinvoke);
 			if (sp > frame->stack)
 				g_warning ("retobj: more values on stack: %d", sp-frame->stack);
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		MINT_IN_CASE(MINT_MONO_SGEN_THREAD_INFO)
 			sp->data.p = mono_tls_get_sgen_thread_info ();
@@ -6674,8 +6513,6 @@ main_loop:
 
 			mono_trace_leave_method (frame->imethod->method, prof_ctx);
 			ip += 3;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		}
 
@@ -6773,26 +6610,14 @@ main_loop:
 		MINT_IN_CASE(MINT_LOCALLOC) {
 			if (sp != frame->stack + 1) /*FIX?*/
 				goto abort_label;
-#if 1
+			// alloca must be in caller.
+			frame->ip = ip;
 			opcode = MINT_LOCALLOC;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto recurse;
-#else
-			int len = sp [-1].data.i;
-			sp [-1].data.p = alloca (len);
-
-			if (frame->imethod->init_locals)
-				memset (sp [-1].data.p, 0, len);
-			++ip;
-			MINT_IN_BREAK;
-#endif
 		}
 		MINT_IN_CASE(MINT_ENDFILTER)
 			/* top of stack is result of filter */
 			frame->retval = &sp [-1];
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 			goto exit_frame;
 		MINT_IN_CASE(MINT_INITOBJ)
 			--sp;
@@ -6950,14 +6775,8 @@ invalid_cast_label:
 resume:
 	g_assert (context->has_resume_state);
 
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
-
 	if (frame == context->handler_frame && (!clause_args || context->handler_ip < clause_args->end_at_ip)) {
 		/* Set the current execution state to the resume state in context */
-
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 
 		ip = context->handler_ip;
 		/* spec says stack should be empty at endfinally so it should be at the start too */
@@ -6967,35 +6786,20 @@ resume:
 		sp->data.p = mono_gchandle_get_target_internal (context->exc_gchandle);
 		++sp;
 
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
-
 		finally_ips = clear_resume_state (context, frame, finally_ips);
 		// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
 		// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
 
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
-
 		goto main_loop;
 	}
 	// fall through
-
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
-
 exit_frame:
 recurse:
-
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
-
+//	g_assert (opcode == MINT_NOP || opcode == MINT_LOCALLOC || opcode == MINT_JMP || sp == child_frame->stack_args);
 	inner->finally_ips = finally_ips;
 	inner->ip = ip;
 	inner->sp = sp;
 	inner->vt_sp = vt_sp;
-	g_assert (clause_args != (gpointer)(gsize)0x1300000000);
-	g_assert (*pclause_args != (gpointer)(gsize)0x1300000000);
 	return opcode;
 }
 
