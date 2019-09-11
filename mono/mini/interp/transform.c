@@ -6295,6 +6295,40 @@ clear_local_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 }
 
 static void
+interp_local_deadce (TransformData *td, int *local_ref_count)
+{
+	InterpInst *ins;
+	gboolean needs_dce = FALSE;
+
+	for (int i = 0; i < td->locals_size; i++) {
+		g_assert (local_ref_count [i] >= 0);
+		if (!local_ref_count [i] && (td->locals [i].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+			needs_dce = TRUE;
+			break;
+		}
+	}
+
+	// Return early if all locals are alive
+	if (!needs_dce)
+		return;
+
+	// Kill instructions that don't use stack and are storing into dead locals
+	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
+		if (MINT_IS_STLOC_NP (ins->opcode)) {
+			if (!local_ref_count [ins->data [0]] && (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions++;
+			}
+		} else if (MINT_IS_MOVLOC (ins->opcode)) {
+			if (!local_ref_count [ins->data [1]] && (td->locals [ins->data [1]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions++;
+			}
+		}
+	}
+}
+
+static void
 interp_cprop (TransformData *td)
 {
 	if (!td->max_stack_height || !td->locals_size)
@@ -6303,6 +6337,7 @@ interp_cprop (TransformData *td)
 	StackContentInfo *stack_end = stack + td->max_stack_height;
 	StackContentInfo *sp = stack;
 	StackContentInfo *locals = (StackContentInfo*) g_malloc (td->locals_size * sizeof (StackContentInfo));
+	int *local_ref_count = (int*) g_malloc0 (td->locals_size * sizeof (int));
 	InterpInst *ins;
 	int last_il_offset = -1;
 
@@ -6325,7 +6360,9 @@ interp_cprop (TransformData *td)
 		get_inst_stack_usage (td, ins, &pop, &push);
 		if (MINT_IS_LDLOC (ins->opcode)) {
 			int replace_op = 0;
-			if (!is_bb_start && MINT_IS_STLOC (ins->prev->opcode) && ins->prev->data [0] == ins->data [0]) {
+			int loaded_local = ins->data [0];
+			local_ref_count [loaded_local]++;
+			if (!is_bb_start && MINT_IS_STLOC (ins->prev->opcode) && ins->prev->data [0] == loaded_local) {
 				int mt = ins->prev->opcode - MINT_STLOC_I1;
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
@@ -6338,6 +6375,7 @@ interp_cprop (TransformData *td)
 						interp_clear_ins (td, ins->prev);
 						ins->opcode = replace_op;
 						mono_interp_stats.stloc_nps++;
+						local_ref_count [loaded_local]--;
 						// FIXME We know what local is on the stack now. Track it
 					}
 				}
@@ -6347,13 +6385,15 @@ interp_cprop (TransformData *td)
 				if (td->verbose_level)
 					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].ins->data [0]);
 				mono_interp_stats.copy_propagations++;
+				local_ref_count [loaded_local]--;
 				ins->data [0] = locals [loaded_local].ins->data [0];
+				local_ref_count [ins->data [0]]++;
 			}
 			if (!replace_op) {
 				// Save the ldloc on the stack if it wasn't optimized away
 				// For simplicity we don't track locals that have their address taken
 				// since it is hard to detect instructions that change the local value.
-				if (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT)
+				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)
 					sp->ins = NULL;
 				else
 					sp->ins = ins;
@@ -6400,8 +6440,11 @@ interp_cprop (TransformData *td)
 		last_il_offset = ins->il_offset;
 	}
 
+	interp_local_deadce (td, local_ref_count);
+
 	g_free (stack);
 	g_free (locals);
+	g_free (local_ref_count);
 }
 
 static void
