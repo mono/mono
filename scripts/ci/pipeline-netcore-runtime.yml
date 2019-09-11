@@ -113,8 +113,8 @@ stages:
           condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
         - bash: |
-            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1
-            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1
+            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
+            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
