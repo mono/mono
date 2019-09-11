@@ -230,6 +230,4 @@ include desktop.mk
 endif
 
 ## WASM targets
-ifdef ENABLE_WASM
 include wasm.mk
-endif
