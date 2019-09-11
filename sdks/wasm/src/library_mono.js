@@ -1,6 +1,6 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message',
+	$MONO__postset: 'Module["pump_message"] = MONO.pump_message; Module["get_call_stack"] = MONO.mono_wasm_get_call_stack_anytime;',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
@@ -16,6 +16,18 @@ var MonoSupportLib = {
 				--MONO.pump_count;
 				this.mono_background_exec ();
 			}
+		},
+
+		mono_wasm_get_call_stack_anytime: function() {
+			if (!this.mono_wasm_enum_frames)
+				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", 'void', [ ]);
+
+			this.active_frames = [];
+			this.mono_wasm_enum_frames ();
+
+			var the_frames = this.active_frames;
+			this.active_frames = [];
+			return the_frames;
 		},
 
 		mono_wasm_get_call_stack: function() {
@@ -92,6 +104,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_runtime_ready: function () {
+			window["mono_wasm_stack_probe"]();
 			console.log (">>mono_wasm_runtime_ready");
 			this.mono_wasm_runtime_is_ready = true;
 			debugger;
@@ -355,6 +368,8 @@ var MonoSupportLib = {
 	},
 
 	mono_set_timeout: function (timeout, id) {
+		window["mono_wasm_stack_probe"]();
+
 		if (!this.mono_set_timeout_exec)
 			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", 'void', [ 'number' ]);
 		if (ENVIRONMENT_IS_WEB) {

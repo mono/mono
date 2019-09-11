@@ -8,8 +8,6 @@ var BindingSupportLib = {
 		mono_wasm_free_list: [],
 		mono_wasm_marshal_enum_as_int: false,
 		mono_wasm_estimated_memory_stack_base: 0,
-		mono_wasm_highest_js_stack_size: 0,
-		mono_wasm_highest_memory_stack_size: 0,
 
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
@@ -23,12 +21,11 @@ var BindingSupportLib = {
 			module ["mono_bind_static_method"] = BINDING.bind_static_method.bind(BINDING);
 			module ["mono_call_static_method"] = BINDING.call_static_method.bind(BINDING);
 			module ["mono_wasm_stack_probe"] = BINDING.mono_wasm_stack_probe.bind(BINDING);
-
-			this.mono_wasm_estimated_memory_stack_base = Module.stackSave();
+			window ["mono_wasm_stack_probe"] = BINDING.mono_wasm_stack_probe.bind(BINDING);
 		},
 
 		mono_wasm_stack_probe: function () {
-			if (Module.disableStackProbing || false)
+			if (!(Module || null) || Module.disableStackProbing || false)
 				return;
 
 			var js_stack = null;
@@ -39,15 +36,32 @@ var BindingSupportLib = {
 			}
 			var js_stack_size = js_stack.split("\n").length;
 			var memory_stack_offset = Module.stackSave();
-			var memory_stack_size = memory_stack_offset - this.mono_wasm_estimated_memory_stack_base;
-			if (
-				(this.mono_wasm_highest_js_stack_size < js_stack_size) ||
-				(this.mono_wasm_highest_memory_stack_size < memory_stack_size)
-			) {
-				console.log("js stack size", js_stack_size, "memory stack size", memory_stack_size);
+			var managed_stack_size = 0;
+
+			var is_interpreter = false;
+			if (is_interpreter) {
+				var managed_stack = [];
+				if (Module["get_call_stack"]) {
+					try {
+						managed_stack = Module.get_call_stack();
+					} catch (exc) {
+					}
+				}			
+				managed_stack_size = managed_stack.length;
 			}
-			this.mono_wasm_highest_js_stack_size = Math.max(this.mono_wasm_highest_js_stack_size, js_stack_size);
-			this.mono_wasm_highest_memory_stack_size = Math.max(this.mono_wasm_highest_memory_stack_size, memory_stack_size);
+			
+			if (
+				((window["mono_wasm_highest_js_stack_size"] || 0) < js_stack_size) ||
+				((window["mono_wasm_highest_memory_stack_offset"] || 0) < memory_stack_offset) ||
+				((window["mono_wasm_highest_managed_stack_size"] || 0) < managed_stack_size)
+			) {
+				console.log("js stack size", js_stack_size, "memory stack offset", memory_stack_offset, "managed stack size", managed_stack_size);
+				console.log(js_stack);
+			}
+
+			window["mono_wasm_highest_js_stack_size"] = Math.max(window["mono_wasm_highest_js_stack_size"] || 0, js_stack_size);
+			window["mono_wasm_highest_managed_stack_size"] = Math.max(window["mono_wasm_highest_managed_stack_size"] || 0, managed_stack_size);
+			window["mono_wasm_highest_memory_stack_offset"] = Math.max(window["mono_wasm_highest_memory_stack_offset"] || 0, memory_stack_offset);
 		},
 
 		bindings_lazy_init: function () {
