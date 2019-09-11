@@ -141,21 +141,37 @@ gboolean
 g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
 {
 	HMODULE module;
+	/*
+	 * We have to cast the address because usually this func works with strings,
+	 * this being an exception.
+	 */
 	BOOL ret = GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCWSTR)addr, &module);
 	if (ret)
 		return FALSE;
 
-	if (file_name) {
-		/* sigh, non-const */
+	if (file_name != NULL) {
+		/* sigh, non-const. AIX for POSIX is the same way. */
 		TCHAR *fname = (TCHAR*)malloc(255);
 		DWORD bytes = GetModuleFileName(module, fname, 255);
 		/* XXX: check for ERROR_INSUFFICIENT_BUFFER? */
-		*file_name = bytes ? fname : NULL;
+		if (bytes) {
+			/* Convert back to UTF-8 from wide for runtime */
+			char *fname_utf8 = u16to8(fname);
+			*file_name = fname_utf8;
+		} else {
+			*file_name = NULL;
+		}
+		free(fname);
+	} else {
+		*file_name = NULL;
 	}
 	/* XXX: implement the rest */
-	*file_base = NULL;
-	*sym_name = NULL;
-	*sym_addr = NULL;
+	if (file_base != NULL)
+		*file_base = NULL;
+	if (sym_name != NULL)
+		*sym_name = NULL;
+	if (sym_addr != NULL)
+		*sym_addr = NULL;
 
 	return TRUE;
 }
