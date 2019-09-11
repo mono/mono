@@ -113,13 +113,6 @@ stages:
           timeoutInMinutes: 90
           condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
-        - bash: |
-            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
-            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
-          displayName: 'Download and Run CoreFX Tests with LLVM'
-          timeoutInMinutes: 90
-          condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
-
         - task: PublishTestResults@2
           inputs:
             testRunTitle: $(poolname)
@@ -144,10 +137,11 @@ stages:
             x64:
               poolname: Hosted macOS
               manifest: osx-x64
-            x64_LLVM:
-              poolname: Hosted macOS
-              manifest: osx-x64
-              llvm: true
+            #TODO: download pre-built LLVM binaries, currently it has to build llvm from sources (>1h)
+            #x64_LLVM:
+            #  poolname: Hosted macOS
+            #  manifest: osx-x64
+            #  llvm: true
         pool:
           name: $(poolname)
         steps:
@@ -203,13 +197,6 @@ stages:
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
-
-        - bash: |
-            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
-            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
-          displayName: 'Download and Run CoreFX Tests with LLVM'
-          timeoutInMinutes: 90
-          condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
         - task: PublishTestResults@2
           inputs:
