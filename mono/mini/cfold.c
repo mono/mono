@@ -97,13 +97,13 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 	switch (ins->opcode) {
 	case OP_FADD:
 	case OP_FMUL:
-		if (arg2->opcode == OP_R8CONST && arg2->opcode == OP_R8CONST){
+		if ((arg1->opcode == OP_R8CONST || arg1->opcode == OP_R4CONST) && arg2->opcode == arg1->opcode){
 			ALLOC_DEST (cfg, dest, ins);
 			switch (ins->opcode) {
 				FOLD_FBINOP (OP_FADD, +);
 				FOLD_FBINOP (OP_FMUL, *);
 			}
-			dest->opcode = OP_R8CONST;
+			dest->opcode = arg1->opcode;
 			MONO_INST_NULLIFY_SREGS (dest);		
 		}
 		break;
@@ -258,6 +258,14 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 			dest->inst_c0 = arg1->inst_c0;
 		}
 		break;
+	case OP_FMOVE:
+		if (arg1->opcode == OP_R8CONST || arg1->opcode == OP_R4CONST) {
+			ALLOC_DEST (cfg, dest, ins);
+			dest->opcode = arg1->opcode;
+			dest->sreg1 = -1;
+			dest->inst_p0 = arg1->inst_p0;
+		}
+		break;
 	case OP_VMOVE:
 		if (arg1->opcode == OP_VZERO) {
 			ALLOC_DEST (cfg, dest, ins);
@@ -407,14 +415,6 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 		}
 		break;
 	}
-	case OP_FMOVE:
-		if (arg1->opcode == OP_R8CONST) {
-			ALLOC_DEST (cfg, dest, ins);
-			dest->opcode = OP_R8CONST;
-			dest->sreg1 = -1;
-			dest->inst_p0 = arg1->inst_p0;
-		}
-		break;
 
 		/*
 		 * TODO: 
