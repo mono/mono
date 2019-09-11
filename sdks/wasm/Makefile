@@ -275,8 +275,8 @@ build-aot-sample: packager.exe hello.exe
 	ninja -v -C obj/aot-sample
 
 build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
-	ninja -v -C obj/aot-sample
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-sample-profiled
 
 zlibtest.exe: zlibtest.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
@@ -313,6 +313,9 @@ hello.exe: hello.cs
 
 run-aot-sample: build-aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+
+run-aot-sample-profiled: build-aot-sample-profiled
+	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
 
 build-interp-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
@@ -353,6 +356,7 @@ build-aot-bindings-interp-sample: packager.exe sample.dll
 aot-profile/main.exe: aot-profile/main.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll aot-profile/main.cs
 
+.PHONY: build-aot-profile
 build-aot-profile: packager.exe aot-profile/main.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-profile --builddir=obj/aot-profile --profile=aot --template=aot-profile/runtime.js --asset=aot-profile/index.html aot-profile/main.exe
 	ninja -C obj/aot-profile
