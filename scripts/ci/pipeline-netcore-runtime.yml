@@ -44,6 +44,11 @@ stages:
               poolname: Hosted Ubuntu 1604
               manifest: linux-x64
               prepareDependencies: true
+            x64_LLVM:
+              poolname: Hosted Ubuntu 1604
+              manifest: linux-x64
+              prepareDependencies: true
+              llvm: true
             ARM64:
               manifest: linux-arm64
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -57,6 +62,10 @@ stages:
             git clean -ffdx
             git reset --hard HEAD
           displayName: 'Clean up working directory'
+
+        - bash: |
+            git submodule update --init -- external/llvm
+          condition: eq(variables['llvm'], 'true')
 
         - bash: |
             sudo apt update
@@ -75,18 +84,42 @@ stages:
             cd netcore
             ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
+          condition: ne(variables['llvm'], 'true')
 
+        - bash: |
+            cd netcore
+            ./build.sh -c $(_BuildConfig) --llvm
+          displayName: 'Build (Make)'
+          condition: eq(variables['llvm'], 'true')
+  
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
             mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
+          condition: ne(variables['llvm'], 'true')
+  
+        - bash: |
+            make -C netcore nupkg-llvm
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
+          displayName: 'Build nupkg'
+          condition: eq(variables['llvm'], 'true')
 
         - bash: |
             make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
+          condition: ne(variables['llvm'], 'true')
+
+        - bash: |
+            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1
+            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1
+          displayName: 'Download and Run CoreFX Tests'
+          timeoutInMinutes: 90
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
+          condition: eq(variables['llvm'], 'true')
 
         - task: PublishTestResults@2
           inputs:
