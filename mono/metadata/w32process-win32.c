@@ -399,14 +399,12 @@ process_unquote_application_name (gchar *appname)
 static gchar*
 process_quote_path (const gchar *path)
 {
-	gchar *res = g_shell_quote (path);
-	gchar *q = res;
-	while (*q) {
-		if (*q == '\'')
-			*q = '\"';
-		q++;
-	}
-	return res;
+	size_t len = strlen (path);
+	GString *result = g_string_sized_new (len + 3);
+	g_string_append_c (result, '"');
+	g_string_append (result, path);
+	g_string_append_c (result, '"');
+	return g_string_free (result, FALSE);
 }
 
 /* Only used when UseShellExecute is false */
