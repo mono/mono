@@ -36,6 +36,8 @@
 #define INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT 4
 #define INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL 8
 
+#define INTERP_LOCAL_FLAG_INDIRECT 1
+
 MonoInterpStats mono_interp_stats;
 
 #define DEBUG 0
@@ -91,6 +93,7 @@ typedef struct {
 
 typedef struct {
 	MonoType *type;
+	int flags;
 	int offset;
 } InterpLocal;
 
@@ -919,6 +922,7 @@ create_interp_local (TransformData *td, MonoType *type)
 		td->locals = (InterpLocal*) g_realloc (td->locals, td->locals_capacity * sizeof (InterpLocal));
 	}
 	td->locals [td->locals_size].type = type;
+	td->locals [td->locals_size].flags = 0;
 	td->locals [td->locals_size].offset = -1;
 	td->locals_size++;
 	return td->locals_size - 1;
@@ -2622,6 +2626,7 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 		offset &= ~(align - 1);
 		imethod->local_offsets [i] = offset;
 		td->locals [i].offset = offset;
+		td->locals [i].flags = 0;
 		offset += size;
 	}
 	offset = (offset + 7) & ~7;
@@ -3232,8 +3237,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
 				td->last_ins->data [0] = n;
 			} else {
+				int loc_n = arg_locals [n];
 				interp_add_ins (td, MINT_LDLOCA_S);
-				td->last_ins->data [0] = arg_locals [n];
+				td->last_ins->data [0] = loc_n;
+				td->locals [loc_n].flags |= INTERP_LOCAL_FLAG_INDIRECT;
 			}
 			PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 			td->ip += 2;
@@ -3260,10 +3267,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		case CEE_LDLOCA_S: {
 			int loc_n = ((guint8 *)td->ip)[1];
 			interp_add_ins (td, MINT_LDLOCA_S);
-			if (!inlining)
-				td->last_ins->data [0] = loc_n;
-			else
-				td->last_ins->data [0] = local_locals [loc_n];
+			if (inlining)
+				loc_n = local_locals [loc_n];
+			td->last_ins->data [0] = loc_n;
+			td->locals [loc_n].flags |= INTERP_LOCAL_FLAG_INDIRECT;
 			PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 			td->ip += 2;
 			break;
@@ -4367,6 +4374,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				store_local_general (td, local, m_class_get_byval_arg (klass));
 				interp_add_ins (td, MINT_LDLOCA_S);
 				td->last_ins->data [0] = local;
+				td->locals [local].flags |= INTERP_LOCAL_FLAG_INDIRECT;
 				PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
 			} else {
 				interp_add_ins (td, MINT_UNBOX);
@@ -5721,8 +5729,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
 					td->last_ins->data [0] = n;
 				} else {
+					int loc_n = arg_locals [n];
 					interp_add_ins (td, MINT_LDLOCA_S);
-					td->last_ins->data [0] = arg_locals [n];
+					td->last_ins->data [0] = loc_n;
+					td->locals [loc_n].flags |= INTERP_LOCAL_FLAG_INDIRECT;
 				}
 				PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 				td->ip += 3;
@@ -5749,10 +5759,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case CEE_LDLOCA: {
 				int loc_n = read16 (td->ip + 1);
 				interp_add_ins (td, MINT_LDLOCA_S);
-				if (!inlining)
-					td->last_ins->data [0] = loc_n;
-				else
-					td->last_ins->data [0] = local_locals [loc_n];
+				if (inlining)
+					loc_n = local_locals [loc_n];
+				td->last_ins->data [0] = loc_n;
+				td->locals [loc_n].flags |= INTERP_LOCAL_FLAG_INDIRECT;
 				PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 				td->ip += 3;
 				break;
@@ -6302,7 +6312,7 @@ interp_cprop (TransformData *td)
 						replace_op = MINT_STLOC_NP_O;
 					if (replace_op) {
 						if (td->verbose_level)
-							g_print ("Add stloc : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
+							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
 						interp_clear_ins (td, ins->prev);
 						ins->opcode = replace_op;
 						mono_interp_stats.killed_instructions++;
@@ -6310,9 +6320,15 @@ interp_cprop (TransformData *td)
 					}
 				}
 			}
-			// Save the ldloc on the stack if it wasn't optimized already
-			if (!replace_op)
-				sp->ins = ins;
+			if (!replace_op) {
+				// Save the ldloc on the stack if it wasn't optimized away
+				// For simplicity we don't track locals that have their address taken
+				// since it is hard to detect instructions that change the local value.
+				if (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT)
+					sp->ins = NULL;
+				else
+					sp->ins = ins;
+			}
 			sp++;
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			sp--;
@@ -6337,8 +6353,6 @@ interp_cprop (TransformData *td)
 			}
 			clear_stack_content_info_for_local (stack, sp, ins->data [1]);
 		} else {
-			if (ins->opcode == MINT_LDLOCA_S)
-				clear_stack_content_info_for_local (stack, sp, ins->data [0]);
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
 			sp += push - pop;
