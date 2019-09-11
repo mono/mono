@@ -79,7 +79,8 @@ typedef gint64  mono_i;
 
 #define WASM_VOLATILE volatile
 
-static inline MonoObject * WASM_VOLATILE *
+// Function instead of macro with casting, for type checking.
+static inline MonoObject * volatile *
 mono_interp_objref (MonoObject **o)
 {
 	return o;
@@ -94,7 +95,6 @@ mono_interp_objref (MonoObject **o)
 #define OBJREF(x) x
 
 #endif
-
 
 /*
  * Value types are represented on the eval stack as pointers to the
@@ -169,14 +169,35 @@ typedef struct _InterpMethod
 	MonoProfilerCallInstrumentationFlags prof_flags;
 } InterpMethod;
 
+// FIXME union here is confusing.
+
 struct _InterpFrame {
-	InterpFrame *parent; /* parent */
+	// child_frame is used by a few recursive cases in interp_exec_method_inner.
+	// Repurpose for output.
+	union {
+		InterpFrame *parent; /* parent */
+		GSList		*finally_ips;
+	};
+
+	// child_frame->imethod and child_frame->retval are returned by interp_exec_method_inner.
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	stackval       *stack_args; /* parent */
-	stackval       *stack;
+
+	// stack_args is either equal to sp, or unused by interp_exec_method_inner,
+	// so can be equal.
+	union {
+		stackval	*stack_args; /* parent */
+		stackval	*sp;
+	};
+
+	// stack is unused by interp_exec_method_inner, so repurpose.
+	union {
+		stackval	*stack;
+		guchar		*vt_sp;
+	};
+
 	/* exception info */
-	const unsigned short  *ip;
+	const guint16	*ip;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
