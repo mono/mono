@@ -165,7 +165,8 @@ typedef struct {
 typedef struct {
 	gint64 transform_time;
 	gint64 cprop_time;
-	gint32 killed_instructions;
+	gint32 stloc_nps;
+	gint32 movlocs;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;
