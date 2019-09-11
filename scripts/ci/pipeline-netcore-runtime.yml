@@ -66,6 +66,7 @@ stages:
         - bash: |
             git submodule update --init -- external/llvm
           condition: eq(variables['llvm'], 'true')
+          displayName: 'Checkout external/llvm'
 
         - bash: |
             sudo apt update
@@ -89,7 +90,7 @@ stages:
         - bash: |
             cd netcore
             ./build.sh -c $(_BuildConfig) --llvm
-          displayName: 'Build (Make)'
+          displayName: 'Build (Make) with LLVM'
           condition: eq(variables['llvm'], 'true')
   
         - bash: |
@@ -103,7 +104,7 @@ stages:
             make -C netcore nupkg-llvm
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
             mkdir -p ./artifacts/log/$(_BuildConfig)
-          displayName: 'Build nupkg'
+          displayName: 'Build nupkg with LLVM'
           condition: eq(variables['llvm'], 'true')
 
         - bash: |
@@ -115,7 +116,7 @@ stages:
         - bash: |
             make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
             make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
-          displayName: 'Download and Run CoreFX Tests'
+          displayName: 'Download and Run CoreFX Tests with LLVM'
           timeoutInMinutes: 90
           condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
@@ -143,6 +144,10 @@ stages:
             x64:
               poolname: Hosted macOS
               manifest: osx-x64
+            x64_LLVM:
+              poolname: Hosted macOS
+              manifest: osx-x64
+              llvm: true
         pool:
           name: $(poolname)
         steps:
@@ -150,6 +155,12 @@ stages:
             git clean -ffdx
             git reset --hard HEAD
           displayName: 'Clean up working directory'
+
+        - bash: |
+            git submodule update --init -- external/llvm
+          condition: eq(variables['llvm'], 'true')
+          displayName: 'Checkout external/llvm'
+
         - bash: |
             brew install autoconf automake libtool gnu-sed
           displayName: 'Prepare macOS dependencies'
@@ -165,18 +176,40 @@ stages:
             cd netcore
             ./build.sh -c $(_BuildConfig)
           displayName: 'Build (Make)'
+          condition: ne(variables['llvm'], 'true')
+
+        - bash: |
+            cd netcore
+            ./build.sh -c $(_BuildConfig) --llvm
+          displayName: 'Build (Make) with LLVM'
+          condition: eq(variables['llvm'], 'true')
 
         - bash: |
             make -C netcore nupkg
             rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
             mkdir -p ./artifacts/log/$(_BuildConfig)
           displayName: 'Build nupkg'
+          condition: ne(variables['llvm'], 'true')
+
+        - bash: |
+            make -C netcore nupkg-llvm
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mkdir -p ./artifacts/log/$(_BuildConfig)
+          displayName: 'Build nupkg with LLVM'
+          condition: eq(variables['llvm'], 'true')
 
         - bash: |
             make -C netcore run-tests-corefx USE_TIMEOUT=1
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
+          condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
+
+        - bash: |
+            make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
+            make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 MONO_ENV_OPTIONS="--llvm"
+          displayName: 'Download and Run CoreFX Tests with LLVM'
+          timeoutInMinutes: 90
+          condition: and(eq(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
 
         - task: PublishTestResults@2
           inputs:
