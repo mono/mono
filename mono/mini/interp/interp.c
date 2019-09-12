@@ -6981,8 +6981,9 @@ mono_ee_interp_init (const char *opts)
 	set_context (NULL);
 
 	interp_parse_options (opts);
+	/* Don't do any optimizations if running under debugger */
 	if (mini_get_debug_options ()->mdb_optimizations)
-		mono_interp_opt &= ~INTERP_OPT_INLINE;
+		mono_interp_opt = 0;
 	mono_interp_transform_init ();
 
 	mini_install_interp_callbacks (&mono_interp_callbacks);
