@@ -5398,16 +5398,38 @@ main_loop:
 
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_LDELEMA)
+		MINT_IN_CASE(MINT_LDELEMA) {
+			guint16 rank = ip [1];
+			gint32 const esize = READ32 (ip + 2);
+			ip += 4;
+			sp -= rank;
+
+			MonoArray* const ao = (MonoArray*) sp [-1].data.o;
+			NULL_CHECK (ao);
+
+			g_assert (ao->bounds);
+			guint32 pos = 0;
+			for (int i = 0; i < rank; i++) {
+				guint32 idx = sp [i].data.i;
+				guint32 lower = ao->bounds [i].lower_bound;
+				guint32 len = ao->bounds [i].length;
+				if (idx < lower || (idx - lower) >= len)
+					THROW_EX (mono_get_exception_index_out_of_range (), ip);
+				pos = (pos * len) + idx - lower;
+			}
+
+			sp [-1].data.p = mono_array_addr_with_size_fast (ao, esize, pos);
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDELEMA_TC) {
-			guint16 rank = ip [2];
+			guint16 rank = ip [1];
 			ip += 3;
 			sp -= rank;
 
 			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
 
-			MonoClass *klass = (MonoClass*)frame->imethod->data_items [ip [-3 + 1]];
+			MonoClass *klass = (MonoClass*)frame->imethod->data_items [ip [-3 + 2]];
 			const gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
 			MonoException *ex = ves_array_element_address (frame, klass, (MonoArray *) o, sp, needs_typecheck);
 			if (ex)
