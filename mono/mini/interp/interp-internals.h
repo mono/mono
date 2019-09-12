@@ -52,6 +52,41 @@ typedef guint64 mono_u;
 typedef gint64  mono_i;
 #endif
 
+
+/*
+ * GC SAFETY:
+ *
+ *  The interpreter executes in gc unsafe (non-preempt) mode. On wasm, the C stack is
+ * scannable but the wasm stack is not, so to make the code GC safe, the following rules
+ * should be followed:
+ * - every objref handled by the code needs to either be stored volatile or stored
+ *   into a volatile; volatile stores are stack packable, volatile values are not.
+ *   Use either OBJREF or stackval->data.o.
+ *   This will ensure the objects are pinned. A volatile local
+ *   is on the stack and not in registers. Volatile stores ditto.
+ * - minimize the number of MonoObject* locals/arguments (or make them volatile).
+ */
+#ifdef TARGET_WASM
+
+#define WASM_VOLATILE volatile
+
+static inline MonoObject * WASM_VOLATILE *
+mono_interp_objref (MonoObject **o)
+{
+	return o;
+}
+
+#define OBJREF(x) (*mono_interp_objref (&x))
+
+#else
+
+#define WASM_VOLATILE /* nothing */
+
+#define OBJREF(x) x
+
+#endif
+
+
 /*
  * Value types are represented on the eval stack as pointers to the
  * actual storage. The size field tells how much storage is allocated.
@@ -67,11 +102,7 @@ typedef struct {
 		} pair;
 		float f_r4;
 		double f;
-#ifdef TARGET_WASM
-		MonoObject * volatile o;
-#else
-		MonoObject *o;
-#endif
+		MonoObject * WASM_VOLATILE o;
 		/* native size integer and pointer types */
 		gpointer p;
 		mono_u nati;
@@ -135,14 +166,6 @@ struct _InterpFrame {
 	stackval       *retval; /* parent */
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
-	/*
-	 * For GC tracking of local objrefs in exec_method ().
-	 * Storing into this field will keep the object pinned
-	 * until the objref can be stored into stackval->data.o.
-	 */
-#ifdef TARGET_WASM
-	MonoObject* volatile o;
-#endif
 	/* exception info */
 	const unsigned short  *ip;
 };
