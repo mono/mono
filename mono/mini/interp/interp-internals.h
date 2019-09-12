@@ -67,10 +67,10 @@ typedef gint64  mono_i;
  * - minimize the number of MonoObject* locals/arguments (or make them volatile).
  *
  * Volatile on a type/local forces all reads and writes to go to memory/stack,
- *   and each such local to have a unique address. This is called "stack packing".
+ *   and each such local to have a unique address.
  *
  * Volatile absence on a type/local allows multiple locals to share storage,
- *   if their lifetimes do not overlap.
+ *   if their lifetimes do not overlap. This is called "stack packing".
  *
  * Volatile absence on a type/local allows the variable to live in
  * both stack and register, for fast reads and "write through".
