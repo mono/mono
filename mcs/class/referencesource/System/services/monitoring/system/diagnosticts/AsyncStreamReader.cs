@@ -124,7 +124,7 @@ namespace System.Diagnostics {
                         // We are still holding lock that will prevent new async read requests to queue up
                         // before we have closed and invalidated the stream.
                         if (stream is FileStream) {
-                            SafeFileHandle tmpStreamHandle = ((FileStream)stream).SafeFileHandle;
+                            SafeHandle tmpStreamHandle = ((FileStream)stream).SafeFileHandle;
                             while (!asyncReadResult.IsCompleted) {
                                 MonoIOError error;
                                 if (!MonoIO.Cancel (tmpStreamHandle, out error) && error == MonoIOError.ERROR_NOT_SUPPORTED) {
