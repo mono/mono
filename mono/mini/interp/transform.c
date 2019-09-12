@@ -2188,7 +2188,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		}
 		if (op == MINT_LDELEMA || op == MINT_LDELEMA_TC) {
 			td->last_ins->data [0] = get_data_item_index (td, m_class_get_element_class (target_method->klass));
-			td->last_ins->data [1] = 1 + m_class_get_rank (target_method->klass);
+			td->last_ins->data [1] = m_class_get_rank (target_method->klass);
 		}
 
 		if (op == MINT_CALLRUN) {
@@ -4825,7 +4825,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				CHECK_TYPELOAD (klass);
 				interp_add_ins (td, MINT_LDELEMA_TC);
 				td->last_ins->data [0] = get_data_item_index (td, klass);
-				td->last_ins->data [1] = 2;
+				td->last_ins->data [1] = 1;
 			} else {
 				interp_add_ins (td, MINT_LDELEMA_FAST);
 				mono_class_init_internal (klass);
@@ -6052,9 +6052,12 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 		case MINT_NEWOBJ_ARRAY:
 		case MINT_NEWOBJ_VT_FAST:
 		case MINT_NEWOBJ_VTST_FAST:
+			*pop = ins->data [1];
+			*push = 1;
+			break;
 		case MINT_LDELEMA:
 		case MINT_LDELEMA_TC:
-			*pop = ins->data [1];
+			*pop = ins->data [1] + 1;
 			*push = 1;
 			break;
 		case MINT_NEWOBJ: {

@@ -5402,21 +5402,18 @@ main_loop:
 		}
 		MINT_IN_CASE(MINT_LDELEMA)
 		MINT_IN_CASE(MINT_LDELEMA_TC) {
-			
-			guint16 numargs = ip [2];
+			guint16 rank = ip [2];
 			ip += 3;
-			sp -= numargs;
+			sp -= rank;
 
-			MonoObject* const o = sp [0].data.o;
+			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
 
 			MonoClass *klass = (MonoClass*)frame->imethod->data_items [ip [-3 + 1]];
 			const gboolean needs_typecheck = ip [-3] == MINT_LDELEMA_TC;
-			MonoException *ex = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
+			MonoException *ex = ves_array_element_address (frame, klass, (MonoArray *) o, sp, needs_typecheck);
 			if (ex)
 				THROW_EX (ex, ip);
-			++sp;
-
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDELEM_I1) /* fall through */
