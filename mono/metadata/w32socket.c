@@ -1976,8 +1976,8 @@ ipaddress_handle_to_struct_in6_addr (MonoObjectHandle ipaddr)
 #endif
 #endif
 
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 #if defined(__APPLE__) || defined(__FreeBSD__)
-
 static int
 get_local_interface_id (int family)
 {
@@ -2008,8 +2008,8 @@ get_local_interface_id (int family)
 	return idx;
 #endif
 }
-
 #endif /* defined(__APPLE__) || defined(__FreeBSD__) */
+#endif /* HAVE_STRUCT_SOCKADDR_IN6 */
 
 void
 ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32 level, gint32 name, MonoObjectHandle obj_val, MonoArrayHandle byte_val, gint32 int_val, gint32 *werror, MonoError *error)
