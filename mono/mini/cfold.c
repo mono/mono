@@ -277,7 +277,15 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 		}
 		break;
 	case OP_FMOVE:
-		if (arg1->opcode == OP_R8CONST || arg1->opcode == OP_R4CONST) {
+		if (arg1->opcode == OP_R8CONST) {
+			ALLOC_DEST (cfg, dest, ins);
+			dest->opcode = arg1->opcode;
+			dest->sreg1 = -1;
+			dest->inst_p0 = arg1->inst_p0;
+		}
+		break;
+	case OP_RMOVE:
+		if (arg1->opcode == OP_R4CONST) {
 			ALLOC_DEST (cfg, dest, ins);
 			dest->opcode = arg1->opcode;
 			dest->sreg1 = -1;
