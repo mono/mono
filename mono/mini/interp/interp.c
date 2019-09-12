@@ -5384,7 +5384,7 @@ main_loop:
 			ip++;
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_LDELEMA_FAST) {
+		MINT_IN_CASE(MINT_LDELEMA1) {
 			/* No bounds, one direction */
 			MonoArray *ao = (MonoArray*)sp [-2].data.o;
 			NULL_CHECK (ao);

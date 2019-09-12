@@ -1328,7 +1328,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			int size = mono_class_array_element_size (element_class);
 
 			if (rank == 1) {
-				interp_add_ins (td, MINT_LDELEMA_FAST);
+				interp_add_ins (td, MINT_LDELEMA1);
 				WRITE32_INS (td->last_ins, 0, &size);
 			} else {
 				interp_add_ins (td, MINT_LDELEMA);
@@ -4855,7 +4855,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->last_ins->data [0] = 1;
 				td->last_ins->data [1] = get_data_item_index (td, klass);
 			} else {
-				interp_add_ins (td, MINT_LDELEMA_FAST);
+				interp_add_ins (td, MINT_LDELEMA1);
 				mono_class_init_internal (klass);
 				size = mono_class_array_element_size (klass);
 				WRITE32_INS (td->last_ins, 0, &size);
