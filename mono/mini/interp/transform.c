@@ -1296,7 +1296,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 		} else if (!strcmp (tm, "get_Length")) {
 			*op = MINT_LDLEN;
 		} else if (!strcmp (tm, "Address")) {
-			*op = readonly ? MINT_LDELEMA : MINT_LDELEMA_TC;
+			if (!readonly && !m_class_is_valuetype (m_class_get_element_class (target_method->klass)))
+				*op = MINT_LDELEMA_TC;
+			else
+				*op = MINT_LDELEMA;
 		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad") || !strcmp (tm, "Set") || !strcmp (tm, "Get")) {
 			*op = MINT_CALLRUN;
 		} else if (!strcmp (tm, "UnsafeStore")) {
