@@ -1525,8 +1525,6 @@ ves_imethod (InterpFrame *frame, MonoMethod *method, MonoMethodSignature *sig, s
 			return mono_get_exception_null_reference ();
 		if (*name == 'S' && (strcmp (name, "Set") == 0))
 			return ves_array_set (frame, sp, sig);
-		if (*name == 'G' && (strcmp (name, "Get") == 0))
-			return ves_array_get (frame, sp, retval, sig, TRUE);
 	}
 	
 	g_error ("Don't know how to exec runtime method %s.%s::%s", 

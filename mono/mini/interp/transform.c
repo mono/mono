@@ -1072,6 +1072,26 @@ interp_get_ldind_for_mt (int mt)
 	return -1;
 }
 
+static void
+interp_emit_ldobj (TransformData *td, MonoClass *klass)
+{
+	int mt = mint_type (m_class_get_byval_arg (klass));
+	int size;
+
+	if (mt == MINT_TYPE_VT) {
+		interp_add_ins (td, MINT_LDOBJ_VT);
+		size = mono_class_value_size (klass, NULL);
+		WRITE32_INS (td->last_ins, 0, &size);
+		PUSH_VT (td, size);
+	} else {
+		int opcode = interp_get_ldind_for_mt (mt);
+		interp_add_ins (td, opcode);
+	}
+
+	SET_TYPE (td->sp - 1, stack_type [mt], klass);
+}
+
+
 /* Return TRUE if call transformation is finished */
 static gboolean
 interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClass *constrained_class, MonoMethodSignature *csignature, gboolean readonly, int *op)
@@ -1300,8 +1320,27 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				*op = MINT_LDELEMA_TC;
 			else
 				*op = MINT_LDELEMA;
-		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad") || !strcmp (tm, "Set") || !strcmp (tm, "Get")) {
+		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad") || !strcmp (tm, "Set")) {
 			*op = MINT_CALLRUN;
+		} else if (!strcmp (tm, "Get")) {
+			MonoClass *element_class = m_class_get_element_class (target_method->klass);
+			int rank = m_class_get_rank (target_method->klass);
+
+			if (rank == 1) {
+				interp_add_ins (td, MINT_LDELEMA_FAST);
+				int size = mono_class_array_element_size (element_class);
+				WRITE32_INS (td->last_ins, 0, &size);
+			} else {
+				interp_add_ins (td, MINT_LDELEMA);
+				td->last_ins->data [0] = get_data_item_index (td, element_class);
+				td->last_ins->data [1] = rank;
+			}
+
+			td->sp -= rank;
+			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
+			interp_emit_ldobj (td, element_class);
+			td->ip += 5;
+			return TRUE;
 		} else if (!strcmp (tm, "UnsafeStore")) {
 			g_error ("TODO ArrayClass::UnsafeStore");
 		}
@@ -2799,25 +2838,6 @@ interp_handle_isinst (TransformData *td, MonoClass *klass, gboolean isinst_instr
 	}
 	td->last_ins->data [0] = get_data_item_index (td, klass);
 	td->ip += 5;
-}
-
-static void
-interp_emit_ldobj (TransformData *td, MonoClass *klass)
-{
-	int mt = mint_type (m_class_get_byval_arg (klass));
-	int size;
-
-	if (mt == MINT_TYPE_VT) {
-		interp_add_ins (td, MINT_LDOBJ_VT);
-		size = mono_class_value_size (klass, NULL);
-		WRITE32_INS (td->last_ins, 0, &size);
-		PUSH_VT (td, size);
-	} else {
-		int opcode = interp_get_ldind_for_mt (mt);
-		interp_add_ins (td, opcode);
-	}
-
-	SET_TYPE (td->sp - 1, stack_type [mt], klass);
 }
 
 static void
