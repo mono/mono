@@ -587,7 +587,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
-../referencesource/System/net/System/Net/_PooledStream.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/_Semaphore.cs
@@ -602,7 +601,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs
 ../referencesource/System/net/System/Net/cookieexception.cs
-../referencesource/System/net/System/Net/connectionpool.cs
 ../referencesource/System/net/System/Net/DnsEndPoint.cs
 ../referencesource/System/net/System/Net/EndPoint.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs
@@ -663,18 +661,19 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
 ../referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
 
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
 ../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
 ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/LingerOption.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
-../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetworkStream.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
 ../referencesource/System/net/System/Net/Sockets/SelectMode.cs
 ../referencesource/System/net/System/Net/Sockets/Socket.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.Tasks.cs
 ../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
 ../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
 ../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
