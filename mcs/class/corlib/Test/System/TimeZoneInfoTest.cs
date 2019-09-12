@@ -854,6 +854,15 @@ namespace MonoTests.System
 				Assert.IsTrue (tzi.IsDaylightSavingTime (dateOffset));
 			}
 
+			// https://github.com/mono/mono/issues/16742
+			[Test]
+			public void Bug_16472 ()
+			{
+				var parsedTime = DateTime.Parse ("1948-02-19T23:00:00Z", CultureInfo.InvariantCulture);
+				var newTime = TimeZoneInfo.ConvertTime (parsedTime, TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Rome")));
+				Assert.AreEqual (1948, newTime.Year);
+			}
+
 			// https://github.com/mono/mono/issues/9664
 			[Test]
 			public void Bug_9664 ()
