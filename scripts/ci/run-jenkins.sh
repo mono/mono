@@ -318,6 +318,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'osx-amd64'* ]]; then
             echo "ENABLE_WINDOWS=1" >> sdks/Make.config
+	    echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
         fi
 
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
@@ -326,7 +327,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
-        echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
         #echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
         export aot_test_suites="System.Core"
