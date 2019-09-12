@@ -167,6 +167,22 @@ namespace System.Net
 					try {
 						operation.ThrowIfDisposed (cancellationToken);
 
+						/*
+						 * I investigated this and we have one test failing:
+						 * MonoTests.System.Net.WebRequestTest.TestFailedConnection.
+						 *
+						 * What's happening is that Socket.Tasks.cs from CoreFX introduces
+						 * a new internal BeginConnect(EndPoint) overload, which will replace
+						 * the one we're using from SocketTaskExtensions.cs.
+						 *
+						 * Looking at the two implementations, the important difference is that
+						 * our Socket.BeginConnect does not invoke the callback when the request
+						 * failed synchronously.
+						 *
+						 * This one here seems to be the only place in the BCL that's calling
+						 * that extension, so we should be safe.
+						 */
+
 						// Keep Mono's old implementation from SocketTaskExtensions.cs
 						await Task.Factory.FromAsync (
 							(targetEndPoint, callback, state) => ((Socket)state).BeginConnect (targetEndPoint, callback, state),
