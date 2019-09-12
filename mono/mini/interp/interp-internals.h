@@ -127,6 +127,7 @@ typedef struct _InterpMethod
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
 	MonoProfilerCallInstrumentationFlags prof_flags;
+	gboolean has_localloc : 1;
 } InterpMethod;
 
 struct _InterpFrame {

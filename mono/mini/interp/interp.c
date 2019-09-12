@@ -3441,7 +3441,7 @@ main_loop:
 				MONO_PROFILER_RAISE (method_tail_call, (frame->imethod->method, new_method->method));
 
 			if (!new_method->transformed) {
-				MONO_API_ERROR_INIT (error);
+				error_init_reuse (error);
 
 				frame->ip = ip;
 				mono_interp_transform_method (new_method, context, error);
@@ -3449,20 +3449,22 @@ main_loop:
 				if (ex)
 					THROW_EX (ex, ip);
 			}
-			ip += 2;
 			const gboolean realloc_frame = new_method->alloca_size > frame->imethod->alloca_size;
-			frame->imethod = new_method;
 			/*
 			 * We allocate the stack frame from scratch and store the arguments in the
 			 * locals again since it's possible for the caller stack frame to be smaller
 			 * than the callee stack frame (at the interp level)
 			 */
 			if (realloc_frame) {
-				frame->stack = (stackval*)g_alloca (frame->imethod->alloca_size);
-				memset (frame->stack, 0, frame->imethod->alloca_size);
+				if (frame->imethod->has_localloc)
+					frame->stack = (stackval*)g_alloca (new_method->alloca_size);
+				else
+					frame->stack = (stackval*)g_alloca (new_method->alloca_size - frame->imethod->alloca_size);
+				memset (frame->stack, 0, new_method->alloca_size);
 				sp = frame->stack;
 			}
-			vt_sp = (unsigned char *) sp + frame->imethod->stack_size;
+			frame->imethod = new_method;
+			vt_sp = (guchar*)sp + new_method->stack_size;
 #if DEBUG_INTERP
 			vtalloc = vt_sp;
 #endif
@@ -6428,6 +6430,8 @@ main_loop:
 
 			int len = sp [-1].data.i;
 			sp [-1].data.p = alloca (len);
+
+			frame->imethod->has_localloc = TRUE;
 
 			if (frame->imethod->init_locals)
 				memset (sp [-1].data.p, 0, len);
