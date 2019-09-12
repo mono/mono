@@ -1705,6 +1705,25 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				return ins;
 			}
 		}
+	} else if ((cmethod->klass == mono_defaults.int_class || cmethod->klass == mono_defaults.uint_class) && 
+		!strcmp (cmethod->name, "op_Explicit") && fsig->param_count == 1) {
+
+		int from_type = fsig->params [0]->type;
+		if (from_type == MONO_TYPE_I4 || from_type == MONO_TYPE_U4) {
+			MONO_INST_NEW (cfg, ins, SIZEOF_REGISTER == 8 ? OP_SEXT_I4 : OP_MOVE);
+		} else if (from_type == MONO_TYPE_PTR) {
+			MONO_INST_NEW (cfg, ins, OP_MOVE);
+		} else if (SIZEOF_REGISTER == 8 && (from_type == MONO_TYPE_I8 || from_type == MONO_TYPE_U8)) {
+			MONO_INST_NEW (cfg, ins, OP_MOVE);
+		} else {
+			return ins;
+		}
+
+		ins->dreg = alloc_preg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->type = STACK_PTR;
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
 	} else if (cmethod->klass == mono_defaults.systemtype_class && !strcmp (cmethod->name, "op_Equality")) {
 		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
 		MONO_INST_NEW (cfg, ins, OP_PCEQ);
