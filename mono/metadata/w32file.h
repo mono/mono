@@ -167,7 +167,7 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 
 ICALL_EXPORT
 MonoBoolean
-ves_icall_System_IO_MonoIO_Cancel (gpointer handle, MonoBoolean all, gint32 *error);
+ves_icall_System_IO_MonoIO_Cancel (gpointer handle, gint32 *error);
 
 ICALL_EXPORT
 MonoBoolean
