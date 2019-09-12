@@ -1415,7 +1415,7 @@ namespace System.Net.Sockets
 			int nativeError;
 			int ret;
 			unsafe {
-				using (var handle = buffer.Pin ()) {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
 					ret = Receive_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, out nativeError, is_blocking);
 				}
 			}
@@ -1577,7 +1577,7 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					using (var pbuffer = sockares.Buffer.Pin ()) {
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
 						total = Receive_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
 					}
 				}
@@ -1739,7 +1739,7 @@ namespace System.Net.Sockets
 			int nativeError;
 			int cnt;
 			unsafe {
-				using (var handle = buffer.Pin ()) {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
 					Console.Error.WriteLine ($"RECEIVE FROM MEMORY!");
 					cnt = ReceiveFrom_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, ref sockaddr, out nativeError, is_blocking);
 				}
@@ -2121,7 +2121,7 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					using (var pbuffer = sockares.Buffer.Pin ()) {
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
 						total = Socket.Send_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, false);
 					}
 				}
@@ -2283,7 +2283,7 @@ namespace System.Net.Sockets
 			int error;
 			int ret;
 			unsafe {
-				using (var pbuffer = buffer.Pin ()) {
+				using (var pbuffer = buffer.Slice (offset, size).Pin ()) {
 					ret = SendTo_internal (m_Handle, (byte*)pbuffer.Pointer, size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
 				}
 			}
