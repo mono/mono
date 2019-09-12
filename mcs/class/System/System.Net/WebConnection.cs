@@ -166,7 +166,12 @@ namespace System.Net
 				} else {
 					try {
 						operation.ThrowIfDisposed (cancellationToken);
-						await socket.ConnectAsync (remote).ConfigureAwait (false);
+
+						// Keep Mono's old implementation from SocketTaskExtensions.cs
+						await Task.Factory.FromAsync (
+							(targetEndPoint, callback, state) => ((Socket)state).BeginConnect (targetEndPoint, callback, state),
+							asyncResult => ((Socket)asyncResult.AsyncState).EndConnect (asyncResult),
+							remote, socket).ConfigureAwait (false);
 					} catch (ObjectDisposedException) {
 						throw;
 					} catch (Exception exc) {
