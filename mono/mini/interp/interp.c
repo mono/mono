@@ -6431,8 +6431,6 @@ main_loop:
 			int len = sp [-1].data.i;
 			sp [-1].data.p = alloca (len);
 
-			frame->imethod->has_localloc = TRUE;
-
 			if (frame->imethod->init_locals)
 				memset (sp [-1].data.p, 0, len);
 			++ip;

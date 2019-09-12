@@ -5766,6 +5766,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (td->sp != td->stack + 1)
 					g_warning("CEE_LOCALLOC: stack not empty");
 				++td->ip;
+				td->rtm->has_localloc = TRUE;
 				SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_MP);
 				break;
 #if 0
