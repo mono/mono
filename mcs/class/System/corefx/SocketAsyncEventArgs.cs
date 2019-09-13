@@ -164,6 +164,6 @@ namespace System.Net.Sockets
             _bufferIsExplicitArray = false;
         }
 
-        internal bool HasMultipleBuffers => _bufferList != null;        
+        internal bool HasMultipleBuffers => _bufferList != null;
     }
 }
