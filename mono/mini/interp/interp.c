@@ -1003,36 +1003,6 @@ ves_array_calculate_index (MonoArray *ao, stackval *sp, gboolean safe)
 	return pos;
 }
 
-static MONO_NEVER_INLINE MonoException*
-ves_array_set (InterpFrame *frame, stackval *sp, MonoMethodSignature *sig)
-{
-	MonoObject *o = sp->data.o;
-	MonoArray *ao = (MonoArray *) o;
-	MonoClass *ac = o->vtable->klass;
-
-	g_assert (m_class_get_rank (ac) >= 1);
-
-	gint32 pos = ves_array_calculate_index (ao, sp + 1, TRUE);
-	if (pos == -1)
-		return mono_get_exception_index_out_of_range ();
-
-	int val_index = 1 + m_class_get_rank (ac);
-	if (sp [val_index].data.p && !m_class_is_valuetype (m_class_get_element_class (mono_object_class (o)))) {
-		ERROR_DECL (error);
-		MonoObject *isinst = mono_object_isinst_checked (sp [val_index].data.o, m_class_get_element_class (mono_object_class (o)), error);
-		mono_error_cleanup (error);
-		if (!isinst)
-			return mono_get_exception_array_type_mismatch ();
-	}
-
-	gint32 esize = mono_array_element_size (ac);
-	gpointer ea = mono_array_addr_with_size_fast (ao, esize, pos);
-
-	MonoType *mt = sig->params [m_class_get_rank (ac)];
-	stackval_to_data (mt, &sp [val_index], ea, FALSE);
-	return NULL;
-}
-
 static MonoException*
 ves_array_get (InterpFrame *frame, stackval *sp, stackval *retval, MonoMethodSignature *sig, gboolean safe)
 {
@@ -1519,12 +1489,6 @@ ves_imethod (InterpFrame *frame, MonoMethod *method, MonoMethodSignature *sig, s
 		}
 		if (!strcmp (name, "UnsafeLoad"))
 			return ves_array_get (frame, sp, retval, sig, FALSE);
-	} else if (mini_class_is_system_array (method->klass)) {
-		MonoObject *obj = (MonoObject*) sp->data.p;
-		if (!obj)
-			return mono_get_exception_null_reference ();
-		if (*name == 'S' && (strcmp (name, "Set") == 0))
-			return ves_array_set (frame, sp, sig);
 	}
 	
 	g_error ("Don't know how to exec runtime method %s.%s::%s", 
