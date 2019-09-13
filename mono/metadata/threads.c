@@ -1809,7 +1809,9 @@ mono_thread_get_name_utf8 (MonoThread *thread)
 
 	LOCK_THREAD (internal);
 
-	char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
+	char *tname = NULL;
+	if (internal->name)
+		tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
 
 	UNLOCK_THREAD (internal);
 
