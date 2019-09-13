@@ -459,29 +459,79 @@ NOHANDLES(ICALL(EWH_2, "ResetEventInternal",  ves_icall_System_Threading_Events_
 NOHANDLES(ICALL(EWH_3, "SetEventInternal",    ves_icall_System_Threading_Events_SetEvent_internal))
 
 ICALL_TYPE(ILOCK, "System.Threading.Interlocked", ILOCK_1)
+
+//#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_1, "Add(int&,int)", ves_icall_System_Threading_Interlocked_Add_Int))
+//#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_2, "Add(long&,long)", ves_icall_System_Threading_Interlocked_Add_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 ICALL(ILOCK_3, "CompareExchange(T&,T,T)", ves_icall_System_Threading_Interlocked_CompareExchange_T)
+#endif
+
 NOHANDLES(ICALL(ILOCK_4, "CompareExchange(double&,double,double)", ves_icall_System_Threading_Interlocked_CompareExchange_Double))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_5, "CompareExchange(int&,int,int)", ves_icall_System_Threading_Interlocked_CompareExchange_Int))
 NOHANDLES(ICALL(ILOCK_6, "CompareExchange(int&,int,int,bool&)", ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success))
 NOHANDLES(ICALL(ILOCK_7, "CompareExchange(intptr&,intptr,intptr)", ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_8, "CompareExchange(long&,long,long)", ves_icall_System_Threading_Interlocked_CompareExchange_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 ICALL(ILOCK_9, "CompareExchange(object&,object,object)", ves_icall_System_Threading_Interlocked_CompareExchange_Object)
+#endif
+
 NOHANDLES(ICALL(ILOCK_10, "CompareExchange(single&,single,single)", ves_icall_System_Threading_Interlocked_CompareExchange_Single))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_11, "Decrement(int&)", ves_icall_System_Threading_Interlocked_Decrement_Int))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_12, "Decrement(long&)", ves_icall_System_Threading_Interlocked_Decrement_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 ICALL(ILOCK_13, "Exchange(T&,T)", ves_icall_System_Threading_Interlocked_Exchange_T)
+#endif
+
 NOHANDLES(ICALL(ILOCK_14, "Exchange(double&,double)", ves_icall_System_Threading_Interlocked_Exchange_Double))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 NOHANDLES(ICALL(ILOCK_15, "Exchange(int&,int)", ves_icall_System_Threading_Interlocked_Exchange_Int))
 NOHANDLES(ICALL(ILOCK_16, "Exchange(intptr&,intptr)", ves_icall_System_Threading_Interlocked_Exchange_IntPtr))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X)
 NOHANDLES(ICALL(ILOCK_17, "Exchange(long&,long)", ves_icall_System_Threading_Interlocked_Exchange_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 ICALL(ILOCK_18, "Exchange(object&,object)", ves_icall_System_Threading_Interlocked_Exchange_Object)
+#endif
+
 NOHANDLES(ICALL(ILOCK_19, "Exchange(single&,single)", ves_icall_System_Threading_Interlocked_Exchange_Single))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_20, "Increment(int&)", ves_icall_System_Threading_Interlocked_Increment_Int))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlocked_Increment_Long))
+#endif
+
 NOHANDLES(ICALL(ILOCK_22, "MemoryBarrierProcessWide", ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide))
+
+#if !(HOST_AMD64 | HOST_ARM64)
 NOHANDLES(ICALL(ILOCK_23, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long))
+#endif
 
 ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_0)
 HANDLES(MONIT_0, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter, void, 1, (MonoObject))

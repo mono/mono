@@ -973,29 +973,82 @@ ICALL_TYPE(UNORM, "System.Text.Normalization", UNORM_1)
 HANDLES(UNORM_1, "load_normalization_resource", ves_icall_System_Text_Normalization_load_normalization_resource, void, 6, (guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref))
 
 ICALL_TYPE(ILOCK, "System.Threading.Interlocked", ILOCK_1)
+
+//#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_1, "Add(int&,int)", ves_icall_System_Threading_Interlocked_Add_Int))
+//#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_2, "Add(long&,long)", ves_icall_System_Threading_Interlocked_Add_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 ICALL(ILOCK_3, "CompareExchange(T&,T,T)", ves_icall_System_Threading_Interlocked_CompareExchange_T)
+#endif
+
 NOHANDLES(ICALL(ILOCK_4, "CompareExchange(double&,double,double)", ves_icall_System_Threading_Interlocked_CompareExchange_Double))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_5, "CompareExchange(int&,int,int)", ves_icall_System_Threading_Interlocked_CompareExchange_Int))
 NOHANDLES(ICALL(ILOCK_6, "CompareExchange(int&,int,int,bool&)", ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success))
 NOHANDLES(ICALL(ILOCK_7, "CompareExchange(intptr&,intptr,intptr)", ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_8, "CompareExchange(long&,long,long)", ves_icall_System_Threading_Interlocked_CompareExchange_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 ICALL(ILOCK_9, "CompareExchange(object&,object,object)", ves_icall_System_Threading_Interlocked_CompareExchange_Object)
+#endif
+
 NOHANDLES(ICALL(ILOCK_10, "CompareExchange(single&,single,single)", ves_icall_System_Threading_Interlocked_CompareExchange_Single))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_11, "Decrement(int&)", ves_icall_System_Threading_Interlocked_Decrement_Int))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_12, "Decrement(long&)", ves_icall_System_Threading_Interlocked_Decrement_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 ICALL(ILOCK_13, "Exchange(T&,T)", ves_icall_System_Threading_Interlocked_Exchange_T)
+#endif
+
 NOHANDLES(ICALL(ILOCK_14, "Exchange(double&,double)", ves_icall_System_Threading_Interlocked_Exchange_Double))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 NOHANDLES(ICALL(ILOCK_15, "Exchange(int&,int)", ves_icall_System_Threading_Interlocked_Exchange_Int))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 NOHANDLES(ICALL(ILOCK_16, "Exchange(intptr&,intptr)", ves_icall_System_Threading_Interlocked_Exchange_IntPtr))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X)
 NOHANDLES(ICALL(ILOCK_17, "Exchange(long&,long)", ves_icall_System_Threading_Interlocked_Exchange_Long))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86)
 ICALL(ILOCK_18, "Exchange(object&,object)", ves_icall_System_Threading_Interlocked_Exchange_Object)
+#endif
+
 NOHANDLES(ICALL(ILOCK_19, "Exchange(single&,single)", ves_icall_System_Threading_Interlocked_Exchange_Single))
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X | HOST_POWERPC | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_20, "Increment(int&)", ves_icall_System_Threading_Interlocked_Increment_Int))
+#endif
+
+#if !(HOST_AMD64 | HOST_ARM64 | HOST_S390X | HOST_POWERPC64)
 NOHANDLES(ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlocked_Increment_Long))
+#endif
+
 NOHANDLES(ICALL(ILOCK_22, "MemoryBarrierProcessWide", ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide))
+
+#if !(HOST_AMD64 | HOST_ARM64)
 NOHANDLES(ICALL(ILOCK_23, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long))
+#endif
 
 ICALL_TYPE(ITHREAD, "System.Threading.InternalThread", ITHREAD_1)
 HANDLES(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal, void, 1, (MonoInternalThread))
@@ -1099,12 +1152,20 @@ ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
 NOHANDLES(ICALL(TTIMER_1, "GetTimeMonotonic", ves_icall_System_Threading_Timer_GetTimeMonotonic))
 
 ICALL_TYPE(VOLATILE, "System.Threading.Volatile", VOLATILE_1)
+
 NOHANDLES(ICALL(VOLATILE_1, "Read(double&)", ves_icall_System_Threading_Volatile_ReadDouble))
+
+#if !(HOST_AMD64 | HOST_ARM64)
 NOHANDLES(ICALL(VOLATILE_2, "Read(long&)", ves_icall_System_Threading_Volatile_Read8))
 NOHANDLES(ICALL(VOLATILE_3, "Read(ulong&)", ves_icall_System_Threading_Volatile_ReadU8))
+#endif
+
 NOHANDLES(ICALL(VOLATILE_4, "Write(double&,double)", ves_icall_System_Threading_Volatile_WriteDouble))
+
+#if !(HOST_AMD64 | HOST_ARM64)
 NOHANDLES(ICALL(VOLATILE_5, "Write(long&,long)", ves_icall_System_Threading_Volatile_Write8))
 NOHANDLES(ICALL(VOLATILE_6, "Write(ulong&,ulong)", ves_icall_System_Threading_Volatile_WriteU8))
+#endif
 
 ICALL_TYPE(WAITH, "System.Threading.WaitHandle", WAITH_1)
 HANDLES(WAITH_1, "SignalAndWait_Internal", ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal, gint32, 3, (gpointer, gpointer, gint32))
