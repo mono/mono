@@ -12,7 +12,7 @@ namespace System.Net.Sockets
 
 		internal static ValueTask WriteAsync (this NetworkStream stream, ReadOnlyMemory<byte> buffer)
 		{
-			return stream.WriteAsync (buffer);
+			return stream.WriteAsync (buffer, default);
 		}
 	}
 }
