@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Mono.Debugger.Soft
 {
-	public sealed class ExceptionEventRequest : EventRequest {
+	public class ExceptionEventRequest : EventRequest {
 
-		TypeMirror exc_type;
-		bool caught, uncaught, subclasses;
+		protected TypeMirror exc_type;
+		protected bool caught, uncaught, subclasses;
 		
 		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught) : base (vm, EventType.Exception) {
 			if (exc_type != null) {
@@ -42,6 +42,21 @@ namespace Mono.Debugger.Soft
 		public override void Enable () {
 			var mods = new List <Modifier> ();
 			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses });
+			SendReq (mods);
+		}
+	}
+
+	public sealed class ExceptionEventRequest2 : ExceptionEventRequest {
+
+		bool everything_else;
+		
+		internal ExceptionEventRequest2 (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught, bool everything_else) : base (vm, exc_type, caught, uncaught) {
+			this.everything_else = everything_else;
+		}
+
+		public override void Enable () {
+			var mods = new List <Modifier> ();
+			mods.Add (new ExceptionModifier2 () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses, EverythingElse = everything_else });
 			SendReq (mods);
 		}
 	}

@@ -309,6 +309,13 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
+	class ExceptionModifier2 : ExceptionModifier {
+		public bool EverythingElse {
+			get; set;
+		}
+	}
+
+
 	class AssemblyModifier : Modifier {
 		public long[] Assemblies {
 			get; set;
@@ -429,7 +436,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 53;
+		internal const int MINOR_VERSION = 54;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -484,7 +491,8 @@ namespace Mono.Debugger.Soft
 			STEP = 10,
 			ASSEMBLY_ONLY = 11,
 			SOURCE_FILE_ONLY = 12,
-			TYPE_NAME_ONLY = 13
+			TYPE_NAME_ONLY = 13,
+			EXCEPTION_ONLY_2 = 15,
 		}
 
 		enum CmdVM {
@@ -2616,6 +2624,14 @@ namespace Mono.Debugger.Soft
 					} else if (mod is ThreadModifier) {
 						w.WriteByte ((byte)ModifierKind.THREAD_ONLY);
 						w.WriteId ((mod as ThreadModifier).Thread);
+					} else if (mod is ExceptionModifier2) {
+						var em = mod as ExceptionModifier2;
+						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY_2);
+						w.WriteId (em.Type);
+						w.WriteBool (em.Caught);
+						w.WriteBool (em.Uncaught);
+						w.WriteBool (em.Subclasses);
+						w.WriteBool (em.EverythingElse);
 					} else if (mod is ExceptionModifier) {
 						var em = mod as ExceptionModifier;
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
