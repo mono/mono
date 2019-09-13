@@ -982,10 +982,7 @@ NOHANDLES(ICALL(ILOCK_1, "Add(int&,int)", ves_icall_System_Threading_Interlocked
 NOHANDLES(ICALL(ILOCK_2, "Add(long&,long)", ves_icall_System_Threading_Interlocked_Add_Long))
 #endif
 
-#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
 ICALL(ILOCK_3, "CompareExchange(T&,T,T)", ves_icall_System_Threading_Interlocked_CompareExchange_T)
-#endif
-
 NOHANDLES(ICALL(ILOCK_4, "CompareExchange(double&,double,double)", ves_icall_System_Threading_Interlocked_CompareExchange_Double))
 
 #if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_POWERPC | HOST_POWERPC64)
@@ -1012,10 +1009,7 @@ NOHANDLES(ICALL(ILOCK_11, "Decrement(int&)", ves_icall_System_Threading_Interloc
 NOHANDLES(ICALL(ILOCK_12, "Decrement(long&)", ves_icall_System_Threading_Interlocked_Decrement_Long))
 #endif
 
-#if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
 ICALL(ILOCK_13, "Exchange(T&,T)", ves_icall_System_Threading_Interlocked_Exchange_T)
-#endif
-
 NOHANDLES(ICALL(ILOCK_14, "Exchange(double&,double)", ves_icall_System_Threading_Interlocked_Exchange_Double))
 
 #if !(HOST_AMD64 | HOST_ARM64 | HOST_X86 | HOST_S390X)
