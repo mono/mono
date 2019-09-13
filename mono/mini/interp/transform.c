@@ -1386,10 +1386,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 		} else if (!strcmp (tm, "get_Length")) {
 			*op = MINT_LDLEN;
 		} else if (!strcmp (tm, "Address")) {
-			if (!readonly && !m_class_is_valuetype (m_class_get_element_class (target_method->klass)))
-				*op = MINT_LDELEMA_TC;
-			else
-				*op = MINT_LDELEMA;
+			MonoClass *check_class = readonly ? NULL : m_class_get_element_class (target_method->klass);
+			interp_emit_ldelema (td, target_method->klass, check_class);
+			td->ip += 5;
+			return TRUE;
 		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad")) {
 			*op = MINT_CALLRUN;
 		} else if (!strcmp (tm, "Get")) {
@@ -2300,15 +2300,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 #else
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I4);
 #endif
-		}
-		if (op == MINT_LDELEMA_TC) {
-			td->last_ins->data [0] = m_class_get_rank (target_method->klass);
-			td->last_ins->data [1] = get_data_item_index (td, m_class_get_element_class (target_method->klass));
-		}
-		if (op == MINT_LDELEMA) {
-			td->last_ins->data [0] = m_class_get_rank (target_method->klass);
-			int size = mono_class_array_element_size (m_class_get_element_class (target_method->klass));
-			WRITE32_INS (td->last_ins, 1, &size);
 		}
 
 		if (op == MINT_CALLRUN) {
