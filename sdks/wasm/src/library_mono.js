@@ -1,10 +1,12 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message; Module["get_call_stack"] = MONO.mono_wasm_get_call_stack_anytime;',
+	$MONO__postset: 'Module["pump_message"] = MONO.pump_message; Module["get_call_stack"] = MONO.mono_wasm_get_call_stack_anytime; Module["_stack_probe"] = MONO.mono_wasm_stack_probe.bind(MONO);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
 		mono_wasm_runtime_is_ready : false,
+		mono_wasm_stack_probe_state : null,
+
 		pump_message: function () {
 			if (!this.mono_background_exec)
 				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
@@ -16,18 +18,6 @@ var MonoSupportLib = {
 				--MONO.pump_count;
 				this.mono_background_exec ();
 			}
-		},
-
-		mono_wasm_get_call_stack_anytime: function() {
-			if (!this.mono_wasm_enum_frames)
-				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", 'void', [ ]);
-
-			this.active_frames = [];
-			this.mono_wasm_enum_frames ();
-
-			var the_frames = this.active_frames;
-			this.active_frames = [];
-			return the_frames;
 		},
 
 		mono_wasm_get_call_stack: function() {
@@ -103,8 +93,48 @@ var MonoSupportLib = {
 			this.mono_wasm_setup_single_step (kind);
 		},
 
+		_do_stack_probe: function () {
+			var state = this.mono_wasm_stack_probe_state;
+			if (!state)
+				state = this.mono_wasm_stack_probe_state = {
+					max_js_stack_size: 0,
+					min_memory_stack_offset: 99999999,
+				};
+
+			var js_stack = null;
+			try {
+				throw new Error("");
+			} catch (exc) {
+				js_stack = exc.stack;
+			}
+			var js_stack_size = js_stack.split("\n").length;
+
+			var memory_stack_offset = Module.stackSave();
+
+			var changed = (state.max_js_stack_size < js_stack_size) ||
+				(state.min_memory_stack_offset > memory_stack_offset);
+
+			if (changed) {
+				console.log("js stack size", js_stack_size, "memory stack offset", memory_stack_offset);
+				console.log(js_stack);
+			}
+
+			state.max_js_stack_size = Math.max(state.js_stack_size, js_stack_size);
+			state.min_memory_stack_offset = Math.min(state.min_memory_stack_offset, memory_stack_offset);
+		},
+
+		mono_wasm_stack_probe: function () {
+			if (!Module)
+				return;
+			if (Module.enableStackProbes === false)
+				return;
+
+			this._do_stack_probe();
+		},
+
 		mono_wasm_runtime_ready: function () {
-			window["mono_wasm_stack_probe"]();
+			this.mono_wasm_stack_probe();
+
 			console.log (">>mono_wasm_runtime_ready");
 			this.mono_wasm_runtime_is_ready = true;
 			debugger;
@@ -368,7 +398,7 @@ var MonoSupportLib = {
 	},
 
 	mono_set_timeout: function (timeout, id) {
-		window["mono_wasm_stack_probe"]();
+		this.mono_wasm_stack_probe();
 
 		if (!this.mono_set_timeout_exec)
 			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", 'void', [ 'number' ]);
