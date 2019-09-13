@@ -126,7 +126,7 @@ var MonoSupportLib = {
 		mono_wasm_stack_probe: function () {
 			if (!Module)
 				return;
-			if (Module.enableStackProbes === false)
+			if (window["mono_wasm_enable_stack_probes"] !== true)
 				return;
 
 			this._do_stack_probe();
