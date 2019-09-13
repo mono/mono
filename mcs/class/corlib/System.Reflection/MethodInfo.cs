@@ -54,6 +54,11 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+
+		Type _MethodInfo.GetType ()
+		{
+			return GetType ();
+		}
 #endif
 
 		internal virtual int GenericParameterCount => GetGenericArguments ().Length;
