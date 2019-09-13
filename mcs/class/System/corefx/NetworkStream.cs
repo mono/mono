@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace System.Net.Sockets
 {
 	partial class NetworkStream

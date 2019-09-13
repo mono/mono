@@ -1,6 +1,7 @@
 ../test-helpers/Configuration.Http.cs
 ../test-helpers/Configuration.Certificates.cs
 ../test-helpers/TestConfiguration.cs
+../test-helpers/NetworkStreamHelper.cs
 
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 

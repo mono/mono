@@ -668,6 +668,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/Sockets/LingerOption.cs
 ../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
+# ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
 ../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetworkStream.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
