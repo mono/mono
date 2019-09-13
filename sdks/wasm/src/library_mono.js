@@ -128,7 +128,10 @@ var MonoSupportLib = {
 			if (this.mono_wasm_stack_probes_enabled === -1) {
 				if (!Module)
 					return;
-				this.mono_wasm_stack_probes_enabled = window["mono_wasm_enable_stack_probes"] ? 1 : 0;
+				if (typeof (mono_wasm_enable_stack_probes) !== "undefined")
+					this.mono_wasm_stack_probes_enabled = mono_wasm_enable_stack_probes ? 1 : 0;
+				else
+					this.mono_wasm_stack_probes_enabled = 0;
 			}
 
 			if (this.mono_wasm_stack_probes_enabled !== 1)
