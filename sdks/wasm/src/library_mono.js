@@ -6,6 +6,7 @@ var MonoSupportLib = {
 		timeout_queue: [],
 		mono_wasm_runtime_is_ready : false,
 		mono_wasm_stack_probe_state : null,
+		mono_wasm_stack_probes_enabled : -1,
 
 		pump_message: function () {
 			if (!this.mono_background_exec)
@@ -124,9 +125,13 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_stack_probe: function () {
-			if (!Module)
-				return;
-			if (window["mono_wasm_enable_stack_probes"] !== true)
+			if (this.mono_wasm_stack_probes_enabled === -1) {
+				if (!Module)
+					return;
+				this.mono_wasm_stack_probes_enabled = window["mono_wasm_enable_stack_probes"] ? 1 : 0;
+			}
+
+			if (this.mono_wasm_stack_probes_enabled !== 1)
 				return;
 
 			this._do_stack_probe();
