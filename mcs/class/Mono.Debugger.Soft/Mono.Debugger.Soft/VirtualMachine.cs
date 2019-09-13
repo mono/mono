@@ -277,6 +277,13 @@ namespace Mono.Debugger.Soft
 			return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
 
+		public ExceptionEventRequest CreateExceptionRequest2 (TypeMirror exc_type, bool caught, bool uncaught, bool everything_else) {
+			if (Version.AtLeast (2, 54))
+				return new ExceptionEventRequest2 (this, exc_type, caught, uncaught, everything_else);
+			else
+				return new ExceptionEventRequest (this, exc_type, caught, uncaught);
+		}
+
 		public AssemblyLoadEventRequest CreateAssemblyLoadRequest () {
 			return new AssemblyLoadEventRequest (this);
 		}
