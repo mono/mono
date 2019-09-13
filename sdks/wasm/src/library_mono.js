@@ -1,6 +1,6 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message; Module["get_call_stack"] = MONO.mono_wasm_get_call_stack_anytime; Module["_stack_probe"] = MONO.mono_wasm_stack_probe.bind(MONO);',
+	$MONO__postset: 'Module["pump_message"] = MONO.pump_message; Module["_stack_probe"] = MONO.mono_wasm_stack_probe.bind(MONO);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
