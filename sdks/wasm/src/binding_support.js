@@ -24,7 +24,7 @@ var BindingSupportLib = {
 		mono_wasm_stack_probe: function () {
 			if (!Module)
 				return;
-			
+
 			Module._stack_probe();
 		},
 
@@ -270,8 +270,6 @@ var BindingSupportLib = {
 
 		// https://github.com/Planeshifter/emscripten-examples/blob/master/01_PassingArrays/sum_post.js
 		js_typedarray_to_heap: function(typedArray){
-			this.mono_wasm_stack_probe();
-
 			var numBytes = typedArray.length * typedArray.BYTES_PER_ELEMENT;
 			var ptr = Module._malloc(numBytes);
 			var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
