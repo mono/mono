@@ -55,6 +55,12 @@ mono_llvm_dump_value (LLVMValueRef value)
 	outs () << (*unwrap<Value> (value));
 }
 
+void
+mono_llvm_dump_module (LLVMModuleRef module)
+{
+	LLVMDumpModule (module);
+}
+
 /* Missing overload for building an alloca with an alignment */
 LLVMValueRef
 mono_llvm_build_alloca (LLVMBuilderRef builder, LLVMTypeRef Ty, 
