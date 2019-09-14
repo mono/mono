@@ -44,11 +44,6 @@
 
 #if HAVE_BOEHM_GC
 
-#undef TRUE
-#undef FALSE
-#define THREAD_LOCAL_ALLOC 1
-#include "private/pthread_support.h"
-
 #if defined(HOST_DARWIN) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 void *pthread_get_stackaddr_np(pthread_t);
 #endif
@@ -60,9 +55,8 @@ void *pthread_get_stackaddr_np(pthread_t);
 
 static gboolean gc_initialized = FALSE;
 static gboolean gc_dont_gc_env = FALSE;
-static mono_mutex_t mono_gc_lock;
 
-typedef void (*GC_push_other_roots_proc)(void);
+static mono_mutex_t mono_gc_lock;
 
 static GC_push_other_roots_proc default_push_other_roots;
 static GHashTable *roots;
@@ -127,6 +121,7 @@ mono_gc_base_init (void)
 	mono_w32handle_init ();
 #endif
 
+#if JON
 	/*
 	 * Handle the case when we are called from a thread different from the main thread,
 	 * confusing libgc.
@@ -180,14 +175,15 @@ mono_gc_base_init (void)
 		GC_stackbottom = (char*)stack_bottom;
 	}
 #endif
+#endif
 
 	roots = g_hash_table_new (NULL, NULL);
-	default_push_other_roots = GC_push_other_roots;
-	GC_push_other_roots = mono_push_other_roots;
+	default_push_other_roots = GC_get_push_other_roots ();
+	GC_set_push_other_roots (mono_push_other_roots);
 
 #if !defined(HOST_ANDROID)
 	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
-	GC_no_dls = TRUE;
+	GC_set_no_dls (TRUE);
 #endif
 	{
 		if ((env = g_getenv ("MONO_GC_DEBUG"))) {
@@ -210,8 +206,8 @@ mono_gc_base_init (void)
 	GC_init ();
 
 	GC_set_warn_proc (mono_gc_warning);
-	GC_finalize_on_demand = 1;
-	GC_finalizer_notifier = mono_gc_finalize_notify;
+	GC_set_finalize_on_demand (1);
+	GC_set_finalizer_notifier(mono_gc_finalize_notify);
 
 	GC_init_gcj_malloc (5, NULL);
 	GC_allow_register_threads ();
@@ -259,7 +255,7 @@ mono_gc_base_init (void)
 	mono_thread_info_attach ();
 
 	GC_set_on_collection_event (on_gc_notification);
-	GC_on_heap_resize = on_gc_heap_resize;
+	GC_set_on_heap_resize (on_gc_heap_resize);
 
 	gc_initialized = TRUE;
 }
@@ -267,7 +263,7 @@ mono_gc_base_init (void)
 void
 mono_gc_base_cleanup (void)
 {
-	GC_finalizer_notifier = NULL;
+	GC_set_finalizer_notifier (NULL);
 }
 
 void
@@ -344,7 +340,7 @@ mono_gc_get_generation  (MonoObject *object)
 int
 mono_gc_collection_count (int generation)
 {
-	return GC_gc_no;
+	return GC_get_gc_no ();
 }
 
 /**
@@ -435,7 +431,7 @@ mono_gc_thread_in_critical_region (MonoThreadInfo *info)
 gboolean
 mono_object_is_alive (MonoObject* o)
 {
-	return GC_is_marked ((ptr_t)o);
+	return GC_is_marked ((const void *)o);
 }
 
 int
@@ -1034,7 +1030,7 @@ mono_gc_get_description (void)
 void
 mono_gc_set_desktop_mode (void)
 {
-	GC_dont_expand = 1;
+	GC_set_dont_expand (1);
 }
 
 gboolean
@@ -1046,7 +1042,7 @@ mono_gc_is_moving (void)
 gboolean
 mono_gc_is_disabled (void)
 {
-	if (GC_dont_gc || gc_dont_gc_env)
+	if (GC_is_disabled () || gc_dont_gc_env)
 		return TRUE;
 	else
 		return FALSE;
@@ -1067,7 +1063,9 @@ mono_gc_get_range_copy_func (void)
 guint8*
 mono_gc_get_card_table (int *shift_bits, gpointer *card_mask)
 {
-	g_assert_not_reached ();
+	*shift_bits = 0;
+	*card_mask = 0;
+	//g_assert_not_reached ();
 	return NULL;
 }
 
@@ -1142,6 +1140,17 @@ mono_gc_set_gc_callbacks (MonoGCCallbacks *callbacks)
 void
 mono_gc_set_stack_end (void *stack_end)
 {
+}
+
+// FIXME
+void GC_start_blocking ()
+{
+
+}
+
+void GC_end_blocking ()
+{
+
 }
 
 void

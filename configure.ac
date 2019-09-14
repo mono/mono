@@ -2039,14 +2039,14 @@ if test "x$support_boehm" = "xyes"; then
 	case "x$libgc" in
 		xincluded)
 			if test "x$support_boehm" = "xyes"; then
-				libgc_dir=libgc
+				libgc_dir=external/bdwgc
 			fi
 
-			LIBGC_CPPFLAGS='-I$(top_srcdir)/libgc/include'
-			LIBGC_LIBS='$(top_builddir)/libgc/libmonogc.la'
-			LIBGC_STATIC_LIBS='$(top_builddir)/libgc/libmonogc-static.la'
+			LIBGC_CPPFLAGS='-I$(top_srcdir)/external/bdwgc/include -I$(top_srcdir)/external/bdwgc/libatomic_ops/src'
+			LIBGC_LIBS='$(top_builddir)/external/bdwgc/libgc.la'
+			LIBGC_STATIC_LIBS='$(top_builddir)/external/bdwgc/libgc-static.la'
 
-			BOEHM_DEFINES="-DHAVE_BOEHM_GC"
+			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS"
 
 			if test x$target_win32 = xyes; then
 				BOEHM_DEFINES="$BOEHM_DEFINES -DGC_NOT_DLL"
@@ -5607,7 +5607,7 @@ case "x$libgc" in
 		TMP_CPPFLAGS=`echo $TMP_CPPFLAGS | sed -e 's/-finstrument-for-thread-suspension//g'`
 		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$TMP_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
 		if test "x$support_boehm" = "xyes"; then
-			AC_CONFIG_SUBDIRS(libgc)
+			AC_CONFIG_SUBDIRS(external/bdwgc)
 		fi
 		;;
 esac
@@ -6063,7 +6063,7 @@ if test "x$enable_msvc" = "xyes"; then
 	AC_SUBST(mono_msvc_build_lib_dir)
 	AC_SUBST(mono_msvc_build_bin_dir)
 else
-	mono_runtime=mono/mini/mono
+	mono_runtime=mono/mini/mono-boehm
 	mono_runtime_wrapper=$mono_runtime
 fi
 
