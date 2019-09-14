@@ -70,4 +70,4 @@
 	branch = release/6.x
 [submodule "external/bdwgc"]
 	path = external/bdwgc
-	url = git@github.com:Unity-Technologies/bdwgc.git
+	url = git://github.com/Unity-Technologies/bdwgc.git
