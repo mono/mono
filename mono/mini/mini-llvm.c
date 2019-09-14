@@ -383,6 +383,7 @@ typedef enum {
 	INTRINS_SSE_PAUSE,
 	INTRINS_SSE_DPPS,
 	INTRINS_SSE_ROUNDPD,
+	INTRINS_SSE_ROUNDPS,
 #endif
 	INTRINS_NUM
 } IntrinsicId;
@@ -1132,6 +1133,7 @@ simd_op_to_llvm_type (int opcode)
 	case OP_EXTRACT_U1:
 	case OP_EXPAND_I1:
 		return type_to_simd_type (MONO_TYPE_I1);
+	case OP_EXTRACT_R4:
 	case OP_EXPAND_R4:
 		return type_to_simd_type (MONO_TYPE_R4);
 	case OP_CVTDQ2PD:
@@ -6891,6 +6893,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildSExt (builder, pcmp, retType, "");
 			break;
 		}
+		case OP_EXTRACT_R4:
 		case OP_EXTRACT_R8:
 		case OP_EXTRACT_I8:
 		case OP_EXTRACT_I4:
@@ -6905,6 +6908,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			t = simd_op_to_llvm_type (ins->opcode);
 
 			switch (ins->opcode) {
+			case OP_EXTRACT_R4:
 			case OP_EXTRACT_R8:
 			case OP_EXTRACT_I8:
 			case OP_EXTRACT_I4:
@@ -7294,6 +7298,11 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_FCONV_TO_R4_X: {
+			values [ins->dreg] = LLVMBuildInsertElement (builder, LLVMConstNull (type_to_simd_type (MONO_TYPE_R4)), lhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
+			break;
+		}
+
 		case OP_SSE41_ROUNDPD: {
 			LLVMValueRef args [3];
 
@@ -7301,6 +7310,16 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
 
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins_by_name (ctx, "llvm.x86.sse41.round.pd"), args, 2, dname);
+			break;
+		}
+
+		case OP_SSE41_ROUNDPS: {
+			LLVMValueRef args [3];
+
+			args [0] = lhs;
+			args [1] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
+
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins_by_name (ctx, "llvm.x86.sse41.round.ps"), args, 2, dname);
 			break;
 		}
 
@@ -8773,7 +8792,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_PAVGB, "llvm.x86.sse2.pavg.b"},
 	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"},
 	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"},
-	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"}
+	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"},
+	{INTRINS_SSE_ROUNDPS, "llvm.x86.sse41.round.ps"}
 #endif
 };
 
@@ -9102,9 +9122,15 @@ add_intrinsic (LLVMModuleRef module, int id)
 		arg_types [2] = LLVMInt8Type ();
 		AddFunc (module, name, ret_type, arg_types, 3);
 		break;
+	case INTRINS_SSE_ROUNDPS:
+		ret_type = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [1] = LLVMInt32Type ();
+		AddFunc (module, name, ret_type, arg_types, 2);
+		break;
 	case INTRINS_SSE_ROUNDPD:
 		ret_type = type_to_simd_type (MONO_TYPE_R8);
-		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = type_to_simd_type (MONO_TYPE_R8);
 		arg_types [1] = LLVMInt32Type ();
 		AddFunc (module, name, ret_type, arg_types, 2);
 		break;

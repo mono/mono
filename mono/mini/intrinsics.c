@@ -131,6 +131,16 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				opcode = OP_SQRTF;
 			} else if (!strcmp (cmethod->name, "Truncate")) {
 				opcode = OP_TRUNCF;
+			} else if (!strcmp (cmethod->name, "Round")) {
+				// special case: emit vroundps for MathF.Round directly instead of what llvm.round.f32 emits
+				// to align with CoreCLR behavior
+				int xreg = alloc_xreg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_FCONV_TO_R4_X, xreg, args [0]->dreg);
+				EMIT_NEW_UNALU (cfg, ins, OP_SSE41_ROUNDPS, xreg, xreg);
+				ins->inst_c0 = 0;
+				int dreg = alloc_freg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_EXTRACT_R4, dreg, xreg);
+				return ins;
 			}
 		}
 		// (float, float)
