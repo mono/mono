@@ -6063,7 +6063,7 @@ if test "x$enable_msvc" = "xyes"; then
 	AC_SUBST(mono_msvc_build_lib_dir)
 	AC_SUBST(mono_msvc_build_bin_dir)
 else
-	mono_runtime=mono/mini/mono-boehm
+	mono_runtime=mono/mini/mono
 	mono_runtime_wrapper=$mono_runtime
 fi
 
