@@ -58,7 +58,8 @@ mono_llvm_dump_value (LLVMValueRef value)
 void
 mono_llvm_dump_module (LLVMModuleRef module)
 {
-	LLVMDumpModule (module);
+	fflush (stdout);
+	unwrap (module)->print (outs (), nullptr, /*ShouldPreserveUseListOrder=*/false, /*IsForDebug=*/true);
 }
 
 /* Missing overload for building an alloca with an alignment */
