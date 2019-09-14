@@ -4838,7 +4838,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I4);
 			interp_add_ins (td, MINT_NEWARR);
 			td->last_ins->data [0] = get_data_item_index (td, vtable);
-			SET_TYPE (td->sp - 1, STACK_TYPE_O, klass);
+			SET_TYPE (td->sp - 1, STACK_TYPE_O, array_class);
 			td->ip += 5;
 			break;
 		}
