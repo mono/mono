@@ -2,6 +2,7 @@ LICENSE.txt
 ThirdPartyNotices.txt
 tests
 /shared
+/host
 sdk
 dotnet*
 aspnetcore-runtime-*

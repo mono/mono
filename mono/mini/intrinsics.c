@@ -278,7 +278,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	}
 
 	if (in_corlib && !strcmp (m_class_get_name (cmethod->klass), "Buffer")) {
-		if (!strcmp (cmethod->name, "Memmove") && fsig->param_count == 3 && fsig->params [0]->type == MONO_TYPE_PTR && fsig->params [1]->type == MONO_TYPE_PTR) {
+		if (!strcmp (cmethod->name, "Memmove") && fsig->param_count == 3 && fsig->params [0]->type == MONO_TYPE_PTR && fsig->params [1]->type == MONO_TYPE_PTR && fsig->params [2]->type == MONO_TYPE_U8) {
 			// throw NRE if src or dst are nulls
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
@@ -286,9 +286,23 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 
 			MONO_INST_NEW (cfg, ins, OP_MEMMOVE);
-			ins->sreg1 = args [0]->dreg; // i1* dst
-			ins->sreg2 = args [1]->dreg; // i1* src
+			ins->sreg1 = args [0]->dreg; // i8* dst
+			ins->sreg2 = args [1]->dreg; // i8* src
 			ins->sreg3 = args [2]->dreg; // i32/i64 len
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+	}
+
+	if (in_corlib && !strcmp (m_class_get_name (cmethod->klass), "RuntimeImports")) {
+		if (!strcmp (cmethod->name, "ZeroMemory") && fsig->param_count == 2 && fsig->params [0]->type == MONO_TYPE_PTR && fsig->params [1]->type == MONO_TYPE_U8) {
+			// throw NRE if src is null
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
+			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
+
+			MONO_INST_NEW (cfg, ins, OP_MEMSETC64);
+			ins->sreg1 = args [0]->dreg; // i8* src
+			ins->inst_c0 = 0;            // i8  const value
+			ins->sreg2 = args [1]->dreg; // i64 len
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}

@@ -277,6 +277,7 @@ static LLVMRealPredicate fpcond_to_llvm_cond [] = {
 
 typedef enum {
 	INTRINS_MEMSET,
+	INTRINS_MEMSETC64,
 	INTRINS_MEMCPY,
 	INTRINS_MEMMOVE,
 	INTRINS_SADD_OVF_I32,
@@ -5929,6 +5930,20 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn, "");
 			break;
 		}
+		case OP_MEMSETC64: {
+			int argn = 0;
+			LLVMValueRef args [5];
+			args [argn++] = convert (ctx, values [ins->sreg1], LLVMPointerType (LLVMInt8Type (), 0));
+			args [argn++] = LLVMConstInt (LLVMInt8Type (), ins->inst_c0, FALSE);
+			args [argn++] = convert (ctx, values [ins->sreg2], LLVMInt64Type ());
+#if LLVM_API_VERSION < 900
+			args [argn++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE); // alignment
+#endif
+			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);  // is_volatile
+
+			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMSETC64), args, argn, "");
+			break;
+		}
 		case OP_NOT_REACHED:
 			LLVMBuildUnreachable (builder);
 			has_terminator = TRUE;
@@ -8667,6 +8682,7 @@ typedef struct {
 
 static IntrinsicDesc intrinsics[] = {
 	{INTRINS_MEMSET, "llvm.memset.p0i8.i32"},
+	{INTRINS_MEMSETC64, "llvm.memset.p0i8.i64"},
 	{INTRINS_MEMCPY, "llvm.memcpy.p0i8.p0i8.i32"},
 	{INTRINS_MEMMOVE, "llvm.memmove.p0i8.p0i8.i64"},
 	{INTRINS_SADD_OVF_I32, "llvm.sadd.with.overflow.i32"},
@@ -8818,6 +8834,17 @@ add_intrinsic (LLVMModuleRef module, int id)
 #else
 		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMPointerType (LLVMInt8Type (), 0), LLVMInt32Type (), LLVMInt32Type (), LLVMInt1Type () };
 
+		AddFunc (module, name, LLVMVoidType (), params, 5);
+#endif
+		break;
+	}
+	case INTRINS_MEMSETC64: {
+#if LLVM_API_VERSION >= 900
+		/* No alignment argument */
+		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMInt8Type (), LLVMInt64Type (), LLVMInt1Type () };
+		AddFunc (module, name, LLVMVoidType (), params, 4);
+#else
+		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMInt8Type (), LLVMInt64Type (), LLVMInt32Type (), LLVMInt1Type () };
 		AddFunc (module, name, LLVMVoidType (), params, 5);
 #endif
 		break;
