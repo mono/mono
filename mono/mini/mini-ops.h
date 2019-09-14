@@ -1008,7 +1008,7 @@ MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
 /* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */
 MINI_OP(OP_SSE41_ROUNDPD, "roundpd", XREG, XREG, NONE)
-MINI_OP(OP_SSE41_ROUNDPS, "roundps", XREG, XREG, NONE)
+MINI_OP(OP_SSE41_ROUNDSS, "roundss", XREG, XREG, NONE)
 
 #endif
 
