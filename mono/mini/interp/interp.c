@@ -3028,11 +3028,7 @@ mono_interp_newobj_vt (
 	// stack for all the other recursive cases.
 	interp_exec_method (child_frame, context, error);
 
-	CHECK_RESUME_STATE (context);
-
 	*sp = valuetype_this;
-resume:
-	;
 }
 
 static MONO_NEVER_INLINE MonoException*
@@ -3101,8 +3097,6 @@ mono_interp_newobj (
 
 	interp_exec_method (child_frame, context, error);
 
-	CHECK_RESUME_STATE (context);
-
 	/*
 	 * a constructor returns void, but we need to return the object we created
 	 */
@@ -3113,7 +3107,6 @@ mono_interp_newobj (
 	} else {
 		sp->data.o = o;
 	}
-resume:
 	return NULL;
 }
 
@@ -3287,6 +3280,9 @@ main_loop:
 		/* g_assert(vt_sp - vtalloc <= frame->imethod->vt_stack_size); */
 		DUMP_INSTR();
 		MINT_IN_SWITCH (*ip) {
+
+			gboolean is_void;
+
 		MINT_IN_CASE(MINT_INITLOCALS)
 			memset (locals, 0, frame->imethod->locals_size);
 			++ip;
@@ -3469,7 +3465,6 @@ main_loop:
 			sp -= csignature->param_count;
 			if (csignature->hasthis)
 				--sp;
-			child_frame.stack_args = sp;
 
 			if (child_frame.imethod->method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 				child_frame.imethod = mono_interp_get_imethod (frame->imethod->domain, mono_marshal_get_native_wrapper (child_frame.imethod->method, FALSE, FALSE), error);
@@ -3485,16 +3480,8 @@ main_loop:
 				}
 			}
 
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			/* need to handle typedbyref ... */
-			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
+			is_void = csignature->ret->type == MONO_TYPE_VOID;
+			goto call_common;
 		}
 		MINT_IN_CASE(MINT_CALLI_NAT_FAST) {
 			gpointer target_ip = sp [-1].data.p;
@@ -3537,14 +3524,8 @@ main_loop:
 				ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, context, save_last_error);
 			}
 
-			CHECK_RESUME_STATE (context);
-
-			/* need to handle typedbyref ... */
-			if (csignature->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
+			is_void = csignature->ret->type == MONO_TYPE_VOID;
+			goto call_end;
 		}
 		MINT_IN_CASE(MINT_CALLVIRT_FAST)
 		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
@@ -3564,7 +3545,6 @@ main_loop:
 
 			/* decrement by the actual number of args */
 			sp -= target_imethod->param_count + target_imethod->hasthis;
-			child_frame.stack_args = sp;
 
 			this_arg = (MonoObject*)sp->data.p;
 
@@ -3575,17 +3555,8 @@ main_loop:
 				sp [0].data.p = unboxed;
 			}
 
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
-			if (!is_void) {
-				/* need to handle typedbyref ... */
-				*sp = *child_frame.retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
+			is_void = ip [-3] == MINT_VCALLVIRT_FAST;
+			goto call_common;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
 			int num_varargs = 0;
@@ -3606,17 +3577,9 @@ main_loop:
 
 			/* decrement by the actual number of args */
 			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis + num_varargs;
-			child_frame.stack_args = sp;
 
-			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			if (csig->ret->type != MONO_TYPE_VOID) {
-				*sp = *child_frame.retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
+			is_void = csig->ret->type == MONO_TYPE_VOID;
+			goto call_common;
 		}
 		MINT_IN_CASE(MINT_CALL)
 		MINT_IN_CASE(MINT_VCALL)
@@ -3632,9 +3595,9 @@ main_loop:
 
 			/* decrement by the actual number of args */
 			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis;
-			child_frame.stack_args = sp;
 
-			const gboolean is_virtual = ip [-2] == MINT_CALLVIRT || ip [-2] == MINT_VCALLVIRT;
+			gboolean is_virtual;
+			is_virtual = ip [-2] == MINT_CALLVIRT || ip [-2] == MINT_VCALLVIRT;
 			if (is_virtual) {
 				MonoObject *this_arg = (MonoObject*)sp->data.p;
 
@@ -3646,16 +3609,17 @@ main_loop:
 				}
 			}
 
+			is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
+call_common:
+			child_frame.stack_args = sp;
 			interp_exec_method (&child_frame, context, error);
-
-			CHECK_RESUME_STATE (context);
-
-			const gboolean is_void = ip [-2] == MINT_VCALL || ip [-2] == MINT_VCALLVIRT;
+call_end:
 			if (!is_void) {
 				/* need to handle typedbyref ... */
 				*sp = *child_frame.retval;
 				sp++;
 			}
+			CHECK_RESUME_STATE (context);
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
