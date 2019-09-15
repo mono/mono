@@ -277,7 +277,7 @@ static LLVMRealPredicate fpcond_to_llvm_cond [] = {
 
 typedef enum {
 	INTRINS_MEMSET,
-	INTRINS_MEMSETC64,
+	INTRINS_MEMSET64,
 	INTRINS_MEMCPY,
 	INTRINS_MEMMOVE,
 	INTRINS_SADD_OVF_I32,
@@ -5941,7 +5941,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #endif
 			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);  // is_volatile
 
-			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMSETC64), args, argn, "");
+			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMSET64), args, argn, "");
 			break;
 		}
 		case OP_NOT_REACHED:
@@ -8682,7 +8682,7 @@ typedef struct {
 
 static IntrinsicDesc intrinsics[] = {
 	{INTRINS_MEMSET, "llvm.memset.p0i8.i32"},
-	{INTRINS_MEMSETC64, "llvm.memset.p0i8.i64"},
+	{INTRINS_MEMSET64, "llvm.memset.p0i8.i64"},
 	{INTRINS_MEMCPY, "llvm.memcpy.p0i8.p0i8.i32"},
 	{INTRINS_MEMMOVE, "llvm.memmove.p0i8.p0i8.i64"},
 	{INTRINS_SADD_OVF_I32, "llvm.sadd.with.overflow.i32"},
@@ -8838,7 +8838,7 @@ add_intrinsic (LLVMModuleRef module, int id)
 #endif
 		break;
 	}
-	case INTRINS_MEMSETC64: {
+	case INTRINS_MEMSET64: {
 #if LLVM_API_VERSION >= 900
 		/* No alignment argument */
 		LLVMTypeRef params [] = { LLVMPointerType (LLVMInt8Type (), 0), LLVMInt8Type (), LLVMInt64Type (), LLVMInt1Type () };
