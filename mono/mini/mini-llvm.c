@@ -5930,12 +5930,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn, "");
 			break;
 		}
-		case OP_MEMSETC64: {
+		case OP_MEMSET64: {
 			int argn = 0;
 			LLVMValueRef args [5];
 			args [argn++] = convert (ctx, values [ins->sreg1], LLVMPointerType (LLVMInt8Type (), 0));
-			args [argn++] = LLVMConstInt (LLVMInt8Type (), ins->inst_c0, FALSE);
-			args [argn++] = convert (ctx, values [ins->sreg2], LLVMInt64Type ());
+			args [argn++] = convert (ctx, values [ins->sreg2], LLVMInt8Type ());
+			args [argn++] = convert (ctx, values [ins->sreg3], LLVMInt64Type ());
 #if LLVM_API_VERSION < 900
 			args [argn++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE); // alignment
 #endif

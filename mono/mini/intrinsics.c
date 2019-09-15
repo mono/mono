@@ -299,10 +299,13 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 
-			MONO_INST_NEW (cfg, ins, OP_MEMSETC64);
+			int valuereg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_ICONST (cfg, valuereg, 0);
+
+			MONO_INST_NEW (cfg, ins, OP_MEMSET64);
 			ins->sreg1 = args [0]->dreg; // i8* src
-			ins->inst_c0 = 0;            // i8  const value
-			ins->sreg2 = args [1]->dreg; // i64 len
+			ins->sreg2 = valuereg;       // i8  const value
+			ins->sreg3 = args [1]->dreg; // i64 len
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}
