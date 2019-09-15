@@ -550,13 +550,21 @@ mini_emit_memory_init_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *value, 
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 	}
 
-	//FIXME unrolled memset only supports zeroing
-	if ((cfg->opt & MONO_OPT_INTRINS) && (size->opcode == OP_ICONST) && (value->opcode == OP_ICONST) && (value->inst_c0 == 0)) {
-		mini_emit_memset_const_size (cfg, dest, value->inst_c0, size->inst_c0, align);
+	if (COMPILE_LLVM (cfg)) {
+		MonoInst *ins;
+		MONO_INST_NEW (cfg, ins, OP_MEMSET64);
+		ins->sreg1 = dest->dreg;  // i8* src
+		ins->sreg2 = value->dreg; // i8  value
+		ins->sreg3 = size->dreg;  // i64 len
+		MONO_ADD_INS (cfg->cbb, ins);
 	} else {
-		mini_emit_memset_internal (cfg, dest, value, 0, size, 0, align);
+		//FIXME unrolled memset only supports zeroing
+		if ((cfg->opt & MONO_OPT_INTRINS) && (size->opcode == OP_ICONST) && (value->opcode == OP_ICONST) && (value->inst_c0 == 0)) {
+			mini_emit_memset_const_size (cfg, dest, value->inst_c0, size->inst_c0, align);
+		} else {
+			mini_emit_memset_internal (cfg, dest, value, 0, size, 0, align);
+		}
 	}
-
 }
 
 /*

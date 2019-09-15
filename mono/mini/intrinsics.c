@@ -304,7 +304,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			MONO_INST_NEW (cfg, ins, OP_MEMSET64);
 			ins->sreg1 = args [0]->dreg; // i8* src
-			ins->sreg2 = valuereg;       // i8  const value
+			ins->sreg2 = valuereg;       // i8  value
 			ins->sreg3 = args [1]->dreg; // i64 len
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
