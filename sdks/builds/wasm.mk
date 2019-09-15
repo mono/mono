@@ -156,6 +156,7 @@ $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
+endif
 ifdef ENABLE_WASM_NETCORE
 $(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
@@ -267,4 +268,3 @@ package-wasm-bcl-netcore: build-wasm-bcl-netcore
 	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
 
 endif
-
