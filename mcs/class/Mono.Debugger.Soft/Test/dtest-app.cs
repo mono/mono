@@ -597,9 +597,7 @@ public class Tests : TestsBase, ITest2
 	}
 
 	public class MyException : Exception {
-		public MyException(string message)
-        : base(message)
-		{
+		public MyException(string message) : base(message) {
 		}
 	}
 
@@ -845,56 +843,44 @@ public class Tests : TestsBase, ITest2
 
 
 	public static void test_new_exception_filter1 () {
-		try
-		{
+		try {
 			throw new Exception("excp");
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
 	}
 
 	public static void test_new_exception_filter2 () {
-		try
-		{
+		try {
 			throw new MyException("excp");
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
 	}
 
 	public static void test_new_exception_filter3 () {
-		try
-		{
+		try {
 			throw new ArgumentException();
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
-		try
-		{
+		try {
 			throw new Exception("excp");
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
 	}
 
 	public static void test_new_exception_filter4 () {
-		try
-		{
+		try {
 			throw new ArgumentException();
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
-		try
-		{
+		try {
 			throw new Exception("excp");
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 		}
 	}
 
