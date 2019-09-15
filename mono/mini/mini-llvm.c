@@ -3578,9 +3578,12 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 			/* The IR treats these as variables with addresses */
 			ctx->addresses [reg] = LLVMGetParam (ctx->lmethod, pindex);
 			break;
-		default:
-			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (cfg, type_to_llvm_type (ctx, ainfo->type)), type_is_unsigned (ctx, ainfo->type));
+		default: {
+			/* Use the type of the assigned class to match the types used by OP_PHI and mono_compile_create_var */
+			MonoType *var_type = m_class_get_byval_arg (cfg->args [i + sig->hasthis]->klass);
+			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (cfg, type_to_llvm_type (ctx, var_type)), type_is_unsigned (ctx, var_type));
 			break;
+		}
 		}
 	}
 	g_free (names);
