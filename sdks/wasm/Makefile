@@ -121,6 +121,7 @@ emsdk_env.sh:
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
+MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0
 EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
@@ -168,7 +169,7 @@ $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(E
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_LIBS)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
 endif
 ifdef ENABLE_WASM_NETCORE
 $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS)))
