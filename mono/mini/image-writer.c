@@ -1866,7 +1866,7 @@ static void
 asm_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
-	asm_writer_emit_alignment (acfg, sizeof (target_mgreg_t));
+	asm_writer_emit_alignment (acfg, TARGET_SIZEOF_VOID_P);
 	asm_writer_emit_pointer_unaligned (acfg, target);
 }
 
