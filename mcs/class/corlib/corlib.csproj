@@ -1482,6 +1482,7 @@
     <Compile Include="System.Reflection\FieldInfo.cs" />
     <Compile Include="System.Reflection\LocalVariableInfo.cs" />
     <Compile Include="System.Reflection\MethodBody.cs" />
+    <Compile Include="System.Reflection\MethodInfo.cs" />
     <Compile Include="System.Reflection\Module.cs" />
     <Compile Include="System.Reflection\RuntimeAssembly.cs" />
     <Compile Include="System.Reflection\RuntimeEventInfo.cs" />
@@ -1877,7 +1878,6 @@
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\IncrementingEventCounter.cs" />
     <Compile Include="corefx\IncrementingPollingCounter.cs" />
-    <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\MonoLinqHelper.cs" />
     <Compile Include="corefx\PbeEncryptionAlgorithm.cs" />
     <Compile Include="corefx\PbeParameters.cs" />
