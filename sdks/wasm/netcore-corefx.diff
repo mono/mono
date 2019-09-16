@@ -1,0 +1,55 @@
+diff --git a/src/Native/Unix/CMakeLists.txt b/src/Native/Unix/CMakeLists.txt
+index f1d6a9ac59..4a8c99e140 100644
+--- a/src/Native/Unix/CMakeLists.txt
++++ b/src/Native/Unix/CMakeLists.txt
+@@ -18,7 +18,7 @@ add_compile_options(-Wno-empty-translation-unit)
+ add_compile_options(-Wno-cast-align)
+ add_compile_options(-Wno-typedef-redefinition)
+ add_compile_options(-Wno-c11-extensions)
+-add_compile_options(-fPIC)
++#add_compile_options(-fPIC)
+ add_compile_options(-I${CMAKE_CURRENT_SOURCE_DIR}/Common)
+ add_compile_options(-I${CMAKE_CURRENT_BINARY_DIR}/Common)
+ add_compile_options(-g)
+@@ -26,7 +26,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL Clang)
+     add_compile_options(-Wthread-safety)
+     add_compile_options(-Wno-thread-safety-analysis)
+ endif()
+-add_compile_options(-Werror)
++#add_compile_options(-Werror)
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+     set(CLR_CMAKE_PLATFORM_WASM 1)
+@@ -95,7 +95,8 @@ else ()
+     message(FATAL_ERROR "Unknown build type. Set CMAKE_BUILD_TYPE to DEBUG or RELEASE.")
+ endif ()
+ 
+-if (APPLE)
++if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
++elseif (APPLE)
+     add_definitions(-D__APPLE_USE_RFC_3542)
+ 
+    # We cannot enable "stack-protector-strong" on OS X due to a bug in clang compiler (current version 7.0.2)
+diff --git a/src/Native/Unix/System.Native/pal_networking.c b/src/Native/Unix/System.Native/pal_networking.c
+index 1ece3b6487..638ed7d6cd 100644
+--- a/src/Native/Unix/System.Native/pal_networking.c
++++ b/src/Native/Unix/System.Native/pal_networking.c
+@@ -55,6 +55,7 @@
+ #include <ifaddrs.h>
+ #endif
+ #endif
++#undef AF_CAN
+ #ifdef AF_CAN
+ #include <linux/can.h>
+ #endif
+@@ -2492,8 +2493,8 @@ static int32_t WaitForSocketEventsInner(int32_t port, SocketEvent* buffer, int32
+ }
+ 
+ #else
+-#warning epoll/kqueue not detected; building with stub socket events support
+-static const size_t SocketEventBufferElementSize = sizeof(struct pollfd);
++//#warning epoll/kqueue not detected; building with stub socket events support
++static const size_t SocketEventBufferElementSize = 0;//sizeof(struct pollfd);
+ 
+ static SocketEvents GetSocketEvents(int16_t filter, uint16_t flags)
+ {
