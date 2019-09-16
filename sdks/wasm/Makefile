@@ -10,7 +10,7 @@ MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-#Use either 'release' or 'debug' dependending on what you need
+#Use either 'release' or 'debug' depending on what you need
 DRIVER_CONF=release
 
 CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
@@ -25,8 +25,16 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
-DOTNET_BUILD?=dotnet build
-DOTNET_PACK?=dotnet pack
+
+ifeq ($(HOST_PLATFORM),win32)
+DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
+DOTNET_CMD := "$(subst \,/,$(DOTNET))"
+else
+DOTNET_CMD := $(shell ./init-tools.sh | tail -1)
+endif
+
+DOTNET_PACK=$(DOTNET_CMD) pack
+DOTNET_BUILD=$(DOTNET_CMD) build
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
@@ -115,7 +123,7 @@ emsdk_env.sh:
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0
-EMCC_DEBUG_FLAGS =-g4 -Os -s -s ASSERTIONS=1
+EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
 EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
@@ -150,7 +158,7 @@ endef
 
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS)))
-ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS)))
 endif
 ifdef ENABLE_WASM_THREADS
@@ -274,6 +282,10 @@ build-aot-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-sample
 
+build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-sample-profiled
+
 zlibtest.exe: zlibtest.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
 
@@ -309,6 +321,9 @@ hello.exe: hello.cs
 
 run-aot-sample: build-aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+
+run-aot-sample-profiled: build-aot-sample-profiled
+	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
 
 build-interp-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
@@ -349,6 +364,7 @@ build-aot-bindings-interp-sample: packager.exe sample.dll
 aot-profile/main.exe: aot-profile/main.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll aot-profile/main.cs
 
+.PHONY: build-aot-profile
 build-aot-profile: packager.exe aot-profile/main.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-profile --builddir=obj/aot-profile --profile=aot --template=aot-profile/runtime.js --asset=aot-profile/index.html aot-profile/main.exe
 	ninja -C obj/aot-profile
@@ -401,13 +417,13 @@ $(eval $(call AotTestTemplate,System,wasm_System_test.dll,System))
 $(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
 $(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,System.Core,--aot-interp --aot-assemblies=mscorlib))
 
-AOT_TEST_SUITES=corlib System.Core
+AOT_TEST_SUITES=corlib System System.Core
 
 build-aot-all: build
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
 run-aot-all: build-aot-all
-	for suite in System.Core; do $(MAKE) run-aot-$$suite || exit 1; done
+	for suite in $(AOT_TEST_SUITES); do $(MAKE) run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
 

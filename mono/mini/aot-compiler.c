@@ -106,6 +106,12 @@ get_method_nofail (MonoClass *klass, const char *method_name, int param_count, i
 #define EMIT_WIN32_UNWIND_INFO
 #endif
 
+#if defined(TARGET_ANDROID) || defined(__linux__)
+#define RODATA_REL_SECT ".data.rel.ro"
+#else
+#define RODATA_REL_SECT ".text"
+#endif
+
 #if defined(__linux__)
 #define RODATA_SECT ".rodata"
 #elif defined(TARGET_MACH)
@@ -403,6 +409,7 @@ typedef struct {
 
 /* This points to the current acfg in LLVM mode */
 static MonoAotCompile *llvm_acfg;
+static MonoAotCompile *current_acfg;
 
 /* Cache of decoded method external icall symbol names. */
 /* Owned by acfg, but kept in this static as well since it is */
@@ -1594,6 +1601,21 @@ arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean extern
 #else
 	g_assert_not_reached ();
 #endif
+}
+
+static void
+arch_emit_label_address (MonoAotCompile *acfg, const char *target, gboolean external_call, gboolean thumb, MonoJumpInfo *ji, int *call_size)
+{
+#if defined(TARGET_ARM) && defined(TARGET_ANDROID)
+	/* binutils ld does not support branch islands on arm32 */
+	if (!thumb) {
+		emit_unset_mode (acfg);
+		fprintf (acfg->fp, "ldr pc,=%s\n", target);
+		fprintf (acfg->fp, ".ltorg\n");
+		*call_size = 8;
+	} else
+#endif
+	arch_emit_direct_call (acfg, target, external_call, thumb, ji, call_size);
 }
 #endif
 
@@ -4411,6 +4433,17 @@ cleanup_true:
 	if (cattr)
 		mono_custom_attrs_free (cattr);
 	return TRUE;
+}
+
+gboolean
+mono_aot_can_enter_interp (MonoMethod *method)
+{
+	MonoAotCompile *acfg = current_acfg;
+
+	g_assert (acfg);
+	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method))
+		return TRUE;
+	return FALSE;
 }
 
 static void
@@ -8423,8 +8456,24 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (method->wrapper_type == MONO_WRAPPER_COMINTEROP)
 		return;
 
-	if (acfg->aot_opts.profile_only && !method->is_inflated && !g_hash_table_lookup (acfg->profile_methods, method))
-		return;
+	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method)) {
+		if (acfg->aot_opts.llvm_only) {
+			/* Keep wrappers */
+			if (!method->wrapper_type)
+				return;
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+			switch (info->subtype) {
+			case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
+			case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
+				return;
+			default:
+				break;
+			}
+		} else {
+			if (!method->is_inflated)
+				return;
+		}
+	}
 
 	mono_atomic_inc_i32 (&acfg->stats.mcount);
 
@@ -9923,13 +9972,18 @@ emit_code (MonoAotCompile *acfg)
 	 * To work around linker issues, we emit a table of branches, and disassemble them at runtime.
 	 * This is PIE code, and the linker can update it if needed.
 	 */
-	
+#if defined(TARGET_ANDROID) || defined(__linux__)
+	gboolean is_func = FALSE;
+#else
+	gboolean is_func = TRUE;
+#endif
+
 	sprintf (symbol, "method_addresses");
-	emit_section_change (acfg, ".text", 1);
+	emit_section_change (acfg, RODATA_REL_SECT, !!is_func);
 	emit_alignment_code (acfg, 8);
-	emit_info_symbol (acfg, symbol, TRUE);
+	emit_info_symbol (acfg, symbol, is_func);
 	if (acfg->aot_opts.write_symbols)
-		emit_local_symbol (acfg, symbol, "method_addresses_end", TRUE);
+		emit_local_symbol (acfg, symbol, "method_addresses_end", is_func);
 	emit_unset_mode (acfg);
 	if (acfg->need_no_dead_strip)
 		fprintf (acfg->fp, "	.no_dead_strip %s\n", symbol);
@@ -9939,9 +9993,9 @@ emit_code (MonoAotCompile *acfg)
 		int call_size;
 
 		if (!ignore_cfg (acfg->cfgs [i])) {
-			arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
+			arch_emit_label_address (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
 		} else {
-			arch_emit_direct_call (acfg, symbol, FALSE, FALSE, NULL, &call_size);
+			arch_emit_label_address (acfg, symbol, FALSE, FALSE, NULL, &call_size);
 		}
 #endif
 	}
@@ -12050,7 +12104,7 @@ compile_asm (MonoAotCompile *acfg)
 	 * gas generates 'mapping symbols' each time code and data is mixed, which 
 	 * happens a lot in emit_and_reloc_code (), so we need to get rid of them.
 	 */
-	command = g_strdup_printf ("\"%sstrip\" --strip-symbol=\\$a --strip-symbol=\\$d %s", wrap_path(tool_prefix), wrap_path(tmp_outfile_name));
+	command = g_strdup_printf ("\"%sstrip\" --strip-symbol=\\$a --strip-symbol=\\$d %s", tool_prefix, wrap_path(tmp_outfile_name));
 	aot_printf (acfg, "Stripping the binary: %s\n", command);
 	if (execute_system (command) != 0) {
 		g_free (tmp_outfile_name);
@@ -13352,7 +13406,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		generate_aotid ((guint8*) &acfg->image->aotid);
 
 	char *aotid = mono_guid_to_string (acfg->image->aotid);
-	if (!acfg->dedup_collect_only)
+	if (!acfg->dedup_collect_only && !acfg->aot_opts.deterministic)
 		aot_printf (acfg, "AOTID %s\n", aotid);
 	g_free (aotid);
 
@@ -13529,6 +13583,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	acfg->plt_offset = 1;
 	add_preinit_got_slots (acfg);
 
+	current_acfg = acfg;
+
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
@@ -13589,6 +13645,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
 		/* We only collected methods from this assembly */
 		return 0;
+
+	current_acfg = NULL;
 
 	return emit_aot_image (acfg);
 }
@@ -13957,6 +14015,12 @@ mono_aot_direct_icalls_enabled_for_method (MonoCompile *cfg, MonoMethod *method)
 {
 	g_assert_not_reached ();
 	return 0;
+}
+
+gboolean
+mono_aot_can_enter_interp (MonoMethod *method)
+{
+	return FALSE;
 }
 
 #endif

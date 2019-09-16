@@ -866,10 +866,6 @@
 -nomethod System.Reflection.Emit.Tests.DynamicILInfoTests.SetX_NullInput_ThrowsArgumentNullException
 -nomethod System.Reflection.Emit.Tests.DynamicMethodctor1.InvalidOwner_ThrowsArgumentException
 
-# Exception string is different (Expect System.String vs actual String)
-# https://github.com/mono/mono/issues/15323
--nomethod System.Reflection.Emit.Tests.DynamicMethodToString.ToStringTest
-
 # Expected: typeof(System.ArgumentOutOfRangeException)
 # Actual:   typeof(System.OverflowException): Arithmetic operation resulted in an overflow.
 # https://github.com/mono/mono/issues/15334
@@ -996,3 +992,18 @@
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByValue_Ctor
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.Oid_StringString_NullFriendlyName
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Ctor
+
+
+# corefx tests need to be updated
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt16
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt32
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeDouble
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeByte
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSByte
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt64
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt16
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt64
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSingle
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt32
+
+-nomethod System.Tests.StringComparerTests.CreateCultureOptions_InvalidArguments_Throws

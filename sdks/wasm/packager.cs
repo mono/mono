@@ -87,7 +87,7 @@ class Driver {
 		public string linkout_path;
 		// AOT input path
 		public string aotin_path;
-		// Finaly output path after IL strip
+		// Final output path after IL strip
 		public string final_path;
 		// Whenever to AOT this assembly
 		public bool aot;
@@ -132,6 +132,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
+		Console.WriteLine ("\t--aot-profile=x Use 'x' as the AOT profile.");
 		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
 		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
@@ -362,6 +363,7 @@ class Driver {
 		bool enable_zlib = false;
 		bool enable_threads = false;
 		var il_strip = false;
+		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
@@ -373,7 +375,7 @@ class Driver {
 		var linkMode = LinkMode.All;
 		var linkDescriptor = "";
 		string coremode, usermode;
-		var linker_verbose = false;
+		string aot_profile = null;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
@@ -404,6 +406,7 @@ class Driver {
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
+				{ "aot-profile=", s => aot_profile = s },
 				{ "link-mode=", s => linkModeParm = s },
 				{ "link-descriptor=", s => linkDescriptor = s },
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
@@ -478,6 +481,11 @@ class Driver {
 		}
 		if (link_icalls && !enable_linker) {
 			Console.Error.WriteLine ("The --link-icalls option requires the --linker option.");
+			return 1;
+		}
+
+		if (aot_profile != null && !File.Exists (aot_profile)) {
+			Console.Error.WriteLine ($"AOT profile file '{aot_profile}' not found.");
 			return 1;
 		}
 
@@ -672,6 +680,10 @@ class Driver {
 			if (profiler_aot_args != "")
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
+		}
+		if (aot_profile != null) {
+			CopyFile (aot_profile, Path.Combine (builddir, Path.GetFileName (aot_profile)), CopyType.IfNewer, "");
+			aot_args += $"profile={aot_profile},profile-only,";
 		}
 		if (ee_mode == ExecMode.AotInterp)
 			aot_args += "interp,";

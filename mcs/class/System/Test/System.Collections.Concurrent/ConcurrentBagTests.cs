@@ -241,12 +241,14 @@ namespace MonoTests.System.Collections.Concurrent
         }
 		
 		[Test]
+		[Category("MultiThreaded")]
 		public void AddStressTest ()
 		{
 			CollectionStressTestHelper.AddStressTest (bag);
 		}
 		
 		[Test]
+		[Category("MultiThreaded")]
 		public void RemoveStressTest ()
 		{
 			CollectionStressTestHelper.RemoveStressTest (bag, CheckOrderingType.DontCare);

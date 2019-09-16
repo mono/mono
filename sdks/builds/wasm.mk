@@ -153,7 +153,7 @@ $(eval $(call WasmRuntimeTemplate,runtime))
 ifdef ENABLE_WASM_THREADS
 $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
-ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
 endif
 
@@ -182,7 +182,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
-$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$(2)-unknown)),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
