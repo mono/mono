@@ -32,7 +32,7 @@ namespace System
 			}
 		}
 
-		static unsafe void SetEnvironmentVariableCore (string variable, string value)
+		static unsafe void SetEnvironmentVariableCore (string variable, string? value)
 		{
 			Debug.Assert(variable != null);
 
