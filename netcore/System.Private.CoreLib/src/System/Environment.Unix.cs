@@ -25,8 +25,8 @@ namespace System
 				}
 			}
 
+			variable = TrimStringOnFirstZero (variable);
 			lock (s_environment) {
-				variable = TrimStringOnFirstZero (variable);
 				s_environment.TryGetValue (variable, out string value);
 				return value;
 			}
@@ -64,9 +64,9 @@ namespace System
 
 		private static string TrimStringOnFirstZero (string value)
 		{
-			int index = value.IndexOf('\0');
+			int index = value.IndexOf ('\0');
 			if (index >= 0) {
-				return value.Substring(0, index);
+				return value.Substring (0, index);
 			}
 			return value;
 		}
@@ -74,7 +74,7 @@ namespace System
 		private static void EnsureEnvironmentCached ()
 		{
 			if (s_environment == null) {
-				Interlocked.CompareExchange(ref s_environment, GetSystemEnvironmentVariables(), null);
+				Interlocked.CompareExchange (ref s_environment, GetSystemEnvironmentVariables (), null);
 			}
 		}
 
