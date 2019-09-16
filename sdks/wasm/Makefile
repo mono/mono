@@ -311,7 +311,7 @@ run-$(1): bin/$(2)/mono.js
 endef
 
 $(eval $(call XunitTestTemplate,System-xunit,System-xunit,wasm_System_xunit-test.dll))
-$(eval $(call XunitTestTemplate,Microsoft.CSharp-xunit,Microsoft.CSharp-xunit,Microsoft.CSharp_xunit-test.dll))
+$(eval $(call XunitTestTemplate,Microsoft.CSharp-xunit,Microsoft.CSharp-xunit,wasm_Microsoft.CSharp_xunit-test.dll))
 $(eval $(call XunitTestTemplate,System.Core-xunit,System.Core-xunit,wasm_System.Core_xunit-test.dll))
 $(eval $(call XunitTestTemplate,System.Data-xunit,System.Data-xunit,wasm_System.Data_xunit-test.dll))
 $(eval $(call XunitTestTemplate,System.IO.Compression-xunit,System.IO.Compression-xunit,wasm_System.IO.Compression_xunit-test.dll))
