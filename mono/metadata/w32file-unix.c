@@ -1851,7 +1851,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		 * when we looked it up, so be careful to put it back
 		 * if we conclude we can't use this file.
 		 */
-		if (file_existing_share == 0) {
+		if ((file_existing_share == FILE_SHARE_NONE) || (sharemode == FILE_SHARE_NONE)) {
 			/* Quick and easy, no possibility to share */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
 
@@ -1867,19 +1867,6 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		     (fileaccess != GENERIC_WRITE))) {
 			/* New access mode doesn't match up */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, fileaccess, file_existing_share);
-
-			file_share_release (*share_info);
-			*share_info = NULL;
-		
-			return(FALSE);
-		}
-
-		if (((file_existing_access & GENERIC_READ) &&
-		     !(sharemode & FILE_SHARE_READ)) ||
-		    ((file_existing_access & GENERIC_WRITE) &&
-		     !(sharemode & FILE_SHARE_WRITE))) {
-			/* New share mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -2083,6 +2070,13 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
 
 	return GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd);
+}
+
+gboolean
+mono_w32file_cancel (gpointer handle)
+{
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
+	return FALSE;
 }
 
 gboolean
@@ -3344,7 +3338,7 @@ retry:
 
 	/* stat next match */
 
-	filename = g_build_filename (findhandle->dir_part, findhandle->namelist[findhandle->count ++], NULL);
+	filename = g_build_filename (findhandle->dir_part, findhandle->namelist[findhandle->count ++], (const char*)NULL);
 
 	result = _wapi_stat (filename, &buf);
 	if (result == -1 && errno == ENOENT) {

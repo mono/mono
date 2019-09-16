@@ -53,7 +53,8 @@ class BoolFlag : Flag {
 
 class Driver {
 	static bool enable_debug, enable_linker;
-	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
+	static string app_prefix, framework_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
+	static List<string> bcl_prefixes;
 	static HashSet<string> asm_map = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
 	static HashSet<string> assemblies_with_dbg_info = new HashSet<string> ();
@@ -64,7 +65,7 @@ class Driver {
 	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";
 	const string WEBSOCKETS_ASM_NAME = "WebAssembly.Net.WebSockets";
 	const string BINDINGS_MODULE = "corebindings.o";
-	const string BINDINGS_MODULE_SUPPORT = "$tool_prefix/binding_support.js";
+	const string BINDINGS_MODULE_SUPPORT = "$tool_prefix/src/binding_support.js";
 
 	class AssemblyData {
 		// Assembly name
@@ -87,7 +88,7 @@ class Driver {
 		public string linkout_path;
 		// AOT input path
 		public string aotin_path;
-		// Finaly output path after IL strip
+		// Final output path after IL strip
 		public string final_path;
 		// Whenever to AOT this assembly
 		public bool aot;
@@ -132,6 +133,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
+		Console.WriteLine ("\t--aot-profile=x Use 'x' as the AOT profile.");
 		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
 		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
@@ -189,7 +191,12 @@ class Driver {
 	}
 
 	static string ResolveBcl (string asm_name) {
-		return ResolveWithExtension (bcl_prefix, asm_name);
+		foreach (var prefix in bcl_prefixes) {
+			string res = ResolveWithExtension (prefix, asm_name);
+			if (res != null)
+				return res;
+		}
+		return null;
 	}
 
 	static string ResolveBclFacade (string asm_name) {
@@ -218,6 +225,13 @@ class Driver {
 		throw new Exception ($"Could not resolve {asm_name}");
 	}
 
+	static bool is_sdk_assembly (string filename) {
+		foreach (var prefix in bcl_prefixes)
+			if (filename.StartsWith (prefix))
+				return true;
+		return false;
+	}
+
 	static void Import (string ra, AssemblyKind kind) {
 		if (!asm_map.Add (ra))
 			return;
@@ -232,8 +246,9 @@ class Driver {
 
 		var resolver = new DefaultAssemblyResolver();
 		root_search_paths.ForEach(resolver.AddSearchDirectory);
+		foreach (var prefix in bcl_prefixes)
+			resolver.AddSearchDirectory (prefix);
 		resolver.AddSearchDirectory(bcl_facades_prefix);
-		resolver.AddSearchDirectory(bcl_prefix);
 		resolver.AddSearchDirectory(framework_prefix);		
 		rp.AssemblyResolver = resolver;
 
@@ -250,14 +265,26 @@ class Driver {
 			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
 		}
 
+		var parent_kind = kind;
+
 		foreach (var ar in image.AssemblyReferences) {
 			// Resolve using root search paths first
-			var resolved = image.AssemblyResolver.Resolve(ar, rp);
+			AssemblyDefinition resolved = null;
+			try {
+				resolved = image.AssemblyResolver.Resolve(ar, rp);
+			} catch {
+			}
 
-			var searchName = resolved?.MainModule.FileName ?? ar.Name;
+			if (resolved == null && is_sdk_assembly (ra))
+				// FIXME: netcore assemblies have missing references
+				continue;
 
-			var resolve = Resolve(searchName, out kind);
-			Import(resolve, kind);
+			if (resolved != null) {
+				Import (resolved.MainModule.FileName, parent_kind);
+			} else {
+				var resolve = Resolve (ar.Name, out kind);
+				Import(resolve, kind);
+			}
 		}
 	}
 
@@ -361,7 +388,9 @@ class Driver {
 		bool gen_pinvoke = false;
 		bool enable_zlib = false;
 		bool enable_threads = false;
+		bool is_netcore = false;
 		var il_strip = false;
+		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
@@ -372,8 +401,10 @@ class Driver {
 		var linkModeParm = "all";
 		var linkMode = LinkMode.All;
 		var linkDescriptor = "";
+		var framework = "";
+		var netcore_sdkdir = "";
 		string coremode, usermode;
-		var linker_verbose = false;
+		string aot_profile = null;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
@@ -393,6 +424,7 @@ class Driver {
 				{ "builddir=", s => builddir = s },
 				{ "mono-sdkdir=", s => sdkdir = s },
 				{ "emscripten-sdkdir=", s => emscripten_sdkdir = s },
+				{ "netcore-sdkdir=", s => netcore_sdkdir = s },
 				{ "prefix=", s => app_prefix = s },
 				{ "deploy=", s => deploy_prefix = s },
 				{ "vfs=", s => vfs_prefix = s },
@@ -404,9 +436,11 @@ class Driver {
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
+				{ "aot-profile=", s => aot_profile = s },
 				{ "link-mode=", s => linkModeParm = s },
 				{ "link-descriptor=", s => linkDescriptor = s },
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
+				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -480,26 +514,49 @@ class Driver {
 			Console.Error.WriteLine ("The --link-icalls option requires the --linker option.");
 			return 1;
 		}
+		if (framework != "") {
+			if (framework.StartsWith ("netcoreapp")) {
+				is_netcore = true;
+				if (netcore_sdkdir == "") {
+					Console.Error.WriteLine ("The --netcore-sdkdir= argument is required.");
+					return 1;
+				}
+			} else {
+				Console.Error.WriteLine ("The only valid value for --framework is 'netcoreapp...'");
+				return 1;
+			}
+		}
+
+		if (aot_profile != null && !File.Exists (aot_profile)) {
+			Console.Error.WriteLine ($"AOT profile file '{aot_profile}' not found.");
+			return 1;
+		}
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
 		if (sdkdir != null) {
 			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
-			bcl_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm");
-			bcl_tools_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm_tools");
 		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/wasm-bcl/wasm"))) {
 			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
-			bcl_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm");
-			bcl_tools_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm_tools");
 			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
-			bcl_prefix = Path.Combine (tool_prefix, "wasm-bcl/wasm");
-			bcl_tools_prefix = Path.Combine (tool_prefix, "wasm-bcl/wasm_tools");
 			sdkdir = tool_prefix;
 		}
+		string bcl_root = Path.Combine (sdkdir, "wasm-bcl");
+		var bcl_prefix = Path.Combine (bcl_root, "wasm");
+		bcl_tools_prefix = Path.Combine (bcl_root, "wasm_tools");
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
+		bcl_prefixes = new List<string> ();
+		if (is_netcore) {
+			/* corelib */
+			bcl_prefixes.Add (Path.Combine (bcl_root, "netcore"));
+			/* .net runtime */
+			bcl_prefixes.Add (netcore_sdkdir);
+		} else {
+			bcl_prefixes.Add (bcl_prefix);
+		}
 
 		foreach (var ra in root_assemblies) {
 			AssemblyKind kind;
@@ -617,7 +674,9 @@ class Driver {
 		File.WriteAllText (config_js, config);
 
 		string runtime_dir;
-		if (enable_threads)
+		if (is_netcore)
+			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/netcore-release" : "builds/netcore-debug");
+		else if (enable_threads)
 			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
 		else
 			runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
@@ -672,6 +731,10 @@ class Driver {
 			if (profiler_aot_args != "")
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
+		}
+		if (aot_profile != null) {
+			CopyFile (aot_profile, Path.Combine (builddir, Path.GetFileName (aot_profile)), CopyType.IfNewer, "");
+			aot_args += $"profile={aot_profile},profile-only,";
 		}
 		if (ee_mode == ExecMode.AotInterp)
 			aot_args += "interp,";
@@ -752,7 +815,7 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' {strip_cmd}");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/src/library_mono.js --js-library $tool_prefix/src/dotnet_support.js {wasm_core_support_library} $in' {strip_cmd}");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; else touch $$f; fi; done");
@@ -775,18 +838,18 @@ class Driver {
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (build_wasm) {
-			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
+			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
-			var pinvoke_file = Path.GetFullPath (Path.Combine (tool_prefix, "pinvoke-tables-default.h"));
+			var pinvoke_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "pinvoke-tables-default.h"));
 			ninja.WriteLine ($"build $builddir/pinvoke-tables-default.h: cpifdiff {pinvoke_file}");
 			driver_deps += $" $builddir/pinvoke-tables-default.h";
 
 			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
 			if (add_binding) {
-				var bindings_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "corebindings.c"));
+				var bindings_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "corebindings.c"));
 				ninja.WriteLine ($"build $builddir/corebindings.c: cpifdiff {bindings_source_file}");
 
 				ninja.WriteLine ($"build $builddir/corebindings.o: emcc $builddir/corebindings.c | $emsdk_env");
@@ -801,7 +864,7 @@ class Driver {
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 
 			if (enable_zlib) {
-				var zlib_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "zlib-helper.c"));
+				var zlib_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "zlib-helper.c"));
 				ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
 
 				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c | $emsdk_env");
@@ -937,7 +1000,7 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support} $emsdk_env");
+			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/src/library_mono.js $tool_prefix/src/dotnet_support.js {wasm_core_support} $emsdk_env");
 			ninja.WriteLine ("  out_js=$appdir/mono.js");
 			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
 		}

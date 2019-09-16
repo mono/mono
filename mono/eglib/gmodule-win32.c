@@ -30,6 +30,9 @@
  */
 #include <config.h>
 #include <glib.h>
+#ifndef PSAPI_VERSION
+#define PSAPI_VERSION 2 // Use the Windows 7 or newer version more directly.
+#endif
 #include <windows.h>
 #include <psapi.h>
 #include <gmodule-win32-internals.h>
@@ -227,4 +230,156 @@ g_module_build_path (const gchar *directory, const gchar *module_name)
 		return g_strdup_printf ("%s/%s%s" LIBSUFFIX, directory, lib_prefix, module_name);
 	}
 	return g_strdup_printf ("%s%s" LIBSUFFIX, lib_prefix, module_name); 
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_filename (gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleFileNameW ((HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function does not truncate, but - 1 anyway.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_filename_ex (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleFileNameExW (process, (HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function truncates, thus the - 1.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleBaseNameW (process, (HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function truncates, thus the - 1.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_current_directory (gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		// Call in loop, not just twice, in case another thread is changing it.
+		// Result is transient in currentness and validity (can get deleted or become a file).
+		length = GetCurrentDirectoryW (capacity, str);
+		success = length && length < (capacity - 1);
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
 }

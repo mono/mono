@@ -344,16 +344,21 @@ typedef enum {
     MonoSetThreadNameFlag_None      = 0x0000,
     MonoSetThreadNameFlag_Permanent = 0x0001,
     MonoSetThreadNameFlag_Reset     = 0x0002,
-    //MonoSetThreadNameFlag_Constant  = 0x0004,
+    MonoSetThreadNameFlag_Constant  = 0x0004,
 } MonoSetThreadNameFlags;
 
 G_ENUM_FUNCTIONS (MonoSetThreadNameFlags)
 
 MONO_PROFILER_API
-void
-mono_thread_set_name_internal (MonoInternalThread *thread,
-			       MonoString *name,
-			       MonoSetThreadNameFlags flags, MonoError *error);
+gsize
+mono_thread_set_name (MonoInternalThread *thread,
+		      const char* name8, size_t name8_length, const gunichar2* name16,
+		      MonoSetThreadNameFlags flags, MonoError *error);
+
+#define mono_thread_set_name_constant_ignore_error(thread, name, flags) \
+	mono_thread_set_name ((thread), name, G_N_ELEMENTS (name) - 1,  \
+		MONO_THREAD_NAME_WINDOWS_CONSTANT (name),               \
+		(flags) | MonoSetThreadNameFlag_Constant, NULL)
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
@@ -404,9 +409,6 @@ void mono_threads_add_joinable_runtime_thread (MonoThreadInfo *thread_info);
 void mono_threads_add_joinable_thread (gpointer tid);
 void mono_threads_join_threads (void);
 void mono_thread_join (gpointer tid);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces);
 
 MONO_API gpointer
 mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy);
@@ -541,7 +543,7 @@ typedef struct {
 } MonoThreadSummary;
 
 void
-mono_threads_summarize_init (const char *timeline_dir);
+mono_threads_summarize_init (void);
 
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size);

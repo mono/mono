@@ -412,6 +412,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\Base64Stream.cs" />
@@ -866,8 +868,6 @@
     <Compile Include="System.IO.Compression\DeflateStream.cs" />
     <Compile Include="System.IO\ErrorEventArgs.cs" />
     <Compile Include="System.IO\ErrorEventHandler.cs" />
-    <Compile Include="System.IO\FileSystemEventArgs.cs" />
-    <Compile Include="System.IO\FileSystemEventHandler.cs" />
     <Compile Include="System.IO\IODescriptionAttribute.cs" />
     <Compile Include="System.IO\InternalBufferOverflowException.cs" />
     <Compile Include="System.IO\InvalidDataException.cs" />

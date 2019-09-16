@@ -15,7 +15,11 @@
 #ifdef GEN_PINVOKE
 #include "pinvoke-table.h"
 #else
+#ifdef ENABLE_NETCORE
+#include "pinvoke-tables-default-netcore.h"
+#else
 #include "pinvoke-tables-default.h"
+#endif
 #endif
 
 #ifdef CORE_BINDINGS
@@ -306,6 +310,9 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
+#ifdef ENABLE_NETCORE
+	monoeg_g_setenv ("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1", 0);
+#endif
 
 	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
 

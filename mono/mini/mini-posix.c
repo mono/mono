@@ -687,12 +687,7 @@ sampling_thread_func (gpointer unused)
 
 	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	ERROR_DECL (error);
-
-	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (thread, name, MonoSetThreadNameFlag_None, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name_constant_ignore_error (thread, "Profiler Sampler", MonoSetThreadNameFlag_None);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
@@ -1151,6 +1146,7 @@ mono_init_native_crash_info (void)
 {
 	gdb_path = g_find_program_in_path ("gdb");
 	lldb_path = g_find_program_in_path ("lldb");
+	mono_threads_summarize_init ();
 }
 
 void

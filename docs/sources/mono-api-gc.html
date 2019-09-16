@@ -109,6 +109,12 @@ typedef struct {
 
 <h3>Write Barriers</h3>
 
+	<p>SGen is a concurrent and generational GC, features which require
+	tracking changes to the state of the heap. This is achieved through
+	write barriers. Whenever native code is changing the state of the
+	heap by storing references into another managed object, it needs to
+	do it using this write barrier API.
+
 <h4><a name="api:mono_gc_wbarrier_arrayref_copy">mono_gc_wbarrier_arrayref_copy</a></h4>
 <h4><a name="api:mono_gc_wbarrier_generic_nostore">mono_gc_wbarrier_generic_nostore</a></h4>
 <h4><a name="api:mono_gc_wbarrier_generic_store">mono_gc_wbarrier_generic_store</a></h4>

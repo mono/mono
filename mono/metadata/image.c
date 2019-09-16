@@ -738,7 +738,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		if (valid) {
 			MonoAssemblyLoadContext *alc = mono_image_get_alc (image);
 			MonoLoadedImages *li = mono_image_get_loaded_images_for_modules (image);
-			module_ref = g_build_filename (base_dir, name, NULL);
+			module_ref = g_build_filename (base_dir, name, (const char*)NULL);
 			MonoImage *moduleImage = mono_image_open_a_lot_parameterized (li, alc, module_ref, &status, refonly, FALSE, NULL);
 			if (moduleImage) {
 				if (!assign_assembly_parent_for_netmodule (moduleImage, image, error)) {
@@ -1336,14 +1336,11 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		    gboolean care_about_cli, gboolean care_about_pecoff)
 {
 	ERROR_DECL (error);
-	MonoCLIImageInfo *iinfo;
 	GSList *l;
 
 	MONO_PROFILER_RAISE (image_loading, (image));
 
 	mono_image_init (image);
-
-	iinfo = image->image_info;
 
 	if (!image->metadata_only) {
 		for (l = image_loaders; l; l = l->next) {
@@ -1831,6 +1828,7 @@ mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, gu
 	image->storage = storage;
 	mono_image_init_raw_data (image, storage);
 	image->name = (name == NULL) ? g_strdup_printf ("data-%p", datac) : g_strdup(name);
+	image->filename = name ? g_strdup (name) : NULL;
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->ref_only = refonly;
@@ -1930,6 +1928,7 @@ mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->name = fname;
+	image->filename = g_strdup (image->name);
 	image->ref_count = has_entry_point ? 0 : 1;
 #ifdef ENABLE_NETCORE
 	image->alc = alc;
@@ -2275,7 +2274,7 @@ mono_dynamic_stream_reset (MonoDynamicStream* stream)
 	}
 }
 
-static inline void
+static void
 free_hash (GHashTable *hash)
 {
 	if (hash)
@@ -2808,7 +2807,7 @@ mono_image_load_file_for_image_checked (MonoImage *image, int fileidx, MonoError
 	fname_id = mono_metadata_decode_row_col (t, fileidx - 1, MONO_FILE_NAME);
 	fname = mono_metadata_string_heap (image, fname_id);
 	base_dir = g_path_get_dirname (image->name);
-	name = g_build_filename (base_dir, fname, NULL);
+	name = g_build_filename (base_dir, fname, (const char*)NULL);
 	res = mono_image_open (name, NULL);
 	if (!res)
 		goto done;

@@ -329,6 +329,7 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
+		[Category ("NotWasm")] // Object.onAbort
 		public void TestRaceCondition ()
 		{
 			Assert.IsTrue (new RaceTest (true).Success, "#1");

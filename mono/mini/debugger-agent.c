@@ -735,7 +735,7 @@ static void
 register_socket_transport (void);
 #endif
 
-static inline gboolean
+static gboolean
 is_debugger_thread (void)
 {
 	MonoInternalThread *internal;
@@ -1656,7 +1656,7 @@ start_debugger_thread (MonoError *error)
  * Functions to decode protocol data
  */
 
-static inline int
+static int
 decode_byte (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	*endbuf = buf + 1;
@@ -1664,7 +1664,7 @@ decode_byte (guint8 *buf, guint8 **endbuf, guint8 *limit)
 	return buf [0];
 }
 
-static inline int
+static int
 decode_int (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	*endbuf = buf + 4;
@@ -1673,7 +1673,7 @@ decode_int (guint8 *buf, guint8 **endbuf, guint8 *limit)
 	return (((int)buf [0]) << 24) | (((int)buf [1]) << 16) | (((int)buf [2]) << 8) | (((int)buf [3]) << 0);
 }
 
-static inline gint64
+static gint64
 decode_long (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	guint32 high = decode_int (buf, &buf, limit);
@@ -1684,13 +1684,13 @@ decode_long (guint8 *buf, guint8 **endbuf, guint8 *limit)
 	return ((((guint64)high) << 32) | ((guint64)low));
 }
 
-static inline int
+static int
 decode_id (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	return decode_int (buf, endbuf, limit);
 }
 
-static inline char*
+static char*
 decode_string (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	int len = decode_int (buf, &buf, limit);
@@ -1716,7 +1716,7 @@ decode_string (guint8 *buf, guint8 **endbuf, guint8 *limit)
  * Functions to encode protocol data
  */
 
-static inline void
+static void
 buffer_init (Buffer *buf, int size)
 {
 	buf->buf = (guint8 *)g_malloc (size);
@@ -1724,13 +1724,13 @@ buffer_init (Buffer *buf, int size)
 	buf->end = buf->buf + size;
 }
 
-static inline int
+static int
 buffer_len (Buffer *buf)
 {
 	return buf->p - buf->buf;
 }
 
-static inline void
+static void
 buffer_make_room (Buffer *buf, int size)
 {
 	if (buf->end - buf->p < size) {
@@ -1743,7 +1743,7 @@ buffer_make_room (Buffer *buf, int size)
 	}
 }
 
-static inline void
+static void
 buffer_add_byte (Buffer *buf, guint8 val)
 {
 	buffer_make_room (buf, 1);
@@ -1751,7 +1751,7 @@ buffer_add_byte (Buffer *buf, guint8 val)
 	buf->p++;
 }
 
-static inline void
+static void
 buffer_add_short (Buffer *buf, guint32 val)
 {
 	buffer_make_room (buf, 2);
@@ -1760,7 +1760,7 @@ buffer_add_short (Buffer *buf, guint32 val)
 	buf->p += 2;
 }
 
-static inline void
+static void
 buffer_add_int (Buffer *buf, guint32 val)
 {
 	buffer_make_room (buf, 4);
@@ -1771,20 +1771,20 @@ buffer_add_int (Buffer *buf, guint32 val)
 	buf->p += 4;
 }
 
-static inline void
+static void
 buffer_add_long (Buffer *buf, guint64 l)
 {
 	buffer_add_int (buf, (l >> 32) & 0xffffffff);
 	buffer_add_int (buf, (l >> 0) & 0xffffffff);
 }
 
-static inline void
+static void
 buffer_add_id (Buffer *buf, int id)
 {
 	buffer_add_int (buf, (guint64)id);
 }
 
-static inline void
+static void
 buffer_add_data (Buffer *buf, guint8 *data, int len)
 {
 	buffer_make_room (buf, len);
@@ -1792,7 +1792,7 @@ buffer_add_data (Buffer *buf, guint8 *data, int len)
 	buf->p += len;
 }
 
-static inline void
+static void
 buffer_add_string (Buffer *buf, const char *str)
 {
 	int len;
@@ -1806,20 +1806,20 @@ buffer_add_string (Buffer *buf, const char *str)
 	}
 }
 
-static inline void
+static void
 buffer_add_byte_array (Buffer *buf, guint8 *bytes, guint32 arr_len)
 {
     buffer_add_int (buf, arr_len);
     buffer_add_data (buf, bytes, arr_len);
 }
 
-static inline void
+static void
 buffer_add_buffer (Buffer *buf, Buffer *data)
 {
 	buffer_add_data (buf, data->buf, buffer_len (data));
 }
 
-static inline void
+static void
 buffer_free (Buffer *buf)
 {
 	g_free (buf->buf);
@@ -2028,7 +2028,7 @@ clear_suspended_objs (void)
 	dbg_unlock ();
 }
 
-static inline int
+static int
 get_objid (MonoObject *obj)
 {
 	if (!obj)
@@ -2083,13 +2083,13 @@ get_object (int objid, MonoObject **obj)
 	return ERR_NONE;
 }
 
-static inline int
+static int
 decode_objid (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	return decode_id (buf, endbuf, limit);
 }
 
-static inline void
+static void
 buffer_add_objid (Buffer *buf, MonoObject *o)
 {
 	buffer_add_id (buf, get_objid (o));
@@ -2298,7 +2298,7 @@ get_id (MonoDomain *domain, IdType type, gpointer val)
 	return id->id;
 }
 
-static inline gpointer
+static gpointer
 decode_ptr_id (guint8 *buf, guint8 **endbuf, guint8 *limit, IdType type, MonoDomain **domain, ErrorCode *err)
 {
 	Id *res;
@@ -2331,7 +2331,7 @@ decode_ptr_id (guint8 *buf, guint8 **endbuf, guint8 *limit, IdType type, MonoDom
 	return res->data.val;
 }
 
-static inline int
+static int
 buffer_add_ptr_id (Buffer *buf, MonoDomain *domain, IdType type, gpointer val)
 {
 	int id = get_id (domain, type, val);
@@ -2340,7 +2340,7 @@ buffer_add_ptr_id (Buffer *buf, MonoDomain *domain, IdType type, gpointer val)
 	return id;
 }
 
-static inline MonoClass*
+static MonoClass*
 decode_typeid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	MonoClass *klass;
@@ -2356,19 +2356,19 @@ decode_typeid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain,
 	return klass;
 }
 
-static inline MonoAssembly*
+static MonoAssembly*
 decode_assemblyid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	return (MonoAssembly *)decode_ptr_id (buf, endbuf, limit, ID_ASSEMBLY, domain, err);
 }
 
-static inline MonoImage*
+static MonoImage*
 decode_moduleid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	return (MonoImage *)decode_ptr_id (buf, endbuf, limit, ID_MODULE, domain, err);
 }
 
-static inline MonoMethod*
+static MonoMethod*
 decode_methodid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	MonoMethod *m;
@@ -2384,25 +2384,25 @@ decode_methodid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domai
 	return m;
 }
 
-static inline MonoClassField*
+static MonoClassField*
 decode_fieldid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	return (MonoClassField *)decode_ptr_id (buf, endbuf, limit, ID_FIELD, domain, err);
 }
 
-static inline MonoDomain*
+static MonoDomain*
 decode_domainid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	return (MonoDomain *)decode_ptr_id (buf, endbuf, limit, ID_DOMAIN, domain, err);
 }
 
-static inline MonoProperty*
+static MonoProperty*
 decode_propertyid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
 	return (MonoProperty *)decode_ptr_id (buf, endbuf, limit, ID_PROPERTY, domain, err);
 }
 
-static inline void
+static void
 buffer_add_typeid (Buffer *buf, MonoDomain *domain, MonoClass *klass)
 {
 	buffer_add_ptr_id (buf, domain, ID_TYPE, klass);
@@ -2418,7 +2418,7 @@ buffer_add_typeid (Buffer *buf, MonoDomain *domain, MonoClass *klass)
 	}
 }
 
-static inline void
+static void
 buffer_add_methodid (Buffer *buf, MonoDomain *domain, MonoMethod *method)
 {
 	buffer_add_ptr_id (buf, domain, ID_METHOD, method);
@@ -2434,7 +2434,7 @@ buffer_add_methodid (Buffer *buf, MonoDomain *domain, MonoMethod *method)
 	}
 }
 
-static inline void
+static void
 buffer_add_assemblyid (Buffer *buf, MonoDomain *domain, MonoAssembly *assembly)
 {
 	int id;
@@ -2444,25 +2444,25 @@ buffer_add_assemblyid (Buffer *buf, MonoDomain *domain, MonoAssembly *assembly)
 		DEBUG_PRINTF (2, "[dbg]   send assembly [%s][%s][%d]\n", assembly->aname.name, domain->friendly_name, id);
 }
 
-static inline void
+static void
 buffer_add_moduleid (Buffer *buf, MonoDomain *domain, MonoImage *image)
 {
 	buffer_add_ptr_id (buf, domain, ID_MODULE, image);
 }
 
-static inline void
+static void
 buffer_add_fieldid (Buffer *buf, MonoDomain *domain, MonoClassField *field)
 {
 	buffer_add_ptr_id (buf, domain, ID_FIELD, field);
 }
 
-static inline void
+static void
 buffer_add_propertyid (Buffer *buf, MonoDomain *domain, MonoProperty *property)
 {
 	buffer_add_ptr_id (buf, domain, ID_PROPERTY, property);
 }
 
-static inline void
+static void
 buffer_add_domainid (Buffer *buf, MonoDomain *domain)
 {
 	buffer_add_ptr_id (buf, domain, ID_DOMAIN, domain);
@@ -3250,6 +3250,7 @@ static gint32 isFixedSizeArray (MonoClassField *f)
 					goto leave;
 				}
 				ret = *(gint32*)typed_args [1];
+				g_free (typed_args [1]);
 				g_free (typed_args);
 				g_free (named_args);
 				g_free (arginfo);
@@ -4967,7 +4968,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &args->sp);
 				if (!found_sp)
 					no_seq_points_found (frame->de.method, frame->de.native_offset);
-				g_assert (found_sp);
+				g_assert (found_sp);				
 				method = frame->de.method;
 			}
 		}
@@ -7792,6 +7793,8 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 		return ERR_NONE;
 	}
 
+	SETUP_ICALL_FUNCTION;
+
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		if (!attr_klass || mono_class_has_parent (cinfo->attrs [i].ctor->klass, attr_klass))
 			nattrs ++;
@@ -7802,16 +7805,26 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 		MonoCustomAttrEntry *attr = &cinfo->attrs [i];
 		if (!attr_klass || mono_class_has_parent (attr->ctor->klass, attr_klass)) {
 			MonoArray *typed_args, *named_args;
+			MonoArrayHandleOut typed_args_h, named_args_h;
+			MonoObjectHandle val_h;
 			MonoType *t;
 			CattrNamedArg *arginfo = NULL;
 			ERROR_DECL (error);
 
-			mono_reflection_create_custom_attr_data_args (image, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, error);
+			SETUP_ICALL_FRAME;
+			typed_args_h = MONO_HANDLE_NEW (MonoArray, NULL);
+			named_args_h = MONO_HANDLE_NEW (MonoArray, NULL);
+			val_h = MONO_HANDLE_NEW (MonoObject, NULL);
+
+			mono_reflection_create_custom_attr_data_args (image, attr->ctor, attr->data, attr->data_size, typed_args_h, named_args_h, &arginfo, error);
 			if (!is_ok (error)) {
 				DEBUG_PRINTF (2, "[dbg] mono_reflection_create_custom_attr_data_args () failed with: '%s'\n", mono_error_get_message (error));
 				mono_error_cleanup (error);
+				CLEAR_ICALL_FRAME;
 				return ERR_LOADER_ERROR;
 			}
+			typed_args = MONO_HANDLE_RAW (typed_args_h);
+			named_args = MONO_HANDLE_RAW (named_args_h);
 
 			buffer_add_methodid (buf, domain, attr->ctor);
 
@@ -7820,6 +7833,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 				buffer_add_int (buf, mono_array_length_internal (typed_args));
 				for (j = 0; j < mono_array_length_internal (typed_args); ++j) {
 					MonoObject *val = mono_array_get_internal (typed_args, MonoObject*, j);
+					MONO_HANDLE_ASSIGN_RAW (val_h, val);
 
 					t = mono_method_signature_internal (attr->ctor)->params [j];
 
@@ -7835,6 +7849,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 
 				for (j = 0; j < mono_array_length_internal (named_args); ++j) {
 					MonoObject *val = mono_array_get_internal (named_args, MonoObject*, j);
+					MONO_HANDLE_ASSIGN_RAW (val_h, val);
 
 					if (arginfo [j].prop) {
 						buffer_add_byte (buf, 0x54);
@@ -7852,6 +7867,8 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 				buffer_add_int (buf, 0);
 			}
 			g_free (arginfo);
+
+			CLEAR_ICALL_FRAME;
 		}
 	}
 
@@ -8038,17 +8055,17 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		attr_klass = decode_typeid (p, &p, end, NULL, &err);
 		/* attr_klass can be NULL */
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 
 		cinfo = mono_custom_attrs_from_class_checked (klass, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			return ERR_LOADER_ERROR;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		break;
 	}
 	case CMD_TYPE_GET_FIELD_CATTRS: {
@@ -8058,20 +8075,20 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		field = decode_fieldid (p, &p, end, NULL, &err);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		attr_klass = decode_typeid (p, &p, end, NULL, &err);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 
 		cinfo = mono_custom_attrs_from_field_checked (klass, field, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			return ERR_LOADER_ERROR;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		break;
 	}
 	case CMD_TYPE_GET_PROPERTY_CATTRS: {
@@ -8081,20 +8098,20 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		prop = decode_propertyid (p, &p, end, NULL, &err);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		attr_klass = decode_typeid (p, &p, end, NULL, &err);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 
 		cinfo = mono_custom_attrs_from_property_checked (klass, prop, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error); /* FIXME don't swallow the error message */
-			return ERR_LOADER_ERROR;
+			goto loader_error;
 		}
 
 		err = buffer_add_cattrs (buf, domain, m_class_get_image (klass), attr_klass, cinfo);
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		break;
 	}
 	case CMD_TYPE_GET_VALUES:
@@ -8115,7 +8132,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 			err = get_object (objid, (MonoObject**)&thread_obj);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			thread = THREAD_TO_INTERNAL (thread_obj);
 		}
@@ -8124,14 +8141,15 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		for (i = 0; i < len; ++i) {
 			f = decode_fieldid (p, &p, end, NULL, &err);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC))
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
+
 			special_static_type = mono_class_field_get_special_static_type (f);
 			if (special_static_type != SPECIAL_STATIC_NONE) {
 				if (!(thread && special_static_type == SPECIAL_STATIC_THREAD))
-					return ERR_INVALID_FIELDID;
+					goto invalid_fieldid;
 			}
 
 			/* Check that the field belongs to the object */
@@ -8143,15 +8161,15 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 				}
 			}
 			if (!found)
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
 
 			vtable = mono_class_vtable_checked (domain, f->parent, error);
-			if (!is_ok (error))
-				return ERR_INVALID_FIELDID;
+			goto_if_nok (error, invalid_fieldid);
+
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val, error);
-			if (!is_ok (error))
-				return ERR_INVALID_FIELDID;
+			goto_if_nok (error, invalid_fieldid);
+
 			buffer_add_value (buf, f->type, val, domain);
 			g_free (val);
 		}
@@ -8169,12 +8187,13 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		for (i = 0; i < len; ++i) {
 			f = decode_fieldid (p, &p, end, NULL, &err);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC))
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
+
 			if (mono_class_field_is_special_static (f))
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
@@ -8185,18 +8204,18 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 				}
 			}
 			if (!found)
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
 
 			// FIXME: Check for literal/const
 
 			vtable = mono_class_vtable_checked (domain, f->parent, error);
-			if (!is_ok (error))
-				return ERR_INVALID_FIELDID;
+			goto_if_nok (error, invalid_fieldid);
+
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 			err = decode_value (f->type, domain, val, p, &p, end, TRUE);
 			if (err != ERR_NONE) {
 				g_free (val);
-				return err;
+				goto exit;
 			}
 			if (MONO_TYPE_IS_REFERENCE (f->type))
 				mono_field_static_set_value_internal (vtable, f, *(gpointer*)val);
@@ -8210,7 +8229,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoObject *o = (MonoObject*)mono_type_get_object_checked (domain, m_class_get_byval_arg (klass), error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
-			return ERR_INVALID_OBJECT;
+			goto invalid_object;
 		}
 		buffer_add_objid (buf, o);
 		break;
@@ -8242,7 +8261,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoClass *oklass = decode_typeid (p, &p, end, NULL, &err);
 
 		if (err != ERR_NONE)
-			return err;
+			goto exit;
 		if (mono_class_is_assignable_from_internal (klass, oklass))
 			buffer_add_byte (buf, 1);
 		else
@@ -8264,7 +8283,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, mlisttype, TRUE, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
-			return ERR_LOADER_ERROR;
+			goto loader_error;
 		}
 		buffer_add_int (buf, array->len);
 		for (i = 0; i < array->len; ++i) {
@@ -8286,11 +8305,10 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		for (parent = tclass; parent; parent = m_class_get_parent (parent)) {
 			mono_class_setup_interfaces (parent, error);
-			if (!is_ok (error))
-				return ERR_LOADER_ERROR;
+			goto_if_nok (error, loader_error);
+
 			collect_interfaces (parent, iface_hash, error);
-			if (!is_ok (error))
-				return ERR_LOADER_ERROR;
+			goto_if_nok (error, loader_error);
 		}
 
 		buffer_add_int (buf, g_hash_table_size (iface_hash));
@@ -8315,11 +8333,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		for (tindex = 0; tindex < len; ++tindex) {
 			iclass = decode_typeid (p, &p, end, NULL, &err);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			ioffset = mono_class_interface_offset_with_variance (klass, iclass, &variance_used);
 			if (ioffset == -1)
-				return ERR_INVALID_ARGUMENT;
+				goto invalid_argument;
 
 			nmethods = mono_class_num_methods (iclass);
 			buffer_add_int (buf, nmethods);
@@ -8336,8 +8354,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	}
 	case CMD_TYPE_IS_INITIALIZED: {
 		MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
-		if (!is_ok (error))
-			return ERR_LOADER_ERROR;
+		goto_if_nok (error, loader_error);
 
 		if (vtable)
 			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
@@ -8362,10 +8379,26 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	default:
-		return ERR_NOT_IMPLEMENTED;
+		err = ERR_NOT_IMPLEMENTED;
+		goto exit;
 	}
 
-	return ERR_NONE;
+	err = ERR_NONE;
+	goto exit;
+invalid_argument:
+	err = ERR_INVALID_ARGUMENT;
+	goto exit;
+invalid_fieldid:
+	err = ERR_INVALID_FIELDID;
+	goto exit;
+invalid_object:
+	err = ERR_INVALID_OBJECT;
+	goto exit;
+loader_error:
+	err = ERR_LOADER_ERROR;
+	goto exit;
+exit:
+	return err;
 }
 
 static ErrorCode
@@ -9407,6 +9440,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	MonoClassField *f;
 	MonoClass *k;
 	gboolean found;
+	gboolean remote_obj = FALSE;
 
 	if (command == CMD_OBJECT_REF_IS_COLLECTED) {
 		objid = decode_objid (p, &p, end);
@@ -9415,16 +9449,16 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			buffer_add_int (buf, 1);
 		else
 			buffer_add_int (buf, 0);
-		return ERR_NONE;
+		err = ERR_NONE;
+		goto exit;
 	}
 
 	objid = decode_objid (p, &p, end);
 	err = get_object (objid, &obj);
 	if (err != ERR_NONE)
-		return err;
+		goto exit;
 
 	MonoClass *obj_type;
-	gboolean remote_obj = FALSE;
 
 	obj_type = obj->vtable->klass;
 	if (mono_class_is_transparent_proxy (obj_type)) {
@@ -9445,7 +9479,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		for (i = 0; i < len; ++i) {
 			MonoClassField *f = decode_fieldid (p, &p, end, NULL, &err);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
@@ -9456,26 +9490,26 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				}
 			}
 			if (!found)
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
 
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
 				if (mono_class_field_is_special_static (f))
-					return ERR_INVALID_FIELDID;
+					goto invalid_fieldid;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
 				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error);
-					return ERR_INVALID_OBJECT;
+					goto invalid_object;
 				}
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 				mono_field_static_get_value_checked (vtable, f, val, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error); /* FIXME report the error */
-					return ERR_INVALID_OBJECT;
+					goto invalid_object;
 				}
 				buffer_add_value (buf, f->type, val, obj->vtable->domain);
 				g_free (val);
@@ -9489,7 +9523,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					field_value = mono_load_remote_field_checked(obj, obj_type, f, &field_storage, error);
 					if (!is_ok (error)) {
 						mono_error_cleanup (error); /* FIXME report the error */
-						return ERR_INVALID_OBJECT;
+						goto invalid_object;
 					}
 #else
 					g_assert_not_reached ();
@@ -9507,7 +9541,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		for (i = 0; i < len; ++i) {
 			f = decode_fieldid (p, &p, end, NULL, &err);
 			if (err != ERR_NONE)
-				return err;
+				goto exit;
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
@@ -9518,34 +9552,34 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				}
 			}
 			if (!found)
-				return ERR_INVALID_FIELDID;
+				goto invalid_fieldid;
 
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
 				if (mono_class_field_is_special_static (f))
-					return ERR_INVALID_FIELDID;
+					goto invalid_fieldid;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
 				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, error);
 				if (!is_ok (error)) {
 					mono_error_cleanup (error);
-					return ERR_INVALID_FIELDID;
+					goto invalid_fieldid;
 				}
 
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
 				err = decode_value (f->type, obj->vtable->domain, val, p, &p, end, TRUE);
 				if (err != ERR_NONE) {
 					g_free (val);
-					return err;
+					goto exit;
 				}
 				mono_field_static_set_value_internal (vtable, f, val);
 				g_free (val);
 			} else {
 				err = decode_value (f->type, obj->vtable->domain, (guint8*)obj + f->offset, p, &p, end, TRUE);
 				if (err != ERR_NONE)
-					return err;
+					goto exit;
 			}
 		}
 		break;
@@ -9560,10 +9594,20 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_domainid (buf, obj->vtable->domain);
 		break;
 	default:
-		return ERR_NOT_IMPLEMENTED;
+		err = ERR_NOT_IMPLEMENTED;
+		goto exit;
 	}
 
-	return ERR_NONE;
+	err = ERR_NONE;
+	goto exit;
+invalid_fieldid:
+	err = ERR_INVALID_FIELDID;
+	goto exit;
+invalid_object:
+	err = ERR_INVALID_OBJECT;
+	goto exit;
+exit:
+	return err;
 }
 
 static const char*
@@ -9853,7 +9897,6 @@ wait_for_attach (void)
 static gsize WINAPI
 debugger_thread (void *arg)
 {
-	ERROR_DECL (error);
 	int res, len, id, flags, command = 0;
 	CommandSet command_set = (CommandSet)0;
 	guint8 header [HEADER_LENGTH];
@@ -9870,10 +9913,7 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
-	MonoString *str = mono_string_new_checked (mono_domain_get (), "Debugger agent", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (internal, str, MonoSetThreadNameFlag_Permanent, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name_constant_ignore_error (internal, "Debugger agent", MonoSetThreadNameFlag_Permanent);
 
 	internal->state |= ThreadState_Background;
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;

@@ -911,82 +911,64 @@ mono_w32process_try_get_modules (gpointer handle, gpointer *modules, guint32 siz
 	return TRUE;
 }
 
-guint32
-mono_w32process_module_get_filename (gpointer handle, gpointer module, gunichar2 *basename, guint32 size)
+gunichar2 *
+mono_w32process_module_get_filename (gpointer handle, gpointer module, guint32 *len)
 {
-	gint pid, len;
-	gsize bytes;
+	gint pid;
+	gsize bytes = 0;
 	gchar *path;
 	gunichar2 *proc_path;
 
-	size *= sizeof (gunichar2); /* adjust for unicode characters */
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module file name, process handle %p module %p " G_GUINT32_FORMAT,
+	            __func__, handle, module);
 
-	if (basename == NULL || size == 0)
-		return 0;
+	*len = 0;
 
 	pid = mono_w32process_get_pid (handle);
+	if (pid == 0)
+		return NULL;
 
 	path = mono_w32process_get_path (pid);
 	if (path == NULL)
-		return 0;
+		return NULL;
 
 	proc_path = mono_unicode_from_external (path, &bytes);
+
+	*len = bytes / sizeof (gunichar2);
+
 	g_free (path);
-
-	if (proc_path == NULL)
-		return 0;
-
-	len = (bytes / 2);
-
-	/* Add the terminator */
-	bytes += 2;
-
-	if (size < bytes) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Size %" G_GUINT32_FORMAT " smaller than needed (%zd); truncating", __func__, size, bytes);
-		memcpy (basename, proc_path, size);
-	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Size %" G_GUINT32_FORMAT " larger than needed (%zd)", __func__, size, bytes);
-		memcpy (basename, proc_path, bytes);
-	}
-
-	g_free (proc_path);
-
-	return len;
+	return proc_path;
 }
 
-guint32
-mono_w32process_module_get_name (gpointer handle, gpointer module, gunichar2 *basename, guint32 size)
+gunichar2 *
+mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
 	pid_t pid;
 	gunichar2 *procname;
 	char *procname_ext = NULL;
-	glong len;
-	gsize bytes;
+	gsize bytes = 0;
 	GSList *mods = NULL, *mods_iter;
 	MonoW32ProcessModule *found_module;
 	char *pname = NULL;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module base name, process handle %p module %p basename %p size %" G_GUINT32_FORMAT,
-		   __func__, handle, module, basename, size);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module base name, process handle %p module %p " G_GUINT32_FORMAT,
+		   __func__, handle, module);
 
-	size = size * sizeof (gunichar2); /* adjust for unicode characters */
-
-	if (basename == NULL || size == 0)
-		return 0;
+	*len = 0;
 
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unknown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return 0;
+		return NULL;
 	}
 
 	if (handle_data->type != MONO_W32TYPE_PROCESS) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unknown process handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		mono_w32handle_unref (handle_data);
-		return 0;
+		return NULL;
 	}
 
 	process_handle = (MonoW32HandleProcess*) handle_data->specific;
@@ -1041,35 +1023,19 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, gunichar2 *ba
 			/* bugger */
 			g_free (procname_ext);
 			mono_w32handle_unref (handle_data);
-			return 0;
+			return NULL;
 		}
 
-		len = (bytes / 2);
+		*len = bytes / sizeof (gunichar2);
 
-		/* Add the terminator */
-		bytes += 2;
-
-		if (size < bytes) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Size %" G_GUINT32_FORMAT " smaller than needed (%zd); truncating", __func__, size, bytes);
-
-			memcpy (basename, procname, size);
-		} else {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Size %" G_GUINT32_FORMAT " larger than needed (%zd)",
-				   __func__, size, bytes);
-
-			memcpy (basename, procname, bytes);
-		}
-
-		g_free (procname);
 		g_free (procname_ext);
-
 		mono_w32handle_unref (handle_data);
-		return len;
+		return procname;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Can't find procname_ext %p", __func__, handle);
 	mono_w32handle_unref (handle_data);
-	return 0;
+	return NULL;
 }
 
 gboolean
@@ -1381,7 +1347,7 @@ leave:
  * that, the system's file descriptor limit. This is called by the fork child
  * in close_my_fds.
  */
-static inline guint32
+static guint32
 max_fd_count (void)
 {
 #if defined (_AIX)
@@ -1788,7 +1754,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		char *qprog;
 
 		qprog = g_shell_quote (prog);
-		full_prog = g_strconcat (qprog, " ", args_after_prog, NULL);
+		full_prog = g_strconcat (qprog, " ", args_after_prog, (const char*)NULL);
 		g_free (qprog);
 	} else {
 		full_prog = g_shell_quote (prog);
@@ -2070,7 +2036,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 					/* kfmclient needs exec argument */
 					char *old = handler;
 					handler = g_strconcat (old, " exec",
-							       NULL);
+							       (const char*)NULL);
 					g_free (old);
 				}
 			}

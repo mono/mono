@@ -54,8 +54,10 @@ namespace System.Threading {
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
 		/* accessed only from unmanaged code */
-		private IntPtr name;
-		private int name_len; 
+		private IntPtr name_chars;
+		private IntPtr name_generation;
+		private int name_free;
+		private int name_length;
 		private ThreadState state;
 		private object abort_exc;
 		private int abort_state_handle;
@@ -403,7 +405,13 @@ namespace System.Threading {
 		private extern static string GetName_internal (InternalThread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetName_internal (InternalThread thread, String name);
+		private static unsafe extern void SetName_icall (InternalThread thread, char *name, int nameLength);
+
+		private static unsafe void SetName_internal (InternalThread thread, String name)
+		{
+			fixed (char* fixed_name = name)
+				SetName_icall (thread, fixed_name, name?.Length ?? 0);
+		}
 
 		/* 
 		 * The thread name must be shared by appdomains, so it is stored in

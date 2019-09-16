@@ -259,7 +259,7 @@ remove_breakpoint (BreakpointInstance *inst)
 /*
  * This doesn't take any locks.
  */
-static inline gboolean
+static gboolean
 bp_matches_method (MonoBreakpoint *bp, MonoMethod *method)
 {
 	int i;
@@ -1276,6 +1276,12 @@ mono_de_ss_start (SingleStepReq *ss_req, SingleStepArgs *ss_args)
 	DbgEngineStackFrame **frames = ss_args->frames;
 	int nframes = ss_args->nframes;
 	SeqPoint *sp = &ss_args->sp;
+
+#if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
+	/* this can happen on a single step in a exception on android (Mono_UnhandledException_internal) */
+	if (!method)
+		return;
+#endif		
 
 	/*
 	 * Implement single stepping using breakpoints if possible.

@@ -80,7 +80,7 @@ class OffsetsTool:
 
 		if "wasm" in args.abi:
 			require_emscipten_path (args)
-			self.sys_includes = [args.emscripten_path + "/system/include/libc"]
+			self.sys_includes = [args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
@@ -179,7 +179,7 @@ class OffsetsTool:
 			"SgenThreadInfo",
 			"SgenClientThreadInfo",
 			"MonoProfilerCallContext",
-			"MonoError"
+			"MonoErrorExternal",
 		]
 		self.jit_type_names = [
 			"MonoLMF",
