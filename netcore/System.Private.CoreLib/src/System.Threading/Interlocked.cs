@@ -13,7 +13,26 @@ namespace System.Threading
 		public extern static int CompareExchange (ref int location1, int value, int comparand);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static object CompareExchange (ref object location1, object value, object comparand);
+		extern static void CompareExchange_object (ref object location1, ref object value, ref object comparand, ref object result);
+
+		public static object CompareExchange (ref object location1, object value, object comparand)
+		{
+			// This avoids coop handles, esp. on the output which would be particularly inefficient.
+			// Passing everything by ref is equivalent to coop handles -- ref to locals at least.
+			//
+			// location1's treatment is unclear. But note that passing it by handle would be incorrect,
+			// as it would use a local alias, which the coop marshaling does, to avoid the unclarity here,
+			// that of a ref being to a managed frame vs. a native frame. Perhaps that could be revisited.
+			//
+			// So there a hole here, that of calling this function with location1 being in a native frame.
+			// Usually it will be to a field, static or not, and not even to managed stack.
+			//
+			// This is usually intrinsified. Ideally it is always intrinisified.
+			//
+			object result = null;
+			CompareExchange_object (ref location1, ref value, ref comparand, ref result);
+			return result;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static float CompareExchange (ref float location1, float value, float comparand);
@@ -34,7 +53,15 @@ namespace System.Threading
 		public extern static int Exchange (ref int location1, int value);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static object Exchange (ref object location1, object value);
+		extern static void Exchange_object (ref object location1, ref object value, ref object result);
+
+		public static object Exchange (ref object location1, object value)
+		{
+			// See CompareExchange for comments.
+			object result = null;
+			Exchange_object (ref location1, ref value, ref result);
+			return result;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static float Exchange (ref float location1, float value);
