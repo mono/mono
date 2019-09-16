@@ -2367,12 +2367,16 @@ gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gi
 	return mono_atomic_xchg_i32(location, value);
 }
 
-MonoObject * ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject **location, MonoObject *value)
+void
+ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
 {
-	MonoObject *res;
-	res = (MonoObject *) mono_atomic_xchg_ptr((gpointer *) location, value);
+	// Coop-equivalency here via pointers to pointers.
+	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	//
+	// This also handles generic T case, T constrained to a class.
+	//
+	*res = (MonoObject*)mono_atomic_xchg_ptr ((volatile gpointer*)location, *value);
 	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
 }
 
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr (gpointer *location, gpointer value)
@@ -2429,12 +2433,16 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32
 	return r;
 }
 
-MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
+void
+ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
 {
-	MonoObject *res;
-	res = (MonoObject *) mono_atomic_cas_ptr((gpointer *) location, value, comparand);
+	// Coop-equivalency here via pointers to pointers.
+	// value and comparand and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	//
+	// This also handles generic T case, T constrained to a class.
+	//
+	*res = (MonoObject*)mono_atomic_cas_ptr ((volatile gpointer*)location, *value, *comparand);
 	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
 }
 
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
@@ -2494,23 +2502,13 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 	return mono_atomic_cas_i64 (location, value, comparand);
 }
 
-MonoObject*
-ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject **location, MonoObject *value, MonoObject *comparand)
+void
+ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
 {
-	MonoObject *res;
-	res = (MonoObject *)mono_atomic_cas_ptr ((volatile gpointer *)location, value, comparand);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
-}
-
-MonoObject*
-ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoObject *value)
-{
-	MonoObject *res;
-	MONO_CHECK_NULL (location, NULL);
-	res = (MonoObject *)mono_atomic_xchg_ptr ((volatile gpointer *)location, value);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
+	// Coop-equivalency here via pointers to pointers.
+	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	MONO_CHECK_NULL (location, );
+	ves_icall_System_Threading_Interlocked_Exchange_Object (location, value, res);
 }
 
 gint32 
