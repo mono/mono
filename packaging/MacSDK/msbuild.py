@@ -3,7 +3,7 @@ import fileinput
 class MSBuild (GitHubPackage):
 	def __init__ (self):
 		GitHubPackage.__init__ (self, 'mono', 'msbuild', '15',  # note: fix scripts/ci/run-test-mac-sdk.sh when bumping the version number
-			revision = '63cdc9079266c170dc4a3f14704f3fc07be81bc7')
+			revision = '360994959eb1dca5d59932df4bf826385c7d58ad')
 
 	def build (self):
 		try:       
