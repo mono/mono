@@ -78,10 +78,14 @@
 #define AS_POINTER_DIRECTIVE ".quad"
 #elif defined(TARGET_ARM64)
 
+#ifdef MONO_ARCH_ILP32
+#define AS_POINTER_DIRECTIVE AS_INT32_DIRECTIVE
+#else
 #ifdef TARGET_ASM_APPLE
 #define AS_POINTER_DIRECTIVE ".quad"
 #else
 #define AS_POINTER_DIRECTIVE ".xword"
+#endif
 #endif
 
 #else
