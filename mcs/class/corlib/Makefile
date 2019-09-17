@@ -232,7 +232,7 @@ TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 satellite_assembly1 = $(test_lib_dir)/es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
 satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
-$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
+$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) | $(test_lib_dir)
 
 mscorlib_for_profile = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
 
@@ -298,11 +298,8 @@ NO_VTS_TEST = yes
 endif
 
 ifndef NO_VTS_TEST
-test: test-vts
-run-test: run-test-vts
-else
-test:
-run-test:
+test-local: test-vts
+run-test-local: run-test-vts
 endif
 
 EXTRA_DISTFILES += \
