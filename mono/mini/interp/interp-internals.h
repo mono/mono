@@ -176,7 +176,7 @@ struct _InterpFrame {
 	// Repurpose for output.
 	union {
 		InterpFrame *parent; /* parent */
-		GSList		*finally_ips;
+//		GSList		*finally_ips;
 	};
 
 	// child_frame->imethod and child_frame->retval are returned by interp_exec_method_inner.
@@ -198,6 +198,7 @@ struct _InterpFrame {
 
 	/* exception info */
 	const guint16	*ip;
+	GSList *finally_ips;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
