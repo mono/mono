@@ -645,16 +645,35 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
-		case SN_ExtractLowestSetBit:
-			// (0 - x) & x;
-			//EMIT_NEW_BIALU_IMM (cfg, ins, OP_ISUB, -1, args [0]->dreg, 0);
+		case SN_GetMaskUpToLowestSetBit: {
+			// x ^ (x - 1)
+			// LLVM replaces it with `blsmsk`
+			int tmp_reg = alloc_preg (cfg);
+			int result_reg = alloc_preg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, is_64bit ? OP_LSUB_IMM : OP_ISUB_IMM, tmp_reg, args [0]->dreg, 1);
+			EMIT_NEW_BIALU (cfg, ins, is_64bit ? OP_LXOR : OP_IXOR, result_reg, args [0]->dreg, tmp_reg);
 			return ins;
-		case SN_GetMaskUpToLowestSetBit:
-			// (x - 1)) ^ x;
+		}
+		case SN_ResetLowestSetBit: {
+			// x & (x - 1)
+			// LLVM replaces it with `blsr`
+			int tmp_reg = alloc_preg (cfg);
+			int result_reg = alloc_preg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, is_64bit ? OP_LSUB_IMM : OP_ISUB_IMM, tmp_reg, args [0]->dreg, 1);
+			EMIT_NEW_BIALU (cfg, ins, is_64bit ? OP_LAND : OP_IAND, result_reg, args [0]->dreg, tmp_reg);
 			return ins;
-		case SN_ResetLowestSetBit:
-			// (x - 1)) & x;
+		}
+		case SN_ExtractLowestSetBit: {
+			// x & (0 - x)
+			// LLVM replaces it with `blsi`
+			int tmp_reg = alloc_preg (cfg);
+			int result_reg = alloc_preg (cfg);
+			int zero_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_ICONST (cfg, zero_reg, 0);
+			EMIT_NEW_BIALU (cfg, ins, is_64bit ? OP_LSUB : OP_ISUB, tmp_reg, zero_reg, args [0]->dreg);
+			EMIT_NEW_BIALU (cfg, ins, is_64bit ? OP_LAND : OP_IAND, result_reg, args [0]->dreg, tmp_reg);
 			return ins;
+		}
 		case SN_TrailingZeroCount:
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_CTTZ64 : OP_CTTZ32);
 			ins->dreg = alloc_ireg (cfg);
