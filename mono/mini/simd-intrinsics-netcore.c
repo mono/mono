@@ -706,7 +706,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->dreg = alloc_ireg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
-			ins->type = STACK_I4;
+			ins->type = is_64bit ? STACK_I8 : STACK_I4;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		case SN_ParallelBitExtract:
