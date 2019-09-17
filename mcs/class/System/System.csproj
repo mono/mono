@@ -829,7 +829,6 @@
     <Compile Include="Mono.Btls\X509PalImpl.Btls.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="MonoTouch\Dummy.cs" />
-    <Compile Include="Mono\AppleTypes.cs" />
     <Compile Include="Mono\SystemCertificateProvider.cs" />
     <Compile Include="Mono\SystemDependencyProvider.cs" />
     <Compile Include="Mono\X509Pal.cs" />
@@ -1096,6 +1095,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -1235,6 +1235,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
@@ -1331,6 +1332,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -1459,6 +1461,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -1907,6 +1910,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -2379,6 +2383,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -2891,6 +2896,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -3391,6 +3397,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -3701,6 +3708,7 @@
         <Compile Include="Mono.AppleTls\SafeHandles.cs" />
         <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
         <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -3825,6 +3833,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -3962,6 +3971,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4115,6 +4125,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\CoreFXFileSystemWatcherProxy.cs" />
             <Compile Include="System.IO\DefaultWatcher.cs" />
             <Compile Include="System.IO\FAMWatcher.cs" />
@@ -4235,6 +4246,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4376,6 +4388,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4517,6 +4530,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
