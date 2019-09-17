@@ -1,3 +1,4 @@
+if !ENABLE_MSVC_ONLY
 if HOST_WIN32
 SUPPORT=
 else
@@ -190,3 +191,17 @@ patch-libtool:
 	sed -e 's,LTCOMPILE =,LTCOMPILE2 =,g' 2 > 3
 	cat 1 3 > Makefile
 	touch *.c
+
+endif # !ENABLE_MSVC_ONLY
+
+if ENABLE_MSVC_ONLY
+
+all-local:
+
+	make -C $(top_srcdir)/msvc libmonoposixhelper
+
+clean-local:
+
+	make -C $(top_srcdir)/msvc clean-libmonoposixhelper
+
+endif # ENABLE_MSVC_ONLY

@@ -6027,12 +6027,24 @@ AC_DEFINE(MONO_INSIDE_RUNTIME,1, [Disable banned functions from being used by th
 mono_build_root=`pwd`
 AC_SUBST(mono_build_root)
 
+AC_ARG_ENABLE(msvc_only,[  --enable-msvc-only    Build only with Visual Studio (msvc) (defaults to no). Disable gcc build.], enable_msvc_only=$enableval, enable_msvc_only=no)
+if test x$host_win32 = xno; then
+	if test x$enable_msvc_only = xyes; then
+		echo "Error, --enable-msvc-only only supported for Windows builds."
+		exit 1
+	fi
+fi
+AM_CONDITIONAL(ENABLE_MSVC_ONLY, test x$enable_msvc_only = xyes)
+
 AC_ARG_ENABLE(msvc,[  --enable-msvc    Build with Visual Studio (msvc) (defaults to no)], enable_msvc=$enableval, enable_msvc=no)
 if test x$host_win32 = xno; then
 	if test x$enable_msvc = xyes; then
 		echo "Error, --enable-msvc only supported for Windows builds."
 		exit 1
 	fi
+fi
+if test x$enable_msvc_only = xyes; then
+	enable_msvc=yes
 fi
 AM_CONDITIONAL(ENABLE_MSVC, test x$enable_msvc = xyes)
 
@@ -6966,6 +6978,10 @@ fi
       echo "ENABLE_COMPILER_SERVER?=0" >> $srcdir/$mcsdir/build/config.make
     fi
     echo "COMPILER_SERVER_PIPENAME?=monomake" >> $srcdir/$mcsdir/build/config.make
+
+	if test x$enable_msvc_only = xyes; then
+		echo "ENABLE_MSVC_ONLY=1" >> $srcdir/$mcsdir/build/config.make
+	fi
 
   fi
 
