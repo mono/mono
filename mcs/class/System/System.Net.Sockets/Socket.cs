@@ -1740,7 +1740,6 @@ namespace System.Net.Sockets
 			int cnt;
 			unsafe {
 				using (var handle = buffer.Slice (offset, size).Pin ()) {
-					Console.Error.WriteLine ($"RECEIVE FROM MEMORY!");
 					cnt = ReceiveFrom_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, ref sockaddr, out nativeError, is_blocking);
 				}
 			}
