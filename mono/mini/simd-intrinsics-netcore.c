@@ -552,6 +552,9 @@ static guint16 lzcnt_methods [] = {
 };
 
 static guint16 bmi1_methods [] = {
+	SN_ExtractLowestSetBit,
+	SN_GetMaskUpToLowestSetBit,
+	SN_ResetLowestSetBit,
 	SN_TrailingZeroCount,
 	SN_get_IsSupported,
 };
@@ -559,6 +562,7 @@ static guint16 bmi1_methods [] = {
 static guint16 bmi2_methods [] = {
 	SN_ParallelBitDeposit,
 	SN_ParallelBitExtract,
+	SN_ZeroHighBits,
 	SN_get_IsSupported,
 };
 
@@ -631,6 +635,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (bmi1_methods, sizeof (bmi1_methods), cmethod);
+
 		g_assert (id != -1);
 		supported = (get_cpu_features () & MONO_CPU_X86_BMI1) != 0;
 		is_64bit = !strcmp (class_name, "X64");
@@ -639,6 +644,16 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_get_IsSupported:
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
+			return ins;
+		case SN_ExtractLowestSetBit:
+			// (0 - x) & x;
+			//EMIT_NEW_BIALU_IMM (cfg, ins, OP_ISUB, -1, args [0]->dreg, 0);
+			return ins;
+		case SN_GetMaskUpToLowestSetBit:
+			// (x - 1)) ^ x;
+			return ins;
+		case SN_ResetLowestSetBit:
+			// (x - 1)) & x;
 			return ins;
 		case SN_TrailingZeroCount:
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_CTTZ64 : OP_CTTZ32);
@@ -666,6 +681,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_get_IsSupported:
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
+			return ins;
+		case SN_ZeroHighBits:
+			MONO_INST_NEW (cfg, ins, is_64bit ? OP_BZHI64 : OP_BZHI32);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		case SN_ParallelBitExtract:
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_PEXT64 : OP_PEXT32);
