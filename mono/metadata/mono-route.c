@@ -158,3 +158,4 @@ gateway_from_rtm(struct rt_msghdr *rtm)
 #endif
 
 extern const char mono_route_empty_file_no_warning;
+const char mono_route_empty_file_no_warning = 0;
