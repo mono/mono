@@ -687,6 +687,21 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			mini_type_from_op (cfg, ins, NULL, NULL);
 			return ins;
 		} else if (strcmp (cmethod->name, "get_Length") == 0 && fsig->param_count + fsig->hasthis == 1) {
+
+			// Replace "literal".Length with ICONST
+			if (*(args [0]->cil_code) == CEE_LDSTR && args [0]->data.i8const)
+			{
+				MonoGHashTable* table = cfg->domain->ldstr_table;
+				// TODO: do I need to lock ldstr_table access here?
+				MonoString* str = (MonoString*) mono_g_hash_table_lookup (table, GUINT_TO_POINTER (args [0]->data.i8const));
+				if (str && str->length >= 0)
+				{
+					EMIT_NEW_ICONST (cfg, ins, str->length);
+					ins->type = STACK_I4;
+					return ins;
+				}
+			}
+
 			int dreg = alloc_ireg (cfg);
 			/* Decompose later to allow more optimizations */
 			EMIT_NEW_UNALU (cfg, ins, OP_STRLEN, dreg, args [0]->dreg);
