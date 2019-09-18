@@ -1,0 +1,3 @@
+<configuration>
+	<dllmap dll="libc" target="@LIBC@" os="!windows"/>
+</configuration>

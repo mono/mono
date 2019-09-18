@@ -92,12 +92,14 @@ patch-app: prepare
 	cd $(APP_PATH) && $(DOTNET) publish -c Release -r $(RID) -f netcoreapp3.0
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)	
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish
+	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll.config $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb $(APP_PATH)/bin/Release/netcoreapp3.0/$(RID)/publish
 
 # makes $(DOTNET) to use mono runtime (to run real-world apps using '$(DOTNET) run')
 patch-local-dotnet: prepare
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
+	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll.config ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)
 
 # Precompile BCL libs in $(DOTNET) using LLVM (requires `--enable-llvm` build)
@@ -136,6 +138,10 @@ System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/sr
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
 
+System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll.config: System.Private.CoreLib/resources/config.in config.make
+	test -n '$(LIBC)'
+	sed -e 's,@''LIBC@,$(LIBC),' $< > $@
+
 CORLIB_BUILD_FLAGS?=-c Release
 
 bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
@@ -152,9 +158,10 @@ runtime:
 
 link-mono: $(SHAREDRUNTIME)/.stamp-link-mono
 
-$(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb
+$(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll.config System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(SHAREDRUNTIME)
+	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll.config $(SHAREDRUNTIME)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb $(SHAREDRUNTIME)
 	touch $@
 
