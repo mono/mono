@@ -26,8 +26,6 @@ ANDROID_SDK_VERSION_x86_64?=21
 # iOS
 
 XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
-# Xcode version used to compile 32 bit cross compilers
-XCODE32_DIR?=/Applications/Xcode94.app/Contents/Developer
 
 # min versions of the targets
 MACOS_VERSION_MIN?=10.9
