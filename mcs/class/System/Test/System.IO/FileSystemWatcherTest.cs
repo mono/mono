@@ -11,6 +11,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 
 using MonoTests.Helpers;
 
@@ -109,6 +110,71 @@ namespace MonoTests.System.IO
 				}
 			}
 		}
+
+		[Test]
+		public void CreateTwoAndDispose ()
+		{
+			// Create two FSW instances and dispose them.  Verify
+			// that the backend IFileWatcher's Dispose
+			// (watcher_handle) method got called.
+
+			// FIXME: This only works for the
+			// CoreFXFileSystemWatcherProxy not the other backends.
+
+			using (var tmp = new TempDirectory ()) {
+				// have to use reflection to poke at the private fields of FileSystemWatcher.
+				var watcherField = typeof (FileSystemWatcher).GetField ("watcher", BindingFlags.Instance | BindingFlags.NonPublic);
+				Assert.IsNotNull (watcherField);
+				var watcherHandleField = typeof (FileSystemWatcher).GetField ("watcher_handle", BindingFlags.Instance | BindingFlags.NonPublic);
+				Assert.IsNotNull (watcherHandleField);
+				var proxyType = typeof (FileSystemWatcher).Assembly.GetType ("System.IO.CoreFXFileSystemWatcherProxy");
+				Assert.IsNotNull (proxyType);
+
+				var fsw1 = new FileSystemWatcher (tmp.Path, "*");
+				var fsw2 = new FileSystemWatcher (tmp.Path, "*");
+
+				object handle1 = null;
+				object handle2 = null;
+
+				// using "using" to ensure that Dispose gets called even if we throw an exception
+				using (var fsw11 = fsw1)
+				using (var fsw22 = fsw2) {
+					// at this point watcher and watcher_handle should be set
+
+					var watcher = watcherField.GetValue (fsw1);
+					Assert.IsNotNull (watcher);
+					if (!proxyType.IsAssignableFrom (watcher.GetType ()))
+						Assert.Ignore ("Testing only CoreFXFileSystemWatcherProxy FSW backend");
+
+					handle1 = watcherHandleField.GetValue (fsw1);
+					handle2 = watcherHandleField.GetValue (fsw2);
+
+					Assert.IsNotNull (handle1);
+					Assert.IsNotNull (handle2);
+
+				}
+
+				// Dispose was called, now watcher_handle should be null
+
+				Assert.IsNull (watcherHandleField.GetValue (fsw1));
+				Assert.IsNull (watcherHandleField.GetValue (fsw2));
+
+				// and moreover, the CoreFXFileSystemWatcherProxy shouldn't have entries for either handle1 or handle2
+
+				var proxyTypeInternalMapField = proxyType.GetField ("internal_map", BindingFlags.Static | BindingFlags.NonPublic);
+				Assert.IsNotNull (proxyTypeInternalMapField);
+				var internal_map = proxyTypeInternalMapField.GetValue (null)
+					as global::System.Collections.Generic.IDictionary<object, global::System.IO.CoreFX.FileSystemWatcher>;
+				Assert.IsNotNull (internal_map);
+
+				// This pair are the critical checks: after we call Dispose on fsw1 and fsw2, the
+				// backend's internal map shouldn't have anything keyed on handle1 and handle2.
+				// Therefore System.IO.CoreFX.FileSystemWatcher instances will be disposed of, too.
+				Assert.IsFalse (internal_map.ContainsKey (handle1));
+				Assert.IsFalse (internal_map.ContainsKey (handle2));
+			}
+		}
+
 	}
 }
 
