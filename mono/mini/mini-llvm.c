@@ -7469,7 +7469,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_BEXTR64: {
 			LLVMValueRef args [2];
 			args [0] = lhs;
-			args [1] = rhs;
+			args [1] = convert (ctx, rhs, ins->opcode == OP_BEXTR32 ? LLVMInt32Type () : LLVMInt64Type ()); // cast ushort to u32/u64
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64), args, 2, "");
 			break;
 		}
@@ -8947,11 +8947,9 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_EXPECT_I1:
 		AddFunc2 (module, name, LLVMInt1Type (), LLVMInt1Type (), LLVMInt1Type ());
 		break;
-	case INTRINS_BEXTR_I32:
 	case INTRINS_CTPOP_I32:
 		AddFunc1 (module, name, LLVMInt32Type (), LLVMInt32Type ());
 		break;
-	case INTRINS_BEXTR_I64:
 	case INTRINS_CTPOP_I64:
 		AddFunc1 (module, name, LLVMInt64Type (), LLVMInt64Type ());
 		break;
@@ -8963,11 +8961,13 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_CTTZ_I64:
 		AddFunc2 (module, name, LLVMInt64Type (), LLVMInt64Type (), LLVMInt1Type ());
 		break;
+	case INTRINS_BEXTR_I32:
 	case INTRINS_BZHI_I32:
 	case INTRINS_PEXT_I32:
 	case INTRINS_PDEP_I32:
 		AddFunc2 (module, name, LLVMInt32Type (), LLVMInt32Type (), LLVMInt32Type ());
 		break;
+	case INTRINS_BEXTR_I64:
 	case INTRINS_BZHI_I64:
 	case INTRINS_PEXT_I64:
 	case INTRINS_PDEP_I64:
