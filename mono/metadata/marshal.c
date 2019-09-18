@@ -3606,6 +3606,12 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 		csig->pinvoke = 0;
 		res = mono_mb_create_and_cache_full (cache, method, mb, csig, csig->param_count + 16,
 											 info, NULL);
+		// Avoid optimizing wrappers out of fear that a highly optimizing compiler
+		// will skip the handles. This is incomplete, because the out and inout parameters
+		// do not reference volatiles.
+		method->iflags = (method->iflags & ~METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING)
+				| METHOD_IMPL_ATTRIBUTE_NOINLINING
+				| METHOD_IMPL_ATTRIBUTE_NOOPTIMIZATION;
 
 		mono_mb_free (mb);
 		return res;

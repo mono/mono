@@ -6339,6 +6339,8 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 		return ICALL_HANDLES_WRAP_NONE;
 }
 
+const char mono_coop_marshal_out_inout_through_intermediate_locals = FALSE;
+
 static void
 emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *piinfo)
 {
@@ -6398,13 +6400,15 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		int const error_var = mono_mb_add_local (mb, m_class_get_byval_arg (error_class));
 		call_sig->params [csig->param_count] = mono_class_get_byref_type (error_class);
 
-		handles_locals = g_new0 (IcallHandlesLocal, csig->param_count);
+		if (mono_coop_marshal_out_inout_through_intermediate_locals)
+			handles_locals = g_new0 (IcallHandlesLocal, csig->param_count);
 
 		for (int i = 0; i < csig->param_count; ++i) {
 			// Determine which args need to be wrapped in handles and adjust icall signature.
 			// Here, a handle is a pointer to a volatile local in a managed frame -- which is sufficient and efficient.
 			const IcallHandlesWrap w = signature_param_uses_handles (csig, generic_sig, i);
-			handles_locals [i].wrap = w;
+			if (mono_coop_marshal_out_inout_through_intermediate_locals)
+				handles_locals [i].wrap = w;
 			int local = -1;
 
 			switch (w) {
@@ -6421,19 +6425,24 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 					g_assert_not_reached ();
 			}
 
-			// Add a local var to hold the references for each out arg.
+			// Add a local var to hold the references for each out arg. (or not)
 			switch (w) {
 				case ICALL_HANDLES_WRAP_OBJ_INOUT:
 				case ICALL_HANDLES_WRAP_OBJ_OUT:
-					// FIXME better type
-					local = mono_mb_add_local (mb, mono_get_object_type ());
+					if (mono_coop_marshal_out_inout_through_intermediate_locals) {
+						// FIXME better type
+						local = mono_mb_add_local (mb, mono_get_object_type ());
 
-					if (!mb->volatile_locals) {
-						gpointer mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
-						mb->volatile_locals = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
+						if (!mb->volatile_locals) {
+							gpointer mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
+							// Looks like a typo but is not -- local count vs. param_count
+							mb->volatile_locals = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
+						}
+						mono_bitset_set (mb->volatile_locals, local);
+						break;
+					} else {
+						// fallthrough
 					}
-					mono_bitset_set (mb->volatile_locals, local);
-					break;
 				case ICALL_HANDLES_WRAP_VALUETYPE_REF:
 				case ICALL_HANDLES_WRAP_OBJ:
 					if (!mb->volatile_args) {
@@ -6447,10 +6456,12 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 				default:
 					g_assert_not_reached ();
 			}
-			handles_locals [i].handle = local;
+			if (mono_coop_marshal_out_inout_through_intermediate_locals)
+				handles_locals [i].handle = local;
 
 			// Load each argument. References into the managed heap get wrapped in handles.
-			// Handles here are just pointers to managed volatile locals.
+			// Handles here are just pointers to managed volatile locals or parameters,
+			// or pass through out/inout parametes, hoping optimizer does not see through too far.
 			switch (w) {
 				case ICALL_HANDLES_WRAP_NONE:
 				case ICALL_HANDLES_WRAP_VALUETYPE_REF:
@@ -6463,22 +6474,43 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 					break;
 				case ICALL_HANDLES_WRAP_OBJ_INOUT:
 				case ICALL_HANDLES_WRAP_OBJ_OUT:
-					// If parameter guaranteeably referred to a managed frame,
-					// then could just be passthrough and volatile. Since
-					// that cannot be guaranteed, use a managed volatile local intermediate.
-					// ObjOut:
-					//   localI = NULL
-					// ObjInOut:
-					//   localI = *argI_raw
-					// &localI
-					if (w == ICALL_HANDLES_WRAP_OBJ_OUT) {
-						mono_mb_emit_byte (mb, CEE_LDNULL);
+					if (mono_coop_marshal_out_inout_through_intermediate_locals) {
+						// If parameter guaranteeably referred to a managed frame,
+						// then could just be passthrough and volatile. Since
+						// that cannot be guaranteed, use a managed volatile local intermediate.
+						// ObjOut:
+						//   localI = NULL
+						// ObjInOut:
+						//   localI = *argI_raw
+						// &localI
+						if (w == ICALL_HANDLES_WRAP_OBJ_OUT) {
+							mono_mb_emit_byte (mb, CEE_LDNULL);
+						} else {
+							mono_mb_emit_ldarg (mb, i);
+							mono_mb_emit_byte (mb, CEE_LDIND_REF);
+						}
+						mono_mb_emit_stloc (mb, local);
+						mono_mb_emit_ldloc_addr (mb, local);
 					} else {
+						// While the risk above does sound real, the local intermediate
+						// also has downsides:
+						//   stack size
+						//   loss of identity on interlocked inout parameters
+						// A pointer in a managed frame, to a pointer anywhere, counts?
+						if (w == ICALL_HANDLES_WRAP_OBJ_OUT) {
+							// *argI_raw = NULL -- this really is the responsibility
+							// of the underlying native icall, but they have a bad
+							// track record, and coop marshaling historically covered up.
+							mono_mb_emit_ldarg (mb, i);
+							mono_mb_emit_byte (mb, CEE_LDNULL);
+							mono_mb_emit_byte (mb, CEE_STIND_REF);
+						} else {
+							// ref/inout, should be initialized by caller already
+							// and writing anything here even null is a mistake.
+						}
+						// argI_raw, which is already a ref.
 						mono_mb_emit_ldarg (mb, i);
-						mono_mb_emit_byte (mb, CEE_LDIND_REF);
 					}
-					mono_mb_emit_stloc (mb, local);
-					mono_mb_emit_ldloc_addr (mb, local);
 					break;
 				default:
 					g_assert_not_reached ();
@@ -6505,21 +6537,26 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	if (need_gc_safe)
 		gc_safe_transition_builder_emit_exit (&gc_safe_transition_builder);
 
-	// Copy back ObjOut and ObjInOut from locals through parameters.
-	if (mb->volatile_locals) {
-		g_assert (handles_locals);
-		for (int i = 0; i < csig->param_count; i++) {
-			const int local = handles_locals [i].handle;
-			if (local >= 0) {
-				// *argI_raw = localI
-				mono_mb_emit_ldarg (mb, i);
-				mono_mb_emit_ldloc (mb, local);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
+	if (mono_coop_marshal_out_inout_through_intermediate_locals) {
+		// Copy back ObjOut and ObjInOut from locals through parameters.
+		if (mb->volatile_locals) {
+			g_assert (handles_locals);
+			for (int i = 0; i < csig->param_count; i++) {
+				const int local = handles_locals [i].handle;
+				if (local >= 0) {
+					// *argI_raw = localI
+					mono_mb_emit_ldarg (mb, i);
+					mono_mb_emit_ldloc (mb, local);
+					mono_mb_emit_byte (mb, CEE_STIND_REF);
+				}
 			}
 		}
+		g_free (handles_locals);
+	} else {
+		// Nothing to do -- the out and inout parameters
+		// were passed through, and the underlying native icall
+		// wrote directly to the results.
 	}
-	g_free (handles_locals);
-
 	if (need_gc_safe)
 		gc_safe_transition_builder_cleanup (&gc_safe_transition_builder);
 
