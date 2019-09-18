@@ -2971,6 +2971,8 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 	rgctx = class_vtable->runtime_generic_context;
 	if (!rgctx) {
 		rgctx = alloc_rgctx_array (domain, 0, FALSE);
+		/* Make sure that this array is zeroed if other threads access it */
+		mono_memory_write_barrier ();
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
 	}
