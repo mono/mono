@@ -1405,6 +1405,8 @@ MINI_OP(OP_POPCNT64, "popcnt64", LREG, LREG, NONE)
 /* Count trailing zeroes, return 32/64 if the input is 0 */
 MINI_OP(OP_CTTZ32, "cttz32", IREG, IREG, NONE)
 MINI_OP(OP_CTTZ64, "cttz64", LREG, LREG, NONE)
+MINI_OP(OP_BEXTR32, "bextr32", LREG, LREG, LREG)
+MINI_OP(OP_BEXTR64, "bextr64", LREG, LREG, LREG)
 
 /* Intel BMI2 */
 MINI_OP(OP_BZHI32, "bzhi32", IREG, IREG, IREG)

@@ -332,6 +332,8 @@ typedef enum {
 	INTRINS_PDEP_I64,
 	INTRINS_BZHI_I32,
 	INTRINS_BZHI_I64,
+	INTRINS_BEXTR_I32,
+	INTRINS_BEXTR_I64,
 #if defined(TARGET_AMD64) || defined(TARGET_X86)
 	INTRINS_SSE_PMOVMSKB,
 	INTRINS_SSE_PSRLI_W,
@@ -7463,6 +7465,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_CTTZ32 ? INTRINS_CTTZ_I32 : INTRINS_CTTZ_I64), args, 2, "");
 			break;
 		}
+		case OP_BEXTR32:
+		case OP_BEXTR64: {
+			LLVMValueRef args [2];
+			args [0] = lhs;
+			args [1] = rhs;
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64), args, 2, "");
+			break;
+		}
 		case OP_BZHI32:
 		case OP_BZHI64: {
 			LLVMValueRef args [2];
@@ -8740,6 +8750,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_CTTZ_I64, "llvm.cttz.i64"},
 	{INTRINS_BZHI_I32, "llvm.x86.bmi.bzhi.32"},
 	{INTRINS_BZHI_I64, "llvm.x86.bmi.bzhi.64"},
+	{INTRINS_BEXTR_I32, "llvm.x86.bmi.bextr.32"},
+	{INTRINS_BEXTR_I64, "llvm.x86.bmi.bextr.64"},
 	{INTRINS_PEXT_I32, "llvm.x86.bmi.pext.32"},
 	{INTRINS_PEXT_I64, "llvm.x86.bmi.pext.64"},
 	{INTRINS_PDEP_I32, "llvm.x86.bmi.pdep.32"},
@@ -8935,9 +8947,11 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_EXPECT_I1:
 		AddFunc2 (module, name, LLVMInt1Type (), LLVMInt1Type (), LLVMInt1Type ());
 		break;
+	case INTRINS_BEXTR_I32:
 	case INTRINS_CTPOP_I32:
 		AddFunc1 (module, name, LLVMInt32Type (), LLVMInt32Type ());
 		break;
+	case INTRINS_BEXTR_I64:
 	case INTRINS_CTPOP_I64:
 		AddFunc1 (module, name, LLVMInt64Type (), LLVMInt64Type ());
 		break;
