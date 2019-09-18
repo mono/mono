@@ -414,7 +414,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\Base64Stream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\BufferBuilder.cs" />
@@ -1047,6 +1046,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1205,6 +1205,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1300,7 +1301,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1332,6 +1332,7 @@
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.platformnotsupported.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1425,6 +1426,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1553,6 +1555,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1819,6 +1822,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -2291,6 +2295,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -2788,6 +2793,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3303,6 +3309,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3674,6 +3681,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
@@ -3780,6 +3788,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3917,6 +3926,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4081,6 +4091,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4200,6 +4211,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4341,6 +4353,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4482,6 +4495,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
