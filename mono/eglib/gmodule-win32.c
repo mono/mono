@@ -176,6 +176,8 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (sym_addr != NULL)
 		*sym_addr = NULL;
 
+	/* -1 reference count to avoid leaks; Ex variant does +1 refcount */
+	FreeLibrary (module);
 	return TRUE;
 }
 
