@@ -143,6 +143,9 @@ else # !ENABLE_MSVC_ONLY
 mono:
 	make -C $(top_srcdir)/msvc mono
 	ln -sf $(mono_msvc_build_bin_dir)/mono-$(mono_bin_suffix)$(EXEEXT) ./mono.exe
+if SUPPORT_SGEN
+	ln -sf $(mono_msvc_build_bin_dir)/mono-$(mono_bin_suffix)$(EXEEXT) ./mono-sgen.exe
+endif
 
 mono.exe: mono
 
@@ -923,10 +926,10 @@ endif
 GSHAREDVT_RUNTIME_OPTS=$(if $(GSHAREDVT),-O=gsharedvt,)
 
 aotcheck: mono $(regtests)
-	rm -rf *.exe.so *.exe.dylib *.exe.dylib.dSYM
+	rm -rf *.exe.so *.exe.dylib *.exe.dylib.dSYM *.exe.dll
 	$(MINI_RUNTIME) $(LLVM_AOT_RUNTIME_OPTS) --aot="$(LLVM_AOT_COMPILER_OPTS)" $(regtests) || exit 1
 	for i in $(regtests); do $(RUNTIME_AOTCHECK) --regression $$i || exit 1; done
-	rm -rf *.exe.so *.exe.dylib *.exe.dylib.dSYM
+	rm -rf *.exe.so *.exe.dylib *.exe.dylib.dSYM *.exe.dll
 
 llvmaotcheck:
 	$(MAKE) aotcheck LLVM=1
@@ -1054,7 +1057,7 @@ check_local_targets = $(if $(EMIT_NUNIT), rcheck-nunit, rcheck)
 check-local: $(check_local_targets)
 
 clean-local:
-	rm -f mono a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe regressionexitcode.out TestResult-op_il_seq_point.xml*
+	rm -f mono mono.exe monow.exe mono-sgen.exe a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe regressionexitcode.out TestResult-op_il_seq_point.xml*
 
 pkgconfigdir = $(libdir)/pkgconfig
 
