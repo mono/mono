@@ -1175,19 +1175,6 @@ mono_w32process_signal_finished (void)
 }
 
 #if defined (HAVE_FORK) && defined (HAVE_EXECVE)
-static void
-switch_dir_separators (char *path)
-{
-	size_t i, pathLength = strlen (path);
-
-	/* Turn all the slashes round the right way, except for \' */
-	/* There are probably other characters that need to be excluded as well. */
-	for (i = 0; i < pathLength; i++) {
-		if (path[i] == '\\' && i < pathLength - 1 && path[i + 1] != '\'')
-			path[i] = '/';
-	}
-}
-
 static gboolean
 is_readable_or_executable (const char *prog)
 {
@@ -1523,8 +1510,6 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
-
-		switch_dir_separators(cmd);
 	}
 
 	if (cmdline != NULL) {
@@ -1547,11 +1532,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
-
-		/* Turn all the slashes round the right way */
-		switch_dir_separators(dir);
 	}
-
 
 	/* We can't put off locating the executable any longer :-( */
 	if (cmd != NULL) {
@@ -1659,11 +1640,6 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
-
-		/* Turn all the slashes round the right way. Only for
-		 * the prg. name
-		 */
-		switch_dir_separators(token);
 
 		if (g_ascii_isalpha (token[0]) && (token[1] == ':')) {
 			/* Strip off the drive letter.  I can't
