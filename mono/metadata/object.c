@@ -7202,14 +7202,6 @@ mono_object_get_size (MonoObject *o)
 	MONO_EXTERNAL_ONLY (unsigned, mono_object_get_size_internal (o));
 }
 
-gpointer
-mono_object_unbox_internal (MonoObject *obj)
-{
-	/* add assert for valuetypes? */
-	g_assert (m_class_is_valuetype (mono_object_class (obj)));
-	return mono_object_get_data (obj);
-}
-
 /**
  * mono_object_unbox:
  * \param obj object to unbox
@@ -8262,6 +8254,8 @@ static MonoObject*
 mono_message_invoke (MonoThreadInfo* mono_thread_info_current_var,
 		     MonoObject* target, MonoMethodMessage* msg,
 		     MonoObject** exc, MonoArray** out_args, MonoError* error);
+
+#ifndef ENABLE_NETCORE
 MonoObjectHandle
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultHandle aresh, MonoError* error)
 {
@@ -8334,6 +8328,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 	}
 	return res;
 }
+#endif
 
 gboolean
 mono_message_init (MonoDomain *domain,
@@ -9327,17 +9322,6 @@ mono_class_value_size (MonoClass *klass, guint32 *align)
 		*align = m_class_get_min_align (klass);
 
 	return size;
-}
-
-/*
- * mono_object_get_data:
- *
- *   Return a pointer to the beginning of data inside a MonoObject.
- */
-gpointer
-mono_object_get_data (MonoObject *o)
-{
-	return (guint8*)o + MONO_ABI_SIZEOF (MonoObject);
 }
 
 /*

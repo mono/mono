@@ -3045,7 +3045,6 @@ mono_marshal_get_llvm_func_wrapper (MonoLLVMFuncWrapperSubtype subtype)
 	WrapperInfo *info;
 	MonoMethodSignature *csig = NULL;
 	MonoType *void_type = mono_get_void_type ();
-	MonoType *int_type = mono_get_int_type ();
 	char *name = g_strdup_printf ("llvm_func_wrapper_%d", subtype);
 
 	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
@@ -5177,6 +5176,12 @@ guint32
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 {
 	return GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id));
+}
+
+void
+ves_icall_System_Runtime_InteropServices_Marshal_SetLastWin32Error (guint32 err)
+{
+	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (err));
 }
 
 guint32 

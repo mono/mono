@@ -137,6 +137,7 @@ platform_tizen=no
 platform_ios=no
 host_darwin=no
 host_linux=no
+build_darwin=no
 
 case "$host" in
 	wasm32*)
@@ -144,6 +145,11 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -s WASM=1"
 		libgc_threads=pthreads
 		platform_wasm=yes
+		# FIXME:
+		RID="osx-x64"
+		COREARCH="x64"
+		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
+		build_darwin=yes
 		;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
@@ -4607,6 +4613,7 @@ if test "x$host" != "x$target"; then
 	aarch64*darwin*_ilp32)
 		TARGET=ARM6432;
 		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		sizeof_register=8
 		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
 	aarch64-*)
@@ -5635,6 +5642,7 @@ fi
 
 if test x$enable_cooperative_suspend != xno; then
 	AC_DEFINE(ENABLE_COOP_SUSPEND,1,[Enable cooperative stop-the-world garbage collection.])
+	enable_hybrid_suspend_default=no
 fi
 
 AM_CONDITIONAL([ENABLE_COOP_SUSPEND], [test x$enable_cooperative_suspend != xno])
@@ -6969,13 +6977,20 @@ if test x$buildsgen = xyes; then
 fi
 
 if test "x$with_core" = "xonly"; then
+  if test ! -d netcore; then
+    # Out of tree builds
+    mkdir -p netcore
+    echo "all:" > netcore/Makefile
+  fi
   echo "VERSION = $VERSION" > netcore/config.make
   echo "RID = $RID" >> netcore/config.make
   echo "COREARCH = $COREARCH" >> netcore/config.make
   echo "CORETARGETS = $CORETARGETS" >> netcore/config.make
   echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> netcore/config.make
 
-  if test x$host_darwin = xyes; then
+  if test x$build_darwin = xyes; then
+    echo "HOST_PLATFORM ?= macos" >> netcore/config.make
+  elif test x$host_darwin = xyes; then
     echo "HOST_PLATFORM ?= macos" >> netcore/config.make
   elif test x$host_win32 = xyes; then
     echo "HOST_PLATFORM ?= win32" >> netcore/config.make

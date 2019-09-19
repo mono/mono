@@ -83,6 +83,8 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_4.7.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.1/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.2/RedistList
 	$(INSTALL_DATA) frameworks/net_4.7.2.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.2/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.8/RedistList
+	$(INSTALL_DATA) frameworks/net_4.8.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.8/RedistList/FrameworkList.xml
 
 install-pcl-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)
