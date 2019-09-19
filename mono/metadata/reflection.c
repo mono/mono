@@ -2140,7 +2140,8 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
 
 /**
  * mono_reflection_get_type_checked:
-  * \param rootimage the image of the currently active managed caller
+ * \param alc the AssemblyLoadContext to check/load into
+ * \param rootimage the image of the currently active managed caller
  * \param image a metadata context
  * \param info type description structure
  * \param ignorecase flag for case-insensitive string compares
@@ -2150,9 +2151,8 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
  * Build a \c MonoType from the type description in \p info. On failure returns NULL and sets \p error.
  */
 MonoType*
-mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error) {
+mono_reflection_get_type_checked (MonoAssemblyLoadContext *alc, MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error) {
 	error_init (error);
-	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ()); /* FIXME: pass a domain from the caller */
 	return mono_reflection_get_type_with_rootimage (alc, rootimage, image, info, ignorecase, search_mscorlib, type_resolve, error);
 }
 
@@ -2333,7 +2333,9 @@ mono_reflection_type_from_name (char *name, MonoImage *image)
 	ERROR_DECL (error);
 	error_init (error);
 
-	MonoType * const result = mono_reflection_type_from_name_checked (name, image, error);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (mono_domain_get ());
+
+	MonoType * const result = mono_reflection_type_from_name_checked (name, alc, image, error);
 
 	mono_error_cleanup (error);
 	return result;
@@ -2342,6 +2344,7 @@ mono_reflection_type_from_name (char *name, MonoImage *image)
 /**
  * mono_reflection_type_from_name_checked:
  * \param name type name.
+ * \param alc the AssemblyLoadContext to check/load into
  * \param image a metadata context (can be NULL).
  * \param error set on errror.
  * Retrieves a MonoType from its \p name. If the name is not fully qualified,
@@ -2349,7 +2352,7 @@ mono_reflection_type_from_name (char *name, MonoImage *image)
  * from it fails, uses corlib.  On failure returns NULL and sets \p error.
  */
 MonoType*
-mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError *error)
+mono_reflection_type_from_name_checked (char *name, MonoAssemblyLoadContext *alc, MonoImage *image, MonoError *error)
 {
 	MonoType *type = NULL;
 	MonoTypeNameParse info;
@@ -2365,7 +2368,6 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 		mono_error_cleanup (parse_error);
 		goto leave;
 	}
-	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
 	type = _mono_reflection_get_type_from_info (alc, &info, image, FALSE, TRUE, error);
 leave:
 	g_free (tmp);
