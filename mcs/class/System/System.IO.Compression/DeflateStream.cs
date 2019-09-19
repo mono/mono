@@ -145,7 +145,7 @@ namespace System.IO.Compression
 
 		internal int ReadCore (Span<byte> destination)
 		{
-			throw new NotImplementedException ();
+			return Read (destination.ToArray(), 0, destination.Length);
 		}
 
 		public override int Read (byte[] array, int offset, int count)
@@ -185,7 +185,7 @@ namespace System.IO.Compression
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
 		{
-			throw new NotImplementedException ();
+			Write (source.ToArray, 0, source.Length);
 		}
 
 		public override void Write (byte[] array, int offset, int count)
