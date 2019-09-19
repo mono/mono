@@ -847,9 +847,6 @@ mono_install_get_class_from_name (MonoGetClassFromName func);
 MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
-#define mono_method_signature_profiler		mono_method_signature_internal_slow
-#define mono_method_signature_checked_profiler	mono_method_signature_checked_slow
-
 MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked_slow (MonoMethod *m, MonoError *err);
 

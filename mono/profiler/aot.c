@@ -585,7 +585,7 @@ add_method (MonoProfiler *prof, MonoMethod *m)
 	MonoMethodSignature *sig;
 	char *s;
 
-	sig = mono_method_signature_checked_profiler (m, error);
+	sig = mono_method_signature_checked (m, error);
 	g_assert (is_ok (error));
 
 	int class_id = add_class (prof, m->klass);
@@ -669,7 +669,7 @@ prof_save (MonoProfiler *prof, FILE* file)
 			exit (1);
 		}
 
-		sig = mono_method_signature_checked_profiler (send_method, error);
+		sig = mono_method_signature_checked (send_method, error);
 		mono_error_assert_ok (error);
 		if (sig->param_count != 3 || !sig->params [0]->byref || sig->params [0]->type != MONO_TYPE_U1 || sig->params [1]->type != MONO_TYPE_I4 || sig->params [2]->type != MONO_TYPE_STRING) {
 			mono_profiler_printf_err ("Method '%s' should have signature void (byte&,int,string).", prof->send_to_str);
