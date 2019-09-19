@@ -1747,6 +1747,7 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoStackCrawlMark *stack_mark, 
 	MonoAssembly *assembly = NULL;
 	gboolean type_resolve = FALSE;
 	MonoImage *rootimage = NULL;
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
 
 	error_init (error);
 
@@ -1762,22 +1763,28 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoStackCrawlMark *stack_mark, 
 	} else {
 		assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 	}
-	if (assembly) {
-		type_resolve = TRUE;
-		rootimage = assembly->image;
-	} else {
-		g_warning (G_STRLOC);
-	}
+
+	g_assert (assembly);
+
+	type_resolve = TRUE;
+	rootimage = assembly->image;
+
+	g_assert (rootimage);
+
 	*caller_assembly = assembly;
+	alc = rootimage->alc;
 
-	if (info->assembly.name)
-		assembly = mono_assembly_load (&info->assembly, assembly ? assembly->basedir : NULL, NULL);
-
-	if (assembly) {
-		/* When loading from the current assembly, AppDomain.TypeResolve will not be called yet */
-		type = mono_reflection_get_type_checked (rootimage, assembly->image, info, ignoreCase, TRUE, &type_resolve, error);
-		goto_if_nok (error, fail);
+	if (info->assembly.name) {
+		MonoAssemblyByNameRequest req;
+		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, alc);
+		req.requesting_assembly = assembly;
+		req.basedir = assembly ? assembly->basedir : NULL;
+		assembly = mono_assembly_request_byname (&info->assembly, &req, NULL);
 	}
+
+	/* When loading from the current assembly, AppDomain.TypeResolve will not be called yet */
+	type = mono_reflection_get_type_checked (rootimage, assembly->image, info, ignoreCase, TRUE, &type_resolve, error);
+	goto_if_nok (error, fail);
 
 	// XXXX - aleksey -
 	//  Say we're looking for System.Generic.Dict<int, Local>
