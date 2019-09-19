@@ -9,8 +9,24 @@ namespace System.Threading
 	public static class Monitor
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern void Enter (object obj);
+		static extern bool TryEnter_icall (ref object obj);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void Enter_icall (ref object obj, ref Exception exception_handle);
+
+		public static void Enter (object obj)
+		{
+			//
+			// To make async stack traces work, icalls which can block should have a wrapper.
+			// For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+			//
+			if (!TryEnter_icall (ref obj)) {
+				Exception exception = null;
+				Enter_icall (ref obj, ref exception);
+			}
+		}
+
+		// csc generates calls to this.
 		public static void Enter (object obj, ref bool lockTaken)
 		{
 			if (lockTaken)
@@ -20,7 +36,12 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern void Exit (object obj);
+		static extern void Exit_icall (ref object obj);
+
+		public static void Exit (object obj)
+		{
+			Exit_icall (ref obj);
+		}
 
 		public static bool TryEnter (object obj)
 		{
@@ -108,45 +129,45 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_synchronised (object obj);
+		extern static bool Monitor_test_synchronised (ref object obj);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse (object obj);
+		extern static void Monitor_pulse (ref object obj);
 
 		static void ObjPulse (object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			Monitor_pulse (obj);
+			Monitor_pulse (ref obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse_all (object obj);
+		extern static void Monitor_pulse_all (ref object obj);
 
 		static void ObjPulseAll (object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref fobj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			Monitor_pulse_all (obj);
+			Monitor_pulse_all (ref obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool Monitor_wait (object obj, int ms);
+		extern static bool Monitor_wait (ref object obj, int ms);
 
 		static bool ObjWait (bool exitContext, int millisecondsTimeout, object obj)
 		{
 			if (millisecondsTimeout < 0 && millisecondsTimeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			return Monitor_wait (obj, millisecondsTimeout);
+			return Monitor_wait (ref obj, millisecondsTimeout);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+		extern static void try_enter_with_atomic_var (ref object obj, int millisecondsTimeout, ref bool lockTaken, ref Exception exception_handle);
 
 		static void ReliableEnterTimeout (object obj, int timeout, ref bool lockTaken)
 		{
@@ -156,7 +177,14 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 
-			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
+			// First try fast path without wrapper.
+			if (TryEnter_icall (ref obj)) {
+				lockTaken = true;
+				return;
+			}
+
+			Exception exception = null;
+			try_enter_with_atomic_var (ref obj, timeout, ref lockTaken, ref exception);
 		}
 
 		static void ReliableEnter (object obj, ref bool lockTaken)
@@ -165,11 +193,11 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_owner (object obj);
+		extern static bool Monitor_test_owner (ref object obj);
 
 		static bool IsEnteredNative (object obj)
 		{
-			return Monitor_test_owner (obj);
+			return Monitor_test_owner (ref obj);
 		}
 		
 		public static long LockContentionCount

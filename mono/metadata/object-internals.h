@@ -2302,7 +2302,6 @@ mono_object_unbox_internal (MonoObject *obj)
 	return mono_object_get_data (obj);
 }
 
-ICALL_EXPORT
 void
 mono_monitor_exit_internal (MonoObject *obj);
 

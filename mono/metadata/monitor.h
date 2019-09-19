@@ -106,17 +106,13 @@ mono_monitor_init (void);
 void
 mono_monitor_cleanup (void);
 
+ICALL_EXPORT
 MonoBoolean
-mono_monitor_enter_internal (MonoObject *obj);
+mono_monitor_enter_internal (MonoObject *volatile*obj, MonoException *volatile* exception_handle);
 
-void
-mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
-
+ICALL_EXPORT
 guint32
-mono_monitor_enter_fast (MonoObject *obj);
-
-guint32
-mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
+mono_monitor_try_enter_icall (MonoObject *volatile*obj);
 
 guint32
 mono_monitor_get_object_monitor_gchandle (MonoObject *object);

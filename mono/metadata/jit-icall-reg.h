@@ -256,10 +256,7 @@ MONO_JIT_ICALL (mono_marshal_set_last_error_windows) \
 MONO_JIT_ICALL (mono_marshal_string_to_utf16) \
 MONO_JIT_ICALL (mono_marshal_string_to_utf16_copy) \
 MONO_JIT_ICALL (mono_marshal_xdomain_copy_out_value) \
-MONO_JIT_ICALL (mono_monitor_enter_fast) \
-MONO_JIT_ICALL (mono_monitor_enter_internal) \
-MONO_JIT_ICALL (mono_monitor_enter_v4_fast) \
-MONO_JIT_ICALL (mono_monitor_enter_v4_internal) \
+MONO_JIT_ICALL (mono_monitor_try_enter_icall) \
 MONO_JIT_ICALL (mono_object_castclass_unbox) \
 MONO_JIT_ICALL (mono_object_castclass_with_cache) \
 MONO_JIT_ICALL (mono_object_isinst_icall) \

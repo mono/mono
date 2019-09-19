@@ -8285,6 +8285,9 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 	MonoObjectHandle res = MONO_HANDLE_NEW (MonoObject, NULL);
 	MonoAsyncResult* ares = MONO_HANDLE_RAW (aresh);
 
+	// FIXME pass from managed. Why not now? Requires dehandleization of the rest of the function, or partial native wrapper.
+	MonoException *volatile* exception_handle = MONO_HANDLE_REF (MONO_HANDLE_NEW (MonoException, NULL));
+
 	g_assert (ares);
 	g_assert (ares->async_delegate);
 	MONO_HANDLE_NEW (MonoObject, ares->async_delegate);
@@ -8323,7 +8326,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 
 		MonoObjectHandle handle = MONO_HANDLE_NEW (MonoObject, NULL); // Create handle outside of lock.
 
-		mono_monitor_enter_internal ((MonoObject*) ares);
+		mono_monitor_enter_internal ((MonoObject**) &ares, exception_handle);
 		ares->completed = 1;
 		if (ares->handle) {
 			MONO_HANDLE_ASSIGN_RAW (handle, ares->handle);

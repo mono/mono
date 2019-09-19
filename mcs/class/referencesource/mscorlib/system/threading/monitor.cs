@@ -50,8 +50,26 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void Enter(Object obj);
+        static extern bool Enter_icall (ref Object obj, ref Exception exception_handle);
 
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        static extern bool TryEnter_icall (ref Object obj);
+
+#if !MONO
+        [System.Security.SecuritySafeCritical]
+        [ResourceExposure(ResourceScope.None)]
+#endif
+        public static void Enter (Object obj)
+        {
+		//
+		// To make async stack traces work, icalls which can block should have a wrapper.
+		// For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+		//
+		if (!TryEnter_icall (ref obj)) {
+			Exception exception = null;
+			Enter_icall (ref obj, ref exception);
+		}
+        }
 
         // Use a ref bool instead of out to ensure that unverifiable code must
         // initialize this value to something.  If we used out, the value 
@@ -79,7 +97,6 @@ namespace System.Threading {
         private static extern void ReliableEnter(Object obj, ref bool lockTaken);
 #endif
 
-
         /*=========================================================================
         ** Release the monitor lock. If one or more threads are waiting to acquire the
         ** lock, and the current thread has executed as many Exits as
@@ -95,8 +112,14 @@ namespace System.Threading {
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        public static extern void Exit(Object obj);
-    
+        static extern void Exit_icall (ref Object obj);
+
+        [ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+        public static void Exit (Object obj)
+        {
+                Exit_icall (ref obj);
+        }
+
         /*=========================================================================
         ** Similar to Enter, but will never block. That is, if the current thread can
         ** acquire the monitor lock without blocking, it will do so and TRUE will
