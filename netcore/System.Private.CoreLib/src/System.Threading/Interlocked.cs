@@ -77,7 +77,7 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[return: NotNullIfNotNull("location1")]
-		extern static void CompareExchange<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class?;
+		extern static void CompareExchange_T<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class?;
 
 		[return: NotNullIfNotNull("location1")]
 		public static T CompareExchange<T> (ref T location1, T value, T comparand) where T : class?
@@ -94,7 +94,7 @@ namespace System.Threading
 #pragma warning disable 8654 // null problems; is there another way?
 			T result = null;
 #pragma warning restore 8654
-			CompareExchange (ref location1, ref value, ref comparand, ref result);
+			CompareExchange_T (ref location1, ref value, ref comparand, ref result);
 			return result;
 		}
 
@@ -109,7 +109,7 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[return: NotNullIfNotNull("location1")]
-		extern static void Exchange<T> (ref T location1, ref T value, ref T result) where T : class?;
+		extern static void Exchange_T<T> (ref T location1, ref T value, ref T result) where T : class?;
 
 		[return: NotNullIfNotNull("location1")]
 		public static T Exchange<T> (ref T location1, T value) where T : class?
@@ -121,7 +121,7 @@ namespace System.Threading
 #pragma warning disable 8654 // null problems; is there another way?
 			T result = null;
 #pragma warning restore 8654
-			Exchange (ref location1, ref value, ref result);
+			Exchange_T (ref location1, ref value, ref result);
 			return result;
 		}
 

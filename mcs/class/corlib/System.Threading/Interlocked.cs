@@ -124,7 +124,7 @@ namespace System.Threading
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void CompareExchange<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class;
+		extern static void CompareExchange_T<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class;
 
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
@@ -140,7 +140,7 @@ namespace System.Threading
 			// This is not entirely convincing due to lack of volatile.
 			//
 			T result = null;
-			CompareExchange (ref location1, ref value, ref comparand, ref result);
+			CompareExchange_T (ref location1, ref value, ref comparand, ref result);
 			return result;
 		}
 
@@ -158,7 +158,7 @@ namespace System.Threading
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		extern static void Exchange<T> (ref T location1, ref T value, ref T result) where T : class;
+		extern static void Exchange_T<T> (ref T location1, ref T value, ref T result) where T : class;
 
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
@@ -169,7 +169,7 @@ namespace System.Threading
 			// This is not entirely convincing due to lack of volatile.
 			//
 			T result = null;
-			Exchange (ref location1, ref value, ref result);
+			Exchange_T (ref location1, ref value, ref result);
 			return result;
 		}
 

@@ -4817,21 +4817,23 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			&& !strcmp (klass_name_space, "System.Threading") &&
 
 			(((interlocked = !strcmp (klass_name, "Interlocked"))
-				&& !strcmp (method->name, "CompareExchange")
+				&& !strcmp (method->name, "CompareExchange_T")
 				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count == 4
-				&& MONO_TYPE_IS_REFERENCE (sig->params [0])
-				&& MONO_TYPE_IS_REFERENCE (sig->params [1])
-				&& MONO_TYPE_IS_REFERENCE (sig->params [2])
-				&& MONO_TYPE_IS_REFERENCE (sig->params [3])
+				&& sig->param_count
+				//FIXME && sig->param_count == 4
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [3])
 				) ||
 			 (interlocked
-				&& !strcmp (method->name, "Exchange")
+				&& !strcmp (method->name, "Exchange_T")
 				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count == 3
-				&& MONO_TYPE_IS_REFERENCE (sig->params [0])
-				&& MONO_TYPE_IS_REFERENCE (sig->params [1])
-				&& MONO_TYPE_IS_REFERENCE (sig->params [2])
+				&& sig->param_count
+				//FIXME && sig->param_count == 3
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
+				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
 				) ||
 			 (!interlocked
 				&& (volatil = !strcmp (klass_name, "Volatile"))
