@@ -14,15 +14,14 @@ def print_frames(thread, num_frames, current_thread):
         if function_name == "interp_exec_method_full":
             try:
                 s = 'frame->imethod->method'
-                klassname = frame.EvaluateExpression('(char*) ' + s + '->klass->name').summary[1:-1]
-                methodname = frame.EvaluateExpression('(char*) ' + s + '->name').summary[1:-1]
+                methoddesc = frame.EvaluateExpression('(char*) mono_method_full_name (' + s + ', 1)').summary[1:-1]
 
                 ipoffset = frame.EvaluateExpression('ip').GetValueAsUnsigned()
                 insn = ''
                 if ipoffset != 0:
                     ipoffset -= frame.EvaluateExpression('imethod->code').GetValueAsUnsigned()
                     insn = "\"" + frame.EvaluateExpression('mono_interp_opname [*ip]').summary[1:-1] + "\""
-                var = '%s::%s @ %d %s || %s' % (klassname, methodname, ipoffset, insn, frame)
+                var = '%s @ %d %s || %s' % (methoddesc, ipoffset, insn, frame)
             except Exception as e:
                 print "DBG: execfail:" + str(e)
         elif function_name == "mono_interp_transform_method":
