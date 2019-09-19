@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 namespace System.IO {
 	[DefaultEvent("Changed")]
 	[IODescription ("")]
-	public class FileSystemWatcher : Component, ISupportInitialize {
+	public partial class FileSystemWatcher : Component, ISupportInitialize {
 
 		#region Fields
 

@@ -99,9 +99,8 @@ static guint32 jinfo_try_holes_size;
 #define mono_jit_unlock() mono_os_mutex_unlock (&jit_mutex)
 static mono_mutex_t jit_mutex;
 
-static MonoBackend *current_backend;
-
 #ifndef DISABLE_JIT
+static MonoBackend *current_backend;
 
 gpointer
 mono_realloc_native_code (MonoCompile *cfg)
@@ -2122,6 +2121,21 @@ mono_postprocess_patches (MonoCompile *cfg)
 			patch_info->data.table->table = (MonoBasicBlock**)table;
 			break;
 		}
+		default:
+			/* do nothing */
+			break;
+		}
+	}
+}
+
+/* Those patches require the JitInfo of the compiled method already be in place when used */
+static void
+mono_postprocess_patches_after_ji_publish (MonoCompile *cfg)
+{
+	MonoJumpInfo *patch_info;
+
+	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
+		switch (patch_info->type) {
 		case MONO_PATCH_INFO_METHOD_JUMP: {
 			unsigned char *ip = cfg->native_code + patch_info->ip.i;
 
@@ -3146,15 +3160,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
 	cfg->interp = (flags & JIT_FLAG_INTERP) != 0;
+	cfg->use_current_cpu = (flags & JIT_FLAG_USE_CURRENT_CPU) != 0;
 	cfg->backend = current_backend;
 
-#ifdef HOST_ANDROID
-	if (cfg->method->wrapper_type != MONO_WRAPPER_NONE) {
-		/* FIXME: Why is this needed */
-		cfg->gen_seq_points = FALSE;
-		cfg->gen_sdb_seq_points = FALSE;
-	}
-#endif
 	if (cfg->method->wrapper_type == MONO_WRAPPER_ALLOC) {
 		/* We can't have seq points inside gc critical regions */
 		cfg->gen_seq_points = FALSE;
@@ -3862,7 +3870,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 
 	if (cfg->verbose_level >= 2) {
-		char *id =  mono_method_full_name (cfg->method, FALSE);
+		char *id =  mono_method_full_name (cfg->method, TRUE);
 		g_print ("\n*** ASM for %s ***\n", id);
 		mono_disassemble_code (cfg, cfg->native_code, cfg->code_len, id + 3);
 		g_print ("***\n\n");
@@ -3875,6 +3883,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 		if (cfg->method->dynamic)
 			mono_dynamic_code_hash_lookup (cfg->domain, cfg->method)->ji = cfg->jit_info;
+
+		mono_postprocess_patches_after_ji_publish (cfg);
+
 		mono_domain_unlock (cfg->domain);
 	}
 

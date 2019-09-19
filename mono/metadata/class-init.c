@@ -64,13 +64,13 @@ static MonoNativeTlsKey setup_fields_tls_id;
 
 static MonoNativeTlsKey init_pending_tls_id;
 
-static inline void
+static void
 classes_lock (void)
 {
 	mono_locks_os_acquire (&classes_mutex, ClassesLock);
 }
 
-static inline void
+static void
 classes_unlock (void)
 {
 	mono_locks_os_release (&classes_mutex, ClassesLock);
@@ -582,6 +582,8 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 				if (mono_defaults.int64_class)
 					klass->cast_class = mono_defaults.int64_class;
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -808,7 +810,8 @@ mono_class_create_generic_inst (MonoGenericClass *gclass)
 			klass->simd_type = 1;
 	}
 #ifdef ENABLE_NETCORE
-	if (mono_is_corlib_image (gklass->image) && !strcmp (gklass->name, "Vector`1")) {
+	if (mono_is_corlib_image (gklass->image) &&
+		(!strcmp (gklass->name, "Vector`1") || !strcmp (gklass->name, "Vector128`1") || !strcmp (gklass->name, "Vector256`1"))) {
 		MonoType *etype = gclass->context.class_inst->type_argv [0];
 		if (mono_type_is_primitive (etype) && etype->type != MONO_TYPE_CHAR && etype->type != MONO_TYPE_BOOLEAN)
 			klass->simd_type = 1;
@@ -3332,7 +3335,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	if (!mono_class_is_abstract (klass)) {
 		for (i = 0; i < cur_slot; ++i) {
 			if (vtable [i] == NULL || (vtable [i]->flags & (METHOD_ATTRIBUTE_ABSTRACT | METHOD_ATTRIBUTE_STATIC))) {
-				if (vtable [i]->is_reabstracted == 1)
+				if (vtable [i] != NULL && vtable [i]->is_reabstracted == 1)
 					continue;
 				char *type_name = mono_type_get_full_name (klass);
 				char *method_name = vtable [i] ? mono_method_full_name (vtable [i], TRUE) : g_strdup ("none");

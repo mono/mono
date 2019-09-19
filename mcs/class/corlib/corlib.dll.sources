@@ -248,6 +248,7 @@ System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
+System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
@@ -1105,7 +1106,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendartypes.cs
 ../referencesource/mscorlib/system/globalization/hebrewcalendar.cs
-../referencesource/mscorlib/system/globalization/hebrewnumber.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/HebrewNumber.cs
 ../referencesource/mscorlib/system/globalization/hijricalendar.cs
 ../referencesource/mscorlib/system/globalization/japanesecalendar.cs
 ../referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
@@ -1620,7 +1621,6 @@ corefx/CryptoConfigForwarder.cs
 corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
-corefx/MethodInfo.cs
 corefx/RandomNumberGenerator.cs
 corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs

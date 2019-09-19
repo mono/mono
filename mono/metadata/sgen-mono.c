@@ -100,7 +100,7 @@ scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword
 #endif
 
 void
-mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, MonoClass *klass)
+mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
 {
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (m_class_is_valuetype (klass));
@@ -2149,6 +2149,8 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 
 	mono_tls_set_sgen_thread_info (NULL);
 
+	sgen_increment_bytes_allocated_detached (p->total_bytes_allocated);
+
 	tid = mono_thread_info_get_tid (p);
 
 	mono_threads_add_joinable_runtime_thread (&p->client_info.info);
@@ -2270,6 +2272,11 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		return;
 #endif
 
+	SGEN_TV_DECLARE (scan_thread_data_start);
+	SGEN_TV_DECLARE (scan_thread_data_end);
+
+	SGEN_TV_GETTIME (scan_thread_data_start);
+
 	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		int skip_reason = 0;
 		void *aligned_stack_start;
@@ -2349,6 +2356,9 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			}
 		}
 	} FOREACH_THREAD_END
+
+	SGEN_TV_GETTIME (scan_thread_data_end);
+	SGEN_LOG (2, "Scanning thread data: %lld usecs", (long long)(SGEN_TV_ELAPSED (scan_thread_data_start, scan_thread_data_end) / 10));
 }
 
 /*
@@ -2581,6 +2591,12 @@ mono_gc_get_allocated_bytes_for_current_thread (void)
 
 	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
 	return info->total_bytes_allocated + info->tlab_next - info->tlab_start;
+}
+
+guint64
+mono_gc_get_total_allocated_bytes (MonoBoolean precise)
+{
+	return sgen_get_total_allocated_bytes (precise);
 }
 
 gpointer

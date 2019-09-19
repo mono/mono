@@ -37,6 +37,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/DIBuilder.h>
 #include <llvm/IR/CallSite.h>
+#include <llvm/IR/MDBuilder.h>
 
 #include "mini-llvm-cpp.h"
 
@@ -50,8 +51,16 @@ void
 mono_llvm_dump_value (LLVMValueRef value)
 {
 	/* Same as LLVMDumpValue (), but print to stdout */
+	outs () << (*unwrap<Value> (value)) << "\n";
 	fflush (stdout);
-	outs () << (*unwrap<Value> (value));
+}
+
+void
+mono_llvm_dump_module (LLVMModuleRef module)
+{
+	/* Same as LLVMDumpModule (), but print to stdout */
+	outs () << (*unwrap (module));
+	fflush (stdout);
 }
 
 /* Missing overload for building an alloca with an alignment */
@@ -199,6 +208,26 @@ mono_llvm_build_fence (LLVMBuilderRef builder, BarrierKind kind)
 
 	ins = unwrap (builder)->CreateFence (ordering);
 	return wrap (ins);
+}
+
+LLVMValueRef
+mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVMBasicBlockRef t, LLVMBasicBlockRef f, uint32_t t_weight, uint32_t f_weight)
+{
+	auto b = unwrap (builder);
+	auto &ctx = b->getContext ();
+	MDBuilder mdb{ctx};
+	auto weights = mdb.createBranchWeights (t_weight, f_weight);
+	auto ins = b->CreateCondBr (unwrap (cond), unwrap (t), unwrap (f), weights);
+	return wrap (ins);
+}
+
+void
+mono_llvm_set_implicit_branch (LLVMBuilderRef builder, LLVMValueRef branch)
+{
+	auto b = unwrap (builder);
+	auto &ctx = b->getContext ();
+	auto ins = unwrap<Instruction> (branch);
+	ins->setMetadata (LLVMContext::MD_make_implicit, MDNode::get (ctx, {}));
 }
 
 void
@@ -447,6 +476,14 @@ void*
 mono_llvm_di_create_location (void *di_builder, void *scope, int row, int column)
 {
 	return DILocation::get (*unwrap(LLVMGetGlobalContext ()), row, column, (Metadata*)scope);
+}
+
+void
+mono_llvm_set_fast_math (LLVMBuilderRef builder)
+{
+	FastMathFlags flags;
+	flags.setFast ();
+	unwrap(builder)->setFastMathFlags (flags);
 }
 
 void

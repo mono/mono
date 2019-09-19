@@ -77,7 +77,7 @@ Mono_Posix_Syscall_settimeofday (
 	return r;
 }
 
-static inline struct timeval*
+static struct timeval*
 copy_utimes (struct timeval* to, struct Mono_Posix_Timeval *from)
 {
 	if (from) {

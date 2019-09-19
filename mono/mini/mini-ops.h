@@ -672,7 +672,13 @@ MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
 MINI_OP(OP_LMIN, "long_min", LREG, LREG, LREG)
 MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
 MINI_OP(OP_RMAX,     "rmax", FREG, FREG, FREG)
+MINI_OP(OP_RMIN,     "rmin", FREG, FREG, FREG)
 MINI_OP(OP_RPOW,     "rpow", FREG, FREG, FREG)
+MINI_OP(OP_FMAX,     "fmax", FREG, FREG, FREG)
+MINI_OP(OP_FMIN,     "fmin", FREG, FREG, FREG)
+MINI_OP(OP_FPOW,     "fpow", FREG, FREG, FREG)
+MINI_OP(OP_RCOPYSIGN,"rcopysign", FREG, FREG, FREG)
+MINI_OP(OP_FCOPYSIGN,"fcopysign", FREG, FREG, FREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
@@ -711,10 +717,25 @@ MINI_OP(OP_TAN,     "tan", FREG, FREG, NONE)
 MINI_OP(OP_ATAN,    "atan", FREG, FREG, NONE)
 MINI_OP(OP_SQRT,    "sqrt", FREG, FREG, NONE)
 MINI_OP(OP_ROUND,   "round", FREG, FREG, NONE)
+MINI_OP(OP_CEIL,    "ceil", FREG, FREG, NONE)
+MINI_OP(OP_FLOOR,   "floor", FREG, FREG, NONE)
+MINI_OP3(OP_FMA,     "fma", FREG, FREG, FREG, FREG)
 MINI_OP(OP_SINF,     "sinf", FREG, FREG, NONE)
 MINI_OP(OP_COSF,     "cosf", FREG, FREG, NONE)
+MINI_OP(OP_EXPF,     "expf", FREG, FREG, NONE)
+MINI_OP(OP_EXP,      "exp", FREG, FREG, NONE)
+MINI_OP(OP_LOG,      "log", FREG, FREG, NONE)
+MINI_OP(OP_LOG2,     "log2", FREG, FREG, NONE)
+MINI_OP(OP_LOG2F,    "log2f", FREG, FREG, NONE)
+MINI_OP(OP_LOG10,    "log10", FREG, FREG, NONE)
+MINI_OP(OP_LOG10F,   "log10f", FREG, FREG, NONE)
+MINI_OP(OP_TRUNC,    "trunc", FREG, FREG, NONE)
+MINI_OP(OP_TRUNCF,   "truncf", FREG, FREG, NONE)
 MINI_OP(OP_ABSF,     "absf", FREG, FREG, NONE)
 MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
+MINI_OP(OP_CEILF,    "ceilf", FREG, FREG, NONE)
+MINI_OP(OP_FLOORF,   "floorf", FREG, FREG, NONE)
+MINI_OP3(OP_FMAF,     "fmaf", FREG, FREG, FREG, FREG)
 
 /* Operations that can be computed at constants at JIT time  */
 MINI_OP(OP_ACOS,     "acos", FREG, FREG, NONE)
@@ -732,6 +753,7 @@ MINI_OP(OP_STRLEN, "strlen", IREG, IREG, NONE)
 MINI_OP(OP_NEWARR, "newarr", IREG, IREG, NONE)
 /* Load a readonly length field from [sreg1+inst_imm] */
 MINI_OP(OP_LDLEN, "ldlen", IREG, IREG, NONE)
+/* inst_p0 is the exception name to throw or NULL */
 MINI_OP(OP_BOUNDS_CHECK, "bounds_check", NONE, IREG, IREG)
 /* type checks */
 MINI_OP(OP_ISINST, "isinst", IREG, IREG, NONE)
@@ -744,6 +766,8 @@ MINI_OP(OP_MEMCPY, "memcpy", NONE, NONE, NONE)
 MINI_OP(OP_MEMSET, "memset", NONE, NONE, NONE)
 MINI_OP(OP_SAVE_LMF, "save_lmf", NONE, NONE, NONE)
 MINI_OP(OP_RESTORE_LMF, "restore_lmf", NONE, NONE, NONE)
+
+MINI_OP3(OP_MEMMOVE, "memmove", NONE, IREG, IREG, IREG)
 
 /* write barrier */
 MINI_OP(OP_CARD_TABLE_WBARRIER, "card_table_wbarrier", NONE, IREG, IREG)
@@ -1363,19 +1387,30 @@ MINI_OP(OP_XCOMPARE_FP, "xcompare_fp", XREG, XREG, XREG)
 /* Binary op, inst_c0 contains the operation */
 MINI_OP(OP_XBINOP, "xbinop", XREG, XREG, XREG)
 MINI_OP(OP_XCAST, "xcast", XREG, XREG, NONE)
+/* Extract element of vector */
+/* The index is assumed to be in range */
+/* inst_i0 is the element type */
+MINI_OP(OP_XEXTRACT_I32, "xextract_i32", IREG, XREG, IREG)
+MINI_OP(OP_XEXTRACT_I64, "xextract_i64", LREG, XREG, IREG)
+MINI_OP(OP_XEXTRACT_R8, "xextract_r8", FREG, XREG, IREG)
+/* Return an R4 */
+MINI_OP(OP_XEXTRACT_R4, "xextract_r4", FREG, XREG, IREG)
 
 MINI_OP(OP_LZCNT32, "lzcnt32", IREG, IREG, NONE)
 MINI_OP(OP_LZCNT64, "lzcnt64", LREG, LREG, NONE)
 MINI_OP(OP_POPCNT32, "popcnt32", IREG, IREG, NONE)
 MINI_OP(OP_POPCNT64, "popcnt64", LREG, LREG, NONE)
 
+/* Intel BMI1 */
 /* Count trailing zeroes, return 32/64 if the input is 0 */
 MINI_OP(OP_CTTZ32, "cttz32", IREG, IREG, NONE)
 MINI_OP(OP_CTTZ64, "cttz64", LREG, LREG, NONE)
-/* Intel BMI2 PEXT */
+
+/* Intel BMI2 */
+MINI_OP(OP_BZHI32, "bzhi32", IREG, IREG, IREG)
+MINI_OP(OP_BZHI64, "bzhi64", LREG, LREG, LREG)
 MINI_OP(OP_PEXT32, "pext32", IREG, IREG, IREG)
 MINI_OP(OP_PEXT64, "pext64", LREG, LREG, LREG)
-/* Intel BMI2 PDEP */
 MINI_OP(OP_PDEP32, "pdep32", IREG, IREG, IREG)
 MINI_OP(OP_PDEP64, "pdep64", LREG, LREG, LREG)
 

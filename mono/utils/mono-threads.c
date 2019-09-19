@@ -64,7 +64,7 @@ static MonoSemType global_suspend_semaphore;
 
 static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
-static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
+const MonoThreadInfoRuntimeCallbacks *mono_runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, thread_exited_key;
 #ifdef MONO_KEYWORD_THREAD
 static MONO_KEYWORD_THREAD gint32 tls_small_id = -1;
@@ -337,7 +337,7 @@ mono_threads_wait_pending_operations (void)
 
 //Thread initialization code
 
-static inline void
+static void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 {
 	if (retain != 0)
@@ -957,15 +957,9 @@ mono_thread_info_signals_init (void)
 }
 
 void
-mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks)
+mono_thread_info_runtime_init (const MonoThreadInfoRuntimeCallbacks *callbacks)
 {
-	runtime_callbacks = *callbacks;
-}
-
-MonoThreadInfoRuntimeCallbacks *
-mono_threads_get_runtime_callbacks (void)
-{
-	return &runtime_callbacks;
+	mono_runtime_callbacks = callbacks;
 }
 
 static gboolean
@@ -1575,8 +1569,10 @@ mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	/* Sanity check the result */
 	g_assert ((current > *staddr) && (current < *staddr + *stsize));
 
+#ifndef TARGET_WASM
 	/* When running under emacs, sometimes staddr is not aligned to a page size */
 	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+#endif
 }
 
 gboolean
@@ -1604,7 +1600,7 @@ sleep_interrupt (gpointer data)
 	mono_coop_mutex_unlock (&sleep_mutex);
 }
 
-static inline guint32
+static guint32
 sleep_interruptable (guint32 ms, gboolean *alerted)
 {
 	gint64 now, end;

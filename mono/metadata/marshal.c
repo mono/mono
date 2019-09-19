@@ -3045,7 +3045,6 @@ mono_marshal_get_llvm_func_wrapper (MonoLLVMFuncWrapperSubtype subtype)
 	WrapperInfo *info;
 	MonoMethodSignature *csig = NULL;
 	MonoType *void_type = mono_get_void_type ();
-	MonoType *int_type = mono_get_int_type ();
 	char *name = g_strdup_printf ("llvm_func_wrapper_%d", subtype);
 
 	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
@@ -3934,7 +3933,9 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 				} else {
 					g_assert_not_reached ();
 				}
+				g_free (named_args [i]);
 			}
+			g_free (typed_args [0]);
 			g_free (typed_args);
 			g_free (named_args);
 			g_free (arginfo);
@@ -5176,6 +5177,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 	return GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id));
 }
 
+void
+ves_icall_System_Runtime_InteropServices_Marshal_SetLastWin32Error (guint32 err)
+{
+	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (err));
+}
+
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandle rtype, MonoError *error)
 {
@@ -5503,7 +5510,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5527,7 +5534,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, g
 }
 
 #ifndef HOST_WIN32
-static inline void
+static void
 mono_marshal_free_hglobal (gpointer ptr)
 {
 	g_free (ptr);
@@ -5569,7 +5576,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);

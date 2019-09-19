@@ -656,7 +656,9 @@ typedef enum {
 	LLVMArgFpStruct,
 	LLVMArgVtypeByRef,
 	/* Vtype returned as an int */
-	LLVMArgVtypeAsScalar
+	LLVMArgVtypeAsScalar,
+	/* Address to local vtype passed as argument (using register or stack). */
+	LLVMArgVtypeAddr
 } LLVMArgStorage;
 
 typedef struct {
@@ -1218,6 +1220,8 @@ typedef enum {
 	JIT_FLAG_DISCARD_RESULTS = (1 << 8),
 	/* Whenever to generate code which can work with the interpreter */
 	JIT_FLAG_INTERP = (1 << 9),
+	/* Allow AOT to use all current CPU instructions */
+	JIT_FLAG_USE_CURRENT_CPU = (1 << 10),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -1431,6 +1435,7 @@ typedef struct {
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
 	guint            interp : 1;
+	guint            use_current_cpu : 1;
 	guint            domainvar_inited : 1;
 	guint8           uses_simd_intrinsics;
 	int              r4_stack_type;
@@ -1910,6 +1915,7 @@ enum {
 	MONO_EXC_NULL_REF,
 	MONO_EXC_ARRAY_TYPE_MISMATCH,
 	MONO_EXC_ARGUMENT,
+	MONO_EXC_ARGUMENT_OUT_OF_RANGE,
 	MONO_EXC_INTRINS_NUM
 };
 
@@ -2817,6 +2823,7 @@ enum {
 
 const char *mono_arch_xregname (int reg);
 guint32     mono_arch_cpu_enumerate_simd_versions (void);
+MonoCPUFeatures mono_arch_get_cpu_features (void);
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
 void        mono_simd_simplify_indirection (MonoCompile *cfg);

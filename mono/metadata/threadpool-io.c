@@ -599,10 +599,11 @@ mono_threadpool_io_cleanup (void)
 	mono_lazy_cleanup (&io_status, cleanup);
 }
 
+#ifndef ENABLE_NETCORE
 void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
+ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error)
 {
-	ERROR_DECL (error);
+	MonoIOSelectorJob* const job = MONO_HANDLE_RAW (job_handle);
 	ThreadPoolIOUpdate *update;
 
 	g_assert (handle);
@@ -624,13 +625,12 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 		return;
 	}
 
-	int fd = GPOINTER_TO_INT (handle);
+	int const fd = GPOINTER_TO_INT (handle);
 
 	if (!threadpool_io->backend.can_register_fd (fd)) {
 		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_IO_SELECTOR, "Could not register to wait for file descriptor %d", fd);
 		mono_error_set_not_supported (error, "Could not register to wait for file descriptor %d", fd);
-		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -644,6 +644,7 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
+#endif
 
 void
 ves_icall_System_IOSelector_Remove (gpointer handle)
@@ -708,7 +709,7 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 #else
 
 void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
+ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error)
 {
 	g_assert_not_reached ();
 }
