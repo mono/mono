@@ -436,7 +436,7 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	if (target < 0 || target >= td->code_size)
 		g_assert_not_reached ();
 	/* Add exception checkpoint or safepoint for backward branches */
-	if (offset < 0) {
+	if (offset < 0 && td->method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		if (mono_threads_are_safepoints_enabled ())
 			interp_add_ins (td, MINT_SAFEPOINT);
 		else
@@ -3121,7 +3121,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			interp_add_ins (td, MINT_PROF_ENTER);
 
 		/* safepoint is required on method entry */
-		if (mono_threads_are_safepoints_enabled ())
+		if (mono_threads_are_safepoints_enabled () && td->method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)
 			interp_add_ins (td, MINT_SAFEPOINT);
 	} else {
 		int local;
