@@ -135,20 +135,19 @@ namespace MonoTests.System.IO
 
 				var fsw1 = new FileSystemWatcher (tmp.Path, "*");
 				var fsw2 = new FileSystemWatcher (tmp.Path, "*");
+				// at this point watcher and watcher_handle should be set
 
-				// Can't check for internal_map earlier - it is lazily created when the first FSW instance is created
-				var internal_map = proxyTypeInternalMapField.GetValue (null)
-					as global::System.Collections.Generic.IDictionary<object, global::System.IO.CoreFX.FileSystemWatcher>;
-				Assert.IsNotNull (internal_map);
-
+				global::System.Collections.Generic.IDictionary<object, global::System.IO.CoreFX.FileSystemWatcher> internal_map = null;
 				object handle1 = null;
 				object handle2 = null;
 
 				// using "using" to ensure that Dispose gets called even if we throw an exception
 				using (var fsw11 = fsw1)
 				using (var fsw22 = fsw2) {
-					// at this point watcher and watcher_handle should be set
 
+					// Once at least one FSW is initialized, watcher should be set.  But if the
+					// wrong backend is getting used, ignore this test because the other checks
+					// (internal_map in particular) won't be valid.
 					var watcher = watcherField.GetValue (fsw1);
 					Assert.IsNotNull (watcher);
 					if (!proxyType.IsAssignableFrom (watcher.GetType ()))
@@ -159,6 +158,12 @@ namespace MonoTests.System.IO
 
 					Assert.IsNotNull (handle1);
 					Assert.IsNotNull (handle2);
+
+					// Can't check for internal_map earlier - it is lazily created when the first
+					// FSW instance is created
+					internal_map = proxyTypeInternalMapField.GetValue (null)
+						as global::System.Collections.Generic.IDictionary<object, global::System.IO.CoreFX.FileSystemWatcher>;
+					Assert.IsNotNull (internal_map);
 
 					// Both of handles should be in the internal map while the file system watchers
 					// are not disposed.
