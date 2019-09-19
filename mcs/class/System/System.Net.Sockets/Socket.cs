@@ -47,7 +47,7 @@ using System.Text;
 using System.Timers;
 using System.Net.NetworkInformation;
 
-namespace System.Net.Sockets 
+namespace System.Net.Sockets
 {
 	public partial class Socket : IDisposable
 	{
@@ -91,7 +91,14 @@ namespace System.Net.Sockets
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
 
-#region Constructors
+#if MONO_WEB_DEBUG
+		static int nextId;
+		internal readonly int ID = ++nextId;
+#else
+		internal readonly int ID;
+#endif
+
+		#region Constructors
 
 
 		public Socket (SocketInformation socketInformation)
