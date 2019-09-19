@@ -382,7 +382,7 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 	*out_args = NULL;
 
 	/* check if already finished */
-	mono_monitor_enter_internal ((MonoObject*) ares);
+	mono_monitor_enter_internal ((MonoObject**) &ares, NULL/*FIXMEcoop*/);
 
 	if (ares->endinvoke_called) {
 		mono_error_set_invalid_operation(error, "Delegate EndInvoke method called more than once");

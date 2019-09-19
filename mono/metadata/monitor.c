@@ -1033,10 +1033,12 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 
 /* This is an icall */
 MonoBoolean
-mono_monitor_enter_internal (MonoObject *obj)
+mono_monitor_enter_internal (MonoObject *volatile* obj_handle, MonoException *volatile* exception_handle)
 {
+	MonoObject *obj = *obj_handle;
 	gint32 res;
 	gboolean allow_interruption = TRUE;
+
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
@@ -1057,6 +1059,10 @@ mono_monitor_enter_internal (MonoObject *obj)
 		if (res == -1) {
 			MonoException *exc = mono_thread_interruption_checkpoint ();
 			if (exc) {
+				if (exception_handle)
+					*exception_handle = exc;
+				else
+					;// FIXMEcoop
 				mono_set_pending_exception (exc);
 				return FALSE;
 			} else {
@@ -1075,13 +1081,15 @@ gboolean
 mono_monitor_enter (MonoObject *obj)
 {
 	// FIXME slow?
-	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_enter_internal (obj));
+	// FIXMEcoop
+	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_enter_internal (&obj, NULL));
 }
 
 /* Called from JITted code so we return guint32 instead of gboolean */
 guint32
-mono_monitor_enter_fast (MonoObject *obj)
+mono_monitor_enter_fast (MonoObject *volatile*obj_handle)
 {
+	MonoObject *obj = *obj_handle;
 	if (G_UNLIKELY (!obj)) {
 		/* don't set pending exn on the fast path, just return
 		 * FALSE and let the slow path take care of it. */
@@ -1131,9 +1139,9 @@ mono_monitor_exit_internal (MonoObject *obj)
 }
 
 void
-mono_monitor_exit_icall (MonoObjectHandle obj, MonoError* error)
+mono_monitor_exit_icall (MonoObject*volatile* obj)
 {
-	mono_monitor_exit_internal (MONO_HANDLE_RAW (obj));
+	mono_monitor_exit_internal (*obj);
 }
 
 /**
@@ -1179,22 +1187,16 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset)
 }
 
 static void
-mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean *lockTaken, MonoError* error)
+mono_monitor_try_enter_with_atomic_var (MonoObject *volatile* obj_handle, guint32 ms, MonoBoolean *lockTaken, MonoException *volatile* exception_handle)
 {
-	// The use of error here is unusual, but expedient, and easy enough to understand.
-	// Maybe clean it up later.
-
+	MonoObject *obj = *obj_handle;
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 
 	if (G_UNLIKELY (!obj)) {
-		if (error) {
-			mono_error_set_argument_null (error, "obj", "");
-		} else {
-			ERROR_DECL (error);
-			mono_error_set_argument_null (error, "obj", "");
-			mono_error_set_pending_exception (error);
-		}
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1204,12 +1206,11 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 		if (res == -1) {
 			MonoException *exc = mono_thread_interruption_checkpoint ();
 			if (exc) {
-				if (error) { // implies icall and coop handle frame -- a little gross
-					MONO_HANDLE_NEW (MonoException, exc);
-					mono_error_set_exception_instance (error, exc);
-				} else {
-					mono_set_pending_exception (exc);
-				}
+				if (exception_handle)
+					*exception_handle = exc;
+				else
+					;// FIXMEcoop
+				mono_set_pending_exception (exc);
 				return;
 			} else {
 				//we detected a pending interruption but it turned out to be a false positive, we ignore it from now on (this feels like a hack, right?, threads.c should give us less confusing directions)
@@ -1223,9 +1224,9 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean* lockTaken, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject*volatile* obj, guint32 ms, MonoBoolean* lockTaken, MonoException *volatile* exception_handle)
 {
-	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, lockTaken, error);
+	mono_monitor_try_enter_with_atomic_var (obj, ms, lockTaken, exception_handle);
 }
 
 /**
@@ -1235,12 +1236,12 @@ void
 mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 {
 	g_static_assert (sizeof (MonoBoolean) == 1);
-	mono_monitor_enter_v4_internal (obj, (MonoBoolean*)lock_taken);
+	mono_monitor_enter_v4_internal (&obj, (MonoBoolean*)lock_taken, NULL /*FIXMEcoop*/);
 }
 
 /* Called from JITted code */
 void
-mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
+mono_monitor_enter_v4_internal (MonoObject *volatile* obj, MonoBoolean *lock_taken, MonoException *volatile* exception_handle)
 {
 	if (*lock_taken == 1) {
 		ERROR_DECL (error);
@@ -1248,7 +1249,7 @@ mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 		mono_error_set_pending_exception (error);
 		return;
 	}
-	mono_monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, lock_taken, NULL);
+	mono_monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, lock_taken, exception_handle);
 }
 
 /*
@@ -1260,9 +1261,14 @@ mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
  * Called from JITted code so we return guint32 instead of gboolean.
  */
 guint32
-mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken)
+mono_monitor_enter_v4_fast (MonoObject *volatile* obj_handle, MonoBoolean *lock_taken)
 {
-	if (*lock_taken == 1 || G_UNLIKELY (!obj))
+	if (*lock_taken == 1)
+		return FALSE;
+
+	MonoObject *obj = *obj_handle;
+
+	if (G_UNLIKELY (!obj))
 		return FALSE;
 
 	gboolean const res = mono_monitor_try_enter_internal (obj, 0, TRUE) == 1;
@@ -1271,9 +1277,9 @@ mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken)
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject*volatile* obj_handle)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
+	MonoObject* const obj = *obj_handle;
 
 	LockWord lw;
 
@@ -1291,9 +1297,9 @@ ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_hand
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject*volatile* obj_handle)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
+	MonoObject* const obj = *obj_handle;
 
 	LockWord lw;
 
@@ -1349,21 +1355,21 @@ mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *volatile* obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, FALSE);
+	mono_monitor_pulse (*obj, __func__, FALSE);
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *volatile* obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
+	mono_monitor_pulse (*obj, __func__, TRUE);
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject*volatile* obj_handle, guint32 ms)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
+	MonoObject* const obj = *obj_handle;
 
 	LockWord lw;
 	MonoThreadsSync *mon;
@@ -1478,9 +1484,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject*volatile* obj, MonoException *volatile* exception_handle)
 {
-	mono_monitor_enter_internal (MONO_HANDLE_RAW (obj));
+	mono_monitor_enter_internal (obj, exception_handle);
 }
 
 #if ENABLE_NETCORE

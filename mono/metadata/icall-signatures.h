@@ -12,6 +12,7 @@
 
 // FIXME Some of these are only needed under ifdef.
 // FIXME Some of these are redundant like obj vs. object, int vs. int32.
+// FIXME In some of these, obj is objref.
 //
 // count and types, where first type is return type
 // and the rest are the parameter types.
@@ -86,6 +87,7 @@
 // mono_icall_sig_void_double_ptr
 // mono_icall_sig_void_int32_ptrref
 // mono_icall_sig_void_obj_ptr
+// mono_icall_sig_void_obj_ptr_obj
 // mono_icall_sig_void_object_object
 // mono_icall_sig_void_object_ptr // alias
 // mono_icall_sig_void_ptr_int
@@ -98,6 +100,7 @@
 // mono_icall_sig_int32_int32_ptr_ptrref
 // mono_icall_sig_int32_ptr_int32_ptr
 // mono_icall_sig_int32_ptr_int32_ptrref
+// mono_icall_sig_int32_ptr_ptr
 // mono_icall_sig_object_int_object_object
 // mono_icall_sig_object_object_ptr_ptr
 // mono_icall_sig_object_ptr_int_int
@@ -189,6 +192,7 @@ ICALL_SIG (3, (int, obj, ptr))			\
 ICALL_SIG (3, (int32, int32, int32))		\
 ICALL_SIG (3, (int32, int32, ptr))		\
 ICALL_SIG (3, (int32, int32, ptrref))		\
+ICALL_SIG (3, (int32, obj, obj)) /* objref */   \
 ICALL_SIG (3, (int32, ptr, ptr))		\
 ICALL_SIG (3, (int32, ptr, ptrref))		\
 ICALL_SIG (3, (long, long, int32))		\
@@ -236,6 +240,7 @@ ICALL_SIG (4, (ptr, ptr, int32, ptrref))	\
 ICALL_SIG (4, (ptr, ptr, ptr, ptr))		\
 ICALL_SIG (4, (ptr, ptr, ptr, ptrref))		\
 ICALL_SIG (4, (ptr, ptr, uint32, ptrref))	\
+ICALL_SIG (4, (void, obj, ptr, obj)) /* objref */ \
 ICALL_SIG (4, (void, object, object, ptr))	\
 ICALL_SIG (4, (void, object, ptr, int32))	\
 ICALL_SIG (4, (void, ptr, int, object))		\

@@ -895,6 +895,32 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			NEW_BBLOCK (cfg, end_bb);
 
+			// "fast" vs. "regular".
+			//
+			// When fast fails, regular is called.
+			// (It would probably work to just call regular, but that would be slower.)
+			// When fast succeeds, regular is not called.
+			// fast does not do full error reporting, because regular does it.
+			// That is, if fast would need to raise an exception, it fails, and regular does it.
+			//
+			// The signatures of fast and regular are historically the same.
+			// But now, regular has one more parameter, a handle, for the native
+			// code to use as a temporary.
+			//
+			// The managed code just makes one function call and there is one args here,
+			// being passed to two calls. The managed code is not away that its one call
+			// expands to two. Presumably there are no side effects from the double use of args.
+			//
+			// fast and regular have signatures, with parameter count, that get passed
+			// through. This parameter count guides how much of args is actually used.
+			// This makes it ok for their signatures to vary slightly, one being a subset
+			// of the other.
+			//
+			// Separately:
+			// Ternary is not used here:
+			//   ins = mono_emit_jit_icall (cfg, v4 ? mono_monitor_enter_v4_fast : mono_monitor_enter_fast, args)
+			// because mono_emit_jit_icall is a macro that does token pasting.
+
 			if (is_v4)
 				ins = mono_emit_jit_icall (cfg, mono_monitor_enter_v4_fast, args);
 			else

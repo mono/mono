@@ -50,8 +50,17 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void Enter(Object obj);
+        static extern void Enter_icall (ref Object obj, out Exception exception_handle);
 
+#if !MONO
+        [System.Security.SecuritySafeCritical]
+        [ResourceExposure(ResourceScope.None)]
+#endif
+        public static void Enter (Object obj)
+        {
+                Exception exception; // temporary for native to use, not always initialized
+                Enter_icall (ref obj, out exception);
+        }
 
         // Use a ref bool instead of out to ensure that unverifiable code must
         // initialize this value to something.  If we used out, the value 
@@ -95,8 +104,14 @@ namespace System.Threading {
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        public static extern void Exit(Object obj);
-    
+        static extern void Exit_icall (ref Object obj);
+
+        [ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+        public static void Exit (ref Object obj)
+        {
+                Exit_icall (ref obj);
+        }
+
         /*=========================================================================
         ** Similar to Enter, but will never block. That is, if the current thread can
         ** acquire the monitor lock without blocking, it will do so and TRUE will

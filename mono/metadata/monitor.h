@@ -107,16 +107,16 @@ void
 mono_monitor_cleanup (void);
 
 MonoBoolean
-mono_monitor_enter_internal (MonoObject *obj);
+mono_monitor_enter_internal (MonoObject *volatile*obj, MonoException *volatile* exception_handle);
 
 void
-mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
+mono_monitor_enter_v4_internal (MonoObject *volatile* obj, MonoBoolean *lock_taken, MonoException *volatile* exception_handle);
 
 guint32
-mono_monitor_enter_fast (MonoObject *obj);
+mono_monitor_enter_fast (MonoObject *volatile*obj);
 
 guint32
-mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
+mono_monitor_enter_v4_fast (MonoObject *volatile*obj, MonoBoolean *lock_taken);
 
 guint32
 mono_monitor_get_object_monitor_gchandle (MonoObject *object);

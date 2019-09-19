@@ -42,38 +42,38 @@ namespace System.Threading
 	public static partial class Monitor
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_synchronised(object obj);
+		extern static bool Monitor_test_synchronised (ref object obj);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse(object obj);
+		extern static void Monitor_pulse (ref object obj);
 
 		static void ObjPulse(Object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException("Object is not synchronized");
 
-			Monitor_pulse (obj);
+			Monitor_pulse (ref obj);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse_all(object obj);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void Monitor_pulse_all (ref object obj);
 
-		static void ObjPulseAll(Object obj)
+		static void ObjPulseAll (Object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException("Object is not synchronized");
 
-			Monitor_pulse_all (obj);
+			Monitor_pulse_all (ref obj);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_wait(object obj, int ms);
+		extern static bool Monitor_wait (ref object obj, int ms);
 
 		static bool ObjWait(bool exitContext, int millisecondsTimeout, Object obj)
 		{
 			if (millisecondsTimeout < 0 && millisecondsTimeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
 			try {
@@ -82,7 +82,7 @@ namespace System.Threading
 					SynchronizationAttribute.ExitContext ();
 #endif
 
-				return Monitor_wait (obj, millisecondsTimeout);
+				return Monitor_wait (ref obj, millisecondsTimeout);
 			} finally {
 #if FEATURE_REMOTING
 				if (exitContext)
@@ -92,7 +92,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+		extern static void try_enter_with_atomic_var (ref object obj, int millisecondsTimeout, ref bool lockTaken, out Exception exception_handle);
 
 		static void ReliableEnterTimeout(Object obj, int timeout, ref bool lockTaken)
 		{
@@ -101,7 +101,8 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
+			Exception exception; // internal temporary handle for native code, not always initialized
+			try_enter_with_atomic_var (ref obj, timeout, ref lockTaken, out exception);
 		}
 
 		static void ReliableEnter(Object obj, ref bool lockTaken)
@@ -110,11 +111,11 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_owner (object obj);
+		extern static bool Monitor_test_owner (ref object obj);
 
 		static bool IsEnteredNative(Object obj)
 		{
-			return Monitor_test_owner (obj);
+			return Monitor_test_owner (ref obj);
 		}
 		
 #if NETCORE
