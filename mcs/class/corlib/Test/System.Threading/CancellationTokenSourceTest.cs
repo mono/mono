@@ -499,11 +499,11 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // https://github.com/mono/mono/issues/16759
-		public void EnsureContinuationsAreOnSameThread ()
+		public void EnsureCanceledContinuationsAreOnSameThread ()
 		{
 			AsyncPump.Run(async delegate {
 				var _tcs = new TaskCompletionSource<bool>();
-                var _cts = new CancellationTokenSource();
+				var _cts = new CancellationTokenSource();
 
 				var curThreadId = Thread.CurrentThread.ManagedThreadId;
 				var taskThreadId = 0;
@@ -531,7 +531,7 @@ namespace MonoTests.System.Threading
 				Assert.AreNotEqual(taskThreadId, curThreadId, "#3");
 			});			
 		}
-		
+
 		public static class AsyncPump
 		{
 			/// <summary>Runs the specified asynchronous function.</summary>
