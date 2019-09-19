@@ -707,7 +707,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 	if (!strcmp (class_name, "Bmi2") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Bmi2"))) {
 		// We only support the subset used by corelib. Remove this check once MultiplyNoFlags is implemented.
-		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())	
+		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())
 			return NULL;
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
