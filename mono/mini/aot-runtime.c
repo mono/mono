@@ -4803,12 +4803,47 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 
 		const char *klass_name_space = m_class_get_name_space (method->klass);
 		const char *klass_name = m_class_get_name (method->klass);
+
+		gboolean interlocked = FALSE;
+		gboolean volatil = FALSE;
+		MonoMethodSignature *sig;
+
 		/* Same for CompareExchange<T> and Exchange<T> */
 		/* Same for Volatile.Read<T>/Write<T> */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && m_class_get_image (method->klass) == mono_defaults.corlib && 
-			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1]))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->ret)))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1])))))) {
+
+		if (method_index == 0xffffff
+			&& method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE
+			&& m_class_get_image (method->klass) == mono_defaults.corlib
+			&& !strcmp (klass_name_space, "System.Threading") &&
+
+			(((interlocked = !strcmp (klass_name, "Interlocked"))
+				&& !strcmp (method->name, "CompareExchange")
+				&& (sig = mono_method_signature_internal (method))
+				&& sig->param_count == 4
+				&& MONO_TYPE_IS_REFERENCE (sig->params [0])
+				&& MONO_TYPE_IS_REFERENCE (sig->params [1])
+				&& MONO_TYPE_IS_REFERENCE (sig->params [2])
+				&& MONO_TYPE_IS_REFERENCE (sig->params [3])
+				) ||
+			 (interlocked
+				&& !strcmp (method->name, "Exchange")
+				&& (sig = mono_method_signature_internal (method))
+				&& sig->param_count == 3
+				&& MONO_TYPE_IS_REFERENCE (sig->params [0])
+				&& MONO_TYPE_IS_REFERENCE (sig->params [1])
+				&& MONO_TYPE_IS_REFERENCE (sig->params [2])
+				) ||
+			 (!interlocked
+				&& (volatil = !strcmp (klass_name, "Volatile"))
+				&& !strcmp (method->name, "Read")
+				&& (sig = mono_method_signature_internal (method))
+				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->ret))
+				) ||
+			 (volatil
+				&& !strcmp (method->name, "Write")
+				&& (sig = mono_method_signature_internal (method))
+				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->params [1]))))
+				) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			gpointer iter = NULL;
