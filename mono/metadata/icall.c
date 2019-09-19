@@ -9320,7 +9320,7 @@ ves_icall_System_GC_GetMaxGeneration (void)
 	return mono_gc_max_generation ();
 }
 
-gint64
+guint64
 ves_icall_System_GC_GetAllocatedBytesForCurrentThread (void)
 {
 	return mono_gc_get_allocated_bytes_for_current_thread ();
