@@ -1528,11 +1528,10 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	if (saddr && out_name)
 		copy_summary_string_safe (out_name, sname);
 #endif
-#ifdef _AIX
-	/* HACK: because g_module_address fname is non-const on AIX */
 	if (fname != NULL)
 		free (fname);
-#endif
+	if (sname != NULL)
+		free (sname);
 	return TRUE;
 }
 

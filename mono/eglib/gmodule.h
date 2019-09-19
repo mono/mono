@@ -30,7 +30,10 @@ GModule *g_module_open (const gchar *file, GModuleFlags flags);
 G_EXTERN_C // Used by libtest, at least.
 gboolean g_module_symbol (GModule *module, const gchar *symbol_name,
 			  gpointer *symbol);
-/* The non-constness is currently because of Win32 and AIX implementations. */
+/*
+ * Caller must free file_name and syn_name. Limitation is because of AIX/Win32
+ * implementations, and dladdr-based implementation dups for consistency.
+ */
 gboolean g_module_address (void *addr, char **file_name, void **file_base,
 			   char **sym_name, void **sym_addr);
 const gchar *g_module_error (void);

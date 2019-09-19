@@ -218,7 +218,6 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	/* This zero-on-failure is unlike other Unix APIs. */
 	if (ret == 0)
 		return FALSE;
-	/* XXX: Callers should free this on AIX */
 	if (file_name != NULL)
 		*file_name = dli.dli_fname;
 	/* if the caller doesn't want fname and we have it, it's a leak */
@@ -227,7 +226,7 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
 	if (sym_name != NULL)
-		*sym_name = dli.dli_sname;
+		*sym_name = strdup(dli.dli_sname); /* actually const on AIX */
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;

@@ -90,15 +90,14 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (ret == 0)
 		return FALSE;
 	/*
-	 * XXX: AIX/Win32 implementations should be fixed to ensure constiness,
-	 * until then, cast these to non-const strings
+	 * AIX/Win32 return non-const, so dup here for API consistency
 	 */
 	if (file_name != NULL)
-		*file_name = (char *)dli.dli_fname;
+		*file_name = strdup (dli.dli_fname);
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
 	if (sym_name != NULL)
-		*sym_name = (char *)dli.dli_sname;
+		*sym_name = strdup (dli.dli_sname);
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;

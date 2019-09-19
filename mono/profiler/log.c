@@ -2420,7 +2420,7 @@ add_code_pointer (uintptr_t ip)
 }
 
 static void
-dump_usym (const char *name, uintptr_t value, uintptr_t size)
+dump_usym (char *name, uintptr_t value, uintptr_t size)
 {
 	int len = strlen (name) + 1;
 
@@ -2440,7 +2440,7 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 	EXIT_LOG;
 }
 
-static const char*
+static char*
 symbol_for (uintptr_t code)
 {
 	char *sname = NULL;
@@ -2459,7 +2459,7 @@ dump_unmanaged_coderefs (void)
 	uintptr_t addr, page_end;
 
 	for (i = 0; i < size_code_pages; ++i) {
-		const char* sym;
+		char* sym;
 		if (!code_pages [i] || code_pages [i] & 1)
 			continue;
 		last_symbol = NULL;
@@ -2475,6 +2475,7 @@ dump_unmanaged_coderefs (void)
 			if (!sym)
 				continue;
 			dump_usym (sym, addr, 0); /* let's not guess the size */
+			free (sym); /* API changes mean this must be freed */
 		}
 	}
 }
