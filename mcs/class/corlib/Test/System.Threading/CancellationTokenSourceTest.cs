@@ -499,6 +499,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // https://github.com/mono/mono/issues/16759
+		[Category("NotWasm")]
 		public void EnsureCanceledContinuationsAreOnSameThread ()
 		{
 			AsyncPump.Run(async delegate {
