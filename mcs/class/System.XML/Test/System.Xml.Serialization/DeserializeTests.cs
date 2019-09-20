@@ -14,6 +14,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
@@ -1684,6 +1685,42 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (2, d.Extra.Length);
 			Assert.AreEqual ("a", d.Extra[0]);
 			Assert.AreEqual ("b", d.Extra[1]);
+		}
+
+		// https://github.com/mono/mono/issues/16918
+		[Test]
+		public void Bug16918 ()
+		{
+			PropertiesWithSameNameAsTheirType testObject = new PropertiesWithSameNameAsTheirType ()
+			{
+				E1 = E1.Two,
+				E2 = E2.Two,
+				E3 = E3.Two,
+				E4 = E4.Two,
+				E5 = E5.Two
+			};
+
+			XmlSerializer serializer = new XmlSerializer (typeof (PropertiesWithSameNameAsTheirType));
+
+			// serialize
+			string serializedObject;
+			using (MemoryStream memoryStream = new MemoryStream ())
+			{
+				serializer.Serialize (memoryStream, testObject);
+				serializedObject = Encoding.UTF8.GetString (memoryStream.ToArray ());
+			}
+
+			PropertiesWithSameNameAsTheirType deserializedObject;
+			using (MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (serializedObject)))
+			{
+				deserializedObject = (PropertiesWithSameNameAsTheirType)serializer.Deserialize (memoryStream);
+			}
+
+			Assert.AreEqual (testObject.E1, deserializedObject.E1, "#1");
+			Assert.AreEqual (testObject.E2, deserializedObject.E2, "#2");
+			Assert.AreEqual (testObject.E3, deserializedObject.E3, "#3");
+			Assert.AreEqual (testObject.E4, deserializedObject.E4, "#4");
+			Assert.AreEqual (testObject.E5, deserializedObject.E5, "#5");
 		}
 	}
 }
