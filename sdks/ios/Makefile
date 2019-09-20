@@ -24,6 +24,7 @@ TEST_SUITES = \
 	System.Json \
 	System.ComponentModel.DataAnnotations \
 	System.Security \
+	System.Xml \
 	System.Xml.Linq \
 	System.ServiceModel.Web \
 	Mono.Data.Tds \
@@ -33,7 +34,6 @@ TEST_SUITES = \
 TEST_SUITES_COMPILING = \
 	System \
 	System.Net.Http \
-	System.Xml \
 	Mono.CSharp
 
 # Not compiling in monotouch profile
