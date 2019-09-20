@@ -42,10 +42,12 @@ stages:
           matrix:
             x64:
               poolname: Hosted Ubuntu 1604
+              containername: ubuntu:18.04
               manifest: linux-x64
               prepareDependencies: true
             x64_LLVM:
               poolname: Hosted Ubuntu 1604
+              containername: ubuntu:18.04
               manifest: linux-x64
               prepareDependencies: true
               llvm: true
@@ -57,6 +59,7 @@ stages:
                 poolname: Xamarin-ARM64-Private
         pool:
           name: $(poolname)
+        container: $(containername)
         steps:
         - bash: |
             git clean -ffdx
