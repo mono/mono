@@ -57,7 +57,7 @@ stages:
                 poolname: Xamarin-ARM64-Private
         pool:
           name: $(poolname)
-        ${{ if eq($(poolname), 'Hosted Ubuntu 1604') }}:
+        ${{ if eq('$(poolname)', 'Hosted Ubuntu 1604') }}:
           container: 'ubuntu:18.04'
         steps:
         - bash: |
