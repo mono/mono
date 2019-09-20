@@ -3,6 +3,7 @@
 #include <mono/metadata/environment.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -327,7 +328,14 @@ main (int argc, char* argv[]) {
 		return 1;
 	}
 	file = argv [1];
-	/*
+	
+    /*
+	 * Load the default Mono configuration file, this is needed
+	 * if you are planning on using the dllmaps defined on the
+	 * system configuration
+	 */
+	mono_config_parse (NULL);
+    /*
 	 * mono_jit_init() creates a domain: each assembly is
 	 * loaded and run in a MonoDomain.
 	 */
