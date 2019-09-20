@@ -195,6 +195,7 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.7.xml \
 	frameworks/net_4.7.1.xml \
 	frameworks/net_4.7.2.xml \
+	frameworks/net_4.8.xml \
 	targets/Microsoft.WebApplication.targets	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\
