@@ -42,12 +42,10 @@ stages:
           matrix:
             x64:
               poolname: Hosted Ubuntu 1604
-              containername: ubuntu:18.04
               manifest: linux-x64
               prepareDependencies: true
             x64_LLVM:
               poolname: Hosted Ubuntu 1604
-              containername: ubuntu:18.04
               manifest: linux-x64
               prepareDependencies: true
               llvm: true
@@ -57,10 +55,10 @@ stages:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
                 poolname: Xamarin-ARM64-Private
-              containername:
         pool:
           name: $(poolname)
-        container: $(containername)
+        ${{ if eq($(poolname), 'Hosted Ubuntu 1604') }}:
+          container: 'ubuntu:18.04'
         steps:
         - bash: |
             git clean -ffdx
