@@ -250,6 +250,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test, ExpectedException (typeof(OperationCanceledException))]
+		[Category ("MultiThreaded")]
 		public void BoundedAddLimit ()
 		{
 			const int elNumber = 5;

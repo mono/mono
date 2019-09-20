@@ -381,6 +381,9 @@ chain_redirections_loadfrom (MonoAssemblyLoadContext *alc, MonoImage *image, Mon
 static MonoAssembly*
 mono_problematic_image_reprobe (MonoAssemblyLoadContext *alc, MonoImage *image, MonoImageOpenStatus *status);
 
+static MonoAssembly *
+invoke_assembly_preload_hook (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, gchar **apath);
+
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filanem);
 static MonoAssemblyName*
@@ -584,7 +587,7 @@ get_publisher_policy_info (MonoImage *image, MonoAssemblyName *aname, MonoAssemb
 	g_assert (filename != NULL);
 	
 	subpath = g_path_get_dirname (image->name);
-	fullpath = g_build_path (G_DIR_SEPARATOR_S, subpath, filename, NULL);
+	fullpath = g_build_path (G_DIR_SEPARATOR_S, subpath, filename, (const char*)NULL);
 	mono_config_parse_publisher_policy (fullpath, binding_info);
 	g_free (subpath);
 	g_free (fullpath);
@@ -808,7 +811,7 @@ load_in_path (const char *basename, const char** search_path, const MonoAssembly
 	MonoAssembly *result;
 
 	for (i = 0; search_path [i]; ++i) {
-		fullpath = g_build_filename (search_path [i], basename, NULL);
+		fullpath = g_build_filename (search_path [i], basename, (const char*)NULL);
 		result = mono_assembly_request_open (fullpath, req, status);
 		g_free (fullpath);
 		if (result)
@@ -863,7 +866,7 @@ mono_assembly_getrootdir (void)
 gchar *
 mono_native_getrootdir (void)
 {
-	gchar* fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (), mono_config_get_reloc_lib_dir(), NULL);
+	gchar* fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (), mono_config_get_reloc_lib_dir(), (const char*)NULL);
 	return fullpath;
 }
 
@@ -951,9 +954,9 @@ set_dirs (char *exe)
 		return;
 	}
 
-	config = g_build_filename (base, "etc", NULL);
-	lib = g_build_filename (base, "lib", NULL);
-	mono = g_build_filename (lib, "mono/4.5", NULL);  // FIXME: stop hardcoding 4.5 here
+	config = g_build_filename (base, "etc", (const char*)NULL);
+	lib = g_build_filename (base, "lib", (const char*)NULL);
+	mono = g_build_filename (lib, "mono/4.5", (const char*)NULL);  // FIXME: stop hardcoding 4.5 here
 	if (stat (mono, &buf) == -1)
 		fallback ();
 	else {
@@ -1008,9 +1011,9 @@ mono_set_rootdir (void)
 
 	bindir = g_path_get_dirname (resolvedname);
 	installdir = g_path_get_dirname (bindir);
-	root = g_build_path (G_DIR_SEPARATOR_S, installdir, "lib", NULL);
+	root = g_build_path (G_DIR_SEPARATOR_S, installdir, "lib", (const char*)NULL);
 
-	config = g_build_filename (root, "..", "etc", NULL);
+	config = g_build_filename (root, "..", "etc", (const char*)NULL);
 #ifdef HOST_WIN32
 	mono_set_dirs (root, config);
 #else
@@ -1633,31 +1636,39 @@ netcore_load_reference (MonoAssemblyName *aname, MonoAssemblyLoadContext *alc, M
 	 *
 	 * 2. If it's a non-default ALC, call the Load() method.
 	 *
-	 * 3. Try to load using the default ALC (except for satellite requests).
+	 * 3. If the ALC is not the default and this is not a satellite request,
+	 *    check if it's already loaded by the default ALC.
 	 *
-	 * 4. Call ALC ResolveSatelliteAssembly method (for satellite requests).
+	 * 4. If the ALC is not the default or this is not a satellite request,
+	 *    check the TPA paths and ApplicationBase.
 	 *
-	 * 5. Call ALC Resolving event.
+	 * 5. If this is a satellite request, call the ALC ResolveSatelliteAssembly method.
 	 *
-	 * 6. Call the ALC AssemblyResolve event (except for corlib satellite assemblies).
+	 * 6. Call the ALC Resolving event.
 	 *
-	 * 7. Return NULL.
+	 * 7. Call the ALC AssemblyResolve event (except for corlib satellite assemblies).
+	 *
+	 * 8. Return NULL.
 	 */
 
 	reference = mono_assembly_loaded_internal (alc, aname, FALSE);
 	if (reference)
 		goto leave;
 
-	if (!is_default)
+	if (!is_default) {
 		reference = mono_alc_invoke_resolve_using_load_nofail (alc, aname);
-	if (reference)
-		goto leave;
+		if (reference)
+			goto leave;
+	}
+
+	if (!is_default && !is_satellite) {
+		reference = mono_assembly_loaded_internal (mono_domain_default_alc (mono_alc_domain (alc)), aname, FALSE);
+		if (reference)
+			goto leave;
+	}
 
 	if (is_default || !is_satellite) {
-		MonoAssemblyByNameRequest req;
-		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, mono_domain_default_alc (mono_alc_domain (alc)));
-		req.requesting_assembly = requesting;
-		reference = mono_assembly_request_byname_nosearch (aname, &req, NULL);
+		reference = invoke_assembly_preload_hook (mono_domain_default_alc (mono_alc_domain (alc)), aname, assemblies_path);
 		if (reference)
 			goto leave;
 	}
@@ -2301,13 +2312,13 @@ absolute_dir (const gchar *filename)
 
 	if (g_path_is_absolute (filename)) {
 		part = g_path_get_dirname (filename);
-		res = g_strconcat (part, G_DIR_SEPARATOR_S, NULL);
+		res = g_strconcat (part, G_DIR_SEPARATOR_S, (const char*)NULL);
 		g_free (part);
 		return res;
 	}
 
 	cwd = g_get_current_dir ();
-	mixed = g_build_filename (cwd, filename, NULL);
+	mixed = g_build_filename (cwd, filename, (const char*)NULL);
 	parts = g_strsplit (mixed, G_DIR_SEPARATOR_S, 0);
 	g_free (mixed);
 	g_free (cwd);
@@ -3484,11 +3495,22 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 	
 	parts = tmp = g_strsplit (name, ",", 6);
 	if (!tmp || !*tmp) {
-		g_strfreev (tmp);
-		return FALSE;
+		goto cleanup_and_fail;
 	}
 
 	dllname = g_strstrip (*tmp);
+	// Simple name cannot be empty
+	if (!*dllname) {
+		goto cleanup_and_fail;
+	}
+	// Characters /, :, and \ not allowed in simple names
+	while (*dllname) {
+		gchar tmp_char = *dllname;
+		if (tmp_char == '/' || tmp_char == ':' || tmp_char == '\\')
+			goto cleanup_and_fail;
+		dllname++;
+	}
+	dllname = *tmp;
 	
 	tmp++;
 
@@ -3582,8 +3604,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 			continue;
 		}
 
-		g_strfreev (parts);
-		return FALSE;
+		goto cleanup_and_fail;
 	}
 
 	/* if retargetable flag is set, then we must have a fully qualified name */
@@ -3793,7 +3814,7 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 			build = gac_aname.build;
 			revision = gac_aname.revision;
 			g_free (fullpath);
-			fullpath = g_build_path (G_DIR_SEPARATOR_S, basepath, direntry, fullname, NULL);
+			fullpath = g_build_path (G_DIR_SEPARATOR_S, basepath, direntry, fullname, (const char*)NULL);
 		}
 
 		mono_assembly_name_free (&gac_aname);
@@ -3888,7 +3909,7 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoAssemblyLoa
 	if (extra_gac_paths) {
 		paths = extra_gac_paths;
 		while (!res && *paths) {
-			gacpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", aname->name, NULL);
+			gacpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", aname->name, (const char*)NULL);
 			res = probe_for_partial_name (gacpath, fullname, alc, aname, status);
 			g_free (gacpath);
 			paths++;
@@ -3902,7 +3923,7 @@ mono_assembly_load_with_partial_name_internal (const char *name, MonoAssemblyLoa
 		return res;
 	}
 
-	gacpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (), "mono", "gac", aname->name, NULL);
+	gacpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (), "mono", "gac", aname->name, (const char*)NULL);
 	res = probe_for_partial_name (gacpath, fullname, alc, aname, status);
 	g_free (gacpath);
 
@@ -4017,8 +4038,8 @@ mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 	g_free (name);
 	g_free (culture);
 	
-	filename = g_strconcat (pname, ".dll", NULL);
-	subpath = g_build_path (G_DIR_SEPARATOR_S, pname, version, filename, NULL);
+	filename = g_strconcat (pname, ".dll", (const char*)NULL);
+	subpath = g_build_path (G_DIR_SEPARATOR_S, pname, version, filename, (const char*)NULL);
 	g_free (pname);
 	g_free (version);
 	g_free (filename);
@@ -4028,7 +4049,7 @@ mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 		paths = extra_gac_paths;
 		while (!image && *paths) {
 			fullpath = g_build_path (G_DIR_SEPARATOR_S, *paths,
-					"lib", "mono", "gac", subpath, NULL);
+					"lib", "mono", "gac", subpath, (const char*)NULL);
 			image = mono_image_open (fullpath, NULL);
 			g_free (fullpath);
 			paths++;
@@ -4077,7 +4098,7 @@ search_binding_loaded (MonoAssemblyName *aname)
 	return NULL;
 }
 
-static inline gboolean
+static gboolean
 info_compare_versions (AssemblyVersionSet *left, AssemblyVersionSet *right)
 {
 	if (left->major != right->major || left->minor != right->minor ||
@@ -4087,7 +4108,7 @@ info_compare_versions (AssemblyVersionSet *left, AssemblyVersionSet *right)
 	return TRUE;
 }
 
-static inline gboolean
+static gboolean
 info_versions_equal (MonoAssemblyBindingInfo *left, MonoAssemblyBindingInfo *right)
 {
 	if (left->has_old_version_bottom != right->has_old_version_bottom)
@@ -4151,7 +4172,7 @@ get_version_number (int major, int minor)
 	return major * 256 + minor;
 }
 
-static inline gboolean
+static gboolean
 info_major_minor_in_range (MonoAssemblyBindingInfo *info, MonoAssemblyName *aname)
 {
 	int aname_version_number = get_version_number (aname->major, aname->minor);
@@ -4375,7 +4396,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 			culture, pubtok);
 	g_free (pubtok);
 	
-	subpath = g_build_path (G_DIR_SEPARATOR_S, name, version, filename, NULL);
+	subpath = g_build_path (G_DIR_SEPARATOR_S, name, version, filename, (const char*)NULL);
 	g_free (name);
 	g_free (version);
 	g_free (culture);
@@ -4388,7 +4409,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 	if (extra_gac_paths) {
 		paths = extra_gac_paths;
 		while (!result && *paths) {
-			fullpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", subpath, NULL);
+			fullpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", subpath, (const char*)NULL);
 			result = mono_assembly_request_open (fullpath, &req, status);
 			g_free (fullpath);
 			paths++;
@@ -4402,7 +4423,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 	}
 
 	fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (),
-			"mono", "gac", subpath, NULL);
+			"mono", "gac", subpath, (const char*)NULL);
 	result = mono_assembly_request_open (fullpath, &req, status);
 	g_free (fullpath);
 
@@ -4438,6 +4459,11 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 			corlib = load_in_path (corlib_name, (const char**)assemblies_path, &req, status);
 		}
 	}
+	if (!corlib) {
+		/* Maybe its in a bundle */
+		char *corlib_name = g_strdup_printf ("%s.dll", MONO_ASSEMBLY_CORLIB_NAME);
+		corlib = mono_assembly_request_open (corlib_name, &req, status);
+	}
 	g_assert (corlib);
 #else
 	// A nonstandard preload hook may provide a special mscorlib assembly
@@ -4457,7 +4483,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 
 	/* Normal case: Load corlib from mono/<version> */
 	char *corlib_file;
-	corlib_file = g_build_filename ("mono", runtime->framework_version, "mscorlib.dll", NULL);
+	corlib_file = g_build_filename ("mono", runtime->framework_version, "mscorlib.dll", (const char*)NULL);
 	if (assemblies_path) { // Custom assemblies path
 		corlib = load_in_path (corlib_file, (const char**)assemblies_path, &req, status);
 		if (corlib) {
@@ -4666,7 +4692,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 			/* Don't try appending .dll/.exe if it already has one of those extensions */
 			ext_index++;
 		} else {
-			filename = g_strconcat (aname->name, ext, NULL);
+			filename = g_strconcat (aname->name, ext, (const char*)NULL);
 		}
 
 #ifndef DISABLE_GAC
@@ -4680,7 +4706,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 #endif
 
 		if (basedir) {
-			fullpath = g_build_filename (basedir, filename, NULL);
+			fullpath = g_build_filename (basedir, filename, (const char*)NULL);
 			result = mono_assembly_request_open (fullpath, &req, status);
 			g_free (fullpath);
 			if (result) {
@@ -4720,6 +4746,18 @@ mono_assembly_request_byname (MonoAssemblyName *aname, const MonoAssemblyByNameR
 	}
 #else
 	result = netcore_load_reference (aname, req->request.alc, req->requesting_assembly, !req->no_postload_search);
+
+	if (!result && bundles != NULL) {
+		MonoImageOpenStatus status;
+		MonoImage *image;
+		image = mono_assembly_open_from_bundle (req->request.alc, aname->name, &status, FALSE);
+		if (!image) {
+			char *name = g_strdup_printf ("%s.dll", aname->name);
+			image = mono_assembly_open_from_bundle (req->request.alc, name, &status, FALSE);
+		}
+		if (image)
+			result = mono_assembly_request_load_from (image, aname->name, &req->request, &status);
+	}
 #endif
 	return result;
 }

@@ -78,10 +78,14 @@
 #define AS_POINTER_DIRECTIVE ".quad"
 #elif defined(TARGET_ARM64)
 
+#ifdef MONO_ARCH_ILP32
+#define AS_POINTER_DIRECTIVE AS_INT32_DIRECTIVE
+#else
 #ifdef TARGET_ASM_APPLE
 #define AS_POINTER_DIRECTIVE ".quad"
 #else
 #define AS_POINTER_DIRECTIVE ".xword"
+#endif
 #endif
 
 #else
@@ -1696,7 +1700,7 @@ asm_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name,
 #endif
 }
 
-static inline
+static
 const char *get_label (const char *s)
 {
 #ifdef TARGET_ASM_APPLE
@@ -1862,7 +1866,7 @@ static void
 asm_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
-	asm_writer_emit_alignment (acfg, sizeof (target_mgreg_t));
+	asm_writer_emit_alignment (acfg, TARGET_SIZEOF_VOID_P);
 	asm_writer_emit_pointer_unaligned (acfg, target);
 }
 
@@ -1892,7 +1896,7 @@ asm_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 	}
 }
 
-static inline void
+static void
 asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_WORD) {
@@ -1906,7 +1910,7 @@ asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 	fprintf (acfg->fp, "%d", value);
 }
 
-static inline void
+static void
 asm_writer_emit_int32 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_LONG) {

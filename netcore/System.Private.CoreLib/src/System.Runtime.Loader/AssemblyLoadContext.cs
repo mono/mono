@@ -27,10 +27,8 @@ namespace System.Runtime.Loader
 		{
 		}
 
-		static IntPtr InternalLoadUnmanagedDllFromPath (string unmanagedDllPath)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static IntPtr InternalLoadUnmanagedDllFromPath (string unmanagedDllPath);
 
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		Assembly InternalLoadFromPath (string assemblyPath, string nativeImagePath)
@@ -54,7 +52,7 @@ namespace System.Runtime.Loader
 			}
 		}
 
-		public static Assembly[] GetLoadedAssemblies ()
+		internal static Assembly[] GetLoadedAssemblies ()
 		{
 			return InternalGetLoadedAssemblies ();
 		}

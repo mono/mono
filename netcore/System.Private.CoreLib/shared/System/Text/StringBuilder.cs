@@ -271,7 +271,7 @@ namespace System.Text
 
             StringBuilder currentBlock = this;
             int maxCapacity = this.m_MaxCapacity;
-            for (;;)
+            while (true)
             {
                 // All blocks have the same max capacity.
                 Debug.Assert(currentBlock.m_MaxCapacity == maxCapacity);
@@ -295,7 +295,7 @@ namespace System.Text
 
         public int Capacity
         {
-            get { return m_ChunkChars.Length + m_ChunkOffset; }
+            get => m_ChunkChars.Length + m_ChunkOffset;
             set
             {
                 if (value < 0)
@@ -440,13 +440,10 @@ namespace System.Text
         /// </summary>
         public int Length
         {
-            get
-            {
-                return m_ChunkOffset + m_ChunkLength;
-            }
+            get => m_ChunkOffset + m_ChunkLength;
             set
             {
-                //If the new length is less than 0 or greater than our Maximum capacity, bail.
+                // If the new length is less than 0 or greater than our Maximum capacity, bail.
                 if (value < 0)
                 {
                     throw new ArgumentOutOfRangeException(nameof(value), SR.ArgumentOutOfRange_NegativeLength);
@@ -510,7 +507,7 @@ namespace System.Text
             get
             {
                 StringBuilder? chunk = this;
-                for (;;)
+                while (true)
                 {
                     int indexInBlock = index - chunk.m_ChunkOffset;
                     if (indexInBlock >= 0)
@@ -531,7 +528,7 @@ namespace System.Text
             set
             {
                 StringBuilder? chunk = this;
-                for (;;)
+                while (true)
                 {
                     int indexInBlock = index - chunk.m_ChunkOffset;
                     if (indexInBlock >= 0)
@@ -597,7 +594,7 @@ namespace System.Text
             /// Implement IEnumerable.GetEnumerator() to return  'this' as the IEnumerator
             /// </summary>
             [ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)] // Only here to make foreach work
-            public ChunkEnumerator GetEnumerator() { return this;  }
+            public ChunkEnumerator GetEnumerator() { return this; }
 
             /// <summary>
             /// Implements the IEnumerator pattern.
@@ -1784,9 +1781,9 @@ namespace System.Text
                     // Otherwise, fallback to trying IFormattable or calling ToString.
                     if (arg is IFormattable formattableArg)
                     {
-                        if (itemFormatSpan.Length != 0 && itemFormat == null)
+                        if (itemFormatSpan.Length != 0)
                         {
-                            itemFormat = new string(itemFormatSpan);
+                            itemFormat ??= new string(itemFormatSpan);
                         }
                         s = formattableArg.ToString(itemFormat, provider);
                     }
@@ -1849,7 +1846,7 @@ namespace System.Text
             int thisChunkIndex = thisChunk.m_ChunkLength;
             StringBuilder? sbChunk = sb;
             int sbChunkIndex = sbChunk.m_ChunkLength;
-            for (;;)
+            while (true)
             {
                 --thisChunkIndex;
                 --sbChunkIndex;
@@ -2048,7 +2045,7 @@ namespace System.Text
             int endIndex = startIndex + count;
             StringBuilder chunk = this;
 
-            for (;;)
+            while (true)
             {
                 int endIndexInChunk = endIndex - chunk.m_ChunkOffset;
                 int startIndexInChunk = startIndex - chunk.m_ChunkOffset;
@@ -2192,7 +2189,7 @@ namespace System.Text
 
                     // We made certain that characters after the insertion point are not moved,
                     int i = 0;
-                    for (;;)
+                    while (true)
                     {
                         // Copy in the new string for the ith replacement
                         ReplaceInPlaceAtChunk(ref targetChunk!, ref targetIndexInChunk, valuePtr, value.Length);
@@ -2285,7 +2282,7 @@ namespace System.Text
         {
             if (count != 0)
             {
-                for (;;)
+                while (true)
                 {
                     Debug.Assert(chunk != null, "chunk should not be null at this point");
                     int lengthInChunk = chunk.m_ChunkLength - indexInChunk;
@@ -2346,8 +2343,8 @@ namespace System.Text
                 }
 
                 fixed (char* sourcePtr = &source[sourceIndex])
-                    fixed (char* destinationPtr = &MemoryMarshal.GetReference(destination))
-                        string.wstrcpy(destinationPtr + destinationIndex, sourcePtr, count);
+                fixed (char* destinationPtr = &MemoryMarshal.GetReference(destination))
+                    string.wstrcpy(destinationPtr + destinationIndex, sourcePtr, count);
             }
         }
 
@@ -2534,7 +2531,7 @@ namespace System.Text
             // This typically happens when someone repeatedly inserts small strings at a spot (usually the absolute front) of the buffer.
             if (!doNotMoveFollowingChars && chunk.m_ChunkLength <= DefaultCapacity * 2 && chunk.m_ChunkChars.Length - chunk.m_ChunkLength >= count)
             {
-                for (int i = chunk.m_ChunkLength; i > indexInChunk; )
+                for (int i = chunk.m_ChunkLength; i > indexInChunk;)
                 {
                     --i;
                     chunk.m_ChunkChars[i + count] = chunk.m_ChunkChars[i];
@@ -2622,7 +2619,7 @@ namespace System.Text
             chunk = this;
             StringBuilder? endChunk = null;
             int endIndexInChunk = 0;
-            for (;;)
+            while (true)
             {
                 if (endIndex - chunk.m_ChunkOffset >= 0)
                 {

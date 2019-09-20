@@ -21,10 +21,13 @@
 //
 // Ported from C++ to C and adjusted to Mono runtime
 
+#include <config.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <stdlib.h>
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
-#include <config.h>
 #include <glib.h>
 
 #include <mono/metadata/class-internals.h>
@@ -102,7 +105,7 @@ static ThreadPool threadpool;
 		} while (mono_atomic_cas_i32 (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
 	} while (0)
 
-static inline ThreadPoolCounter
+static ThreadPoolCounter
 COUNTER_READ (void)
 {
 	ThreadPoolCounter counter;
@@ -110,13 +113,13 @@ COUNTER_READ (void)
 	return counter;
 }
 
-static inline void
+static void
 domains_lock (void)
 {
 	mono_coop_mutex_lock (&threadpool.domains_lock);
 }
 
-static inline void
+static void
 domains_unlock (void)
 {
 	mono_coop_mutex_unlock (&threadpool.domains_lock);
@@ -818,3 +821,5 @@ ves_icall_System_Threading_ThreadPool_RequestWorkerThread (MonoError *error)
 	mono_refcount_dec (&threadpool);
 	return TRUE;
 }
+
+#endif /* !ENABLE_NETCORE */

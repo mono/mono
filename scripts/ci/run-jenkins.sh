@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# -*- mode: shell-script; indent-tabs-mode: nil; -*-
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
@@ -176,7 +177,6 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
         if [[ ${CI_TAGS} == *'xcode11'* ]]; then
             export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.0
             export TVOS_VERSION=13.0
@@ -184,7 +184,6 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export WATCHOS64_32_VERSION=6.0
         else
             export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
             export MACOS_VERSION=10.14
             export IOS_VERSION=12.1
             export TVOS_VERSION=12.1
@@ -195,9 +194,8 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_IOS=1" > sdks/Make.config
+        echo "ENABLE_MAC=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
@@ -238,21 +236,16 @@ then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
     if [[ ${CI_TAGS} == *'xcode11'* ]]; then
         export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
         export MACOS_VERSION=10.14
     fi
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
-    echo "DISABLE_IOS=1" > sdks/Make.config
-    echo "DISABLE_ANDROID=1" >> sdks/Make.config
-    echo "DISABLE_WASM=1" >> sdks/Make.config
-    echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+    echo "ENABLE_MAC=1" > sdks/Make.config
     if [[ ${CI_TAGS} == *'cxx'* ]]; then
         echo "ENABLE_CXX=1" >> sdks/Make.config
     fi
@@ -269,10 +262,7 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
-        echo "DISABLE_IOS=1" > sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
@@ -320,21 +310,20 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_IOS=1" >> sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_WASM=1" > sdks/Make.config
+        echo "ENABLE_WINDOWS=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
-        echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
+        echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+        #echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
-	   export xunit_test_suites="System.Core"
+	   export xunit_test_suites="System.Core corlib"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
@@ -344,23 +333,16 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            ${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
-            ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
-            ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
-            ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
+            ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
+            ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             #The following tests are not passing yet, so enabling them would make us perma-red
-            #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
-            #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-System
-            ${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-System.Core
-            ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-System.Core
-            ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-System.Core
-            ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-System.Core
-            #for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=10m $gnumake -C sdks/wasm run-${suite}-xunit; done
+            #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
+            ${TESTCMD} --label=system-core --timeout=20m $gnumake -C sdks/wasm run-all-System.Core
+            for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
             #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
-            ${TESTCMD} --label=v8-corlib --timeout=20m $gnumake -C sdks/wasm run-v8-corlib
+            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
             ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done

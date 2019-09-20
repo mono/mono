@@ -28,7 +28,7 @@ enum Win32APCInfo {
 	WIN32_APC_INFO_PENDING_ABORT_SLOT = 1 << 3
 };
 
-static inline void
+static void
 request_interrupt (gpointer thread_info, HANDLE native_thread_handle, gint32 pending_apc_slot, PAPCFUNC apc_callback, DWORD tid)
 {
 	/*
@@ -113,7 +113,7 @@ suspend_abort_syscall (PVOID thread_info, HANDLE native_thread_handle, DWORD tid
 	request_interrupt (thread_info, native_thread_handle, WIN32_APC_INFO_PENDING_ABORT_SLOT, abort_apc, tid);
 }
 
-static inline void
+static void
 enter_alertable_wait_ex (MonoThreadInfo *info, HANDLE io_handle)
 {
 	// Only loaded/stored by current thread, here or in APC (also running on current thread).
@@ -124,7 +124,7 @@ enter_alertable_wait_ex (MonoThreadInfo *info, HANDLE io_handle)
 	mono_atomic_xchg_i32 (&info->win32_apc_info, (io_handle == INVALID_HANDLE_VALUE) ? WIN32_APC_INFO_ALERTABLE_WAIT_SLOT : WIN32_APC_INFO_BLOCKING_IO_SLOT);
 }
 
-static inline void
+static void
 leave_alertable_wait_ex (MonoThreadInfo *info, HANDLE io_handle)
 {
 	// Clear any previous flags. Thread is exiting alertable wait region, and info around pending interrupt/abort APC's
@@ -455,13 +455,13 @@ mono_native_thread_join (MonoNativeThreadId tid)
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-#if _WIN32_WINNT >= 0x0602 // Windows 8 or newer.
+#if _WIN32_WINNT >= 0x0602 // Windows 8 or newer and very fast, just a few instructions, no syscall.
 	ULONG_PTR low;
 	ULONG_PTR high;
 	GetCurrentThreadStackLimits (&low, &high);
 	*staddr = (guint8*)low;
 	*stsize = high - low;
-#else // Win7 and older.
+#else // Win7 and older (or newer, still works, but much slower).
 	MEMORY_BASIC_INFORMATION info;
 	// Windows stacks are commited on demand, one page at time.
 	// teb->StackBase is the top from which it grows down.
@@ -470,6 +470,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	//
 	VirtualQuery (&info, &info, sizeof (info));
 	*staddr = (guint8*)info.AllocationBase;
+	// TEB starts with TIB. TIB is public, TEB is not.
 	*stsize = (size_t)((NT_TIB*)NtCurrentTeb ())->StackBase - (size_t)info.AllocationBase;
 #endif
 }

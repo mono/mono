@@ -265,13 +265,13 @@ mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoO
 }
 
 void
-mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gpointer src_ptr, int count)
+mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_ptr, int count)
 {
 	mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
 }
 
 void
-mono_gc_wbarrier_generic_store_internal (gpointer ptr, MonoObject* value)
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
 }
@@ -288,7 +288,7 @@ mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
 }
 
 void
-mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, MonoClass *klass)
+mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
 {
 	mono_gc_memmove_atomic (dest, src, count * mono_class_value_size (klass, NULL));
 }
@@ -604,6 +604,11 @@ gboolean
 mono_gc_ephemeron_array_add (MonoObject *obj)
 {
 	return TRUE;
+}
+
+guint64 mono_gc_get_total_allocated_bytes (MonoBoolean precise) 
+{
+	return 0;
 }
 
 #else

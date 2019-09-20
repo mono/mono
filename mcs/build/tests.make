@@ -128,7 +128,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
-	cd ${topdir}/tools/nunit-lite && $(MAKE)
+	$(MAKE) -C ${topdir}/tools/nunit-lite
 	echo "stamp" >$@
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
@@ -378,5 +378,3 @@ $(xtest_makefrag): $(xtest_response)
 
 endif
 
-
-.PHONY: patch-nunitlite-appconfig

@@ -685,14 +685,6 @@ load_modules (MonoImage *image)
 MonoImage*
 mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 {
-	MonoTableInfo *t;
-	MonoTableInfo *file_table;
-	int i;
-	char *base_dir;
-	gboolean refonly = image->ref_only;
-	GList *list_iter, *valid_modules = NULL;
-	MonoImageOpenStatus status;
-
 	error_init (error);
 
 	if ((image->module_count == 0) || (idx > image->module_count || idx <= 0))
@@ -704,6 +696,13 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	/* SRE still uses image->modules, but they are not loaded from files, so the rest of this function is dead code for netcore */
 	g_assert_not_reached ();
 #else
+	MonoTableInfo *t;
+	MonoTableInfo *file_table;
+	int i;
+	char *base_dir;
+	gboolean refonly = image->ref_only;
+	GList *list_iter, *valid_modules = NULL;
+	MonoImageOpenStatus status;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading module %d of %s (%s)", idx, image->assembly ? image->assembly->aname.name : "some assembly", image->name);
 
@@ -738,7 +737,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		if (valid) {
 			MonoAssemblyLoadContext *alc = mono_image_get_alc (image);
 			MonoLoadedImages *li = mono_image_get_loaded_images_for_modules (image);
-			module_ref = g_build_filename (base_dir, name, NULL);
+			module_ref = g_build_filename (base_dir, name, (const char*)NULL);
 			MonoImage *moduleImage = mono_image_open_a_lot_parameterized (li, alc, module_ref, &status, refonly, FALSE, NULL);
 			if (moduleImage) {
 				if (!assign_assembly_parent_for_netmodule (moduleImage, image, error)) {
@@ -1832,6 +1831,7 @@ mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, gu
 	image->storage = storage;
 	mono_image_init_raw_data (image, storage);
 	image->name = (name == NULL) ? g_strdup_printf ("data-%p", datac) : g_strdup(name);
+	image->filename = name ? g_strdup (name) : NULL;
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->ref_only = refonly;
@@ -1931,6 +1931,7 @@ mono_image_open_from_module_handle_with_alc (MonoAssemblyLoadContext *alc, HMODU
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->name = fname;
+	image->filename = g_strdup (image->name);
 	image->ref_count = has_entry_point ? 0 : 1;
 #ifdef ENABLE_NETCORE
 	image->alc = alc;
@@ -2284,7 +2285,7 @@ mono_dynamic_stream_reset (MonoDynamicStream* stream)
 	}
 }
 
-static inline void
+static void
 free_hash (GHashTable *hash)
 {
 	if (hash)
@@ -2817,7 +2818,7 @@ mono_image_load_file_for_image_checked (MonoImage *image, int fileidx, MonoError
 	fname_id = mono_metadata_decode_row_col (t, fileidx - 1, MONO_FILE_NAME);
 	fname = mono_metadata_string_heap (image, fname_id);
 	base_dir = g_path_get_dirname (image->name);
-	name = g_build_filename (base_dir, fname, NULL);
+	name = g_build_filename (base_dir, fname, (const char*)NULL);
 	res = mono_image_open (name, NULL);
 	if (!res)
 		goto done;

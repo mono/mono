@@ -330,8 +330,11 @@ typedef struct {
 	void *raw_data_handle;
 	char *raw_data;
 	guint32 raw_data_len;
+	/* data was allocated with mono_file_map and must be unmapped */
 	guint8 raw_buffer_used    : 1;
+	/* data was allocated with malloc and must be freed */
 	guint8 raw_data_allocated : 1;
+	/* data was allocated with mono_file_map_fileio */
 	guint8 fileio_used : 1;
 
 #ifdef HOST_WIN32
@@ -1181,8 +1184,25 @@ m_image_has_entry_point (MonoImage *image)
 {
 	return image->storage ? image->storage->has_entry_point : FALSE;
 }
-
 #endif
+
+static inline const char *
+m_image_get_name (MonoImage *image)
+{
+	return image->name;
+}
+
+static inline const char *
+m_image_get_filename (MonoImage *image)
+{
+	return image->filename;
+}
+
+static inline const char *
+m_image_get_assembly_name (MonoImage *image)
+{
+	return image->assembly_name;
+}
 
 static inline
 MonoAssemblyLoadContext *

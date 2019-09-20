@@ -140,12 +140,15 @@ namespace System.IO.Compression
 
 		internal ValueTask<int> ReadAsyncMemory (Memory<byte> destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.ReadAsync(destination, cancellationToken);
 		}
 
 		internal int ReadCore (Span<byte> destination)
 		{
-			throw new NotImplementedException ();
+			var buffer = new byte [destination.Length];
+			int count = Read(buffer, 0, buffer.Length);
+			buffer.AsSpan(0, count).CopyTo(destination);
+			return count;
 		}
 
 		public override int Read (byte[] array, int offset, int count)
@@ -180,12 +183,12 @@ namespace System.IO.Compression
 
 		internal ValueTask WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return base.WriteAsync(source, cancellationToken);
 		}
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
 		{
-			throw new NotImplementedException ();
+			Write (source.ToArray (), 0, source.Length);
 		}
 
 		public override void Write (byte[] array, int offset, int count)

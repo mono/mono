@@ -90,6 +90,13 @@
 #define CALL_COST 10
 /* Used for the JIT */
 #define INLINE_LENGTH_LIMIT 20
+/*
+ * The aot and jit inline limits should be different,
+ * since aot sees the whole program so we can let opt inline methods for us,
+ * while the jit only sees one method, so we have to inline things ourselves.
+ */
+/* Used by LLVM AOT */
+#define LLVM_AOT_INLINE_LENGTH_LIMIT 30
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
 
@@ -878,7 +885,6 @@ handle_enum:
  * The following tables are used to quickly validate the IL code in type_from_op ().
  */
 #define IF_P8(v) (SIZEOF_VOID_P == 8 ? v : STACK_INV)
-#define INTPTR_TYPE (SIZEOF_VOID_P == 8 ? STACK_I8 : STACK_I4)
 #define IF_P8_I8 IF_P8(STACK_I8)
 #define IF_P8_PTR IF_P8(STACK_PTR)
 
@@ -905,7 +911,7 @@ static const char
 bin_int_table [STACK_MAX] [STACK_MAX] = {
 	{STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
 	{STACK_INV, STACK_I4,  IF_P8_I8,  STACK_PTR, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
-	{STACK_INV, IF_P8_I8,  STACK_I8,  STACK_PTR, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
+	{STACK_INV, IF_P8_I8,  STACK_I8,  IF_P8_PTR, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
 	{STACK_INV, STACK_PTR, IF_P8_PTR, STACK_PTR, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
 	{STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
 	{STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV, STACK_INV},
@@ -1856,8 +1862,11 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		return 0;
 	case MONO_TYPE_PTR:
 		/* STACK_MP is needed when setting pinned locals */
-		if (arg->type != INTPTR_TYPE && arg->type != STACK_PTR && arg->type != STACK_MP)
-			return 1;
+		if (arg->type != STACK_I4 && arg->type != STACK_PTR && arg->type != STACK_MP)
+#if SIZEOF_VOID_P == 8
+			if (arg->type != STACK_I8)
+#endif
+				return 1;
 		return 0;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
@@ -1880,8 +1889,11 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		return 0;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-		if (arg->type != STACK_I8 && !(SIZEOF_VOID_P == 8 && arg->type == STACK_PTR))
-			return 1;
+		if (arg->type != STACK_I8)
+#if SIZEOF_VOID_P == 8
+			if (arg->type != STACK_PTR)
+#endif
+				return 1;
 		return 0;
 	case MONO_TYPE_R4:
 		if (arg->type != cfg->r4_stack_type)
@@ -2018,7 +2030,7 @@ handle_enum:
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR && args [i]->type != STACK_MP && args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_FNPTR:
@@ -2502,7 +2514,7 @@ mono_patch_info_rgctx_entry_new (MonoMemPool *mp, MonoMethod *method, gboolean i
 	return res;
 }
 
-static inline MonoInst*
+static MonoInst*
 emit_rgctx_fetch_inline (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *entry)
 {
 	MonoInst *args [16];
@@ -3781,7 +3793,7 @@ method_does_not_return (MonoMethod *method)
 		!method->is_inflated;
 }
 
-static int inline_limit, llvm_jit_inline_limit;
+static int inline_limit, llvm_jit_inline_limit, llvm_aot_inline_limit;
 static gboolean inline_limit_inited;
 
 static gboolean
@@ -3824,18 +3836,31 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		if ((inlinelimit = g_getenv ("MONO_INLINELIMIT"))) {
 			inline_limit = atoi (inlinelimit);
 			llvm_jit_inline_limit = inline_limit;
+			llvm_aot_inline_limit = inline_limit;
 			g_free (inlinelimit);
 		} else {
 			inline_limit = INLINE_LENGTH_LIMIT;
 			llvm_jit_inline_limit = LLVM_JIT_INLINE_LENGTH_LIMIT;
+			llvm_aot_inline_limit = LLVM_AOT_INLINE_LENGTH_LIMIT;
 		}
 		inline_limit_inited = TRUE;
 	}
 
+#ifdef ENABLE_NETCORE
+	if (COMPILE_LLVM (cfg)) {
+		if (cfg->compile_aot)
+			limit = llvm_aot_inline_limit;
+		else
+			limit = llvm_jit_inline_limit;
+	} else {
+		limit = inline_limit;
+	}
+#else
 	if (COMPILE_LLVM (cfg) && !cfg->compile_aot)
 		limit = llvm_jit_inline_limit;
 	else
 		limit = inline_limit;
+#endif
 	if (header.code_size >= limit && !(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
 		return FALSE;
 
@@ -4783,7 +4808,7 @@ exception_exit:
 	return 1;
 }
 
-static inline MonoMethod *
+static MonoMethod *
 mini_get_method_allow_open (MonoMethod *m, guint32 token, MonoClass *klass, MonoGenericContext *context, MonoError *error)
 {
 	MonoMethod *method;
@@ -4802,7 +4827,7 @@ mini_get_method_allow_open (MonoMethod *m, guint32 token, MonoClass *klass, Mono
 	return method;
 }
 
-static inline MonoMethod *
+static MonoMethod *
 mini_get_method (MonoCompile *cfg, MonoMethod *m, guint32 token, MonoClass *klass, MonoGenericContext *context)
 {
 	ERROR_DECL (error);
@@ -4819,7 +4844,7 @@ mini_get_method (MonoCompile *cfg, MonoMethod *m, guint32 token, MonoClass *klas
 	return method;
 }
 
-static inline MonoMethodSignature*
+static MonoMethodSignature*
 mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *context, MonoError *error)
 {
 	MonoMethodSignature *fsig;
@@ -5823,7 +5848,7 @@ typedef struct _MonoOpcodeInfo {
 	gint  pushes   : 3; // public -1 means variable
 } MonoOpcodeInfo;
 
-static inline const MonoOpcodeInfo*
+static const MonoOpcodeInfo*
 mono_opcode_decode (guchar *ip, guint op_size, MonoOpcodeEnum il_op, MonoOpcodeParameter *parameter)
 {
 #define Push0 (0)
@@ -9734,6 +9759,7 @@ field_access_end:
 			MONO_ADD_INS (cfg->cbb, ins);
 			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
 			cfg->cbb->needs_decompose = TRUE;
+			MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, sp [0]->dreg);
 			*sp++ = ins;
 			break;
 		case MONO_CEE_LDELEMA:
@@ -11448,7 +11474,7 @@ mono_load_membase_to_load_mem (int opcode)
 	return -1;
 }
 
-static inline int
+static int
 op_to_op_dest_membase (int store_opcode, int opcode)
 {
 #if defined(TARGET_X86)
@@ -11544,7 +11570,7 @@ op_to_op_dest_membase (int store_opcode, int opcode)
 	return -1;
 }
 
-static inline int
+static int
 op_to_op_store_membase (int store_opcode, int opcode)
 {
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
@@ -11561,7 +11587,7 @@ op_to_op_store_membase (int store_opcode, int opcode)
 	return -1;
 }
 
-static inline int
+static int
 op_to_op_src1_membase (MonoCompile *cfg, int load_opcode, int opcode)
 {
 #ifdef TARGET_X86
@@ -11625,7 +11651,7 @@ op_to_op_src1_membase (MonoCompile *cfg, int load_opcode, int opcode)
 	return -1;
 }
 
-static inline int
+static int
 op_to_op_src2_membase (MonoCompile *cfg, int load_opcode, int opcode)
 {
 #ifdef TARGET_X86

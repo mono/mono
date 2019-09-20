@@ -477,6 +477,9 @@ int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_get_concurrent_collection_in_progress (void);
 
+void sgen_set_bytes_allocated_attached (guint64 bytes);
+void sgen_increment_bytes_allocated_detached (guint64 bytes);
+
 typedef struct _SgenFragment SgenFragment;
 
 struct _SgenFragment {
@@ -707,8 +710,8 @@ SgenMinorCollector* sgen_get_minor_collector (void);
 
 typedef struct _SgenRememberedSet {
 	void (*wbarrier_set_field) (GCObject *obj, gpointer field_ptr, GCObject* value);
-	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
-	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
+	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gconstpointer src_ptr, int count);
+	void (*wbarrier_value_copy) (gpointer dest, gconstpointer src, int count, size_t element_size);
 	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
 	void (*wbarrier_generic_nostore) (gpointer ptr);
 	void (*record_pointer) (gpointer ptr);
@@ -728,7 +731,7 @@ SgenRememberedSet *sgen_get_remset (void);
  * These must be kept in sync with object.h.  They're here for using SGen independently of
  * Mono.
  */
-void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count);
+void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, /*const*/ void* src_ptr, int count);
 void mono_gc_wbarrier_generic_nostore (gpointer ptr);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
@@ -1075,6 +1078,8 @@ typedef enum {
 } SgenAllocatorType;
 
 void sgen_clear_tlabs (void);
+void sgen_update_allocation_count (void);
+guint64 sgen_get_total_allocated_bytes (MonoBoolean precise);
 
 GCObject* sgen_alloc_obj (GCVTable vtable, size_t size)
 	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
@@ -1141,6 +1146,8 @@ gboolean sgen_nursery_canaries_enabled (void);
 
 void
 sgen_check_canary_for_object (gpointer addr);
+
+guint64 sgen_get_precise_allocation_count (void);
 
 #define CHECK_CANARY_FOR_OBJECT(addr, ignored) \
 	(sgen_nursery_canaries_enabled () ? sgen_check_canary_for_object (addr) : (void)0)

@@ -120,7 +120,7 @@ namespace System
 
     */
 
-    //This class contains only static members and does not require the serializable attribute.
+    // This class contains only static members and does not require the serializable attribute.
     internal static
     class DateTimeFormat
     {
@@ -196,9 +196,9 @@ namespace System
 
             int digits = (int)(buffer + 16 - p);
 
-            //If the repeat count is greater than 0, we're trying
-            //to emulate the "00" format, so we have to prepend
-            //a zero if the string only has one character.
+            // If the repeat count is greater than 0, we're trying
+            // to emulate the "00" format, so we have to prepend
+            // a zero if the string only has one character.
             while ((digits < len) && (p > buffer))
             {
                 *--p = '0';
@@ -391,7 +391,7 @@ namespace System
             //
 
             // Find first "d".
-            for (i = index - 1; i >= 0 && format[i] != patternToMatch; i--) {  /*Do nothing here */ };
+            for (i = index - 1; i >= 0 && format[i] != patternToMatch; i--) {  /*Do nothing here */ }
 
             if (i >= 0)
             {
@@ -406,7 +406,7 @@ namespace System
                 //
                 if (repeat <= 1)
                 {
-                    return (true);
+                    return true;
                 }
                 // Note that we can't just stop here.  We may find "ddd" while looking back, and we have to look
                 // ahead to see if there is "d" or "dd".
@@ -417,7 +417,7 @@ namespace System
             //
 
             // Find first "d"
-            for (i = index + tokenLen; i < format.Length && format[i] != patternToMatch; i++) { /* Do nothing here */ };
+            for (i = index + tokenLen; i < format.Length && format[i] != patternToMatch; i++) { /* Do nothing here */ }
 
             if (i < format.Length)
             {
@@ -433,10 +433,10 @@ namespace System
                 //
                 if (repeat <= 1)
                 {
-                    return (true);
+                    return true;
                 }
             }
-            return (false);
+            return false;
         }
 
 

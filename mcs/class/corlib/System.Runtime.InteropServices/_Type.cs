@@ -20,229 +20,125 @@ namespace System.Runtime.InteropServices
 	[ComVisible (true)]
 	public interface _Type
 	{
-		bool Equals (object other);
-
-		bool Equals (Type o);
-
-		Type[] FindInterfaces (TypeFilter filter, object filterCriteria);
-
-		MemberInfo[] FindMembers (MemberTypes memberType, BindingFlags bindingAttr, MemberFilter filter, object filterCriteria);
-
-		int GetArrayRank ();
-
-		ConstructorInfo GetConstructor (Type[] types);
-
-		ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers);
-
-		ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);
-
-		ConstructorInfo[] GetConstructors ();
-
-		ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
-
-		object[] GetCustomAttributes (bool inherit);
-
-		object[] GetCustomAttributes (Type attributeType, bool inherit);
-
-		MemberInfo[] GetDefaultMembers ();
-
-		Type GetElementType ();
-
-		EventInfo GetEvent (string name);
-
-		EventInfo GetEvent (string name, BindingFlags bindingAttr);
-
-		EventInfo[] GetEvents ();
-
-		EventInfo[] GetEvents (BindingFlags bindingAttr);
-
-		FieldInfo GetField (string name);
-
-		FieldInfo GetField (string name, BindingFlags bindingAttr);
-
-		FieldInfo[] GetFields ();
-
-		FieldInfo[] GetFields (BindingFlags bindingAttr);
-
-		int GetHashCode ();
-
-		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
-
-		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);
-
-		void GetTypeInfoCount (out uint pcTInfo);
-
-		void Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
-			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
-
-		Type GetInterface (string name);
-
-		Type GetInterface (string name, bool ignoreCase);
-
-		InterfaceMapping GetInterfaceMap (Type interfaceType);
-
-		Type[] GetInterfaces ();
-
-		MemberInfo[] GetMember (string name);
-
-		MemberInfo[] GetMember (string name, MemberTypes type, BindingFlags bindingAttr);
-
-		MemberInfo[] GetMember (string name, BindingFlags bindingAttr);
-
-		MemberInfo[] GetMembers ();
-
-		MemberInfo[] GetMembers (BindingFlags bindingAttr);
-
-		MethodInfo GetMethod (string name);
-
-		MethodInfo GetMethod (string name, BindingFlags bindingAttr);
-
-		MethodInfo GetMethod (string name, Type[] types);
-
-		MethodInfo GetMethod (string name, Type[] types, ParameterModifier[] modifiers);
-
-		MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers);
-
-		MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);
-
-		MethodInfo[] GetMethods ();
-
-		MethodInfo[] GetMethods (BindingFlags bindingAttr);
-
-		Type GetNestedType (string name);
-
-		Type GetNestedType (string name, BindingFlags bindingAttr);
-
-		Type[] GetNestedTypes ();
-
-		Type[] GetNestedTypes (BindingFlags bindingAttr);
-
-		PropertyInfo[] GetProperties ();
-
-		PropertyInfo[] GetProperties (BindingFlags bindingAttr);
-
-		PropertyInfo GetProperty (string name);
-
-		PropertyInfo GetProperty (string name, BindingFlags bindingAttr);
-
-		PropertyInfo GetProperty (string name, Type returnType);
-
-		PropertyInfo GetProperty (string name, Type[] types);
-
-		PropertyInfo GetProperty (string name, Type returnType, Type[] types);
-
-		PropertyInfo GetProperty (string name, Type returnType, Type[] types, ParameterModifier[] modifiers);
-
-		PropertyInfo GetProperty (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers);
-
-		Type GetType ();
-
-		object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args);
-
-		object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, CultureInfo culture);
-
-		object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters);
-
-		bool IsAssignableFrom (Type c);
-
-		bool IsDefined (Type attributeType, bool inherit);
-
-		bool IsInstanceOfType (object o);
-
-		bool IsSubclassOf (Type c);
-
-		string ToString ();
-
-		Assembly Assembly {get;}
-
-		string AssemblyQualifiedName {get;}
-
-		TypeAttributes Attributes {get;}
-
-		Type BaseType {get;}
-
-		Type DeclaringType {get;}
-
-		string FullName {get;}
-
-		Guid GUID {get;}
-
-		bool HasElementType {get;}
-
-		bool IsAbstract {get;}
-
-		bool IsAnsiClass {get;}
-
-		bool IsArray {get;}
-
-		bool IsAutoClass {get;}
-
-		bool IsAutoLayout {get;}
-
-		bool IsByRef {get;}
-
-		bool IsClass {get;}
-
-		bool IsCOMObject {get;}
-
-		bool IsContextful {get;}
-
-		bool IsEnum {get;}
-
-		bool IsExplicitLayout {get;}
-
-		bool IsImport {get;}
-
-		bool IsInterface {get;}
-
-		bool IsLayoutSequential {get;}
-
-		bool IsMarshalByRef {get;}
-
-		bool IsNestedAssembly {get;}
-
-		bool IsNestedFamANDAssem {get;}
-
-		bool IsNestedFamily {get;}
-
-		bool IsNestedFamORAssem {get;}
-
-		bool IsNestedPrivate {get;}
-
-		bool IsNestedPublic {get;}
-
-		bool IsNotPublic {get;}
-
-		bool IsPointer {get;}
-
-		bool IsPrimitive {get;}
-
-		bool IsPublic {get;}
-
-		bool IsSealed {get;}
-
-		bool IsSerializable {get;}
-
-		bool IsSpecialName {get;}
-
-		bool IsUnicodeClass {get;}
-
-		bool IsValueType {get;}
-
-		MemberTypes MemberType {get;}
-
-		Module Module {get;}
-
-		string Name {get;}
-
-		string Namespace {get;}
-
-		Type ReflectedType {get;}
-
-		RuntimeTypeHandle TypeHandle {get;}
-
-		ConstructorInfo TypeInitializer {get;}
-
-		Type UnderlyingSystemType {get;}
+		void GetTypeInfoCount(out uint pcTInfo);
+		void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
+		void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
+		void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult,
+			IntPtr pExcepInfo, IntPtr puArgErr);
+
+		String ToString();
+		bool Equals(Object other);
+		int GetHashCode();
+		Type GetType();
+
+		MemberTypes MemberType { get; }
+		String Name { get; }
+		Type DeclaringType { get; }
+		Type ReflectedType { get; }
+		Object[] GetCustomAttributes(Type attributeType, bool inherit);
+		Object[] GetCustomAttributes(bool inherit);
+		bool IsDefined(Type attributeType, bool inherit);
+
+		Guid GUID { get; }
+		Module Module { get; }
+		Assembly Assembly { get; }
+		RuntimeTypeHandle TypeHandle { get; }
+		String FullName { get; }
+		String Namespace { get; }
+		String AssemblyQualifiedName { get; }
+		int GetArrayRank();
+		Type BaseType { get; }
+
+		ConstructorInfo[] GetConstructors(BindingFlags bindingAttr);
+		Type GetInterface(String name, bool ignoreCase);
+		Type[] GetInterfaces();
+		Type[] FindInterfaces(TypeFilter filter,Object filterCriteria);
+		EventInfo GetEvent(String name,BindingFlags bindingAttr);
+		EventInfo[] GetEvents();
+		EventInfo[] GetEvents(BindingFlags bindingAttr);
+		Type[] GetNestedTypes(BindingFlags bindingAttr);
+		Type GetNestedType(String name, BindingFlags bindingAttr);
+		MemberInfo[] GetMember(String name, MemberTypes type, BindingFlags bindingAttr);
+		MemberInfo[] GetDefaultMembers();
+		MemberInfo[] FindMembers(MemberTypes memberType,BindingFlags bindingAttr,MemberFilter filter,Object filterCriteria);
+		Type GetElementType();
+		bool IsSubclassOf(Type c);
+		bool IsInstanceOfType(Object o);
+		bool IsAssignableFrom(Type c);
+		InterfaceMapping GetInterfaceMap(Type interfaceType);
+		MethodInfo GetMethod(String name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers);
+		MethodInfo GetMethod(String name, BindingFlags bindingAttr);
+		MethodInfo[] GetMethods(BindingFlags bindingAttr);
+		FieldInfo GetField(String name, BindingFlags bindingAttr);
+		FieldInfo[] GetFields(BindingFlags bindingAttr);
+		PropertyInfo GetProperty(String name, BindingFlags bindingAttr);
+		PropertyInfo GetProperty(String name,BindingFlags bindingAttr,Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers);
+		PropertyInfo[] GetProperties(BindingFlags bindingAttr);
+		MemberInfo[] GetMember(String name, BindingFlags bindingAttr);
+		MemberInfo[] GetMembers(BindingFlags bindingAttr);
+		Object InvokeMember(String name, BindingFlags invokeAttr, Binder binder, Object target, Object[] args, ParameterModifier[] modifiers,
+			CultureInfo culture, String[] namedParameters);
+		Type UnderlyingSystemType { get; }
+
+		Object InvokeMember(String name,BindingFlags invokeAttr,Binder binder, Object target, Object[] args, CultureInfo culture);
+		Object InvokeMember(String name,BindingFlags invokeAttr,Binder binder, Object target, Object[] args);
+		ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);
+		ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers);
+		ConstructorInfo GetConstructor(Type[] types);
+		ConstructorInfo[] GetConstructors();
+		ConstructorInfo TypeInitializer{ get; }
+
+		MethodInfo GetMethod(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);
+		MethodInfo GetMethod(String name, Type[] types, ParameterModifier[] modifiers);
+		MethodInfo GetMethod(String name, Type[] types);
+		MethodInfo GetMethod(String name);
+		MethodInfo[] GetMethods();
+		FieldInfo GetField(String name);
+		FieldInfo[] GetFields();
+		Type GetInterface(String name);
+		EventInfo GetEvent(String name);
+		PropertyInfo GetProperty(String name, Type returnType, Type[] types,ParameterModifier[] modifiers);
+		PropertyInfo GetProperty(String name, Type returnType, Type[] types);
+		PropertyInfo GetProperty(String name, Type[] types);
+		PropertyInfo GetProperty(String name, Type returnType);
+		PropertyInfo GetProperty(String name);
+		PropertyInfo[] GetProperties();
+		Type[] GetNestedTypes();
+		Type GetNestedType(String name);
+		MemberInfo[] GetMember(String name);
+		MemberInfo[] GetMembers();
+		TypeAttributes Attributes { get; }
+		bool IsNotPublic { get; }
+		bool IsPublic { get; }
+		bool IsNestedPublic { get; }
+		bool IsNestedPrivate { get; }
+		bool IsNestedFamily { get; }
+		bool IsNestedAssembly { get; }
+		bool IsNestedFamANDAssem { get; }
+		bool IsNestedFamORAssem { get; }
+		bool IsAutoLayout { get; }
+		bool IsLayoutSequential { get; }
+		bool IsExplicitLayout { get; }
+		bool IsClass { get; }
+		bool IsInterface { get; }
+		bool IsValueType { get; }
+		bool IsAbstract { get; }
+		bool IsSealed { get; }
+		bool IsEnum { get; }
+		bool IsSpecialName { get; }
+		bool IsImport { get; }
+		bool IsSerializable { get; }
+		bool IsAnsiClass { get; }
+		bool IsUnicodeClass { get; }
+		bool IsAutoClass { get; }
+		bool IsArray { get; }
+		bool IsByRef { get; }
+		bool IsPointer { get; }
+		bool IsPrimitive { get; }
+		bool IsCOMObject { get; }
+		bool HasElementType { get; }
+		bool IsContextful { get; }
+		bool IsMarshalByRef { get; }
+		bool Equals(Type o);
 	}
 }

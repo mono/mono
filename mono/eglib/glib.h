@@ -212,6 +212,9 @@ typedef guint32 gunichar;
  */
 #define G_N_ELEMENTS(s)      (sizeof(s) / sizeof ((s) [0]))
 
+// e.g. strncmp (foo, G_STRING_CONSTANT_AND_LENGTH ("version"))
+#define G_STRING_CONSTANT_AND_LENGTH(x) (x), G_N_ELEMENTS (x) - 1
+
 #define FALSE                0
 #define TRUE                 1
 
@@ -400,6 +403,7 @@ gchar  *g_stpcpy             (gchar *dest, const char *src);
 gchar   g_ascii_tolower      (gchar c);
 gchar   g_ascii_toupper      (gchar c);
 gchar  *g_ascii_strdown      (const gchar *str, gssize len);
+void    g_ascii_strdown_no_alloc (char* dst, const char* src, gsize len);
 gchar  *g_ascii_strup        (const gchar *str, gssize len);
 gint    g_ascii_strncasecmp  (const gchar *s1, const gchar *s2, gsize n);
 gint    g_ascii_strcasecmp   (const gchar *s1, const gchar *s2);
@@ -410,6 +414,32 @@ gint    g_ascii_xdigit_value (gchar c);
 #define g_ascii_isxdigit(c)  (isxdigit (c) != 0)
 gboolean g_utf16_ascii_equal (const gunichar2 *utf16, size_t ulen, const char *ascii, size_t alen);
 gboolean g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii);
+
+static inline
+gboolean g_ascii_equal (const char *s1, gsize len1, const char *s2, gsize len2)
+{
+    return len1 == len2 && (s1 == s2 || memcmp (s1, s2, len1) == 0);
+}
+
+static inline
+gboolean g_asciiz_equal (const char *s1, const char *s2)
+{
+    return s1 == s2 || strcmp (s1, s2) == 0;
+}
+
+static inline
+gboolean
+g_ascii_equal_caseinsensitive (const char *s1, gsize len1, const char *s2, gsize len2)
+{
+    return len1 == len2 && (s1 == s2 || g_ascii_strncasecmp (s1, s2, len1) == 0);
+}
+
+static inline
+gboolean
+g_asciiz_equal_caseinsensitive (const char *s1, const char *s2)
+{
+    return s1 == s2 || g_ascii_strcasecmp (s1, s2) == 0;
+}
 
 /* FIXME: g_strcasecmp supports utf8 unicode stuff */
 #ifdef _MSC_VER
@@ -1386,8 +1416,28 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
- 
-G_END_DECLS
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_filename (gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_filename_ex (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_current_directory (gunichar2 **pstr, guint32 *plength);
+
+G_END_DECLS // FIXME: There is more extern C than there should be.
 
 static inline
 void
@@ -1399,6 +1449,9 @@ mono_qsort (void* base, size_t num, size_t size, int (*compare)(const void*, con
 		return;
 	qsort (base, num, size, compare);
 }
+
+#define MONO_DECL_CALLBACK(prefix, ret, name, sig) ret (*name) sig;
+#define MONO_INIT_CALLBACK(prefix, ret, name, sig) prefix ## _ ## name,
 
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.

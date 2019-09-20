@@ -1,3 +1,6 @@
+# diff settings
+*.cs	diff=csharp
+
 # ensure LF endings on all checkouts
 configure.ac	crlf=input
 config.rpath	crlf=input

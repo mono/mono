@@ -182,6 +182,7 @@ get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len
 			return FALSE;
 		*out_etype = (MonoType*)typed_args [0];
 		*out_len = *(gint32*)typed_args [1];
+		g_free (typed_args [1]);
 		g_free (typed_args);
 		g_free (named_args);
 		g_free (arginfo);
@@ -2593,11 +2594,25 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			char *msg = g_strdup ("[MarshalAs] attribute required to marshal arrays to managed code.");
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			return conv_arg;
-		}			
-		if (spec->native != MONO_NATIVE_LPARRAY) {
-			char *msg = g_strdup ("Non LPArray marshalling of arrays to managed code is not implemented.");
+		}
+
+		switch (spec->native) {
+		case MONO_NATIVE_LPARRAY:
+			break;
+		case MONO_NATIVE_SAFEARRAY:
+#ifndef DISABLE_COM
+			if (spec->data.safearray_data.elem_type != MONO_VARIANT_VARIANT) {
+				char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
+				mono_mb_emit_exception_marshal_directive (mb, msg);
+				return conv_arg;
+			}
+			return mono_cominterop_emit_marshal_safearray (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+#endif
+		default: {
+			char *msg = g_strdup ("Unsupported array type marshalling to managed code.");
 			mono_mb_emit_exception_marshal_directive (mb, msg);
-			return conv_arg;			
+			return conv_arg;
+		}
 		}
 
 		/* FIXME: t is from the method which is wrapped, not the delegate type */
@@ -6043,7 +6058,6 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_BOOLEAN:
 			tmp_locals [i] = mono_emit_marshal (m, i, sig->params [i], mspecs [i + 1], 0, &csig->params [i], MARSHAL_ACTION_MANAGED_CONV_IN);
-
 			break;
 		default:
 			tmp_locals [i] = 0;
@@ -6316,10 +6330,7 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * wrapped in handles: if the actual argument type is a reference type
 	 * we'd need to wrap it in a handle, otherwise we'd want to pass it as is.
 	 */
-	/* FIXME: There is one icall that will some day cause us trouble here:
-	 * System.Threading.Interlocked:CompareExchange<T> (ref T location, T
-	 * new, T old) where T:class.  What will save us is that 'T:class'
-	 * constraint.  We should eventually relax the assertion, below, to
+	/* FIXME: We should eventually relax the assertion, below, to
 	 * allow generic parameters that are constrained to be reference types.
 	 */
 	g_assert (!generic_sig || !mono_type_is_generic_parameter (generic_sig->params [param]));

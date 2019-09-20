@@ -134,7 +134,7 @@ gboolean mono_handle_stack_is_empty (HandleStack *stack);
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
 MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
-void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
+MonoThreadInfo* mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
 
 #ifdef MONO_HANDLE_TRACK_SP
@@ -187,17 +187,18 @@ Icall macros
 #define CLEAR_ICALL_COMMON	\
 	mono_error_set_pending_exception (error);
 
+// FIXME There should be fast and slow versions of this, i.e. with and without local variable.
 #define SETUP_ICALL_FRAME	\
 	HandleStackMark __mark;	\
-	mono_stack_mark_init (mono_thread_info_current_var, &__mark);
+	mono_stack_mark_init (mono_thread_info_current_var ? mono_thread_info_current_var : mono_thread_info_current (), &__mark);
 
+// FIXME This should be one function call since it is not fully inlined.
 #define CLEAR_ICALL_FRAME	\
-	mono_stack_mark_record_size (mono_thread_info_current_var, &__mark, __FUNCTION__);	\
-	mono_stack_mark_pop (mono_thread_info_current_var, &__mark);
+	mono_stack_mark_pop (mono_stack_mark_record_size (mono_thread_info_current_var, &__mark, __FUNCTION__), &__mark);
 
+// FIXME This should be one function call since it is not fully inlined.
 #define CLEAR_ICALL_FRAME_VALUE(RESULT, HANDLE)				\
-	mono_stack_mark_record_size (mono_thread_info_current_var, &__mark, __FUNCTION__);	\
-	(RESULT) = g_cast (mono_stack_mark_pop_value (mono_thread_info_current_var, &__mark, (HANDLE)));
+	(RESULT) = g_cast (mono_stack_mark_pop_value (mono_stack_mark_record_size (mono_thread_info_current_var, &__mark, __FUNCTION__), &__mark, (HANDLE)));
 
 #define HANDLE_FUNCTION_ENTER() do {				\
 	MONO_DISABLE_WARNING(4459) /* declaration of 'identifier' hides global declaration */ \
@@ -341,6 +342,10 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #define MONO_TYPEOF_CAST(typeexpr, expr) ((__typeof__ (typeexpr))(expr))
 #endif
 
+/*
+ * Create handle for the object OBJECT.
+ * The handle will keep the object alive and pinned.
+ */
 #ifndef MONO_HANDLE_TRACK_OWNER
 
 #define MONO_HANDLE_NEW(type, object) \
@@ -354,6 +359,12 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #endif
 
 #define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
+
+/*
+ * Return the raw object reference stored in the handle.
+ * The objref is valid while the handle is alive and
+ * points to it.
+ */
 #ifdef __cplusplus
 #define MONO_HANDLE_RAW(handle)     ((handle).GetRaw())
 #else
@@ -534,12 +545,40 @@ Constant handles may be initialized to it, but non-constant
 handles must be NEW'ed. Uses of these are suspicious and should
 be reviewed and probably changed FIXME.
 */
-extern const MonoObjectHandle mono_null_value_handle;
-#define NULL_HANDLE mono_null_value_handle
+#define NULL_HANDLE (mono_null_value_handle ())
 #define NULL_HANDLE_INIT { 0 }
+static inline MonoObjectHandle
+mono_null_value_handle (void)
+{
+	MonoObjectHandle result = NULL_HANDLE_INIT;
+	return result;
+}
 #define NULL_HANDLE_STRING 		(MONO_HANDLE_CAST (MonoString, NULL_HANDLE))
 #define NULL_HANDLE_ARRAY  		(MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
 #define NULL_HANDLE_STRING_BUILDER	(MONO_HANDLE_CAST (MonoStringBuilder, NULL_HANDLE))
+
+#if __cplusplus
+
+// Use this to convert a THandle to a raw T** such as for a ref or out parameter, without
+// copying back and forth through an intermediate. The handle must already be allocated,
+// such as icall marshaling does for out and ref parameters.
+#define MONO_HANDLE_REF(h) (h.Ref ())
+
+#else
+
+static inline void volatile*
+mono_handle_ref (void volatile* p)
+{
+	g_assert (p);
+	return p;
+}
+
+// Use this to convert a THandle to a raw T** such as for a ref or out parameter, without
+// copying back and forth through an intermediate. The handle must already be allocated,
+// such as icall marshaling does for out and ref parameters.
+#define MONO_HANDLE_REF(handle) (MONO_TYPEOF_CAST ((handle).__raw, mono_handle_ref ((handle).__raw)))
+
+#endif
 
 static inline MonoObjectHandle
 mono_handle_assign_raw (MonoObjectHandleOut dest, void *src)
