@@ -3227,7 +3227,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			frame->ip = ip;
 
 			sp = do_icall_wrapper (frame, csignature, opcode, sp, target_ip, save_last_error);
-			EXCEPTION_CHECKPOINT;
+			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
+				EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 4;
 			MINT_IN_BREAK;
@@ -5842,7 +5843,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
 			sp = do_icall_wrapper (frame, NULL, *ip, sp, imethod->data_items [*(guint16 *)(ip + 1)], FALSE);
-			EXCEPTION_CHECKPOINT;
+			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
+				EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 2;
 			MINT_IN_BREAK;
