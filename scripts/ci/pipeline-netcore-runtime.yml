@@ -101,9 +101,11 @@ stages:
               make -C netcore nupkg
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
+            mkdir -p ./artifacts/SymStore/$(_BuildConfig)
             mkdir -p ./artifacts/packages/$(_BuildConfig)/Shipping
+            cp ./netcore/System.Private.CoreLib/bin/*/System.Private.CoreLib.pdb ./artifacts/SymStore/$(_BuildConfig)
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
             mv ./artifacts/*.nupkg ./artifacts/packages/$(_BuildConfig)/Shipping
-            rm -f ./artifacts/packages/$(_BuildConfig)/Shipping/Microsoft.NETCore.Runtime.Mono*nupkg
           displayName: 'Build nupkg'
 
         - bash: |
@@ -179,9 +181,11 @@ stages:
               make -C netcore nupkg
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
+            mkdir -p ./artifacts/SymStore/$(_BuildConfig)
             mkdir -p ./artifacts/packages/$(_BuildConfig)/Shipping
+            cp ./netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.pdb ./artifacts/SymStore/$(_BuildConfig)
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
             mv ./artifacts/*.nupkg ./artifacts/packages/$(_BuildConfig)/Shipping
-            rm -f ./artifacts/packages/$(_BuildConfig)/Shipping/Microsoft.NETCore.Runtime.Mono*nupkg
           displayName: 'Build nupkg'
 
         - bash: |
@@ -245,7 +249,9 @@ stages:
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
             MKDIR artifacts\log\$(_BuildConfig)\
+            MKDIR artifacts\SymStore\$(_BuildConfig)\
             MKDIR artifacts\packages\$(_BuildConfig)\Shipping\
+            COPY netcore\System.Private.CoreLib\bin\x64\System.Private.CoreLib.pdb artifacts\SymStore\$(_BuildConfig)\
             MOVE artifacts\*.nupkg artifacts\packages\$(_BuildConfig)\Shipping\
           displayName: 'Build (MSBuild and Make)'
           env:
