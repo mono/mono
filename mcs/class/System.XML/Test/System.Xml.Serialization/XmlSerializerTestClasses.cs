@@ -1203,6 +1203,56 @@ namespace MonoTests.System.Xml.TestClasses
 		public ClassWithDefaultTextNotNull () {
 			Value = DefaultValue;
 		}
-    }
+	}
+
+	[Serializable]
+	public class PropertiesWithSameNameAsTheirType
+	{
+		public PropertiesWithSameNameAsTheirType ()
+		{
+		}
+
+		public object obj1 { get; set; }
+		public object obj2 { get; set; }
+		public object obj3 { get; set; }
+		public object obj4 { get; set; }
+		public object obj5 { get; set; }
+
+		public E1 E1 { get; set; }
+		public E2 E2 { get; set; }
+		public E3 E3 { get; set; }
+		public E4 E4 { get; set; }
+		public E5 E5 { get; set; }
+	}
+
+	public enum E1
+	{
+		One,
+		Two,
+	}
+
+	public enum E2
+	{
+		One,
+		Two,
+	}
+
+	public enum E5
+	{
+		One,
+		Two,
+	}
+
+	public enum E3
+	{
+		One,
+		Two,
+	}
+
+	public enum E4
+	{
+		One,
+		Two,
+	}
 }
 
