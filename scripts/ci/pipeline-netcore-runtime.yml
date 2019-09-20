@@ -57,6 +57,7 @@ stages:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
                 poolname: Xamarin-ARM64-Private
+              containername:
         pool:
           name: $(poolname)
         container: $(containername)
