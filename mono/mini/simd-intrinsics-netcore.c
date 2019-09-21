@@ -562,7 +562,7 @@ static guint16 bmi1_methods [] = {
 };
 
 static guint16 bmi2_methods [] = {
-	SN_MultiplyNoFlags,
+	//SN_MultiplyNoFlags,
 	SN_ParallelBitDeposit,
 	SN_ParallelBitExtract,
 	SN_ZeroHighBits,
@@ -721,14 +721,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
-		case SN_MultiplyNoFlags:
-			// TODO: implement using _mulx_u32/u64:
-			// ulong MultiplyNoFlags(ulong left, ulong right)
-			// ulong MultiplyNoFlags(ulong left, ulong right, ulong* low) => MultiplyNoFlags(left, right, low);
-			// uint MultiplyNoFlags(uint left, uint right)
-			// uint MultiplyNoFlags(uint left, uint right, uint* low)
-			return NULL;
-		case SN_ZeroHighBits:
+		//case SN_MultiplyNoFlags:
+			//// TODO: implement using _mulx_u32/u64:
+			//// ulong MultiplyNoFlags(ulong left, ulong right)
+			//// ulong MultiplyNoFlags(ulong left, ulong right, ulong* low) => MultiplyNoFlags(left, right, low);
+			//// uint MultiplyNoFlags(uint left, uint right)
+			//// uint MultiplyNoFlags(uint left, uint right, uint* low)
+			//return NULL;
+		//case SN_ZeroHighBits:
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_BZHI64 : OP_BZHI32);
 			ins->dreg = alloc_ireg (cfg);
 			ins->sreg1 = args [0]->dreg;
