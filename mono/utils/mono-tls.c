@@ -10,30 +10,6 @@
 
 #include "mono-tls.h"
 
-/*
- * On all platforms we should be able to use either __thread or __declspec (thread)
- * or pthread/TlsGetValue.
- * Certain platforms will support fast tls only when using one of the thread local
- * storage backends. By default this is __thread if we have MONO_KEYWORD_THREAD defined.
- *
- * By default all platforms will call into these native getters whenever they need
- * to get a tls value. On certain platforms we can try to be faster than this and
- * avoid the call. We call this fast tls and each platform defines its own way to
- * achieve this. For this, a platform has to define MONO_ARCH_HAVE_INLINED_TLS,
- * and provide alternative getters/setters for a MonoTlsKey. In order to have fast
- * getter/setters, the platform has to declare a way to fetch an internal offset
- * (MONO_THREAD_VAR_OFFSET) which is stored here, and in the arch specific file
- * probe the system to see if we can use the offset initialized here. If these
- * run-time checks don't succeed we just use the fallbacks.
- *
- * In case we would wish to provide fast inlined tls for aot code, we would need
- * to be sure that, at run-time, these two platform checks would never fail
- * otherwise the tls getter/setters that we emitted would not work. Normally,
- * there is little incentive to support this since tls access is most common in
- * wrappers and managed allocators, both of which are not aot-ed by default.
- * So far, we never supported inlined fast tls on full-aot systems.
- */
-
 #ifdef MONO_KEYWORD_THREAD
 
 /* Runtime offset detection */
