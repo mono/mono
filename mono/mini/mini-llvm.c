@@ -4096,7 +4096,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		mono_llvm_set_call_notailcall (lcall);
 
 	// Add original method name we are currently emitting as a custom string metadata (the only way to leave comments in LLVM IR)
-	if (mono_debug_enabled () && LLVMGetInstructionOpcode (lcall) == LLVMCall && call && call->method)
+	if (mono_debug_enabled () && call && call->method)
 		mono_llvm_add_string_metadata (lcall, "managed_name", mono_method_full_name (call->method, TRUE));
 
 	// As per the LLVM docs, a function has a noalias return value if and only if
