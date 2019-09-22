@@ -7341,6 +7341,27 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_XEQUAL: {
+#if defined(TARGET_AMD64) || defined(TARGET_X86)
+			int nelemsi8 = 16; // TODO: calculate vector width in bytes for current CPU
+			LLVMValueRef lhs8 = LLVMBuildBitCast (ctx->builder, lhs, LLVMVectorType (LLVMInt8Type (), nelemsi8), "");
+			LLVMValueRef rhs8 = LLVMBuildBitCast (ctx->builder, rhs, LLVMVectorType (LLVMInt8Type (), nelemsi8), "");
+
+			//%5 = icmp eq <16 x i8> %3, %4
+			LLVMValueRef cmp = LLVMBuildICmp (builder, LLVMIntEQ, lhs8, rhs8, "");
+
+			//%6 = sext <16 x i1> %5 to <16 x i8>
+			//%7 = tail call i32 @llvm.x86.sse2.pmovmskb.128(<16 x i8> %6) #2
+			LLVMValueRef args [1];
+			args [0] = LLVMBuildSExt (builder, cmp, LLVMVectorType (LLVMInt8Type (), nelemsi8), "");
+			LLVMValueRef movmsk = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, "");
+
+			//%8 = icmp eq i32 %7, 65535
+			LLVMValueRef icmpeq = LLVMBuildICmp (builder, LLVMIntEQ, movmsk, LLVMConstInt (LLVMInt32Type (), 0xFFFF, FALSE), "");
+			
+			//%9 = zext i1 %8 to i32
+			values [ins->dreg] = LLVMBuildZExt (ctx->builder, icmpeq, LLVMInt32Type (), "");
+			break;
+#else
 			LLVMTypeRef t;
 			LLVMValueRef cmp, mask [32], shuffle;
 			int nelems;
@@ -7369,6 +7390,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildExtractElement (builder, cmp, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
 			// Maybe convert to 0/1 ?
 			break;
+#endif
 		}
 		case OP_XBINOP: {
 			switch (ins->inst_c0) {
