@@ -4102,6 +4102,11 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	if (call->method && call->method->wrapper_type == MONO_WRAPPER_ALLOC)
 		mono_llvm_set_call_noalias_ret (lcall);
 
+	if (call->method && call->method->klass == mono_get_string_class () && !strcmp(call->method->name, "FastAllocateString")) {
+		mono_llvm_set_call_nonnull_ret (lcall);
+		mono_llvm_set_call_noalias_ret (lcall);
+	}
+
 	/*
 	 * Modify cconv and parameter attributes to pass rgctx/imt correctly.
 	 */
