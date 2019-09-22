@@ -307,9 +307,9 @@ namespace Mono.Debugger.Soft
 		public bool Subclasses {
 			get; set;
 		}
-	}
-
-	class ExceptionModifier2 : ExceptionModifier {
+		public bool WinFeatures {
+			get; set;
+		}
 		public bool EverythingElse {
 			get; set;
 		}
@@ -491,8 +491,7 @@ namespace Mono.Debugger.Soft
 			STEP = 10,
 			ASSEMBLY_ONLY = 11,
 			SOURCE_FILE_ONLY = 12,
-			TYPE_NAME_ONLY = 13,
-			EXCEPTION_ONLY_2 = 15,
+			TYPE_NAME_ONLY = 13
 		}
 
 		enum CmdVM {
@@ -2624,14 +2623,6 @@ namespace Mono.Debugger.Soft
 					} else if (mod is ThreadModifier) {
 						w.WriteByte ((byte)ModifierKind.THREAD_ONLY);
 						w.WriteId ((mod as ThreadModifier).Thread);
-					} else if (mod is ExceptionModifier2) {
-						var em = mod as ExceptionModifier2;
-						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY_2);
-						w.WriteId (em.Type);
-						w.WriteBool (em.Caught);
-						w.WriteBool (em.Uncaught);
-						w.WriteBool (em.Subclasses);
-						w.WriteBool (em.EverythingElse);
 					} else if (mod is ExceptionModifier) {
 						var em = mod as ExceptionModifier;
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
@@ -2647,6 +2638,10 @@ namespace Mono.Debugger.Soft
 							w.WriteBool (em.Subclasses);
 						} else if (!em.Subclasses) {
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+						}
+						if (Version.MajorVersion > 2 || Version.MinorVersion >= 54) {
+							w.WriteBool (em.WinFeatures);
+							w.WriteBool (em.EverythingElse);
 						}
 					} else if (mod is AssemblyModifier) {
 						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);

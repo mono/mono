@@ -3638,7 +3638,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 				} else if (mod->kind == MOD_KIND_THREAD_ONLY) {
 					if (mod->data.thread != mono_thread_internal_current ())
 						filtered = TRUE;
-				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && ei) {
+				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && !mod->win_features && ei) {
 					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from_internal (mod->data.exc_class, ei->exc->vtable->klass))
 						filtered = TRUE;
 					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class != ei->exc->vtable->klass)
@@ -3647,7 +3647,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						filtered = TRUE;
 					if (!ei->caught && !mod->uncaught)
 						filtered = TRUE;
-				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY_2 && ei) {
+				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && mod->win_features && ei) {
 					isNewFilteredException = TRUE;
 					if ((mod->data.exc_class && mod->subclasses && mono_class_is_assignable_from_internal (mod->data.exc_class, ei->exc->vtable->klass)) ||
 					    (mod->data.exc_class && !mod->subclasses && mod->data.exc_class != ei->exc->vtable->klass)) {
@@ -6178,7 +6178,7 @@ clear_assembly_from_modifier (EventRequest *req, Modifier *m, MonoAssembly *asse
 {
 	int i;
 
-	if ((m->kind == MOD_KIND_EXCEPTION_ONLY || m->kind == MOD_KIND_EXCEPTION_ONLY_2) && m->data.exc_class && m_class_get_image (m->data.exc_class)->assembly == assembly)
+	if (m->kind == MOD_KIND_EXCEPTION_ONLY && m->data.exc_class && m_class_get_image (m->data.exc_class)->assembly == assembly)
 		m->kind = MOD_KIND_NONE;
 	if (m->kind == MOD_KIND_ASSEMBLY_ONLY && m->data.assemblies) {
 		int count = 0, match_count = 0, pos;
@@ -7272,7 +7272,6 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					req->modifiers [i].subclasses = decode_byte (p, &p, end);
 				else
 					req->modifiers [i].subclasses = TRUE;
-				DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
 				if (exc_class) {
 					req->modifiers [i].data.exc_class = exc_class;
 
@@ -7281,24 +7280,17 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 						return ERR_INVALID_ARGUMENT;
 					}
 				}
-			} else if (mod == MOD_KIND_EXCEPTION_ONLY_2) {
-				MonoClass *exc_class = decode_typeid (p, &p, end, &domain, &err);
-
-				if (err != ERR_NONE)
-					return err;
-				req->modifiers [i].caught = decode_byte (p, &p, end);
-				req->modifiers [i].uncaught = decode_byte (p, &p, end);
-				req->modifiers [i].subclasses = decode_byte (p, &p, end);
-				req->modifiers [i].everything_else  = decode_byte (p, &p, end);
-				DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY 2 filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : (req->modifiers [i].everything_else ? "everything else" : "all"), req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
-				if (exc_class) {
-					req->modifiers [i].data.exc_class = exc_class;
-
-					if (!mono_class_is_assignable_from_internal (mono_defaults.exception_class, exc_class)) {
-						g_free (req);
-						return ERR_INVALID_ARGUMENT;
-					}
+				if (CHECK_PROTOCOL_VERSION (2, 54)) {
+					req->modifiers [i].win_features = decode_byte (p, &p, end);
+					req->modifiers [i].everything_else  = decode_byte (p, &p, end);
+					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY 2 filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : (req->modifiers [i].everything_else ? "everything else" : "all"), req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
 				}
+				else {
+					req->modifiers [i].win_features = FALSE;
+					req->modifiers [i].everything_else = FALSE;
+					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
+				}
+				
 			} else if (mod == MOD_KIND_ASSEMBLY_ONLY) {
 				int n = decode_int (p, &p, end);
 				int j;

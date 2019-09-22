@@ -279,7 +279,7 @@ namespace Mono.Debugger.Soft
 
 		public ExceptionEventRequest CreateExceptionRequest2 (TypeMirror exc_type, bool caught, bool uncaught, bool everything_else) {
 			if (Version.AtLeast (2, 54))
-				return new ExceptionEventRequest2 (this, exc_type, caught, uncaught, everything_else);
+				return new ExceptionEventRequest (this, exc_type, caught, uncaught, true, everything_else);
 			else
 				return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
