@@ -52,7 +52,7 @@ TEST_ASSETS_PATH := corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_PLATFORM)/netco
 
 # used to calculate exact version number for generating nupkg
 BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
-VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
+VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)-preview
 
 all: bcl
 
@@ -160,9 +160,11 @@ $(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_
 
 prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
-nupkg:
-	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
-	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+pack-%:
+	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=$*.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+
+nupkg: pack-metapackage pack-runtime
+nupkg-llvm: pack-metapackage-llvm pack-runtime-llvm
 
 clean:
 	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
@@ -214,7 +216,7 @@ run-tests-corefx-%: prepare update-tests-corefx
 	@cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
 	@sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
+	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
 		--runtimeconfig $*.runtimeconfig.json --additional-deps $*.deps.json \
 		--fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \

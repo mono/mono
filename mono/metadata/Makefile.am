@@ -336,7 +336,6 @@ common_sources = \
 	mono-perfcounters-def.h	\
 	mono-ptr-array.h	\
 	mono-route.c		\
-	mono-route.h		\
 	monitor.h		\
 	normalization-tables.h	\
 	number-formatter.h	\
@@ -376,6 +375,7 @@ common_sources = \
 	threads-types.h		\
 	threadpool.c	\
 	threadpool.h	\
+	threadpool-netcore.c	\
 	threadpool-worker.h	\
 	threadpool-io.c	\
 	threadpool-io.h	\

@@ -35,6 +35,6 @@ fi
 o=`pwd`/$output
 
 cd $prefix
-(zip -u $o.zip bin/mono lib/mono/4.5/mscorlib.dll lib/mono/4.5/System*dll lib/mono/4.5/Mono.CSharp.dll lib/mono/4.5/Microsoft*dll lib/mono/4.5/FSharp*.dll lib/mono/4.5/I18N*dll lib/mono/4.5/Accessibility.dll lib/mono/4.5/RabbitMQ.Client.dll lib/mono/4.5/ICSharpCode.SharpZipLib.dll lib/mono/4.5/CustomMarshalers.dll etc/mono/config etc/mono/4.5/machine.config etc/mono/4.5/web.config lib/mono/4.5/Mono.Cairo.dll lib/mono/4.5/Mono.Data.Sqlite.dll lib/mono/4.5/Mono.Posix.dll lib/mono/4.5/Mono.Security.*dll lib/mono/4.5/Mono.Simd.dll lib/libMonoSupportW$extension lib/libMonoPosixHelper$extension lib/libmono-btls-shared$extension)
+(zip -u $o.zip bin/mono lib/mono/4.5/mscorlib.dll lib/mono/4.5/System*dll lib/mono/4.5/Mono.CSharp.dll lib/mono/4.5/Microsoft*dll lib/mono/4.5/FSharp*.dll lib/mono/4.5/I18N*dll lib/mono/4.5/Accessibility.dll lib/mono/4.5/RabbitMQ.Client.dll lib/mono/4.5/ICSharpCode.SharpZipLib.dll lib/mono/4.5/CustomMarshalers.dll etc/mono/config etc/mono/4.5/machine.config etc/mono/4.5/web.config lib/mono/4.5/Mono.Cairo.dll lib/mono/4.5/Mono.Data.Sqlite.dll lib/mono/4.5/Mono.Posix.dll lib/mono/4.5/Mono.Security.*dll lib/mono/4.5/Mono.Simd.dll lib/mono/4.5/Mono.WebBrowser.dll lib/mono/4.5/Novell.Directory.Ldap.dll lib/libMonoSupportW$extension lib/libMonoPosixHelper$extension lib/libmono-btls-shared$extension)
 echo Created file $o.zip
 

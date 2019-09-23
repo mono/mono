@@ -38,7 +38,6 @@ ios-sim32-*/
 ios-sim64-*/
 ios-simtv-*/
 ios-simwatch-*/
-mac-mac32-*/
 mac-mac64-*/
 wasm-runtime-*/
 wasm-cross-*/

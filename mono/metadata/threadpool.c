@@ -21,10 +21,13 @@
 //
 // Ported from C++ to C and adjusted to Mono runtime
 
+#include <config.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <stdlib.h>
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
-#include <config.h>
 #include <glib.h>
 
 #include <mono/metadata/class-internals.h>
@@ -725,20 +728,6 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	return TRUE;
 }
 
-#ifdef ENABLE_NETCORE
-gint32
-ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
-{
-	return mono_threadpool_worker_get_threads_count ();
-}
-
-gint64
-ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
-{
-	return mono_threadpool_worker_get_completed_threads_count ();
-}
-#endif
-
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)
 {
@@ -832,3 +821,5 @@ ves_icall_System_Threading_ThreadPool_RequestWorkerThread (MonoError *error)
 	mono_refcount_dec (&threadpool);
 	return TRUE;
 }
+
+#endif /* !ENABLE_NETCORE */
