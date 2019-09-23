@@ -212,6 +212,6 @@ ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gp
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time);
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max);
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass);
-
+ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max);
 
 #endif // __MONO_METADATA_ICALL_H__

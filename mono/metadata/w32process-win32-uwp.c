@@ -107,11 +107,13 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handl
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max)
 {
+	ERROR_DECL (error);
 	g_unsupported_api ("SetProcessWorkingSetSize");
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "SetProcessWorkingSetSize");
 	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
