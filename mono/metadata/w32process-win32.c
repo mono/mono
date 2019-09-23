@@ -416,7 +416,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
 {
 	return SetPriorityClass (handle, (guint32) priorityClass);
 }

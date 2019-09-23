@@ -129,13 +129,15 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
 {
 	// FIXME SetPriorityClass is supported for UWP. Use finer grained #if.
 
+	ERROR_DECL (error);
 	g_unsupported_api ("SetPriorityClass");
 	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "SetPriorityClass");
 	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
