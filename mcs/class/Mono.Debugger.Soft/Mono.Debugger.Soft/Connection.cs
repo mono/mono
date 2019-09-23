@@ -307,7 +307,7 @@ namespace Mono.Debugger.Soft
 		public bool Subclasses {
 			get; set;
 		}
-		public bool WinFeatures {
+		public bool NotFilteredFeature {
 			get; set;
 		}
 		public bool EverythingElse {
@@ -2640,7 +2640,7 @@ namespace Mono.Debugger.Soft
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 						}
 						if (Version.MajorVersion > 2 || Version.MinorVersion >= 54) {
-							w.WriteBool (em.WinFeatures);
+							w.WriteBool (em.NotFilteredFeature);
 							w.WriteBool (em.EverythingElse);
 						}
 					} else if (mod is AssemblyModifier) {

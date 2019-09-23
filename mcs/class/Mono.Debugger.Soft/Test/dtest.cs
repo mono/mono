@@ -5089,7 +5089,7 @@ public class DebuggerTests
 	[Test]
 	public void TestExceptionFilterWin () {
 		Event e = run_until ("test_new_exception_filter1");
-		var req2 = vm.CreateExceptionRequest2 (vm.RootDomain.Corlib.GetType ("System.Exception"), true, true, false);
+		var req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.Exception"), true, true, false);
 		req2.Enable ();
 		vm.Resume ();
 		Event ev = GetNextEvent ();
@@ -5098,7 +5098,7 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
 		req2.Disable ();
 		run_until ("test_new_exception_filter2");
-		req2 = vm.CreateExceptionRequest2 (null, true, true, false);
+		req2 = vm.CreateExceptionRequest (null, true, true, false);
 		req2.Enable ();
 		vm.Resume ();
 		ev = GetNextEvent ();
@@ -5106,9 +5106,9 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
 		req2.Disable ();
 		run_until ("test_new_exception_filter3");
-		var req3 = vm.CreateExceptionRequest2 (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		var req3 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
 		req3.Enable ();
-		req2 = vm.CreateExceptionRequest2 (null, true, true, true);
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
 		req2.Enable ();
 		vm.Resume ();
 		ev = GetNextEvent ();
@@ -5117,9 +5117,9 @@ public class DebuggerTests
 		req2.Disable ();
 		req3.Disable ();
 		run_until ("test_new_exception_filter4");
-		req2 = vm.CreateExceptionRequest2 (null, true, true, true);
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
 		req2.Enable ();
-		req2 = vm.CreateExceptionRequest2 (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
 		req2.Enable ();
 		vm.Resume ();
 		ev = GetNextEvent ();
