@@ -2252,7 +2252,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
 {
 	return mono_get_exit_code_process (handle, exitcode);
 }
