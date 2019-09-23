@@ -6425,6 +6425,8 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		mono_mb_patch_branch (mb, pos);
 	}
 
+	gboolean tailcall = TRUE;
+
 	if (uses_handles) {
 		MonoMethodSignature *generic_sig = NULL;
 
@@ -6539,7 +6541,25 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		}
 		mono_mb_emit_ldloc_addr (mb, error_var);
 	} else {
-		for (int i = 0; i < csig->param_count; i++)
+		int i;
+		int param_count = csig->param_count;
+		for (i = 0; i < param_count; i++) {
+
+			// Take address of some parameters to pin them.
+			// Making them volatile should also work but there were failures.
+
+			if ((i == 0 && csig->hasthis) || MONO_TYPE_IS_REFERENCE (csig->params [i]) || mono_type_is_byref_internal (csig->params [i])) {
+				if (!tailcall) {
+					tailcall = FALSE;
+					mb->method->iflags = (mb->method->iflags & ~METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING)
+						| MONO_METHOD_IMPL_ATTR_NOOPTIMIZATION | MONO_METHOD_IMPL_ATTR_NOINLINING;
+				}
+				mono_mb_emit_ldarg_addr (mb, i);
+				mono_mb_emit_stloc (mb, mono_mb_add_local (mb, mono_get_int_type ()));
+			}
+		}
+		// Split loop to reduce stack.
+		for (i = 0; i < param_count; i++)
 			mono_mb_emit_ldarg (mb, i);
 	}
 
@@ -6578,6 +6598,12 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 
 	if (check_exceptions)
 		emit_thread_interrupt_checkpoint (mb);
+
+	if (!tailcall) {
+		// Likely redundant with check_exceptions or need_gc_safe or ldarg_addr. Could use another way.
+		mono_mb_emit_byte (mb, CEE_NOP);
+	}
+
 	mono_mb_emit_byte (mb, CEE_RET);
 }
 
