@@ -2755,7 +2755,7 @@ MonoDomain *
 mono_jit_init (const char *file)
 {
 	MonoDomain *ret = mini_init (file, NULL);
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
+	MONO_ENTER_GC_SAFE_UNBALANCED;
 	return ret;
 }
 
@@ -2783,7 +2783,7 @@ MonoDomain *
 mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
 	MonoDomain *ret = mini_init (domain_name, runtime_version);
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
+	MONO_ENTER_GC_SAFE_UNBALANCED;
 	return ret;
 }
 

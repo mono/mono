@@ -3084,7 +3084,6 @@ do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **ex
 MonoObject*
 mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
 	MonoObject *res;
 	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
@@ -3099,7 +3098,6 @@ mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **
 		mono_error_raise_exception_deprecated (error); /* OK to throw, external only without a good alternative */
 	}
 	MONO_EXIT_GC_UNSAFE;
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
 	return res;
 }
 
@@ -5422,24 +5420,20 @@ MonoObject*
 mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			   MonoObject **exc)
 {
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
 	ERROR_DECL (error);
 	if (exc) {
 		MonoObject *result = mono_runtime_try_invoke_array (method, obj, params, exc, error);
 		if (*exc) {
 			mono_error_cleanup (error);
-			mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
 			return NULL;
 		} else {
 			if (!is_ok (error))
 				*exc = (MonoObject*)mono_error_convert_to_exception (error);
-				mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
 			return result;
 		}
 	} else {
 		MonoObject *result = mono_runtime_try_invoke_array (method, obj, params, NULL, error);
 		mono_error_raise_exception_deprecated (error); /* OK to throw, external only without a good alternative */
-		mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
 		return result;
 	}
 }
