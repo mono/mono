@@ -1017,8 +1017,7 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 void
 ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
+	// This works by virtue of icalls implicitly pinning all of their parameters (https://github.com/mono/mono/pull/16987).
 
 	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
 
@@ -1034,8 +1033,7 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 void
 ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
+	// This works by virtue of icalls implicitly pinning all of their parameters (https://github.com/mono/mono/pull/16987).
 
 	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
 
