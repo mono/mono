@@ -1983,7 +1983,7 @@ mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg
 static void
 mono_apply_volatile (MonoInst *inst, MonoBitSet *set, gsize index)
 {
-	inst->flags |= mono_bitset_test_safe (set, index) ? MONO_INST_VOLATILE : 0;
+	inst->flags |= mono_bitset_test_safe (set, index) ? MONO_INST_INDIRECT : 0;
 }
 
 static void
