@@ -187,7 +187,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         fi
 
         # retrieve selected Xcode version
-        /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/Contents/version.plist > xcode_version.txt
+        /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -242,7 +242,7 @@ then
     fi
 
     # retrieve selected Xcode version
-    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/Contents/version.plist > xcode_version.txt
+    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
