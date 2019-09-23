@@ -13,7 +13,7 @@
 
 MONO_BEGIN_DECLS
 
-MONO_API MonoDomain * 
+MONO_API MONO_RT_EXTERNAL_ONLY MonoDomain * 
 mono_jit_init              (const char *file);
 
 MONO_API MonoDomain * 
