@@ -204,4 +204,18 @@ ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_R
 ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpointer sock);
 #endif
 
+ICALL_EXPORT MonoBoolean mono_monitor_enter_internal (MonoObject *obj, MonoException *volatile* exception_handle);
+ICALL_EXPORT guint32 mono_monitor_enter_fast (MonoObject *obj);
+ICALL_EXPORT void mono_monitor_exit_icall (MonoObject *obj);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean* lockTaken, MonoException *volatile* exception_handle);
+ICALL_EXPORT void mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken);
+/* Called from JITted code */
+ICALL_EXPORT guint32 mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject *obj, MonoException *volatile* exception_handle);
+
 #endif // __MONO_METADATA_ICALL_H__

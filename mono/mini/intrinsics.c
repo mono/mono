@@ -876,41 +876,39 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		} else
 			return NULL;
 	} else if (cmethod->klass == mono_defaults.monitor_class) {
-		gboolean is_enter = FALSE;
-		gboolean is_v4 = FALSE;
+		/*
+		 * To make async stack traces work, icalls which can block should have a wrapper.
+		 * For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+		 */
+		// The two calls are handled on the managed side now.
+		// Intrinsification remains to omit the wrapper (only intrinsics can?)
+		// and to control the "allow_interruption" flags, which is oddly inconsistent between
+		// mono_monitor_enter_fast and mono_monitor_enter_v4_fast.
+		//
+		// Note that double call being on the managed side, also means
+		// that intrinsicification is happening at a lower level than previously.
+		// i.e. It used to be the entire Monitor.Enter call intrinsified,
+		// now it is the TryEnter in the underlying C#/IL.
+		// This is "necessary", or at least easier, to add the exception_handle parameter at the C#
+		// level instead of having the JIT (and interpreter) insert it.
+		//
+		// Due to the lower level intrinsification, the C# has been rewritten to match
+		// the prior intrinsification.
+		//
+		if (cmethod->name [0] == 'm') {
+			if (!strcmp (cmethod->name, "mono_monitor_enter_fast"))
+				return mono_emit_jit_icall (cfg, mono_monitor_enter_fast, args);
 
-		if (!strcmp (cmethod->name, "Enter") && fsig->param_count == 2 && fsig->params [1]->byref) {
-			is_enter = TRUE;
-			is_v4 = TRUE;
+			if (!strcmp (cmethod->name, "mono_monitor_enter_internal"))
+				return mono_emit_jit_icall (cfg, mono_monitor_enter_internal, args);
+
+			if (!strcmp (cmethod->name, "mono_monitor_enter_v4_fast"))
+				return mono_emit_jit_icall (cfg, mono_monitor_enter_v4_fast, args);
+
+			if (!strcmp (cmethod->name, "mono_monitor_enter_v4_internal"))
+				return mono_emit_jit_icall (cfg, mono_monitor_enter_v4_internal, args);
 		}
-		if (!strcmp (cmethod->name, "Enter") && fsig->param_count == 1)
-			is_enter = TRUE;
-
-		if (is_enter) {
-			/*
-			 * To make async stack traces work, icalls which can block should have a wrapper.
-			 * For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
-			 */
-			MonoBasicBlock *end_bb;
-
-			NEW_BBLOCK (cfg, end_bb);
-
-			if (is_v4)
-				ins = mono_emit_jit_icall (cfg, mono_monitor_enter_v4_fast, args);
-			else
-				ins = mono_emit_jit_icall (cfg, mono_monitor_enter_fast, args);
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, ins->dreg, 0);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, end_bb);
-
-			if (is_v4)
-				ins = mono_emit_jit_icall (cfg, mono_monitor_enter_v4_internal, args);
-			else
-				ins = mono_emit_jit_icall (cfg, mono_monitor_enter_internal, args);
-
-			MONO_START_BB (cfg, end_bb);
-			return ins;
-		}
+		return NULL;
 	} else if (cmethod->klass == mono_defaults.thread_class) {
 		if (strcmp (cmethod->name, "SpinWait_nop") == 0 && fsig->param_count == 0) {
 			MONO_INST_NEW (cfg, ins, OP_RELAXED_NOP);

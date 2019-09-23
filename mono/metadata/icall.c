@@ -9254,14 +9254,15 @@ typedef enum ICallSigType {
 	ICALL_SIG_TYPE_long     = 0x07,
 	ICALL_SIG_TYPE_obj      = 0x08,
 	ICALL_SIG_TYPE_object   = ICALL_SIG_TYPE_obj,
+	ICALL_SIG_TYPE_objref   = 0x09,
 	ICALL_SIG_TYPE_ptr      = ICALL_SIG_TYPE_int,
-	ICALL_SIG_TYPE_ptrref   = 0x09,
-	ICALL_SIG_TYPE_string   = 0x0A,
-	ICALL_SIG_TYPE_uint16   = 0x0B,
-	ICALL_SIG_TYPE_uint32   = 0x0C,
-	ICALL_SIG_TYPE_uint8    = 0x0D,
-	ICALL_SIG_TYPE_ulong    = 0x0E,
-	ICALL_SIG_TYPE_void     = 0x0F,
+	ICALL_SIG_TYPE_ptrref   = 0x0A,
+	ICALL_SIG_TYPE_string   = 0x0B,
+	ICALL_SIG_TYPE_uint16   = 0x0C,
+	ICALL_SIG_TYPE_uint32   = 0x0D,
+	ICALL_SIG_TYPE_uint8    = 0x0E,
+	ICALL_SIG_TYPE_ulong    = 0x0F,
+	ICALL_SIG_TYPE_void     = 0x10,
 } ICallSigType;
 
 #define ICALL_SIG_TYPES_1(a) 		  	ICALL_SIG_TYPE_ ## a,
@@ -9313,7 +9314,7 @@ mono_create_icall_signatures (void)
 	// Fixup the mostly statically initialized icall signatures.
 	//   x = m_class_get_byval_arg (x)
 	//   Initialize ret with params [0] and params [i] with params [i + 1].
-	//   ptrref is special
+	//   objref, ptrref are special
 	//
 	// FIXME This is a bit obscure.
 
@@ -9330,6 +9331,7 @@ mono_create_icall_signatures (void)
 		m_class_get_byval_arg (mono_defaults.sbyte_class),	 // ICALL_SIG_TYPE_int8
 		m_class_get_byval_arg (mono_defaults.int64_class),	 // ICALL_SIG_TYPE_long
 		m_class_get_byval_arg (mono_defaults.object_class),	 // ICALL_SIG_TYPE_obj
+		mono_class_get_byref_type (mono_defaults.object_class),	 // ICALL_SIG_TYPE_objref
 		mono_class_get_byref_type (mono_defaults.int_class), // ICALL_SIG_TYPE_ptrref
 		m_class_get_byval_arg (mono_defaults.string_class),	 // ICALL_SIG_TYPE_string
 		m_class_get_byval_arg (mono_defaults.uint16_class),	 // ICALL_SIG_TYPE_uint16
@@ -9343,7 +9345,7 @@ mono_create_icall_signatures (void)
 	int n;
 	while ((n = sig->param_count)) {
 		--sig->param_count; // remove ret
-		gsize_a *types = (gsize*)(sig + 1);
+		gsize_a *types = (gsize_a*)(sig + 1);
 		for (int i = 0; i < n; ++i) {
 			gsize index = *types++;
 			g_assert (index < G_N_ELEMENTS (lookup));

@@ -8323,7 +8323,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 
 		MonoObjectHandle handle = MONO_HANDLE_NEW (MonoObject, NULL); // Create handle outside of lock.
 
-		mono_monitor_enter_internal ((MonoObject*) ares);
+		mono_monitor_enter_internal ((MonoObject*) ares, MONO_HANDLE_REF (MONO_HANDLE_NEW (MonoException, NULL)));
 		ares->completed = 1;
 		if (ares->handle) {
 			MONO_HANDLE_ASSIGN_RAW (handle, ares->handle);

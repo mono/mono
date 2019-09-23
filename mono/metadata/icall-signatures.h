@@ -145,6 +145,8 @@
 // mono_icall_sig_void_ptr_ptr_ptr_ptr_ptr_ptr
 // mono_icall_sig_ptr_ptr_ptr_ptr_ptr_ptr_ptr
 // mono_icall_sig_void_ptr_ptr_int32_ptr_ptrref_ptr_ptrref
+// mono_icall_sig_int32_obj_objref
+// mono_icall_sig_void_obj_ptr_objref
 
 #define ICALL_SIGS				\
 ICALL_SIG (1, (object))				\
@@ -189,6 +191,7 @@ ICALL_SIG (3, (int, obj, ptr))			\
 ICALL_SIG (3, (int32, int32, int32))		\
 ICALL_SIG (3, (int32, int32, ptr))		\
 ICALL_SIG (3, (int32, int32, ptrref))		\
+ICALL_SIG (3, (int32, obj, objref))		\
 ICALL_SIG (3, (int32, ptr, ptr))		\
 ICALL_SIG (3, (int32, ptr, ptrref))		\
 ICALL_SIG (3, (long, long, int32))		\
@@ -223,6 +226,7 @@ ICALL_SIG (4, (bool, ptr, int32, ptrref))	\
 ICALL_SIG (4, (int32, int32, ptr, ptrref))	\
 ICALL_SIG (4, (int32, ptr, int32, ptr))		\
 ICALL_SIG (4, (int32, ptr, int32, ptrref))	\
+ICALL_SIG (4, (void, obj, ptr, objref))		\
 ICALL_SIG (4, (object, int, object, object))	\
 ICALL_SIG (4, (object, object, ptr, ptr))	\
 ICALL_SIG (4, (object, ptr, int, int))		\

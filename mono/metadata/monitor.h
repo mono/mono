@@ -107,10 +107,10 @@ void
 mono_monitor_cleanup (void);
 
 MonoBoolean
-mono_monitor_enter_internal (MonoObject *obj);
+mono_monitor_enter_internal (MonoObject *obj, MonoException * volatile * exception_handle);
 
 void
-mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
+mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken, MonoException *volatile* exception_handle);
 
 guint32
 mono_monitor_enter_fast (MonoObject *obj);

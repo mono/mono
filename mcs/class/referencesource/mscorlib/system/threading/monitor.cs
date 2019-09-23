@@ -49,9 +49,27 @@ namespace System.Threading {
         [System.Security.SecuritySafeCritical]
         [ResourceExposure(ResourceScope.None)]
 #endif
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void Enter(Object obj);
+	[MethodImplAttribute (MethodImplOptions.InternalCall)]
+	static extern bool mono_monitor_enter_fast (object obj);
 
+	[MethodImplAttribute (MethodImplOptions.InternalCall)]
+	static extern bool mono_monitor_enter_internal (object obj, ref Exception exception_handle);
+
+	[MethodImplAttribute (MethodImplOptions.InternalCall)]
+	static extern bool mono_monitor_enter_v4_fast (object obj, ref bool lockTaken);
+
+	[MethodImplAttribute (MethodImplOptions.InternalCall)]
+	static extern bool mono_monitor_enter_v4_internal (object obj, ref bool lockTaken, ref Exception exception_handle);
+
+        public static void Enter(Object obj)
+        {
+		// To make async stack traces work, icalls which can block should have a wrapper.
+		// For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+		if (!mono_monitor_enter_fast (obj)) {
+			Exception exception = null;
+			mono_monitor_enter_internal (obj, ref exception);
+		}
+        }
 
         // Use a ref bool instead of out to ensure that unverifiable code must
         // initialize this value to something.  If we used out, the value 
@@ -63,7 +81,14 @@ namespace System.Threading {
             if (lockTaken)
                 ThrowLockTakenException();
 
-            ReliableEnter(obj, ref lockTaken);
+            // To make async stack traces work, icalls which can block should have a wrapper.
+            // For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+
+            if (!mono_monitor_enter_v4_fast (obj, ref lockTaken)) {
+                Exception exception = null;
+                mono_monitor_enter_v4_internal (obj, ref lockTaken, ref exception);
+            }
+
             Contract.Assert(lockTaken);
         }
 

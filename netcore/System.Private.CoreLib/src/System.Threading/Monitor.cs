@@ -9,14 +9,41 @@ namespace System.Threading
 	public static class Monitor
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern void Enter (object obj);
+		static extern bool mono_monitor_enter_fast (object obj);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool mono_monitor_enter_internal (object obj, ref Exception exception_handle);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool mono_monitor_enter_v4_fast (object obj, ref bool lockTaken);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool mono_monitor_enter_v4_internal (object obj, ref bool lockTaken, ref Exception exception_handle);
+
+		public static void Enter (object obj)
+		{
+			// To make async stack traces work, icalls which can block should have a wrapper.
+			// For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+
+			if (!mono_monitor_enter_fast (obj)) {
+				Exception exception = null;
+				mono_monitor_enter_internal (obj, ref exception);
+			}
+		}
 
 		public static void Enter (object obj, ref bool lockTaken)
 		{
 			if (lockTaken)
 				throw new ArgumentException (SR.Argument_MustBeFalse, nameof (lockTaken));
 
-			ReliableEnter (obj, ref lockTaken);
+			// To make async stack traces work, icalls which can block should have a wrapper.
+			// For Monitor.Enter, emit two calls: a fastpath which doesn't have a wrapper, and a slowpath, which does.
+
+			if (mono_monitor_enter_v4_fast (obj, ref lockTaken))
+				return;
+
+			Exception exception = null;
+			mono_monitor_enter_v4_internal (obj, ref lockTaken, ref exception);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

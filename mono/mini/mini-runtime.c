@@ -4637,8 +4637,8 @@ register_icalls (void)
 	register_icall (mono_throw_bad_image, mono_icall_sig_void, FALSE);
 	register_icall_no_wrapper (mono_dummy_jit_icall, mono_icall_sig_void);
 
-	register_icall_with_wrapper (mono_monitor_enter_internal, mono_icall_sig_int32_obj);
-	register_icall_with_wrapper (mono_monitor_enter_v4_internal, mono_icall_sig_void_obj_ptr);
+	register_icall_with_wrapper (mono_monitor_enter_internal, mono_icall_sig_int32_obj_objref);
+	register_icall_with_wrapper (mono_monitor_enter_v4_internal, mono_icall_sig_void_obj_ptr_objref);
 	register_icall_no_wrapper (mono_monitor_enter_fast, mono_icall_sig_int_obj);
 	register_icall_no_wrapper (mono_monitor_enter_v4_fast, mono_icall_sig_int_obj_ptr);
 
