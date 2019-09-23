@@ -1983,6 +1983,9 @@ mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg
 static void
 mono_apply_volatile (MonoInst *inst, MonoBitSet *set, gsize index)
 {
+	// The intention is force load/store, or really only store, "for the thread", but not barriers "across threads".
+	// MONO_INST_INDIRECT might be more appropiate here, but MONO_INST_VOLATILE is heavily
+	// used for similar purpose. It appears to be correct, but somewhat overkill.
 	inst->flags |= mono_bitset_test_safe (set, index) ? MONO_INST_VOLATILE : 0;
 }
 
