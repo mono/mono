@@ -2246,7 +2246,7 @@ mono_w32process_set_cli_launcher (gchar *path)
 }
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 {
 	return current_process;
 }
@@ -2301,7 +2301,7 @@ mono_get_exit_code_process (gpointer handle, gint32 *exitcode)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	return mono_w32handle_close (handle);
 }
