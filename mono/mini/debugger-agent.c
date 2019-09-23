@@ -7285,8 +7285,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					req->modifiers [i].not_filtered_feature = decode_byte (p, &p, end);
 					req->modifiers [i].everything_else  = decode_byte (p, &p, end);
 					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY 2 filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : (req->modifiers [i].everything_else ? "everything else" : "all"), req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
-				}
-				else {
+				} else {
 					req->modifiers [i].not_filtered_feature = FALSE;
 					req->modifiers [i].everything_else = FALSE;
 					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
