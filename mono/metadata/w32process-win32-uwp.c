@@ -96,11 +96,13 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
 {
+	ERROR_DECL (error);
 	g_unsupported_api ("GetProcessWorkingSetSize");
 	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "GetProcessWorkingSetSize");
 	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
