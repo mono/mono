@@ -6,9 +6,9 @@ namespace Mono.Debugger.Soft
 	public sealed class ExceptionEventRequest : EventRequest {
 
 		TypeMirror exc_type;
-	    bool caught, uncaught, subclasses, win_features, everything_else;
+		bool caught, uncaught, subclasses, not_filtered_feature, everything_else;
 		
-		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught) : base (vm, EventType.Exception) {
+		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught, bool not_filtered_feature = false, bool everything_else = false) : base (vm, EventType.Exception) {
 			if (exc_type != null) {
 				CheckMirror (vm, exc_type);
 				TypeMirror exception_type = vm.RootDomain.Corlib.GetType ("System.Exception", false, false);
@@ -19,22 +19,7 @@ namespace Mono.Debugger.Soft
 			this.caught = caught;
 			this.uncaught = uncaught;
 			this.subclasses = true;
-			this.win_features = false;
-			this.everything_else = false;
-		}
-
-		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught, bool win_features, bool everything_else) : base (vm, EventType.Exception) {
-			if (exc_type != null) {
-				CheckMirror (vm, exc_type);
-				TypeMirror exception_type = vm.RootDomain.Corlib.GetType ("System.Exception", false, false);
-				if (!exception_type.IsAssignableFrom (exc_type))
-					throw new ArgumentException ("The exception type does not inherit from System.Exception", "exc_type");
-			}
-			this.exc_type = exc_type;
-			this.caught = caught;
-			this.uncaught = uncaught;
-			this.subclasses = true;
-			this.win_features = win_features;
+			this.not_filtered_feature = not_filtered_feature;
 			this.everything_else = everything_else;
 		}
 
@@ -58,7 +43,7 @@ namespace Mono.Debugger.Soft
 
 		public override void Enable () {
 			var mods = new List <Modifier> ();
-			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses, WinFeatures = win_features, EverythingElse = everything_else });
+			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses, NotFilteredFeature = not_filtered_feature, EverythingElse = everything_else });
 			SendReq (mods);
 		}
 	}
