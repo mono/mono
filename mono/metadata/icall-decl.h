@@ -213,5 +213,6 @@ ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max);
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass);
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max);
+ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode);
 
 #endif // __MONO_METADATA_ICALL_H__

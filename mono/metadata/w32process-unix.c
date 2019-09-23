@@ -2307,7 +2307,7 @@ ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
 {
 #ifdef HAVE_KILL
 	MonoW32Handle *handle_data;
