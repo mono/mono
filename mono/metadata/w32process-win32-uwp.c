@@ -114,13 +114,15 @@ ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handl
 }
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 {
 	// FIXME GetPriorityClass is supported for UWP. Use finer grained #if.
 
+	ERROR_DECL (error);
 	g_unsupported_api ("GetPriorityClass");
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
 	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
