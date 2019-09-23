@@ -118,7 +118,7 @@ ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
 // FIXME Much of this could be NOHANDLES().
 NOHANDLES(ICALL(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess))
 NOHANDLES(ICALL(NATIVEMETHODS_2, "GetCurrentProcess", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess))
-HANDLES(NATIVEMETHODS_3, "GetCurrentProcessId", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId, gint32, 0, ())
+NOHANDLES(ICALL(NATIVEMETHODS_3, "GetCurrentProcessId", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId))
 HANDLES(NATIVEMETHODS_4, "GetExitCodeProcess", ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess, MonoBoolean, 2, (gpointer, gint32_ref))
 HANDLES(NATIVEMETHODS_5, "GetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass, gint32, 1, (gpointer))
 HANDLES(NATIVEMETHODS_6, "GetProcessTimes", ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes, MonoBoolean, 5, (gpointer, gint64_ref, gint64_ref, gint64_ref, gint64_ref))

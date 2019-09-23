@@ -206,5 +206,6 @@ ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange
 
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle);
 ICALL_EXPORT gpointer ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void);
+ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void);
 
 #endif // __MONO_METADATA_ICALL_H__
