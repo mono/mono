@@ -53,14 +53,14 @@ parallel (
     "iOS (Xcode 11)": {
         throttle(['provisions-ios-toolchain']) {
             node ("xcode11") {
-                archive ("ios", "release", "Darwin", "", "", "xcode11")
+                archive ("ios", "release", "Darwin", "", "", "", "xcode11")
             }
         }
     },
     "Mac (Xcode 11)": {
         throttle(['provisions-mac-toolchain']) {
             node ("xcode11") {
-                archive ("mac", "release", "Darwin", "", "", "xcode11")
+                archive ("mac", "release", "Darwin", "", "", "", "xcode11")
             }
         }
     },
