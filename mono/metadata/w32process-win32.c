@@ -380,7 +380,7 @@ exit:
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	return CloseHandle (handle);
 }
