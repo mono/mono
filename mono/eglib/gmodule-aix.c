@@ -226,7 +226,8 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
 	if (sym_name != NULL)
-		*sym_name = strdup(dli.dli_sname); /* actually const on AIX */
+		/* const, so dup */
+		*sym_name = (dli.dli_sname == NULL ? NULL : strdup(dli.dli_sname));
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;
