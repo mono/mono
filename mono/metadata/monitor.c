@@ -1057,6 +1057,7 @@ mono_monitor_enter_internal (MonoObject *obj)
 		if (res == -1) {
 			MonoException *exc = mono_thread_interruption_checkpoint ();
 			if (exc) {
+				// FIXMEcoop
 				mono_set_pending_exception (exc);
 				return FALSE;
 			} else {
@@ -1075,6 +1076,7 @@ gboolean
 mono_monitor_enter (MonoObject *obj)
 {
 	// FIXME slow?
+	// FIXMEcoop
 	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_enter_internal (obj));
 }
 
@@ -1131,9 +1133,9 @@ mono_monitor_exit_internal (MonoObject *obj)
 }
 
 void
-mono_monitor_exit_icall (MonoObjectHandle obj, MonoError* error)
+mono_monitor_exit_icall (MonoObject *obj)
 {
-	mono_monitor_exit_internal (MONO_HANDLE_RAW (obj));
+	mono_monitor_exit_internal (obj);
 }
 
 /**
@@ -1179,22 +1181,16 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset)
 }
 
 static void
-mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean *lockTaken, MonoError* error)
+mono_monitor_try_enter_with_atomic_var (MonoObject *volatile* obj_handle, guint32 ms, MonoBoolean *lockTaken)
 {
-	// The use of error here is unusual, but expedient, and easy enough to understand.
-	// Maybe clean it up later.
-
+	MonoObject *obj = *obj_handle;
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 
 	if (G_UNLIKELY (!obj)) {
-		if (error) {
-			mono_error_set_argument_null (error, "obj", "");
-		} else {
-			ERROR_DECL (error);
-			mono_error_set_argument_null (error, "obj", "");
-			mono_error_set_pending_exception (error);
-		}
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1204,12 +1200,9 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 		if (res == -1) {
 			MonoException *exc = mono_thread_interruption_checkpoint ();
 			if (exc) {
-				if (error) { // implies icall and coop handle frame -- a little gross
-					MONO_HANDLE_NEW (MonoException, exc);
-					mono_error_set_exception_instance (error, exc);
-				} else {
-					mono_set_pending_exception (exc);
-				}
+				// We are done with obj. Reuse its handle (not always a handle, FIXMEs elsewhere).
+				*obj_handle = (MonoObject*)exc;
+				mono_set_pending_exception (exc);
 				return;
 			} else {
 				//we detected a pending interruption but it turned out to be a false positive, we ignore it from now on (this feels like a hack, right?, threads.c should give us less confusing directions)
@@ -1223,9 +1216,9 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean* lockTaken, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *volatile* obj_handle, guint32 ms, MonoBoolean* lockTaken)
 {
-	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, lockTaken, error);
+	mono_monitor_try_enter_with_atomic_var (obj_handle, ms, lockTaken);
 }
 
 /**
@@ -1235,6 +1228,7 @@ void
 mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 {
 	g_static_assert (sizeof (MonoBoolean) == 1);
+	// FIXMEcoop and handle reduction.
 	mono_monitor_enter_v4_internal (obj, (MonoBoolean*)lock_taken);
 }
 
@@ -1248,7 +1242,8 @@ mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 		mono_error_set_pending_exception (error);
 		return;
 	}
-	mono_monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, lock_taken, NULL);
+	// FIXMEcoop and handle reduction.
+	mono_monitor_try_enter_with_atomic_var (&obj, MONO_INFINITE_WAIT, lock_taken);
 }
 
 /*
@@ -1265,16 +1260,15 @@ mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken)
 	if (*lock_taken == 1 || G_UNLIKELY (!obj))
 		return FALSE;
 
+	// FIXMEcoop and handle reduction.
 	gboolean const res = mono_monitor_try_enter_internal (obj, 0, TRUE) == 1;
 	*lock_taken = (MonoBoolean)res;
 	return (guint32)res;
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
 	LockWord lw;
 
 	LOCK_DEBUG (g_message ("%s: Testing if %p is owned by thread %d", __func__, obj, mono_thread_info_get_small_id()));
@@ -1291,10 +1285,8 @@ ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_hand
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
 	LockWord lw;
 
 	LOCK_DEBUG (g_message("%s: (%d) Testing if %p is owned by any thread", __func__, mono_thread_info_get_small_id (), obj));
@@ -1349,22 +1341,20 @@ mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, FALSE);
+	mono_monitor_pulse (obj, __func__, FALSE);
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
+	mono_monitor_pulse (obj, __func__, TRUE);
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
 	LockWord lw;
 	MonoThreadsSync *mon;
 	HANDLE event;
@@ -1480,6 +1470,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 void
 ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObjectHandle obj, MonoError* error)
 {
+	// FIXMEcoop reduction
 	mono_monitor_enter_internal (MONO_HANDLE_RAW (obj));
 }
 

@@ -204,4 +204,13 @@ ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_R
 ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpointer sock);
 #endif
 
+// FIXME Enter.
+ICALL_EXPORT void mono_monitor_exit_icall (MonoObject*);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_pulse(MonoObject*);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject*);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject*);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject*);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject*, guint32);
+ICALL_EXPORT void ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *volatile*, guint32, MonoBoolean*);
+
 #endif // __MONO_METADATA_ICALL_H__

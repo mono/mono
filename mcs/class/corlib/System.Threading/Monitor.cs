@@ -92,7 +92,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+		extern static void try_enter_with_atomic_var (ref object obj, int millisecondsTimeout, ref bool lockTaken);
 
 		static void ReliableEnterTimeout(Object obj, int timeout, ref bool lockTaken)
 		{
@@ -101,7 +101,8 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
+			// obj is passed by reference in order to be reused as a handle for an exception.
+			try_enter_with_atomic_var (ref obj, timeout, ref lockTaken);
 		}
 
 		static void ReliableEnter(Object obj, ref bool lockTaken)
