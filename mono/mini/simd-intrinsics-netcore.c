@@ -728,7 +728,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			//// uint MultiplyNoFlags(uint left, uint right)
 			//// uint MultiplyNoFlags(uint left, uint right, uint* low)
 			//return NULL;
-		//case SN_ZeroHighBits:
+		case SN_ZeroHighBits:
 			MONO_INST_NEW (cfg, ins, is_64bit ? OP_BZHI64 : OP_BZHI32);
 			ins->dreg = alloc_ireg (cfg);
 			ins->sreg1 = args [0]->dreg;
