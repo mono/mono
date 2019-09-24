@@ -1,8 +1,8 @@
-name: build_android
+git submodule name: build_android
 
 agent:
   type: Unity::VM::osx
-  image: buildfarm/mac:stable
+  image: platform-foundation/mac-bokken:latest
   flavor: m1.mac
 
 commands:

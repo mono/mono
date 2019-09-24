@@ -2,7 +2,7 @@ name: build_osx_runtime
 
 agent:
   type: Unity::VM::osx
-  image: buildfarm/mac:latest
+  image: platform-foundation/mac-bokken:latest
   flavor: m1.mac
 
 commands:
