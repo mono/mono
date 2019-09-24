@@ -236,7 +236,10 @@ typedef struct MonoAotOptions {
 	char *logfile;
 	char *llvm_opts;
 	char *llvm_llc;
+	char *llvm_cpu_attr;
 	gboolean use_current_cpu;
+	MonoCPUFeatures cpu_features_enabled;
+	MonoCPUFeatures cpu_features_disabled;
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
@@ -7936,6 +7939,101 @@ mono_aot_split_options (const char *aot_options)
 	return args;
 }
 
+static gboolean
+parse_cpu_features (MonoCPUFeatures *cpu_features_enabled, MonoCPUFeatures *cpu_features_disabled, const gchar *str)
+{
+	*cpu_features_enabled = (MonoCPUFeatures) 0;
+	*cpu_features_disabled = (MonoCPUFeatures) 0;
+
+	gchar **attrs = g_strsplit (str, ";", -1);
+
+	for (int i=0; attrs [i] != NULL; i++) {
+		gchar *attr = attrs [i];
+		int attr_len = strlen (attr);
+		if (attr_len < 2) {
+			fprintf (stderr, "Invalid attribute: %s\n", attr);
+			g_strfreev (attrs);
+			return FALSE;
+		}
+
+		//+foo - enable foo
+		//foo  - enable foo
+		//-foo - disable foo
+		gboolean enabled = TRUE;
+		if (attr [0] == '-')
+			enabled = FALSE;
+		int prefix = (attr [0] == '-' || attr [0] == '+') ? 1 : 0;
+		MonoCPUFeatures feature_enabled = (MonoCPUFeatures) 0;
+		MonoCPUFeatures feature_disabled = (MonoCPUFeatures) 0;
+
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+		// e.g.:
+		// `mattr=+sse3` = +sse,+sse2,+pclmul,+aes,+sse3
+		// `mattr=-sse3` = -sse3,-ssse3,-sse4.1,-sse4.2,-popcnt,-avx,-avx2,-fma
+		if (!strcmp (attr + prefix, "sse")) {
+			feature_enabled  = MONO_CPU_X86_SSE_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "sse2")) {
+			feature_enabled  = MONO_CPU_X86_SSE2_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "sse3")) {
+			feature_enabled  = MONO_CPU_X86_SSE3_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "ssse3")) {
+			feature_enabled  = MONO_CPU_X86_SSSE3_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "sse4.1")) {
+			feature_enabled  = MONO_CPU_X86_SSE41_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "sse4.2")) {
+			feature_enabled  = MONO_CPU_X86_SSE42_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "avx")) {
+			feature_enabled  = MONO_CPU_X86_AVX_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "avx2")) {
+			feature_enabled  = MONO_CPU_X86_AVX2_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "pclmul")) {
+			feature_enabled  = MONO_CPU_X86_PCLMUL_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "aes")) {
+			feature_enabled  = MONO_CPU_X86_AES_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "popcnt")) {
+			feature_enabled  = MONO_CPU_X86_POPCNT_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		} else if (!strcmp (attr + prefix, "fma")) {
+			feature_enabled  = MONO_CPU_X86_FMA_COMBINED;
+			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
+		}
+		// these are independent
+		else if (!strcmp (attr + prefix, "lzcnt")) {
+			feature_enabled  = MONO_CPU_X86_LZCNT;
+			feature_disabled = MONO_CPU_X86_LZCNT;
+		} else if (!strcmp (attr + prefix, "bmi1")) {
+			feature_enabled  = MONO_CPU_X86_BMI1;
+			feature_disabled = MONO_CPU_X86_BMI1;
+		} else if (!strcmp (attr + prefix, "bmi2")) {
+			feature_enabled  = MONO_CPU_X86_BMI2;
+			feature_disabled = MONO_CPU_X86_BMI2;
+		} else {
+			// we don't have a flag for it but it's probably recognized by opt/llc so let's don't fire an error here
+			// printf ("Unknown cpu feature: %s\n", attr);
+			continue;
+		}
+#elif defined(TARGET_ARM64)
+		// TODO: neon, sha1, sha2, asimd, etc...
+#endif
+		if (enabled)
+			*cpu_features_enabled = (MonoCPUFeatures)(*cpu_features_enabled | feature_enabled);
+		else
+			*cpu_features_disabled = (MonoCPUFeatures)(*cpu_features_disabled | feature_disabled);
+	}
+	g_strfreev (attrs);
+	return TRUE;
+}
+
 static void
 mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 {
@@ -8102,6 +8200,17 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 				printf ("mcpu can only be 'native' or 'generic' (default).\n");
 				exit (0);
 			}
+		} else if (str_begins_with (arg, "mattr=")) {
+			gchar* attrs = g_strdup (arg + strlen ("mattr="));
+			if (!parse_cpu_features (&opts->cpu_features_enabled, &opts->cpu_features_disabled, attrs))
+				exit (0);
+			// also, save the string (will be passed to LLVM opt and llc)
+			// replace ';' with ',' (we can't use comma in --aot command and LLVM's tools expect mattr to be comma-separated)
+			for (int i = 0; i < strlen (attrs); i++) {
+				if (attrs [i] == ';')
+					attrs [i] = ',';
+			}
+			opts->llvm_cpu_attr = attrs;
 		} else if (str_begins_with (arg, "depfile=")) {
 			opts->depfile = g_strdup (arg + strlen ("depfile="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
@@ -8152,6 +8261,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			printf ("    llvmllc=\n");
 			printf ("    clangxx=\n");
 			printf ("    depfile=\n");
+			printf ("    mcpu=\n");
+			printf ("    mattr=\n");
 			printf ("    help/?\n");
 			exit (0);
 		} else {
@@ -8432,6 +8543,7 @@ static void
 compile_method (MonoAotCompile *acfg, MonoMethod *method)
 {
 	MonoCompile *cfg;
+	MonoDomain *domain;
 	MonoJumpInfo *patch_info;
 	gboolean skip;
 	int index, depth;
@@ -8518,7 +8630,10 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_USE_CURRENT_CPU);
 
 	jit_time_start = mono_time_track_start ();
-	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
+	domain = mono_get_root_domain ();
+	domain->cpu_features_enabled = acfg->aot_opts.cpu_features_enabled;
+	domain->cpu_features_disabled = acfg->aot_opts.cpu_features_disabled;
+	cfg = mini_method_compile (method, acfg->opts, domain, flags, 0, index);
 	mono_time_track_end (&mono_jit_stats.jit_time, jit_time_start);
 
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
@@ -9707,6 +9822,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 		opts = g_strdup_printf ("%s -mcpu=native", opts);
 	}
 
+	if (acfg->aot_opts.llvm_cpu_attr) {
+		opts = g_strdup_printf ("%s -mattr=%s", opts, acfg->aot_opts.llvm_cpu_attr);
+	}
+
 	if (mono_use_fast_math) {
 		// same parameters are passed to llc and LLVM JIT
 		opts = g_strdup_printf ("%s -fp-contract=fast -enable-no-infs-fp-math -enable-no-nans-fp-math -enable-no-signed-zeros-fp-math -enable-no-trapping-fp-math -enable-unsafe-fp-math", opts);
@@ -9781,6 +9900,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.use_current_cpu) {
 		g_string_append (acfg->llc_args, " -mcpu=native");
+	}
+
+	if (acfg->aot_opts.llvm_cpu_attr) {
+		g_string_append_printf (acfg->llc_args, " -mattr=%s", acfg->aot_opts.llvm_cpu_attr);
 	}
 
 	command = g_strdup_printf ("\"%sllc\" %s -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.llvm_path, acfg->llc_args->str, output_fname, acfg->tmpbasename);

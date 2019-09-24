@@ -10635,3 +10635,32 @@ llvm_jit_finalize_method (EmitContext *ctx)
 }
 
 #endif
+
+static MonoCPUFeatures cpu_features;
+
+MonoCPUFeatures mono_llvm_get_cpu_features (void)
+{
+	if (cpu_features == 0) {
+		CpuFeatureAliasFlag flags_map [16] = {
+			{ "sse",	MONO_CPU_X86_SSE },
+			{ "sse2",	MONO_CPU_X86_SSE2 },
+			{ "pclmul",	MONO_CPU_X86_PCLMUL },
+			{ "aes",	MONO_CPU_X86_AES },
+			{ "sse2",	MONO_CPU_X86_SSE2 },
+			{ "sse3",	MONO_CPU_X86_SSE3 },
+			{ "ssse3",	MONO_CPU_X86_SSSE3 },
+			{ "sse4.1",	MONO_CPU_X86_SSE41 },
+			{ "sse4.2",	MONO_CPU_X86_SSE42 },
+			{ "popcnt",	MONO_CPU_X86_POPCNT },
+			{ "avx",	MONO_CPU_X86_AVX },
+			{ "avx2",	MONO_CPU_X86_AVX2 },
+			{ "fma",	MONO_CPU_X86_FMA },
+			{ "lzcnt",	MONO_CPU_X86_LZCNT },
+			{ "bmi1",	MONO_CPU_X86_BMI1 },
+			{ "bmi2",	MONO_CPU_X86_BMI2 },
+		};
+		cpu_features = mono_llvm_check_cpu_features (flags_map, 16);
+		cpu_features |= MONO_CPU_INITED;
+	}
+	return cpu_features;
+}
