@@ -6369,8 +6369,6 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		mono_mb_patch_branch (mb, pos);
 	}
 
-	gboolean tailcall = TRUE;
-
 	if (uses_handles) {
 		MonoMethodSignature *generic_sig = NULL;
 
@@ -6485,22 +6483,20 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		}
 		mono_mb_emit_ldloc_addr (mb, error_var);
 	} else {
-		int param_count = csig->param_count;
-		for (int i = 0; i < param_count; i++) {
+		for (int i = 0; i < csig->param_count; i++) {
+			mono_mb_emit_ldarg (mb, i);
 
-			// Take address of some parameters to pin them.
-			// Making them volatile should also work but there were failures.
+			// Make parameters volatile to pin them.
 
 			if ((i == 0 && csig->hasthis) || MONO_TYPE_IS_REFERENCE (csig->params [i]) || mono_type_is_byref (csig->params [i])) {
-				if (!tailcall) {
-					tailcall = FALSE;
+				if (!mb->volatile_args) {
+					gpointer const mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
+					mb->volatile_args = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
 					mb->method->iflags = (mb->method->iflags & ~METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING)
 						| MONO_METHOD_IMPL_ATTR_NOOPTIMIZATION | MONO_METHOD_IMPL_ATTR_NOINLINING;
 				}
-				mono_mb_emit_ldarg_addr (mb, i);
-				mono_mb_emit_stloc (mb, mono_mb_add_local (mb, mono_get_int_type ()));
+				mono_bitset_set (mb->volatile_args, i);
 			}
-			mono_mb_emit_ldarg (mb, i);
 		}
 	}
 
@@ -6539,12 +6535,6 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 
 	if (check_exceptions)
 		emit_thread_interrupt_checkpoint (mb);
-
-	if (!tailcall) {
-		// Likely redundant with check_exceptions or need_gc_safe or ldarg_addr. Could use another way.
-		mono_mb_emit_byte (mb, CEE_NOP);
-	}
-
 	mono_mb_emit_byte (mb, CEE_RET);
 }
 
