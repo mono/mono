@@ -6483,21 +6483,8 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		}
 		mono_mb_emit_ldloc_addr (mb, error_var);
 	} else {
-		for (int i = 0; i < csig->param_count; i++) {
+		for (int i = 0; i < csig->param_count; i++)
 			mono_mb_emit_ldarg (mb, i);
-
-			// Make parameters volatile to pin them.
-
-			if ((i == 0 && csig->hasthis) || MONO_TYPE_IS_REFERENCE (csig->params [i]) || mono_type_is_byref (csig->params [i])) {
-				if (!mb->volatile_args) {
-					gpointer const mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
-					mb->volatile_args = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
-					mb->method->iflags = (mb->method->iflags & ~METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING)
-						| MONO_METHOD_IMPL_ATTR_NOOPTIMIZATION | MONO_METHOD_IMPL_ATTR_NOINLINING;
-				}
-				mono_bitset_set (mb->volatile_args, i);
-			}
-		}
 	}
 
 	if (need_gc_safe)
