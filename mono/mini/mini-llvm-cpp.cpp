@@ -538,7 +538,6 @@ mono_llvm_check_cpu_features (const CpuFeatureAliasFlag *features, int length)
 			if (F.second)
 				outs () << "X: " << F.first () << "\n";
 		*/
-		mono_memory_barrier ();
 	}
 	return flags;
 }
