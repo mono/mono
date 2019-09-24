@@ -2787,6 +2787,13 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 	return ret;
 }
 
+MonoDomain * 
+mono_jit_init_version_for_test_only (const char *domain_name, const char *runtime_version)
+{
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	return ret;
+}
+
 /**
  * mono_jit_cleanup:
  */
