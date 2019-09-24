@@ -1,4 +1,4 @@
-git submodule name: build_android
+name: build_android
 
 agent:
   type: Unity::VM::osx
