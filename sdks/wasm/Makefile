@@ -310,7 +310,17 @@ run-$(1): bin/$(2)/mono.js
 
 endef
 
+$(eval $(call XunitTestTemplate,System-xunit,System-xunit,wasm_System_xunit-test.dll))
+$(eval $(call XunitTestTemplate,Microsoft.CSharp-xunit,Microsoft.CSharp-xunit,wasm_Microsoft.CSharp_xunit-test.dll))
 $(eval $(call XunitTestTemplate,System.Core-xunit,System.Core-xunit,wasm_System.Core_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Data-xunit,System.Data-xunit,wasm_System.Data_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.IO.Compression-xunit,System.IO.Compression-xunit,wasm_System.IO.Compression_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Net.Http.UnitTests-xunit,System.Net.Http.UnitTests-xunit,wasm_System.Net.Http.UnitTests_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Numerics-xunit,System.Numerics-xunit,wasm_System.Numerics_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Runtime.Serialization-xunit,System.Runtime.Serialization-xunit,wasm_System.Runtime.Serialization_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Security-xunit,System.Security-xunit,wasm_System.Security_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Xml-xunit,System.Xml-xunit,wasm_System.Xml_xunit-test.dll))
+$(eval $(call XunitTestTemplate,System.Xml.Linq-xunit,System.Xml.Linq-xunit,wasm_System.Xml.Linq_xunit-test.dll))
 $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
