@@ -60,7 +60,7 @@ call %RUN_MSBUILD_SCRIPT_PATH%setup-windows-env.bat
 :: Setup VS msbuild environment.
 call %RUN_MSBUILD_SCRIPT_PATH%setup-vs-msbuild-env.bat
 
-set VS_BUILD_ARGS=/p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% %VS_ADDITIONAL_ARGUMENTS% /t:%VS_TARGET%
+set VS_BUILD_ARGS=/p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% %VS_ADDITIONAL_ARGUMENTS% /t:%VS_TARGET% /m
 call msbuild.exe %VS_BUILD_ARGS% "%VS_BUILD_PROJ%" && (
     set BUILD_RESULT=0
 ) || (
