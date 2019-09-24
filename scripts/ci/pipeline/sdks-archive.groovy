@@ -136,7 +136,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                         azureVirtualPath = ""
                         azureArtifactUrl = "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${packageFileName}"
                     } else {
-                        azureVirtualPath = "${xcodeVersion}-" + readFile ("xcode_version.txt")
+                        azureVirtualPath = "xcode-" + readFile ("xcode_version.txt")
                         azureArtifactUrl = "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${azureVirtualPath}/${packageFileName}"
                     }
                 }
