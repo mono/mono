@@ -1252,10 +1252,13 @@ namespace System
 					return false;
 			}
 
+			var isUtc = false;
 			if (dateTime.Kind != DateTimeKind.Utc) {
 				if (!TryAddTicks (date, -BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-			}
+			} else
+				isUtc = true;
+
 
 			AdjustmentRule current = GetApplicableRule (date);
 			if (current != null) {
@@ -1267,7 +1270,7 @@ namespace System
 					if (forOffset)
 						isDst = true;
 					offset = baseUtcOffset; 
-					if (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					if (isUtc || (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc)))
 					{
 						offset += current.DaylightDelta;
 						isDst = true;
