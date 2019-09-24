@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=8E172F4D-82A3-4F55-8D7C-C8E8E0FA58AE
+MONO_CORLIB_VERSION=de62d46f-9502-49c7-9842-841f367a6a3a
 
 #
 # Put a quoted #define in config.h.
@@ -3404,13 +3404,29 @@ if test x$host_win32 = xno; then
 	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
 
-	AC_CHECK_MEMBER(struct stat.st_birthtimespec, [AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtime])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atimespec,     [AC_DEFINE(HAVE_STAT_TIMESPEC, 1, [struct stat.st_atimespec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atim,          [AC_DEFINE(HAVE_STAT_TIM, 1, [struct stat.st_atim])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atimensec,     [AC_DEFINE(HAVE_STAT_NSEC, 1, [struct stat.st_atimensec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct dirent.d_namlen,       [AC_DEFINE(HAVE_DIRENT_NAME_LEN, 1, [struct dirent.d_namlen])], [], [[#include <dirent.h>]])
-	AC_CHECK_MEMBER(struct statfs.f_fstypename,   [AC_DEFINE(HAVE_STATFS_FSTYPENAME, 1, [struct statfs.f_fstypename])], [], [[#include <sys/mount.h>]])
-	AC_CHECK_MEMBER(struct statvfs.f_fstypename,  [AC_DEFINE(HAVE_STATVFS_FSTYPENAME, 1, [struct statvfs.f_fstypename])], [], [[#include <sys/mount.h>]])
+	AC_CHECK_MEMBER(struct stat.st_birthtimespec,
+		[AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtimespec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atimespec,
+		[AC_DEFINE(HAVE_STAT_TIMESPEC, 1, [struct stat.st_atimespec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atim,
+		[AC_DEFINE(HAVE_STAT_TIM, 1, [struct stat.st_atim])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atimensec,
+		[AC_DEFINE(HAVE_STAT_NSEC, 1, [struct stat.st_atimensec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct dirent.d_namlen,       [AC_DEFINE(HAVE_DIRENT_NAME_LEN, 1, [struct dirent.d_namlen])], [], [#include <dirent.h>])
+	AC_CHECK_MEMBER(struct statfs.f_fstypename,   [AC_DEFINE(HAVE_STATFS_FSTYPENAME, 1, [struct statfs.f_fstypename])], [], [#include <sys/mount.h>])
+	AC_CHECK_MEMBER(struct statvfs.f_fstypename,  [AC_DEFINE(HAVE_STATVFS_FSTYPENAME, 1, [struct statvfs.f_fstypename])], [], [#include <sys/mount.h>])
 
 	AC_MSG_CHECKING(for struct statfs)
 	AC_TRY_COMPILE([
@@ -4617,6 +4633,7 @@ if test "x$host" != "x$target"; then
 	aarch64*darwin*_ilp32)
 		TARGET=ARM6432;
 		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		sizeof_register=8
 		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
 	aarch64-*)
@@ -5645,6 +5662,7 @@ fi
 
 if test x$enable_cooperative_suspend != xno; then
 	AC_DEFINE(ENABLE_COOP_SUSPEND,1,[Enable cooperative stop-the-world garbage collection.])
+	enable_hybrid_suspend_default=no
 fi
 
 AM_CONDITIONAL([ENABLE_COOP_SUSPEND], [test x$enable_cooperative_suspend != xno])

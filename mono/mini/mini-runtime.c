@@ -1571,7 +1571,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		}
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
-		target = mono_thread_interruption_request_flag ();
+		target = &mono_thread_interruption_request_flag;
 		break;
 	case MONO_PATCH_INFO_METHOD_RGCTX:
 		target = mini_method_get_rgctx (patch_info->data.method);
@@ -4646,11 +4646,11 @@ register_icalls (void)
 	register_icall (pthread_getspecific, mono_icall_sig_ptr_ptr, TRUE);
 #endif
 	/* Register tls icalls */
-	register_icall_no_wrapper (mono_tls_get_thread, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_jit_tls, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_domain, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_sgen_thread_info, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_lmf_addr, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_thread_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_jit_tls_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_domain_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_sgen_thread_info_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_lmf_addr_extern, mono_icall_sig_ptr);
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, mono_icall_sig_void_ptr_ptr);
 	register_icall_no_wrapper (mono_interp_to_native_trampoline, mono_icall_sig_void_ptr_ptr);
