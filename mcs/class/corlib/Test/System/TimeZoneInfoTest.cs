@@ -58,6 +58,7 @@ namespace MonoTests.System
 					return "E. Europe Standard Time";
 				case "US/Eastern":
 					return "Eastern Standard Time";
+				case "America/Chicago":
 				case "US/Central":
 					return "Central Standard Time";
 				case "US/Pacific":
