@@ -73,7 +73,7 @@
             |
             |--- library_mono.js    - Javascript low level backing support for Mono.
             |                           - Message pumping
-            |                           - Loading and runnning the mono runtime.
+            |                           - Loading and running the mono runtime.
             |                           - Setting environment variables
             |                           - AOT Profiler support
             |                           - Debugger support routines
@@ -98,7 +98,7 @@
 
 * Use a separate mono repo checkout.
 * The build depends on the mono sdk infrastructure.
-* The makefile targets are in skds/build/wasm.mk.
+* The makefile targets are in sdks/builds/wasm.mk.
 * The build outputs are emitted to sdks/out/.
 
 ## Building mono components
@@ -187,7 +187,7 @@ Read usage information about the utility see [WebAssembly packager.exe](./docs/p
 
 # Threading support
 
-To build the runtime with pthread support use the following make target:
+To build the runtime with pthreads support use the following make target:
 
 ``` bash
 make -C sdks/wasm runtime-threads
@@ -229,7 +229,7 @@ _Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files  must be deployed w
 
 # Dynamic Linking support
 
-To build the runtime with WebAssebly dynamic linking support use the following make target:
+To build the runtime with WebAssembly dynamic linking support use the following make target:
 
 ``` bash
 make -C sdks/wasm runtime-dynamic

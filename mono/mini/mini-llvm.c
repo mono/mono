@@ -330,6 +330,10 @@ typedef enum {
 	INTRINS_PEXT_I64,
 	INTRINS_PDEP_I32,
 	INTRINS_PDEP_I64,
+	INTRINS_BZHI_I32,
+	INTRINS_BZHI_I64,
+	INTRINS_BEXTR_I32,
+	INTRINS_BEXTR_I64,
 #if defined(TARGET_AMD64) || defined(TARGET_X86)
 	INTRINS_SSE_PMOVMSKB,
 	INTRINS_SSE_PSRLI_W,
@@ -3578,9 +3582,16 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 			/* The IR treats these as variables with addresses */
 			ctx->addresses [reg] = LLVMGetParam (ctx->lmethod, pindex);
 			break;
-		default:
-			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (cfg, type_to_llvm_type (ctx, ainfo->type)), type_is_unsigned (ctx, ainfo->type));
+		default: {
+			LLVMTypeRef t;
+			/* Needed to avoid phi argument mismatch errors since operations on pointers produce i32/i64 */
+			if (ainfo->type->byref)
+				t = IntPtrType ();
+			else
+				t = type_to_llvm_type (ctx, ainfo->type);
+			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (cfg, t), type_is_unsigned (ctx, ainfo->type));
 			break;
+		}
 		}
 	}
 	g_free (names);
@@ -3817,6 +3828,8 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 					set_failure (ctx, "can't encode patch");
 					return;
 				}
+			} else if (cfg->method == call->method) {
+				callee = ctx->lmethod;
 			} else {
 				ERROR_DECL (error);
 				static int tramp_index;
@@ -7454,6 +7467,22 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_CTTZ32 ? INTRINS_CTTZ_I32 : INTRINS_CTTZ_I64), args, 2, "");
 			break;
 		}
+		case OP_BEXTR32:
+		case OP_BEXTR64: {
+			LLVMValueRef args [2];
+			args [0] = lhs;
+			args [1] = convert (ctx, rhs, ins->opcode == OP_BEXTR32 ? LLVMInt32Type () : LLVMInt64Type ()); // cast ushort to u32/u64
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64), args, 2, "");
+			break;
+		}
+		case OP_BZHI32:
+		case OP_BZHI64: {
+			LLVMValueRef args [2];
+			args [0] = lhs;
+			args [1] = rhs;
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BZHI32 ? INTRINS_BZHI_I32 : INTRINS_BZHI_I64), args, 2, "");
+			break;
+		}
 		case OP_PEXT32:
 		case OP_PEXT64: {
 			LLVMValueRef args [2];
@@ -8455,8 +8484,12 @@ after_codegen:
 	}
 
 	if (cfg->verbose_level > 1) {
-		g_print ("\n*** Unoptimized LLVM IR for %s ***\n", mono_method_full_name (cfg->method, FALSE));
-		mono_llvm_dump_value (method);
+		g_print ("\n*** Unoptimized LLVM IR for %s ***\n", mono_method_full_name (cfg->method, TRUE));
+		if (cfg->compile_aot) {
+			mono_llvm_dump_value (method);
+		} else {
+			mono_llvm_dump_module (ctx->lmodule);
+		}
 		g_print ("***\n\n");
 	}
 
@@ -8717,6 +8750,10 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_CTLZ_I64, "llvm.ctlz.i64"},
 	{INTRINS_CTTZ_I32, "llvm.cttz.i32"},
 	{INTRINS_CTTZ_I64, "llvm.cttz.i64"},
+	{INTRINS_BZHI_I32, "llvm.x86.bmi.bzhi.32"},
+	{INTRINS_BZHI_I64, "llvm.x86.bmi.bzhi.64"},
+	{INTRINS_BEXTR_I32, "llvm.x86.bmi.bextr.32"},
+	{INTRINS_BEXTR_I64, "llvm.x86.bmi.bextr.64"},
 	{INTRINS_PEXT_I32, "llvm.x86.bmi.pext.32"},
 	{INTRINS_PEXT_I64, "llvm.x86.bmi.pext.64"},
 	{INTRINS_PDEP_I32, "llvm.x86.bmi.pdep.32"},
@@ -8926,15 +8963,15 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_CTTZ_I64:
 		AddFunc2 (module, name, LLVMInt64Type (), LLVMInt64Type (), LLVMInt1Type ());
 		break;
+	case INTRINS_BEXTR_I32:
+	case INTRINS_BZHI_I32:
 	case INTRINS_PEXT_I32:
-		AddFunc2 (module, name, LLVMInt32Type (), LLVMInt32Type (), LLVMInt32Type ());
-		break;
-	case INTRINS_PEXT_I64:
-		AddFunc2 (module, name, LLVMInt64Type (), LLVMInt64Type (), LLVMInt64Type ());
-		break;
 	case INTRINS_PDEP_I32:
 		AddFunc2 (module, name, LLVMInt32Type (), LLVMInt32Type (), LLVMInt32Type ());
 		break;
+	case INTRINS_BEXTR_I64:
+	case INTRINS_BZHI_I64:
+	case INTRINS_PEXT_I64:
 	case INTRINS_PDEP_I64:
 		AddFunc2 (module, name, LLVMInt64Type (), LLVMInt64Type (), LLVMInt64Type ());
 		break;
@@ -10571,8 +10608,12 @@ llvm_jit_finalize_method (EmitContext *ctx)
 
 	cfg->native_code = (guint8*)mono_llvm_compile_method (ctx->module->mono_ee, ctx->lmethod, nvars, callee_vars, callee_addrs, &eh_frame);
 	if (cfg->verbose_level > 1) {
-		g_print ("\n*** Optimized LLVM IR for %s ***\n", mono_method_full_name (cfg->method, FALSE));
-		mono_llvm_dump_value (ctx->lmethod);
+		g_print ("\n*** Optimized LLVM IR for %s ***\n", mono_method_full_name (cfg->method, TRUE));
+		if (cfg->compile_aot) {
+			mono_llvm_dump_value (ctx->lmethod);
+		} else {
+			mono_llvm_dump_module (ctx->lmodule);
+		}
 		g_print ("***\n\n");
 	}
 

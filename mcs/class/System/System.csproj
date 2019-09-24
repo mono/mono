@@ -154,6 +154,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedStringFormatReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\WhitespaceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\RangeValidationHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />
@@ -456,6 +457,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPEndPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\MultipleConnectAsync.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\NetworkStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\Socket.Tasks.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\ClientWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\ClientWebSocketOptions.cs" />
@@ -702,7 +705,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\IPProtectionLevel.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\LingerOption.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\MulticastOption.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\Sockets\NetworkStream.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\ProtocolFamily.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\ProtocolType.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SelectMode.cs" />
@@ -738,7 +740,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_LoggingObject.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_NetRes.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\_PooledStream.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ProxyChain.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_Semaphore.cs" />
@@ -746,7 +747,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\_TimerThread.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_WebProxyDataBuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_emptywebproxy.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\connectionpool.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookie.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecollection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecontainer.cs" />
@@ -831,7 +831,6 @@
     <Compile Include="Mono.Btls\X509PalImpl.Btls.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="MonoTouch\Dummy.cs" />
-    <Compile Include="Mono\AppleTypes.cs" />
     <Compile Include="Mono\SystemCertificateProvider.cs" />
     <Compile Include="Mono\SystemDependencyProvider.cs" />
     <Compile Include="Mono\X509Pal.cs" />
@@ -1016,6 +1015,8 @@
     <Compile Include="System\UriTypeConverter.cs" />
     <Compile Include="corefx\CertificateRequest.cs" />
     <Compile Include="corefx\NameValueCollection.cs" />
+    <Compile Include="corefx\NetworkStream.cs" />
+    <Compile Include="corefx\SocketAsyncEventArgs.cs" />
     <Compile Include="corefx\StringDictionary.cs" />
     <Compile Include="corefx\X509SignatureGenerator.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
@@ -1047,6 +1048,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1096,6 +1098,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -1205,6 +1208,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1235,6 +1239,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
@@ -1300,7 +1305,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1331,7 +1335,9 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.platformnotsupported.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1425,6 +1431,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1459,6 +1466,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -1553,6 +1561,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1819,6 +1828,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -1907,6 +1917,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -2291,6 +2302,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -2379,6 +2391,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -2788,6 +2801,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -2891,6 +2905,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -3303,6 +3318,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\codemethodreferenceexpression.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3391,6 +3407,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
             <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
@@ -3674,6 +3691,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
@@ -3701,6 +3719,7 @@
         <Compile Include="Mono.AppleTls\SafeHandles.cs" />
         <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
         <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -3780,6 +3799,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3825,6 +3845,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -3917,6 +3938,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3962,6 +3984,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="Mono\AppleTypes.cs" />
         <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4081,6 +4104,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4115,6 +4139,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\CoreFXFileSystemWatcherProxy.cs" />
             <Compile Include="System.IO\DefaultWatcher.cs" />
             <Compile Include="System.IO\FAMWatcher.cs" />
@@ -4200,6 +4225,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4235,6 +4261,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4341,6 +4368,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4376,6 +4404,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
@@ -4482,6 +4511,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -4517,6 +4547,7 @@
             <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
             <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="Mono\AppleTypes.cs" />
             <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
             <Compile Include="System.Net.Mail\SmtpClient.cs" />
             <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />

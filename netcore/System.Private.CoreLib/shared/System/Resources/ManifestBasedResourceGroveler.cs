@@ -371,7 +371,7 @@ namespace System.Resources
             Debug.Assert(_mediator.MainAssembly != null);
             if (!_mediator.LookedForSatelliteContractVersion)
             {
-                _mediator.SatelliteContractVersion = _mediator.ObtainSatelliteContractVersion(_mediator.MainAssembly);
+                _mediator.SatelliteContractVersion = ResourceManager.ResourceManagerMediator.ObtainSatelliteContractVersion(_mediator.MainAssembly);
                 _mediator.LookedForSatelliteContractVersion = true;
             }
 
@@ -462,16 +462,19 @@ namespace System.Resources
         {
             try
             {
-                string postfix = "\"";
                 string[] resourceSetNames = assembly.GetManifestResourceNames();
+                int length = resourceSetNames.Length;
+                string postfix = "\"";
 
                 // If we have more than 10 resource sets, we just print the first 10 for the sake of the exception message readability.
-                if (resourceSetNames.Length > 10)
+                const int MaxLength = 10;
+                if (length > MaxLength)
                 {
-                    resourceSetNames = resourceSetNames[..10];
+                    length = MaxLength;
                     postfix = "\", ...";
                 }
-                return "\"" + string.Join("\", \"", resourceSetNames) + postfix;
+
+                return "\"" + string.Join("\", \"", resourceSetNames, 0, length) + postfix;
             }
             catch
             {

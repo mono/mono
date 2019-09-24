@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.43
+EMSCRIPTEN_VERSION=1.38.45
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -87,7 +87,7 @@ _wasm_$(1)_CONFIGURE_FLAGS = \
 	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
 	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
-	$$(wasm-$(1)_CONFIGURE_FLAGS) \
+	$$(wasm_$(1)_CONFIGURE_FLAGS) \
 	CFLAGS="$(WASM_RUNTIME_BASE_CFLAGS) $$(wasm_$(1)_CFLAGS)" \
 	CXXFLAGS="$(WASM_RUNTIME_BASE_CXXFLAGS) $$(wasm_$(1)_CXXFLAGS)"
 
@@ -143,6 +143,7 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime-netcore_CONFIGURE_FLAGS=--with-core=only
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
 
@@ -153,8 +154,11 @@ $(eval $(call WasmRuntimeTemplate,runtime))
 ifdef ENABLE_WASM_THREADS
 $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
-ifdef ENABLE_WASM_DYNAMIC_RUMTIME
+ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
+endif
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
 
 ##
@@ -182,7 +186,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
-$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$(2)-unknown)),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
@@ -252,3 +256,15 @@ $(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin6
 endif
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
+
+ifdef ENABLE_WASM_NETCORE
+
+build-wasm-bcl-netcore: build-wasm-runtime-netcore
+	cp wasm-runtime-netcore-release/netcore/config.make ../../netcore/config.make
+	make -C ../../netcore
+
+package-wasm-bcl-netcore: build-wasm-bcl-netcore
+	mkdir -p ../out/wasm-bcl/netcore
+	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
+
+endif
