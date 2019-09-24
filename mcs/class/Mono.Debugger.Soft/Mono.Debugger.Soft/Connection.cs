@@ -307,7 +307,14 @@ namespace Mono.Debugger.Soft
 		public bool Subclasses {
 			get; set;
 		}
+		public bool NotFilteredFeature {
+			get; set;
+		}
+		public bool EverythingElse {
+			get; set;
+		}
 	}
+
 
 	class AssemblyModifier : Modifier {
 		public long[] Assemblies {
@@ -429,7 +436,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 53;
+		internal const int MINOR_VERSION = 54;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -2631,6 +2638,10 @@ namespace Mono.Debugger.Soft
 							w.WriteBool (em.Subclasses);
 						} else if (!em.Subclasses) {
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+						}
+						if (Version.MajorVersion > 2 || Version.MinorVersion >= 54) {
+							w.WriteBool (em.NotFilteredFeature);
+							w.WriteBool (em.EverythingElse);
 						}
 					} else if (mod is AssemblyModifier) {
 						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);

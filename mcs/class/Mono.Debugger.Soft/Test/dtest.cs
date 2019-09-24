@@ -1767,7 +1767,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[7].ParameterType;
 		Assert.AreEqual ("Tests", t.Name);
 		var nested = (from nt in t.GetNestedTypes () where nt.IsNestedPublic select nt).ToArray ();
-		Assert.AreEqual (1, nested.Length);
+		Assert.AreEqual (2, nested.Length);
 		Assert.AreEqual ("NestedClass", nested [0].Name);
 		Assert.IsTrue (t.BaseType.IsAssignableFrom (t));
 		Assert.IsTrue (!t.IsAssignableFrom (t.BaseType));
@@ -5085,6 +5085,46 @@ public class DebuggerTests
 		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
 		Assert.AreEqual("d", min.Value);
 	}
+
+	[Test]
+	public void TestExceptionFilterWin () {
+		Event e = run_until ("test_new_exception_filter1");
+		var req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.Exception"), true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		Event ev = GetNextEvent ();
+		var l = ev.Thread.GetFrames ()[0].Location;
+				
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter2");
+		req2 = vm.CreateExceptionRequest (null, true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter3");
+		var req3 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req3.Enable ();
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		req3.Disable ();
+		run_until ("test_new_exception_filter4");
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+	}
+
 
 #endif
 } // class DebuggerTests
