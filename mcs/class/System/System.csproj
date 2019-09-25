@@ -415,6 +415,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\RenamedEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\RenamedEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\Base64Stream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\BufferBuilder.cs" />
@@ -870,8 +872,6 @@
     <Compile Include="System.IO\InternalBufferOverflowException.cs" />
     <Compile Include="System.IO\InvalidDataException.cs" />
     <Compile Include="System.IO\NotifyFilters.cs" />
-    <Compile Include="System.IO\RenamedEventArgs.cs" />
-    <Compile Include="System.IO\RenamedEventHandler.cs" />
     <Compile Include="System.IO\WatcherChangeTypes.cs" />
     <Compile Include="System.Net.Mail\AlternateView.cs" />
     <Compile Include="System.Net.Mail\AlternateViewCollection.cs" />

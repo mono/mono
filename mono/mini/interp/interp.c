@@ -213,14 +213,14 @@ int mono_interp_traceopt = 0;
 
 #if USE_COMPUTED_GOTO
 
-#define MINT_IN_DISPATCH(op) goto *in_labels [op]
+#define MINT_IN_DISPATCH(op) goto *in_labels [opcode = (MintOpcode)(op)]
 #define MINT_IN_SWITCH(op)   MINT_IN_DISPATCH (op);
 #define MINT_IN_BREAK        MINT_IN_DISPATCH (*ip)
 #define MINT_IN_CASE(x)      LAB_ ## x:
 
 #else
 
-#define MINT_IN_SWITCH(op) COUNT_OP(op); switch (op)
+#define MINT_IN_SWITCH(op) COUNT_OP(op); switch (opcode = (MintOpcode)(op))
 #define MINT_IN_CASE(x) case x:
 #define MINT_IN_BREAK break
 
@@ -3267,6 +3267,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	 * but it may be useful for debug
 	 */
 	while (1) {
+		MintOpcode opcode;
 main_loop:
 		/* g_assert (sp >= frame->stack); */
 		/* g_assert(vt_sp - vtalloc <= frame->imethod->vt_stack_size); */
@@ -3483,7 +3484,8 @@ main_loop:
 			frame->ip = ip;
 
 			sp = do_icall_wrapper (frame, csignature, opcode, sp, target_ip, save_last_error);
-			EXCEPTION_CHECKPOINT;
+			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
+				EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 4;
 			MINT_IN_BREAK;
@@ -5926,7 +5928,8 @@ common_vcall:
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
 			sp = do_icall_wrapper (frame, NULL, *ip, sp, frame->imethod->data_items [ip [1]], FALSE);
-			EXCEPTION_CHECKPOINT;
+			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
+				EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 2;
 			MINT_IN_BREAK;

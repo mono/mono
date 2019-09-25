@@ -156,7 +156,7 @@ ICALL_EXPORT
 gint64 ves_icall_System_Threading_Interlocked_Exchange_Long(gint64 *location, gint64 value);
 
 ICALL_EXPORT
-MonoObject *ves_icall_System_Threading_Interlocked_Exchange_Object(MonoObject **location, MonoObject *value);
+void ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res);
 
 ICALL_EXPORT
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr(gpointer *location, gpointer value);
@@ -177,7 +177,7 @@ ICALL_EXPORT
 gint64 ves_icall_System_Threading_Interlocked_CompareExchange_Long(gint64 *location, gint64 value, gint64 comparand);
 
 ICALL_EXPORT
-MonoObject *ves_icall_System_Threading_Interlocked_CompareExchange_Object(MonoObject **location, MonoObject *value, MonoObject *comparand);
+void ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile*res);
 
 ICALL_EXPORT
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand);
@@ -189,10 +189,10 @@ ICALL_EXPORT
 gdouble ves_icall_System_Threading_Interlocked_CompareExchange_Double(gdouble *location, gdouble value, gdouble comparand);
 
 ICALL_EXPORT
-MonoObject* ves_icall_System_Threading_Interlocked_CompareExchange_T(MonoObject **location, MonoObject *value, MonoObject *comparand);
+void ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile*res);
 
 ICALL_EXPORT
-MonoObject* ves_icall_System_Threading_Interlocked_Exchange_T(MonoObject **location, MonoObject *value);
+void ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res);
 
 ICALL_EXPORT
 gint32 ves_icall_System_Threading_Interlocked_Add_Int(gint32 *location, gint32 value);
@@ -386,7 +386,7 @@ MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 /**
  * mono_thread_interruption_request_flag:
  *
- * Returns the address of a flag that will be non-zero if an interruption has
+ * A flag that will be non-zero if an interruption has
  * been requested for a thread. The thread to interrupt may not be the current
  * thread, so an additional call to mono_thread_interruption_requested () or
  * mono_thread_interruption_checkpoint () is always needed if the flag is not
