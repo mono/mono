@@ -13,6 +13,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
 			var readyEvent = new ManualResetEvent(false);

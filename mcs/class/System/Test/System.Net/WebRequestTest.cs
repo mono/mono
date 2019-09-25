@@ -433,6 +433,7 @@ namespace MonoTests.System.Net {
 #if FEATURE_NO_BSD_SOCKETS
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+	[Category ("MartinMonoIO")]
 	public void TestReceiveCancelation ()
 	{
 		HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri);

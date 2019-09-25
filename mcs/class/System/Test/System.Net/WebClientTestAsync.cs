@@ -84,6 +84,7 @@ namespace MonoTests.System.Net
 		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException
 #endif
 		[Category("InetAccess")]
+		[Category ("MartinFixme2")]
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();

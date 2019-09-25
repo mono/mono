@@ -17,6 +17,7 @@ using MonoTests.Helpers;
 
 namespace MonoTests.System.Net.Sockets {
 	[TestFixture]
+	[Category ("MartinFixme")]
 	public class UdpClientTest {
 		[Test] // .ctor ()
 #if FEATURE_NO_BSD_SOCKETS
@@ -872,10 +873,9 @@ namespace MonoTests.System.Net.Sockets {
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
-			IPAddress local_addr = Dns.GetHostEntry ("localhost").AddressList [0];
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
-				client.JoinMulticastGroup (mcast_addr, local_addr);
+				client.JoinMulticastGroup (mcast_addr, IPAddress.Loopback);
 			}
 		}
 

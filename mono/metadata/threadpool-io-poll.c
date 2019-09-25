@@ -53,6 +53,8 @@ poll_register_fd (gint fd, gint events, gboolean is_new)
 		poll_event |= MONO_POLLIN;
 	if (events & EVENT_OUT)
 		poll_event |= MONO_POLLOUT;
+	if (events & EVENT_ERR)
+		poll_event |= MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL;
 
 	for (i = 0; i < poll_fds_size; ++i) {
 		if (poll_fds [i].fd == fd) {

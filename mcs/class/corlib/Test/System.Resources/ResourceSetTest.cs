@@ -160,7 +160,7 @@ namespace MonoTests.System.Resources {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
 			}
 		}
 

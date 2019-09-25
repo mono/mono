@@ -37,6 +37,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ConnectIPAddressAny ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
@@ -498,6 +499,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		[Category ("RequiresBSDSockets")] // This verifies particular error codes, which we don't care about when nothing's working anyway.
 		public void SocketErrorTest ()
 		{
@@ -536,6 +538,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void DontFragmentDefaultTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -563,6 +566,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void DontFragmentDefaultUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -620,6 +624,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void EnableBroadcastDefaultTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -649,6 +654,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void EnableBroadcastChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -820,6 +826,7 @@ namespace MonoTests.System.Net.Sockets
 		/* Nothing much to test for LingerState */
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void MulticastLoopbackDefaultTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -837,6 +844,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void MulticastLoopbackChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1074,6 +1082,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void UseOnlyOverlappedIODefault ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1100,6 +1109,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void UseOnlyOverlappedIOChange ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1244,6 +1254,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void NoDelayDefaultTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1256,6 +1267,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void NoDelayChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1270,6 +1282,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("MartinFixme")]
 		public void NoDelayDefaultUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1288,6 +1301,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void NoDelayChangeUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1436,6 +1450,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginAcceptData ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1501,6 +1516,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginAcceptSocketUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1528,6 +1544,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginAcceptSocketBound ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1556,6 +1573,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginAcceptSocket ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1637,6 +1655,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginAcceptSocketAccClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1903,6 +1922,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginConnectMultiple2 ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2405,6 +2425,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ConnectMultiple2 ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2632,6 +2653,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void TestDefaultsDualMode ()
 		{
 			using (var socket = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)){
@@ -2837,6 +2859,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void ListenNotBound ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -3865,6 +3888,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // GetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		[Category ("MartinFixme")]
 		public void GetSocketOption2_OptionValue_Null ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -3919,6 +3943,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		[Category ("MartinFixme")]
 		public void SetSocketOption1_DontLinger ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -3930,6 +3955,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		[Category ("MartinFixme")]
 		public void SetSocketOption1_DontLinger_Null ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -3951,6 +3977,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		[Category ("MartinFixme")]
 		public void SetSocketOption1_Linger_Null ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -3989,6 +4016,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Int32)
+		[Category ("MartinFixme")]
 		public void SetSocketOption2_DontLinger ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4195,6 +4223,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("MartinFixme")]
 		public void SetSocketOption3_DontLinger_LingerOption ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4249,6 +4278,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("MartinFixme")]
 		public void SetSocketOption3_Linger_LingerOption ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4267,6 +4297,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void SetSocketOption3_DropMembershipIPv4_IPv6MulticastOption ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
@@ -4337,6 +4368,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void SetSocketOption3_DropMembershipIPv6_IPv6MulticastOption ()
 		{
 			if (!Socket.OSSupportsIPv6)
@@ -4513,7 +4545,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void ReceiveAsync_Null ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4522,7 +4554,8 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[Category ("MartinFixme")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void ReceiveAsync_Default ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4533,7 +4566,7 @@ namespace MonoTests.System.Net.Sockets
 
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void ReceiveAsync_NullBuffer ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4553,7 +4586,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void SendAsync_Null ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4562,6 +4595,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("MartinFixme")]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void SendAsync_Default ()
 		{
@@ -4573,7 +4607,7 @@ namespace MonoTests.System.Net.Sockets
 
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void SendAsync_NullBuffer ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -4656,6 +4690,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ConnectToIPV4EndPointUsingDualModelSocket () {
 			/*
 			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that
@@ -4697,6 +4732,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void BeginConnectToIPV4EndPointUsingDualModelSocket () {
 			/*
 			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that

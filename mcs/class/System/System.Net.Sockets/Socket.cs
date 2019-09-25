@@ -1661,7 +1661,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int Receive_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Receive_internal (IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
 
 #endregion
 

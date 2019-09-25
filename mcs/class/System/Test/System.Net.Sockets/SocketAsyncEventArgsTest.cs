@@ -40,6 +40,7 @@ namespace MonoTests.System.Net.Sockets {
 	public class SocketAsyncEventArgsTest {
 
 		[Test]
+		[Category ("MartinFixme")]
 		public void Defaults ()
 		{
 			SocketAsyncEventArgs saea = new SocketAsyncEventArgs ();

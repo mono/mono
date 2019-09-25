@@ -162,7 +162,7 @@ TESTNAME_ARG = -test=$(TESTNAME)
 endif
 
 ifdef TEST_HARNESS_VERBOSE
-LABELS_ARG = -labels
+LABELS_ARG = -labels=All
 endif
 
 ifdef ALWAYS_AOT_TESTS
@@ -309,7 +309,7 @@ ifdef HAVE_CS_XTESTS
 XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_RESULT_FILE := TestResult-$(PROFILE)-xunit.xml
-XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit $(XTEST_RESULT_FILE)
+XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit $(XTEST_RESULT_FILE) $(LOCAL_XTEST_HARNESS_FLAGS)
 
 XTEST_NOTRAITS := category=failing category=nonmonotests Benchmark=true
 

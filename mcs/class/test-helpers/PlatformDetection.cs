@@ -27,6 +27,7 @@ namespace System
 		public static bool IsOpenSUSE => false;
 		public static bool IsUbuntu1404 => false;
 		public static bool IsNotRedHatFamily6 => true;
+		public static bool IsRedHatFamily7 => false;
 		public static bool IsMacOsHighSierraOrHigher => false;
 		public static bool IsDebian8 => false;
 		public static bool IsInvokingStaticConstructorsSupported => true;
@@ -48,5 +49,7 @@ namespace System
 		public static bool IsNetCore => false;
 
 		public static int WindowsVersion => -1;
-    }
+
+		public static bool IsOSX => true;
+	}
 }

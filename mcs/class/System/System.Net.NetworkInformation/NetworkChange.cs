@@ -363,6 +363,7 @@ namespace System.Net.NetworkInformation {
 
 		bool EnsureSocket ()
 		{
+#if MARTIN_FIXME
 			lock (_lock) {
 				if (nl_sock != null)
 					return true;
@@ -379,6 +380,9 @@ namespace System.Net.NetworkInformation {
 				nl_sock.ReceiveAsync (nl_args);
 			}
 			return true;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		// _lock is held by the caller

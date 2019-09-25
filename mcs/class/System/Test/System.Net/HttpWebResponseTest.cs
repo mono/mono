@@ -27,6 +27,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void CharacterSet_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -56,6 +57,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void Close_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -76,6 +78,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ContentEncoding_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -105,6 +108,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ContentLength_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -126,6 +130,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ContentType_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -155,6 +160,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void Cookies_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -194,6 +200,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void GetResponseHeader_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -223,6 +230,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void GetResponseStream_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -252,6 +260,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void Headers_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -280,6 +289,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void LastModified_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -309,6 +319,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void Method_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -338,6 +349,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ProtocolVersion_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -367,6 +379,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void ResponseUri_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -396,6 +409,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void Server_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -425,6 +439,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void StatusCode_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -446,6 +461,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void StatusDescription_Disposed ()
 		{
 			using (SocketResponder responder = new SocketResponder (out var ep, s => FullResponseHandler (s))) {
@@ -516,6 +532,7 @@ namespace MonoTests.System.Net
 	}
 
 	[TestFixture]
+	[Category ("MartinFixme")]
 	public class HttpResponseStreamTest
 	{
 		[Test]

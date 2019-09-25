@@ -79,6 +79,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		private static int GetBestInterfaceForAddress (IPAddress addr) {
+#if MARTIN_FIXME
 			int index;
 			SocketAddress address = new SocketAddress (addr);
 			int error = (int) GetBestInterfaceEx (address.m_Buffer, out index);
@@ -87,6 +88,9 @@ namespace System.Net.NetworkInformation {
 			}
 
 			return index;
+#else
+			throw new PlatformNotSupportedException ();
+#endif
 		}
 
 		public override int GetLoopbackInterfaceIndex ()

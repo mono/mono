@@ -610,6 +610,7 @@ namespace MonoTests.System.Net {
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme2")]
 		public void MultiResponses ()
 		{
 			echoServerStarted = new ManualResetEvent (false);
@@ -737,6 +738,7 @@ namespace MonoTests.System.Net {
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinMonoIO")]
 		public void Test_MultipleConnections ()
 		{
 			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/multiple/");

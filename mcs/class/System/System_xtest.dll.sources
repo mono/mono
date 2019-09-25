@@ -11,6 +11,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
+../../../external/corefx/src/Common/tests/System/Buffers/NativeMemoryManager.cs
 ../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
 ../../../external/corefx/src/Common/tests/System/Net/Capability.Security.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
@@ -21,6 +22,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/VirtualNetwork/*.cs
 ../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
+
 
 # System.CodeDom
 ../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
@@ -97,9 +99,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAPM.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAsync.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/TestSettings.cs
-../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/NetworkStreamTest.cs
-../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/NetworkStreamTest.netcoreapp.cs
-#../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:NetworkStreamTest.netcoreapp.cs,SocketTestHelper.netcoreapp.cs,SendReceive.netcoreapp.cs,SocketAsyncEventArgsTest.cs,LoggingTest.cs,SendReceive.cs
+../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:LoggingTest.cs
 
 # System.Net.Primitives
 ../../../external/corefx/src/System.Net.Primitives/tests/FunctionalTests/CookieTest/*.cs

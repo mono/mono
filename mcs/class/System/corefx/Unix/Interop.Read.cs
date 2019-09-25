@@ -13,11 +13,6 @@ internal static partial class Interop
 {
 	internal static partial class Sys
 	{
-		static Sys ()
-		{
-			Interop.mono_pal_init ();
-		}
-
 		/// <summary>
 		/// Reads a number of bytes from an open file descriptor into a specified buffer.
 		/// </summary>
@@ -31,21 +26,13 @@ internal static partial class Interop
 		internal static unsafe int Read (SafeFileHandle fd, byte* buffer, int count)
 		{
 			int bytes_read = -1;
-			bool release = false;
-			try {
-				fd.DangerousAddRef (ref release);
-				do {
-					bytes_read = Read (fd.DangerousGetHandle (), buffer, count);
-				} while (bytes_read < 0 && Marshal.GetLastWin32Error () == (int) Interop.Error.EINTR);
-			}
-			finally {
-				if (release)
-					fd.DangerousRelease ();
-			}
+			do {
+				bytes_read = Read_internal (fd.DangerousGetHandle (), buffer, count);
+			} while (bytes_read < 0 && Marshal.GetLastWin32Error () == (int) Interop.Error.EINTR);
 			return bytes_read;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern unsafe int Read (IntPtr fd, byte* buffer, int count);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern unsafe int Read_internal (IntPtr fd, byte* buffer, int count);
 	}
 }

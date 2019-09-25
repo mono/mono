@@ -205,6 +205,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void HttpRequestIsLocal ()
 		{
 			var ips = new List<IPAddress> ();

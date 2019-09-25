@@ -21,6 +21,7 @@ namespace MonoTests.System.Net.Sockets
 	/// Tests System.Net.Sockets.TcpClient
 	/// </summary>
 	[TestFixture]
+	[Category ("MartinFixme")]
 	public class TcpClientTest
 	{
 		

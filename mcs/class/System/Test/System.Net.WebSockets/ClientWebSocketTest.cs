@@ -14,6 +14,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.WebSockets
 {
 	[TestFixture]
+	[Category ("MartinMonoIO")]
 	public class ClientWebSocketTest
 	{
 		const string EchoServerUrl = "ws://corefx-net.cloudapp.net/WebSocket/EchoWebSocket.ashx";

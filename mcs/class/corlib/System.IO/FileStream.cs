@@ -152,13 +152,11 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
-			if (path == null) {
-				throw new ArgumentNullException ("path");
-			}
+			if (path == null)
+				throw new ArgumentNullException (nameof (path), SR.ArgumentNull_Path);
 
-			if (path.Length == 0) {
-				throw new ArgumentException ("Path is empty");
-			}
+			if (path.Length == 0)
+				throw new ArgumentException (SR.Argument_EmptyPath, nameof (path));
 
 			this.anonymous = anonymous;
 			// ignore the Inheritable flag

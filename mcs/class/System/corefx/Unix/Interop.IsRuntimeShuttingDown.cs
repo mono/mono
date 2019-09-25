@@ -2,18 +2,21 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+using System;
 
 internal static partial class Interop
 {
-	[DllImport("System.Native")]
-	internal static extern void mono_pal_init ();
-
 	internal static partial class Sys
 	{
-		static Sys ()
+		public static bool IsRuntimeShuttingDown ()
 		{
-			Interop.mono_pal_init ();
+			return IsRuntimeShuttingDown_internal () != 0;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int IsRuntimeShuttingDown_internal ();
 	}
 }

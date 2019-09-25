@@ -1673,6 +1673,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme2")]
 		public void NtlmAuthentication ()
 		{
 			NtlmServer server = new NtlmServer ();
@@ -1941,6 +1942,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme2")]
 		public void BeginWrite ()
 		{
 			byte[] received = new byte[data64KB.Length];

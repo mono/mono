@@ -28,6 +28,7 @@ namespace MonoTests.System.Net
 		[ExpectedException (typeof (WebException))] // Something catches the PlatformNotSupportedException and re-throws an WebException
 #endif
 		[Category ("InetAccess")]
+		[Category ("MartinFixme2")]
 		public void DownloadTwice ()
 		{
 			WebClient wc = new WebClient();
@@ -1729,6 +1730,7 @@ namespace MonoTests.System.Net
 #endif
 		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 		[Category ("InetAccess")]
+		[Category ("MartinFixme2")]
 		public void GetWebRequestOverriding ()
 		{
 			GetWebRequestOverridingTestClass testObject = new GetWebRequestOverridingTestClass ();
@@ -1849,6 +1851,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void UploadStringAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9301, (webClient, uri, cancelEvent) =>
@@ -1869,6 +1872,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void UploadDataAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9302, (webClient, uri, cancelEvent) =>
@@ -1888,6 +1892,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void UploadValuesAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9303, (webClient, uri, cancelEvent) =>
@@ -1907,6 +1912,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme")]
 		public void UploadFileAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9304,(webClient, uri, cancelEvent) =>

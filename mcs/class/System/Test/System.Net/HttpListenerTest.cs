@@ -535,6 +535,7 @@ namespace MonoTests.System.Net {
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme2")]
 		public void ConnectionReuse ()
 		{
 			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri);
@@ -618,6 +619,7 @@ namespace MonoTests.System.Net {
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MartinFixme2")]
 		public void HttpClientIsDisconnectedCheckForWriteException()
 		{
 			AutoResetEvent exceptionOccuredEvent = new AutoResetEvent (false);
