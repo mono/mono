@@ -999,7 +999,7 @@ namespace System.Net.Sockets
 			}
 		});
 
-		public IAsyncResult BeginConnect (string host, int port, AsyncCallback requestCallback, object state)
+		public IAsyncResult BeginConnect (string host, int port, AsyncCallback callback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 
@@ -1012,32 +1012,23 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			var callback = new AsyncCallback ((result) => {
-				var resultTask = ((Task<IPAddress[]>)result);
-				BeginConnect (resultTask.Result, port, requestCallback, resultTask.AsyncState);
-			});
-			return ConvertToApm<IPAddress[]> (Dns.GetHostAddressesAsync (host), callback, state);
-		}
+			var sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
+				Port = port
+			};
 
-		private static IAsyncResult ConvertToApm<T> (Task<T> task, AsyncCallback callback, object state)
-		{
-			if (task == null)
-				throw new ArgumentNullException ("task");
-
-			var tcs = new TaskCompletionSource<T> (state);
-			task.ContinueWith (t =>
-			{
+			var dnsRequest = Dns.GetHostAddressesAsync (host);
+			dnsRequest.ContinueWith (t => {
 				if (t.IsFaulted)
-					tcs.TrySetException (t.Exception.InnerExceptions);
+					sockares.Complete (t.Exception.InnerException);
 				else if (t.IsCanceled)
-					tcs.TrySetCanceled ();
-				else
-					tcs.TrySetResult (t.Result);
-
-				if (callback != null)
-					callback (tcs.Task);
+					sockares.Complete (new OperationCanceledException ());
+				else {
+					sockares.Addresses = t.Result;
+					BeginMConnect (sockares);
+				}
 			}, TaskScheduler.Default);
-			return tcs.Task;
+
+			return sockares;
 		}
 
 		public IAsyncResult BeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
