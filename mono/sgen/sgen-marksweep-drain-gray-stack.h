@@ -25,6 +25,8 @@ static inline MONO_ALWAYS_INLINE gboolean
 COPY_OR_MARK_FUNCTION_NAME (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
 {
 	MSBlockInfo *block;
+	if (obj == sgen_debug_object)
+		asm ("int $3");
 
 #ifdef HEAVY_STATISTICS
 	++stat_optimized_copy;
@@ -223,6 +225,8 @@ static void
 SCAN_OBJECT_FUNCTION_NAME (GCObject *full_object, SgenDescriptor desc, SgenGrayQueue *queue)
 {
 	char *start = (char*)full_object;
+	if (full_object == sgen_debug_object)
+		asm ("int $3");
 
 #ifdef HEAVY_STATISTICS
 	++stat_optimized_major_scan;

@@ -161,6 +161,8 @@ sgen_gray_object_queue_is_empty (SgenGrayQueue *queue)
 static inline MONO_ALWAYS_INLINE void
 GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc, gboolean is_parallel)
 {
+	if (obj == sgen_debug_object)
+		asm ("int $3");
 #if SGEN_MAX_DEBUG_LEVEL >= 9
 	sgen_gray_object_enqueue (queue, obj, desc, is_parallel);
 #else

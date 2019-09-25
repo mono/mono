@@ -207,6 +207,8 @@
  * ######################################################################
  */
 
+gpointer sgen_debug_object = NULL;
+
 /* 0 means not initialized, 1 is initialized, -1 means in progress */
 static int gc_initialized = 0;
 /* If set, check if we need to do something every X allocations */

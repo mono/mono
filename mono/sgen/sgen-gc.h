@@ -154,6 +154,7 @@ extern guint64 stat_objects_copied_major;
 
 extern int sgen_gc_debug_level;
 extern FILE* sgen_gc_debug_file;
+extern gpointer sgen_debug_object;
 
 extern int sgen_current_collection_generation;
 
