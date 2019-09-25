@@ -42,38 +42,47 @@ namespace System.Threading
 	public static partial class Monitor
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_synchronised(object obj);
+		extern static bool Monitor_test_synchronised (ref object obj);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse(object obj);
+		extern static void Monitor_pulse (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ObjPulse(Object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException("Object is not synchronized");
 
-			Monitor_pulse (obj);
+			Monitor_pulse (ref obj);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse_all(object obj);
+		extern static void Monitor_pulse_all (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ObjPulseAll(Object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException("Object is not synchronized");
 
-			Monitor_pulse_all (obj);
+			Monitor_pulse_all (ref obj);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_wait(object obj, int ms);
+		extern static bool Monitor_wait (ref object obj, int ms, bool allowInterruption);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static bool ObjWait(bool exitContext, int millisecondsTimeout, Object obj)
 		{
 			if (millisecondsTimeout < 0 && millisecondsTimeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
 			try {
@@ -81,8 +90,8 @@ namespace System.Threading
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
 #endif
-
-				return Monitor_wait (obj, millisecondsTimeout);
+				bool allowInterruption = true;
+				return Monitor_wait (ref obj, millisecondsTimeout, allowInterruption);
 			} finally {
 #if FEATURE_REMOTING
 				if (exitContext)
@@ -92,8 +101,11 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+		extern static void try_enter_with_atomic_var (ref object obj, int millisecondsTimeout, bool allowInterruption, ref bool lockTaken);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ReliableEnterTimeout(Object obj, int timeout, ref bool lockTaken)
 		{
 			if (obj == null)
@@ -101,7 +113,8 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
+			bool allowInterruption = true;
+			try_enter_with_atomic_var (ref obj, timeout, allowInterruption, ref lockTaken);
 		}
 
 		static void ReliableEnter(Object obj, ref bool lockTaken)
@@ -110,11 +123,14 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_owner (object obj);
+		extern static bool Monitor_test_owner (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static bool IsEnteredNative(Object obj)
 		{
-			return Monitor_test_owner (obj);
+			return Monitor_test_owner (ref obj);
 		}
 		
 #if NETCORE

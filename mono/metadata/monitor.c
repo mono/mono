@@ -90,8 +90,8 @@ static MonitorArray *monitor_allocated;
 static int array_size = 16;
 
 static MonoBoolean
-mono_monitor_try_enter_loop_if_interrupted (MonoObject *obj, guint32 ms,
-	MonoBoolean allow_interruption, MonoBoolean *lockTaken, MonoError* error);
+mono_monitor_try_enter_loop_if_interrupted (MonoObject *volatile* obj_handle, guint32 timeout_milliseconds,
+	MonoBoolean allow_interruption, gboolean adequate_handle, MonoBoolean *lock_taken);
 
 /* MonoThreadsSync status helpers */
 
@@ -803,7 +803,7 @@ static gint64 thread_contentions; /* for Monitor.LockContentionCount, otherwise 
  * is requested. In this case it returns -1.
  */ 
 static gint32
-mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_interruption, guint32 id)
+mono_monitor_try_enter_inflated (MonoObject *obj, guint32 timeout_milliseconds, gboolean allow_interruption, guint32 id)
 {
 	LockWord lw;
 	MonoThreadsSync *mon;
@@ -813,7 +813,7 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 	MonoInternalThread *thread;
 	gboolean interrupted, timedout;
 
-	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
+	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, timeout_milliseconds));
 
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
@@ -861,8 +861,8 @@ retry:
 #endif
 #endif
 
-	/* If ms is 0 we don't block, but just fail straight away */
-	if (ms == 0) {
+	/* If timeout_milliseconds is 0 we don't block, but just fail straight away */
+	if (timeout_milliseconds == 0) {
 		LOCK_DEBUG (g_message ("%s: (%d) timed out, returning FALSE", __func__, id));
 		return 0;
 	}
@@ -915,10 +915,10 @@ retry_contended:
 		goto retry_contended;
 	}
 
-	if (ms != MONO_INFINITE_WAIT) {
+	if (timeout_milliseconds != MONO_INFINITE_WAIT) {
 		then = mono_msec_ticks ();
 	}
-	waitms = ms;
+	waitms = timeout_milliseconds;
 	
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->thread_queue_len);
@@ -930,7 +930,7 @@ retry_contended:
 	mono_thread_info_install_interrupt (signal_monitor, mon, &interrupted);
 	if (!interrupted) {
 		timedout = FALSE;
-		if (ms == MONO_INFINITE_WAIT) {
+		if (timeout_milliseconds == MONO_INFINITE_WAIT) {
 			mono_coop_cond_wait (mon->entry_cond, mon->entry_mutex);
 		} else {
 			if (mono_coop_cond_timedwait (mon->entry_cond, mon->entry_mutex, waitms) == -1)
@@ -957,17 +957,17 @@ retry_contended:
 		 */
 		if ((interrupted && !mono_thread_test_state (mono_thread_internal_current (), ThreadState_SuspendRequested | ThreadState_AbortRequested)) || !interrupted) {
 			/* We were interrupted (and allow_interruption is FALSE) or we were signaled */
-			if (ms != MONO_INFINITE_WAIT) {
+			if (timeout_milliseconds != MONO_INFINITE_WAIT) {
 				now = mono_msec_ticks ();
 
 				/* it should not overflow before ~30k years */
 				g_assert (now >= then);
 
 				delta = now - then;
-				if (delta >= ms) {
-					ms = 0;
+				if (delta >= timeout_milliseconds) {
+					timeout_milliseconds = 0;
 				} else {
-					ms -= delta;
+					timeout_milliseconds -= delta;
 				}
 			}
 			/* retry from the top */
@@ -994,12 +994,12 @@ retry_contended:
  * is requested. In this case it returns -1.
  */
 static gint32
-mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_interruption)
+mono_monitor_try_enter_internal (MonoObject *obj, guint32 timeout_milliseconds, gboolean allow_interruption)
 {
 	LockWord lw;
 	int const id = mono_thread_info_get_small_id ();
 
-	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
+	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, timeout_milliseconds));
 
 	lw.sync = obj->synchronisation;
 
@@ -1010,15 +1010,15 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 		} else {
 			/* Someone acquired it in the meantime or put a hash */
 			mono_monitor_inflate (obj);
-			return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+			return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 		}
 	} else if (lock_word_is_inflated (lw)) {
-		return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+		return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 	} else if (lock_word_is_flat (lw)) {
 		if (lock_word_get_owner (lw) == id) {
 			if (lock_word_is_max_nest (lw)) {
 				mono_monitor_inflate_owned (obj, id);
-				return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+				return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 			} else {
 				LockWord nlw, old_lw;
 				nlw = lock_word_increment_nest (lw);
@@ -1026,17 +1026,17 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 				if (old_lw.sync != lw.sync) {
 					/* Someone else inflated it in the meantime */
 					g_assert (lock_word_is_inflated (old_lw));
-					return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+					return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 				}
 				return 1;
 			}
 		} else {
 			mono_monitor_inflate (obj);
-			return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+			return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 		}
 	} else if (lock_word_has_hash (lw)) {
 		mono_monitor_inflate (obj);
-		return mono_monitor_try_enter_inflated (obj, ms, allow_interruption, id);
+		return mono_monitor_try_enter_inflated (obj, timeout_milliseconds, allow_interruption, id);
 	}
 
 	g_assert_not_reached ();
@@ -1047,12 +1047,12 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 MonoBoolean
 mono_monitor_enter_internal (MonoObject *obj)
 {
-	const int timeout_milliseconds = MONO_INFINITE_WAIT;
+	const gboolean adequate_handle = FALSE;
 	const gboolean allow_interruption = TRUE;
-	MonoError * const error = NULL;
 	MonoBoolean lock_taken;
+	const int timeout_milliseconds = MONO_INFINITE_WAIT;
 
-	return mono_monitor_try_enter_loop_if_interrupted (obj, timeout_milliseconds, allow_interruption, &lock_taken, error);
+	return mono_monitor_try_enter_loop_if_interrupted (&obj, timeout_milliseconds, allow_interruption, adequate_handle, &lock_taken);
 }
 
 /**
@@ -1074,14 +1074,16 @@ mono_monitor_enter_fast (MonoObject *obj)
 		 * FALSE and let the slow path take care of it. */
 		return FALSE;
 	}
-	return mono_monitor_try_enter_internal (obj, 0, FALSE) == 1;
+	const guint32 timeout = 0;
+	const gboolean allow_interruption = FALSE;
+	return mono_monitor_try_enter_internal (obj, timeout, allow_interruption) == 1;
 }
 
 /**
  * mono_monitor_try_enter:
  */
 gboolean
-mono_monitor_try_enter (MonoObject *obj, guint32 ms)
+mono_monitor_try_enter (MonoObject *obj, guint32 timeout_milliseconds)
 {
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
@@ -1089,7 +1091,8 @@ mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
-	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_try_enter_internal (obj, ms, FALSE) == 1);
+	const gboolean allow_interruption = FALSE;
+	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_try_enter_internal (obj, timeout_milliseconds, allow_interruption) == 1);
 }
 
 void
@@ -1118,9 +1121,9 @@ mono_monitor_exit_internal (MonoObject *obj)
 }
 
 void
-mono_monitor_exit_icall (MonoObjectHandle obj, MonoError* error)
+mono_monitor_exit_icall (MonoObject *volatile* obj)
 {
-	mono_monitor_exit_internal (MONO_HANDLE_RAW (obj));
+	mono_monitor_exit_internal (*obj);
 }
 
 /**
@@ -1166,26 +1169,24 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset)
 }
 
 static MonoBoolean
-mono_monitor_try_enter_loop_if_interrupted (MonoObject *obj, guint32 ms,
-	MonoBoolean allow_interruption, MonoBoolean *lockTaken, MonoError* error)
+mono_monitor_try_enter_loop_if_interrupted (MonoObject *volatile* obj_handle, guint32 timeout_milliseconds,
+					MonoBoolean allow_interruption, gboolean adequate_handle, MonoBoolean *lock_taken)
 {
-	// Return value and lockTaken are equivalent, except, to preserve prior behavior,
-	// *lockTaken is not always written to, i.e. in the error paths.
+	// Return value and lock_taken are equivalent, except, to preserve prior behavior,
+	// *lock_taken is not always written to, i.e. in the error paths.
 	//
-	// Some callers have lockTaken and only use it, some only have the return value.
+	// Some callers have lock_taken and only use it, some only have the return value.
 
-	if (G_UNLIKELY (!obj)) {
-		if (error) {
-			mono_error_set_argument_null (error, "obj", "");
-		} else {
-			ERROR_DECL (error);
-			mono_error_set_argument_null (error, "obj", "");
-			mono_error_set_pending_exception (error);
-		}
-		return FALSE;
-	}
+	MonoObject *obj = *obj_handle;
 
 	gint32 res;
+
+	if (G_UNLIKELY (!obj)) {
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
+		return FALSE;
+	}
 
 	/*
 	 * An inquisitive mind could ask what's the deal with this loop.
@@ -1195,22 +1196,31 @@ mono_monitor_try_enter_loop_if_interrupted (MonoObject *obj, guint32 ms,
 	 * it will return NULL meaning we can't be aborted right now. Once that happens we switch to non-alertable.
 	 */
 	do {
-		res = mono_monitor_try_enter_internal (obj, ms, allow_interruption);
+		res = mono_monitor_try_enter_internal (obj, timeout_milliseconds, allow_interruption);
 		if (res == -1) {
 			// The wait was interrupted and the monitor was not acquired.
-			MonoException *exc;
-			HANDLE_FUNCTION_ENTER ();
-			exc = mono_thread_interruption_checkpoint ();
-			if (exc) {
-				MONO_HANDLE_NEW (MonoException, exc);
-				if (error)
-					mono_error_set_exception_instance (error, exc);
-				else
+			if (adequate_handle) {
+				// If already have a usable handle, do not pay for
+				// a handle frame.
+				MonoException *exc = mono_thread_interruption_checkpoint ();
+				if (exc) {
+					*obj_handle = (MonoObject*)exc;
 					mono_set_pending_exception (exc);
+					return FALSE;
+				}
+			} else {
+				// We do not have a handle, nor necessarily a handle frame. Create one.
+				MonoException *exc;
+				HANDLE_FUNCTION_ENTER ();
+				exc = mono_thread_interruption_checkpoint ();
+				if (exc) {
+					MONO_HANDLE_NEW (MonoException, exc);
+					mono_set_pending_exception (exc);
+				}
+				HANDLE_FUNCTION_RETURN ();
+				if (exc)
+					return FALSE;
 			}
-			HANDLE_FUNCTION_RETURN ();
-			if (exc)
-				return FALSE;
 			// The interrupt was a false positive. Ignore it from now on.
 			// This feels like a hack.
 			// threads.c should give us less confusing directions.
@@ -1219,23 +1229,17 @@ mono_monitor_try_enter_loop_if_interrupted (MonoObject *obj, guint32 ms,
 	} while (res == -1);
 
 	/*It's safe to do it from here since interruption would happen only on the wrapper.*/
-	*lockTaken = res == 1;
+	*lock_taken = res == 1;
 	return res;
 }
 
-#ifdef ENABLE_NETCORE
 void
-ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean allow_interruption, MonoBoolean* lockTaken, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *volatile* obj,
+	guint32 timeout_milliseconds, MonoBoolean allow_interruption, MonoBoolean* lock_taken)
 {
-	mono_monitor_try_enter_loop_if_interrupted (MONO_HANDLE_RAW (obj), ms, allow_interruption, lockTaken, error);
+	const gboolean adequate_handle = TRUE;
+	mono_monitor_try_enter_loop_if_interrupted (obj, timeout_milliseconds, allow_interruption, adequate_handle, lock_taken);
 }
-#else
-void
-ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean* lockTaken, MonoError* error)
-{
-	mono_monitor_try_enter_loop_if_interrupted (MONO_HANDLE_RAW (obj), ms, TRUE, lockTaken, error);
-}
-#endif
 
 /**
  * mono_monitor_enter_v4:
@@ -1251,13 +1255,15 @@ mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 void
 mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 {
-	if (*lock_taken == 1) {
+	if (G_UNLIKELY(*lock_taken == 1)) {
 		ERROR_DECL (error);
 		mono_error_set_argument (error, "lockTaken", "lockTaken is already true");
 		mono_error_set_pending_exception (error);
 		return;
 	}
-	mono_monitor_try_enter_loop_if_interrupted (obj, MONO_INFINITE_WAIT, FALSE, lock_taken, NULL);
+	const MonoBoolean allow_interruption = FALSE;
+	const gboolean adequate_handle = FALSE;
+	mono_monitor_try_enter_loop_if_interrupted (&obj, MONO_INFINITE_WAIT, allow_interruption, adequate_handle, lock_taken);
 }
 
 /*
@@ -1274,16 +1280,17 @@ mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken)
 	if (*lock_taken == 1 || G_UNLIKELY (!obj))
 		return FALSE;
 
-	gboolean const res = mono_monitor_try_enter_internal (obj, 0, TRUE) == 1;
+	const gboolean timeout = 0;
+	const allow_interruption = TRUE;
+	const gboolean res = mono_monitor_try_enter_internal (obj, timeout, allow_interruption) == 1;
 	*lock_taken = (MonoBoolean)res;
-	return (guint32)res;
+	return res;
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *volatile* obj_handle)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
+	MonoObject *obj = *obj_handle;
 	LockWord lw;
 
 	LOCK_DEBUG (g_message ("%s: Testing if %p is owned by thread %d", __func__, obj, mono_thread_info_get_small_id()));
@@ -1300,10 +1307,9 @@ ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj_hand
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle obj_handle, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *volatile* obj_handle)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
+	MonoObject *obj = *obj_handle;
 	LockWord lw;
 
 	LOCK_DEBUG (g_message("%s: (%d) Testing if %p is owned by any thread", __func__, mono_thread_info_get_small_id (), obj));
@@ -1358,22 +1364,21 @@ mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *volatile* obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, FALSE);
+	mono_monitor_pulse (*obj, __func__, FALSE);
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, MonoError* error)
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *volatile* obj)
 {
-	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
+	mono_monitor_pulse (*obj, __func__, TRUE);
 }
 
-static MonoBoolean
-mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
+MonoBoolean
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *volatile* obj_handle, guint32 timeout_milliseconds, MonoBoolean allow_interruption)
 {
-	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-
+	MonoObject *obj = *obj_handle;
 	LockWord lw;
 	MonoThreadsSync *mon;
 	HANDLE event;
@@ -1384,7 +1389,7 @@ mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_in
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	int const id = mono_thread_info_get_small_id ();
 
-	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, id, obj, ms));
+	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, id, obj, timeout_milliseconds));
 
 	lw.sync = obj->synchronisation;
 
@@ -1435,7 +1440,7 @@ mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_in
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	ret = mono_w32handle_wait_one (event, ms, TRUE);
+	ret = mono_w32handle_wait_one (event, timeout_milliseconds, TRUE);
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking
@@ -1486,23 +1491,10 @@ mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_in
 	return success;
 }
 
-#ifdef ENABLE_NETCORE
-MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
-{
-	return mono_monitor_wait (obj_handle, ms, allow_interruption, error);
-}
-#else
-MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
-{
-	return mono_monitor_wait (obj_handle, ms, TRUE, error);
-}
-#endif
-
 void
 ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObjectHandle obj, MonoError* error)
 {
+	// FIXME NOHANDLES
 	mono_monitor_enter_internal (MONO_HANDLE_RAW (obj));
 }
 

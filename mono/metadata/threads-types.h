@@ -378,9 +378,6 @@ mono_thread_interruption_checkpoint_bool (void);
 void
 mono_thread_interruption_checkpoint_void (void);
 
-MonoExceptionHandle
-mono_thread_interruption_checkpoint_handle (void);
-
 ICALL_EXTERN_C
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 

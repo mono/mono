@@ -11,6 +11,9 @@ namespace System.Threading
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern void Enter (object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static void Enter (object obj, ref bool lockTaken)
 		{
 			if (lockTaken)
@@ -20,7 +23,15 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern void Exit (object obj);
+		static extern void Exit_icall (ref object obj);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void Exit (object obj)
+		{
+			Exit_icall (ref obj);
+		}
 
 		public static bool TryEnter (object obj)
 		{
@@ -108,46 +119,59 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_synchronised (object obj);
+		extern static bool Monitor_test_synchronised (ref object obj);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse (object obj);
+		extern static void Monitor_pulse (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ObjPulse (object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			Monitor_pulse (obj);
+			Monitor_pulse (ref obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Monitor_pulse_all (object obj);
+		extern static void Monitor_pulse_all (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ObjPulseAll (object obj)
 		{
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			Monitor_pulse_all (obj);
+			Monitor_pulse_all (ref obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static bool Monitor_wait (object obj, int ms, bool allowInterruption);
+		internal extern static bool Monitor_wait (ref object obj, int ms, bool allowInterruption);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static bool ObjWait (bool exitContext, int millisecondsTimeout, object obj)
 		{
 			if (millisecondsTimeout < 0 && millisecondsTimeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (!Monitor_test_synchronised (obj))
+			if (!Monitor_test_synchronised (ref obj))
 				throw new SynchronizationLockException ("Object is not synchronized");
 
-			return Monitor_wait (obj, millisecondsTimeout, true);
+			bool allowInterruption = true;
+			return Monitor_wait (ref obj, millisecondsTimeout, allowInterruption);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, bool allowInterruption, ref bool lockTaken);
+		internal extern static void try_enter_with_atomic_var (ref object obj, int millisecondsTimeout, bool allowInterruption, ref bool lockTaken);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void ReliableEnterTimeout (object obj, int timeout, ref bool lockTaken)
 		{
 			if (obj == null)
@@ -156,7 +180,8 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 
-			try_enter_with_atomic_var (obj, timeout, true, ref lockTaken);
+			bool allowInterruption = true;
+			try_enter_with_atomic_var (ref obj, timeout, allowInterruption, ref lockTaken);
 		}
 
 		static void ReliableEnter (object obj, ref bool lockTaken)
@@ -165,11 +190,14 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool Monitor_test_owner (object obj);
+		extern static bool Monitor_test_owner (ref object obj);
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static bool IsEnteredNative (object obj)
 		{
-			return Monitor_test_owner (obj);
+			return Monitor_test_owner (ref obj);
 		}
 		
 		public extern static long LockContentionCount

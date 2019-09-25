@@ -95,8 +95,17 @@ namespace System.Threading {
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        public static extern void Exit(Object obj);
+        static extern void Exit_icall (ref Object obj);
     
+#if !MONO
+        [ResourceExposure(ResourceScope.None)]
+#endif
+        [ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+        public static void Exit (Object obj)
+        {
+                Exit_icall (ref obj);
+        }
+
         /*=========================================================================
         ** Similar to Enter, but will never block. That is, if the current thread can
         ** acquire the monitor lock without blocking, it will do so and TRUE will

@@ -14,17 +14,27 @@ namespace System.Threading
 		{
 		}
 
-		public bool TryAcquire()
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		bool AcquireInternal (int timeout)
 		{
 			bool lockTaken = false;
-			Monitor.try_enter_with_atomic_var (this, 0, false, ref lockTaken);
+			bool allowInterruption = false;
+			object self = this;
+			Monitor.try_enter_with_atomic_var (ref self, timeout, allowInterruption, ref lockTaken);
 			return lockTaken;
 		}
 
-		public void Acquire()
+		public bool TryAcquire ()
 		{
-			bool lockTaken = false;
-			Monitor.try_enter_with_atomic_var (this, Timeout.Infinite, false, ref lockTaken);
+			int timeout_zero = 0;
+			return AcquireInternal (timeout_zero);
+		}
+
+		public void Acquire ()
+		{
+			AcquireInternal (Timeout.Infinite);
 		}
 
 		public void Release()

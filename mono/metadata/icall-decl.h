@@ -204,7 +204,6 @@ ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange
 ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size);
 ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpointer sock);
 #endif
-
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle);
 ICALL_EXPORT gpointer ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void);
 ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void);
@@ -226,16 +225,29 @@ ICALL_EXPORT MonoBoolean ves_icall_System_Array_CanChangePrimitive (MonoReflecti
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsLogging (void);
 ICALL_EXPORT void ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *volatile* category, MonoString *volatile* message);
+
 ICALL_EXPORT void ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array);
 ICALL_EXPORT void ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct);
+
 ICALL_EXPORT void ves_icall_Mono_SafeStringMarshal_GFree (void *c_str);
 ICALL_EXPORT char* ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *volatile* s);
+
 ICALL_EXPORT MonoType* ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass);
+
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2*);
+
+ICALL_EXPORT void        ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *volatile* obj);
+ICALL_EXPORT void        ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *volatile* obj);
+ICALL_EXPORT void        ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *volatile* obj, guint32 ms, MonoBoolean allow_interruption, MonoBoolean* lockTaken);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *volatile* obj);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *volatile* obj);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *volatile* obj, guint32 ms, MonoBoolean allow_interruption);
+ICALL_EXPORT void        mono_monitor_exit_icall (MonoObject *volatile* obj);
+
 ICALL_EXPORT gpointer ves_icall_System_Net_Sockets_Socket_Accept (gsize, gint32*, MonoBoolean);
 ICALL_EXPORT gint32 ves_icall_System_Net_Sockets_Socket_Available (gsize, gint32*);
 

@@ -31,14 +31,18 @@ namespace System.Threading
 		{
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		private bool WaitCore (int timeoutMs)
 		{
 			WaitEntry wait_entry = new WaitEntry ();
 			bool mutexLocked = false;
 			bool waitEntryLocked = false;
+			bool allowInterruption = false;
 
 			try {
-				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
+				Monitor.try_enter_with_atomic_var (ref mutex, Timeout.Infinite, allowInterruption, ref mutexLocked);
 
 				if (pending_signals > 0) {
 					--pending_signals;
@@ -60,9 +64,9 @@ namespace System.Threading
 			}
 
 			try {
-				Monitor.try_enter_with_atomic_var (wait_entry.condition, Timeout.Infinite, false, ref waitEntryLocked);
+				Monitor.try_enter_with_atomic_var (ref wait_entry.condition, Timeout.Infinite, allowInterruption, ref waitEntryLocked);
 				if (!wait_entry.signaled) {
-					Monitor.Monitor_wait (wait_entry.condition, timeoutMs, false);
+					Monitor.Monitor_wait (ref wait_entry.condition, timeoutMs, allowInterruption);
 				}
 			}
 			finally {
@@ -72,7 +76,7 @@ namespace System.Threading
 	
 			mutexLocked = false;
 			try {
-				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
+				Monitor.try_enter_with_atomic_var (ref mutex, Timeout.Infinite, allowInterruption, ref mutexLocked);
 
 				if (!wait_entry.signaled) {
 					if (head == Unsafe.AsPointer<WaitEntry> (ref wait_entry)) {
@@ -95,11 +99,15 @@ namespace System.Threading
 			return wait_entry.signaled;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		private void ReleaseCore (int count)
 		{
+			bool allowInterruption = false;
 			bool mutexLocked = false;
 			try {
-				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
+				Monitor.try_enter_with_atomic_var (ref mutex, Timeout.Infinite, allowInterruption, ref mutexLocked);
 				while (count > 0) {
 					if (head != null) {
 						ref WaitEntry wait_entry = ref Unsafe.AsRef<WaitEntry> (head);
