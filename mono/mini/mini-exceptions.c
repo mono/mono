@@ -1775,7 +1775,6 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 				frame->managed_data.name = method->name;
 #endif
 				frame->managed_data.token = method->token;
-				frame->managed_data.native_offset = ip;
 
 				frame->managed_data.guid = image->guid;
 				frame->managed_data.filename = image->filename;
