@@ -42,33 +42,57 @@ namespace System.Buffers
         /// <summary>
         /// True when there is no more data in the <see cref="Sequence"/>.
         /// </summary>
-        public readonly bool End => !_moreData;
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        bool End => !_moreData;
 
         /// <summary>
         /// The underlying <see cref="ReadOnlySequence{T}"/> for the reader.
         /// </summary>
-        public readonly ReadOnlySequence<T> Sequence { get; }
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        ReadOnlySequence<T> Sequence { get; }
 
         /// <summary>
         /// The current position in the <see cref="Sequence"/>.
         /// </summary>
-        public readonly SequencePosition Position
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        SequencePosition Position
             => Sequence.GetPosition(CurrentSpanIndex, _currentPosition);
 
         /// <summary>
         /// The current segment in the <see cref="Sequence"/> as a span.
         /// </summary>
-        public ReadOnlySpan<T> CurrentSpan { readonly get; private set; }
+        public ReadOnlySpan<T> CurrentSpan {
+#if !__MonoCS__
+            readonly 
+#endif
+            get; private set; }
 
         /// <summary>
         /// The index in the <see cref="CurrentSpan"/>.
         /// </summary>
-        public int CurrentSpanIndex { readonly get; private set; }
+        public int CurrentSpanIndex {
+#if !__MonoCS__
+            readonly 
+#endif
+            get; private set; }
 
         /// <summary>
         /// The unread portion of the <see cref="CurrentSpan"/>.
         /// </summary>
-        public readonly ReadOnlySpan<T> UnreadSpan
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        ReadOnlySpan<T> UnreadSpan
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => CurrentSpan.Slice(CurrentSpanIndex);
@@ -77,17 +101,29 @@ namespace System.Buffers
         /// <summary>
         /// The total number of <typeparamref name="T"/>'s processed by the reader.
         /// </summary>
-        public long Consumed { readonly get; private set; }
+        public long Consumed {
+#if !__MonoCS__
+            readonly 
+#endif
+            get; private set; }
 
         /// <summary>
         /// Remaining <typeparamref name="T"/>'s in the reader's <see cref="Sequence"/>.
         /// </summary>
-        public readonly long Remaining => Length - Consumed;
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        long Remaining => Length - Consumed;
 
         /// <summary>
         /// Count of <typeparamref name="T"/> in the reader's <see cref="Sequence"/>.
         /// </summary>
-        public readonly long Length
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        long Length
         {
             get
             {
@@ -109,7 +145,11 @@ namespace System.Buffers
         /// <param name="value">The next value or default if at the end.</param>
         /// <returns>False if at the end of the reader.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly bool TryPeek(out T value)
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        bool TryPeek(out T value)
         {
             if (_moreData)
             {
@@ -342,7 +382,11 @@ namespace System.Buffers
         /// <param name="destination">Destination span to copy to.</param>
         /// <returns>True if there is enough data to completely fill the <paramref name="destination"/> span.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly bool TryCopyTo(Span<T> destination)
+        public
+#if !__MonoCS__
+        readonly 
+#endif
+        bool TryCopyTo(Span<T> destination)
         {
             // This API doesn't advance to facilitate conditional advancement based on the data returned.
             // We don't provide an advance option to allow easier utilizing of stack allocated destination spans.
@@ -359,7 +403,11 @@ namespace System.Buffers
             return TryCopyMultisegment(destination);
         }
 
-        internal readonly bool TryCopyMultisegment(Span<T> destination)
+        internal
+#if !__MonoCS__
+        readonly 
+#endif
+        bool TryCopyMultisegment(Span<T> destination)
         {
             // If we don't have enough to fill the requested buffer, return false
             if (Remaining < destination.Length)
