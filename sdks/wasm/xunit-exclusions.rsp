@@ -50,3 +50,21 @@
 -nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_GetHashCodeCompare
 -nomethod System.Collections.Tests.HashtableTests.HashCodeProvider_Set_ImpactsSearch
 -nomethod System.Collections.Tests.HashtableTests.Comparer_Set_ImpactsSearch
+
+# System.Data
+# Hangs
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbConnection
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbCommand
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbDataReader
+
+# System.Numerics
+# Crashes in GC 
+-nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
+
+# System.Xml.Linq
+# Crashes in GC
+-nomethod CoreXml.Test.XLinq.LoadSaveAsyncTests.RoundtripSyncAsyncMatches_Stream
+
+# System.Net.Http.UnitTests
+# Hangs
+-nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed

@@ -220,9 +220,8 @@ _cross-runtime_$(1)-$(2)_CONFIGURE_FLAGS= \
 
 .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_LLVM),,provision-$(6))
 
-$$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure | configure-$(1)-$(5)
-	$(MAKE) -C $(TOP)/tools/offsets-tool-py setup
-	python3 $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
+$$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-offsets-tool-py-setup .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure | configure-$(1)-$(5)
+	. $(TOP)/tools/offsets-tool-py/offtool/bin/activate && python3 $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
 
 build-$(1)-$(2): $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h
 
@@ -234,6 +233,10 @@ archive-$(1): provision-$(6)
 $(1)_ARCHIVE += $(6)
 
 endef
+
+.stamp-offsets-tool-py-setup:
+	$(MAKE) -C $(TOP)/tools/offsets-tool-py setup
+	touch $@
 
 ##
 # Parameters:

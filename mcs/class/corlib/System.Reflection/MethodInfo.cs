@@ -1,12 +1,3 @@
-// 
-// System.IO.RenamedEventArgs.cs
-//
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
-//
-// Copyright (C) Tim Coleman, 2002
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +6,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,39 +19,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace System.IO {
-	public class RenamedEventArgs : FileSystemEventArgs {
+namespace System.Reflection {
 
-		#region Fields
-
-		string oldName;
-		string oldFullPath;
-
-		#endregion // Fields
-
-		#region Constructors
-
-		public RenamedEventArgs (WatcherChangeTypes changeType, string directory, string name, string oldName)
-			: base (changeType, directory, name)
+	[Serializable]
+#if !MOBILE
+	[ComVisible(true)]
+	[ComDefaultInterface(typeof(_MethodInfo))]
+	[ClassInterface(ClassInterfaceType.None)]
+	partial class MethodInfo : _MethodInfo
+#else
+	partial class MethodInfo
+#endif
+	{
+#if !MOBILE
+		void _MethodInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
-			this.oldName = oldName;
-			oldFullPath = Path.Combine (directory, oldName);
-		}
-		
-		#endregion // Constructors
-
-		#region Properties
-
-		public string OldFullPath {
-			get { return oldFullPath; }
+			throw new NotImplementedException ();
 		}
 
-		public string OldName {
-			get { return oldName; }
+		void _MethodInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
 		}
 
-		#endregion // Properties
+		void _MethodInfo.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		Type _MethodInfo.GetType ()
+		{
+			return GetType ();
+		}
+#endif
+
+		internal virtual int GenericParameterCount => GetGenericArguments ().Length;
 	}
 }

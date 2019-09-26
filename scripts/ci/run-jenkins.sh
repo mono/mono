@@ -174,10 +174,9 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
-        # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+        # configuration on our bots
         if [[ ${CI_TAGS} == *'xcode11'* ]]; then
             export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.0
             export TVOS_VERSION=13.0
@@ -185,13 +184,15 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export WATCHOS64_32_VERSION=6.0
         else
             export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-            export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
             export MACOS_VERSION=10.14
             export IOS_VERSION=12.1
             export TVOS_VERSION=12.1
             export WATCHOS_VERSION=5.1
             export WATCHOS64_32_VERSION=5.1
         fi
+
+        # retrieve selected Xcode version
+        /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -235,16 +236,17 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
-    # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+    # configuration on our bots
     if [[ ${CI_TAGS} == *'xcode11'* ]]; then
         export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
         export MACOS_VERSION=10.14
     fi
+
+    # retrieve selected Xcode version
+    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
@@ -327,7 +329,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
-	   export xunit_test_suites="System.Core corlib"
+	   export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
@@ -338,7 +340,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
             ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
-            ${TESTCMD} --label=corlib --timeout=60m $gnu$gnumake -C sdks/wasm run-all-corlib
+            ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             #The following tests are not passing yet, so enabling them would make us perma-red
             #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
             ${TESTCMD} --label=system-core --timeout=20m $gnumake -C sdks/wasm run-all-System.Core

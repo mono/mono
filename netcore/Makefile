@@ -52,7 +52,7 @@ TEST_ASSETS_PATH := corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_PLATFORM)/netco
 
 # used to calculate exact version number for generating nupkg
 BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
-VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
+VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)-preview
 
 all: bcl
 
@@ -114,6 +114,7 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 # you can append BDN parameters at the end, e.g. ` -- --filter Burgers --keepFiles`
 # NOTE: we have to delete a couple of System.Drawing files to make it work
 run-benchmarks: patch-local-dotnet
+	@if test -z "$(DOTNET_PERF_REPO)"; then echo "DOTNET_PERF_REPO is not set"; exit 1; fi
 	cd $(DOTNET_PERF_REPO)/src/benchmarks/micro/ && \
 	> corefx/System.Drawing/Perf_Color.cs && \
 	> corefx/System.Drawing/Perf_Graphics_DrawBeziers.cs && \
@@ -125,7 +126,7 @@ run-benchmarks: patch-local-dotnet
 run-sample-local-dotnet-llvm: patch-local-dotnet
 	$(DOTNET) build -c Release sample/HelloWorld
 	PATH="../llvm/usr/bin/:$(PATH)" \
-	MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+	MONO_ENV_OPTIONS="--aot=llvm,mcpu=native" \
 	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 
@@ -216,7 +217,7 @@ run-tests-corefx-%: prepare update-tests-corefx
 	@cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
 	@sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
+	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
 		--runtimeconfig $*.runtimeconfig.json --additional-deps $*.deps.json \
 		--fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \

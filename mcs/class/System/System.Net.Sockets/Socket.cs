@@ -740,7 +740,7 @@ namespace System.Net.Sockets
 
 			sockares.CheckIfThrowDelayedException ();
 
-			buffer = sockares.Buffer;
+			buffer = sockares.Buffer.ToArray ();
 			bytesTransferred = sockares.Total;
 
 			return sockares.AcceptedSocket;
@@ -1399,6 +1399,29 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
+		int Receive (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int nativeError;
+			int ret;
+			unsafe {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
+					ret = Receive_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, out nativeError, is_blocking);
+				}
+			}
+
+			errorCode = (SocketError) nativeError;
+			if (errorCode != SocketError.Success && errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
+				is_connected = false;
+				is_bound = false;
+			} else {
+				is_connected = true;
+			}
+
+			return ret;
+		}
+
 		[CLSCompliant (false)]
 		public int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
 		{
@@ -1477,10 +1500,10 @@ namespace System.Net.Sockets
 			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
 			// thrown when e.Buffer and e.BufferList are null (works fine when one is
 			// set to a valid object)
-			if (e.Buffer == null && e.BufferList == null)
+			if (e.MemoryBuffer.Equals (default) && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			if (e.Buffer == null) {
+			if (e.BufferList != null) {
 				InitSocketAsyncEventArgs (e, ReceiveAsyncCallback, e, SocketOperation.ReceiveGeneric);
 
 				e.socket_async_result.Buffers = e.BufferList;
@@ -1489,7 +1512,7 @@ namespace System.Net.Sockets
 			} else {
 				InitSocketAsyncEventArgs (e, ReceiveAsyncCallback, e, SocketOperation.Receive);
 
-				e.socket_async_result.Buffer = e.Buffer;
+				e.socket_async_result.Buffer = e.MemoryBuffer;
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
@@ -1545,8 +1568,8 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					fixed (byte* pbuffer = sockares.Buffer) {
-						total = Receive_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
+						total = Receive_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
 					}
 				}
 			} catch (Exception e) {
@@ -1671,6 +1694,44 @@ namespace System.Net.Sockets
 			unsafe {
 				fixed (byte* pbuffer = buffer) {
 					cnt = ReceiveFrom_internal (m_Handle, &pbuffer[offset], size, socketFlags, ref sockaddr, out nativeError, is_blocking);
+				}
+			}
+
+			errorCode = (SocketError) nativeError;
+			if (errorCode != SocketError.Success) {
+				if (errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
+					is_connected = false;
+				} else if (errorCode == SocketError.WouldBlock && is_blocking) { // This might happen when ReceiveTimeout is set
+					errorCode = SocketError.TimedOut;
+				}
+
+				return 0;
+			}
+
+			is_connected = true;
+			is_bound = true;
+
+			/* If sockaddr is null then we're a connection oriented protocol and should ignore the
+			 * remoteEP parameter (see MSDN documentation for Socket.ReceiveFrom(...) ) */
+			if (sockaddr != null) {
+				/* Stupidly, EndPoint.Create() is an instance method */
+				remoteEP = remoteEP.Create (sockaddr);
+			}
+
+			seed_endpoint = remoteEP;
+
+			return cnt;
+		}
+
+		int ReceiveFrom (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, out SocketError errorCode)
+		{
+			SocketAddress sockaddr = remoteEP.Serialize();
+
+			int nativeError;
+			int cnt;
+			unsafe {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
+					cnt = ReceiveFrom_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, ref sockaddr, out nativeError, is_blocking);
 				}
 			}
 
@@ -1980,10 +2041,10 @@ namespace System.Net.Sockets
 
 			ThrowIfDisposedAndClosed ();
 
-			if (e.Buffer == null && e.BufferList == null)
+			if (e.MemoryBuffer.Equals (default) && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			if (e.Buffer == null) {
+			if (e.BufferList != null) {
 				InitSocketAsyncEventArgs (e, SendAsyncCallback, e, SocketOperation.SendGeneric);
 
 				e.socket_async_result.Buffers = e.BufferList;
@@ -1992,7 +2053,7 @@ namespace System.Net.Sockets
 			} else {
 				InitSocketAsyncEventArgs (e, SendAsyncCallback, e, SocketOperation.Send);
 
-				e.socket_async_result.Buffer = e.Buffer;
+				e.socket_async_result.Buffer = e.MemoryBuffer;
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
@@ -2050,8 +2111,8 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					fixed (byte *pbuffer = sockares.Buffer) {
-						total = Socket.Send_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, false);
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
+						total = Socket.Send_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, false);
 					}
 				}
 			} catch (Exception e) {
@@ -2185,6 +2246,35 @@ namespace System.Net.Sockets
 			unsafe {
 				fixed (byte *pbuffer = buffer) {
 					ret = SendTo_internal (m_Handle, &pbuffer[offset], size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
+				}
+			}
+
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException (error);
+			}
+
+			is_connected = true;
+			is_bound = true;
+			seed_endpoint = remoteEP;
+
+			return ret;
+		}
+
+		int SendTo (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (remoteEP == null)
+				throw new ArgumentNullException("remoteEP");
+
+			int error;
+			int ret;
+			unsafe {
+				using (var pbuffer = buffer.Slice (offset, size).Pin ()) {
+					ret = SendTo_internal (m_Handle, (byte*)pbuffer.Pointer, size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
 				}
 			}
 
