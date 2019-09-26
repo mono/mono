@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.Serialization;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -277,9 +278,13 @@ class WasmRunner : IMessageSink
 				//Console.WriteLine (tc.DisplayName);
 				try {
 					object obj = null;
-					if (!method.IsStatic)
-						obj = Activator.CreateInstance (method.ReflectedType);
-
+					if (!method.IsStatic) {
+						var constructor = method.ReflectedType.GetConstructor (Type.EmptyTypes);
+						if (constructor != null) 
+							obj = constructor.Invoke (null);
+						else
+							obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject (method.ReflectedType);
+					}
 					var args = tc.TestMethodArguments;
 					if (args != null) {
 						var pars = method.GetParameters ();
