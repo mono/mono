@@ -14,6 +14,8 @@ CC_FOR_BUILD = $(MONO_NATIVE_CC)
 
 common_sources = \
 	pal_config.h \
+	pal-socket-icalls.c \
+	pal-socket-icalls.h \
 	mono-native-platform.h \
 	mono-native-platform.c \
 	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
@@ -157,7 +159,8 @@ common_cflags = \
 	$(GLIB_CFLAGS) \
 	$(SHARED_CFLAGS) \
 	-DBROTLI_BUILD_NO_RBIT \
-	-Wno-typedef-redefinition
+	-Wno-typedef-redefinition \
+	-g -O0
 
 # clear these flags as we set values for each target separately and automake always appends CFLAGS
 CFLAGS=

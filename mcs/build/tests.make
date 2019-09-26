@@ -145,7 +145,7 @@ test-local: $(test_assemblies) $(test_lib_dir)/nunit-excludes.txt
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
-TEST_HARNESS_EXCLUDES = $(PLATFORM_TEST_HARNESS_EXCLUDES) $(PROFILE_TEST_HARNESS_EXCLUDES) NotWorking CAS
+TEST_HARNESS_EXCLUDES = $(PLATFORM_TEST_HARNESS_EXCLUDES) $(PROFILE_TEST_HARNESS_EXCLUDES) NotWorking CAS NetCoreSockets
 
 ifdef TEST_WITH_INTERPRETER
 TEST_HARNESS_EXCLUDES += NotWorkingRuntimeInterpreter

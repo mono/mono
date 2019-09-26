@@ -13,7 +13,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		[Category ("MartinFixme")]
+		[Category ("NetCoreSockets")]
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
 			var readyEvent = new ManualResetEvent(false);
@@ -46,6 +46,7 @@ namespace MonoTests.System.Net.Sockets
 				}
 
 				try {
+					// CoreFX throw SR.PlatformNotSupported_AcceptSocket here.
 					if (listenSocket.AcceptAsync(asyncEventArgs))
 						return;
 					acceptedSocket = asyncEventArgs.AcceptSocket;

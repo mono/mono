@@ -968,7 +968,7 @@ namespace MonoTests.System.Net.Sockets {
 				client.BeginSend (bytes, bytes.Length, new AsyncCallback (BSCallback), client);
 				Assert.Fail ("BeginSend #1");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10057, ex.ErrorCode,
+				Assert.AreEqual (SocketError.DestinationAddressRequired, (SocketError)ex.ErrorCode,
 						 "BeginSend #2");
 			}
 			
@@ -976,7 +976,7 @@ namespace MonoTests.System.Net.Sockets {
 				client.BeginSend (bytes, bytes.Length, null, new AsyncCallback (BSCallback), client);
 				Assert.Fail ("BeginSend #3");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10057, ex.ErrorCode,
+				Assert.AreEqual (SocketError.DestinationAddressRequired, (SocketError)ex.ErrorCode,
 						 "BeginSend #4");
 			}
 
