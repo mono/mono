@@ -9492,9 +9492,13 @@ calli_end:
 
 			/* Generate IR to do the actual load/store operation */
 
-			if ((il_op == MONO_CEE_STFLD || il_op == MONO_CEE_STSFLD) && (ins_flag & MONO_INST_VOLATILE)) {
-				/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
-				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+			if ((il_op == MONO_CEE_STFLD || il_op == MONO_CEE_STSFLD)) {
+				if (ins_flag & MONO_INST_VOLATILE) {
+					/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
+					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+				} else if (mini_debug_options.clr_memory_model && mini_type_is_reference (ftype)) {
+					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+				}
 			}
 
 			if (il_op == MONO_CEE_LDSFLDA) {
