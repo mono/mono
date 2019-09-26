@@ -10,9 +10,9 @@ using Internal.Runtime.CompilerServices;
 
 namespace System.Buffers
 {
+#if !__MonoCS__
     public static partial class SequenceReaderExtensions
     {
-#if !__MonoCS__
         /// <summary>
         /// Try to read the given type out of the buffer if possible. Warning: this is dangerous to use with arbitrary
         /// structs- see remarks for full details.
@@ -172,13 +172,16 @@ namespace System.Buffers
 
             return false;
         }
-#else
-    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
-    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
-    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
-    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
-    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
-    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
-#endif
     }
+#else
+    public static partial class SequenceReaderExtensions
+    {
+        public static bool TryReadBigEndian(this ref System.Buffers.SequenceReader<byte> reader, out short value) { throw null; }
+        public static bool TryReadBigEndian(this ref System.Buffers.SequenceReader<byte> reader, out int value) { throw null; }
+        public static bool TryReadBigEndian(this ref System.Buffers.SequenceReader<byte> reader, out long value) { throw null; }
+        public static bool TryReadLittleEndian(this ref System.Buffers.SequenceReader<byte> reader, out short value) { throw null; }
+        public static bool TryReadLittleEndian(this ref System.Buffers.SequenceReader<byte> reader, out int value) { throw null; }
+        public static bool TryReadLittleEndian(this ref System.Buffers.SequenceReader<byte> reader, out long value) { throw null; }
+    }
+#endif
 }
