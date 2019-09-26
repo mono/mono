@@ -1756,7 +1756,35 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 		MonoFrameSummary *frame = &out->unmanaged_frames [i];
 		const char* module_buf = frame->unmanaged_data.module;
 		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &module_buf, (char *) frame->str_descr);
-		if (!success)
+
+		/* attempt to look up any managed method at that ip */
+		/* TODO: Trampolines - follow examples from mono_print_method_from_ip() */
+
+		MonoJitInfo *ji;
+		MonoDomain *domain = mono_domain_get ();
+		MonoDomain *target_domain = mono_domain_get ();
+		char *method_name;
+		ji = mini_jit_info_table_find_ext (domain, (char *)ip, TRUE, &target_domain);
+		if (ji) {
+			frame->is_managed = TRUE;
+			if (!ji->async && !ji->is_trampoline) {
+				MonoMethod *method = jinfo_get_method (ji);
+				MonoImage *image = mono_class_get_image (method->klass);
+				MonoDotNetHeader *header = &image->image_info->cli_header;
+#ifndef MONO_PRIVATE_CRASHES
+				frame->managed_data.name = method->name;
+#endif
+				frame->managed_data.token = method->token;
+				frame->managed_data.native_offset = ip;
+
+				frame->managed_data.guid = image->guid;
+				frame->managed_data.filename = image->filename;
+				frame->managed_data.image_size = header->nt.pe_image_size;
+				frame->managed_data.time_date_stamp = image->time_date_stamp;
+			}
+		}
+
+		if (!success && !ji)
 			continue;
 
 		if (out->unmanaged_frames [i].str_descr [0] != '\0')
