@@ -26,4 +26,5 @@ partial class SR
 	public const string Arg_SwitchExpressionException = "Non-exhaustive switch expression failed to match its input.";
 	public const string SwitchExpressionException_UnmatchedValue = "Unmatched value was {0}.";
 	public const string Argument_InvalidRandomRange = "Range of random number does not contain at least one possibility.";
+	public const string BufferWriterAdvancedTooFar = "Cannot advance past the end of the buffer, which has a size of {0}.";
 }
