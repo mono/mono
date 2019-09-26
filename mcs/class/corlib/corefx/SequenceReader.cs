@@ -395,37 +395,37 @@ namespace System.Buffers
     {
         private object _dummy;
         private int _dummyPrimitive;
-        public SequenceReader(System.Buffers.ReadOnlySequence<T> sequence) { throw null; }
-        public long Consumed { get { throw null; } }
-        public System.ReadOnlySpan<T> CurrentSpan { get { throw null; } }
-        public int CurrentSpanIndex { get { throw null; } }
-        public bool End { get { throw null; } }
-        public long Length { get { throw null; } }
-        public System.SequencePosition Position { get { throw null; } }
-        public long Remaining { get { throw null; } }
-        public System.Buffers.ReadOnlySequence<T> Sequence { get { throw null; } }
-        public System.ReadOnlySpan<T> UnreadSpan { get { throw null; } }
+        public SequenceReader(System.Buffers.ReadOnlySequence<T> sequence) => throw new PlatformNotSupportedException();
+        public long Consumed { get => throw new PlatformNotSupportedException(); }
+        public System.ReadOnlySpan<T> CurrentSpan { get => throw new PlatformNotSupportedException(); }
+        public int CurrentSpanIndex { get => throw new PlatformNotSupportedException(); }
+        public bool End { get => throw new PlatformNotSupportedException(); }
+        public long Length { get => throw new PlatformNotSupportedException(); }
+        public System.SequencePosition Position { get => throw new PlatformNotSupportedException(); }
+        public long Remaining { get => throw new PlatformNotSupportedException(); }
+        public System.Buffers.ReadOnlySequence<T> Sequence { get => throw new PlatformNotSupportedException(); }
+        public System.ReadOnlySpan<T> UnreadSpan { get => throw new PlatformNotSupportedException(); }
         public void Advance(long count) { }
-        public long AdvancePast(T value) { throw null; }
-        public long AdvancePastAny(System.ReadOnlySpan<T> values) { throw null; }
-        public long AdvancePastAny(T value0, T value1) { throw null; }
-        public long AdvancePastAny(T value0, T value1, T value2) { throw null; }
-        public long AdvancePastAny(T value0, T value1, T value2, T value3) { throw null; }
-        public bool IsNext(System.ReadOnlySpan<T> next, bool advancePast = false) { throw null; }
-        public bool IsNext(T next, bool advancePast = false) { throw null; }
+        public long AdvancePast(T value) => throw new PlatformNotSupportedException();
+        public long AdvancePastAny(System.ReadOnlySpan<T> values) => throw new PlatformNotSupportedException();
+        public long AdvancePastAny(T value0, T value1) => throw new PlatformNotSupportedException();
+        public long AdvancePastAny(T value0, T value1, T value2) => throw new PlatformNotSupportedException();
+        public long AdvancePastAny(T value0, T value1, T value2, T value3) => throw new PlatformNotSupportedException();
+        public bool IsNext(System.ReadOnlySpan<T> next, bool advancePast = false) => throw new PlatformNotSupportedException();
+        public bool IsNext(T next, bool advancePast = false) => throw new PlatformNotSupportedException();
         public void Rewind(long count) { }
-        public bool TryAdvanceTo(T delimiter, bool advancePastDelimiter = true) { throw null; }
-        public bool TryAdvanceToAny(System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) { throw null; }
-        public bool TryCopyTo(System.Span<T> destination) { throw null; }
-        public bool TryPeek(out T value) { throw null; }
-        public bool TryRead(out T value) { throw null; }
-        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, System.ReadOnlySpan<T> delimiter, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, T delimiter, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, T delimiter, T delimiterEscape, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadTo(out System.ReadOnlySpan<T> span, T delimiter, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadTo(out System.ReadOnlySpan<T> span, T delimiter, T delimiterEscape, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadToAny(out System.Buffers.ReadOnlySequence<T> sequence, System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) { throw null; }
-        public bool TryReadToAny(out System.ReadOnlySpan<T> span, System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) { throw null; }
+        public bool TryAdvanceTo(T delimiter, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryAdvanceToAny(System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryCopyTo(System.Span<T> destination) => throw new PlatformNotSupportedException();
+        public bool TryPeek(out T value) => throw new PlatformNotSupportedException();
+        public bool TryRead(out T value) => throw new PlatformNotSupportedException();
+        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, System.ReadOnlySpan<T> delimiter, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, T delimiter, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadTo(out System.Buffers.ReadOnlySequence<T> sequence, T delimiter, T delimiterEscape, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadTo(out System.ReadOnlySpan<T> span, T delimiter, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadTo(out System.ReadOnlySpan<T> span, T delimiter, T delimiterEscape, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadToAny(out System.Buffers.ReadOnlySequence<T> sequence, System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
+        public bool TryReadToAny(out System.ReadOnlySpan<T> span, System.ReadOnlySpan<T> delimiters, bool advancePastDelimiter = true) => throw new PlatformNotSupportedException();
     }
 #endif
 }
