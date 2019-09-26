@@ -237,17 +237,16 @@ mono_gc_base_init (void)
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &time_limit)) {
 					GC_enable_incremental ();
-			#if HAVE_BDWGC_GC	
-					if (time_limit != 0)
+					if (time_limit != 0) {
 						// value is in milliseconds
 						GC_set_time_limit (time_limit);
-			#endif					
+					}
 				}
 				continue;
 			} else if (g_str_has_prefix (opt, "strict-wbarriers")) {
 				gc_strict_wbarriers = TRUE;
 				continue;
-			}else {
+			} else {
 				/* Could be a parameter for sgen */
 				/*
 				fprintf (stderr, "MONO_GC_PARAMS must be a comma-delimited list of one or more of the following:\n");
@@ -1186,6 +1185,12 @@ mono_gc_set_desktop_mode (void)
 
 gboolean
 mono_gc_is_moving (void)
+{
+	return FALSE;
+}
+
+gboolean 
+mono_gc_needs_write_barriers(void)
 {
 	return GC_is_incremental_mode ();
 }

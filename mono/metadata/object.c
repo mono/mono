@@ -6353,7 +6353,7 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size)
 {
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers ()) {
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (m_class_is_valuetype (element_class)) {
 			if (m_class_has_references (element_class))
@@ -7219,7 +7219,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	return_val_if_nok (error, NULL_HANDLE);
 
 	size -= MONO_ABI_SIZEOF (MonoObject);
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		MONO_ENTER_NO_SAFEPOINTS;
 		gpointer data = mono_handle_get_data_unsafe (res_handle);
