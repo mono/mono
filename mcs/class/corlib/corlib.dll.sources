@@ -1631,6 +1631,7 @@ corefx/AesGcm.cs
 corefx/IncrementingEventCounter.cs
 corefx/IncrementingPollingCounter.cs
 corefx/PollingCounter.cs
+corefx/NullableAttributes.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
