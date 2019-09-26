@@ -2783,6 +2783,12 @@ mono_gc_is_moving (void)
 }
 
 gboolean
+mono_gc_needs_write_barriers(void)
+{
+	return TRUE;
+}
+
+gboolean
 mono_gc_is_disabled (void)
 {
 	return FALSE;

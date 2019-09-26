@@ -5703,7 +5703,7 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size)
 {
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers()) {
 		if (klass->element_class->valuetype) {
 			if (klass->element_class->has_references)
 				mono_value_copy_array (dest, 0, mono_array_addr_with_size_fast (src, 0, 0), mono_array_length (src));
@@ -6447,7 +6447,7 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 
 	size = size - sizeof (MonoObject);
 
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		mono_gc_wbarrier_value_copy ((char *)res + sizeof (MonoObject), value, 1, klass);
 	} else {

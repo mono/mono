@@ -4111,7 +4111,7 @@ add_wrappers (MonoAotCompile *acfg)
 		}
 
 		/* write barriers */
-		if (mono_gc_is_moving ()) {
+		if (mono_gc_needs_write_barriers()) {
 			add_method (acfg, mono_gc_get_specific_write_barrier (FALSE));
 			add_method (acfg, mono_gc_get_specific_write_barrier (TRUE));
 		}
