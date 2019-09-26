@@ -12,6 +12,7 @@ namespace System.Buffers
 {
     public static partial class SequenceReaderExtensions
     {
+#if !__MonoCS__
         /// <summary>
         /// Try to read the given type out of the buffer if possible. Warning: this is dangerous to use with arbitrary
         /// structs- see remarks for full details.
@@ -25,11 +26,7 @@ namespace System.Buffers
         /// True if successful. <paramref name="value"/> will be default if failed (due to lack of space).
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static unsafe bool TryRead<T>(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out T value) where T : unmanaged
+        internal static unsafe bool TryRead<T>(ref this SequenceReader<byte> reader, out T value) where T : unmanaged
         {
             ReadOnlySpan<byte> span = reader.UnreadSpan;
             if (span.Length < sizeof(T))
@@ -63,11 +60,7 @@ namespace System.Buffers
         /// Reads an <see cref="short"/> as little endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="short"/>.</returns>
-        public static bool TryReadLittleEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out short value)
+        public static bool TryReadLittleEndian(ref this SequenceReader<byte> reader, out short value)
         {
             if (BitConverter.IsLittleEndian)
             {
@@ -81,11 +74,7 @@ namespace System.Buffers
         /// Reads an <see cref="short"/> as big endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="short"/>.</returns>
-        public static bool TryReadBigEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out short value)
+        public static bool TryReadBigEndian(ref this SequenceReader<byte> reader, out short value)
         {
             if (!BitConverter.IsLittleEndian)
             {
@@ -110,11 +99,7 @@ namespace System.Buffers
         /// Reads an <see cref="int"/> as little endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="int"/>.</returns>
-        public static bool TryReadLittleEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out int value)
+        public static bool TryReadLittleEndian(ref this SequenceReader<byte> reader, out int value)
         {
             if (BitConverter.IsLittleEndian)
             {
@@ -128,11 +113,7 @@ namespace System.Buffers
         /// Reads an <see cref="int"/> as big endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="int"/>.</returns>
-        public static bool TryReadBigEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out int value)
+        public static bool TryReadBigEndian(ref this SequenceReader<byte> reader, out int value)
         {
             if (!BitConverter.IsLittleEndian)
             {
@@ -157,11 +138,7 @@ namespace System.Buffers
         /// Reads an <see cref="long"/> as little endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="long"/>.</returns>
-        public static bool TryReadLittleEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out long value)
+        public static bool TryReadLittleEndian(ref this SequenceReader<byte> reader, out long value)
         {
             if (BitConverter.IsLittleEndian)
             {
@@ -175,11 +152,7 @@ namespace System.Buffers
         /// Reads an <see cref="long"/> as big endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="long"/>.</returns>
-        public static bool TryReadBigEndian(
-#if !__MonoCS__
-            ref
-#endif
-            this SequenceReader<byte> reader, out long value)
+        public static bool TryReadBigEndian(ref this SequenceReader<byte> reader, out long value)
         {
             if (!BitConverter.IsLittleEndian)
             {
@@ -199,5 +172,13 @@ namespace System.Buffers
 
             return false;
         }
+#else
+    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
+    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
+    public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
+    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
+    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
+    public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
+#endif
     }
 }
