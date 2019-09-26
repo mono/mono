@@ -405,7 +405,7 @@ static void emit_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder, const unsign
 static void emit_default_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder);
 static LLVMValueRef emit_dbg_subprogram (EmitContext *ctx, MonoCompile *cfg, LLVMValueRef method, const char *name);
 static void emit_dbg_info (MonoLLVMModule *module, const char *filename, const char *cu_name);
-static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp);
+static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp, gboolean force_explicit);
 static LLVMValueRef get_intrins_by_name (EmitContext *ctx, const char *name);
 static LLVMValueRef get_intrins (EmitContext *ctx, int id);
 static LLVMValueRef get_intrins_from_module (LLVMModuleRef lmodule, int id);
@@ -2303,15 +2303,6 @@ emit_load (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, in
 {
 	LLVMValueRef res;
 
-	if (is_faulting && bb->region != -1 && !ctx->cfg->llvm_only) {
-		/* The llvm.mono.load/store intrinsics are not supported by this llvm version, emit an explicit null check instead */
-		LLVMValueRef cmp;
-
-		cmp = LLVMBuildICmp (*builder_ref, LLVMIntEQ, base, LLVMConstNull (LLVMTypeOf (base)), "");
-		emit_cond_system_exception (ctx, bb, "NullReferenceException", cmp);
-		*builder_ref = ctx->builder;
-	}
-
 	/* 
 	 * We emit volatile loads for loads which can fault, because otherwise
 	 * LLVM will generate invalid code when encountering a load from a
@@ -2328,13 +2319,6 @@ emit_load (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, in
 static void
 emit_store_general (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, int size, LLVMValueRef value, LLVMValueRef addr, LLVMValueRef base, gboolean is_faulting, gboolean is_volatile, BarrierKind barrier)
 {
-	if (is_faulting && bb->region != -1 && !ctx->cfg->llvm_only) {
-		/* The llvm.mono.load/store intrinsics are not supported by this llvm version, emit an explicit null check instead */
-		LLVMValueRef cmp = LLVMBuildICmp (*builder_ref, LLVMIntEQ, base, LLVMConstNull (LLVMTypeOf (base)), "");
-		emit_cond_system_exception (ctx, bb, "NullReferenceException", cmp);
-		*builder_ref = ctx->builder;
-	}
-
 	if (barrier != LLVM_BARRIER_NONE)
 		mono_llvm_build_aligned_store (*builder_ref, value, addr, barrier, size);
 	else
@@ -2354,7 +2338,7 @@ emit_store (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, i
  * Might set the ctx exception.
  */
 static void
-emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp)
+emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp, gboolean force_explicit)
 {
 	LLVMBasicBlockRef ex_bb, ex2_bb = NULL, noex_bb;
 	LLVMBuilderRef builder;
@@ -2379,7 +2363,7 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	noex_bb = gen_bb (ctx, "NOEX_BB");
 
 	LLVMValueRef branch = LLVMBuildCondBr (ctx->builder, cmp, ex_bb, noex_bb);
-	if (exc_id == MONO_EXC_NULL_REF && !ctx->cfg->disable_llvm_implicit_null_checks) {
+	if (exc_id == MONO_EXC_NULL_REF && !ctx->cfg->disable_llvm_implicit_null_checks && !force_explicit) {
 		mono_llvm_set_implicit_branch (ctx->builder, branch);
 	}
 
@@ -3281,7 +3265,7 @@ emit_div_check (EmitContext *ctx, LLVMBuilderRef builder, MonoBasicBlock *bb, Mo
 							  ins->opcode == OP_IDIV_IMM || ins->opcode == OP_LDIV_IMM || ins->opcode == OP_IREM_IMM || ins->opcode == OP_LREM_IMM);
 
 		cmp = LLVMBuildICmp (builder, LLVMIntEQ, rhs, LLVMConstInt (LLVMTypeOf (rhs), 0, FALSE), "");
-		emit_cond_system_exception (ctx, bb, "DivideByZeroException", cmp);
+		emit_cond_system_exception (ctx, bb, "DivideByZeroException", cmp, FALSE);
 		if (!ctx_ok (ctx))
 			break;
 		builder = ctx->builder;
@@ -3293,7 +3277,7 @@ emit_div_check (EmitContext *ctx, LLVMBuilderRef builder, MonoBasicBlock *bb, Mo
 			LLVMValueRef cond2 = LLVMBuildICmp (builder, LLVMIntEQ, lhs, c, "");
 
 			cmp = LLVMBuildICmp (builder, LLVMIntEQ, LLVMBuildAnd (builder, cond1, cond2, ""), LLVMConstInt (LLVMInt1Type (), 1, FALSE), "");
-			emit_cond_system_exception (ctx, bb, "OverflowException", cmp);
+			emit_cond_system_exception (ctx, bb, "OverflowException", cmp, FALSE);
 			if (!ctx_ok (ctx))
 				break;
 			builder = ctx->builder;
@@ -5208,7 +5192,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				/* Add stores for volatile variables */
 				emit_volatile_store (ctx, ins->next->dreg);
 			} else if (MONO_IS_COND_EXC (ins->next)) {
-				emit_cond_system_exception (ctx, bb, (const char*)ins->next->inst_p1, cmp);
+				gboolean force_explicit_branch = FALSE;
+				if (bb->region != -1) {
+					/* Don't tag null check branches in exception-handling
+					 * regions with `make.implicit`.
+					 */
+					force_explicit_branch = TRUE;
+				}
+				emit_cond_system_exception (ctx, bb, (const char*)ins->next->inst_p1, cmp, force_explicit_branch);
 				if (!ctx_ok (ctx))
 					break;
 				builder = ctx->builder;
@@ -6522,7 +6513,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				val = LLVMBuildCall (builder, func, args, 2, "");
 				values [ins->dreg] = LLVMBuildExtractValue (builder, val, 0, dname);
 				ovf = LLVMBuildExtractValue (builder, val, 1, "");
-				emit_cond_system_exception (ctx, bb, "OverflowException", ovf);
+				emit_cond_system_exception (ctx, bb, "OverflowException", ovf, FALSE);
 				if (!ctx_ok (ctx))
 					break;
 				builder = ctx->builder;
