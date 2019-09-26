@@ -128,7 +128,11 @@ namespace System.Buffers
         /// Reads an <see cref="int"/> as big endian.
         /// </summary>
         /// <returns>False if there wasn't enough data for an <see cref="int"/>.</returns>
-        public static bool TryReadBigEndian(ref this SequenceReader<byte> reader, out int value)
+        public static bool TryReadBigEndian(
+#if !__MonoCS__
+            ref
+#endif
+            this SequenceReader<byte> reader, out int value)
         {
             if (!BitConverter.IsLittleEndian)
             {
