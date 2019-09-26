@@ -1792,8 +1792,10 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 			}
 		}
 
-		if (!success && !ji)
+		if (!success && !ji) {
+			frame->unmanaged_data.ip = ip;
 			continue;
+		}
 
 		if (out->unmanaged_frames [i].str_descr [0] != '\0')
 			out->unmanaged_frames [i].unmanaged_data.has_name = TRUE;
