@@ -7,7 +7,11 @@ using System.Runtime.CompilerServices;
 
 namespace System.Buffers
 {
+#if __MonoCS__
+    public ref partial struct SequenceReader<T> where T : IEquatable<T>
+#else
     public ref partial struct SequenceReader<T> where T : unmanaged, IEquatable<T>
+#endif
     {
         /// <summary>
         /// Try to read everything up to the given <paramref name="delimiter"/>.
