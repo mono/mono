@@ -765,6 +765,18 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.SqlTypes.SqlXml))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.SqlTypes.StorageState))]
 #endif
+#if !MOBILE && !XAMMAC_4_5
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.DataRowComparer))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.DataRowComparer<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.DataRowExtensions))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.DataTableExtensions))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.EnumerableRowCollection))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.EnumerableRowCollection<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.EnumerableRowCollectionExtensions))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.OrderedEnumerableRowCollection<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.TypedTableBase<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.TypedTableBaseExtensions))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.BooleanSwitch))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.ConditionalAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CorrelationManager))]

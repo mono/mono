@@ -39,8 +39,7 @@ else
 LIB_REFS += Facades/System.Drawing.Common
 endif
 
-
-ifneq (,$(filter xammac_net_4_5 net_4_x, $(PROFILE)))
+ifeq ($(PROFILE),net_4_x)
 LIB_REFS += System.Data.DataSetExtensions
 endif
 
