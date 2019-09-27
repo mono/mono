@@ -4282,6 +4282,23 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void UnhandledException4 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-perform-wait-callback");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_perform_wait_callback");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is VMDeathEvent);
+		vm = null;
+	}
+
+	[Test]
 	public void GCWhileSuspended () {
 		// Check that objects are kept alive during suspensions
 		Event e = run_until ("gc_suspend_1");
