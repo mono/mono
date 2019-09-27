@@ -23,7 +23,6 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 
-
 # System.CodeDom
 ../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs

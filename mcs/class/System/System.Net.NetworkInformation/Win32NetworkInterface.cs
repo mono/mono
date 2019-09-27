@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if WIN_PLATFORM
+using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -78,19 +79,70 @@ namespace System.Net.NetworkInformation {
 			return ret;
 		}
 
-		private static int GetBestInterfaceForAddress (IPAddress addr) {
-#if MARTIN_FIXME
+		private static int GetBestInterfaceForAddress (IPAddress addr)
+		{
 			int index;
-			SocketAddress address = new SocketAddress (addr);
-			int error = (int) GetBestInterfaceEx (address.m_Buffer, out index);
+			var address = GetSocketAddressBuffer (addr);
+			int error = (int) GetBestInterfaceEx (address, out index);
 			if (error != 0) {
 				throw new NetworkInformationException (error);
 			}
 
 			return index;
+		}
+
+		internal const int IPv6AddressSize = 28;
+		internal const int IPv4AddressSize = 16;
+
+		/*
+		 * This is the only place that's still using Mono's old SocketAddress format.
+		 * The implementation from CoreFX uses a different binary format.
+		 *
+		 * This is copied from the referencesource version.
+		 */
+		static byte[] GetSocketAddressBuffer (IPAddress addr)
+		{
+			var family = addr.AddressFamily;
+			var size = family == AddressFamily.InterNetwork ? IPv4AddressSize : IPv6AddressSize;
+			var buffer = new byte[(size/IntPtr.Size+2)*IntPtr.Size];//sizeof DWORD
+
+#if BIGENDIAN
+			buffer[0] = unchecked((byte)((int)family>>8));
+			buffer[1] = unchecked((byte)((int)family   ));
 #else
-			throw new PlatformNotSupportedException ();
+			buffer[0] = unchecked((byte)((int)family   ));
+			buffer[1] = unchecked((byte)((int)family>>8));
 #endif
+
+			// No Port
+			buffer[2] = (byte)0;
+			buffer[3] = (byte)0;
+
+			if (family == AddressFamily.InterNetworkV6) {
+				// No handling for Flow Information
+				buffer[4] = (byte)0;
+				buffer[5] = (byte)0;
+				buffer[6] = (byte)0;
+				buffer[7] = (byte)0;
+
+				// Scope serialization
+				long scope = addr.ScopeId;
+				buffer[24] = (byte)scope;
+				buffer[25] = (byte)(scope >> 8);
+				buffer[26] = (byte)(scope >> 16);
+				buffer[27] = (byte)(scope >> 24);
+
+				// Address serialization
+				byte[] addressBytes = addr.GetAddressBytes();
+				for (int i = 0; i < addressBytes.Length; i++) {
+				buffer[8 + i] = addressBytes[i];
+				}
+			} else {
+				// IPv4 Address serialization
+				addr.TryWriteBytes(buffer.AsSpan(4), out int bytesWritten);
+			}
+
+			return buffer;
 		}
 
 		public override int GetLoopbackInterfaceIndex ()

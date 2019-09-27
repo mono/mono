@@ -1,6 +1,7 @@
 #include common.sources
 #include common_networking.sources
 #include corefx.windows.sources
+#include old-sockets.sources
 #include mono_fsw.sources
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs

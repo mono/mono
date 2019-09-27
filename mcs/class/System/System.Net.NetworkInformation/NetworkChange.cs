@@ -363,7 +363,6 @@ namespace System.Net.NetworkInformation {
 
 		bool EnsureSocket ()
 		{
-#if MARTIN_FIXME
 			lock (_lock) {
 				if (nl_sock != null)
 					return true;
@@ -371,18 +370,13 @@ namespace System.Net.NetworkInformation {
 				if (fd.ToInt64 () == -1)
 					return false;
 
-				var safeHandle = new SafeSocketHandle (fd, true);
-
-				nl_sock = new Socket (0, SocketType.Raw, ProtocolType.Udp, safeHandle);
+				nl_sock = Socket.CreateFromFileDescriptor (fd, 0, SocketType.Raw, ProtocolType.Udp);
 				nl_args = new SocketAsyncEventArgs ();
 				nl_args.SetBuffer (new byte [8192], 0, 8192);
 				nl_args.Completed += OnDataAvailable;
 				nl_sock.ReceiveAsync (nl_args);
 			}
 			return true;
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		// _lock is held by the caller

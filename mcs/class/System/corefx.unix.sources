@@ -1,12 +1,34 @@
+#include corefx.sockets.sources
+
 corefx/Unix/*.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/*.cs
+
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Close.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.IPAddress.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.IPPacketInformation.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MessageHeader.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.PlatformSocketSupport.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Poll.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.ReceiveMessage.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SendMessage.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SocketAddress.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SocketEvent.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Socket.cs
 
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.NetSecurityNative.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.GssBuffer.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.GssApiException.cs
 
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsAdapterPal.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/InteropIPAddressExtensions.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/NTAuthentication.Common.cs
+../../../external/corefx/src/Common/src/System/Net/SafeCloseSocket.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/SocketAddressPal.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/SocketProtocolSupportPal.Unix.cs
+
+../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.Unix.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Security/NegotiateStreamPal.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SSPIHandleCache.cs
@@ -17,5 +39,8 @@ corefx/Unix/*.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeDeleteContext.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeFreeCredentials.cs
 
+../../../external/corefx/src/Common/src/System/Net/Sockets/SocketErrorPal.Unix.cs
+
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/GssSafeHandles.cs
 
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/*.Unix.cs:UnixDomainSocketEndPoint.Unix.cs

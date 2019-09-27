@@ -1,3 +1,9 @@
 #include monotouch_System.dll.exclude.sources
 #include common_networking.sources
 #include appletls.sources
+#include old-sockets.exclude.sources
+
+../referencesource/System/net/System/Net/Sockets/TCPClient.cs
+../referencesource/System/net/System/Net/Sockets/TCPListener.cs
+../referencesource/System/net/System/Net/Sockets/UDPClient.cs
+

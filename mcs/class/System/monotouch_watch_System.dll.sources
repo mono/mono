@@ -1,5 +1,6 @@
 #include monotouch_System.dll.sources
 #include apple-certificates.sources
+#include old-sockets.sources
 
 System.Net.Mail/SmtpClient.platformnotsupported.cs
 System.Net.Security/SslStream.platformnotsupported.cs

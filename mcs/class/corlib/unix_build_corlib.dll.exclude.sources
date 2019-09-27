@@ -1,2 +1,5 @@
 #include System.IO.platformnotsupported.sources
+
+../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
+
 corefx/Interop.GetRandomBytes.Mono.cs

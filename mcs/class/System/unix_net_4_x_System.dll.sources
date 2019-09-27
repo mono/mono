@@ -2,8 +2,6 @@
 #include net_4_x_System.dll.sources
 
 ../../../external/corefx/src/Common/src/Interop/Linux/Interop.Libraries.cs
-../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeFileHandle.Unix.cs
-../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeDirectoryHandle.Unix.cs
 ../../../external/corefx/src/Common/src/Interop/Linux/System.Native/Interop.INotify.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.Linux.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.OpenFlags.cs

@@ -100,5 +100,12 @@ namespace System.Net.Sockets
 			if (!silent && error != 0)
 				throw new SocketException (error);
 		}
+
+		// private constructor used by System.Net.NetworkInformation/NetworkChange.cs
+		internal static Socket CreateFromFileDescriptor (IntPtr fd, AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+		{
+			var safeHandle = new SafeSocketHandle (fd, true);
+			return new Socket (addressFamily, socketType, protocolType, safeHandle);
+		}
 	}
 }

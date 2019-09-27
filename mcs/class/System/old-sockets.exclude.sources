@@ -1,0 +1,12 @@
+corefx/Socket.cs
+
+#include corefx.sockets.sources
+
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/*.Unix.cs
+
+../../../external/corefx/src/Common/src/System/Net/SafeCloseSocket.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/SocketProtocolSupportPal.Unix.cs
+../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.Unix.cs
+
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Socket.cs
+

@@ -1,5 +1,6 @@
 #include net_4_x_System.dll.sources
 #include corefx.windows.sources
+#include old-sockets.sources
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 

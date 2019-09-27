@@ -39,7 +39,6 @@ namespace System
 
 		Read  = 1 << 0,
 		Write = 1 << 1,
-		Error = 1 << 2,
 	}
 
 	internal delegate void IOAsyncCallback (IOAsyncResult ioares);

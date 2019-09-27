@@ -1,6 +1,5 @@
 Assembly/AssemblyInfo.cs
 corefx/*.cs
-martin/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
 
@@ -92,15 +91,6 @@ System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
-
-# System.Net.Sockets/SafeSocketHandle.cs
-# System.Net.Sockets/Socket.cs
-# System.Net.Sockets/SocketAsyncEventArgs.cs
-# System.Net.Sockets/SocketAsyncResult.cs
-System.Net.Sockets/SocketOperation.cs
-System.Net.Sockets/SocketReceiveFromResult.cs
-System.Net.Sockets/SocketReceiveMessageFromResult.cs
-# System.Net.Sockets/SocketTaskExtensions.cs
 
 System.Runtime.InteropServices.ComTypes/ADVF.cs
 System.Runtime.InteropServices.ComTypes/DATADIR.cs
@@ -262,7 +252,6 @@ ReferenceSources/RequestCacheProtocol.cs
 ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
-# ReferenceSources/Socket.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -638,7 +627,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
 ../referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../referencesource/System/net/System/Net/ServicePointManager.cs
-# ../referencesource/System/net/System/Net/SocketAddress.cs
 ../referencesource/System/net/System/Net/SocketException.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
@@ -659,29 +647,6 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
 ../referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
-
-../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
-../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
-# ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
-../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
-../referencesource/System/net/System/Net/Sockets/LingerOption.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
-../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetworkStream.cs
-../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
-../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
-../referencesource/System/net/System/Net/Sockets/SelectMode.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.Tasks.cs
-../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
-../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
-../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
-../referencesource/System/net/System/Net/Sockets/SocketInformationOptions.cs
-# ../referencesource/System/net/System/Net/Sockets/SocketOptionLevel.cs
-# ../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
-../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
-../referencesource/System/net/System/Net/Sockets/SocketType.cs
-../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
-../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
@@ -792,6 +757,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
+
+../../../external/corefx/src/Common/src/Interop/Windows/Winsock/Interop.ErrorCodes.cs
 
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
@@ -915,94 +882,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
 
-../../../external/corefx/src/Common/src/System/Net/IPEndPointStatics.cs
-../../../external/corefx/src/Common/src/System/Net/RangeValidationHelpers.cs
-../../../external/corefx/src/Common/src/System/Net/SafeCloseSocket.cs
-../../../external/corefx/src/Common/src/System/Net/SafeCloseSocket.Unix.cs
-../../../external/corefx/src/Common/src/System/Net/SocketAddress.cs
-../../../external/corefx/src/Common/src/System/Net/SocketAddressPal.Unix.cs
-../../../external/corefx/src/Common/src/System/Net/Sockets/SocketErrorPal.Unix.cs
-
-../../../external/corefx/src/Common/src/System/Net/Internals/IPAddressExtensions.cs
-../../../external/corefx/src/Common/src/System/Net/Internals/IPEndPointExtensions.cs
-../../../external/corefx/src/Common/src/System/Net/InteropIPAddressExtensions.Unix.cs
-
-#
-# FIXME: unix sources
-#
-
-corefx/Unix/*.cs
-../../../external/corefx/src/Common/src/Interop/Unix/*.cs
-
-
-#
-# Need conversion
-#
-
-#
-# Checked and Converted
-#
-
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Close.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.IPAddress.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.IPPacketInformation.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MessageHeader.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.PlatformSocketSupport.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Pipe.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Poll.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.ReceiveMessage.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SendMessage.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SocketAddress.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SocketEvent.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Socket.cs
-
-#
-# Misc
-#
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/IPPacketInformation.cs
-
 ../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetworkStream.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.Tasks.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketPal.Unix.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncContext.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncEngine.Unix.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/AcceptOverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/AcceptOverlappedAsyncResult.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/BaseOverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/BaseOverlappedAsyncResult.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ConnectOverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ConnectOverlappedAsyncResult.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/DisconnectOverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/DisconnectOverlappedAsyncResult.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ReceiveMessageOverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/ReceiveMessageOverlappedAsyncResult.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/OverlappedAsyncResult.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/OverlappedAsyncResult.Unix.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetEventSource.Sockets.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SendPacketsElement.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SendPacketsElementFlags.Unix.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncEventArgs.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncEventArgs.Unix.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketAsyncOperation.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketOptionLevel.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketOptionName.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/SocketTaskExtensions.cs
-
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/TCPClient.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/TCPListener.cs
-../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UDPClient.cs
-
-../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.cs
-../../../external/corefx/src/Common/src/System/Net/Internals/SocketExceptionFactory.Unix.cs
-../../../external/corefx/src/Common/src/System/Net/SocketProtocolSupportPal.Unix.cs

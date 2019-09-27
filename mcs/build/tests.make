@@ -162,7 +162,7 @@ TESTNAME_ARG = -test=$(TESTNAME)
 endif
 
 ifdef TEST_HARNESS_VERBOSE
-LABELS_ARG = -labels=All
+LABELS_ARG = -labels
 endif
 
 ifdef ALWAYS_AOT_TESTS
