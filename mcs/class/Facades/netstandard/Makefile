@@ -39,6 +39,10 @@ else
 LIB_REFS += Facades/System.Drawing.Common
 endif
 
+ifeq ($(PROFILE),net_4_x)
+LIB_REFS += System.Data.DataSetExtensions
+endif
+
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes

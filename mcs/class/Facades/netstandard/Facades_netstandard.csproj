@@ -113,6 +113,7 @@
   <!--Common files-->
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Stubs.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!--End of common files-->
@@ -169,6 +170,7 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../../System.Web/System.Web.csproj" />
     <ProjectReference Include="../../System.Drawing/System.Drawing.csproj" />
+    <ProjectReference Include="../../System.Data.DataSetExtensions/System.Data.DataSetExtensions.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
