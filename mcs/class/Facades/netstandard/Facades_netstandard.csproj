@@ -113,6 +113,7 @@
   <!--Common files-->
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Stubs.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!--End of common files-->
