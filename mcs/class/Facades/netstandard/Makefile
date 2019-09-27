@@ -39,6 +39,11 @@ else
 LIB_REFS += Facades/System.Drawing.Common
 endif
 
+
+ifeq (,$(filter xammac_net_4_5 net_4_x, $(PROFILE)))
+LIB_REFS += System.Data.DataSetExtensions
+endif
+
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
