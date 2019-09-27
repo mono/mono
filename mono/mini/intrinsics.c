@@ -34,6 +34,8 @@ emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst
 	MonoType *etype = m_class_get_byval_arg (eklass);
 	if (is_set) {
 		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, etype, args [2]->dreg, 0);
+		if (mini_debug_options.clr_memory_model && mini_type_is_reference (etype))
+			mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, etype, addr->dreg, 0, load->dreg);
 		if (mini_type_is_reference (etype))
 			mini_emit_write_barrier (cfg, addr, load);
@@ -132,6 +134,19 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			} else if (!strcmp (cmethod->name, "Truncate")) {
 				opcode = OP_TRUNCF;
 			}
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+			else if (!strcmp (cmethod->name, "Round") && !cfg->compile_aot && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41)) {
+				// special case: emit vroundps for MathF.Round directly instead of what llvm.round.f32 emits
+				// to align with CoreCLR behavior
+				int xreg = alloc_xreg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_FCONV_TO_R4_X, xreg, args [0]->dreg);
+				EMIT_NEW_UNALU (cfg, ins, OP_SSE41_ROUNDSS, xreg, xreg);
+				ins->inst_c0 = 0x4; // vroundss xmm0, xmm0, xmm0, 0x4 (mode for rounding)
+				int dreg = alloc_freg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_EXTRACT_R4, dreg, xreg);
+				return ins;
+			}
+#endif
 		}
 		// (float, float)
 		if (fsig->param_count == 2 && fsig->params [0]->type == MONO_TYPE_R4 && fsig->params [1]->type == MONO_TYPE_R4) {
@@ -1186,6 +1201,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				MONO_ADD_INS (cfg->cbb, f2i);
 			}
 
+			if (is_ref && mini_debug_options.clr_memory_model)
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->dreg = is_ref ? mono_alloc_ireg_ref (cfg) : mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
@@ -1285,6 +1303,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 					f2i_cmp->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
 				MONO_ADD_INS (cfg->cbb, f2i_cmp);
 			}
+
+			if (is_ref && mini_debug_options.clr_memory_model)
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->dreg = is_ref ? alloc_ireg_ref (cfg) : alloc_ireg (cfg);

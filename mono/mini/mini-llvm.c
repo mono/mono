@@ -332,6 +332,8 @@ typedef enum {
 	INTRINS_PDEP_I64,
 	INTRINS_BZHI_I32,
 	INTRINS_BZHI_I64,
+	INTRINS_BEXTR_I32,
+	INTRINS_BEXTR_I64,
 #if defined(TARGET_AMD64) || defined(TARGET_X86)
 	INTRINS_SSE_PMOVMSKB,
 	INTRINS_SSE_PSRLI_W,
@@ -384,6 +386,7 @@ typedef enum {
 	INTRINS_SSE_PAVGB,
 	INTRINS_SSE_PAUSE,
 	INTRINS_SSE_DPPS,
+	INTRINS_SSE_ROUNDSS,
 	INTRINS_SSE_ROUNDPD,
 #endif
 	INTRINS_NUM
@@ -1134,6 +1137,7 @@ simd_op_to_llvm_type (int opcode)
 	case OP_EXTRACT_U1:
 	case OP_EXPAND_I1:
 		return type_to_simd_type (MONO_TYPE_I1);
+	case OP_EXTRACT_R4:
 	case OP_EXPAND_R4:
 		return type_to_simd_type (MONO_TYPE_R4);
 	case OP_CVTDQ2PD:
@@ -3833,7 +3837,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				static int tramp_index;
 				char *name;
 
-				name = g_strdup_printf ("tramp_%d", tramp_index);
+				name = g_strdup_printf ("[tramp_%d] %s", tramp_index, mono_method_full_name (call->method, TRUE));
 				tramp_index ++;
 
 				/*
@@ -4096,6 +4100,10 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
+
+	// Add original method name we are currently emitting as a custom string metadata (the only way to leave comments in LLVM IR)
+	if (mono_debug_enabled () && call && call->method)
+		mono_llvm_add_string_metadata (lcall, "managed_name", mono_method_full_name (call->method, TRUE));
 
 	// As per the LLVM docs, a function has a noalias return value if and only if
 	// it is an allocation function. This is an allocation function.
@@ -6902,6 +6910,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildSExt (builder, pcmp, retType, "");
 			break;
 		}
+		case OP_EXTRACT_R4:
 		case OP_EXTRACT_R8:
 		case OP_EXTRACT_I8:
 		case OP_EXTRACT_I4:
@@ -6916,6 +6925,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			t = simd_op_to_llvm_type (ins->opcode);
 
 			switch (ins->opcode) {
+			case OP_EXTRACT_R4:
 			case OP_EXTRACT_R8:
 			case OP_EXTRACT_I8:
 			case OP_EXTRACT_I4:
@@ -7305,13 +7315,29 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_FCONV_TO_R4_X: {
+			values [ins->dreg] = LLVMBuildInsertElement (builder, LLVMConstNull (type_to_simd_type (MONO_TYPE_R4)), lhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
+			break;
+		}
+
+		case OP_SSE41_ROUNDSS: {
+			LLVMValueRef args [3];
+
+			args [0] = lhs;
+			args [1] = lhs;
+			args [2] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
+
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDSS), args, 3, dname);
+			break;
+		}
+
 		case OP_SSE41_ROUNDPD: {
 			LLVMValueRef args [3];
 
 			args [0] = lhs;
 			args [1] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
 
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins_by_name (ctx, "llvm.x86.sse41.round.pd"), args, 2, dname);
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDPD), args, 2, dname);
 			break;
 		}
 
@@ -7465,12 +7491,38 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_CTTZ32 ? INTRINS_CTTZ_I32 : INTRINS_CTTZ_I64), args, 2, "");
 			break;
 		}
+		case OP_BEXTR32:
+		case OP_BEXTR64: {
+			LLVMValueRef args [2];
+			args [0] = lhs;
+			args [1] = convert (ctx, rhs, ins->opcode == OP_BEXTR32 ? LLVMInt32Type () : LLVMInt64Type ()); // cast ushort to u32/u64
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64), args, 2, "");
+			break;
+		}
 		case OP_BZHI32:
 		case OP_BZHI64: {
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = rhs;
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BZHI32 ? INTRINS_BZHI_I32 : INTRINS_BZHI_I64), args, 2, "");
+			break;
+		}
+		case OP_MULX_H32:
+		case OP_MULX_H64:
+		case OP_MULX_HL32:
+		case OP_MULX_HL64: {
+			gboolean is_64 = ins->opcode == OP_MULX_H64 || ins->opcode == OP_MULX_HL64;
+			gboolean only_high = ins->opcode == OP_MULX_H32 || ins->opcode == OP_MULX_H64;
+			LLVMValueRef lx = LLVMBuildZExt (ctx->builder, lhs, LLVMInt128Type (), "");
+			LLVMValueRef rx = LLVMBuildZExt (ctx->builder, rhs, LLVMInt128Type (), "");
+			LLVMValueRef mulx = LLVMBuildMul (ctx->builder, lx, rx, "");
+			if (!only_high) {
+				LLVMValueRef lowx = LLVMBuildTrunc (ctx->builder, mulx, is_64 ? LLVMInt64Type () : LLVMInt32Type (), "");
+				LLVMBuildStore (ctx->builder, lowx, values [ins->sreg3]);
+			}
+			LLVMValueRef shift = LLVMConstInt (LLVMInt128Type (), is_64 ? 64 : 32, FALSE);
+			LLVMValueRef highx = LLVMBuildLShr (ctx->builder, mulx, shift, "");
+			values [ins->dreg] = LLVMBuildTrunc (ctx->builder, highx, is_64 ? LLVMInt64Type () : LLVMInt32Type (), "");
 			break;
 		}
 		case OP_PEXT32:
@@ -8742,6 +8794,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_CTTZ_I64, "llvm.cttz.i64"},
 	{INTRINS_BZHI_I32, "llvm.x86.bmi.bzhi.32"},
 	{INTRINS_BZHI_I64, "llvm.x86.bmi.bzhi.64"},
+	{INTRINS_BEXTR_I32, "llvm.x86.bmi.bextr.32"},
+	{INTRINS_BEXTR_I64, "llvm.x86.bmi.bextr.64"},
 	{INTRINS_PEXT_I32, "llvm.x86.bmi.pext.32"},
 	{INTRINS_PEXT_I64, "llvm.x86.bmi.pext.64"},
 	{INTRINS_PDEP_I32, "llvm.x86.bmi.pdep.32"},
@@ -8798,7 +8852,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_PAVGB, "llvm.x86.sse2.pavg.b"},
 	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"},
 	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"},
-	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"}
+	{INTRINS_SSE_ROUNDSS, "llvm.x86.sse41.round.ss"},
+	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"},
 #endif
 };
 
@@ -8951,11 +9006,13 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_CTTZ_I64:
 		AddFunc2 (module, name, LLVMInt64Type (), LLVMInt64Type (), LLVMInt1Type ());
 		break;
+	case INTRINS_BEXTR_I32:
 	case INTRINS_BZHI_I32:
 	case INTRINS_PEXT_I32:
 	case INTRINS_PDEP_I32:
 		AddFunc2 (module, name, LLVMInt32Type (), LLVMInt32Type (), LLVMInt32Type ());
 		break;
+	case INTRINS_BEXTR_I64:
 	case INTRINS_BZHI_I64:
 	case INTRINS_PEXT_I64:
 	case INTRINS_PDEP_I64:
@@ -9125,9 +9182,16 @@ add_intrinsic (LLVMModuleRef module, int id)
 		arg_types [2] = LLVMInt8Type ();
 		AddFunc (module, name, ret_type, arg_types, 3);
 		break;
+	case INTRINS_SSE_ROUNDSS:
+		ret_type = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [1] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [2] = LLVMInt32Type ();
+		AddFunc (module, name, ret_type, arg_types, 3);
+		break;
 	case INTRINS_SSE_ROUNDPD:
 		ret_type = type_to_simd_type (MONO_TYPE_R8);
-		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = type_to_simd_type (MONO_TYPE_R8);
 		arg_types [1] = LLVMInt32Type ();
 		AddFunc (module, name, ret_type, arg_types, 2);
 		break;
