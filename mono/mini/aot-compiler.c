@@ -7982,11 +7982,6 @@ parse_cpu_features (const gchar *attr)
 		feature = MONO_CPU_X86_POPCNT_COMBINED;
 	else if (!strcmp (attr + prefix, "fma"))
 		feature = MONO_CPU_X86_FMA_COMBINED;
-
-	// if we disable a feature from the SSE-AVX tree we also need to disable all dependencies
-	if (!enabled && (feature & MONO_CPU_X86_FULL_SSEAVX_COMBINED))
-		feature = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature)
-
 	// these are independent
 	else if (!strcmp (attr + prefix, "lzcnt")) // technically, it'a a part of BMI but only on Intel
 		feature = MONO_CPU_X86_LZCNT;
@@ -7998,6 +7993,10 @@ parse_cpu_features (const gchar *attr)
 		// we don't have a flag for it but it's probably recognized by opt/llc so let's don't fire an error here
 		// printf ("Unknown cpu feature: %s\n", attr);
 	}
+
+	// if we disable a feature from the SSE-AVX tree we also need to disable all dependencies
+	if (!enabled && (feature & MONO_CPU_X86_FULL_SSEAVX_COMBINED))
+		feature = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature)
 	
 #elif defined(TARGET_ARM64)
 	// TODO: neon, sha1, sha2, asimd, etc...
