@@ -7986,10 +7986,10 @@ parse_cpu_features (const gchar *attr)
 	// these are independent
 	else if (!strcmp (attr + prefix, "lzcnt"))
 		feature = MONO_CPU_X86_LZCNT;
-	else if (!strcmp (attr + prefix, "bmi1"))
+	else if (!strcmp (attr + prefix, "bmi")) // NOTE: it's not "bmi1"
 		feature = MONO_CPU_X86_BMI1;
 	else if (!strcmp (attr + prefix, "bmi2"))
-		feature = MONO_CPU_X86_BMI2;
+		feature = MONO_CPU_X86_BMI2; // BMI2 doesn't imply BMI1
 	else {
 		// we don't have a flag for it but it's probably recognized by opt/llc so let's don't fire an error here
 		// printf ("Unknown cpu feature: %s\n", attr);

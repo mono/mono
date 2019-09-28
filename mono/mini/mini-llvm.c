@@ -10721,7 +10721,7 @@ MonoCPUFeatures mono_llvm_get_cpu_features (void)
 			{ "avx2",	MONO_CPU_X86_AVX2 },
 			{ "fma",	MONO_CPU_X86_FMA },
 			{ "lzcnt",	MONO_CPU_X86_LZCNT },
-			{ "bmi1",	MONO_CPU_X86_BMI1 },
+			{ "bmi",	MONO_CPU_X86_BMI1 },
 			{ "bmi2",	MONO_CPU_X86_BMI2 },
 #endif
 		};
