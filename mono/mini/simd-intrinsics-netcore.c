@@ -886,12 +886,19 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	class_ns = m_class_get_name_space (cmethod->klass);
 	class_name = m_class_get_name (cmethod->klass);
 
-#ifdef TARGET_AMD64
+#ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (cmethod->klass->nested_in)
 		class_ns = m_class_get_name_space (cmethod->klass->nested_in), class_name, cmethod->klass->nested_in;
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics.X86"))
 		return emit_x86_intrinsics (cfg ,cmethod, fsig, args);
 #endif
+
+	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
+		if (!strcmp (class_name, "Vector128`1"))
+			return emit_vector128_t (cfg ,cmethod, fsig, args);
+		if (!strcmp (class_name, "Vector256`1"))
+		return emit_vector256_t (cfg ,cmethod, fsig, args);
+	}
 
 	// FIXME: Make sure get_cpu_features is used where needed
 	if (cfg->compile_aot)
@@ -909,12 +916,6 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
 		}
 		return ins;
-	}
-	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
-		if (!strcmp (class_name, "Vector128`1"))
-			return emit_vector128_t (cfg ,cmethod, fsig, args);
-		if (!strcmp (class_name, "Vector256`1"))
-		return emit_vector256_t (cfg ,cmethod, fsig, args);
 	}
 
 	return NULL;
