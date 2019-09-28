@@ -130,6 +130,10 @@ mono_threads_state_poll (void)
 static void
 mono_threads_state_poll_with_info (MonoThreadInfo *info)
 {
+	MonoContext ctx;
+
+	MONO_CONTEXT_GET_CURRENT (ctx);
+
 	g_assert (mono_threads_is_blocking_transition_enabled ());
 
 	++coop_do_polling_count;
@@ -147,7 +151,7 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 		return;
 
 	++coop_save_count;
-	mono_threads_get_runtime_callbacks ()->thread_state_init (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX]);
+	mono_threads_get_runtime_callbacks ()->thread_state_init_from_monoctx (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX], &ctx);
 
 	/* commit the saved state and notify others if needed */
 	switch (mono_threads_transition_state_poll (info)) {
@@ -266,7 +270,7 @@ copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 #endif
 
 static gpointer
-mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata);
+mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata, MonoContext *ctx);
 
 gpointer
 mono_threads_enter_gc_safe_region_internal (MonoStackData *stackdata)
@@ -282,15 +286,18 @@ mono_threads_enter_gc_safe_region (gpointer *stackpointer)
 	return mono_threads_enter_gc_safe_region_internal (&stackdata);
 }
 
-gpointer
+gpointer MONO_NO_OPTIMIZATION
 mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, MonoStackData *stackdata)
 {
 	gpointer cookie;
 
+	MonoContext ctx;
+	MONO_CONTEXT_GET_CURRENT (ctx);
+
 	if (!mono_threads_is_blocking_transition_enabled ())
 		return NULL;
 
-	cookie = mono_threads_enter_gc_safe_region_unbalanced_with_info (info, stackdata);
+	cookie = mono_threads_enter_gc_safe_region_unbalanced_with_info (info, stackdata, &ctx);
 
 #ifdef ENABLE_CHECKED_BUILD_GC
 	if (mono_check_mode_enabled (MONO_CHECK_MODE_GC))
@@ -300,22 +307,26 @@ mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, MonoStackData
 	return cookie;
 }
 
-gpointer
+gpointer MONO_NO_OPTIMIZATION
 mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata)
 {
-	return mono_threads_enter_gc_safe_region_unbalanced_with_info (mono_thread_info_current_unchecked (), stackdata);
+	MonoContext ctx;
+	MONO_CONTEXT_GET_CURRENT (ctx);
+	return mono_threads_enter_gc_safe_region_unbalanced_with_info (mono_thread_info_current_unchecked (), stackdata, &ctx);
 }
 
-gpointer
+gpointer MONO_NO_OPTIMIZATION
 mono_threads_enter_gc_safe_region_unbalanced (gpointer *stackpointer)
 {
 	MONO_STACKDATA (stackdata);
+	MonoContext ctx;
 	stackdata.stackpointer = stackpointer;
-	return mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata);
+	MONO_CONTEXT_GET_CURRENT (ctx);
+	return mono_threads_enter_gc_safe_region_unbalanced_with_info (mono_thread_info_current_unchecked (), &stackdata, &ctx);
 }
 
 static gpointer
-mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata)
+mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata, MonoContext *ctx)
 {
 	if (!mono_threads_is_blocking_transition_enabled ())
 		return NULL;
@@ -330,7 +341,7 @@ mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, Mo
 
 retry:
 	++coop_save_count;
-	mono_threads_get_runtime_callbacks ()->thread_state_init (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX]);
+	mono_threads_get_runtime_callbacks ()->thread_state_init_from_monoctx (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX], ctx);
 
 	switch (mono_threads_transition_do_blocking (info, function_name)) {
 	case DoBlockingContinue:

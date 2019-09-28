@@ -1980,7 +1980,7 @@ usage (void)
 }
 
 static void
-monodis_thread_state_init (MonoThreadUnwindState *ctx)
+monodis_thread_state_init_from_monoctx (MonoThreadUnwindState *ctx, MonoContext *mctx)
 {
 }
 
