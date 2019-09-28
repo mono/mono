@@ -127,6 +127,10 @@ gboolean mono_use_llvm = FALSE;
 
 gboolean mono_use_fast_math = FALSE;
 
+MonoCPUFeatures mono_cpu_features_enabled = (MonoCPUFeatures)0;
+
+MonoCPUFeatures mono_cpu_features_disabled = (MonoCPUFeatures)0;
+
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
 

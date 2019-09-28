@@ -19,6 +19,7 @@ mono_simd_intrinsics_init (void)
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "ir-emit.h"
 #ifdef ENABLE_LLVM
 #include "mini-llvm.h"
@@ -70,8 +71,8 @@ get_cpu_features (MonoCompile* cfg)
 #endif
 
 	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | cfg->domain->cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~(cfg->domain->cpu_features_disabled));
+	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
+	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
 	return features;
 }
 

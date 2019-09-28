@@ -7940,97 +7940,73 @@ mono_aot_split_options (const char *aot_options)
 }
 
 static gboolean
-parse_cpu_features (MonoCPUFeatures *cpu_features_enabled, MonoCPUFeatures *cpu_features_disabled, const gchar *str)
+parse_cpu_features (MonoCPUFeatures *cpu_features_enabled, MonoCPUFeatures *cpu_features_disabled, const gchar *attr)
 {
-	*cpu_features_enabled = (MonoCPUFeatures) 0;
-	*cpu_features_disabled = (MonoCPUFeatures) 0;
+	if (!attr || strlen (attr) < 2) {
+		fprintf (stderr, "Invalid attribute");
+		return FALSE;
+	}
 
-	gchar **attrs = g_strsplit (str, ";", -1);
-
-	for (int i=0; attrs [i] != NULL; i++) {
-		gchar *attr = attrs [i];
-		int attr_len = strlen (attr);
-		if (attr_len < 2) {
-			fprintf (stderr, "Invalid attribute: %s\n", attr);
-			g_strfreev (attrs);
-			return FALSE;
-		}
-
-		//+foo - enable foo
-		//foo  - enable foo
-		//-foo - disable foo
-		gboolean enabled = TRUE;
-		if (attr [0] == '-')
-			enabled = FALSE;
-		int prefix = (attr [0] == '-' || attr [0] == '+') ? 1 : 0;
-		MonoCPUFeatures feature_enabled = (MonoCPUFeatures) 0;
-		MonoCPUFeatures feature_disabled = (MonoCPUFeatures) 0;
+	//+foo - enable foo
+	//foo  - enable foo
+	//-foo - disable foo
+	gboolean enabled = TRUE;
+	if (attr [0] == '-')
+		enabled = FALSE;
+	int prefix = (attr [0] == '-' || attr [0] == '+') ? 1 : 0;
+	MonoCPUFeatures feature = (MonoCPUFeatures) 0;
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-		// e.g.:
-		// `mattr=+sse3` = +sse,+sse2,+pclmul,+aes,+sse3
-		// `mattr=-sse3` = -sse3,-ssse3,-sse4.1,-sse4.2,-popcnt,-avx,-avx2,-fma
-		if (!strcmp (attr + prefix, "sse")) {
-			feature_enabled  = MONO_CPU_X86_SSE_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "sse2")) {
-			feature_enabled  = MONO_CPU_X86_SSE2_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "sse3")) {
-			feature_enabled  = MONO_CPU_X86_SSE3_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "ssse3")) {
-			feature_enabled  = MONO_CPU_X86_SSSE3_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "sse4.1")) {
-			feature_enabled  = MONO_CPU_X86_SSE41_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "sse4.2")) {
-			feature_enabled  = MONO_CPU_X86_SSE42_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "avx")) {
-			feature_enabled  = MONO_CPU_X86_AVX_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "avx2")) {
-			feature_enabled  = MONO_CPU_X86_AVX2_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "pclmul")) {
-			feature_enabled  = MONO_CPU_X86_PCLMUL_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "aes")) {
-			feature_enabled  = MONO_CPU_X86_AES_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "popcnt")) {
-			feature_enabled  = MONO_CPU_X86_POPCNT_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		} else if (!strcmp (attr + prefix, "fma")) {
-			feature_enabled  = MONO_CPU_X86_FMA_COMBINED;
-			feature_disabled = (MonoCPUFeatures) (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature_enabled);
-		}
-		// these are independent
-		else if (!strcmp (attr + prefix, "lzcnt")) {
-			feature_enabled  = MONO_CPU_X86_LZCNT;
-			feature_disabled = MONO_CPU_X86_LZCNT;
-		} else if (!strcmp (attr + prefix, "bmi1")) {
-			feature_enabled  = MONO_CPU_X86_BMI1;
-			feature_disabled = MONO_CPU_X86_BMI1;
-		} else if (!strcmp (attr + prefix, "bmi2")) {
-			feature_enabled  = MONO_CPU_X86_BMI2;
-			feature_disabled = MONO_CPU_X86_BMI2;
-		} else {
-			// we don't have a flag for it but it's probably recognized by opt/llc so let's don't fire an error here
-			// printf ("Unknown cpu feature: %s\n", attr);
-			continue;
-		}
-#elif defined(TARGET_ARM64)
-		// TODO: neon, sha1, sha2, asimd, etc...
-#endif
-		if (enabled)
-			*cpu_features_enabled = (MonoCPUFeatures)(*cpu_features_enabled | feature_enabled);
-		else
-			*cpu_features_disabled = (MonoCPUFeatures)(*cpu_features_disabled | feature_disabled);
+	// e.g.:
+	// `mattr=+sse3` = +sse,+sse2,+pclmul,+aes,+sse3
+	// `mattr=-sse3` = -sse3,-ssse3,-sse4.1,-sse4.2,-popcnt,-avx,-avx2,-fma
+	if (!strcmp (attr + prefix, "sse"))
+		feature = MONO_CPU_X86_SSE_COMBINED;
+	else if (!strcmp (attr + prefix, "sse2"))
+		feature = MONO_CPU_X86_SSE2_COMBINED;
+	else if (!strcmp (attr + prefix, "sse3"))
+		feature = MONO_CPU_X86_SSE3_COMBINED;
+	else if (!strcmp (attr + prefix, "ssse3"))
+		feature = MONO_CPU_X86_SSSE3_COMBINED;
+	else if (!strcmp (attr + prefix, "sse4.1"))
+		feature = MONO_CPU_X86_SSE41_COMBINED;
+	else if (!strcmp (attr + prefix, "sse4.2"))
+		feature = MONO_CPU_X86_SSE42_COMBINED;
+	else if (!strcmp (attr + prefix, "avx"))
+		feature = MONO_CPU_X86_AVX_COMBINED;
+	else if (!strcmp (attr + prefix, "avx2"))
+		feature = MONO_CPU_X86_AVX2_COMBINED;
+	else if (!strcmp (attr + prefix, "pclmul"))
+		feature = MONO_CPU_X86_PCLMUL_COMBINED;
+	else if (!strcmp (attr + prefix, "aes"))
+		feature = MONO_CPU_X86_AES_COMBINED;
+	else if (!strcmp (attr + prefix, "popcnt"))
+		feature = MONO_CPU_X86_POPCNT_COMBINED;
+	else if (!strcmp (attr + prefix, "fma"))
+		feature = MONO_CPU_X86_FMA_COMBINED;
+
+	// these are independent
+	else if (!strcmp (attr + prefix, "lzcnt"))
+		feature = MONO_CPU_X86_LZCNT;
+	else if (!strcmp (attr + prefix, "bmi1"))
+		feature = MONO_CPU_X86_BMI1;
+	else if (!strcmp (attr + prefix, "bmi2"))
+		feature = MONO_CPU_X86_BMI2;
+	else {
+		// we don't have a flag for it but it's probably recognized by opt/llc so let's don't fire an error here
+		// printf ("Unknown cpu feature: %s\n", attr);
 	}
-	g_strfreev (attrs);
+#elif defined(TARGET_ARM64)
+	// TODO: neon, sha1, sha2, asimd, etc...
+#endif
+
+	if (!enabled && (feature & MONO_CPU_X86_FMA_COMBINED))
+		*cpu_features_disabled = (MonoCPUFeatures) (*cpu_features_disabled | (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature));
+	else if (!enabled)
+		*cpu_features_disabled = (MonoCPUFeatures) (*cpu_features_disabled | feature);
+	else if (enabled)
+		*cpu_features_enabled = (MonoCPUFeatures) (*cpu_features_enabled | feature);
+
 	return TRUE;
 }
 
@@ -8210,7 +8186,12 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 				if (attrs [i] == ';')
 					attrs [i] = ',';
 			}
-			opts->llvm_cpu_attr = attrs;
+			// mattr can be declared more than once, e.g.
+			// `mattr=avx2,mattr=lzcnt,mattr=bmi2`
+			if (!opts->llvm_cpu_attr)
+				opts->llvm_cpu_attr = attrs;
+			else
+				g_string_append_printf (opts->llvm_cpu_attr, ",%s", attrs);
 		} else if (str_begins_with (arg, "depfile=")) {
 			opts->depfile = g_strdup (arg + strlen ("depfile="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
@@ -8631,8 +8612,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	jit_time_start = mono_time_track_start ();
 	domain = mono_get_root_domain ();
-	domain->cpu_features_enabled = acfg->aot_opts.cpu_features_enabled;
-	domain->cpu_features_disabled = acfg->aot_opts.cpu_features_disabled;
+	mono_cpu_features_enabled = acfg->aot_opts.cpu_features_enabled;
+	mono_cpu_features_disabled = acfg->aot_opts.cpu_features_disabled;
 	cfg = mini_method_compile (method, acfg->opts, domain, flags, 0, index);
 	mono_time_track_end (&mono_jit_stats.jit_time, jit_time_start);
 
