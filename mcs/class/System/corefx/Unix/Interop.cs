@@ -15,5 +15,10 @@ internal static partial class Interop
 		{
 			Interop.mono_pal_init ();
 		}
+
+		internal static void EnsureInitialized ()
+		{
+			Interop.mono_pal_init ();
+		}
 	}
 }

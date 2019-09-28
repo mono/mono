@@ -40,3 +40,5 @@ System.IO.Pipes/AnonymousPipeServerStream.Unix.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetEUid.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SetEUid.cs
 # corefx/Interop.cs
+
+../System/corefx/Unix/Interop.cs
