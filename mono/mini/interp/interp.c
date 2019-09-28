@@ -3269,6 +3269,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		sp++;
 	}
 
+	context->nframes ++;
+	if (G_UNLIKELY (mini_get_debug_options ()->interp_max_frames)) {
+		if (context->nframes == mini_get_debug_options ()->interp_max_frames) {
+			mini_get_debug_options ()->interp_max_frames = 0;
+			THROW_EX (mono_get_exception_stack_overflow (), ip);
+		}
+	}
+
 	//g_print ("(%p) Call %s\n", mono_thread_internal_current (), mono_method_get_full_name (frame->imethod->method));
 
 	/*
@@ -6579,6 +6587,8 @@ resume:
 	// fall through
 exit_frame:
 	error_init_reuse (error);
+
+	context->nframes --;
 
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);

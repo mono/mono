@@ -3718,6 +3718,8 @@ mini_parse_debug_option (const char *option)
 	else if (!strncmp (option, "aot-skip=", 9)) {
 		mini_debug_options.aot_skip_set = TRUE;
 		mini_debug_options.aot_skip = atoi (option + 9);
+	} else if (!strncmp (option, "interp-max-frames=", 18)) {
+		mini_debug_options.interp_max_frames = atoi (option + 18);
 	} else
 		return FALSE;
 

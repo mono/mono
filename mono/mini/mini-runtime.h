@@ -255,6 +255,7 @@ typedef struct MonoDebugOptions {
 	 */
 	gboolean aot_skip_set;
 	int aot_skip;
+	int interp_max_frames;
 } MonoDebugOptions;
 
 
