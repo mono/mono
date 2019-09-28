@@ -8175,15 +8175,18 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 				exit (0);
 			}
 		} else if (str_begins_with (arg, "mattr=")) {
-			gchar* attrs = g_strdup (arg + strlen ("mattr="));
-			if (!parse_cpu_features (attrs))
+			gchar* attr = g_strdup (arg + strlen ("mattr="));
+			if (!parse_cpu_features (attr))
 				exit (0);
 			// mattr can be declared more than once, e.g.
 			// `mattr=avx2,mattr=lzcnt,mattr=bmi2`
 			if (!opts->llvm_cpu_attr)
-				opts->llvm_cpu_attr = attrs;
-			else
-				g_string_append_printf (opts->llvm_cpu_attr, ",%s", attrs);
+				opts->llvm_cpu_attr = attr;
+			else {
+				char* old_attrs = opts->llvm_cpu_attr;
+				opts->llvm_cpu_attr = g_strdup_printf ("%s,%s", opts->llvm_cpu_attr, attr);
+				g_free (old_attrs);
+			}
 		} else if (str_begins_with (arg, "depfile=")) {
 			opts->depfile = g_strdup (arg + strlen ("depfile="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
