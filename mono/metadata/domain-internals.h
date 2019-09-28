@@ -462,12 +462,6 @@ struct _MonoDomain {
 	gboolean throw_unobserved_task_exceptions;
 
 	guint32 execution_context_field_offset;
-
-	/* cpu features requested via -mattr */
-	gint32 cpu_features_enabled; 
-	/* cpu features disabled via -mattr */
-	gint32 cpu_features_disabled;
-
 #ifdef ENABLE_NETCORE
 	GSList *alcs;
 	MonoAssemblyLoadContext *default_alc;

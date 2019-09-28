@@ -8524,7 +8524,6 @@ static void
 compile_method (MonoAotCompile *acfg, MonoMethod *method)
 {
 	MonoCompile *cfg;
-	MonoDomain *domain;
 	MonoJumpInfo *patch_info;
 	gboolean skip;
 	int index, depth;
@@ -8611,10 +8610,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_USE_CURRENT_CPU);
 
 	jit_time_start = mono_time_track_start ();
-	domain = mono_get_root_domain ();
 	mono_cpu_features_enabled = acfg->aot_opts.cpu_features_enabled;
 	mono_cpu_features_disabled = acfg->aot_opts.cpu_features_disabled;
-	cfg = mini_method_compile (method, acfg->opts, domain, flags, 0, index);
+	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
 	mono_time_track_end (&mono_jit_stats.jit_time, jit_time_start);
 
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
