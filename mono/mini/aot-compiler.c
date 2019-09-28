@@ -238,8 +238,6 @@ typedef struct MonoAotOptions {
 	char *llvm_llc;
 	char *llvm_cpu_attr;
 	gboolean use_current_cpu;
-	MonoCPUFeatures cpu_features_enabled;
-	MonoCPUFeatures cpu_features_disabled;
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
@@ -7940,7 +7938,7 @@ mono_aot_split_options (const char *aot_options)
 }
 
 static gboolean
-parse_cpu_features (MonoCPUFeatures *cpu_features_enabled, MonoCPUFeatures *cpu_features_disabled, const gchar *attr)
+parse_cpu_features (const gchar *attr)
 {
 	if (!attr || strlen (attr) < 2) {
 		fprintf (stderr, "Invalid attribute");
@@ -8001,11 +7999,11 @@ parse_cpu_features (MonoCPUFeatures *cpu_features_enabled, MonoCPUFeatures *cpu_
 #endif
 
 	if (!enabled && (feature & MONO_CPU_X86_FMA_COMBINED))
-		*cpu_features_disabled = (MonoCPUFeatures) (*cpu_features_disabled | (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature));
+		mono_cpu_features_disabled = (MonoCPUFeatures) (mono_cpu_features_disabled | (MONO_CPU_X86_FULL_SSEAVX_COMBINED & ~feature));
 	else if (!enabled)
-		*cpu_features_disabled = (MonoCPUFeatures) (*cpu_features_disabled | feature);
+		mono_cpu_features_disabled = (MonoCPUFeatures) (mono_cpu_features_disabled | feature);
 	else if (enabled)
-		*cpu_features_enabled = (MonoCPUFeatures) (*cpu_features_enabled | feature);
+		mono_cpu_features_enabled = (MonoCPUFeatures) (mono_cpu_features_enabled | feature);
 
 	return TRUE;
 }
@@ -8178,14 +8176,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			}
 		} else if (str_begins_with (arg, "mattr=")) {
 			gchar* attrs = g_strdup (arg + strlen ("mattr="));
-			if (!parse_cpu_features (&opts->cpu_features_enabled, &opts->cpu_features_disabled, attrs))
+			if (!parse_cpu_features (attrs))
 				exit (0);
-			// also, save the string (will be passed to LLVM opt and llc)
-			// replace ';' with ',' (we can't use comma in --aot command and LLVM's tools expect mattr to be comma-separated)
-			for (int i = 0; i < strlen (attrs); i++) {
-				if (attrs [i] == ';')
-					attrs [i] = ',';
-			}
 			// mattr can be declared more than once, e.g.
 			// `mattr=avx2,mattr=lzcnt,mattr=bmi2`
 			if (!opts->llvm_cpu_attr)
@@ -8610,8 +8602,6 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_USE_CURRENT_CPU);
 
 	jit_time_start = mono_time_track_start ();
-	mono_cpu_features_enabled = acfg->aot_opts.cpu_features_enabled;
-	mono_cpu_features_disabled = acfg->aot_opts.cpu_features_disabled;
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
 	mono_time_track_end (&mono_jit_stats.jit_time, jit_time_start);
 
