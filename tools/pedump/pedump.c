@@ -666,9 +666,10 @@ pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *request
        return NULL;
 }
 
-static void
+static gboolean
 thread_state_init_from_monoctx (MonoThreadUnwindState *ctx, MonoContext *mctx)
 {
+	return FALSE;
 }
 
 #define VALID_ONLY_FLAG 0x08000000
