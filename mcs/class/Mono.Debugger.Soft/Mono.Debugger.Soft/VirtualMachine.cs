@@ -150,8 +150,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void Detach () {
-			conn.Close ();
+			// Notify the application that we are detaching
 			conn.VM_Dispose ();
+			// Close the connection. No further messages can be sent
+			// over the connection after this point.
+			conn.Close ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null, 0);
 		}
 

@@ -3837,7 +3837,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				static int tramp_index;
 				char *name;
 
-				name = g_strdup_printf ("tramp_%d", tramp_index);
+				name = g_strdup_printf ("[tramp_%d] %s", tramp_index, mono_method_full_name (call->method, TRUE));
 				tramp_index ++;
 
 				/*
@@ -4100,6 +4100,10 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
+
+	// Add original method name we are currently emitting as a custom string metadata (the only way to leave comments in LLVM IR)
+	if (mono_debug_enabled () && call && call->method)
+		mono_llvm_add_string_metadata (lcall, "managed_name", mono_method_full_name (call->method, TRUE));
 
 	// As per the LLVM docs, a function has a noalias return value if and only if
 	// it is an allocation function. This is an allocation function.
@@ -7501,6 +7505,24 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [0] = lhs;
 			args [1] = rhs;
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BZHI32 ? INTRINS_BZHI_I32 : INTRINS_BZHI_I64), args, 2, "");
+			break;
+		}
+		case OP_MULX_H32:
+		case OP_MULX_H64:
+		case OP_MULX_HL32:
+		case OP_MULX_HL64: {
+			gboolean is_64 = ins->opcode == OP_MULX_H64 || ins->opcode == OP_MULX_HL64;
+			gboolean only_high = ins->opcode == OP_MULX_H32 || ins->opcode == OP_MULX_H64;
+			LLVMValueRef lx = LLVMBuildZExt (ctx->builder, lhs, LLVMInt128Type (), "");
+			LLVMValueRef rx = LLVMBuildZExt (ctx->builder, rhs, LLVMInt128Type (), "");
+			LLVMValueRef mulx = LLVMBuildMul (ctx->builder, lx, rx, "");
+			if (!only_high) {
+				LLVMValueRef lowx = LLVMBuildTrunc (ctx->builder, mulx, is_64 ? LLVMInt64Type () : LLVMInt32Type (), "");
+				LLVMBuildStore (ctx->builder, lowx, values [ins->sreg3]);
+			}
+			LLVMValueRef shift = LLVMConstInt (LLVMInt128Type (), is_64 ? 64 : 32, FALSE);
+			LLVMValueRef highx = LLVMBuildLShr (ctx->builder, mulx, shift, "");
+			values [ins->dreg] = LLVMBuildTrunc (ctx->builder, highx, is_64 ? LLVMInt64Type () : LLVMInt32Type (), "");
 			break;
 		}
 		case OP_PEXT32:
