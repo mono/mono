@@ -1427,20 +1427,6 @@ copy_summary_string_safe (char *dest, const char *src)
 	g_strlcpy (dest, src, MONO_MAX_SUMMARY_NAME_LEN);
 }
 
-/* given a pointer to a path string, get a pointer to just the filename */
-static char*
-basename_ptr (const char* path)
-{
-	g_assert (path);
-	char *p = (char *) path, *basename = (char *) path;
-	while (*p != '\0') {
-		if (*p == '/')
-			basename = p + 1;
-		p++;
-	}
-	return p;
-}
-
 static void
 fill_frame_managed_info (MonoFrameSummary *frame, MonoMethod * method)
 {
@@ -1497,7 +1483,12 @@ check_whitelisted_module (const char *in_name, const char **out_module)
 	if (allow_all_native_libraries) {
 		if (out_module) {
 			/* for a module name, use the basename of the full path in in_name */
-			char *basename = basename_ptr (in_name);
+			char *basename = (char *) in_name, *p = (char *) in_name;
+			while (*p != '\0') {
+				if (*p == '/')
+					basename = p + 1;
+				p++;
+			}
 			if (*basename)
 				copy_summary_string_safe ((char *) *out_module, basename);
 			else
