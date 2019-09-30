@@ -8123,12 +8123,13 @@ emit_method_inner (EmitContext *ctx)
 			}
 		}
 	}
-
+#ifndef MONO_LLVM_LOADED
 	if (!cfg->llvm_only && mono_threads_are_safepoints_enabled () && requires_safepoint) {
 		LLVMSetGC (method, "coreclr");
 		if (!cfg->compile_aot)
 			emit_gc_safepoint_poll (ctx->module, ctx->lmodule, cfg);
 	}
+#endif
 	LLVMSetLinkage (method, LLVMPrivateLinkage);
 
 	mono_llvm_add_func_attr (method, LLVM_ATTR_UW_TABLE);
