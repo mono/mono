@@ -359,7 +359,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->systemManufacturer = "apple";
 	get_apple_model ((char *) merp->systemModel, sizeof (merp->systemModel));
 
-	merp->eventType = config.eventType;
+	merp->eventType = "MonoAppCrash";
 
 	merp->hashes = *hashes;
 
@@ -440,11 +440,7 @@ mono_write_wer_template (MERPStruct *merp)
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->serviceNameArg, i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleName, i);
-	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleVersion, i);
-	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>0x%zx</Parameter%d>\n", i, merp->moduleOffset, i);
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_exctype (merp->exceptionArg), i);
 	i++;
@@ -454,11 +450,7 @@ mono_write_wer_template (MERPStruct *merp)
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->osVersion, i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->uiLidArg, i);
-	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemManufacturer, i);
-	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemModel, i);
+	g_async_safe_fprintf(handle, "<Parameter%d>%s %s</Parameter%d>\n", i, merp->systemManufacturer, merp->systemModel, i);
 	i++;
 
 	g_async_safe_fprintf(handle, "</ProblemSignatures>\n");
@@ -563,7 +555,6 @@ mono_merp_enable (const char *appBundleID, const char *appSignature, const char 
 	config.appSignature = g_strdup (appSignature);
 	config.appVersion = g_strdup (appVersion);
 	config.merpGUIPath = g_strdup (merpGUIPath);
-	config.eventType = g_strdup (eventType);
 	config.appPath = g_strdup (appPath);
 
 	config.log = g_getenv ("MONO_MERP_VERBOSE") != NULL;
