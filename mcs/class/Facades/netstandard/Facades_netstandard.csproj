@@ -175,6 +175,7 @@
     <ProjectReference Include="../../System.Transactions/System.Transactions.csproj" />
     <ProjectReference Include="../../System.Runtime.Serialization/System.Runtime.Serialization.csproj" />
     <ProjectReference Include="../../System.Data/System.Data.csproj" />
+    <ProjectReference Include="../../System.Data.DataSetExtensions/System.Data.DataSetExtensions.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
