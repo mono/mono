@@ -1031,6 +1031,7 @@
     <Compile Include="..\Mono.Security\Mono.Security\ASN1Convert.cs" />
     <Compile Include="..\Mono.Security\Mono.Security\BitConverterLE.cs" />
     <Compile Include="..\Mono.Security\Mono.Security\StrongName.cs" />
+    <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefilehandle.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefindhandle.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safewaithandle.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\win32safehandles.cs" />
@@ -1931,11 +1932,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -1962,7 +1959,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
@@ -2245,7 +2241,6 @@
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
-        <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefilehandle.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatters\soapfault.cs" />
@@ -2463,11 +2458,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -2495,7 +2486,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -2552,11 +2542,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -2584,7 +2570,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -2812,11 +2797,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -2844,7 +2825,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -3179,7 +3159,6 @@
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
-            <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefilehandle.cs" />
             <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
             <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatters\soapfault.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\descryptoserviceprovider.cs" />
@@ -3384,11 +3363,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -3421,7 +3396,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -3645,11 +3619,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -3682,7 +3652,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -3906,11 +3875,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -3943,7 +3908,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -4167,11 +4131,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -4198,7 +4158,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
@@ -4423,11 +4382,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -4454,7 +4409,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
@@ -4679,11 +4633,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -4710,7 +4660,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
@@ -4999,7 +4948,6 @@
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
-            <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefilehandle.cs" />
             <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
             <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
             <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatters\soapfault.cs" />
@@ -5217,11 +5165,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -5249,7 +5193,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -5477,11 +5420,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -5509,7 +5448,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -5737,11 +5675,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Close.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.FLock.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Open.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
@@ -5769,7 +5703,6 @@
             <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
-            <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
             <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />

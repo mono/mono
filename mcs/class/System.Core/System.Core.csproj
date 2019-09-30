@@ -976,6 +976,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
@@ -1052,6 +1053,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
@@ -1128,6 +1130,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
@@ -1468,6 +1471,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
@@ -1544,6 +1548,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
@@ -1620,6 +1625,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+            <Compile Include="..\System\corefx\Unix\Interop.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
