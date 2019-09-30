@@ -43,6 +43,7 @@
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "tasklets.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef TARGET_WIN32
 static void (*restore_stack) (void);

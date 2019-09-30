@@ -20,6 +20,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/unlocked.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #include "mini-ppc.h"
 #ifdef TARGET_POWERPC64

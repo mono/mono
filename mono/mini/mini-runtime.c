@@ -100,6 +100,7 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
+#include "mono/utils/mono-tls-inline.h"
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;

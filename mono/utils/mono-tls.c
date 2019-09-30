@@ -9,6 +9,7 @@
  */
 
 #include "mono-tls.h"
+#include "mono-tls-inline.h"
 
 #ifdef MONO_KEYWORD_THREAD
 

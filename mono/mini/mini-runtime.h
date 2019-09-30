@@ -457,12 +457,14 @@ gboolean          mono_running_on_valgrind (void);
 
 MonoLMF * mono_get_lmf                      (void);
 #define mono_get_lmf_addr mono_tls_get_lmf_addr
-MonoLMF** mono_get_lmf_addr                 (void);
+//#include "mono/utils/mono-tls-inline.h" for this.
+//MonoLMF** mono_get_lmf_addr                 (void);
 void      mono_set_lmf                      (MonoLMF *lmf);
 void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 #define mono_get_jit_tls mono_tls_get_jit_tls
-MonoJitTlsData* mono_get_jit_tls            (void);
+//#include "mono/utils/mono-tls-inline.h" for this.
+//MonoJitTlsData* mono_get_jit_tls            (void);
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);
