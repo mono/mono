@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#if !__MonoCS__
-
 using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -12,6 +10,7 @@ using Internal.Runtime.CompilerServices;
 
 namespace System.Buffers
 {
+#if !__MonoCS__
     public static partial class SequenceReaderExtensions
     {
         /// <summary>
@@ -174,6 +173,15 @@ namespace System.Buffers
             return false;
         }
     }
-}
-
+#else
+    public static partial class SequenceReaderExtensions
+    {
+        public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
+        public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
+        public static bool TryReadBigEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
+        public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out short value) => throw new PlatformNotSupportedException();
+        public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out int value) => throw new PlatformNotSupportedException();
+        public static bool TryReadLittleEndian(this System.Buffers.SequenceReader<byte> reader, out long value) => throw new PlatformNotSupportedException();
+    }
 #endif
+}
