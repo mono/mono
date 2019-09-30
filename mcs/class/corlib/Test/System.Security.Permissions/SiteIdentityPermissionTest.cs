@@ -54,6 +54,7 @@ namespace MonoTests.System.Security.Permissions {
 			"*www.mono-project.com",
 			"*-project.com",
 			"www.*.com",
+			"www.mono-project.com*"
 		};
 
 		[Category ("NotWorking")]
