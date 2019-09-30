@@ -84,17 +84,12 @@ macos_version_string (void)
 	/* macOS 10.13.6 or later */
 	if (!version_string) {
 		size_t size = 0;
-		if (sysctlbyname ("kern.osproductversion", NULL, &size, NULL, 0) < 0) {
-			buf[0] = '\0';
-			version_string = &buf[0];
+		if (sysctlbyname ("kern.osproductversion", NULL, &size, NULL, 0) < 0 || size > buf_size) {
+			/* if we couldn't get the size or if it needs more space that we have in buf, leave it empty */
+			version_string = "";
 			return version_string;
 		}
 
-		if (size > buf_size) {
-			buf[0] = '\0';
-			version_string = &buf[0];
-			return version_string;
-		}
 		if (sysctlbyname ("kern.osproductversion", (char*)buf, &size, NULL, 0) >= 0)
 			version_string = &buf[0];
 	}
