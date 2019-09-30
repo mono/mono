@@ -393,8 +393,11 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->moduleOffset = 0;
 
 	merp->uiLidArg = MONO_LOCALE_INVARIANT;
-
+#if defined (TARGET_OSX)
 	merp->osVersion = macos_version_string ();
+#else
+	merp->osVersion = kernel_version_string ();
+#endif
 
 	// FIXME: THis is apple-only for now
 	merp->systemManufacturer = "apple";
