@@ -1773,7 +1773,6 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 		MonoJitInfo *ji;
 		MonoDomain *domain = mono_domain_get ();
 		MonoDomain *target_domain = mono_domain_get ();
-		char *method_name;
 		ji = mini_jit_info_table_find_ext (domain, (char *)ip, TRUE, &target_domain);
 		if (ji) {
 			frame->is_managed = TRUE;
