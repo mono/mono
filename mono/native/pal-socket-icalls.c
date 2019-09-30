@@ -46,7 +46,7 @@ mono_pal_init_sockets (void)
 int32_t
 SystemNative_IsRuntimeShuttingDown (void)
 {
-	return mono_runtime_is_shutting_down ();
+	return mono_runtime_is_shutting_down () || mono_thread_interruption_requested ();
 }
 
 int32_t ves_icall_Interop_Sys_IsRuntimeShuttingDown_internal (void)
