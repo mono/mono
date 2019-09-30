@@ -2440,42 +2440,36 @@ dump_usym (char *name, uintptr_t value, uintptr_t size)
 	EXIT_LOG;
 }
 
-static char*
-symbol_for (uintptr_t code)
+static gboolean
+symbol_for (uintptr_t code, char *sname, size_t slen)
 {
-	char *sname = NULL;
-
-	if (g_module_address ((void *) code, NULL, NULL, &sname, NULL) == TRUE)
-		return sname;
-
-	return NULL;
+	return g_module_address ((void *) code, NULL, 0, NULL, sname, slen, NULL);
 }
 
 static void
 dump_unmanaged_coderefs (void)
 {
 	int i;
-	const char* last_symbol;
+	char last_symbol [256];
 	uintptr_t addr, page_end;
 
 	for (i = 0; i < size_code_pages; ++i) {
-		char* sym;
+		char sym [256];
 		if (!code_pages [i] || code_pages [i] & 1)
 			continue;
-		last_symbol = NULL;
+		last_symbol [0] = '\0';
 		addr = CPAGE_ADDR (code_pages [i]);
 		page_end = addr + CPAGE_SIZE;
 		code_pages [i] |= 1;
 		/* we dump the symbols for the whole page */
 		for (; addr < page_end; addr += 16) {
-			sym = symbol_for (addr);
-			if (sym && sym == last_symbol)
+			gboolean symret = symbol_for (addr, sym, 256);
+			if (symret && strncmp (sym, last_symbol, 256) == 0)
 				continue;
-			last_symbol = sym;
-			if (!sym)
+			g_strlcpy (last_symbol, sym, 256);
+			if (sym [0] == '\0')
 				continue;
 			dump_usym (sym, addr, 0); /* let's not guess the size */
-			free (sym); /* API changes mean this must be freed */
 		}
 	}
 }

@@ -1512,9 +1512,9 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	// Note: it's not safe for us to be interrupted while inside of dl_addr, because if we
 	// try to call dl_addr while interrupted while inside the lock, we will try to take a
 	// non-recursive lock twice on this thread, and will deadlock.
-	char *sname = NULL, *fname = NULL;
+	char sname [256], fname [256];
 	void *saddr = NULL, *fbase = NULL;
-	gboolean success = g_module_address ((void*)in_ip, &fname, &fbase, &sname, &saddr);
+	gboolean success = g_module_address ((void*)in_ip, fname, 256, &fbase, sname, 256, &saddr);
 	if (!success)
 		return FALSE;
 
@@ -1526,10 +1526,6 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 
 	if (saddr && out_name)
 		copy_summary_string_safe (out_name, sname);
-	if (fname != NULL)
-		free (fname);
-	if (sname != NULL)
-		free (sname);
 	return TRUE;
 }
 

@@ -141,7 +141,9 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 }
 
 gboolean
-g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
+g_module_address (void *addr, char *file_name, size_t file_name_len,
+                  void **file_base, char *sym_name, size_t sym_name_len,
+                  void **sym_addr)
 {
 	HMODULE module;
 	/*
@@ -152,27 +154,23 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (ret)
 		return FALSE;
 
-	if (file_name != NULL) {
+	if (file_name != NULL && file_name_len >= 1) {
 		/* sigh, non-const. AIX for POSIX is the same way. */
-		TCHAR *fname = (TCHAR*)malloc(255);
+		TCHAR *fname = (TCHAR*)g_alloca(255);
 		DWORD bytes = GetModuleFileName(module, fname, 255);
 		/* XXX: check for ERROR_INSUFFICIENT_BUFFER? */
 		if (bytes) {
 			/* Convert back to UTF-8 from wide for runtime */
-			char *fname_utf8 = u16to8(fname);
-			*file_name = fname_utf8;
+			*file_name = '\0'; /* XXX */
 		} else {
-			*file_name = NULL;
+			*file_name = '\0';
 		}
-		free(fname);
-	} else {
-		*file_name = NULL;
 	}
 	/* XXX: implement the rest */
 	if (file_base != NULL)
 		*file_base = NULL;
-	if (sym_name != NULL)
-		*sym_name = NULL;
+	if (sym_name != NULL && sym_name_len >= 1)
+		sym_name[0] = '\0';
 	if (sym_addr != NULL)
 		*sym_addr = NULL;
 

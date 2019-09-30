@@ -48,6 +48,9 @@
 #include <sys/ldr.h>
 #include <sys/debug.h>
 
+/* library filename + ( + member file name + ) + NUL */
+#define AIX_PRINTED_LIB_LEN ((PATH_MAX * 2) + 3)
+
 /*
  * The structure that holds information for dladdr. Unfortunately, on AIX,
  * the information returned by loadquery lives in an allocated buffer, so it
@@ -136,11 +139,10 @@ _g_sym_from_tb(void **sbase, const char **sname, void *where) {
 static int
 _g_dladdr(void* s, _g_Dl_info* i) {
 	/*
-	 * Don't put this on the stack, we'll allocate some hideously large
-	 * buffer on the heap and avoid any reallocations. Also init the
-	 * returned structure members to clear out any garbage.
+	 * Use stack instead of heap because malloc may be messed up.
+	 * Init returned structure members to clear out any garbage.
 	 */
-	char *buf = malloc(10000);
+	char *buf = (char*)g_alloca(10000);
 	i->dli_fbase = NULL;
 	i->dli_fname = NULL;
 	i->dli_saddr = NULL;
@@ -177,31 +179,28 @@ _g_dladdr(void* s, _g_Dl_info* i) {
 			/* Look for file name and base address. */
 			i->dli_fbase = tb; /* Includes XCOFF header */
 			/* library filename + ( + member + ) + NUL */
-			char *libname = malloc ((PATH_MAX * 2) + 3);
+			char *libname = (char*)g_alloca (AIX_PRINTED_LIB_LEN);
 			char *file_part = cur->ldinfo_filename;
 			char *member_part = file_part + strlen(file_part) + 1;
 			/*
 			 * This can't be a const char*, because it exists from
-			 * an allocated buffer in memory that should probably
-			 * be freed. We might as well add the member name too.
+			 * a stack allocated buffer. Also append the member.
 			 *
 			 * XXX: See if we can't frob usla's memory ranges for
 			 * const strings; but is quite difficult.
 			 */
 			if (member_part[0] == '\0') {
 				/* Not an archive, just copy the file name. */
-				strcpy(libname, file_part);
+				g_strlcpy(libname, file_part, AIX_PRINTED_LIB_LEN);
 			} else {
 				/* It's an archive with member. */
 				sprintf(libname, "%s(%s)", file_part, member_part);
 			}
 			i->dli_fname = libname;
 
-			free(buf);
 			return 1;
 		} else if (cur->ldinfo_next == 0) {
 			/* Nothing. */
-			free(buf);
 			return 0;
 		} else {
 			/* Try the next image in memory. */
@@ -211,23 +210,21 @@ _g_dladdr(void* s, _g_Dl_info* i) {
 }
 
 gboolean
-g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
+g_module_address (void *addr, char *file_name, size_t file_name_len,
+                  void **file_base, char *sym_name, size_t sym_name_len,
+                  void **sym_addr)
 {
 	_g_Dl_info dli;
 	int ret = _g_dladdr(addr, &dli);
 	/* This zero-on-failure is unlike other Unix APIs. */
 	if (ret == 0)
 		return FALSE;
-	if (file_name != NULL)
-		*file_name = dli.dli_fname;
-	/* if the caller doesn't want fname and we have it, it's a leak */
-	else if (dli.dli_fname != NULL)
-		free (dli.dli_fname);
+	if (file_name != NULL && file_name_len >= 1)
+		g_strlcpy(file_name, dli.dli_fname, file_name_len);
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
-	if (sym_name != NULL)
-		/* const, so dup */
-		*sym_name = (dli.dli_sname == NULL ? NULL : strdup(dli.dli_sname));
+	if (sym_name != NULL && sym_name_len >= 1)
+		g_strlcpy(sym_name, dli.dli_sname, sym_name_len);
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;

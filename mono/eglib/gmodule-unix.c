@@ -82,7 +82,9 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 
 #if defined(HAVE_DLADDR)
 gboolean
-g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
+g_module_address (void *addr, char *file_name, size_t file_name_len,
+                  void **file_base, char *sym_name, size_t sym_name_len,
+                  void **sym_addr)
 {
 	Dl_info dli;
 	int ret = dladdr(addr, &dli);
@@ -90,14 +92,14 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 	if (ret == 0)
 		return FALSE;
 	/*
-	 * AIX/Win32 return non-const, so dup here for API consistency
+	 * AIX/Win32 return non-const, so we use caller-allocated bufs instead
 	 */
-	if (file_name != NULL)
-		*file_name = (dli.dli_fname == NULL ? NULL : strdup (dli.dli_fname));
+	if (file_name != NULL && file_name_len >= 1)
+		g_strlcpy(file_name, dli.dli_fname, file_name_len);
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
-	if (sym_name != NULL)
-		*sym_name = (dli.dli_sname == NULL ? NULL : strdup (dli.dli_sname));
+	if (sym_name != NULL && sym_name_len >= 1)
+		g_strlcpy(sym_name, dli.dli_sname, sym_name_len);
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;
@@ -105,7 +107,9 @@ g_module_address (void *addr, char **file_name, void **file_base, char **sym_nam
 #elif !defined(_AIX)
 /* AIX has its own implementation that is long enough to be its own file. */
 gboolean
-g_module_address (void *addr, char **file_name, void **file_base, char **sym_name, void **sym_addr)
+g_module_address (void *addr, char *file_name, size_t file_name_len,
+                  void **file_base, char *sym_name, size_t sym_name_len,
+                  void **sym_addr)
 {
 	return FALSE;
 }
