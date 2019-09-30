@@ -42,7 +42,7 @@
 #include <utils/mono-threads-debug.h>
 
 static const char *
-os_version_string (void)
+kernel_version_string (void)
 {
 #ifdef HAVE_SYS_UTSNAME_H
 	static struct utsname name;
@@ -60,6 +60,47 @@ os_version_string (void)
 	return version_string;
 #endif
 	return "";
+}
+
+static gboolean
+starts_with(const char *pre, const char *str)
+{
+    return strncmp(pre, str, strlen(pre)) == 0;
+}
+
+static const char *
+macos_version_string (void)
+{
+	static const char *version_string;
+	/* macOS 10.13.6 or later */
+	if (!version_string) {
+		char s[256];
+		size_t size = sizeof (s);
+		if (sysctlbyname ("kern.osproductversion", s, &size, NULL, 0) >= 0)
+			version_string = strdup(s);
+	}
+	/* macOS 10.13.5 or older */
+	if (!version_string) {
+		const char *kv_string = kernel_version_string ();
+		if (starts_with ("17", kv_string))
+			version_string = "10.13"; // High Sierra
+		else if (starts_with ("16", kv_string))
+			version_string = "10.12"; // Sierra
+		else if (starts_with ("15", kv_string))
+			version_string = "10.11"; // El Capitan
+		else if (starts_with ("14", kv_string))
+			version_string = "10.10"; // Yosemite
+		else if (starts_with ("13", kv_string))
+			version_string = "10.9"; // Mavericks
+		else if (starts_with ("12", kv_string))
+			version_string = "10.8"; // Mountain Lion
+		else if (starts_with ("11", kv_string))
+			version_string = "10.7"; // Lion
+	}
+	if (!version_string)
+		version_string = "";
+
+	return version_string;
 }
 
 // To get the path of the running process
@@ -351,7 +392,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 
 	merp->uiLidArg = MONO_LOCALE_INVARIANT;
 
-	merp->osVersion = os_version_string ();
+	merp->osVersion = macos_version_string ();
 
 	// FIXME: THis is apple-only for now
 	merp->systemManufacturer = "apple";
