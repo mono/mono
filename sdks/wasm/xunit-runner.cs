@@ -247,8 +247,14 @@ class WasmRunner : IMessageSink
 						nrun ++;
 						try {
 							object obj = null;
-							if (!method.IsStatic)
-								obj = Activator.CreateInstance (method.ReflectedType);
+							if (!method.IsStatic) {
+								var constructor = method.ReflectedType.GetConstructor (Type.EmptyTypes);
+								if (constructor != null) 
+									obj = constructor.Invoke (null);
+								else
+									obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject (method.ReflectedType);
+							}
+
 							var pars = method.GetParameters ();
 							for (int i = 0; i < dataRow.Length; ++i)
 								dataRow [i] = ConvertArg (dataRow [i], pars [i].ParameterType);
