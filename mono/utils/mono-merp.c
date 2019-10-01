@@ -63,9 +63,9 @@ kernel_version_string (void)
 }
 
 static gboolean
-starts_with (const char *pre, const char *str)
+starts_with (const char *pre, size_t pre_sz, const char *str)
 {
-    return strncmp (pre, str, strlen (pre)) == 0;
+    return strncmp (pre, str, pre_sz) == 0;
 }
 
 static const char *
@@ -84,7 +84,7 @@ macos_version_string (void)
 	/* macOS 10.13.6 or later */
 	if (!version_string) {
 		size_t size = 0;
-		if (sysctlbyname ("kern.osproductversion", NULL, &size, NULL, 0) < 0 || size > buf_size) {
+		if (sysctlbyname ("kern.osproductversion", NULL, &size, NULL, 0) < 0 || size >= buf_size) {
 			/* if we couldn't get the size or if it needs more space that we have in buf, leave it empty */
 			version_string = "";
 			return version_string;
@@ -96,19 +96,19 @@ macos_version_string (void)
 	/* macOS 10.13.5 or older */
 	if (!version_string) {
 		const char *kv_string = kernel_version_string ();
-		if (starts_with ("17", kv_string))
+		if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("17"), kv_string))
 			version_string = "10.13"; // High Sierra
-		else if (starts_with ("16", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("16"), kv_string))
 			version_string = "10.12"; // Sierra
-		else if (starts_with ("15", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("15"), kv_string))
 			version_string = "10.11"; // El Capitan
-		else if (starts_with ("14", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("14"), kv_string))
 			version_string = "10.10"; // Yosemite
-		else if (starts_with ("13", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("13"), kv_string))
 			version_string = "10.9"; // Mavericks
-		else if (starts_with ("12", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("12"), kv_string))
 			version_string = "10.8"; // Mountain Lion
-		else if (starts_with ("11", kv_string))
+		else if (starts_with (G_STRING_CONSTANT_AND_LENGTH ("11"), kv_string))
 			version_string = "10.7"; // Lion
 	}
 	if (!version_string)
