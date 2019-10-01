@@ -3167,8 +3167,14 @@ emit_gc_safepoint_poll (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoCompi
 	gboolean is_aot = cfg == NULL || cfg->compile_aot;
 	LLVMValueRef func = mono_llvm_get_or_insert_gc_safepoint_poll (lmodule);
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_UNWIND);
-	mono_llvm_add_func_attr (func, LLVM_ATTR_OPTIMIZE_NONE);
-	LLVMSetLinkage (func, is_aot ? LLVMWeakODRLinkage : LLVMPrivateLinkage);
+	if (!is_aot) {
+		mono_llvm_add_func_attr (func, LLVM_ATTR_OPTIMIZE_NONE); // no need to waste time here, the function is already optimized and will be inlined.
+		mono_llvm_add_func_attr (func, LLVM_ATTR_NO_INLINE); // optnone attribute requires noinline (but it will be inlined anyway)
+		LLVMSetLinkage (LLVMPrivateLinkage);
+	} else {
+		LLVMSetLinkage (LLVMWeakODRLinkage);
+	}
+
 	LLVMBasicBlockRef entry_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.entry");
 	LLVMBasicBlockRef poll_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.poll");
 	LLVMBasicBlockRef exit_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.exit");
