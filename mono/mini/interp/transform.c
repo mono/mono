@@ -51,8 +51,22 @@ typedef struct
 	unsigned char flags;
 } StackInfo;
 
+// StackValue contains data to construct an InterpInst that is equivalent with the contents
+// of the stack slot / local.
+typedef struct {
+	// Indicates the type of the stored information. It could be a LDLOC or a LDC opcode
+	int opcode;
+	// If opcode is a LDLOC, this is the local_index
+	int data;
+} StackValue;
+
 typedef struct
 {
+	// This indicates what is currently stored in this stack slot. This can be a constant
+	// or the copy of a local.
+	StackValue val;
+	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
+	// of the stack slot, because we can't clear the instruction that set it.
 	InterpInst *ins;
 } StackContentInfo;
 
@@ -6318,10 +6332,10 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 {
 	StackContentInfo *si;
 	for (si = start; si < end; si++) {
-		if (si->ins) {
-			g_assert (MINT_IS_LDLOC (si->ins->opcode));
-			if (si->ins->data [0] == local)
-				si->ins = NULL;
+		if (si->val.opcode != MINT_NOP) {
+			g_assert (MINT_IS_LDLOC (si->val.opcode));
+			if (si->val.data == local)
+				si->val.opcode = MINT_NOP;
 		}
 	}
 }
@@ -6329,15 +6343,14 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 // The value of local has changed. This means we can no longer assume that any other local
 // is a copy of this local.
 static void
-clear_local_content_info_for_local (StackContentInfo *start, StackContentInfo *end, int local)
+clear_local_content_info_for_local (StackValue *start, StackValue *end, int local)
 {
-	StackContentInfo *si;
-	for (si = start; si < end; si++) {
-		if (si->ins) {
-			g_assert (MINT_IS_MOVLOC (si->ins->opcode));
-			g_assert (si->ins->data [1] == (guint16)(si - start));
-			if (si->ins->data [0] == local)
-				si->ins = NULL;
+	StackValue *sval;
+	for (sval = start; sval < end; sval++) {
+		if (sval->opcode != MINT_NOP) {
+			g_assert (MINT_IS_MOVLOC (sval->opcode));
+			if (sval->data == local)
+				sval->opcode = MINT_NOP;
 		}
 	}
 }
@@ -6384,7 +6397,7 @@ interp_cprop (TransformData *td)
 	StackContentInfo *stack = (StackContentInfo*) g_malloc (td->max_stack_height * sizeof (StackContentInfo));
 	StackContentInfo *stack_end = stack + td->max_stack_height;
 	StackContentInfo *sp = stack;
-	StackContentInfo *locals = (StackContentInfo*) g_malloc (td->locals_size * sizeof (StackContentInfo));
+	StackValue *locals = (StackValue*) g_malloc (td->locals_size * sizeof (StackValue));
 	int *local_ref_count = (int*) g_malloc0 (td->locals_size * sizeof (int));
 	InterpInst *ins;
 	int last_il_offset = -1;
@@ -6399,10 +6412,10 @@ interp_cprop (TransformData *td)
 		if (is_bb_start) {
 			if (td->stack_height [il_offset] >= 0) {
 				sp = stack + td->stack_height [il_offset];
-				g_assert (sp >= stack);
+				g_assert (sp <= stack_end);
 				memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 			}
-			memset (locals, 0, td->locals_size * sizeof (StackContentInfo));
+			memset (locals, 0, td->locals_size * sizeof (StackValue));
 		}
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
@@ -6420,59 +6433,69 @@ interp_cprop (TransformData *td)
 					if (replace_op) {
 						if (td->verbose_level)
 							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
+						// We know what local is on the stack now. Track it
+						sp->ins = NULL;
+						sp->val.opcode = ins->opcode;
+						sp->val.data = loaded_local;
+
+						// Clear the previous stloc instruction
 						interp_clear_ins (td, ins->prev);
 						ins->opcode = replace_op;
 						mono_interp_stats.stloc_nps++;
 						local_ref_count [loaded_local]--;
-						// FIXME We know what local is on the stack now. Track it
 					}
 				}
-			} else if (locals [loaded_local].ins != NULL && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
-				g_assert (MINT_IS_MOVLOC (locals [loaded_local].ins->opcode));
+			} else if (locals [loaded_local].opcode != MINT_NOP && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
+				g_assert (MINT_IS_MOVLOC (locals [loaded_local].opcode));
 				// do copy propagation of the original source
 				if (td->verbose_level)
-					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].ins->data [0]);
+					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].data);
 				mono_interp_stats.copy_propagations++;
 				local_ref_count [loaded_local]--;
-				ins->data [0] = locals [loaded_local].ins->data [0];
+				ins->data [0] = locals [loaded_local].data;
 				local_ref_count [ins->data [0]]++;
 			}
 			if (!replace_op) {
 				// Save the ldloc on the stack if it wasn't optimized away
 				// For simplicity we don't track locals that have their address taken
 				// since it is hard to detect instructions that change the local value.
-				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)
-					sp->ins = NULL;
-				else
+				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT) {
+					sp->val.opcode = MINT_NOP;
+				} else {
 					sp->ins = ins;
+					sp->val.opcode = ins->opcode;
+					sp->val.data = ins->data [0];
+				}
 			}
 			sp++;
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			int dest_local = ins->data [0];
 			sp--;
-			if (sp->ins != NULL) {
-				int mt = sp->ins->opcode - MINT_LDLOC_I1;
+			if (sp->val.opcode != MINT_NOP && sp->ins != NULL) {
+				int mt = sp->val.opcode - MINT_LDLOC_I1;
 				if (ins->opcode - MINT_STLOC_I1 == mt) {
 					// Same local, same type of load and store, convert to movloc
 					if (td->verbose_level)
 						g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
-					int src_local = sp->ins->data [0];
+					int src_local = sp->val.data;
+					int vtsize = (ins->opcode == MINT_STLOC_VT) ? ins->data [1] : 0;
 					interp_clear_ins (td, sp->ins);
 					interp_clear_ins (td, ins);
 
 					ins = interp_insert_ins (td, ins, get_movloc_for_type (mt));
 					ins->data [0] = src_local;
 					ins->data [1] = dest_local;
-					if (ins->opcode == MINT_MOVLOC_VT)
-						ins->data [2] = sp->ins->data [1];
+					if (vtsize)
+						ins->data [2] = vtsize;
 					mono_interp_stats.movlocs++;
 					// Track what exactly is stored into local
-					locals [dest_local].ins = ins;
+					locals [dest_local].opcode = ins->opcode;
+					locals [dest_local].data = src_local;
 				} else {
-					locals [dest_local].ins = NULL;
+					locals [dest_local].opcode = MINT_NOP;
 				}
 			} else {
-				locals [dest_local].ins = NULL;
+				locals [dest_local].opcode = MINT_NOP;
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
