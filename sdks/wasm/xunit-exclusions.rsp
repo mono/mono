@@ -68,3 +68,13 @@
 # System.Net.Http.UnitTests
 # Hangs
 -nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
+
+# System.Net.Tests.WebClientTest
+# WebClient.Proxy throws PlatformNotSupportedException
+-nomethod System.Net.Tests.WebClientTest.DefaultCtor_PropertiesReturnExpectedValues
+-nomethod System.Net.Tests.WebClientTest.Proxy_Roundtrips
+
+# System.Net.Sockets.Tests
+# Socket ctor throws PlatformNotSupportedException
+-nomethod System.Net.Sockets.Tests.NetworkStreamTest.Ctor_NotConnected_ThrowsIOException
+
