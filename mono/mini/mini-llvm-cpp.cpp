@@ -535,7 +535,7 @@ mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 gboolean
 mono_llvm_remove_gc_safepoint_poll (LLVMModuleRef module)
 {
-	llvm::Function *func = unwrap(module)->getFunction ("gc.safepoint_poll");
+	llvm::Function *func = unwrap (module)->getFunction ("gc.safepoint_poll");
 	if (func == nullptr)
 		return FALSE;
 	func->eraseFromParent ();

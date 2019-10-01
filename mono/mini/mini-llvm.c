@@ -3172,29 +3172,29 @@ emit_gc_safepoint_poll (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoCompi
 	LLVMBasicBlockRef entry_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.entry");
 	LLVMBasicBlockRef poll_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.poll");
 	LLVMBasicBlockRef exit_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.exit");
+	LLVMTypeRef ptr_type = LLVMPointerType (IntPtrType (), 0);
 	LLVMBuilderRef builder = LLVMCreateBuilder ();
 
 	/* entry: */
 	LLVMPositionBuilderAtEnd (builder, entry_bb);
 	LLVMValueRef poll_val_ptr;
 	if (is_aot) {
-		poll_val_ptr = get_aotconst_typed_module (module, builder, 
-			MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, NULL, LLVMPointerType (IntPtrType (), 0));
+		poll_val_ptr = get_aotconst_typed_module (module, builder, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, NULL, ptr_type);
 	} else {
 		LLVMValueRef poll_val_int = LLVMConstInt (IntPtrType (), (guint64) &mono_polling_required, TRUE);
-		poll_val_ptr = LLVMBuildIntToPtr (builder, poll_val_int, LLVMPointerType (IntPtrType (), 0), "");
+		poll_val_ptr = LLVMBuildIntToPtr (builder, poll_val_int, ptr_type, "");
 	}
 	LLVMValueRef poll_val_ptr_load = LLVMBuildLoad (builder, poll_val_ptr, "");
 	LLVMValueRef poll_val = LLVMBuildPtrToInt (builder, poll_val_ptr_load, IntPtrType (), "");
-	LLVMValueRef cmp = LLVMBuildICmp (builder, LLVMIntEQ, poll_val, LLVMConstNull (LLVMTypeOf (poll_val)), "");
+	LLVMValueRef poll_val_zero = LLVMConstNull (LLVMTypeOf (poll_val));
+	LLVMValueRef cmp = LLVMBuildICmp (builder, LLVMIntEQ, poll_val, poll_val_zero, "");
 	mono_llvm_build_weighted_branch (builder, cmp, exit_bb, poll_bb, 1000 /* weight for exit_bb */, 1 /* weight for poll_bb */);
 
 	/* poll: */
 	LLVMPositionBuilderAtEnd (builder, poll_bb);
 	LLVMValueRef call;
 	if (is_aot) {
-		LLVMValueRef icall_wrapper;
-		icall_wrapper = emit_icall_cold_wrapper (module, lmodule, MONO_JIT_ICALL_mono_threads_state_poll, TRUE);
+		LLVMValueRef icall_wrapper = emit_icall_cold_wrapper (module, lmodule, MONO_JIT_ICALL_mono_threads_state_poll, TRUE);
 		module->gc_poll_cold_wrapper = icall_wrapper;
 		call = LLVMBuildCall (builder, icall_wrapper, NULL, 0, "");
 	} else {
@@ -3202,10 +3202,11 @@ emit_gc_safepoint_poll (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoCompi
 		// this function calls gc_poll_cold_wrapper_compiled via a global variable.
 		// @gc.safepoint_poll will be inlined and can be deleted after -place-safepoints pass.
 		LLVMTypeRef poll_sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
+		LLVMTypeRef poll_sig_ptr = LLVMPointerType (poll_sig, 0);
 		gpointer target = resolve_patch (cfg, MONO_PATCH_INFO_ABS, module->gc_poll_cold_wrapper_compiled);
-		LLVMValueRef tramp_var = LLVMAddGlobal (lmodule, LLVMPointerType (poll_sig, 0), "mono_threads_state_poll");
+		LLVMValueRef tramp_var = LLVMAddGlobal (lmodule, poll_sig_ptr, "mono_threads_state_poll");
 		LLVMValueRef target_val = LLVMConstInt (LLVMInt64Type (), (guint64) target, FALSE);
-		LLVMSetInitializer (tramp_var, LLVMConstIntToPtr (target_val, LLVMPointerType (poll_sig, 0)));
+		LLVMSetInitializer (tramp_var, LLVMConstIntToPtr (target_val, poll_sig_ptr));
 		LLVMSetLinkage (tramp_var, LLVMExternalLinkage);
 		LLVMValueRef callee = LLVMBuildLoad (builder, tramp_var, "");
 		call = LLVMBuildCall (builder, callee, NULL, 0, "");
