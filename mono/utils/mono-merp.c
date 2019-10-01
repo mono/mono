@@ -116,11 +116,17 @@ typedef struct {
 	char systemModel [100];
 	const char *systemManufacturer;
 
-	const char *eventType;
+	const char *eventType; /* Must be MONO_MERP_EVENT_TYPE_STR */
 
 	MonoStackHash hashes;
 	GSList *annotations;
 } MERPStruct;
+
+/* The event type determines the format of the fields that are reported.  It
+ * must be MonoAppCrash for the rest of our report to make sense.
+ */
+#define MONO_MERP_EVENT_TYPE_STR "MonoAppCrash"
+
 
 typedef struct {
 	gboolean enable_merp;
@@ -359,7 +365,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->systemManufacturer = "apple";
 	get_apple_model ((char *) merp->systemModel, sizeof (merp->systemModel));
 
-	merp->eventType = "MonoAppCrash";
+	merp->eventType = MONO_MERP_EVENT_TYPE_STR;
 
 	merp->hashes = *hashes;
 
@@ -520,7 +526,6 @@ mono_merp_disable (void)
 	g_free ((char*)config.appSignature);
 	g_free ((char*)config.appVersion);
 	g_free ((char*)config.merpGUIPath);
-	g_free ((char*)config.eventType);
 	g_free ((char*)config.appPath); 
 	g_free ((char*)config.moduleVersion);
 	g_slist_free (config.annotations);
@@ -530,7 +535,7 @@ mono_merp_disable (void)
 }
 
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir)
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir)
 {
 	mono_memory_barrier ();
 
