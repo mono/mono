@@ -6125,20 +6125,6 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 			*push = 1;
 			break;
 		}
-		case MINT_BOX:
-		case MINT_BOX_VT:
-		case MINT_BOX_NULLABLE:
-			*pop = (ins->data [1] & ~BOX_NOT_CLEAR_VT_SP) + 1;
-			*push = *pop;
-			break;
-		case MINT_CKNULL_N:
-			*pop = ins->data [0];
-			*push = ins->data [0];
-			break;
-		case MINT_LD_DELEGATE_INVOKE_IMPL:
-			*pop = ins->data [0];
-			*push = ins->data [0] + 1;
-			break;
 		case MINT_INTRINS_BYREFERENCE_CTOR: {
 			InterpMethod *imethod = (InterpMethod*) td->data_items [ins->data [0]];
 			*pop = imethod->param_count;
@@ -6419,6 +6405,8 @@ interp_cprop (TransformData *td)
 		}
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
+		if (td->verbose_level)
+                        g_print ("IL_%x, sp %d, %s (pop %d, push %d)\n", ins->il_offset, sp - stack, mono_interp_opname (ins->opcode), pop, push);
 		if (MINT_IS_LDLOC (ins->opcode)) {
 			int replace_op = 0;
 			int loaded_local = ins->data [0];
@@ -6512,6 +6500,25 @@ interp_cprop (TransformData *td)
 			// If top of stack is known, we could also replace dup with an explicit
 			// propagated instruction, so we remove the top of stack dependency
 			sp [-1].ins = NULL;
+			sp++;
+		} else if (ins->opcode >= MINT_BOX && ins->opcode <= MINT_BOX_NULLABLE) {
+			int offset = (ins->data [1] & ~BOX_NOT_CLEAR_VT_SP);
+			// Clear the stack slot that is boxed
+			memset (&sp [-1 - offset], 0, sizeof (StackContentInfo));
+			// Make sure that the instructions that pushed this stack slot can't be
+			// optimized away. If we would optimize them away, we would also need to
+			// update the offset in the box instruction, which we can't, for now.
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+		} else if (ins->opcode == MINT_CKNULL_N) {
+			int offset = ins->data [0];
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+		} else if (ins->opcode == MINT_LD_DELEGATE_INVOKE_IMPL) {
+			int offset = ins->data [0];
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+			memset (sp, 0, sizeof (StackContentInfo));
 			sp++;
 		} else {
 			if (pop == MINT_POP_ALL)
