@@ -20,8 +20,11 @@ namespace aotprofiletool {
 		static bool Verbose;
 
 		static Regex FilterMethod;
+		static Regex SkipMethod;
 		static Regex FilterModule;
+		static Regex SkipModule;
 		static Regex FilterType;
+		static Regex SkipType;
 
 		static string Output;
 
@@ -51,14 +54,23 @@ namespace aotprofiletool {
 					"Set adb socket forwarding for Android",
 				  v => AdbForward = true },
 				{ "filter-method=",
-					"Filter by method with regex {VALUE}",
+					"Include by method with regex {VALUE}",
 				  v => FilterMethod = new Regex (v) },
+				{ "skip-method=",
+					"Exclude by method with regex {VALUE}",
+				  v => SkipMethod = new Regex (v) },
 				{ "filter-module=",
-					"Filter by module with regex {VALUE}",
+					"Include by module with regex {VALUE}",
 				  v => FilterModule = new Regex (v) },
+				{ "skip-module=",
+					"Exclude by module with regex {VALUE}",
+				  v => SkipModule = new Regex (v) },
 				{ "filter-type=",
-					"Filter by type with regex {VALUE}",
+					"Include by type with regex {VALUE}",
 				  v => FilterType = new Regex (v) },
+				{ "skip-type=",
+					"Exclude by type with regex {VALUE}",
+				  v => SkipType = new Regex (v) },
 				{ "m|methods",
 					"Show methods in the profile",
 				  v => Methods = true },
@@ -198,6 +210,13 @@ namespace aotprofiletool {
 							continue;
 					}
 
+					if (SkipModule != null) {
+						var skip = SkipModule.Match (module.ToString ());
+
+						if (skip.Success)
+							continue;
+					}
+
 					if (FilterType != null) {
 						var match = FilterType.Match (method.Type.ToString ());
 
@@ -205,10 +224,23 @@ namespace aotprofiletool {
 							continue;
 					}
 
+					if (SkipType != null) {
+						var skip = SkipType.Match (method.Type.ToString ());
+
+						if (skip.Success)
+							continue;
+					}
+
 					if (FilterMethod != null) {
 						var match = FilterMethod.Match (method.ToString ());
 
 						if (!match.Success)
+							continue;
+					}
+
+					if (SkipMethod != null)	{
+						var skip = SkipMethod.Match (method.ToString ());
+						if (skip.Success)
 							continue;
 					}
 
