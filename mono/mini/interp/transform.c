@@ -6097,11 +6097,10 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 			int param_count = ins->data [1];
 			gboolean is_inlined = ins->data [0] == 0xffff;
 			if (is_inlined) {
-				// FIXME
-				// We lose track of the contents of the stack because the newobj references are pushed below
-				// the ctor arguments. We should keep track of stack contents to enable ctor optimization.
-				*pop = param_count;
-				*push = param_count + 2;
+				// This needs to be handled explictly during cprop, in order to properly
+				// keep track of stack contents
+				*pop = 0;
+				*push = 2;
 			} else {
 				*pop = param_count;
 				*push = 1;
@@ -6520,6 +6519,16 @@ interp_cprop (TransformData *td)
 				sp [-i].ins = NULL;
 			memset (sp, 0, sizeof (StackContentInfo));
 			sp++;
+		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == 0xffff) {
+			int param_count = ins->data [1];
+			// memmove the stack values while clearing ins, to prevent instruction removal
+			for (int i = 1; i <= param_count; i++) {
+				sp [-i + 2] = sp [-i];
+				sp [-i + 2].ins = NULL;
+			}
+			// clear stack information for the slots where the allocated object resides
+			memset (&sp [-param_count], 0, 2 * sizeof (StackContentInfo));
+			sp += 2;
 		} else {
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
