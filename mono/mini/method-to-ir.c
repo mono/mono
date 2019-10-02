@@ -3266,19 +3266,34 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			return NULL;
 		}
 
-		MonoMethod *managed_alloc = mono_gc_get_managed_allocator (klass, for_box, TRUE);
+		int size = mono_class_instance_size (klass);
+		if (size < MONO_ABI_SIZEOF (MonoObject))
+			g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
 
-		if (managed_alloc) {
-			int size = mono_class_instance_size (klass);
-			if (size < MONO_ABI_SIZEOF (MonoObject))
-				g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
+		/* FIXME: remove out_of_line hack. decompose.c must do proper wiring of BBs introduced by fastbump_allocator */
+		MonoMethod *fastbump_alloc = cfg->cbb->out_of_line ? NULL : mono_gc_get_managed_fastbump_allocator (klass, size);
+
+		if (fastbump_alloc) {
+			mono_atomic_inc_i32 (&mono_jit_stats.fastbump_allocator);
 
 			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
-			EMIT_NEW_ICONST (cfg, iargs [1], size);
-			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
+			int costs = inline_method (cfg, fastbump_alloc, fastbump_alloc->signature, iargs, (guchar *) cfg->ip, cfg->real_offset, TRUE);
+			g_assert (costs > 0);
+			cfg->real_offset += 5;
+			return iargs [0];
+		} else {
+			mono_atomic_inc_i32 (&mono_jit_stats.other_allocator);
+
+			MonoMethod *managed_alloc = mono_gc_get_managed_allocator (klass, for_box, TRUE);
+
+			if (managed_alloc) {
+				EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
+				EMIT_NEW_ICONST (cfg, iargs [1], size);
+				return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
+			}
+			alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new_specific;
+			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 		}
-		alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new_specific;
-		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
 	return mono_emit_jit_icall_id (cfg, alloc_ftn, iargs);
@@ -8752,6 +8767,7 @@ calli_end:
 						class_inits = g_slist_prepend (class_inits, cmethod->klass);
 					}
 
+					g_assert (ip == cfg->ip);
 					alloc = handle_alloc (cfg, cmethod->klass, FALSE, 0);
 					*sp = alloc;
 				}

@@ -544,6 +544,108 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 #endif /* MANAGED_ALLOCATION */
 }
 
+#ifndef REMOVE_ME
+int *fastbump_tlab_hit;
+int *fastbump_tlab_miss;
+#endif
+static void
+emit_managed_fastbump_allocator_ilgen (MonoMethodBuilder *mb, int instance_size)
+{
+#ifdef MANAGED_ALLOCATION
+	int p_var, tlab_next_addr_var, new_next_var, thread_var;
+	guint32 slowpath_branch;
+	MonoType *int_type = mono_get_int_type ();
+
+	const int vtable_arg = 0;
+	int size = ALIGN_TO (instance_size, SGEN_ALLOC_ALIGN);
+
+	/*
+	 * We need to modify tlab_next, but the JIT only supports reading, so we read
+	 * another tls var holding its address instead.
+	 */
+
+	EMIT_TLS_ACCESS_VAR (mb, thread_var);
+
+	/* tlab_next_addr (local) = tlab_next_addr (TLS var) */
+	tlab_next_addr_var = mono_mb_add_local (mb, int_type);
+	EMIT_TLS_ACCESS_NEXT_ADDR (mb, thread_var);
+	mono_mb_emit_stloc (mb, tlab_next_addr_var);
+
+	/* p = *(void**)tlab_next; */
+	p_var = mono_mb_add_local (mb, int_type);
+	mono_mb_emit_ldloc (mb, tlab_next_addr_var);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_stloc (mb, p_var);
+
+	/* new_next = (char*)p + size; */
+	new_next_var = mono_mb_add_local (mb, int_type);
+	mono_mb_emit_ldloc (mb, p_var);
+	mono_mb_emit_icon (mb, size);
+	mono_mb_emit_byte (mb, CEE_CONV_I);
+	mono_mb_emit_byte (mb, CEE_ADD);
+
+	mono_mb_emit_stloc (mb, new_next_var);
+
+	/* if (new_next >= tlab_temp_end) */
+	mono_mb_emit_ldloc (mb, new_next_var);
+	EMIT_TLS_ACCESS_TEMP_END (mb, thread_var);
+	slowpath_branch = mono_mb_emit_short_branch (mb, MONO_CEE_BGE_UN_S);
+
+	/* fastpath */
+
+	/* tlab_next = new_next */
+	mono_mb_emit_ldloc (mb, tlab_next_addr_var);
+	mono_mb_emit_ldloc (mb, new_next_var);
+	mono_mb_emit_byte (mb, CEE_STIND_I);
+
+	/* *p = vtable; */
+	mono_mb_emit_ldloc (mb, p_var);
+	mono_mb_emit_ldarg (mb, vtable_arg);
+	mono_mb_emit_byte (mb, CEE_STIND_I);
+
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_MEMORY_BARRIER);
+	/*
+	We must make sure both vtable and max_length are globaly visible before returning to managed land.
+	*/
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_REL);
+
+#ifndef REMOVE_ME
+	mono_mb_emit_ptr (mb, fastbump_tlab_hit); /* only JIT */
+	mono_mb_emit_byte (mb, CEE_DUP);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_icon (mb, 1);
+	mono_mb_emit_byte (mb, CEE_CONV_I);
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_STIND_I);
+#endif
+
+	mono_mb_emit_ldloc (mb, p_var);
+	mono_mb_emit_byte (mb, CEE_RET);
+
+
+	/* slowpath */
+	mono_mb_patch_short_branch (mb, slowpath_branch);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
+#ifndef REMOVE_ME
+	mono_mb_emit_ptr (mb, fastbump_tlab_miss); /* only JIT */
+	mono_mb_emit_byte (mb, CEE_DUP);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_icon (mb, 1);
+	mono_mb_emit_byte (mb, CEE_CONV_I);
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_STIND_I);
+#endif
+
+	mono_mb_emit_ldarg (mb, vtable_arg);
+	mono_mb_emit_icall (mb, ves_icall_object_new_specific);
+	mono_mb_emit_byte (mb, CEE_RET);
+#else
+	g_assert_not_reached ();
+#endif /* MANAGED_ALLOCATION */
+}
+
 void
 mono_sgen_mono_ilgen_init (void)
 {
@@ -551,6 +653,7 @@ mono_sgen_mono_ilgen_init (void)
 	cb.version = MONO_SGEN_MONO_CALLBACKS_VERSION;
 	cb.emit_nursery_check = emit_nursery_check_ilgen;
 	cb.emit_managed_allocator = emit_managed_allocator_ilgen;
+	cb.emit_managed_fastbump_allocator = emit_managed_fastbump_allocator_ilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
 #endif

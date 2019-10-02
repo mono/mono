@@ -1638,6 +1638,10 @@ typedef struct {
 	gint32 allocated_seq_points_size;
 	gint32 inlineable_methods;
 	gint32 inlined_methods;
+	gint32 fastbump_allocator;
+	gint32 fastbump_tlab_hit;
+	gint32 fastbump_tlab_miss;
+	gint32 other_allocator;
 	gint32 basic_blocks;
 	gint32 max_basic_blocks;
 	gint32 locals_stack_size;

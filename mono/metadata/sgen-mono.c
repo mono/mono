@@ -259,12 +259,18 @@ emit_managed_allocator_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboole
 }
 
 static void
+emit_managed_fastbump_allocator_noilgen (MonoMethodBuilder *mb, int instance_size)
+{
+}
+
+static void
 install_noilgen (void)
 {
 	MonoSgenMonoCallbacks cb;
 	cb.version = MONO_SGEN_MONO_CALLBACKS_VERSION;
 	cb.emit_nursery_check = emit_nursery_check_noilgen;
 	cb.emit_managed_allocator = emit_managed_allocator_noilgen;
+	cb.emit_managed_fastbump_allocator = emit_managed_fastbump_allocator_noilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
 
@@ -1061,6 +1067,22 @@ mono_gc_get_aligned_size_for_allocator (int size)
 	return SGEN_ALIGN_UP (size);
 }
 
+static gboolean
+can_use_managed_allocator (MonoClass *klass, gboolean known_instance_size)
+{
+	if (sgen_collect_before_allocs)
+		return FALSE;
+	if (m_class_get_instance_size (klass) > sgen_tlab_size)
+		return FALSE;
+	if (known_instance_size && ALIGN_TO (m_class_get_instance_size (klass), SGEN_ALLOC_ALIGN) >= SGEN_MAX_SMALL_OBJ_SIZE)
+		return FALSE;
+	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass) || m_class_has_weak_fields (klass))
+		return FALSE;
+	if (m_class_get_rank (klass))
+		return FALSE;
+	return TRUE;
+}
+
 /*
  * Generate an allocator method implementing the fast path of mono_gc_alloc_obj ().
  * The signature of the called method is:
@@ -1070,26 +1092,70 @@ MonoMethod*
 mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {
 #ifdef MANAGED_ALLOCATION
-	ManagedAllocatorVariant variant = mono_profiler_allocations_enabled () ?
-		MANAGED_ALLOCATOR_PROFILER : MANAGED_ALLOCATOR_REGULAR;
+	ManagedAllocatorVariant variant = mono_profiler_allocations_enabled () ? MANAGED_ALLOCATOR_PROFILER : MANAGED_ALLOCATOR_REGULAR;
 
-	if (sgen_collect_before_allocs)
+	if (!can_use_managed_allocator (klass, known_instance_size))
 		return NULL;
-	if (m_class_get_instance_size (klass) > sgen_tlab_size)
-		return NULL;
-	if (known_instance_size && ALIGN_TO (m_class_get_instance_size (klass), SGEN_ALLOC_ALIGN) >= SGEN_MAX_SMALL_OBJ_SIZE)
-		return NULL;
-	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass) || m_class_has_weak_fields (klass))
-		return NULL;
-	if (m_class_get_rank (klass))
-		return NULL;
-	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_STRING)
+
+	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_STRING) {
 		return mono_gc_get_managed_allocator_by_type (ATYPE_STRING, variant);
+	}
 	/* Generic classes have dynamic field and can go above MAX_SMALL_OBJ_SIZE. */
 	if (known_instance_size)
 		return mono_gc_get_managed_allocator_by_type (ATYPE_SMALL, variant);
 	else
 		return mono_gc_get_managed_allocator_by_type (ATYPE_NORMAL, variant);
+#else
+	return NULL;
+#endif
+}
+
+static MonoMethod*
+fastbump_helper (int instance_size)
+{
+#ifdef MANAGED_ALLOCATION
+	if (!use_managed_allocator)
+		return NULL;
+
+	const char *name = "FastBumpAllocSmall";
+	MonoMethodSignature *csig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
+	csig->ret = mono_get_object_type ();
+	csig->params [0] = mono_get_int_type ();
+
+	MonoMethodBuilder *mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
+	get_sgen_mono_cb ()->emit_managed_fastbump_allocator (mb, instance_size);
+	WrapperInfo *info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
+	info->d.alloc.gc_name = "sgen";
+	info->d.alloc.alloc_type = ATYPE_SMALL;
+
+	MonoMethod *res = mono_mb_create (mb, csig, 3, info);
+	mono_mb_free (mb);
+
+	return res;
+#else
+	return NULL;
+#endif
+}
+
+MonoMethod*
+mono_gc_get_managed_fastbump_allocator (MonoClass *klass, int instance_size)
+{
+#ifdef MANAGED_ALLOCATION
+	char *opt = getenv ("MONO_USE_FASTBUMP");
+	if (!opt)
+		return NULL;
+
+	if (sgen_nursery_canaries_enabled ())
+		return NULL;
+
+	if (mono_profiler_allocations_enabled ())
+		return NULL;
+
+	if (!can_use_managed_allocator (klass, TRUE))
+		return NULL;
+
+	/* ATYPE_SMALL */
+	return fastbump_helper (instance_size);
 #else
 	return NULL;
 #endif
@@ -1123,7 +1189,7 @@ mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant varian
 {
 #ifdef MANAGED_ALLOCATION
 	MonoMethod *res;
-	MonoMethod **cache;
+	MonoMethod **cache = NULL;
 
 	if (variant != MANAGED_ALLOCATOR_SLOW_PATH && !use_managed_allocator)
 		return NULL;
@@ -1132,19 +1198,20 @@ mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant varian
 	case MANAGED_ALLOCATOR_REGULAR: cache = alloc_method_cache; break;
 	case MANAGED_ALLOCATOR_SLOW_PATH: cache = slowpath_alloc_method_cache; break;
 	case MANAGED_ALLOCATOR_PROFILER: cache = profiler_alloc_method_cache; break;
+	case MANAGED_ALLOCATOR_FAST_BUMP: /* no cache */ break;
 	default: g_assert_not_reached (); break;
 	}
 
-	res = cache [atype];
+	res = cache ? cache [atype] : NULL;
 	if (res)
 		return res;
 
 	res = create_allocator (atype, variant);
 	LOCK_GC;
-	if (cache [atype]) {
+	if (cache && cache [atype]) {
 		mono_free_method (res);
 		res = cache [atype];
-	} else {
+	} else if (cache) {
 		mono_memory_barrier ();
 		cache [atype] = res;
 	}

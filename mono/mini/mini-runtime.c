@@ -3797,6 +3797,10 @@ mini_get_addr_from_ftnptr (gpointer descr)
 #endif
 }
 
+#ifndef REMOVE_ME
+extern int *fastbump_tlab_hit, *fastbump_tlab_miss;
+#endif
+
 static void
 register_jit_stats (void)
 {
@@ -3853,6 +3857,12 @@ register_jit_stats (void)
 	mono_counters_register ("Allocated seq points size", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.allocated_seq_points_size);
 	mono_counters_register ("Inlineable methods", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.inlineable_methods);
 	mono_counters_register ("Inlined methods", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.inlined_methods);
+	mono_counters_register ("Fastbump allocator inlined", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.fastbump_allocator);
+#ifndef REMOVE_ME
+	mono_counters_register ("Fastbump TLAB hit", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.fastbump_tlab_hit);
+	mono_counters_register ("Fastbump TLAB miss", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.fastbump_tlab_miss);
+#endif
+	mono_counters_register ("Other allocator (not inlined)", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.other_allocator);
 	mono_counters_register ("Regvars", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.regvars);
 	mono_counters_register ("Locals stack size", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.locals_stack_size);
 	mono_counters_register ("Method cache lookups", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_lookups);
@@ -3863,6 +3873,10 @@ register_jit_stats (void)
 	mono_counters_register ("Aliased loads eliminated", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.loads_eliminated);
 	mono_counters_register ("Aliased stores eliminated", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.stores_eliminated);
 	mono_counters_register ("Optimized immediate divisions", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.optimized_divisions);
+#ifndef REMOVE_ME
+	fastbump_tlab_hit = &mono_jit_stats.fastbump_tlab_hit;
+	fastbump_tlab_miss = &mono_jit_stats.fastbump_tlab_miss;
+#endif
 }
 
 static void runtime_invoke_info_free (gpointer value);

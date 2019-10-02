@@ -207,11 +207,14 @@ typedef enum {
 	MANAGED_ALLOCATOR_SLOW_PATH,
 	// Managed allocator that works like the regular one but also calls into the profiler.
 	MANAGED_ALLOCATOR_PROFILER,
+	// Managed allocater that only tries to bump TLAB otherwise fall back to slow path variant. It ought to be inlined at the call-site.
+	MANAGED_ALLOCATOR_FAST_BUMP
 } ManagedAllocatorVariant;
 
 int mono_gc_get_aligned_size_for_allocator (int size);
 MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size);
 MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass);
+MonoMethod* mono_gc_get_managed_fastbump_allocator (MonoClass *klass, int instance_size);
 MonoMethod *mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant variant);
 
 guint32 mono_gc_get_managed_allocator_types (void);

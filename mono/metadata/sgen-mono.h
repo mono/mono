@@ -6,12 +6,13 @@
 #ifndef __MONO_SGEN_MONO_H__
 #define __MONO_SGEN_MONO_H__
 
-#define MONO_SGEN_MONO_CALLBACKS_VERSION 1
+#define MONO_SGEN_MONO_CALLBACKS_VERSION 2
 
 typedef struct {
 	int version;
 	void (*emit_nursery_check) (MonoMethodBuilder *mb, gboolean is_concurrent);
 	void (*emit_managed_allocator) (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype);
+	void (*emit_managed_fastbump_allocator) (MonoMethodBuilder *mb, int instance_size);
 } MonoSgenMonoCallbacks;
 
 void
