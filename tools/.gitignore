@@ -1,2 +1,5 @@
 /Makefile.in
 /Makefile
+offsets-tool-py/offtool/lib
+offsets-tool-py/offtool/include
+offsets-tool-py/offtool/.Python
