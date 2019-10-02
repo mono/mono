@@ -55,27 +55,6 @@ enum {
 
 static int register_size;
 
-static MonoCPUFeatures
-get_cpu_features (MonoCompile* cfg)
-{
-	MonoCPUFeatures features = (MonoCPUFeatures)0;
-#if !defined(MONO_CROSS_COMPILE)
-	if (!cfg->compile_aot || cfg->use_current_cpu) {
-		// detect current CPU features if we are in JIT mode or AOT with use_current_cpu flag.
-#if defined(ENABLE_LLVM)
-		features = mono_llvm_get_cpu_features (); // llvm has a nice built-in API to detect features
-#elif defined(TARGET_AMD64)
-		features = mono_arch_get_cpu_features ();
-#endif
-	}
-#endif
-
-	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
-	return features;
-}
-
 void
 mono_simd_intrinsics_init (void)
 {
@@ -886,36 +865,26 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	class_ns = m_class_get_name_space (cmethod->klass);
 	class_name = m_class_get_name (cmethod->klass);
 
-#ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (cmethod->klass->nested_in)
 		class_ns = m_class_get_name_space (cmethod->klass->nested_in), class_name, cmethod->klass->nested_in;
+
+#ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics.X86"))
 		return emit_x86_intrinsics (cfg ,cmethod, fsig, args);
 #endif
 
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
 		if (!strcmp (class_name, "Vector128`1"))
-			return emit_vector128_t (cfg ,cmethod, fsig, args);
+			return emit_vector128_t (cfg, cmethod, fsig, args);
 		if (!strcmp (class_name, "Vector256`1"))
-		return emit_vector256_t (cfg ,cmethod, fsig, args);
+			return emit_vector256_t (cfg, cmethod, fsig, args);
 	}
 
-	// FIXME: Make sure get_cpu_features is used where needed
-	if (cfg->compile_aot)
-		return NULL;
-	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector")) {
-		MonoInst *ins = emit_sys_numerics_vector (cfg, cmethod, fsig, args);
-		if (!ins) {
-			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
-		}
-		return ins;
-	}
-	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector`1")) {
-		MonoInst *ins = emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
-		if (!ins) {
-			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
-		}
-		return ins;
+	if (!strcmp (class_ns, "System.Numerics")) {
+		if (!strcmp (class_name, "Vector"))
+			return emit_sys_numerics_vector (cfg, cmethod, fsig, args);
+		if (!strcmp (class_name, "Vector`1"))
+			return emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
 	}
 
 	return NULL;
