@@ -6529,6 +6529,9 @@ interp_cprop (TransformData *td)
 			// clear stack information for the slots where the allocated object resides
 			memset (&sp [-param_count], 0, 2 * sizeof (StackContentInfo));
 			sp += 2;
+		} else if (ins->opcode == MINT_CASTCLASS || ins->opcode == MINT_CASTCLASS_COMMON || ins->opcode == MINT_CASTCLASS_INTERFACE) {
+			// Keep the value on the stack, but prevent optimizing away
+			sp [-1].ins = NULL;
 		} else {
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
