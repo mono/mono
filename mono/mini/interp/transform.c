@@ -6348,7 +6348,7 @@ clear_local_content_info_for_local (StackValue *start, StackValue *end, int loca
 	StackValue *sval;
 	for (sval = start; sval < end; sval++) {
 		if (sval->opcode != MINT_NOP) {
-			g_assert (MINT_IS_MOVLOC (sval->opcode));
+			g_assert (MINT_IS_LDLOC (sval->opcode));
 			if (sval->data == local)
 				sval->opcode = MINT_NOP;
 		}
@@ -6446,7 +6446,7 @@ interp_cprop (TransformData *td)
 					}
 				}
 			} else if (locals [loaded_local].opcode != MINT_NOP && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
-				g_assert (MINT_IS_MOVLOC (locals [loaded_local].opcode));
+				g_assert (MINT_IS_LDLOC (locals [loaded_local].opcode));
 				// do copy propagation of the original source
 				if (td->verbose_level)
 					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].data);
@@ -6471,26 +6471,32 @@ interp_cprop (TransformData *td)
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			int dest_local = ins->data [0];
 			sp--;
-			if (sp->val.opcode != MINT_NOP && sp->ins != NULL) {
+			if (sp->val.opcode != MINT_NOP) {
+				g_assert (MINT_IS_LDLOC (sp->val.opcode));
 				int mt = sp->val.opcode - MINT_LDLOC_I1;
 				if (ins->opcode - MINT_STLOC_I1 == mt) {
-					// Same local, same type of load and store, convert to movloc
-					if (td->verbose_level)
-						g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
+					// Same local, same type of load and store. Propagate value
 					int src_local = sp->val.data;
 					int vtsize = (ins->opcode == MINT_STLOC_VT) ? ins->data [1] : 0;
-					interp_clear_ins (td, sp->ins);
-					interp_clear_ins (td, ins);
 
-					ins = interp_insert_ins (td, ins, get_movloc_for_type (mt));
-					ins->data [0] = src_local;
-					ins->data [1] = dest_local;
-					if (vtsize)
-						ins->data [2] = vtsize;
-					mono_interp_stats.movlocs++;
 					// Track what exactly is stored into local
-					locals [dest_local].opcode = ins->opcode;
+					locals [dest_local].opcode = sp->val.opcode;
 					locals [dest_local].data = src_local;
+
+					if (sp->ins) {
+						// Clear ldloc / stloc pair and replace it with movloc superinstruction
+						if (td->verbose_level)
+							g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
+						interp_clear_ins (td, sp->ins);
+						interp_clear_ins (td, ins);
+
+						ins = interp_insert_ins (td, ins, get_movloc_for_type (mt));
+						ins->data [0] = src_local;
+						ins->data [1] = dest_local;
+						if (vtsize)
+							ins->data [2] = vtsize;
+						mono_interp_stats.movlocs++;
+					}
 				} else {
 					locals [dest_local].opcode = MINT_NOP;
 				}
