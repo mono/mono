@@ -1854,6 +1854,11 @@ This option will suspend the program when an unhandled exception occurs.
 \fBthread-dump-dir=DIR\fR
 Use DIR for storage thread dumps created by SIGQUIT.
 .TP
+\fBweak-memory-model\fR
+Don't enforce the CLR memory model on platforms with weak memory models. This can introduce
+random crashes in some rare cases, for multithreaded environments. This can be used for a
+performance boost on applications that are single threaded.
+.TP
 \fBverbose-gdb\fR
 Make gdb output on native crashes more verbose.
 .ne
