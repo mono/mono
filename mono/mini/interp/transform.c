@@ -6505,6 +6505,14 @@ interp_cprop (TransformData *td)
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
+		} else if (ins->opcode == MINT_DUP || ins->opcode == MINT_DUP_VT) {
+			sp [0].val.opcode = sp [-1].val.opcode;
+			sp [0].val.data = sp [-1].val.data;
+			sp [0].ins = ins;
+			// If top of stack is known, we could also replace dup with an explicit
+			// propagated instruction, so we remove the top of stack dependency
+			sp [-1].ins = NULL;
+			sp++;
 		} else {
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
@@ -6513,7 +6521,6 @@ interp_cprop (TransformData *td)
 			g_assert ((sp - push) >= stack && (sp - push) <= stack_end);
 			memset (sp - push, 0, push * sizeof (StackContentInfo));
 		}
-		// TODO handle dup
 		last_il_offset = ins->il_offset;
 	}
 
