@@ -1422,9 +1422,9 @@ typedef struct {
 } MonoSummarizeUserData;
 
 static void
-copy_summary_string_safe (char *in, const char *out)
+copy_summary_string_safe (char *dest, const char *src)
 {
-	g_strlcpy (in, out, MONO_MAX_SUMMARY_NAME_LEN);
+	g_strlcpy (dest, src, MONO_MAX_SUMMARY_NAME_LEN);
 }
 
 typedef struct {
