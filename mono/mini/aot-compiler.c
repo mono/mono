@@ -4451,6 +4451,9 @@ mono_aot_can_enter_interp (MonoMethod *method)
 	MonoAotCompile *acfg = current_acfg;
 
 	g_assert (acfg);
+	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		/* Always AOTed */
+		return FALSE;
 	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method))
 		return TRUE;
 	return FALSE;
