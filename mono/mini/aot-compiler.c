@@ -8557,17 +8557,25 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method)) {
 		if (acfg->aot_opts.llvm_only) {
-			/* Keep wrappers */
-			if (!method->wrapper_type)
-				return;
-			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
-			switch (info->subtype) {
-			case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
-			case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
-				return;
-			default:
-				break;
+			gboolean keep = FALSE;
+			if (method->wrapper_type) {
+				/* Keep most wrappers */
+				WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+				switch (info->subtype) {
+				case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
+				case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
+					break;
+				default:
+					keep = TRUE;
+					break;
+				}
+			} else {
+				// These are called by generated code
+				if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "memset") || strstr (method->name, "bzero")))
+					keep = TRUE;
 			}
+			if (!keep)
+				return;
 		} else {
 			if (!method->is_inflated)
 				return;
