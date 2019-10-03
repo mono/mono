@@ -1431,7 +1431,7 @@ copy_summary_string_safe (char *in, const char *out)
 	}
 
 	// Overflowed
-	in [MONO_MAX_SUMMARY_NAME_LEN] = '\0';
+	in [MONO_MAX_SUMMARY_NAME_LEN - 1] = '\0';
 	return;
 }
 
