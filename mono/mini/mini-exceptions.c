@@ -1424,15 +1424,7 @@ typedef struct {
 static void
 copy_summary_string_safe (char *in, const char *out)
 {
-	for (int i=0; i < MONO_MAX_SUMMARY_NAME_LEN; i++) {
-		in [i] = out [i];
-		if (out [i] == '\0')
-			return;
-	}
-
-	// Overflowed
-	in [MONO_MAX_SUMMARY_NAME_LEN - 1] = '\0';
-	return;
+	g_strlcpy (in, out, MONO_MAX_SUMMARY_NAME_LEN);
 }
 
 static void
