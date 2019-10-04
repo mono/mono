@@ -446,7 +446,11 @@ mono_write_wer_template (MERPStruct *merp)
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->serviceNameArg, i);
 	i++;
+	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleName, i);
+	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleVersion, i);
+	i++;
+	g_async_safe_fprintf(handle, "<Parameter%d>0x%zx</Parameter%d>\n", i, merp->moduleOffset, i);
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_exctype (merp->exceptionArg), i);
 	i++;
@@ -456,7 +460,11 @@ mono_write_wer_template (MERPStruct *merp)
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->osVersion, i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>%s %s</Parameter%d>\n", i, merp->systemManufacturer, merp->systemModel, i);
+	g_async_safe_fprintf(handle, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->uiLidArg, i);
+	i++;
+	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemManufacturer, i);
+	i++;
+	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemModel, i);
 	i++;
 
 	g_async_safe_fprintf(handle, "</ProblemSignatures>\n");
