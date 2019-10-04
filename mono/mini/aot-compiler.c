@@ -4445,14 +4445,27 @@ cleanup_true:
 	return TRUE;
 }
 
+static gboolean
+always_aot (MonoMethod *method)
+{
+	/*
+	 * Calls to these methods do not go through the normal call processing code so
+	 * calling code cannot enter the interpreter. So always aot them even in profile guided aot mode.
+	 */
+	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		return TRUE;
+	if (method->string_ctor)
+		return TRUE;
+	return FALSE;
+}
+
 gboolean
 mono_aot_can_enter_interp (MonoMethod *method)
 {
 	MonoAotCompile *acfg = current_acfg;
 
 	g_assert (acfg);
-	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
-		/* Always AOTed */
+	if (always_aot (method))
 		return FALSE;
 	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method))
 		return TRUE;
@@ -8572,11 +8585,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 					keep = TRUE;
 					break;
 				}
-			} else {
-				// These are called by generated code
-				if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "memset") || strstr (method->name, "bzero")))
-					keep = TRUE;
 			}
+			if (always_aot (method))
+				keep = TRUE;
 			if (!keep)
 				return;
 		} else {
