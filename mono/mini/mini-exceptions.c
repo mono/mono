@@ -133,6 +133,7 @@ static void mono_summarize_managed_stack (MonoThreadSummary *out);
 static void mono_summarize_unmanaged_stack (MonoThreadSummary *out);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 static void mono_crash_reporting_register_native_library (const char *module_path, const char *module_name);
+static void mono_crash_reporting_allow_all_native_libraries (void);
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -244,6 +245,7 @@ mono_exceptions_init (void)
 	cbs.mono_summarize_unmanaged_stack = mono_summarize_unmanaged_stack;
 	cbs.mono_summarize_exception = mono_summarize_exception;
 	cbs.mono_register_native_library = mono_crash_reporting_register_native_library;
+	cbs.mono_allow_all_native_libraries = mono_crash_reporting_allow_all_native_libraries;
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -1402,6 +1404,12 @@ mono_crash_reporting_register_native_library (const char *module_path, const cha
 	return;
 }
 
+static void
+mono_crash_reporting_allow_all_native_libraries ()
+{
+	return;
+}
+
 
 #else
 
@@ -1414,17 +1422,9 @@ typedef struct {
 } MonoSummarizeUserData;
 
 static void
-copy_summary_string_safe (char *in, const char *out)
+copy_summary_string_safe (char *dest, const char *src)
 {
-	for (int i=0; i < MONO_MAX_SUMMARY_NAME_LEN; i++) {
-		in [i] = out [i];
-		if (out [i] == '\0')
-			return;
-	}
-
-	// Overflowed
-	in [MONO_MAX_SUMMARY_NAME_LEN] = '\0';
-	return;
+	g_strlcpy (dest, src, MONO_MAX_SUMMARY_NAME_LEN);
 }
 
 typedef struct {
@@ -1433,6 +1433,7 @@ typedef struct {
 } MonoLibWhitelistEntry;
 
 static GList *native_library_whitelist;
+static gboolean allow_all_native_libraries = FALSE;
 
 static void
 mono_crash_reporting_register_native_library (const char *module_path, const char *module_name)
@@ -1446,6 +1447,12 @@ mono_crash_reporting_register_native_library (const char *module_path, const cha
 	native_library_whitelist = g_list_append (native_library_whitelist, entry);
 }
 
+static void
+mono_crash_reporting_allow_all_native_libraries ()
+{
+	allow_all_native_libraries = TRUE;
+}
+
 static gboolean
 check_whitelisted_module (const char *in_name, const char **out_module)
 {
@@ -1454,7 +1461,24 @@ check_whitelisted_module (const char *in_name, const char **out_module)
 #else
 	if (g_str_has_suffix (in_name, "mono-sgen")) {
 		if (out_module)
-			*out_module = "mono";
+			copy_summary_string_safe ((char *) *out_module, "mono");
+		return TRUE;
+	}
+	if (allow_all_native_libraries) {
+		if (out_module) {
+			/* for a module name, use the basename of the full path in in_name */
+			char *basename = (char *) in_name, *p = (char *) in_name;
+			while (*p != '\0') {
+				if (*p == '/')
+					basename = p + 1;
+				p++;
+			}
+			if (*basename)
+				copy_summary_string_safe ((char *) *out_module, basename);
+			else
+				copy_summary_string_safe ((char *) *out_module, "unknown");
+
+		}
 		return TRUE;
 	}
 
@@ -1463,7 +1487,7 @@ check_whitelisted_module (const char *in_name, const char **out_module)
 		if (!g_str_has_suffix (in_name, iter->suffix))
 			continue;
 		if (out_module)
-			*out_module = iter->exported_name;
+			copy_summary_string_safe ((char *) *out_module, iter->exported_name);
 		return TRUE;
 	}
 
@@ -1557,6 +1581,7 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 
 	dest->unmanaged_data.ip = (intptr_t) ip;
 	dest->is_managed = managed;
+	dest->unmanaged_data.module [0] = '\0';
 
 	if (!managed && method && method->wrapper_type != MONO_WRAPPER_NONE && method->wrapper_type < MONO_WRAPPER_NUM) {
 		dest->is_managed = FALSE;
@@ -1729,8 +1754,8 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 	for (int i =0; i < out->num_unmanaged_frames; ++i) {
 		intptr_t ip = frame_ips [i];
 		MonoFrameSummary *frame = &out->unmanaged_frames [i];
-
-		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &frame->unmanaged_data.module, (char *) frame->str_descr);
+		const char* module_buf = frame->unmanaged_data.module;
+		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &module_buf, (char *) frame->str_descr);
 		if (!success)
 			continue;
 
@@ -3308,6 +3333,27 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 	if (handle_crash_loop)
 		return;
 
+#ifdef MONO_ARCH_USE_SIGACTION
+	struct sigaction sa;
+	sa.sa_handler = SIG_DFL;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	/* Remove our SIGABRT handler */
+	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
+
+	/* On some systems we get a SIGILL when calling abort (), because it might
+	 * fail to raise SIGABRT */
+	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
+
+	/* Remove SIGCHLD, it uses the finalizer thread */
+	g_assert (sigaction (SIGCHLD, &sa, NULL) != -1);
+
+	/* Remove SIGQUIT, we are already dumping threads */
+	g_assert (sigaction (SIGQUIT, &sa, NULL) != -1);
+
+#endif
+
 	if (mini_debug_options.suspend_on_native_crash) {
 		g_async_safe_printf ("Received %s, suspending...\n", signal);
 		while (1) {
@@ -3345,20 +3391,6 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 		mono_walk_stack_full (print_stack_frame_signal_safe, mctx, mono_domain_get (), jit_tls, mono_get_lmf (), MONO_UNWIND_LOOKUP_IL_OFFSET, NULL, TRUE);
 		g_async_safe_printf ("=================================================================\n");
 	}
-
-#ifdef MONO_ARCH_USE_SIGACTION
-	struct sigaction sa;
-	sa.sa_handler = SIG_DFL;
-	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	/* Remove our SIGABRT handler */
-	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
-
-	/* On some systems we get a SIGILL when calling abort (), because it might
-	 * fail to raise SIGABRT */
-	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
-#endif
 
 	mono_post_native_crash_handler (signal, mctx, info, mono_do_crash_chaining);
 }

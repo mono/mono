@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=2cfaeda3-94a9-44e5-8fcb-51979a3398c9
+MONO_CORLIB_VERSION=657116DD-B24B-4615-8680-6C56BA42F86D
 
 #
 # Put a quoted #define in config.h.
@@ -1334,7 +1334,6 @@ with_wasm_default=no
 with_bitcode_default=no
 enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
-enable_copy_stack_data_default=yes
 
 # For the sake of clearer error messages, these numbers should all be different from each other.
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000
@@ -5673,38 +5672,6 @@ fi
 AM_CONDITIONAL([ENABLE_HYBRID_SUSPEND], [test x$enable_hybrid_suspend != xno])
 
 dnl End of thread suspend policy
-
-dnl *******************************
-dnl *** Copy stack data support ***
-dnl *******************************
-
-dnl Disable copy_stack_data on platforms supporting full context and
-dnl having access to full stack of running threads.
-if test x$enable_copy_stack_data_default != xno; then
-	case $HOST in
-	X86 | AMD64)
-		if test x$target_osx = xyes; then
-			dnl Some host/target confusion, there's no host_osx (and
-			dnl host_darwin would be true on iOS not just macOS).
-			enable_copy_stack_data_default=no
-		elif test x$host_linux = xyes -o x$host_win32 = xyes; then
-			enable_copy_stack_data_default=no
-		fi
-		;;
-	esac
-fi
-
-AC_ARG_ENABLE(copy_stack_data, [ --enable-copy-stack-data     Enable copy_stack_data feature for hybrid/cooperative suspend scenarios, (defaults to yes)], [], [enable_copy_stack_data=default])
-
-if test x$enable_copy_stack_data = xdefault; then
-   enable_copy_stack_data=$enable_copy_stack_data_default
-fi
-
-if test x$enable_copy_stack_data != xno ; then
-	AC_DEFINE(ENABLE_COPY_STACK_DATA,1,[Enable copy_stack_data feature for hybrid/cooperative suspend scenarios])
-fi
-
-dnl End of Copy stack data support
 
 dnl ***************************
 dnl *** feature experiments ***
