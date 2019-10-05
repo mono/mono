@@ -6389,6 +6389,12 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 				interp_clear_ins (td, ins);
 				mono_interp_stats.killed_instructions++;
 			}
+		} else if (MINT_IS_STLOC (ins->opcode) && ins->opcode != MINT_STLOC_VT) {
+			if (!local_ref_count [ins->data [0]] && (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+				// We store to a dead stloc, we can replace it with a POP to save local space
+				ins->opcode = MINT_POP;
+				mono_interp_stats.added_pop_count++;
+			}
 		}
 	}
 	return needs_cprop;
