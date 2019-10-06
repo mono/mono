@@ -1318,6 +1318,8 @@ namespace Mono.Debugger.Soft
 		protected abstract int TransportSend (byte[] buf, int buf_offset, int len);
 		protected abstract void TransportSetTimeouts (int send_timeout, int receive_timeout);
 		protected abstract void TransportClose ();
+		// Shutdown breaks all communication, resuming blocking waits
+		protected abstract void TransportShutdown ();
 
 		internal VersionInfo Version;
 		
@@ -1434,6 +1436,7 @@ namespace Mono.Debugger.Soft
 
 		internal void Close () {
 			closed = true;
+			TransportShutdown ();
 		}
 
 		internal bool IsClosed {
@@ -2864,6 +2867,11 @@ namespace Mono.Debugger.Soft
 		protected override void TransportClose ()
 		{
 			socket.Close ();
+		}
+
+		protected override void TransportShutdown ()
+		{
+			socket.Shutdown (SocketShutdown.Both);
 		}
 	}
 
