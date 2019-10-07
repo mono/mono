@@ -2461,7 +2461,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 						//try to find threadpool_perform_wait_callback_method
 						unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &new_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
 						while (unwind_res) {
-							if (frame.ji && jinfo_get_method (frame.ji) == mono_defaults.threadpool_perform_wait_callback_method) {
+							if (frame.ji && !frame.ji->is_trampoline && jinfo_get_method (frame.ji) == mono_defaults.threadpool_perform_wait_callback_method) {
 								*has_perform_wait_callback_method = TRUE;
 								break;
 							}
