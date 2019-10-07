@@ -45,6 +45,12 @@ TEST_CASES += \
 	System.Core/test-queryable-02.cs
 endif
 
+ifdef MCS_MODE
+NO_INSTALL=1
+NO_BUILD=1
+NO_TEST=1
+endif
+
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 MARSHALING_TEST_NATIVE = mscorlib/test-marshaling-native.so
