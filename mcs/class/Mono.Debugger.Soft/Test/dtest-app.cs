@@ -507,6 +507,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception_wrapper ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-perform-wait-callback") {
+			unhandled_exception_perform_wait_callback ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
 			return 0;
@@ -1647,6 +1651,24 @@ public class Tests : TestsBase, ITest2
 	}
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_perform_wait_callback () {
+		try
+		{
+			var results = ResolveAsync().GetAwaiter().GetResult();
+		}
+		catch (SocketException sockEx)
+		{
+			//Console.WriteLine("correctly handled");
+		}
+	}
+
+	public static async Task<List<string>> ResolveAsync()
+	{
+		var addresses = await System.Net.Dns.GetHostAddressesAsync("foo.bar.baz");
+		return new List<string>(addresses.Select(addr => addr.ToString()));
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
