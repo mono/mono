@@ -3517,6 +3517,7 @@ cache_System_IO_Stream_slots ()
 {
 	MonoClass* klass = mono_class_try_get_stream_class ();
 	guint32 method_count = mono_class_get_method_count (klass);
+	int methods_found = 0;
 	for (guint32 i = 0; i < method_count; i++)
 	{
 		// find slots for Begin(End)Read and Begin(End)Write
@@ -3525,19 +3526,20 @@ cache_System_IO_Stream_slots ()
 			continue;
 
 		if (!strcmp (m->name, "BeginRead")) {
-			g_assert (stream_begin_read_slot == -1);
+			methods_found++;
 			stream_begin_read_slot = m->slot;
 		} else if (!strcmp (m->name, "BeginWrite")) {
-			g_assert (stream_begin_write_slot == -1);
+			methods_found++;
 			stream_begin_write_slot = m->slot;
 		} else if (!strcmp (m->name, "EndRead")) {
-			g_assert (stream_end_read_slot == -1);
+			methods_found++;
 			stream_end_read_slot = m->slot;
 		} else if (!strcmp (m->name, "EndWrite")) {
-			g_assert (stream_end_write_slot == -1);
+			methods_found++;
 			stream_end_write_slot = m->slot;
 		}
 	}
+	g_assert (methods_found == 4);
 }
 
 MonoBoolean
@@ -3546,7 +3548,7 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, M
 	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
 	MonoClass* base_klass = mono_class_try_get_stream_class ();
 
-	if (stream_begin_read_slot == 0 || stream_end_read_slot == 0)
+	if (stream_begin_read_slot == -1 || stream_end_read_slot == -1)
 		cache_System_IO_Stream_slots ();
 
 	gboolean begin_read_is_overriden = curr_klass->vtable [stream_begin_read_slot]->klass != base_klass;
@@ -3562,7 +3564,7 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndWrite (MonoObjectHandle stream, 
 	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
 	MonoClass* base_klass = mono_class_try_get_stream_class ();
 
-	if (stream_begin_write_slot == 0 || stream_end_write_slot == 0)
+	if (stream_begin_write_slot == -1 || stream_end_write_slot == -1)
 		cache_System_IO_Stream_slots ();
 
 	gboolean begin_write_is_overriden = curr_klass->vtable [stream_begin_write_slot]->klass != base_klass;
