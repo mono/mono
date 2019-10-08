@@ -303,8 +303,6 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_patch_branch (mb, pos_leave);
 		/* end catch */
 	} else if (atype == ATYPE_STRING) {
-		int pos;
-
 		/*
 		 * a string allocator method takes the args: (vtable, len)
 		 *
@@ -323,6 +321,8 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		 * never reach the maximum size.
 		 */
 #if TARGET_SIZEOF_VOID_P == 4
+		int pos;
+
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - MONO_STRUCT_OFFSET (MonoString, chars)) / 2 - 1);
 		pos = mono_mb_emit_short_branch (mb, MONO_CEE_BLE_UN_S);
@@ -334,6 +334,7 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 #endif
 
 		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_SHL);
 		//WE manually fold the above + 2 here
