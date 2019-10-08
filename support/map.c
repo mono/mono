@@ -77,6 +77,7 @@
 #endif /* ndef HAVE_UTIME_H */
 #include <time.h>
 #include "mph.h"
+#include "map-impl.h"
 
 #include "map.h"
 
@@ -3949,42 +3950,6 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	return 0;
 }
 
-int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r)
-{
-	*r = 0;
-#ifndef __NetBSD__
-	if ((x & Mono_Posix_MremapFlags_MREMAP_MAYMOVE) == Mono_Posix_MremapFlags_MREMAP_MAYMOVE)
-#ifdef MREMAP_MAYMOVE
-		*r |= MREMAP_MAYMOVE;
-#else /* def MREMAP_MAYMOVE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef MREMAP_MAYMOVE */
-#else /* def __NetBSD__ */
-	if ((x & Mono_Posix_MremapFlags_MREMAP_MAYMOVE) != Mono_Posix_MremapFlags_MREMAP_MAYMOVE)
-		*r = MAP_FIXED;
-#endif /* def __NetBSD__ */
-	if (x == 0)
-		return 0;
-	return 0;
-}
-
-int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r)
-{
-	*r = 0;
-#ifndef __NetBSD__
-	if (x == 0)
-		return 0;
-#ifdef MREMAP_MAYMOVE
-	if ((x & MREMAP_MAYMOVE) == MREMAP_MAYMOVE)
-		*r |= Mono_Posix_MremapFlags_MREMAP_MAYMOVE;
-#endif /* ndef MREMAP_MAYMOVE */
-#else /* def __NetBSD__ */
-	if ((x & MAP_FIXED) != MAP_FIXED)
-		*r |= Mono_Posix_MremapFlags_MREMAP_MAYMOVE;
-#endif
-	return 0;
-}
-
 int Mono_Posix_FromMsyncFlags (int x, int *r)
 {
 	*r = 0;
@@ -5277,7 +5242,7 @@ Mono_Posix_ToSockaddrIn (struct sockaddr_in *from, struct Mono_Posix_SockaddrIn 
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN */
 
 
-#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 int
 Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr_in6 *to)
 {
@@ -5299,7 +5264,7 @@ Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN6 */
 
 
-#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 int
 Mono_Posix_ToSockaddrIn6 (struct sockaddr_in6 *from, struct Mono_Posix_SockaddrIn6 *to)
 {

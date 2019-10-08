@@ -760,13 +760,6 @@ enum Mono_Posix_MountFlags {
 int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
 int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
 
-enum Mono_Posix_MremapFlags {
-	Mono_Posix_MremapFlags_MREMAP_MAYMOVE       = 0x0000000000000001,
-	#define Mono_Posix_MremapFlags_MREMAP_MAYMOVE Mono_Posix_MremapFlags_MREMAP_MAYMOVE
-};
-int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r);
-int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r);
-
 enum Mono_Posix_MsyncFlags {
 	Mono_Posix_MsyncFlags_MS_ASYNC            = 0x00000001,
 	#define Mono_Posix_MsyncFlags_MS_ASYNC      Mono_Posix_MsyncFlags_MS_ASYNC
@@ -2157,6 +2150,7 @@ int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_Cmsghdr_getsize (void);
 int Mono_Posix_FromIn6Addr (struct Mono_Posix_In6Addr* source, void* destination);
 int Mono_Posix_FromInAddr (struct Mono_Posix_InAddr* source, void* destination);
+int Mono_Posix_FromMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
 int Mono_Posix_FromSockaddr (struct Mono_Posix__SockaddrHeader* source, void* destination);
 int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
@@ -2174,14 +2168,27 @@ int Mono_Posix_Stdlib_DumpFilePosition (char* buf, void* handle, int len);
 int Mono_Posix_Stdlib_EOF (void);
 int Mono_Posix_Stdlib_EXIT_FAILURE (void);
 int Mono_Posix_Stdlib_EXIT_SUCCESS (void);
+int Mono_Posix_Stdlib_fclose (void* stream);
+int Mono_Posix_Stdlib_feof (void* stream);
+int Mono_Posix_Stdlib_ferror (void* stream);
+int Mono_Posix_Stdlib_fflush (void* stream);
+int Mono_Posix_Stdlib_fgetc (void* stream);
 int Mono_Posix_Stdlib_fgetpos (void* stream, void* pos);
+void* Mono_Posix_Stdlib_fgets (char* sb, int size, void* stream);
 int Mono_Posix_Stdlib_FILENAME_MAX (void);
+void* Mono_Posix_Stdlib_fopen (const char* path, const char* mode);
 int Mono_Posix_Stdlib_FOPEN_MAX (void);
+int Mono_Posix_Stdlib_fprintf (void* stream, const char* format, const char* message);
+int Mono_Posix_Stdlib_fputc (int c, void* stream);
+int Mono_Posix_Stdlib_fputs (const char* s, void* stream);
 guint64 Mono_Posix_Stdlib_fread (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
+void Mono_Posix_Stdlib_free (void* ptr);
+void* Mono_Posix_Stdlib_freopen (const char* path, const char* mode, void* stream);
 int Mono_Posix_Stdlib_fseek (void* stream, gint64 offset, int origin);
 int Mono_Posix_Stdlib_fsetpos (void* stream, void* pos);
 gint64 Mono_Posix_Stdlib_ftell (void* stream);
 guint64 Mono_Posix_Stdlib_fwrite (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
+int Mono_Posix_Stdlib_GetLastError (void);
 void Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void* handler);
 int Mono_Posix_Stdlib_L_tmpnam (void);
 void* Mono_Posix_Stdlib_malloc (guint64 size);
@@ -2189,25 +2196,10 @@ int Mono_Posix_Stdlib_MB_CUR_MAX (void);
 int Mono_Posix_Stdlib_perror (const char* s, int err);
 int Mono_Posix_Stdlib_RAND_MAX (void);
 void* Mono_Posix_Stdlib_realloc (void* ptr, guint64 size);
-void Mono_Posix_Stdlib_free (void* p);
 int Mono_Posix_Stdlib_rewind (void* stream);
 int Mono_Posix_Stdlib_setbuf (void* stream, void* buf);
-int Mono_Posix_Stdlib_GetLastError (void);
 void Mono_Posix_Stdlib_SetLastError (int error);
 int Mono_Posix_Stdlib_setvbuf (void* stream, void* buf, int mode, guint64 size);
-void* Mono_Posix_Stdlib_fopen (char* path, char* mode);
-void* Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream);
-gint32 Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message);
-gint32 Mono_Posix_Stdlib_fgetc (void* stream);
-char* Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream);
-gint32 Mono_Posix_Stdlib_fputc (gint32 c, void* stream);
-gint32 Mono_Posix_Stdlib_fputs (char* s, void* stream);
-gint32 Mono_Posix_Stdlib_fclose (void* stream);
-gint32 Mono_Posix_Stdlib_fflush (void* stream);
-void* Mono_Posix_Stdlib_tmpfile (void);
-gint32 Mono_Posix_Stdlib_ungetc (gint32 c, void* stream);
-gint32 Mono_Posix_Stdlib_feof (void* stream);
-gint32 Mono_Posix_Stdlib_ferror (void* stream);
 void* Mono_Posix_Stdlib_SIG_DFL (void);
 void* Mono_Posix_Stdlib_SIG_ERR (void);
 void* Mono_Posix_Stdlib_SIG_IGN (void);
@@ -2215,7 +2207,9 @@ void* Mono_Posix_Stdlib_stderr (void);
 void* Mono_Posix_Stdlib_stdin (void);
 void* Mono_Posix_Stdlib_stdout (void);
 guint64 Mono_Posix_Stdlib_strlen (void* s);
+void* Mono_Posix_Stdlib_tmpfile (void);
 int Mono_Posix_Stdlib_TMP_MAX (void);
+int Mono_Posix_Stdlib_ungetc (int c, void* stream);
 int Mono_Posix_Stdlib__IOFBF (void);
 int Mono_Posix_Stdlib__IOLBF (void);
 int Mono_Posix_Stdlib__IONBF (void);
@@ -2374,6 +2368,7 @@ int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToIn6Addr (void* source, struct Mono_Posix_In6Addr* destination);
 int Mono_Posix_ToInAddr (void* source, struct Mono_Posix_InAddr* destination);
+int Mono_Posix_ToMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_ToSockaddr (void* source, gint64 size, struct Mono_Posix__SockaddrHeader* destination);
 int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);

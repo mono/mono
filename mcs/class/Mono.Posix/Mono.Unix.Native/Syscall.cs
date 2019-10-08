@@ -725,7 +725,9 @@ namespace Mono.Unix.Native {
 		MCL_FUTURE  = 0x2,	// Lock all additions to address
 	}
 
-	[Map][Flags]
+	// Use manually written To/From methods because NetBSD needs special treatment for MREMAP_MAYMOVE
+	// This has to be kept in sync with sys-mman.c
+	[Flags]
 	[CLSCompliant (false)]
 	public enum MremapFlags : ulong {
 		MREMAP_MAYMOVE = 0x1,
