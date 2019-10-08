@@ -24,6 +24,7 @@ MPH_C_SOURCE =					\
 	errno.c					\
 	map.c					\
 	map.h					\
+	map-impl.h				\
 	mph.h					\
 	signal.c				\
 	stdio.c					\
