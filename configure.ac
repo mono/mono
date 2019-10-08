@@ -3787,6 +3787,7 @@ if test x$host_win32 = xno; then
 			AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
 			AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS_SPNEGO_MECHANISM])
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
@@ -3798,6 +3799,7 @@ if test x$host_win32 = xno; then
 	],[
 			AC_MSG_RESULT(yes)
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
