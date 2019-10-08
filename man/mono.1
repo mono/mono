@@ -1546,31 +1546,8 @@ install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
 \fBMONO_IOMAP\fR
-Enables some filename rewriting support to assist badly-written
-applications that hard-code Windows paths.  Set to a colon-separated
-list of "drive" to strip drive letters, or "case" to do
-case-insensitive file matching in every directory in a path.  "all"
-enables all rewriting methods.  (Backslashes are always mapped to
-slashes if this variable is set to a valid option).
-.fi
-.Sp
-For example, this would work from the shell:
-.nf
-
-	MONO_IOMAP=drive:case
-	export MONO_IOMAP
-
-.fi
-If you are using mod_mono to host your web applications, you can use
-the 
-.B MonoIOMAP
-directive instead, like this:
-.nf
-
-	MonoIOMAP <appalias> all
-
-.fi
-See mod_mono(8) for more details.
+(deprecated) Enabled some filename rewriting support to assist badly-written
+applications that hard-code Windows paths. It no longer works as of Mono 6.0.
 .TP
 \fBMONO_LLVM\fR
 When Mono is using the LLVM code generation backend you can use this
