@@ -6503,10 +6503,10 @@ retry:
 				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT) {
 					sp->val.opcode = MINT_NOP;
 				} else {
-					sp->ins = ins;
 					sp->val.opcode = ins->opcode;
 					sp->val.data = ins->data [0];
 				}
+				sp->ins = ins;
 			}
 			sp++;
 		} else if (MINT_IS_STLOC (ins->opcode)) {
