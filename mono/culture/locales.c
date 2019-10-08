@@ -509,12 +509,18 @@ get_android_locale (void)
             const char *nativeTag;
             jobject def = (*env)->CallStaticObjectMethod(env, localeClass, getDefault);
             toLanguageTag = (*env)->GetMethodID(env, localeClass, "toLanguageTag", "()Ljava/lang/String;");
-            tag = (jstring)(*env)->CallObjectMethod(env, def, toLanguageTag);
-            nativeTag = (*env)->GetStringUTFChars(env, tag, NULL);
-            __android_log_print(ANDROID_LOG_INFO, "Mono", "Locale %s", nativeTag);
-            cached_locale = g_strdup (nativeTag);
-            (*env)->ReleaseStringUTFChars(env, tag, nativeTag);
+            // toLanguageTag is available since API 21 only, so returning default locale for Android 4.4
+            if (toLanguageTag != NULL) {
+                tag = (jstring)(*env)->CallObjectMethod(env, def, toLanguageTag);
+                nativeTag = (*env)->GetStringUTFChars(env, tag, NULL);
+                __android_log_print(ANDROID_LOG_INFO, "Mono", "Locale %s", nativeTag);
+                cached_locale = g_strdup (nativeTag);
+                (*env)->ReleaseStringUTFChars(env, tag, nativeTag);
+            }
         }
+    }
+    if ((*env)->ExceptionCheck(env)) {
+        (*env)->ExceptionClear(env);
     }
 
     if (detached)
