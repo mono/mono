@@ -6413,7 +6413,7 @@ elif test x$host_linux = xyes; then
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
 	# requires libkrb5-dev package
 	if test x$enable_gss = xyes; then
-		MONO_NATIVE_LDFLAGS="$MONO_NATIVE_LDFLAGS -lgss"
+		MONO_NATIVE_LDFLAGS="$MONO_NATIVE_LDFLAGS -lgssapi"
 	fi
 	mono_native=yes
 	mono_native_compat=no
