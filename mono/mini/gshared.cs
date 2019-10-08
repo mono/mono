@@ -1058,6 +1058,14 @@ public class Tests
 		return 0;
 	}
 
+	public static int test_0_contains_key_constrained_get_hash () {
+		IDictionary<Type, EmptyStruct> dict = new Dictionary<Type, EmptyStruct> ();
+		dict.Add (typeof (int), default (EmptyStruct));
+		if (!dict.ContainsKey (typeof (int)))
+			return 1;
+		return 0;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static bool equals<T, T2>(T t, T2 t2) {
 		return t.Equals (t);
