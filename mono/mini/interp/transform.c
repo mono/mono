@@ -6605,6 +6605,13 @@ retry:
 		} else if (ins->opcode == MINT_CASTCLASS || ins->opcode == MINT_CASTCLASS_COMMON || ins->opcode == MINT_CASTCLASS_INTERFACE) {
 			// Keep the value on the stack, but prevent optimizing away
 			sp [-1].ins = NULL;
+		} else if (MINT_IS_CONDITIONAL_BRANCH (ins->opcode)) {
+			sp -= pop;
+			g_assert (push == 0);
+			// We can't clear any instruction that pushes the stack, because the
+			// branched code will expect a certain stack size.
+			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
+				sp_iter->ins = NULL;
 		} else {
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
