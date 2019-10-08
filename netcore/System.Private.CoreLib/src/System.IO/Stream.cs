@@ -6,8 +6,8 @@ namespace System.IO
 {
 	partial class Stream
 	{
-		bool HasOverriddenBeginEndRead () => true;
+		bool HasOverriddenBeginEndRead () => false;
 
-		bool HasOverriddenBeginEndWrite () => true;
+		bool HasOverriddenBeginEndWrite () => false;
 	}
 }
