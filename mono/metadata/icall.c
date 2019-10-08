@@ -1015,38 +1015,31 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 }
 
 void
-ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_GetGenericValue_icall (MonoArray **arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
-
-	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
+	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, *arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-	MonoClass * const ac = mono_object_class (arr);
+	MonoClass * const ac = mono_object_class (*arr);
 	gsize const esize = mono_array_element_size (ac);
-	gconstpointer * const ea = (gconstpointer*)((char*)arr->vector + (pos * esize));
+	gconstpointer * const ea = (gconstpointer*)((char*)(*arr)->vector + (pos * esize));
 
 	mono_gc_memmove_atomic (value, ea, esize);
 }
 
 void
-ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_SetGenericValue_icall (MonoArray **arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
-
-	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
+	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, *arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-
-	MonoClass * const ac = mono_object_class (arr);
+	MonoClass * const ac = mono_object_class (*arr);
 	MonoClass * const ec = m_class_get_element_class (ac);
 
 	gsize const esize = mono_array_element_size (ac);
-	gpointer * const ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	gpointer * const ea = (gpointer*)((char*)(*arr)->vector + (pos * esize));
 
 	if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (ec))) {
 		g_assert (esize == sizeof (gpointer));
@@ -3106,16 +3099,19 @@ ves_icall_RuntimeType_get_Name (MonoReflectionTypeHandle reftype, MonoError *err
 	MonoDomain *domain = mono_domain_get ();
 	MonoType *type = MONO_HANDLE_RAW(reftype)->type; 
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
+	// FIXME: this should be escaped in some scenarios with mono_identifier_escape_type_name_chars
+	// Determining exactly when to do so is fairly difficult, so for now we don't bother to avoid regressions
+	const char *klass_name = m_class_get_name (klass);
 
 	if (type->byref) {
-		char *n = g_strdup_printf ("%s&", m_class_get_name (klass));
+		char *n = g_strdup_printf ("%s&", klass_name);
 		MonoStringHandle res = mono_string_new_handle (domain, n, error);
 
 		g_free (n);
 
 		return res;
 	} else {
-		return mono_string_new_handle (domain, m_class_get_name (klass), error);
+		return mono_string_new_handle (domain, klass_name, error);
 	}
 }
 
@@ -3131,8 +3127,11 @@ ves_icall_RuntimeType_get_Namespace (MonoReflectionTypeHandle type, MonoError *e
 
 	if (m_class_get_name_space (klass) [0] == '\0')
 		return NULL_HANDLE_STRING;
-	else
-		return mono_string_new_handle (domain, m_class_get_name_space (klass), error);
+
+	char *escaped = mono_identifier_escape_type_name_chars (m_class_get_name_space (klass));
+	MonoStringHandle res = mono_string_new_handle (domain, escaped, error);
+	g_free (escaped);
+	return res;
 }
 
 gint32
@@ -7200,6 +7199,66 @@ mono_array_get_byte_length (MonoArrayHandle array)
 		return -1;
 	}
 }
+
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArrayHandle dst, int dst_offset, int count, MonoError *error)
+{
+	MONO_CHECK_ARG_NULL_HANDLE (src,);
+	MONO_CHECK_ARG_NULL_HANDLE (dst,);
+
+	if (src_offset < 0) {
+		mono_error_set_argument_out_of_range (error, "srcOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	if (dst_offset < 0) {
+		mono_error_set_argument_out_of_range (error, "dstOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	if (count < 0) {
+		mono_error_set_argument_out_of_range (error, "count", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	MonoClass * const src_class = m_class_get_element_class (MONO_HANDLE_GETVAL (src, obj.vtable)->klass);
+	MonoClass * const dst_class = m_class_get_element_class (MONO_HANDLE_GETVAL (dst, obj.vtable)->klass);
+
+	if (!m_class_is_primitive (src_class)) {
+		mono_error_set_argument (error, "src", "Object must be an array of primitives.");
+		return;
+	}
+
+	if (!m_class_is_primitive (dst_class)) {
+		mono_error_set_argument (error, "dst", "Object must be an array of primitives.");
+		return;
+	}
+
+	if ((src_offset > mono_array_get_byte_length (src) - count) || (dst_offset > mono_array_get_byte_length (dst) - count)) {
+		mono_error_set_argument (error, "", "Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
+		return;
+	}
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	guint8 const * const src_buf = (guint8*)MONO_HANDLE_RAW (src)->vector + src_offset;
+	guint8* const dst_buf = (guint8*)MONO_HANDLE_RAW (dst)->vector + dst_offset;
+
+	memmove (dst_buf, src_buf, count);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
+	return;
+}
+
+MonoBoolean
+ves_icall_System_Buffer_IsPrimitiveTypeArray (MonoArrayHandle array, MonoError* error)
+{
+	MonoClass * const klass = m_class_get_element_class (MONO_HANDLE_GETVAL (array, obj.vtable)->klass);
+	return m_class_is_primitive (klass);
+}
+#endif
 
 gint32
 ves_icall_System_Buffer_ByteLengthInternal (MonoArrayHandle array, MonoError* error)

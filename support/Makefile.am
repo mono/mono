@@ -24,6 +24,7 @@ MPH_C_SOURCE =					\
 	errno.c					\
 	map.c					\
 	map.h					\
+	map-impl.h				\
 	mph.h					\
 	signal.c				\
 	stdio.c					\
@@ -174,6 +175,7 @@ refresh:
 	--autoconf-header="<utime.h>"                         \
 	--impl-header="<time.h>"                              \
 	--impl-header="\"mph.h\""                             \
+	--impl-header="\"map-impl.h\""                        \
 	--rename-member=st_atime=st_atime_                    \
 	--rename-member=st_ctime=st_ctime_                    \
 	--rename-member=st_mtime=st_mtime_                    \

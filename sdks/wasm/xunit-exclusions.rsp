@@ -61,10 +61,6 @@
 # Crashes in GC 
 -nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
 
-# System.Xml.Linq
-# Crashes in GC
--nomethod CoreXml.Test.XLinq.LoadSaveAsyncTests.RoundtripSyncAsyncMatches_Stream
-
 # System.Net.Http.UnitTests
 # Hangs
 -nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed

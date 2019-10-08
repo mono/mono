@@ -29,7 +29,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/ll
 		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(EXTRA_LLVM_ARGS)	\
-		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
+		-DLLVM_ENABLE_ASSERTIONS=$(ENABLE_ASSERTS) \
 		-DLLVM_ENABLE_LIBXML2=Off \
 		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \

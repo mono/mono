@@ -344,7 +344,6 @@ mono_merp_send (MERPStruct *merp)
 	} else {
 		int status;
 		waitpid (pid, &status, 0);
-		gboolean exit_success = FALSE;
 		int exit_status = FALSE;
 
 		while (TRUE) {
@@ -353,8 +352,7 @@ mono_merp_send (MERPStruct *merp)
 
 			if (WIFEXITED(status)) {
 				exit_status = WEXITSTATUS(status);
-				exit_success = TRUE;
-				invoke_success = exit_status == TRUE;
+				invoke_success = (exit_status == 0);
 				break;
 			} else if (WIFSIGNALED(status)) {
 				break;
