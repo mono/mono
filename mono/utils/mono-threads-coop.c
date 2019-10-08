@@ -646,6 +646,9 @@ char mono_threads_suspend_policy_hidden_dont_modify;
 void
 mono_threads_suspend_policy_init (void)
 {
+	if (mono_threads_suspend_policy_hidden_dont_modify)
+		return;
+
 	int policy = 0;
 	{
 		// thread suspend policy:
