@@ -4542,6 +4542,8 @@ free_main_args (void)
 int
 mono_runtime_set_main_args (int argc, char* argv[])
 {
+	mono_threads_suspend_policy_init ();
+
 	MONO_ENTER_GC_UNSAFE;
 
 	MONO_REQ_GC_NEUTRAL_MODE;
