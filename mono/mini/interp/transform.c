@@ -6598,6 +6598,15 @@ retry:
 				sp [-i].ins = NULL;
 			memset (sp, 0, sizeof (StackContentInfo));
 			sp++;
+		} else if (ins->opcode == MINT_POP) {
+			sp--;
+			if (sp->ins) {
+				// The top of the stack is not used by any instructions. Kill both the
+				// instruction that pushed it and the pop.
+				interp_clear_ins (td, sp->ins);
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions += 2;
+			}
 		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == INLINED_METHOD_FLAG) {
 			int param_count = ins->data [1];
 			// memmove the stack values while clearing ins, to prevent instruction removal
@@ -6625,6 +6634,10 @@ retry:
 			g_assert (sp >= stack && sp <= stack_end);
 			g_assert ((sp - push) >= stack && (sp - push) <= stack_end);
 			memset (sp - push, 0, push * sizeof (StackContentInfo));
+			// If this instruction only pushes a single value, make it a candidate for
+			// removal, if its value is not used anywhere.
+			if (push == 1 && pop == 0 && !MINT_IS_CALL (ins->opcode) && !MINT_IS_NEWOBJ (ins->opcode))
+				sp [-1].ins = ins;
 		}
 		last_il_offset = ins->il_offset;
 	}
