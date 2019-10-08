@@ -60,7 +60,7 @@ mono_simd_intrinsics_init (void)
 {
 	register_size = 16;
 #if FALSE
-	if ((get_cpu_features () & MONO_CPU_X86_AVX) != 0)
+	if ((mini_get_cpu_features () & MONO_CPU_X86_AVX) != 0)
 		register_size = 32;
 #endif
 	/* Tell the class init code the size of the System.Numerics.Register type */
@@ -575,7 +575,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		if (id == -1)
 			return NULL;
 
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_POPCNT) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_POPCNT) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -601,7 +601,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		if (id == -1)
 			return NULL;
 
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_LZCNT) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_LZCNT) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -628,7 +628,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		id = lookup_intrins (bmi1_methods, sizeof (bmi1_methods), cmethod);
 
 		g_assert (id != -1);
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_BMI1) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_BMI1) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -701,7 +701,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return NULL;
 		id = lookup_intrins (bmi2_methods, sizeof (bmi2_methods), cmethod);
 		g_assert (id != -1);
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_BMI2) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_BMI2) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {

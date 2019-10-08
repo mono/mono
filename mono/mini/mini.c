@@ -4303,7 +4303,7 @@ mono_target_pagesize (void)
 }
 
 MonoCPUFeatures
-get_cpu_features (MonoCompile* cfg)
+mini_get_cpu_features (MonoCompile* cfg)
 {
 	MonoCPUFeatures features = (MonoCPUFeatures)0;
 #if !defined(MONO_CROSS_COMPILE)

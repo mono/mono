@@ -135,7 +135,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				opcode = OP_TRUNCF;
 			}
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-			else if (!strcmp (cmethod->name, "Round") && (get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0) {
+			else if (!strcmp (cmethod->name, "Round") && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0) {
 				// special case: emit vroundps for MathF.Round directly instead of what llvm.round.f32 emits
 				// to align with CoreCLR behavior
 				int xreg = alloc_xreg (cfg);

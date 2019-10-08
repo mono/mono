@@ -2846,7 +2846,7 @@ typedef enum {
 #endif
 } MonoCPUFeatures;
 
-MonoCPUFeatures get_cpu_features (MonoCompile* cfg);
+MonoCPUFeatures mini_get_cpu_features (MonoCompile* cfg);
 
 enum {
 	SIMD_COMP_EQ,
