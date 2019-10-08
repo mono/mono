@@ -3540,7 +3540,7 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, M
 	MonoClass* klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
 	MonoClass* base_klass = mono_class_try_get_stream_class();
 
-	if (stream_begin_read_slot == 0 || stream_end_read_slot)
+	if (stream_begin_read_slot == 0 || stream_end_read_slot == 0)
 		find_stream_methods_slots();
 
 	gboolean begin_read_is_overriden = klass->vtable[stream_begin_read_slot]->klass != base_klass;
