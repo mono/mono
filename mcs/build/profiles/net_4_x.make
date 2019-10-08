@@ -25,6 +25,6 @@ ifdef PLATFORM_MACOS
 MONO_FEATURE_APPLETLS=1
 endif
 
-if ENABLE_GSS
+ifeq ("$(ENABLE_GSS)","1")
 ENABLE_GSS=1
 endif
