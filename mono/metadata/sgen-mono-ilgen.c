@@ -312,13 +312,17 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		 *
 		 * condition:
 		 *
-		 * bytes <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
+		 * bytes <= SIZE_MAX - (SGEN_ALLOC_ALIGN - 1)
 		 *
 		 * therefore:
 		 *
 		 * offsetof (MonoString, chars) + ((len + 1) * 2) <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
-		 * len <= (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - offsetof (MonoString, chars)) / 2 - 1
+		 * len <= (SIZE_MAX - (SGEN_ALLOC_ALIGN - 1) - offsetof (MonoString, chars)) / 2 - 1
+		 * 
+		 * On 64-bit platforms SIZE_MAX is so big that the 32-bit string length can
+		 * never reach the maximum size.
 		 */
+#if TARGET_SIZEOF_VOID_P == 4
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - MONO_STRUCT_OFFSET (MonoString, chars)) / 2 - 1);
 		pos = mono_mb_emit_short_branch (mb, MONO_CEE_BLE_UN_S);
@@ -327,6 +331,7 @@ emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 		mono_mb_emit_exception (mb, "OutOfMemoryException", NULL);
 		mono_mb_patch_short_branch (mb, pos);
+#endif
 
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, 1);
