@@ -61,6 +61,13 @@
 -nomethod BasicEventSourceTests.TestsManifestNegative.Test_GenerateManifest_InvalidEventSources
 
 ####################################################################
+##  System.Drawing.Common.Tests
+####################################################################
+
+# System.ArgumentException Arg_ObjObjEx
+-nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
+
+####################################################################
 ##  System.Dynamic.Runtime.Tests
 ####################################################################
 
@@ -976,9 +983,6 @@
 # Flaky test (FileSystemWatcher)
 -nomethod System.IO.Tests.Directory_NotifyFilter_Tests.FileSystemWatcher_Directory_NotifyFilter_LastWriteTime
 
-# Flaky test
--nomethod System.Security.Cryptography.Rsa.Tests.RSAKeyFileTests.ReadEncryptedRsa16384
-
 ####################################################################
 ##  System.Security.Cryptography.Encoding.Tests
 ####################################################################
@@ -988,7 +992,6 @@
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByValue_Ctor
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.Oid_StringString_NullFriendlyName
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Ctor
-
 
 # corefx tests need to be updated
 -nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt16

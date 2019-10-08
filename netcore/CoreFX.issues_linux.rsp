@@ -1,6 +1,3 @@
-# System.ArgumentException Arg_ObjObjEx
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
-
 # See TODO in AssemblyLoadContext.InternalLoadFromPath()
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandleFullSignature
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandle
@@ -32,8 +29,3 @@
 
 # Requires precise GC (should be ignored in dotnet/corefx for mono)
 -nomethod System.Collections.Concurrent.Tests.ConcurrentQueueTests.ReferenceTypes_NulledAfterDequeue
-
-# libgdiplus update broke these tests
--nomethod System.Drawing.Tests.IconTests.CorrectColorDepthExtracted
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_ColorMatrixDefaultFlagType_Success
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrices_ColorMatrixGrayMatrixFlagsTypes_Success

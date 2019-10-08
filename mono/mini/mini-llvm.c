@@ -9712,7 +9712,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	info = &module->aot_info;
 
 	/* Create an LLVM type to represent MonoAotFileInfo */
-	nfields = 2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 21 + 5;
+	nfields = 2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 22 + 5;
 	eltypes = g_new (LLVMTypeRef, nfields);
 	tindex = 0;
 	eltypes [tindex ++] = LLVMInt32Type ();
@@ -9721,7 +9721,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	for (i = 0; i < MONO_AOT_FILE_INFO_NUM_SYMBOLS; ++i)
 		eltypes [tindex ++] = LLVMPointerType (LLVMInt8Type (), 0);
 	/* Scalars */
-	for (i = 0; i < 20; ++i)
+	for (i = 0; i < 21; ++i)
 		eltypes [tindex ++] = LLVMInt32Type ();
 	/* Arrays */
 	eltypes [tindex ++] = LLVMArrayType (LLVMInt32Type (), MONO_AOT_TABLE_NUM);
@@ -9866,6 +9866,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->card_table_shift_bits, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->card_table_mask, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->tramp_page_size, FALSE);
+	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->call_table_entry_size, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->nshared_got_entries, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->datafile_size, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), module->unbox_tramp_num, FALSE);
@@ -10699,3 +10700,34 @@ llvm_jit_finalize_method (EmitContext *ctx)
 }
 
 #endif
+
+static MonoCPUFeatures cpu_features;
+
+MonoCPUFeatures mono_llvm_get_cpu_features (void)
+{
+	if (cpu_features == 0) {
+		CpuFeatureAliasFlag flags_map [] = {
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+			{ "sse",	MONO_CPU_X86_SSE },
+			{ "sse2",	MONO_CPU_X86_SSE2 },
+			{ "pclmul",	MONO_CPU_X86_PCLMUL },
+			{ "aes",	MONO_CPU_X86_AES },
+			{ "sse2",	MONO_CPU_X86_SSE2 },
+			{ "sse3",	MONO_CPU_X86_SSE3 },
+			{ "ssse3",	MONO_CPU_X86_SSSE3 },
+			{ "sse4.1",	MONO_CPU_X86_SSE41 },
+			{ "sse4.2",	MONO_CPU_X86_SSE42 },
+			{ "popcnt",	MONO_CPU_X86_POPCNT },
+			{ "avx",	MONO_CPU_X86_AVX },
+			{ "avx2",	MONO_CPU_X86_AVX2 },
+			{ "fma",	MONO_CPU_X86_FMA },
+			{ "lzcnt",	MONO_CPU_X86_LZCNT },
+			{ "bmi",	MONO_CPU_X86_BMI1 },
+			{ "bmi2",	MONO_CPU_X86_BMI2 },
+#endif
+		};
+		cpu_features = mono_llvm_check_cpu_features (flags_map, sizeof (flags_map) / sizeof (CpuFeatureAliasFlag));
+		cpu_features |= MONO_CPU_INITED;
+	}
+	return cpu_features;
+}

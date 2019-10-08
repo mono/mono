@@ -249,6 +249,11 @@ program that comes with Mono, and calling it like this:
 .I mcpu=[native o generic]
 cpu=native allows AOT mode to use all instructions current CPU supports, e.g. AVX2, SSE42, etc.
 Default value is 'generic'.
+.I mattr=[cpu feature]
+Allows AOT code generator to use specified CPU features where possible including `System.Runtime.Intrinsics.*'.
+E.g. `mattr=+avx2,mattr=-lzcnt' unlocks sse1-4.2, avx1-2 and disables lzcnt. 
+It's useful for cross-compilation or when it's not possible to use `-mcpu=native' (which enables 
+all cpu feature current cpu has).
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
@@ -1848,6 +1853,11 @@ This option will suspend the program when an unhandled exception occurs.
 .TP
 \fBthread-dump-dir=DIR\fR
 Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBweak-memory-model\fR
+Don't enforce the CLR memory model on platforms with weak memory models. This can introduce
+random crashes in some rare cases, for multithreaded environments. This can be used for a
+performance boost on applications that are single threaded.
 .TP
 \fBverbose-gdb\fR
 Make gdb output on native crashes more verbose.
