@@ -140,7 +140,7 @@ namespace System
 		static IDictionary CreateDataContainer () => new ListDictionaryInternal ();
 
 		static string? SerializationWatsonBuckets => null;
-		static string? SerializationRemoteStackTraceString => _remoteStackTraceString;
+		string? SerializationRemoteStackTraceString => _remoteStackTraceString;
 		string? SerializationStackTraceString => GetStackTrace (true);
 	}
 }
