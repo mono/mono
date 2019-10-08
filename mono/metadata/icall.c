@@ -3506,45 +3506,51 @@ ves_icall_RuntimeMethodInfo_GetGenericMethodDefinition (MonoReflectionMethodHand
 }
 
 #ifdef ENABLE_NETCORE
-static GENERATE_TRY_GET_CLASS_WITH_CACHE(stream, "System.IO", "Stream")
-static guint32 stream_begin_read_slot = 0;
-static guint32 stream_begin_write_slot = 0;
-static guint32 stream_end_read_slot = 0;
-static guint32 stream_end_write_slot = 0;
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (stream, "System.IO", "Stream")
+static int stream_begin_read_slot = -1;
+static int stream_begin_write_slot = -1;
+static int stream_end_read_slot = -1;
+static int stream_end_write_slot = -1;
 
 void
-find_stream_methods_slots()
+cache_System_IO_Stream_slots ()
 {
-	MonoClass* klass = mono_class_try_get_stream_class();
-	guint32 method_count = mono_class_get_method_count(klass);
+	MonoClass* klass = mono_class_try_get_stream_class ();
+	guint32 method_count = mono_class_get_method_count (klass);
 	for (guint32 i = 0; i < method_count; i++)
 	{
 		// find slots for Begin(End)Read and Begin(End)Write
-		MonoMethod* m = klass->methods[i];
+		MonoMethod* m = klass->methods [i];
 		if (m->slot == -1)
 			continue;
-		else if (!strcmp (m->name, "BeginRead"))
+
+		if (!strcmp (m->name, "BeginRead")) {
+			g_assert (stream_begin_read_slot == -1);
 			stream_begin_read_slot = m->slot;
-		else if (!strcmp (m->name, "BeginWrite"))
+		} else if (!strcmp (m->name, "BeginWrite")) {
+			g_assert (stream_begin_write_slot == -1);
 			stream_begin_write_slot = m->slot;
-		else if (!strcmp (m->name, "EndRead"))
+		} else if (!strcmp (m->name, "EndRead")) {
+			g_assert (stream_end_read_slot == -1);
 			stream_end_read_slot = m->slot;
-		else if (!strcmp (m->name, "EndWrite"))
+		} else if (!strcmp (m->name, "EndWrite")) {
+			g_assert (stream_end_write_slot == -1);
 			stream_end_write_slot = m->slot;
+		}
 	}
 }
 
 MonoBoolean
 ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, MonoError *error)
 {
-	MonoClass* klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
+	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
 	MonoClass* base_klass = mono_class_try_get_stream_class ();
 
 	if (stream_begin_read_slot == 0 || stream_end_read_slot == 0)
-		find_stream_methods_slots ();
+		cache_System_IO_Stream_slots ();
 
-	gboolean begin_read_is_overriden = klass->vtable [stream_begin_read_slot]->klass != base_klass;
-	gboolean end_read_is_overriden = klass->vtable [stream_end_read_slot]->klass != base_klass;
+	gboolean begin_read_is_overriden = curr_klass->vtable [stream_begin_read_slot]->klass != base_klass;
+	gboolean end_read_is_overriden = curr_klass->vtable [stream_end_read_slot]->klass != base_klass;
 
 	// return true if BeginRead or EndRead were overriden
 	return begin_read_is_overriden || end_read_is_overriden;
@@ -3553,14 +3559,14 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, M
 MonoBoolean
 ves_icall_System_IO_Stream_HasOverriddenBeginEndWrite (MonoObjectHandle stream, MonoError *error)
 {
-	MonoClass* klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
+	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
 	MonoClass* base_klass = mono_class_try_get_stream_class ();
 
 	if (stream_begin_write_slot == 0 || stream_end_write_slot == 0)
-		find_stream_methods_slots ();
+		cache_System_IO_Stream_slots ();
 
-	gboolean begin_write_is_overriden = klass->vtable [stream_begin_write_slot]->klass != base_klass;
-	gboolean end_write_is_overriden = klass->vtable [stream_end_write_slot]->klass != base_klass;
+	gboolean begin_write_is_overriden = curr_klass->vtable [stream_begin_write_slot]->klass != base_klass;
+	gboolean end_write_is_overriden = curr_klass->vtable [stream_end_write_slot]->klass != base_klass;
 
 	// return true if BeginWrite or EndWrite were overriden
 	return begin_write_is_overriden || end_write_is_overriden;
