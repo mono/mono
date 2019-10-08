@@ -4605,7 +4605,7 @@ common_vcall:
 			guint16 param_count;
 			guint16 imethod_index = ip [1];
 
-			const gboolean is_inlined = imethod_index == 0xffff;
+			const gboolean is_inlined = imethod_index == INLINED_METHOD_FLAG;
 
 			param_count = ip [2];
 

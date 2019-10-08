@@ -4337,7 +4337,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 							goto_if_nok (error, exit);
 
 							if (interp_inline_method (td, m, mheader, error)) {
-								newobj_fast->data [0] = 0xffff;
+								newobj_fast->data [0] = INLINED_METHOD_FLAG;
 								break;
 							}
 						}
@@ -6109,7 +6109,7 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 		}
 		case MINT_NEWOBJ_FAST: {
 			int param_count = ins->data [1];
-			gboolean is_inlined = ins->data [0] == 0xffff;
+			gboolean is_inlined = ins->data [0] == INLINED_METHOD_FLAG;
 			if (is_inlined) {
 				// This needs to be handled explictly during cprop, in order to properly
 				// keep track of stack contents
@@ -6596,7 +6596,7 @@ retry:
 				sp [-i].ins = NULL;
 			memset (sp, 0, sizeof (StackContentInfo));
 			sp++;
-		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == 0xffff) {
+		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == INLINED_METHOD_FLAG) {
 			int param_count = ins->data [1];
 			// memmove the stack values while clearing ins, to prevent instruction removal
 			for (int i = 1; i <= param_count; i++) {
