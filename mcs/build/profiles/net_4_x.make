@@ -21,8 +21,9 @@ ENFORCE_LIBRARY_WARN_AS_ERROR = yes
 
 ifeq ($(HOST_PLATFORM),macos)
 MONO_FEATURE_APPLETLS=1
+ENABLE_GSS=1
 endif
 
-ifeq ("$(ENABLE_GSS)","1")
+ifeq ($(HOST_PLATFORM),linux)
 ENABLE_GSS=1
 endif
