@@ -5,7 +5,7 @@
     <PreReleaseVersionLabel>prerelease</PreReleaseVersionLabel>
     <!-- Package versions -->
     <!-- corefx -->
-    <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19476.2</MicrosoftPrivateCoreFxNETCoreAppVersion>
+    <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19502.7</MicrosoftPrivateCoreFxNETCoreAppVersion>
     <!-- core-setup -->
     <MicrosoftNETCoreAppVersion>5.0.0-alpha1.19476.2</MicrosoftNETCoreAppVersion>
     <!-- roslyn -->

@@ -1933,18 +1933,20 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
  * TABLE should point to a table of call instructions. Return the address called by the INDEXth entry.
  */
 static void*
-get_call_table_entry (void *table, int index)
+get_call_table_entry (void *table, int index, int entry_size)
 {
 #if defined(TARGET_ARM)
 	guint32 *ins_addr;
 	guint32 ins;
 	gint32 offset;
 
-	ins_addr = (guint32 *)table + (index * 2);
-	if ((guint32) *ins_addr == (guint32 ) 0xe51ff004) { // ldr pc, =<label>
+	if (entry_size == 8) {
+		ins_addr = (guint32 *)table + (index * 2);
+		g_assert ((guint32) *ins_addr == (guint32 ) 0xe51ff004); // ldr pc, =<label>
 		return *((char **) (ins_addr + 1));
 	}
 
+	g_assert (entry_size == 4);
 	ins_addr = (guint32*)table + index;
 	ins = *ins_addr;
 	if ((ins >> ARMCOND_SHIFT) == ARMCOND_NV) {
@@ -2367,7 +2369,7 @@ if (container_assm_name && !container_amodule) {
 
 		/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
 		if (!addr && amodule->info.method_addresses) {
-			addr = get_call_table_entry (amodule->info.method_addresses, i);
+			addr = get_call_table_entry (amodule->info.method_addresses, i, amodule->info.call_table_entry_size);
 			g_assert (addr);
 			if (addr == amodule->info.method_addresses)
 				addr = NULL;
@@ -4767,11 +4769,11 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		}
 
 		/*
-		 * Special case Array.GetGenericValueImpl which is a generic icall.
+		 * Special case Array.GetGenericValue_icall which is a generic icall.
 		 * Generic sharing currently can't handle it, but the icall returns data using
 		 * an out parameter, so the managed-to-native wrappers can share the same code.
 		 */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValueImpl")) {
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValue_icall")) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 
@@ -4779,7 +4781,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 				/* Avoid recursion */
 				return NULL;
 
-			m = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetGenericValueImpl", 2, 0, error);
+			m = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetGenericValue_icall", 3, 0, error);
 			mono_error_assert_ok (error);
 			g_assert (m);
 
@@ -6030,7 +6032,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 		}
 	}
 
-	code = get_call_table_entry (amodule->unbox_trampoline_addresses, entry_index);
+	code = get_call_table_entry (amodule->unbox_trampoline_addresses, entry_index, amodule->info.call_table_entry_size);
 	g_assert (code);
 
 	tinfo = mono_tramp_info_create (NULL, (guint8 *)code, 0, NULL, NULL);

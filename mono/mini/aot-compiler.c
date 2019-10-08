@@ -329,6 +329,7 @@ typedef struct MonoAotCompile {
 
 	MonoAotOptions aot_opts;
 	guint32 nmethods;
+	int call_table_entry_size;
 	guint32 nextra_methods;
 	guint32 opts;
 	guint32 simd_opts;
@@ -4444,12 +4445,28 @@ cleanup_true:
 	return TRUE;
 }
 
+static gboolean
+always_aot (MonoMethod *method)
+{
+	/*
+	 * Calls to these methods do not go through the normal call processing code so
+	 * calling code cannot enter the interpreter. So always aot them even in profile guided aot mode.
+	 */
+	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		return TRUE;
+	if (method->string_ctor)
+		return TRUE;
+	return FALSE;
+}
+
 gboolean
 mono_aot_can_enter_interp (MonoMethod *method)
 {
 	MonoAotCompile *acfg = current_acfg;
 
 	g_assert (acfg);
+	if (always_aot (method))
+		return FALSE;
 	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method))
 		return TRUE;
 	return FALSE;
@@ -5662,22 +5679,21 @@ add_generic_instances (MonoAotCompile *acfg)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
 
 		/* 
-		 * Add a managed-to-native wrapper of Array.GetGenericValueImpl<object>, which is
-		 * used for all instances of GetGenericValueImpl by the AOT runtime.
+		 * Add a managed-to-native wrapper of Array.GetGenericValue_icall<object>, which is
+		 * used for all instances of GetGenericValue_icall by the AOT runtime.
 		 */
 		{
 			ERROR_DECL (error);
 			MonoGenericContext ctx;
-			MonoType *args [16];
 			MonoMethod *get_method;
 			MonoClass *array_klass = m_class_get_parent (mono_class_create_array (mono_defaults.object_class, 1));
 
-			get_method = mono_class_get_method_from_name_checked (array_klass, "GetGenericValueImpl", 2, 0, error);
+			get_method = mono_class_get_method_from_name_checked (array_klass, "GetGenericValue_icall", 3, 0, error);
 			mono_error_assert_ok (error);
 
 			if (get_method) {
 				memset (&ctx, 0, sizeof (ctx));
-				args [0] = object_type;
+				MonoType *args [ ] = { object_type };
 				ctx.method_inst = mono_metadata_get_generic_inst (1, args);
 				add_extra_method (acfg, mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (get_method, &ctx, error), TRUE, TRUE));
 				mono_error_assert_ok (error); /* FIXME don't swallow the error */
@@ -8556,17 +8572,23 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	if (acfg->aot_opts.profile_only && !g_hash_table_lookup (acfg->profile_methods, method)) {
 		if (acfg->aot_opts.llvm_only) {
-			/* Keep wrappers */
-			if (!method->wrapper_type)
-				return;
-			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
-			switch (info->subtype) {
-			case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
-			case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
-				return;
-			default:
-				break;
+			gboolean keep = FALSE;
+			if (method->wrapper_type) {
+				/* Keep most wrappers */
+				WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+				switch (info->subtype) {
+				case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
+				case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
+					break;
+				default:
+					keep = TRUE;
+					break;
+				}
 			}
+			if (always_aot (method))
+				keep = TRUE;
+			if (!keep)
+				return;
 		} else {
 			if (!method->is_inflated)
 				return;
@@ -10096,12 +10118,10 @@ emit_code (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->nmethods; ++i) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
-		int call_size;
-
 		if (!ignore_cfg (acfg->cfgs [i])) {
-			arch_emit_label_address (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
+			arch_emit_label_address (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &acfg->call_table_entry_size);
 		} else {
-			arch_emit_label_address (acfg, symbol, FALSE, FALSE, NULL, &call_size);
+			arch_emit_label_address (acfg, symbol, FALSE, FALSE, NULL, &acfg->call_table_entry_size);
 		}
 #endif
 	}
@@ -11117,6 +11137,7 @@ init_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	info->got_size = acfg->got_offset * sizeof (target_mgreg_t);
 	info->plt_size = acfg->plt_offset;
 	info->nmethods = acfg->nmethods;
+	info->call_table_entry_size = acfg->call_table_entry_size;
 	info->nextra_methods = acfg->nextra_methods;
 	info->flags = acfg->flags;
 	info->opts = acfg->opts;
@@ -11284,6 +11305,7 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	emit_int32 (acfg, info->card_table_shift_bits);
 	emit_int32 (acfg, info->card_table_mask);
 	emit_int32 (acfg, info->tramp_page_size);
+	emit_int32 (acfg, info->call_table_entry_size);
 	emit_int32 (acfg, info->nshared_got_entries);
 	emit_int32 (acfg, info->datafile_size);
 	emit_int32 (acfg, 0);

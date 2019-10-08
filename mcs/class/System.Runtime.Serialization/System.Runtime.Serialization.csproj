@@ -117,6 +117,7 @@
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Serialization.Primitives\src\System\Runtime\Serialization\ISerializationSurrogateProvider.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\AppSettings.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Attributes.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ClassDataContract.cs" />
