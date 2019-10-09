@@ -6611,15 +6611,34 @@ retry:
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
-		} else if (MINT_IS_LDC_I4 (ins->opcode)) {
-			sp->ins = ins;
-			sp->val.type = STACK_VALUE_I4;
-			sp->val.i = interp_ldc_i4_get_const (ins);
-			sp++;
-		} else if (ins->opcode == MINT_LDC_I8) {
-			sp->ins = ins;
-			sp->val.type = STACK_VALUE_I8;
-			sp->val.l = READ64 (&ins->data [0]);
+		} else if (MINT_IS_LDC_I4 (ins->opcode) || ins->opcode == MINT_LDC_I8) {
+			StackValue val;
+			gboolean is_i8 = ins->opcode == MINT_LDC_I8;
+			InterpInst *prev_ins = interp_prev_ins (ins);
+
+			if (is_i8) {
+				val.type = STACK_VALUE_I8;
+				val.l = READ64 (&ins->data [0]);
+			} else {
+				val.type = STACK_VALUE_I4;
+				val.i = interp_ldc_i4_get_const (ins);
+			}
+
+			if (prev_ins && prev_ins->opcode == MINT_POP &&
+					((is_i8 && sp->val.type == STACK_VALUE_I8 && sp->val.l == val.l) ||
+					(!is_i8 && sp->val.type == STACK_VALUE_I4 && sp->val.i == val.i)) &&
+					!interp_is_bb_start (td, prev_ins, ins)) {
+				// The previous instruction pops the stack of the value we are pushing
+				// right now. We can kill both instructions
+				if (td->verbose_level)
+					g_print ("Kill redundant pop/ldc pair: pop (off %p), ldc (off %p)\n", prev_ins->il_offset, ins->il_offset);
+				interp_clear_ins (td, prev_ins);
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions += 2;
+			} else {
+				sp->ins = ins;
+				sp->val = val;
+			}
 			sp++;
 		} else if (MINT_IS_MOVLOC (ins->opcode)) {
 			int src_local = ins->data [0];
@@ -6679,6 +6698,10 @@ retry:
 				interp_clear_ins (td, sp->ins);
 				interp_clear_ins (td, ins);
 				mono_interp_stats.killed_instructions += 2;
+				// The value pop-ed by this instruction can still be accessed. If we also
+				// kill the instruction pushing the value, then we need to empty the
+				// value of the stack, so it is not considered for further optimizations.
+				sp->val.type = STACK_VALUE_NONE;
 			}
 		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == INLINED_METHOD_FLAG) {
 			int param_count = ins->data [1];
