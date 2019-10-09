@@ -111,6 +111,7 @@ typedef struct {
 
 typedef struct {
 	MonoType *type;
+	int mt;
 	int flags;
 	int offset;
 } InterpLocal;
@@ -764,9 +765,10 @@ store_arg(TransformData *td, int n)
 }
 
 static void
-load_local_general (TransformData *td, int local, MonoType *type)
+load_local (TransformData *td, int local)
 {
-	int mt = mint_type (type);
+	MonoType *type = td->locals [local].type;
+	int mt = td->locals [local].mt;
 	MonoClass *klass = NULL;
 	if (mt == MINT_TYPE_VT) {
 		klass = mono_class_from_mono_type_internal (type);
@@ -785,17 +787,11 @@ load_local_general (TransformData *td, int local, MonoType *type)
 	PUSH_TYPE(td, stack_type[mt], klass);
 }
 
-static void
-load_local (TransformData *td, int n)
-{
-	MonoType *type = td->header->locals [n];
-	load_local_general (td, n, type);
-}
-
 static void 
-store_local_general (TransformData *td, int local, MonoType *type)
+store_local (TransformData *td, int local)
 {
-	int mt = mint_type (type);
+	MonoType *type = td->locals [local].type;
+	int mt = td->locals [local].mt;
 	CHECK_STACK (td, 1);
 #if SIZEOF_VOID_P == 8
 	if (td->sp [-1].type == STACK_TYPE_I4 && stack_type [mt] == STACK_TYPE_I8) {
@@ -822,13 +818,6 @@ store_local_general (TransformData *td, int local, MonoType *type)
 		td->last_ins->data [0] = local;
 	}
 	--td->sp;
-}
-
-static void
-store_local (TransformData *td, int n)
-{
-	MonoType *type = td->header->locals [n];
-	store_local_general (td, n, type);
 }
 
 #define SIMPLE_OP(td, op) \
@@ -946,6 +935,7 @@ create_interp_local (TransformData *td, MonoType *type)
 		td->locals = (InterpLocal*) g_realloc (td->locals, td->locals_capacity * sizeof (InterpLocal));
 	}
 	td->locals [td->locals_size].type = type;
+	td->locals [td->locals_size].mt = mint_type (type);
 	td->locals [td->locals_size].flags = 0;
 	td->locals [td->locals_size].offset = -1;
 	td->locals_size++;
@@ -1023,7 +1013,7 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 	int size = mini_magic_type_size (NULL, src);
 	int local = create_interp_local (td, mini_native_type_replace_type (src));
 
-	store_local_general (td, local, src);
+	store_local (td, local);
 
 	size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 	interp_add_ins (td, MINT_LDLOC_VT);
@@ -1436,9 +1426,9 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 
 			int local = create_interp_local (td, local_type);
 
-			store_local_general (td, local, local_type);
+			store_local (td, local);
 			interp_emit_ldelema (td, target_method->klass, value_class);
-			load_local_general (td, local, local_type);
+			load_local (td, local);
 			interp_emit_stobj (td, element_class);
 			td->ip += 5;
 			return TRUE;
@@ -1688,11 +1678,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			localb = create_interp_local (td, t);
 
 			// Save arguments
-			store_local_general (td, localb, t);
-			store_local_general (td, locala, t);
+			store_local (td, localb);
+			store_local (td, locala);
 			// (a > b)
-			load_local_general (td, locala, t);
-			load_local_general (td, localb, t);
+			load_local (td, locala);
+			load_local (td, localb);
 			if (is_unsigned)
 				interp_add_ins (td, is_i8 ? MINT_CGT_UN_I8 : MINT_CGT_UN_I4);
 			else
@@ -1700,8 +1690,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->sp --;
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I4);
 			// (a < b)
-			load_local_general (td, locala, t);
-			load_local_general (td, localb, t);
+			load_local (td, locala);
+			load_local (td, localb);
 			if (is_unsigned)
 				interp_add_ins (td, is_i8 ? MINT_CLT_UN_I8 : MINT_CLT_UN_I4);
 			else
@@ -2769,6 +2759,7 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 		td->locals [i].offset = offset;
 		td->locals [i].flags = 0;
 		td->locals [i].type = header->locals [i];
+		td->locals [i].mt = mint_type (header->locals [i]);
 		offset += size;
 	}
 	offset = (offset + 7) & ~7;
@@ -2783,14 +2774,6 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 	imethod->locals_size = offset;
 	g_assert (imethod->locals_size < 65536);
 	td->total_locals_size = offset;
-}
-
-static MonoType*
-get_arg_type (MonoMethodSignature *signature, int arg_n)
-{
-	if (signature->hasthis && arg_n == 0)
-		return mono_get_object_type ();
-	return signature->params [arg_n - !!signature->hasthis];
 }
 
 /* Return false is failure to init basic blocks due to being in inline method */
@@ -3164,7 +3147,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		for (i = signature->param_count - 1; i >= 0; i--) {
 			local = create_interp_local (td, signature->params [i]);
 			arg_locals [i + !!signature->hasthis] = local;
-			store_local_general (td, local, signature->params [i]);
+			store_local (td, local);
 		}
 
 		if (signature->hasthis) {
@@ -3175,7 +3158,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			MonoType *type = mono_get_object_type ();
 			local = create_interp_local (td, type);
 			arg_locals [0] = local;
-			store_local_general (td, local, type);
+			store_local (td, local);
 		}
 
 		local_locals = (guint32*) g_malloc (header->num_locals * sizeof (guint32));
@@ -3270,7 +3253,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_arg (td, arg_n);
 			else
-				load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				load_local (td, arg_locals [arg_n]);
 			++td->ip;
 			break;
 		}
@@ -3282,7 +3265,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_local (td, loc_n);
 			else
-				load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				load_local (td, local_locals [loc_n]);
 			++td->ip;
 			break;
 		}
@@ -3294,7 +3277,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_local (td, loc_n);
 			else
-				store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				store_local (td, local_locals [loc_n]);
 			++td->ip;
 			break;
 		}
@@ -3303,7 +3286,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_arg (td, arg_n);
 			else
-				load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				load_local (td, arg_locals [arg_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3330,7 +3313,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_arg (td, arg_n);
 			else
-				store_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				store_local (td, arg_locals [arg_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3339,7 +3322,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_local (td, loc_n);
 			else
-				load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				load_local (td, local_locals [loc_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3359,7 +3342,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_local (td, loc_n);
 			else
-				store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				store_local (td, local_locals [loc_n]);
 			td->ip += 2;
 			break;
 		}
@@ -4449,7 +4432,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				 * We create a local variable in the frame so that we can fetch its address.
 				 */
 				int local = create_interp_local (td, m_class_get_byval_arg (klass));
-				store_local_general (td, local, m_class_get_byval_arg (klass));
+				store_local (td, local);
 				interp_add_ins (td, MINT_LDLOCA_S);
 				td->last_ins->data [0] = local;
 				td->locals [local].flags |= INTERP_LOCAL_FLAG_INDIRECT;
@@ -5790,7 +5773,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					load_arg (td, arg_n);
 				else
-					load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+					load_local (td, arg_locals [arg_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5816,7 +5799,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					store_arg (td, arg_n);
 				else
-					store_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+					store_local (td, arg_locals [arg_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5825,7 +5808,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					load_local (td, loc_n);
 				else
-					load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+					load_local (td, local_locals [loc_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5845,7 +5828,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					store_local (td, loc_n);
 				else
-					store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+					store_local (td, local_locals [loc_n]);
 				td->ip += 3;
 				break;
 			}
@@ -6519,7 +6502,7 @@ retry:
 			if (sp->val.type != STACK_VALUE_NONE) {
 				g_assert (sp->val.type == STACK_VALUE_LOCAL);
 				int src_local = sp->val.data;
-				if (mint_type (td->locals [src_local].type) == mint_type (td->locals [dest_local].type)) {
+				if (td->locals [src_local].mt == td->locals [dest_local].mt) {
 					// The locals have the same type. We can propagate the value
 					int vtsize = (ins->opcode == MINT_STLOC_VT) ? ins->data [1] : 0;
 
@@ -6534,7 +6517,7 @@ retry:
 						interp_clear_ins (td, sp->ins);
 						interp_clear_ins (td, ins);
 
-						ins = interp_insert_ins (td, ins, get_movloc_for_type (mint_type (td->locals [src_local].type)));
+						ins = interp_insert_ins (td, ins, get_movloc_for_type (td->locals [src_local].mt));
 						ins->data [0] = src_local;
 						ins->data [1] = dest_local;
 						if (vtsize)
