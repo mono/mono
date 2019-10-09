@@ -8,10 +8,10 @@ namespace System.IO
 {
 	partial class Stream
 	{
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern bool HasOverriddenBeginEndRead ();
+		[Intrinsic]
+		bool HasOverriddenBeginEndRead () => true;
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern bool HasOverriddenBeginEndWrite ();
+		[Intrinsic]
+		bool HasOverriddenBeginEndWrite () => true;
 	}
 }
