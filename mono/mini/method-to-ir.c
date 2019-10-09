@@ -4261,7 +4261,7 @@ mini_redirect_call (MonoCompile *cfg, MonoMethod *method,
 {
 	if (method->klass == mono_defaults.string_class) {
 		/* managed string allocation support */
-		if (strcmp (method->name, "InternalAllocateStr") == 0 && !(cfg->opt & MONO_OPT_SHARED)) {
+		if (strcmp (method->name, "FastAllocateString") == 0 && !(cfg->opt & MONO_OPT_SHARED)) {
 			MonoInst *iargs [2];
 			MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, method->klass, cfg->error);
 			MonoMethod *managed_alloc = NULL;
@@ -12518,6 +12518,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 							mono_bblock_insert_before_ins (bb, ins, load_ins);
 							use_ins = load_ins;
 						}
+						if (cfg->verbose_level > 2)
+							mono_print_ins_index (0, use_ins);
 					}
 
 					if (var->dreg < orig_next_vreg) {
