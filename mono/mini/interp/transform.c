@@ -52,12 +52,15 @@ typedef struct
 	unsigned char flags;
 } StackInfo;
 
+
+#define STACK_VALUE_NONE 0
+#define STACK_VALUE_LOCAL 1
 // StackValue contains data to construct an InterpInst that is equivalent with the contents
 // of the stack slot / local.
 typedef struct {
 	// Indicates the type of the stored information. It could be a LDLOC or a LDC opcode
-	int opcode;
-	// If opcode is a LDLOC, this is the local_index
+	int type;
+	// If type is STACK_VALUE_LOCAL, this is the local_index
 	int data;
 } StackValue;
 
@@ -2765,6 +2768,7 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 		imethod->local_offsets [i] = offset;
 		td->locals [i].offset = offset;
 		td->locals [i].flags = 0;
+		td->locals [i].type = header->locals [i];
 		offset += size;
 	}
 	offset = (offset + 7) & ~7;
@@ -6327,10 +6331,10 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 {
 	StackContentInfo *si;
 	for (si = start; si < end; si++) {
-		if (si->val.opcode != MINT_NOP) {
-			g_assert (MINT_IS_LDLOC (si->val.opcode));
+		if (si->val.type != STACK_VALUE_NONE) {
+			g_assert (si->val.type == STACK_VALUE_LOCAL);
 			if (si->val.data == local)
-				si->val.opcode = MINT_NOP;
+				si->val.type = STACK_VALUE_NONE;
 		}
 	}
 }
@@ -6342,10 +6346,10 @@ clear_local_content_info_for_local (StackValue *start, StackValue *end, int loca
 {
 	StackValue *sval;
 	for (sval = start; sval < end; sval++) {
-		if (sval->opcode != MINT_NOP) {
-			g_assert (MINT_IS_LDLOC (sval->opcode));
+		if (sval->type != STACK_VALUE_NONE) {
+			g_assert (sval->type == STACK_VALUE_LOCAL);
 			if (sval->data == local)
-				sval->opcode = MINT_NOP;
+				sval->type = STACK_VALUE_NONE;
 		}
 	}
 }
@@ -6405,14 +6409,14 @@ interp_local_equal (StackValue *locals, int local1, int local2)
 {
 	if (local1 == local2)
 		return TRUE;
-	if (locals [local1].opcode != MINT_NOP) {
-		g_assert (MINT_IS_LDLOC (locals [local1].opcode));
+	if (locals [local1].type != STACK_VALUE_NONE) {
+		g_assert (locals [local1].type == STACK_VALUE_LOCAL);
 		// local1 is a copy of local2
 		if (locals [local1].data == local2)
 			return TRUE;
 	}
-	if (locals [local2].opcode != MINT_NOP) {
-		g_assert (MINT_IS_LDLOC (locals [local2].opcode));
+	if (locals [local2].type != STACK_VALUE_NONE) {
+		g_assert (locals [local2].type == STACK_VALUE_LOCAL);
 		// local2 is a copy of local1
 		if (locals [local2].data == local1)
 			return TRUE;
@@ -6475,7 +6479,7 @@ retry:
 							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, prev_ins->il_offset);
 						// We know what local is on the stack now. Track it
 						sp->ins = NULL;
-						sp->val.opcode = ins->opcode;
+						sp->val.type = STACK_VALUE_LOCAL;
 						sp->val.data = stored_local;
 
 						// Clear the previous stloc instruction
@@ -6486,8 +6490,8 @@ retry:
 						local_ref_count [loaded_local]--;
 					}
 				}
-			} else if (locals [loaded_local].opcode != MINT_NOP && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
-				g_assert (MINT_IS_LDLOC (locals [loaded_local].opcode));
+			} else if (locals [loaded_local].type != STACK_VALUE_NONE && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
+				g_assert (locals [loaded_local].type == STACK_VALUE_LOCAL);
 				// do copy propagation of the original source
 				if (td->verbose_level)
 					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].data);
@@ -6501,9 +6505,9 @@ retry:
 				// For simplicity we don't track locals that have their address taken
 				// since it is hard to detect instructions that change the local value.
 				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT) {
-					sp->val.opcode = MINT_NOP;
+					sp->val.type = STACK_VALUE_NONE;
 				} else {
-					sp->val.opcode = ins->opcode;
+					sp->val.type = STACK_VALUE_LOCAL;
 					sp->val.data = ins->data [0];
 				}
 				sp->ins = ins;
@@ -6512,16 +6516,15 @@ retry:
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			int dest_local = ins->data [0];
 			sp--;
-			if (sp->val.opcode != MINT_NOP) {
-				g_assert (MINT_IS_LDLOC (sp->val.opcode));
-				int mt = sp->val.opcode - MINT_LDLOC_I1;
-				if (ins->opcode - MINT_STLOC_I1 == mt) {
-					// Same local, same type of load and store. Propagate value
-					int src_local = sp->val.data;
+			if (sp->val.type != STACK_VALUE_NONE) {
+				g_assert (sp->val.type == STACK_VALUE_LOCAL);
+				int src_local = sp->val.data;
+				if (mint_type (td->locals [src_local].type) == mint_type (td->locals [dest_local].type)) {
+					// The locals have the same type. We can propagate the value
 					int vtsize = (ins->opcode == MINT_STLOC_VT) ? ins->data [1] : 0;
 
 					// Track what exactly is stored into local
-					locals [dest_local].opcode = sp->val.opcode;
+					locals [dest_local].type = STACK_VALUE_LOCAL;
 					locals [dest_local].data = src_local;
 
 					if (sp->ins) {
@@ -6531,7 +6534,7 @@ retry:
 						interp_clear_ins (td, sp->ins);
 						interp_clear_ins (td, ins);
 
-						ins = interp_insert_ins (td, ins, get_movloc_for_type (mt));
+						ins = interp_insert_ins (td, ins, get_movloc_for_type (mint_type (td->locals [src_local].type)));
 						ins->data [0] = src_local;
 						ins->data [1] = dest_local;
 						if (vtsize)
@@ -6539,10 +6542,10 @@ retry:
 						mono_interp_stats.movlocs++;
 					}
 				} else {
-					locals [dest_local].opcode = MINT_NOP;
+					locals [dest_local].type = STACK_VALUE_NONE;
 				}
 			} else {
-				locals [dest_local].opcode = MINT_NOP;
+				locals [dest_local].type = STACK_VALUE_NONE;
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
@@ -6550,14 +6553,11 @@ retry:
 			int src_local = ins->data [0];
 			int dest_local = ins->data [1];
 			local_ref_count [src_local]++;
-			if (locals [src_local].opcode != MINT_NOP) {
-				locals [dest_local].opcode = locals [src_local].opcode;
+			if (locals [src_local].type != STACK_VALUE_NONE) {
+				locals [dest_local].type = locals [src_local].type;
 				locals [dest_local].data = locals [src_local].data;
 			} else {
-				// FIXME We lost the type information. We don't really seem to use it.
-				// It might make sense to switch opcode field to an enum instead, when
-				// we will also support constant propagation.
-				locals [dest_local].opcode = MINT_LDLOC_I1;
+				locals [dest_local].type = STACK_VALUE_LOCAL;
 				locals [dest_local].data = src_local;
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
@@ -6567,12 +6567,12 @@ retry:
 			// Prevent optimizing away the instruction that pushed the value on the stack
 			sp [-1].ins = NULL;
 			// The local contains the value of the top of stack
-			locals [dest_local].opcode = sp [-1].val.opcode;
+			locals [dest_local].type = sp [-1].val.type;
 			locals [dest_local].data = sp [-1].val.data;
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
 		} else if (ins->opcode == MINT_DUP || ins->opcode == MINT_DUP_VT) {
-			sp [0].val.opcode = sp [-1].val.opcode;
+			sp [0].val.type = sp [-1].val.type;
 			sp [0].val.data = sp [-1].val.data;
 			sp [0].ins = ins;
 			// If top of stack is known, we could also replace dup with an explicit
