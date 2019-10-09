@@ -438,6 +438,38 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMemfdFlags")]
+		private static extern int FromMemfdFlags (MemfdFlags value, out UInt32 rval);
+
+		public static bool TryFromMemfdFlags (MemfdFlags value, out UInt32 rval)
+		{
+			return FromMemfdFlags (value, out rval) == 0;
+		}
+
+		public static UInt32 FromMemfdFlags (MemfdFlags value)
+		{
+			UInt32 rval;
+			if (FromMemfdFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMemfdFlags")]
+		private static extern int ToMemfdFlags (UInt32 value, out MemfdFlags rval);
+
+		public static bool TryToMemfdFlags (UInt32 value, out MemfdFlags rval)
+		{
+			return ToMemfdFlags (value, out rval) == 0;
+		}
+
+		public static MemfdFlags ToMemfdFlags (UInt32 value)
+		{
+			MemfdFlags rval;
+			if (ToMemfdFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromMessageFlags")]
 		private static extern int FromMessageFlags (MessageFlags value, out Int32 rval);
 
@@ -802,6 +834,38 @@ namespace Mono.Unix.Native {
 		{
 			PosixMadviseAdvice rval;
 			if (ToPosixMadviseAdvice (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSealType")]
+		private static extern int FromSealType (SealType value, out Int32 rval);
+
+		public static bool TryFromSealType (SealType value, out Int32 rval)
+		{
+			return FromSealType (value, out rval) == 0;
+		}
+
+		public static Int32 FromSealType (SealType value)
+		{
+			Int32 rval;
+			if (FromSealType (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSealType")]
+		private static extern int ToSealType (Int32 value, out SealType rval);
+
+		public static bool TryToSealType (Int32 value, out SealType rval)
+		{
+			return ToSealType (value, out rval) == 0;
+		}
+
+		public static SealType ToSealType (Int32 value)
+		{
+			SealType rval;
+			if (ToSealType (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
