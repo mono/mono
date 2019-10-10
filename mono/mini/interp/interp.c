@@ -4782,7 +4782,6 @@ main_loop:
 				memmove (sp + 1, sp, param_count * sizeof (stackval));
 			}
 			child_frame->stack_args = sp; // FIXME Should not be needed.
-			child_frame->parent = frame;  // FIXME Should not be needed.
 			recurse_opcode = (MintOpcode)*ip;
 			if (recurse_opcode == MINT_NEWOBJ_VTST_FAST) {
 				memset (vt_sp, 0, ip [3]);
