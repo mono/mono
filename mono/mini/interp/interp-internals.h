@@ -171,22 +171,29 @@ typedef struct _InterpMethod
 } InterpMethod;
 
 struct _InterpFrame {
+	// InterpFrame is used both for interp_exec_method_inner to
+	// communicate with interp_exec_method_full, and to hold
+	// the state of interp_exec_method_full across recursion.
+	//
+	// These could be two separate structs but that would probably
+	// use more stack.
+	//
 	// union is confusing but space-efficient
 	union {
 		InterpFrame *parent; /* parent */
-		GSList *finally_ips ;
+		GSList *finally_ips; /* child */
 	};
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
 
 	union {
 		stackval       *stack_args; /* parent */
-		stackval       *sp;
+		stackval       *sp;	    /* child */
 	};
 
 	union {
 		stackval       *stack;
-		guchar         *vt_sp;
+		guchar         *vt_sp;	/* child */
 	};
 	/* exception info */
 	const guint16 *ip;
