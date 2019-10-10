@@ -652,11 +652,16 @@ cache_System_IO_Stream_slots ()
 	MonoClass* klass = mono_class_try_get_stream_class ();
 	mono_class_setup_vtable (klass);
 	guint32 method_count = mono_class_get_method_count (klass);
+	MonoMethod **klass_methods = m_class_get_methods (klass);
+	if (!klass_methods) {
+		mono_class_setup_methods (klass);
+		klass_methods = m_class_get_methods (klass);
+	}
 	int methods_found = 0;
 	for (guint32 i = 0; i < method_count; i++)
 	{
 		// find slots for Begin(End)Read and Begin(End)Write
-		MonoMethod* m = klass->methods [i];
+		MonoMethod* m = klass_methods [i];
 		if (m->slot == -1)
 			continue;
 
