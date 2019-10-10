@@ -79,7 +79,8 @@ typedef gint64  mono_i;
 
 #define WASM_VOLATILE volatile
 
-static inline MonoObject * WASM_VOLATILE *
+// Function instead of macro with casting, for type checking.
+static inline MonoObject * volatile *
 mono_interp_objref (MonoObject **o)
 {
 	return o;
@@ -170,13 +171,32 @@ typedef struct _InterpMethod
 } InterpMethod;
 
 struct _InterpFrame {
-	InterpFrame *parent; /* parent */
+	// InterpFrame is used both for interp_exec_method_inner to
+	// communicate with interp_exec_method_full, and to hold
+	// the state of interp_exec_method_full across recursion.
+	//
+	// These could be two separate structs but that would probably
+	// use more stack.
+	//
+	// union is confusing but space-efficient
+	union {
+		InterpFrame *parent; /* parent */
+		GSList *finally_ips; /* child */
+	};
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	stackval       *stack_args; /* parent */
-	stackval       *stack;
+
+	union {
+		stackval       *stack_args; /* parent */
+		stackval       *sp;	    /* child */
+	};
+
+	union {
+		stackval       *stack;
+		guchar         *vt_sp;	/* child */
+	};
 	/* exception info */
-	const unsigned short  *ip;
+	const guint16 *ip;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
