@@ -504,7 +504,6 @@ public class DebuggerTests
 	}
 	
 	[Test]
-	[Category ("AndroidSdksNotWorking")]
 	public void IsDynamicAssembly () {
 		vm.Detach ();
 
@@ -3788,7 +3787,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("AndroidSdksNotWorking")]
 	public void RefEmit () {
 		vm.Detach ();
 
