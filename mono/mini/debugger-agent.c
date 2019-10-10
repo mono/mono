@@ -1842,6 +1842,8 @@ stop_debugger_thread (void)
 				mono_coop_cond_wait (&debugger_thread_exited_cond, &debugger_thread_exited_mutex);
 			mono_coop_mutex_unlock (&debugger_thread_exited_mutex);
 		} while (!debugger_thread_exited);
+
+		mono_native_thread_join (debugger_thread_id);
 	}
 
 	transport_close2 ();
