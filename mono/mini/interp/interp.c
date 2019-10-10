@@ -3190,7 +3190,6 @@ mono_interp_call (InterpFrame *frame, ThreadContext *context, InterpFrame *child
 			sp [0].data.p = unboxed;
 		}
 	}
-	child_frame->stack_args = sp; // FIXME Should not be needed.
 	return sp;
 }
 
@@ -3723,7 +3722,6 @@ main_loop:
 
 			/* decrement by the actual number of args */
 			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis + num_varargs;
-			child_frame->stack_args = sp; // FIXME Should not be needed.
 
 			recurse_opcode = (csig->ret->type != MONO_TYPE_VOID) ? MINT_CALL : MINT_VCALL;
 			goto recurse;
@@ -4766,7 +4764,6 @@ main_loop:
 			InterpMethod *ctor_method = (InterpMethod*)frame->imethod->data_items [imethod_index];
 			frame->ip = ip;
 			child_frame->imethod = ctor_method;
-			child_frame->stack_args = sp; // FIXME Should not be needed.
 			recurse_opcode = MINT_NEWOBJ_FAST;
 			goto recurse;
 		}
@@ -4781,7 +4778,6 @@ main_loop:
 				sp -= param_count;
 				memmove (sp + 1, sp, param_count * sizeof (stackval));
 			}
-			child_frame->stack_args = sp; // FIXME Should not be needed.
 			recurse_opcode = (MintOpcode)*ip;
 			if (recurse_opcode == MINT_NEWOBJ_VTST_FAST) {
 				memset (vt_sp, 0, ip [3]);
@@ -4810,7 +4806,6 @@ main_loop:
 				memmove (sp + 1, sp, csig->param_count * sizeof (stackval));
 			}
 
-			child_frame->stack_args = sp; // FIXME Should not be needed.
 			recurse_opcode = MINT_NEWOBJ;
 			goto recurse;
 		}
