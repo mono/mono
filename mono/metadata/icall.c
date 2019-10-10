@@ -3513,8 +3513,8 @@ static int io_stream_end_read_slot = -1;
 static int io_stream_end_write_slot = -1;
 static gboolean io_stream_slots_set = FALSE;
 
-void
-init_io_stream_slots ()
+static void
+init_io_stream_slots (void)
 {
 	MonoClass* klass = mono_class_try_get_stream_class ();
 	mono_class_setup_vtable (klass);
