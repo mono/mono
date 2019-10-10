@@ -22,6 +22,7 @@ typedef struct {
 	void (*emit_aot_data)(const char *symbol, guint8 *data, int data_len);
 	void (*free_domain_info)(MonoDomain *domain);
 	void (*create_vars)(MonoCompile *cfg);
+	MonoCPUFeatures (*mono_llvm_get_cpu_features)(void);
 } LoadedBackend;
 
 static LoadedBackend backend;
@@ -141,6 +142,11 @@ symbol_error:
 	g_warning ("llvm symbol load failed: %s\n", err);
 	g_free (err);
 	return FALSE;
+}
+
+MonoCPUFeatures mono_llvm_get_cpu_features (void)
+{
+	return backend.mono_llvm_get_cpu_features (cfg);
 }
 
 #else
