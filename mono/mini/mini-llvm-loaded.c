@@ -148,7 +148,7 @@ symbol_error:
 
 MonoCPUFeatures mono_llvm_get_cpu_features (void)
 {
-	return backend.get_cpu_features (cfg);
+	return backend.get_cpu_features ();
 }
 
 #else
