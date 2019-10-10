@@ -638,56 +638,6 @@ emit_jit_helpers_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSi
 	return NULL;
 }
 
-#ifdef ENABLE_NETCORE
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (stream, "System.IO", "Stream")
-static int stream_begin_read_slot = -1;
-static int stream_begin_write_slot = -1;
-static int stream_end_read_slot = -1;
-static int stream_end_write_slot = -1;
-static gboolean stream_slots_inited = FALSE;
-
-static void
-cache_System_IO_Stream_slots ()
-{
-	MonoClass* klass = mono_class_try_get_stream_class ();
-	mono_class_setup_vtable (klass);
-	guint32 method_count = mono_class_get_method_count (klass);
-	MonoMethod **klass_methods = m_class_get_methods (klass);
-	if (!klass_methods) {
-		mono_class_setup_methods (klass);
-		klass_methods = m_class_get_methods (klass);
-	}
-	int methods_found = 0;
-	for (guint32 i = 0; i < method_count; i++)
-	{
-		// find slots for Begin(End)Read and Begin(End)Write
-		MonoMethod* m = klass_methods [i];
-		if (m->slot == -1)
-			continue;
-
-		if (!strcmp (m->name, "BeginRead")) {
-			methods_found++;
-			stream_begin_read_slot = m->slot;
-		}
-		else if (!strcmp (m->name, "BeginWrite")) {
-			methods_found++;
-			stream_begin_write_slot = m->slot;
-		}
-		else if (!strcmp (m->name, "EndRead")) {
-			methods_found++;
-			stream_end_read_slot = m->slot;
-		}
-		else if (!strcmp (m->name, "EndWrite")) {
-			methods_found++;
-			stream_end_write_slot = m->slot;
-		}
-	}
-	g_assert (methods_found == 4);
-	stream_slots_inited = TRUE;
-}
-#endif
-
-
 MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -1895,76 +1845,6 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		EMIT_NEW_ICONST (cfg, ins, 0);
 		ins->type = STACK_I4;
 		return ins;
-	}
-	if (in_corlib && !strcmp ("System.IO", cmethod_klass_name_space) && !strcmp ("Stream", cmethod_klass_name)) {
-		gboolean is_has_overridden_begin_end_read  = strcmp (cmethod->name, "HasOverriddenBeginEndRead") == 0;
-		gboolean is_has_overridden_begin_end_write = strcmp (cmethod->name, "HasOverriddenBeginEndWrite") == 0;
-		if (is_has_overridden_begin_end_read || is_has_overridden_begin_end_write) {
-
-			// this intrinsic basically does:
-			// 
-			// begin_method_klass_reg = MONO_HANDLE_GETVAL (streamObj, vtable)->vtable [stream_begin%method%_slot]->klass;
-			// end_method_klass_reg   = MONO_HANDLE_GETVAL (streamObj, vtable)->vtable [stream_end%method%_slot]->klass;
-			// return begin_method_klass_reg != base_stream_klass || end_method_klass_reg != base_stream_klass;
-
-			int vtable_reg = alloc_preg (cfg);
-			int klass_reg = alloc_preg (cfg);
-			int klass_vt_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_LOAD_MEMBASE_OP_FAULT (cfg, OP_LOAD_MEMBASE, vtable_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, klass_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, klass_vt_reg, klass_reg, MONO_STRUCT_OFFSET (MonoClass, vtable));
-
-			if (!stream_slots_inited)
-				cache_System_IO_Stream_slots ();
-
-			int begin_slot = is_has_overridden_begin_end_read ? stream_begin_read_slot : stream_begin_write_slot;
-			int end_slot   = is_has_overridden_begin_end_read ? stream_end_read_slot : stream_end_write_slot;
-
-			int begin_method_reg = alloc_preg (cfg);
-			int begin_method_klass_reg = alloc_preg (cfg);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, begin_method_reg, klass_vt_reg, SIZEOF_REGISTER * begin_slot);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, begin_method_klass_reg, begin_method_reg, MONO_STRUCT_OFFSET (MonoMethod, klass));
-			
-			int end_method_reg = alloc_preg (cfg);
-			int end_method_klass_reg = alloc_preg (cfg);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, end_method_reg, klass_vt_reg, SIZEOF_REGISTER * end_slot);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, end_method_klass_reg, end_method_reg, MONO_STRUCT_OFFSET (MonoMethod, klass));
-			
-			MonoClass* base_stream_klass = mono_class_try_get_stream_class ();
-			int dreg = alloc_preg (cfg);
-
-			/*
-			 * if (begin_method_klass_reg != base_stream_klass)
-			 *     goto overidden;
-			 *     
-			 * if (end_method_klass_reg != base_stream_klass)
-			 *     goto overidden;
-			 *
-			 * return false; // none of BeginX and EndX were overidden
-			 *
-			 * overidden:
-			 *     return true;
-			 */
-			MonoBasicBlock *end_bb, *overridden_bb;
-			NEW_BBLOCK (cfg, overridden_bb);
-			NEW_BBLOCK (cfg, end_bb);
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, begin_method_klass_reg, (size_t) base_stream_klass);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, overridden_bb);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, end_method_klass_reg, (size_t) base_stream_klass);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, overridden_bb);
-			MONO_EMIT_NEW_ICONST (cfg, dreg, 0);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
-			
-			MONO_START_BB (cfg, overridden_bb);
-			MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-			
-			MONO_START_BB (cfg, end_bb);
-			EMIT_NEW_UNALU (cfg, ins, OP_MOVE, dreg, dreg);
-			
-			ins->type = STACK_I4;
-			return ins;
-		}
 	}
 #endif
 
