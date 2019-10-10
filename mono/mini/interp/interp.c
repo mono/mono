@@ -3200,7 +3200,7 @@ static MONO_NEVER_INLINE void
 interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
 	frame->ip = NULL;
-	GSList *finally_ips = NULL; // FIXME remove this local, have only in frame.
+	GSList *finally_ips = NULL;
 	const guint16 *ip = NULL;
 	stackval *sp = NULL;
 #if DEBUG_INTERP
@@ -3257,7 +3257,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 resume:
 		// Carefully pass state to interp_exec_method_inner through unions.
 
-		child_frame.finally_ips = finally_ips; // FIXME remove this.
+		child_frame.finally_ips = finally_ips;
 		child_frame.ip = ip; // Different than frame->ip.
 		child_frame.sp = sp;
 		child_frame.vt_sp = vt_sp;
@@ -3278,7 +3278,7 @@ resume:
 
 		// Restore locals from unions, before they are used in the recursion.
 
-		finally_ips = child_frame.finally_ips; // FIXME remove this
+		finally_ips = child_frame.finally_ips;
 		ip = child_frame.ip; // Different than frame->ip.
 		sp = child_frame.sp;
 		vt_sp = child_frame.vt_sp;
@@ -3391,7 +3391,7 @@ interp_exec_method_inner (InterpFrame *frame, InterpFrame *child_frame, ThreadCo
 	};
 #endif
 
-	GSList *finally_ips = child_frame->finally_ips; // FIXME Maybe remove this.
+	GSList *finally_ips = child_frame->finally_ips;
 	const guint16 *ip = child_frame->ip;  // Not the same as frame->ip.
 	stackval *sp = child_frame->sp;
 	guchar *vt_sp = child_frame->vt_sp;
@@ -6715,7 +6715,7 @@ exit_frame:
 recurse:
 	// Return to caller to recurse, using less stack
 	// than if this function recursed.
-	child_frame->finally_ips = finally_ips; // FIXME Maybe remove this.
+	child_frame->finally_ips = finally_ips;
 	child_frame->ip = ip; // Not the same as frame->ip.
 	child_frame->vt_sp = vt_sp;
 	child_frame->sp = sp;
