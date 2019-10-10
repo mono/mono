@@ -3523,10 +3523,9 @@ init_io_stream_slots (void)
 		mono_class_setup_methods (klass);
 		klass_methods = m_class_get_methods (klass);
 	}
-	guint32 method_count = mono_class_get_method_count (klass);
+	int method_count = mono_class_get_method_count (klass);
 	int methods_found = 0;
-	for (guint32 i = 0; i < method_count; i++)
-	{
+	for (int i = 0; i < method_count; i++) {
 		// find slots for Begin(End)Read and Begin(End)Write
 		MonoMethod* m = klass->methods [i];
 		if (m->slot == -1)
@@ -3546,7 +3545,7 @@ init_io_stream_slots (void)
 			io_stream_end_write_slot = m->slot;
 		}
 	}
-	g_assert (methods_found == 4);
+	g_assert (methods_found <= 4); // some of them can be linked out
 	io_stream_slots_set = TRUE;
 }
 
@@ -3559,8 +3558,11 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, M
 	if (!io_stream_slots_set)
 		init_io_stream_slots ();
 
-	gboolean begin_read_is_overriden = curr_klass->vtable [io_stream_begin_read_slot]->klass != base_klass;
-	gboolean end_read_is_overriden = curr_klass->vtable [io_stream_end_read_slot]->klass != base_klass;
+	// slots can still be -1 and it means Linker removed the methods from the base class (Stream)
+	// in this case we can safely assume the methods are not overridden
+	// otherwise - check vtable
+	gboolean begin_read_is_overriden = io_stream_begin_read_slot != -1 && curr_klass->vtable [io_stream_begin_read_slot]->klass != base_klass;
+	gboolean end_read_is_overriden = io_stream_end_read_slot != -1 && curr_klass->vtable [io_stream_end_read_slot]->klass != base_klass;
 
 	// return true if BeginRead or EndRead were overriden
 	return begin_read_is_overriden || end_read_is_overriden;
