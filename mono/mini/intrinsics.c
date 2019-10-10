@@ -646,7 +646,7 @@ static int stream_end_read_slot = -1;
 static int stream_end_write_slot = -1;
 static gboolean stream_slots_inited = FALSE;
 
-void
+static void
 cache_System_IO_Stream_slots ()
 {
 	MonoClass* klass = mono_class_try_get_stream_class ();
@@ -1913,7 +1913,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				cache_System_IO_Stream_slots ();
 
 			int begin_slot = is_has_overridden_begin_end_read ? stream_begin_read_slot : stream_begin_write_slot;
-			int end_slot = is_has_overridden_begin_end_read ? stream_end_read_slot : stream_end_write_slot;
+			int end_slot   = is_has_overridden_begin_end_read ? stream_end_read_slot : stream_end_write_slot;
 
 			int begin_method_reg = alloc_preg (cfg);
 			int begin_method_klass_reg = alloc_preg (cfg);
