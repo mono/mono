@@ -20,27 +20,9 @@ namespace System
 			public byte Data;
 		}
 
-		public int Length {
-			get {
-				int length = GetLength (0);
+		public int Length => checked ((int)Unsafe.As<RawData>(this).Count);
 
-				for (int i = 1; i < Rank; i++) {
-					length *= GetLength (i);
-				}
-				return length;
-			}
-		}
-
-		public long LongLength {
-			get {
-				long length = GetLength (0);
-
-				for (int i = 1; i < Rank; i++) {
-					length *= GetLength (i);
-				}
-				return length;
-			}
-		}
+		public long LongLength => (long)Unsafe.As<RawData>(this).Count;
 
 		public int Rank {
 			get {
