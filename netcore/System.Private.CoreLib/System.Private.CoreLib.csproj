@@ -146,6 +146,7 @@
   <ItemGroup>
       <Compile Include="src\Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="src\Mono\MonoListItem.cs" />
+      <Compile Include="src\Mono\MonoObject.cs" />
       <Compile Include="src\Mono\MonoDomain.cs" />
       <Compile Include="src\Mono\MonoDomainSetup.cs" />
       <Compile Include="src\Mono\RuntimeHandles.cs" />

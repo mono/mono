@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.CompilerServices;
+using Internal.Runtime.CompilerServices;
 
 namespace System
 {
@@ -15,7 +16,7 @@ namespace System
 		protected extern object MemberwiseClone ();
 
 		[Intrinsic]
-		internal ref byte GetRawData () => throw new NotImplementedException ();
+		internal ref byte GetRawData () => ref Unsafe.As<Mono.RawData>(this).Data;
 
 		internal object CloneInternal () => MemberwiseClone ();
 	}
