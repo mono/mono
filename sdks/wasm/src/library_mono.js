@@ -195,9 +195,8 @@ var MonoSupportLib = {
 				fetch_promise.then (function (response) {
 					if (!response.ok) {
 						// If it's a 404 on a .pdb, we don't want to block the app from starting up.
-          				// We'll just skip that file and continue (though the 404 is logged in the console).
-						if (response.status === 404
-							&& file_name.match(/\.pdb$/) && MONO.mono_wasm_ignore_pdb_load_errors) {
+          					// We'll just skip that file and continue (though the 404 is logged in the console).
+						if (response.status === 404 && file_name.match(/\.pdb$/) && MONO.mono_wasm_ignore_pdb_load_errors) {
 							--pending;
 							throw "MONO-WASM: Skipping failed load for .pdb file: '" + file_name + "'";
 						}
