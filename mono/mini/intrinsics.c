@@ -805,6 +805,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			mini_type_from_op (cfg, ins, NULL, NULL);
 
 			return ins;
+#ifndef ENABLE_NETCORE
 		} else if (strcmp (cmethod->name, "get_Length") == 0 && fsig->param_count + fsig->hasthis == 1) {
 			int dreg = alloc_ireg (cfg);
 
@@ -813,6 +814,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			mini_type_from_op (cfg, ins, NULL, NULL);
 
 			return ins;
+#endif
 		} else
 			return NULL;
 	} else if (cmethod->klass == runtime_helpers_class) {
