@@ -3559,7 +3559,7 @@ main_loop:
 		MINT_IN_CASE(MINT_JMP) {
 
 			// alloca must be in caller (or really, its caller).
-	
+
 			g_assert (sp == frame->stack);
 			InterpMethod *new_method = (InterpMethod*)frame->imethod->data_items [ip [1]];
 
