@@ -150,7 +150,8 @@ case "$host" in
 		RID="osx-x64"
 		COREARCH="x64"
 		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
-		build_darwin=yes
+		build_darwin=yes # FIXME
+		enable_cxx=yes # WebAssembly requires C++ for lambdas to break up interpreter
 		;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])

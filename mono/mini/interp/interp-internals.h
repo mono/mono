@@ -66,7 +66,7 @@ typedef gint64  mono_i;
  *   is on the stack and not in registers. Volatile stores ditto.
  * - minimize the number of MonoObject* locals/arguments (or make them volatile).
  *
- * Volatile on a type/local forces all reads and writes to go to memory/stack,
+ * Volatile on a type/local forces all reads and writes to go to memory/C-stack,
  *   and each such local to have a unique address.
  *
  * Volatile absence on a type/local allows multiple locals to share storage,
@@ -74,12 +74,16 @@ typedef gint64  mono_i;
  *
  * Volatile absence on a type/local allows the variable to live in
  * both stack and register, for fast reads and "write through".
+ *
+ * Taking the address of a local causes it to be on the C stack.
  */
 #ifdef TARGET_WASM
 
 #define WASM_VOLATILE volatile
 
-static inline MonoObject * WASM_VOLATILE *
+// Function instead of macro with casting, for type checking.
+// Volatile is probably not needed here, taking address probably suffices.
+static inline MonoObject * volatile *
 mono_interp_objref (MonoObject **o)
 {
 	return o;
