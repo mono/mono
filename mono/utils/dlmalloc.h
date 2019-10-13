@@ -28,6 +28,8 @@
 #include <stddef.h>   /* for size_t */
 #include <mono/utils/mono-compiler.h>
 
+#define NO_MALLINFO 1 /* mono */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
