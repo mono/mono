@@ -3,7 +3,7 @@
     "dotnet": "5.0.100-alpha1-013968"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "5.0.0-beta.19506.1",
-    "Microsoft.DotNet.Helix.Sdk": "5.0.0-beta.19506.1"
+    "Microsoft.DotNet.Arcade.Sdk": "5.0.0-beta.19511.1",
+    "Microsoft.DotNet.Helix.Sdk": "5.0.0-beta.19511.1"
   }
 }
