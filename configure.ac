@@ -1649,7 +1649,7 @@ if test "x$with_wasm" = "xdefault"; then
 fi
 
 # Currently, we only want to use DllMap for non-netcore builds
-if test x$with_core = xno; then
+if test "x$with_core" = xno; then
     AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
     with_dllmap=yes
 fi
