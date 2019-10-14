@@ -175,20 +175,23 @@ fi
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
         # configuration on our bots
-        if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-            export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+        if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+            export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.0
+            export TVOS_VERSION=13.0
+            export WATCHOS_VERSION=6.0
+            export WATCHOS64_32_VERSION=6.0
+        if [[ ${CI_TAGS} == *'xcode111'* ]]; then
+            export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.0
             export TVOS_VERSION=13.0
             export WATCHOS_VERSION=6.0
             export WATCHOS64_32_VERSION=6.0
         else
-            export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-            export MACOS_VERSION=10.14
-            export IOS_VERSION=12.1
-            export TVOS_VERSION=12.1
-            export WATCHOS_VERSION=5.1
-            export WATCHOS64_32_VERSION=5.1
+            echo "Error: no Xcode selected in CI_TAGS env var."
+            exit 1
         fi
 
         # retrieve selected Xcode version
@@ -237,12 +240,15 @@ fi
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots
-    if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-        export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+    if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+        export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    if [[ ${CI_TAGS} == *'xcode111'* ]]; then
+        export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
-        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export MACOS_VERSION=10.14
+        echo "Error: no Xcode selected in CI_TAGS env var."
+        exit 1
     fi
 
     # retrieve selected Xcode version
