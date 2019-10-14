@@ -1653,7 +1653,7 @@ if test x$with_core = xno; then
     AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
     with_dllmap=yes
 fi
-AM_CONDITIONAL(ENABLE_DLLMAP, test x$with_core = xno)
+AM_CONDITIONAL(ENABLE_DLLMAP, [test "x$with_dllmap" = xyes])
 
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
