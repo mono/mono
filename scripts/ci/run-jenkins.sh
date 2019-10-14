@@ -182,7 +182,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export TVOS_VERSION=13.0
             export WATCHOS_VERSION=6.0
             export WATCHOS64_32_VERSION=6.0
-        if [[ ${CI_TAGS} == *'xcode111'* ]]; then
+        elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
             export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.0
@@ -243,7 +243,7 @@ then
     if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
         export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
         export MACOS_VERSION=10.15
-    if [[ ${CI_TAGS} == *'xcode111'* ]]; then
+    elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
         export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
