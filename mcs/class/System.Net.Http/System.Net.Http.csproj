@@ -251,12 +251,10 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Http\HttpHandlerDefaults.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\ByteArrayContent.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\ByteArrayHelpers.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\ClientCertificateOption.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\DelegatingHandler.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\DiagnosticsHandlerLoggingStrings.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\FormUrlEncodedContent.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\Headers\BaseHeaderParser.cs" />
@@ -304,7 +302,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\Headers\ViaHeaderValue.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\Headers\WarningHeaderValue.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\HttpClient.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\HttpClientHandler.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\HttpCompletionOption.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\HttpContent.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\HttpMessageHandler.cs" />
@@ -323,13 +320,9 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamContent.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
-        <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-        <Compile Include="HttpClientHandler.wasm.cs" />
         <Compile Include="HttpRequestMessage.Mono.cs" />
-        <Compile Include="IMonoHttpClientHandler.cs" />
-        <Compile Include="MonoWebRequestHandler.cs" />
-        <Compile Include="PlatformHelper.SocketsHandler.cs" />
         <Compile Include="System.Net.Http\HttpClient.wasm.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.wasm.cs" />
         <Compile Include="corefx\NetEventSource.Http.cs" />
       </ItemGroup>
     </When>
@@ -1243,6 +1236,13 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
