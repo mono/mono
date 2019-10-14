@@ -1648,6 +1648,13 @@ if test "x$with_wasm" = "xdefault"; then
    with_wasm=$with_wasm_default
 fi
 
+# Currently, we only want to use DllMap for non-netcore builds
+if test x$with_core = xno; then
+    AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
+    with_dllmap=yes
+fi
+AM_CONDITIONAL(ENABLE_DLLMAP, test x$with_core = xno)
+
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
 AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" != "xno"])
