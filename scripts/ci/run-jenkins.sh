@@ -190,8 +190,12 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export WATCHOS_VERSION=6.0
             export WATCHOS64_32_VERSION=6.0
         else
-            echo "Error: no Xcode selected in CI_TAGS env var."
-            exit 1
+            export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+            export MACOS_VERSION=10.14
+            export IOS_VERSION=12.1
+            export TVOS_VERSION=12.1
+            export WATCHOS_VERSION=5.1
+            export WATCHOS64_32_VERSION=5.1
         fi
 
         # retrieve selected Xcode version
@@ -247,8 +251,8 @@ then
         export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
-        echo "Error: no Xcode selected in CI_TAGS env var."
-        exit 1
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export MACOS_VERSION=10.14
     fi
 
     # retrieve selected Xcode version
