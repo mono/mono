@@ -972,11 +972,13 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 			dump_for_merp = mono_merp_enabled ();
 #endif
 
+#ifndef DISABLE_STRUCTURED_CRASH
+			mini_register_sigterm_handler ();
+#endif
+
 			if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
 				leave = TRUE;
-#else
-				mini_register_sigterm_handler ();
 #endif
 			}
 
