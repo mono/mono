@@ -1648,13 +1648,6 @@ if test "x$with_wasm" = "xdefault"; then
    with_wasm=$with_wasm_default
 fi
 
-# Currently, we only want to use DllMap for non-netcore builds
-if test "x$with_core" = xno; then
-    AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
-    with_dllmap=yes
-fi
-AM_CONDITIONAL(ENABLE_DLLMAP, [test "x$with_dllmap" = xyes])
-
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
 AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" != "xno"])
@@ -1748,7 +1741,7 @@ fi
 AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
-     LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
+     LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
 	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac.],
 [
@@ -1961,6 +1954,13 @@ if test "x$mono_feature_disable_gac" = "xyes"; then
 	AC_DEFINE(DISABLE_GAC, 1, [Disable GAC])
 	AC_MSG_NOTICE([Disabled GAC support])
 fi
+
+# Currently, we only want to use DllMap for non-netcore builds
+if test "x$with_core" = "xno" -a "x$mono_feature_disable_dllmap" != "xyes"; then
+    AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
+    with_dllmap=yes
+fi
+AM_CONDITIONAL(ENABLE_DLLMAP, [test "x$with_dllmap" = "xyes"])
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
 AM_CONDITIONAL(DISABLE_EXECUTABLES, test x$enable_executables = xno)
