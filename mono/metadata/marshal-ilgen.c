@@ -6283,7 +6283,7 @@ typedef enum {
 	/* Wrap the argument (a valuetype reference) in a handle to pin its
 	   enclosing object, but pass the raw reference to the icall.  This is
 	   also how we pass byref generic parameter arguments to generic method
-	   icalls (eg, System.Array:GetGenericValueImpl<T>(int idx, T out value)) */
+	   icalls (e.g. System.Array:GetGenericValue_icall<T>(int idx, T out value)) */
 	ICALL_HANDLES_WRAP_VALUETYPE_REF,
 } IcallHandlesWrap;
 
@@ -6307,10 +6307,7 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * wrapped in handles: if the actual argument type is a reference type
 	 * we'd need to wrap it in a handle, otherwise we'd want to pass it as is.
 	 */
-	/* FIXME: There is one icall that will some day cause us trouble here:
-	 * System.Threading.Interlocked:CompareExchange<T> (ref T location, T
-	 * new, T old) where T:class.  What will save us is that 'T:class'
-	 * constraint.  We should eventually relax the assertion, below, to
+	/* FIXME: We should eventually relax the assertion, below, to
 	 * allow generic parameters that are constrained to be reference types.
 	 */
 	g_assert (!generic_sig || !mono_type_is_generic_parameter (generic_sig->params [param]));
@@ -6322,18 +6319,18 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * like string& since the C code for the icall has to work uniformly
 	 * for both valuetypes and reference types.
 	 */
-	if (generic_sig && mono_type_is_byref (generic_sig->params [param]) &&
+	if (generic_sig && mono_type_is_byref_internal (generic_sig->params [param]) &&
 	    (generic_sig->params [param]->type == MONO_TYPE_VAR || generic_sig->params [param]->type == MONO_TYPE_MVAR))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 
 	if (MONO_TYPE_IS_REFERENCE (sig->params [param])) {
 		if (mono_signature_param_is_out (sig, param))
 			return ICALL_HANDLES_WRAP_OBJ_OUT;
-		else if (mono_type_is_byref (sig->params [param]))
+		else if (mono_type_is_byref_internal (sig->params [param]))
 			return ICALL_HANDLES_WRAP_OBJ_INOUT;
 		else
 			return ICALL_HANDLES_WRAP_OBJ;
-	} else if (mono_type_is_byref (sig->params [param]))
+	} else if (mono_type_is_byref_internal (sig->params [param]))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 	else
 		return ICALL_HANDLES_WRAP_NONE;

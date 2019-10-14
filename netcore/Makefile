@@ -6,6 +6,11 @@ NETCORETESTS_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*Microsof
 NETCOREAPP_VERSION := $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 ROSLYN_VERSION:=  $(shell cat ../eng/Versions.props | sed -n 's/.*MicrosoftNetCompilersVersion>\(.*\)<\/MicrosoftNetCompilersVersion.*/\1/p' )
 
+# Should be automated but not sure how for now
+# the name is misleading osx version is used for any unix like systems
+# the url is manually extracted from coreclr-outerloop (https://dev.azure.com/dnceng/public/_build?definitionId=98&_a=summary) Build artifacts published page
+CORECLR_TESTS:=https://dev.azure.com/dnceng/9ee6d478-d288-47f7-aacc-f6e6d082ae6d/_apis/build/builds/368250/artifacts?artifactName=Tests_OSX_x64_checked_outerloop&api-version=5.2-preview.5&%24format=zip
+
 # runtime version used by $(DOTNET) - local .net core sdk to bootstrap stuff
 # it doesn't match NETCOREAPP_VERSION
 BOOTSTRAP_RUNTIME = $(shell ls ../.dotnet/shared/Microsoft.NETCore.App | tail -1)
@@ -52,7 +57,7 @@ TEST_ASSETS_PATH := corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_PLATFORM)/netco
 
 # used to calculate exact version number for generating nupkg
 BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
-VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
+VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)-preview
 
 all: bcl
 
@@ -114,6 +119,7 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 # you can append BDN parameters at the end, e.g. ` -- --filter Burgers --keepFiles`
 # NOTE: we have to delete a couple of System.Drawing files to make it work
 run-benchmarks: patch-local-dotnet
+	@if test -z "$(DOTNET_PERF_REPO)"; then echo "DOTNET_PERF_REPO is not set"; exit 1; fi
 	cd $(DOTNET_PERF_REPO)/src/benchmarks/micro/ && \
 	> corefx/System.Drawing/Perf_Color.cs && \
 	> corefx/System.Drawing/Perf_Graphics_DrawBeziers.cs && \
@@ -125,7 +131,7 @@ run-benchmarks: patch-local-dotnet
 run-sample-local-dotnet-llvm: patch-local-dotnet
 	$(DOTNET) build -c Release sample/HelloWorld
 	PATH="../llvm/usr/bin/:$(PATH)" \
-	MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+	MONO_ENV_OPTIONS="--aot=llvm,mcpu=native" \
 	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 	$(DOTNET) sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 
@@ -160,9 +166,11 @@ $(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_
 
 prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
-nupkg:
-	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
-	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+pack-%:
+	$(DOTNET) pack roslyn-restore.csproj -p:IsPackable=true -p:NuspecFile=$*.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+
+nupkg: pack-metapackage pack-runtime
+nupkg-llvm: pack-metapackage-llvm pack-runtime-llvm
 
 clean:
 	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
@@ -214,7 +222,7 @@ run-tests-corefx-%: prepare update-tests-corefx
 	@cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
 	@sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
+	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
 		--runtimeconfig $*.runtimeconfig.json --additional-deps $*.deps.json \
 		--fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
@@ -231,6 +239,36 @@ build-test-corefx-%:
 xunit-summary:
 	./xunit-summary.py "corefx/tests"
 
+
+update-tests-coreclr: coreclr/.stamp-tests
+
+coreclr/.stamp-tests:
+	rm -rf coreclr/tests
+	curl -L "$(CORECLR_TESTS)" --output coreclr/tests.zip
+	tar -xvf coreclr/tests.zip -C coreclr/
+	mkdir coreclr/tests
+	tar -xvf coreclr/Tests_OSX_x64_checked_outerloop/Tests_OSX_x64_checked_outerloop.tar.gz -C coreclr/tests
+	touch $@
+
+.PHONY: corerun
+corerun:
+	cp corerun/corerun $(SHAREDRUNTIME)
+
+run-tests-coreclr: prepare update-tests-coreclr corerun
+	rm -rf coreclr/output.log
+	@counter=0; \
+	failures=0; \
+	test_files=$$(find coreclr/tests -type f -name "*.sh"); \
+	for testdir in $$test_files; do \
+		counter=$$((counter+1)); \
+		echo "Running $$testdir"; \
+		if sh $$testdir -coreroot=$(realpath $(SHAREDRUNTIME)) >>coreclr/output.log 2>&1 ; then \
+			echo "FAILED"; \
+			failures=$$((failures+1)); \
+		fi; \
+	done; \
+	echo "Tests Count: $$counter"; \
+	echo "Failed: $$failures"
 endif
 
 distdir:

@@ -30,7 +30,7 @@ PROFILE_MCS_FLAGS = \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
 
-API_BIN_PROFILE = build/monotouch
+API_BIN_PROFILE = build/monowasm
 FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install

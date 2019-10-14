@@ -249,6 +249,11 @@ program that comes with Mono, and calling it like this:
 .I mcpu=[native o generic]
 cpu=native allows AOT mode to use all instructions current CPU supports, e.g. AVX2, SSE42, etc.
 Default value is 'generic'.
+.I mattr=[cpu feature]
+Allows AOT code generator to use specified CPU features where possible including `System.Runtime.Intrinsics.*'.
+E.g. `mattr=+avx2,mattr=-lzcnt' unlocks sse1-4.2, avx1-2 and disables lzcnt. 
+It's useful for cross-compilation or when it's not possible to use `-mcpu=native' (which enables 
+all cpu feature current cpu has).
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
@@ -1541,31 +1546,8 @@ install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
 \fBMONO_IOMAP\fR
-Enables some filename rewriting support to assist badly-written
-applications that hard-code Windows paths.  Set to a colon-separated
-list of "drive" to strip drive letters, or "case" to do
-case-insensitive file matching in every directory in a path.  "all"
-enables all rewriting methods.  (Backslashes are always mapped to
-slashes if this variable is set to a valid option).
-.fi
-.Sp
-For example, this would work from the shell:
-.nf
-
-	MONO_IOMAP=drive:case
-	export MONO_IOMAP
-
-.fi
-If you are using mod_mono to host your web applications, you can use
-the 
-.B MonoIOMAP
-directive instead, like this:
-.nf
-
-	MonoIOMAP <appalias> all
-
-.fi
-See mod_mono(8) for more details.
+(deprecated) Enabled some filename rewriting support to assist badly-written
+applications that hard-code Windows paths. It no longer works as of Mono 6.0.
 .TP
 \fBMONO_LLVM\fR
 When Mono is using the LLVM code generation backend you can use this
@@ -1848,6 +1830,11 @@ This option will suspend the program when an unhandled exception occurs.
 .TP
 \fBthread-dump-dir=DIR\fR
 Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBweak-memory-model\fR
+Don't enforce the CLR memory model on platforms with weak memory models. This can introduce
+random crashes in some rare cases, for multithreaded environments. This can be used for a
+performance boost on applications that are single threaded.
 .TP
 \fBverbose-gdb\fR
 Make gdb output on native crashes more verbose.

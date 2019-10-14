@@ -47,6 +47,7 @@
 #include <utime.h>
 #endif
 
+#if defined (HAVE_FORK) && defined (HAVE_EXECVE)
 // For close_my_fds
 #if defined (_AIX)
 #include <procinfo.h>
@@ -56,6 +57,7 @@
 #include <libutil.h>
 #elif defined(__linux__)
 #include <dirent.h>
+#endif
 #endif
 
 #include <mono/metadata/object-internals.h>
@@ -911,8 +913,8 @@ mono_w32process_try_get_modules (gpointer handle, gpointer *modules, guint32 siz
 	return TRUE;
 }
 
-gunichar2 *
-mono_w32process_module_get_filename (gpointer handle, gpointer module, guint32 *len)
+gboolean
+mono_w32process_module_get_filename (gpointer handle, gpointer module, gunichar2 **str, guint32 *len)
 {
 	gint pid;
 	gsize bytes = 0;
@@ -922,26 +924,35 @@ mono_w32process_module_get_filename (gpointer handle, gpointer module, guint32 *
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module file name, process handle %p module %p " G_GUINT32_FORMAT,
 	            __func__, handle, module);
 
+	if (str == NULL || len == NULL)
+		return FALSE;
+
+	*str = NULL;
 	*len = 0;
 
 	pid = mono_w32process_get_pid (handle);
 	if (pid == 0)
-		return NULL;
+		return FALSE;
 
 	path = mono_w32process_get_path (pid);
 	if (path == NULL)
-		return NULL;
+		return FALSE;
 
 	proc_path = mono_unicode_from_external (path, &bytes);
+	if (proc_path == NULL) {
+		g_free (path);
+		return FALSE;
+	}
 
+	*str = mono_unicode_from_external (path, &bytes);
 	*len = bytes / sizeof (gunichar2);
 
 	g_free (path);
-	return proc_path;
+	return TRUE;
 }
 
-gunichar2 *
-mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
+gboolean
+mono_w32process_module_get_name (gpointer handle, gpointer module, gunichar2 **str, guint32 *len)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
@@ -956,19 +967,23 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Getting module base name, process handle %p module %p " G_GUINT32_FORMAT,
 		   __func__, handle, module);
 
+	if (str == NULL || len == NULL)
+		return FALSE;
+
+	*str = NULL;
 	*len = 0;
 
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unknown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return NULL;
+		return FALSE;
 	}
 
 	if (handle_data->type != MONO_W32TYPE_PROCESS) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unknown process handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		mono_w32handle_unref (handle_data);
-		return NULL;
+		return FALSE;
 	}
 
 	process_handle = (MonoW32HandleProcess*) handle_data->specific;
@@ -981,7 +996,7 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Can't get modules %p", __func__, handle);
 		g_free (pname);
 		mono_w32handle_unref (handle_data);
-		return 0;
+		return FALSE;
 	}
 
 	/* If module != NULL compare the address.
@@ -1023,19 +1038,20 @@ mono_w32process_module_get_name (gpointer handle, gpointer module, guint32 *len)
 			/* bugger */
 			g_free (procname_ext);
 			mono_w32handle_unref (handle_data);
-			return NULL;
+			return FALSE;
 		}
 
+		*str = procname;
 		*len = bytes / sizeof (gunichar2);
 
 		g_free (procname_ext);
 		mono_w32handle_unref (handle_data);
-		return procname;
+		return TRUE;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Can't find procname_ext %p", __func__, handle);
 	mono_w32handle_unref (handle_data);
-	return NULL;
+	return FALSE;
 }
 
 gboolean
@@ -1104,19 +1120,6 @@ mono_w32process_module_get_information (gpointer handle, gpointer module, MODULE
 	return ret;
 }
 
-static void
-switch_dir_separators (char *path)
-{
-	size_t i, pathLength = strlen(path);
-	
-	/* Turn all the slashes round the right way, except for \' */
-	/* There are probably other characters that need to be excluded as well. */
-	for (i = 0; i < pathLength; i++) {
-		if (path[i] == '\\' && i < pathLength - 1 && path[i+1] != '\'' )
-			path[i] = '/';
-	}
-}
-
 #if HAVE_SIGACTION
 
 MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, siginfo_t *info, void *context))
@@ -1183,6 +1186,20 @@ mono_w32process_signal_finished (void)
 	}
 
 	mono_coop_mutex_unlock (&processes_mutex);
+}
+
+#if defined (HAVE_FORK) && defined (HAVE_EXECVE)
+static void
+switch_dir_separators (char *path)
+{
+	size_t i, pathLength = strlen (path);
+
+	/* Turn all the slashes round the right way, except for \' */
+	/* There are probably other characters that need to be excluded as well. */
+	for (i = 0; i < pathLength; i++) {
+		if (path[i] == '\\' && i < pathLength - 1 && path[i + 1] != '\'')
+			path[i] = '/';
+	}
 }
 
 static gboolean
@@ -1460,6 +1477,7 @@ fallback:
 	for (guint32 i = max_fd_count () - 1; i > 2; i--)
 		close (i);
 }
+#endif
 
 static gboolean
 process_create (const gunichar2 *appname, const gunichar2 *cmdline,
@@ -4273,6 +4291,30 @@ mono_w32process_set_cli_launcher (gchar *path)
 void
 mono_w32process_signal_finished (void)
 {
+}
+
+guint32
+mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len)
+{
+	return 0;
+}
+
+gboolean
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
+{
+	return FALSE;
+}
+
+gboolean
+mono_w32process_module_get_information (gpointer handle, gpointer module, MODULEINFO *modinfo, guint32 size)
+{
+	return FALSE;
+}
+
+gboolean
+mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subblock, gpointer *buffer, guint32 *len)
+{
+	return FALSE;
 }
 
 #endif /* ENABLE_NETCORE */

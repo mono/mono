@@ -22,18 +22,20 @@
 static GENERATE_GET_CLASS_WITH_CACHE (runtime_helpers, "System.Runtime.CompilerServices", "RuntimeHelpers")
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 
-/* optimize the simple GetGenericValueImpl/SetGenericValueImpl generic icalls */
+/* optimize the simple GetGenericValueImpl/SetGenericValueImpl generic calls */
 static MonoInst*
 emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, int is_set)
 {
 	MonoInst *addr, *store, *load;
-	MonoClass *eklass = mono_class_from_mono_type_internal (fsig->params [2]);
+	MonoClass *eklass = mono_class_from_mono_type_internal (fsig->params [1]);
 
 	/* the bounds check is already done by the callers */
 	addr = mini_emit_ldelema_1_ins (cfg, eklass, args [0], args [1], FALSE);
 	MonoType *etype = m_class_get_byval_arg (eklass);
 	if (is_set) {
 		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, etype, args [2]->dreg, 0);
+		if (!mini_debug_options.weak_memory_model && mini_type_is_reference (etype))
+			mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, etype, addr->dreg, 0, load->dreg);
 		if (mini_type_is_reference (etype))
 			mini_emit_write_barrier (cfg, addr, load);
@@ -132,6 +134,19 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			} else if (!strcmp (cmethod->name, "Truncate")) {
 				opcode = OP_TRUNCF;
 			}
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+			else if (!strcmp (cmethod->name, "Round") && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0) {
+				// special case: emit vroundps for MathF.Round directly instead of what llvm.round.f32 emits
+				// to align with CoreCLR behavior
+				int xreg = alloc_xreg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_FCONV_TO_R4_X, xreg, args [0]->dreg);
+				EMIT_NEW_UNALU (cfg, ins, OP_SSE41_ROUNDSS, xreg, xreg);
+				ins->inst_c0 = 0x4; // vroundss xmm0, xmm0, xmm0, 0x4 (mode for rounding)
+				int dreg = alloc_freg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_EXTRACT_R4, dreg, xreg);
+				return ins;
+			}
+#endif
 		}
 		// (float, float)
 		if (fsig->param_count == 2 && fsig->params [0]->type == MONO_TYPE_R4 && fsig->params [1]->type == MONO_TYPE_R4) {
@@ -723,11 +738,11 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		} else
 			return NULL;
 	} else if (cmethod->klass == mono_defaults.array_class) {
-		if (strcmp (cmethod->name, "GetGenericValueImpl") == 0 && fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt)
+		if (fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt && strcmp (cmethod->name, "GetGenericValueImpl") == 0)
 			return emit_array_generic_access (cfg, fsig, args, FALSE);
-		else if (strcmp (cmethod->name, "SetGenericValueImpl") == 0 && fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt)
+		else if (fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt && strcmp (cmethod->name, "SetGenericValueImpl") == 0)
 			return emit_array_generic_access (cfg, fsig, args, TRUE);
-		else if (!strcmp (cmethod->name, "GetRawSzArrayData")) {
+		else if (!strcmp (cmethod->name, "GetRawSzArrayData") || !strcmp (cmethod->name, "GetRawArrayData")) {
 			int dreg = alloc_preg (cfg);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoArray, vector));
 			return ins;
@@ -1186,6 +1201,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				MONO_ADD_INS (cfg->cbb, f2i);
 			}
 
+			if (is_ref && !mini_debug_options.weak_memory_model)
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->dreg = is_ref ? mono_alloc_ireg_ref (cfg) : mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
@@ -1285,6 +1303,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 					f2i_cmp->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
 				MONO_ADD_INS (cfg->cbb, f2i_cmp);
 			}
+
+			if (is_ref && !mini_debug_options.weak_memory_model)
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->dreg = is_ref ? alloc_ireg_ref (cfg) : alloc_ireg (cfg);

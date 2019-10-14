@@ -322,6 +322,7 @@ enum {
 	INTERNAL_MEM_STATISTICS,
 	INTERNAL_MEM_STAT_PINNED_CLASS,
 	INTERNAL_MEM_STAT_REMSET_CLASS,
+	INTERNAL_MEM_STAT_GCHANDLE_CLASS,
 	INTERNAL_MEM_GRAY_QUEUE,
 	INTERNAL_MEM_MS_TABLES,
 	INTERNAL_MEM_MS_BLOCK_INFO,
@@ -470,12 +471,18 @@ void sgen_pin_stats_register_object (GCObject *obj, int generation);
 void sgen_pin_stats_register_global_remset (GCObject *obj);
 void sgen_pin_stats_report (void);
 
+void sgen_gchandle_stats_enable (void);
+void sgen_gchandle_stats_report (void);
+
 void sgen_sort_addresses (void **array, size_t size);
 void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
 
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_get_concurrent_collection_in_progress (void);
+
+void sgen_set_bytes_allocated_attached (guint64 bytes);
+void sgen_increment_bytes_allocated_detached (guint64 bytes);
 
 typedef struct _SgenFragment SgenFragment;
 
@@ -1075,6 +1082,8 @@ typedef enum {
 } SgenAllocatorType;
 
 void sgen_clear_tlabs (void);
+void sgen_update_allocation_count (void);
+guint64 sgen_get_total_allocated_bytes (MonoBoolean precise);
 
 GCObject* sgen_alloc_obj (GCVTable vtable, size_t size)
 	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
@@ -1141,6 +1150,8 @@ gboolean sgen_nursery_canaries_enabled (void);
 
 void
 sgen_check_canary_for_object (gpointer addr);
+
+guint64 sgen_get_precise_allocation_count (void);
 
 #define CHECK_CANARY_FOR_OBJECT(addr, ignored) \
 	(sgen_nursery_canaries_enabled () ? sgen_check_canary_for_object (addr) : (void)0)

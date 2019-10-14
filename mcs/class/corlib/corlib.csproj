@@ -1482,6 +1482,7 @@
     <Compile Include="System.Reflection\FieldInfo.cs" />
     <Compile Include="System.Reflection\LocalVariableInfo.cs" />
     <Compile Include="System.Reflection\MethodBody.cs" />
+    <Compile Include="System.Reflection\MethodInfo.cs" />
     <Compile Include="System.Reflection\Module.cs" />
     <Compile Include="System.Reflection\RuntimeAssembly.cs" />
     <Compile Include="System.Reflection\RuntimeEventInfo.cs" />
@@ -1861,6 +1862,7 @@
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="corefx\AesCcm.cs" />
     <Compile Include="corefx\AesGcm.cs" />
+    <Compile Include="corefx\ArrayBufferWriter.cs" />
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
@@ -1877,8 +1879,8 @@
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\IncrementingEventCounter.cs" />
     <Compile Include="corefx\IncrementingPollingCounter.cs" />
-    <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\MonoLinqHelper.cs" />
+    <Compile Include="corefx\NullableAttributes.cs" />
     <Compile Include="corefx\PbeEncryptionAlgorithm.cs" />
     <Compile Include="corefx\PbeParameters.cs" />
     <Compile Include="corefx\PollingCounter.cs" />
@@ -1887,6 +1889,9 @@
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
+    <Compile Include="corefx\SequenceReader.Search.cs" />
+    <Compile Include="corefx\SequenceReader.cs" />
+    <Compile Include="corefx\SequenceReaderExtensions.Binary.cs" />
     <Compile Include="corefx\Stream.cs" />
     <Compile Include="corefx\SwitchExpressionException.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />

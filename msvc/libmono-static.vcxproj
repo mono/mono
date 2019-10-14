@@ -200,6 +200,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="build-external-btls.vcxproj">
+      <Project>{e41ddf41-0916-454b-a7c2-6e410e45cafd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="build-external-llvm.vcxproj">
+      <Project>{c3d4c623-55f8-4653-980d-61aa629b4e1d}</Project>
+    </ProjectReference>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
     </ProjectReference>

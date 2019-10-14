@@ -6,6 +6,7 @@
     <GenerateResxSourceOmitGetResourceString>true</GenerateResxSourceOmitGetResourceString>
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
     <EnsureRuntimePackageDependencies>false</EnsureRuntimePackageDependencies>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
 
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -247,6 +248,7 @@
       <Compile Include="src\System.Runtime.InteropServices\GCHandle.cs" />
       <Compile Include="src\System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="src\System.Runtime.InteropServices\MarshalAsAttribute.cs" />
+      <Compile Include="src\System.Runtime.InteropServices\SafeHandle.cs" />
       <Compile Include="src\System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="src\System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="src\System.Runtime.Remoting.Contexts\Context.cs" />

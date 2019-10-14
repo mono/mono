@@ -116,12 +116,12 @@ mono_arch_regname (int reg)
 	return "unknown";
 }
 
-static const char * packed_xmmregs [] = {
+static const char * const packed_xmmregs [] = {
 	"p:xmm0", "p:xmm1", "p:xmm2", "p:xmm3", "p:xmm4", "p:xmm5", "p:xmm6", "p:xmm7", "p:xmm8",
 	"p:xmm9", "p:xmm10", "p:xmm11", "p:xmm12", "p:xmm13", "p:xmm14", "p:xmm15"
 };
 
-static const char * single_xmmregs [] = {
+static const char * const single_xmmregs [] = {
 	"s:xmm0", "s:xmm1", "s:xmm2", "s:xmm3", "s:xmm4", "s:xmm5", "s:xmm6", "s:xmm7", "s:xmm8",
 	"s:xmm9", "s:xmm10", "s:xmm11", "s:xmm12", "s:xmm13", "s:xmm14", "s:xmm15"
 };
@@ -3039,11 +3039,6 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 			EMIT_COND_BRANCH (tins, cond, signed);	\
 		}			\
 	} while (0); 
-
-#define EMIT_FPCOMPARE(code) do { \
-	amd64_fcompp (code); \
-	amd64_fnstsw (code); \
-} while (0); 
 
 #define EMIT_SSE2_FPFUNC(code, op, dreg, sreg1) do { \
     amd64_movsd_membase_reg (code, AMD64_RSP, -8, (sreg1)); \
@@ -8742,7 +8737,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		}
 #endif
 
-		if (!cfg->compile_aot && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
+		if ((mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0 && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
 			int mode = -1;
 			if (!strcmp (cmethod->name, "Round"))
 				mode = 0;
@@ -9012,6 +9007,8 @@ mono_arch_load_function (MonoJitICallId jit_icall_id)
 	MONO_AOT_ICALL (mono_amd64_start_gsharedvt_call)
 	MONO_AOT_ICALL (mono_amd64_throw_corlib_exception)
 	MONO_AOT_ICALL (mono_amd64_throw_exception)
+	default:
+		break;
 	}
 	return target;
 }

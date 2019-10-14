@@ -4,11 +4,12 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.7.0],
+AC_INIT(mono, [6.9.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
 AC_CONFIG_MACRO_DIR([m4])
+
 AC_CANONICAL_SYSTEM
 AC_CANONICAL_HOST
 
@@ -62,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=8E172F4D-82A3-4F55-8D7C-C8E8E0FA58AE
+MONO_CORLIB_VERSION=077A060C-749A-4634-B364-B50171A66C6B
 
 #
 # Put a quoted #define in config.h.
@@ -137,6 +138,7 @@ platform_tizen=no
 platform_ios=no
 host_darwin=no
 host_linux=no
+build_darwin=no
 
 case "$host" in
 	wasm32*)
@@ -144,6 +146,11 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -s WASM=1"
 		libgc_threads=pthreads
 		platform_wasm=yes
+		# FIXME:
+		RID="osx-x64"
+		COREARCH="x64"
+		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
+		build_darwin=yes
 		;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
@@ -663,7 +670,7 @@ AC_SUBST(export_ldflags)
 AC_PROG_LD
 AC_PROG_LD_GNU
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h copyfile.h)
+AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h copyfile.h gnu/lib-names.h)
 AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
 
 # zlib/configure checks for unistd.h existance and defines HAVE_UNISTD_H on the compiler
@@ -1167,7 +1174,7 @@ AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files durin
 fi
 
 case "$host" in
-	*-mingw*|*-*-cygwin*|*-*-aix*|*-*-os400*)
+	*-mingw*|*-*-cygwin*)
 		crash_reporting=no
 		;;
 esac
@@ -1334,7 +1341,6 @@ with_wasm_default=no
 with_bitcode_default=no
 enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
-enable_copy_stack_data_default=yes
 
 # For the sake of clearer error messages, these numbers should all be different from each other.
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000
@@ -1361,6 +1367,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_com='yes'
    mono_feature_disable_gac='yes'
    mono_feature_disable_perfcounters='yes'
+   mono_feature_disable_attach='yes'
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
@@ -2210,6 +2217,10 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(getresuid)
 	AC_CHECK_FUNCS(setresuid)
 	AC_CHECK_FUNCS(kqueue)
+	# IBM provides a compatibility library for i offering this function.
+	# BSDs and others, have execinfo in base or packages.
+	AC_SEARCH_LIBS(backtrace_symbols, execinfo util)
+	# Two-step so it sets it in config.h
 	AC_CHECK_FUNCS(backtrace_symbols)
 	AC_CHECK_FUNCS(mkstemp)
 	AC_CHECK_FUNCS(mmap)
@@ -3393,13 +3404,29 @@ if test x$host_win32 = xno; then
 	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
 
-	AC_CHECK_MEMBER(struct stat.st_birthtimespec, [AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtime])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atimespec,     [AC_DEFINE(HAVE_STAT_TIMESPEC, 1, [struct stat.st_atimespec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atim,          [AC_DEFINE(HAVE_STAT_TIM, 1, [struct stat.st_atim])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct stat.st_atimensec,     [AC_DEFINE(HAVE_STAT_NSEC, 1, [struct stat.st_atimensec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
-	AC_CHECK_MEMBER(struct dirent.d_namlen,       [AC_DEFINE(HAVE_DIRENT_NAME_LEN, 1, [struct dirent.d_namlen])], [], [[#include <dirent.h>]])
-	AC_CHECK_MEMBER(struct statfs.f_fstypename,   [AC_DEFINE(HAVE_STATFS_FSTYPENAME, 1, [struct statfs.f_fstypename])], [], [[#include <sys/mount.h>]])
-	AC_CHECK_MEMBER(struct statvfs.f_fstypename,  [AC_DEFINE(HAVE_STATVFS_FSTYPENAME, 1, [struct statvfs.f_fstypename])], [], [[#include <sys/mount.h>]])
+	AC_CHECK_MEMBER(struct stat.st_birthtimespec,
+		[AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtimespec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atimespec,
+		[AC_DEFINE(HAVE_STAT_TIMESPEC, 1, [struct stat.st_atimespec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atim,
+		[AC_DEFINE(HAVE_STAT_TIM, 1, [struct stat.st_atim])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct stat.st_atimensec,
+		[AC_DEFINE(HAVE_STAT_NSEC, 1, [struct stat.st_atimensec])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+	AC_CHECK_MEMBER(struct dirent.d_namlen,       [AC_DEFINE(HAVE_DIRENT_NAME_LEN, 1, [struct dirent.d_namlen])], [], [#include <dirent.h>])
+	AC_CHECK_MEMBER(struct statfs.f_fstypename,   [AC_DEFINE(HAVE_STATFS_FSTYPENAME, 1, [struct statfs.f_fstypename])], [], [#include <sys/mount.h>])
+	AC_CHECK_MEMBER(struct statvfs.f_fstypename,  [AC_DEFINE(HAVE_STATVFS_FSTYPENAME, 1, [struct statvfs.f_fstypename])], [], [#include <sys/mount.h>])
 
 	AC_MSG_CHECKING(for struct statfs)
 	AC_TRY_COMPILE([
@@ -4606,6 +4633,7 @@ if test "x$host" != "x$target"; then
 	aarch64*darwin*_ilp32)
 		TARGET=ARM6432;
 		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		sizeof_register=8
 		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
 	aarch64-*)
@@ -5634,6 +5662,7 @@ fi
 
 if test x$enable_cooperative_suspend != xno; then
 	AC_DEFINE(ENABLE_COOP_SUSPEND,1,[Enable cooperative stop-the-world garbage collection.])
+	enable_hybrid_suspend_default=no
 fi
 
 AM_CONDITIONAL([ENABLE_COOP_SUSPEND], [test x$enable_cooperative_suspend != xno])
@@ -5655,38 +5684,6 @@ fi
 AM_CONDITIONAL([ENABLE_HYBRID_SUSPEND], [test x$enable_hybrid_suspend != xno])
 
 dnl End of thread suspend policy
-
-dnl *******************************
-dnl *** Copy stack data support ***
-dnl *******************************
-
-dnl Disable copy_stack_data on platforms supporting full context and
-dnl having access to full stack of running threads.
-if test x$enable_copy_stack_data_default != xno; then
-	case $HOST in
-	X86 | AMD64)
-		if test x$target_osx = xyes; then
-			dnl Some host/target confusion, there's no host_osx (and
-			dnl host_darwin would be true on iOS not just macOS).
-			enable_copy_stack_data_default=no
-		elif test x$host_linux = xyes -o x$host_win32 = xyes; then
-			enable_copy_stack_data_default=no
-		fi
-		;;
-	esac
-fi
-
-AC_ARG_ENABLE(copy_stack_data, [ --enable-copy-stack-data     Enable copy_stack_data feature for hybrid/cooperative suspend scenarios, (defaults to yes)], [], [enable_copy_stack_data=default])
-
-if test x$enable_copy_stack_data = xdefault; then
-   enable_copy_stack_data=$enable_copy_stack_data_default
-fi
-
-if test x$enable_copy_stack_data != xno ; then
-	AC_DEFINE(ENABLE_COPY_STACK_DATA,1,[Enable copy_stack_data feature for hybrid/cooperative suspend scenarios])
-fi
-
-dnl End of Copy stack data support
 
 dnl ***************************
 dnl *** feature experiments ***
@@ -6002,12 +5999,24 @@ AC_DEFINE(MONO_INSIDE_RUNTIME,1, [Disable banned functions from being used by th
 mono_build_root=`pwd`
 AC_SUBST(mono_build_root)
 
+AC_ARG_ENABLE(msvc_only,[  --enable-msvc-only    Build only with Visual Studio (msvc) (defaults to no). Disable gcc build.], enable_msvc_only=$enableval, enable_msvc_only=no)
+if test x$host_win32 = xno; then
+	if test x$enable_msvc_only = xyes; then
+		echo "Error, --enable-msvc-only only supported for Windows builds."
+		exit 1
+	fi
+fi
+AM_CONDITIONAL(ENABLE_MSVC_ONLY, test x$enable_msvc_only = xyes)
+
 AC_ARG_ENABLE(msvc,[  --enable-msvc    Build with Visual Studio (msvc) (defaults to no)], enable_msvc=$enableval, enable_msvc=no)
 if test x$host_win32 = xno; then
 	if test x$enable_msvc = xyes; then
 		echo "Error, --enable-msvc only supported for Windows builds."
 		exit 1
 	fi
+fi
+if test x$enable_msvc_only = xyes; then
+	enable_msvc=yes
 fi
 AM_CONDITIONAL(ENABLE_MSVC, test x$enable_msvc = xyes)
 
@@ -6753,6 +6762,7 @@ tools/mono-hang-watchdog/Makefile
 runtime/Makefile
 msvc/Makefile
 po/Makefile
+netcore/corerun/Makefile
 ])
 
 if test x$host_win32 = xyes; then
@@ -6941,6 +6951,10 @@ fi
     fi
     echo "COMPILER_SERVER_PIPENAME?=monomake" >> $srcdir/$mcsdir/build/config.make
 
+	if test x$enable_msvc_only = xyes; then
+		echo "ENABLE_MSVC_ONLY=1" >> $srcdir/$mcsdir/build/config.make
+	fi
+
   fi
 
 )
@@ -6968,13 +6982,20 @@ if test x$buildsgen = xyes; then
 fi
 
 if test "x$with_core" = "xonly"; then
+  if test ! -d netcore; then
+    # Out of tree builds
+    mkdir -p netcore
+    echo "all:" > netcore/Makefile
+  fi
   echo "VERSION = $VERSION" > netcore/config.make
   echo "RID = $RID" >> netcore/config.make
   echo "COREARCH = $COREARCH" >> netcore/config.make
   echo "CORETARGETS = $CORETARGETS" >> netcore/config.make
   echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> netcore/config.make
 
-  if test x$host_darwin = xyes; then
+  if test x$build_darwin = xyes; then
+    echo "HOST_PLATFORM ?= macos" >> netcore/config.make
+  elif test x$host_darwin = xyes; then
     echo "HOST_PLATFORM ?= macos" >> netcore/config.make
   elif test x$host_win32 = xyes; then
     echo "HOST_PLATFORM ?= win32" >> netcore/config.make
