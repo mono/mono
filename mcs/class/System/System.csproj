@@ -5073,24 +5073,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Numerics.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
