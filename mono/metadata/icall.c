@@ -6295,10 +6295,10 @@ ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry (const char *key, const char *
 }
 
 void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath, configDir);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, appPath, configDir);
 
 	// Why does this install the sigterm handler so early?
 	// mono_get_runtime_callbacks ()->install_state_summarizer ();
