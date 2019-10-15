@@ -2822,7 +2822,7 @@ static long opcode_counts[MINT_LASTOP];
 		sp->data.l = 0; \
 		output_indent (); \
 		char *mn = mono_method_full_name (frame->imethod->method, FALSE); \
-		char *disasm = mono_interp_dis_mintop (frame->imethod->code, ip); \
+		char *disasm = mono_interp_dis_mintop ((gint32)(ip - frame->imethod->code), TRUE, ip + 1, *ip); \
 		g_print ("(%p) %s -> %s\t%d:%s\n", mono_thread_internal_current (), mn, disasm, vt_sp - vtalloc, ins); \
 		g_free (mn); \
 		g_free (ins); \

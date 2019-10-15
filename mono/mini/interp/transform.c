@@ -973,11 +973,26 @@ dump_mint_code (const guint16 *start, const guint16* end)
 {
 	const guint16 *p = start;
 	while (p < end) {
-		char *ins = mono_interp_dis_mintop (start, p);
+		char *ins = mono_interp_dis_mintop ((gint32)(p - start), TRUE, p + 1, *p);
 		g_print ("%s\n", ins);
 		g_free (ins);
 		p = mono_interp_dis_mintop_len (p);
 	}
+}
+
+static void
+dump_interp_inst (InterpInst *ins)
+{
+	char *descr = mono_interp_dis_mintop (ins->il_offset, FALSE, &ins->data [0], ins->opcode);
+	g_print ("%s", descr);
+	g_free (descr);
+}
+
+static void
+dump_interp_inst_newline (InterpInst *ins)
+{
+	dump_interp_inst (ins);
+	g_print ("\n");
 }
 
 /* For debug use */
@@ -6499,8 +6514,10 @@ retry:
 		}
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
-		if (td->verbose_level)
-                        g_print ("IL_%x, sp %d, %s (pop %d, push %d)\n", ins->il_offset, sp - stack, mono_interp_opname (ins->opcode), pop, push);
+		if (td->verbose_level) {
+			dump_interp_inst (ins);
+			g_print (", sp %d, (pop %d, push %d)\n", sp - stack, pop, push);
+		}
 		if (MINT_IS_LDLOC (ins->opcode)) {
 			int replace_op = 0;
 			int loaded_local = ins->data [0];
@@ -6517,8 +6534,6 @@ retry:
 						replace_op = MINT_STLOC_NP_O;
 					if (replace_op) {
 						int stored_local = prev_ins->data [0];
-						if (td->verbose_level)
-							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, prev_ins->il_offset);
 						sp->ins = NULL;
 						if (sp->val.type == STACK_VALUE_NONE) {
 							// We know what local is on the stack now. Track it
@@ -6531,6 +6546,10 @@ retry:
 						ins->opcode = replace_op;
 						ins->data [0] = stored_local;
 						local_ref_count [loaded_local]--;
+						if (td->verbose_level) {
+							g_print ("Add stloc.np :\n\t");
+							dump_interp_inst_newline (ins);
+						}
 						mono_interp_stats.stloc_nps++;
 						mono_interp_stats.killed_instructions++;
 					}
@@ -6539,12 +6558,14 @@ retry:
 				g_assert (locals [loaded_local].type == STACK_VALUE_LOCAL);
 				g_assert (!(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT));
 				// do copy propagation of the original source
-				if (td->verbose_level)
-					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].local);
 				mono_interp_stats.copy_propagations++;
 				local_ref_count [loaded_local]--;
 				ins->data [0] = locals [loaded_local].local;
 				local_ref_count [ins->data [0]]++;
+				if (td->verbose_level) {
+					g_print ("cprop loc %d -> loc %d :\n\t", loaded_local, locals [loaded_local].local);
+					dump_interp_inst_newline (ins);
+				}
 			} else if (locals [loaded_local].type == STACK_VALUE_I4 || locals [loaded_local].type == STACK_VALUE_I8) {
 				gboolean is_i4 = locals [loaded_local].type == STACK_VALUE_I4;
 				g_assert (!(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT));
@@ -6556,8 +6577,10 @@ retry:
 				sp->val = locals [loaded_local];
 				local_ref_count [loaded_local]--;
 				mono_interp_stats.copy_propagations++;
-				if (td->verbose_level)
-					g_print ("cprop %d -> ct %d\n", loaded_local, is_i4 ? locals [loaded_local].i : locals [loaded_local].l);
+				if (td->verbose_level) {
+					g_print ("cprop loc %d -> ct :\n\t", loaded_local);
+					dump_interp_inst_newline (ins);
+				}
 				// FIXME this replace_op got ugly
 				replace_op = ins->opcode;
 			}
@@ -6590,9 +6613,6 @@ retry:
 					}
 
 					if (sp->ins) {
-						// Clear ldloc / stloc pair and replace it with movloc superinstruction
-						if (td->verbose_level)
-							g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
 						interp_clear_ins (td, sp->ins);
 						interp_clear_ins (td, ins);
 
@@ -6601,6 +6621,11 @@ retry:
 						ins->data [1] = dest_local;
 						if (vtsize)
 							ins->data [2] = vtsize;
+						// Clear ldloc / stloc pair and replace it with movloc superinstruction
+						if (td->verbose_level) {
+							g_print ("Add movloc (ldloc off %d) :\n\t", sp->ins->il_offset);
+							dump_interp_inst_newline (ins);
+						}
 						mono_interp_stats.movlocs++;
 						mono_interp_stats.killed_instructions++;
 					}
