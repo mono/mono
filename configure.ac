@@ -1368,6 +1368,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_gac='yes'
    mono_feature_disable_perfcounters='yes'
    mono_feature_disable_attach='yes'
+   mono_feature_disable_dllmap='yes'
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
@@ -1955,12 +1956,10 @@ if test "x$mono_feature_disable_gac" = "xyes"; then
 	AC_MSG_NOTICE([Disabled GAC support])
 fi
 
-# Currently, we only want to use DllMap for non-netcore builds
-if test "x$with_core" = "xno" -a "x$mono_feature_disable_dllmap" != "xyes"; then
-    AC_DEFINE(ENABLE_DLLMAP,1,[Enables use of DllMaps in MonoVM])
-    with_dllmap=yes
+if test "x$mono_feature_disable_dllmap" = "xyes"; then
+    AC_DEFINE(DISABLE_DLLMAP,1,[Disables use of DllMaps in MonoVM])
+    AC_MSG_NOTICE([Disabled DllMap in the loader.])
 fi
-AM_CONDITIONAL(ENABLE_DLLMAP, [test "x$with_dllmap" = "xyes"])
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
 AM_CONDITIONAL(DISABLE_EXECUTABLES, test x$enable_executables = xno)

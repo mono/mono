@@ -12,7 +12,7 @@ static int pinvoke_search_directories_count;
 static char **pinvoke_search_directories;
 #endif
 
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 static MonoDllMap *global_dll_map;
 #endif
 static GHashTable *global_module_map;
@@ -42,7 +42,7 @@ typedef struct MonoLookupPInvokeStatus {
 GENERATE_GET_CLASS_WITH_CACHE (appdomain_unloaded_exception, "System", "AppDomainUnloadedException")
 GENERATE_TRY_GET_CLASS_WITH_CACHE (appdomain_unloaded_exception, "System", "AppDomainUnloadedException")
 
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 /*
  * LOCKING: Assumes the relevant lock is held.
  * For the global DllMap, this is `global_loader_data_mutex`, and for images it's their internal lock.
@@ -238,7 +238,7 @@ mono_global_dllmap_cleanup (void)
 void
 mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc)
 {
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 	mono_dllmap_insert_internal (assembly, dll, func, tdll, tfunc);
 #endif
 }
@@ -460,7 +460,7 @@ lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_ou
 		orig_scope = mono_metadata_string_heap (image, scope_token);
 	}
 
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 	// FIXME: The dllmap remaps System.Native to mono-native
 	mono_dllmap_lookup (image, orig_scope, orig_import, &new_scope, &new_import);
 #else

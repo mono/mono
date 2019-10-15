@@ -48,7 +48,7 @@ mono_global_loader_data_unlock (void);
 gpointer
 mono_lookup_pinvoke_call_internal (MonoMethod *method, MonoError *error);
 
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 void
 mono_dllmap_insert_internal (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc);
 

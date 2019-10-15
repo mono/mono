@@ -107,7 +107,7 @@ mono_loader_init ()
 void
 mono_loader_cleanup (void)
 {
-#ifdef ENABLE_DLLMAP
+#ifndef DISABLE_DLLMAP
 	mono_global_dllmap_cleanup ();
 #endif
 	mono_cached_module_cleanup ();
