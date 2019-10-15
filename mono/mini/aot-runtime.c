@@ -4810,7 +4810,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		gboolean volatil = FALSE;
 		MonoMethodSignature *sig;
 
-		/* Same for CompareExchange<T> and Exchange<T> */
+		/* Same for CompareExchange<T> */
 		/* Same for Volatile.Read<T>/Write<T> */
 
 		if (method_index == 0xffffff
@@ -4827,15 +4827,6 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
 				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
 				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [3])
-				) ||
-			 (interlocked
-				&& !strcmp (method->name, "Exchange_T")
-				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count
-				//FIXME && sig->param_count == 3
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
 				) ||
 			 (!interlocked
 				&& (volatil = !strcmp (klass_name, "Volatile"))

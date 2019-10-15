@@ -107,10 +107,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double Exchange (ref double location1, double value);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[return: NotNullIfNotNull("location1")]
-		extern static void Exchange_T<T> (ref T location1, ref T value, ref T result) where T : class?;
-
 		[return: NotNullIfNotNull("location1")]
 		public static T Exchange<T> (ref T location1, T value) where T : class?
 		{
@@ -121,7 +117,8 @@ namespace System.Threading
 #pragma warning disable 8654 // null problems; is there another way?
 			T result = null;
 #pragma warning restore 8654
-			Exchange_T (ref location1, ref value, ref result);
+			// T : class so call the object overload.
+			Exchange (ref location1, ref value, ref result);
 			return result;
 		}
 
