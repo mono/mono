@@ -4810,7 +4810,6 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		gboolean volatil = FALSE;
 		MonoMethodSignature *sig;
 
-		/* Same for CompareExchange<T> */
 		/* Same for Volatile.Read<T>/Write<T> */
 
 		if (method_index == 0xffffff
@@ -4818,17 +4817,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			&& m_class_get_image (method->klass) == mono_defaults.corlib
 			&& !strcmp (klass_name_space, "System.Threading") &&
 
-			(((interlocked = !strcmp (klass_name, "Interlocked"))
-				&& !strcmp (method->name, "CompareExchange_T")
-				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count
-				//FIXME && sig->param_count == 4
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [3])
-				) ||
-			 (!interlocked
+			((!interlocked
 				&& (volatil = !strcmp (klass_name, "Volatile"))
 				&& !strcmp (method->name, "Read")
 				&& (sig = mono_method_signature_internal (method))
@@ -4838,7 +4827,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 				&& !strcmp (method->name, "Write")
 				&& (sig = mono_method_signature_internal (method))
 				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->params [1]))))
-				) {
+			) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			gpointer iter = NULL;

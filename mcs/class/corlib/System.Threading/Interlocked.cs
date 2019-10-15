@@ -140,7 +140,8 @@ namespace System.Threading
 			// This is not entirely convincing due to lack of volatile.
 			//
 			T result = null;
-			CompareExchange_T (ref location1, ref value, ref comparand, ref result);
+			// T : class so call the object overload.
+			CompareExchange (ref location1, ref value, ref comparand, ref result);
 			return result;
 		}
 
