@@ -59,8 +59,8 @@ enum {
 };
 #undef OPDEF
 
-#define IS_IN(t) ((t->attrs & PARAM_ATTRIBUTE_IN) || !(t->attrs & PARAM_ATTRIBUTE_OUT))
-#define IS_OUT(t) ((t->attrs & PARAM_ATTRIBUTE_OUT) || !(t->attrs & PARAM_ATTRIBUTE_IN))
+#define IS_IN (t) ((t->attrs & PARAM_ATTRIBUTE_IN) || !(t->attrs & PARAM_ATTRIBUTE_OUT))
+#define IS_OUT (t) ((t->attrs & PARAM_ATTRIBUTE_OUT) || !(t->attrs & PARAM_ATTRIBUTE_IN))
 
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
@@ -5120,7 +5120,7 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 {
 	MonoMethodBuilder *mb = m->mb;
 	MonoType *int_type = mono_get_int_type ();
-	MonoType *boolean_type = m_class_get_byval_arg (mono_defaults.boolean_class);	
+	MonoType *boolean_type = m_class_get_byval_arg (mono_defaults.boolean_class);
 
 	switch (action){
 	case MARSHAL_ACTION_CONV_IN: {
@@ -5148,7 +5148,7 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (t->byref) {
 			int old_handle_value_slot = mono_mb_add_local (mb, int_type);
 
-			if (!IS_IN(t)) {
+			if (!IS_IN (t)) {
 				mono_mb_emit_icon (mb, 0);
 				mono_mb_emit_stloc (mb, conv_arg);
 			} else {
@@ -5200,7 +5200,7 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		if (t->byref){
 			/* If there was SafeHandle on input we have to release the reference to it */
-			if (IS_IN(t)) {
+			if (IS_IN (t)) {
 				mono_mb_emit_ldloc (mb, dar_release_slot);
 				label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
 				mono_mb_emit_ldarg (mb, argnum);
@@ -5209,15 +5209,15 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_patch_branch (mb, label_next);
 			}
 
-			if (IS_OUT(t)) {
-				ERROR_DECL (error);
+			if (IS_OUT (t)) {
+				ERROR_DECL (local_error);
 				MonoMethod *ctor;
 			
 				/*
 				 * If the SafeHandle was marshalled on input we can skip the marshalling on
 				 * output if the handle value is identical.
 				 */
-				if (IS_IN(t)) {
+				if (IS_IN (t)) {
 					int old_handle_value_slot = dar_release_slot + 1;
 					mono_mb_emit_ldloc (mb, old_handle_value_slot);
 					mono_mb_emit_ldloc (mb, conv_arg);
@@ -5231,10 +5231,10 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				 * leak the handle. We should move the allocation of the SafeHandle to the
 				 * input marshalling code to prevent that.
 				 */
-				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
-				if (ctor == NULL || !is_ok (error)){
+				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, local_error);
+				if (ctor == NULL || !is_ok (local_error)){
 					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
-					mono_error_cleanup (error);
+					mono_error_cleanup (local_error);
 					break;
 				}
 
@@ -5250,7 +5250,7 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_ldloc (mb, conv_arg);
 				mono_mb_emit_byte (mb, CEE_STIND_I);
 
-				if (IS_IN(t)) {
+				if (IS_IN (t)) {
 					mono_mb_patch_branch (mb, label_next);
 				}
 			}
