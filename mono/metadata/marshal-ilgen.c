@@ -59,8 +59,8 @@ enum {
 };
 #undef OPDEF
 
-#define IS_IN (t) ((t->attrs & PARAM_ATTRIBUTE_IN) || !(t->attrs & PARAM_ATTRIBUTE_OUT))
-#define IS_OUT (t) ((t->attrs & PARAM_ATTRIBUTE_OUT) || !(t->attrs & PARAM_ATTRIBUTE_IN))
+#define IS_IN(t) ((t->attrs & PARAM_ATTRIBUTE_IN) || !(t->attrs & PARAM_ATTRIBUTE_OUT))
+#define IS_OUT(t) ((t->attrs & PARAM_ATTRIBUTE_OUT) || !(t->attrs & PARAM_ATTRIBUTE_IN))
 
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
