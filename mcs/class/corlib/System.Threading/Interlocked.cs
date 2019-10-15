@@ -128,6 +128,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		[Intrinsic]
 		public static T CompareExchange<T> (ref T location1, T value, T comparand) where T : class
 		{
 			// Besides avoiding coop handles for efficiency,
@@ -141,7 +142,7 @@ namespace System.Threading
 			//
 			T result = null;
 			// T : class so call the object overload.
-			CompareExchange (ref location1, ref value, ref comparand, ref result);
+			CompareExchange (ref Unsafe.As<T, object> (ref location1), ref Unsafe.As<T, object>(ref value), ref Unsafe.As<T, object>(ref comparand), ref Unsafe.As<T, object>(ref result));
 			return result;
 		}
 
@@ -158,6 +159,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		[Intrinsic]
 		public static T Exchange<T> (ref T location1, T value) where T : class
 		{
 			// See CompareExchange(T) for comments.
@@ -166,7 +168,7 @@ namespace System.Threading
 			//
 			T result = null;
 			// T : class so call the object overload.
-			Exchange (ref location1, ref value, ref result);
+			Exchange (ref Unsafe.As<T, object>(ref location1), ref Unsafe.As<T, object>(ref value), ref Unsafe.As<T, object>(ref result));
 			return result;
 		}
 

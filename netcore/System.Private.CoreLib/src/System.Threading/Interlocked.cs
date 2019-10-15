@@ -91,7 +91,7 @@ namespace System.Threading
 			T result = null;
 #pragma warning restore 8654
 			// T : class so call the object overload.
-			CompareExchange (ref location1, ref value, ref comparand, ref result);
+			CompareExchange (ref Unsafe.As<T, object?> (ref location1), ref Unsafe.As<T, object?>(ref value), ref Unsafe.As<T, object?>(ref comparand), ref Unsafe.As<T, object?>(ref result));
 			return result;
 		}
 
@@ -105,6 +105,7 @@ namespace System.Threading
 		public extern static double Exchange (ref double location1, double value);
 
 		[return: NotNullIfNotNull("location1")]
+		[Intrinsic]
 		public static T Exchange<T> (ref T location1, T value) where T : class?
 		{
 			// See CompareExchange(T) for comments.
@@ -115,7 +116,7 @@ namespace System.Threading
 			T result = null;
 #pragma warning restore 8654
 			// T : class so call the object overload.
-			Exchange (ref location1, ref value, ref result);
+			Exchange (ref Unsafe.As<T,object?>(ref location1), ref Unsafe.As<T, object?>(ref value), ref Unsafe.As<T, object?>(ref result));
 			return result;
 		}
 
