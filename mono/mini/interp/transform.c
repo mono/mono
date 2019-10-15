@@ -6511,6 +6511,8 @@ retry:
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
 						replace_op = MINT_STLOC_NP_I4;
+					else if (mt == MINT_TYPE_I8)
+						replace_op = MINT_STLOC_NP_I8;
 					else if (mt == MINT_TYPE_O || mt == MINT_TYPE_P)
 						replace_op = MINT_STLOC_NP_O;
 					if (replace_op) {
