@@ -1221,6 +1221,8 @@ fi
 
 AC_SUBST(CXXFLAGS_COMMON)
 
+enable_cxx=yes
+
 if test "x$enable_cxx" = "xyes"; then
 
 	CXX_ADD_CFLAGS=" -xc++ $CXXFLAGS_COMMON "
