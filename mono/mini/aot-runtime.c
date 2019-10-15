@@ -4810,55 +4810,6 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		gboolean volatil = FALSE;
 		MonoMethodSignature *sig;
 
-		/* Same for Volatile.Read<T>/Write<T> */
-
-		if (method_index == 0xffffff
-			&& method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE
-			&& m_class_get_image (method->klass) == mono_defaults.corlib
-			&& !strcmp (klass_name_space, "System.Threading") &&
-
-			((!interlocked
-				&& (volatil = !strcmp (klass_name, "Volatile"))
-				&& !strcmp (method->name, "Read")
-				&& (sig = mono_method_signature_internal (method))
-				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->ret))
-				) ||
-			 (volatil
-				&& !strcmp (method->name, "Write")
-				&& (sig = mono_method_signature_internal (method))
-				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->params [1]))))
-			) {
-			MonoMethod *m;
-			MonoGenericContext ctx;
-			gpointer iter = NULL;
-
-			while ((m = mono_class_get_methods (method->klass, &iter))) {
-				if (mono_method_signature_internal (m)->generic_param_count && !strcmp (m->name, method->name))
-					break;
-			}
-			g_assert (m);
-
-			memset (&ctx, 0, sizeof (ctx));
-			MonoType *args [ ] = { mono_get_object_type () };
-			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
-
-			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
-			if (!m)
-				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
-
-			/* Avoid recursion */
-			if (method == m)
-				return NULL;
-
-			/* 
-			 * Get the code for the <object> instantiation which should be emitted into
-			 * the mscorlib aot image by the AOT compiler.
-			 */
-			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
-			mono_error_cleanup (inner_error);
-			if (code)
-				return code;
-		}
 
 		/* For ARRAY_ACCESSOR wrappers with reference types, use the <object> instantiation saved in corlib */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_OTHER) {
