@@ -6,6 +6,7 @@ jobName = env.JOB_NAME.split('/').first()
 properties([/* compressBuildLog() */])
 
 parallel (
+/*
     "Android Darwin (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
@@ -52,6 +53,21 @@ parallel (
         throttle(['provisions-mac-toolchain']) {
             node ("xcode11") {
                 archive ("mac", "release", "Darwin", "", "", "", "xcode11")
+            }
+        }
+    },
+*/
+    "iOS (Xcode 11.2 beta2)": {
+        throttle(['provisions-ios-toolchain']) {
+            node ("xcode112b2") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode112b2")
+            }
+        }
+    },
+    "Mac (Xcode 11.2 beta2)": {
+        throttle(['provisions-mac-toolchain']) {
+            node ("xcode112b2") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode112b2")
             }
         }
     },
