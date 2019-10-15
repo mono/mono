@@ -59,6 +59,9 @@ enum {
 };
 #undef OPDEF
 
+#define IS_IN(t) ((t->attrs & PARAM_ATTRIBUTE_IN) || !(t->attrs & PARAM_ATTRIBUTE_OUT))
+#define IS_OUT(t) ((t->attrs & PARAM_ATTRIBUTE_OUT) || !(t->attrs & PARAM_ATTRIBUTE_IN))
+
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, "System.Runtime.InteropServices", "ICustomMarshaler");
@@ -5117,7 +5120,7 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 {
 	MonoMethodBuilder *mb = m->mb;
 	MonoType *int_type = mono_get_int_type ();
-	MonoType *boolean_type = m_class_get_byval_arg (mono_defaults.boolean_class);
+	MonoType *boolean_type = m_class_get_byval_arg (mono_defaults.boolean_class);	
 
 	switch (action){
 	case MARSHAL_ACTION_CONV_IN: {
@@ -5134,16 +5137,6 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_exception (mb, "ArgumentNullException", NULL);
 		
 		mono_mb_patch_branch (mb, pos);
-		if (t->byref){
-			/*
-			 * My tests in show that ref SafeHandles are not really
-			 * passed as ref objects.  Instead a NULL is passed as the
-			 * value of the ref
-			 */
-			mono_mb_emit_icon (mb, 0);
-			mono_mb_emit_stloc (mb, conv_arg);
-			break;
-		} 
 
 		/* Create local to hold the ref parameter to DangerousAddRef */
 		dar_release_slot = mono_mb_add_local (mb, boolean_type);
@@ -5152,16 +5145,40 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_icon (mb, 0);
 		mono_mb_emit_stloc (mb, dar_release_slot);
 
-		/* safehandle.DangerousAddRef (ref release) */
-		mono_mb_emit_ldarg (mb, argnum);
-		mono_mb_emit_ldloc_addr (mb, dar_release_slot);
-		mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+		if (t->byref) {
+			if (!IS_IN(t)) {
+				mono_mb_emit_icon (mb, 0);
+				mono_mb_emit_stloc (mb, conv_arg);
+			} else {
+				int old_handle_value_slot = mono_mb_add_local (mb, int_type);
+				
+				/* safehandle.DangerousAddRef (ref release) */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+				mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
 
-		/* Pull the handle field from SafeHandle */
-		mono_mb_emit_ldarg (mb, argnum);
-		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_stloc (mb, conv_arg);
+				/* Pull the handle field from SafeHandle */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_byte (mb, CEE_DUP);
+				mono_mb_emit_stloc (mb, conv_arg);
+				mono_mb_emit_stloc (mb, old_handle_value_slot);
+			}
+		} else {
+			/* safehandle.DangerousAddRef (ref release) */
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+			mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+
+			/* Pull the handle field from SafeHandle */
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
+			mono_mb_emit_stloc (mb, conv_arg);
+		}
 
 		break;
 	}
@@ -5185,32 +5202,58 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			ERROR_DECL (error);
 			MonoMethod *ctor;
 			
-			/*
-			 * My tests indicate that ref SafeHandles parameters are not actually
-			 * passed by ref, but instead a new Handle is created regardless of
-			 * whether a change happens in the unmanaged side.
-			 *
-			 * Also, the Handle is created before calling into unmanaged code,
-			 * but we do not support that mechanism (getting to the original
-			 * handle) and it makes no difference where we create this
-			 */
-			ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
-			if (ctor == NULL || !is_ok (error)){
-				mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
-				mono_error_cleanup (error);
-				break;
+			/* If there was SafeHandle on input we have to release the reference to it */
+			if (IS_IN(t)) {
+				mono_mb_emit_ldloc (mb, dar_release_slot);
+				label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_managed_call (mb, sh_dangerous_release, NULL);
+				mono_mb_patch_branch (mb, label_next);
 			}
-			/* refval = new SafeHandleDerived ()*/
-			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
-			mono_mb_emit_byte (mb, CEE_STIND_REF);
 
-			/* refval.handle = returned_handle */
-			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_byte (mb, CEE_LDIND_REF);
-			mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
-			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_byte (mb, CEE_STIND_I);
+			if (IS_OUT(t)) {
+				/* If the SafeHandle was marshalled on input we can skip the marshalling on
+				 * output if the handle value is identical.
+				 */
+				if (IS_IN(t)) {
+					int old_handle_value_slot = dar_release_slot + 1;
+					mono_mb_emit_ldloc (mb, old_handle_value_slot);
+					mono_mb_emit_ldloc (mb, conv_arg);
+					label_next = mono_mb_emit_branch (mb, CEE_BEQ);
+				}
+
+				/*
+				 * My tests indicate that ref SafeHandles parameters are not actually
+				 * passed by ref, but instead a new Handle is created regardless of
+				 * whether a change happens in the unmanaged side.
+				 *
+				 * Also, the Handle is created before calling into unmanaged code,
+				 * but we do not support that mechanism (getting to the original
+				 * handle) and it makes no difference where we create this
+				 */
+				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
+				if (ctor == NULL || !is_ok (error)){
+					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+					mono_error_cleanup (error);
+					break;
+				}
+				/* refval = new SafeHandleDerived ()*/
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+				mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+				/* refval.handle = returned_handle */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+				mono_mb_emit_ldloc (mb, conv_arg);
+				mono_mb_emit_byte (mb, CEE_STIND_I);
+
+				if (IS_IN(t)) {
+					mono_mb_patch_branch (mb, label_next);
+				}
+			}
 		} else {
 			mono_mb_emit_ldloc (mb, dar_release_slot);
 			label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
