@@ -75,10 +75,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double CompareExchange (ref double location1, double value, double comparand);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[return: NotNullIfNotNull("location1")]
-		extern static void CompareExchange_T<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class?;
-
 		[return: NotNullIfNotNull("location1")]
 		public static T CompareExchange<T> (ref T location1, T value, T comparand) where T : class?
 		{
@@ -94,7 +90,8 @@ namespace System.Threading
 #pragma warning disable 8654 // null problems; is there another way?
 			T result = null;
 #pragma warning restore 8654
-			CompareExchange_T (ref location1, ref value, ref comparand, ref result);
+			// T : class so call the object overload.
+			CompareExchange (ref location1, ref value, ref comparand, ref result);
 			return result;
 		}
 
