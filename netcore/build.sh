@@ -7,6 +7,12 @@ set -u
 # Prevents hidden errors caused by missing error code propagation.
 set -e
 
+# Handle being in the "wrong" directory
+cd "${BASH_SOURCE%/*}/"
+
+# Include VSTS logging helpers
+. ../eng/common/pipeline-logging-functions.sh
+
 usage()
 {
   echo "Common settings:"
