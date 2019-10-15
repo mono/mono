@@ -27,6 +27,7 @@ usage()
   echo "  --llvm                     Enable LLVM support"
   echo "  --skipnative               Do not build runtime"
   echo "  --skipmscorlib             Do not build System.Private.CoreLib"
+  echo "  --ci                       Enable Azure DevOps telemetry decoration"
   echo ""
 
   echo "Command line arguments starting with '/p:' are passed through to MSBuild."
@@ -42,7 +43,7 @@ skipmscorlib=false
 skipnative=false
 llvm=false
 autogen_params=''
-ci=true
+ci=false
 
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
@@ -73,6 +74,9 @@ while [[ $# > 0 ]]; do
       ;;
     -llvm)
       llvm=true
+      ;;
+    -ci)
+      ci=true
       ;;
     -p:*|/p:*)
       properties="$properties $1"

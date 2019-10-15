@@ -88,9 +88,9 @@ stages:
         - bash: |
             cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./build.sh -c $(_BuildConfig) --llvm --ci
             else
-              ./build.sh -c $(_BuildConfig)
+              ./build.sh -c $(_BuildConfig) --ci
             fi
           displayName: 'Build (Make)'
 
@@ -168,9 +168,9 @@ stages:
         - bash: |
             cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./build.sh -c $(_BuildConfig) --llvm --ci
             else
-              ./build.sh -c $(_BuildConfig)
+              ./build.sh -c $(_BuildConfig) --ci
             fi
           displayName: 'Build (Make)'
 
