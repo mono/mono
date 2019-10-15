@@ -5701,7 +5701,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			}
 		}
 
-		/* Same for CompareExchange<T>/Exchange<T> */
+		/* Same for CompareExchange<T> */
 		{
 			MonoGenericContext ctx;
 			MonoType *args [16];
@@ -5711,7 +5711,7 @@ add_generic_instances (MonoAotCompile *acfg)
 
 			while ((m = mono_class_get_methods (interlocked_klass, &iter))) {
 				if ((m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && m->is_generic &&
-					(!strcmp (m->name, "CompareExchange_T") || !strcmp (m->name, "Exchange_T"))) {
+				    (!strcmp (m->name, "CompareExchange_T"))) {
 					ERROR_DECL (error);
 					memset (&ctx, 0, sizeof (ctx));
 					args [0] = object_type;
