@@ -5146,33 +5146,12 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_stloc (mb, dar_release_slot);
 
 		if (t->byref) {
+			int old_handle_value_slot = mono_mb_add_local (mb, int_type);
+
 			if (!IS_IN(t)) {
-				ERROR_DECL (error);
-				MonoMethod *ctor;
-			
 				mono_mb_emit_icon (mb, 0);
 				mono_mb_emit_stloc (mb, conv_arg);
-
-				/*
-				 * Create an empty SafeHandle (of correct derived type) here
-				 * to ensure that any exception or out-of-memory situation
-				 * happens before marshalling the value back where we would
-				 * have no way of handling it.
-				 */
-				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
-				if (ctor == NULL || !is_ok (error)){
-					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
-					mono_error_cleanup (error);
-					break;
-				}
-
-				/* refval = new SafeHandleDerived ()*/
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
 			} else {
-				int old_handle_value_slot = mono_mb_add_local (mb, int_type);
-				
 				/* safehandle.DangerousAddRef (ref release) */
 				mono_mb_emit_ldarg (mb, argnum);
 				mono_mb_emit_byte (mb, CEE_LDIND_REF);
@@ -5231,6 +5210,9 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			}
 
 			if (IS_OUT(t)) {
+				ERROR_DECL (error);
+				MonoMethod *ctor;
+			
 				/*
 				 * If the SafeHandle was marshalled on input we can skip the marshalling on
 				 * output if the handle value is identical.
@@ -5241,6 +5223,25 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					mono_mb_emit_ldloc (mb, conv_arg);
 					label_next = mono_mb_emit_branch (mb, CEE_BEQ);
 				}
+
+				/*
+				 * Create an empty SafeHandle (of correct derived type).
+				 * 
+				 * FIXME: If an out-of-memory situation or exception happens here we will
+				 * leak the handle. We should move the allocation of the SafeHandle to the
+				 * input marshalling code to prevent that.
+				 */
+				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
+				if (ctor == NULL || !is_ok (error)){
+					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+					mono_error_cleanup (error);
+					break;
+				}
+
+				/* refval = new SafeHandleDerived ()*/
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+				mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 				/* refval.handle = returned_handle */
 				mono_mb_emit_ldarg (mb, argnum);
