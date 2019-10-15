@@ -5147,8 +5147,29 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		if (t->byref) {
 			if (!IS_IN(t)) {
+				ERROR_DECL (error);
+				MonoMethod *ctor;
+			
 				mono_mb_emit_icon (mb, 0);
 				mono_mb_emit_stloc (mb, conv_arg);
+
+				/*
+				 * Create an empty SafeHandle (of correct derived type) here
+				 * to ensure that any exception or out-of-memory situation
+				 * happens before marshalling the value back where we would
+				 * have no way of handling it.
+				 */
+				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
+				if (ctor == NULL || !is_ok (error)){
+					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+					mono_error_cleanup (error);
+					break;
+				}
+
+				/* refval = new SafeHandleDerived ()*/
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+				mono_mb_emit_byte (mb, CEE_STIND_REF);
 			} else {
 				int old_handle_value_slot = mono_mb_add_local (mb, int_type);
 				
@@ -5199,9 +5220,6 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			init_safe_handle ();
 
 		if (t->byref){
-			ERROR_DECL (error);
-			MonoMethod *ctor;
-			
 			/* If there was SafeHandle on input we have to release the reference to it */
 			if (IS_IN(t)) {
 				mono_mb_emit_ldloc (mb, dar_release_slot);
@@ -5213,7 +5231,8 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			}
 
 			if (IS_OUT(t)) {
-				/* If the SafeHandle was marshalled on input we can skip the marshalling on
+				/*
+				 * If the SafeHandle was marshalled on input we can skip the marshalling on
 				 * output if the handle value is identical.
 				 */
 				if (IS_IN(t)) {
@@ -5222,26 +5241,6 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					mono_mb_emit_ldloc (mb, conv_arg);
 					label_next = mono_mb_emit_branch (mb, CEE_BEQ);
 				}
-
-				/*
-				 * My tests indicate that ref SafeHandles parameters are not actually
-				 * passed by ref, but instead a new Handle is created regardless of
-				 * whether a change happens in the unmanaged side.
-				 *
-				 * Also, the Handle is created before calling into unmanaged code,
-				 * but we do not support that mechanism (getting to the original
-				 * handle) and it makes no difference where we create this
-				 */
-				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
-				if (ctor == NULL || !is_ok (error)){
-					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
-					mono_error_cleanup (error);
-					break;
-				}
-				/* refval = new SafeHandleDerived ()*/
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 				/* refval.handle = returned_handle */
 				mono_mb_emit_ldarg (mb, argnum);
