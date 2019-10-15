@@ -16,6 +16,7 @@
 typedef struct _MonoLoadedImages MonoLoadedImages;
 typedef struct _MonoAssemblyLoadContext MonoAssemblyLoadContext;
 
+#ifndef DISABLE_DLLMAP
 typedef struct _MonoDllMap MonoDllMap;
 struct _MonoDllMap {
 	char *dll;
@@ -24,6 +25,7 @@ struct _MonoDllMap {
 	char *target_func;
 	MonoDllMap *next;
 };
+#endif
 
 #ifdef ENABLE_NETCORE
 /* FIXME: this probably belongs somewhere else */
