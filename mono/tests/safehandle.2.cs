@@ -50,7 +50,7 @@ public class Tests {
 	}
 	
 	[DllImport ("libtest")]
-	public static extern void mono_safe_handle_ref ([Out] ref MyHandle handle);
+	public static extern void mono_safe_handle_ref (ref MyHandle handle);
 
 	[DllImport ("libtest", EntryPoint="mono_safe_handle_ref")]
 	public static extern void mono_safe_handle_ref2 (ref MyHandleNoCtor handle);
