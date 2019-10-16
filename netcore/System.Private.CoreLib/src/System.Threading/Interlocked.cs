@@ -77,6 +77,7 @@ namespace System.Threading
 		public extern static double CompareExchange (ref double location1, double value, double comparand);
 
 		[return: NotNullIfNotNull("location1")]
+		[Intrinsic]
 		public static T CompareExchange<T> (ref T location1, T value, T comparand) where T : class?
 		{
 			// Besides avoiding coop handles for efficiency,
