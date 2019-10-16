@@ -1979,9 +1979,10 @@ usage (void)
 	exit (1);
 }
 
-static void
-monodis_thread_state_init (MonoThreadUnwindState *ctx)
+static gboolean
+monodis_thread_state_init_from_monoctx (MonoThreadUnwindState *ctx, MonoContext *mctx)
 {
+	return FALSE;
 }
 
 #define monodis_setup_async_callback          NULL

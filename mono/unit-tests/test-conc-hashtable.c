@@ -318,9 +318,10 @@ benchmark_glib (void)
 	g_hash_table_destroy (h);
 }
 
-static void
-monotest_thread_state_init (MonoThreadUnwindState *ctx)
+static gboolean
+monotest_thread_state_init_from_monoctx (MonoThreadUnwindState *ctx, MonoContext *mctx)
 {
+	return FALSE;
 }
 
 #ifdef __cplusplus

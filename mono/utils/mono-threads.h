@@ -189,7 +189,7 @@ typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
 	MonoNativeThreadHandle native_handle; /* Valid on mach, android and Windows */
-	int thread_state;
+	volatile int thread_state;
 
 	/*
 	 * Must not be changed directly, and especially not by other threads. Use
@@ -322,7 +322,7 @@ typedef struct {
 	macro (prefix, void, setup_async_callback, (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)) \
 	macro (prefix, gboolean, thread_state_init_from_sigctx, (MonoThreadUnwindState *state, void *sigctx)) \
 	macro (prefix, gboolean, thread_state_init_from_handle, (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx)) \
-	macro (prefix, void, thread_state_init, (MonoThreadUnwindState *tctx)) \
+	macro (prefix, gboolean, thread_state_init_from_monoctx, (MonoThreadUnwindState *tctx, MonoContext *mctx)) \
 
 typedef struct {
 	MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_DECL_CALLBACK, unused)

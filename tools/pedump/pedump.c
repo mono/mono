@@ -666,9 +666,10 @@ pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *request
        return NULL;
 }
 
-static void
-thread_state_init (MonoThreadUnwindState *ctx)
+static gboolean
+thread_state_init_from_monoctx (MonoThreadUnwindState *ctx, MonoContext *mctx)
 {
+	return FALSE;
 }
 
 #define VALID_ONLY_FLAG 0x08000000
@@ -722,7 +723,7 @@ main (int argc, char *argv [])
 	mono_counters_init ();
 	mono_tls_init_runtime_keys ();
 	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.thread_state_init = thread_state_init;
+	ticallbacks.thread_state_init_from_monoctx = thread_state_init_from_monoctx;
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif
