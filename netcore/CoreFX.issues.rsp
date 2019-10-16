@@ -1006,3 +1006,10 @@
 -nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt32
 
 -nomethod System.Tests.StringComparerTests.CreateCultureOptions_InvalidArguments_Throws
+
+# Requires NativeLibrary implementation
+-nomethod System.Net.Tests.HttpWebRequestTest.ServicePoint_GetValue_ExpectedResult
+
+# Broken SafeWaitHandle test on finalization
+# https://github.com/dotnet/corefx/issues/41635#issuecomment-542409299
+-nomethod SafeWaitHandleExtensionsTests.SafeWaitHandleExtensions_set
