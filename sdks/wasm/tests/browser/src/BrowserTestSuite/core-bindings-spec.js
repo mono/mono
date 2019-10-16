@@ -624,7 +624,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCtor1", []);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestCtor1", []);
       assert.isNotNull(map, "result is null.");
       assert.equal(map.size, 0, "result does not match size of 0.");
       assert.equal(map.constructor.name, "Map", "Result is not a Map type." )
@@ -633,56 +633,56 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCount1", [100]);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestCount1", [100]);
       assert.equal(map.size, 100, "result does not match size of 100.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should not change map count.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCount2", [100]);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestCount2", [100]);
       assert.equal(map.size, 100, "result does not match size of 100.  Count should not change.");
     }, DEFAULT_TIMEOUT); 
     it('BindingTestSuite: Should return Map not fixed by default.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestIsFixedSize", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestIsFixedSize", []);
       assert.isFalse(result, "Map not fixed by default.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should return Map not readonly by default.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestIsReadOnly", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestIsReadOnly", []);
       assert.isFalse(result, "Map not readonly by default.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should return Map not synchronized by default.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestIsSynchronized", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestIsSynchronized", []);
       assert.isFalse(result, "Map not synchronized by default.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should return Map key null.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestItem", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestItem", []);
       assert.isUndefined(result, "Map item not null or undefined.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should return Map keys should be equal (1) .', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestKeys1", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestKeys1", []);
       assert.equal(result["keysLength"], result["mapKeysLength"], "Map keys wrong size.");
     }, DEFAULT_TIMEOUT);  
     it('BindingTestSuite: Should return Map keys should be equal (2).', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestKeys2", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestKeys2", []);
       assert.equal(result["keysLength"], result["h1.Keys.Count"], "Map keys wrong size 6.");
       assert.equal(result["keysLength"], result["keysReference.Count"], "Map keys wrong size 6.");
     }, DEFAULT_TIMEOUT);  
@@ -690,7 +690,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestValues1", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestValues1", []);
       assert.equal(result["keysLength"], result["valuesLength"], "Map keys/values wrong size.");
       assert.equal(result["valuesLength"], result["mapValuesCount"], "Map values wrong size.");
     }, DEFAULT_TIMEOUT);  
@@ -698,7 +698,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestValues2", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestValues2", []);
       assert.equal(result["keysLength"], result["valuesLength"], "Map keys/values wrong size.");
       assert.equal(result["valuesLength"], result["h1.Values.Count"], "Map values and count wrong size.");
       assert.equal(result["valuesLength"], result["valuesReference.Count"], "Map values and reference count wrong size.");
@@ -707,7 +707,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestAddNullKey", []);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestAddNullKey", []);
       assert.isNotNull(map, "result is null.");
       assert.isNotNull(map[null], "result should not have a value.");
       assert.isNotNull(map[undefined], "result should not have a value.");
@@ -718,7 +718,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestAddDuplicateKey", []);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestAddDuplicateKey", []);
       assert.isNotNull(map, "result is null.");
       assert.isNotNull(map["a"], "result should not have a value.");
       assert.equal(map.get("a"), 2, "result value for Map.get key is not valid.");
@@ -728,7 +728,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestClear", []);
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestClear", []);
       assert.isNotNull(map, "result is null.");
       assert.equal(map.size, 0, "result size should be 0.");
       
@@ -737,7 +737,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestGetEnumerator", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestGetEnumerator", []);
       assert.isUndefined(result, "Error enumerating over Map.  " + result);
       
     }, DEFAULT_TIMEOUT);  
@@ -745,7 +745,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestEnumerator", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestEnumerator", []);
       assert.isTrue(result, "Result not valid.");
       
     }, DEFAULT_TIMEOUT);  
@@ -753,7 +753,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestRemove", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestRemove", []);
       assert.equal(result.size, 2, "Result value not correct.");
       
     }, DEFAULT_TIMEOUT);  
@@ -761,7 +761,7 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.corebindingsspec.document;
 
-      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestContains", []);
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:MapTestContains", []);
       assert.isUndefined(result, "Error in Map contains.  " + result);
       
     }, DEFAULT_TIMEOUT);  

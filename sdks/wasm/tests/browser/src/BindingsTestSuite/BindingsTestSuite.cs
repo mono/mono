@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using WebAssembly;
 using WebAssembly.Core;
 
