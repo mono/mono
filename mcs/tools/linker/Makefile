@@ -23,6 +23,7 @@ TEST_CASES := \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs \
+	System/test-typeconverter.cs \
 	System.Core/test-plinq-01.cs
 
 ifdef INCLUDE_DISABLED
