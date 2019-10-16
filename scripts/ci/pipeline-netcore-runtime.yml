@@ -89,19 +89,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm --ci
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig) --ci
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -112,7 +111,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
@@ -170,19 +169,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm --ci
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig) --ci
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -193,7 +191,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
