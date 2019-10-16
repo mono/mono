@@ -24,7 +24,7 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 	# FIXME: Add more
 	skip=false
 	skip_step=""
-	if ! grep -q -v a/netcore pr-files.txt; then
+	if ! grep -q -v -e a/netcore -e a/scripts/ci/pipeline-netcore-runtime.yml pr-files.txt; then
 		skip_step="NETCORE"
 		skip=true
 	fi
