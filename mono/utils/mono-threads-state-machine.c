@@ -91,7 +91,7 @@ unwrap_thread_state (MonoThreadInfo* info,
 		     int *blk)
 {
 	MonoThreadStateMachine state;
-	state = info->thread_state;
+	state.raw = mono_atomic_load_i32 (&info->thread_state.raw);
 	/* read once from info and then read from state so we unpack
 	 * consistently */
 	*raw = state.raw;
