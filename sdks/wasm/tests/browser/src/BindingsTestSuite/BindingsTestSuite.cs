@@ -1,10 +1,4 @@
 using System;
-<<<<<<< .merge_file_YwEvV8
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-=======
->>>>>>> .merge_file_rUINYQ
 using WebAssembly;
 using WebAssembly.Core;
 
@@ -460,6 +454,7 @@ namespace BindingsTestSuite
                     return $"Map must not contain {i+1}";
             }            
             return null;
+        }
 
         public static object ArrayPop () 
         {
