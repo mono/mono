@@ -1246,10 +1246,7 @@ typedef union {
 //#define amd64_mov_reg_memindex_size(inst,reg,basereg,disp,indexreg,shift,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),(reg),(indexreg),(basereg)); x86_mov_reg_memindex((inst),((reg)&0x7),((basereg)&0x7),(disp),((indexreg)&0x7),(shift),(size) == 8 ? 4 : (size)); amd64_codegen_post(inst); } while (0)
 #define amd64_clear_reg_size(inst,reg,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_clear_reg((inst),((reg)&0x7)); amd64_codegen_post(inst); } while (0)
 //#define amd64_mov_reg_imm_size(inst,reg,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_mov_reg_imm((inst),((reg)&0x7),(imm)); amd64_codegen_post(inst); } while (0)
-
-// This is not used.
 #define amd64_mov_mem_imm_size(inst,mem,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_mov_mem_imm((inst),(mem),(imm),(size) == 8 ? 4 : (size)); amd64_codegen_post(inst); } while (0)
-
 //#define amd64_mov_membase_imm_size(inst,basereg,disp,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(basereg)); x86_mov_membase_imm((inst),((basereg)&0x7),(disp),(imm),(size) == 8 ? 4 : (size)); amd64_codegen_post(inst); } while (0)
 #define amd64_mov_memindex_imm_size(inst,basereg,disp,indexreg,shift,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,(indexreg),(basereg)); x86_mov_memindex_imm((inst),((basereg)&0x7),(disp),((indexreg)&0x7),(shift),(imm),(size) == 8 ? 4 : (size)); amd64_codegen_post(inst); } while (0)
 #define amd64_lea_mem_size(inst,reg,mem,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_lea_mem((inst),((reg)&0x7),(mem)); amd64_codegen_post(inst); } while (0)
@@ -1444,10 +1441,7 @@ typedef union {
 #define amd64_mov_reg_memindex(inst,reg,basereg,disp,indexreg,shift,size) amd64_mov_reg_memindex_size(inst,reg,basereg,disp,indexreg,shift,size)
 #define amd64_clear_reg(inst,reg) amd64_clear_reg_size(inst,reg,8)
 //#define amd64_mov_reg_imm(inst,reg,imm) amd64_mov_reg_imm_size(inst,reg,imm,8)
-
-// This is not used.
 #define amd64_mov_mem_imm(inst,mem,imm,size) amd64_mov_mem_imm_size(inst,mem,imm,size)
-
 //#define amd64_mov_membase_imm(inst,basereg,disp,imm,size) amd64_mov_membase_imm_size(inst,basereg,disp,imm,size)
 #define amd64_mov_memindex_imm(inst,basereg,disp,indexreg,shift,imm,size) amd64_mov_memindex_imm_size(inst,basereg,disp,indexreg,shift,imm,size)
 #define amd64_lea_mem(inst,reg,mem) amd64_lea_mem_size(inst,reg,mem,8)

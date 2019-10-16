@@ -1125,7 +1125,6 @@ mono_x86_patch_inline (guchar* code, gpointer target)
 		x86_imm_emit32 ((inst), (imm));	\
 	} while (0)
 
-// This is not used.
 #define x86_mov_mem_imm(inst,mem,imm,size)	\
 	do {	\
 		if ((size) == 1) {	\
