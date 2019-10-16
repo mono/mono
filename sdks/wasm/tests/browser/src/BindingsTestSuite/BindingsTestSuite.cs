@@ -253,7 +253,7 @@ namespace BindingsTestSuite
             return x;
         }
 
-        private static Map MapTestCtor1 () 
+        public static Map MapTestCtor1 () 
         {
             return new Map();
         }
