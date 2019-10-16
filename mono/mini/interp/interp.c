@@ -4515,10 +4515,6 @@ common_vcall:
 			sp [-2].data.f = (double) sp [-2].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_CONV_U8_I4)
-			sp [-1].data.l = sp [-1].data.i & 0xffffffff;
-			++ip;
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U8_R4)
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_U8
 			sp [-1].data.l = mono_rconv_u8 (sp [-1].data.f_r4);

@@ -4061,7 +4061,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			case STACK_TYPE_I4:
 #if SIZEOF_VOID_P == 8
-				interp_add_ins (td, MINT_CONV_U8_I4);
+				interp_add_ins (td, MINT_CONV_I8_U4);
 #endif
 				break;
 			case STACK_TYPE_I8:
@@ -4244,7 +4244,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, MINT_LDC_I8);
 					WRITE64_INS (td->last_ins, 0, &ct);
 				} else {
-					interp_add_ins (td, MINT_CONV_U8_I4);
+					interp_add_ins (td, MINT_CONV_I8_U4);
 				}
 				break;
 			case STACK_TYPE_I8:
@@ -4257,7 +4257,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			case STACK_TYPE_MP:
 #if SIZEOF_VOID_P == 4
-				interp_add_ins (td, MINT_CONV_U8_I4);
+				interp_add_ins (td, MINT_CONV_I8_U4);
 #endif
 				break;
 			default:
