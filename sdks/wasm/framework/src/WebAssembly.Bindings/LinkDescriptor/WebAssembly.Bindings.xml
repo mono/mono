@@ -76,6 +76,9 @@
         <type fullname="WebAssembly.Core.Function" >
             <method signature="System.Void .ctor(System.IntPtr)" />
         </type>
+        <type fullname="WebAssembly.Core.Map" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>        
     </assembly>
 
 
