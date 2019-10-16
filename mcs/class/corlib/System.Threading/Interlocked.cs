@@ -123,11 +123,6 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void CompareExchange_T<T> (ref T location1, ref T value, ref T comparand, ref T result) where T : class;
-
-		[ComVisible (false)]
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		[Intrinsic]
 		public static T CompareExchange<T> (ref T location1, T value, T comparand) where T : class
 		{
