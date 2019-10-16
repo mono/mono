@@ -6306,6 +6306,7 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 		for (int i = 0; i < size; i++)
 			*ip++ = ins->data [i];
 	}
+	mono_interp_stats.emitted_instructions++;
 	return ip;
 }
 
@@ -6527,8 +6528,9 @@ retry:
 						interp_clear_ins (td, prev_ins);
 						ins->opcode = replace_op;
 						ins->data [0] = stored_local;
-						mono_interp_stats.stloc_nps++;
 						local_ref_count [loaded_local]--;
+						mono_interp_stats.stloc_nps++;
+						mono_interp_stats.killed_instructions++;
 					}
 				}
 			} else if (locals [loaded_local].type == STACK_VALUE_LOCAL) {
@@ -6598,6 +6600,7 @@ retry:
 						if (vtsize)
 							ins->data [2] = vtsize;
 						mono_interp_stats.movlocs++;
+						mono_interp_stats.killed_instructions++;
 					}
 				} else {
 					locals [dest_local].type = STACK_VALUE_NONE;
