@@ -18,10 +18,10 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/utils/json.h>
 
-#define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.4"
+#define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.5"
 
 typedef enum {
-	MonoSummaryNone,
+	MonoSummaryNone = 0,
 	MonoSummarySetup,
 	MonoSummarySuspendHandshake,
 	MonoSummaryUnmanagedStacks,
@@ -51,8 +51,6 @@ typedef struct {
 	gint handle;
 	gint64 tag;
 } MonoStateMem;
-
-MONO_BEGIN_DECLS
 
 // Logging
 gboolean
@@ -119,6 +117,5 @@ mono_state_alloc_mem (MonoStateMem *mem, long tag, size_t size);
 void
 mono_state_free_mem (MonoStateMem *mem);
 
-MONO_END_DECLS
 #endif // DISABLE_CRASH_REPORTING
 #endif // MONO_UTILS_NATIVE_STATE

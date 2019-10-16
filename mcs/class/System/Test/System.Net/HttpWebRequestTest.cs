@@ -1399,6 +1399,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1412,6 +1413,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		[Category("MultiThreaded")]
 		[Category ("RequiresBSDSockets")] // Requires some test refactoring to assert that a PlatformNotSupportedException is thrown, so don't bother (there's plenty of other tests asserting the PlatformNotSupported exceptions).
 		public void TestTimeoutWithEndpointThatDoesntExistThrowsConnectFailureBeforeTimeout ()
 		{
@@ -1667,6 +1669,7 @@ namespace MonoTests.System.Net
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -3229,6 +3232,54 @@ namespace MonoTests.System.Net
 			
 			var gr = wr.BeginGetResponse (delegate { }, null);
 			Assert.AreEqual (true, gr.AsyncWaitHandle.WaitOne (5000), "#1");
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void Read_ErrorResponse_After_Abort ()
+		{
+			const string message = "Hello World!";
+			using (SocketResponder responder = new SocketResponder (out var ep, socket => {
+				var buffer = new byte [4096];
+				var bytesReceived = socket.Receive (buffer);
+				while (bytesReceived > 0) {
+					 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+					 // after sending the headers
+					Thread.Sleep (200);
+					if (socket.Available > 0) {
+						bytesReceived = socket.Receive (buffer);
+					} else {
+						bytesReceived = 0;
+					}
+				}
+				var sw = new StringWriter ();
+				sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+				sw.WriteLine ($"Content-Length: {message.Length}");
+				sw.WriteLine ();
+				sw.Write (message);
+				sw.Flush ();
+
+				return Encoding.UTF8.GetBytes (sw.ToString ());
+			})) {
+				string url = $"http://{ep}/test/";
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					req.Abort ();
+					var res = (HttpWebResponse)ex.Response;
+					Assert.IsNotNull (res, "#2");
+
+					using (var r = new StreamReader(res.GetResponseStream())) {
+						var body = r.ReadToEnd();
+						Assert.AreEqual (message, body, "#3");
+					}
+				}
+			}
 		}
 	}
 

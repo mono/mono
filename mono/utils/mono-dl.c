@@ -22,6 +22,11 @@
 #include <string.h>
 #include <glib.h>
 
+// Contains LIBC_SO definition
+#ifdef HAVE_GNU_LIB_NAMES_H
+#include <gnu/lib-names.h>
+#endif
+
 struct MonoDlFallbackHandler {
 	MonoDlFallbackLoad load_func;
 	MonoDlFallbackSymbol symbol_func;
@@ -131,17 +136,37 @@ get_dl_name_from_libtool (const char *libtool_file)
 	if (installed && strcmp (installed, "no") == 0) {
 		char *dir = g_path_get_dirname (libtool_file);
 		if (dlname)
-			line = g_strconcat (dir, G_DIR_SEPARATOR_S ".libs" G_DIR_SEPARATOR_S, dlname, NULL);
+			line = g_strconcat (dir, G_DIR_SEPARATOR_S ".libs" G_DIR_SEPARATOR_S, dlname, (const char*)NULL);
 		g_free (dir);
 	} else {
 		if (libdir && dlname)
-			line = g_strconcat (libdir, G_DIR_SEPARATOR_S, dlname, NULL);
+			line = g_strconcat (libdir, G_DIR_SEPARATOR_S, dlname, (const char*)NULL);
 	}
 	g_free (dlname);
 	g_free (libdir);
 	g_free (installed);
 	return line;
 }
+
+#ifdef ENABLE_NETCORE
+static const char *
+fix_libc_name (const char *name)
+{
+	if (name != NULL && strcmp (name, "libc") == 0) {
+		// Taken from CoreCLR: https://github.com/dotnet/coreclr/blob/6b0dab793260d36e35d66c82678c63046828d01b/src/pal/src/loader/module.cpp#L568-L576
+#if defined (HOST_DARWIN)
+		return "/usr/lib/libc.dylib";
+#elif defined (__FreeBSD__)
+		return "libc.so.7";
+#elif defined (LIBC_SO)
+		return LIBC_SO;
+#else
+		return "libc.so";
+#endif
+	}
+	return name;
+}
+#endif
 
 /**
  * mono_dl_open:
@@ -178,6 +203,10 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
 
+#ifdef ENABLE_NETCORE
+	name = fix_libc_name (name);
+#endif
+
 	// No GC safe transition because this is called early in main.c
 	lib = mono_dl_open_file (name, lflags);
 
@@ -213,7 +242,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 		ext = strrchr (name, '.');
 		if (ext && strcmp (ext, ".la") == 0)
 			suff = "";
-		lname = g_strconcat (name, suff, NULL);
+		lname = g_strconcat (name, suff, (const char*)NULL);
 		llname = get_dl_name_from_libtool (lname);
 		g_free (lname);
 		if (llname) {
@@ -229,7 +258,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			if (!lib && is_library_ar_archive (llname)) {
 				/* try common suffix */
 				char *llaixname;
-				llaixname = g_strconcat (llname, "(shr_64.o)", NULL);
+				llaixname = g_strconcat (llname, "(shr_64.o)", (const char*)NULL);
 				lib = mono_dl_open_file (llaixname, lflags);
 				/* XXX: try another suffix like (shr.o)? */
 				g_free (llaixname);
@@ -270,9 +299,10 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	} else {
 #if MONO_DL_NEED_USCORE
 		{
-			char *usname = g_malloc (strlen (name) + 2);
+			const size_t length = strlen (name);
+			char *usname = g_new (char, length + 2);
 			*usname = '_';
-			strcpy (usname + 1, name);
+			memcpy (usname + 1, name, length + 1);
 			sym = mono_dl_lookup_symbol (module, usname);
 			g_free (usname);
 		}
@@ -390,9 +420,9 @@ mono_dl_build_path (const char *directory, const char *name, void **iter)
 		suffix = "";
 
 	if (directory && *directory)
-		res = g_strconcat (directory, G_DIR_SEPARATOR_S, prefix, name, suffix, NULL);
+		res = g_strconcat (directory, G_DIR_SEPARATOR_S, prefix, name, suffix, (const char*)NULL);
 	else
-		res = g_strconcat (prefix, name, suffix, NULL);
+		res = g_strconcat (prefix, name, suffix, (const char*)NULL);
 	++iteration;
 	*iter = GUINT_TO_POINTER (iteration);
 	return res;

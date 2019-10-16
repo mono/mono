@@ -13,9 +13,10 @@
 
 #include "mini.h"
 #include "ir-emit.h"
-#include "mono/utils/bsearch.h"
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/reflection-internals.h>
+#include <mono/utils/mono-compiler.h>
+#include <mono/utils/bsearch.h>
 
 /*
 General notes on SIMD intrinsics
@@ -63,7 +64,7 @@ The advantage of this change is that it could have a _membase version and promot
 without a OP_LDADDR.
 */
 
-#if defined (MONO_ARCH_SIMD_INTRINSICS)
+#if defined (MONO_ARCH_SIMD_INTRINSICS) && !defined(ENABLE_NETCORE)
 
 #if defined (DISABLE_JIT)
 
@@ -606,7 +607,7 @@ mono_simd_intrinsics_init (void)
 	/*TODO log the supported flags*/
 }
 
-static inline gboolean
+static gboolean
 apply_vreg_first_block_interference (MonoCompile *cfg, MonoInst *ins, int reg, int max_vreg, char *vreg_flags)
 {
 	if (reg != -1 && reg <= max_vreg && vreg_flags [reg]) {
@@ -618,7 +619,7 @@ apply_vreg_first_block_interference (MonoCompile *cfg, MonoInst *ins, int reg, i
 	return FALSE;
 }
 
-static inline gboolean
+static gboolean
 apply_vreg_following_block_interference (MonoCompile *cfg, MonoInst *ins, int reg, MonoBasicBlock *bb, int max_vreg, char *vreg_flags, MonoBasicBlock **target_bb)
 {
 	if (reg == -1 || reg > max_vreg || !(vreg_flags [reg] & VREG_HAS_XZERO_BB0) || target_bb [reg] == bb)
@@ -1705,7 +1706,7 @@ simd_intrinsic_emit_shift (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mon
 	return ins;
 }
 
-static inline gboolean
+static gboolean
 mono_op_is_packed_compare (int op)
 {
 	return op >= OP_PCMPEQB && op <= OP_PCMPEQQ;

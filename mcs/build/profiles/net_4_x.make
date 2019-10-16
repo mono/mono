@@ -7,8 +7,6 @@ MCS = $(BOOTSTRAP_MCS)
 
 PLATFORMS = macos linux win32 unix
 
-# nuttzing!
-
 profile-check:
 	@:
 
@@ -21,7 +19,7 @@ XBUILD_VERSION = 4.0
 
 ENFORCE_LIBRARY_WARN_AS_ERROR = yes
 
-ifdef PLATFORM_MACOS
+ifeq ($(HOST_PLATFORM),macos)
 MONO_FEATURE_APPLETLS=1
 ENABLE_GSS=1
 endif

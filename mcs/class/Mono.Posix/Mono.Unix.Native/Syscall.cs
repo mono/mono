@@ -151,7 +151,8 @@ namespace Mono.Unix.Native {
 		O_ASYNC     = 0x00002000,
 		O_LARGEFILE = 0x00008000,
 		O_CLOEXEC   = 0x00080000,
-		O_PATH      = 0x00200000
+		O_PATH      = 0x00200000,
+		O_NOATIME   = 0x00040000
 	}
 	
 	[Map][Flags]
@@ -211,22 +212,27 @@ namespace Mono.Unix.Native {
 	[CLSCompliant (false)]
 	public enum FcntlCommand : int {
 		// Form /usr/include/bits/fcntl.h
-		F_DUPFD    =    0, // Duplicate file descriptor.
-		F_GETFD    =    1, // Get file descriptor flags.
-		F_SETFD    =    2, // Set file descriptor flags.
-		F_GETFL    =    3, // Get file status flags.
-		F_SETFL    =    4, // Set file status flags.
-		F_GETLK    =   12, // Get record locking info. [64]
-		F_SETLK    =   13, // Set record locking info (non-blocking). [64]
-		F_SETLKW   =   14, // Set record locking info (blocking). [64]
-		F_SETOWN   =    8, // Set owner of socket (receiver of SIGIO).
-		F_GETOWN   =    9, // Get owner of socket (receiver of SIGIO).
-		F_SETSIG   =   10, // Set number of signal to be sent.
-		F_GETSIG   =   11, // Get number of signal to be sent.
-		F_NOCACHE  =   48, // OSX: turn data caching off/on for this fd.
-		F_SETLEASE = 1024, // Set a lease.
-		F_GETLEASE = 1025, // Enquire what lease is active.
-		F_NOTIFY   = 1026, // Required notifications on a directory
+		F_DUPFD      =    0, // Duplicate file descriptor.
+		F_GETFD      =    1, // Get file descriptor flags.
+		F_SETFD      =    2, // Set file descriptor flags.
+		F_GETFL      =    3, // Get file status flags.
+		F_SETFL      =    4, // Set file status flags.
+		F_GETLK      =   12, // Get record locking info. [64]
+		F_SETLK      =   13, // Set record locking info (non-blocking). [64]
+		F_SETLKW     =   14, // Set record locking info (blocking). [64]
+		F_OFD_GETLK  =   36, // Get open file description locking info.
+		F_OFD_SETLK  =   37, // Set open file description locking info (non-blocking).
+		F_OFD_SETLKW =   38, // Set open file description locking info (blocking).
+		F_SETOWN     =    8, // Set owner of socket (receiver of SIGIO).
+		F_GETOWN     =    9, // Get owner of socket (receiver of SIGIO).
+		F_SETSIG     =   10, // Set number of signal to be sent.
+		F_GETSIG     =   11, // Get number of signal to be sent.
+		F_NOCACHE    =   48, // OSX: turn data caching off/on for this fd.
+		F_SETLEASE   = 1024, // Set a lease.
+		F_GETLEASE   = 1025, // Enquire what lease is active.
+		F_NOTIFY     = 1026, // Required notifications on a directory
+		F_ADD_SEALS  = 1033, // Add seals.
+		F_GET_SEALS  = 1034, // Get seals.
 	}
 
 	[Map]
@@ -235,6 +241,16 @@ namespace Mono.Unix.Native {
 		F_RDLCK = 0, // Read lock.
 		F_WRLCK = 1, // Write lock.
 		F_UNLCK = 2, // Remove lock.
+	}
+
+	[Flags][Map]
+	[CLSCompliant (false)]
+	public enum SealType : int {
+		F_SEAL_SEAL         = 0x0001, // prevent further seals from being set
+		F_SEAL_SHRINK       = 0x0002, // prevent file from shrinking
+		F_SEAL_GROW         = 0x0004, // prevent file from growing
+		F_SEAL_WRITE        = 0x0008, // prevent writes
+		F_SEAL_FUTURE_WRITE = 0x0010, // prevent future writes while mapped
 	}
 
 	[Map]
@@ -721,10 +737,32 @@ namespace Mono.Unix.Native {
 		MCL_FUTURE  = 0x2,	// Lock all additions to address
 	}
 
-	[Map][Flags]
+	// Use manually written To/From methods because NetBSD needs special treatment for MREMAP_MAYMOVE
+	// This has to be kept in sync with sys-mman.c
+	[Flags]
 	[CLSCompliant (false)]
 	public enum MremapFlags : ulong {
 		MREMAP_MAYMOVE = 0x1,
+	}
+
+	[Map][Flags]
+	[CLSCompliant (false)]
+	public enum MemfdFlags : uint {
+		MFD_CLOEXEC       = 0x00000001,
+		MFD_ALLOW_SEALING = 0x00000002,
+		MFD_HUGETLB       = 0x00000004,
+		MFD_HUGE_64KB     = 0x40000000,
+		MFD_HUGE_512KB    = 0x4c000000,
+		MFD_HUGE_1MB      = 0x50000000,
+		MFD_HUGE_2MB      = 0x54000000,
+		MFD_HUGE_8MB      = 0x5c000000,
+		MFD_HUGE_16MB     = 0x60000000,
+		MFD_HUGE_32MB     = 0x64000000,
+		MFD_HUGE_256MB    = 0x70000000,
+		MFD_HUGE_512MB    = 0x74000000,
+		MFD_HUGE_1GB      = 0x78000000,
+		MFD_HUGE_2GB      = 0x7c000000,
+		MFD_HUGE_16GB     = 0x88000000,
 	}
 
 	[Map]
@@ -3015,6 +3053,12 @@ namespace Mono.Unix.Native {
 			return fcntl (fd, FcntlCommand.F_NOTIFY, _arg);
 		}
 
+		public static int fcntl (int fd, FcntlCommand cmd, SealType arg)
+		{
+			int _arg = NativeConvert.FromSealType (arg);
+			return fcntl (fd, cmd, _arg);
+		}
+
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_fcntl_lock")]
 		public static extern int fcntl (int fd, FcntlCommand cmd, ref Flock @lock);
@@ -3851,6 +3895,19 @@ namespace Mono.Unix.Native {
 		public static extern int remap_file_pages (IntPtr start, ulong size,
 				MmapProts prot, long pgoff, MmapFlags flags);
 
+		// memfd_create(2)
+		//    int memfd_create(const char *name, unsigned int flags);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="memfd_create")]
+		private static extern int sys_memfd_create (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, uint flags);
+
+		public static int memfd_create (string name, MemfdFlags flags)
+		{
+			uint _flags = NativeConvert.FromMemfdFlags (flags);
+			return sys_memfd_create (name, _flags);
+		}
+
 		#endregion
 
 		#region <sys/poll.h> Declarations
@@ -4576,19 +4633,37 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int chown (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string path, uint owner, uint group);
+				string path, int owner, int group);
 
 		// fchown(2)
 		//    int fchown(int fd, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int fchown (int fd, uint owner, uint group);
+		public static extern int fchown (int fd, int owner, int group);
 
 		// lchown(2)
 		//    int lchown(const char *path, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int lchown (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string path, uint owner, uint group);
+				string path, int owner, int group);
+
+		#region UInt32 overloads for initial incorrect implementation
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int chown (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string path, uint owner, uint group);
+
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fchown (int fd, uint owner, uint group);
+
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int lchown (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string path, uint owner, uint group);
+		#endregion
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int chdir (
@@ -5161,13 +5236,28 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="fchownat")]
 		private static extern int sys_fchownat (int dirfd,
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string pathname, uint owner, uint group, int flags);
+				string pathname, int owner, int group, int flags);
 
+		public static int fchownat (int dirfd, string pathname, int owner, int group, AtFlags flags)
+		{
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_fchownat (dirfd, pathname, owner, group, _flags);
+		}
+
+		#region UInt32 overloads for initial incorrect implementation
+		[Obsolete("Use Int32 overload")]
+		[DllImport (LIBC, SetLastError=true, EntryPoint="fchownat")]
+		private static extern int sys_fchownat (int dirfd,
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string pathname, uint owner, uint group, int flags);
+
+		[Obsolete("Use Int32 overload")]
 		public static int fchownat (int dirfd, string pathname, uint owner, uint group, AtFlags flags)
 		{
 			int _flags = NativeConvert.FromAtFlags (flags);
 			return sys_fchownat (dirfd, pathname, owner, group, _flags);
 		}
+		#endregion
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="linkat")]
 		private static extern int sys_linkat (int olddirfd,

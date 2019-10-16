@@ -93,9 +93,7 @@
 #endif
 
 #include <fcntl.h>
-#ifndef HOST_WIN32
-#include <dlfcn.h>
-#endif
+#include <gmodule.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -429,7 +427,7 @@ mono_runtime_posix_install_handlers (void)
 
 	sigset_t signal_set;
 	sigemptyset (&signal_set);
-	if (mini_get_debug_options ()->handle_sigint) {
+	if (mini_debug_options.handle_sigint) {
 		add_signal_handler (SIGINT, mono_sigint_signal_handler, SA_RESTART);
 		sigaddset (&signal_set, SIGINT);
 	}
@@ -481,7 +479,7 @@ mono_runtime_install_handlers (void)
 void
 mono_runtime_cleanup_handlers (void)
 {
-	if (mini_get_debug_options ()->handle_sigint)
+	if (mini_debug_options.handle_sigint)
 		remove_signal_handler (SIGINT);
 
 	remove_signal_handler (SIGFPE);
@@ -579,7 +577,7 @@ clock_init (MonoProfilerSampleMode mode)
 	 * makes very little sense as we can only use nanosleep () to sleep on
 	 * real time.
 	 */
-#ifdef HAVE_CLOCK_NANOSLEEP
+#if defined(HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 		struct timespec ts = { 0 };
 
 		/*
@@ -619,7 +617,7 @@ clock_get_time_ns (void)
 static void
 clock_sleep_ns_abs (guint64 ns_abs)
 {
-#ifdef HAVE_CLOCK_NANOSLEEP
+#if defined(HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 	int ret;
 	struct timespec then;
 
@@ -689,12 +687,7 @@ sampling_thread_func (gpointer unused)
 
 	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	ERROR_DECL (error);
-
-	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
-	mono_error_assert_ok (error);
-	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
-	mono_error_assert_ok (error);
+	mono_thread_set_name_constant_ignore_error (thread, "Profiler Sampler", MonoSetThreadNameFlag_None);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
@@ -862,9 +855,9 @@ mono_runtime_setup_stat_profiler (void)
 
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
 
-	MonoError error;
-	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
-	mono_error_assert_ok (&error);
+	ERROR_DECL (error);
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	mono_error_assert_ok (error);
 
 	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
@@ -943,17 +936,17 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 
 	for (int i = 0; i < size; ++i) {
 		gpointer ip = array [i];
-		Dl_info info;
-		gboolean success = dladdr ((void*) ip, &info);
+		char sname [256], fname [256];
+		gboolean success = g_module_address ((void*)ip, fname, 256, NULL, sname, 256, NULL);
 		if (!success) {
 			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
-			g_async_safe_printf ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
+			g_async_safe_printf ("\t%p - %s : %s\n", ip, fname, sname);
 		}
 	}
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
-	if (!mini_get_debug_options ()->no_gdb_backtrace) {
+	if (!mini_debug_options.no_gdb_backtrace) {
 		/* From g_spawn_command_line_sync () in eglib */
 		pid_t pid;
 		int status;
@@ -1149,6 +1142,7 @@ mono_init_native_crash_info (void)
 {
 	gdb_path = g_find_program_in_path ("gdb");
 	lldb_path = g_find_program_in_path ("lldb");
+	mono_threads_summarize_init ();
 }
 
 void
@@ -1173,7 +1167,7 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, int commands, char*
 	g_async_safe_fprintf (commands, "attach %ld\n", (long) crashed_pid);
 	g_async_safe_fprintf (commands, "info threads\n");
 	g_async_safe_fprintf (commands, "thread apply all bt\n");
-	if (mini_get_debug_options ()->verbose_gdb) {
+	if (mini_debug_options.verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
 			g_async_safe_fprintf (commands, "info registers\n");
 			g_async_safe_fprintf (commands, "info frame\n");
@@ -1201,7 +1195,7 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, int commands, char
 	g_async_safe_fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
 	g_async_safe_fprintf (commands, "thread list\n");
 	g_async_safe_fprintf (commands, "thread backtrace all\n");
-	if (mini_get_debug_options ()->verbose_gdb) {
+	if (mini_debug_options.verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
 			g_async_safe_fprintf (commands, "reg read\n");
 			g_async_safe_fprintf (commands, "frame info\n");

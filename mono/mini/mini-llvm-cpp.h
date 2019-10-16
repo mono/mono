@@ -51,6 +51,9 @@ typedef enum {
 void
 mono_llvm_dump_value (LLVMValueRef value);
 
+void
+mono_llvm_dump_module (LLVMModuleRef module);
+
 LLVMValueRef
 mono_llvm_build_alloca (LLVMBuilderRef builder, LLVMTypeRef Ty, 
 						LLVMValueRef ArraySize,
@@ -88,6 +91,15 @@ mono_llvm_replace_uses_of (LLVMValueRef var, LLVMValueRef v);
 LLVMValueRef
 mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef addr, LLVMValueRef comparand, LLVMValueRef value);
 
+LLVMValueRef
+mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVMBasicBlockRef t, LLVMBasicBlockRef f, uint32_t t_weight, uint32_t f_weight);
+
+void
+mono_llvm_add_string_metadata (LLVMValueRef insref, const char* label, const char* text);
+
+void
+mono_llvm_set_implicit_branch (LLVMBuilderRef builder, LLVMValueRef branch);
+
 void
 mono_llvm_set_must_tailcall (LLVMValueRef call_ins);
 
@@ -96,12 +108,6 @@ mono_llvm_create_constant_data_array (const uint8_t *data, int len);
 
 void
 mono_llvm_set_is_constant (LLVMValueRef global_var);
-
-void
-mono_llvm_set_preserveall_cc (LLVMValueRef func);
-
-void
-mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
 void
 mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo);
@@ -160,10 +166,21 @@ void
 mono_llvm_di_builder_finalize (void *di_builder);
 
 void
+mono_llvm_set_fast_math (LLVMBuilderRef builder);
+
+void
 mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
 
 LLVMValueRef
 mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module);
+
+typedef struct {
+	const char* alias;
+	guint32 flag;
+} CpuFeatureAliasFlag;
+
+int
+mono_llvm_check_cpu_features (const CpuFeatureAliasFlag *features, int length);
 
 G_END_DECLS
 

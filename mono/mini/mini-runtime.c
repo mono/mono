@@ -125,6 +125,12 @@ int mini_verbose = 0;
  */
 gboolean mono_use_llvm = FALSE;
 
+gboolean mono_use_fast_math = FALSE;
+
+// Lists of whitelisted and blacklisted CPU features 
+MonoCPUFeatures mono_cpu_features_enabled = (MonoCPUFeatures)0;
+MonoCPUFeatures mono_cpu_features_disabled = (MonoCPUFeatures)0;
+
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
 
@@ -944,7 +950,6 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 	//This happens during AOT cuz the thread is never attached
 	if (!jit_tls)
 		return;
-	mono_arch_free_jit_tls_data (jit_tls);
 	mono_free_altstack (jit_tls);
 
 	g_free (jit_tls->first_lmf);
@@ -1218,7 +1223,6 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_SIGNATURE:
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT:
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
-	case MONO_PATCH_INFO_GET_TLS_TRAMP:
 		return hash | (gssize)ji->data.target;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL:
 		return hash | (gssize)ji->data.gsharedvt->method;
@@ -1266,6 +1270,7 @@ mono_patch_info_hash (gconstpointer data)
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
 		g_assert_not_reached ();
+	case MONO_PATCH_INFO_NONE:
 		return 0;
 	}
 }
@@ -1333,7 +1338,10 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig);
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+	case MONO_PATCH_INFO_NONE:
 		return 1;
+	default:
+		break;
 	}
 
 	return ji1->data.target == ji2->data.target;
@@ -1378,7 +1386,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_METHOD_JUMP:
 		target = mono_create_jump_trampoline (domain, patch_info->data.method, FALSE, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		break;
 	case MONO_PATCH_INFO_METHOD:
@@ -1387,7 +1395,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		} else {
 			/* get the trampoline to the method from the domain */
 			target = mono_create_jit_trampoline (domain, patch_info->data.method, error);
-			if (!mono_error_ok (error))
+			if (!is_ok (error))
 				return NULL;
 		}
 		break;
@@ -1520,13 +1528,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		mono_class_init_internal (handle_class);
 		mono_class_init_internal (mono_class_from_mono_type_internal ((MonoType *)handle));
 
 		target = mono_type_get_object_checked (domain, (MonoType *)handle, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 		break;
 	}
@@ -1567,7 +1575,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		}
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
-		target = mono_thread_interruption_request_flag ();
+		target = &mono_thread_interruption_request_flag;
 		break;
 	case MONO_PATCH_INFO_METHOD_RGCTX:
 		target = mini_method_get_rgctx (patch_info->data.method);
@@ -1642,9 +1650,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		target = mini_get_gsharedvt_wrapper (TRUE, NULL, patch_info->data.sig, NULL, -1, FALSE);
-		break;
-	case MONO_PATCH_INFO_GET_TLS_TRAMP: // FIXME replace with MONO_PATCH_INFO_JIT_ICALL?
-		target = (gpointer)mono_tls_get_tls_getter ((MonoTlsKey)patch_info->data.index);
 		break;
 	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT: {
 		target = (gpointer) &mono_profiler_state.gc_allocation_count;
@@ -2329,7 +2334,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 			method = info->d.synchronized_inner.method;
 			if (ctx) {
 				method = mono_class_inflate_generic_method_checked (method, ctx, error);
-				g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+				g_assert (is_ok (error)); /* FIXME don't swallow the error */
 			}
 		}
 	}
@@ -2402,7 +2407,7 @@ lookup_start:
 	if (!code) {
 		code = compile_special (method, target_domain, error);
 
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 	}
 
@@ -2413,7 +2418,7 @@ lookup_start:
 		}
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 	}
 
@@ -2438,7 +2443,7 @@ lookup_start:
 		code = mono_jit_compile_method_inner (method, target_domain, opt, error);
 		unregister_method_for_compile (method, target_domain);
 	}
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		return NULL;
 
 	if (!code && mono_llvm_only) {
@@ -2747,7 +2752,8 @@ static RuntimeInvokeInfo*
 create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer compiled_method, gboolean callee_gsharedvt, gboolean use_interp, MonoError *error)
 {
 	MonoMethod *invoke;
-	RuntimeInvokeInfo *info;
+	RuntimeInvokeInfo *info = NULL;
+	RuntimeInvokeInfo *ret = NULL;
 
 	info = g_new0 (RuntimeInvokeInfo, 1);
 	info->compiled_method = compiled_method;
@@ -2758,12 +2764,14 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 		info->sig = mono_method_signature_internal (method);
 
 	invoke = mono_marshal_get_runtime_invoke (method, FALSE);
+	(void)invoke;
 	info->vtable = mono_class_vtable_checked (domain, method->klass, error);
-	if (!mono_error_ok (error))
-		return NULL;
+	if (!is_ok (error))
+		goto exit;
 	g_assert (info->vtable);
 
-	MonoMethodSignature *sig = info->sig;
+	MonoMethodSignature *sig;
+	sig = info->sig;
 	MonoType *ret_type;
 
 	/*
@@ -2838,8 +2846,11 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 		break;
 	}
 
-	if (info->use_interp)
-		return info;
+	if (info->use_interp) {
+		ret = info;
+		info = NULL;
+		goto exit;
+	}
 
 	if (!info->dyn_call_info) {
 		if (mono_llvm_only) {
@@ -2860,10 +2871,8 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				g_free (wrapper_sig);
 
 				info->compiled_method = mono_jit_compile_method (wrapper, error);
-				if (!mono_error_ok (error)) {
-					g_free (info);
-					return NULL;
-				}
+				if (!is_ok (error))
+					goto exit;
 			} else {
 				/* Gsharedvt methods can be invoked the same way */
 				/* The out wrapper has the same signature as the compiled gsharedvt method */
@@ -2876,13 +2885,15 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 			}
 		}
 		info->runtime_invoke = mono_jit_compile_method (invoke, error);
-		if (!mono_error_ok (error)) {
-			g_free (info);
-			return NULL;
-		}
+		if (!is_ok (error))
+			goto exit;
 	}
 
-	return info;
+	ret = info;
+	info = NULL;
+exit:
+	g_free (info);
+	return ret;
 }
 
 static MonoObject*
@@ -2891,10 +2902,8 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	MonoMethodSignature *sig = info->sig;
 	MonoDomain *domain = mono_domain_get ();
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
-	gpointer *args;
 	gpointer retval_ptr;
 	guint8 retval [256];
-	gpointer *param_refs;
 	int i, pindex;
 
 	error_init (error);
@@ -2909,8 +2918,10 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	 * This code also handles invocation of gsharedvt methods directly, no
 	 * out wrappers are used in that case.
 	 */
-	args = (void **)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
-	param_refs = (gpointer*)g_alloca ((sig->param_count + sig->hasthis + 2) * sizeof (gpointer));
+	// allocate param_refs = param_count and args = param_count + hasthis + 2.
+	int const param_count = sig->param_count;
+	gpointer* const param_refs = g_newa (gpointer, param_count * 2 + sig->hasthis + 2);
+	gpointer* const args = param_refs + param_count;
 	pindex = 0;
 	/*
 	 * The runtime invoke wrappers expects pointers to primitive types, so have to
@@ -2919,7 +2930,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	if (sig->hasthis)
 		args [pindex ++] = &obj;
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		retval_ptr = (gpointer)&retval;
+		retval_ptr = &retval;
 		args [pindex ++] = &retval_ptr;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
@@ -3041,7 +3052,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		if (callee) {
 			compiled_method = mono_jit_compile_method_jit_only (callee, error);
 			if (!compiled_method) {
-				g_assert (!mono_error_ok (error));
+				g_assert (!is_ok (error));
 
 				if (mono_use_interpreter)
 					use_interp = TRUE;
@@ -3063,7 +3074,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		}
 
 		info = create_runtime_invoke_info (domain, method, compiled_method, callee_gsharedvt, use_interp, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return NULL;
 
 		mono_domain_lock (domain);
@@ -3108,7 +3119,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 			if (!dyn_runtime_invoke && mono_use_interpreter) {
 				info->use_interp = TRUE;
 				info->dyn_call_info = NULL;
-			} else if (!mono_error_ok (error)) {
+			} else if (!is_ok (error)) {
 				mono_domain_unlock (domain);
 				return NULL;
 			}
@@ -3243,7 +3254,6 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 		return;
 	}
 
-	g_assert_not_reached ();
 }
 
 #if defined(MONO_ARCH_USE_SIGACTION) || defined(HOST_WIN32)
@@ -3281,10 +3291,12 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 {
 	MonoJitInfo *ji = NULL;
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	gpointer fault_addr = NULL;
 	MonoContext mctx;
 
+#if defined(HAVE_SIG_INFO) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+#endif
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 #else
@@ -3704,7 +3716,10 @@ mini_parse_debug_option (const char *option)
 	else if (!strcmp (option, "verbose-gdb"))
 		mini_debug_options.verbose_gdb = TRUE;
 	else if (!strcmp (option, "clr-memory-model"))
-		mini_debug_options.clr_memory_model = TRUE;
+		// FIXME Kill this debug flag
+		mini_debug_options.weak_memory_model = FALSE;
+	else if (!strcmp (option, "weak-memory-model"))
+		mini_debug_options.weak_memory_model = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
 	else if (!strncmp (option, "aot-skip=", 9)) {
@@ -3736,7 +3751,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'clr-memory-model'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'weak-memory-model'.\n");
 			exit (1);
 		}
 	}
@@ -3787,6 +3802,7 @@ register_jit_stats (void)
 {
 	mono_counters_register ("Compiled methods", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_compiled);
 	mono_counters_register ("Methods from AOT", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_aot);
+	mono_counters_register ("Methods from AOT+LLVM", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_aot_llvm);
 	mono_counters_register ("Methods JITted using mono JIT", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_without_llvm);
 	mono_counters_register ("Methods JITted using LLVM", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_with_llvm);
 	mono_counters_register ("Methods using the interpreter", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_with_interp);
@@ -3969,22 +3985,6 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	domain->runtime_info = NULL;
 }
 
-#ifdef MONO_ARCH_HAVE_CODE_CHUNK_TRACKING
-
-static void
-code_manager_chunk_new (void *chunk, int size)
-{
-	mono_arch_code_chunk_new (chunk, size);
-}
-
-static void
-code_manager_chunk_destroy (void *chunk)
-{
-	mono_arch_code_chunk_destroy (chunk);
-}
-
-#endif
-
 #ifdef ENABLE_LLVM
 static gboolean
 llvm_init_inner (void)
@@ -4087,9 +4087,12 @@ mini_init (const char *filename, const char *runtime_version)
 {
 	ERROR_DECL (error);
 	MonoDomain *domain;
+
 	MonoRuntimeCallbacks callbacks;
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
-	MonoCodeManagerCallbacks code_manager_callbacks;
+
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		MONO_THREAD_INFO_RUNTIME_CALLBACKS (MONO_INIT_CALLBACK, mono)
+	};
 
 	MONO_VES_INIT_BEGIN ();
 
@@ -4183,12 +4186,6 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_install_callbacks (&callbacks);
 
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.setup_async_callback = mono_setup_async_callback;
-	ticallbacks.thread_state_init_from_sigctx = mono_thread_state_init_from_sigctx;
-	ticallbacks.thread_state_init_from_handle = mono_thread_state_init_from_handle;
-	ticallbacks.thread_state_init = mono_thread_state_init;
-
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif
@@ -4201,12 +4198,18 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_code_manager_init ();
 
-	memset (&code_manager_callbacks, 0, sizeof (code_manager_callbacks));
 #ifdef MONO_ARCH_HAVE_CODE_CHUNK_TRACKING
-	code_manager_callbacks.chunk_new = code_manager_chunk_new;
-	code_manager_callbacks.chunk_destroy = code_manager_chunk_destroy;
-#endif
+
+	static const MonoCodeManagerCallbacks code_manager_callbacks = {
+
+#undef MONO_CODE_MANAGER_CALLBACK
+#define MONO_CODE_MANAGER_CALLBACK(ret, name, sig) mono_arch_code_ ## name,
+		MONO_CODE_MANAGER_CALLBACKS
+
+	};
+
 	mono_code_manager_install_callbacks (&code_manager_callbacks);
+#endif
 
 	mono_hwcap_init ();
 
@@ -4216,7 +4219,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_unwind_init ();
 
-	if (mini_get_debug_options ()->lldb || g_hasenv ("MONO_LLDB")) {
+	if (mini_debug_options.lldb || g_hasenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
 	}
@@ -4229,7 +4232,7 @@ mini_init (const char *filename, const char *runtime_version)
 		/* So methods for multiple domains don't have the same address */
 		mono_dont_free_domains = TRUE;
 		mono_using_xdebug = TRUE;
-	} else if (mini_get_debug_options ()->gdb) {
+	} else if (mini_debug_options.gdb) {
 		mono_xdebug_init ((char*)"gdb");
 		mono_dont_free_domains = TRUE;
 		mono_using_xdebug = TRUE;
@@ -4477,14 +4480,20 @@ register_icalls (void)
 	register_opcode_emulation (OP_FDIV, __emul_fdiv, mono_icall_sig_double_double_double, mono_fdiv, FALSE);
 #endif
 
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U8
 	register_opcode_emulation (OP_FCONV_TO_U8, __emul_fconv_to_u8, mono_icall_sig_ulong_double, mono_fconv_u8_2, FALSE);
 	register_opcode_emulation (OP_RCONV_TO_U8, __emul_rconv_to_u8, mono_icall_sig_ulong_float, mono_rconv_u8, FALSE);
+#endif
+#ifdef MONO_ARCH_EMULATE_FCONV_TO_U4
 	register_opcode_emulation (OP_FCONV_TO_U4, __emul_fconv_to_u4, mono_icall_sig_uint32_double, mono_fconv_u4_2, FALSE);
+	register_opcode_emulation (OP_RCONV_TO_U4, __emul_rconv_to_u4, mono_icall_sig_uint32_float, mono_rconv_u4, FALSE);
+#endif
 	register_opcode_emulation (OP_FCONV_TO_OVF_I8, __emul_fconv_to_ovf_i8, mono_icall_sig_long_double, mono_fconv_ovf_i8, FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_U8, __emul_fconv_to_ovf_u8, mono_icall_sig_ulong_double, mono_fconv_ovf_u8, FALSE);
+	register_opcode_emulation (OP_FCONV_TO_OVF_U8_UN, __emul_fconv_to_ovf_u8_un, mono_icall_sig_ulong_double, mono_fconv_ovf_u8_un, FALSE);
 	register_opcode_emulation (OP_RCONV_TO_OVF_I8, __emul_rconv_to_ovf_i8, mono_icall_sig_long_float, mono_rconv_ovf_i8, FALSE);
 	register_opcode_emulation (OP_RCONV_TO_OVF_U8, __emul_rconv_to_ovf_u8, mono_icall_sig_ulong_float, mono_rconv_ovf_u8, FALSE);
-
+	register_opcode_emulation (OP_RCONV_TO_OVF_U8_UN, __emul_rconv_to_ovf_u8_un, mono_icall_sig_ulong_float, mono_rconv_ovf_u8_un, FALSE);
 
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 	register_opcode_emulation (OP_FCONV_TO_I8, __emul_fconv_to_i8, mono_icall_sig_long_double, mono_fconv_i8, FALSE);
@@ -4632,6 +4641,7 @@ register_icalls (void)
 	register_icall (mono_get_assembly_object, mono_icall_sig_object_ptr, TRUE);
 	register_icall (mono_get_method_object, mono_icall_sig_object_ptr, TRUE);
 	register_icall (mono_throw_method_access, mono_icall_sig_void_ptr_ptr, FALSE);
+	register_icall (mono_throw_bad_image, mono_icall_sig_void, FALSE);
 	register_icall_no_wrapper (mono_dummy_jit_icall, mono_icall_sig_void);
 
 	register_icall_with_wrapper (mono_monitor_enter_internal, mono_icall_sig_int32_obj);
@@ -4716,6 +4726,8 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
+	print_jit_stats ();
+	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 #else
 void
@@ -4754,8 +4766,6 @@ mini_cleanup (MonoDomain *domain)
 	if (profile_options)
 		g_ptr_array_free (profile_options, TRUE);
 
-	free_jit_tls_data (mono_tls_get_jit_tls ());
-
 	mono_icall_cleanup ();
 
 	mono_runtime_cleanup_handlers ();
@@ -4763,6 +4773,7 @@ mini_cleanup (MonoDomain *domain)
 #ifndef MONO_CROSS_COMPILE
 	mono_domain_free (domain, TRUE);
 #endif
+	free_jit_tls_data (mono_tls_get_jit_tls ());
 
 #ifdef ENABLE_LLVM
 	if (mono_use_llvm)
@@ -4779,6 +4790,8 @@ mini_cleanup (MonoDomain *domain)
 	g_free (vtable_trampolines);
 
 	mini_jit_cleanup ();
+
+	mini_get_interp_callbacks ()->cleanup ();
 
 	mono_tramp_info_cleanup ();
 

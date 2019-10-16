@@ -30,6 +30,11 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;CECIL</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM;CECIL</DefineConstants>
+  </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,11 +63,24 @@
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
-  <!-- @COMMON_PROJECT_REFERENCES@ -->
+  <ItemGroup>
+    <ProjectReference Include="../Mono.Cecil/Mono.Cecil.csproj" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../System/System.csproj" />
-    <ProjectReference Include="../Mono.Cecil/Mono.Cecil.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7/System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7/System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7/mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7/mscorlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->

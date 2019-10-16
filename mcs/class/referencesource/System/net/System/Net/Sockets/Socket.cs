@@ -146,6 +146,9 @@ namespace System.Net.Sockets {
         ///    </para>
         /// </devdoc>
         public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {
+#if WASM
+            throw new PlatformNotSupportedException ();
+#else
             s_LoggingEnabled = Logging.On;
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Socket", addressFamily);
             InitializeSockets();
@@ -181,6 +184,7 @@ namespace System.Net.Sockets {
 #endif
 
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Socket", null);
+#endif           
         }
 
 #if !MONO
@@ -7851,7 +7855,7 @@ namespace System.Net.Sockets {
             if (s_LoggingEnabled) Logging.Enter(Logging.Sockets, null, "ConnectAsync", "");
 
             // Throw if multiple buffers specified.
-            if (e.m_BufferList != null) {
+            if (e.BufferList != null) {
                 throw new ArgumentException(SR.GetString(SR.net_multibuffernotsupported), "BufferList");
             }
 
@@ -7867,7 +7871,7 @@ namespace System.Net.Sockets {
                 Socket attemptSocket = null;
                 MultipleConnectAsync multipleConnectAsync = null;
                 if (dnsEP.AddressFamily == AddressFamily.Unspecified) {
-                    multipleConnectAsync = new MultipleSocketMultipleConnectAsync(socketType, protocolType);
+                    multipleConnectAsync = new DualSocketMultipleConnectAsync(socketType, protocolType);
                 } else {
                     attemptSocket = new Socket(dnsEP.AddressFamily, socketType, protocolType);
                     multipleConnectAsync = new SingleSocketMultipleConnectAsync(attemptSocket, false);

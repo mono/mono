@@ -16,7 +16,6 @@ System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/Process.cs
 System.Diagnostics/ProcessModule.cs
 System.Diagnostics/ProcessPriorityClass.cs
-System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
@@ -29,14 +28,10 @@ System.IO.Compression/DeflateStream.cs
 
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
-System.IO/FileSystemEventArgs.cs
-System.IO/FileSystemEventHandler.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/InvalidDataException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/NotifyFilters.cs
-System.IO/RenamedEventArgs.cs
-System.IO/RenamedEventHandler.cs
 System.IO/WatcherChangeTypes.cs
 
 System.Net/BasicClient.cs
@@ -590,7 +585,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
-../referencesource/System/net/System/Net/_PooledStream.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/_Semaphore.cs
@@ -605,7 +599,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs
 ../referencesource/System/net/System/Net/cookieexception.cs
-../referencesource/System/net/System/Net/connectionpool.cs
 ../referencesource/System/net/System/Net/DnsEndPoint.cs
 ../referencesource/System/net/System/Net/EndPoint.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs
@@ -666,18 +659,20 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
 ../referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
 
-../referencesource/System/net/System/Net/Sockets/_MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
 ../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
 ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/LingerOption.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
-../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
+# ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/NetworkStream.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
 ../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
 ../referencesource/System/net/System/Net/Sockets/SelectMode.cs
 ../referencesource/System/net/System/Net/Sockets/Socket.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/Socket.Tasks.cs
 ../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
 ../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
 ../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
@@ -813,6 +808,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/Net/ExceptionCheck.cs
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
+../../../external/corefx/src/Common/src/System/Net/RangeValidationHelpers.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
@@ -873,13 +869,17 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventHandler.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventHandler.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
 
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 
 # Everything except compiled
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
@@ -915,3 +915,4 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
+

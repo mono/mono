@@ -44,10 +44,13 @@ namespace System {
 
 	public partial class TimeZoneInfo {
 
+		[DllImport ("__Internal")]
+		extern static string xamarin_timezone_get_local_name ();
+
 		static TimeZoneInfo CreateLocal ()
 		{
 			using (Stream stream = GetMonoTouchData (null)) {
-				return BuildFromStream ("Local", stream);
+				return BuildFromStream (xamarin_timezone_get_local_name (), stream);
 			}
 		}
 
@@ -68,7 +71,7 @@ namespace System {
 				}
 			}
 		}
-		
+
 		[DllImport ("__Internal")]
 		extern static IntPtr xamarin_timezone_get_names (ref int count);
 

@@ -17,6 +17,7 @@
 #include <mono/metadata/mono-conc-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/handle-decl.h>
 
@@ -375,6 +376,13 @@ struct _MonoDomain {
 	/* Needed by Thread:GetDomainID() */
 	gint32             domain_id;
 	gint32             shadow_serial;
+	/*
+	 * For framework Mono, this is every assembly loaded in this
+	 * domain. For netcore, this is every assembly loaded in every ALC in
+	 * this domain.  In netcore, the thread that adds an assembly to its
+	 * MonoAssemblyLoadContext:loaded_assemblies should also add it to this
+	 * list.
+	 */
 	GSList             *domain_assemblies;
 	MonoAssembly       *entry_assembly;
 	char               *friendly_name;
@@ -419,7 +427,10 @@ struct _MonoDomain {
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
-	
+
+	/* Information maintained by mono-debug.c */
+	gpointer debug_info;
+
 	/* Contains the compiled runtime invoke wrapper used by finalizers */
 	gpointer            finalize_runtime_invoke;
 
@@ -451,6 +462,12 @@ struct _MonoDomain {
 	gboolean throw_unobserved_task_exceptions;
 
 	guint32 execution_context_field_offset;
+
+#ifdef ENABLE_NETCORE
+	GSList *alcs;
+	MonoAssemblyLoadContext *default_alc;
+	MonoCoopMutex alcs_lock; /* Used when accessing 'alcs' */
+#endif
 };
 
 typedef struct  {
@@ -613,15 +630,19 @@ mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor,
 gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
-MonoImage *mono_assembly_open_from_bundle (const char *filename,
+MonoAssembly *
+mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext *alc, const char *name);
+
+MonoImage *mono_assembly_open_from_bundle (MonoAssemblyLoadContext *alc,
+					   const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly);
 
 MonoAssembly *
-mono_try_assembly_resolve (MonoDomain *domain, const char *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+mono_try_assembly_resolve (MonoAssemblyLoadContext *alc, const char *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
 MonoAssembly *
-mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly);
+mono_domain_assembly_postload_search (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
 void mono_domain_set_options_from_config (MonoDomain *domain);
 
@@ -655,5 +676,24 @@ mono_runtime_install_appctx_properties (void);
 
 gboolean 
 mono_domain_set_fast (MonoDomain *domain, gboolean force);
+
+MonoAssemblyLoadContext *
+mono_domain_default_alc (MonoDomain *domain);
+
+#ifdef ENABLE_NETCORE
+MonoAssemblyLoadContext *
+mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error);
+#endif
+
+static inline
+MonoAssemblyLoadContext *
+mono_domain_ambient_alc (MonoDomain *domain)
+{
+	/*
+	 * FIXME: All the callers of mono_domain_ambient_alc should get an ALC
+	 * passed to them from their callers.
+	 */
+	return mono_domain_default_alc (domain);
+}
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

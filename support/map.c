@@ -77,6 +77,7 @@
 #endif /* ndef HAVE_UTIME_H */
 #include <time.h>
 #include "mph.h"
+#include "map-impl.h"
 
 #include "map.h"
 
@@ -2632,6 +2633,12 @@ int Mono_Posix_ToErrno (int x, int *r)
 int Mono_Posix_FromFcntlCommand (int x, int *r)
 {
 	*r = 0;
+	if (x == Mono_Posix_FcntlCommand_F_ADD_SEALS)
+#ifdef F_ADD_SEALS
+		{*r = F_ADD_SEALS; return 0;}
+#else /* def F_ADD_SEALS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_ADD_SEALS */
 	if (x == Mono_Posix_FcntlCommand_F_DUPFD)
 #ifdef F_DUPFD
 		{*r = F_DUPFD; return 0;}
@@ -2674,6 +2681,12 @@ int Mono_Posix_FromFcntlCommand (int x, int *r)
 #else /* def F_GETSIG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_GETSIG */
+	if (x == Mono_Posix_FcntlCommand_F_GET_SEALS)
+#ifdef F_GET_SEALS
+		{*r = F_GET_SEALS; return 0;}
+#else /* def F_GET_SEALS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_GET_SEALS */
 	if (x == Mono_Posix_FcntlCommand_F_NOCACHE)
 #ifdef F_NOCACHE
 		{*r = F_NOCACHE; return 0;}
@@ -2686,6 +2699,24 @@ int Mono_Posix_FromFcntlCommand (int x, int *r)
 #else /* def F_NOTIFY */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_NOTIFY */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_GETLK)
+#ifdef F_OFD_GETLK
+		{*r = F_OFD_GETLK; return 0;}
+#else /* def F_OFD_GETLK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_GETLK */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_SETLK)
+#ifdef F_OFD_SETLK
+		{*r = F_OFD_SETLK; return 0;}
+#else /* def F_OFD_SETLK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_SETLK */
+	if (x == Mono_Posix_FcntlCommand_F_OFD_SETLKW)
+#ifdef F_OFD_SETLKW
+		{*r = F_OFD_SETLKW; return 0;}
+#else /* def F_OFD_SETLKW */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_OFD_SETLKW */
 	if (x == Mono_Posix_FcntlCommand_F_SETFD)
 #ifdef F_SETFD
 		{*r = F_SETFD; return 0;}
@@ -2738,6 +2769,10 @@ int Mono_Posix_ToFcntlCommand (int x, int *r)
 	*r = 0;
 	if (x == 0)
 		return 0;
+#ifdef F_ADD_SEALS
+	if (x == F_ADD_SEALS)
+		{*r = Mono_Posix_FcntlCommand_F_ADD_SEALS; return 0;}
+#endif /* ndef F_ADD_SEALS */
 #ifdef F_DUPFD
 	if (x == F_DUPFD)
 		{*r = Mono_Posix_FcntlCommand_F_DUPFD; return 0;}
@@ -2766,6 +2801,10 @@ int Mono_Posix_ToFcntlCommand (int x, int *r)
 	if (x == F_GETSIG)
 		{*r = Mono_Posix_FcntlCommand_F_GETSIG; return 0;}
 #endif /* ndef F_GETSIG */
+#ifdef F_GET_SEALS
+	if (x == F_GET_SEALS)
+		{*r = Mono_Posix_FcntlCommand_F_GET_SEALS; return 0;}
+#endif /* ndef F_GET_SEALS */
 #ifdef F_NOCACHE
 	if (x == F_NOCACHE)
 		{*r = Mono_Posix_FcntlCommand_F_NOCACHE; return 0;}
@@ -2774,6 +2813,18 @@ int Mono_Posix_ToFcntlCommand (int x, int *r)
 	if (x == F_NOTIFY)
 		{*r = Mono_Posix_FcntlCommand_F_NOTIFY; return 0;}
 #endif /* ndef F_NOTIFY */
+#ifdef F_OFD_GETLK
+	if (x == F_OFD_GETLK)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_GETLK; return 0;}
+#endif /* ndef F_OFD_GETLK */
+#ifdef F_OFD_SETLK
+	if (x == F_OFD_SETLK)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_SETLK; return 0;}
+#endif /* ndef F_OFD_SETLK */
+#ifdef F_OFD_SETLKW
+	if (x == F_OFD_SETLKW)
+		{*r = Mono_Posix_FcntlCommand_F_OFD_SETLKW; return 0;}
+#endif /* ndef F_OFD_SETLKW */
 #ifdef F_SETFD
 	if (x == F_SETFD)
 		{*r = Mono_Posix_FcntlCommand_F_SETFD; return 0;}
@@ -3297,6 +3348,172 @@ int Mono_Posix_ToLockfCommand (int x, int *r)
 		{*r = Mono_Posix_LockfCommand_F_ULOCK; return 0;}
 #endif /* ndef F_ULOCK */
 	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromMemfdFlags (unsigned int x, unsigned int *r)
+{
+	*r = 0;
+	if ((x & Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING) == Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING)
+#ifdef MFD_ALLOW_SEALING
+		*r |= MFD_ALLOW_SEALING;
+#else /* def MFD_ALLOW_SEALING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_ALLOW_SEALING */
+	if ((x & Mono_Posix_MemfdFlags_MFD_CLOEXEC) == Mono_Posix_MemfdFlags_MFD_CLOEXEC)
+#ifdef MFD_CLOEXEC
+		*r |= MFD_CLOEXEC;
+#else /* def MFD_CLOEXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_CLOEXEC */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGETLB) == Mono_Posix_MemfdFlags_MFD_HUGETLB)
+#ifdef MFD_HUGETLB
+		*r |= MFD_HUGETLB;
+#else /* def MFD_HUGETLB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGETLB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_16GB) == Mono_Posix_MemfdFlags_MFD_HUGE_16GB)
+#ifdef MFD_HUGE_16GB
+		*r |= MFD_HUGE_16GB;
+#else /* def MFD_HUGE_16GB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGE_16GB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_16MB) == Mono_Posix_MemfdFlags_MFD_HUGE_16MB)
+#ifdef MFD_HUGE_16MB
+		*r |= MFD_HUGE_16MB;
+#else /* def MFD_HUGE_16MB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGE_16MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_1GB) == Mono_Posix_MemfdFlags_MFD_HUGE_1GB)
+#ifdef MFD_HUGE_1GB
+		*r |= MFD_HUGE_1GB;
+#else /* def MFD_HUGE_1GB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_1GB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_1GB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_1MB) == Mono_Posix_MemfdFlags_MFD_HUGE_1MB)
+#ifdef MFD_HUGE_1MB
+		*r |= MFD_HUGE_1MB;
+#else /* def MFD_HUGE_1MB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGE_1MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_256MB) == Mono_Posix_MemfdFlags_MFD_HUGE_256MB)
+#ifdef MFD_HUGE_256MB
+		*r |= MFD_HUGE_256MB;
+#else /* def MFD_HUGE_256MB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_256MB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_256MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_2GB) == Mono_Posix_MemfdFlags_MFD_HUGE_2GB)
+#ifdef MFD_HUGE_2GB
+		*r |= MFD_HUGE_2GB;
+#else /* def MFD_HUGE_2GB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_2GB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_2GB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_2MB) == Mono_Posix_MemfdFlags_MFD_HUGE_2MB)
+#ifdef MFD_HUGE_2MB
+		*r |= MFD_HUGE_2MB;
+#else /* def MFD_HUGE_2MB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_2MB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_2MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_32MB) == Mono_Posix_MemfdFlags_MFD_HUGE_32MB)
+#ifdef MFD_HUGE_32MB
+		*r |= MFD_HUGE_32MB;
+#else /* def MFD_HUGE_32MB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_32MB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_32MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_512KB) == Mono_Posix_MemfdFlags_MFD_HUGE_512KB)
+#ifdef MFD_HUGE_512KB
+		*r |= MFD_HUGE_512KB;
+#else /* def MFD_HUGE_512KB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGE_512KB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_512MB) == Mono_Posix_MemfdFlags_MFD_HUGE_512MB)
+#ifdef MFD_HUGE_512MB
+		*r |= MFD_HUGE_512MB;
+#else /* def MFD_HUGE_512MB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_512MB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_512MB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_64KB) == Mono_Posix_MemfdFlags_MFD_HUGE_64KB)
+#ifdef MFD_HUGE_64KB
+		*r |= MFD_HUGE_64KB;
+#else /* def MFD_HUGE_64KB */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MFD_HUGE_64KB */
+	if ((x & Mono_Posix_MemfdFlags_MFD_HUGE_8MB) == Mono_Posix_MemfdFlags_MFD_HUGE_8MB)
+#ifdef MFD_HUGE_8MB
+		*r |= MFD_HUGE_8MB;
+#else /* def MFD_HUGE_8MB */
+		{/* Ignoring Mono_Posix_MemfdFlags_MFD_HUGE_8MB, as it is constructed from other values */}
+#endif /* ndef MFD_HUGE_8MB */
+	if (x == 0)
+		return 0;
+	return 0;
+}
+
+int Mono_Posix_ToMemfdFlags (unsigned int x, unsigned int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef MFD_ALLOW_SEALING
+	if ((x & MFD_ALLOW_SEALING) == MFD_ALLOW_SEALING)
+		*r |= Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING;
+#endif /* ndef MFD_ALLOW_SEALING */
+#ifdef MFD_CLOEXEC
+	if ((x & MFD_CLOEXEC) == MFD_CLOEXEC)
+		*r |= Mono_Posix_MemfdFlags_MFD_CLOEXEC;
+#endif /* ndef MFD_CLOEXEC */
+#ifdef MFD_HUGETLB
+	if ((x & MFD_HUGETLB) == MFD_HUGETLB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGETLB;
+#endif /* ndef MFD_HUGETLB */
+#ifdef MFD_HUGE_16GB
+	if ((x & MFD_HUGE_16GB) == MFD_HUGE_16GB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_16GB;
+#endif /* ndef MFD_HUGE_16GB */
+#ifdef MFD_HUGE_16MB
+	if ((x & MFD_HUGE_16MB) == MFD_HUGE_16MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_16MB;
+#endif /* ndef MFD_HUGE_16MB */
+#ifdef MFD_HUGE_1GB
+	if ((x & MFD_HUGE_1GB) == MFD_HUGE_1GB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_1GB;
+#endif /* ndef MFD_HUGE_1GB */
+#ifdef MFD_HUGE_1MB
+	if ((x & MFD_HUGE_1MB) == MFD_HUGE_1MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_1MB;
+#endif /* ndef MFD_HUGE_1MB */
+#ifdef MFD_HUGE_256MB
+	if ((x & MFD_HUGE_256MB) == MFD_HUGE_256MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_256MB;
+#endif /* ndef MFD_HUGE_256MB */
+#ifdef MFD_HUGE_2GB
+	if ((x & MFD_HUGE_2GB) == MFD_HUGE_2GB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_2GB;
+#endif /* ndef MFD_HUGE_2GB */
+#ifdef MFD_HUGE_2MB
+	if ((x & MFD_HUGE_2MB) == MFD_HUGE_2MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_2MB;
+#endif /* ndef MFD_HUGE_2MB */
+#ifdef MFD_HUGE_32MB
+	if ((x & MFD_HUGE_32MB) == MFD_HUGE_32MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_32MB;
+#endif /* ndef MFD_HUGE_32MB */
+#ifdef MFD_HUGE_512KB
+	if ((x & MFD_HUGE_512KB) == MFD_HUGE_512KB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_512KB;
+#endif /* ndef MFD_HUGE_512KB */
+#ifdef MFD_HUGE_512MB
+	if ((x & MFD_HUGE_512MB) == MFD_HUGE_512MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_512MB;
+#endif /* ndef MFD_HUGE_512MB */
+#ifdef MFD_HUGE_64KB
+	if ((x & MFD_HUGE_64KB) == MFD_HUGE_64KB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_64KB;
+#endif /* ndef MFD_HUGE_64KB */
+#ifdef MFD_HUGE_8MB
+	if ((x & MFD_HUGE_8MB) == MFD_HUGE_8MB)
+		*r |= Mono_Posix_MemfdFlags_MFD_HUGE_8MB;
+#endif /* ndef MFD_HUGE_8MB */
+	return 0;
 }
 
 int Mono_Posix_FromMessageFlags (int x, int *r)
@@ -3919,42 +4136,6 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	return 0;
 }
 
-int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r)
-{
-	*r = 0;
-#ifndef __NetBSD__
-	if ((x & Mono_Posix_MremapFlags_MREMAP_MAYMOVE) == Mono_Posix_MremapFlags_MREMAP_MAYMOVE)
-#ifdef MREMAP_MAYMOVE
-		*r |= MREMAP_MAYMOVE;
-#else /* def MREMAP_MAYMOVE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef MREMAP_MAYMOVE */
-#else /* def __NetBSD__ */
-	if ((x & Mono_Posix_MremapFlags_MREMAP_MAYMOVE) != Mono_Posix_MremapFlags_MREMAP_MAYMOVE)
-		*r = MAP_FIXED;
-#endif /* def __NetBSD__ */
-	if (x == 0)
-		return 0;
-	return 0;
-}
-
-int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r)
-{
-	*r = 0;
-#ifndef __NetBSD__
-	if (x == 0)
-		return 0;
-#ifdef MREMAP_MAYMOVE
-	if ((x & MREMAP_MAYMOVE) == MREMAP_MAYMOVE)
-		*r |= Mono_Posix_MremapFlags_MREMAP_MAYMOVE;
-#endif /* ndef MREMAP_MAYMOVE */
-#else /* def __NetBSD__ */
-	if ((x & MAP_FIXED) != MAP_FIXED)
-		*r |= Mono_Posix_MremapFlags_MREMAP_MAYMOVE;
-#endif
-	return 0;
-}
-
 int Mono_Posix_FromMsyncFlags (int x, int *r)
 {
 	*r = 0;
@@ -4052,6 +4233,12 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_LARGEFILE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_LARGEFILE */
+	if ((x & Mono_Posix_OpenFlags_O_NOATIME) == Mono_Posix_OpenFlags_O_NOATIME)
+#ifdef O_NOATIME
+		*r |= O_NOATIME;
+#else /* def O_NOATIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef O_NOATIME */
 	if ((x & Mono_Posix_OpenFlags_O_NOCTTY) == Mono_Posix_OpenFlags_O_NOCTTY)
 #ifdef O_NOCTTY
 		*r |= O_NOCTTY;
@@ -4148,6 +4335,10 @@ int Mono_Posix_ToOpenFlags (int x, int *r)
 	if ((x & O_LARGEFILE) == O_LARGEFILE)
 		*r |= Mono_Posix_OpenFlags_O_LARGEFILE;
 #endif /* ndef O_LARGEFILE */
+#ifdef O_NOATIME
+	if ((x & O_NOATIME) == O_NOATIME)
+		*r |= Mono_Posix_OpenFlags_O_NOATIME;
+#endif /* ndef O_NOATIME */
 #ifdef O_NOCTTY
 	if ((x & O_NOCTTY) == O_NOCTTY)
 		*r |= Mono_Posix_OpenFlags_O_NOCTTY;
@@ -4713,6 +4904,72 @@ int Mono_Posix_ToPosixMadviseAdvice (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
+int Mono_Posix_FromSealType (int x, int *r)
+{
+	*r = 0;
+	if ((x & Mono_Posix_SealType_F_SEAL_FUTURE_WRITE) == Mono_Posix_SealType_F_SEAL_FUTURE_WRITE)
+#ifdef F_SEAL_FUTURE_WRITE
+		*r |= F_SEAL_FUTURE_WRITE;
+#else /* def F_SEAL_FUTURE_WRITE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_SEAL_FUTURE_WRITE */
+	if ((x & Mono_Posix_SealType_F_SEAL_GROW) == Mono_Posix_SealType_F_SEAL_GROW)
+#ifdef F_SEAL_GROW
+		*r |= F_SEAL_GROW;
+#else /* def F_SEAL_GROW */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_SEAL_GROW */
+	if ((x & Mono_Posix_SealType_F_SEAL_SEAL) == Mono_Posix_SealType_F_SEAL_SEAL)
+#ifdef F_SEAL_SEAL
+		*r |= F_SEAL_SEAL;
+#else /* def F_SEAL_SEAL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_SEAL_SEAL */
+	if ((x & Mono_Posix_SealType_F_SEAL_SHRINK) == Mono_Posix_SealType_F_SEAL_SHRINK)
+#ifdef F_SEAL_SHRINK
+		*r |= F_SEAL_SHRINK;
+#else /* def F_SEAL_SHRINK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_SEAL_SHRINK */
+	if ((x & Mono_Posix_SealType_F_SEAL_WRITE) == Mono_Posix_SealType_F_SEAL_WRITE)
+#ifdef F_SEAL_WRITE
+		*r |= F_SEAL_WRITE;
+#else /* def F_SEAL_WRITE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef F_SEAL_WRITE */
+	if (x == 0)
+		return 0;
+	return 0;
+}
+
+int Mono_Posix_ToSealType (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef F_SEAL_FUTURE_WRITE
+	if ((x & F_SEAL_FUTURE_WRITE) == F_SEAL_FUTURE_WRITE)
+		*r |= Mono_Posix_SealType_F_SEAL_FUTURE_WRITE;
+#endif /* ndef F_SEAL_FUTURE_WRITE */
+#ifdef F_SEAL_GROW
+	if ((x & F_SEAL_GROW) == F_SEAL_GROW)
+		*r |= Mono_Posix_SealType_F_SEAL_GROW;
+#endif /* ndef F_SEAL_GROW */
+#ifdef F_SEAL_SEAL
+	if ((x & F_SEAL_SEAL) == F_SEAL_SEAL)
+		*r |= Mono_Posix_SealType_F_SEAL_SEAL;
+#endif /* ndef F_SEAL_SEAL */
+#ifdef F_SEAL_SHRINK
+	if ((x & F_SEAL_SHRINK) == F_SEAL_SHRINK)
+		*r |= Mono_Posix_SealType_F_SEAL_SHRINK;
+#endif /* ndef F_SEAL_SHRINK */
+#ifdef F_SEAL_WRITE
+	if ((x & F_SEAL_WRITE) == F_SEAL_WRITE)
+		*r |= Mono_Posix_SealType_F_SEAL_WRITE;
+#endif /* ndef F_SEAL_WRITE */
+	return 0;
+}
+
 int Mono_Posix_FromSeekFlags (short x, short *r)
 {
 	*r = 0;
@@ -5237,7 +5494,7 @@ Mono_Posix_ToSockaddrIn (struct sockaddr_in *from, struct Mono_Posix_SockaddrIn 
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN */
 
 
-#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 int
 Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr_in6 *to)
 {
@@ -5259,7 +5516,7 @@ Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN6 */
 
 
-#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 int
 Mono_Posix_ToSockaddrIn6 (struct sockaddr_in6 *from, struct Mono_Posix_SockaddrIn6 *to)
 {
@@ -9324,3 +9581,4 @@ int Mono_Posix_ToXattrFlags (int x, int *r)
 #endif /* ndef XATTR_REPLACE */
 	return 0;
 }
+

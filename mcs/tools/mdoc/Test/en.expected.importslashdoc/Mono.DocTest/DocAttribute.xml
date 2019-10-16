@@ -53,8 +53,6 @@ class Example {
         <remarks>
           <c>C:Mono.DocTest.DocAttribute(System.String)</c>
         </remarks>
-        <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:Mono.DocTest.DocAttribute.#ctor(System.String)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Field">

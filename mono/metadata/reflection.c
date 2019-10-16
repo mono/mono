@@ -14,6 +14,7 @@
  */
 #include <config.h>
 #include "mono/utils/mono-membar.h"
+#include "mono/metadata/assembly-internals.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/metadata-internals.h"
@@ -53,7 +54,7 @@
 #include "icall-decl.h"
 
 static void get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types);
-static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error);
+static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error);
 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (mono_assembly, "System.Reflection", "RuntimeAssembly")
@@ -519,7 +520,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	norm_type = mono_type_normalize (type);
 	if (norm_type != type) {
 		res = mono_type_get_object_checked (domain, norm_type, error);
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			return NULL;
@@ -560,7 +561,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	}
 	/* This is stored in vtables/JITted code so it has to be pinned */
 	res = (MonoReflectionType *)mono_object_new_pinned (domain, mono_defaults.runtimetype_class, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
 		return NULL;
@@ -967,6 +968,7 @@ static gboolean
 add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjectHandle member, int idx, const char *name, MonoType *sig_param, guint32 blob_type_enum, const char *blob, MonoMarshalSpec *mspec, MonoObjectHandle missing, MonoObjectHandle dbnull, MonoArrayHandle dest,  MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
+
 	error_init (error);
 	MonoReflectionParameterHandle param = MONO_HANDLE_CAST (MonoReflectionParameter, mono_object_new_handle (domain, mono_class_get_mono_parameter_info_class (), error));
 	goto_if_nok (error, leave);
@@ -1012,7 +1014,7 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 		} else
 			blob_type.data.klass = mono_class_from_mono_type_internal (&blob_type);
 
-		def_value = MONO_HANDLE_NEW (MonoObject, mono_get_object_from_blob (domain, &blob_type, blob, error)); /* FIXME make mono_get_object_from_blob return a handle */
+		def_value = mono_get_object_from_blob (domain, &blob_type, blob, MONO_HANDLE_NEW (MonoString, NULL), error);
 		goto_if_nok (error, leave);
 
 		/* Type in the Constant table is MONO_TYPE_CLASS for nulls */
@@ -1456,34 +1458,39 @@ get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types)
 	return;
 }
 
-MonoObject *
-mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob, MonoError *error)
+MonoObjectHandle
+mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob, MonoStringHandleOut string_handle, MonoError *error)
 {
-	void *retval;
-	MonoClass *klass;
-	MonoObject *object;
-	MonoType *basetype = type;
-
 	error_init (error);
 
 	if (!blob)
-		return NULL;
-	
-	klass = mono_class_from_mono_type_internal (type);
+		return NULL_HANDLE;
+
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoObject *object;
+	void *retval = &object;
+	MonoType *basetype = type;
+
+	MonoObjectHandle object_handle = MONO_HANDLE_NEW (MonoObject, NULL);
+
+	MonoClass* const klass = mono_class_from_mono_type_internal (type);
+
 	if (m_class_is_valuetype (klass)) {
 		object = mono_object_new_checked (domain, klass, error);
-		return_val_if_nok (error, NULL);
+		MONO_HANDLE_ASSIGN_RAW (object_handle, object);
+		return_val_if_nok (error, NULL_HANDLE);
 		retval = mono_object_get_data (object);
 		if (m_class_is_enumtype (klass))
 			basetype = mono_class_enum_basetype_internal (klass);
-	} else {
-		retval = &object;
 	}
 			
-	if (!mono_get_constant_value_from_blob (domain, basetype->type,  blob, retval, error))
-		return object;
+	if (mono_get_constant_value_from_blob (domain, basetype->type,  blob, retval, string_handle, error))
+		MONO_HANDLE_ASSIGN_RAW (object_handle, object);
 	else
-		return NULL;
+		object_handle = NULL_HANDLE;
+
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, object_handle);
 }
 
 static int
@@ -1520,7 +1527,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	while (g_ascii_isspace (*p))
 		p++;
 	while (*p) {
-		if (*p == 'V' && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
+		if ((*p == 'V' || *p == 'v') && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
 			p += 8;
 			assembly->major = strtoul (p, &s, 10);
 			if (s == p || *s != '.')
@@ -1538,7 +1545,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 			if (s == p)
 				return 1;
 			p = s;
-		} else if (*p == 'C' && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
+		} else if ((*p == 'C' || *p == 'c') && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
 			p += 8;
 			if (g_ascii_strncasecmp (p, "neutral", 7) == 0) {
 				assembly->culture = "";
@@ -1549,7 +1556,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 					p++;
 				}
 			}
-		} else if (*p == 'P' && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
+		} else if ((*p == 'P' || *p == 'p') && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
 			p += 15;
 			if (strncmp (p, "null", 4) == 0) {
 				p += 4;
@@ -1562,7 +1569,9 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 				len = (p - start + 1);
 				if (len > MONO_PUBLIC_KEY_TOKEN_LENGTH)
 					len = MONO_PUBLIC_KEY_TOKEN_LENGTH;
-				g_strlcpy ((char*)assembly->public_key_token, start, len);
+				char* pkt_lower = g_ascii_strdown (start, len);
+				g_strlcpy ((char*) assembly->public_key_token, pkt_lower, len);
+				g_free (pkt_lower);
 			}
 		} else {
 			while (*p && *p != ',')
@@ -1915,13 +1924,17 @@ mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoErr
 	if (ok) {
 		mono_identifier_unescape_info (info);
 	} else {
+#if ENABLE_NETCORE
+		mono_error_set_argument_format (error, "typeName@0", "failed parse: %s", name);
+#else
 		mono_error_set_argument_format (error, "typeName", "failed parse: %s", name);
+#endif
 	}
 	return (ok != 0);
 }
 
 static MonoType*
-_mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, gboolean ignorecase, MonoError *error)
+_mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	gboolean type_resolve = FALSE;
 	MonoType *type;
@@ -1930,7 +1943,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 	error_init (error);
 
 	if (info->assembly.name) {
-		MonoAssembly *assembly = mono_assembly_loaded_full (&info->assembly, FALSE);
+		MonoAssembly *assembly = mono_assembly_loaded_internal (mono_domain_ambient_alc (mono_domain_get ()), &info->assembly, FALSE);
 		if (!assembly && image && image->assembly && mono_assembly_names_equal (&info->assembly, &image->assembly->aname))
 			/* 
 			 * This could happen in the AOT compiler case when the search hook is not
@@ -1944,17 +1957,17 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 				return NULL;
 		}
 		image = assembly->image;
-	} else if (!image) {
+	} else if (!image && search_mscorlib) {
 		image = mono_defaults.corlib;
 	}
 
-	type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
-	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib) {
+	type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, &type_resolve, error);
+	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib && search_mscorlib) {
 		/* ignore the error and try again */
 		mono_error_cleanup (error);
 		error_init (error);
 		image = mono_defaults.corlib;
-		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
+		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, &type_resolve, error);
 	}
 
 	return type;
@@ -1966,7 +1979,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
  * Returns: may return NULL on success, sets error on failure.
  */
 static MonoType*
-mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoClass *klass;
@@ -2061,7 +2074,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		for (i = 0; i < info->type_arguments->len; i++) {
 			MonoTypeNameParse *subinfo = (MonoTypeNameParse *)g_ptr_array_index (info->type_arguments, i);
 
-			type_args [i] = _mono_reflection_get_type_from_info (subinfo, rootimage, ignorecase, error);
+			type_args [i] = _mono_reflection_get_type_from_info (subinfo, rootimage, ignorecase, search_mscorlib, error);
 			if (!type_args [i]) {
 				g_free (type_args);
 				goto leave;
@@ -2115,7 +2128,7 @@ leave:
 MonoType*
 mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve) {
 	ERROR_DECL (error);
-	MonoType *result = mono_reflection_get_type_with_rootimage (image, image, info, ignorecase, type_resolve, error);
+	MonoType *result = mono_reflection_get_type_with_rootimage (image, image, info, ignorecase, TRUE, type_resolve, error);
 	mono_error_cleanup (error);
 	return result;
 }
@@ -2127,18 +2140,19 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
  * \param info type description structure
  * \param ignorecase flag for case-insensitive string compares
  * \param type_resolve whenever type resolve was already tried
+ * \param
  * \param error set on error.
  * Build a \c MonoType from the type description in \p info. On failure returns NULL and sets \p error.
  */
 MonoType*
-mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error) {
+mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error) {
 	error_init (error);
-	return mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, type_resolve, error);
+	return mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, search_mscorlib, type_resolve, error);
 }
 
 
 static MonoType*
-module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -2146,12 +2160,12 @@ module_builder_array_get_type (MonoArrayHandle module_builders, int i, MonoImage
 	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW (MonoReflectionModuleBuilder, NULL);
 	MONO_HANDLE_ARRAY_GETREF (mb, module_builders, i);
 	MonoDynamicImage *dynamic_image = MONO_HANDLE_GETVAL (mb, dynamic_image);
-	type = mono_reflection_get_type_internal (rootimage, &dynamic_image->image, info, ignorecase, error);
+	type = mono_reflection_get_type_internal (rootimage, &dynamic_image->image, info, ignorecase, search_mscorlib, error);
 	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
 static MonoType*
-module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -2159,12 +2173,12 @@ module_array_get_type (MonoArrayHandle modules, int i, MonoImage *rootimage, Mon
 	MonoReflectionModuleHandle mod = MONO_HANDLE_NEW (MonoReflectionModule, NULL);
 	MONO_HANDLE_ARRAY_GETREF (mod, modules, i);
 	MonoImage *image = MONO_HANDLE_GETVAL (mod, image);
-	type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, error);
+	type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, search_mscorlib, error);
 	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
 static MonoType*
-mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase, MonoError *error)
+mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoType *type = NULL;
@@ -2183,7 +2197,7 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 	if (!MONO_HANDLE_IS_NULL (modules)) {
 		int n = mono_array_handle_length (modules);
 		for (i = 0; i < n; ++i) {
-			type = module_builder_array_get_type (modules, i, rootimage, info, ignorecase, error);
+			type = module_builder_array_get_type (modules, i, rootimage, info, ignorecase, search_mscorlib, error);
 			if (type)
 				break;
 			goto_if_nok (error, leave);
@@ -2196,7 +2210,7 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 	if (!type && !MONO_HANDLE_IS_NULL(loaded_modules)) {
 		int n = mono_array_handle_length (loaded_modules);
 		for (i = 0; i < n; ++i) {
-			type = module_array_get_type (loaded_modules, i, rootimage, info, ignorecase, error);
+			type = module_array_get_type (loaded_modules, i, rootimage, info, ignorecase, search_mscorlib, error);
 			if (type)
 				break;
 			goto_if_nok (error, leave);
@@ -2208,7 +2222,7 @@ leave:
 }
 	
 MonoType*
-mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error)
+mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
@@ -2220,9 +2234,9 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 	error_init (error);
 
 	if (image && image_is_dynamic (image))
-		type = mono_reflection_get_type_internal_dynamic (rootimage, image->assembly, info, ignorecase, error);
+		type = mono_reflection_get_type_internal_dynamic (rootimage, image->assembly, info, ignorecase, search_mscorlib, error);
 	else
-		type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, error);
+		type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, search_mscorlib, error);
 	goto_if_nok (error, return_null);
 
 	if (type)
@@ -2255,10 +2269,10 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 		MonoAssembly *assembly = MONO_HANDLE_GETVAL (reflection_assembly, assembly);
 		if (assembly_is_dynamic (assembly))
 			type = mono_reflection_get_type_internal_dynamic (rootimage, assembly,
-									  info, ignorecase, error);
+									  info, ignorecase, search_mscorlib, error);
 		else
 			type = mono_reflection_get_type_internal (rootimage, assembly->image,
-								  info, ignorecase, error);
+								  info, ignorecase, search_mscorlib, error);
 	}
 	goto_if_nok (error, return_null);
 	goto exit;
@@ -2345,7 +2359,7 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 		mono_error_cleanup (parse_error);
 		goto leave;
 	}
-	type = _mono_reflection_get_type_from_info (&info, image, FALSE, error);
+	type = _mono_reflection_get_type_from_info (&info, image, FALSE, TRUE, error);
 leave:
 	g_free (tmp);
 	mono_reflection_free_type_info (&info);
@@ -2624,7 +2638,11 @@ reflection_bind_generic_method_parameters (MonoMethod *method, MonoArrayHandle t
 	mono_error_assert_ok (error);
 
 	if (!mono_verifier_is_method_valid_generic_instantiation (inflated)) {
+#if ENABLE_NETCORE
+		mono_error_set_argument (error, NULL, "Invalid generic arguments");
+#else
 		mono_error_set_argument (error, "typeArguments", "Invalid generic arguments");
+#endif
 		return NULL;
 	}
 

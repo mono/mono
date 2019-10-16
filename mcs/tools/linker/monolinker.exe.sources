@@ -18,6 +18,7 @@
 ../../../external/linker/src/linker/Linker/MarkingHelpers.cs
 ../../../external/linker/src/linker/Linker/MethodAction.cs
 ../../../external/linker/src/linker/Linker/MethodBodyScanner.cs
+../../../external/linker/src/linker/Linker/OutputException.cs
 ../../../external/linker/src/linker/Linker/OverrideInformation.cs
 ../../../external/linker/src/linker/Linker/MethodDefinitionExtensions.cs
 ../../../external/linker/src/linker/Linker/MethodReferenceExtensions.cs
@@ -29,6 +30,7 @@
 ../../../external/linker/src/linker/Linker/TypeReferenceExtensions.cs
 ../../../external/linker/src/linker/Linker/XApiReader.cs
 ../../../external/linker/src/linker/Linker.Steps/BaseStep.cs
+../../../external/linker/src/linker/Linker.Steps/ClearInitLocals.cs
 ../../../external/linker/src/linker/Linker.Steps/LoadReferencesStep.cs
 ../../../external/linker/src/linker/Linker.Steps/LoadI18nAssemblies.cs
 ../../../external/linker/src/linker/Linker.Steps/ResolveFromXmlStep.cs

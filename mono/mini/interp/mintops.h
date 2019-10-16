@@ -26,12 +26,11 @@ typedef enum
 	MintOpShortAndInt
 } MintOpArgType;
 
-#define OPDEF(a,b,c,d) \
-	a,
-enum {
+#define OPDEF(a,b,c,d,e,f) a,
+typedef enum {
 #include "mintops.def"
 	MINT_LASTOP
-};
+} MintOpcode;
 #undef OPDEF
 
 #if NO_UNALIGNED_ACCESS
@@ -55,11 +54,31 @@ enum {
 
 #define MINT_SWITCH_LEN(n) (3 + (n) * 2)
 
-extern const char *mono_interp_opname[];
-extern unsigned char mono_interp_oplen[];
-extern MintOpArgType mono_interp_opargtype[];
-extern char* mono_interp_dis_mintop(const unsigned short *base, const guint16 *ip);
+#define MINT_IS_LDLOC(op) ((op) >= MINT_LDLOC_I1 && (op) <= MINT_LDLOC_VT)
+#define MINT_IS_STLOC(op) ((op) >= MINT_STLOC_I1 && (op) <= MINT_STLOC_VT)
+#define MINT_IS_MOVLOC(op) ((op) >= MINT_MOVLOC_1 && (op) <= MINT_MOVLOC_VT)
+#define MINT_IS_STLOC_NP(op) ((op) >= MINT_STLOC_NP_I4 && (op) <= MINT_STLOC_NP_O)
+#define MINT_IS_CONDITIONAL_BRANCH(op) ((op) >= MINT_BRFALSE_I4 && (op) <= MINT_BLT_UN_R8_S)
+#define MINT_IS_CALL(op) ((op) >= MINT_CALL && (op) <= MINT_JIT_CALL)
+#define MINT_IS_NEWOBJ(op) ((op) >= MINT_NEWOBJ && (op) <= MINT_NEWOBJ_MAGIC)
+
+#define MINT_POP_ALL	-2
+#define MINT_VAR_PUSH	-1
+#define MINT_VAR_POP	-1
+
+extern unsigned char const mono_interp_oplen[];
+extern int const mono_interp_oppop[];
+extern int const mono_interp_oppush[];
+extern MintOpArgType const mono_interp_opargtype[];
+extern char* mono_interp_dis_mintop (const unsigned short *base, const guint16 *ip);
 extern const guint16* mono_interp_dis_mintop_len (const guint16 *ip);
 
-#endif
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
+extern const guint16 mono_interp_opname_offsets [ ];
+typedef struct MonoInterpOpnameCharacters MonoInterpOpnameCharacters;
+extern const MonoInterpOpnameCharacters mono_interp_opname_characters;
 
+const char*
+mono_interp_opname (int op);
+
+#endif

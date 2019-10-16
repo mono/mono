@@ -22,7 +22,7 @@ static gboolean
 is_int_stack_size (int type)
 {
 #if TARGET_SIZEOF_VOID_P == 4
-	return type == STACK_I4 || type == STACK_MP;
+	return type == STACK_I4 || type == STACK_MP || type == STACK_PTR;
 #else
 	return type == STACK_I4;
 #endif
@@ -32,7 +32,7 @@ static gboolean
 is_long_stack_size (int type)
 {
 #if TARGET_SIZEOF_VOID_P == 8
-	return type == STACK_I8 || type == STACK_MP;
+	return type == STACK_I8 || type == STACK_MP || type == STACK_PTR;
 #else
 	return type == STACK_I8;
 #endif
@@ -303,6 +303,12 @@ handle_instruction:
 		}
 	}
 	g_hash_table_destroy (addr_loads);
+
+#ifdef ENABLE_NETCORE
+	/* There could be ldaddr instructions which already got eliminated */
+	if (COMPILE_LLVM (cfg))
+		return TRUE;
+#endif
 	return needs_dce;
 }
 

@@ -322,6 +322,7 @@ enum {
 	INTERNAL_MEM_STATISTICS,
 	INTERNAL_MEM_STAT_PINNED_CLASS,
 	INTERNAL_MEM_STAT_REMSET_CLASS,
+	INTERNAL_MEM_STAT_GCHANDLE_CLASS,
 	INTERNAL_MEM_GRAY_QUEUE,
 	INTERNAL_MEM_MS_TABLES,
 	INTERNAL_MEM_MS_BLOCK_INFO,
@@ -470,12 +471,18 @@ void sgen_pin_stats_register_object (GCObject *obj, int generation);
 void sgen_pin_stats_register_global_remset (GCObject *obj);
 void sgen_pin_stats_report (void);
 
+void sgen_gchandle_stats_enable (void);
+void sgen_gchandle_stats_report (void);
+
 void sgen_sort_addresses (void **array, size_t size);
 void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
 
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_get_concurrent_collection_in_progress (void);
+
+void sgen_set_bytes_allocated_attached (guint64 bytes);
+void sgen_increment_bytes_allocated_detached (guint64 bytes);
 
 typedef struct _SgenFragment SgenFragment;
 
@@ -707,8 +714,8 @@ SgenMinorCollector* sgen_get_minor_collector (void);
 
 typedef struct _SgenRememberedSet {
 	void (*wbarrier_set_field) (GCObject *obj, gpointer field_ptr, GCObject* value);
-	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
-	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
+	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gconstpointer src_ptr, int count);
+	void (*wbarrier_value_copy) (gpointer dest, gconstpointer src, int count, size_t element_size);
 	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
 	void (*wbarrier_generic_nostore) (gpointer ptr);
 	void (*record_pointer) (gpointer ptr);
@@ -728,7 +735,7 @@ SgenRememberedSet *sgen_get_remset (void);
  * These must be kept in sync with object.h.  They're here for using SGen independently of
  * Mono.
  */
-void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count);
+void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, /*const*/ void* src_ptr, int count);
 void mono_gc_wbarrier_generic_nostore (gpointer ptr);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
@@ -932,7 +939,7 @@ void sgen_clear_nursery_fragments (void);
 void sgen_nursery_allocator_prepare_for_pinning (void);
 void sgen_nursery_allocator_set_nursery_bounds (char *nursery_start, size_t min_size, size_t max_size);
 void sgen_resize_nursery (gboolean need_shrink);
-mword sgen_build_nursery_fragments (GCMemSection *nursery_section, SgenGrayQueue *unpin_queue);
+mword sgen_build_nursery_fragments (GCMemSection *nursery_section);
 void sgen_init_nursery_allocator (void);
 void sgen_nursery_allocator_init_heavy_stats (void);
 void sgen_init_allocator (void);
@@ -1075,6 +1082,8 @@ typedef enum {
 } SgenAllocatorType;
 
 void sgen_clear_tlabs (void);
+void sgen_update_allocation_count (void);
+guint64 sgen_get_total_allocated_bytes (MonoBoolean precise);
 
 GCObject* sgen_alloc_obj (GCVTable vtable, size_t size)
 	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
@@ -1093,7 +1102,7 @@ void sgen_check_whole_heap_stw (void)
 	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_check_objref (char *obj);
 void sgen_check_heap_marked (gboolean nursery_must_be_pinned);
-void sgen_check_nursery_objects_pinned (gboolean pinned);
+void sgen_check_nursery_objects_untag (void);
 void sgen_check_for_xdomain_refs (void);
 GCObject* sgen_find_object_for_ptr (char *ptr);
 
@@ -1141,6 +1150,8 @@ gboolean sgen_nursery_canaries_enabled (void);
 
 void
 sgen_check_canary_for_object (gpointer addr);
+
+guint64 sgen_get_precise_allocation_count (void);
 
 #define CHECK_CANARY_FOR_OBJECT(addr, ignored) \
 	(sgen_nursery_canaries_enabled () ? sgen_check_canary_for_object (addr) : (void)0)

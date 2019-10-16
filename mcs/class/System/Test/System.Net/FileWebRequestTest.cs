@@ -26,6 +26,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category("NotWasm")]
 	public class FileWebRequestTest
 	{
 		private TempDirectory _tempDirectory;

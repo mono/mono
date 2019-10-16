@@ -35,7 +35,7 @@ typedef struct
 	guint32 breakpoint_id;
 } MiniDebugMethodInfo;
 
-static inline void
+static void
 record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
 {
 	MonoDebugLineNumberEntry lne;
@@ -352,7 +352,7 @@ mono_debug_open_block (MonoCompile *cfg, MonoBasicBlock *bb, guint32 address)
 	record_line_number (info, address, offset);
 }
 
-static inline void
+static void
 encode_value (gint32 value, guint8 *buf, guint8 **endbuf)
 {
 	guint8 *p = buf;
@@ -388,7 +388,7 @@ encode_value (gint32 value, guint8 *buf, guint8 **endbuf)
 		*endbuf = p;
 }
 
-static inline gint32
+static gint32
 decode_value (guint8 *ptr, guint8 **rptr)
 {
 	guint8 b = *ptr;
@@ -465,6 +465,8 @@ mono_debug_serialize_debug_info (MonoCompile *cfg, guint8 **out_buf, guint32 *bu
 	encode_value (jit->has_var_info, p, &p);
 
 	if (jit->has_var_info) {
+		encode_value (jit->num_locals, p, &p);
+
 		for (i = 0; i < jit->num_params; ++i)
 			serialize_variable (&jit->params [i], p, &p);
 
@@ -531,15 +533,10 @@ deserialize_variable (MonoDebugVarInfo *var, guint8 *p, guint8 **endbuf)
 static MonoDebugMethodJitInfo *
 deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, guint32 buf_len)
 {
-	ERROR_DECL (error);
-	MonoMethodHeader *header;
 	gint32 offset, native_offset, prev_offset, prev_native_offset;
 	MonoDebugMethodJitInfo *jit;
 	guint8 *p;
 	int i;
-
-	header = mono_method_get_header_checked (method, error);
-	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	jit = g_new0 (MonoDebugMethodJitInfo, 1);
 	jit->code_start = code_start;
@@ -551,7 +548,8 @@ deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, gui
 	jit->has_var_info = decode_value (p, &p);
 
 	if (jit->has_var_info) {
-		jit->num_locals = header->num_locals;
+		jit->num_locals = decode_value (p, &p);
+
 		jit->num_params = mono_method_signature_internal (method)->param_count;
 		jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
 		jit->locals = g_new0 (MonoDebugVarInfo, jit->num_locals);
@@ -593,7 +591,6 @@ deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, gui
 		prev_native_offset = native_offset;
 	}
 
-	mono_metadata_free_mh (header);
 	return jit;
 }
 

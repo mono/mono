@@ -32,11 +32,23 @@
         "none": "Do not include any additional code pages"
       },
       "valueSeparators": ",;"
-    }
+    },
     "EnableDefaultWebContentItems": {
       "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
       "kind": "bool",
       "default": true
+    },
+    "EnableMonoWasmThreads": {
+      "description": "Whether to include support for threads or not.",
+      "kind": "bool",
+      "default": false
+    },
+    "MonoWasmRuntime": {
+      "description": "Decide which version of the wasm runtime should be published.  Default: Tied to _DebugSymbolsProduced",
+      "values": {
+        "debug": "Publish the debug version of the runtime.",
+        "release": "Publish the release version of the runtime."
+      }
     }
   }
 }

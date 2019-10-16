@@ -33,13 +33,13 @@
 static GPtrArray *dynamic_images;
 static mono_mutex_t dynamic_images_mutex;
 
-static inline void
+static void
 dynamic_images_lock (void)
 {
 	mono_os_mutex_lock (&dynamic_images_mutex);
 }
 
-static inline void
+static void
 dynamic_images_unlock (void)
 {
 	mono_os_mutex_unlock (&dynamic_images_mutex);
@@ -122,7 +122,7 @@ mono_find_dynamic_image_owner (void *ptr)
 	return owner;
 }
 
-static inline void
+static void
 dynamic_image_lock (MonoDynamicImage *image)
 {
 	MONO_ENTER_GC_SAFE;
@@ -130,7 +130,7 @@ dynamic_image_lock (MonoDynamicImage *image)
 	MONO_EXIT_GC_SAFE;
 }
 
-static inline void
+static void
 dynamic_image_unlock (MonoDynamicImage *image)
 {
 	mono_image_unlock ((MonoImage*)image);
@@ -263,7 +263,7 @@ mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean 
 
 	if (!handle_class)
 		handle_class = &klass;
-	gpointer result = mono_reflection_resolve_object_handle (image, obj, handle_class, context, error);
+	gpointer const result = mono_reflection_resolve_object_handle (image, obj, handle_class, context, error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 #else /* DISABLE_REFLECTION_EMIT */

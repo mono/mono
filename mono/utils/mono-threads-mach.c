@@ -73,8 +73,16 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	} while (ret == KERN_ABORTED);
 
 	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (gpointer)(gsize)info->native_handle, ret);
-	if (ret != KERN_SUCCESS)
+	if (ret != KERN_SUCCESS) {
+		if (!mono_threads_transition_abort_async_suspend (info)) {
+			/* We raced with self suspend and lost so suspend can continue. */
+			g_assert (mono_threads_is_hybrid_suspension_enabled ());
+			info->suspend_can_continue = TRUE;
+			THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (gpointer)(gsize)info->native_handle);
+			return TRUE;
+		}
 		return FALSE;
+	}
 
 	if (!mono_threads_transition_finish_async_suspend (info)) {
 		/* We raced with self-suspend and lost.  Resume the native
@@ -269,5 +277,13 @@ gboolean
 mono_threads_platform_is_main_thread (void)
 {
 	return pthread_main_np () == 1;
+}
+
+guint64
+mono_native_thread_os_id_get (void)
+{
+	uint64_t tid;
+	pthread_threadid_np (pthread_self (), &tid);
+	return tid;
 }
 #endif

@@ -77,6 +77,7 @@ mobile_common_dirs_parallel := \
 	System.Numerics	\
 	System.Numerics.Vectors		\
 	System.Data	\
+	System.Data.DataSetExtensions \
 	Mono.Data.Sqlite	\
 	System.Data.Services.Client \
 	System.IO.Compression \
@@ -117,6 +118,7 @@ monodroid_dirs_parallel := \
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
+	Mono.Cecil.Mdb	\
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
 	monodoc \
@@ -168,7 +170,27 @@ unreal_dirs_parallel := \
 	$(mobile_common_dirs_parallel)
 
 wasm_dirs_parallel := \
-	$(mobile_common_dirs_parallel)
+	Mono.Security \
+	System	\
+	System.Core	\
+	System.XML	\
+	System.Security	\
+	I18N		\
+	System.Transactions	\
+	System.ServiceModel.Internals	\
+	System.Runtime.Serialization	\
+	System.Data	\
+	System.Data.DataSetExtensions	\
+	System.Xml.Linq	\
+	System.Numerics	\
+	System.Numerics.Vectors		\
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.ComponentModel.DataAnnotations \
+	System.ComponentModel.Composition.4.5 \
+	System.Net.Http	\
+	Microsoft.CSharp \
+	System.Runtime.CompilerServices.Unsafe
 
 wasm_tools_dirs_parallel := \
 	Mono.Cecil
@@ -193,6 +215,7 @@ xammac_4_5_dirs_parallel := \
 	System.Transactions	\
 	System.EnterpriseServices	\
 	System.Data	\
+	System.Data.DataSetExtensions	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq	\
 	Mono.Data.Sqlite	\
@@ -429,7 +452,7 @@ wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
 wasm_tools_SUBDIRS :=
 wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
-netcore_SUBDIRS := System.Private.CoreLib
+netcore_SUBDIRS :=
 netcore_PARALLEL_SUBDIRS :=
 
 include ../build/rules.make

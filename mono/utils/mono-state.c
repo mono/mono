@@ -15,6 +15,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/mono-config-dirs.h>
 
 #include <sys/param.h>
 #include <fcntl.h>
@@ -41,6 +42,18 @@ extern GCStats mono_gc_stats;
 
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
+
+#ifdef TARGET_OSX
+// OSX 10.9 does not have MAP_ANONYMOUS
+#if !defined(MAP_ANONYMOUS)
+  #define NO_MAP_ANONYMOUS
+  #if defined(MAP_ANON)
+    #define MAP_ANONYMOUS MAP_ANON
+  #else
+    #define MAP_ANONYMOUS 0
+  #endif
+#endif
 #endif
 
 #ifdef HAVE_EXECINFO_H
@@ -135,6 +148,15 @@ file_for_summary_stage (const char *directory, MonoSummaryStage stage, gchar *bu
 	g_snprintf (buff, sizeof_buff, "%s%scrash_stage_%d", directory, G_DIR_SEPARATOR_S, stage);
 }
 
+static void
+create_stage_mark_file (void)
+{
+	char out_file [200];
+	file_for_summary_stage (log.directory, log.level, out_file, sizeof(out_file));
+	int handle = g_open (out_file, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+	close(handle);
+}
+
 gboolean
 mono_summarize_set_timeline_dir (const char *directory)
 {
@@ -155,30 +177,27 @@ mono_summarize_timeline_start (void)
 	if (!configured_timeline_dir)
 		return;
 
-	log.level = MonoSummarySetup;
 	log.directory = configured_timeline_dir;
+	mono_summarize_timeline_phase_log (MonoSummarySetup);
 }
 
 void
 mono_summarize_double_fault_log (void)
 {
-	char out_file [200];
-	file_for_summary_stage (log.directory, MonoSummaryDoubleFault, out_file, sizeof(out_file));
-	int handle = g_open (out_file, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
-	close(handle);
+	mono_summarize_timeline_phase_log (MonoSummaryDoubleFault);
 }
 
 void
 mono_summarize_timeline_phase_log (MonoSummaryStage next)
 {
-	if (log.level == MonoSummaryNone)
-		return;
-
 	if (!log.directory)
 		return;
 
 	MonoSummaryStage out_level;
 	switch (log.level) {
+		case MonoSummaryNone:
+			out_level = MonoSummarySetup;
+			break;
 		case MonoSummarySetup:
 			out_level = MonoSummarySuspendHandshake;
 			break;
@@ -222,22 +241,15 @@ mono_summarize_timeline_phase_log (MonoSummaryStage next)
 			return;
 	}
 
-	g_assertf(out_level == next, "Log Error: Log transition to %d, actual expected next step is %d\n", next, out_level);
+	g_assertf(out_level == next || next == MonoSummaryDoubleFault, "Log Error: Log transition to %d, actual expected next step is %d\n", next, out_level);
 
-	char out_file [200];
-	memset (out_file, 0, sizeof(out_file));
-	file_for_summary_stage (log.directory, out_level, out_file, sizeof(out_file));
-
-	int handle = g_open (out_file, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
-	close(handle);
-
+	log.level = out_level;
+	create_stage_mark_file ();
 	// To check, comment out normally
 	// DO NOT MERGE UNCOMMENTED
 	// As this does a lot of FILE io
 	//
 	// g_assert (out_level == mono_summarize_timeline_read_level (log.directory,  FALSE));
-
-	log.level = out_level;
 
 	if (out_level == MonoSummaryDone)
 		memset (&log, 0, sizeof (log));
@@ -441,12 +453,10 @@ mono_native_state_add_frame (MonoStateWriter *writer, MonoFrameSummary *frame)
 	mono_state_writer_printf(writer, "{\n");
 	writer->indent++;
 
-	if (frame->is_managed) {
-		assert_has_space (writer);
-		mono_state_writer_indent (writer);
-		mono_state_writer_object_key (writer, "is_managed");
-		mono_state_writer_printf(writer, "\"%s\",", frame->is_managed ? "true" : "false");
-	}
+	assert_has_space (writer);
+	mono_state_writer_indent (writer);
+	mono_state_writer_object_key (writer, "is_managed");
+	mono_state_writer_printf(writer, "\"%s\",", frame->is_managed ? "true" : "false");
 
 	if (frame->unmanaged_data.is_trampoline) {
 		mono_state_writer_printf(writer, "\n");
@@ -503,6 +513,7 @@ mono_native_state_add_frame (MonoStateWriter *writer, MonoFrameSummary *frame)
 		mono_state_writer_printf(writer, "\"0x%05x\"\n", frame->managed_data.il_offset);
 
 	} else {
+		mono_state_writer_printf(writer, "\n");
 		assert_has_space (writer);
 		mono_state_writer_indent (writer);
 		mono_state_writer_object_key (writer, "native_address");
@@ -520,7 +531,7 @@ mono_native_state_add_frame (MonoStateWriter *writer, MonoFrameSummary *frame)
 			mono_state_writer_printf(writer, "\"0x%05x\"", frame->unmanaged_data.offset);
 		}
 
-		if (frame->unmanaged_data.module) {
+		if (frame->unmanaged_data.module [0] != '\0') {
 			mono_state_writer_printf(writer, ",\n");
 
 			assert_has_space (writer);
@@ -929,6 +940,8 @@ mono_native_state_add_memory (MonoStateWriter *writer)
 
 #define MONO_CRASH_REPORTING_MAPPING_LINE_LIMIT 30
 
+#if !MONO_PRIVATE_CRASHES
+
 static void
 mono_native_state_add_process_map (MonoStateWriter *writer)
 {
@@ -983,6 +996,8 @@ mono_native_state_add_process_map (MonoStateWriter *writer)
 	close (handle);
 #endif
 }
+
+#endif
 
 static void
 mono_native_state_add_prologue (MonoStateWriter *writer)

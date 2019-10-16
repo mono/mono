@@ -1384,7 +1384,7 @@ int cond_to_sparc_cond [][3] = {
 };
 
 /* Map opcode to the sparc condition codes */
-static inline SparcCond
+static SparcCond
 opcode_to_sparc_cond (int opcode)
 {
 	CompRelation rel;
@@ -4344,11 +4344,6 @@ mono_arch_tls_init (void)
 
 void
 mono_arch_finish_init (void)
-{
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 {
 }
 

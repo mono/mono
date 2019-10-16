@@ -1354,6 +1354,21 @@ public class DebuggerTests
 		val = frame.GetArgument (0);
 		AssertValue ("BLA", val);
 	}
+	[Test]
+	public void CreateByteArrays () {
+		byte[] bt = new byte[5];
+		bt[0] = 1;
+		bt[1] = 0;
+		bt[2] = 255;
+		bt[3] = 10;
+		bt[4] = 50;
+		var val =  vm.RootDomain.CreateByteArray (bt);
+		AssertValue (1, val [0]);
+		AssertValue (0, val [1]);
+		AssertValue (255, val [2]);
+		AssertValue (10, val [3]);
+		AssertValue (50, val [4]);
+	}
 
 	[Test]
 	public void Arrays () {
@@ -1752,7 +1767,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[7].ParameterType;
 		Assert.AreEqual ("Tests", t.Name);
 		var nested = (from nt in t.GetNestedTypes () where nt.IsNestedPublic select nt).ToArray ();
-		Assert.AreEqual (1, nested.Length);
+		Assert.AreEqual (2, nested.Length);
 		Assert.AreEqual ("NestedClass", nested [0].Name);
 		Assert.IsTrue (t.BaseType.IsAssignableFrom (t));
 		Assert.IsTrue (!t.IsAssignableFrom (t.BaseType));
@@ -4218,8 +4233,6 @@ public class DebuggerTests
 		var e = run_until ("unhandled_exception_endinvoke");
 		vm.Resume ();
 
-		var e1 = GetNextEvent (); //this should be the exception
-		vm.Resume ();
 		var e2 = GetNextEvent ();
 		Assert.IsFalse (e2 is ExceptionEvent);
 
@@ -4263,6 +4276,23 @@ public class DebuggerTests
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
 		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException4 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-perform-wait-callback");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_perform_wait_callback");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is VMDeathEvent);
 		vm = null;
 	}
 
@@ -4419,6 +4449,39 @@ public class DebuggerTests
 
 		e.Thread.SetIP (next_loc);
 
+		/* Check that i ++; j = 5; was skipped */
+		bevent = run_until ("set_ip_2");
+		var f = bevent.Thread.GetFrames ()[1];
+		AssertValue (2, f.GetValue (f.Method.GetLocal ("i")));
+		AssertValue (0, f.GetValue (f.Method.GetLocal ("j")));
+
+		// Error handling
+		AssertThrows<ArgumentNullException> (delegate {
+				e.Thread.SetIP (null);
+			});
+
+		AssertThrows<ArgumentException> (delegate {
+				e.Thread.SetIP (invalid_loc);
+			});
+	}
+
+	[Test]
+	public void SetIP2 () {
+		var bevent = run_until ("set_ip_1");
+
+		var invalid_loc = bevent.Thread.GetFrames ()[0].Location;
+
+		var req = create_step (bevent);
+		var e = step_out ();
+		req.Disable ();
+		var frames = e.Thread.GetFrames ();
+		var locs = frames [0].Method.Locations;
+
+		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 3));
+
+		e.Thread.SetIP (next_loc);
+
+		Assert.AreEqual(next_loc.ILOffset, e.Thread.GetFrames ()[0].Location.ILOffset);
 		/* Check that i ++; j = 5; was skipped */
 		bevent = run_until ("set_ip_2");
 		var f = bevent.Thread.GetFrames ()[1];
@@ -4995,6 +5058,88 @@ public class DebuggerTests
 
 		ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (port);
 	}
+
+	[Test]
+	public void InvokeMethodFixedArray () {
+		Event e = run_until ("fixed_size_array");
+		var req = create_step (e);
+		req.Enable ();
+		step_once ();
+		step_over ();
+		step_over ();
+		var bp = step_over ();
+		var thread = bp.Thread;
+		var frame = thread.GetFrames()[0];
+
+		var local =  frame.GetVisibleVariableByName("n");
+		var n = (StructMirror)frame.GetValue(local);
+		var get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer0");
+		var min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("1", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer1");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("2", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("3", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer3");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("4", min.Value);
+
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_0");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("a", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_1");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("b", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_2");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("c", min.Value);
+		get_Min = n.Type.GetMethods().First(m => m.Name == "getBuffer2_3");
+		min = (StringMirror) n.InvokeMethod(thread, get_Min, Array.Empty<Value>());
+		Assert.AreEqual("d", min.Value);
+	}
+
+	[Test]
+	public void TestExceptionFilterWin () {
+		Event e = run_until ("test_new_exception_filter1");
+		var req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.Exception"), true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		Event ev = GetNextEvent ();
+		var l = ev.Thread.GetFrames ()[0].Location;
+				
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter2");
+		req2 = vm.CreateExceptionRequest (null, true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter3");
+		var req3 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req3.Enable ();
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		req3.Disable ();
+		run_until ("test_new_exception_filter4");
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+	}
+
+
 #endif
 } // class DebuggerTests
 } // namespace

@@ -182,6 +182,7 @@ get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len
 			return FALSE;
 		*out_etype = (MonoType*)typed_args [0];
 		*out_len = *(gint32*)typed_args [1];
+		g_free (typed_args [1]);
 		g_free (typed_args);
 		g_free (named_args);
 		g_free (arginfo);
@@ -1370,9 +1371,19 @@ emit_invoke_call (MonoMethodBuilder *mb, MonoMethod *method,
 	/* to make it work with our special string constructors */
 	if (!string_dummy) {
 		ERROR_DECL (error);
+
+		// FIXME Allow for static construction of MonoString.
+
+		SETUP_ICALL_FUNCTION;
+		SETUP_ICALL_FRAME;
+
 		MONO_GC_REGISTER_ROOT_SINGLE (string_dummy, MONO_ROOT_SOURCE_MARSHAL, NULL, "Marshal Dummy String");
-		string_dummy = mono_string_new_checked (mono_get_root_domain (), "dummy", error);
+
+		MonoStringHandle string_dummy_handle = mono_string_new_utf8_len (mono_get_root_domain (), "dummy", 5, error);
+		string_dummy = MONO_HANDLE_RAW (string_dummy_handle);
 		mono_error_assert_ok (error);
+
+		CLEAR_ICALL_FRAME;
 	}
 
 	if (virtual_) {
@@ -1949,10 +1960,18 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 		mono_mb_emit_byte (mb, CEE_LDARG_0);
 		mono_mb_emit_op (mb, CEE_UNBOX, mono_defaults.int_class);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
+			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+			mono_mb_emit_byte (mb, CEE_MONO_SAVE_LAST_ERROR);
+		}
 		mono_mb_emit_calli (mb, csig);
 	} else if (MONO_CLASS_IS_IMPORT (mb->method->klass)) {
 #ifndef DISABLE_COM
 		mono_mb_emit_ldloc (mb, gc_safe_transition_builder.coop_cominterop_fnptr);
+		if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
+			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+			mono_mb_emit_byte (mb, CEE_MONO_SAVE_LAST_ERROR);
+		}
 		mono_mb_emit_cominterop_call_function_pointer (mb, csig);
 #else
 		g_assert_not_reached ();
@@ -1962,37 +1981,18 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 			/* Reuse the ICALL_ADDR opcode for pinvokes too */
 			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 			mono_mb_emit_op (mb, CEE_MONO_ICALL_ADDR, &piinfo->method);
+			if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
+				mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+				mono_mb_emit_byte (mb, CEE_MONO_SAVE_LAST_ERROR);
+			}
 			mono_mb_emit_calli (mb, csig);
-		} else {			
+		} else {
+			if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
+				mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+				mono_mb_emit_byte (mb, CEE_MONO_SAVE_LAST_ERROR);
+			}
 			mono_mb_emit_native_call (mb, csig, func);
 		}
-	}
-
-	/* Set LastError if needed */
-	if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
-#ifdef TARGET_WIN32
-		if (!aot) {
-			static MonoMethodSignature *get_last_error_sig = NULL;
-			if (!get_last_error_sig) {
-				get_last_error_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
-				get_last_error_sig->ret = int_type;
-				get_last_error_sig->pinvoke = 1;
-			}
-
-			/*
-			 * Have to call GetLastError () early and without a wrapper, since various runtime components could
-			 * clobber its value.
-			 */
-			mono_mb_emit_native_call (mb, get_last_error_sig, GetLastError);
-			mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
-		} else {
-			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-			mono_mb_emit_byte (mb, CEE_MONO_GET_LAST_ERROR);
-			mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
-		}
-#else
-		mono_mb_emit_icall (mb, mono_marshal_set_last_error);
-#endif
 	}
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
@@ -2578,11 +2578,25 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			char *msg = g_strdup ("[MarshalAs] attribute required to marshal arrays to managed code.");
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			return conv_arg;
-		}			
-		if (spec->native != MONO_NATIVE_LPARRAY) {
-			char *msg = g_strdup ("Non LPArray marshalling of arrays to managed code is not implemented.");
+		}
+
+		switch (spec->native) {
+		case MONO_NATIVE_LPARRAY:
+			break;
+		case MONO_NATIVE_SAFEARRAY:
+#ifndef DISABLE_COM
+			if (spec->data.safearray_data.elem_type != MONO_VARIANT_VARIANT) {
+				char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
+				mono_mb_emit_exception_marshal_directive (mb, msg);
+				return conv_arg;
+			}
+			return mono_cominterop_emit_marshal_safearray (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+#endif
+		default: {
+			char *msg = g_strdup ("Unsupported array type marshalling to managed code.");
 			mono_mb_emit_exception_marshal_directive (mb, msg);
-			return conv_arg;			
+			return conv_arg;
+		}
 		}
 
 		/* FIXME: t is from the method which is wrapped, not the delegate type */
@@ -4021,7 +4035,7 @@ emit_delegate_invoke_internal_ilgen (MonoMethodBuilder *mb, MonoMethodSignature 
 	} else {
 		ERROR_DECL (error);
 		mono_mb_emit_op (mb, CEE_CALLVIRT, mono_class_inflate_generic_method_checked (method, &container->context, error));
-		g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+		g_assert (is_ok (error)); /* FIXME don't swallow the error */
 	}
 	if (!void_ret)
 		mono_mb_emit_stloc (mb, local_res);
@@ -4116,7 +4130,7 @@ emit_synchronized_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	if (ctx) {
 		ERROR_DECL (error);
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, error), NULL);
-		g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+		g_assert (is_ok (error)); /* FIXME don't swallow the error */
 	} else {
 		mono_mb_emit_managed_call (mb, method, NULL);
 	}
@@ -4174,7 +4188,7 @@ emit_array_accessor_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mo
 	if (ctx) {
 		ERROR_DECL (error);
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, error), NULL);
-		g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+		g_assert (is_ok (error)); /* FIXME don't swallow the error */
 	} else {
 		mono_mb_emit_managed_call (mb, method, NULL);
 	}
@@ -5483,7 +5497,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				}
 
 				mono_mb_emit_byte (mb, CEE_STIND_REF);
-			} else {
+			} else if (t->attrs & PARAM_ATTRIBUTE_OUT || !(t->attrs & PARAM_ATTRIBUTE_IN)) {
 				mono_mb_emit_ldarg (mb, argnum);
 				mono_mb_emit_ldloc (mb, conv_arg);
 
@@ -6027,7 +6041,6 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_BOOLEAN:
 			tmp_locals [i] = mono_emit_marshal (m, i, sig->params [i], mspecs [i + 1], 0, &csig->params [i], MARSHAL_ACTION_MANAGED_CONV_IN);
-
 			break;
 		default:
 			tmp_locals [i] = 0;
@@ -6270,7 +6283,7 @@ typedef enum {
 	/* Wrap the argument (a valuetype reference) in a handle to pin its
 	   enclosing object, but pass the raw reference to the icall.  This is
 	   also how we pass byref generic parameter arguments to generic method
-	   icalls (eg, System.Array:GetGenericValueImpl<T>(int idx, T out value)) */
+	   icalls (e.g. System.Array:GetGenericValue_icall<T>(int idx, T out value)) */
 	ICALL_HANDLES_WRAP_VALUETYPE_REF,
 } IcallHandlesWrap;
 
@@ -6294,10 +6307,7 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * wrapped in handles: if the actual argument type is a reference type
 	 * we'd need to wrap it in a handle, otherwise we'd want to pass it as is.
 	 */
-	/* FIXME: There is one icall that will some day cause us trouble here:
-	 * System.Threading.Interlocked:CompareExchange<T> (ref T location, T
-	 * new, T old) where T:class.  What will save us is that 'T:class'
-	 * constraint.  We should eventually relax the assertion, below, to
+	/* FIXME: We should eventually relax the assertion, below, to
 	 * allow generic parameters that are constrained to be reference types.
 	 */
 	g_assert (!generic_sig || !mono_type_is_generic_parameter (generic_sig->params [param]));
@@ -6309,18 +6319,18 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * like string& since the C code for the icall has to work uniformly
 	 * for both valuetypes and reference types.
 	 */
-	if (generic_sig && mono_type_is_byref (generic_sig->params [param]) &&
+	if (generic_sig && mono_type_is_byref_internal (generic_sig->params [param]) &&
 	    (generic_sig->params [param]->type == MONO_TYPE_VAR || generic_sig->params [param]->type == MONO_TYPE_MVAR))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 
 	if (MONO_TYPE_IS_REFERENCE (sig->params [param])) {
 		if (mono_signature_param_is_out (sig, param))
 			return ICALL_HANDLES_WRAP_OBJ_OUT;
-		else if (mono_type_is_byref (sig->params [param]))
+		else if (mono_type_is_byref_internal (sig->params [param]))
 			return ICALL_HANDLES_WRAP_OBJ_INOUT;
 		else
 			return ICALL_HANDLES_WRAP_OBJ;
-	} else if (mono_type_is_byref (sig->params [param]))
+	} else if (mono_type_is_byref_internal (sig->params [param]))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 	else
 		return ICALL_HANDLES_WRAP_NONE;

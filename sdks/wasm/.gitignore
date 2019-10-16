@@ -3,5 +3,8 @@ package-lock.json
 .stamp*
 *.wasm
 mono.js
-runtime*.js
 Mono.Cecil*
+emsdk_env.sh
+builds/threads-debug
+builds/threads-release
+.configured

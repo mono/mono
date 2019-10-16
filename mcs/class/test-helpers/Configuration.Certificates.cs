@@ -24,6 +24,9 @@ namespace System.Net.Test.Common
 
             static Certificates()
             {
+#if MOBILE
+                m = new Mutex(false);
+#else
                 if (PlatformDetection.IsUap)
                 {
                     // UWP doesn't support Global mutexes.
@@ -33,6 +36,7 @@ namespace System.Net.Test.Common
                 {
                     m = new Mutex(false, "Global\\CoreFXTest.Configuration.Certificates.LoadPfxCertificate");
                 }
+#endif
             }
 
             public static X509Certificate2 GetServerCertificate() => GetCertWithPrivateKey(GetServerCertificateCollection());

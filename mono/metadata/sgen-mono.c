@@ -100,7 +100,7 @@ scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword
 #endif
 
 void
-mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, MonoClass *klass)
+mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
 {
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (m_class_is_valuetype (klass));
@@ -121,7 +121,7 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, Mo
 		for (i = 0; i < count; ++i) {
 			scan_object_for_binary_protocol_copy_wbarrier ((char*)dest + i * element_size,
 					(char*)src + i * element_size - MONO_ABI_SIZEOF (MonoObject),
-					(mword) klass->gc_descr);
+					(mword) m_class_get_gc_descr (klass));
 		}
 	}
 #endif
@@ -234,11 +234,6 @@ mono_gc_is_critical_method (MonoMethod *method)
 #endif
 }
 
-static void
-emit_nursery_check_noilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
-{
-}
-
 static MonoSgenMonoCallbacks sgenmono_cb;
 static gboolean cb_inited = FALSE;
 
@@ -251,12 +246,17 @@ mono_install_sgen_mono_callbacks (MonoSgenMonoCallbacks *cb)
 	cb_inited = TRUE;
 }
 
+#if !ENABLE_ILGEN
+
 static void
-emit_managed_allocater_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
+emit_nursery_check_noilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 {
 }
 
-#if !ENABLE_ILGEN
+static void
+emit_managed_allocator_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
+{
+}
 
 static void
 install_noilgen (void)
@@ -264,7 +264,7 @@ install_noilgen (void)
 	MonoSgenMonoCallbacks cb;
 	cb.version = MONO_SGEN_MONO_CALLBACKS_VERSION;
 	cb.emit_nursery_check = emit_nursery_check_noilgen;
-	cb.emit_managed_allocater = emit_managed_allocater_noilgen;
+	cb.emit_managed_allocator = emit_managed_allocator_noilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
 
@@ -1042,7 +1042,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
 
-	get_sgen_mono_cb ()->emit_managed_allocater (mb, slowpath, profiler, atype);
+	get_sgen_mono_cb ()->emit_managed_allocator (mb, slowpath, profiler, atype);
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
 	info->d.alloc.gc_name = "sgen";
@@ -1456,6 +1456,7 @@ mono_gc_set_string_length (MonoString *str, gint32 new_length)
 #define SPECIAL_ADDRESS_FIN_QUEUE ((mono_byte*)1)
 #define SPECIAL_ADDRESS_CRIT_FIN_QUEUE ((mono_byte*)2)
 #define SPECIAL_ADDRESS_EPHEMERON ((mono_byte*)3)
+#define SPECIAL_ADDRESS_TOGGLEREF ((mono_byte*)4)
 
 typedef struct {
 	int count;		/* must be the first field */
@@ -1643,6 +1644,116 @@ report_handle_stack_roots (GCRootReport *report, SgenThreadInfo *info, gboolean 
 	mono_handle_stack_scan (info->client_info.info.handle_stack, report_handle_stack_root, &ud, ud.precise, FALSE);
 }
 
+static void*
+get_aligned_stack_start (SgenThreadInfo *info)
+{
+	void* aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+#if _WIN32
+// Due to the guard page mechanism providing gradual commit of Windows stacks,
+// stack pages must be touched in order.
+//
+// This mechanism is only transparent (kernel handles page faults and user never sees them),
+// for the thread touching its own stack. Not for cross-thread stack references as are being
+// done here.
+//
+// Here is a small program that demonstrates the behavior:
+//
+// #include <windows.h>
+// #include <stdio.h>
+//
+// #pragma optimize ("x", on)
+//
+// int volatile * volatile Event1;
+// int volatile Event2;
+// HANDLE ThreadHandle;
+//
+// DWORD __stdcall thread (void* x)
+// {
+// 	while (!Event1)
+// 		_mm_pause ();
+//
+// 	__try {
+// 		*Event1 = 0x123;
+// 	} __except (GetExceptionCode () == STATUS_GUARD_PAGE_VIOLATION) {
+// 		printf ("oops\n");
+// 	}
+// 	Event2 = 1;
+// 	return 0;
+// }
+//
+// int unlucky;
+// int print = 1;
+//
+// __declspec (noinline)
+// __declspec (safebuffers)
+// void f (void)
+// {
+// 	int local [5];
+//
+// 	while (unlucky && ((size_t)_AddressOfReturnAddress () - 8) & 0xFFF)
+// 		f ();
+//
+// 	unlucky = 0;
+// 	Event1 = local;
+//
+// 	while (!Event2)
+// 		_mm_pause ();
+//
+// 	if (print) {
+// 		printf ("%X\n", local [0]);
+// 		print = 0;
+// 	}
+//
+// 	if (ThreadHandle) {
+// 		WaitForSingleObject (ThreadHandle, INFINITE);
+// 		ThreadHandle = NULL;
+// 	}
+// }
+//
+// int main (int argc, char** argv)
+// {
+// 	unlucky = argc > 1;
+// 	ThreadHandle = CreateThread (0, 0, thread, 0, 0, 0);
+// 	f ();
+// }
+//
+// This would seem to be a problem otherwise, not just for garbage collectors.
+//
+// We therefore have a few choices:
+//
+// 1. Historical slow code: VirtualQuery and check for guard page. Slow.
+//
+// MEMORY_BASIC_INFORMATION mem_info;
+// SIZE_T result = VirtualQuery (info->client_info.stack_start, &mem_info, sizeof(mem_info));
+// g_assert (result != 0);
+// if (mem_info.Protect & PAGE_GUARD) {
+// 	aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
+// }
+//
+// VirtualQuery not historically allowed in UWP, but it is now.
+//
+// 2. Touch page under __try / __except and handle STATUS_GUARD_PAGE_VIOLATION.
+//    Good but compiler specific.
+//
+// __try {
+// 	*(volatile char*)aligned_stack_start;
+// } __except (GetExceptionCode () == STATUS_GUARD_PAGE_VIOLATION) {
+// 	MEMORY_BASIC_INFORMATION mem_info;
+// 	const SIZE_T result = VirtualQuery(aligned_stack_start, &mem_info, sizeof(mem_info));
+// 	g_assert (result >= sizeof (mem_info));
+// 	VirtualProtect (aligned_stack_start, 1, mem_info.Protect | PAGE_GUARD, &mem_info.Protect);
+// }
+//
+// 3. Vectored exception handler. Not terrible. Not compiler specific.
+//
+// 4. Check against the high watermark in the TIB. That is done.
+//  TIB is the public prefix TEB. It is Windows.h, ntddk.h, etc.
+//
+	aligned_stack_start = MAX (aligned_stack_start, info->client_info.info.windows_tib->StackLimit);
+#endif
+	return aligned_stack_start;
+}
+
 static void
 report_stack_roots (void)
 {
@@ -1661,23 +1772,7 @@ report_stack_roots (void)
 		g_assert (info->client_info.stack_start);
 		g_assert (info->client_info.info.stack_end);
 
-		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
-#ifdef HOST_WIN32
-		/* Windows uses a guard page before the committed stack memory pages to detect when the
-		   stack needs to be grown. If we suspend a thread just after a function prolog has
-		   decremented the stack pointer to point into the guard page but before the thread has
-		   been able to read or write to that page, starting the stack scan at aligned_stack_start
-		   will raise a STATUS_GUARD_PAGE_VIOLATION and the process will crash. This code uses
-		   VirtualQuery() to determine whether stack_start points into the guard page and then
-		   updates aligned_stack_start to point at the next non-guard page. */
-		MEMORY_BASIC_INFORMATION mem_info;
-		SIZE_T result = VirtualQuery (info->client_info.stack_start, &mem_info, sizeof(mem_info));
-		g_assert (result != 0);
-		if (mem_info.Protect & PAGE_GUARD) {
-			aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
-		}
-#endif
-
+		aligned_stack_start = get_aligned_stack_start (info);
 		g_assert (info->client_info.suspend_done);
 
 		report_conservative_roots (&report, aligned_stack_start, (void **)aligned_stack_start, (void **)info->client_info.info.stack_end);
@@ -1785,6 +1880,20 @@ report_ephemeron_roots (void)
 }
 
 static void
+report_toggleref_root (MonoObject* obj, gpointer data)
+{
+	report_gc_root ((GCRootReport*)data, SPECIAL_ADDRESS_TOGGLEREF, obj);
+}
+
+static void
+report_toggleref_roots (void)
+{
+	GCRootReport report = { 0 };
+	sgen_foreach_toggleref_root (report_toggleref_root, &report);
+	notify_gc_roots (&report);
+}
+
+static void
 sgen_report_all_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
 {
 	if (!MONO_PROFILER_ENABLED (gc_roots))
@@ -1792,6 +1901,7 @@ sgen_report_all_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *crit
 
 	report_registered_roots ();
 	report_ephemeron_roots ();
+	report_toggleref_roots ();
 	report_pin_queue ();
 	report_finalizer_roots_from_queue (fin_ready_queue, SPECIAL_ADDRESS_FIN_QUEUE);
 	report_finalizer_roots_from_queue (critical_fin_queue, SPECIAL_ADDRESS_CRIT_FIN_QUEUE);
@@ -2055,6 +2165,8 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 
 	mono_tls_set_sgen_thread_info (NULL);
 
+	sgen_increment_bytes_allocated_detached (p->total_bytes_allocated);
+
 	tid = mono_thread_info_get_tid (p);
 
 	mono_threads_add_joinable_runtime_thread (&p->client_info.info);
@@ -2123,6 +2235,7 @@ sgen_client_thread_register_worker (void)
 {
 	mono_thread_info_register_small_id ();
 	mono_native_thread_set_name (mono_native_thread_id_get (), "SGen worker");
+	mono_thread_set_name_windows (GetCurrentThread (), L"SGen worker");
 }
 
 /* Variables holding start/end nursery so it won't have to be passed at every call */
@@ -2157,6 +2270,9 @@ pin_handle_stack_interior_ptrs (void **ptr_slot, void *user_data)
 	sgen_conservatively_pin_objects_from (ptr_slot, ptr_slot+1, ud->start_nursery, ud->end_nursery, PIN_TYPE_STACK);
 }
 
+#ifdef HOST_WASM
+extern gboolean mono_wasm_enable_gc;
+#endif
 
 /*
  * Mark from thread stacks and registers.
@@ -2168,8 +2284,14 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 	scan_area_arg_end = end_nursery;
 #ifdef HOST_WASM
 	//Under WASM we don't scan thread stacks and we can't trust the values we find there either.
-	return;
+	if (!mono_wasm_enable_gc)
+		return;
 #endif
+
+	SGEN_TV_DECLARE (scan_thread_data_start);
+	SGEN_TV_DECLARE (scan_thread_data_end);
+
+	SGEN_TV_GETTIME (scan_thread_data_start);
 
 	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		int skip_reason = 0;
@@ -2203,23 +2325,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		g_assert (info->client_info.stack_start);
 		g_assert (info->client_info.info.stack_end);
 
-		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
-#ifdef HOST_WIN32
-		/* Windows uses a guard page before the committed stack memory pages to detect when the
-		   stack needs to be grown. If we suspend a thread just after a function prolog has
-		   decremented the stack pointer to point into the guard page but before the thread has
-		   been able to read or write to that page, starting the stack scan at aligned_stack_start
-		   will raise a STATUS_GUARD_PAGE_VIOLATION and the process will crash. This code uses
-		   VirtualQuery() to determine whether stack_start points into the guard page and then
-		   updates aligned_stack_start to point at the next non-guard page. */
-		MEMORY_BASIC_INFORMATION mem_info;
-		SIZE_T result = VirtualQuery(info->client_info.stack_start, &mem_info, sizeof(mem_info));
-		g_assert (result != 0);
-		if (mem_info.Protect & PAGE_GUARD) {
-			aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
-		}
-#endif
-
+		aligned_stack_start = get_aligned_stack_start (info);
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.info.stack_end, (char*)info->client_info.info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
 		if (mono_gc_get_gc_callbacks ()->thread_mark_func && !conservative_stack_mark) {
@@ -2266,6 +2372,9 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			}
 		}
 	} FOREACH_THREAD_END
+
+	SGEN_TV_GETTIME (scan_thread_data_end);
+	SGEN_LOG (2, "Scanning thread data: %lld usecs", (long long)(SGEN_TV_ELAPSED (scan_thread_data_start, scan_thread_data_end) / 10));
 }
 
 /*
@@ -2498,6 +2607,12 @@ mono_gc_get_allocated_bytes_for_current_thread (void)
 
 	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
 	return info->total_bytes_allocated + info->tlab_next - info->tlab_start;
+}
+
+guint64
+mono_gc_get_total_allocated_bytes (MonoBoolean precise)
+{
+	return sgen_get_total_allocated_bytes (precise);
 }
 
 gpointer
@@ -2988,6 +3103,7 @@ sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_FIN_QUEUE, 1, MONO_ROOT_SOURCE_FINALIZER_QUEUE, NULL, "Finalizer Queue"));
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_CRIT_FIN_QUEUE, 1, MONO_ROOT_SOURCE_FINALIZER_QUEUE, NULL, "Finalizer Queue (Critical)"));
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_EPHEMERON, 1, MONO_ROOT_SOURCE_EPHEMERON, NULL, "Ephemerons"));
+		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_TOGGLEREF, 1, MONO_ROOT_SOURCE_TOGGLEREF, NULL, "ToggleRefs"));
 	}
 
 #ifndef DISABLE_PERFCOUNTERS

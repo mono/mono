@@ -3,9 +3,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>MSBuild SDK for Mono.WebAssembly projects.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <None Update="sdk\Sdk.props" PackagePath="sdk\Sdk.props" Pack="true" />
     <None Update="sdk\Sdk.targets" PackagePath="sdk\Sdk.targets" Pack="true" />
+    <None Update="sdk\Versions.props" PackagePath="sdk\Versions.props" Pack="true" />
   </ItemGroup>
 </Project>

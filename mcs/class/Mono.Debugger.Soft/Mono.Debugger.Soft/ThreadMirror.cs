@@ -168,6 +168,10 @@ namespace Mono.Debugger.Soft
 				throw new ArgumentNullException ("loc");
 			try {
 				vm.conn.Thread_SetIP (id, loc.Method.Id, loc.ILOffset);
+				if (vm.conn.Version.AtLeast(2, 52)) {
+					InvalidateFrames();
+					FetchFrames(true);
+				}
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
 					throw new ArgumentException ("loc doesn't refer to a location in the current method of this thread.", "loc");

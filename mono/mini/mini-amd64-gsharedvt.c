@@ -73,7 +73,7 @@ arg_info_desc (ArgInfo *info)
 }
 #endif
 
-static inline void
+static void
 add_to_map (GPtrArray *map, int src, int dst)
 {
 	g_ptr_array_add (map, GUINT_TO_POINTER (src));
@@ -94,7 +94,7 @@ add_to_map (GPtrArray *map, int src, int dst)
  * 8..  - stack slots
  *
  */
-static inline int
+static int
 map_reg (int reg)
 {
 	int i = 0;
@@ -106,13 +106,13 @@ map_reg (int reg)
 	return -1;
 }
 
-static inline int
+static int
 map_freg (int reg)
 {
 	return reg + PARAM_REGS;
 }
 
-static inline int
+static int
 map_stack_slot (int slot)
 {
 	return slot + PARAM_REGS + FLOAT_PARAM_REGS;
@@ -379,16 +379,15 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 
 		if (arg_marshal == GSHAREDVT_ARG_BYREF_TO_BYVAL && dst_info->byte_arg_size) {
 			/* Have to load less than 4 bytes */
-			// FIXME: Signed types
 			switch (dst_info->byte_arg_size) {
 			case 1:
-				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U1;
+				arg_marshal = dst_info->is_signed ? GSHAREDVT_ARG_BYREF_TO_BYVAL_I1 : GSHAREDVT_ARG_BYREF_TO_BYVAL_U1;
 				break;
 			case 2:
-				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U2;
+				arg_marshal = dst_info->is_signed ? GSHAREDVT_ARG_BYREF_TO_BYVAL_I2 : GSHAREDVT_ARG_BYREF_TO_BYVAL_U2;
 				break;
 			default:
-				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U4;
+				arg_marshal = dst_info->is_signed ? GSHAREDVT_ARG_BYREF_TO_BYVAL_I4 : GSHAREDVT_ARG_BYREF_TO_BYVAL_U4;
 				break;
 			}
 		}

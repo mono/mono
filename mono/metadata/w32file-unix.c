@@ -1851,7 +1851,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		 * when we looked it up, so be careful to put it back
 		 * if we conclude we can't use this file.
 		 */
-		if (file_existing_share == 0) {
+		if ((file_existing_share == FILE_SHARE_NONE) || (sharemode == FILE_SHARE_NONE)) {
 			/* Quick and easy, no possibility to share */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
 
@@ -1867,19 +1867,6 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		     (fileaccess != GENERIC_WRITE))) {
 			/* New access mode doesn't match up */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, fileaccess, file_existing_share);
-
-			file_share_release (*share_info);
-			*share_info = NULL;
-		
-			return(FALSE);
-		}
-
-		if (((file_existing_access & GENERIC_READ) &&
-		     !(sharemode & FILE_SHARE_READ)) ||
-		    ((file_existing_access & GENERIC_WRITE) &&
-		     !(sharemode & FILE_SHARE_WRITE))) {
-			/* New share mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -2083,6 +2070,13 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
 
 	return GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd);
+}
+
+gboolean
+mono_w32file_cancel (gpointer handle)
+{
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
+	return FALSE;
 }
 
 gboolean
@@ -3344,7 +3338,7 @@ retry:
 
 	/* stat next match */
 
-	filename = g_build_filename (findhandle->dir_part, findhandle->namelist[findhandle->count ++], NULL);
+	filename = g_build_filename (findhandle->dir_part, findhandle->namelist[findhandle->count ++], (const char*)NULL);
 
 	result = _wapi_stat (filename, &buf);
 	if (result == -1 && errno == ENOENT) {
@@ -4388,7 +4382,6 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 #elif defined(HAVE_STATFS)
 	struct statfs fsstat;
 #endif
-	gboolean isreadonly;
 	gchar *utf8_path_name;
 	gint ret;
 	unsigned long block_size;
@@ -4417,17 +4410,11 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 		MONO_ENTER_GC_SAFE;
 		ret = statvfs (utf8_path_name, &fsstat);
 		MONO_EXIT_GC_SAFE;
-		isreadonly = ((fsstat.f_flag & ST_RDONLY) == ST_RDONLY);
 		block_size = fsstat.f_frsize;
 #elif defined(HAVE_STATFS)
 		MONO_ENTER_GC_SAFE;
 		ret = statfs (utf8_path_name, &fsstat);
 		MONO_EXIT_GC_SAFE;
-#if defined (MNT_RDONLY)
-		isreadonly = ((fsstat.f_flags & MNT_RDONLY) == MNT_RDONLY);
-#elif defined (MS_RDONLY)
-		isreadonly = ((fsstat.f_flags & MS_RDONLY) == MS_RDONLY);
-#endif
 		block_size = fsstat.f_bsize;
 #endif
 	} while(ret == -1 && errno == EINTR);
@@ -4441,19 +4428,13 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	}
 
 	/* total number of free bytes for non-root */
-	if (isreadonly)
-		*free_bytes_avail = 0;
-	else
-		*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
+	*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 
 	/* total number of bytes available for non-root */
 	*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 
 	/* total number of bytes available for root */
-	if (isreadonly)
-		*total_number_of_free_bytes = 0;
-	else
-		*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
+	*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 #endif
 	return(TRUE);
 }
@@ -4745,6 +4726,7 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 }
 #endif
 
+#ifndef ENABLE_NETCORE
 guint32
 ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
 {
@@ -4776,6 +4758,7 @@ ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gin
 
 	return (drive_type);
 }
+#endif
 
 #if defined (HOST_DARWIN) || defined (__linux__) || defined(HOST_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__) || defined(_AIX)
 static gchar*

@@ -920,21 +920,22 @@ namespace System {
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{
-			throw new NotImplementedException ();
+			FailFast (message, null, null);
 		}
 
 		internal static void FailFast (String message, uint exitCode)
 		{
-			throw new NotImplementedException ();
+			FailFast (message, null, null);
 		}
 
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
-#pragma warning disable 618
-			throw new ExecutionEngineException (message, exception);
-#pragma warning restore
+			FailFast (message, exception, null);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void FailFast (string message, Exception exception, string errorSource);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static bool GetIs64BitOperatingSystem ();

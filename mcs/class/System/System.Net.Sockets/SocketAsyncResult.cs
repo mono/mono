@@ -43,7 +43,7 @@ namespace System.Net.Sockets
 		Exception DelayedException;
 
 		public EndPoint EndPoint;                 // Connect,ReceiveFrom,SendTo
-		public byte [] Buffer;                    // Receive,ReceiveFrom,Send,SendTo
+		public Memory<byte> Buffer;               // Receive,ReceiveFrom,Send,SendTo
 		public int Offset;                        // Receive,ReceiveFrom,Send,SendTo
 		public int Size;                          // Receive,ReceiveFrom,Send,SendTo
 		public SocketFlags SockFlags;             // Receive,ReceiveFrom,Send,SendTo
@@ -153,7 +153,7 @@ namespace System.Net.Sockets
 			Socket completedSocket = socket;
 			SocketOperation completedOperation = operation;
 
-			if (this.AsyncCallback != null) {
+			if (!CompletedSynchronously && AsyncCallback != null) {
 				ThreadPool.UnsafeQueueUserWorkItem(state => ((SocketAsyncResult)state).AsyncCallback((SocketAsyncResult)state), this);
 			}
 

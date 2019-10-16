@@ -41,7 +41,7 @@ MonoType *
 mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref_type, MonoError *error);
 
 MonoType*
-mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, mono_bool ignorecase, mono_bool *type_resolve, MonoError *error);
+mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error);
 
 MonoType*
 mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError *error);
@@ -61,7 +61,7 @@ mono_reflection_get_custom_attrs_data_checked (MonoObjectHandle obj, MonoError *
 MonoArrayHandle
 mono_reflection_get_custom_attrs_by_type_handle (MonoObjectHandle obj, MonoClass *attr_klass, MonoError *error);
 
-MonoArray*
+MonoArrayHandle
 mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues, MonoError *error);
 
 MonoCustomAttrInfo*

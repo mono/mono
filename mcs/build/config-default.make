@@ -21,7 +21,6 @@ TEST_HARNESS = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/$(PARENT_PROFILE)nunit-l
 PLATFORM_DEBUG_FLAGS = /debug:portable
 # Workaround for https://bugzilla.xamarin.com/show_bug.cgi?id=59967
 MCS_FLAGS = /features:peverify-compat /langversion:latest
-MBAS_FLAGS = -debug
 LIBRARY_FLAGS =
 ifndef CFLAGS
 CFLAGS = -g -O2
@@ -41,7 +40,6 @@ TEST_RUNTIME = MONO_PATH="$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH
 # keep track of the default value
 
 DEFAULT_MCS_FLAGS := $(MCS_FLAGS)
-DEFAULT_MBAS_FLAGS := $(MBAS_FLAGS)
 DEFAULT_PROFILE := net_4_x
 
 # You shouldn't need to set these but might on a 

@@ -373,7 +373,7 @@ mono_arch_have_fast_tls (void)
 	static gboolean have_fast_tls = FALSE;
         static gboolean inited = FALSE;
 
-	if (mini_get_debug_options ()->use_fallback_tls)
+	if (mini_debug_options.use_fallback_tls)
 		return FALSE;
 
 	if (inited)
@@ -802,16 +802,16 @@ mono_arch_init (void)
 	char *cpu_arch;
 
 #ifdef TARGET_WATCHOS
-	mini_get_debug_options ()->soft_breakpoints = TRUE;
+	mini_debug_options.soft_breakpoints = TRUE;
 #endif
 
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
-	if (mini_get_debug_options ()->soft_breakpoints) {
+	if (mini_debug_options.soft_breakpoints) {
 		if (!mono_aot_only)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
-		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
-		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
+		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, MONO_MEM_ACCOUNT_OTHER);
+		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, MONO_MEM_ACCOUNT_OTHER);
 		mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 	}
 
@@ -1214,7 +1214,7 @@ add_float (guint *fpr, guint *stack_size, ArgInfo *ainfo, gboolean is_double, gi
 		ainfo->reg = ARMREG_SP;
 		ainfo->storage = RegTypeBase;
 
-		*stack_size += 8;
+		*stack_size += is_double ? 8 : 4;
 	}
 }
 
@@ -1431,11 +1431,13 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		t = mini_get_underlying_type (sig->params [i]);
 		switch (t->type) {
 		case MONO_TYPE_I1:
+			cinfo->args [n].is_signed = 1;
 		case MONO_TYPE_U1:
 			cinfo->args [n].size = 1;
 			add_general (&gr, &stack_size, ainfo, TRUE);
 			break;
 		case MONO_TYPE_I2:
+			cinfo->args [n].is_signed = 1;
 		case MONO_TYPE_U2:
 			cinfo->args [n].size = 2;
 			add_general (&gr, &stack_size, ainfo, TRUE);
@@ -4049,7 +4051,7 @@ mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val)
 	code += 4;
 	return code;
 #endif
-	if (mini_get_debug_options()->single_imm_size && v7_supported) {
+	if (mini_debug_options.single_imm_size && v7_supported) {
 		ARM_MOVW_REG_IMM (code, dreg, val & 0xffff);
 		ARM_MOVT_REG_IMM (code, dreg, (val >> 16) & 0xffff);
 		return code;
@@ -6313,11 +6315,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
 			ARM_STR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
 		}
+
+		mono_add_var_location (cfg, cfg->rgctx_var, TRUE, MONO_ARCH_RGCTX_REG, 0, 0, code - cfg->native_code);
+		mono_add_var_location (cfg, cfg->rgctx_var, FALSE, ins->inst_basereg, ins->inst_offset, code - cfg->native_code, 0);
 	}
 
 	/* load arguments allocated to register from the stack */
-	pos = 0;
-
 	cinfo = get_call_info (NULL, sig);
 
 	if (cinfo->ret.storage == RegTypeStructByAddr) {
@@ -6341,7 +6344,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
-		inst = cfg->args [pos];
+		inst = cfg->args [i];
 		
 		if (cfg->verbose_level > 2)
 			g_print ("Saving argument %d (type: %d)\n", i, ainfo->storage);
@@ -6361,8 +6364,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			} else
 				g_assert_not_reached ();
 
+			if (i == 0 && sig->hasthis) {
+				g_assert (ainfo->storage == RegTypeGeneral);
+				mono_add_var_location (cfg, inst, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
+				mono_add_var_location (cfg, inst, TRUE, inst->dreg, 0, code - cfg->native_code, 0);
+			}
+
 			if (cfg->verbose_level > 2)
-				g_print ("Argument %d assigned to register %s\n", pos, mono_arch_regname (inst->dreg));
+				g_print ("Argument %d assigned to register %s\n", i, mono_arch_regname (inst->dreg));
 		} else {
 			switch (ainfo->storage) {
 			case RegTypeHFA:
@@ -6417,6 +6426,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					}
 					break;
 				}
+				if (i == 0 && sig->hasthis) {
+					g_assert (ainfo->storage == RegTypeGeneral);
+					mono_add_var_location (cfg, inst, TRUE, ainfo->reg, 0, 0, code - cfg->native_code);
+					mono_add_var_location (cfg, inst, FALSE, inst->inst_basereg, inst->inst_offset, code - cfg->native_code, 0);
+                                }
 				break;
 			case RegTypeBaseGen:
 				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
@@ -6535,7 +6549,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				break;
 			}
 		}
-		pos++;
 	}
 
 	if (method->save_lmf)
@@ -6841,11 +6854,6 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 void
 mono_arch_finish_init (void)
-{
-}
-
-void
-mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 {
 }
 
@@ -7195,7 +7203,6 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
 	guint8 *code = ip;
 	guint32 native_offset = ip - (guint8*)ji->code_start;
-	MonoDebugOptions *opt = mini_get_debug_options ();
 
 	if (ji->from_aot) {
 		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
@@ -7205,8 +7212,8 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 
 		g_assert (native_offset % 4 == 0);
 		g_assert (info->bp_addrs [native_offset / 4] == 0);
-		info->bp_addrs [native_offset / 4] = (guint8*)(opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page);
-	} else if (opt->soft_breakpoints) {
+		info->bp_addrs [native_offset / 4] = (guint8*)(mini_debug_options.soft_breakpoints ? breakpoint_tramp : bp_trigger_page);
+	} else if (mini_debug_options.soft_breakpoints) {
 		code += 4;
 		ARM_BLX_REG (code, ARMREG_LR);
 		mono_arch_flush_icache (code - 4, 4);
@@ -7241,7 +7248,6 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 void
 mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
-	MonoDebugOptions *opt = mini_get_debug_options ();
 	guint8 *code = ip;
 	int i;
 
@@ -7253,9 +7259,9 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 
 		g_assert (native_offset % 4 == 0);
-		g_assert (info->bp_addrs [native_offset / 4] == (guint8*)(opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page));
+		g_assert (info->bp_addrs [native_offset / 4] == (guint8*)(mini_debug_options.soft_breakpoints ? breakpoint_tramp : bp_trigger_page));
 		info->bp_addrs [native_offset / 4] = 0;
-	} else if (opt->soft_breakpoints) {
+	} else if (mini_debug_options.soft_breakpoints) {
 		code += 4;
 		ARM_NOP (code);
 		mono_arch_flush_icache (code - 4, 4);

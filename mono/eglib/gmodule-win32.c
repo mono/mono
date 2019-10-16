@@ -30,6 +30,9 @@
  */
 #include <config.h>
 #include <glib.h>
+#ifndef PSAPI_VERSION
+#define PSAPI_VERSION 2 // Use the Windows 7 or newer version more directly.
+#endif
 #include <windows.h>
 #include <psapi.h>
 #include <gmodule-win32-internals.h>
@@ -137,6 +140,45 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 	}
 }
 
+gboolean
+g_module_address (void *addr, char *file_name, size_t file_name_len,
+                  void **file_base, char *sym_name, size_t sym_name_len,
+                  void **sym_addr)
+{
+	HMODULE module;
+	/*
+	 * We have to cast the address because usually this func works with strings,
+	 * this being an exception.
+	 */
+	BOOL ret = GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCWSTR)addr, &module);
+	if (ret)
+		return FALSE;
+
+	if (file_name != NULL && file_name_len >= 1) {
+		/* sigh, non-const. AIX for POSIX is the same way. */
+		TCHAR *fname = (TCHAR*)g_alloca(255);
+		DWORD bytes = GetModuleFileName(module, fname, 255);
+		/* XXX: check for ERROR_INSUFFICIENT_BUFFER? */
+		if (bytes) {
+			/* Convert back to UTF-8 from wide for runtime */
+			*file_name = '\0'; /* XXX */
+		} else {
+			*file_name = '\0';
+		}
+	}
+	/* XXX: implement the rest */
+	if (file_base != NULL)
+		*file_base = NULL;
+	if (sym_name != NULL && sym_name_len >= 1)
+		sym_name[0] = '\0';
+	if (sym_addr != NULL)
+		*sym_addr = NULL;
+
+	/* -1 reference count to avoid leaks; Ex variant does +1 refcount */
+	FreeLibrary (module);
+	return TRUE;
+}
+
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 const gchar *
 g_module_error (void)
@@ -175,7 +217,7 @@ g_module_close (GModule *module)
 gchar *
 g_module_build_path (const gchar *directory, const gchar *module_name)
 {
-	char *lib_prefix = "";
+	const char *lib_prefix = "";
 	
 	if (module_name == NULL)
 		return NULL;
@@ -188,4 +230,156 @@ g_module_build_path (const gchar *directory, const gchar *module_name)
 		return g_strdup_printf ("%s/%s%s" LIBSUFFIX, directory, lib_prefix, module_name);
 	}
 	return g_strdup_printf ("%s%s" LIBSUFFIX, lib_prefix, module_name); 
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_filename (gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleFileNameW ((HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function does not truncate, but - 1 anyway.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_filename_ex (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleFileNameExW (process, (HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function truncates, thus the - 1.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// This is not about GModule but is still a close fit.
+// This is not named "g_" but that should be ok.
+// g_free the result
+// No MAX_PATH limit.
+//
+// Prefer mono_get_module_filename over mono_get_module_filename_ex and mono_get_module_basename.
+// Prefer not-ex, not-base.
+//
+gboolean
+mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = GetModuleBaseNameW (process, (HMODULE)mod, str, capacity);
+		success = length && length < (capacity - 1); // This function truncates, thus the - 1.
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
+}
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_current_directory (gunichar2 **pstr, guint32 *plength)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	guint32 length = 0;
+	gboolean success = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		// Call in loop, not just twice, in case another thread is changing it.
+		// Result is transient in currentness and validity (can get deleted or become a file).
+		length = GetCurrentDirectoryW (capacity, str);
+		success = length && length < (capacity - 1);
+		if (success)
+			break;
+		g_free (str); // error or too small
+		str = NULL;
+		if (!length) // error
+			break;
+		capacity *= 2;
+	}
+	*pstr = str;
+	*plength = length;
+	return success;
 }

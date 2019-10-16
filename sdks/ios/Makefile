@@ -24,6 +24,7 @@ TEST_SUITES = \
 	System.Json \
 	System.ComponentModel.DataAnnotations \
 	System.Security \
+	System.Xml \
 	System.Xml.Linq \
 	System.ServiceModel.Web \
 	Mono.Data.Tds \
@@ -33,7 +34,6 @@ TEST_SUITES = \
 TEST_SUITES_COMPILING = \
 	System \
 	System.Net.Http \
-	System.Xml \
 	Mono.CSharp
 
 # Not compiling in monotouch profile
@@ -177,7 +177,7 @@ stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
 
 # CONNSTR will be replace by the harness with the real connection string
-NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,CAS,InetAccess,NotWorkingLinqInterpreter -labels
+NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,CAS,InetAccess,NotWorkingLinqInterpreter $(if $(TESTNAME),-test:$(TESTNAME)) -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test
@@ -215,7 +215,7 @@ Mono.Data.Tds_ASSEMBLIES = $(BCL_DIR)/Mono.Data.Tds.dll $(TESTDIR)/monotouch_Mon
 Mono.Data.Tds_ARGS = $(NUNIT) monotouch_Mono.Data.Tds_test.dll
 System.Security_ASSEMBLIES = $(BCL_DIR)/System.Security.dll $(TESTDIR)/monotouch_System.Security_test.dll
 System.Security_ARGS = $(NUNIT) monotouch_System.Security_test.dll
-System.Xml_ASSEMBLIES = $(BCL_DIR)/System.Xml.dll $(TESTDIR)/monotouch_System.Xml_test.dll
+System.Xml_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(TESTDIR)/monotouch_System.Xml_test.dll
 System.Xml_ARGS = $(NUNIT) monotouch_System.Xml_test.dll
 System.Xml.Linq_ASSEMBLIES = $(BCL_DIR)/System.Xml.Linq.dll $(TESTDIR)/monotouch_System.Xml.Linq_test.dll
 System.Xml.Linq_ARGS = $(NUNIT) monotouch_System.Xml.Linq_test.dll

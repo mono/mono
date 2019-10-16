@@ -400,7 +400,7 @@ typedef union MonoInstSpec { // instruction specification
 	char bytes[MONO_INST_MAX];
 } MonoInstSpec;
 
-extern const char mini_ins_info[];
+extern const char mini_ins_info[] MONO_LLVM_INTERNAL;
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
@@ -656,7 +656,9 @@ typedef enum {
 	LLVMArgFpStruct,
 	LLVMArgVtypeByRef,
 	/* Vtype returned as an int */
-	LLVMArgVtypeAsScalar
+	LLVMArgVtypeAsScalar,
+	/* Address to local vtype passed as argument (using register or stack). */
+	LLVMArgVtypeAddr
 } LLVMArgStorage;
 
 typedef struct {
@@ -1218,6 +1220,8 @@ typedef enum {
 	JIT_FLAG_DISCARD_RESULTS = (1 << 8),
 	/* Whenever to generate code which can work with the interpreter */
 	JIT_FLAG_INTERP = (1 << 9),
+	/* Allow AOT to use all current CPU instructions */
+	JIT_FLAG_USE_CURRENT_CPU = (1 << 10),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -1431,6 +1435,7 @@ typedef struct {
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
 	guint            interp : 1;
+	guint            use_current_cpu : 1;
 	guint            domainvar_inited : 1;
 	guint8           uses_simd_intrinsics;
 	int              r4_stack_type;
@@ -1570,7 +1575,8 @@ typedef struct {
 	guint32 gc_map_size;
 
 	/* Error handling */
-	MonoError error;
+	MonoError* error;
+	MonoErrorInternal error_value;
 
 	/* pointer to context datastructure used for graph dumping */
 	MonoGraphDumper *gdump_ctx;
@@ -1620,6 +1626,7 @@ typedef enum {
 typedef struct {
 	gint32 methods_compiled;
 	gint32 methods_aot;
+	gint32 methods_aot_llvm;
 	gint32 methods_lookups;
 	gint32 allocate_var;
 	gint32 cil_code_size;
@@ -1908,6 +1915,7 @@ enum {
 	MONO_EXC_NULL_REF,
 	MONO_EXC_ARRAY_TYPE_MISMATCH,
 	MONO_EXC_ARGUMENT,
+	MONO_EXC_ARGUMENT_OUT_OF_RANGE,
 	MONO_EXC_INTRINS_NUM
 };
 
@@ -2346,7 +2354,6 @@ void      mono_arch_lowering_pass               (MonoCompile *cfg, MonoBasicBloc
 void      mono_arch_peephole_pass_1             (MonoCompile *cfg, MonoBasicBlock *bb);
 void      mono_arch_peephole_pass_2             (MonoCompile *cfg, MonoBasicBlock *bb);
 void      mono_arch_output_basic_block          (MonoCompile *cfg, MonoBasicBlock *bb);
-void      mono_arch_free_jit_tls_data           (MonoJitTlsData *tls);
 void      mono_arch_fill_argument_info          (MonoCompile *cfg);
 void      mono_arch_allocate_vars               (MonoCompile *m);
 int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info);
@@ -2781,8 +2788,65 @@ enum {
 	/* this value marks the end of the bit indexes used in 
 	 * this emum.
 	 */
-	SIMD_VERSION_INDEX_END = 6 
+	SIMD_VERSION_INDEX_END = 6
 };
+
+typedef enum {
+	/* Used for lazy initialization */
+	MONO_CPU_INITED		= 1 << 0,
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
+	MONO_CPU_X86_SSE	= 1 << 1,
+	MONO_CPU_X86_SSE2	= 1 << 2,
+	MONO_CPU_X86_PCLMUL	= 1 << 3,
+	MONO_CPU_X86_AES	= 1 << 4,
+	MONO_CPU_X86_SSE3	= 1 << 5,
+	MONO_CPU_X86_SSSE3	= 1 << 6,
+	MONO_CPU_X86_SSE41	= 1 << 7,
+	MONO_CPU_X86_SSE42	= 1 << 8,
+	MONO_CPU_X86_POPCNT	= 1 << 9,
+	MONO_CPU_X86_AVX	= 1 << 10,
+	MONO_CPU_X86_AVX2	= 1 << 11,
+	MONO_CPU_X86_FMA	= 1 << 12,
+	MONO_CPU_X86_LZCNT	= 1 << 13,
+	MONO_CPU_X86_BMI1	= 1 << 14,
+	MONO_CPU_X86_BMI2	= 1 << 15,
+
+
+	//
+	// Dependencies (based on System.Runtime.Intrinsics.X86 class hierarchy):
+	//
+	// sse
+	//   sse2
+	//     pclmul
+	//     aes
+	//     sse3
+	//       ssse3
+	//         sse4.1
+	//           sse4.2
+	//             popcnt
+	//             avx
+	//               avx2
+	//               fma
+	// lzcnt
+	// bmi1
+	// bmi2
+	MONO_CPU_X86_SSE_COMBINED         = MONO_CPU_X86_SSE,
+	MONO_CPU_X86_SSE2_COMBINED        = MONO_CPU_X86_SSE_COMBINED   | MONO_CPU_X86_SSE2,
+	MONO_CPU_X86_PCLMUL_COMBINED      = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_PCLMUL,
+	MONO_CPU_X86_AES_COMBINED         = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_AES,
+	MONO_CPU_X86_SSE3_COMBINED        = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_SSE3,
+	MONO_CPU_X86_SSSE3_COMBINED       = MONO_CPU_X86_SSE3_COMBINED  | MONO_CPU_X86_PCLMUL | MONO_CPU_X86_AES | MONO_CPU_X86_SSSE3,
+	MONO_CPU_X86_SSE41_COMBINED       = MONO_CPU_X86_SSSE3_COMBINED | MONO_CPU_X86_SSE41,
+	MONO_CPU_X86_SSE42_COMBINED       = MONO_CPU_X86_SSE41_COMBINED | MONO_CPU_X86_SSE42,
+	MONO_CPU_X86_POPCNT_COMBINED      = MONO_CPU_X86_SSE42_COMBINED | MONO_CPU_X86_POPCNT,
+	MONO_CPU_X86_AVX_COMBINED         = MONO_CPU_X86_SSE42_COMBINED | MONO_CPU_X86_AVX,
+	MONO_CPU_X86_AVX2_COMBINED        = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_AVX2,
+	MONO_CPU_X86_FMA_COMBINED         = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_FMA,
+	MONO_CPU_X86_FULL_SSEAVX_COMBINED = MONO_CPU_X86_FMA_COMBINED   | MONO_CPU_X86_AVX2,
+#endif
+} MonoCPUFeatures;
+
+MonoCPUFeatures mini_get_cpu_features (MonoCompile* cfg);
 
 enum {
 	SIMD_COMP_EQ,
@@ -2804,6 +2868,7 @@ enum {
 
 const char *mono_arch_xregname (int reg);
 guint32     mono_arch_cpu_enumerate_simd_versions (void);
+MonoCPUFeatures mono_arch_get_cpu_features (void);
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
 void        mono_simd_simplify_indirection (MonoCompile *cfg);

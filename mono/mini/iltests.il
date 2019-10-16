@@ -25,6 +25,132 @@
 		ret
 	}
 
+	.method hidebysig static int32 comp_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ceq
+		ret
+	}
+
+	.method hidebysig static int64 add_ptr_i4(void* arg) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldc.i4.2
+		add
+		ret
+	}
+
+	.method hidebysig static int64 add_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		add
+		ret
+	}
+
+	.method hidebysig static int64 and_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		and
+		ret
+	}
+
+	.method hidebysig static int32 i8_ptr_arithm_x64() cil managed
+	{
+		.maxstack 3
+
+		ldc.i4.1
+		ldc.i8 0x1111222233334444
+		call int64 class Tests::add_ptr_i4(void*)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.2
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x2
+		call int64 class Tests::add_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.3
+		ldc.i8 0x1111222233334444
+		ldc.i4 0x2
+		call int64 class Tests::add_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.4
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x0000FFFF00000000
+		call int64 class Tests::and_ptr_i8(void*,int64)
+		ldc.i8 0x0000222200000000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.5
+		ldc.i8 0x1111222233334444
+		ldc.i4 0xFFFF0000
+		call int64 class Tests::and_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233330000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.6
+		ldc.i8 0x1111222233334444
+		ldc.i4 0xFFFF0000
+		and
+		ldc.i8 0x1111222233330000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.7
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x1111222233334444
+		call int32 class Tests::comp_ptr_i8(void*,int64)
+		ldc.i4.1
+		bne.un FAIL1
+		pop
+
+		ldc.i4.8
+		ldc.i8 0x1111222233334444
+		ldc.i4 0x1111
+		add
+		ldc.i8 0x1111222233335555
+		bne.un FAIL1
+		pop
+
+		ldc.i4.0
+FAIL1:
+		ret
+	}
+
+	.method static public int32 test_0_i8_ptr_arithm() cil managed {
+		.maxstack 2
+
+		sizeof [mscorlib]System.IntPtr
+		ldc.i4.8
+		bne.un OK1
+		call int32 class Tests::i8_ptr_arithm_x64()
+		ret
+
+OK1:
+		ldc.i4.0
+		ret
+	}
+
 	// make sure the register allocator works when the return value of
 	// 'div' is discarded
 	.method static public int32 test_0_div_regalloc () il managed {
@@ -3136,6 +3262,15 @@ L_3:
        ret
   }
 
+  .method public hidebysig static int32 test_3_github_issue_15794 () cil managed
+  {
+      .maxstack 8
+      ldc.r8 3.4
+      conv.r.un
+      conv.i4
+      ret
+  }
+
   .method public hidebysig static int32 test_1_box_r8_r4_autoconv () cil managed
   {
 		ldc.r8 1.234
@@ -3172,4 +3307,32 @@ L_3:
 		ldind.i4
 		ret
 	 }
+
+  .method public hidebysig static int32  test_10_rconv_to_u8_ovf_un() cil managed
+  {
+    // Code size       20 (0x14)
+    .maxstack  1
+    .locals init (uint64 V_0,
+             float32 V_1,
+             int32 V_2)
+    IL_0000:  nop
+    IL_0001:  ldc.i4.s   10
+    IL_0003:  conv.i8
+    IL_0004:  stloc.0
+    IL_0005:  ldloc.0
+    IL_0006:  conv.r.un
+    IL_0007:  conv.r4
+    IL_0008:  stloc.1
+    IL_0009:  nop
+    IL_000a:  ldloc.1
+    IL_000b:  conv.ovf.u8.un
+    IL_000c:  stloc.0
+    IL_000d:  ldloc.0
+    IL_000e:  conv.ovf.i4.un
+    IL_000f:  stloc.2
+    IL_0010:  br.s       IL_0012
+
+    IL_0012:  ldloc.2
+    IL_0013:  ret
+  } // end of method Tests::test_10_rconv_to_u8_ovf_un
 }

@@ -919,8 +919,9 @@ namespace System
 			DateTime DST_end = TransitionPoint (rule.DaylightTransitionEnd, year + ((rule.DaylightTransitionStart.Month < rule.DaylightTransitionEnd.Month) ? 0 : 1));
 			if (dateTime.Kind == DateTimeKind.Utc) {
 				DST_start -= BaseUtcOffset;
-				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
+				DST_end -= BaseUtcOffset;
 			}
+			DST_end -= rule.DaylightDelta;
 			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 		
@@ -1215,10 +1216,13 @@ namespace System
 					return false;
 			}
 
+			var isUtc = false;
 			if (dateTime.Kind != DateTimeKind.Utc) {
 				if (!TryAddTicks (date, -BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-			}
+			} else
+				isUtc = true;
+
 
 			AdjustmentRule current = GetApplicableRule (date);
 			if (current != null) {
@@ -1230,10 +1234,16 @@ namespace System
 					if (forOffset)
 						isDst = true;
 					offset = baseUtcOffset; 
-					if (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					if (isUtc || (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc)))
 					{
 						offset += current.DaylightDelta;
 						isDst = true;
+					}
+
+					if (date >= new DateTime (tEnd.Ticks - current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					{
+						offset = baseUtcOffset;
+						isDst = false;
 					}
 
 					return true;
@@ -1244,8 +1254,11 @@ namespace System
 
 		private static DateTime TransitionPoint (TransitionTime transition, int year)
 		{
-			if (transition.IsFixedDateRule)
-				return new DateTime (year, transition.Month, transition.Day) + transition.TimeOfDay.TimeOfDay;
+			if (transition.IsFixedDateRule) {
+				var daysInMonth = DateTime.DaysInMonth (year, transition.Month);
+				var transitionDay = transition.Day <= daysInMonth ? transition.Day : daysInMonth;
+				return new DateTime (year, transition.Month, transitionDay) + transition.TimeOfDay.TimeOfDay;
+			}
 
 			DayOfWeek first = (new DateTime (year, transition.Month, 1)).DayOfWeek;
 			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first + 7) % 7;

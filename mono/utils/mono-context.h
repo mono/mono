@@ -48,18 +48,7 @@ typedef __m128d MonoContextSimdReg;
 #endif
 #elif defined(TARGET_ARM64)
 #define MONO_HAVE_SIMD_REG
-#if defined(MONO_ARCH_ILP32) && defined(MONO_CPPSHARP_HACK)
-/* We lie to the MonoAotOffsetsDumper tool and claim we targeting armv7k. This
- * is because aarch64_ilp32 isn't available (yet). Unfortunately __uint128_t
- * isn't defined for this target by the compiler, so we define a struct with
- * the same size here in order to get the right offset */
-typedef struct
-{
-	guint8 v[16];
-} MonoContextSimdReg;
-#else
 typedef __uint128_t MonoContextSimdReg;
-#endif
 #endif
 
 /*
@@ -916,7 +905,24 @@ typedef struct ucontext MonoContext;
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\
 		"stmg	%%r0,%%r15,0(%0)\n"	\
-		: : "r" (&(ctx).uc_mcontext.gregs[0])	\
+		"std	%%f0,0(%1)\n"		\
+		"std	%%f1,8(%1)\n"		\
+		"std	%%f2,16(%1)\n"		\
+		"std	%%f3,24(%1)\n"		\
+		"std	%%f4,32(%1)\n"		\
+		"std	%%f5,40(%1)\n"		\
+		"std	%%f6,48(%1)\n"		\
+		"std	%%f7,56(%1)\n"		\
+		"std	%%f8,64(%1)\n"		\
+		"std	%%f9,72(%1)\n"		\
+		"std	%%f10,80(%1)\n"		\
+		"std	%%f11,88(%1)\n"		\
+		"std	%%f12,96(%1)\n"		\
+		"std	%%f13,104(%1)\n"		\
+		"std	%%f14,112(%1)\n"		\
+		"std	%%f15,120(%1)\n"		\
+		: : "r" (&(ctx).uc_mcontext.gregs[0]),		\
+		    "r" (&(ctx).uc_mcontext.fpregs.fprs[0])	\
 		: "memory"			\
 	)
 

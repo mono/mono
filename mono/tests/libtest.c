@@ -1253,6 +1253,14 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	return 0;
 }
 
+LIBTEST_API void STDCALL  
+mono_test_marshal_stringbuilder_utf16_tolower (short *s, int n)
+{
+	for (int i = 0; i < n; i++)
+		s[i] = tolower(s[i]);
+}
+
+
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++-compat"
@@ -3361,6 +3369,15 @@ mono_test_marshal_variant_out_bool_false_unmanaged(VarRefFunc func)
 }
 
 typedef struct MonoComObject MonoComObject;
+typedef struct MonoDefItfObject MonoDefItfObject;
+
+typedef struct
+{
+	int (STDCALL *QueryInterface)(MonoDefItfObject* pUnk, gpointer riid, gpointer* ppv);
+	int (STDCALL *AddRef)(MonoDefItfObject* pUnk);
+	int (STDCALL *Release)(MonoDefItfObject* pUnk);
+	int (STDCALL *Method)(MonoDefItfObject* pUnk, int *value);
+} MonoDefItf;
 
 typedef struct
 {
@@ -3381,12 +3398,23 @@ typedef struct
 	int (STDCALL *ITestIn)(MonoComObject* pUnk, MonoComObject* pUnk2);
 	int (STDCALL *ITestOut)(MonoComObject* pUnk, MonoComObject* *ppUnk);
 	int (STDCALL *Return22NoICall)(MonoComObject* pUnk);
+	int (STDCALL *IntOut)(MonoComObject* pUnk, int *a);
+	int (STDCALL *ArrayIn)(MonoComObject* pUnk, void *array);
+	int (STDCALL *ArrayIn2)(MonoComObject* pUnk, void *array);
+	int (STDCALL *ArrayIn3)(MonoComObject* pUnk, void *array);
+	int (STDCALL *GetDefInterface1)(MonoComObject* pUnk, MonoDefItfObject **iface);
+	int (STDCALL *GetDefInterface2)(MonoComObject* pUnk, MonoDefItfObject **iface);
 } MonoIUnknown;
 
 struct MonoComObject
 {
 	MonoIUnknown* vtbl;
 	int m_ref;
+};
+
+struct MonoDefItfObject
+{
+	MonoDefItf* vtbl;
 };
 
 static GUID IID_ITest = {0, 0, 0, {0,0,0,0,0,0,0,1}};
@@ -3504,6 +3532,41 @@ Return22NoICall(MonoComObject* pUnk)
 	return 22;
 }
 
+LIBTEST_API int STDCALL
+IntOut(MonoComObject* pUnk, int *a)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+ArrayIn(MonoComObject* pUnk, void *array)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+ArrayIn2(MonoComObject* pUnk, void *array)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+ArrayIn3(MonoComObject* pUnk, void *array)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+GetDefInterface1(MonoComObject* pUnk, MonoDefItfObject **obj)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
+GetDefInterface2(MonoComObject* pUnk, MonoDefItfObject **obj)
+{
+	return S_OK;
+}
 
 static void create_com_object (MonoComObject** pOut);
 
@@ -3537,6 +3600,12 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ITestOut = ITestOut;
 	(*pOut)->vtbl->get_ITest = get_ITest;
 	(*pOut)->vtbl->Return22NoICall = Return22NoICall;
+	(*pOut)->vtbl->IntOut = IntOut;
+	(*pOut)->vtbl->ArrayIn = ArrayIn;
+	(*pOut)->vtbl->ArrayIn2 = ArrayIn2;
+	(*pOut)->vtbl->ArrayIn3 = ArrayIn3;
+	(*pOut)->vtbl->GetDefInterface1 = GetDefInterface1;
+	(*pOut)->vtbl->GetDefInterface2 = GetDefInterface2;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3643,6 +3712,60 @@ mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
 	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
 	if (hr != 0)
 		return 4;
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_retval_ccw_itest (MonoComObject *pUnk, int test_null)
+{
+	int hr = 0, i = 0;
+
+	if (!pUnk)
+		return 1;
+
+	hr = pUnk->vtbl->IntOut (pUnk, &i);
+	if (hr != 0)
+		return 2;
+	if (i != 33)
+		return 3;
+	if (test_null)
+	{
+		hr = pUnk->vtbl->IntOut (pUnk, NULL);
+		if (hr != 0)
+			return 4;
+	}
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_default_interface_ccw (MonoComObject *pUnk)
+{
+	MonoDefItfObject *obj;
+	int ret, value;
+
+	ret = pUnk->vtbl->GetDefInterface1(pUnk, &obj);
+	if (ret)
+		return 1;
+	value = 0;
+
+	ret = obj->vtbl->Method(obj, &value);
+	obj->vtbl->Release(obj);
+	if (ret)
+		return 2;
+	if (value != 1)
+		return 3;
+
+	ret = pUnk->vtbl->GetDefInterface2(pUnk, &obj);
+	if (ret)
+		return 4;
+	ret = obj->vtbl->Method(obj, &value);
+	obj->vtbl->Release(obj);
+	if (ret)
+		return 5;
+	if (value != 2)
+		return 6;
 
 	return 0;
 }
@@ -5519,6 +5642,37 @@ mono_test_marshal_safearray_mixed(
 	return hr;
 }
 
+LIBTEST_API int STDCALL
+mono_test_marshal_safearray_in_ccw(MonoComObject *pUnk)
+{
+	SAFEARRAY *array;
+	VARIANT var;
+	long index;
+	int ret;
+
+	array = SafeArrayCreateVector(VT_VARIANT, 0, 2);
+
+	var.vt = VT_BSTR;
+	var.bstrVal = marshal_bstr_alloc("Test");
+	index = 0;
+	SafeArrayPutElement(array, &index, &var);
+
+	var.vt = VT_I4;
+	var.intVal = 2345;
+	index = 1;
+	SafeArrayPutElement(array, &index, &var);
+
+	ret = pUnk->vtbl->ArrayIn (pUnk, (void *)array);
+	if (!ret)
+		ret = pUnk->vtbl->ArrayIn2 (pUnk, (void *)array);
+	if (!ret)
+		ret = pUnk->vtbl->ArrayIn3 (pUnk, (void *)array);
+
+	SafeArrayDestroy(array);
+
+	return ret;
+}
+
 #endif
 
 static int call_managed_res;
@@ -5701,6 +5855,18 @@ __thiscall
 _mono_test_native_thiscall3 (int arg, int arg2, int arg3)
 {
 	return arg + (arg2^1) + (arg3^2);
+}
+
+typedef int (
+#ifndef _MSC_VER
+__thiscall
+#endif
+*ThiscallFunction)(int arg, int arg2);
+
+LIBTEST_API ThiscallFunction STDCALL
+mono_test_get_native_thiscall2 (void)
+{
+	return _mono_test_native_thiscall2;
 }
 
 LIBTEST_API int STDCALL

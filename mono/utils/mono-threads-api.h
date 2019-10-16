@@ -130,13 +130,8 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 	} while (0)
 
 #define MONO_ENTER_GC_SAFE_UNBALANCED	\
-	do {	\
 		MONO_STACKDATA (__gc_safe_unbalanced_dummy); \
-		gpointer __gc_safe_unbalanced_cookie = mono_threads_enter_gc_safe_region_unbalanced_internal (&__gc_safe_unbalanced_dummy)
-
-#define MONO_EXIT_GC_SAFE_UNBALANCED	\
-		mono_threads_exit_gc_safe_region_unbalanced_internal (__gc_safe_unbalanced_cookie, &__gc_safe_unbalanced_dummy);	\
-	} while (0)
+		mono_threads_enter_gc_safe_region_unbalanced_internal (&__gc_safe_unbalanced_dummy)
 
 void
 mono_threads_enter_no_safepoints_region (const char *func);
@@ -144,6 +139,7 @@ mono_threads_enter_no_safepoints_region (const char *func);
 void
 mono_threads_exit_no_safepoints_region (const char *func);
 
+#if 0
 #define MONO_ENTER_NO_SAFEPOINTS						\
 	do {										\
 		do {									\
@@ -155,5 +151,19 @@ mono_threads_exit_no_safepoints_region (const char *func);
 		if (mono_threads_are_safepoints_enabled ())			\
 			mono_threads_exit_no_safepoints_region (__func__);	\
 	} while (0)
+#else
+
+// With pinned handles, safepoints become not needed, as long as pinned handles are used.
+
+#define MONO_ENTER_NO_SAFEPOINTS   /* nothing */
+#define MONO_EXIT_NO_SAFEPOINTS    /* nothing */
+
+#endif
+
+MONO_API MONO_RT_EXTERNAL_ONLY void
+mono_thread_set_coop_aware (void);
+
+MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
+mono_thread_get_coop_aware (void);
 
 #endif /* __MONO_LOGGER_H__ */

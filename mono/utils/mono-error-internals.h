@@ -9,32 +9,38 @@
 #include "mono/utils/mono-compiler.h"
 
 /*Keep in sync with MonoError*/
-typedef struct {
-	guint16 error_code;
-	guint16 flags;
+typedef union _MonoErrorInternal {
+	// Merge two uint16 into one uint32 so it can be initialized
+	// with one instruction instead of two.
+	guint32 init; // Written by JITted code
+	struct {
+		guint16 error_code;
+		guint16 flags;
 
-	/*These name are suggestions of their content. MonoError internals might use them for something else.*/
-	// type_name must be right after error_code and flags, see mono_error_init_deferred.
-	const char *type_name;
-	const char *assembly_name;
-	const char *member_name;
-	const char *exception_name_space;
-	const char *exception_name;
-	union {
-		/* Valid if error_code != MONO_ERROR_EXCEPTION_INSTANCE.
-		 * Used by type or field load errors and generic error specified by class.
-		 */
-		MonoClass *klass;
-		/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
-		 * Generic error specified by a managed instance.
-		 */
-		uint32_t instance_handle;
-	} exn;
-	const char *full_message;
-	const char *full_message_with_fields;
-	const char *first_argument;
+		/*These name are suggestions of their content. MonoError internals might use them for something else.*/
+		// type_name must be right after error_code and flags, see mono_error_init_deferred.
+		const char *type_name;
+		const char *assembly_name;
+		const char *member_name;
+		const char *exception_name_space;
+		const char *exception_name;
+		union {
+			/* Valid if error_code != MONO_ERROR_EXCEPTION_INSTANCE.
+			 * Used by type or field load errors and generic error specified by class.
+			 */
+			MonoClass *klass;
+			/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
+			 * Generic error specified by a managed instance.
+			 */
+			uint32_t instance_handle;
+		} exn;
+		const char *full_message;
+		const char *full_message_with_fields;
+		const char *first_argument;
 
-	void *padding [3];
+		// MonoErrorExternal:
+		//void *padding [3];
+	};
 } MonoErrorInternal;
 
 /* Invariant: the error strings are allocated in the mempool of the given image */
@@ -214,19 +220,19 @@ mono_error_set_remoting (MonoError *error, const char *message)
 static inline void
 mono_error_set_divide_by_zero (MonoError *error)
 {
-	mono_error_set_generic_error (error, "System", "DivideByZeroException", "");
+	mono_error_set_generic_error (error, "System", "DivideByZeroException", NULL);
 }
 
 static inline void
 mono_error_set_index_out_of_range (MonoError *error)
 {
-	mono_error_set_generic_error (error, "System", "IndexOutOfRangeException", "");
+	mono_error_set_generic_error (error, "System", "IndexOutOfRangeException", NULL);
 }
 
 static inline void
 mono_error_set_overflow (MonoError *error)
 {
-	mono_error_set_generic_error (error, "System", "OverflowException", "");
+	mono_error_set_generic_error (error, "System", "OverflowException", NULL);
 }
 
 static inline void
@@ -238,13 +244,13 @@ mono_error_set_synchronization_lock (MonoError *error, const char *message)
 static inline void
 mono_error_set_thread_interrupted (MonoError *error)
 {
-	mono_error_set_generic_error (error, "System.Threading", "ThreadInterruptedException", "");
+	mono_error_set_generic_error (error, "System.Threading", "ThreadInterruptedException", NULL);
 }
 
 static inline void
 mono_error_set_null_reference (MonoError *error)
 {
-	mono_error_set_generic_error (error, "System", "NullReferenceException", "");
+	mono_error_set_generic_error (error, "System", "NullReferenceException", NULL);
 }
 
 static inline void
@@ -283,5 +289,61 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
+
+#if HOST_WIN32
+#if HOST_X86 || HOST_AMD64
+
+#include <windows.h>
+
+// Single instruction inlinable form of GetLastError.
+//
+// Naming violation so can search disassembly for GetLastError.
+//
+#define GetLastError mono_GetLastError
+
+static inline
+unsigned long
+__stdcall
+GetLastError (void)
+{
+#if HOST_X86
+    return __readfsdword (0x34);
+#elif HOST_AMD64
+    return __readgsdword (0x68);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+// Single instruction inlinable valid subset of SetLastError.
+//
+// Naming violation so can search disassembly for SetLastError.
+//
+// This is useful, for example, if you want to set a breakpoint
+// on SetLastError, but do not want to break on merely "restoring" it,
+// only "originating" it.
+//
+// A generic name is used in case there are other use-cases.
+//
+static inline
+void
+__stdcall
+mono_SetLastError (unsigned long err)
+{
+#if HOST_X86
+    __writefsdword (0x34, err);
+#elif HOST_AMD64
+    __writegsdword (0x68, err);
+#else
+#error Unreachable, see above.
+#endif
+}
+
+#else // arm, arm64, etc.
+
+#define mono_SetLastError SetLastError
+
+#endif // processor
+#endif // win32
 
 #endif

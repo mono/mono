@@ -1,10 +1,11 @@
 #!/bin/bash -e
+# -*- mode: shell-script; indent-tabs-mode: nil; -*-
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 export CI=1
 export CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
-export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
+export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || getconf NPROCESSORS_ONLN || echo 4)
 export TEST_HARNESS_VERBOSE=1
 
 # workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
@@ -12,6 +13,46 @@ export TEST_HARNESS_VERBOSE=1
 for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "Cleaning $dir" && git clean -xdff); done
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+
+if [[ ${CI_TAGS} == *'pull-request'* ]]; then
+	# Skip lanes which are not affected by the PR
+	wget -O pr-contents.diff "${ghprbPullLink}.diff"
+	grep '^diff' pr-contents.diff > pr-files.txt
+	echo "Files affected by the PR:"
+	cat pr-files.txt
+
+	# FIXME: Add more
+	skip=false
+	skip_step=""
+	if ! grep -q -v a/netcore pr-files.txt; then
+		skip_step="NETCORE"
+		skip=true
+	fi
+	if ! grep -q -v a/mono/mini/mini-ppc pr-files.txt; then
+		skip_step="PPC"
+		skip=true
+	fi
+	if ! grep -q -v a/scripts/ci/provisioning pr-files.txt; then
+		skip_step="CI provisioning scripts"
+		skip=true
+	fi
+	if ! grep -q -v a/sdks/wasm pr-files.txt; then
+		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
+			true
+		else
+			skip_step="WASM"
+			skip=true
+		fi
+	fi
+	if [ $skip = true ]; then
+		${TESTCMD} --label="Skipped on ${skip_step}." --timeout=60m --fatal sh -c 'exit 0'
+		if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
+		if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
+		exit 0
+	fi
+
+    rm pr-files.txt
+fi
 
 helix_set_env_vars
 helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
@@ -54,6 +95,7 @@ if [[ ${CI_TAGS} == *'osx-i386'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m32 -arch
 if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.9"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32 --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* && ${CI_TAGS} != *'sdks-android'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
+if [[ ${CI_TAGS} == *'freebsd-amd64'* ]]; then export CC="clang"; export CXX="clang++"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-dtrace --disable-boehm ac_cv_header_sys_inotify_h=no ac_cv_func_inotify_init=no ac_cv_func_inotify_add_watch=no ac_cv_func_inotify_rm_watch=no"; fi
 if [[ ${CI_TAGS} == *'make-install'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-loadedllvm --prefix=${MONO_REPO_ROOT}/tmp/monoprefix"; fi
 
 if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
@@ -75,6 +117,7 @@ elif [[ ${CI_TAGS} == *'jit_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'fullaotinterp_llvm'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaotinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaotinterp";
 elif [[ ${CI_TAGS} == *'winaotinterp'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaotinterp";
+elif [[ ${CI_TAGS} == *'winaotinterp_llvm'* ]];  then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=winaotinterp_llvm";
 elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaot";
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
@@ -125,30 +168,44 @@ then
 fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
-	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
-	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
-		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
-	fi
+	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}64 NINJA=
 	exit 0
 fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
-        # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-        export MACOS_VERSION=10.14
-        export IOS_VERSION=12.1
-        export TVOS_VERSION=12.1
-        export WATCHOS_VERSION=5.1
-        export WATCHOS5_VERSION=5.1
+        # configuration on our bots
+        if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+            export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.2
+            export TVOS_VERSION=13.2
+            export WATCHOS_VERSION=6.1
+            export WATCHOS64_32_VERSION=6.1
+        elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
+            export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.1
+            export TVOS_VERSION=13.0
+            export WATCHOS_VERSION=6.0
+            export WATCHOS64_32_VERSION=6.0
+        else
+            export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+            export MACOS_VERSION=10.14
+            export IOS_VERSION=12.1
+            export TVOS_VERSION=12.1
+            export WATCHOS_VERSION=5.1
+            export WATCHOS64_32_VERSION=5.1
+        fi
+
+        # retrieve selected Xcode version
+        /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_IOS=1" > sdks/Make.config
+        echo "ENABLE_MAC=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
@@ -186,18 +243,25 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
-    # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-    export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-    export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
-    export MACOS_VERSION=10.14
+    # configuration on our bots
+    if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+        export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
+        export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    else
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export MACOS_VERSION=10.14
+    fi
+
+    # retrieve selected Xcode version
+    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
-    echo "DISABLE_IOS=1" > sdks/Make.config
-    echo "DISABLE_ANDROID=1" >> sdks/Make.config
-    echo "DISABLE_WASM=1" >> sdks/Make.config
-    echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+    echo "ENABLE_MAC=1" > sdks/Make.config
     if [[ ${CI_TAGS} == *'cxx'* ]]; then
         echo "ENABLE_CXX=1" >> sdks/Make.config
     fi
@@ -214,10 +278,7 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
-        echo "DISABLE_IOS=1" > sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_WASM=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
@@ -265,19 +326,20 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
-        echo "DISABLE_ANDROID=1" > sdks/Make.config
-        echo "DISABLE_IOS=1" >> sdks/Make.config
-        echo "DISABLE_MAC=1" >> sdks/Make.config
-        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        echo "ENABLE_WASM=1" > sdks/Make.config
+        echo "ENABLE_WINDOWS=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
+        echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+        #echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
+	   export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
@@ -287,21 +349,19 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            ${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
-            ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
-            ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
-            ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
+            ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
+            ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             #The following tests are not passing yet, so enabling them would make us perma-red
-            #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
             #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
-            ${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
-            ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-system-core
-            ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-system-core
-            ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=system-core --timeout=20m $gnumake -C sdks/wasm run-all-System.Core
+            for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
             #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            ${TESTCMD} --label=v8-corlib --timeout=20m $gnumake -C sdks/wasm run-v8-corlib
+            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
+                ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
+            fi
             ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done
@@ -360,6 +420,8 @@ fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
+
+if [[ ${CI_TAGS} == *'hardened-runtime'* ]]; then codesign -s - -fv -o runtime --entitlements ${MONO_REPO_ROOT}/mono/mini/mac-entitlements.plist ${MONO_REPO_ROOT}/mono/mini/mono-sgen; fi
 
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 

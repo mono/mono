@@ -28,6 +28,7 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include "abi-details.h"
+#include "cominterop.h"
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-memory-model.h>
@@ -556,7 +557,7 @@ inverse of this mapping.
  */
 #define rtsize(meta,s,b) (((s) < (1 << (b)) ? 2 : 4))
 
-static inline int
+static int
 idx_size (MonoImage *meta, int idx)
 {
 	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << idx)))
@@ -565,7 +566,7 @@ idx_size (MonoImage *meta, int idx)
 		return meta->tables [idx].rows < 65536 ? 2 : 4;
 }
 
-static inline int
+static int
 get_nrows (MonoImage *meta, int idx)
 {
 	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << idx)))
@@ -2251,6 +2252,19 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	method->call_convention = call_convention;
 	method->generic_param_count = gen_param_count;
 
+	switch (method->call_convention) {
+	case MONO_CALL_DEFAULT:
+	case MONO_CALL_VARARG:
+		method->pinvoke = 0;
+		break;
+	case MONO_CALL_C:
+	case MONO_CALL_STDCALL:
+	case MONO_CALL_THISCALL:
+	case MONO_CALL_FASTCALL:
+		method->pinvoke = 1;
+		break;
+	}
+
 	if (call_convention != 0xa) {
 		method->ret = mono_metadata_parse_type_checked (m, container, pattrs ? pattrs [0] : 0, FALSE, ptr, &ptr, error);
 		if (!method->ret) {
@@ -2544,13 +2558,13 @@ aggregate_modifiers_in_image (MonoAggregateModContainer *amods, MonoImage *image
 	return FALSE;
 }
 
-static inline void
+static void
 image_sets_lock (void)
 {
 	mono_os_mutex_lock (&image_sets_mutex);
 }
 
-static inline void
+static void
 image_sets_unlock (void)
 {
 	mono_os_mutex_unlock (&image_sets_mutex);
@@ -2570,7 +2584,7 @@ mix_hash (uintptr_t source)
 
 	// Mix in highest bits on 64-bit systems only
 	if (sizeof (source) > 4)
-		hash = hash ^ (source >> 32);
+		hash = hash ^ ((source >> 31) >> 1);
 
 	return hash;
 }
@@ -2890,7 +2904,7 @@ enlarge_data (CollectData *data)
 	data->images_len = new_len;
 }
 
-static inline void
+static void
 add_image (MonoImage *image, CollectData *data)
 {
 	int i;
@@ -3536,7 +3550,7 @@ mono_metadata_inflate_generic_inst (MonoGenericInst *ginst, MonoGenericContext *
 
 	for (i = 0; i < ginst->type_argc; i++) {
 		type_argv [i] = mono_class_inflate_generic_type_checked (ginst->type_argv [i], context, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			goto cleanup;
 		++count;
 	}
@@ -6740,10 +6754,17 @@ handle_enum:
 			*conv = MONO_MARSHAL_CONV_DEL_FTN;
 			return MONO_NATIVE_FUNC;
 		}
-		if (mono_class_try_get_safehandle_class () && type->data.klass == mono_class_try_get_safehandle_class ()){
+		if (mono_class_try_get_safehandle_class () && type->data.klass != NULL &&
+			mono_class_is_subclass_of_internal (type->data.klass,  mono_class_try_get_safehandle_class (), FALSE)){
 			*conv = MONO_MARSHAL_CONV_SAFEHANDLE;
 			return MONO_NATIVE_INT;
 		}
+#ifndef DISABLE_COM
+		if (t == MONO_TYPE_CLASS && mono_cominterop_is_interface (type->data.klass)){
+			*conv = MONO_MARSHAL_CONV_OBJECT_INTERFACE;
+			return MONO_NATIVE_INTERFACE;
+		}
+#endif
 		*conv = MONO_MARSHAL_CONV_OBJECT_STRUCT;
 		return MONO_NATIVE_STRUCT;
 	}
@@ -7152,8 +7173,8 @@ mono_bool
 mono_type_is_byref (MonoType *type)
 {
 	mono_bool result;
-	MONO_ENTER_GC_UNSAFE;
-	result = type->byref;
+	MONO_ENTER_GC_UNSAFE; // FIXME slow
+	result = mono_type_is_byref_internal (type);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -7167,7 +7188,7 @@ mono_type_is_byref (MonoType *type)
 int
 mono_type_get_type (MonoType *type)
 {
-	return type->type;
+	return mono_type_get_type_internal (type);
 }
 
 /**
@@ -7180,8 +7201,7 @@ mono_type_get_type (MonoType *type)
 MonoMethodSignature*
 mono_type_get_signature (MonoType *type)
 {
-	g_assert (type->type == MONO_TYPE_FNPTR);
-	return type->data.method;
+	return mono_type_get_signature_internal (type);
 }
 
 /**
@@ -7196,7 +7216,7 @@ MonoClass*
 mono_type_get_class (MonoType *type)
 {
 	/* FIXME: review the runtime users before adding the assert here */
-	return type->data.klass;
+	return mono_type_get_class_internal (type);
 }
 
 /**
@@ -7210,7 +7230,7 @@ mono_type_get_class (MonoType *type)
 MonoArrayType*
 mono_type_get_array_type (MonoType *type)
 {
-	return type->data.array;
+	return mono_type_get_array_type_internal (type);
 }
 
 /**
@@ -7287,6 +7307,11 @@ mono_type_is_pointer (MonoType *type)
 mono_bool
 mono_type_is_reference (MonoType *type)
 {
+	/* NOTE: changing this function to return TRUE more often may have
+	 * consequences for generic sharing in the AOT compiler.  In
+	 * particular, returning TRUE for generic parameters with a 'class'
+	 * constraint may cause crashes.
+	 */
 	return (type && (((type->type == MONO_TYPE_STRING) ||
 		(type->type == MONO_TYPE_SZARRAY) || (type->type == MONO_TYPE_CLASS) ||
 		(type->type == MONO_TYPE_OBJECT) || (type->type == MONO_TYPE_ARRAY)) ||

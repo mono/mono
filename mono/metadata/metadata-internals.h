@@ -298,8 +298,6 @@ struct _MonoTableInfo {
 
 #define REFERENCE_MISSING ((gpointer) -1)
 
-typedef struct _MonoDllMap MonoDllMap;
-
 typedef struct {
 	gboolean (*match) (MonoImage*);
 	gboolean (*load_pe_data) (MonoImage*);
@@ -330,8 +328,11 @@ typedef struct {
 	void *raw_data_handle;
 	char *raw_data;
 	guint32 raw_data_len;
+	/* data was allocated with mono_file_map and must be unmapped */
 	guint8 raw_buffer_used    : 1;
+	/* data was allocated with malloc and must be freed */
 	guint8 raw_data_allocated : 1;
+	/* data was allocated with mono_file_map_fileio */
 	guint8 fileio_used : 1;
 
 #ifdef HOST_WIN32
@@ -435,6 +436,7 @@ struct _MonoImage {
 	 * table, where the module table is a subset of the file table. We track both lists,
 	 * and because we can lazy-load them at different times we reference-increment both.
 	 */
+	/* No netmodules in netcore, but for System.Reflection.Emit support we still use modules */
 	MonoImage **modules;
 	guint32 module_count;
 	gboolean *modules_loaded;
@@ -450,6 +452,13 @@ struct _MonoImage {
 	 * The Assembly this image was loaded from.
 	 */
 	MonoAssembly *assembly;
+
+#ifdef ENABLE_NETCORE
+	/*
+	 * The AssemblyLoadContext that this image was loaded into.
+	 */
+	MonoAssemblyLoadContext *alc;
+#endif
 
 	/*
 	 * Indexed by method tokens and typedef tokens.
@@ -524,8 +533,10 @@ struct _MonoImage {
 	 */
 	void *user_info;
 
+#ifndef DISABLE_DLLMAP
 	/* dll map entries */
 	MonoDllMap *dll_map;
+#endif
 
 	/* interfaces IDs from this image */
 	/* protected by the classes lock */
@@ -1072,11 +1083,11 @@ gboolean mono_image_load_cli_data (MonoImage *image);
 
 void mono_image_load_names (MonoImage *image);
 
-MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status);
+MonoImage *mono_image_open_raw (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status);
 
-MonoImage *mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status);
+MonoImage *mono_image_open_metadata_only (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOpenStatus *status);
 
-MonoImage *mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, const char *name);
+MonoImage *mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, const char *name);
 
 MonoException *mono_get_exception_field_access_msg (const char *msg);
 
@@ -1173,7 +1184,109 @@ m_image_has_entry_point (MonoImage *image)
 {
 	return image->storage ? image->storage->has_entry_point : FALSE;
 }
-
 #endif
+
+static inline const char *
+m_image_get_name (MonoImage *image)
+{
+	return image->name;
+}
+
+static inline const char *
+m_image_get_filename (MonoImage *image)
+{
+	return image->filename;
+}
+
+static inline const char *
+m_image_get_assembly_name (MonoImage *image)
+{
+	return image->assembly_name;
+}
+
+static inline
+MonoAssemblyLoadContext *
+mono_image_get_alc (MonoImage *image)
+{
+#ifndef ENABLE_NETCORE
+	return NULL;
+#else
+	return image->alc;
+#endif
+}
+
+static inline
+MonoAssemblyLoadContext *
+mono_assembly_get_alc (MonoAssembly *assm)
+{
+	return mono_image_get_alc (assm->image);
+}
+
+/**
+ * mono_type_get_type_internal:
+ * \param type the \c MonoType operated on
+ * \returns the IL type value for \p type. This is one of the \c MonoTypeEnum
+ * enum members like \c MONO_TYPE_I4 or \c MONO_TYPE_STRING.
+ */
+static inline int
+mono_type_get_type_internal (MonoType *type)
+{
+	return type->type;
+}
+
+/**
+ * mono_type_get_signature:
+ * \param type the \c MonoType operated on
+ * It is only valid to call this function if \p type is a \c MONO_TYPE_FNPTR .
+ * \returns the \c MonoMethodSignature pointer that describes the signature
+ * of the function pointer \p type represents.
+ */
+static inline MonoMethodSignature*
+mono_type_get_signature_internal (MonoType *type)
+{
+	g_assert (type->type == MONO_TYPE_FNPTR);
+	return type->data.method;
+}
+
+/**
+ * mono_type_is_byref_internal:
+ * \param type the \c MonoType operated on
+ * \returns TRUE if \p type represents a type passed by reference,
+ * FALSE otherwise.
+ */
+static inline mono_bool
+mono_type_is_byref_internal (MonoType *type)
+{
+	return type->byref;
+}
+
+/**
+ * mono_type_get_class_internal:
+ * \param type the \c MonoType operated on
+ * It is only valid to call this function if \p type is a \c MONO_TYPE_CLASS or a
+ * \c MONO_TYPE_VALUETYPE . For more general functionality, use \c mono_class_from_mono_type_internal,
+ * instead.
+ * \returns the \c MonoClass pointer that describes the class that \p type represents.
+ */
+static inline MonoClass*
+mono_type_get_class_internal (MonoType *type)
+{
+	/* FIXME: review the runtime users before adding the assert here */
+	return type->data.klass;
+}
+
+/**
+ * mono_type_get_array_type_internal:
+ * \param type the \c MonoType operated on
+ * It is only valid to call this function if \p type is a \c MONO_TYPE_ARRAY .
+ * \returns a \c MonoArrayType struct describing the array type that \p type
+ * represents. The info includes details such as rank, array element type
+ * and the sizes and bounds of multidimensional arrays.
+ */
+static inline MonoArrayType*
+mono_type_get_array_type_internal (MonoType *type)
+{
+	return type->data.array;
+}
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */

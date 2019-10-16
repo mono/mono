@@ -15,7 +15,7 @@
 # Order is important. The last matching pattern has the most precedence.
 
 /acceptance-tests @akoeplinger @kg
-/acceptance-tests/profiler-stress* @alexrp @akoeplinger
+/acceptance-tests/profiler-stress* @BrzVlad @akoeplinger
 
 /data @directhex @akoeplinger
 /data/gdb @lewurm @vargaz
@@ -23,7 +23,7 @@
 
 /docs @marek-safar @akoeplinger
 /docs/riscv.md @alexrp @lewurm
-/docs/sources/mono-api-profiler.html @alexrp
+/docs/sources/mono-api-profiler.html @BrzVlad
 
 /external @akoeplinger @marek-safar
 /external/api-snapshot @marek-safar @akoeplinger
@@ -34,16 +34,16 @@
 /external/corefx @akoeplinger @marek-safar @egorbo @steveisok
 /external/corert @akoeplinger @marek-safar @egorbo @steveisok
 /external/linker @marek-safar
-/external/llvm @SamMonoRT @vargaz
+/external/llvm @SamMonoRT @vargaz @imhameed
 /external/nuget-buildtasks @radical @akoeplinger
 /external/roslyn-binaries @kg @marek-safar @akoeplinger @lewing
 
 /libgc @BrzVlad @vargaz @naricc
 
-/llvm @vargaz @SamMonoRT
+/llvm @vargaz @SamMonoRT @imhameed
 
 /man @marek-safar @miguel
-/man/*prof* @alexrp
+/man/*prof* @BrzVlad
 
 /mcs @marek-safar @akoeplinger @egorbo
 
@@ -92,20 +92,27 @@
 /mono/metadata/thread* @lateralusX @lambdageek
 /mono/metadata/w32* @lateralusX @lambdageek
 /mono/metadata/*-win* @lateralusX @lambdageek
+/mono/metadata/appdomain* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/assembly* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/domain* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/loader* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/native-library* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/*-unix* @lambdageek @CoffeeFlux
 
 /mono/mini @vargaz @lewurm @lambdageek @SamMonoRT
 /mono/mini/*cfgdump* @lewurm @vargaz
-/mono/mini/*exceptions* @lewurm @vargaz
+/mono/mini/*exceptions* @lewurm @vargaz @BrzVlad
 /mono/mini/*ppc* @lewurm @vargaz
 /mono/mini/*riscv* @alexrp @lewurm
 /mono/mini/*type-check* @lewurm @lambdageek
+/mono/mini/*llvm* @vargaz @imhameed
 /mono/mini/interp/* @lewurm @BrzVlad
-/mono/mini/*profiler* @alexrp @lambdageek
+/mono/mini/*profiler* @BrzVlad @lambdageek
 /mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas @lambdageek
 
 /mono/native @baulig @egorbo @alexischr @marek-safar
 
-/mono/profiler @alexrp @lambdageek
+/mono/profiler @BrzVlad @lambdageek
 
 /mono/sgen @BrzVlad @lambdageek
 
@@ -121,7 +128,7 @@
 /msvc @lateralusX @kg @akoeplinger
 /msvc/scripts @akoeplinger @kg
 
-/netcore @marek-safar @akoeplinger @egorbo @vargaz
+/netcore @marek-safar @akoeplinger @egorbo @vargaz @steveisok
 
 /packaging @alexischr @akoeplinger @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
@@ -129,7 +136,7 @@
 /runtime @akoeplinger @marek-safar
 
 /samples @lambdageek @lewurm
-/samples/profiler @alexrp @lambdageek
+/samples/profiler @BrzVlad @lambdageek
 /samples/size @alexrp @lambdageek
 
 /scripts @akoeplinger @directhex

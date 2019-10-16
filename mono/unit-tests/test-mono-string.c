@@ -41,7 +41,7 @@ new_string_conv_err (void)
 	ERROR_DECL (error);
 	static const unsigned char bytes[] = { 'a', 0xFC, 'b', 'c', 0 };
 	MonoString G_GNUC_UNUSED *s = mono_string_new_checked (mono_domain_get (), (const char*)bytes, error);
-	g_assert (!mono_error_ok (error));
+	g_assert (!is_ok (error));
 	const char *msg = mono_error_get_message (error);
 	g_assert (msg != NULL);
 	fprintf (stderr, "(expected) error message was: \"%s\"", msg);
@@ -59,7 +59,7 @@ int
 test_mono_string_main (void)
 {
 
-	mono_jit_init_version ("test-mono-string", "v4.0.30319");
+	mono_jit_init_version_for_test_only ("test-mono-string", "v4.0.30319");
 
 	int res = 0;
 

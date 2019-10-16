@@ -504,38 +504,48 @@ int Mono_Posix_FromErrno (int x, int *r);
 int Mono_Posix_ToErrno (int x, int *r);
 
 enum Mono_Posix_FcntlCommand {
-	Mono_Posix_FcntlCommand_F_DUPFD          = 0x00000000,
-	#define Mono_Posix_FcntlCommand_F_DUPFD    Mono_Posix_FcntlCommand_F_DUPFD
-	Mono_Posix_FcntlCommand_F_GETFD          = 0x00000001,
-	#define Mono_Posix_FcntlCommand_F_GETFD    Mono_Posix_FcntlCommand_F_GETFD
-	Mono_Posix_FcntlCommand_F_GETFL          = 0x00000003,
-	#define Mono_Posix_FcntlCommand_F_GETFL    Mono_Posix_FcntlCommand_F_GETFL
-	Mono_Posix_FcntlCommand_F_GETLEASE       = 0x00000401,
-	#define Mono_Posix_FcntlCommand_F_GETLEASE Mono_Posix_FcntlCommand_F_GETLEASE
-	Mono_Posix_FcntlCommand_F_GETLK          = 0x0000000c,
-	#define Mono_Posix_FcntlCommand_F_GETLK    Mono_Posix_FcntlCommand_F_GETLK
-	Mono_Posix_FcntlCommand_F_GETOWN         = 0x00000009,
-	#define Mono_Posix_FcntlCommand_F_GETOWN   Mono_Posix_FcntlCommand_F_GETOWN
-	Mono_Posix_FcntlCommand_F_GETSIG         = 0x0000000b,
-	#define Mono_Posix_FcntlCommand_F_GETSIG   Mono_Posix_FcntlCommand_F_GETSIG
-	Mono_Posix_FcntlCommand_F_NOCACHE        = 0x00000030,
-	#define Mono_Posix_FcntlCommand_F_NOCACHE  Mono_Posix_FcntlCommand_F_NOCACHE
-	Mono_Posix_FcntlCommand_F_NOTIFY         = 0x00000402,
-	#define Mono_Posix_FcntlCommand_F_NOTIFY   Mono_Posix_FcntlCommand_F_NOTIFY
-	Mono_Posix_FcntlCommand_F_SETFD          = 0x00000002,
-	#define Mono_Posix_FcntlCommand_F_SETFD    Mono_Posix_FcntlCommand_F_SETFD
-	Mono_Posix_FcntlCommand_F_SETFL          = 0x00000004,
-	#define Mono_Posix_FcntlCommand_F_SETFL    Mono_Posix_FcntlCommand_F_SETFL
-	Mono_Posix_FcntlCommand_F_SETLEASE       = 0x00000400,
-	#define Mono_Posix_FcntlCommand_F_SETLEASE Mono_Posix_FcntlCommand_F_SETLEASE
-	Mono_Posix_FcntlCommand_F_SETLK          = 0x0000000d,
-	#define Mono_Posix_FcntlCommand_F_SETLK    Mono_Posix_FcntlCommand_F_SETLK
-	Mono_Posix_FcntlCommand_F_SETLKW         = 0x0000000e,
-	#define Mono_Posix_FcntlCommand_F_SETLKW   Mono_Posix_FcntlCommand_F_SETLKW
-	Mono_Posix_FcntlCommand_F_SETOWN         = 0x00000008,
-	#define Mono_Posix_FcntlCommand_F_SETOWN   Mono_Posix_FcntlCommand_F_SETOWN
-	Mono_Posix_FcntlCommand_F_SETSIG         = 0x0000000a,
-	#define Mono_Posix_FcntlCommand_F_SETSIG   Mono_Posix_FcntlCommand_F_SETSIG
+	Mono_Posix_FcntlCommand_F_ADD_SEALS        = 0x00000409,
+	#define Mono_Posix_FcntlCommand_F_ADD_SEALS  Mono_Posix_FcntlCommand_F_ADD_SEALS
+	Mono_Posix_FcntlCommand_F_DUPFD            = 0x00000000,
+	#define Mono_Posix_FcntlCommand_F_DUPFD      Mono_Posix_FcntlCommand_F_DUPFD
+	Mono_Posix_FcntlCommand_F_GETFD            = 0x00000001,
+	#define Mono_Posix_FcntlCommand_F_GETFD      Mono_Posix_FcntlCommand_F_GETFD
+	Mono_Posix_FcntlCommand_F_GETFL            = 0x00000003,
+	#define Mono_Posix_FcntlCommand_F_GETFL      Mono_Posix_FcntlCommand_F_GETFL
+	Mono_Posix_FcntlCommand_F_GETLEASE         = 0x00000401,
+	#define Mono_Posix_FcntlCommand_F_GETLEASE   Mono_Posix_FcntlCommand_F_GETLEASE
+	Mono_Posix_FcntlCommand_F_GETLK            = 0x0000000c,
+	#define Mono_Posix_FcntlCommand_F_GETLK      Mono_Posix_FcntlCommand_F_GETLK
+	Mono_Posix_FcntlCommand_F_GETOWN           = 0x00000009,
+	#define Mono_Posix_FcntlCommand_F_GETOWN     Mono_Posix_FcntlCommand_F_GETOWN
+	Mono_Posix_FcntlCommand_F_GETSIG           = 0x0000000b,
+	#define Mono_Posix_FcntlCommand_F_GETSIG     Mono_Posix_FcntlCommand_F_GETSIG
+	Mono_Posix_FcntlCommand_F_GET_SEALS        = 0x0000040a,
+	#define Mono_Posix_FcntlCommand_F_GET_SEALS  Mono_Posix_FcntlCommand_F_GET_SEALS
+	Mono_Posix_FcntlCommand_F_NOCACHE          = 0x00000030,
+	#define Mono_Posix_FcntlCommand_F_NOCACHE    Mono_Posix_FcntlCommand_F_NOCACHE
+	Mono_Posix_FcntlCommand_F_NOTIFY           = 0x00000402,
+	#define Mono_Posix_FcntlCommand_F_NOTIFY     Mono_Posix_FcntlCommand_F_NOTIFY
+	Mono_Posix_FcntlCommand_F_OFD_GETLK        = 0x00000024,
+	#define Mono_Posix_FcntlCommand_F_OFD_GETLK  Mono_Posix_FcntlCommand_F_OFD_GETLK
+	Mono_Posix_FcntlCommand_F_OFD_SETLK        = 0x00000025,
+	#define Mono_Posix_FcntlCommand_F_OFD_SETLK  Mono_Posix_FcntlCommand_F_OFD_SETLK
+	Mono_Posix_FcntlCommand_F_OFD_SETLKW       = 0x00000026,
+	#define Mono_Posix_FcntlCommand_F_OFD_SETLKW Mono_Posix_FcntlCommand_F_OFD_SETLKW
+	Mono_Posix_FcntlCommand_F_SETFD            = 0x00000002,
+	#define Mono_Posix_FcntlCommand_F_SETFD      Mono_Posix_FcntlCommand_F_SETFD
+	Mono_Posix_FcntlCommand_F_SETFL            = 0x00000004,
+	#define Mono_Posix_FcntlCommand_F_SETFL      Mono_Posix_FcntlCommand_F_SETFL
+	Mono_Posix_FcntlCommand_F_SETLEASE         = 0x00000400,
+	#define Mono_Posix_FcntlCommand_F_SETLEASE   Mono_Posix_FcntlCommand_F_SETLEASE
+	Mono_Posix_FcntlCommand_F_SETLK            = 0x0000000d,
+	#define Mono_Posix_FcntlCommand_F_SETLK      Mono_Posix_FcntlCommand_F_SETLK
+	Mono_Posix_FcntlCommand_F_SETLKW           = 0x0000000e,
+	#define Mono_Posix_FcntlCommand_F_SETLKW     Mono_Posix_FcntlCommand_F_SETLKW
+	Mono_Posix_FcntlCommand_F_SETOWN           = 0x00000008,
+	#define Mono_Posix_FcntlCommand_F_SETOWN     Mono_Posix_FcntlCommand_F_SETOWN
+	Mono_Posix_FcntlCommand_F_SETSIG           = 0x0000000a,
+	#define Mono_Posix_FcntlCommand_F_SETSIG     Mono_Posix_FcntlCommand_F_SETSIG
 };
 int Mono_Posix_FromFcntlCommand (int x, int *r);
 int Mono_Posix_ToFcntlCommand (int x, int *r);
@@ -620,6 +630,41 @@ enum Mono_Posix_LockfCommand {
 };
 int Mono_Posix_FromLockfCommand (int x, int *r);
 int Mono_Posix_ToLockfCommand (int x, int *r);
+
+enum Mono_Posix_MemfdFlags {
+	Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING       = 0x00000002,
+	#define Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING Mono_Posix_MemfdFlags_MFD_ALLOW_SEALING
+	Mono_Posix_MemfdFlags_MFD_CLOEXEC             = 0x00000001,
+	#define Mono_Posix_MemfdFlags_MFD_CLOEXEC       Mono_Posix_MemfdFlags_MFD_CLOEXEC
+	Mono_Posix_MemfdFlags_MFD_HUGETLB             = 0x00000004,
+	#define Mono_Posix_MemfdFlags_MFD_HUGETLB       Mono_Posix_MemfdFlags_MFD_HUGETLB
+	Mono_Posix_MemfdFlags_MFD_HUGE_16GB           = 0x88000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_16GB     Mono_Posix_MemfdFlags_MFD_HUGE_16GB
+	Mono_Posix_MemfdFlags_MFD_HUGE_16MB           = 0x60000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_16MB     Mono_Posix_MemfdFlags_MFD_HUGE_16MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_1GB            = 0x78000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_1GB      Mono_Posix_MemfdFlags_MFD_HUGE_1GB
+	Mono_Posix_MemfdFlags_MFD_HUGE_1MB            = 0x50000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_1MB      Mono_Posix_MemfdFlags_MFD_HUGE_1MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_256MB          = 0x70000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_256MB    Mono_Posix_MemfdFlags_MFD_HUGE_256MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_2GB            = 0x7c000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_2GB      Mono_Posix_MemfdFlags_MFD_HUGE_2GB
+	Mono_Posix_MemfdFlags_MFD_HUGE_2MB            = 0x54000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_2MB      Mono_Posix_MemfdFlags_MFD_HUGE_2MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_32MB           = 0x64000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_32MB     Mono_Posix_MemfdFlags_MFD_HUGE_32MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_512KB          = 0x4c000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_512KB    Mono_Posix_MemfdFlags_MFD_HUGE_512KB
+	Mono_Posix_MemfdFlags_MFD_HUGE_512MB          = 0x74000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_512MB    Mono_Posix_MemfdFlags_MFD_HUGE_512MB
+	Mono_Posix_MemfdFlags_MFD_HUGE_64KB           = 0x40000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_64KB     Mono_Posix_MemfdFlags_MFD_HUGE_64KB
+	Mono_Posix_MemfdFlags_MFD_HUGE_8MB            = 0x5c000000,
+	#define Mono_Posix_MemfdFlags_MFD_HUGE_8MB      Mono_Posix_MemfdFlags_MFD_HUGE_8MB
+};
+int Mono_Posix_FromMemfdFlags (unsigned int x, unsigned int *r);
+int Mono_Posix_ToMemfdFlags (unsigned int x, unsigned int *r);
 
 enum Mono_Posix_MessageFlags {
 	Mono_Posix_MessageFlags_MSG_CMSG_CLOEXEC       = 0x40000000,
@@ -754,13 +799,6 @@ enum Mono_Posix_MountFlags {
 int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
 int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
 
-enum Mono_Posix_MremapFlags {
-	Mono_Posix_MremapFlags_MREMAP_MAYMOVE       = 0x0000000000000001,
-	#define Mono_Posix_MremapFlags_MREMAP_MAYMOVE Mono_Posix_MremapFlags_MREMAP_MAYMOVE
-};
-int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r);
-int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r);
-
 enum Mono_Posix_MsyncFlags {
 	Mono_Posix_MsyncFlags_MS_ASYNC            = 0x00000001,
 	#define Mono_Posix_MsyncFlags_MS_ASYNC      Mono_Posix_MsyncFlags_MS_ASYNC
@@ -789,6 +827,8 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_EXCL      Mono_Posix_OpenFlags_O_EXCL
 	Mono_Posix_OpenFlags_O_LARGEFILE       = 0x00008000,
 	#define Mono_Posix_OpenFlags_O_LARGEFILE Mono_Posix_OpenFlags_O_LARGEFILE
+	Mono_Posix_OpenFlags_O_NOATIME         = 0x00040000,
+	#define Mono_Posix_OpenFlags_O_NOATIME   Mono_Posix_OpenFlags_O_NOATIME
 	Mono_Posix_OpenFlags_O_NOCTTY          = 0x00000100,
 	#define Mono_Posix_OpenFlags_O_NOCTTY    Mono_Posix_OpenFlags_O_NOCTTY
 	Mono_Posix_OpenFlags_O_NOFOLLOW        = 0x00020000,
@@ -914,6 +954,21 @@ enum Mono_Posix_PosixMadviseAdvice {
 };
 int Mono_Posix_FromPosixMadviseAdvice (int x, int *r);
 int Mono_Posix_ToPosixMadviseAdvice (int x, int *r);
+
+enum Mono_Posix_SealType {
+	Mono_Posix_SealType_F_SEAL_FUTURE_WRITE       = 0x00000010,
+	#define Mono_Posix_SealType_F_SEAL_FUTURE_WRITE Mono_Posix_SealType_F_SEAL_FUTURE_WRITE
+	Mono_Posix_SealType_F_SEAL_GROW               = 0x00000004,
+	#define Mono_Posix_SealType_F_SEAL_GROW         Mono_Posix_SealType_F_SEAL_GROW
+	Mono_Posix_SealType_F_SEAL_SEAL               = 0x00000001,
+	#define Mono_Posix_SealType_F_SEAL_SEAL         Mono_Posix_SealType_F_SEAL_SEAL
+	Mono_Posix_SealType_F_SEAL_SHRINK             = 0x00000002,
+	#define Mono_Posix_SealType_F_SEAL_SHRINK       Mono_Posix_SealType_F_SEAL_SHRINK
+	Mono_Posix_SealType_F_SEAL_WRITE              = 0x00000008,
+	#define Mono_Posix_SealType_F_SEAL_WRITE        Mono_Posix_SealType_F_SEAL_WRITE
+};
+int Mono_Posix_FromSealType (int x, int *r);
+int Mono_Posix_ToSealType (int x, int *r);
 
 enum Mono_Posix_SeekFlags {
 	Mono_Posix_SeekFlags_L_INCR         = 0x0001,
@@ -2149,6 +2204,7 @@ int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_Cmsghdr_getsize (void);
 int Mono_Posix_FromIn6Addr (struct Mono_Posix_In6Addr* source, void* destination);
 int Mono_Posix_FromInAddr (struct Mono_Posix_InAddr* source, void* destination);
+int Mono_Posix_FromMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
 int Mono_Posix_FromSockaddr (struct Mono_Posix__SockaddrHeader* source, void* destination);
 int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
@@ -2166,14 +2222,27 @@ int Mono_Posix_Stdlib_DumpFilePosition (char* buf, void* handle, int len);
 int Mono_Posix_Stdlib_EOF (void);
 int Mono_Posix_Stdlib_EXIT_FAILURE (void);
 int Mono_Posix_Stdlib_EXIT_SUCCESS (void);
+int Mono_Posix_Stdlib_fclose (void* stream);
+int Mono_Posix_Stdlib_feof (void* stream);
+int Mono_Posix_Stdlib_ferror (void* stream);
+int Mono_Posix_Stdlib_fflush (void* stream);
+int Mono_Posix_Stdlib_fgetc (void* stream);
 int Mono_Posix_Stdlib_fgetpos (void* stream, void* pos);
+void* Mono_Posix_Stdlib_fgets (char* sb, int size, void* stream);
 int Mono_Posix_Stdlib_FILENAME_MAX (void);
+void* Mono_Posix_Stdlib_fopen (const char* path, const char* mode);
 int Mono_Posix_Stdlib_FOPEN_MAX (void);
+int Mono_Posix_Stdlib_fprintf (void* stream, const char* format, const char* message);
+int Mono_Posix_Stdlib_fputc (int c, void* stream);
+int Mono_Posix_Stdlib_fputs (const char* s, void* stream);
 guint64 Mono_Posix_Stdlib_fread (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
+void Mono_Posix_Stdlib_free (void* ptr);
+void* Mono_Posix_Stdlib_freopen (const char* path, const char* mode, void* stream);
 int Mono_Posix_Stdlib_fseek (void* stream, gint64 offset, int origin);
 int Mono_Posix_Stdlib_fsetpos (void* stream, void* pos);
 gint64 Mono_Posix_Stdlib_ftell (void* stream);
 guint64 Mono_Posix_Stdlib_fwrite (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
+int Mono_Posix_Stdlib_GetLastError (void);
 void Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void* handler);
 int Mono_Posix_Stdlib_L_tmpnam (void);
 void* Mono_Posix_Stdlib_malloc (guint64 size);
@@ -2181,25 +2250,10 @@ int Mono_Posix_Stdlib_MB_CUR_MAX (void);
 int Mono_Posix_Stdlib_perror (const char* s, int err);
 int Mono_Posix_Stdlib_RAND_MAX (void);
 void* Mono_Posix_Stdlib_realloc (void* ptr, guint64 size);
-void Mono_Posix_Stdlib_free (void* p);
 int Mono_Posix_Stdlib_rewind (void* stream);
 int Mono_Posix_Stdlib_setbuf (void* stream, void* buf);
-int Mono_Posix_Stdlib_GetLastError (void);
 void Mono_Posix_Stdlib_SetLastError (int error);
 int Mono_Posix_Stdlib_setvbuf (void* stream, void* buf, int mode, guint64 size);
-void* Mono_Posix_Stdlib_fopen (char* path, char* mode);
-void* Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream);
-gint32 Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message);
-gint32 Mono_Posix_Stdlib_fgetc (void* stream);
-char* Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream);
-gint32 Mono_Posix_Stdlib_fputc (gint32 c, void* stream);
-gint32 Mono_Posix_Stdlib_fputs (char* s, void* stream);
-gint32 Mono_Posix_Stdlib_fclose (void* stream);
-gint32 Mono_Posix_Stdlib_fflush (void* stream);
-void* Mono_Posix_Stdlib_tmpfile (void);
-gint32 Mono_Posix_Stdlib_ungetc (gint32 c, void* stream);
-gint32 Mono_Posix_Stdlib_feof (void* stream);
-gint32 Mono_Posix_Stdlib_ferror (void* stream);
 void* Mono_Posix_Stdlib_SIG_DFL (void);
 void* Mono_Posix_Stdlib_SIG_ERR (void);
 void* Mono_Posix_Stdlib_SIG_IGN (void);
@@ -2207,7 +2261,9 @@ void* Mono_Posix_Stdlib_stderr (void);
 void* Mono_Posix_Stdlib_stdin (void);
 void* Mono_Posix_Stdlib_stdout (void);
 guint64 Mono_Posix_Stdlib_strlen (void* s);
+void* Mono_Posix_Stdlib_tmpfile (void);
 int Mono_Posix_Stdlib_TMP_MAX (void);
+int Mono_Posix_Stdlib_ungetc (int c, void* stream);
 int Mono_Posix_Stdlib__IOFBF (void);
 int Mono_Posix_Stdlib__IOLBF (void);
 int Mono_Posix_Stdlib__IONBF (void);
@@ -2366,6 +2422,7 @@ int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToIn6Addr (void* source, struct Mono_Posix_In6Addr* destination);
 int Mono_Posix_ToInAddr (void* source, struct Mono_Posix_InAddr* destination);
+int Mono_Posix_ToMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_ToSockaddr (void* source, gint64 size, struct Mono_Posix__SockaddrHeader* destination);
 int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);

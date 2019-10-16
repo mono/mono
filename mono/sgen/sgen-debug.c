@@ -597,23 +597,18 @@ sgen_check_heap_marked (gboolean nursery_must_be_pinned)
 }
 
 static void
-check_nursery_objects_pinned_callback (char *obj, size_t size, void *data /* ScanCopyContext *ctx */)
+check_nursery_objects_untag_callback (char *obj, size_t size, void *data)
 {
-	gboolean pinned = (gboolean) (size_t) data;
-
 	g_assert (!SGEN_OBJECT_IS_FORWARDED (obj));
-	if (pinned)
-		g_assert (SGEN_OBJECT_IS_PINNED (obj));
-	else
-		g_assert (!SGEN_OBJECT_IS_PINNED (obj));
+	g_assert (!SGEN_OBJECT_IS_PINNED (obj));
 }
 
 void
-sgen_check_nursery_objects_pinned (gboolean pinned)
+sgen_check_nursery_objects_untag (void)
 {
 	sgen_clear_nursery_fragments ();
 	sgen_scan_area_with_callback (sgen_nursery_section->data, sgen_nursery_section->end_data,
-			(IterateObjectCallbackFunc)check_nursery_objects_pinned_callback, (void*) (size_t) pinned /* (void*)&ctx */, FALSE, TRUE);
+			(IterateObjectCallbackFunc)check_nursery_objects_untag_callback, NULL, FALSE, TRUE);
 }
 
 static void
@@ -949,38 +944,21 @@ sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type)
 static gboolean
 is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 {
+#ifndef ENABLE_NETCORE
 	MonoObject *o = (MonoObject*)(obj);
-	MonoObject *ref = *ptr;
 	size_t offset = (char*)(ptr) - (char*)o;
 
-#ifndef ENABLE_NETCORE
 	if (o->vtable->klass == mono_defaults.thread_class && offset == G_STRUCT_OFFSET (MonoThread, internal_thread))
 		return TRUE;
 	if (o->vtable->klass == mono_defaults.internal_thread_class && offset == G_STRUCT_OFFSET (MonoInternalThread, current_appcontext))
 		return TRUE;
-#endif
 
 #ifndef DISABLE_REMOTING
 	if (m_class_get_supertypes (mono_defaults.real_proxy_class) && mono_class_has_parent_fast (o->vtable->klass, mono_defaults.real_proxy_class) &&
 			offset == G_STRUCT_OFFSET (MonoRealProxy, unwrapped_server))
 		return TRUE;
 #endif
-	/*
-	 *  at System.IO.MemoryStream.InternalConstructor (byte[],int,int,bool,bool) [0x0004d] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:121
-	 * at System.IO.MemoryStream..ctor (byte[]) [0x00017] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:81
-	 * at (wrapper remoting-invoke-with-check) System.IO.MemoryStream..ctor (byte[]) <IL 0x00020, 0xffffffff>
-	 * at System.Runtime.Remoting.Messaging.CADMethodCallMessage.GetArguments () [0x0000d] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Messaging/CADMessages.cs:327
-	 * at System.Runtime.Remoting.Messaging.MethodCall..ctor (System.Runtime.Remoting.Messaging.CADMethodCallMessage) [0x00017] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Messaging/MethodCall.cs:87
-	 * at System.AppDomain.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage,byte[]&,System.Runtime.Remoting.Messaging.CADMethodReturnMessage&) [0x00018] in /home/schani/Work/novell/trunk/mcs/class/corlib/System/AppDomain.cs:1213
-	 * at (wrapper remoting-invoke-with-check) System.AppDomain.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage,byte[]&,System.Runtime.Remoting.Messaging.CADMethodReturnMessage&) <IL 0x0003d, 0xffffffff>
-	 * at System.Runtime.Remoting.Channels.CrossAppDomainSink.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage) [0x00008] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs:198
-	 * at (wrapper runtime-invoke) object.runtime_invoke_CrossAppDomainSink/ProcessMessageRes_object_object (object,intptr,intptr,intptr) <IL 0x0004c, 0xffffffff>
-	 */
-	if (!strcmp (m_class_get_name_space (ref->vtable->klass), "System") &&
-		!strcmp (m_class_get_name (ref->vtable->klass), "Byte[]") &&
-		!strcmp (m_class_get_name_space (o->vtable->klass), "System.IO") &&
-		!strcmp (m_class_get_name (o->vtable->klass), "MemoryStream"))
-		return TRUE;
+#endif
 	return FALSE;
 }
 
@@ -1265,7 +1243,7 @@ sgen_check_mod_union_consistency (void)
 }
 
 void
-sgen_check_nursery_objects_pinned (gboolean pinned)
+sgen_check_nursery_objects_untag (void)
 {
 }
 

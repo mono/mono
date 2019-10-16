@@ -174,6 +174,95 @@ public struct AStruct : ITest2 {
 	}
 }
 
+public struct int4
+{
+	public int w, x, y, z;
+
+	public int4(int w, int x, int y, int z)
+	{
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+
+public struct char4
+{
+	public int w, x, y, z;
+
+	public char4(char w, char x, char y, char z)
+	{
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+public unsafe struct NodeTestFixedArray
+{
+	private fixed short buffer[4];
+	private fixed char buffer2[4];
+
+	public int4 Buffer
+	{
+		set
+		{
+			fixed (NodeTestFixedArray* p = &this) {
+				p->buffer[0] = (short)value.w;
+				p->buffer[1] = (short)value.x;
+				p->buffer[2] = (short)value.y;
+				p->buffer[3] = (short)value.z;
+			}
+		}
+	}
+	public char4 Buffer2
+	{
+		set
+		{
+			fixed (NodeTestFixedArray* p = &this) {
+				p->buffer2[0] = (char)value.w;
+				p->buffer2[1] = (char)value.x;
+				p->buffer2[2] = (char)value.y;
+				p->buffer2[3] = (char)value.z;
+			}
+		}
+	}
+	public String getBuffer0() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[0]);
+	}
+	public String getBuffer1() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[1]);
+	}
+	public String getBuffer2() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[2]);
+	}
+	public String getBuffer3() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Convert.ToString(p->buffer[3]);
+	}
+	public String getBuffer2_0() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[0]);
+	}
+	public String getBuffer2_1() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[1]);
+	}
+	public String getBuffer2_2() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[2]);
+	}
+	public String getBuffer2_3() {
+		fixed (NodeTestFixedArray* p = &this) 
+			return Char.ToString(p->buffer2[3]);
+	}
+}
 
 public struct BlittableStruct {
 	public int i;
@@ -418,6 +507,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception_wrapper ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-perform-wait-callback") {
+			unhandled_exception_perform_wait_callback ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
 			return 0;
@@ -494,6 +587,8 @@ public class Tests : TestsBase, ITest2
 		field_with_unsafe_cast_value();
 		inspect_enumerator_in_generic_struct();
 		if_property_stepping();
+		fixed_size_array();
+		test_new_exception_filter();
 		return 3;
 	}
 
@@ -502,6 +597,11 @@ public class Tests : TestsBase, ITest2
 		public string OneLineProperty {
 			get { return oneLineProperty; }
 			set { oneLineProperty = value; }
+		}
+	}
+
+	public class MyException : Exception {
+		public MyException(string message) : base(message) {
 		}
 	}
 
@@ -730,6 +830,64 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep(300);
 	}
 	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void fixed_size_array () {
+		var n = new NodeTestFixedArray();
+		n.Buffer = new int4(1, 2, 3, 4);
+		n.Buffer2 = new char4('a', 'b', 'c', 'd');
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_new_exception_filter () {
+		test_new_exception_filter1();
+		test_new_exception_filter2();
+		test_new_exception_filter3();
+		test_new_exception_filter4();
+	}
+
+
+	public static void test_new_exception_filter1 () {
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter2 () {
+		try {
+			throw new MyException("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter3 () {
+		try {
+			throw new ArgumentException();
+		}
+		catch (Exception e) {
+		}
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter4 () {
+		try {
+			throw new ArgumentException();
+		}
+		catch (Exception e) {
+		}
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void inspect_enumerator_in_generic_struct() {
 		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
@@ -1493,6 +1651,24 @@ public class Tests : TestsBase, ITest2
 	}
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_perform_wait_callback () {
+		try
+		{
+			var results = ResolveAsync().GetAwaiter().GetResult();
+		}
+		catch (SocketException sockEx)
+		{
+			//Console.WriteLine("correctly handled");
+		}
+	}
+
+	public static async Task<List<string>> ResolveAsync()
+	{
+		var addresses = await System.Net.Dns.GetHostAddressesAsync("foo.bar.baz");
+		return new List<string>(addresses.Select(addr => addr.ToString()));
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

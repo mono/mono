@@ -22,7 +22,7 @@
 #define MINT_TYPE_P  9
 #define MINT_TYPE_VT 10
 
-#define BOX_NOT_CLEAR_VT_SP 0x4000
+#define INLINED_METHOD_FLAG 0xffff
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -39,7 +39,9 @@ enum {
 };
 
 enum {
-	INTERP_OPT_INLINE = 1
+	INTERP_OPT_INLINE = 1,
+	INTERP_OPT_CPROP = 2,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
 };
 
 #if SIZEOF_VOID_P == 4
@@ -49,6 +51,50 @@ typedef gint32  mono_i;
 typedef guint64 mono_u;
 typedef gint64  mono_i;
 #endif
+
+
+/*
+ * GC SAFETY:
+ *
+ *  The interpreter executes in gc unsafe (non-preempt) mode. On wasm, the C stack is
+ * scannable but the wasm stack is not, so to make the code GC safe, the following rules
+ * should be followed:
+ * - every objref handled by the code needs to either be stored volatile or stored
+ *   into a volatile; volatile stores are stack packable, volatile values are not.
+ *   Use either OBJREF or stackval->data.o.
+ *   This will ensure the objects are pinned. A volatile local
+ *   is on the stack and not in registers. Volatile stores ditto.
+ * - minimize the number of MonoObject* locals/arguments (or make them volatile).
+ *
+ * Volatile on a type/local forces all reads and writes to go to memory/stack,
+ *   and each such local to have a unique address.
+ *
+ * Volatile absence on a type/local allows multiple locals to share storage,
+ *   if their lifetimes do not overlap. This is called "stack packing".
+ *
+ * Volatile absence on a type/local allows the variable to live in
+ * both stack and register, for fast reads and "write through".
+ */
+#ifdef TARGET_WASM
+
+#define WASM_VOLATILE volatile
+
+static inline MonoObject * WASM_VOLATILE *
+mono_interp_objref (MonoObject **o)
+{
+	return o;
+}
+
+#define OBJREF(x) (*mono_interp_objref (&x))
+
+#else
+
+#define WASM_VOLATILE /* nothing */
+
+#define OBJREF(x) x
+
+#endif
+
 
 /*
  * Value types are represented on the eval stack as pointers to the
@@ -65,8 +111,8 @@ typedef struct {
 		} pair;
 		float f_r4;
 		double f;
+		MonoObject * WASM_VOLATILE o;
 		/* native size integer and pointer types */
-		MonoObject *o;
 		gpointer p;
 		mono_u nati;
 		gpointer vt;
@@ -127,31 +173,35 @@ struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */
-	char           *args;
-	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
-	stackval       *sp; /* For GC stack marking */
-	unsigned char  *locals;
 	/* exception info */
-	unsigned char  invoke_trap;
 	const unsigned short  *ip;
-	MonoException     *ex;
 };
 
+#define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
+
 typedef struct {
-	/* Resume state for resuming execution in mixed mode */
-	gboolean       has_resume_state;
+	/* Lets interpreter know it has to resume execution after EH */
+	gboolean has_resume_state;
 	/* Frame to resume execution at */
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
-	guint16 *handler_ip;
+	const guint16 *handler_ip;
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
+	/* Exception that is being thrown. Set with rest of resume state */
+	guint32 exc_gchandle;
 } ThreadContext;
 
 typedef struct {
 	gint64 transform_time;
+	gint64 cprop_time;
+	gint32 stloc_nps;
+	gint32 movlocs;
+	gint32 copy_propagations;
+	gint32 killed_instructions;
+	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

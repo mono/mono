@@ -28,6 +28,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category("NotWasm")]
 	public class SocketTest
 	{
 		public const string BogusAddress = "192.168.244.244";
@@ -511,7 +512,7 @@ namespace MonoTests.System.Net.Sockets
 			sock.BeginConnect (ep, new AsyncCallback(SocketError_callback),
 				sock);
 
-			if (SocketError_event.WaitOne (2000, false) == false) {
+			if (SocketError_event.WaitOne (5000, false) == false) {
 				Assert.Fail ("SocketError wait timed out");
 			}
 
@@ -1711,6 +1712,68 @@ namespace MonoTests.System.Net.Sockets
 			
 			Assert.AreEqual (true, BCConnected, "BeginConnectAddressPort #1");
 			
+			sock.Close ();
+			listen.Close ();
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void BeginConnectHostNamePortWithoutCallback ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			Socket listen = new Socket (AddressFamily.InterNetwork,
+						    SocketType.Stream,
+						    ProtocolType.Tcp);
+
+			listen.Bind (IPAddress.Loopback, out IPEndPoint ep);
+			listen.Listen (1);
+
+			IAsyncResult result = sock.BeginConnect (IPAddress.Loopback.ToString (), ep.Port, null, null);
+
+			if (result.AsyncWaitHandle.WaitOne (2000, false) == false) {
+				Assert.Fail ("BeginConnectHostNamePortWithoutCallback wait timed out");
+			}
+
+			Assert.AreEqual (true, result.IsCompleted, "BeginConnectHostNamePortWithoutCallback #1");
+
+			sock.EndConnect (result);
+
+			sock.Close ();
+			listen.Close ();
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void BeginConnectHostNamePortWithCallback ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			Socket listen = new Socket (AddressFamily.InterNetwork,
+						    SocketType.Stream,
+						    ProtocolType.Tcp);
+
+			listen.Bind (IPAddress.Loopback, out IPEndPoint ep);
+			listen.Listen (1);
+
+			BCCalledBack.Reset ();
+
+			BCConnected = false;
+
+			IAsyncResult result = sock.BeginConnect (IPAddress.Loopback.ToString (), ep.Port, BCCallback, sock);
+
+			if (BCCalledBack.WaitOne (2000, false) == false) {
+				Assert.Fail ("BeginConnectHostNamePortWithCallback wait timed out");
+			}
+
+			Assert.AreEqual (true, BCConnected, "BeginConnectHostNamePortWithCallback #1");
+
 			sock.Close ();
 			listen.Close ();
 		}
@@ -4707,9 +4770,10 @@ namespace MonoTests.System.Net.Sockets
 			socketArgs.RemoteEndPoint = endPoint;
 			socketArgs.Completed += (sender, e) => mre.Set ();
 
-			socket.ConnectAsync (socketArgs);
+			if (socket.ConnectAsync (socketArgs))
+				Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
 
-			Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
+			Assert.AreNotEqual (SocketError.Success, socketArgs.SocketError);
 		}
 
 		[Test] // Covers https://bugzilla.xamarin.com/show_bug.cgi?id=52549

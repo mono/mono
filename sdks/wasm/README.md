@@ -1,33 +1,132 @@
 # Contents
-- **sdk/out/wasm-bcl/wasm** directory: Core libraries to be used with the runtime.
-- **driver.c**, **libmonosgen-2.0.a**, **library_mono.js**, **binding_support.js**: Source / Binaries for custom building the runtime. See compilation instructions down.
-- **debug**, **release** directories: Pre-compiled runtimes using the above driver in release and debug configurations.
-- **sample.html**, **sample.cs**: Sample code, see sample details below.
 
+> **_Note:_** Recent changes have occurred to the directory structure for `Available WebAssembly Runtime Builds` (see below diagrams).  All builds can now be found in one directory `sdk/wasm/builds`.  This was necessary to start supporting more options and functionality.
 
-# Requirements
+- Available WebAssembly Runtime Builds
 
-Mono requires the latest [emscripten][1] installed and built. Emscripten is *not* required if simply using the sample.
+    ```
+        .
+        |--- sdk/wasm/builds
+            |--- debug                  - Debug build of the runtime.
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+            |--- release                - Release build of the runtime.
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+            |--- release-dynamic         - Release build of the runtime with dynamic linking enabled
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+            |--- threads-debug          - Debug build that includes pthreads.
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- mono.js.mem            - Mono WebAssembly implementations
+                |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+            |--- threads-release        - Release build that includes pthreads.
+                |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+                |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+                |--- mono.js                - Mono WebAssembly implementations
+                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- mono.js.mem            - Mono WebAssembly implementations
+                |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+                |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
-The pre-built binaries are compiled using the following command line for the debug build:
+    ```
 
-``` bash
-emcc -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1 -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o mono/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a} -o debug/mono.js
+    _Note:_ In the above directories the only files that need to be distributed are the ones prefixed with **mono.***.
 
-```
+    _Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files must be deployed with the rest of the generated code files if using the runtimes for threads.
 
-# Compiling mono
+- Core libraries to be used with the runtime.  Generated by the bcl build step.
 
+    ```
+        .
+        |--- sdk/out/wasm-bcl                           
+            |--- wasm               - Contains the DotNet Binary Core Library references and facades.
+            |--- wasm_tools         - Contains the support tools used during build and distribution.       
+    ```
 
-## Commands for compiling mono
+- Source support files for custom building the Webassembly Runtime
 
-``` bash
+    ```
+        .
+        |--- sdk/wasm/src
+            |--- driver.c           - WebAssembly main driver program.
+            |                           - Native interops with the library_mono.js
+            |                           - Initializing and starting mono/
+            |                           - Loading of assemblies
+            |                           - etc ...
+            |
+            |--- library_mono.js    - Javascript low level backing support for Mono.
+            |                           - Message pumping
+            |                           - Loading and running the mono runtime.
+            |                           - Setting environment variables
+            |                           - AOT Profiler support
+            |                           - Debugger support routines
+            |
+            |--- corebindings.c     - Native interface providing support for:
+            |                           - Bindings for Core Javascript Objects
+            |                           - Routines for calling managed code using FQN
+            |                           - Marshalling code for js <-> managed objects
+            |                           - etc ...
+            |
+            |--- binding_support.js - Javascript low level backing support for `corebindings.c`.
+            |
+            |--- dotnet_support.js  - Javascript low level backing support routines used by Blazor.
+            |
+            |--- zlib-helper.c      - Native interface providing support for zlib compression for System.IO.Compression.
+            |
+            |--- pinvoke-tables-default.h - Native pinvoke interface - this is a generated file.
 
-make -C sdks/builds provision-wasm
-make -C sdks/builds archive-wasm  NINJA=
-make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
+    ```
 
-```
+# Building
+
+* Use a separate mono repo checkout.
+* The build depends on the mono sdk infrastructure.
+* The makefile targets are in sdks/builds/wasm.mk.
+* The build outputs are emitted to sdks/out/.
+
+## Building mono components
+
+```make -C sdks/builds provision-wasm```
+
+This will download and setup emscripten.
+
+``` make -C sdks/wasm runtime```
+
+This will build the wasm device runtime.
+
+``` make -C sdks/wasm bcl```
+
+This will build the wasm specific version of the BCL.
+
+``` make -C sdks/wasm cross```
+
+This will build the AOT cross compiler. Its only needed if you intend
+to use AOT.
+
+## Building wasm components
+
+``` make -C sdks/wasm```
+
+This will build the actual wasm libraries etc.
+
+Use the same commands after making changes to the various components.
 
 # Sample
 
@@ -38,22 +137,15 @@ See [Getting Started Guides](./docs/getting-started)
 
 ## WebAssembly
 
-First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `sdks/out` directory:
-
-```bash
-make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
-```
-
 Build the test runner and test suites
 
 ```bash
 make -C sdks/wasm build
 ```
 
-
 Right now the following targets are available:
 
-- mono: Executes the previous `package-wasm-*` step above.
+- mono: Build the mono components.
 - build: Build the test runner and test suites
 - run-all-mini: Run mini test suite
 - run-all-corlib: Run corlib test suite
@@ -82,10 +174,9 @@ The debugger requires dotnet core version 2.1.301 or greater installed.
 To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
-- Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
+- Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222`)
 - Run the proxy: `dotnet run -p ProxyDriver/ProxyDriver.csproj`
-- Connect to the remote debugged Chrome and pick the page which is running the wasm code
-- Rewrite the request URL (just the `ws` argument) to use the proxy port (9300 by default for ProxyDriver) instead of the browser port
+- Connect to the proxy by visiting http://localhost:9300/ and select the tab you wish to debug from the list of tabs
 - Refresh the debugged page and you should be set
 
 Beware that the debugger is in active development so bugs and missing features will be present.
@@ -93,6 +184,78 @@ Beware that the debugger is in active development so bugs and missing features w
 # WebAssembly packager.exe
 
 Read usage information about the utility see [WebAssembly packager.exe](./docs/packager.md)
+
+# Threading support
+
+To build the runtime with pthreads support use the following make target:
+
+``` bash
+make -C sdks/wasm runtime-threads
+```
+
+-- or --
+
+```bash
+make -C sdks/builds package-wasm-runtime-threads
+```
+
+During the main build two directories will be created:
+
+```
+    .
+    |--- sdk/wasm/builds                           
+        |--- threads-debug          - Debug build that includes pthreads.
+            |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+            |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+            |--- mono.js                - Mono WebAssembly implementations
+            |--- mono.wasm              - Mono WebAssembly implementations
+            |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
+            |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+            |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+        |--- threads-release        - Release build that includes pthreads.
+            |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+            |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+            |--- mono.js                - Mono WebAssembly implementations
+            |--- mono.wasm              - Mono WebAssembly implementations
+            |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
+            |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+            |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+
+```
+
+_Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files  must be deployed with the rest of the generated code files if using these two runtimes.
+
+# Dynamic Linking support
+
+To build the runtime with WebAssembly dynamic linking support use the following make target:
+
+``` bash
+make -C sdks/wasm runtime-dynamic
+```
+
+-- or --
+
+```bash
+make -C sdks/builds package-wasm-runtime-dynamic
+```
+
+During the main build one directory will be created:
+
+```
+    .
+    |--- sdk/wasm/builds                           
+        |--- release-dynamic        - Release build that includes dynamic linking support.
+            |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+            |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+            |--- mono.js                - Mono WebAssembly implementations
+            |--- mono.wasm              - Mono WebAssembly implementations
+            |--- mono.wasm.map          - Mono WebAssembly implementations
+            |--- mono.js.mem            - Mono WebAssembly implementations
+            |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+
+```
 
 # AOT support
 

@@ -223,8 +223,8 @@ static gboolean remset_consistency_checks = FALSE;
 static gboolean mod_union_consistency_check = FALSE;
 /* If set, check whether mark bits are consistent after major collections */
 static gboolean check_mark_bits_after_major_collection = FALSE;
-/* If set, check that all nursery objects are pinned/not pinned, depending on context */
-static gboolean check_nursery_objects_pinned = FALSE;
+/* If set, check that all vtables of nursery objects are untagged */
+static gboolean check_nursery_objects_untag = FALSE;
 /* If set, do a few checks when the concurrent collector is used */
 static gboolean do_concurrent_checks = FALSE;
 /* If set, do a plausibility check on the scan_starts before and after
@@ -1197,7 +1197,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx)
 	sgen_client_clear_togglerefs (start_addr, end_addr, ctx);
 
 	TV_GETTIME (btv);
-	SGEN_LOG (2, "Finalize queue handling scan for %s generation: %lld usecs %d ephemeron rounds", generation_name (generation), (long long)TV_ELAPSED (atv, btv), ephemeron_rounds);
+	SGEN_LOG (2, "Finalize queue handling scan for %s generation: %lld usecs %d ephemeron rounds", generation_name (generation), (long long)(TV_ELAPSED (atv, btv) / 10), ephemeron_rounds);
 
 	/*
 	 * handle disappearing links
@@ -1677,7 +1677,7 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
  * Return whether any objects were late-pinned due to being out of memory.
  */
 static gboolean
-collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_queue)
+collect_nursery (const char *reason, gboolean is_overflow)
 {
 	gboolean needs_major, is_parallel = FALSE;
 	mword fragment_total;
@@ -1772,7 +1772,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 
 	TV_GETTIME (atv);
 	time_minor_pinning += TV_ELAPSED (btv, atv);
-	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), (long long)TV_ELAPSED (btv, atv));
+	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), (long long)(TV_ELAPSED (btv, atv) / 10));
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 	sgen_client_pinning_end ();
 
@@ -1783,9 +1783,10 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	/* we don't have complete write barrier yet, so we scan all the old generation sections */
 	TV_GETTIME (btv);
 	time_minor_scan_remsets += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Old generation scan: %lld usecs", (long long)TV_ELAPSED (atv, btv));
+	SGEN_LOG (2, "Old generation scan: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
 
 	sgen_pin_stats_report ();
+	sgen_gchandle_stats_report ();
 
 	TV_GETTIME (atv);
 	time_minor_scan_pinned += TV_ELAPSED (btv, atv);
@@ -1844,7 +1845,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	 * next allocations.
 	 */
 	sgen_client_binary_protocol_reclaim_start (GENERATION_NURSERY);
-	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section, unpin_queue);
+	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section);
 	if (!fragment_total)
 		sgen_degraded_mode = 1;
 
@@ -1854,7 +1855,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	sgen_client_binary_protocol_reclaim_end (GENERATION_NURSERY);
 	TV_GETTIME (btv);
 	time_minor_fragment_creation += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Fragment creation: %lld usecs, %lu bytes available", (long long)TV_ELAPSED (atv, btv), (unsigned long)fragment_total);
+	SGEN_LOG (2, "Fragment creation: %lld usecs, %lu bytes available", (long long)(TV_ELAPSED (atv, btv) / 10), (unsigned long)fragment_total);
 
 	if (remset_consistency_checks)
 		sgen_check_major_refs ();
@@ -1899,8 +1900,8 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 
 	sgen_binary_protocol_collection_end (mono_atomic_load_i32 (&mono_gc_stats.minor_gc_count) - 1, GENERATION_NURSERY, 0, 0);
 
-	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
-		sgen_check_nursery_objects_pinned (unpin_queue != NULL);
+	if (check_nursery_objects_untag)
+		sgen_check_nursery_objects_untag ();
 
 	return needs_major;
 }
@@ -2020,8 +2021,6 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	}
 
 	pin_objects_in_nursery (mode == COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT, ctx);
-	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
-		sgen_check_nursery_objects_pinned (mode != COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT);
 
 	sgen_major_collector.pin_objects (gc_thread_gray_queue);
 	if (old_next_pin_slot)
@@ -2029,7 +2028,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	TV_GETTIME (btv);
 	time_major_pinning += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), (long long)TV_ELAPSED (atv, btv));
+	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), (long long)(TV_ELAPSED (atv, btv) / 10));
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 	sgen_client_pinning_end ();
 
@@ -2257,13 +2256,15 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	 * pinned objects as we go, memzero() the empty fragments so they are ready for the
 	 * next allocations.
 	 */
-	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section, NULL);
+	fragment_total = sgen_build_nursery_fragments (sgen_nursery_section);
 	if (!fragment_total)
 		sgen_degraded_mode = 1;
 	SGEN_LOG (4, "Free space in nursery after major %ld", (long)fragment_total);
 
 	if (do_concurrent_checks && sgen_concurrent_collection_in_progress)
 		sgen_debug_check_nursery_is_clean ();
+	if (check_nursery_objects_untag)
+		sgen_check_nursery_objects_untag ();
 
 	/* prepare the pin queue for the next collection */
 	sgen_finish_pinning ();
@@ -2541,7 +2542,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 		if (sgen_concurrent_collection_in_progress)
 			major_update_concurrent_collection ();
 
-		if (collect_nursery (reason, FALSE, NULL) && !sgen_concurrent_collection_in_progress) {
+		if (collect_nursery (reason, FALSE) && !sgen_concurrent_collection_in_progress) {
 			overflow_generation_to_collect = GENERATION_OLD;
 			overflow_reason = "Minor overflow";
 		}
@@ -2553,7 +2554,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 	} else {
 		SGEN_ASSERT (0, generation_to_collect == GENERATION_OLD, "We should have handled nursery collections above");
 		if (sgen_major_collector.is_concurrent && !forced_serial) {
-			collect_nursery ("Concurrent start", FALSE, NULL);
+			collect_nursery ("Concurrent start", FALSE);
 			major_start_concurrent_collection (reason);
 			oldest_generation_collected = GENERATION_NURSERY;
 		} else if (major_do_collection (reason, FALSE, forced_serial)) {
@@ -2571,7 +2572,7 @@ sgen_perform_collection_inner (size_t requested_size, int generation_to_collect,
 		 */
 
 		if (overflow_generation_to_collect == GENERATION_NURSERY)
-			collect_nursery (overflow_reason, TRUE, NULL);
+			collect_nursery (overflow_reason, TRUE);
 		else
 			major_do_collection (overflow_reason, TRUE, forced_serial);
 
@@ -2615,26 +2616,33 @@ gc_pump_callback (void)
 }
 #endif
 
+#ifdef HOST_WASM
+extern gboolean mono_wasm_enable_gc;
+#endif
+
 void
 sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean forced_serial, gboolean stw)
 {
 #ifdef HOST_WASM
-	g_assert (stw); //can't handle non-stw mode (IE, domain unload)
-	//we ignore forced_serial
+	if (!mono_wasm_enable_gc) {
+		g_assert (stw); //can't handle non-stw mode (IE, domain unload)
+		//we ignore forced_serial
 
-	//There's a window for racing where we're executing other bg jobs before the GC, they trigger a GC request and it overrides this one.
-	//I belive this case to be benign as it will, in the worst case, upgrade a minor to a major collection.
-	if (gc_request.generation_to_collect <= generation_to_collect) {
-		gc_request.requested_size = requested_size;
-		gc_request.generation_to_collect = generation_to_collect;
-		gc_request.reason = reason;
-		sgen_client_schedule_background_job (gc_pump_callback);
+		//There's a window for racing where we're executing other bg jobs before the GC, they trigger a GC request and it overrides this one.
+		//I belive this case to be benign as it will, in the worst case, upgrade a minor to a major collection.
+		if (gc_request.generation_to_collect <= generation_to_collect) {
+			gc_request.requested_size = requested_size;
+			gc_request.generation_to_collect = generation_to_collect;
+			gc_request.reason = reason;
+			sgen_client_schedule_background_job (gc_pump_callback);
+		}
+
+		sgen_degraded_mode = 1; //enable degraded mode so allocation can continue
+		return;
 	}
-
-	sgen_degraded_mode = 1; //enable degraded mode so allocation can continue
-#else
-	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, forced_serial, stw);
 #endif
+
+	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, forced_serial, stw);
 }
 /*
  * ######################################################################
@@ -2668,7 +2676,7 @@ report_internal_mem_usage (void)
  * current collection - major collections are full heap, so old gen objects
  * are never alive during a minor collection.
  */
-static inline int
+static int
 sgen_is_object_alive_and_on_current_collection (GCObject *object)
 {
 	if (ptr_in_nursery (object))
@@ -2980,7 +2988,7 @@ sgen_thread_detach_with_lock (SgenThreadInfo *p)
  * mono_gc_wbarrier_arrayref_copy_internal:
  */
 void
-mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gpointer src_ptr, int count)
+mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_ptr, int count)
 {
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
@@ -3038,12 +3046,12 @@ mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
  * mono_gc_wbarrier_generic_store_internal:
  */
 void
-mono_gc_wbarrier_generic_store_internal (gpointer ptr, GCObject* value)
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, GCObject* value)
 {
 	SGEN_LOG (8, "Wbarrier store at %p to %p (%s)", ptr, value, value ? sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (value)) : "null");
-	SGEN_UPDATE_REFERENCE_ALLOW_NULL (ptr, value);
+	SGEN_UPDATE_REFERENCE_ALLOW_NULL ((void*)ptr, value); // FIXME volatile
 	if (ptr_in_nursery (value) || sgen_concurrent_collection_in_progress)
-		mono_gc_wbarrier_generic_nostore_internal (ptr);
+		mono_gc_wbarrier_generic_nostore_internal ((void*)ptr); // FIXME volatile
 	sgen_dummy_use (value);
 }
 
@@ -3604,6 +3612,8 @@ sgen_gc_init (void)
 				debug_print_allowance = TRUE;
 			} else if (!strcmp (opt, "print-pinning")) {
 				sgen_pin_stats_enable ();
+			} else if (!strcmp (opt, "print-gchandles")) {
+				sgen_gchandle_stats_enable ();
 			} else if (!strcmp (opt, "verify-before-allocs")) {
 				sgen_verify_before_allocs = 1;
 				sgen_has_per_allocation_action = TRUE;
@@ -3640,8 +3650,8 @@ sgen_gc_init (void)
 				mod_union_consistency_check = TRUE;
 			} else if (!strcmp (opt, "check-mark-bits")) {
 				check_mark_bits_after_major_collection = TRUE;
-			} else if (!strcmp (opt, "check-nursery-pinned")) {
-				check_nursery_objects_pinned = TRUE;
+			} else if (!strcmp (opt, "check-nursery-untag")) {
+				check_nursery_objects_untag = TRUE;
 			} else if (!strcmp (opt, "clear-at-gc")) {
 				sgen_nursery_clear_policy = CLEAR_AT_GC;
 			} else if (!strcmp (opt, "clear-nursery-at-gc")) {
@@ -3699,7 +3709,7 @@ sgen_gc_init (void)
 				fprintf (stderr, "  max-valloc-size=N (where N is an integer, possibly with a k, m or a g suffix)\n");
 				fprintf (stderr, "  check-remset-consistency\n");
 				fprintf (stderr, "  check-mark-bits\n");
-				fprintf (stderr, "  check-nursery-pinned\n");
+				fprintf (stderr, "  check-nursery-untag\n");
 				fprintf (stderr, "  verify-before-collections\n");
 				fprintf (stderr, "  verify-nursery-at-minor-gc\n");
 				fprintf (stderr, "  dump-nursery-at-minor-gc\n");
@@ -3712,6 +3722,7 @@ sgen_gc_init (void)
 				fprintf (stderr, "  check-scan-starts\n");
 				fprintf (stderr, "  print-allowance\n");
 				fprintf (stderr, "  print-pinning\n");
+				fprintf (stderr, "  print-gchandles\n");
 				fprintf (stderr, "  heap-dump=<filename>\n");
 				fprintf (stderr, "  binary-protocol=<filename>[:<file-size-limit>]\n");
 				fprintf (stderr, "  nursery-canaries\n");

@@ -24,7 +24,7 @@ namespace System
         /// </summary>
         public static bool Contains(this ReadOnlySpan<char> span, ReadOnlySpan<char> value, StringComparison comparisonType)
         {
-            return (IndexOf(span, value, comparisonType) >= 0);
+            return IndexOf(span, value, comparisonType) >= 0;
         }
 
         /// <summary>
@@ -41,16 +41,16 @@ namespace System
             switch (comparisonType)
             {
                 case StringComparison.CurrentCulture:
-                    return (CultureInfo.CurrentCulture.CompareInfo.CompareOptionNone(span, other) == 0);
+                    return CultureInfo.CurrentCulture.CompareInfo.CompareOptionNone(span, other) == 0;
 
                 case StringComparison.CurrentCultureIgnoreCase:
-                    return (CultureInfo.CurrentCulture.CompareInfo.CompareOptionIgnoreCase(span, other) == 0);
+                    return CultureInfo.CurrentCulture.CompareInfo.CompareOptionIgnoreCase(span, other) == 0;
 
                 case StringComparison.InvariantCulture:
-                    return (CompareInfo.Invariant.CompareOptionNone(span, other) == 0);
+                    return CompareInfo.Invariant.CompareOptionNone(span, other) == 0;
 
                 case StringComparison.InvariantCultureIgnoreCase:
-                    return (CompareInfo.Invariant.CompareOptionIgnoreCase(span, other) == 0);
+                    return CompareInfo.Invariant.CompareOptionIgnoreCase(span, other) == 0;
 
                 case StringComparison.Ordinal:
                     return EqualsOrdinal(span, other);
@@ -219,13 +219,15 @@ namespace System
         /// <param name="source">The source span.</param>
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
-        /// <remarks>If the source and destinations overlap, this method behaves as if the original values are in
-        /// a temporary location before the destination is overwritten. If <paramref name="culture"/> is null, <see cref="System.Globalization.CultureInfo.CurrentCulture"/> will be used.</remarks>
+        /// <remarks>If <paramref name="culture"/> is null, <see cref="System.Globalization.CultureInfo.CurrentCulture"/> will be used.</remarks>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+        /// <exception cref="InvalidOperationException">The source and destination buffers overlap.</exception>
         public static int ToLower(this ReadOnlySpan<char> source, Span<char> destination, CultureInfo? culture)
         {
-            if (culture == null)
-                culture = CultureInfo.CurrentCulture;
+            if (source.Overlaps(destination))
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
+
+            culture ??= CultureInfo.CurrentCulture;
 
             // Assuming that changing case does not affect length
             if (destination.Length < source.Length)
@@ -244,11 +246,13 @@ namespace System
         /// </summary>
         /// <param name="source">The source span.</param>
         /// <param name="destination">The destination span which contains the transformed characters.</param>
-        /// <remarks>If the source and destinations overlap, this method behaves as if the original values are in
-        /// a temporary location before the destination is overwritten.</remarks>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+        /// <exception cref="InvalidOperationException">The source and destination buffers overlap.</exception>
         public static int ToLowerInvariant(this ReadOnlySpan<char> source, Span<char> destination)
         {
+            if (source.Overlaps(destination))
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
+
             // Assuming that changing case does not affect length
             if (destination.Length < source.Length)
                 return -1;
@@ -267,13 +271,15 @@ namespace System
         /// <param name="source">The source span.</param>
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
-        /// <remarks>If the source and destinations overlap, this method behaves as if the original values are in
-        /// a temporary location before the destination is overwritten. If <paramref name="culture"/> is null, <see cref="System.Globalization.CultureInfo.CurrentCulture"/> will be used.</remarks>
+        /// <remarks>If <paramref name="culture"/> is null, <see cref="System.Globalization.CultureInfo.CurrentCulture"/> will be used.</remarks>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+        /// <exception cref="InvalidOperationException">The source and destination buffers overlap.</exception>
         public static int ToUpper(this ReadOnlySpan<char> source, Span<char> destination, CultureInfo? culture)
         {
-            if (culture == null)
-                culture = CultureInfo.CurrentCulture;
+            if (source.Overlaps(destination))
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
+
+            culture ??= CultureInfo.CurrentCulture;
 
             // Assuming that changing case does not affect length
             if (destination.Length < source.Length)
@@ -292,11 +298,13 @@ namespace System
         /// </summary>
         /// <param name="source">The source span.</param>
         /// <param name="destination">The destination span which contains the transformed characters.</param>
-        /// <remarks>If the source and destinations overlap, this method behaves as if the original values are in
-        /// a temporary location before the destination is overwritten.</remarks>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+        /// <exception cref="InvalidOperationException">The source and destination buffers overlap.</exception>
         public static int ToUpperInvariant(this ReadOnlySpan<char> source, Span<char> destination)
         {
+            if (source.Overlaps(destination))
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
+
             // Assuming that changing case does not affect length
             if (destination.Length < source.Length)
                 return -1;

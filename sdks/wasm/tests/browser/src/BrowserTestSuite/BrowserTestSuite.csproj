@@ -1,0 +1,66 @@
+<Project Sdk="Mono.WebAssembly.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\publish</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\publish</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugThreads|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\publish</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile></DocumentationFile>
+    <IntermediateOutputPath>obj\Debug\netstandard2.0</IntermediateOutputPath>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseThreads|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\publish</OutputPath>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    <IntermediateOutputPath>obj\Release\netstandard2.0</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BindingsTestSuite.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BindingsTestSuite\BindingsTestSuite.csproj" />
+    <ProjectReference Include="..\HttpTestSuite\HttpTestSuite.csproj" />
+    <ProjectReference Include="..\WebSocketTestSuite\WebSocketTestSuite.csproj" />
+    <ProjectReference Include="..\IssuesTestSuite\IssuesTestSuite.csproj" />
+    <ProjectReference Include="..\ZipTestSuite\ZipTestSuite.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="NowIsTheTime.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="NowIsTheTime.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NowIsTheTime.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\resources\test.nupkg">
+      <Link>test.nupkg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\resources\archive.zip">
+      <Link>archive.zip</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
+

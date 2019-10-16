@@ -62,12 +62,6 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
  * chunk should be updated before an object is written into the
  * handle, and chunks to be scanned (between bottom and top) should
  * always be valid.
- *
- * Note that the handle stack is scanned PRECISELY (see
- * sgen_client_scan_thread_data ()).  That means there should not be
- * stale objects scanned.  So when we manipulate the size of a chunk,
- * we must ensure that the newly scannable slot is either null or
- * points to a valid value.
  */
 
 static HandleStack*
@@ -93,8 +87,6 @@ free_handle_chunk (HandleChunk *chunk)
 {
 	g_free (chunk);
 }
-
-const MonoObjectHandle mono_null_value_handle = { 0 };
 
 #define THIS_IS_AN_OK_NUMBER_OF_HANDLES 100
 
@@ -171,11 +163,15 @@ mono_handle_new (MonoObject *obj, MonoThreadInfo *info, const char *owner)
 #endif
 {
 	info = info ? info : mono_thread_info_current ();
+
 	HandleStack *handles = info->handle_stack;
 	HandleChunk *top = handles->top;
 #ifdef MONO_HANDLE_TRACK_SP
 	mono_handle_chunk_leak_check (handles);
 #endif
+
+	// FIXME: Since we scan the handle stack inprecisely, some of the
+	// membars could be removed
 
 retry:
 	if (G_LIKELY (top->size < OBJECTS_PER_HANDLES_CHUNK)) {
@@ -319,14 +315,11 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, g
 		check_handle_stack_monotonic (stack);
 
 	/*
-	  We're called twice - on the imprecise pass we do nothing.
-	  Interior pointers are retained in managed frames.
-	  On the precise pass, we scan all the objects where the handles point to the start of
-	  the object.
-
-	  Note that if we're running, we know the world is stopped.
-	*/
-	if (!precise)
+	 * We're called twice, on the precise pass we do nothing.
+	 * On the inprecise pass, we pin the objects pointed to by the handles.
+	 * Note that if we're running, we know the world is stopped.
+	 */
+	if (precise)
 		return;
 
 	HandleChunk *cur = stack->bottom;
@@ -345,9 +338,11 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, g
 	}
 }
 
-void
+MonoThreadInfo*
 mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name)
 {
+	info = info ? info : mono_thread_info_current ();
+
 	HandleStack *handles = info->handle_stack;
 	HandleChunk *cur = stackmark->chunk;
 	int size = -stackmark->size; //discard the starting point of the stack
@@ -360,6 +355,8 @@ mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, c
 
 	if (size > THIS_IS_AN_OK_NUMBER_OF_HANDLES)
 		g_warning ("%s USED %d handles\n", func_name, size);
+
+	return info;
 }
 
 /*
@@ -397,14 +394,6 @@ MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error)
 {
 	return MONO_HANDLE_NEW (MonoArray, mono_array_new_full_checked (domain, array_class, lengths, lower_bounds, error));
-}
-
-uintptr_t
-mono_array_handle_length (MonoArrayHandle arr)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	return MONO_HANDLE_RAW (arr)->max_length;
 }
 
 uint32_t

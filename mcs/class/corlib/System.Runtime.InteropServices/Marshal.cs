@@ -66,7 +66,7 @@ namespace System.Runtime.InteropServices
 		{
 #if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
-				throw new ArgumentException ("Value cannot be null.", "pUnk");
+				throw new ArgumentNullException ("pUnk");
 			return AddRefInternal (pUnk);
 #else
 			throw new NotImplementedException ();
@@ -939,7 +939,7 @@ namespace System.Runtime.InteropServices
 		{
 #if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
-				throw new ArgumentException ("Value cannot be null.", "pUnk");
+				throw new ArgumentNullException ("pUnk");
 			return QueryInterfaceInternal (pUnk, ref iid, out ppv);
 #else
 			throw new NotImplementedException ();
@@ -1112,7 +1112,7 @@ namespace System.Runtime.InteropServices
 		{
 #if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
-				throw new ArgumentException ("Value cannot be null.", "pUnk");
+				throw new ArgumentNullException ("pUnk");
 
 			return ReleaseInternal (pUnk);
 #else
@@ -1936,9 +1936,8 @@ namespace System.Runtime.InteropServices
 			return GetFunctionPointerForDelegateInternal ((Delegate)(object)d);
 		}
 
-		internal static void SetLastWin32Error (int error)
-		{
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void SetLastWin32Error (int error);
 
 #if NETCORE
 		internal static IntPtr AllocBSTR (int length)

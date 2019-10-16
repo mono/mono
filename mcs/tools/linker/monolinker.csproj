@@ -54,6 +54,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BlacklistStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CleanStep.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ClearInitLocals.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CodeRewriterStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\IStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\LoadI18nAssemblies.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodBodyScanner.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodDefinitionExtensions.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodReferenceExtensions.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\OutputException.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\OverrideInformation.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Tracer.cs" />

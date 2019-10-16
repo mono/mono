@@ -1,9 +1,8 @@
 include $(top_srcdir)/mk/common.mk
 
-# FIXME
-#SUBDIRS = test
+if !ENABLE_MSVC_ONLY
 
-DIST_SUBDIRS = test
+SUBDIRS = . test
 
 noinst_LTLIBRARIES = libeglib.la
 
@@ -16,7 +15,7 @@ win_files  = \
 
 unix_files = \
 	gdate-unix.c  gdir-unix.c  gfile-unix.c  gmisc-unix.c	\
-	gmodule-unix.c gtimer-unix.c
+	gmodule-unix.c gtimer-unix.c gmodule-aix.c
 
 if HOST_WIN32
 os_files = $(win_files)
@@ -55,7 +54,11 @@ libeglib_la_SOURCES = \
 	unicode-data.h	\
 	$(os_files)
 
+endif # !ENABLE_MSVC_ONLY
+
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+
+if !ENABLE_MSVC_ONLY
 
 eglibdir=$(datadir)/mono-$(API_VER)/mono/eglib
 eglib_DATA = eglib-config.h
@@ -77,3 +80,18 @@ endif
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = eglib-config.h.in $(win_files) $(unix_files)
+
+endif # !ENABLE_MSVC_ONLY
+
+if ENABLE_MSVC_ONLY
+
+all-local:
+
+	make -C $(top_srcdir)/msvc eglib
+
+clean-local:
+
+	make -C $(top_srcdir)/msvc clean-eglib
+
+
+endif # ENABLE_MSVC_ONLY

@@ -13,10 +13,11 @@
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
 ios_SOURCES_DIR = $(TOP)/sdks/out/ios-sources
+ios_TPN_DIR = $(TOP)/sdks/out/ios-tpn
 ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
-ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-mono-version.txt
-ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_MONO_VERSION)
+ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-tpn ios-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_TPN_DIR) $(ios_MONO_VERSION)
 
 ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
@@ -98,7 +99,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-dtrace=no \
 	--enable-icall-export \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-minimal=ssa,com,interpreter,jit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters,gac \
 	--enable-monotouch \
 	--with-lazy-gc-thread-creation=yes \
 	--with-tls=pthread \
@@ -141,10 +142,15 @@ $$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dyl
 
 endef
 
-ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk
-tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk
-watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk
-watchos64_32_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS64_32_VERSION).sdk
+ios_sysroot_path = $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk
+tvos_sysroot_path = $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk
+watchos_sysroot_path = $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk
+watchos64_32_sysroot_path = $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS64_32_VERSION).sdk
+
+ios_sysroot = -isysroot $(ios_sysroot_path)
+tvos_sysroot = -isysroot $(tvos_sysroot_path)
+watchos_sysroot = -isysroot $(watchos_sysroot_path)
+watchos64_32_sysroot = -isysroot $(watchos64_32_sysroot_path)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes
@@ -257,7 +263,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode \
-	--enable-minimal=com,remoting,shared_perfcounters \
+	--enable-minimal=com,remoting,shared_perfcounters,gac \
 	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
@@ -321,9 +327,9 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  $(2): host arch (i386 or x86_64)
 #  $(3): target arch (arm or aarch64)
 #  $(4): device target (target32, target64, ...)
-#  $(5): llvm (llvm32 or llvm64)
+#  $(5): llvm
 #  $(6): offsets dumper abi
-#  $(7): xcode dir
+#  $(7): sysroot path
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -333,8 +339,8 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSETS_DUMPER_ARGS=--gen-ios
-_ios_$(1)_PLATFORM_BIN=$(7)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+_ios-$(1)_OFFSETS_DUMPER_ARGS=--libclang="$$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib" --sysroot="$(7)"
+_ios_$(1)_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _ios-$(1)_CC=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang++
@@ -374,18 +380,18 @@ $$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5)
 
 endef
 
-ios-cross32_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
-ios-crosswatch_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
+ios-cross32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
+ios-crosswatch_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-cross64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-crosswatch64_32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-cross32-64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
 
-$(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
-$(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,armv7k-apple-darwin_ilp32,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(watchos_sysroot_path)))
+$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(watchos64_32_sysroot_path)))
 
 
 $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
@@ -575,6 +581,12 @@ $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file
 	cd $(TOP) && rsync -r --exclude='external/api-doc-tools/*' --exclude='external/api-snapshot/*' --exclude='external/aspnetwebstack/*' --exclude='external/binary-reference-assemblies/*' --exclude='netcore/*' --include='*.cs' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_SOURCES_DIR)
 
 $(ios_SOURCES_DIR): $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs
+
+$(ios_TPN_DIR)/LICENSE:
+	mkdir -p $(ios_TPN_DIR)
+	cd $(TOP) && rsync -r --include='THIRD-PARTY-NOTICES.TXT' --include='license.txt' --include='License.txt' --include='LICENSE' --include='LICENSE.txt' --include='LICENSE.TXT' --include='COPYRIGHT.regex' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_TPN_DIR)
+
+$(ios_TPN_DIR): $(ios_TPN_DIR)/LICENSE
 
 $(ios_MONO_VERSION): $(TOP)/configure.ac
 	mkdir -p $(dir $(ios_MONO_VERSION))

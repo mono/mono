@@ -1,6 +1,10 @@
 <Type Name="GenericBase&lt;U&gt;+FooEventArgs" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+FooEventArgs">
   <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;.FooEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit GenericBase`1/FooEventArgs&lt;U&gt; extends System.EventArgs" />
+  <TypeSignature Language="DocId" Value="T:Mono.DocTest.Generic.GenericBase`1.FooEventArgs" />
+  <TypeSignature Language="VB.NET" Value="Public Class GenericBase(Of U).FooEventArgs&#xA;Inherits EventArgs" />
+  <TypeSignature Language="F#" Value="type GenericBase&lt;'U&gt;.FooEventArgs = class&#xA;    inherit EventArgs" />
+  <TypeSignature Language="C++ CLI" Value="public: ref class GenericBase&lt;U&gt;::FooEventArgs : EventArgs" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +24,11 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public FooEventArgs ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:Mono.DocTest.Generic.GenericBase`1.FooEventArgs.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; FooEventArgs();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; FooEventArgs();" />
+      <MemberSignature Language="C++ WINRT" Value=" FooEventArgs();" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

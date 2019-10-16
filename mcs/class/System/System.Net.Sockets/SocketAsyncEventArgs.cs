@@ -36,19 +36,19 @@ using System.Threading;
 
 namespace System.Net.Sockets
 {
-	public class SocketAsyncEventArgs : EventArgs, IDisposable
+	public partial class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
 		bool disposed;
 
 		internal volatile int in_progress;
-		internal EndPoint remote_ep;
-		internal Socket current_socket;
+		EndPoint remote_ep;
+		Socket current_socket;
 
 		internal SocketAsyncResult socket_async_result = new SocketAsyncResult ();
 
 		public Exception ConnectByNameError {
 			get;
-			internal set;
+			private set;
 		}
 
 		public Socket AcceptSocket {
@@ -56,31 +56,9 @@ namespace System.Net.Sockets
 			set;
 		}
 
-		public byte[] Buffer {
-			get;
-			private set;
-		}
-
-		public Memory<byte> MemoryBuffer => Buffer;
-
-		internal IList<ArraySegment<byte>> m_BufferList;
-		public IList<ArraySegment<byte>> BufferList {
-			get { return m_BufferList; }
-			set {
-				if (Buffer != null && value != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				m_BufferList = value;
-			}
-		}
-
 		public int BytesTransferred {
 			get;
-			internal set;
-		}
-
-		public int Count {
-			get;
-			internal set;
+			private set;
 		}
 
 		public bool DisconnectReuseSocket {
@@ -89,11 +67,6 @@ namespace System.Net.Sockets
 		}
 
 		public SocketAsyncOperation LastOperation {
-			get;
-			private set;
-		}
-
-		public int Offset {
 			get;
 			private set;
 		}
@@ -150,22 +123,15 @@ namespace System.Net.Sockets
 			}
 		}
 
-		internal bool PolicyRestricted {
-			get;
-			private set;
-		}
-
 		public event EventHandler<SocketAsyncEventArgs> Completed;
-
-		internal SocketAsyncEventArgs (bool policy)
-			: this ()
-		{
-			PolicyRestricted = policy;
-		}
 
 		public SocketAsyncEventArgs ()
 		{
 			SendPacketsSendSize = -1;
+		}
+
+		internal SocketAsyncEventArgs (bool flowExecutionContext)
+		{
 		}
 
 		~SocketAsyncEventArgs ()
@@ -187,6 +153,25 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
+		internal void SetConnectByNameError (Exception error)
+		{
+			ConnectByNameError = error;
+		}
+
+		internal void SetBytesTransferred (int value)
+		{
+			BytesTransferred = value;
+		}
+
+		internal Socket CurrentSocket {
+			get { return current_socket; }
+		}
+
+		internal void SetCurrentSocket (Socket socket)
+		{
+			current_socket = socket;
+		}
+
 		internal void SetLastOperation (SocketAsyncOperation op)
 		{
 			if (disposed)
@@ -197,7 +182,7 @@ namespace System.Net.Sockets
 			LastOperation = op;
 		}
 
-		internal void Complete ()
+		internal void Complete_internal ()
 		{
 			in_progress = 0;
 			OnCompleted (this);
@@ -211,36 +196,6 @@ namespace System.Net.Sockets
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
 			if (handler != null)
 				handler (e.current_socket, e);
-		}
-
-		public void SetBuffer (int offset, int count)
-		{
-			SetBuffer (Buffer, offset, count);
-		}
-
-		public void SetBuffer (byte[] buffer, int offset, int count)
-		{
-			if (buffer != null) {
-				if (BufferList != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				
-				int buflen = buffer.Length;
-				if (offset < 0 || (offset != 0 && offset >= buflen))
-					throw new ArgumentOutOfRangeException ("offset");
-
-				if (count < 0 || count > buflen - offset)
-					throw new ArgumentOutOfRangeException ("count");
-
-				Count = count;
-				Offset = offset;
-			}
-
-			Buffer = buffer;
-		}
-
-		public void SetBuffer(Memory<byte> buffer)
-		{
-			SetBuffer(buffer.ToArray(), 0, buffer.Length);
 		}
 
 		internal void StartOperationCommon (Socket socket)
@@ -262,7 +217,7 @@ namespace System.Net.Sockets
 			if (current_socket != null)
 				current_socket.is_connected = false;
 			
-			Complete ();
+			Complete_internal ();
 		}
 
 		internal void FinishOperationAsyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
@@ -272,7 +227,7 @@ namespace System.Net.Sockets
 			if (current_socket != null)
 				current_socket.is_connected = false;
 			
-			Complete ();
+			Complete_internal ();
 		}
 
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
@@ -280,7 +235,7 @@ namespace System.Net.Sockets
 			SetResults(SocketError.Success, bytesTransferred, flags);
 			current_socket = connectSocket;
 
-			Complete ();
+			Complete_internal ();
 		}
 
 		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)

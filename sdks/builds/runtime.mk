@@ -178,9 +178,6 @@ archive-$(1): package-$(1)-$(2)
 endef
 
 
-$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
-	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
-
 ##
 # Parameters:
 #  $(1): product
@@ -223,18 +220,8 @@ _cross-runtime_$(1)-$(2)_CONFIGURE_FLAGS= \
 
 .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_LLVM),,provision-$(6))
 
-ifdef USE_OFFSETS_TOOL_PY
-$$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure | configure-$(1)-$(5)
-	$(MAKE) -C $(TOP)/tools/offsets-tool-py setup
-	python $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
-else
-$$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe | configure-$(1)-$(5)
-	cd $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION) && \
-		MONO_PATH=$$(TOP)/tools/offsets-tool/CppSharp/$$(if $$(filter $$(UNAME),Darwin),osx_32,$$(if $$(filter $$(UNAME),Linux),linux_64,$$(error "Unknown UNAME='$$(UNAME)'"))) \
-			mono $$(if $$(filter $$(UNAME),Darwin),--arch=32) --debug "$$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe" \
-				--abi $(7) --outfile "$$@" --mono "$$(TOP)" --targetdir "$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" \
-					$$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
-endif
+$$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h: .stamp-offsets-tool-py-setup .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure | configure-$(1)-$(5)
+	. $(TOP)/tools/offsets-tool-py/offtool/bin/activate && PYTHONPATH=$(TOP)/tools/offsets-tool-py python3 $(TOP)/tools/offsets-tool-py/offsets-tool.py --targetdir="$$(TOP)/sdks/builds/$(1)-$(5)-$$(CONFIGURATION)" --abi=$(7) --monodir="$$(TOP)" --outfile="$$@" $$(_$(1)-$(2)_OFFSETS_DUMPER_ARGS)
 
 build-$(1)-$(2): $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/$(4).h
 
@@ -246,6 +233,10 @@ archive-$(1): provision-$(6)
 $(1)_ARCHIVE += $(6)
 
 endef
+
+.stamp-offsets-tool-py-setup:
+	$(MAKE) -C $(TOP)/tools/offsets-tool-py setup
+	touch $@
 
 ##
 # Parameters:

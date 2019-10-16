@@ -31,9 +31,11 @@ extern alias MonoSecurity;
 #if MONO_SECURITY_ALIAS
 using MX = MonoSecurity::Mono.Security.X509;
 using MonoSecurity::Mono.Security.Cryptography;
+using MonoSecurity::Mono.Security.Authenticode;
 #else
 using MX = Mono.Security.X509;
 using Mono.Security.Cryptography;
+using Mono.Security.Authenticode;
 #endif
 
 using System;
@@ -86,9 +88,13 @@ namespace Mono.Btls
 					try {
 						 ImportPkcs12 (data, null);
 					} catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
+						try {
+							ImportAuthenticode (data);
+						} catch {
+							string msg = Locale.GetText ("Unable to decode certificate.");
+							// inner exception is the original (not second) exception
+							throw new CryptographicException (msg, e);
+						}
 					}
 				}
 			} else {
@@ -101,9 +107,13 @@ namespace Mono.Btls
 						// fix bug #79028
 						Import (data);
 					} catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
+						try {
+							ImportAuthenticode (data);
+						} catch {
+							string msg = Locale.GetText ("Unable to decode certificate.");
+							// inner exception is the original (not second) exception
+							throw new CryptographicException (msg, e);
+						}
 					}
 				}
 			}
@@ -188,7 +198,14 @@ namespace Mono.Btls
 			set {
 				if (nativePrivateKey != null)
 					nativePrivateKey.Dispose ();
-				nativePrivateKey = null;
+				try {
+					// FIXME: there doesn't seem to be a public API to check whether it actually
+					//        contains a private key (apart from RSAManaged.PublicOnly).
+					if (value != null)
+						nativePrivateKey = MonoBtlsKey.CreateFromRSAPrivateKey ((RSA)value);
+				} catch {
+					nativePrivateKey = null;
+				}
 			}
 		}
 
@@ -258,6 +275,14 @@ namespace Mono.Btls
 						}
 					}
 				}
+			}
+		}
+
+		void ImportAuthenticode (byte[] data)
+		{
+			if (data != null) {
+				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (data);
+				Import (ad.SigningCertificate.RawData);
 			}
 		}
 

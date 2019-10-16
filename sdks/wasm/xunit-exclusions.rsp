@@ -1,0 +1,76 @@
+-noclass System.IO.Pipes.Tests.AnonymousPipeTest_CreateClient
+
+# Threads
+-noclass TaskCoverage.Coverage
+-noclass Test.TaskContinueWhenAnyTests
+-noclass Test.TaskContinueWith_ContFuncAndActionTests
+-noclass Test.TaskContinueWith_ContFuncAndActionWithArgsTests
+-nonamespace System.Linq.Parallel.Tests
+-noclass System.Tests.ProgressTests
+-nonamespace System.Threading.Tests
+-nonamespace System.Threading.Tasks
+-nonamespace Sytem.Threading.Tasks
+-nonamespace System.Collections.Concurrent
+-noclass System.IO.Tests.StreamAPMTests
+-noclass System.Collections.Tests.Hashtable_ItemThreadSafetyTests
+-noclass System.Collections.Tests.Hashtable_SynchronizedTests
+-noclass System.Collections.Tests.Hashtable_SyncRootTests
+-noclass System.Collections.Tests.Queue_SyncRootTests
+-noclass System.Collections.Tests.Queue_SynchronizedTests
+-noclass System.Collections.Tests.Stack_SyncRootTests
+-nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeIntArrayOverflowingBitArray_ThrowsArgumentException
+
+# Stack overflow
+-nomethod System.Linq.Expressions.Tests.CompilerTests.CompileDeepTree_NoStackOverflow
+-nomethod System.Linq.Expressions.Tests.CompilerTests.CompileDeepTree_NoStackOverflowFast
+
+# Crashes
+-noclass System.Tests.MathFTests
+
+# Crashes in GC
+-nonamespace System.MemoryTests
+-nonamespace System.SpanTests
+
+# OOM
+-nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeByteArrayOverflowingBitArray_ThrowsArgumentException
+-nomethod System.Collections.Tests.BitArray_CtorTests.Clone_LongLength_Works
+
+# Not supported
+-nonamespace System.IO.Pipes.Tests
+
+# corlib failures
+-noclass System.Buffers.Text.Tests.ParserTests
+-nomethod System.Collections.Tests.ComparerTests.Default_Compare
+-nomethod System.Text.Encodings.Tests.EncodingMiscTests.GetEncodingsTest
+-nomethod System.Tests.ValueTupleTests.TestCompareTo
+-nomethod System.Collections.Tests.CaseInsensitiveComparerTests.Ctor_CultureInfo_Compare_TurkishI
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_Empty_GetHashCodeCompare
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_CultureInfo_ChangeCurrentCulture_GetHashCodeCompare
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_CultureInfo_GetHashCodeCompare_TurkishI
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_GetHashCodeCompare
+-nomethod System.Collections.Tests.HashtableTests.HashCodeProvider_Set_ImpactsSearch
+-nomethod System.Collections.Tests.HashtableTests.Comparer_Set_ImpactsSearch
+
+# System.Data
+# Hangs
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbConnection
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbCommand
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbDataReader
+
+# System.Numerics
+# Crashes in GC 
+-nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
+
+# System.Net.Http.UnitTests
+# Hangs
+-nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
+
+# System.Net.Tests.WebClientTest
+# WebClient.Proxy throws PlatformNotSupportedException
+-nomethod System.Net.Tests.WebClientTest.DefaultCtor_PropertiesReturnExpectedValues
+-nomethod System.Net.Tests.WebClientTest.Proxy_Roundtrips
+
+# System.Net.Sockets.Tests
+# Socket ctor throws PlatformNotSupportedException
+-nomethod System.Net.Sockets.Tests.NetworkStreamTest.Ctor_NotConnected_ThrowsIOException
+

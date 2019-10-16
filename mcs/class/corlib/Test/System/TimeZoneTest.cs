@@ -182,9 +182,9 @@ public class TimeZoneTest {
 				TST (t1);
 				break;
 			case "GMT":
-#if MONOTOUCH
+#if MOBILE
 				if (string.IsNullOrEmpty (t1.DaylightName))
-					Assert.Ignore ("This test may fail due to: http://www.openradar.me/38174449");
+					Assert.Ignore ("This test may fail due to: http://www.openradar.me/38174449. This value is also empty on recent Android versions.");
 #endif
 				GMT (t1);
 				break;
@@ -364,7 +364,7 @@ public class TimeZoneTest {
 		[Category ("NotWasm")]
 		public void FindSystemTimeZoneById ()
 		{
-			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfoTest.MapTimeZoneId ("Canada/Eastern"));
+			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfoTest.MapTimeZoneId ("America/Toronto"));
 			Assert.IsTrue ("EDT" == tzi.DaylightName || "Eastern Daylight Time" == tzi.DaylightName, "DaylightName");
 			Assert.IsTrue ("EST" == tzi.StandardName || "Eastern Standard Time" == tzi.StandardName, "StandardName");
 			Assert.IsTrue (tzi.SupportsDaylightSavingTime, "SupportsDaylightSavingTime");

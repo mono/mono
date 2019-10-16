@@ -3,16 +3,26 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Mono.WebAssembly runtime libraries. This package is not intended to be referenced directly.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SignAssembly>true</SignAssembly>
     <!-- get rid of warnings about assemblies not in lib -->
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
-    <Content Include="..\..\..\wasm\debug\mono.js" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.js" />
-    <Content Include="..\..\..\wasm\debug\mono.wasm" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.wasm" />
-    <Content Include="..\..\..\wasm\debug\mono.wasm.map" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.wasm.map" />
-    <Content Include="..\..\..\wasm\release\mono.js" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.js" />
-    <Content Include="..\..\..\wasm\release\mono.wasm" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.wasm" />
+    <Content Include="..\..\..\wasm\builds\debug\mono.js" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.js" />
+    <Content Include="..\..\..\wasm\builds\debug\mono.wasm" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.wasm" />
+    <Content Include="..\..\..\wasm\builds\debug\mono.wasm.map" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.wasm.map" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\mono.js" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\mono.js" Condition="Exists('..\..\..\wasm\builds\threads-debug\mono.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\mono.worker.js" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\mono.worker.js" Condition="Exists('..\..\..\wasm\builds\threads-debug\mono.worker.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\mono.wasm" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\mono.wasm" Condition="Exists('..\..\..\wasm\builds\threads-debug\mono.wasm')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\mono.wasm.map" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\mono.wasm.map" Condition="Exists('..\..\..\wasm\builds\threads-debug\mono.wasm.map')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\mono.js.mem" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\mono.js.mem" Condition="Exists('..\..\..\wasm\builds\threads-debug\mono.js.mem')" />
+    <Content Include="..\..\..\wasm\builds\release\mono.js" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.js" />
+    <Content Include="..\..\..\wasm\builds\release\mono.wasm" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.wasm" />
+    <Content Include="..\..\..\wasm\builds\threads-release\mono.js" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\mono.js" Condition="Exists('..\..\..\wasm\builds\threads-release\mono.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-release\mono.worker.js" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\mono.worker.js"  Condition="Exists('..\..\..\wasm\builds\threads-release\mono.worker.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-release\mono.wasm" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\mono.wasm"  Condition="Exists('..\..\..\wasm\builds\threads-release\mono.wasm')" />
+    <Content Include="..\..\..\wasm\builds\threads-release\mono.js.mem" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\mono.js.mem"  Condition="Exists('..\..\..\wasm\builds\threads-release\mono.js.mem')" />
     <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" PackagePath="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
   </ItemGroup>
 </Project>

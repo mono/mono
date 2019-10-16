@@ -3,12 +3,6 @@
 
 MXE_HASH?=b9cbb53541a0e10fe4fe81f22bd586cb9cdc922a
 
-# LLVM
-
-LLVM36_BRANCH=master
-LLVM36_HASH?=acb33f3436e7dd5b6588c9f044d012846c4d55c4
-LLVM36_JENKINS_LANE=build-package-osx-llvm
-
 # Android
 
 ANDROID_BUILD_TOOLS_VERSION?=27
@@ -26,12 +20,10 @@ ANDROID_SDK_VERSION_x86_64?=21
 # iOS
 
 XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
-# Xcode version used to compile 32 bit cross compilers
-XCODE32_DIR?=/Applications/Xcode94.app/Contents/Developer
 
 # min versions of the targets
 MACOS_VERSION_MIN?=10.9
-IOS_VERSION_MIN?=6.0
+IOS_VERSION_MIN?=7.0
 TVOS_VERSION_MIN?=9.0
 WATCHOS_VERSION_MIN?=2.0
 WATCHOS64_32_VERSION_MIN?=5.1

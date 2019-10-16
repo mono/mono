@@ -577,7 +577,6 @@ class Tests
 	}
 
 	[Category ("DYNCALL")]
-	[Category ("!WASM")] //Interp fails	
 	public static int test_0_large_nullable_invoke () {
 		var s = new LargeStruct () { a = 1, b = 2, c = 3, d = 4 };
 
@@ -666,6 +665,13 @@ class Tests
 	public static int test_0_regress_gh_7364 () {
 		var map1 = new Dictionary <Type, IntPtr> (EqualityComparer<Type>.Default);
 		var map2 = new Dictionary <IntPtr, WeakReference> (EqualityComparer<IntPtr>.Default);
+		return 0;
+	}
+
+	public static int test_0_byte_equality_compater_devirt () {
+		var dict = new Dictionary<byte, Struct1>();
+		dict [1] = new Struct1 ();
+		dict [1] = new Struct1 ();
 		return 0;
 	}
 

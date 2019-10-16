@@ -141,14 +141,14 @@ namespace System.Diagnostics
 		 * element 0.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern ProcessModule[] GetModules_internal(IntPtr handle);
+		private extern ProcessModule[] GetModules_icall (IntPtr handle);
 
 		ProcessModule[] GetModules_internal (SafeProcessHandle handle)
 		{
 			bool release = false;
 			try {
 				handle.DangerousAddRef (ref release);
-				return GetModules_internal (handle.DangerousGetHandle ());
+				return GetModules_icall (handle.DangerousGetHandle ());
 			} finally {
 				if (release)
 					handle.DangerousRelease ();
@@ -323,14 +323,14 @@ namespace System.Diagnostics
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static string ProcessName_internal(IntPtr handle);
+		private extern static string ProcessName_icall (IntPtr handle);
 
 		static string ProcessName_internal(SafeProcessHandle handle)
 		{
 			bool release = false;
 			try {
 				handle.DangerousAddRef (ref release);
-				return ProcessName_internal (handle.DangerousGetHandle ());
+				return ProcessName_icall (handle.DangerousGetHandle ());
 			} finally {
 				if (release)
 					handle.DangerousRelease ();

@@ -134,12 +134,12 @@ namespace System.Reflection
         #region Object Overrides
         public override String ToString()
         {
-            return FormatNameAndSig(false);
+            return FormatNameAndSig();
         }
 
-        private string FormatNameAndSig(bool serialization)
+        private string FormatNameAndSig()
         {
-            StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName(serialization));
+            StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName());
 
             sbName.Append(" ");
             sbName.Append(Name);
@@ -147,7 +147,7 @@ namespace System.Reflection
 			var pi = GetIndexParameters ();
 			if (pi.Length > 0) {
 				sbName.Append (" [");
-				RuntimeParameterInfo.FormatParameters (sbName, pi, 0, serialization);
+				RuntimeParameterInfo.FormatParameters (sbName, pi, 0);
 				sbName.Append ("]");
 			}
 
@@ -192,6 +192,8 @@ namespace System.Reflection
 					return info.get_method.ReturnType;
 				} else {
 					ParameterInfo[] parameters = info.set_method.GetParametersInternal ();
+					if (parameters.Length == 0)
+						throw new ArgumentException	(SR.SetterHasNoParams, "indexer");
 					
 					return parameters [parameters.Length - 1].ParameterType;
 				}

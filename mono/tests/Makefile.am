@@ -177,10 +177,13 @@ test-wrench: check-parallel
 
 aotcheck: testaot gshared-aot
 
+if HOST_WIN32
+JITTEST_PROG = $(top_builddir)/runtime/mono-wrapper
+else
 JITTEST_PROG = $(if $(VALGRIND), valgrind $(VALGRIND_ARGS),) $(if $(SGEN),$(top_builddir)/mono/mini/mono-sgen,$(top_builddir)/mono/mini/mono)
+endif
 
 JITTEST_PROG_RUN = MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(JITTEST_PROG)
-
 
 RUNTIME_ARGS=--config tests-config --optimize=all --debug
 TEST_RUNTIME_ARGS ?= $(RUNTIME_ARGS)
@@ -210,7 +213,7 @@ if FULL_AOT_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
-MCS_NO_UNSAFE = MONO_DEBUG=clr-memory-model $(TOOLS_RUNTIME) $(CSC) -debug:portable \
+MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
@@ -225,9 +228,9 @@ TEST_RUNNER = ./test-runner.exe
 
 if HOST_WIN32
 if ENABLE_MSVC
-	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
 else
-	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
 endif
 TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
@@ -537,6 +540,7 @@ TESTS_CS_SRC=		\
 	generic-stack-traces2.2.cs	\
 	bug-472600.2.cs	\
 	recursive-generics.2.cs	\
+	recursive-generics.3.cs	\
 	bug-473482.2.cs	\
 	bug-473999.2.cs	\
 	bug-479763.2.cs	\
@@ -1011,6 +1015,7 @@ TESTS_IL_SRC=			\
 	dim-protected-accessibility2.il \
 	dim-reabstraction.il \
 	dim-reabstraction-generics.il \
+	dim-abstractcall.il \
 	twopassvariance.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
@@ -1024,7 +1029,9 @@ TESTS_IL_SRC=			\
 	gh-13056_mono_local_cprop_av.il \
 	gh-13057_mono_local_emulate_ops_av.il \
 	module-cctor-entrypoint.il \
-	bug-gh-9706.il
+	bug-gh-9706.il \
+	localloc-noinit.il \
+	calli_native.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
@@ -1627,17 +1634,28 @@ REMOTING_DISABLED_TESTS = \
 
 if FULL_AOT_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
 endif
 
 if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
 endif
 
 if FULL_AOT_INTERP_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
+
 endif
 
 AOT_DISABLED_TESTS= \
+	localloc-noinit.exe \
 	constraints-load.exe \
 	calli_sig_check.exe
 
@@ -1734,7 +1752,6 @@ KNOWN_FAILING_TESTS = \
 	appdomain-marshalbyref-assemblyload.exe	\
 	abort-try-holes.exe \
 	threads-init.exe \
-	dim-constrainedcall.exe \
 	gptail1.exe \
 	itaili1.exe \
 	sirtail1.exe \
@@ -1905,6 +1922,8 @@ INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 # expected InvalidProgramException not thrown
 INTERP_DISABLED_TESTS += calli_sig_check.exe
 
+# Test is too sensitive.
+INTERP_DISABLED_TESTS += localloc-noinit.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1971,6 +1990,15 @@ INTERP_DISABLED_TESTS += \
 	bug-80307.exe \
 	dim-diamondshape.exe \
 	pinvoke3.exe
+
+# Test is too sensitive.
+DISABLED_TESTS += localloc-noinit.exe
+
+endif
+
+if HOST_WIN32
+# Test is too sensitive?
+DISABLED_TESTS += localloc-noinit.exe
 endif
 
 if AMD64
@@ -2673,21 +2701,28 @@ endif
 tests-sgen-oom: $(TESTS_SGEN_OOM) $(TESTSAOT_SGEN_OOM) test-runner.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw-2.exe sgen-bridge-major-fragmentation.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug=max-valloc-size=50M,bridge=Bridge" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_OOM)
 
+if HOST_WIN32
+AOT_CONFIGURATIONS=	\
+	"|regular"
+else
 AOT_CONFIGURATIONS=	\
 	"|regular"	\
 	"--gc=boehm|boehm"
+endif
 
 #LLVM crashes, got to fix it first.
 #	"--llvm|llvm"	\
 #	"--llvm --gc=boehm|llvm+boehm"
 
+AOT_TEMP_DIR=$(top_builddir)/mono/tests/aot-tmp
 
 test-aot:
 	@failed=0; \
 	passed=0; \
 	failed_tests="";\
 	profile=$(DEFAULT_PROFILE);	\
-	tmpfile=`mktemp -t mono_aot_outputXXXXXX` || exit 1;	\
+	rm -rf $(AOT_TEMP_DIR); \
+	mkdir $(AOT_TEMP_DIR); \
 	rm -f test-aot-$${name}.stdout test-aot-$${name}.stderr; \
 	for assembly in $(mcs_topdir)/class/lib/$$profile/*.dll	; do	\
 		asm_name=`basename $$assembly`;	\
@@ -2697,7 +2732,7 @@ test-aot:
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${asm_name}|$${name}";	\
 			echo "  $$test_name";	\
-			if MONO_PATH=$(mcs_topdir)/class/lib/$$profile $(JITTEST_PROG_RUN) $$params --aot=outfile=$$tmpfile $$assembly >> test-aot-$${name}.stdout 2>> test-aot-$${name}.stderr;	\
+			if MONO_PATH=$(mcs_topdir)/class/lib/$$profile $(JITTEST_PROG_RUN) $$params --aot=temp-path=$(AOT_TEMP_DIR),outfile=$(AOT_TEMP_DIR)/$$asm_name $$assembly >> test-aot-$${name}.stdout 2>> test-aot-$${name}.stderr;	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -2706,7 +2741,7 @@ test-aot:
 			fi \
 		done;	\
 	done;	\
-	rm	$$tmpfile;	\
+	rm -rf $(AOT_TEMP_DIR); \
 	echo "$${passed} test(s) passed. $${failed} test(s) did not pass."; \
 	if [ $${failed} != 0 ]; then echo -e "\nFailed tests:\n"; \
 	for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
@@ -3141,6 +3176,8 @@ EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
 	python test_lldb.py $(JITTEST_PROG)
 
+if !ENABLE_MSVC_ONLY
+
 noinst_LTLIBRARIES = libtest.la
 
 AM_CPPFLAGS = $(GLIB_CFLAGS)
@@ -3157,6 +3194,8 @@ libtest_la_LDFLAGS = -no-undefined -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
 libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
+
+endif # !ENABLE_MSVC_ONLY
 
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \
@@ -3222,6 +3261,8 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase-2-sign2048.dll -target:library -d:CORRECT_CASE -d:SIGN2048 internalsvisibleto-library.cs	
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-2-sign2048.dll -target:library -d:WRONG_CASE -d:SIGN2048 internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest-sign2048.exe -warn:0 -r:internalsvisibleto-correctcase-2-sign2048.dll -r:internalsvisibleto-wrongcase-2-sign2048.dll -d:SIGN2048 internalsvisibleto-compilertest.cs
+
+EXTRA_DIST += internalsvisibleto-runtimetest.cs internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
 
 EXTRA_DIST += weakattribute.cs
 

@@ -695,8 +695,8 @@
       </Docs>
     </Member>
     <Member MemberName="chown">
-      <MemberSignature Language="C#" Value="public static int chown (string path, uint owner, uint group);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;chown&quot; winapi lasterr)int32 chown(string path, unsigned int32 owner, unsigned int32 group) cil managed" />
+      <MemberSignature Language="C#" Value="public static int chown (string path, int owner, int group);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;chown&quot; winapi lasterr)int32 chown(string path, int32 owner, int32 group) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -708,8 +708,8 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="path" Type="System.String" />
-        <Parameter Name="owner" Type="System.UInt32" />
-        <Parameter Name="group" Type="System.UInt32" />
+        <Parameter Name="owner" Type="System.Int32" />
+        <Parameter Name="group" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="path">To be added.</param>
@@ -1835,8 +1835,8 @@
       </Docs>
     </Member>
     <Member MemberName="fchown">
-      <MemberSignature Language="C#" Value="public static int fchown (int fd, uint owner, uint group);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;fchown&quot; winapi lasterr)int32 fchown(int32 fd, unsigned int32 owner, unsigned int32 group) cil managed" />
+      <MemberSignature Language="C#" Value="public static int fchown (int fd, int owner, int group);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;fchown&quot; winapi lasterr)int32 fchown(int32 fd, int32 owner, int32 group) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1848,8 +1848,8 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="fd" Type="System.Int32" />
-        <Parameter Name="owner" Type="System.UInt32" />
-        <Parameter Name="group" Type="System.UInt32" />
+        <Parameter Name="owner" Type="System.Int32" />
+        <Parameter Name="group" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="fd">To be added.</param>
@@ -4354,8 +4354,8 @@
       </Docs>
     </Member>
     <Member MemberName="lchown">
-      <MemberSignature Language="C#" Value="public static int lchown (string path, uint owner, uint group);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;lchown&quot; winapi lasterr)int32 lchown(string path, unsigned int32 owner, unsigned int32 group) cil managed" />
+      <MemberSignature Language="C#" Value="public static int lchown (string path, int owner, int group);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;libc&quot; as &quot;lchown&quot; winapi lasterr)int32 lchown(string path, int32 owner, int32 group) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -4367,8 +4367,8 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="path" Type="System.String" />
-        <Parameter Name="owner" Type="System.UInt32" />
-        <Parameter Name="group" Type="System.UInt32" />
+        <Parameter Name="owner" Type="System.Int32" />
+        <Parameter Name="group" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="path">To be added.</param>
