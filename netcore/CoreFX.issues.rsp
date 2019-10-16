@@ -1051,3 +1051,37 @@
 -nomethod System.IO.Tests.FileStream_Dispose.Dispose_CallsVirtualDispose_TrueArg
 -nomethod System.Net.Sockets.Tests.DisposedSocket.NonDisposedSocket_SafeHandlesCollected
 -nomethod System.Diagnostics.TraceSourceTests.SwitchClassTests.PruneTest
+
+# Flaky test (FileSystemWatcher)
+-nomethod System.IO.Tests.Directory_NotifyFilter_Tests.FileSystemWatcher_Directory_NotifyFilter_LastWriteTime
+
+####################################################################
+##  System.Security.Cryptography.Encoding.Tests
+####################################################################
+
+# Broken array copying (https://github.com/mono/mono/issues/16686)
+-nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Method_InverseCase
+-nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByValue_Ctor
+-nomethod System.Security.Cryptography.Encoding.Tests.OidTests.Oid_StringString_NullFriendlyName
+-nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Ctor
+
+# corefx tests need to be updated
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt16
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt32
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeDouble
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeByte
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSByte
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt64
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt16
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt64
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSingle
+-nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt32
+
+-nomethod System.Tests.StringComparerTests.CreateCultureOptions_InvalidArguments_Throws
+
+# Requires NativeLibrary implementation
+-nomethod System.Net.Tests.HttpWebRequestTest.ServicePoint_GetValue_ExpectedResult
+
+# Broken SafeWaitHandle test on finalization
+# https://github.com/dotnet/corefx/issues/41635#issuecomment-542409299
+-nomethod SafeWaitHandleExtensionsTests.SafeWaitHandleExtensions_set
