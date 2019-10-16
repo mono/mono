@@ -1167,10 +1167,10 @@ try {
 			var tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
 			var settings = MSI.MonoTlsSettings.CopyDefaultSettings ();
 			settings.UseServicePointManagerCallback = true;
-			var sslStream = tlsProvider.CreateSslStream (stream, false, settings);
+			var sslStream = new SslStream (stream, false, tlsProvider, settings);
 			CheckCancellation ();
 			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
-			stream = sslStream.AuthenticatedStream;
+			stream = sslStream;
 
 #else
 			throw new SystemException ("You are using an incomplete System.dll build");
