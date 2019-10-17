@@ -141,7 +141,7 @@ clean-local: clean-mcs
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc $(tmpinst)/bin/mcs $(tmpinst)/bin/al
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mono-hang-watchdog $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc $(tmpinst)/bin/mcs $(tmpinst)/bin/al
 
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
@@ -175,6 +175,7 @@ test-bundle-local:
 	for profile in $(test_profiles); do \
 		cp -L -R $(mcs_topdir)/class/lib/$$profile $(TEST_BUNDLE_PATH); \
 	done
+	cp -L ../tools/mono-hang-watchdog/mono-hang-watchdog $(TEST_BUNDLE_PATH)/_tmpinst/bin
 	cp -L $(top_srcdir)/external/xunit-binaries/*.dll $(top_srcdir)/external/xunit-binaries/*.exe $(top_srcdir)/external/xunit-binaries/*.config $(TEST_BUNDLE_PATH)/net_4_x/
 	$(MAKE) -C $(mcs_topdir)/tests test-bundle
 	$(MAKE) -C $(mcs_topdir)/errors test-bundle
@@ -283,6 +284,9 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
+
+$(tmpinst)/bin/mono-hang-watchdog: ../tools/mono-hang-watchdog/mono-hang-watchdog
+	cp -L $< $@
 
 $(tmpinst)/bin/csc: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
