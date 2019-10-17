@@ -1359,9 +1359,11 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	mono_g_hash_table_insert_internal (threads_starting_up, thread, thread);
 	mono_threads_unlock ();
 
+#ifndef ENABLE_NETCORE
 	internal->threadpool_thread = flags & MONO_THREAD_CREATE_FLAGS_THREADPOOL;
 	if (internal->threadpool_thread)
 		mono_thread_set_state (internal, ThreadState_Background);
+#endif
 
 	internal->debugger_thread = flags & MONO_THREAD_CREATE_FLAGS_DEBUGGER;
 
