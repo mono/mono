@@ -20,6 +20,7 @@
 #ifndef _WIN32_WCE
 #include <signal.h>
 #endif
+#include "mono/utils/mono-static-mutex.h"
 
 #define I_HIDE_POINTERS	/* To make GC_call_with_alloc_lock visible */
 #include "private/gc_pmark.h"
@@ -49,6 +50,15 @@
 #          if defined(GC_WIN32_THREADS) 
 #             if defined(GC_PTHREADS)
 		  pthread_mutex_t GC_allocate_ml = PTHREAD_MUTEX_INITIALIZER;
+
+#		  if HAS_PTHREAD_PRIO_INHERIT
+		  __attribute__((constructor))
+		  __attribute__((unused))
+		  static void init_libgc_misc_mutex(void)
+		  {
+			mono_os_static_mutex_init(&GC_allocate_ml);
+		  }
+#		  endif
 #	      elif defined(GC_DLL)
 		 __declspec(dllexport) CRITICAL_SECTION GC_allocate_ml;
 #	      else
@@ -63,6 +73,14 @@
 	          pthread_t GC_lock_holder = NO_THREAD;
 			/* Used only for assertions, and to prevent	 */
 			/* recursive reentry in the system call wrapper. */
+#		  if HAS_PTHREAD_PRIO_INHERIT
+		  __attribute__((constructor))
+		  __attribute__((unused))
+		  static void init_libgc_misc_mutex(void)
+		  {
+			mono_os_static_mutex_init(&GC_allocate_ml);
+		  }
+#		  endif
 #		endif 
 #    	      elif defined(SN_TARGET_PS3)
 		  #include <pthread.h>

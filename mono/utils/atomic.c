@@ -18,8 +18,18 @@
 #if defined (WAPI_NO_ATOMIC_ASM) || defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
 
 #include <pthread.h>
+#include "mono/utils/mono-static-mutex.h"
 
-static pthread_mutex_t spin G_GNUC_UNUSED = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t spin = PTHREAD_MUTEX_INITIALIZER;
+
+#if HAS_PTHREAD_PRIO_INHERIT
+__attribute__((constructor))
+__attribute__((unused))
+static void init_atomic_mutex(void)
+{
+	mono_os_static_mutex_init(&spin);
+}
+#endif
 
 #define NEED_64BIT_CMPXCHG_FALLBACK
 

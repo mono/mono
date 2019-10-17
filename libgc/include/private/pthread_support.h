@@ -2,6 +2,7 @@
 #define GC_PTHREAD_SUPPORT_H
 
 # include "private/gc_priv.h"
+#include "mono/utils/mono-static-mutex.h"
 
 # if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
      && !defined(GC_WIN32_THREADS)

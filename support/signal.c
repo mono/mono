@@ -28,6 +28,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <mono/utils/atomic.h>
+#include "mono/utils/mono-static-mutex.h"
 #include <mono/metadata/appdomain.h>
 #endif
 
@@ -297,6 +298,15 @@ default_handler (int signum)
 }
 
 static pthread_mutex_t signals_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+#if HAS_PTHREAD_PRIO_INHERIT
+__attribute__((constructor))
+__attribute__((unused))
+static void init_support_signal_mutex(void)
+{
+	mono_os_static_mutex_init(&signals_mutex);
+}
+#endif
 
 // A UnixSignal object is being constructed
 void*

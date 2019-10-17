@@ -75,6 +75,7 @@ libeglib_la_LIBADD = -lm -lpsapi $(LTLIBICONV)
 else
 libeglib_la_LIBADD = -lm $(LTLIBICONV)
 endif
+libeglib_la_LIBADD = -lpthread
 endif
 
 MAINTAINERCLEANFILES = Makefile.in
