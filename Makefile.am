@@ -7,8 +7,10 @@ MONOTOUCH_SUBDIRS = $(libgc_dir) mono
 # Some tools might not build when cross-compiling
 if CROSS_COMPILING
 tools_dir =
+hang_watchdog =
 else
 tools_dir = tools
+hang_watchdog = tools/mono-hang-watchdog
 endif
 
 if ENABLE_MSVC
@@ -21,10 +23,10 @@ endif
 
 if ENABLE_NETCORE
 update_submodules = 
-SUBDIRS = mk llvm mono runtime netcore netcore/corerun
+SUBDIRS = mk llvm mono $(hang_watchdog) runtime netcore netcore/corerun
 else
 update_submodules = update_submodules
-SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
+SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data $(hang_watchdog) runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
 endif
 
 # Keep in sync with SUBDIRS
