@@ -23,6 +23,9 @@ extern volatile size_t mono_polling_required;
 
 /* Internal API */
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_threads_state_poll (void);
 

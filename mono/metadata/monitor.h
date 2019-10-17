@@ -106,15 +106,27 @@ mono_monitor_init (void);
 void
 mono_monitor_cleanup (void);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoBoolean
 mono_monitor_enter_internal (MonoObject *obj);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 guint32
 mono_monitor_enter_fast (MonoObject *obj);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 guint32
 mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
 

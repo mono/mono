@@ -19,6 +19,9 @@ typedef struct {
 	const char* (*lookup_icall_symbol) (gpointer func);
 } MonoIcallTableCallbacks;
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 

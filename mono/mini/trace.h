@@ -7,9 +7,15 @@
 #include <glib.h>
 #include "mono/utils/mono-compiler.h"
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void 
 mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx);
 

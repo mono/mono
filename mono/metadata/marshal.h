@@ -390,6 +390,9 @@ mono_marshal_ftnptr_eh_callback (guint32 gchandle);
 MONO_PAL_API void
 mono_marshal_set_last_error (void);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_marshal_clear_last_error (void);
 
@@ -529,9 +532,15 @@ mono_marshal_unlock_internal (void);
 void * 
 mono_marshal_alloc (gsize size, MonoError *error);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void 
 mono_marshal_free (gpointer ptr);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_marshal_free_array (gpointer *ptr, int size);
 
@@ -544,9 +553,15 @@ mono_cominterop_release_all_rcws (void);
 MONO_API void *
 mono_marshal_string_to_utf16 (MonoString *s);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void
 mono_marshal_set_last_error_windows (int error);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void 
 mono_struct_delete_old (MonoClass *klass, char *ptr);
 
@@ -555,12 +570,21 @@ mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 	      MonoMarshalSpec *spec, int conv_arg, 
 	      MonoType **conv_arg_type, MarshalAction action);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params);
 
@@ -591,6 +615,9 @@ mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 gboolean
 mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoObject* mono_marshal_get_type_object (MonoClass *klass);
 
 ICALL_EXPORT

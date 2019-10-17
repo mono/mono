@@ -371,6 +371,9 @@ gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
 gboolean mono_thread_interruption_requested (void);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoException*
 mono_thread_interruption_checkpoint (void);
 
@@ -383,6 +386,9 @@ mono_thread_interruption_checkpoint_void (void);
 MonoExceptionHandle
 mono_thread_interruption_checkpoint_handle (void);
 
+#if HOST_WASM
+G_EXTERN_C
+#endif
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 
 /**
@@ -397,7 +403,12 @@ MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 extern gint32 mono_thread_interruption_request_flag;
 
 uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits);
+
+#if HOST_WASM
+G_EXTERN_C
+#endif
 void*    mono_get_special_static_data   (uint32_t offset);
+
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 
 void
