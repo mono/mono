@@ -7056,3 +7056,4 @@ echo "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then
    AC_MSG_WARN([Turning off static Mono is a risk, you might run into unexpected bugs])
 fi
+  
