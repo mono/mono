@@ -37,6 +37,8 @@ NO_CONSOLE = yes
 
 ifeq ($(HOST_PLATFORM),win32)
 PROFILE_MCS_FLAGS += -d:MOBILE_DESKTOP_HOST -d:WIN_PLATFORM
+else
+ENABLE_GSS=1
 endif
 
 PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS InetAccess AndroidNotWorking
