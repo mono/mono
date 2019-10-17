@@ -127,6 +127,10 @@ gboolean mono_use_llvm = FALSE;
 
 gboolean mono_use_fast_math = FALSE;
 
+// Lists of whitelisted and blacklisted CPU features 
+MonoCPUFeatures mono_cpu_features_enabled = (MonoCPUFeatures)0;
+MonoCPUFeatures mono_cpu_features_disabled = (MonoCPUFeatures)0;
+
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
 
@@ -3712,7 +3716,10 @@ mini_parse_debug_option (const char *option)
 	else if (!strcmp (option, "verbose-gdb"))
 		mini_debug_options.verbose_gdb = TRUE;
 	else if (!strcmp (option, "clr-memory-model"))
-		mini_debug_options.clr_memory_model = TRUE;
+		// FIXME Kill this debug flag
+		mini_debug_options.weak_memory_model = FALSE;
+	else if (!strcmp (option, "weak-memory-model"))
+		mini_debug_options.weak_memory_model = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
 	else if (!strncmp (option, "aot-skip=", 9)) {
@@ -3744,7 +3751,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'clr-memory-model'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'weak-memory-model'.\n");
 			exit (1);
 		}
 	}
@@ -4646,11 +4653,11 @@ register_icalls (void)
 	register_icall (pthread_getspecific, mono_icall_sig_ptr_ptr, TRUE);
 #endif
 	/* Register tls icalls */
-	register_icall_no_wrapper (mono_tls_get_thread_extern, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_jit_tls_extern, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_domain_extern, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_sgen_thread_info_extern, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_lmf_addr_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_thread, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_jit_tls, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_domain, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_sgen_thread_info, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_lmf_addr, mono_icall_sig_ptr);
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, mono_icall_sig_void_ptr_ptr);
 	register_icall_no_wrapper (mono_interp_to_native_trampoline, mono_icall_sig_void_ptr_ptr);

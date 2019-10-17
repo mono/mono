@@ -477,9 +477,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

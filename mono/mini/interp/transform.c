@@ -37,6 +37,7 @@
 #define INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL 8
 
 #define INTERP_LOCAL_FLAG_INDIRECT 1
+#define INTERP_LOCAL_FLAG_DEAD 2
 
 MonoInterpStats mono_interp_stats;
 
@@ -51,8 +52,31 @@ typedef struct
 	unsigned char flags;
 } StackInfo;
 
+#define STACK_VALUE_NONE 0
+#define STACK_VALUE_LOCAL 1
+#define STACK_VALUE_I4 2
+#define STACK_VALUE_I8 3
+
+// StackValue contains data to construct an InterpInst that is equivalent with the contents
+// of the stack slot / local.
+typedef struct {
+	// Indicates the type of the stored information. It can be a local or a constant
+	int type;
+	// Holds the local index or the actual constant value
+	union {
+		int local;
+		gint32 i;
+		gint64 l;
+	};
+} StackValue;
+
 typedef struct
 {
+	// This indicates what is currently stored in this stack slot. This can be a constant
+	// or the copy of a local.
+	StackValue val;
+	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
+	// of the stack slot, because we can't clear the instruction that set it.
 	InterpInst *ins;
 } StackContentInfo;
 
@@ -93,6 +117,7 @@ typedef struct {
 
 typedef struct {
 	MonoType *type;
+	int mt;
 	int flags;
 	int offset;
 } InterpLocal;
@@ -363,6 +388,15 @@ interp_clear_ins (TransformData *td, InterpInst *ins)
 	// to worry about updating the il_offset, or whether this instruction
 	// was at the start of a basic block etc.
 	ins->opcode = MINT_NOP;
+}
+
+static InterpInst*
+interp_prev_ins (InterpInst *ins)
+{
+	ins = ins->prev;
+	while (ins && ins->opcode == MINT_NOP)
+		ins = ins->prev;
+	return ins;
 }
 
 #define CHECK_STACK(td, n) \
@@ -737,9 +771,10 @@ store_arg(TransformData *td, int n)
 }
 
 static void
-load_local_general (TransformData *td, int local, MonoType *type)
+load_local (TransformData *td, int local)
 {
-	int mt = mint_type (type);
+	MonoType *type = td->locals [local].type;
+	int mt = td->locals [local].mt;
 	MonoClass *klass = NULL;
 	if (mt == MINT_TYPE_VT) {
 		klass = mono_class_from_mono_type_internal (type);
@@ -758,17 +793,11 @@ load_local_general (TransformData *td, int local, MonoType *type)
 	PUSH_TYPE(td, stack_type[mt], klass);
 }
 
-static void
-load_local (TransformData *td, int n)
-{
-	MonoType *type = td->header->locals [n];
-	load_local_general (td, n, type);
-}
-
 static void 
-store_local_general (TransformData *td, int local, MonoType *type)
+store_local (TransformData *td, int local)
 {
-	int mt = mint_type (type);
+	MonoType *type = td->locals [local].type;
+	int mt = td->locals [local].mt;
 	CHECK_STACK (td, 1);
 #if SIZEOF_VOID_P == 8
 	if (td->sp [-1].type == STACK_TYPE_I4 && stack_type [mt] == STACK_TYPE_I8) {
@@ -795,13 +824,6 @@ store_local_general (TransformData *td, int local, MonoType *type)
 		td->last_ins->data [0] = local;
 	}
 	--td->sp;
-}
-
-static void
-store_local (TransformData *td, int n)
-{
-	MonoType *type = td->header->locals [n];
-	store_local_general (td, n, type);
 }
 
 #define SIMPLE_OP(td, op) \
@@ -919,6 +941,7 @@ create_interp_local (TransformData *td, MonoType *type)
 		td->locals = (InterpLocal*) g_realloc (td->locals, td->locals_capacity * sizeof (InterpLocal));
 	}
 	td->locals [td->locals_size].type = type;
+	td->locals [td->locals_size].mt = mint_type (type);
 	td->locals [td->locals_size].flags = 0;
 	td->locals [td->locals_size].offset = -1;
 	td->locals_size++;
@@ -996,7 +1019,7 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 	int size = mini_magic_type_size (NULL, src);
 	int local = create_interp_local (td, mini_native_type_replace_type (src));
 
-	store_local_general (td, local, src);
+	store_local (td, local);
 
 	size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 	interp_add_ins (td, MINT_LDLOC_VT);
@@ -1020,6 +1043,10 @@ interp_is_bb_start (TransformData *td, InterpInst *start, InterpInst *end)
 		}
 		ins = ins->next;
 	}
+
+	// Also check if end is bb start
+	if (ins != NULL && ins->il_offset != -1 && td->is_bb_start [ins->il_offset])
+		return TRUE;
 	return FALSE;
 }
 
@@ -1048,6 +1075,62 @@ interp_ldc_i4_get_const (InterpInst *ins)
 		default:
 			g_assert_not_reached ();
 	}
+}
+
+static InterpInst*
+interp_inst_replace_with_i4_const (TransformData *td, InterpInst *ins, gint32 ct)
+{
+	switch (ct) {
+		case -1: ins->opcode = MINT_LDC_I4_M1; break;
+		case 0: ins->opcode = MINT_LDC_I4_0; break;
+		case 1: ins->opcode = MINT_LDC_I4_1; break;
+		case 2: ins->opcode = MINT_LDC_I4_2; break;
+		case 3: ins->opcode = MINT_LDC_I4_3; break;
+		case 4: ins->opcode = MINT_LDC_I4_4; break;
+		case 5: ins->opcode = MINT_LDC_I4_5; break;
+		case 6: ins->opcode = MINT_LDC_I4_6; break;
+		case 7: ins->opcode = MINT_LDC_I4_7; break;
+		case 8: ins->opcode = MINT_LDC_I4_8; break;
+		default: {
+			int size = mono_interp_oplen [ins->opcode];
+			if (ct >= -128 && ct <= 127 ) {
+				if (size < 2) {
+					ins = interp_insert_ins (td, ins, MINT_LDC_I4_S);
+					interp_clear_ins (td, ins->prev);
+				} else {
+					ins->opcode = MINT_LDC_I4_S;
+				}
+				ins->data [0] = (gint8)ct;
+			} else {
+				if (size < 3) {
+					ins = interp_insert_ins (td, ins, MINT_LDC_I4);
+					interp_clear_ins (td, ins->prev);
+				} else {
+					ins->opcode = MINT_LDC_I4;
+				}
+				WRITE32_INS (ins, 0, &ct);
+			}
+			break;
+		}
+	}
+
+	return ins;
+}
+
+static InterpInst*
+interp_inst_replace_with_i8_const (TransformData *td, InterpInst *ins, gint64 ct)
+{
+	int size = mono_interp_oplen [ins->opcode];
+
+	if (size < 5) {
+		ins = interp_insert_ins (td, ins, MINT_LDC_I8);
+		interp_clear_ins (td, ins->prev);
+	} else {
+		ins->opcode = MINT_LDC_I8;
+	}
+	WRITE64_INS (ins, 0, &ct);
+
+	return ins;
 }
 
 static int
@@ -1405,9 +1488,9 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 
 			int local = create_interp_local (td, local_type);
 
-			store_local_general (td, local, local_type);
+			store_local (td, local);
 			interp_emit_ldelema (td, target_method->klass, value_class);
-			load_local_general (td, local, local_type);
+			load_local (td, local);
 			interp_emit_stobj (td, element_class);
 			td->ip += 5;
 			return TRUE;
@@ -1657,11 +1740,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			localb = create_interp_local (td, t);
 
 			// Save arguments
-			store_local_general (td, localb, t);
-			store_local_general (td, locala, t);
+			store_local (td, localb);
+			store_local (td, locala);
 			// (a > b)
-			load_local_general (td, locala, t);
-			load_local_general (td, localb, t);
+			load_local (td, locala);
+			load_local (td, localb);
 			if (is_unsigned)
 				interp_add_ins (td, is_i8 ? MINT_CGT_UN_I8 : MINT_CGT_UN_I4);
 			else
@@ -1669,8 +1752,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->sp --;
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I4);
 			// (a < b)
-			load_local_general (td, locala, t);
-			load_local_general (td, localb, t);
+			load_local (td, locala);
+			load_local (td, localb);
 			if (is_unsigned)
 				interp_add_ins (td, is_i8 ? MINT_CLT_UN_I8 : MINT_CLT_UN_I4);
 			else
@@ -1993,7 +2076,8 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 		g_assert (mt == MINT_TYPE_VT);
 		interp_add_ins (td, MINT_BOX_NULLABLE);
 		td->last_ins->data [0] = get_data_item_index (td, constrained_class);
-		td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
+		td->last_ins->data [1] = csignature->param_count;
+		td->last_ins->data [2] = (td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : 1;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
 		return_if_nok (error);
@@ -2001,7 +2085,8 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 		if (mt == MINT_TYPE_VT) {
 			interp_add_ins (td, MINT_BOX_VT);
 			td->last_ins->data [0] = get_data_item_index (td, vtable);
-			td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
+			td->last_ins->data [1] = csignature->param_count;
+			td->last_ins->data [2] = (td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : 1;
 		} else {
 			interp_add_ins (td, MINT_BOX);
 			td->last_ins->data [0] = get_data_item_index (td, vtable);
@@ -2735,6 +2820,8 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 		imethod->local_offsets [i] = offset;
 		td->locals [i].offset = offset;
 		td->locals [i].flags = 0;
+		td->locals [i].type = header->locals [i];
+		td->locals [i].mt = mint_type (header->locals [i]);
 		offset += size;
 	}
 	offset = (offset + 7) & ~7;
@@ -2749,14 +2836,6 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 	imethod->locals_size = offset;
 	g_assert (imethod->locals_size < 65536);
 	td->total_locals_size = offset;
-}
-
-static MonoType*
-get_arg_type (MonoMethodSignature *signature, int arg_n)
-{
-	if (signature->hasthis && arg_n == 0)
-		return mono_get_object_type ();
-	return signature->params [arg_n - !!signature->hasthis];
 }
 
 /* Return false is failure to init basic blocks due to being in inline method */
@@ -3130,7 +3209,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		for (i = signature->param_count - 1; i >= 0; i--) {
 			local = create_interp_local (td, signature->params [i]);
 			arg_locals [i + !!signature->hasthis] = local;
-			store_local_general (td, local, signature->params [i]);
+			store_local (td, local);
 		}
 
 		if (signature->hasthis) {
@@ -3141,7 +3220,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			MonoType *type = mono_get_object_type ();
 			local = create_interp_local (td, type);
 			arg_locals [0] = local;
-			store_local_general (td, local, type);
+			store_local (td, local);
 		}
 
 		local_locals = (guint32*) g_malloc (header->num_locals * sizeof (guint32));
@@ -3236,7 +3315,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_arg (td, arg_n);
 			else
-				load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				load_local (td, arg_locals [arg_n]);
 			++td->ip;
 			break;
 		}
@@ -3248,7 +3327,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_local (td, loc_n);
 			else
-				load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				load_local (td, local_locals [loc_n]);
 			++td->ip;
 			break;
 		}
@@ -3260,7 +3339,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_local (td, loc_n);
 			else
-				store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				store_local (td, local_locals [loc_n]);
 			++td->ip;
 			break;
 		}
@@ -3269,7 +3348,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_arg (td, arg_n);
 			else
-				load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				load_local (td, arg_locals [arg_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3296,7 +3375,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_arg (td, arg_n);
 			else
-				store_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+				store_local (td, arg_locals [arg_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3305,7 +3384,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				load_local (td, loc_n);
 			else
-				load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				load_local (td, local_locals [loc_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3325,7 +3404,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (!inlining)
 				store_local (td, loc_n);
 			else
-				store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+				store_local (td, local_locals [loc_n]);
 			td->ip += 2;
 			break;
 		}
@@ -3425,7 +3504,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		case CEE_POP:
 			CHECK_STACK(td, 1);
 			SIMPLE_OP(td, MINT_POP);
-			td->last_ins->data [0] = 0;
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				int size = mono_class_value_size (td->sp [-1].klass, NULL);
 				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
@@ -4309,7 +4387,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 							goto_if_nok (error, exit);
 
 							if (interp_inline_method (td, m, mheader, error)) {
-								newobj_fast->data [0] = 0xffff;
+								newobj_fast->data [0] = INLINED_METHOD_FLAG;
 								break;
 							}
 						}
@@ -4416,7 +4494,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				 * We create a local variable in the frame so that we can fetch its address.
 				 */
 				int local = create_interp_local (td, m_class_get_byval_arg (klass));
-				store_local_general (td, local, m_class_get_byval_arg (klass));
+				store_local (td, local);
 				interp_add_ins (td, MINT_LDLOCA_S);
 				td->last_ins->data [0] = local;
 				td->locals [local].flags |= INTERP_LOCAL_FLAG_INDIRECT;
@@ -4500,7 +4578,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			{
 				if (is_static) {
 					interp_add_ins (td, MINT_POP);
-					td->last_ins->data [0] = 0;
 					interp_emit_ldsflda (td, field, error);
 					goto_if_nok (error, exit);
 				} else {
@@ -4538,7 +4615,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			{
 				if (is_static) {
 					interp_add_ins (td, MINT_POP);
-					td->last_ins->data [0] = 0;
 					interp_emit_sfld_access (td, field, field_klass, mt, TRUE, error);
 					goto_if_nok (error, exit);
 				} else {
@@ -4607,10 +4683,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 #endif
 			{
 				if (is_static) {
-					interp_add_ins (td, MINT_POP);
-					td->last_ins->data [0] = 1;
 					interp_emit_sfld_access (td, field, field_klass, mt, FALSE, error);
 					goto_if_nok (error, exit);
+
+					/* pop the unused object reference */
+					interp_add_ins (td, MINT_POP);
 
 					/* the vtable of the field might not be initialized at this point */
 					mono_class_vtable_checked (domain, field_klass, error);
@@ -5499,8 +5576,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					break;
 				case CEE_MONO_CALLI_EXTRA_ARG:
 					/* Same as CEE_CALLI, except that we drop the extra arg required for llvm specific behaviour */
-					interp_add_ins (td, MINT_POP);
-					td->last_ins->data [0] = 1;
+					interp_add_ins (td, MINT_POP1);
 					--td->sp;
 					if (!interp_transform_call (td, method, NULL, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE, FALSE))
 						goto exit;
@@ -5526,15 +5602,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 						/* attach needs two arguments, and has one return value: leave one element on the stack */
 						interp_add_ins (td, MINT_POP);
-						td->last_ins->data [0] = 0;
 					} else if (jit_icall_id == MONO_JIT_ICALL_mono_threads_detach_coop) {
 						g_assert (rtm->needs_thread_attach);
 
 						/* detach consumes two arguments, and no return value: drop both of them */
 						interp_add_ins (td, MINT_POP);
-						td->last_ins->data [0] = 0;
 						interp_add_ins (td, MINT_POP);
-						td->last_ins->data [0] = 0;
 					} else {
 						int const icall_op = interp_icall_op_for_sig (info->sig);
 						g_assert (icall_op != -1);
@@ -5762,7 +5835,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					load_arg (td, arg_n);
 				else
-					load_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+					load_local (td, arg_locals [arg_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5788,7 +5861,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					store_arg (td, arg_n);
 				else
-					store_local_general (td, arg_locals [arg_n], get_arg_type (signature, arg_n));
+					store_local (td, arg_locals [arg_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5797,7 +5870,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					load_local (td, loc_n);
 				else
-					load_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+					load_local (td, local_locals [loc_n]);
 				td->ip += 3;
 				break;
 			}
@@ -5817,7 +5890,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!inlining)
 					store_local (td, loc_n);
 				else
-					store_local_general (td, local_locals [loc_n], header->locals [loc_n]);
+					store_local (td, local_locals [loc_n]);
 				td->ip += 3;
 				break;
 			}
@@ -6081,13 +6154,12 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 		}
 		case MINT_NEWOBJ_FAST: {
 			int param_count = ins->data [1];
-			gboolean is_inlined = ins->data [0] == 0xffff;
+			gboolean is_inlined = ins->data [0] == INLINED_METHOD_FLAG;
 			if (is_inlined) {
-				// FIXME
-				// We lose track of the contents of the stack because the newobj references are pushed below
-				// the ctor arguments. We should keep track of stack contents to enable ctor optimization.
-				*pop = param_count;
-				*push = param_count + 2;
+				// This needs to be handled explictly during cprop, in order to properly
+				// keep track of stack contents
+				*pop = 0;
+				*push = 2;
 			} else {
 				*pop = param_count;
 				*push = 1;
@@ -6111,20 +6183,6 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 			*push = 1;
 			break;
 		}
-		case MINT_BOX:
-		case MINT_BOX_VT:
-		case MINT_BOX_NULLABLE:
-			*pop = (ins->data [1] & ~BOX_NOT_CLEAR_VT_SP) + 1;
-			*push = *pop;
-			break;
-		case MINT_CKNULL_N:
-			*pop = ins->data [0];
-			*push = ins->data [0];
-			break;
-		case MINT_LD_DELEGATE_INVOKE_IMPL:
-			*pop = ins->data [0];
-			*push = ins->data [0] + 1;
-			break;
 		case MINT_INTRINS_BYREFERENCE_CTOR: {
 			InterpMethod *imethod = (InterpMethod*) td->data_items [ins->data [0]];
 			*pop = imethod->param_count;
@@ -6318,47 +6376,47 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 {
 	StackContentInfo *si;
 	for (si = start; si < end; si++) {
-		if (si->ins) {
-			g_assert (MINT_IS_LDLOC (si->ins->opcode));
-			if (si->ins->data [0] == local)
-				si->ins = NULL;
-		}
+		if (si->val.type == STACK_VALUE_LOCAL && si->val.local == local)
+			si->val.type = STACK_VALUE_NONE;
 	}
 }
 
 // The value of local has changed. This means we can no longer assume that any other local
 // is a copy of this local.
 static void
-clear_local_content_info_for_local (StackContentInfo *start, StackContentInfo *end, int local)
+clear_local_content_info_for_local (StackValue *start, StackValue *end, int local)
 {
-	StackContentInfo *si;
-	for (si = start; si < end; si++) {
-		if (si->ins) {
-			g_assert (MINT_IS_MOVLOC (si->ins->opcode));
-			g_assert (si->ins->data [1] == (guint16)(si - start));
-			if (si->ins->data [0] == local)
-				si->ins = NULL;
-		}
+	StackValue *sval;
+	for (sval = start; sval < end; sval++) {
+		if (sval->type == STACK_VALUE_LOCAL && sval->local == local)
+			sval->type = STACK_VALUE_NONE;
 	}
 }
 
-static void
+static gboolean
 interp_local_deadce (TransformData *td, int *local_ref_count)
 {
 	InterpInst *ins;
 	gboolean needs_dce = FALSE;
+	gboolean needs_cprop = FALSE;
 
 	for (int i = 0; i < td->locals_size; i++) {
 		g_assert (local_ref_count [i] >= 0);
-		if (!local_ref_count [i] && (td->locals [i].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+		if (!local_ref_count [i] &&
+				(td->locals [i].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0 &&
+				(td->locals [i].flags & INTERP_LOCAL_FLAG_DEAD) == 0) {
 			needs_dce = TRUE;
+			// If we do another deadce iteration over the code, make sure we don't try
+			// to kill instructions accessing locals that have already been handled in
+			// a previous iteration.
+			td->locals [i].flags |= INTERP_LOCAL_FLAG_DEAD;
 			break;
 		}
 	}
 
 	// Return early if all locals are alive
 	if (!needs_dce)
-		return;
+		return FALSE;
 
 	// Kill instructions that don't use stack and are storing into dead locals
 	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
@@ -6366,14 +6424,43 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 			if (!local_ref_count [ins->data [0]] && (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
 				interp_clear_ins (td, ins);
 				mono_interp_stats.killed_instructions++;
+				// We killed an instruction that makes use of the stack. This might uncover new optimizations
+				needs_cprop = TRUE;
 			}
 		} else if (MINT_IS_MOVLOC (ins->opcode)) {
 			if (!local_ref_count [ins->data [1]] && (td->locals [ins->data [1]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
 				interp_clear_ins (td, ins);
 				mono_interp_stats.killed_instructions++;
 			}
+		} else if (MINT_IS_STLOC (ins->opcode) && ins->opcode != MINT_STLOC_VT) {
+			if (!local_ref_count [ins->data [0]] && (td->locals [ins->data [0]].flags & INTERP_LOCAL_FLAG_INDIRECT) == 0) {
+				// We store to a dead stloc, we can replace it with a POP to save local space
+				ins->opcode = MINT_POP;
+				mono_interp_stats.added_pop_count++;
+			}
 		}
 	}
+	return needs_cprop;
+}
+
+static gboolean
+interp_local_equal (StackValue *locals, int local1, int local2)
+{
+	if (local1 == local2)
+		return TRUE;
+	if (locals [local1].type == STACK_VALUE_LOCAL && locals [local1].local == local2) {
+		// local1 is a copy of local2
+		return TRUE;
+	}
+	if (locals [local2].type == STACK_VALUE_LOCAL && locals [local2].local == local1) {
+		// local2 is a copy of local1
+		return TRUE;
+	}
+	if (locals [local1].type == STACK_VALUE_I4 && locals [local2].type == STACK_VALUE_I4)
+		return locals [local1].i == locals [local2].i;
+	if (locals [local1].type == STACK_VALUE_I8 && locals [local2].type == STACK_VALUE_I8)
+		return locals [local1].l == locals [local2].l;
+	return FALSE;
 }
 
 static void
@@ -6383,11 +6470,16 @@ interp_cprop (TransformData *td)
 		return;
 	StackContentInfo *stack = (StackContentInfo*) g_malloc (td->max_stack_height * sizeof (StackContentInfo));
 	StackContentInfo *stack_end = stack + td->max_stack_height;
-	StackContentInfo *sp = stack;
-	StackContentInfo *locals = (StackContentInfo*) g_malloc (td->locals_size * sizeof (StackContentInfo));
-	int *local_ref_count = (int*) g_malloc0 (td->locals_size * sizeof (int));
+	StackContentInfo *sp;
+	StackValue *locals = (StackValue*) g_malloc (td->locals_size * sizeof (StackValue));
+	int *local_ref_count = (int*) g_malloc (td->locals_size * sizeof (int));
 	InterpInst *ins;
-	int last_il_offset = -1;
+	int last_il_offset;
+
+retry:
+	sp = stack;
+	last_il_offset = -1;
+	memset (local_ref_count, 0, td->locals_size * sizeof (int));
 
 	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
 		int pop, push;
@@ -6399,83 +6491,238 @@ interp_cprop (TransformData *td)
 		if (is_bb_start) {
 			if (td->stack_height [il_offset] >= 0) {
 				sp = stack + td->stack_height [il_offset];
-				g_assert (sp >= stack);
+				g_assert (sp <= stack_end);
 				memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 			}
-			memset (locals, 0, td->locals_size * sizeof (StackContentInfo));
+			memset (locals, 0, td->locals_size * sizeof (StackValue));
 		}
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
+		if (td->verbose_level)
+                        g_print ("IL_%x, sp %d, %s (pop %d, push %d)\n", ins->il_offset, sp - stack, mono_interp_opname (ins->opcode), pop, push);
 		if (MINT_IS_LDLOC (ins->opcode)) {
 			int replace_op = 0;
 			int loaded_local = ins->data [0];
 			local_ref_count [loaded_local]++;
-			if (!is_bb_start && MINT_IS_STLOC (ins->prev->opcode) && ins->prev->data [0] == loaded_local) {
-				int mt = ins->prev->opcode - MINT_STLOC_I1;
+			InterpInst *prev_ins = interp_prev_ins (ins);
+			if (MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
+				int mt = prev_ins->opcode - MINT_STLOC_I1;
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
 						replace_op = MINT_STLOC_NP_I4;
 					else if (mt == MINT_TYPE_O || mt == MINT_TYPE_P)
 						replace_op = MINT_STLOC_NP_O;
 					if (replace_op) {
+						int stored_local = prev_ins->data [0];
 						if (td->verbose_level)
-							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, ins->prev->il_offset);
-						interp_clear_ins (td, ins->prev);
+							g_print ("Add stloc.np : ldloc (off %p), stloc (off %p)\n", ins->il_offset, prev_ins->il_offset);
+						sp->ins = NULL;
+						if (sp->val.type == STACK_VALUE_NONE) {
+							// We know what local is on the stack now. Track it
+							sp->val.type = STACK_VALUE_LOCAL;
+							sp->val.local = stored_local;
+						}
+
+						// Clear the previous stloc instruction
+						interp_clear_ins (td, prev_ins);
 						ins->opcode = replace_op;
+						ins->data [0] = stored_local;
 						mono_interp_stats.stloc_nps++;
 						local_ref_count [loaded_local]--;
-						// FIXME We know what local is on the stack now. Track it
 					}
 				}
-			} else if (locals [loaded_local].ins != NULL && !(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
-				g_assert (MINT_IS_MOVLOC (locals [loaded_local].ins->opcode));
+			} else if (locals [loaded_local].type == STACK_VALUE_LOCAL) {
+				g_assert (locals [loaded_local].type == STACK_VALUE_LOCAL);
+				g_assert (!(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT));
 				// do copy propagation of the original source
 				if (td->verbose_level)
-					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].ins->data [0]);
+					g_print ("cprop %d -> %d\n", loaded_local, locals [loaded_local].local);
 				mono_interp_stats.copy_propagations++;
 				local_ref_count [loaded_local]--;
-				ins->data [0] = locals [loaded_local].ins->data [0];
+				ins->data [0] = locals [loaded_local].local;
 				local_ref_count [ins->data [0]]++;
+			} else if (locals [loaded_local].type == STACK_VALUE_I4 || locals [loaded_local].type == STACK_VALUE_I8) {
+				gboolean is_i4 = locals [loaded_local].type == STACK_VALUE_I4;
+				g_assert (!(td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT));
+				if (is_i4)
+					ins = interp_inst_replace_with_i4_const (td, ins, locals [loaded_local].i);
+				else
+					ins = interp_inst_replace_with_i8_const (td, ins, locals [loaded_local].l);
+				sp->ins = ins;
+				sp->val = locals [loaded_local];
+				local_ref_count [loaded_local]--;
+				mono_interp_stats.copy_propagations++;
+				if (td->verbose_level)
+					g_print ("cprop %d -> ct %d\n", loaded_local, is_i4 ? locals [loaded_local].i : locals [loaded_local].l);
+				// FIXME this replace_op got ugly
+				replace_op = ins->opcode;
 			}
 			if (!replace_op) {
 				// Save the ldloc on the stack if it wasn't optimized away
 				// For simplicity we don't track locals that have their address taken
 				// since it is hard to detect instructions that change the local value.
-				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT)
-					sp->ins = NULL;
-				else
-					sp->ins = ins;
+				if (td->locals [loaded_local].flags & INTERP_LOCAL_FLAG_INDIRECT) {
+					sp->val.type = STACK_VALUE_NONE;
+				} else {
+					sp->val.type = STACK_VALUE_LOCAL;
+					sp->val.local = ins->data [0];
+				}
+				sp->ins = ins;
 			}
 			sp++;
 		} else if (MINT_IS_STLOC (ins->opcode)) {
 			int dest_local = ins->data [0];
 			sp--;
-			if (sp->ins != NULL) {
-				int mt = sp->ins->opcode - MINT_LDLOC_I1;
-				if (ins->opcode - MINT_STLOC_I1 == mt) {
-					// Same local, same type of load and store, convert to movloc
-					if (td->verbose_level)
-						g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
-					int src_local = sp->ins->data [0];
-					interp_clear_ins (td, sp->ins);
-					interp_clear_ins (td, ins);
+			if (sp->val.type == STACK_VALUE_LOCAL) {
+				int src_local = sp->val.local;
+				if (td->locals [src_local].mt == td->locals [dest_local].mt) {
+					// The locals have the same type. We can propagate the value
+					int vtsize = (ins->opcode == MINT_STLOC_VT) ? ins->data [1] : 0;
 
-					ins = interp_insert_ins (td, ins, get_movloc_for_type (mt));
-					ins->data [0] = src_local;
-					ins->data [1] = dest_local;
-					if (ins->opcode == MINT_MOVLOC_VT)
-						ins->data [2] = sp->ins->data [1];
-					mono_interp_stats.movlocs++;
-					// Track what exactly is stored into local
-					locals [dest_local].ins = ins;
+					if (!(td->locals [dest_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
+						// Track what exactly is stored into local
+						locals [dest_local].type = STACK_VALUE_LOCAL;
+						locals [dest_local].local = src_local;
+					}
+
+					if (sp->ins) {
+						// Clear ldloc / stloc pair and replace it with movloc superinstruction
+						if (td->verbose_level)
+							g_print ("Add movloc : ldloc (off %p), stloc (off %p)\n", sp->ins->il_offset, ins->il_offset);
+						interp_clear_ins (td, sp->ins);
+						interp_clear_ins (td, ins);
+
+						ins = interp_insert_ins (td, ins, get_movloc_for_type (td->locals [src_local].mt));
+						ins->data [0] = src_local;
+						ins->data [1] = dest_local;
+						if (vtsize)
+							ins->data [2] = vtsize;
+						mono_interp_stats.movlocs++;
+					}
 				} else {
-					locals [dest_local].ins = NULL;
+					locals [dest_local].type = STACK_VALUE_NONE;
 				}
+			} else if (sp->val.type == STACK_VALUE_NONE) {
+				locals [dest_local].type = STACK_VALUE_NONE;
 			} else {
-				locals [dest_local].ins = NULL;
+				g_assert (sp->val.type == STACK_VALUE_I4 || sp->val.type == STACK_VALUE_I8);
+				if (!(td->locals [dest_local].flags & INTERP_LOCAL_FLAG_INDIRECT))
+					locals [dest_local] = sp->val;
 			}
 			clear_stack_content_info_for_local (stack, sp, dest_local);
 			clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
+		} else if (MINT_IS_LDC_I4 (ins->opcode) || ins->opcode == MINT_LDC_I8) {
+			StackValue val;
+			gboolean is_i8 = ins->opcode == MINT_LDC_I8;
+			InterpInst *prev_ins = interp_prev_ins (ins);
+
+			if (is_i8) {
+				val.type = STACK_VALUE_I8;
+				val.l = READ64 (&ins->data [0]);
+			} else {
+				val.type = STACK_VALUE_I4;
+				val.i = interp_ldc_i4_get_const (ins);
+			}
+
+			if (prev_ins && prev_ins->opcode == MINT_POP &&
+					((is_i8 && sp->val.type == STACK_VALUE_I8 && sp->val.l == val.l) ||
+					(!is_i8 && sp->val.type == STACK_VALUE_I4 && sp->val.i == val.i)) &&
+					!interp_is_bb_start (td, prev_ins, ins)) {
+				// The previous instruction pops the stack of the value we are pushing
+				// right now. We can kill both instructions
+				if (td->verbose_level)
+					g_print ("Kill redundant pop/ldc pair: pop (off %p), ldc (off %p)\n", prev_ins->il_offset, ins->il_offset);
+				interp_clear_ins (td, prev_ins);
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions += 2;
+			} else {
+				sp->ins = ins;
+				sp->val = val;
+			}
+			sp++;
+		} else if (MINT_IS_MOVLOC (ins->opcode)) {
+			int src_local = ins->data [0];
+			int dest_local = ins->data [1];
+			local_ref_count [src_local]++;
+			if (!(td->locals [dest_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
+				if (locals [src_local].type != STACK_VALUE_NONE) {
+					locals [dest_local] = locals [src_local];
+				} else {
+					locals [dest_local].type = STACK_VALUE_LOCAL;
+					locals [dest_local].local = src_local;
+				}
+				clear_stack_content_info_for_local (stack, sp, dest_local);
+				clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
+			}
+		} else if (MINT_IS_STLOC_NP (ins->opcode)) {
+			int dest_local = ins->data [0];
+			// Prevent optimizing away the instruction that pushed the value on the stack
+			sp [-1].ins = NULL;
+			// The local contains the value of the top of stack
+			if (!(td->locals [dest_local].flags & INTERP_LOCAL_FLAG_INDIRECT)) {
+				locals [dest_local] = sp [-1].val;
+				clear_stack_content_info_for_local (stack, sp, dest_local);
+				clear_local_content_info_for_local (locals, locals + td->locals_size, dest_local);
+			}
+		} else if (ins->opcode == MINT_DUP || ins->opcode == MINT_DUP_VT) {
+			sp [0].val = sp [-1].val;
+			sp [0].ins = ins;
+			// If top of stack is known, we could also replace dup with an explicit
+			// propagated instruction, so we remove the top of stack dependency
+			sp [-1].ins = NULL;
+			sp++;
+		} else if (ins->opcode >= MINT_BOX && ins->opcode <= MINT_BOX_NULLABLE) {
+			int offset = ins->data [1];
+			// Clear the stack slot that is boxed
+			memset (&sp [-1 - offset], 0, sizeof (StackContentInfo));
+			// Make sure that the instructions that pushed this stack slot can't be
+			// optimized away. If we would optimize them away, we would also need to
+			// update the offset in the box instruction, which we can't, for now.
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+		} else if (ins->opcode == MINT_CKNULL_N) {
+			int offset = ins->data [0];
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+		} else if (ins->opcode == MINT_LD_DELEGATE_INVOKE_IMPL) {
+			int offset = ins->data [0];
+			for (int i = 1; i <= offset; i++)
+				sp [-i].ins = NULL;
+			memset (sp, 0, sizeof (StackContentInfo));
+			sp++;
+		} else if (ins->opcode == MINT_POP) {
+			sp--;
+			if (sp->ins) {
+				// The top of the stack is not used by any instructions. Kill both the
+				// instruction that pushed it and the pop.
+				interp_clear_ins (td, sp->ins);
+				interp_clear_ins (td, ins);
+				mono_interp_stats.killed_instructions += 2;
+				// The value pop-ed by this instruction can still be accessed. If we also
+				// kill the instruction pushing the value, then we need to empty the
+				// value of the stack, so it is not considered for further optimizations.
+				sp->val.type = STACK_VALUE_NONE;
+			}
+		} else if (ins->opcode == MINT_NEWOBJ_FAST && ins->data [0] == INLINED_METHOD_FLAG) {
+			int param_count = ins->data [1];
+			// memmove the stack values while clearing ins, to prevent instruction removal
+			for (int i = 1; i <= param_count; i++) {
+				sp [-i + 2] = sp [-i];
+				sp [-i + 2].ins = NULL;
+			}
+			// clear stack information for the slots where the allocated object resides
+			memset (&sp [-param_count], 0, 2 * sizeof (StackContentInfo));
+			sp += 2;
+		} else if (ins->opcode == MINT_CASTCLASS || ins->opcode == MINT_CASTCLASS_COMMON || ins->opcode == MINT_CASTCLASS_INTERFACE) {
+			// Keep the value on the stack, but prevent optimizing away
+			sp [-1].ins = NULL;
+		} else if (MINT_IS_CONDITIONAL_BRANCH (ins->opcode)) {
+			sp -= pop;
+			g_assert (push == 0);
+			// We can't clear any instruction that pushes the stack, because the
+			// branched code will expect a certain stack size.
+			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
+				sp_iter->ins = NULL;
 		} else {
 			if (pop == MINT_POP_ALL)
 				pop = sp - stack;
@@ -6483,12 +6730,16 @@ interp_cprop (TransformData *td)
 			g_assert (sp >= stack && sp <= stack_end);
 			g_assert ((sp - push) >= stack && (sp - push) <= stack_end);
 			memset (sp - push, 0, push * sizeof (StackContentInfo));
+			// If this instruction only pushes a single value, make it a candidate for
+			// removal, if its value is not used anywhere.
+			if (push == 1 && pop == 0 && !MINT_IS_CALL (ins->opcode) && !MINT_IS_NEWOBJ (ins->opcode))
+				sp [-1].ins = ins;
 		}
-		// TODO handle dup
 		last_il_offset = ins->il_offset;
 	}
 
-	interp_local_deadce (td, local_ref_count);
+	if (interp_local_deadce (td, local_ref_count))
+		goto retry;
 
 	g_free (stack);
 	g_free (locals);

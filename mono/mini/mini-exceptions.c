@@ -94,8 +94,8 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
-#if !defined(HOST_WIN32) && !defined(DISABLE_CRASH_REPORTING)
-#include <dlfcn.h>
+#if !defined(DISABLE_CRASH_REPORTING)
+#include <gmodule.h>
 #endif
 
 /*
@@ -1422,17 +1422,25 @@ typedef struct {
 } MonoSummarizeUserData;
 
 static void
-copy_summary_string_safe (char *in, const char *out)
+copy_summary_string_safe (char *dest, const char *src)
 {
-	for (int i=0; i < MONO_MAX_SUMMARY_NAME_LEN; i++) {
-		in [i] = out [i];
-		if (out [i] == '\0')
-			return;
-	}
+	g_strlcpy (dest, src, MONO_MAX_SUMMARY_NAME_LEN);
+}
 
-	// Overflowed
-	in [MONO_MAX_SUMMARY_NAME_LEN] = '\0';
-	return;
+static void
+fill_frame_managed_info (MonoFrameSummary *frame, MonoMethod * method)
+{
+		MonoImage *image = mono_class_get_image (method->klass);
+		// Used for hashing, more stable across rebuilds than using GUID
+		copy_summary_string_safe (frame->str_descr, image->assembly_name);
+
+		frame->managed_data.guid = image->guid;
+		frame->managed_data.token = method->token;
+		frame->managed_data.filename = image->module_name;
+
+		MonoDotNetHeader *header = &image->image_info->cli_header;
+		frame->managed_data.image_size = header->nt.pe_image_size;
+		frame->managed_data.time_date_stamp = image->time_date_stamp;
 }
 
 typedef struct {
@@ -1467,14 +1475,26 @@ check_whitelisted_module (const char *in_name, const char **out_module)
 #ifndef MONO_PRIVATE_CRASHES
 		return TRUE;
 #else
-	if (allow_all_native_libraries) {
-		if (out_module)
-			*out_module = "<external module>";
-		return TRUE;
-	}
 	if (g_str_has_suffix (in_name, "mono-sgen")) {
 		if (out_module)
-			*out_module = "mono";
+			copy_summary_string_safe ((char *) *out_module, "mono");
+		return TRUE;
+	}
+	if (allow_all_native_libraries) {
+		if (out_module) {
+			/* for a module name, use the basename of the full path in in_name */
+			char *basename = (char *) in_name, *p = (char *) in_name;
+			while (*p != '\0') {
+				if (*p == '/')
+					basename = p + 1;
+				p++;
+			}
+			if (*basename)
+				copy_summary_string_safe ((char *) *out_module, basename);
+			else
+				copy_summary_string_safe ((char *) *out_module, "unknown");
+
+		}
 		return TRUE;
 	}
 
@@ -1483,7 +1503,7 @@ check_whitelisted_module (const char *in_name, const char **out_module)
 		if (!g_str_has_suffix (in_name, iter->suffix))
 			continue;
 		if (out_module)
-			*out_module = iter->exported_name;
+			copy_summary_string_safe ((char *) *out_module, iter->exported_name);
 		return TRUE;
 	}
 
@@ -1512,21 +1532,20 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	// Note: it's not safe for us to be interrupted while inside of dl_addr, because if we
 	// try to call dl_addr while interrupted while inside the lock, we will try to take a
 	// non-recursive lock twice on this thread, and will deadlock.
-	Dl_info info;
-	gboolean success = dladdr ((void*)in_ip, &info);
+	char sname [256], fname [256];
+	void *saddr = NULL, *fbase = NULL;
+	gboolean success = g_module_address ((void*)in_ip, fname, 256, &fbase, sname, 256, &saddr);
 	if (!success)
 		return FALSE;
 
-	if (!check_whitelisted_module (info.dli_fname, out_module))
+	if (!check_whitelisted_module (fname, out_module))
 		return FALSE;
 
-	*out_ip = mono_make_portable_ip ((intptr_t) info.dli_saddr, (intptr_t) info.dli_fbase);
-	*out_offset = in_ip - (intptr_t) info.dli_saddr;
+	*out_ip = mono_make_portable_ip ((intptr_t) saddr, (intptr_t) fbase);
+	*out_offset = in_ip - (intptr_t) saddr;
 
-#ifndef MONO_PRIVATE_CRASHES
-	if (info.dli_saddr && out_name)
-		copy_summary_string_safe (out_name, info.dli_sname);
-#endif
+	if (saddr && out_name)
+		copy_summary_string_safe (out_name, sname);
 	return TRUE;
 }
 
@@ -1578,6 +1597,7 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 
 	dest->unmanaged_data.ip = (intptr_t) ip;
 	dest->is_managed = managed;
+	dest->unmanaged_data.module [0] = '\0';
 
 	if (!managed && method && method->wrapper_type != MONO_WRAPPER_NONE && method->wrapper_type < MONO_WRAPPER_NUM) {
 		dest->is_managed = FALSE;
@@ -1595,24 +1615,9 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 			ud->error = "Managed method frame, but no provided managed method";
 			return TRUE;
 		}
-
-		MonoImage *image = mono_class_get_image (method->klass);
-		// Used for hashing, more stable across rebuilds than using GUID
-		copy_summary_string_safe (dest->str_descr, image->assembly_name);
-
-		dest->managed_data.guid = image->guid;
-
+		fill_frame_managed_info (dest, method);
 		dest->managed_data.native_offset = native_offset;
-		dest->managed_data.token = method->token;
 		dest->managed_data.il_offset = il_offset;
-
-		dest->managed_data.filename = image->module_name;
-
-		MonoDotNetHeader *header = &image->image_info->cli_header;
-		dest->managed_data.image_size = header->nt.pe_image_size;
-
-		dest->managed_data.time_date_stamp = image->time_date_stamp;
-
 	} else {
 		dest->managed_data.token = -1;
 	}
@@ -1750,10 +1755,31 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 	for (int i =0; i < out->num_unmanaged_frames; ++i) {
 		intptr_t ip = frame_ips [i];
 		MonoFrameSummary *frame = &out->unmanaged_frames [i];
+		const char* module_buf = frame->unmanaged_data.module;
+		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &module_buf, (char *) frame->str_descr);
 
-		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &frame->unmanaged_data.module, (char *) frame->str_descr);
-		if (!success)
+		/* attempt to look up any managed method at that ip */
+		/* TODO: Trampolines - follow examples from mono_print_method_from_ip() */
+
+		MonoJitInfo *ji;
+		MonoDomain *domain = mono_domain_get ();
+		MonoDomain *target_domain;
+		ji = mini_jit_info_table_find_ext (domain, (char *)ip, TRUE, &target_domain);
+		if (ji) {
+			frame->is_managed = TRUE;
+			if (!ji->async && !ji->is_trampoline) {
+				MonoMethod *method = jinfo_get_method (ji);
+				fill_frame_managed_info (frame, method);
+#ifndef MONO_PRIVATE_CRASHES
+				frame->managed_data.name = method->name;
+#endif
+			}
+		}
+
+		if (!success && !ji) {
+			frame->unmanaged_data.ip = ip;
 			continue;
+		}
 
 		if (out->unmanaged_frames [i].str_descr [0] != '\0')
 			out->unmanaged_frames [i].unmanaged_data.has_name = TRUE;
@@ -2192,7 +2218,7 @@ typedef enum {
  * return \c MONO_FIRST_PASS_CALLBACK_TO_NATIVE).
  */
 static MonoFirstPassResult
-handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception, StackFrameInfo *catch_frame)
+handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception, StackFrameInfo *catch_frame, gboolean *has_perform_wait_callback_method)
 {
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
@@ -2445,6 +2471,17 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 					frame.native_offset = (char*)ei->handler_start - (char*)ji->code_start;
 					*catch_frame = frame;
 					result = MONO_FIRST_PASS_HANDLED;
+					if (method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
+						//try to find threadpool_perform_wait_callback_method
+						unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &new_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+						while (unwind_res) {
+							if (frame.ji && !frame.ji->is_trampoline && jinfo_get_method (frame.ji) == mono_defaults.threadpool_perform_wait_callback_method) {
+								*has_perform_wait_callback_method = TRUE;
+								break;
+							}
+							unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &new_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+						}
+					}
 					return result;
 				}
 				mono_error_cleanup (isinst_error);
@@ -2649,7 +2686,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 		StackFrameInfo catch_frame;
 		MonoFirstPassResult res;
-		res = handle_exception_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception, &catch_frame);
+		gboolean has_perform_wait_callback_method = FALSE;
+		res = handle_exception_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception, &catch_frame, &has_perform_wait_callback_method);
 
 		if (res == MONO_FIRST_PASS_UNHANDLED) {
 			if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) {
@@ -2688,8 +2726,9 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 			if (unhandled)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
-			else if (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
-				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+			else if (!ji || (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)) {
+				if (!has_perform_wait_callback_method)
+					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 			}
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
@@ -3329,6 +3368,27 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 	if (handle_crash_loop)
 		return;
 
+#ifdef MONO_ARCH_USE_SIGACTION
+	struct sigaction sa;
+	sa.sa_handler = SIG_DFL;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	/* Remove our SIGABRT handler */
+	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
+
+	/* On some systems we get a SIGILL when calling abort (), because it might
+	 * fail to raise SIGABRT */
+	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
+
+	/* Remove SIGCHLD, it uses the finalizer thread */
+	g_assert (sigaction (SIGCHLD, &sa, NULL) != -1);
+
+	/* Remove SIGQUIT, we are already dumping threads */
+	g_assert (sigaction (SIGQUIT, &sa, NULL) != -1);
+
+#endif
+
 	if (mini_debug_options.suspend_on_native_crash) {
 		g_async_safe_printf ("Received %s, suspending...\n", signal);
 		while (1) {
@@ -3366,20 +3426,6 @@ mono_handle_native_crash (const char *signal, MonoContext *mctx, MONO_SIG_HANDLE
 		mono_walk_stack_full (print_stack_frame_signal_safe, mctx, mono_domain_get (), jit_tls, mono_get_lmf (), MONO_UNWIND_LOOKUP_IL_OFFSET, NULL, TRUE);
 		g_async_safe_printf ("=================================================================\n");
 	}
-
-#ifdef MONO_ARCH_USE_SIGACTION
-	struct sigaction sa;
-	sa.sa_handler = SIG_DFL;
-	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	/* Remove our SIGABRT handler */
-	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
-
-	/* On some systems we get a SIGILL when calling abort (), because it might
-	 * fail to raise SIGABRT */
-	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
-#endif
 
 	mono_post_native_crash_handler (signal, mctx, info, mono_do_crash_chaining);
 }

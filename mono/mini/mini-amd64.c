@@ -116,12 +116,12 @@ mono_arch_regname (int reg)
 	return "unknown";
 }
 
-static const char * packed_xmmregs [] = {
+static const char * const packed_xmmregs [] = {
 	"p:xmm0", "p:xmm1", "p:xmm2", "p:xmm3", "p:xmm4", "p:xmm5", "p:xmm6", "p:xmm7", "p:xmm8",
 	"p:xmm9", "p:xmm10", "p:xmm11", "p:xmm12", "p:xmm13", "p:xmm14", "p:xmm15"
 };
 
-static const char * single_xmmregs [] = {
+static const char * const single_xmmregs [] = {
 	"s:xmm0", "s:xmm1", "s:xmm2", "s:xmm3", "s:xmm4", "s:xmm5", "s:xmm6", "s:xmm7", "s:xmm8",
 	"s:xmm9", "s:xmm10", "s:xmm11", "s:xmm12", "s:xmm13", "s:xmm14", "s:xmm15"
 };
@@ -3040,11 +3040,6 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 		}			\
 	} while (0); 
 
-#define EMIT_FPCOMPARE(code) do { \
-	amd64_fcompp (code); \
-	amd64_fnstsw (code); \
-} while (0); 
-
 #define EMIT_SSE2_FPFUNC(code, op, dreg, sreg1) do { \
     amd64_movsd_membase_reg (code, AMD64_RSP, -8, (sreg1)); \
 	amd64_fld_membase (code, AMD64_RSP, -8, TRUE); \
@@ -5953,12 +5948,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_xorpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
 			break;
 		}
-		case OP_SIN:
-			EMIT_SSE2_FPFUNC (code, fsin, ins->dreg, ins->sreg1);
-			break;		
-		case OP_COS:
-			EMIT_SSE2_FPFUNC (code, fcos, ins->dreg, ins->sreg1);
-			break;		
 		case OP_ABS: {
 			static guint64 d = 0x7fffffffffffffffUL;
 
@@ -8683,11 +8672,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	int opcode = 0;
 
 	if (cmethod->klass == mono_class_try_get_math_class ()) {
-		if (strcmp (cmethod->name, "Sin") == 0) {
-			opcode = OP_SIN;
-		} else if (strcmp (cmethod->name, "Cos") == 0) {
-			opcode = OP_COS;
-		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
 			opcode = OP_SQRT;
 		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_ABS;
@@ -8742,7 +8727,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		}
 #endif
 
-		if (!cfg->compile_aot && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
+		if ((mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0 && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
 			int mode = -1;
 			if (!strcmp (cmethod->name, "Round"))
 				mode = 0;

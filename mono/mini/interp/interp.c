@@ -213,14 +213,14 @@ int mono_interp_traceopt = 0;
 
 #if USE_COMPUTED_GOTO
 
-#define MINT_IN_DISPATCH(op) goto *in_labels [op]
+#define MINT_IN_DISPATCH(op) goto *in_labels [opcode = (MintOpcode)(op)]
 #define MINT_IN_SWITCH(op)   MINT_IN_DISPATCH (op);
 #define MINT_IN_BREAK        MINT_IN_DISPATCH (*ip)
 #define MINT_IN_CASE(x)      LAB_ ## x:
 
 #else
 
-#define MINT_IN_SWITCH(op) COUNT_OP(op); switch (op)
+#define MINT_IN_SWITCH(op) COUNT_OP(op); switch (opcode = (MintOpcode)(op))
 #define MINT_IN_CASE(x) case x:
 #define MINT_IN_BREAK break
 
@@ -944,6 +944,15 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, con
 		}									\
 	} while (0)
 
+/* Don't throw exception if thread is in GC Safe mode. Should only happen in managed-to-native wrapper. */
+#define EXCEPTION_CHECKPOINT_GC_UNSAFE	\
+	do {										\
+		if (mono_thread_interruption_request_flag && !mono_threads_is_critical_method (frame->imethod->method) && mono_thread_is_gc_unsafe_mode ()) { \
+			MonoException *exc = mono_thread_interruption_checkpoint ();	\
+			if (exc)							\
+				THROW_EX (exc, ip);					\
+		}									\
+	} while (0)
 
 #define EXCEPTION_CHECKPOINT_IN_HELPER_FUNCTION	\
 	do {										\
@@ -3095,8 +3104,7 @@ mono_interp_box_nullable (InterpFrame* frame, const guint16* ip, stackval* sp, M
 	int const size = mono_class_value_size (c, NULL);
 
 	guint16 offset = ip [2];
-	gboolean const pop_vt_sp = !(offset & BOX_NOT_CLEAR_VT_SP);
-	offset &= ~BOX_NOT_CLEAR_VT_SP;
+	guint16 pop_vt_sp = !ip [3];
 
 	sp [-1 - offset].data.o = mono_nullable_box (sp [-1 - offset].data.p, c, error);
 	mono_interp_error_cleanup (error); /* FIXME: don't swallow the error */
@@ -3116,8 +3124,7 @@ mono_interp_box_vt (InterpFrame* frame, const guint16* ip, stackval* sp)
 	int const size = mono_class_value_size (c, NULL);
 
 	guint16 offset = ip [2];
-	gboolean const pop_vt_sp = !(offset & BOX_NOT_CLEAR_VT_SP);
-	offset &= ~BOX_NOT_CLEAR_VT_SP;
+	guint16 pop_vt_sp = !ip [3];
 
 	OBJREF (o) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 	mono_value_copy_internal (mono_object_get_data (o), sp [-1 - offset].data.p, c);
@@ -3267,6 +3274,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	 * but it may be useful for debug
 	 */
 	while (1) {
+		MintOpcode opcode;
 main_loop:
 		/* g_assert (sp >= frame->stack); */
 		/* g_assert(vt_sp - vtalloc <= frame->imethod->vt_stack_size); */
@@ -3394,11 +3402,14 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_POP) {
-			guint16 u16 = (ip [1]) + 1;
-			if (u16 > 1)
-				memmove (sp - u16, sp - 1, (u16 - 1) * sizeof (stackval));
 			sp--;
-			ip += 2;
+			ip++;
+			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_POP1) {
+			sp [-2] = sp [-1];
+			sp--;
+			ip++;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_JMP) {
@@ -3483,8 +3494,7 @@ main_loop:
 			frame->ip = ip;
 
 			sp = do_icall_wrapper (frame, csignature, opcode, sp, target_ip, save_last_error);
-			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
-				EXCEPTION_CHECKPOINT;
+			EXCEPTION_CHECKPOINT_GC_UNSAFE;
 			CHECK_RESUME_STATE (context);
 			ip += 4;
 			MINT_IN_BREAK;
@@ -4596,7 +4606,7 @@ common_vcall:
 			guint16 param_count;
 			guint16 imethod_index = ip [1];
 
-			const gboolean is_inlined = imethod_index == 0xffff;
+			const gboolean is_inlined = imethod_index == INLINED_METHOD_FLAG;
 
 			param_count = ip [2];
 
@@ -5246,12 +5256,12 @@ common_vcall:
 		}
 		MINT_IN_CASE(MINT_BOX_VT) {
 			vt_sp -= mono_interp_box_vt (frame, ip, sp);
-			ip += 3;
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_BOX_NULLABLE) {
 			vt_sp -= mono_interp_box_nullable (frame, ip, sp, error);
-			ip += 3;
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_NEWARR) {
@@ -5927,8 +5937,7 @@ common_vcall:
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
 			sp = do_icall_wrapper (frame, NULL, *ip, sp, frame->imethod->data_items [ip [1]], FALSE);
-			if (mono_thread_is_gc_unsafe_mode ()) /* do not enter EH in GC Safe state */
-				EXCEPTION_CHECKPOINT;
+			EXCEPTION_CHECKPOINT_GC_UNSAFE;
 			CHECK_RESUME_STATE (context);
 			ip += 2;
 			MINT_IN_BREAK;
@@ -6959,6 +6968,7 @@ register_interp_stats (void)
 	mono_counters_register ("STLOC_NP count", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.stloc_nps);
 	mono_counters_register ("MOVLOC count", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.movlocs);
 	mono_counters_register ("Copy propagations", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.copy_propagations);
+	mono_counters_register ("Added pop count", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.added_pop_count);
 	mono_counters_register ("Killed instructions", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.killed_instructions);
 	mono_counters_register ("Methods inlined", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.inlined_methods);
 	mono_counters_register ("Inline failures", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.inline_failures);

@@ -166,8 +166,8 @@ ICALL_EXPORT int ves_icall_System_Threading_Thread_SystemMaxStackSize (void);
 ICALL_EXPORT int ves_icall_get_method_attributes (MonoMethod* method);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char*, const char*);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForAllNativeLibs (void);
-ICALL_EXPORT void ves_icall_System_Array_GetGenericValueImpl (MonoArray*, guint32, gpointer);
-ICALL_EXPORT void ves_icall_System_Array_SetGenericValueImpl (MonoArray*, guint32, gpointer);
+ICALL_EXPORT void ves_icall_System_Array_GetGenericValue_icall (MonoArray**, guint32, gpointer);
+ICALL_EXPORT void ves_icall_System_Array_SetGenericValue_icall (MonoArray**, guint32, gpointer);
 ICALL_EXPORT void ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32 count);
 ICALL_EXPORT void ves_icall_System_Environment_Exit (int);
 ICALL_EXPORT void ves_icall_System_GCHandle_FreeHandle (guint32 handle);
@@ -215,5 +215,6 @@ ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClas
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max);
 ICALL_EXPORT MonoBoolean ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode);
 ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (void);
 
 #endif // __MONO_METADATA_ICALL_H__

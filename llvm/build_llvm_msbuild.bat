@@ -79,7 +79,7 @@ if not "%MONO_LLVM_INSTALL_DIR%" == "" (
     set VS_BUILD_ARGS=%VS_BUILD_ARGS% /p:_LLVMInstallDir="%MONO_LLVM_INSTALL_DIR%"
 )
 
-set VS_BUILD_ARGS=%VS_BUILD_ARGS% /p:MONO_ENABLE_LLVM=true /p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% %VS_ADDITIONAL_ARGUMENTS% /t:%VS_TARGET%
+set VS_BUILD_ARGS=%VS_BUILD_ARGS% /p:MONO_ENABLE_LLVM=true /p:Configuration=%VS_CONFIGURATION% /p:Platform=%VS_PLATFORM% %VS_ADDITIONAL_ARGUMENTS% /t:%VS_TARGET% /m
 call msbuild.exe %VS_BUILD_ARGS% "%MONO_MSVC_SOURCE_DIR%build-external-llvm.vcxproj" && (
     set BUILD_RESULT=0
 ) || (

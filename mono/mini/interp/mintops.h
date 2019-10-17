@@ -27,10 +27,10 @@ typedef enum
 } MintOpArgType;
 
 #define OPDEF(a,b,c,d,e,f) a,
-enum {
+typedef enum {
 #include "mintops.def"
 	MINT_LASTOP
-};
+} MintOpcode;
 #undef OPDEF
 
 #if NO_UNALIGNED_ACCESS
@@ -58,6 +58,10 @@ enum {
 #define MINT_IS_STLOC(op) ((op) >= MINT_STLOC_I1 && (op) <= MINT_STLOC_VT)
 #define MINT_IS_MOVLOC(op) ((op) >= MINT_MOVLOC_1 && (op) <= MINT_MOVLOC_VT)
 #define MINT_IS_STLOC_NP(op) ((op) >= MINT_STLOC_NP_I4 && (op) <= MINT_STLOC_NP_O)
+#define MINT_IS_CONDITIONAL_BRANCH(op) ((op) >= MINT_BRFALSE_I4 && (op) <= MINT_BLT_UN_R8_S)
+#define MINT_IS_CALL(op) ((op) >= MINT_CALL && (op) <= MINT_JIT_CALL)
+#define MINT_IS_NEWOBJ(op) ((op) >= MINT_NEWOBJ && (op) <= MINT_NEWOBJ_MAGIC)
+#define MINT_IS_LDC_I4(op) ((op) >= MINT_LDC_I4_M1 && (op) <= MINT_LDC_I4)
 
 #define MINT_POP_ALL	-2
 #define MINT_VAR_PUSH	-1

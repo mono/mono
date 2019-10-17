@@ -1,3 +1,5 @@
+if !ENABLE_MSVC_ONLY
+
 bin_PROGRAMS = sgen-grep-binprot
 
 AM_CPPFLAGS =  $(GLIB_CFLAGS) -I$(top_srcdir)
@@ -9,9 +11,13 @@ noinst_LIBRARIES = libsgen-grep-binprot.a libsgen-grep-binprot32p.a libsgen-grep
 # Main is in a library so it can be C++.
 noinst_LIBRARIES += libmain.a
 
+endif # !ENABLE_MSVC_ONLY
+
 # Default to C so the executable is linked as C and does not use libstdc++.
 # Also the -xc++ flag mishandles .o and .a files.
 CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
+if !ENABLE_MSVC_ONLY
 
 # Libraries are C++ if enabled.
 libmain_a_CFLAGS = @CXX_ADD_CFLAGS@
@@ -39,3 +45,5 @@ sgen_grep_binprot_LDADD = \
 	libmain_a-sgen-grep-binprot-main.$(OBJEXT) \
 	libmain_a-sgen-entry-stream.$(OBJEXT) \
 	$(glib_libs) libsgen-grep-binprot.a libsgen-grep-binprot32p.a libsgen-grep-binprot64p.a
+
+endif # !ENABLE_MSVC_ONLY

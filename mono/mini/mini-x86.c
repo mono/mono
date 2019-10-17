@@ -2383,9 +2383,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STOREI4_MEMBASE_REG:
 			x86_mov_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1, 4);
 			break;
-		case OP_STORE_MEM_IMM:
-			x86_mov_mem_imm (code, ins->inst_p0, ins->inst_c0, 4);
-			break;
 		case OP_LOADU4_MEM:
 			x86_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);
 			break;
@@ -3553,16 +3550,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		case OP_FNEG:
 			x86_fchs (code);
-			break;		
-		case OP_SIN:
-			x86_fsin (code);
-			x86_fldz (code);
-			x86_fp_op_reg (code, X86_FADD, 1, TRUE);
-			break;		
-		case OP_COS:
-			x86_fcos (code);
-			x86_fldz (code);
-			x86_fp_op_reg (code, X86_FADD, 1, TRUE);
 			break;		
 		case OP_ABS:
 			x86_fabs (code);
@@ -4939,6 +4926,8 @@ stack_unaligned (MonoMethod *m, gpointer caller)
 	g_assert_not_reached ();
 }
 
+#ifndef DISABLE_JIT
+
 guint8 *
 mono_arch_emit_prolog (MonoCompile *cfg)
 {
@@ -5168,6 +5157,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	return code;
 }
+
+#endif
 
 void
 mono_arch_emit_epilog (MonoCompile *cfg)
@@ -5589,11 +5580,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	int opcode = 0;
 
 	if (cmethod->klass == mono_class_try_get_math_class ()) {
-		if (strcmp (cmethod->name, "Sin") == 0) {
-			opcode = OP_SIN;
-		} else if (strcmp (cmethod->name, "Cos") == 0) {
-			opcode = OP_COS;
-		} else if (strcmp (cmethod->name, "Tan") == 0) {
+		if (strcmp (cmethod->name, "Tan") == 0) {
 			opcode = OP_TAN;
 		} else if (strcmp (cmethod->name, "Atan") == 0) {
 			opcode = OP_ATAN;

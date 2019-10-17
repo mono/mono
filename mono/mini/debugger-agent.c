@@ -283,7 +283,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 53
+#define MINOR_VERSION 54
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -1646,7 +1646,8 @@ start_debugger_thread (MonoError *error)
 
 	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, error);
 	return_if_nok (error);
-	
+
+	/* Is it possible for the thread to be dead alreay ? */
 	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
 	g_assert (debugger_thread_handle);
 	
@@ -3609,7 +3610,14 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 
 	if (!reqs)
 		return NULL;
-
+	gboolean has_everything_else = FALSE;
+	gboolean is_new_filtered_exception = FALSE;
+	gboolean filteredException = TRUE;
+	gint filtered_suspend_policy = 0;
+	gint filtered_req_id = 0;
+	gint everything_else_suspend_policy = 0;
+	gint everything_else_req_id = 0;
+	gboolean is_already_filtered = FALSE;
 	for (i = 0; i < reqs->len; ++i) {
 		EventRequest *req = (EventRequest *)g_ptr_array_index (reqs, i);
 		if (req->event_kind == event) {
@@ -3631,7 +3639,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 				} else if (mod->kind == MOD_KIND_THREAD_ONLY) {
 					if (mod->data.thread != mono_thread_internal_current ())
 						filtered = TRUE;
-				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && ei) {
+				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && !mod->not_filtered_feature && ei) {
 					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from_internal (mod->data.exc_class, ei->exc->vtable->klass))
 						filtered = TRUE;
 					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class != ei->exc->vtable->klass)
@@ -3640,6 +3648,31 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						filtered = TRUE;
 					if (!ei->caught && !mod->uncaught)
 						filtered = TRUE;
+				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && mod->not_filtered_feature && ei) {
+					is_new_filtered_exception = TRUE;
+					if ((mod->data.exc_class && mod->subclasses && mono_class_is_assignable_from_internal (mod->data.exc_class, ei->exc->vtable->klass)) ||
+					    (mod->data.exc_class && !mod->subclasses && mod->data.exc_class != ei->exc->vtable->klass)) {
+						is_already_filtered = TRUE;
+						if ((ei->caught && mod->caught) || (!ei->caught && mod->uncaught)) {
+							filteredException = FALSE; 
+							filtered_suspend_policy = req->suspend_policy;
+							filtered_req_id = req->id;
+						}
+					}
+					if (!mod->data.exc_class && mod->everything_else) {
+						if ((ei->caught && mod->caught) || (!ei->caught && mod->uncaught)) {
+							has_everything_else = TRUE;
+							everything_else_req_id = req->id;
+							everything_else_suspend_policy = req->suspend_policy;
+						}
+					}
+					if (!mod->data.exc_class && !mod->everything_else) {
+						if ((ei->caught && mod->caught) || (!ei->caught && mod->uncaught)) {
+							filteredException = FALSE; 
+							filtered_suspend_policy = req->suspend_policy;
+							filtered_req_id = req->id;
+						}
+					}
 				} else if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && ji) {
 					int k;
 					gboolean found = FALSE;
@@ -3722,11 +3755,22 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 				}
 			}
 
-			if (!filtered) {
+			if (!filtered && !is_new_filtered_exception) {
 				*suspend_policy = MAX (*suspend_policy, req->suspend_policy);
 				events = g_slist_append (events, GINT_TO_POINTER (req->id));
 			}
 		}
+	}
+
+	if (has_everything_else && !is_already_filtered) {
+		filteredException = FALSE; 
+		filtered_suspend_policy = everything_else_suspend_policy;
+		filtered_req_id = everything_else_req_id;
+	}
+
+	if (!filteredException) {
+		*suspend_policy = MAX (*suspend_policy, filtered_suspend_policy);
+		events = g_slist_append (events, GINT_TO_POINTER (filtered_req_id));
 	}
 
 	/* Send a VM START/DEATH event by default */
@@ -6241,6 +6285,23 @@ clear_types_for_assembly (MonoAssembly *assembly)
 	mono_loader_unlock ();
 }
 
+static void
+dispose_vm (void)
+{
+	/* Clear all event requests */
+	mono_loader_lock ();
+	while (event_requests->len > 0) {
+		EventRequest *req = (EventRequest *)g_ptr_array_index (event_requests, 0);
+
+		clear_event_request (req->id, req->event_kind);
+	}
+	mono_loader_unlock ();
+
+	while (suspend_count > 0)
+		resume_vm ();
+	disconnected = TRUE;
+	vm_start_event_sent = FALSE;
+}
 
 static void
 count_thread_check_gc_finalizer (gpointer key, gpointer value, gpointer user_data)
@@ -6717,7 +6778,7 @@ get_types (gpointer key, gpointer value, gpointer user_data)
 			t = mono_reflection_get_type_checked (ass->image, ass->image, ud->info, ud->ignore_case, TRUE, &type_resolve, probe_type_error);
 			mono_error_cleanup (probe_type_error);
 			if (t) {
-				g_ptr_array_add (ud->res_classes, mono_type_get_class (t));
+				g_ptr_array_add (ud->res_classes, mono_type_get_class_internal (t));
 				g_ptr_array_add (ud->res_domains, domain);
 			}
 		}
@@ -6850,19 +6911,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		clear_suspended_objs ();
 		break;
 	case CMD_VM_DISPOSE:
-		/* Clear all event requests */
-		mono_loader_lock ();
-		while (event_requests->len > 0) {
-			EventRequest *req = (EventRequest *)g_ptr_array_index (event_requests, 0);
-
-			clear_event_request (req->id, req->event_kind);
-		}
-		mono_loader_unlock ();
-
-		while (suspend_count > 0)
-			resume_vm ();
-		disconnected = TRUE;
-		vm_start_event_sent = FALSE;
+		dispose_vm ();
 		break;
 	case CMD_VM_EXIT: {
 		MonoInternalThread *thread;
@@ -6943,8 +6992,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			mono_environment_exitcode_set (exit_code);
 
 			/* Suspend all managed threads since the runtime is going away */
+#ifndef ENABLE_NETCORE
 			DEBUG_PRINTF (1, "Suspending all threads...\n");
 			mono_thread_suspend_all_other_threads ();
+#endif
 			DEBUG_PRINTF (1, "Shutting down the runtime...\n");
 			mono_runtime_quit ();
 			transport_close2 ();
@@ -7230,7 +7281,6 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					req->modifiers [i].subclasses = decode_byte (p, &p, end);
 				else
 					req->modifiers [i].subclasses = TRUE;
-				DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
 				if (exc_class) {
 					req->modifiers [i].data.exc_class = exc_class;
 
@@ -7239,6 +7289,16 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 						return ERR_INVALID_ARGUMENT;
 					}
 				}
+				if (CHECK_PROTOCOL_VERSION (2, 54)) {
+					req->modifiers [i].not_filtered_feature = decode_byte (p, &p, end);
+					req->modifiers [i].everything_else  = decode_byte (p, &p, end);
+					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY 2 filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : (req->modifiers [i].everything_else ? "everything else" : "all"), req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
+				} else {
+					req->modifiers [i].not_filtered_feature = FALSE;
+					req->modifiers [i].everything_else = FALSE;
+					DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? m_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
+				}
+				
 			} else if (mod == MOD_KIND_ASSEMBLY_ONLY) {
 				int n = decode_int (p, &p, end);
 				int j;
@@ -9942,11 +10002,10 @@ debugger_thread (void *arg)
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH) {
 			DEBUG_PRINTF (1, "[dbg] transport_recv () returned %d, expected %d.\n", res, HEADER_LENGTH);
-			len = HEADER_LENGTH;
-			id = 0;
-			flags = 0;
-			command_set = CMD_SET_VM;
-			command = CMD_VM_DISPOSE;
+			command_set = (CommandSet)0;
+			command = 0;
+			dispose_vm ();
+			break;
 		} else {
 			p = header;
 			end = header + HEADER_LENGTH;

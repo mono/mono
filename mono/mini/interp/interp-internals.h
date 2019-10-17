@@ -22,7 +22,7 @@
 #define MINT_TYPE_P  9
 #define MINT_TYPE_VT 10
 
-#define BOX_NOT_CLEAR_VT_SP 0x4000
+#define INLINED_METHOD_FLAG 0xffff
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -201,6 +201,7 @@ typedef struct {
 	gint32 movlocs;
 	gint32 copy_propagations;
 	gint32 killed_instructions;
+	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

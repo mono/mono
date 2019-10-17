@@ -1015,38 +1015,31 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 }
 
 void
-ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_GetGenericValue_icall (MonoArray **arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
-
-	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
+	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, *arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-	MonoClass * const ac = mono_object_class (arr);
+	MonoClass * const ac = mono_object_class (*arr);
 	gsize const esize = mono_array_element_size (ac);
-	gconstpointer * const ea = (gconstpointer*)((char*)arr->vector + (pos * esize));
+	gconstpointer * const ea = (gconstpointer*)((char*)(*arr)->vector + (pos * esize));
 
 	mono_gc_memmove_atomic (value, ea, esize);
 }
 
 void
-ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_SetGenericValue_icall (MonoArray **arr, guint32 pos, gpointer value)
 {
-	// FIXME?
-	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
-
-	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
+	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, *arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-
-	MonoClass * const ac = mono_object_class (arr);
+	MonoClass * const ac = mono_object_class (*arr);
 	MonoClass * const ec = m_class_get_element_class (ac);
 
 	gsize const esize = mono_array_element_size (ac);
-	gpointer * const ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	gpointer * const ea = (gpointer*)((char*)(*arr)->vector + (pos * esize));
 
 	if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (ec))) {
 		g_assert (esize == sizeof (gpointer));
@@ -3106,16 +3099,19 @@ ves_icall_RuntimeType_get_Name (MonoReflectionTypeHandle reftype, MonoError *err
 	MonoDomain *domain = mono_domain_get ();
 	MonoType *type = MONO_HANDLE_RAW(reftype)->type; 
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
+	// FIXME: this should be escaped in some scenarios with mono_identifier_escape_type_name_chars
+	// Determining exactly when to do so is fairly difficult, so for now we don't bother to avoid regressions
+	const char *klass_name = m_class_get_name (klass);
 
 	if (type->byref) {
-		char *n = g_strdup_printf ("%s&", m_class_get_name (klass));
+		char *n = g_strdup_printf ("%s&", klass_name);
 		MonoStringHandle res = mono_string_new_handle (domain, n, error);
 
 		g_free (n);
 
 		return res;
 	} else {
-		return mono_string_new_handle (domain, m_class_get_name (klass), error);
+		return mono_string_new_handle (domain, klass_name, error);
 	}
 }
 
@@ -3131,8 +3127,11 @@ ves_icall_RuntimeType_get_Namespace (MonoReflectionTypeHandle type, MonoError *e
 
 	if (m_class_get_name_space (klass) [0] == '\0')
 		return NULL_HANDLE_STRING;
-	else
-		return mono_string_new_handle (domain, m_class_get_name_space (klass), error);
+
+	char *escaped = mono_identifier_escape_type_name_chars (m_class_get_name_space (klass));
+	MonoStringHandle res = mono_string_new_handle (domain, escaped, error);
+	g_free (escaped);
+	return res;
 }
 
 gint32
@@ -3505,6 +3504,86 @@ ves_icall_RuntimeMethodInfo_GetGenericMethodDefinition (MonoReflectionMethodHand
 
 	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (ref_method), result, NULL, error);
 }
+
+#ifdef ENABLE_NETCORE
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (stream, "System.IO", "Stream")
+static int io_stream_begin_read_slot = -1;
+static int io_stream_begin_write_slot = -1;
+static int io_stream_end_read_slot = -1;
+static int io_stream_end_write_slot = -1;
+static gboolean io_stream_slots_set = FALSE;
+
+static void
+init_io_stream_slots (void)
+{
+	MonoClass* klass = mono_class_try_get_stream_class ();
+	mono_class_setup_vtable (klass);
+	MonoMethod **klass_methods = m_class_get_methods (klass);
+	if (!klass_methods) {
+		mono_class_setup_methods (klass);
+		klass_methods = m_class_get_methods (klass);
+	}
+	int method_count = mono_class_get_method_count (klass);
+	int methods_found = 0;
+	for (int i = 0; i < method_count; i++) {
+		// find slots for Begin(End)Read and Begin(End)Write
+		MonoMethod* m = klass->methods [i];
+		if (m->slot == -1)
+			continue;
+
+		if (!strcmp (m->name, "BeginRead")) {
+			methods_found++;
+			io_stream_begin_read_slot = m->slot;
+		} else if (!strcmp (m->name, "BeginWrite")) {
+			methods_found++;
+			io_stream_begin_write_slot = m->slot;
+		} else if (!strcmp (m->name, "EndRead")) {
+			methods_found++;
+			io_stream_end_read_slot = m->slot;
+		} else if (!strcmp (m->name, "EndWrite")) {
+			methods_found++;
+			io_stream_end_write_slot = m->slot;
+		}
+	}
+	g_assert (methods_found <= 4); // some of them can be linked out
+	io_stream_slots_set = TRUE;
+}
+
+MonoBoolean
+ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, MonoError *error)
+{
+	MonoClass* curr_klass = MONO_HANDLE_GET_CLASS (stream);
+	MonoClass* base_klass = mono_class_try_get_stream_class ();
+
+	if (!io_stream_slots_set)
+		init_io_stream_slots ();
+
+	// slots can still be -1 and it means Linker removed the methods from the base class (Stream)
+	// in this case we can safely assume the methods are not overridden
+	// otherwise - check vtable
+	gboolean begin_read_is_overriden = io_stream_begin_read_slot != -1 && curr_klass->vtable [io_stream_begin_read_slot]->klass != base_klass;
+	gboolean end_read_is_overriden = io_stream_end_read_slot != -1 && curr_klass->vtable [io_stream_end_read_slot]->klass != base_klass;
+
+	// return true if BeginRead or EndRead were overriden
+	return begin_read_is_overriden || end_read_is_overriden;
+}
+
+MonoBoolean
+ves_icall_System_IO_Stream_HasOverriddenBeginEndWrite (MonoObjectHandle stream, MonoError *error)
+{
+	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
+	MonoClass* base_klass = mono_class_try_get_stream_class ();
+
+	if (!io_stream_slots_set)
+		init_io_stream_slots ();
+
+	gboolean begin_write_is_overriden = curr_klass->vtable [io_stream_begin_write_slot]->klass != base_klass;
+	gboolean end_write_is_overriden = curr_klass->vtable [io_stream_end_write_slot]->klass != base_klass;
+
+	// return true if BeginWrite or EndWrite were overriden
+	return begin_write_is_overriden || end_write_is_overriden;
+}
+#endif
 
 MonoBoolean
 ves_icall_RuntimeMethodInfo_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
@@ -5045,7 +5124,7 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHand
 	}
 
 	if (type->type == MONO_TYPE_CLASS) {
-		MonoClass *klass = mono_type_get_class (type);
+		MonoClass *klass = mono_type_get_class_internal (type);
 
 		/* need to report exceptions ? */
 		if (throwOnError && mono_class_has_failure (klass)) {
@@ -6107,7 +6186,7 @@ assembly_get_types (MonoReflectionAssemblyHandle assembly_handle, MonoBoolean ex
 		MONO_HANDLE_ARRAY_GETREF (t, res, i);
 
 		if (!MONO_HANDLE_IS_NULL (t)) {
-			MonoClass *klass = mono_type_get_class (MONO_HANDLE_GETVAL (t, type));
+			MonoClass *klass = mono_type_get_class_internal (MONO_HANDLE_GETVAL (t, type));
 			if ((klass != NULL) && mono_class_has_failure (klass)) {
 				/* keep the class in the list */
 				list = g_list_append (list, klass);
@@ -6265,7 +6344,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 void
 ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
 {
-	mono_assembly_name_free (aname);
+	mono_assembly_name_free_internal (aname);
 	if (free_struct)
 		g_free (aname);
 }
@@ -6295,10 +6374,10 @@ ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry (const char *key, const char *
 }
 
 void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath, configDir);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, appPath, configDir);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
@@ -7201,6 +7280,66 @@ mono_array_get_byte_length (MonoArrayHandle array)
 	}
 }
 
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Buffer_BlockCopy (MonoArrayHandle src, int src_offset, MonoArrayHandle dst, int dst_offset, int count, MonoError *error)
+{
+	MONO_CHECK_ARG_NULL_HANDLE (src,);
+	MONO_CHECK_ARG_NULL_HANDLE (dst,);
+
+	if (src_offset < 0) {
+		mono_error_set_argument_out_of_range (error, "srcOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	if (dst_offset < 0) {
+		mono_error_set_argument_out_of_range (error, "dstOffset", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	if (count < 0) {
+		mono_error_set_argument_out_of_range (error, "count", "Value must be non-negative and less than or equal to Int32.MaxValue.");
+		return;
+	}
+
+	MonoClass * const src_class = m_class_get_element_class (MONO_HANDLE_GETVAL (src, obj.vtable)->klass);
+	MonoClass * const dst_class = m_class_get_element_class (MONO_HANDLE_GETVAL (dst, obj.vtable)->klass);
+
+	if (!m_class_is_primitive (src_class)) {
+		mono_error_set_argument (error, "src", "Object must be an array of primitives.");
+		return;
+	}
+
+	if (!m_class_is_primitive (dst_class)) {
+		mono_error_set_argument (error, "dst", "Object must be an array of primitives.");
+		return;
+	}
+
+	if ((src_offset > mono_array_get_byte_length (src) - count) || (dst_offset > mono_array_get_byte_length (dst) - count)) {
+		mono_error_set_argument (error, "", "Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
+		return;
+	}
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	guint8 const * const src_buf = (guint8*)MONO_HANDLE_RAW (src)->vector + src_offset;
+	guint8* const dst_buf = (guint8*)MONO_HANDLE_RAW (dst)->vector + dst_offset;
+
+	memmove (dst_buf, src_buf, count);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
+	return;
+}
+
+MonoBoolean
+ves_icall_System_Buffer_IsPrimitiveTypeArray (MonoArrayHandle array, MonoError* error)
+{
+	MonoClass * const klass = m_class_get_element_class (MONO_HANDLE_GETVAL (array, obj.vtable)->klass);
+	return m_class_is_primitive (klass);
+}
+#endif
+
 gint32
 ves_icall_System_Buffer_ByteLengthInternal (MonoArrayHandle array, MonoError* error)
 {
@@ -7577,8 +7716,10 @@ ves_icall_System_Environment_Exit (int result)
 	if (!mono_runtime_try_shutdown ())
 		mono_thread_exit ();
 
+#ifndef ENABLE_NETCORE
 	/* Suspend all managed threads since the runtime is going away */
 	mono_thread_suspend_all_other_threads ();
+#endif
 
 	mono_runtime_quit ();
 
@@ -8780,7 +8921,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void)
 }
 
 MonoBoolean
-ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (MonoError *error)
+ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (void)
 {
 #if HAVE_BTLS
 	return TRUE;

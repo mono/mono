@@ -21,14 +21,14 @@ endif
 
 if ENABLE_NETCORE
 update_submodules = 
-SUBDIRS = mk llvm mono runtime netcore
+SUBDIRS = mk llvm mono runtime netcore netcore/corerun
 else
 update_submodules = update_submodules
 SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
 endif
 
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = $(build_with_msvc) m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools $(build_without_msvc) docs acceptance-tests netcore
+DIST_SUBDIRS = $(build_with_msvc) m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools $(build_without_msvc) docs acceptance-tests netcore netcore/corerun
 
 all: $(update_submodules)
 

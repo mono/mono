@@ -424,17 +424,41 @@ namespace System
 			}
 		}
 
+		static bool TrySZBinarySearch (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZIndexOf (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZLastIndexOf (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZReverse (Array array, int index, int count) => false;
+
+		static bool TrySZSort (Array keys, Array? items, int left, int right) => false;
+
 		public int GetUpperBound (int dimension)
 		{
 			return GetLowerBound (dimension) + GetLength (dimension) - 1;
 		}
 
+		[Intrinsic]
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawSzArrayData ()
 		{
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
+		[Intrinsic]
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawArrayData ()
 		{
@@ -496,7 +520,7 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void GetGenericValueImpl<T> (int pos, out T value);
+		extern static void GetGenericValue_icall<T> (ref Array self, int pos, out T value);
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -504,7 +528,21 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void SetGenericValueImpl<T> (int pos, ref T value);
+		extern static void SetGenericValue_icall<T> (ref Array self, int pos, ref T value);
+
+		// This is a special case in the runtime.
+		void GetGenericValueImpl<T> (int pos, out T value)
+		{
+			var self = this;
+			GetGenericValue_icall (ref self, pos, out value);
+		}
+
+		// This is a special case in the runtime.
+		void SetGenericValueImpl<T> (int pos, ref T value)
+		{
+			var self = this;
+			SetGenericValue_icall (ref self, pos, ref value);
+		}
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -567,6 +605,7 @@ namespace System
 				ThrowHelper.ThrowArgumentOutOfRange_IndexException ();
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -597,6 +636,7 @@ namespace System
 				ThrowHelper.ThrowArgumentOutOfRange_IndexException ();
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -611,6 +651,7 @@ namespace System
 				return;
 			}
 
+			// Do not change this to call SetGenericValue_icall directly, due to special casing in the runtime.
 			SetGenericValueImpl (index, ref item);
 		}
 	}

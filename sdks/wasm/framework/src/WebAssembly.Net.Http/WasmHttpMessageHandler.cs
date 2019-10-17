@@ -34,7 +34,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 		/// <summary>
 		/// Gets or sets whether responses should be streamed if supported
 		/// </summary>
-		public static bool StreamingEnabled { get; set; } = true;
+		public static bool StreamingEnabled { get; set; } = false;
 
 		static WasmHttpMessageHandler ()
 		{

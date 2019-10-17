@@ -926,6 +926,7 @@ mono_generic_param_get_base_type (MonoClass *klass);
 typedef struct {
 	MonoImage *corlib;
 	MonoClass *object_class;
+	MonoClass *object_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *byte_class;
 	MonoClass *void_class;
 	MonoClass *boolean_class;
@@ -952,6 +953,7 @@ typedef struct {
 	MonoClass *methodhandle_class;
 	MonoClass *systemtype_class;
 	MonoClass *runtimetype_class;
+	MonoClass *runtimetype_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *exception_class;
 	MonoClass *threadabortexception_class;
 	MonoClass *thread_class;
@@ -974,6 +976,7 @@ typedef struct {
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *attribute_class;
+	MonoClass *attribute_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
 	MonoClass *generic_ienumerator_class;
@@ -1127,6 +1130,9 @@ mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_
 
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
+
+char*
+mono_identifier_escape_type_name_chars (const char* identifier);
 
 char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
