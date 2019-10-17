@@ -122,6 +122,9 @@ namespace System.Threading
 				ValidateThreadState ();
 				return threadpool_thread;
 			}
+			internal set {
+				threadpool_thread = value;
+			}
 		}
 
 		public int ManagedThreadId => managed_id;
@@ -213,6 +216,8 @@ namespace System.Threading
 
 			SleepInternal (millisecondsTimeout);
 		}
+
+		internal static void UninterruptibleSleep0 () => Sleep (0);
 
 		public void Start ()
 		{
