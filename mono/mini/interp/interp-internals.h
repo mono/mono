@@ -181,20 +181,28 @@ struct _InterpFrame {
 	// union is confusing but space-efficient
 	union {
 		InterpFrame *parent; /* parent */
+#if HOST_WASM
 		GSList *finally_ips; /* child */
+#endif
 	};
-	InterpMethod  *imethod; /* parent */
+
+	InterpMethod   *imethod; /* parent */
 	stackval       *retval; /* parent */
 
 	union {
 		stackval       *stack_args; /* parent */
+#if HOST_WASM
 		stackval       *sp;	    /* child */
+#endif
 	};
 
 	union {
 		stackval       *stack;
+#if HOST_WASM
 		guchar         *vt_sp;	/* child */
+#endif
 	};
+
 	/* exception info */
 	const guint16 *ip;
 };
