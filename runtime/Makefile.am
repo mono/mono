@@ -285,12 +285,8 @@ $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
 
-$(tmpinst)/bin/mono-hang-watchdog: ../tools/mono-hang-watchdog/mono-hang-watchdog
-	r=`pwd`; echo aleksey pwd is $$r
+$(tmpinst)/bin/mono-hang-watchdog: ../tools/mono-hang-watchdog/mono-hang-watchdog $(tmpinst)/bin/mono
 	cp -L $< $@
-
-../tools/mono-hang-watchdog/mono-hang-watchdog:
-	cd $(top_srcdir)/tools/mono-hang-watchdog && $(MAKE) mono-hang-watchdog
 
 $(tmpinst)/bin/csc: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
