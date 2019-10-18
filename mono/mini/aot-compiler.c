@@ -5700,27 +5700,6 @@ add_generic_instances (MonoAotCompile *acfg)
 			}
 		}
 
-		/* Same for CompareExchange<T>/Exchange<T> */
-		{
-			MonoGenericContext ctx;
-			MonoType *args [16];
-			MonoMethod *m;
-			MonoClass *interlocked_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "Interlocked");
-			gpointer iter = NULL;
-
-			while ((m = mono_class_get_methods (interlocked_klass, &iter))) {
-				if ((m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && m->is_generic &&
-					(!strcmp (m->name, "CompareExchange_T") || !strcmp (m->name, "Exchange_T"))) {
-					ERROR_DECL (error);
-					memset (&ctx, 0, sizeof (ctx));
-					args [0] = object_type;
-					ctx.method_inst = mono_metadata_get_generic_inst (1, args);
-					add_extra_method (acfg, mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE));
-					g_assert (is_ok (error)); /* FIXME don't swallow the error */
-				}
-			}
-		}
-
 		/* object[] accessor wrappers. */
 		for (i = 1; i < 4; ++i) {
 			MonoClass *obj_array_class = mono_class_create_array (mono_defaults.object_class, i);
@@ -8018,7 +7997,7 @@ parse_cpu_features (const gchar *attr)
 	// TODO: neon, sha1, sha2, asimd, etc...
 #endif
 
-	if (!enabled)
+	if (enabled)
 		mono_cpu_features_enabled = (MonoCPUFeatures) (mono_cpu_features_enabled | feature);
 	else 
 		mono_cpu_features_disabled = (MonoCPUFeatures) (mono_cpu_features_disabled | feature);
@@ -12048,7 +12027,7 @@ compile_asm (MonoAotCompile *acfg)
 	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
 
 #ifdef TARGET_WIN32_MSVC
-#define AS_OPTIONS "-c -x assembler"
+#define AS_OPTIONS "--target=x86_64-pc-windows-msvc -c -x assembler"
 #elif defined(TARGET_AMD64) && !defined(TARGET_MACH)
 #define AS_OPTIONS "--64"
 #elif defined(TARGET_POWERPC64)

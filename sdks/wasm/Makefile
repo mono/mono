@@ -537,6 +537,10 @@ run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
 
+run-browser-safar-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+	(cd $(BROWSER_TEST) && npm run testsafari)
+
+
 clean: clean-browser-tests
 	$(RM) -r *.o
 	$(RM) -r ./obj

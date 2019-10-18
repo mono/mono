@@ -5,6 +5,7 @@ var MonoSupportLib = {
 		pump_count: 0,
 		timeout_queue: [],
 		mono_wasm_runtime_is_ready : false,
+		mono_wasm_ignore_pdb_load_errors: true,
 		pump_message: function () {
 			if (!this.mono_background_exec)
 				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
@@ -192,10 +193,21 @@ var MonoSupportLib = {
 				var fetch_promise = fetch_file_cb (locateFile(deploy_prefix + "/" + file_name));
 
 				fetch_promise.then (function (response) {
-					if (!response.ok)
-						throw "failed to load '" + file_name + "'";
-					loaded_files.push (response.url);
-					return response ['arrayBuffer'] ();
+					if (!response.ok) {
+						// If it's a 404 on a .pdb, we don't want to block the app from starting up.
+          					// We'll just skip that file and continue (though the 404 is logged in the console).
+						if (response.status === 404 && file_name.match(/\.pdb$/) && MONO.mono_wasm_ignore_pdb_load_errors) {
+							--pending;
+							throw "MONO-WASM: Skipping failed load for .pdb file: '" + file_name + "'";
+						}
+						else {
+							throw "MONO_WASM: Failed to load file: '" + file_name + "'";
+						}
+					}
+					else {
+						loaded_files.push (response.url);
+						return response ['arrayBuffer'] ();
+					}
 				}).then (function (blob) {
 					var asm = new Uint8Array (blob);
 					var memory = Module._malloc(asm.length);
@@ -203,7 +215,7 @@ var MonoSupportLib = {
 					heapBytes.set (asm);
 					mono_wasm_add_assembly (file_name, memory, asm.length);
 
-					console.log ("Loaded: " + file_name);
+					console.log ("MONO_WASM: Loaded: " + file_name);
 					--pending;
 					if (pending == 0) {
 						MONO.loaded_files = loaded_files;
