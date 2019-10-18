@@ -112,7 +112,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_SECURITY_ALIAS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -1085,8 +1085,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -1224,8 +1222,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -1320,8 +1316,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -1448,8 +1442,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -1572,8 +1564,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -1896,8 +1886,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -2368,8 +2356,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -2880,8 +2866,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -3380,8 +3364,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -3814,8 +3796,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -3951,8 +3931,6 @@
         <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
         <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -4104,8 +4082,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -4224,8 +4200,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -4365,8 +4339,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
@@ -4506,8 +4478,6 @@
             <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
             <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
