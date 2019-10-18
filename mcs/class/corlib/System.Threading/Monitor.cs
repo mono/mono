@@ -67,7 +67,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Monitor_wait(object obj, int ms, bool allowInterruption);
+		extern static bool Monitor_wait(object obj, int ms);
 
 		static bool ObjWait(bool exitContext, int millisecondsTimeout, Object obj)
 		{
@@ -82,7 +82,7 @@ namespace System.Threading
 					SynchronizationAttribute.ExitContext ();
 #endif
 
-				return Monitor_wait (obj, millisecondsTimeout, true);
+				return Monitor_wait (obj, millisecondsTimeout);
 			} finally {
 #if FEATURE_REMOTING
 				if (exitContext)
@@ -92,7 +92,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, bool allowInterruption, ref bool lockTaken);
+		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
 
 		static void ReliableEnterTimeout(Object obj, int timeout, ref bool lockTaken)
 		{
@@ -101,7 +101,7 @@ namespace System.Threading
 			if (timeout < 0 && timeout != (int) Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			try_enter_with_atomic_var (obj, timeout, true, ref lockTaken);
+			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
 		}
 
 		static void ReliableEnter(Object obj, ref bool lockTaken)
@@ -116,5 +116,9 @@ namespace System.Threading
 		{
 			return Monitor_test_owner (obj);
 		}
+		
+#if NETCORE
+		public static long LockContentionCount => throw new PlatformNotSupportedException ();
+#endif
 	}
 }

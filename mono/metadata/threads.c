@@ -1758,8 +1758,8 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	mono_thread_name_cleanup (&this_obj->name);
 }
 
-void
-ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
+static void
+mono_sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
 {
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
@@ -1803,6 +1803,20 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_i
 		return;
 	}
 }
+
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
+{
+	return mono_sleep_internal (ms, allow_interruption, error);
+}
+#else
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+{
+	return mono_sleep_internal (ms, TRUE, error);
+}
+#endif
 
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)

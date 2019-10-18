@@ -1221,11 +1221,19 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 	*lockTaken = res == 1;
 }
 
+#ifdef ENABLE_NETCORE
 void
 ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean allow_interruption, MonoBoolean* lockTaken, MonoError* error)
 {
 	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, allow_interruption, lockTaken, error);
 }
+#else
+void
+ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean* lockTaken, MonoError* error)
+{
+	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, TRUE, lockTaken, error);
+}
+#endif
 
 /**
  * mono_monitor_enter_v4:
@@ -1359,8 +1367,8 @@ ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, Mono
 	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
 }
 
-MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
+static MonoBoolean
+mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
 
@@ -1476,13 +1484,27 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 	return success;
 }
 
+#ifdef ENABLE_NETCORE
+MonoBoolean
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
+{
+	return mono_monitor_wait (obj_handle, ms, allow_interruption, error);
+}
+#else
+MonoBoolean
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
+{
+	return mono_monitor_wait (obj_handle, ms, TRUE, error);
+}
+#endif
+
 void
 ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObjectHandle obj, MonoError* error)
 {
 	mono_monitor_enter_internal (MONO_HANDLE_RAW (obj));
 }
 
-#if ENABLE_NETCORE
+#ifdef ENABLE_NETCORE
 gint64
 ves_icall_System_Threading_Monitor_Monitor_LockContentionCount (void)
 {
