@@ -3778,6 +3778,7 @@ if test x$host_win32 = xno; then
 			AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
 			AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS_SPNEGO_MECHANISM])
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
@@ -3789,6 +3790,7 @@ if test x$host_win32 = xno; then
 	],[
 			AC_MSG_RESULT(yes)
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
@@ -6391,7 +6393,11 @@ elif test x$host_linux = xyes; then
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
 	MONO_NATIVE_CFLAGS=$CFLAGS
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
-
+	if test x$enable_gss = xyes; then
+		MONO_NATIVE_LDFLAGS="$MONO_NATIVE_LDFLAGS -lgssapi_krb5"
+	else
+		AC_MSG_WARN([GSS is not enabled, it requires libkrb5-dev package])
+	fi
 	mono_native=yes
 	mono_native_compat=no
 	MONO_NATIVE_PLATFORM=linux
