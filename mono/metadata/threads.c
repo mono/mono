@@ -1759,7 +1759,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 }
 
 void
-ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
 {
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
@@ -1782,19 +1782,22 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
-		SETUP_ICALL_FRAME;
+		if (allow_interruption) {
+			SETUP_ICALL_FRAME;
 
-		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+			MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-		const gboolean interrupt = mono_thread_execute_interruption (&exc);
+			const gboolean interrupt = mono_thread_execute_interruption (&exc);
 
-		if (interrupt)
-			mono_set_pending_exception_handle (exc);
+			if (interrupt)
+				mono_set_pending_exception_handle (exc);
 
-		CLEAR_ICALL_FRAME;
+			CLEAR_ICALL_FRAME;
 
-		if (interrupt)
-			return;
+			if (interrupt)
+				return;
+		}
+
 		if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
 			continue;
 		return;

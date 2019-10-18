@@ -6,15 +6,36 @@ using System.Diagnostics;
 
 namespace System.Threading
 {
-	// FIXME: LowLevelLock should be uninterruptible
+	// This class provides implementation of uninterruptible lock for internal
+	// use by thread pool.
 	internal class LowLevelLock : IDisposable
 	{
-		public void Dispose () {}
-		public bool TryAcquire() => Monitor.TryEnter (this);
-		public void Acquire() => Monitor.Enter (this);
-		public void Release() => Monitor.Exit (this);
+		public void Dispose ()
+		{
+		}
+
+		public bool TryAcquire()
+		{
+			bool lockTaken = false;
+			Monitor.try_enter_with_atomic_var (this, 0, false, ref lockTaken);
+			return lockTaken;
+		}
+
+		public void Acquire()
+		{
+			bool lockTaken = false;
+			Monitor.try_enter_with_atomic_var (this, Timeout.Infinite, false, ref lockTaken);
+		}
+
+		public void Release()
+		{
+			Monitor.Exit (this);
+		}
 
 		[Conditional("DEBUG")]
-		public void VerifyIsLocked() {}
+		public void VerifyIsLocked()
+		{
+			Debug.Assert (Monitor.IsEntered (this));
+		}
 	}
 }

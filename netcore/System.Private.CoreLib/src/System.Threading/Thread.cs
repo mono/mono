@@ -214,10 +214,10 @@ namespace System.Threading
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (millisecondsTimeout), millisecondsTimeout, SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
 
-			SleepInternal (millisecondsTimeout);
+			SleepInternal (millisecondsTimeout, true);
 		}
 
-		internal static void UninterruptibleSleep0 () => Sleep (0);
+		internal static void UninterruptibleSleep0 () => SleepInternal (0, false);
 
 		public void Start ()
 		{
@@ -310,7 +310,7 @@ namespace System.Threading
 		extern static bool YieldInternal ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void SleepInternal (int millisecondsTimeout);
+		extern static void SleepInternal (int millisecondsTimeout, bool allowInterruption);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static void SpinWait_nop ();

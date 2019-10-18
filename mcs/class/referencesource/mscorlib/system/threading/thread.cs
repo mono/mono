@@ -786,7 +786,7 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
 #endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern void SleepInternal(int millisecondsTimeout);
+        private static extern void SleepInternal(int millisecondsTimeout, bool allowInterruption);
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void Sleep(int millisecondsTimeout)
@@ -795,7 +795,7 @@ namespace System.Threading {
             if (millisecondsTimeout < Timeout.Infinite)
                 throw new ArgumentOutOfRangeException("millisecondsTimeout", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
 #endif
-            SleepInternal(millisecondsTimeout);
+            SleepInternal(millisecondsTimeout, true);
 #if !MONO
             // Ensure we don't return to app code when the pause is underway
             if(AppDomainPauseManager.IsPaused)

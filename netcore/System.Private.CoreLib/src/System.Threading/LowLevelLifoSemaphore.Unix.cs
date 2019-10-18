@@ -6,7 +6,6 @@ using Internal.Runtime.CompilerServices;
 
 namespace System.Threading
 {
-	// FIXME: LowLevelLifoSemaphore should be uninterruptible
 	internal unsafe sealed partial class LowLevelLifoSemaphore : IDisposable
 	{
 		struct WaitEntry
@@ -35,8 +34,12 @@ namespace System.Threading
 		private bool WaitCore (int timeoutMs)
 		{
 			WaitEntry wait_entry = new WaitEntry ();
+			bool mutexLocked = false;
+			bool waitEntryLocked = false;
 
-			lock (mutex) {
+			try {
+				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
+
 				if (pending_signals > 0) {
 					--pending_signals;
 					return true;
@@ -50,14 +53,27 @@ namespace System.Threading
 				}
 				head = Unsafe.AsPointer<WaitEntry> (ref wait_entry);
 			}
-
-			lock (wait_entry.condition) {
-				if (!wait_entry.signaled) {
-					Monitor.Wait (wait_entry.condition, timeoutMs, false);
+			finally {
+				if (mutexLocked) {
+					Monitor.Exit (mutex);
 				}
 			}
+
+			try {
+				Monitor.try_enter_with_atomic_var (wait_entry.condition, Timeout.Infinite, false, ref waitEntryLocked);
+				if (!wait_entry.signaled) {
+					Monitor.Monitor_wait (wait_entry.condition, timeoutMs, false);
+				}
+			}
+			finally {
+				if (waitEntryLocked)
+					Monitor.Exit (wait_entry.condition);
+			}
 	
-			lock (mutex) {
+			mutexLocked = false;
+			try {
+				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
+
 				if (!wait_entry.signaled) {
 					if (head == Unsafe.AsPointer<WaitEntry> (ref wait_entry)) {
 						head = wait_entry.next;
@@ -70,13 +86,20 @@ namespace System.Threading
 					}
 				}
 			}
+			finally {
+				if (mutexLocked) {
+					Monitor.Exit (mutex);
+				}
+			}
 
 			return wait_entry.signaled;
 		}
 
 		private void ReleaseCore (int count)
 		{
-			lock (mutex) {
+			bool mutexLocked = false;
+			try {
+				Monitor.try_enter_with_atomic_var (mutex, Timeout.Infinite, false, ref mutexLocked);
 				while (count > 0) {
 					if (head != null) {
 						ref WaitEntry wait_entry = ref Unsafe.AsRef<WaitEntry> (head);
@@ -96,6 +119,11 @@ namespace System.Threading
 						pending_signals += (uint)count;
 						count = 0;
 					}
+				}
+			}
+			finally {
+				if (mutexLocked) {
+					Monitor.Exit (mutex);
 				}
 			}
 		}
