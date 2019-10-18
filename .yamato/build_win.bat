@@ -8,5 +8,5 @@ if NOT %errorlevel% == 0 (
 )
 echo "mono build script ran successfully"
 
-mkdir -p incomingbuilds\win64
+md incomingbuilds\win64
 xcopy /s /e /h /y builds\* incomingbuilds\win64
