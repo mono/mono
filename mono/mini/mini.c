@@ -4316,7 +4316,7 @@ mini_get_cpu_features (MonoCompile* cfg)
 #endif
 	}
 #endif
-	
+
 	// apply parameters passed via -mattr
 	return (features | mono_cpu_features_enabled) & ~mono_cpu_features_disabled;
 }

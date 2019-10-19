@@ -189,7 +189,9 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
+#if !__WATCHOS__			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif		
 #endif
 		public void Ctor_HttpClientHandler ()
 		{
@@ -1109,7 +1111,9 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
+#if !__WATCHOS__			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif		
 #endif
 		public void Send_Invalid ()
 		{
