@@ -4319,7 +4319,7 @@ mini_get_cpu_features (MonoCompile* cfg)
 	MonoCPUFeatures features_ = features;
 
 	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
-	return features;
+	features_ = (MonoCPUFeatures) (features_ | mono_cpu_features_enabled);
+	features_ = (MonoCPUFeatures) (features_ & ~mono_cpu_features_disabled);
+	return features_;
 }
