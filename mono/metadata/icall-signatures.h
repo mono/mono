@@ -31,7 +31,6 @@
 // mono_icall_sig_double_ptr
 // mono_icall_sig_float_long
 // mono_icall_sig_int_obj
-// mono_icall_sig_int_ptr
 // mono_icall_sig_int16_double
 // mono_icall_sig_int32_double
 // mono_icall_sig_int32_obj
@@ -157,7 +156,6 @@ ICALL_SIG (2, (double, long))			\
 ICALL_SIG (2, (double, ptr))			\
 ICALL_SIG (2, (float, long))			\
 ICALL_SIG (2, (int, obj))			\
-ICALL_SIG (2, (int, ptr))			\
 ICALL_SIG (2, (int16, double))			\
 ICALL_SIG (2, (int32, double))			\
 ICALL_SIG (2, (int32, obj))			\

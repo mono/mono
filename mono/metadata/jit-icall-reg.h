@@ -154,7 +154,6 @@ MONO_JIT_ICALL (mono_arm_start_gsharedvt_call)	\
 MONO_JIT_ICALL (mono_arm_throw_exception)	\
 MONO_JIT_ICALL (mono_arm_throw_exception_by_token)	\
 MONO_JIT_ICALL (mono_arm_unaligned_stack)	\
-MONO_JIT_ICALL (mono_array_element_size) \
 MONO_JIT_ICALL (mono_array_new_1) \
 MONO_JIT_ICALL (mono_array_new_2) \
 MONO_JIT_ICALL (mono_array_new_3) \

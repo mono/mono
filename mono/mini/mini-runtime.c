@@ -4601,7 +4601,6 @@ register_icalls (void)
 	register_icall (mono_create_corlib_exception_0, mono_icall_sig_object_int, TRUE);
 	register_icall (mono_create_corlib_exception_1, mono_icall_sig_object_int_object, TRUE);
 	register_icall (mono_create_corlib_exception_2, mono_icall_sig_object_int_object_object, TRUE);
-	register_icall_no_wrapper (mono_array_element_size, mono_icall_sig_int_ptr);
 	register_icall (mono_array_new_1, mono_icall_sig_object_ptr_int, FALSE);
 	register_icall (mono_array_new_2, mono_icall_sig_object_ptr_int_int, FALSE);
 	register_icall (mono_array_new_3, mono_icall_sig_object_ptr_int_int_int, FALSE);
