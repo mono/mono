@@ -5338,6 +5338,13 @@ common_vcall:
 			ip++;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_ARRAY_ELEMENT_SIZE) {
+			MonoObject* const o = sp [-1].data.o;
+			NULL_CHECK (o);
+			sp [-1].data.i = mono_class_array_element_size (mono_object_class (sp [-1].data.p));
+			ip++;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDELEMA1) {
 			/* No bounds, one direction */
 			MonoArray *ao = (MonoArray*)sp [-2].data.o;
