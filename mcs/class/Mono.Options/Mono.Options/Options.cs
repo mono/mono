@@ -193,20 +193,20 @@ namespace Mono.Options
 {
 	static class StringCoda {
 
-		public static IEnumerable<string> WrappedLines (string self, params int[] widths)
+		public static IEnumerable<string> WrappedLines (string self, string newLine, params int[] widths)
 		{
 			IEnumerable<int> w = widths;
-			return WrappedLines (self, w);
+			return WrappedLines (self, w, newLine);
 		}
 
-		public static IEnumerable<string> WrappedLines (string self, IEnumerable<int> widths)
+		public static IEnumerable<string> WrappedLines (string self, IEnumerable<int> widths, string newLine)
 		{
 			if (widths == null)
 				throw new ArgumentNullException ("widths");
-			return CreateWrappedLinesIterator (self, widths);
+			return CreateWrappedLinesIterator (self, widths, newLine);
 		}
 
-		private static IEnumerable<string> CreateWrappedLinesIterator (string self, IEnumerable<int> widths)
+		private static IEnumerable<string> CreateWrappedLinesIterator (string self, IEnumerable<int> widths, string newLine)
 		{
 			if (string.IsNullOrEmpty (self)) {
 				yield return string.Empty;
@@ -217,7 +217,7 @@ namespace Mono.Options
 				int width = GetNextWidth (ewidths, int.MaxValue, ref hw);
 				int start = 0, end;
 				do {
-					end = GetLineEnd (start, width, self);
+					end = GetLineEnd (start, width, self, newLine);
 					char c = self [end-1];
 					if (char.IsWhiteSpace (c))
 						--end;
@@ -257,7 +257,7 @@ namespace Mono.Options
 			return !char.IsLetterOrDigit (c);
 		}
 
-		private static int GetLineEnd (int start, int length, string description)
+		private static int GetLineEnd (int start, int length, string description, string newLine)
 		{
 			int end = System.Math.Min (start + length, description.Length);
 			int sep = -1;
@@ -1325,7 +1325,7 @@ namespace Mono.Options
 		void WriteDescription (TextWriter o, string value, string prefix, int firstWidth, int remWidth)
 		{
 			bool indent = false;
-			foreach (string line in GetLines (localizer (GetDescription (value)), firstWidth, remWidth)) {
+			foreach (string line in GetLines (localizer (GetDescription (value)), firstWidth, remWidth, o.NewLine)) {
 				if (indent)
 					o.Write (prefix);
 				o.WriteLine (line);
@@ -1455,9 +1455,9 @@ namespace Mono.Options
 			return sb.ToString ();
 		}
 
-		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth)
+		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth, string newLine)
 		{
-			return StringCoda.WrappedLines (description, firstWidth, remWidth);
+			return StringCoda.WrappedLines (description, firstWidth, remWidth, newLine);
 		}
 	}
 
