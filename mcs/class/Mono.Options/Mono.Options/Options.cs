@@ -193,20 +193,20 @@ namespace Mono.Options
 {
 	static class StringCoda {
 
-		public static IEnumerable<string> WrappedLines (string self, string newLine, params int[] widths)
+		public static IEnumerable<string> WrappedLines (string self, params int[] widths)
 		{
 			IEnumerable<int> w = widths;
-			return WrappedLines (self, w, newLine);
+			return WrappedLines (self, w);
 		}
 
-		public static IEnumerable<string> WrappedLines (string self, IEnumerable<int> widths, string newLine)
+		public static IEnumerable<string> WrappedLines (string self, IEnumerable<int> widths)
 		{
 			if (widths == null)
 				throw new ArgumentNullException ("widths");
-			return CreateWrappedLinesIterator (self, widths, newLine);
+			return CreateWrappedLinesIterator (self, widths);
 		}
 
-		private static IEnumerable<string> CreateWrappedLinesIterator (string self, IEnumerable<int> widths, string newLine)
+		private static IEnumerable<string> CreateWrappedLinesIterator (string self, IEnumerable<int> widths)
 		{
 			if (string.IsNullOrEmpty (self)) {
 				yield return string.Empty;
@@ -217,11 +217,11 @@ namespace Mono.Options
 				int width = GetNextWidth (ewidths, int.MaxValue, ref hw);
 				int start = 0, end;
 				do {
-					end = GetLineEnd (start, width, self, newLine);
-					// endCorrection is 1 if the line end is '\n', and might be 2 if the line end is an Environment.NewLine where the system newline is '\r\n'.
+					end = GetLineEnd (start, width, self);
+					// endCorrection is 1 if the line end is '\n', and might be 2 if the line end is '\r\n'.
 					int endCorrection = 1;
-					if (end >= newLine.Length && self.Substring (end - newLine.Length, newLine.Length).Equals (newLine))
-						endCorrection = newLine.Length;
+					if (end >= 2 && self.Substring (end - 2, 2).Equals ("\r\n"))
+						endCorrection = 2;
 					char c = self [end - endCorrection];
 					if (char.IsWhiteSpace (c))
 						end -= endCorrection;
@@ -261,15 +261,13 @@ namespace Mono.Options
 			return !char.IsLetterOrDigit (c);
 		}
 
-		private static int GetLineEnd (int start, int length, string description, string newLine)
+		private static int GetLineEnd (int start, int length, string description)
 		{
-			if (newLine == null)
-				newLine = Environment.NewLine;
 			int end = System.Math.Min (start + length, description.Length);
 			int sep = -1;
 			for (int i = start; i < end; ++i) {
-				if (i + newLine.Length <= description.Length && description.Substring (i, newLine.Length).Equals (newLine))
-					return i+newLine.Length;
+				if (i + 2 <= description.Length && description.Substring (i, 2).Equals ("\r\n"))
+					return i+2;
 				if (description [i] == '\n')
 					return i+1;
 				if (IsEolChar (description [i]))
@@ -1333,7 +1331,7 @@ namespace Mono.Options
 		void WriteDescription (TextWriter o, string value, string prefix, int firstWidth, int remWidth)
 		{
 			bool indent = false;
-			foreach (string line in GetLines (localizer (GetDescription (value)), firstWidth, remWidth, o.NewLine)) {
+			foreach (string line in GetLines (localizer (GetDescription (value)), firstWidth, remWidth)) {
 				if (indent)
 					o.Write (prefix);
 				o.WriteLine (line);
@@ -1463,9 +1461,9 @@ namespace Mono.Options
 			return sb.ToString ();
 		}
 
-		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth, string newLine)
+		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth)
 		{
-			return StringCoda.WrappedLines (description, firstWidth, remWidth, newLine);
+			return StringCoda.WrappedLines (description, firstWidth, remWidth);
 		}
 	}
 
