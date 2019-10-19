@@ -725,6 +725,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (strcmp (cmethod->name, "GetType") == 0 && fsig->param_count + fsig->hasthis == 1) {
 			int dreg = alloc_ireg_ref (cfg);
 			int vt_reg = alloc_preg (cfg);
+
 			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, type));
 			mini_type_from_op (cfg, ins, NULL, NULL);
@@ -754,6 +755,13 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			int dreg = alloc_preg (cfg);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoArray, vector));
 			return ins;
+		}
+		else if (!strcmp (cmethod->name, "GetElementSize")) {
+			int dreg = alloc_ireg (cfg);
+			int vt_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
+			return mono_emit_jit_icall (cfg, mono_array_element_size, &ins);
 		}
 
 #ifndef MONO_BIG_ARRAYS
