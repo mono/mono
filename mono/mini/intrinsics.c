@@ -759,7 +759,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		else if (!strcmp (cmethod->name, "GetElementSize")) {
 			int vt_reg = alloc_preg (cfg);
 			int class_reg = alloc_preg (cfg);
-			int sizes_reg = alloc_preg (cfg);
+			int sizes_reg = alloc_ireg (cfg);
 			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, class_reg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, sizes_reg, class_reg, MONO_STRUCT_OFFSET (MonoClass, sizes));
