@@ -275,10 +275,14 @@ namespace MonoTests.System.Net.Http
 					Assert.AreEqual ("v1", values[0]);
 					break;
 				case 1:
+#if !__WATCHOS__							
 					if (HttpClientTestHelpers.UsingSocketsHandler)
+#endif					
 						Assert.AreEqual ("Cache-Control", entry.Key);
+#if !__WATCHOS__													
 					else
 						Assert.AreEqual ("cache-control", entry.Key);
+#endif						
 					values = entry.Value.ToList ();
 					Assert.AreEqual (1, values.Count);
 					Assert.AreEqual ("audio", values[0]);
