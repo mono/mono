@@ -6294,16 +6294,19 @@ common_vcall:
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_TRACE_EXIT) {
+		MINT_IN_CASE(MINT_TRACE_EXIT)
+		MINT_IN_CASE(MINT_TRACE_EXIT_VOID) {
 			// Set retval
 			int const i32 = READ32 (ip + 1);
-			--sp;
-			if (i32 == -1)
+			if (i32 == -1) {
 				;
-			else if (i32)
+			} else if (i32) {
+				sp--;
 				memcpy(frame->retval->data.p, sp->data.p, i32);
-			else
+			} else {
+				sp--;
 				*frame->retval = *sp;
+			}
 
 			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
 			prof_ctx->interp_frame = frame;
