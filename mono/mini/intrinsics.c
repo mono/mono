@@ -15,6 +15,7 @@
 #include "debugger-agent.h"
 
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/class-abi-details.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/monitor.h>
 #include <mono/utils/mono-memory-model.h>
@@ -762,7 +763,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			int sizes_reg = alloc_ireg (cfg);
 			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, class_reg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, sizes_reg, class_reg, MONO_STRUCT_OFFSET (MonoClass, sizes));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, sizes_reg, class_reg, m_class_offsetof_sizes ());
 			return ins;
 		}
 
