@@ -6307,7 +6307,6 @@ common_vcall:
 			// Set retval
 			int const i32 = READ32 (ip + 1);
 			if (i32 == -1) {
-				;
 			} else if (i32) {
 				sp--;
 				memcpy(frame->retval->data.p, sp->data.p, i32);
