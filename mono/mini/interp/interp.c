@@ -298,6 +298,7 @@ ves_real_abort (int line, MonoMethod *mh,
 	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const unsigned short *) header->code);
 	g_printerr ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
 	mono_metadata_free_mh (header);
+	g_assert_not_reached ();
 }
 
 #define ves_abort() \
