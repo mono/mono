@@ -892,7 +892,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		else
 			/* the lmf is always stored on the stack, so the following
 			 * expression points to a stack location which can be used as ESP */
-			new_ctx->esp = (unsigned long)&((*lmf)->eip);
+			new_ctx->esp = (gsize)&((*lmf)->eip);
 
 		*lmf = (MonoLMF*)(((gsize)(*lmf)->previous_lmf) & ~3);
 
