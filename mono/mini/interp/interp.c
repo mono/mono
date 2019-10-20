@@ -281,6 +281,14 @@ get_context (void)
 }
 
 static void
+interp_free_context (gpointer ctx)
+{
+	ThreadContext *context = (ThreadContext*)ctx;
+
+	g_free (context);
+}
+
+static void
 mono_interp_error_cleanup (MonoError* error)
 {
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
