@@ -928,7 +928,7 @@ var BindingSupportLib = {
 			if (typeof ___mono_wasm_global___ === 'object') {
 				return ___mono_wasm_global___;
 			}
-			throw Error('unable to get mono wasm global object.');
+			throw Error('Unable to get mono wasm global object.');
 		},
 	
 	},
@@ -1151,9 +1151,9 @@ var BindingSupportLib = {
 
 		var coreObj = BINDING.mono_wasm_get_global()[js_name];
 
-		if (coreObj === null || typeof coreObj === undefined) {
+		if (coreObj === null || typeof coreObj === "undefined") {
 			setValue (is_exception, 1, "i32");
-			return BINDING.js_string_to_mono_string ("Global object '" + js_name + "' not found.");
+			return BINDING.js_string_to_mono_string ("JavaScript host object '" + js_name + "' not found.");
 		}
 
 		var js_args = BINDING.mono_array_to_js_array(args);
