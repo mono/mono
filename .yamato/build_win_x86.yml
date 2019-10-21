@@ -5,8 +5,6 @@ agent:
   image: platform-foundation/windows-mono-bokken:latest
   flavor: b1.xlarge
 
-interpreter: powershell
-
 commands:
   - .yamato/build_win_x86.bat
 

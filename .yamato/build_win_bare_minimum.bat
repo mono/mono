@@ -8,5 +8,5 @@ if NOT %errorlevel% == 0 (
 )
 echo "mono build script ran successfully"
 
-mkdir incomingbuilds\bareminimum
+md incomingbuilds\bareminimum
 xcopy /s /e /h /y builds\* incomingbuilds\bareminimum
