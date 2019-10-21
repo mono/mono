@@ -244,15 +244,15 @@ update-tests-coreclr: coreclr/.stamp-tests
 
 coreclr/.stamp-tests:
 	rm -rf coreclr/tests
-	mkdir -p coreclr/tests
 	curl -L "$(CORECLR_TESTS)" --output coreclr/tests.zip
 	tar -xvf coreclr/tests.zip -C coreclr/
+	mkdir coreclr/tests
 	tar -xvf coreclr/Tests_OSX_x64_checked_outerloop/Tests_OSX_x64_checked_outerloop.tar.gz -C coreclr/tests
 	touch $@
 
 .PHONY: corerun
 corerun:
-	cp -pRv corerun $(SHAREDRUNTIME)
+	cp corerun/corerun $(SHAREDRUNTIME)
 
 run-tests-coreclr: prepare update-tests-coreclr corerun
 	rm -rf coreclr/output.log
