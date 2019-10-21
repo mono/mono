@@ -299,6 +299,12 @@ test_cwd (void)
 	char *dir = g_get_current_dir ();
 #ifdef G_OS_WIN32
 	const gchar *newdir = "C:\\Windows";
+#elif defined(_AIX)
+	/*
+	 * AIX/PASE have /bin -> /usr/bin, and chdir follows links.
+	 * Use a directory available on both systems that shouldn't be a link.
+	 */
+	const gchar *newdir = "/usr";
 #else
 	const gchar *newdir = "/bin";
 #endif
@@ -312,7 +318,7 @@ test_cwd (void)
 	
 	dir = g_get_current_dir ();
 	if (strcmp (dir, newdir) != 0)
-		return FAILED("Did not go to %s?", newdir);
+		return FAILED("Did not go to %s? Instead in %s", newdir, dir);
 	g_free (dir);
 	
 	return OK;
