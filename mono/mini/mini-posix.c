@@ -93,9 +93,7 @@
 #endif
 
 #include <fcntl.h>
-#ifndef HOST_WIN32
-#include <dlfcn.h>
-#endif
+#include <gmodule.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -938,12 +936,12 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 
 	for (int i = 0; i < size; ++i) {
 		gpointer ip = array [i];
-		Dl_info info;
-		gboolean success = dladdr ((void*) ip, &info);
+		char sname [256], fname [256];
+		gboolean success = g_module_address ((void*)ip, fname, 256, NULL, sname, 256, NULL);
 		if (!success) {
 			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
-			g_async_safe_printf ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
+			g_async_safe_printf ("\t%p - %s : %s\n", ip, fname, sname);
 		}
 	}
 
@@ -953,10 +951,10 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 		pid_t pid;
 		int status;
 		pid_t crashed_pid = getpid ();
-		gchar *output = NULL;
-		MonoStackHash hashes;
 
 #ifndef DISABLE_CRASH_REPORTING
+		gchar *output = NULL;
+		MonoStackHash hashes;
 		MonoStateMem merp_mem;
 		memset (&merp_mem, 0, sizeof (merp_mem));
 

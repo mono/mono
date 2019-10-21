@@ -39,7 +39,7 @@ module.exports = function(config) {
         //load karma-jasmine-dom and karma-jasmine
         frameworks: ['jasmine-dom','jasmine','mocha', 'chai', 'websocket-server'],
         //load karma-chrome-launcher
-        browsers: ['ChromeHeadless', 'NoSandBoxHeadless'],
+        browsers: ['ChromeHeadless', 'NoSandBoxHeadless', 'SafariNative'],
         customLaunchers: {
             NoSandBoxHeadless: {
                 base: 'ChromeHeadless',

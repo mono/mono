@@ -95,6 +95,9 @@ LLVMValueRef
 mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVMBasicBlockRef t, LLVMBasicBlockRef f, uint32_t t_weight, uint32_t f_weight);
 
 void
+mono_llvm_add_string_metadata (LLVMValueRef insref, const char* label, const char* text);
+
+void
 mono_llvm_set_implicit_branch (LLVMBuilderRef builder, LLVMValueRef branch);
 
 void
@@ -170,6 +173,14 @@ mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
 
 LLVMValueRef
 mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module);
+
+typedef struct {
+	const char* alias;
+	guint32 flag;
+} CpuFeatureAliasFlag;
+
+int
+mono_llvm_check_cpu_features (const CpuFeatureAliasFlag *features, int length);
 
 G_END_DECLS
 

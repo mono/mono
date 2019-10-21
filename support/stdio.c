@@ -179,19 +179,19 @@ Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
 }
 
 void*
-Mono_Posix_Stdlib_fopen (char* path, char* mode)
+Mono_Posix_Stdlib_fopen (const char* path, const char* mode)
 {
 	return fopen (path, mode);
 }
 
 void*
-Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream)
+Mono_Posix_Stdlib_freopen (const char* path, const char* mode, void *stream)
 {
 	return freopen (path, mode, stream);
 }
 
 gint32
-Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message)
+Mono_Posix_Stdlib_fprintf (void* stream, const char* format, const char* message)
 {
 	return fprintf (stream, format, message);
 }
@@ -202,7 +202,7 @@ Mono_Posix_Stdlib_fgetc (void* stream)
 	return fgetc (stream);
 }
 
-char*
+void*
 Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream)
 {
 	return fgets (str, size, stream);
@@ -215,7 +215,7 @@ Mono_Posix_Stdlib_fputc (gint32 c, void* stream)
 }
 
 gint32
-Mono_Posix_Stdlib_fputs (char* s, void* stream)
+Mono_Posix_Stdlib_fputs (const char* s, void* stream)
 {
 	return fputs (s, stream);
 }

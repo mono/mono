@@ -2261,7 +2261,9 @@ void              mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoI
 MonoInst*         mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboolean safety_checks);
 MonoInst*         mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*         mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+#ifndef ENABLE_NETCORE
 MonoInst*         mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+#endif
 MonoInst*         mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field);
 MonoInst*         mini_handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_this, int enum_val_reg, MonoInst *enum_flag);
 
@@ -2793,15 +2795,62 @@ enum {
 
 typedef enum {
 	/* Used for lazy initialization */
-	MONO_CPU_INITED = 1 << 0,
+	MONO_CPU_INITED		= 1 << 0,
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-	MONO_CPU_X86_POPCNT = 1 << 1,
-	MONO_CPU_X86_LZCNT = 1 << 2,
-	MONO_CPU_X86_AVX = 1 << 3,
-	MONO_CPU_X86_BMI1 = 1 << 4,
-	MONO_CPU_X86_BMI2 = 1 << 5,
+	MONO_CPU_X86_SSE	= 1 << 1,
+	MONO_CPU_X86_SSE2	= 1 << 2,
+	MONO_CPU_X86_PCLMUL	= 1 << 3,
+	MONO_CPU_X86_AES	= 1 << 4,
+	MONO_CPU_X86_SSE3	= 1 << 5,
+	MONO_CPU_X86_SSSE3	= 1 << 6,
+	MONO_CPU_X86_SSE41	= 1 << 7,
+	MONO_CPU_X86_SSE42	= 1 << 8,
+	MONO_CPU_X86_POPCNT	= 1 << 9,
+	MONO_CPU_X86_AVX	= 1 << 10,
+	MONO_CPU_X86_AVX2	= 1 << 11,
+	MONO_CPU_X86_FMA	= 1 << 12,
+	MONO_CPU_X86_LZCNT	= 1 << 13,
+	MONO_CPU_X86_BMI1	= 1 << 14,
+	MONO_CPU_X86_BMI2	= 1 << 15,
+
+
+	//
+	// Dependencies (based on System.Runtime.Intrinsics.X86 class hierarchy):
+	//
+	// sse
+	//   sse2
+	//     pclmul
+	//     aes
+	//     sse3
+	//       ssse3
+	//         sse4.1
+	//           sse4.2
+	//             popcnt
+	//             avx
+	//               avx2
+	//               fma
+	// lzcnt
+	// bmi1
+	// bmi2
+	MONO_CPU_X86_SSE_COMBINED         = MONO_CPU_X86_SSE,
+	MONO_CPU_X86_SSE2_COMBINED        = MONO_CPU_X86_SSE_COMBINED   | MONO_CPU_X86_SSE2,
+	MONO_CPU_X86_PCLMUL_COMBINED      = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_PCLMUL,
+	MONO_CPU_X86_AES_COMBINED         = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_AES,
+	MONO_CPU_X86_SSE3_COMBINED        = MONO_CPU_X86_SSE2_COMBINED  | MONO_CPU_X86_SSE3,
+	MONO_CPU_X86_SSSE3_COMBINED       = MONO_CPU_X86_SSE3_COMBINED  | MONO_CPU_X86_PCLMUL | MONO_CPU_X86_AES | MONO_CPU_X86_SSSE3,
+	MONO_CPU_X86_SSE41_COMBINED       = MONO_CPU_X86_SSSE3_COMBINED | MONO_CPU_X86_SSE41,
+	MONO_CPU_X86_SSE42_COMBINED       = MONO_CPU_X86_SSE41_COMBINED | MONO_CPU_X86_SSE42,
+	MONO_CPU_X86_POPCNT_COMBINED      = MONO_CPU_X86_SSE42_COMBINED | MONO_CPU_X86_POPCNT,
+	MONO_CPU_X86_AVX_COMBINED         = MONO_CPU_X86_SSE42_COMBINED | MONO_CPU_X86_AVX,
+	MONO_CPU_X86_AVX2_COMBINED        = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_AVX2,
+	MONO_CPU_X86_FMA_COMBINED         = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_FMA,
+	MONO_CPU_X86_FULL_SSEAVX_COMBINED = MONO_CPU_X86_FMA_COMBINED   | MONO_CPU_X86_AVX2,
 #endif
 } MonoCPUFeatures;
+
+G_ENUM_FUNCTIONS (MonoCPUFeatures)
+
+MonoCPUFeatures mini_get_cpu_features (MonoCompile* cfg);
 
 enum {
 	SIMD_COMP_EQ,

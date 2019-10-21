@@ -222,6 +222,14 @@ mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVM
 }
 
 void
+mono_llvm_add_string_metadata (LLVMValueRef insref, const char* label, const char* text)
+{
+	auto ins = unwrap<Instruction> (insref);
+	auto &ctx = ins->getContext ();
+	ins->setMetadata (label, MDNode::get (ctx, MDString::get (ctx, text)));
+}
+
+void
 mono_llvm_set_implicit_branch (LLVMBuilderRef builder, LLVMValueRef branch)
 {
 	auto b = unwrap (builder);
@@ -520,4 +528,24 @@ mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 
 	return wrap(SafepointPoll);
 #endif
+}
+
+int
+mono_llvm_check_cpu_features (const CpuFeatureAliasFlag *features, int length)
+{
+	int flags = 0;
+	llvm::StringMap<bool> HostFeatures;
+	if (llvm::sys::getHostCPUFeatures (HostFeatures)) {
+		for (int i=0; i<length; i++) {
+			CpuFeatureAliasFlag feature = features [i];
+			if (HostFeatures [feature.alias])
+				flags |= feature.flag;
+		}
+		/*
+		for (auto &F : HostFeatures)
+			if (F.second)
+				outs () << "X: " << F.first () << "\n";
+		*/
+	}
+	return flags;
 }

@@ -14,6 +14,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
+#include "mono/utils/mono-error-internals.h"
 
 #define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
@@ -847,10 +848,34 @@ MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
 MONO_PROFILER_API MonoMethodSignature*
-mono_method_signature_checked (MonoMethod *m, MonoError *err);
+mono_method_signature_checked_slow (MonoMethod *m, MonoError *err);
 
 MONO_PROFILER_API MonoMethodSignature*
-mono_method_signature_internal (MonoMethod *m);
+mono_method_signature_internal_slow (MonoMethod *m);
+
+/**
+ * mono_method_signature_checked:
+ *
+ * Return the signature of the method M. On failure, returns NULL, and ERR is set.
+ */
+static inline MonoMethodSignature*
+mono_method_signature_checked (MonoMethod *m, MonoError *error)
+{
+	error_init (error);
+	MonoMethodSignature* sig = m->signature;
+	return sig ? sig : mono_method_signature_checked_slow (m, error);
+}
+
+/**
+ * mono_method_signature_internal:
+ * \returns the signature of the method \p m. On failure, returns NULL.
+ */
+static inline MonoMethodSignature*
+mono_method_signature_internal (MonoMethod *m)
+{
+	MonoMethodSignature* sig = m->signature;
+	return sig ? sig : mono_method_signature_internal_slow (m);
+}
 
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
@@ -901,6 +926,7 @@ mono_generic_param_get_base_type (MonoClass *klass);
 typedef struct {
 	MonoImage *corlib;
 	MonoClass *object_class;
+	MonoClass *object_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *byte_class;
 	MonoClass *void_class;
 	MonoClass *boolean_class;
@@ -927,6 +953,7 @@ typedef struct {
 	MonoClass *methodhandle_class;
 	MonoClass *systemtype_class;
 	MonoClass *runtimetype_class;
+	MonoClass *runtimetype_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *exception_class;
 	MonoClass *threadabortexception_class;
 	MonoClass *thread_class;
@@ -949,6 +976,7 @@ typedef struct {
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *attribute_class;
+	MonoClass *attribute_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
 	MonoClass *generic_ienumerator_class;
@@ -1102,6 +1130,9 @@ mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_
 
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
+
+char*
+mono_identifier_escape_type_name_chars (const char* identifier);
 
 char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);

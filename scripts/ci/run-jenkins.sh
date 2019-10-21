@@ -24,7 +24,7 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 	# FIXME: Add more
 	skip=false
 	skip_step=""
-	if ! grep -q -v a/netcore pr-files.txt; then
+	if ! grep -q -v -e a/netcore -e a/scripts/ci/pipeline-netcore-runtime.yml pr-files.txt; then
 		skip_step="NETCORE"
 		skip=true
 	fi
@@ -174,11 +174,18 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
-        # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-        if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-            export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+        # configuration on our bots
+        if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+            export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
             export MACOS_VERSION=10.15
-            export IOS_VERSION=13.0
+            export IOS_VERSION=13.2
+            export TVOS_VERSION=13.2
+            export WATCHOS_VERSION=6.1
+            export WATCHOS64_32_VERSION=6.1
+        elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
+            export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.1
             export TVOS_VERSION=13.0
             export WATCHOS_VERSION=6.0
             export WATCHOS64_32_VERSION=6.0
@@ -190,6 +197,9 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export WATCHOS_VERSION=5.1
             export WATCHOS64_32_VERSION=5.1
         fi
+
+        # retrieve selected Xcode version
+        /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
@@ -233,14 +243,20 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
-    # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-    if [[ ${CI_TAGS} == *'xcode11'* ]]; then
-        export XCODE_DIR=/Applications/Xcode11.app/Contents/Developer
+    # configuration on our bots
+    if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
+        export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
+        export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
         export MACOS_VERSION=10.14
     fi
+
+    # retrieve selected Xcode version
+    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
 
     # make sure we embed the correct path into the PDBs
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
@@ -323,7 +339,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
-	   export xunit_test_suites="System.Core corlib"
+	   export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
@@ -343,6 +359,9 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
             #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
+                ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
+            fi
             ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done

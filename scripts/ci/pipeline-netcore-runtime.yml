@@ -14,12 +14,13 @@ variables:
   - group: DotNet-VSTS-Bot
   - group: DotNet-Blob-Feed
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-  # Variables used to publish packages to blob feed
-  - name: dotnetFeedUrl
+  # Variables used by arcade to publish packages
+  - name: _DotNetFeedUrl
     value: https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-  # Variables used by arcade to gather asset manifests
-  - name: _DotNetPublishToBlobFeed
-    value: true
+  - name: _DotNetValidationArtifactsCategory
+    value: .NETCore
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
 
 stages:
 - stage: build
@@ -29,7 +30,7 @@ stages:
     parameters:
       enablePublishBuildArtifacts: true
       enablePublishBuildAssets: true
-      enablePublishUsingPipelines: false
+      enablePublishUsingPipelines: true
       variables:
         - _BuildConfig: Release
       jobs:
@@ -42,15 +43,21 @@ stages:
           matrix:
             x64:
               poolname: Hosted Ubuntu 1604
-              manifest: linux-x64
-              prepareDependencies: true
+              assetManifestOS: linux
+              assetManifestPlatform: x64
+              installDependencies: true
+              llvm: false
             x64_LLVM:
               poolname: Hosted Ubuntu 1604
-              manifest: linux-x64
-              prepareDependencies: true
+              assetManifestOS: linux
+              assetManifestPlatform: x64_LLVM
+              installDependencies: true
               llvm: true
             ARM64:
-              manifest: linux-arm64
+              assetManifestOS: linux
+              assetManifestPlatform: arm64
+              installDependencies: false
+              llvm: false
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -71,8 +78,8 @@ stages:
         - bash: |
             sudo apt update
             sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
-          displayName: 'Prepare Linux dependencies'
-          condition: and(succeeded(), eq(variables['prepareDependencies'], 'true'))
+          displayName: 'Install Linux dependencies'
+          condition: and(succeeded(), eq(variables['installDependencies'], 'true'))
 
         - bash: |
             sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
@@ -82,36 +89,32 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
-            ./build.sh -c $(_BuildConfig)
+            if [ $(llvm) = true ]; then
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
+            else
+              ./netcore/build.sh --ci -c $(_BuildConfig)
+            fi
           displayName: 'Build (Make)'
-          condition: ne(variables['llvm'], 'true')
 
         - bash: |
-            cd netcore
-            ./build.sh -c $(_BuildConfig) --llvm
-          displayName: 'Build (Make) with LLVM'
-          condition: eq(variables['llvm'], 'true')
-  
-        - bash: |
-            make -C netcore nupkg
-            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            if [ $(llvm) = true ]; then
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
+            else
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
+            fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
+            mkdir -p ./artifacts/SymStore/$(_BuildConfig)
+            mkdir -p ./artifacts/packages/$(_BuildConfig)/Shipping
+            cp ./netcore/System.Private.CoreLib/bin/*/System.Private.CoreLib.pdb ./artifacts/SymStore/$(_BuildConfig)
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mv ./artifacts/*.nupkg ./artifacts/packages/$(_BuildConfig)/Shipping
           displayName: 'Build nupkg'
-          condition: ne(variables['llvm'], 'true')
-  
-        - bash: |
-            make -C netcore nupkg-llvm
-            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
-            mkdir -p ./artifacts/log/$(_BuildConfig)
-          displayName: 'Build nupkg with LLVM'
-          condition: eq(variables['llvm'], 'true')
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
 
         - task: PublishTestResults@2
           inputs:
@@ -120,12 +123,8 @@ stages:
             testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
           condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
 
-        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
-          displayName: Restore blob feed tasks
-          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
-
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
-          displayName: Publish packages to blob feed
+        - script: ./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) /p:DotNetPublishUsingPipelines=true /p:DotNetPublishToBlobFeed=true /p:DotNetPublishBlobFeedUrl=$(_DotNetFeedUrl) /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1) /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/eng/empty.csproj
+          displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
       ############ MACOS BUILD ############
@@ -136,11 +135,14 @@ stages:
           matrix:
             x64:
               poolname: Hosted macOS
-              manifest: osx-x64
+              assetManifestOS: osx
+              assetManifestPlatform: x64
+              llvm: false
             #TODO: download pre-built LLVM binaries, currently it has to build llvm from sources (>1h)
             #x64_LLVM:
             #  poolname: Hosted macOS
-            #  manifest: osx-x64
+            #  assetManifestOS: osx
+            #  assetManifestPlatform: x64
             #  llvm: true
         pool:
           name: $(poolname)
@@ -167,36 +169,32 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
-            ./build.sh -c $(_BuildConfig)
+            if [ $(llvm) = true ]; then
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
+            else
+              ./netcore/build.sh --ci -c $(_BuildConfig)
+            fi
           displayName: 'Build (Make)'
-          condition: ne(variables['llvm'], 'true')
 
         - bash: |
-            cd netcore
-            ./build.sh -c $(_BuildConfig) --llvm
-          displayName: 'Build (Make) with LLVM'
-          condition: eq(variables['llvm'], 'true')
-
-        - bash: |
-            make -C netcore nupkg
-            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            if [ $(llvm) = true ]; then
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
+            else
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
+            fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
+            mkdir -p ./artifacts/SymStore/$(_BuildConfig)
+            mkdir -p ./artifacts/packages/$(_BuildConfig)/Shipping
+            cp ./netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.pdb ./artifacts/SymStore/$(_BuildConfig)
+            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+            mv ./artifacts/*.nupkg ./artifacts/packages/$(_BuildConfig)/Shipping
           displayName: 'Build nupkg'
-          condition: ne(variables['llvm'], 'true')
 
         - bash: |
-            make -C netcore nupkg-llvm
-            rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
-            mkdir -p ./artifacts/log/$(_BuildConfig)
-          displayName: 'Build nupkg with LLVM'
-          condition: eq(variables['llvm'], 'true')
-
-        - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(ne(variables['llvm'], 'true'), and(succeeded(), eq(variables['System.TeamProject'], 'public')))
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
 
         - task: PublishTestResults@2
           inputs:
@@ -205,12 +203,8 @@ stages:
             testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
           condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
 
-        - script: ./eng/common/build.sh -c $(_BuildConfig) /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.SourcesDirectory)/eng/empty.proj
-          displayName: Restore blob feed tasks
-          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
-
-        - script: ./eng/common/msbuild.sh --ci $(Build.SourcesDirectory)/eng/publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
-          displayName: Publish packages to blob feed
+        - script: ./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) /p:DotNetPublishUsingPipelines=true /p:DotNetPublishToBlobFeed=true /p:DotNetPublishBlobFeedUrl=$(_DotNetFeedUrl) /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1) /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/eng/empty.csproj
+          displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
       ############ WINDOWS BUILD ############
@@ -221,7 +215,8 @@ stages:
           matrix:
             x64:
               poolname: Hosted VS2017
-              manifest: win-x64
+              assetManifestOS: win
+              assetManifestPlatform: x64
         pool:
           name: $(poolname)
         steps:
@@ -256,23 +251,23 @@ stages:
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
             MKDIR artifacts\log\$(_BuildConfig)\
+            MKDIR artifacts\SymStore\$(_BuildConfig)\
+            MKDIR artifacts\packages\$(_BuildConfig)\Shipping\
+            COPY netcore\System.Private.CoreLib\bin\x64\System.Private.CoreLib.pdb artifacts\SymStore\$(_BuildConfig)\
+            MOVE artifacts\*.nupkg artifacts\packages\$(_BuildConfig)\Shipping\
           displayName: 'Build (MSBuild and Make)'
           env:
             CHERE_INVOKING: yes
 
-        - powershell: eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -c $(_BuildConfig) -ci -restore -projects $(Build.SourcesDirectory)\eng\empty.proj
-          displayName: Restore blob feed tasks
+        - powershell: eng\common\build.ps1 -ci -restore -publish -configuration $(_BuildConfig) /p:DotNetPublishUsingPipelines=true /p:DotNetPublishToBlobFeed=true /p:DotNetPublishBlobFeedUrl=$(_DotNetFeedUrl) /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1) /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) -projects $(Build.SourcesDirectory)\eng\empty.csproj
+          displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
-        - powershell: eng\common\msbuild.ps1 -ci $(Build.SourcesDirectory)\eng\publishwitharcade.proj /p:Configuration=$(_BuildConfig) /p:AzureFeedUrl=$(dotnetFeedUrl) /p:AzureAccountKey=$(dotnetfeed-storage-access-key-1) /p:AssetManifest=$(manifest)
-          displayName: Publish packages to blob feed
-          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
-
-
-# - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-#   - template: /eng/common/templates/post-build/post-build.yml
-#     parameters:
-#       enableSourceLinkValidation: false
-#       enableSigningValidation: false
-#       enableSymbolValidation: false
-#       enableNugetValidation: true
+############ POST BUILD ARCADE LOGIC ############
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: /eng/common/templates/post-build/post-build.yml
+    parameters:
+      enableSourceLinkValidation: false
+      enableSigningValidation: false
+      enableSymbolValidation: false
+      enableNugetValidation: true

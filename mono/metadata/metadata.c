@@ -7182,8 +7182,8 @@ mono_bool
 mono_type_is_byref (MonoType *type)
 {
 	mono_bool result;
-	MONO_ENTER_GC_UNSAFE;
-	result = type->byref;
+	MONO_ENTER_GC_UNSAFE; // FIXME slow
+	result = mono_type_is_byref_internal (type);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -7197,7 +7197,7 @@ mono_type_is_byref (MonoType *type)
 int
 mono_type_get_type (MonoType *type)
 {
-	return type->type;
+	return mono_type_get_type_internal (type);
 }
 
 /**
@@ -7210,8 +7210,7 @@ mono_type_get_type (MonoType *type)
 MonoMethodSignature*
 mono_type_get_signature (MonoType *type)
 {
-	g_assert (type->type == MONO_TYPE_FNPTR);
-	return type->data.method;
+	return mono_type_get_signature_internal (type);
 }
 
 /**
@@ -7226,7 +7225,7 @@ MonoClass*
 mono_type_get_class (MonoType *type)
 {
 	/* FIXME: review the runtime users before adding the assert here */
-	return type->data.klass;
+	return mono_type_get_class_internal (type);
 }
 
 /**
@@ -7240,7 +7239,7 @@ mono_type_get_class (MonoType *type)
 MonoArrayType*
 mono_type_get_array_type (MonoType *type)
 {
-	return type->data.array;
+	return mono_type_get_array_type_internal (type);
 }
 
 /**
