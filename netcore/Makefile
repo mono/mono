@@ -246,7 +246,8 @@ coreclr/.stamp-tests:
 	rm -rf coreclr/tests
 	mkdir -p coreclr/tests
 	curl -L "$(CORECLR_TESTS)" --output coreclr/tests.zip
-	tar -xvf coreclr/tests.zip -C coreclr/
+	#tar -xvf coreclr/tests.zip -C coreclr/
+	unzip -d coreclr/ coreclr/tests.zip
 	tar -xvf coreclr/Tests_OSX_x64_checked_outerloop/Tests_OSX_x64_checked_outerloop.tar.gz -C coreclr/tests
 	touch $@
 
