@@ -121,6 +121,19 @@ stages:
             testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
           condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
 
+        - bash: |
+            make -C netcore run-tests-coreclr USE_TIMEOUT=1
+          displayName: 'Download and Run CoreCLR Tests'
+          timeoutInMinutes: 90
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
+
+        - task: PublishTestResults@2
+          inputs:
+            testRunTitle: $(poolname)
+            testResultsFormat: 'XUnit'
+            testResultsFiles: 'netcore/coreclr/tests/TestResult-*.xml'
+          condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
+
         - script: ./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) /p:DotNetPublishUsingPipelines=true /p:DotNetPublishToBlobFeed=true /p:DotNetPublishBlobFeedUrl=$(_DotNetFeedUrl) /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1) /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/eng/empty.csproj
           displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
