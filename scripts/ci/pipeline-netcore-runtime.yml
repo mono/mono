@@ -46,6 +46,7 @@ stages:
               assetManifestOS: linux
               assetManifestPlatform: x64
               installDependencies: true
+              llvm: false
             x64_LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
@@ -55,6 +56,8 @@ stages:
             ARM64:
               assetManifestOS: linux
               assetManifestPlatform: arm64
+              installDependencies: false
+              llvm: false
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -86,19 +89,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig)
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -109,7 +111,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
@@ -135,6 +137,7 @@ stages:
               poolname: Hosted macOS
               assetManifestOS: osx
               assetManifestPlatform: x64
+              llvm: false
             #TODO: download pre-built LLVM binaries, currently it has to build llvm from sources (>1h)
             #x64_LLVM:
             #  poolname: Hosted macOS
@@ -166,19 +169,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig)
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -189,7 +191,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))

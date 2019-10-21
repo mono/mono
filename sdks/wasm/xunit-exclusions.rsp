@@ -74,3 +74,5 @@
 # Socket ctor throws PlatformNotSupportedException
 -nomethod System.Net.Sockets.Tests.NetworkStreamTest.Ctor_NotConnected_ThrowsIOException
 
+# System.IO.Compression
+-noclass System.IO.Compression.Tests.BrotliEncoderTests

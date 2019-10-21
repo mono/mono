@@ -6888,7 +6888,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_PCMPGTB: {
 			LLVMValueRef pcmp;
 			LLVMTypeRef retType;
-			int cmpOp;
+			LLVMIntPredicate cmpOp;
 
 			if (ins->opcode == OP_PCMPGTB)
 				cmpOp = LLVMIntSGT;
@@ -7371,15 +7371,26 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef cmp, mask [32], shuffle;
 			int nelems;
 
+			LLVMTypeRef srcelemt = LLVMGetElementType (LLVMTypeOf (lhs));
+
 			//%c = icmp sgt <16 x i8> %a0, %a1
-			if (LLVMGetElementType (LLVMTypeOf (lhs)) == LLVMDoubleType () || LLVMGetElementType (LLVMTypeOf (lhs)) == LLVMFloatType ())
+			if (srcelemt == LLVMDoubleType () || srcelemt == LLVMFloatType ())
 				cmp = LLVMBuildFCmp (builder, LLVMRealOEQ, lhs, rhs, "");
 			else
 				cmp = LLVMBuildICmp (builder, LLVMIntEQ, lhs, rhs, "");
 			nelems = LLVMGetVectorSize (LLVMTypeOf (cmp));
-			t = LLVMVectorType (LLVMInt8Type (), nelems);
+
+			LLVMTypeRef elemt;
+			if (srcelemt == LLVMDoubleType ())
+				elemt = LLVMInt64Type ();
+			else if (srcelemt == LLVMFloatType ())
+				elemt = LLVMInt32Type ();
+			else
+				elemt = srcelemt;
+
+			t = LLVMVectorType (elemt, nelems);
 			cmp = LLVMBuildSExt (builder, cmp, t, "");
-			// cmp is a <16 x i8> vector, each element is either 0xff or 0
+			// cmp is a <nelems x elemt> vector, each element is either 0xff... or 0
 			int half = nelems / 2;
 			while (half >= 1) {
 				// AND the top and bottom halfes into the bottom half
@@ -10705,29 +10716,27 @@ static MonoCPUFeatures cpu_features;
 
 MonoCPUFeatures mono_llvm_get_cpu_features (void)
 {
-	if (cpu_features == 0) {
-		CpuFeatureAliasFlag flags_map [] = {
+	static const CpuFeatureAliasFlag flags_map [] = {
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-			{ "sse",	MONO_CPU_X86_SSE },
-			{ "sse2",	MONO_CPU_X86_SSE2 },
-			{ "pclmul",	MONO_CPU_X86_PCLMUL },
-			{ "aes",	MONO_CPU_X86_AES },
-			{ "sse2",	MONO_CPU_X86_SSE2 },
-			{ "sse3",	MONO_CPU_X86_SSE3 },
-			{ "ssse3",	MONO_CPU_X86_SSSE3 },
-			{ "sse4.1",	MONO_CPU_X86_SSE41 },
-			{ "sse4.2",	MONO_CPU_X86_SSE42 },
-			{ "popcnt",	MONO_CPU_X86_POPCNT },
-			{ "avx",	MONO_CPU_X86_AVX },
-			{ "avx2",	MONO_CPU_X86_AVX2 },
-			{ "fma",	MONO_CPU_X86_FMA },
-			{ "lzcnt",	MONO_CPU_X86_LZCNT },
-			{ "bmi",	MONO_CPU_X86_BMI1 },
-			{ "bmi2",	MONO_CPU_X86_BMI2 },
+		{ "sse",	MONO_CPU_X86_SSE },
+		{ "sse2",	MONO_CPU_X86_SSE2 },
+		{ "pclmul",	MONO_CPU_X86_PCLMUL },
+		{ "aes",	MONO_CPU_X86_AES },
+		{ "sse2",	MONO_CPU_X86_SSE2 },
+		{ "sse3",	MONO_CPU_X86_SSE3 },
+		{ "ssse3",	MONO_CPU_X86_SSSE3 },
+		{ "sse4.1",	MONO_CPU_X86_SSE41 },
+		{ "sse4.2",	MONO_CPU_X86_SSE42 },
+		{ "popcnt",	MONO_CPU_X86_POPCNT },
+		{ "avx",	MONO_CPU_X86_AVX },
+		{ "avx2",	MONO_CPU_X86_AVX2 },
+		{ "fma",	MONO_CPU_X86_FMA },
+		{ "lzcnt",	MONO_CPU_X86_LZCNT },
+		{ "bmi",	MONO_CPU_X86_BMI1 },
+		{ "bmi2",	MONO_CPU_X86_BMI2 },
 #endif
-		};
-		cpu_features = mono_llvm_check_cpu_features (flags_map, sizeof (flags_map) / sizeof (CpuFeatureAliasFlag));
-		cpu_features |= MONO_CPU_INITED;
-	}
+	};
+	if (!cpu_features)
+		cpu_features = MONO_CPU_INITED | (MonoCPUFeatures)mono_llvm_check_cpu_features (flags_map, G_N_ELEMENTS (flags_map));
 	return cpu_features;
 }

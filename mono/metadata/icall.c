@@ -3505,6 +3505,86 @@ ves_icall_RuntimeMethodInfo_GetGenericMethodDefinition (MonoReflectionMethodHand
 	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (ref_method), result, NULL, error);
 }
 
+#ifdef ENABLE_NETCORE
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (stream, "System.IO", "Stream")
+static int io_stream_begin_read_slot = -1;
+static int io_stream_begin_write_slot = -1;
+static int io_stream_end_read_slot = -1;
+static int io_stream_end_write_slot = -1;
+static gboolean io_stream_slots_set = FALSE;
+
+static void
+init_io_stream_slots (void)
+{
+	MonoClass* klass = mono_class_try_get_stream_class ();
+	mono_class_setup_vtable (klass);
+	MonoMethod **klass_methods = m_class_get_methods (klass);
+	if (!klass_methods) {
+		mono_class_setup_methods (klass);
+		klass_methods = m_class_get_methods (klass);
+	}
+	int method_count = mono_class_get_method_count (klass);
+	int methods_found = 0;
+	for (int i = 0; i < method_count; i++) {
+		// find slots for Begin(End)Read and Begin(End)Write
+		MonoMethod* m = klass->methods [i];
+		if (m->slot == -1)
+			continue;
+
+		if (!strcmp (m->name, "BeginRead")) {
+			methods_found++;
+			io_stream_begin_read_slot = m->slot;
+		} else if (!strcmp (m->name, "BeginWrite")) {
+			methods_found++;
+			io_stream_begin_write_slot = m->slot;
+		} else if (!strcmp (m->name, "EndRead")) {
+			methods_found++;
+			io_stream_end_read_slot = m->slot;
+		} else if (!strcmp (m->name, "EndWrite")) {
+			methods_found++;
+			io_stream_end_write_slot = m->slot;
+		}
+	}
+	g_assert (methods_found <= 4); // some of them can be linked out
+	io_stream_slots_set = TRUE;
+}
+
+MonoBoolean
+ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, MonoError *error)
+{
+	MonoClass* curr_klass = MONO_HANDLE_GET_CLASS (stream);
+	MonoClass* base_klass = mono_class_try_get_stream_class ();
+
+	if (!io_stream_slots_set)
+		init_io_stream_slots ();
+
+	// slots can still be -1 and it means Linker removed the methods from the base class (Stream)
+	// in this case we can safely assume the methods are not overridden
+	// otherwise - check vtable
+	gboolean begin_read_is_overriden = io_stream_begin_read_slot != -1 && curr_klass->vtable [io_stream_begin_read_slot]->klass != base_klass;
+	gboolean end_read_is_overriden = io_stream_end_read_slot != -1 && curr_klass->vtable [io_stream_end_read_slot]->klass != base_klass;
+
+	// return true if BeginRead or EndRead were overriden
+	return begin_read_is_overriden || end_read_is_overriden;
+}
+
+MonoBoolean
+ves_icall_System_IO_Stream_HasOverriddenBeginEndWrite (MonoObjectHandle stream, MonoError *error)
+{
+	MonoClass* curr_klass = MONO_HANDLE_GETVAL (stream, vtable)->klass;
+	MonoClass* base_klass = mono_class_try_get_stream_class ();
+
+	if (!io_stream_slots_set)
+		init_io_stream_slots ();
+
+	gboolean begin_write_is_overriden = curr_klass->vtable [io_stream_begin_write_slot]->klass != base_klass;
+	gboolean end_write_is_overriden = curr_klass->vtable [io_stream_end_write_slot]->klass != base_klass;
+
+	// return true if BeginWrite or EndWrite were overriden
+	return begin_write_is_overriden || end_write_is_overriden;
+}
+#endif
+
 MonoBoolean
 ves_icall_RuntimeMethodInfo_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
 {
@@ -6264,7 +6344,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 void
 ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
 {
-	mono_assembly_name_free (aname);
+	mono_assembly_name_free_internal (aname);
 	if (free_struct)
 		g_free (aname);
 }
@@ -7636,8 +7716,10 @@ ves_icall_System_Environment_Exit (int result)
 	if (!mono_runtime_try_shutdown ())
 		mono_thread_exit ();
 
+#ifndef ENABLE_NETCORE
 	/* Suspend all managed threads since the runtime is going away */
 	mono_thread_suspend_all_other_threads ();
+#endif
 
 	mono_runtime_quit ();
 
@@ -8818,7 +8900,7 @@ ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static inline gint32
+static gint32
 mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
 {
 	return WAIT_TIMEOUT;
@@ -8827,13 +8909,13 @@ mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
 
 #ifndef ENABLE_NETCORE
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds)
 {
 	return mono_icall_wait_for_input_idle (handle, milliseconds);
 }
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void)
 {
 	return mono_process_current_pid ();
 }
@@ -9458,11 +9540,13 @@ ves_icall_System_GC_GetAllocatedBytesForCurrentThread (void)
 	return mono_gc_get_allocated_bytes_for_current_thread ();
 }
 
+#ifdef ENABLE_NETCORE
 guint64
 ves_icall_System_GC_GetTotalAllocatedBytes (MonoBoolean precise, MonoError* error)
 {
 	return mono_gc_get_total_allocated_bytes (precise);
 }
+#endif
 
 void
 ves_icall_System_GC_RecordPressure (gint64 value)
