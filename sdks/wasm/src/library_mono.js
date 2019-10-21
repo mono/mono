@@ -1,6 +1,6 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message',
+	$MONO__postset: 'MONO.export_functions (Module);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
@@ -17,6 +17,11 @@ var MonoSupportLib = {
 				--MONO.pump_count;
 				this.mono_background_exec ();
 			}
+		},
+
+		export_functions: function (module) {
+			module ["pump_message"] = MONO.pump_message;
+			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
 		},
 
 		mono_wasm_get_call_stack: function() {
