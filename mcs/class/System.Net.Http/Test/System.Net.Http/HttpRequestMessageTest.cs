@@ -61,17 +61,13 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (HttpMethod.Get, m.Method, "#3");
 			Assert.IsNotNull (m.Properties, "#4");
 			Assert.IsNull (m.RequestUri, "#5");
-#if !__WATCHOS__			
 			if (HttpClientTestHelpers.UsingSocketsHandler) {
-#endif				
 				Assert.AreEqual (new Version (2, 0), m.Version, "#6");
 				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 2.0, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
-#if !__WATCHOS__
 			} else {
 				Assert.AreEqual (new Version (1, 1), m.Version, "#6");
 				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
 			}
-#endif			
 		}
 
 		[Test]
@@ -674,14 +670,10 @@ namespace MonoTests.System.Net.Http
 
 			// .NET encloses the "Age: vv" with two whitespaces.
 			var normalized = Regex.Replace (message.ToString (), @"\s", "");
-#if !__WATCHOS__						
 			if (HttpClientTestHelpers.UsingSocketsHandler)
-#endif			
 				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:2.0,Content:<null>,Headers:{Age:vv}", normalized, "#3");
-#if !__WATCHOS__							
 			else
 				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
-#endif				
 		}
 
 		[Test]

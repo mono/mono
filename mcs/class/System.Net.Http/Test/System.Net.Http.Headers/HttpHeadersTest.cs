@@ -61,10 +61,8 @@ namespace MonoTests.System.Net.Http.Headers
 				if (HttpClientTestHelpers.UsingSocketsHandler)
 					Assert.Fail ("#1");
 			} catch (FormatException) {
-#if !__WATCHOS__							
 				if (!HttpClientTestHelpers.UsingSocketsHandler)
 					throw;
-#endif					
 			}
 		}
 
