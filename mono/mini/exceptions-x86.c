@@ -1091,8 +1091,8 @@ prepare_for_guard_pages (MonoContext *mctx)
 	sp -= 1;
 	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
-	mctx->eip = (unsigned long)restore_soft_guard_pages;
-	mctx->esp = (unsigned long)sp;
+	mctx->eip = (gsize)restore_soft_guard_pages;
+	mctx->esp = (gsize)sp;
 }
 
 static void
