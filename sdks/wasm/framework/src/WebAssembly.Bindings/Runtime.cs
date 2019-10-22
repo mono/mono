@@ -14,6 +14,9 @@ namespace WebAssembly {
 		static extern string InvokeJS (string str, out int exceptional_result);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object CompileFunction (string str, out int exceptional_result);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object [] _params, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object GetObjectProperty (int js_obj_handle, string propertyName, out int exceptional_result);
@@ -58,6 +61,20 @@ namespace WebAssembly {
 			if (exception != 0)
 				throw new JSException (res);
 			return res;
+		}
+
+		/// <summary>
+		/// Compiles a JavaScript function from the function data passed.
+		/// The code snippet is not a function definition. Instead it must create and return a function instance.
+		/// </summary>
+		/// <returns>A <see cref="T:WebAssembly.Core.Function"/> class</returns>
+		/// <param name="str">String.</param>
+		public static WebAssembly.Core.Function CompileFunction (string snippet)
+		{
+			var res = CompileFunction (snippet, out int exception);
+			if (exception != 0)
+				throw new JSException (res.ToString());
+			return res as WebAssembly.Core.Function;
 		}
 
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject> ();
