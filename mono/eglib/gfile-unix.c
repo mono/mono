@@ -68,11 +68,11 @@ g_file_test (const gchar *filename, GFileTest test)
 		 */
 		if (!have_stat)
 			have_stat = (stat (filename, &st) == 0);
-		if (have_stat && (st.st_mode & S_IXUSR) && (st.st_uid == getuid()))
-			return TRUE;
-		if (have_stat && (st.st_mode & S_IXGRP) && (st.st_gid == getgid()))
-			return TRUE;
-		if (have_stat && (st.st_mode & S_IXOTH))
+		/* Hairy parens, but just manually try all permission bits */
+		if (have_stat && (
+			((st.st_mode & S_IXOTH)
+				|| ((st.st_mode & S_IXUSR) && (st.st_uid == getuid()))
+				|| ((st.st_mode & S_IXGRP) && (st.st_gid == getgid())))))
 			return TRUE;
 #endif
 	}
