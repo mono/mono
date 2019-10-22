@@ -350,6 +350,17 @@ class TestIfaces : ITest
 	}
 }
 
+public class RuntimeInvokeWithThrowClass
+{
+    public RuntimeInvokeWithThrowClass()
+    {
+    }
+    public void RuntimeInvokeThrowMethod()
+    {
+        throw new Exception("thays");
+    }
+}
+
 public sealed class DebuggerTaskScheduler : TaskScheduler, IDisposable
 {
 	private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
@@ -589,6 +600,7 @@ public class Tests : TestsBase, ITest2
 		if_property_stepping();
 		fixed_size_array();
 		test_new_exception_filter();
+		runtime_invoke_hybrid_exceptions();
 		return 3;
 	}
 
@@ -2191,6 +2203,16 @@ public class Tests : TestsBase, ITest2
 	public static ref BlittableStruct get_ref_struct() {
 		return ref ref_return_struct;
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void runtime_invoke_hybrid_exceptions () {
+		Type rtType = Type.GetType("RuntimeInvokeWithThrowClass");
+        ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
+        object rtObject = rtConstructor.Invoke(new object[] { });
+        MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
+        rtMethod.Invoke(rtObject, new object[] { });
+	}
+
 }
 
 public class SentinelClass : MarshalByRefObject {

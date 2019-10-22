@@ -5139,7 +5139,18 @@ public class DebuggerTests
 		ev = GetNextEvent ();
 	}
 
-
+	[Test]
+	public void TestRuntimeInvokeHybridSuspendExceptions () {
+		Event e = run_until ("runtime_invoke_hybrid_exceptions");
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
+	
 #endif
 } // class DebuggerTests
 } // namespace
