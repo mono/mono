@@ -532,7 +532,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 #ifdef TARGET_ARM64
 
 static guint16 armbase_methods [] = {
-	//SN_LeadingSignCount,
+	SN_LeadingSignCount,
 	SN_LeadingZeroCount,
 	SN_get_IsSupported
 };
@@ -540,20 +540,18 @@ static guint16 armbase_methods [] = {
 static MonoInst*
 emit_arm64_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	const char *class_name;
 	MonoInst *ins;
 	int id;
 	gboolean supported;
 	MonoClass *klass = cmethod->klass;
+	const char *class_name = m_class_get_name (klass);
 
-	class_name = m_class_get_name (klass);
-	if (!strcmp (class_name, "ArmBase")) {
+	if (!strcmp (class_name, "ArmBase") || (!strcmp (class_name, "Arm64") && cmethod->klass->nested_in && 
+		!strcmp (m_class_get_name (cmethod->klass->nested_in), "ArmBase"))) {
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_ARM64_BASE) != 0;
 		id = lookup_intrins (armbase_methods, sizeof (armbase_methods), cmethod);
 		if (id == -1)
 			return NULL;
-
-		supported = FALSE;
-
 		switch (id) {
 		case SN_get_IsSupported:
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
@@ -569,17 +567,28 @@ emit_arm64_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatur
 				g_assert_not_reached ();
 			}
 			ins->dreg = alloc_ireg (cfg);
+			ins->type = STACK_I4;
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
-		/*case SN_LeadingSignCount: {
+		case SN_LeadingSignCount: {
 			g_assert (fsig->param_count == 1);
-			// cls = lzcnt(x ^ (x >> 1)) - 1
+			if (fsig->params [0]->type == MONO_TYPE_I4) {
+				MONO_INST_NEW (cfg, ins, OP_CLS32);
+			} else if (fsig->params [0]->type == MONO_TYPE_I8) {
+				MONO_INST_NEW (cfg, ins, OP_CLS64);
+			}  else {
+				g_assert_not_reached ();
+			}
 			// the only llvm intrins I found is @llvm.aarch64.neon.cls.v2i32
+			ins->dreg = alloc_ireg (cfg);
+			ins->type = STACK_I4;
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
-		}*/
+		}
 		default:
-			return NULL;
+			g_assert_not_reached (); // if a new API is added we need to either implement it or change IsSupported to false
 		}
 	}
 	return NULL;

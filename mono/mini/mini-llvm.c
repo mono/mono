@@ -6712,7 +6712,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			mono_llvm_build_aligned_store (builder, values [ins->sreg1], dest, FALSE, 1);
 			break;
 		}
-#if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_PADDB:
 		case OP_PADDW:
 		case OP_PADDD:
@@ -7548,6 +7547,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #endif /* ENABLE_NETCORE */
 #endif /* TARGET_X86 || TARGET_AMD64 */
 
+// Shared between ARM64 and X86
 #if defined(ENABLE_NETCORE) && (defined(TARGET_ARM64) || defined(TARGET_X86) || defined(TARGET_AMD64))
 		case OP_LZCNT32:
 		case OP_LZCNT64: {
@@ -7556,6 +7556,31 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_LZCNT32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64), args, 2, "");
 			break;
+		}
+#endif
+
+#if defined(ENABLE_NETCORE) && defined(TARGET_ARM64)
+		case OP_CLS32:
+		case OP_CLS64: {
+			// %shr = ashr i32 %x, 31
+			// %xor = xor i32 %shr, %x
+			// %mul = shl i32 %xor, 1
+			// %add = or i32 %mul, 1
+			// %0 = tail call i32 @llvm.ctlz.i32(i32 %add, i1 false)
+			LLVMValueRef shr = LLVMBuildAShr (builder, lhs, ins->opcode == OP_CLS32 ? 
+				LLVMConstInt (LLVMInt32Type (), 31, FALSE) : 
+				LLVMConstInt (LLVMInt64Type (), 63, FALSE), "");
+			LLVMValueRef one = ins->opcode == OP_CLS32 ? 
+				LLVMConstInt (LLVMInt32Type (), 1, FALSE) : 
+				LLVMConstInt (LLVMInt64Type (), 1, FALSE);
+			LLVMValueRef xor = LLVMBuildXor (builder, shr, lhs, "");
+			LLVMValueRef mul = LLVMBuildShl (builder, xor, one, "");
+			LLVMValueRef add = LLVMBuildOr (builder, mul, one, "");
+			
+			LLVMValueRef args [2];
+			args [0] = add;
+			args [1] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_CLS32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64), args, 2, "");
 		}
 #endif
 
@@ -10746,5 +10771,10 @@ MonoCPUFeatures mono_llvm_get_cpu_features (void)
 	};
 	if (!cpu_features)
 		cpu_features = MONO_CPU_INITED | (MonoCPUFeatures)mono_llvm_check_cpu_features (flags_map, G_N_ELEMENTS (flags_map));
+#if defined(TARGET_ARM64)
+	cpu_features |= MONO_CPU_ARM64_BASE;	// arm doesn't have an alias for it but we want users to be able to turn ArmBase off if they want
+											// it's always supported on Arm64 by default
+#endif
+
 	return cpu_features;
 }
