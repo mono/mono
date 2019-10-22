@@ -10772,8 +10772,7 @@ MonoCPUFeatures mono_llvm_get_cpu_features (void)
 	if (!cpu_features)
 		cpu_features = MONO_CPU_INITED | (MonoCPUFeatures)mono_llvm_check_cpu_features (flags_map, G_N_ELEMENTS (flags_map));
 #if defined(TARGET_ARM64)
-	cpu_features |= MONO_CPU_ARM64_BASE;	// arm doesn't have an alias for it but we want users to be able to turn ArmBase off if they want
-											// it's always supported on Arm64 by default
+	cpu_features |= MONO_CPU_ARM64_BASE; // any Arm64 hw support this set by default (llvm doesn't have an alias for it)
 #endif
 
 	return cpu_features;
