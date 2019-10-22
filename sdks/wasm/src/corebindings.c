@@ -28,7 +28,6 @@ extern MonoObject* mono_wasm_typed_array_copy_from (int js_handle, int ptr, int 
 // Compiles a JavaScript function from the function data passed.
 // Note: code snippet is not a function definition. Instead it must create and return a function instance.
 EM_JS(MonoObject*, compile_funtion, (char* snippet, int *is_exception), {
-
 	try {
 		var data = UTF8ToString (snippet);
 		var wrapper = '(function () { ' + data + ' })';
@@ -54,18 +53,13 @@ EM_JS(MonoObject*, compile_funtion, (char* snippet, int *is_exception), {
 static MonoObject*
 mono_wasm_compile_function (MonoString *str, int *is_exception)
 {
-	
 	if (str == NULL)
 	 	return NULL;
-
 	char *native_val = mono_string_to_utf8 (str);
 	MonoObject* native_res =  compile_funtion(native_val, is_exception);
-
 	mono_free (native_val);
-
 	if (native_res == NULL)
 	 	return NULL;
-
 	return native_res;
 }
 
