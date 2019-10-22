@@ -6712,6 +6712,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			mono_llvm_build_aligned_store (builder, values [ins->sreg1], dest, FALSE, 1);
 			break;
 		}
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_PADDB:
 		case OP_PADDW:
 		case OP_PADDD:
@@ -7486,14 +7487,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_POPCNT64:
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CTPOP_I64), &lhs, 1, "");
 			break;
-		case OP_LZCNT32:
-		case OP_LZCNT64: {
-			LLVMValueRef args [2];
-			args [0] = lhs;
-			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_LZCNT32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64), args, 2, "");
-			break;
-		}
 		case OP_CTTZ32:
 		case OP_CTTZ64: {
 			LLVMValueRef args [2];
@@ -7553,7 +7546,18 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 #endif /* ENABLE_NETCORE */
-#endif /* SIMD */
+#endif /* TARGET_X86 || TARGET_AMD64 */
+
+#if defined(ENABLE_NETCORE) && (defined(TARGET_ARM64) || defined(TARGET_X86) || defined(TARGET_AMD64))
+		case OP_LZCNT32:
+		case OP_LZCNT64: {
+			LLVMValueRef args [2];
+			args [0] = lhs;
+			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_LZCNT32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64), args, 2, "");
+			break;
+		}
+#endif
 
 		case OP_DUMMY_USE:
 			break;
@@ -10734,6 +10738,10 @@ MonoCPUFeatures mono_llvm_get_cpu_features (void)
 		{ "lzcnt",	MONO_CPU_X86_LZCNT },
 		{ "bmi",	MONO_CPU_X86_BMI1 },
 		{ "bmi2",	MONO_CPU_X86_BMI2 },
+#elif defined(TARGET_ARM64)
+		{ "neon",	MONO_CPU_ARM64_NEON },
+		{ "crypto",	MONO_CPU_ARM64_CRYPTO },
+		{ "crc",	MONO_CPU_ARM64_CRC },
 #endif
 	};
 	if (!cpu_features)

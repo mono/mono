@@ -314,7 +314,11 @@ enum {
 #define MONO_IS_REAL_MOVE(ins) (((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_FMOVE) || ((ins)->opcode == OP_XMOVE) || ((ins)->opcode == OP_RMOVE))
 #define MONO_IS_ZERO(ins) (((ins)->opcode == OP_VZERO) || ((ins)->opcode == OP_XZERO))
 
+#ifndef TARGET_ARM64
 #define MONO_CLASS_IS_SIMD(cfg, klass) (((cfg)->opt & MONO_OPT_SIMD) && m_class_is_simd_type (klass))
+#else
+#define MONO_CLASS_IS_SIMD(cfg, klass) (0)
+#endif
 
 #else
 
@@ -2845,7 +2849,12 @@ typedef enum {
 	MONO_CPU_X86_AVX2_COMBINED        = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_AVX2,
 	MONO_CPU_X86_FMA_COMBINED         = MONO_CPU_X86_AVX_COMBINED   | MONO_CPU_X86_POPCNT | MONO_CPU_X86_FMA,
 	MONO_CPU_X86_FULL_SSEAVX_COMBINED = MONO_CPU_X86_FMA_COMBINED   | MONO_CPU_X86_AVX2,
+#elif defined(TARGET_ARM64)
+	MONO_CPU_ARM64_NEON		= 1 << 1,
+	MONO_CPU_ARM64_CRYPTO	= 1 << 2,
+	MONO_CPU_ARM64_CRC		= 1 << 3,
 #endif
+
 } MonoCPUFeatures;
 
 G_ENUM_FUNCTIONS (MonoCPUFeatures)

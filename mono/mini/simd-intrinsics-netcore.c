@@ -529,6 +529,63 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	return NULL;
 }
 
+#ifdef TARGET_ARM64
+
+static guint16 armbase_methods [] = {
+	//SN_LeadingSignCount,
+	SN_LeadingZeroCount,
+	SN_get_IsSupported
+};
+
+static MonoInst*
+emit_arm64_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	const char *class_name;
+	MonoInst *ins;
+	int id;
+	gboolean supported;
+	MonoClass *klass = cmethod->klass;
+
+	class_name = m_class_get_name (klass);
+	if (!strcmp (class_name, "ArmBase")) {
+		id = lookup_intrins (armbase_methods, sizeof (armbase_methods), cmethod);
+		if (id == -1)
+			return NULL;
+
+		supported = FALSE;
+
+		switch (id) {
+		case SN_get_IsSupported:
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			ins->type = STACK_I4;
+			return ins;
+		case SN_LeadingZeroCount:
+			g_assert (fsig->param_count == 1);
+			if (fsig->params [0]->type == MONO_TYPE_I4 || fsig->params [0]->type == MONO_TYPE_U4) {
+				MONO_INST_NEW (cfg, ins, OP_LZCNT32);
+			} else if (fsig->params [0]->type == MONO_TYPE_I8 || fsig->params [0]->type == MONO_TYPE_U8) {
+				MONO_INST_NEW (cfg, ins, OP_LZCNT64);
+			}  else {
+				g_assert_not_reached ();
+			}
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		/*case SN_LeadingSignCount: {
+			g_assert (fsig->param_count == 1);
+			// cls = lzcnt(x ^ (x >> 1)) - 1
+			// the only llvm intrins I found is @llvm.aarch64.neon.cls.v2i32
+			return ins;
+		}*/
+		default:
+			return NULL;
+		}
+	}
+	return NULL;
+}
+#endif // TARGET_ARM64
+
 #ifdef TARGET_AMD64
 
 static guint16 popcnt_methods [] = {
@@ -761,7 +818,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 	return NULL;
 }
-#endif
+#endif // TARGET_AMD64
 
 static guint16 vector_128_t_methods [] = {
 	SN_get_Count,
@@ -871,8 +928,7 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 #ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics.X86"))
-		return emit_x86_intrinsics (cfg ,cmethod, fsig, args);
-#endif
+		return emit_x86_intrinsics (cfg, cmethod, fsig, args);
 
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
 		if (!strcmp (class_name, "Vector128`1"))
@@ -887,6 +943,12 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (!strcmp (class_name, "Vector`1"))
 			return emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
 	}
+#endif
+
+#ifdef TARGET_ARM64
+	if (!strcmp (class_ns, "System.Runtime.Intrinsics.Arm"))
+		return emit_arm64_intrinsics (cfg, cmethod, fsig, args);
+#endif
 
 	return NULL;
 }
