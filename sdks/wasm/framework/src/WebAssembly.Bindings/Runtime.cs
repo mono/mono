@@ -12,10 +12,8 @@ namespace WebAssembly {
 	public sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string InvokeJS (string str, out int exceptional_result);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern object CompileFunction (string str, out int exceptional_result);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object [] _params, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
