@@ -68,6 +68,9 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	GCVTable vt = SGEN_LOAD_VTABLE_UNCHECKED (obj);
 	gboolean has_references = SGEN_VTABLE_HAS_REFERENCES (vt);
 	mword objsize = SGEN_ALIGN_UP (sgen_client_par_object_get_size (vt, obj));
+
+	sgen_gc_info.memory_load += objsize;
+
 	void *destination = COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
 
 	if (G_UNLIKELY (!destination)) {
@@ -108,6 +111,9 @@ copy_object_no_checks_par (GCObject *obj, SgenGrayQueue *queue)
 		 */
 		gboolean has_references = SGEN_VTABLE_HAS_REFERENCES (vt);
 		mword objsize = SGEN_ALIGN_UP (sgen_client_par_object_get_size (vt, obj));
+
+		sgen_gc_info.memory_load += objsize;
+
 		destination = COLLECTOR_PARALLEL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
 
 		par_copy_object_no_checks ((char*)destination, vt, obj, objsize);

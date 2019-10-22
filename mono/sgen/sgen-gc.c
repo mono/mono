@@ -2642,6 +2642,10 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	}
 #endif
 
+	if (generation_to_collect == GENERATION_OLD)
+	{
+		initialize_sgen_gc_info();
+	}
 	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, forced_serial, stw);
 }
 /*
@@ -3316,6 +3320,16 @@ init_sgen_mode (SgenMode mode)
 }
 
 void
+initialize_sgen_gc_info() 
+{
+	sgen_gc_info.fragmented_bytes = 0;
+	sgen_gc_info.heap_size_bytes = 0;
+	sgen_gc_info.high_memory_load = 0;
+	sgen_gc_info.memory_load_bytes = 0;
+	sgen_gc_info.total_available_memory_bytes = 0;
+}
+
+void
 sgen_gc_init (void)
 {
 	char *env;
@@ -3332,11 +3346,7 @@ sgen_gc_init (void)
 	double allowance_ratio = 0, save_target = 0;
 	gboolean cement_enabled = TRUE;
 
-	sgen_gc_info.fragmented_bytes = 0;
-	sgen_gc_info.heap_size_bytes = 0;
-	sgen_gc_info.high_memory_load = 0;
-	sgen_gc_info.memory_load_bytes = 0;
-	sgen_gc_info.total_available_memory_bytes = 0;
+	initialize_sgen_gc_info();
 
 	do {
 		result = mono_atomic_cas_i32 (&gc_initialized, -1, 0);
