@@ -8,8 +8,6 @@ HttpRequestMessage.Mono.cs
 IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
 
-../corlib/System.Diagnostics/Debug.cs
-
 corefx/SocketsHttpHandler.Mono.cs
 corefx/NetEventSource.Http.cs
 
