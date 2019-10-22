@@ -562,7 +562,7 @@ clean: clean-browser-tests
 	$(RM) emsdk_env.sh
 	$(RM) .configured
 
-package: build build-dbg-proxy
+package: build build-sdk build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
@@ -600,10 +600,10 @@ package: build build-dbg-proxy
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.dll tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
-	cp -r ProxyDriver/bin/Debug/netcoreapp2.1/ tmp/dbg-proxy/
+	cp -r ProxyDriver/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
 	mkdir tmp/docs
 	cp -r ./docs/ tmp/docs/
 	mkdir tmp/packages
