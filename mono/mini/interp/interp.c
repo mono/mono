@@ -2927,7 +2927,13 @@ static MONO_NEVER_INLINE gboolean
 mono_interp_isinst (MonoObject* object, MonoClass* klass)
 {
 	ERROR_DECL (error);
-	const gboolean isinst = mono_object_isinst_checked (object, klass, error) != NULL;
+	gboolean isinst;
+	MonoClass *obj_class = mono_object_class (object);
+	// mono_class_is_assignable_from_checked can't handle remoting casts
+	if (mono_class_is_transparent_proxy (obj_class))
+		isinst = mono_object_isinst_checked (object, klass, error) != NULL;
+	else
+		mono_class_is_assignable_from_checked (klass, obj_class, &isinst, error);
 	mono_error_cleanup (error); // FIXME: do not swallow the error
 	return isinst;
 }
@@ -5555,10 +5561,9 @@ common_vcall:
 			gint32 aindex;
 			STELEM_PROLOG(o, aindex);
 
-			if (sp [2].data.p) {
-				MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.o, m_class_get_element_class (mono_object_class (o)), error);
-				mono_interp_error_cleanup (error); /* FIXME: don't swallow the error */
-				if (!isinst_obj)
+			if (sp [2].data.o) {
+				gboolean isinst = mono_interp_isinst (sp [2].data.o, m_class_get_element_class (mono_object_class (o)));
+				if (!isinst)
 					THROW_EX (mono_get_exception_array_type_mismatch (), ip);
 			}
 			mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
