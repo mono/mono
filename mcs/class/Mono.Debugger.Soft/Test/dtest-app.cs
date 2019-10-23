@@ -554,6 +554,10 @@ public class Tests : TestsBase, ITest2
 			run_step_out_void_async();
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "runtime_invoke_hybrid_exceptions") {
+			runtime_invoke_hybrid_exceptions();
+			return 0;
+		}
 		assembly_load ();
 		breakpoints ();
 		single_stepping ();
@@ -600,7 +604,6 @@ public class Tests : TestsBase, ITest2
 		if_property_stepping();
 		fixed_size_array();
 		test_new_exception_filter();
-		runtime_invoke_hybrid_exceptions();
 		return 3;
 	}
 
