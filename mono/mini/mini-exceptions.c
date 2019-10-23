@@ -2555,7 +2555,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	MonoObject *non_exception = NULL;
 	Unwinder unwinder;
 	gboolean in_interp;
-	gboolean is_catched_unmanaged = FALSE;
+	gboolean is_caught_unmanaged = FALSE;
 	gboolean last_mono_wrapper_runtime_invoke = TRUE;
 
 	g_assert (ctx != NULL);
@@ -2597,7 +2597,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	}
 
 	if (mono_ex->caught_in_unmanaged)
-		is_catched_unmanaged = TRUE;
+		is_caught_unmanaged = TRUE;
 	
 
 	if (mono_object_isinst_checked (obj, mono_defaults.exception_class, error)) {
@@ -2738,7 +2738,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 			}
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
-				if (!is_catched_unmanaged)
+				if (!is_caught_unmanaged)
 					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 		}
 	}
