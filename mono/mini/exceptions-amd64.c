@@ -39,6 +39,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-amd64.h"
@@ -66,7 +67,8 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -875,7 +877,8 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, guint32 flags)
 	gboolean nullref = (flags & 2) != 0;
 
 	if (!ji || (!stack_ovf && !nullref))
-		mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", ctx, NULL);
 
 	mctx = *ctx;
 
