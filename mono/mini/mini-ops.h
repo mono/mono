@@ -955,26 +955,7 @@ MINI_OP(OP_EXTRACT_R4, "extract_r4", FREG, XREG, NONE)
 MINI_OP(OP_EXTRACT_R8, "extract_r8", FREG, XREG, NONE)
 MINI_OP(OP_EXTRACT_I8, "extract_i8", LREG, XREG, NONE)
 
-/* Used by LLVM */
-MINI_OP(OP_INSERT_I1, "insert_i1", XREG, XREG, IREG)
-MINI_OP(OP_INSERT_I4, "insert_i4", XREG, XREG, IREG)
-MINI_OP(OP_INSERT_I8, "insert_i8", XREG, XREG, LREG)
-MINI_OP(OP_INSERT_R4, "insert_r4", XREG, XREG, FREG)
-MINI_OP(OP_INSERT_R8, "insert_r8", XREG, XREG, FREG)
-
-MINI_OP(OP_INSERT_I2, "insert_i2", XREG, XREG, IREG)
-
 MINI_OP(OP_EXTRACTX_U2, "extractx_u2", IREG, XREG, NONE)
-
-/*these slow ops are modeled around the availability of a fast 2 bytes insert op*/
-/*insertx_u1_slow takes old value and new value as source regs */
-MINI_OP(OP_INSERTX_U1_SLOW, "insertx_u1_slow", XREG, IREG, IREG)
-/*insertx_i4_slow takes target xreg and new value as source regs */
-MINI_OP(OP_INSERTX_I4_SLOW, "insertx_i4_slow", XREG, XREG, IREG)
-
-MINI_OP(OP_INSERTX_R4_SLOW, "insertx_r4_slow", XREG, XREG, FREG)
-MINI_OP(OP_INSERTX_R8_SLOW, "insertx_r8_slow", XREG, XREG, FREG)
-MINI_OP(OP_INSERTX_I8_SLOW, "insertx_i8_slow", XREG, XREG, LREG)
 
 MINI_OP(OP_FCONV_TO_R4_X, "fconv_to_r4_x", XREG, FREG, NONE)
 MINI_OP(OP_FCONV_TO_R8_X, "fconv_to_r8_x", XREG, FREG, NONE)
@@ -1030,6 +1011,22 @@ MINI_OP(OP_EXPAND_I4, "expand_i4", XREG, IREG, NONE)
 MINI_OP(OP_EXPAND_R4, "expand_r4", XREG, FREG, NONE)
 MINI_OP(OP_EXPAND_I8, "expand_i8", XREG, IREG, NONE)
 MINI_OP(OP_EXPAND_R8, "expand_r8", XREG, FREG, NONE)
+
+MINI_OP(OP_INSERT_I1, "insert_i1", XREG, XREG, IREG)
+MINI_OP(OP_INSERT_I2, "insert_i2", XREG, XREG, IREG)
+MINI_OP(OP_INSERT_I4, "insert_i4", XREG, XREG, IREG)
+MINI_OP(OP_INSERT_I8, "insert_i8", XREG, XREG, LREG)
+MINI_OP(OP_INSERT_R4, "insert_r4", XREG, XREG, FREG)
+MINI_OP(OP_INSERT_R8, "insert_r8", XREG, XREG, FREG)
+
+/*these slow ops are modeled around the availability of a fast 2 bytes insert op*/
+/*insertx_u1_slow takes old value and new value as source regs */
+MINI_OP(OP_INSERTX_U1_SLOW, "insertx_u1_slow", XREG, IREG, IREG)
+/*insertx_i4_slow takes target xreg and new value as source regs */
+MINI_OP(OP_INSERTX_I4_SLOW, "insertx_i4_slow", XREG, XREG, IREG)
+MINI_OP(OP_INSERTX_R4_SLOW, "insertx_r4_slow", XREG, XREG, FREG)
+MINI_OP(OP_INSERTX_R8_SLOW, "insertx_r8_slow", XREG, XREG, FREG)
+MINI_OP(OP_INSERTX_I8_SLOW, "insertx_i8_slow", XREG, XREG, LREG)
 #endif
 
 MINI_OP(OP_XMOVE,   "xmove", XREG, XREG, NONE)
