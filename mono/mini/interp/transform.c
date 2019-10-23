@@ -6789,7 +6789,7 @@ interp_local_equal (StackValue *locals, int local1, int local2)
 static void
 interp_cprop (TransformData *td)
 {
-	if (!td->max_stack_height || !td->locals_size)
+	if (!td->max_stack_height)
 		return;
 	StackContentInfo *stack = (StackContentInfo*) g_malloc (td->max_stack_height * sizeof (StackContentInfo));
 	StackContentInfo *stack_end = stack + td->max_stack_height;
