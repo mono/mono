@@ -5142,7 +5142,8 @@ public class DebuggerTests
 
 	[Test]
 	public void TestRuntimeInvokeHybridSuspendExceptions () {
-		Event e = run_until ("runtime_invoke_hybrid_exceptions");
+		TearDown ();
+		Start (dtest_app_path, "runtime_invoke_hybrid_exceptions", forceExit: true);
 		var req2 = vm.CreateExceptionRequest (null, false, true, false);
 		req2.Enable ();
 		vm.Resume ();
