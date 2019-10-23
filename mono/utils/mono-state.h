@@ -117,5 +117,12 @@ mono_state_alloc_mem (MonoStateMem *mem, long tag, size_t size);
 void
 mono_state_free_mem (MonoStateMem *mem);
 
+// Dump context functions (enter/leave)
+
+gboolean
+mono_dump_start (void);
+gboolean
+mono_dump_complete (void);
+
 #endif // DISABLE_CRASH_REPORTING
 #endif // MONO_UTILS_NATIVE_STATE

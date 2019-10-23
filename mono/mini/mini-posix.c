@@ -248,8 +248,14 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 
 	// Will return when the dumping is done, so this thread can continue
 	// running. Returns FALSE on unrecoverable error.
-	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
-		g_error ("Crash reporter dumper exited due to fatal error.");
+	if (mono_dump_start ()) {
+		// Process was killed from outside since crash reporting wasn't running yet.
+		mono_handle_native_crash ("SIGTERM", &mctx, NULL);
+	} else {
+		// Crash reporting already running and we got a second SIGTERM from as part of thread-summarizing
+		if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
+			g_error ("Crash reporter dumper exited due to fatal error.");
+	}
 #endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -1058,9 +1064,8 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 					} else {
 						// Remove
 						g_async_safe_printf("\nThe MERP upload step has succeeded.\n");
-						mono_summarize_timeline_phase_log (MonoSummaryDone);
 					}
-
+					mono_summarize_timeline_phase_log (MonoSummaryDone);
 					mono_summarize_toggle_assertions (FALSE);
 				} else {
 					g_async_safe_printf("\nMerp dump step not run, no dump created.\n");
@@ -1125,7 +1130,6 @@ void
 mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 	dump_native_stacktrace (signal, mctx);
-
 	dump_memory_around_ip (mctx);
 }
 

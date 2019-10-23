@@ -64,8 +64,8 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 		return (*mono_old_win_toplevel_exception_filter)(ep);
 	}
 #endif
-
-	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }

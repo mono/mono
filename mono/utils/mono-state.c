@@ -1139,4 +1139,18 @@ mono_crash_dump (const char *jsonFile, MonoStackHash *hashes)
 	return;
 }
 
+static volatile int32_t dump_status;
+
+gboolean
+mono_dump_start (void)
+{
+	return (mono_atomic_xchg_i32(&dump_status, 1) == 0);  // return true if we started the dump
+}
+
+gboolean
+mono_dump_complete (void)
+{
+	return (mono_atomic_xchg_i32(&dump_status, 0) == 1);  // return true if we completed the dump
+}
+
 #endif // DISABLE_CRASH_REPORTING
