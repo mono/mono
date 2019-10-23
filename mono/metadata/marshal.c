@@ -1179,9 +1179,7 @@ MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
 #ifdef ENABLE_NETCORE
-	MonoException *exception;
-	exception = mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException");
-	mono_set_pending_exception (exception);
+	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
 	return NULL;
 #else
 	ERROR_DECL (error);
@@ -1895,9 +1893,7 @@ MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
 #ifdef ENABLE_NETCORE
-	MonoException *exception;
-	exception = mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException");
-	mono_set_pending_exception (exception);
+	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
 	return NULL;
 #else
 	ERROR_DECL (error);

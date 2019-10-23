@@ -184,17 +184,14 @@ namespace System.Threading
 
 		internal void ResetThreadPoolThread ()
 		{
-			if (_name != null) {
+			if (_name != null)
 				Name = null;
-			}
 
-			if ((state & ThreadState.Background) == 0) {
+			if ((state & ThreadState.Background) == 0)
 				IsBackground = true;
-			}
 
-			if ((ThreadPriority) priority != ThreadPriority.Normal) {
+			if ((ThreadPriority) priority != ThreadPriority.Normal)
 				Priority = ThreadPriority.Normal;
-			}
 		}
 
 		void SetCultureOnUnstartedThreadNoCheck (CultureInfo value, bool uiCulture)
