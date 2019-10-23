@@ -732,13 +732,15 @@ typedef struct _SgenRememberedSet {
 typedef struct _SgenGCInfo {
 	guint64 fragmented_bytes;
 	guint64 heap_size_bytes;
-	guint64 high_memory_load;
+	guint64 high_memory_load_threshold_bytes;
 	guint64 memory_load_bytes;
 	guint64 total_available_memory_bytes;
 
 } SgenGCInfo;
 
-extern SgenGCInfo sgen_gc_info;
+SgenGCInfo sgen_gc_info;
+
+void initialize_sgen_gc_info(void);
 
 SgenRememberedSet *sgen_get_remset (void);
 

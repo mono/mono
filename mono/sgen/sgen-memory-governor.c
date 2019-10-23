@@ -237,8 +237,8 @@ sgen_memgov_major_post_sweep (mword used_slots_size)
 	}
 
 	sgen_gc_info.heap_size_bytes = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size + sgen_los_memory_usage_total;
-	sgen_gc_info.fragmented_bytes = sgen_gc_info.heap_size - sgen_los_memory_usage - (used_slots_size + sgen_total_allocated_major - total_allocated_major_end)
-	sgem_gc_info.memory_load_bytes = sgen_los_memory_usage + used_slots_size + sgen_total_allocated_major - total_allocated_major_end;
+	sgen_gc_info.fragmented_bytes = sgen_gc_info.heap_size_bytes - sgen_los_memory_usage - (used_slots_size + sgen_total_allocated_major - total_allocated_major_end);
+	sgen_gc_info.memory_load_bytes = sgen_los_memory_usage + used_slots_size + sgen_total_allocated_major - total_allocated_major_end;
 
 	last_used_slots_size = used_slots_size;
 }
@@ -249,7 +249,7 @@ sgen_memgov_major_collection_start (gboolean concurrent, const char *reason)
 	need_calculate_minor_collection_allowance = TRUE;
 	major_start_heap_size = get_heap_size ();
 
-	sgen_gc_info.high_memory_threshold_bytes = major_collection_trigger_size;
+	sgen_gc_info.high_memory_load_threshold_bytes = major_collection_trigger_size;
 
 	if (debug_print_allowance) {
 		SGEN_LOG (0, "Starting collection with heap size %ld bytes", (long)major_start_heap_size);
@@ -298,14 +298,6 @@ sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const ch
 void
 sgen_memgov_collection_start (int generation)
 {
-	// I think this may only be called for GENERATION_OLD
-	// collection; this check my not be needed.
-	if (generation == GENERATION_OLD)
-	{
-		// TODO: Is get_heap_size heap size in bytes or words? Or something else.
-		sgen_gc_info.heap_size = get_heap_size();
-		sgen_gc_info.high_memory_threshold_bytes = major_collection_trigger_size;
-	}
 } 
 
 static void
