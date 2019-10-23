@@ -2646,6 +2646,8 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	{
 		initialize_sgen_gc_info();
 	}
+
+
 	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, forced_serial, stw);
 }
 /*
@@ -3324,7 +3326,7 @@ initialize_sgen_gc_info()
 {
 	sgen_gc_info.fragmented_bytes = 0;
 	sgen_gc_info.heap_size_bytes = 0;
-	sgen_gc_info.high_memory_load = 0;
+	sgen_gc_info.high_memory_load_threshold_bytes = 0;
 	sgen_gc_info.memory_load_bytes = 0;
 	sgen_gc_info.total_available_memory_bytes = 0;
 }
