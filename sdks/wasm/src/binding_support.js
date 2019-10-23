@@ -18,6 +18,8 @@ var BindingSupportLib = {
 			module ["mono_method_resolve"] = BINDING.resolve_method_fqn.bind(BINDING);
 			module ["mono_bind_static_method"] = BINDING.bind_static_method.bind(BINDING);
 			module ["mono_call_static_method"] = BINDING.call_static_method.bind(BINDING);
+			module ["mono_bind_assembly_entry_point"] = BINDING.bind_assembly_entry_point.bind(BINDING);
+			module ["mono_call_assembly_entry_point"] = BINDING.call_assembly_entry_point.bind(BINDING);
 		},
 
 		bindings_lazy_init: function () {
@@ -38,6 +40,7 @@ var BindingSupportLib = {
 			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
 			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 			this.mono_unbox_enum = Module.cwrap ('mono_wasm_unbox_enum', 'number', ['number']);
+			this.assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
@@ -736,6 +739,40 @@ var BindingSupportLib = {
 			return function() {
 				return BINDING.call_method (method, null, signature, arguments);
 			};
+		},
+		bind_assembly_entry_point: function (assembly) {
+			this.bindings_lazy_init ();
+
+			var asm = this.assembly_load (assembly);
+			if (!asm)
+				throw new Error ("Could not find assembly: " + assembly);
+
+			var method = this.assembly_get_entry_point(asm);
+			if (!method)
+				throw new Error ("Could not find entry point for assembly: " + assembly);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return function() {
+				return BINDING.call_method (method, null, signature, arguments);
+			};
+		},
+		call_assembly_entry_point: function (assembly, args, signature) {
+			this.bindings_lazy_init ();
+
+			var asm = this.assembly_load (assembly);
+			if (!asm)
+				throw new Error ("Could not find assembly: " + assembly);
+
+			var method = this.assembly_get_entry_point(asm);
+			if (!method)
+				throw new Error ("Could not find entry point for assembly: " + assembly);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return this.call_method (method, null, signature, args);
 		},
 		wasm_get_core_type: function (obj)
 		{
