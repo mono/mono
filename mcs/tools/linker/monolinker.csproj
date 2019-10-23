@@ -95,6 +95,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodBodyScanner.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodDefinitionExtensions.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodReferenceExtensions.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\OutputException.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\OverrideInformation.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Tracer.cs" />

@@ -171,11 +171,17 @@ typedef struct {
 	char systemModel [100];
 	const char *systemManufacturer;
 
-	const char *eventType;
+	const char *eventType; /* Must be MONO_MERP_EVENT_TYPE_STR */
 
 	MonoStackHash hashes;
 	GSList *annotations;
 } MERPStruct;
+
+/* The event type determines the format of the fields that are reported.  It
+ * must be MonoAppCrash for the rest of our report to make sense.
+ */
+#define MONO_MERP_EVENT_TYPE_STR "MonoAppCrash"
+
 
 typedef struct {
 	gboolean enable_merp;
@@ -338,7 +344,6 @@ mono_merp_send (MERPStruct *merp)
 	} else {
 		int status;
 		waitpid (pid, &status, 0);
-		gboolean exit_success = FALSE;
 		int exit_status = FALSE;
 
 		while (TRUE) {
@@ -347,8 +352,7 @@ mono_merp_send (MERPStruct *merp)
 
 			if (WIFEXITED(status)) {
 				exit_status = WEXITSTATUS(status);
-				exit_success = TRUE;
-				invoke_success = exit_status == TRUE;
+				invoke_success = (exit_status == 0);
 				break;
 			} else if (WIFSIGNALED(status)) {
 				break;
@@ -417,7 +421,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->systemManufacturer = "apple";
 	get_apple_model ((char *) merp->systemModel, sizeof (merp->systemModel));
 
-	merp->eventType = config.eventType;
+	merp->eventType = MONO_MERP_EVENT_TYPE_STR;
 
 	merp->hashes = *hashes;
 
@@ -586,7 +590,6 @@ mono_merp_disable (void)
 	g_free ((char*)config.appSignature);
 	g_free ((char*)config.appVersion);
 	g_free ((char*)config.merpGUIPath);
-	g_free ((char*)config.eventType);
 	g_free ((char*)config.appPath); 
 	g_free ((char*)config.moduleVersion);
 	g_slist_free (config.annotations);
@@ -596,7 +599,7 @@ mono_merp_disable (void)
 }
 
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir)
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir)
 {
 	mono_memory_barrier ();
 
@@ -621,7 +624,6 @@ mono_merp_enable (const char *appBundleID, const char *appSignature, const char 
 	config.appSignature = g_strdup (appSignature);
 	config.appVersion = g_strdup (appVersion);
 	config.merpGUIPath = g_strdup (merpGUIPath);
-	config.eventType = g_strdup (eventType);
 	config.appPath = g_strdup (appPath);
 
 	config.log = g_getenv ("MONO_MERP_VERBOSE") != NULL;

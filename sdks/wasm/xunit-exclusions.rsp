@@ -61,10 +61,6 @@
 # Crashes in GC 
 -nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
 
-# System.Xml.Linq
-# Crashes in GC
--nomethod CoreXml.Test.XLinq.LoadSaveAsyncTests.RoundtripSyncAsyncMatches_Stream
-
 # System.Net.Http.UnitTests
 # Hangs
 -nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
@@ -78,3 +74,5 @@
 # Socket ctor throws PlatformNotSupportedException
 -nomethod System.Net.Sockets.Tests.NetworkStreamTest.Ctor_NotConnected_ThrowsIOException
 
+# System.IO.Compression
+-noclass System.IO.Compression.Tests.BrotliEncoderTests

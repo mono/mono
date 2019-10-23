@@ -197,7 +197,7 @@ namespace System.Security.Permissions {
 				if (x == 42) {
 					// special case for wildcards (*)
 					// must be alone or first and followed by a dot
-					if ((s.Length > 1) && ((s [i + 1] != '.') || (i > 0)))
+					if ((s.Length > 1) && ((i > 0) || (s [i + 1] != '.')))
 						return false;
 				}
 				if (!valid [x - 33]) {

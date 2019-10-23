@@ -22,7 +22,7 @@
 #define MINT_TYPE_P  9
 #define MINT_TYPE_VT 10
 
-#define BOX_NOT_CLEAR_VT_SP 0x4000
+#define INLINED_METHOD_FLAG 0xffff
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -39,9 +39,11 @@ enum {
 };
 
 enum {
+	INTERP_OPT_NONE = 0,
 	INTERP_OPT_INLINE = 1,
 	INTERP_OPT_CPROP = 2,
-	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
+	INTERP_OPT_SUPER_INSTRUCTIONS = 4,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS
 };
 
 #if SIZEOF_VOID_P == 4
@@ -197,10 +199,15 @@ typedef struct {
 typedef struct {
 	gint64 transform_time;
 	gint64 cprop_time;
+	gint64 super_instructions_time;
 	gint32 stloc_nps;
 	gint32 movlocs;
 	gint32 copy_propagations;
+	gint32 constant_folds;
 	gint32 killed_instructions;
+	gint32 emitted_instructions;
+	gint32 super_instructions;
+	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

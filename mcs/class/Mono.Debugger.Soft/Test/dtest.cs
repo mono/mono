@@ -4233,8 +4233,6 @@ public class DebuggerTests
 		var e = run_until ("unhandled_exception_endinvoke");
 		vm.Resume ();
 
-		var e1 = GetNextEvent (); //this should be the exception
-		vm.Resume ();
 		var e2 = GetNextEvent ();
 		Assert.IsFalse (e2 is ExceptionEvent);
 
@@ -4278,6 +4276,23 @@ public class DebuggerTests
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
 		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException4 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-perform-wait-callback");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_perform_wait_callback");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is VMDeathEvent);
 		vm = null;
 	}
 
@@ -5124,7 +5139,19 @@ public class DebuggerTests
 		ev = GetNextEvent ();
 	}
 
-
+	[Test]
+	public void TestRuntimeInvokeHybridSuspendExceptions () {
+		TearDown ();
+		Start (dtest_app_path, "runtime_invoke_hybrid_exceptions", forceExit: true);
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
+	
 #endif
 } // class DebuggerTests
 } // namespace

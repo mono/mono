@@ -239,7 +239,6 @@
       <Compile Include="src\System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="src\System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="src\System.Runtime\GCSettings.cs" />
-      <Compile Include="src\System.Runtime\RuntimeImports.cs" />
       <Compile Include="src\System.Runtime.CompilerServices\DependentHandle.cs" />
       <Compile Include="src\System.Runtime.CompilerServices\JitHelpers.cs" />
       <Compile Include="src\System.Runtime.CompilerServices\RuntimeHelpers.cs" />
@@ -248,6 +247,7 @@
       <Compile Include="src\System.Runtime.InteropServices\GCHandle.cs" />
       <Compile Include="src\System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="src\System.Runtime.InteropServices\MarshalAsAttribute.cs" />
+      <Compile Include="src\System.Runtime.InteropServices\NativeLibrary.cs" />
       <Compile Include="src\System.Runtime.InteropServices\SafeHandle.cs" />
       <Compile Include="src\System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="src\System.Runtime.Loader\AssemblyDependencyResolver.cs" />
@@ -271,13 +271,11 @@
       <Compile Include="src\System.Threading\EventWaitHandle.Unix.cs" />
       <Compile Include="src\System.Threading\Mutex.Unix.cs" />
       <Compile Include="src\System.Threading\Semaphore.Unix.cs" />
-      <Compile Include="src\System.Runtime.InteropServices\NativeLibrary.Unix.cs" />
 
       <Compile Include="..\..\mcs\class\corlib\System.IO\MonoIOError.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
       <Compile Include="src\System.Globalization\GlobalizationMode.Windows.cs" />
-      <Compile Include="src\System.Runtime.InteropServices\NativeLibrary.Windows.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\mcs\class\corlib\Mono\RuntimeStructs.cs" />

@@ -55,33 +55,12 @@ enum {
 
 static int register_size;
 
-static MonoCPUFeatures
-get_cpu_features (MonoCompile* cfg)
-{
-	MonoCPUFeatures features = (MonoCPUFeatures)0;
-#if !defined(MONO_CROSS_COMPILE)
-	if (!cfg->compile_aot || cfg->use_current_cpu) {
-		// detect current CPU features if we are in JIT mode or AOT with use_current_cpu flag.
-#if defined(ENABLE_LLVM)
-		features = mono_llvm_get_cpu_features (); // llvm has a nice built-in API to detect features
-#elif defined(TARGET_AMD64)
-		features = mono_arch_get_cpu_features ();
-#endif
-	}
-#endif
-
-	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
-	return features;
-}
-
 void
 mono_simd_intrinsics_init (void)
 {
 	register_size = 16;
 #if FALSE
-	if ((get_cpu_features () & MONO_CPU_X86_AVX) != 0)
+	if ((mini_get_cpu_features () & MONO_CPU_X86_AVX) != 0)
 		register_size = 32;
 #endif
 	/* Tell the class init code the size of the System.Numerics.Register type */
@@ -105,13 +84,15 @@ lookup_intrins (guint16 *intrinsics, int size, MonoMethod *cmethod)
 {
 	const guint16 *result = (const guint16 *)mono_binary_search (cmethod->name, intrinsics, size / sizeof (guint16), sizeof (guint16), &simd_intrinsic_compare_by_name);
 
+#if FALSE
 	for (int i = 0; i < (size / sizeof (guint16)) - 1; ++i) {
 		if (method_name (intrinsics [i])[0] > method_name (intrinsics [i + 1])[0]) {
 			printf ("%s %s\n",method_name (intrinsics [i]), method_name (intrinsics [i + 1]));
 			g_assert_not_reached ();
 		}
 	}
-
+#endif
+	
 	if (result == NULL)
 		return -1;
 	else
@@ -322,7 +303,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		ins = emit_simd_ins (cfg, klass, OP_XZERO, -1, -1);
 		return emit_xcompare (cfg, klass, etype, ins, ins);
 	}
-	case SN_get_Item:
+	case SN_get_Item: {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [1]->dreg, len);
@@ -359,6 +340,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		mini_type_to_eval_stack_type (cfg, etype, ins);
 		MONO_ADD_INS (cfg->cbb, ins);
 		return ins;
+	}
 	case SN_ctor:
 		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
 			int dreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
@@ -596,7 +578,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		if (id == -1)
 			return NULL;
 
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_POPCNT) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_POPCNT) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -622,7 +604,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		if (id == -1)
 			return NULL;
 
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_LZCNT) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_LZCNT) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -649,7 +631,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		id = lookup_intrins (bmi1_methods, sizeof (bmi1_methods), cmethod);
 
 		g_assert (id != -1);
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_BMI1) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_BMI1) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -722,7 +704,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return NULL;
 		id = lookup_intrins (bmi2_methods, sizeof (bmi2_methods), cmethod);
 		g_assert (id != -1);
-		supported = (get_cpu_features (cfg) & MONO_CPU_X86_BMI2) != 0;
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_BMI2) != 0;
 		is_64bit = !strcmp (class_name, "X64");
 
 		switch (id) {
@@ -886,36 +868,26 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	class_ns = m_class_get_name_space (cmethod->klass);
 	class_name = m_class_get_name (cmethod->klass);
 
-#ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (cmethod->klass->nested_in)
 		class_ns = m_class_get_name_space (cmethod->klass->nested_in), class_name, cmethod->klass->nested_in;
+
+#ifdef TARGET_AMD64 // TODO: test and enable for x86 too
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics.X86"))
 		return emit_x86_intrinsics (cfg ,cmethod, fsig, args);
 #endif
 
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
 		if (!strcmp (class_name, "Vector128`1"))
-			return emit_vector128_t (cfg ,cmethod, fsig, args);
+			return emit_vector128_t (cfg, cmethod, fsig, args);
 		if (!strcmp (class_name, "Vector256`1"))
-		return emit_vector256_t (cfg ,cmethod, fsig, args);
+			return emit_vector256_t (cfg, cmethod, fsig, args);
 	}
 
-	// FIXME: Make sure get_cpu_features is used where needed
-	if (cfg->compile_aot)
-		return NULL;
-	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector")) {
-		MonoInst *ins = emit_sys_numerics_vector (cfg, cmethod, fsig, args);
-		if (!ins) {
-			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
-		}
-		return ins;
-	}
-	if (!strcmp (class_ns, "System.Numerics") && !strcmp (class_name, "Vector`1")) {
-		MonoInst *ins = emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
-		if (!ins) {
-			//printf ("M: %s %s\n", mono_method_get_full_name (cfg->method), mono_method_get_full_name (cmethod));
-		}
-		return ins;
+	if (!strcmp (class_ns, "System.Numerics")) {
+		if (!strcmp (class_name, "Vector"))
+			return emit_sys_numerics_vector (cfg, cmethod, fsig, args);
+		if (!strcmp (class_name, "Vector`1"))
+			return emit_sys_numerics_vector_t (cfg, cmethod, fsig, args);
 	}
 
 	return NULL;

@@ -292,31 +292,14 @@ mono_type_name_check_byref (MonoType *type, GString *str)
 		g_string_append_c (str, '&');
 }
 
-/**
- * mono_identifier_escape_type_name_chars:
- * \param str a destination string
- * \param identifier an IDENTIFIER in internal form
- *
- * \returns \p str
- *
- * The displayed form of the identifier is appended to str.
- *
- * The displayed form of an identifier has the characters ,+&*[]\
- * that have special meaning in type names escaped with a preceeding
- * backslash (\) character.
- */
-static GString*
-mono_identifier_escape_type_name_chars (GString* str, const char* identifier)
+static char*
+escape_special_chars (const char* identifier)
 {
-	if (!identifier)
-		return str;
-
-	size_t n = str->len;
-	// reserve space for common case: there will be no escaped characters.
-	g_string_set_size(str, n + strlen(identifier));
-	g_string_set_size(str, n);
-
-	for (const char* s = identifier; *s != 0 ; s++) {
+	size_t id_len = strlen (identifier);
+	// Assume the worst case, and thus only allocate once
+	char *res = g_malloc (id_len * 2 + 1);
+	char *res_ptr = res;
+	for (const char *s = identifier; *s != 0; s++) {
 		switch (*s) {
 		case ',':
 		case '+':
@@ -325,15 +308,46 @@ mono_identifier_escape_type_name_chars (GString* str, const char* identifier)
 		case '[':
 		case ']':
 		case '\\':
-			g_string_append_c (str, '\\');
-			g_string_append_c (str, *s);
-			break;
-		default:
-			g_string_append_c (str, *s);
+			*res_ptr++ = '\\';
 			break;
 		}
+		*res_ptr++ = *s;
 	}
-	return str;
+	*res_ptr = '\0';
+	return res;
+}
+
+/**
+ * mono_identifier_escape_type_name_chars:
+ * \param identifier the display name of a mono type
+ *
+ * \returns The name in external form, that is with escaping backslashes.
+ *
+ * The displayed form of an identifier has the characters ,+&*[]\
+ * that have special meaning in type names escaped with a preceeding
+ * backslash (\) character.
+ */
+char*
+mono_identifier_escape_type_name_chars (const char* identifier)
+{
+	if (!identifier)
+		return NULL;
+
+	// If the string has any special characters escape the whole thing, otherwise just return the input
+	for (const char *s = identifier; *s != 0; s++) {
+		switch (*s) {
+		case ',':
+		case '+':
+		case '&':
+		case '*':
+		case '[':
+		case ']':
+		case '\\':
+			return escape_special_chars (identifier);
+		}
+	}
+
+	return g_strdup (identifier);
 }
 
 static void
@@ -420,8 +434,11 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 			const char *klass_name_space = m_class_get_name_space (klass);
 			if (format == MONO_TYPE_NAME_FORMAT_IL)
 				g_string_append (str, klass_name_space);
-			else
-				mono_identifier_escape_type_name_chars (str, klass_name_space);
+			else {
+				char *escaped = mono_identifier_escape_type_name_chars (klass_name_space);
+				g_string_append (str, escaped);
+				g_free (escaped);
+			}
 			g_string_append_c (str, '.');
 		}
 		const char *klass_name = m_class_get_name (klass);
@@ -430,7 +447,9 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 			gssize len = s ? (s - klass_name) : (gssize)strlen (klass_name);
 			g_string_append_len (str, klass_name, len);
 		} else {
-			mono_identifier_escape_type_name_chars (str, klass_name);
+			char *escaped = mono_identifier_escape_type_name_chars (klass_name);
+			g_string_append (str, escaped);
+			g_free (escaped);
 		}
 		if (is_recursed)
 			break;
@@ -2002,6 +2021,7 @@ mono_class_from_mono_type (MonoType *type)
 MonoClass *
 mono_class_from_mono_type_internal (MonoType *type)
 {
+	g_assert (type);
 	switch (type->type) {
 	case MONO_TYPE_OBJECT:
 		return type->data.klass? type->data.klass: mono_defaults.object_class;
@@ -6233,7 +6253,17 @@ mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError 
 		return method;
 
 	klass = method->klass;
-	if (mono_class_is_ginst (klass)) {
+	if (mono_class_is_gtd (klass)) {
+		/* If we get a GTD like Foo`2 replace look instead at its instantiation with its own generic params: Foo`2<!0, !1>. */
+		/* In particular we want generic_inst to be initialized to <!0,
+		 * !1> so that we can inflate parent classes correctly as we go
+		 * up the class hierarchy. */
+		MonoType *ty = mono_class_gtd_get_canonical_inst (klass);
+		g_assert (ty->type == MONO_TYPE_GENERICINST);
+		MonoGenericClass *gklass = ty->data.generic_class;
+		generic_inst = mono_generic_class_get_context (gklass);
+		klass = gklass->container_class;
+	} else if (mono_class_is_ginst (klass)) {
 		generic_inst = mono_class_get_context (klass);
 		klass = mono_class_get_generic_class (klass)->container_class;
 	}
@@ -6281,6 +6311,10 @@ retry:
 			generic_inst = parent_inst;
 		}
 	} else {
+		/* When we get here, possibly after a retry, if generic_inst is
+		 * set, then the class is must be a gtd */
+		g_assert (generic_inst == NULL || mono_class_is_gtd (klass));
+
 		klass = m_class_get_parent (klass);
 		if (!klass)
 			return method;
@@ -6300,6 +6334,7 @@ retry:
 	if (generic_inst) {
 		klass = mono_class_inflate_generic_class_checked (klass, generic_inst, error);
 		return_val_if_nok (error, NULL);
+		generic_inst = NULL;
 	}
 
 	if (klass == method->klass)

@@ -19,13 +19,6 @@
 -nomethod Microsoft.VisualBasic.Tests.InteractionTests.GetSetting
 
 ####################################################################
-##  System.CodeDom.Tests
-####################################################################
-
-# TODO: Hangs
--noclass System.CodeDom.Compiler.Tests.ExecutorTests
-
-####################################################################
 ##  System.Collections.Specialized.Tests
 ####################################################################
 
@@ -36,9 +29,6 @@
 ####################################################################
 ##  System.Diagnostics.Process.Tests
 ####################################################################
-
-# test process hangs
--nomethod System.Diagnostics.Tests.ProcessTests.Kill_EntireProcessTree_True_CalledOnTreeContainingCallingProcess_ThrowsInvalidOperationException
 
 # times out waiting for remote process. Would it require system wide dotnet?
 # https://github.com/mono/mono/issues/14903
@@ -61,6 +51,13 @@
 -nomethod BasicEventSourceTests.TestsManifestNegative.Test_GenerateManifest_InvalidEventSources
 
 ####################################################################
+##  System.Drawing.Common.Tests
+####################################################################
+
+# System.ArgumentException Arg_ObjObjEx
+-nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
+
+####################################################################
 ##  System.Dynamic.Runtime.Tests
 ####################################################################
 
@@ -71,9 +68,6 @@
 ####################################################################
 ##  System.IO.Tests
 ####################################################################
-
-# TODO: Hangs
--nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
 
 # flaky test (The process cannot access the file ...)
 -nomethod System.IO.Tests.*.CopyFileWithData_MemberData
@@ -176,10 +170,6 @@
 # https://github.com/mono/mono/issues/15005
 -nomethod *PlatformHandler*
 
-# TODO: Hangs
-# https://github.com/mono/mono/issues/15006
--nomethod *ExpectedDiagnosticSourceActivityLogging*
-
 # Works, but may trigger UI!
 # NOTE: KEEPING THIS HERE BUT COMMENTED OUT - in the event the UI is shown (wasn't for me)
 #-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_DangerousAcceptAllCertificatesValidator_Test.SetDelegate_ConnectionSucceeds
@@ -190,10 +180,6 @@
 ####################################################################
 ##  System.Net.Sockets.Tests
 ####################################################################
-
-# TODO: Hangs and fails.
-# https://github.com/mono/mono/issues/15010
--nomethod System.Net.Sockets.Tests.CreateSocket.CtorAndAccept_SocketNotKeptAliveViaInheritance
 
 # flaky test
 -nomethod System.Net.Sockets.Tests.SocketOptionNameTest.MulticastInterface_Set_AnyInterface_Succeeds
@@ -464,30 +450,6 @@
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_InvalidLengthByValArrayInStruct_ThrowsArgumentException
 
 ####################################################################
-##  System.Runtime.Numerics.Tests
-####################################################################
-
-# Expected vs Actual are pretty different
-# https://github.com/mono/mono/issues/15106
--nomethod System.Numerics.Tests.ComplexTests.Sin_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15107
--nomethod System.Numerics.Tests.ComplexTests.Sinh_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15108
--nomethod System.Numerics.Tests.ComplexTests.Cos_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15109
--nomethod System.Numerics.Tests.ComplexTests.Cosh_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15110
--nomethod System.Numerics.Tests.ComplexTests.Exp
-
-####################################################################
 ##  System.Runtime.Serialization.Formatters.Tests
 ####################################################################
 
@@ -675,18 +637,6 @@
 -nomethod System.Data.Common.Tests.DbConnectionTests.ProviderFactoryTest
 
 ####################################################################
-##  System.Data.SqlClient.Tests
-####################################################################
-
-# Hangs and then fails... All async tests display the same failure
-# https://github.com/mono/mono/issues/15181
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteReaderAsyncTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncErrorTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
-
-####################################################################
 ##  System.Diagnostics.StackTrace.Tests
 ####################################################################
 
@@ -815,6 +765,15 @@
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
 
 ####################################################################
+##  System.Runtime.Handles.Tests
+####################################################################
+
+# NRE in SafeHandle.Dispose
+# https://github.com/mono/mono/issues/17224
+-noclass SafeWaitHandleExtensions_4000_Tests
+-noclass SafeWaitHandle_4000_Tests
+
+####################################################################
 ##  System.Reflection.TypeExtensions.Tests
 ####################################################################
 
@@ -938,13 +897,6 @@
 -nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 
 ####################################################################
-##  System.Net.Requests.Tests
-####################################################################
-
-# hangs:
--nomethod System.Net.Tests.HttpWebRequestTest.HttpWebRequest_SetHostHeader_ContainsPortNumber
-
-####################################################################
 ##  System.Security.Cryptography.X509Certificates.Tests
 ####################################################################
 
@@ -976,9 +928,6 @@
 # Flaky test (FileSystemWatcher)
 -nomethod System.IO.Tests.Directory_NotifyFilter_Tests.FileSystemWatcher_Directory_NotifyFilter_LastWriteTime
 
-# Flaky test
--nomethod System.Security.Cryptography.Rsa.Tests.RSAKeyFileTests.ReadEncryptedRsa16384
-
 ####################################################################
 ##  System.Security.Cryptography.Encoding.Tests
 ####################################################################
@@ -989,17 +938,14 @@
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.Oid_StringString_NullFriendlyName
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Ctor
 
-
-# corefx tests need to be updated
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt16
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt32
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeDouble
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeByte
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSByte
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt64
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt16
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt64
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSingle
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt32
-
 -nomethod System.Tests.StringComparerTests.CreateCultureOptions_InvalidArguments_Throws
+
+# Requires NativeLibrary implementation
+-nomethod System.Net.Tests.HttpWebRequestTest.ServicePoint_GetValue_ExpectedResult
+
+# Remove once we get https://github.com/dotnet/corefx/pull/41924 through Arcade
+-nomethod System.Tests.BufferTests.BlockCopy_Invalid
+# Remove once we get https://github.com/dotnet/corefx/pull/41851 through Arcade
+-nomethod System.Text.Tests.DecoderConvert2.PosTest6
+# Remove once we get https://github.com/dotnet/corefx/pull/41926 through Arcade
+-nomethod System.Security.Cryptography.DeriveBytesTests.PasswordDeriveBytesTests.GetBytes_ZeroLength

@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Resources;
+using System.Reflection;
 
 // needed for ../referencesource/System.Data/System/Data/CodeGen/datacache.cs
 internal static partial class Res
@@ -41,5 +43,13 @@ internal static partial class Res
 
 internal static partial class SR 
 {
-	public static string GetResourceString(string resourceKey, string defaultString) => defaultString;
+	public static string GetResourceString(string resourceKey, string defaultString) {
+		Type fieldType = typeof(SR);
+		FieldInfo field = fieldType.GetField(resourceKey);
+		if (field != null) {
+			return field.GetValue(null).ToString();
+		}
+
+		return defaultString;
+	}
 }

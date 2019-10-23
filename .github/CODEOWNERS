@@ -92,6 +92,12 @@
 /mono/metadata/thread* @lateralusX @lambdageek
 /mono/metadata/w32* @lateralusX @lambdageek
 /mono/metadata/*-win* @lateralusX @lambdageek
+/mono/metadata/appdomain* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/assembly* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/domain* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/loader* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/native-library* @vargaz @lambdageek @CoffeeFlux
+/mono/metadata/*-unix* @lambdageek @CoffeeFlux
 
 /mono/mini @vargaz @lewurm @lambdageek @SamMonoRT
 /mono/mini/*cfgdump* @lewurm @vargaz

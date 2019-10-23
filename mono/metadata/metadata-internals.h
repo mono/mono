@@ -298,8 +298,6 @@ struct _MonoTableInfo {
 
 #define REFERENCE_MISSING ((gpointer) -1)
 
-typedef struct _MonoDllMap MonoDllMap;
-
 typedef struct {
 	gboolean (*match) (MonoImage*);
 	gboolean (*load_pe_data) (MonoImage*);
@@ -535,8 +533,10 @@ struct _MonoImage {
 	 */
 	void *user_info;
 
+#ifndef DISABLE_DLLMAP
 	/* dll map entries */
 	MonoDllMap *dll_map;
+#endif
 
 	/* interfaces IDs from this image */
 	/* protected by the classes lock */

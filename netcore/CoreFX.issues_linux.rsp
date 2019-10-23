@@ -1,6 +1,3 @@
-# System.ArgumentException Arg_ObjObjEx
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
-
 # See TODO in AssemblyLoadContext.InternalLoadFromPath()
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandleFullSignature
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandle
@@ -24,17 +21,8 @@
 # StackOverflow somewhere here
 -nonamespace System.Threading.Tasks.Tests
 
-# NRE in SafeHandle.Dispose
--noclass SafeWaitHandleExtensions_4000_Tests
--noclass SafeWaitHandle_4000_Tests
--noclass SafeHandle_4000_Tests
--noclass CriticalHandle_4000_Tests
-
 # Requires precise GC (should be ignored in dotnet/corefx for mono)
 -nomethod System.Collections.Concurrent.Tests.ConcurrentQueueTests.ReferenceTypes_NulledAfterDequeue
 
-# libgdiplus update broke these tests
--nomethod System.Drawing.Tests.IconTests.CorrectColorDepthExtracted
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_ColorMatrixDefaultFlagType_Success
--nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrices_ColorMatrixGrayMatrixFlagsTypes_Success
--nomethod System.Drawing.Tests.IconTests.CorrectColorDepthExtracted
+# Requires NativeLibrary implementation
+-nomethod System.Data.Odbc.Tests.DependencyCheckTest.OdbcConnection_OpenWhenOdbcNotInstalled_ThrowsException
