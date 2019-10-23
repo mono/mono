@@ -23,7 +23,7 @@
 #define MONO_ARCH_CALLEE_SAVED_XREGS 0
 #define MONO_ARCH_CALLEE_XREGS 0
 
-#if !defined(DISABLE_SIMD) && defined(ENABLE_NETCORE)
+#if !defined(DISABLE_SIMD) && defined(ENABLE_NETCORE) && defined(ENABLE_LLVM)
 #define MONO_ARCH_SIMD_INTRINSICS 1
 #endif
 
