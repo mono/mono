@@ -6397,7 +6397,7 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 		cbb->last_seq_point = seqp;
 	} else {
 		if (MINT_IS_LDLOC (opcode) || MINT_IS_STLOC (opcode) || MINT_IS_STLOC_NP (opcode) || opcode == MINT_LDLOCA_S ||
-				MINT_IS_LDLOCFLD (opcode) || MINT_IS_LOCUNOP (opcode)) {
+				MINT_IS_LDLOCFLD (opcode) || MINT_IS_LOCUNOP (opcode) || MINT_IS_STLOCFLD (opcode)) {
 			ins->data [0] = get_interp_local_offset (td, ins->data [0]);
 		} else if (MINT_IS_MOVLOC (opcode)) {
 			ins->data [0] = get_interp_local_offset (td, ins->data [0]);
@@ -7068,6 +7068,39 @@ retry:
 			ins = interp_fold_unop (td, sp, ins);
 		} else if (MINT_IS_BINOP (ins->opcode)) {
 			ins = interp_fold_binop (td, sp, ins);
+			sp--;
+		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_P && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
+			if (sp [-2].ins) {
+				InterpInst *obj_ins = sp [-2].ins;
+				if (obj_ins->opcode == MINT_LDLOC_O) {
+					int loc_index = obj_ins->data [0];
+					int fld_offset = ins->data [0];
+					int mt = ins->opcode - MINT_STFLD_I1;
+					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
+					ins->data [0] = loc_index;
+					ins->data [1] = fld_offset;
+					interp_clear_ins (td, ins->prev);
+					interp_clear_ins (td, obj_ins);
+					mono_interp_stats.super_instructions++;
+					mono_interp_stats.killed_instructions++;
+				} else if (obj_ins->opcode == MINT_LDARG_O || obj_ins->opcode == MINT_LDARG_P0) {
+					int arg_index = 0;
+					int fld_offset = ins->data [0];
+					int mt = ins->opcode - MINT_STFLD_I1;
+					if (obj_ins->opcode == MINT_LDARG_O)
+						arg_index = obj_ins->data [0];
+					ins = interp_insert_ins (td, ins, MINT_STARGFLD_I1 + mt);
+					ins->data [0] = arg_index;
+					ins->data [1] = fld_offset;
+					interp_clear_ins (td, ins->prev);
+					interp_clear_ins (td, obj_ins);
+					mono_interp_stats.super_instructions++;
+					mono_interp_stats.killed_instructions++;
+				}
+			}
+			sp -= 2;
+		} else if (MINT_IS_STLOCFLD (ins->opcode)) {
+			local_ref_count [ins->data [0]]++;
 			sp--;
 		} else {
 			if (pop == MINT_POP_ALL)
