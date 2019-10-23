@@ -315,7 +315,7 @@ enum {
 #define MONO_IS_ZERO(ins) (((ins)->opcode == OP_VZERO) || ((ins)->opcode == OP_XZERO))
 
 #ifdef TARGET_ARM64
-#define MONO_CLASS_IS_SIMD(cfg, klass) (((cfg)->opt & MONO_OPT_SIMD) && COMPILE_LLVM (cfg) && m_class_is_simd_type (klass))
+#define MONO_CLASS_IS_SIMD(cfg, klass) (0)
 #else
 #define MONO_CLASS_IS_SIMD(cfg, klass) (((cfg)->opt & MONO_OPT_SIMD) && m_class_is_simd_type (klass))
 #endif
