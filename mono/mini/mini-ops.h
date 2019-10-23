@@ -785,8 +785,6 @@ MINI_OP(OP_NOT_NULL, "not_null", NONE, IREG, NONE)
 
 /* SIMD opcodes. */
 
-#if defined(TARGET_X86) || defined(TARGET_AMD64)
-
 MINI_OP(OP_ADDPS, "addps", XREG, XREG, XREG)
 MINI_OP(OP_DIVPS, "divps", XREG, XREG, XREG)
 MINI_OP(OP_MULPS, "mulps", XREG, XREG, XREG)
@@ -977,6 +975,7 @@ MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 /* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */
 MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 /* sse 4.1 */
 
 /* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */

@@ -6691,7 +6691,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			/* 
 			 * SIMD
 			 */
-#if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_XZERO: {
 			values [ins->dreg] = LLVMConstNull (type_to_llvm_type (ctx, m_class_get_byval_arg (ins->klass)));
 			break;
@@ -7320,6 +7319,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_SSE41_ROUNDSS: {
 			LLVMValueRef args [3];
 
@@ -7340,6 +7340,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDPD), args, 2, dname);
 			break;
 		}
+#endif
 
 #ifdef ENABLE_NETCORE
 		case OP_XCAST: {
@@ -7480,6 +7481,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			ctx->bblocks [bb->block_num].end_bblock = cbb;
 			break;
 		}
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_POPCNT32:
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CTPOP_I32), &lhs, 1, "");
 			break;
@@ -7544,8 +7546,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_PDEP32 ? INTRINS_PDEP_I32 : INTRINS_PDEP_I64), args, 2, "");
 			break;
 		}
-#endif /* ENABLE_NETCORE */
 #endif /* TARGET_X86 || TARGET_AMD64 */
+#endif /* ENABLE_NETCORE */
 
 // Shared between ARM64 and X86
 #if defined(ENABLE_NETCORE) && (defined(TARGET_ARM64) || defined(TARGET_X86) || defined(TARGET_AMD64))
