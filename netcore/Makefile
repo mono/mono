@@ -263,7 +263,7 @@ run-tests-coreclr: prepare update-tests-coreclr corerun
 	for testdir in $$test_files; do \
 		counter=$$((counter+1)); \
 		echo "Running $$testdir"; \
-		if sh $$testdir -coreroot=$(realpath $(SHAREDRUNTIME)) >>coreclr/output.log 2>&1 ; then \
+		if sh $$testdir -coreroot=$(realpath $(SHAREDRUNTIME)) ; then \
 			echo "FAILED"; \
 			failures=$$((failures+1)); \
 		fi; \
