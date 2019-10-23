@@ -210,6 +210,8 @@ OPDEF(MINT_STLOC_VT, "stloc.vt", 4, Pop1, Push0, MintOpShortAndInt)
 
 OPDEF(MINT_STLOC_NP_I4, "stloc.np.i4", 2, Pop0, Push0, MintOpUShortInt)
 OPDEF(MINT_STLOC_NP_I8, "stloc.np.i8", 2, Pop0, Push0, MintOpUShortInt)
+OPDEF(MINT_STLOC_NP_R4, "stloc.np.R4", 2, Pop0, Push0, MintOpUShortInt)
+OPDEF(MINT_STLOC_NP_R8, "stloc.np.R8", 2, Pop0, Push0, MintOpUShortInt)
 OPDEF(MINT_STLOC_NP_O, "stloc.np.o", 2, Pop0, Push0, MintOpUShortInt)
 
 OPDEF(MINT_MOVLOC_1, "movloc.1", 3, Pop0, Push0, MintOpTwoShorts)
