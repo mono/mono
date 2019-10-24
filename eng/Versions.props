@@ -7,7 +7,7 @@
     <!-- corefx -->
     <MicrosoftPrivateCoreFxNETCoreAppVersion>5.0.0-alpha1.19520.7</MicrosoftPrivateCoreFxNETCoreAppVersion>
     <!-- core-setup -->
-    <MicrosoftNETCoreAppVersion>5.0.0-alpha1.19521.2</MicrosoftNETCoreAppVersion>
+    <MicrosoftNETCoreAppVersion>5.0.0-alpha1.19523.10</MicrosoftNETCoreAppVersion>
     <!-- roslyn -->
     <MicrosoftNetCompilersVersion>3.3.1-beta4-19476-06</MicrosoftNetCompilersVersion>
   </PropertyGroup>
