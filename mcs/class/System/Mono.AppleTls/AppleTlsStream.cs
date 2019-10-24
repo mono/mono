@@ -31,7 +31,7 @@ namespace Mono.AppleTls
 	class AppleTlsStream : MNS.MobileAuthenticatedStream
 	{
 		public AppleTlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
-		                       MonoTlsSettings settings, MonoTlsProvider provider)
+		                       MonoTlsSettings settings, MNS.MobileTlsProvider provider)
 			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
 		{
 		}

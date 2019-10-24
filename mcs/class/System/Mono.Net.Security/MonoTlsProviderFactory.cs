@@ -70,7 +70,7 @@ namespace Mono.Net.Security
 		 * 
 		 */
 
-		internal static MSI.MonoTlsProvider GetProviderInternal ()
+		internal static MobileTlsProvider GetProviderInternal ()
 		{
 			lock (locker) {
 				InitializeInternal ();
@@ -88,7 +88,7 @@ namespace Mono.Net.Security
 
 				InitializeProviderRegistration ();
 
-				MSI.MonoTlsProvider provider;
+				MobileTlsProvider provider;
 				try {
 					provider = CreateDefaultProviderImpl ();
 				} catch (Exception ex) {
@@ -123,18 +123,18 @@ namespace Mono.Net.Security
 		static object locker = new object ();
 		static bool initialized;
 
-		static MSI.MonoTlsProvider defaultProvider;
+		static MobileTlsProvider defaultProvider;
 
 		/*
 		 * @providerRegistration maps provider names to a tuple containing its ID and full type name.
 		 * On non-reflection enabled systems (such as XI and XM), we can use the Guid to uniquely
 		 * identify the provider.
 		 *
-		 * @providerCache maps the provider's Guid to the MSI.MonoTlsProvider instance.
+		 * @providerCache maps the provider's Guid to the MobileTlsProvider instance.
 		 *
 		 */
 		static Dictionary<string,Tuple<Guid,string>> providerRegistration;
-		static Dictionary<Guid,MSI.MonoTlsProvider> providerCache;
+		static Dictionary<Guid,MobileTlsProvider> providerCache;
 
 #if !ONLY_APPLETLS && !MONOTOUCH && !XAMMAC
 		static Type LookupProviderType (string name, bool throwOnError)
@@ -155,7 +155,7 @@ namespace Mono.Net.Security
 		}
 #endif
 
-		static MSI.MonoTlsProvider LookupProvider (string name, bool throwOnError)
+		static MobileTlsProvider LookupProvider (string name, bool throwOnError)
 		{
 			lock (locker) {
 				InitializeProviderRegistration ();
@@ -167,7 +167,7 @@ namespace Mono.Net.Security
 				}
 
 				// Check cache before doing the reflection lookup.
-				MSI.MonoTlsProvider provider;
+				MobileTlsProvider provider;
 				if (providerCache.TryGetValue (entry.Item1, out provider))
 					return provider;
 
@@ -177,7 +177,7 @@ namespace Mono.Net.Security
 					throw new NotSupportedException (string.Format ("Could not find TLS Provider: `{0}'.", entry.Item2));
 
 				try {
-					provider = (MSI.MonoTlsProvider)Activator.CreateInstance (type, true);
+					provider = (MobileTlsProvider)Activator.CreateInstance (type, true);
 				} catch (Exception ex) {
 					throw new NotSupportedException (string.Format ("Unable to instantiate TLS Provider `{0}'.", type), ex);
 				}
@@ -224,7 +224,7 @@ namespace Mono.Net.Security
 				InitializeDebug ();
 
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
-				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
+				providerCache = new Dictionary<Guid,MobileTlsProvider> ();
 
 				PopulateProviders ();
 			}
@@ -283,7 +283,7 @@ namespace Mono.Net.Security
 		internal extern static bool IsBtlsSupported ();
 #endif
 
-		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
+		static MobileTlsProvider CreateDefaultProviderImpl ()
 		{
 #if MONODROID
 			var type = Environment.GetEnvironmentVariable ("XA_TLS_PROVIDER");
@@ -342,13 +342,9 @@ namespace Mono.Net.Security
 		 * Mono.Security.dll provides a public wrapper around these.
 		 */
 
-		internal static MSI.MonoTlsProvider GetProvider ()
+		internal static MobileTlsProvider GetProvider ()
 		{
-			var provider = GetProviderInternal ();
-			if (provider == null)
-				throw new NotSupportedException ("No TLS Provider available.");
-
-			return provider;
+			return GetProviderInternal ();
 		}
 
 		internal static bool IsProviderSupported (string name)
@@ -359,7 +355,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static MSI.MonoTlsProvider GetProvider (string name)
+		internal static MobileTlsProvider GetProvider (string name)
 		{
 			return LookupProvider (name, false);
 		}
