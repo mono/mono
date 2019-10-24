@@ -7256,8 +7256,9 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	if (td->max_stack_height > header->max_stack * 3 && header->max_stack > 16)
 		g_warning ("Excessive stack space usage for method %s, %d/%d", method->name, td->max_stack_height, header->max_stack);
 
-	int code_len_u8 = (guint8 *) td->new_code_end - (guint8 *) td->new_code;
-	int code_len_u16 = td->new_code_end - td->new_code;
+	int code_len_u8, code_len_u16;
+	code_len_u8 = (guint8 *) td->new_code_end - (guint8 *) td->new_code;
+	code_len_u16 = td->new_code_end - td->new_code;
 
 	rtm->clauses = (MonoExceptionClause*)mono_domain_alloc0 (domain, header->num_clauses * sizeof (MonoExceptionClause));
 	memcpy (rtm->clauses, header->clauses, header->num_clauses * sizeof(MonoExceptionClause));
