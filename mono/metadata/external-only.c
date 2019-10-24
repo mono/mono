@@ -20,6 +20,8 @@
 #include "marshal.h"
 #include "object.h"
 #include "external-only.h"
+#include "threads.h"
+#include "threads-types.h"
 
 /**
  * mono_gchandle_new:
@@ -323,3 +325,14 @@ mono_domain_set (MonoDomain *domain, gboolean force)
 	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_domain_set_internal_with_options (domain, TRUE));
 	return TRUE;
 }
+
+/**
+ * mono_thread_manage:
+ *
+ */
+void
+mono_thread_manage (void)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_thread_manage_internal ());
+}
+
