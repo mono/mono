@@ -4914,7 +4914,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				g_assert_not_reached ();
 				break;
 			}
-			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I8);
+			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I);
 			++td->ip;
 			break;
 		case CEE_CONV_OVF_I8_UN:
