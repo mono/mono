@@ -550,7 +550,12 @@ common_sources = \
 	llvmonly-runtime.c \
 	aot-runtime.h	\
 	ee.h \
+	tiered.h \
 	mini-runtime.h
+
+if ENABLE_EXPERIMENT_TIERED
+common_sources += tiered.c
+endif
 
 endif # !ENABLE_MSVC_ONLY
 
