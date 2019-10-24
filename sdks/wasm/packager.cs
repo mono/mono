@@ -687,7 +687,6 @@ class Driver {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {
 				interp_files.Add ("mono.worker.js");
-				interp_files.Add ("mono.js.mem");
 			}
 			foreach (var fname in interp_files) {
 				File.Delete (Path.Combine (out_prefix, fname));
@@ -881,7 +880,6 @@ class Driver {
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
 			if (enable_threads) {
 				ninja.WriteLine ("build $appdir/mono.worker.js: cpifdiff $wasm_runtime_dir/mono.worker.js");
-				ninja.WriteLine ("build $appdir/mono.js.mem: cpifdiff $wasm_runtime_dir/mono.js.mem");
 			}
 		}
 		if (enable_aot)
