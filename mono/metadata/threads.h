@@ -24,6 +24,7 @@ typedef mono_bool (*MonoThreadManageCallback) (MonoThread* thread);
 MONO_API void mono_thread_init (MonoThreadStartCB start_cb,
 			      MonoThreadAttachCB attach_cb);
 MONO_API void mono_thread_cleanup (void);
+MONO_RT_EXTERNAL_ONLY
 MONO_API void mono_thread_manage(void);
 
 MONO_API MonoThread *mono_thread_current (void);
