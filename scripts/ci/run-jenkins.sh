@@ -335,7 +335,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
         echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
-        #echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
+        echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"

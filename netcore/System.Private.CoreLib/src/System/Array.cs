@@ -465,30 +465,11 @@ namespace System
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
+		[Intrinsic]
 		internal int GetElementSize ()
 		{
-			return Marshal.GetArrayElementSize (GetType ());
-		}
-
-		//
-		// Moved value from instance into target of different type with no checks (JIT intristics)
-		//
-		// Restrictions:
-		//
-		// S and R must either:
-		// 	 both be blitable valuetypes
-		// 	 both be reference types (IOW, an unsafe cast)
-		// S and R cannot be float or double
-		// S and R must either:
-		//	 both be a struct
-		// 	 both be a scalar
-		// S and R must either:
-		// 	 be of same size
-		// 	 both be a scalar of size <= 4
-		//
-		internal static R UnsafeMov<S,R> (S instance)
-		{
-			return (R)(object) instance;
+			ThrowHelper.ThrowNotSupportedException ();
+			return 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -1152,9 +1152,13 @@ namespace System.Text
 
         public StringBuilder Append(char value)
         {
-            if (m_ChunkLength < m_ChunkChars.Length)
+            int nextCharIndex = m_ChunkLength;
+            char[] chars = m_ChunkChars;
+
+            if ((uint)chars.Length > (uint)nextCharIndex)
             {
-                m_ChunkChars[m_ChunkLength++] = value;
+                chars[nextCharIndex] = value;
+                m_ChunkLength++;
             }
             else
             {
@@ -2358,25 +2362,6 @@ namespace System.Text
 
             StringBuilder result = this;
             while (result.m_ChunkOffset > index)
-            {
-                Debug.Assert(result.m_ChunkPrevious != null);
-                result = result.m_ChunkPrevious;
-            }
-
-            Debug.Assert(result != null);
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the chunk corresponding to the logical byte index in this builder.
-        /// </summary>
-        /// <param name="byteIndex">The logical byte index in this builder.</param>
-        private StringBuilder FindChunkForByte(int byteIndex)
-        {
-            Debug.Assert(0 <= byteIndex && byteIndex <= Length * sizeof(char));
-
-            StringBuilder result = this;
-            while (result.m_ChunkOffset * sizeof(char) > byteIndex)
             {
                 Debug.Assert(result.m_ChunkPrevious != null);
                 result = result.m_ChunkPrevious;

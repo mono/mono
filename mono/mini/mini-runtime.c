@@ -952,8 +952,10 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 		return;
 	mono_free_altstack (jit_tls);
 
+	if (jit_tls->interp_context)
+		mini_get_interp_callbacks ()->free_context (jit_tls->interp_context);
+
 	g_free (jit_tls->first_lmf);
-	g_free (jit_tls->interp_context);
 	g_free (jit_tls);
 }
 
@@ -3272,8 +3274,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 
 #endif
 
-static gboolean
-is_addr_implicit_null_check (void *addr)
+gboolean
+mono_is_addr_implicit_null_check (void *addr)
 {
 	/* implicit null checks are only expected to work on the first page. larger
 	 * offsets are expected to have an explicit null check */
@@ -3363,11 +3365,17 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		if (is_addr_implicit_null_check (info->si_addr)) {
+#ifdef TARGET_AMD64
+		/* exceptions-amd64.c handles the check itself */
+		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
+#else
+		if (mono_is_addr_implicit_null_check (info->si_addr)) {
 			mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 		} else {
+			// FIXME: This shouldn't run on the altstack
 			mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		}
+#endif
 	}
 #else
 
@@ -3383,7 +3391,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		}
 	}
 
-	if (is_addr_implicit_null_check (fault_addr)) {
+	if (mono_is_addr_implicit_null_check (fault_addr)) {
 		mono_arch_handle_exception (ctx, NULL);
 	} else {
 		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);

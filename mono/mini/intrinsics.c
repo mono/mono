@@ -15,6 +15,7 @@
 #include "debugger-agent.h"
 
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/class-abi-details.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/monitor.h>
 #include <mono/utils/mono-memory-model.h>
@@ -574,6 +575,11 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		MONO_ADD_INS (cfg->cbb, ins);
 		return ins;
 	}
+	else if (!strcmp (cmethod->name, "SkipInit")) {
+ 		MONO_INST_NEW (cfg, ins, OP_NOP);
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	}
 #endif
 
 	return NULL;
@@ -725,6 +731,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (strcmp (cmethod->name, "GetType") == 0 && fsig->param_count + fsig->hasthis == 1) {
 			int dreg = alloc_ireg_ref (cfg);
 			int vt_reg = alloc_preg (cfg);
+
 			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, type));
 			mini_type_from_op (cfg, ins, NULL, NULL);
@@ -753,6 +760,15 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		else if (!strcmp (cmethod->name, "GetRawSzArrayData") || !strcmp (cmethod->name, "GetRawArrayData")) {
 			int dreg = alloc_preg (cfg);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoArray, vector));
+			return ins;
+		}
+		else if (!strcmp (cmethod->name, "GetElementSize")) {
+			int vt_reg = alloc_preg (cfg);
+			int class_reg = alloc_preg (cfg);
+			int sizes_reg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, class_reg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, sizes_reg, class_reg, m_class_offsetof_sizes ());
 			return ins;
 		}
 
@@ -1989,6 +2005,7 @@ emit_array_unsafe_mov (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **a
 	return NULL;
 }
 
+#ifndef ENABLE_NETCORE
 MonoInst*
 mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -2003,6 +2020,7 @@ mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoM
 
 	return NULL;
 }
+#endif
 
 MonoInst*
 mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
