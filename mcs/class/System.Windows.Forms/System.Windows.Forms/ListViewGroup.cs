@@ -86,16 +86,16 @@ namespace System.Windows.Forms
 
 			int count = 0;
 			try {
-        			count = info.GetInt32("ItemsCount");
+				count = info.GetInt32("ItemsCount");
 			} catch (SerializationException e) {
 				// Mono backwards compat
 				try {
-        				count = info.GetInt32("ListViewItemCount");
-				} catch (SerializationException e) {}
+ 					count = info.GetInt32("ListViewItemCount");
+				} catch (SerializationException e2) {}
 			}
 
 			if (items == null) {
-        			items = new ListView.ListViewItemCollection(list_view_owner);
+				items = new ListView.ListViewItemCollection(list_view_owner);
 			}
 
 			for (int i = 0; i < count; i++)
