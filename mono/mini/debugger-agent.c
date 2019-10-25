@@ -6995,7 +6995,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			DEBUG_PRINTF (1, "Suspending all threads...\n");
 			mono_thread_suspend_all_other_threads ();
 			DEBUG_PRINTF (1, "Shutting down the runtime...\n");
-			mono_runtime_quit ();
+			mono_runtime_quit_internal ();
 			transport_close2 ();
 			DEBUG_PRINTF (1, "Exiting...\n");
 
