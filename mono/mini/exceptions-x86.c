@@ -1140,6 +1140,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 		mono_sigctx_to_monoctx (sigctx, &mctx);
 		if (mono_dump_start ())
 			mono_handle_native_crash ("SIGSEGV", &mctx, siginfo);
+		else
+			abort ();
 	}
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.

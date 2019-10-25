@@ -879,6 +879,8 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, guint32 flags)
 	if (!ji || (!stack_ovf && !nullref))
 		if (mono_dump_start ())
 			mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+		// if couldn't dump or if mono_handle_native_crash returns, abort
+		abort ();
 
 	mctx = *ctx;
 

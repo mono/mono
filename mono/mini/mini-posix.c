@@ -233,6 +233,8 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 		mono_sigctx_to_monoctx (ctx, &mctx);
 		if (mono_dump_start ())
 			mono_handle_native_crash ("SIGABRT", &mctx, info);
+		else
+			abort ();
 	}
 }
 
