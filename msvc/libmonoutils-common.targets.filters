@@ -478,9 +478,9 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\unlocked.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-state.c">
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-state.c">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
-    </ClInclude>
+    </ClCompile>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-state.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
