@@ -111,3 +111,6 @@
 
 # System.IO.Compression
 -noclass System.IO.Compression.Tests.BrotliEncoderTests
+
+# System
+-nonamespace System.Net.Security.Tests
