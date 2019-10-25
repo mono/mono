@@ -69,8 +69,9 @@ namespace System.Diagnostics {
 #endif
 #if WASM
                     // Wasm does not have access to command line arguments through browser
-                    if (Environment.GetCommandLineArgs().Length > 0)
-                        appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    var clArgs = Environment.GetCommandLineArgs();
+                    if (clArgs.Length > 0)
+                        appName = Path.GetFileName(clArgs[0]);
 #else
                     appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
 #endif
