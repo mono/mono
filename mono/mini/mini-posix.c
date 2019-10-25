@@ -1065,8 +1065,8 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 					} else {
 						// Remove
 						g_async_safe_printf("\nThe MERP upload step has succeeded.\n");
+						mono_summarize_timeline_phase_log (MonoSummaryDone);
 					}
-					mono_summarize_timeline_phase_log (MonoSummaryDone);
 					mono_summarize_toggle_assertions (FALSE);
 				} else {
 					g_async_safe_printf("\nMerp dump step not run, no dump created.\n");
