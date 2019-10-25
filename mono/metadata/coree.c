@@ -97,7 +97,7 @@ BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpRes
 			if (error) {
 				g_free (error);
 				g_free (file_name);
-				mono_runtime_quit_internal ();
+				mono_runtime_quit ();
 				return FALSE;
 			}
 
@@ -171,7 +171,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		g_free (corlib_version_error);
 		g_free (file_name);
 		MessageBox (NULL, L"Corlib not in sync with this runtime.", NULL, MB_ICONERROR);
-		mono_runtime_quit_internal ();
+		mono_runtime_quit ();
 		ExitProcess (1);
 	}
 
@@ -182,7 +182,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 	if (!assembly) {
 		g_free (file_name);
 		MessageBox (NULL, L"Cannot open assembly.", NULL, MB_ICONERROR);
-		mono_runtime_quit_internal ();
+		mono_runtime_quit ();
 		ExitProcess (1);
 	}
 
@@ -191,7 +191,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 	if (!entry) {
 		g_free (file_name);
 		MessageBox (NULL, L"Assembly doesn't have an entry point.", NULL, MB_ICONERROR);
-		mono_runtime_quit_internal ();
+		mono_runtime_quit ();
 		ExitProcess (1);
 	}
 
@@ -200,7 +200,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		g_free (file_name);
 		mono_error_cleanup (error); /* FIXME don't swallow the error */
 		MessageBox (NULL, L"The entry point method could not be loaded.", NULL, MB_ICONERROR);
-		mono_runtime_quit_internal ();
+		mono_runtime_quit ();
 		ExitProcess (1);
 	}
 
@@ -215,7 +215,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 	mono_error_raise_exception_deprecated (error); /* OK, triggers unhandled exn handler */
 	mono_thread_manage ();
 
-	mono_runtime_quit_internal ();
+	mono_runtime_quit ();
 
 	/* return does not terminate the process. */
 	ExitProcess (mono_environment_exitcode_get ());
@@ -230,7 +230,7 @@ void STDMETHODCALLTYPE CorExitProcess(int exitCode)
 	if (mono_get_root_domain () && !mono_runtime_is_shutting_down ()) {
 		mono_runtime_set_shutting_down ();
 		mono_thread_suspend_all_other_threads ();
-		mono_runtime_quit_internal ();
+		mono_runtime_quit ();
 	}
 #endif
 	ExitProcess (exitCode);
