@@ -236,10 +236,13 @@ namespace System
 			return 1024 * 1024 * 16;
 		}
 
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern GCMemoryInfo _GetGCMemoryInfo (); 
+
 		public static GCMemoryInfo GetGCMemoryInfo ()
 		{
-			// TODO: Implement
-			return default;
+			return _GetGCMemoryInfo();
 		}
 
 		internal static T[] AllocateUninitializedArray<T> (int length)

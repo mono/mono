@@ -315,6 +315,8 @@ guint64 mono_gc_get_allocated_bytes_for_current_thread (void);
 
 guint64 mono_gc_get_total_allocated_bytes (MonoBoolean precise);
 
+MonoObjectHandle mono_gc_get_gcmemoryinfo (MonoError* error);
+
 guint8* mono_gc_get_card_table (int *shift_bits, gpointer *card_mask);
 guint8* mono_gc_get_target_card_table (int *shift_bits, target_mgreg_t *card_mask);
 gboolean mono_gc_card_table_nursery_check (void);

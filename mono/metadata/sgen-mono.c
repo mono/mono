@@ -2567,6 +2567,25 @@ mono_gc_get_heap_size (void)
 	return (int64_t)sgen_gc_get_total_heap_allocation ();
 }
 
+static
+GENERATE_GET_CLASS_WITH_CACHE(gcinfo, "System", "GCInfo")
+
+MonoObjectHandle
+mono_gc_get_gcmemoryinfo (MonoError* error)
+{
+	MonoClass* gcinfo_class = mono_class_get_gcinfo_class();
+	MonoObjectHandle  gcinfo_obj = mono_object_new_handle (mono_domain_get (), gcinfo_class, error);
+
+	MonoClassField* high_memory_load_threshold_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "HighMemoryLoadThresholdBytes", NULL);
+	MonoClassField* memory_load_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "MemoryLoadBytes", NULL);
+	MonoClassField* total_available_memory_bytes = mono_class_get_field_from_name_full (gcinfo_class, "TotalAvailableMemoryBytes", NULL);
+	MonoClassField* HeapSizeBytes = mono_class_get_field_from_name_full (gcinfo_class, "HeapSizeBytes", NULL);
+
+	MONO_HANDLE_SET_FIELD_VAL(gcinfo_obj, guint64, high_memory_load_threshold_bytes_field, 9999L);
+
+	return gcinfo_obj;
+}
+
 MonoGCDescriptor
 mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
 {

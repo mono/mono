@@ -564,6 +564,13 @@ ves_icall_System_GC_KeepAlive (MonoObjectHandle obj, MonoError *error)
 	 */
 }
 
+
+MonoObjectHandle
+ves_icall_System_GC_GetGCMemoryInfo (MonoError *error)
+{
+	return mono_gc_get_gcmemoryinfo(error);
+}
+
 void
 ves_icall_System_GC_ReRegisterForFinalize (MonoObjectHandle obj, MonoError *error)
 {
