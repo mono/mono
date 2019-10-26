@@ -2568,7 +2568,7 @@ mono_gc_get_heap_size (void)
 }
 
 static
-GENERATE_GET_CLASS_WITH_CACHE(gcinfo, "System", "GCInfo")
+GENERATE_GET_CLASS_WITH_CACHE(gcinfo, "System", "GCMemoryInfo")
 
 MonoObjectHandle
 mono_gc_get_gcmemoryinfo (MonoError* error)
@@ -2576,7 +2576,7 @@ mono_gc_get_gcmemoryinfo (MonoError* error)
 	MonoClass* gcinfo_class = mono_class_get_gcinfo_class();
 	MonoObjectHandle  gcinfo_obj = mono_object_new_handle (mono_domain_get (), gcinfo_class, error);
 
-	MonoClassField* high_memory_load_threshold_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "HighMemoryLoadThresholdBytes", NULL);
+	MonoClassField* high_memory_load_threshold_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "<HighMemoryLoadThresholdBytes>k__BackingField", NULL);
 	MonoClassField* memory_load_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "MemoryLoadBytes", NULL);
 	MonoClassField* total_available_memory_bytes = mono_class_get_field_from_name_full (gcinfo_class, "TotalAvailableMemoryBytes", NULL);
 	MonoClassField* HeapSizeBytes = mono_class_get_field_from_name_full (gcinfo_class, "HeapSizeBytes", NULL);
