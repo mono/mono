@@ -1,3 +1,6 @@
+#include <config.h>
+#include <mono/utils/mono-compiler.h>
+
 #include "mini.h"
 #include "mini-runtime.h"
 #include <mono/utils/mono-counters.h>
@@ -133,5 +136,6 @@ mini_tiered_inc (MonoDomain *domain, MonoMethod *method, MiniTieredCounter *tcnt
 		tcnt->hotness++;
 	}
 }
-
+#else
+MONO_EMPTY_SOURCE_FILE (tiered);
 #endif
