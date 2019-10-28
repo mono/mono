@@ -2577,11 +2577,11 @@ mono_gc_get_gcmemoryinfo (MonoError* error)
 	MonoObjectHandle  gcinfo_obj = mono_object_new_handle (mono_domain_get (), gcinfo_class, error);
 
 	MonoClassField* high_memory_load_threshold_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "<HighMemoryLoadThresholdBytes>k__BackingField", NULL);
-	MonoClassField* memory_load_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "MemoryLoadBytes", NULL);
-	MonoClassField* total_available_memory_bytes = mono_class_get_field_from_name_full (gcinfo_class, "TotalAvailableMemoryBytes", NULL);
-	MonoClassField* HeapSizeBytes = mono_class_get_field_from_name_full (gcinfo_class, "HeapSizeBytes", NULL);
+	MonoClassField* memory_load_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "<MemoryLoadBytes>k__BackingField", NULL);
+	MonoClassField* total_available_memory_bytes = mono_class_get_field_from_name_full (gcinfo_class, "<TotalAvailableMemoryBytes>k__BackingField", NULL);
+	MonoClassField* HeapSizeBytes = mono_class_get_field_from_name_full (gcinfo_class, "<HeapSizeBytes>k__BackingField", NULL);
 
-	MONO_HANDLE_SET_FIELD_VAL(gcinfo_obj, guint64, high_memory_load_threshold_bytes_field, 9999L);
+	MONO_HANDLE_SET_FIELD_VAL(gcinfo_obj, guint64, high_memory_load_threshold_bytes_field, 999L);
 
 	return gcinfo_obj;
 }
