@@ -280,7 +280,11 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 
 build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+ifeq ($(UNAME),Darwin)
+	ninja -v -C obj/test-suite -w dupbuild=warn
+else
 	ninja -v -C obj/test-suite
+endif	
 
 XUNIT_DIR = $(TOP)/external/xunit-binaries
 
@@ -302,7 +306,11 @@ define XunitTestTemplate
 
 bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
 	mono packager.exe --debugrt --search-path=$(XUNIT_DIR) --search-path=$(WASM_BCL_DIR)/tests --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(XUNIT_DIR)/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+ifeq ($(UNAME),Darwin)
+	ninja -v -C obj/$(2) -w dupbuild=warn
+else
 	ninja -v -C obj/$(2)
+endif
 
 build-$(1): bin/$(2)/mono.js
 
