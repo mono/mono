@@ -657,6 +657,12 @@ sgen_workers_get_job_split_count (int generation)
 	return 1;
 }
 
+int
+sgen_workers_get_active_worker_count (int generation)
+{
+	return 0;
+}
+
 gboolean
 sgen_workers_have_idle_work (int generation)
 {
