@@ -238,11 +238,27 @@ namespace System
 
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern GCMemoryInfo _GetGCMemoryInfo (); 
+		private static extern GCMemoryInfo _GetGCMemoryInfo (ref long highMemoryLoadThresholdBytes,
+														     ref long memoryLoadBytes,
+															 ref long totalAvailableMemoryBytes,
+															 ref long heapSizeBytes,
+															 ref long fragmentedBytes); 
 
 		public static GCMemoryInfo GetGCMemoryInfo ()
 		{
-			return _GetGCMemoryInfo();
+			long highMemoryLoadThresholdBytes = 0L;
+			long memoryLoadBytes = 0L;
+			long totalAvailableMemoryBytes = 0L;
+			long heapSizeBytes = 0L;
+			long fragmentedBytes = 0L;
+
+			_GetGCMemoryInfo(ref highMemoryLoadThresholdBytes,
+							 ref memoryLoadBytes,
+							 ref totalAvailableMemoryBytes,
+							 ref heapSizeBytes,
+							 ref fragmentedBytes );
+
+			return new GCMemoryInfo(highMemoryLoadThresholdBytes, memoryLoadBytes, totalAvailableMemoryBytes, heapSizeBytes, fragmentedBytes);
 		}
 
 		internal static T[] AllocateUninitializedArray<T> (int length)
