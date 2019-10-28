@@ -3696,7 +3696,7 @@ common_vcall:
 			if (rmethod->rtype->type != MONO_TYPE_VOID)
 				sp++;
 #else
-			g_assert_not_reached ();
+			g_error ("MINT_JIT_ICALL2 shouldn't be used");
 #endif
 			MINT_IN_BREAK;
 		}
@@ -3747,9 +3747,10 @@ common_vcall:
 		}
 
 #ifdef ENABLE_EXPERIMENT_TIERED
-#define BACK_BRANCH_PROFILE(offset) \
+#define BACK_BRANCH_PROFILE(offset) do { \
 		if (offset < 0) \
-			mini_tiered_inc (frame->imethod->domain, frame->imethod->method, &frame->imethod->tiered_counter, 0);
+			mini_tiered_inc (frame->imethod->domain, frame->imethod->method, &frame->imethod->tiered_counter, 0); \
+	} while (0);
 #else
 #define BACK_BRANCH_PROFILE(offset)
 #endif
