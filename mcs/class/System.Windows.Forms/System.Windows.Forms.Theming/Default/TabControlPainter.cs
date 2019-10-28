@@ -192,7 +192,7 @@ namespace System.Windows.Forms.Theming.Default
 			defaultFormatting.Alignment = StringAlignment.Near;
 			defaultFormatting.LineAlignment = StringAlignment.Center;
 			defaultFormatting.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
-			defaultFormatting.HotkeyPrefix = HotkeyPrefix.Show;
+			defaultFormatting.HotkeyPrefix = HotkeyPrefix.None;
 
 			borderThickness = new Rectangle (1, 1, 2, 2);
 		}
