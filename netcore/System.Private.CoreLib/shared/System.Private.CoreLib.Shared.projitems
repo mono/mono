@@ -1076,7 +1076,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTimeAsFileTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTimePreciseAsFileTime.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTimes.cs" Condition="'$(FeaturePerfTracing)' == 'true'" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTimes.cs" Condition="'$(FeaturePerfTracing)' == 'true' AND '$(FeaturePortableThreadPool)' == 'false'" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetTempFileNameW.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetTempPathW.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetVersionExW.cs" />
@@ -1372,6 +1372,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.GetSystemTimes.cs" Condition="'$(TargetsWindows)' == 'true'" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\LowLevelLifoSemaphore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\LowLevelLifoSemaphore.Windows.cs" Condition="'$(TargetsWindows)'=='true'" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interop\Windows\Kernel32\Interop.CompletionPort.cs" Condition="'$(TargetsWindows)' == 'true'" />
   </ItemGroup>
   <ItemGroup Condition="'$(FeaturePortableThreadPool)' == 'true' OR '$(FeatureThreadInt64PersistentCounter)' == 'true'">
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\ThreadInt64PersistentCounter.cs" />
