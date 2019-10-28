@@ -56,7 +56,7 @@ namespace Mono.Btls
 
 		public override X509CertificateImpl Import (byte[] data)
 		{
-			return Provider.GetNativeCertificate (data, null, X509KeyStorageFlags.DefaultKeySet);
+			return Provider.GetNativeCertificate (data, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public override X509Certificate2Impl Import (

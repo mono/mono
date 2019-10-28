@@ -121,10 +121,6 @@ namespace Mono.Security.Interface
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null);
 
-		internal abstract IMonoSslStream CreateSslStreamInternal (
-			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings);
-
 #endregion
 
 #region Native Certificate Implementation
@@ -133,34 +129,6 @@ namespace Mono.Security.Interface
 			get { return false; }
 		}
 
-		internal virtual X509Certificate2Impl GetNativeCertificate (
-			byte[] data, string password, X509KeyStorageFlags flags)
-		{
-			throw new InvalidOperationException ();
-		}
-
-		internal virtual X509Certificate2Impl GetNativeCertificate (
-			X509Certificate certificate)
-		{
-			throw new InvalidOperationException ();
-		}
-
-#endregion
-
-#region Certificate Validation
-		/*
-		 * If @serverMode is true, then we're a server and want to validate a certificate
-		 * that we received from a client.
-		 *
-		 * On OS X and Mobile, the @chain will be initialized with the @certificates, but not actually built.
-		 *
-		 * Returns `true` if certificate validation has been performed and `false` to invoke the
-		 * default system validator.
-		 */
-		internal abstract bool ValidateCertificate (
-			ICertificateValidator2 validator, string targetHost, bool serverMode,
-			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
-			ref MonoSslPolicyErrors errors, ref int status11);
 #endregion
 
 #region Misc

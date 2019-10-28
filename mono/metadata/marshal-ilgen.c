@@ -59,6 +59,20 @@ enum {
 };
 #undef OPDEF
 
+static gboolean
+is_in (const MonoType *t)
+{
+	const guint32 attrs = t->attrs;
+	return (attrs & PARAM_ATTRIBUTE_IN) || !(attrs & PARAM_ATTRIBUTE_OUT);
+}
+
+static gboolean
+is_out (const MonoType *t)
+{
+	const guint32 attrs = t->attrs;
+	return (attrs & PARAM_ATTRIBUTE_OUT) || !(attrs & PARAM_ATTRIBUTE_IN);
+}
+
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, "System.Runtime.InteropServices", "ICustomMarshaler");
@@ -5134,16 +5148,6 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_exception (mb, "ArgumentNullException", NULL);
 		
 		mono_mb_patch_branch (mb, pos);
-		if (t->byref){
-			/*
-			 * My tests in show that ref SafeHandles are not really
-			 * passed as ref objects.  Instead a NULL is passed as the
-			 * value of the ref
-			 */
-			mono_mb_emit_icon (mb, 0);
-			mono_mb_emit_stloc (mb, conv_arg);
-			break;
-		} 
 
 		/* Create local to hold the ref parameter to DangerousAddRef */
 		dar_release_slot = mono_mb_add_local (mb, boolean_type);
@@ -5152,16 +5156,40 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_icon (mb, 0);
 		mono_mb_emit_stloc (mb, dar_release_slot);
 
-		/* safehandle.DangerousAddRef (ref release) */
-		mono_mb_emit_ldarg (mb, argnum);
-		mono_mb_emit_ldloc_addr (mb, dar_release_slot);
-		mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+		if (t->byref) {
+			int old_handle_value_slot = mono_mb_add_local (mb, int_type);
 
-		/* Pull the handle field from SafeHandle */
-		mono_mb_emit_ldarg (mb, argnum);
-		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_stloc (mb, conv_arg);
+			if (!is_in (t)) {
+				mono_mb_emit_icon (mb, 0);
+				mono_mb_emit_stloc (mb, conv_arg);
+			} else {
+				/* safehandle.DangerousAddRef (ref release) */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+				mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+
+				/* Pull the handle field from SafeHandle */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_byte (mb, CEE_DUP);
+				mono_mb_emit_stloc (mb, conv_arg);
+				mono_mb_emit_stloc (mb, old_handle_value_slot);
+			}
+		} else {
+			/* safehandle.DangerousAddRef (ref release) */
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+			mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+
+			/* Pull the handle field from SafeHandle */
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
+			mono_mb_emit_stloc (mb, conv_arg);
+		}
 
 		break;
 	}
@@ -5182,35 +5210,61 @@ emit_marshal_safehandle_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			init_safe_handle ();
 
 		if (t->byref){
-			ERROR_DECL (error);
-			MonoMethod *ctor;
-			
-			/*
-			 * My tests indicate that ref SafeHandles parameters are not actually
-			 * passed by ref, but instead a new Handle is created regardless of
-			 * whether a change happens in the unmanaged side.
-			 *
-			 * Also, the Handle is created before calling into unmanaged code,
-			 * but we do not support that mechanism (getting to the original
-			 * handle) and it makes no difference where we create this
-			 */
-			ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, error);
-			if (ctor == NULL || !is_ok (error)){
-				mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
-				mono_error_cleanup (error);
-				break;
+			/* If there was SafeHandle on input we have to release the reference to it */
+			if (is_in (t)) {
+				mono_mb_emit_ldloc (mb, dar_release_slot);
+				label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_managed_call (mb, sh_dangerous_release, NULL);
+				mono_mb_patch_branch (mb, label_next);
 			}
-			/* refval = new SafeHandleDerived ()*/
-			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
-			mono_mb_emit_byte (mb, CEE_STIND_REF);
 
-			/* refval.handle = returned_handle */
-			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_byte (mb, CEE_LDIND_REF);
-			mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
-			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_byte (mb, CEE_STIND_I);
+			if (is_out (t)) {
+				ERROR_DECL (local_error);
+				MonoMethod *ctor;
+			
+				/*
+				 * If the SafeHandle was marshalled on input we can skip the marshalling on
+				 * output if the handle value is identical.
+				 */
+				if (is_in (t)) {
+					int old_handle_value_slot = dar_release_slot + 1;
+					mono_mb_emit_ldloc (mb, old_handle_value_slot);
+					mono_mb_emit_ldloc (mb, conv_arg);
+					label_next = mono_mb_emit_branch (mb, CEE_BEQ);
+				}
+
+				/*
+				 * Create an empty SafeHandle (of correct derived type).
+				 * 
+				 * FIXME: If an out-of-memory situation or exception happens here we will
+				 * leak the handle. We should move the allocation of the SafeHandle to the
+				 * input marshalling code to prevent that.
+				 */
+				ctor = mono_class_get_method_from_name_checked (t->data.klass, ".ctor", 0, 0, local_error);
+				if (ctor == NULL || !is_ok (local_error)){
+					mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+					mono_error_cleanup (local_error);
+					break;
+				}
+
+				/* refval = new SafeHandleDerived ()*/
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+				mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+				/* refval.handle = returned_handle */
+				mono_mb_emit_ldarg (mb, argnum);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+				mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoSafeHandle, handle));
+				mono_mb_emit_ldloc (mb, conv_arg);
+				mono_mb_emit_byte (mb, CEE_STIND_I);
+
+				if (is_in (t)) {
+					mono_mb_patch_branch (mb, label_next);
+				}
+			}
 		} else {
 			mono_mb_emit_ldloc (mb, dar_release_slot);
 			label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
@@ -6283,7 +6337,7 @@ typedef enum {
 	/* Wrap the argument (a valuetype reference) in a handle to pin its
 	   enclosing object, but pass the raw reference to the icall.  This is
 	   also how we pass byref generic parameter arguments to generic method
-	   icalls (eg, System.Array:GetGenericValueImpl<T>(int idx, T out value)) */
+	   icalls (e.g. System.Array:GetGenericValue_icall<T>(int idx, T out value)) */
 	ICALL_HANDLES_WRAP_VALUETYPE_REF,
 } IcallHandlesWrap;
 
@@ -6307,10 +6361,7 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * wrapped in handles: if the actual argument type is a reference type
 	 * we'd need to wrap it in a handle, otherwise we'd want to pass it as is.
 	 */
-	/* FIXME: There is one icall that will some day cause us trouble here:
-	 * System.Threading.Interlocked:CompareExchange<T> (ref T location, T
-	 * new, T old) where T:class.  What will save us is that 'T:class'
-	 * constraint.  We should eventually relax the assertion, below, to
+	/* FIXME: We should eventually relax the assertion, below, to
 	 * allow generic parameters that are constrained to be reference types.
 	 */
 	g_assert (!generic_sig || !mono_type_is_generic_parameter (generic_sig->params [param]));
@@ -6322,18 +6373,18 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 	 * like string& since the C code for the icall has to work uniformly
 	 * for both valuetypes and reference types.
 	 */
-	if (generic_sig && mono_type_is_byref (generic_sig->params [param]) &&
+	if (generic_sig && mono_type_is_byref_internal (generic_sig->params [param]) &&
 	    (generic_sig->params [param]->type == MONO_TYPE_VAR || generic_sig->params [param]->type == MONO_TYPE_MVAR))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 
 	if (MONO_TYPE_IS_REFERENCE (sig->params [param])) {
 		if (mono_signature_param_is_out (sig, param))
 			return ICALL_HANDLES_WRAP_OBJ_OUT;
-		else if (mono_type_is_byref (sig->params [param]))
+		else if (mono_type_is_byref_internal (sig->params [param]))
 			return ICALL_HANDLES_WRAP_OBJ_INOUT;
 		else
 			return ICALL_HANDLES_WRAP_OBJ;
-	} else if (mono_type_is_byref (sig->params [param]))
+	} else if (mono_type_is_byref_internal (sig->params [param]))
 		return ICALL_HANDLES_WRAP_VALUETYPE_REF;
 	else
 		return ICALL_HANDLES_WRAP_NONE;

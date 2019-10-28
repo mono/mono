@@ -64,9 +64,7 @@
 #include <sys/wait.h>
 #endif
 
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #if defined(HOST_WIN32)
 #include <objbase.h>
@@ -242,7 +240,7 @@ static mono_mutex_t interlocked_mutex;
 #endif
 
 /* global count of thread interruptions requested */
-static gint32 thread_interruption_requested = 0;
+gint32 mono_thread_interruption_request_flag;
 
 /* Event signaled when a thread changes its background mode */
 static MonoOSEvent background_change_event;
@@ -321,12 +319,12 @@ mono_threads_begin_abort_protected_block (void)
 
 	/* Defer async request since we won't be able to process until exiting the block */
 	if (new_val == 1 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
-		mono_atomic_dec_i32 (&thread_interruption_requested);
-		THREADS_INTERRUPT_DEBUG ("[%d] begin abort protected block old_state %ld new_state %ld, defer tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
-		if (thread_interruption_requested < 0)
-			g_warning ("bad thread_interruption_requested state");
+		mono_atomic_dec_i32 (&mono_thread_interruption_request_flag);
+		THREADS_INTERRUPT_DEBUG ("[%d] begin abort protected block old_state %ld new_state %ld, defer tir %d\n", thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
+		if (mono_thread_interruption_request_flag < 0)
+			g_warning ("bad mono_thread_interruption_request_flag state");
 	} else {
-		THREADS_INTERRUPT_DEBUG ("[%d] begin abort protected block old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
+		THREADS_INTERRUPT_DEBUG ("[%d] begin abort protected block old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
 	}
 }
 
@@ -362,10 +360,10 @@ mono_threads_end_abort_protected_block (void)
 	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (new_val == 0 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
-		mono_atomic_inc_i32 (&thread_interruption_requested);
-		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, restore tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
+		mono_atomic_inc_i32 (&mono_thread_interruption_request_flag);
+		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, restore tir %d\n", thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
 	} else {
-		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
+		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
 	}
 
 	return mono_thread_state_has_interruption (new_state);
@@ -401,10 +399,10 @@ mono_thread_clear_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state & ~INTERRUPT_ASYNC_REQUESTED_BIT;
 	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
-	mono_atomic_dec_i32 (&thread_interruption_requested);
-	THREADS_INTERRUPT_DEBUG ("[%d] clear interruption old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
-	if (thread_interruption_requested < 0)
-		g_warning ("bad thread_interruption_requested state");
+	mono_atomic_dec_i32 (&mono_thread_interruption_request_flag);
+	THREADS_INTERRUPT_DEBUG ("[%d] clear interruption old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
+	if (mono_thread_interruption_request_flag < 0)
+		g_warning ("bad mono_thread_interruption_request_flag state");
 	return TRUE;
 }
 
@@ -461,10 +459,10 @@ mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboole
 	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (sync || !(new_state & ABORT_PROT_BLOCK_MASK)) {
-		mono_atomic_inc_i32 (&thread_interruption_requested);
-		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, thread_interruption_requested);
+		mono_atomic_inc_i32 (&mono_thread_interruption_request_flag);
+		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
 	} else {
-		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir deferred %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, thread_interruption_requested);
+		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir deferred %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, mono_thread_interruption_request_flag);
 	}
 
 	return sync || !(new_state & ABORT_PROT_BLOCK_MASK);
@@ -1359,9 +1357,11 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	mono_g_hash_table_insert_internal (threads_starting_up, thread, thread);
 	mono_threads_unlock ();
 
+#ifndef ENABLE_NETCORE
 	internal->threadpool_thread = flags & MONO_THREAD_CREATE_FLAGS_THREADPOOL;
 	if (internal->threadpool_thread)
 		mono_thread_set_state (internal, ThreadState_Background);
+#endif
 
 	internal->debugger_thread = flags & MONO_THREAD_CREATE_FLAGS_DEBUGGER;
 
@@ -1756,8 +1756,8 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	mono_thread_name_cleanup (&this_obj->name);
 }
 
-void
-ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+static void
+mono_sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
 {
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
@@ -1780,24 +1780,41 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
-		SETUP_ICALL_FRAME;
+		if (allow_interruption) {
+			SETUP_ICALL_FRAME;
 
-		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+			MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-		const gboolean interrupt = mono_thread_execute_interruption (&exc);
+			const gboolean interrupt = mono_thread_execute_interruption (&exc);
 
-		if (interrupt)
-			mono_set_pending_exception_handle (exc);
+			if (interrupt)
+				mono_set_pending_exception_handle (exc);
 
-		CLEAR_ICALL_FRAME;
+			CLEAR_ICALL_FRAME;
 
-		if (interrupt)
-			return;
+			if (interrupt)
+				return;
+		}
+
 		if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
 			continue;
 		return;
 	}
 }
+
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
+{
+	return mono_sleep_internal (ms, allow_interruption, error);
+}
+#else
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+{
+	return mono_sleep_internal (ms, TRUE, error);
+}
+#endif
 
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
@@ -2367,12 +2384,19 @@ gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gi
 	return mono_atomic_xchg_i32(location, value);
 }
 
-MonoObject * ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject **location, MonoObject *value)
+void
+ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
 {
-	MonoObject *res;
-	res = (MonoObject *) mono_atomic_xchg_ptr((gpointer *) location, value);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
+	// Coop-equivalency here via pointers to pointers.
+	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	//
+	// This also handles generic T case, T constrained to a class.
+	//
+	// This is not entirely convincing due to lack of volatile in the caller, however coop also
+	// presently breaks identity of location and would therefore never work.
+	//
+	*res = (MonoObject*)mono_atomic_xchg_ptr ((volatile gpointer*)location, *value);
+	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr (gpointer *location, gpointer value)
@@ -2429,12 +2453,25 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32
 	return r;
 }
 
-MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
+void
+ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
 {
-	MonoObject *res;
-	res = (MonoObject *) mono_atomic_cas_ptr((gpointer *) location, value, comparand);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
+	// Coop-equivalency here via pointers to pointers.
+	// value and comparand and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	//
+	// This also handles generic T case, T constrained to a class.
+	//
+	// This is not entirely convincing due to lack of volatile in the caller, however coop also
+	// presently breaks identity of location and would therefore never work.
+	//
+	*res = (MonoObject*)mono_atomic_cas_ptr ((volatile gpointer*)location, *value, *comparand);
+	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
+}
+
+void
+ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
+{
+	ves_icall_System_Threading_Interlocked_CompareExchange_Object (location, value, comparand, res);
 }
 
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
@@ -2494,23 +2531,16 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 	return mono_atomic_cas_i64 (location, value, comparand);
 }
 
-MonoObject*
-ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject **location, MonoObject *value, MonoObject *comparand)
+void
+ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
 {
-	MonoObject *res;
-	res = (MonoObject *)mono_atomic_cas_ptr ((volatile gpointer *)location, value, comparand);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
-}
-
-MonoObject*
-ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoObject *value)
-{
-	MonoObject *res;
-	MONO_CHECK_NULL (location, NULL);
-	res = (MonoObject *)mono_atomic_xchg_ptr ((volatile gpointer *)location, value);
-	mono_gc_wbarrier_generic_nostore_internal (location);
-	return res;
+	// Coop-equivalency here via pointers to pointers.
+	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
+	//
+	// This is not entirely convincing due to lack of volatile in the caller.
+	//
+	MONO_CHECK_NULL (location, );
+	ves_icall_System_Threading_Interlocked_Exchange_Object (location, value, res);
 }
 
 gint32 
@@ -3649,11 +3679,13 @@ mono_threads_set_shutting_down (void)
 }
 
 /**
- * mono_thread_manage:
+ * mono_thread_manage_internal:
  */
 void
-mono_thread_manage (void)
+mono_thread_manage_internal (void)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	struct wait_data wait_data;
 	struct wait_data *wait = &wait_data;
 
@@ -3736,6 +3768,7 @@ mono_thread_manage (void)
 	mono_thread_info_yield ();
 }
 
+#ifndef ENABLE_NETCORE
 static void
 collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 {
@@ -3867,6 +3900,7 @@ void mono_thread_suspend_all_other_threads (void)
 		}
 	}
 }
+#endif
 
 typedef struct {
 	MonoInternalThread *thread;
@@ -4093,6 +4127,7 @@ mono_threads_perform_thread_dump (void)
 	thread_dump_requested = FALSE;
 }
 
+#ifndef ENABLE_NETCORE
 /* Obtain the thread dump of all threads */
 void
 ves_icall_System_Threading_Thread_GetStackTraces (MonoArrayHandleOut out_threads_handle, MonoArrayHandleOut out_stack_frames_handle, MonoError *error)
@@ -4207,6 +4242,7 @@ leave:
 	mono_gchandle_free_internal (handle);
 	g_free (ud.frames);
 }
+#endif
 
 /**
  * mono_threads_request_thread_dump:
@@ -5116,7 +5152,7 @@ mono_thread_resume_interruption (gboolean exec)
 gboolean
 mono_thread_interruption_requested (void)
 {
-	if (thread_interruption_requested) {
+	if (mono_thread_interruption_request_flag) {
 		MonoInternalThread *thread = mono_thread_internal_current ();
 		/* The thread may already be stopping */
 		if (thread != NULL) 
@@ -5246,21 +5282,6 @@ mono_set_pending_exception_handle (MonoExceptionHandle exc)
 	MONO_OBJECT_SETREF_INTERNAL (thread, pending_exception, MONO_HANDLE_RAW (exc));
 
 	mono_thread_request_interruption_native ();
-}
-
-/**
- * mono_thread_interruption_request_flag:
- *
- * Returns the address of a flag that will be non-zero if an interruption has
- * been requested for a thread. The thread to interrupt may not be the current
- * thread, so an additional call to mono_thread_interruption_requested() or
- * mono_thread_interruption_checkpoint() is allways needed if the flag is not
- * zero.
- */
-gint32*
-mono_thread_interruption_request_flag (void)
-{
-	return &thread_interruption_requested;
 }
 
 void 
@@ -6373,7 +6394,6 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 
 		if (i == current_idx)
 			continue;
-
 	#ifdef HAVE_PTHREAD_KILL
 		pthread_kill (state->thread_array [i], SIGTERM);
 
@@ -6596,7 +6616,14 @@ mono_threads_summarize_init (void)
 gboolean
 mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gchar *working_mem, size_t provided_size)
 {
-	return mono_threads_summarize_execute_internal (ctx, out, hashes, silent, working_mem, provided_size, FALSE);
+	gboolean result;
+	gboolean already_async = mono_thread_info_is_async_context ();
+	if (!already_async)
+		mono_thread_info_set_is_async_context (TRUE);
+	result = mono_threads_summarize_execute_internal (ctx, out, hashes, silent, working_mem, provided_size, FALSE);
+	if (!already_async)
+		mono_thread_info_set_is_async_context (FALSE);
+	return result;
 }
 
 gboolean 

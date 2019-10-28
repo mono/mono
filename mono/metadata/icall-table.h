@@ -10,6 +10,7 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 #include "marshal.h"
+#include "icalls.h"
 
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -19,6 +20,7 @@ typedef struct {
 	const char* (*lookup_icall_symbol) (gpointer func);
 } MonoIcallTableCallbacks;
 
+ICALL_EXTERN_C
 void
 mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 
@@ -204,7 +206,6 @@ typedef MonoStringHandle MonoStringOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoCultureData		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoCultureInfo		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoDelegate			ICALL_HANDLES_WRAP_OBJ
-#define MONO_HANDLE_TYPE_WRAP_MonoReflectionDynamicMethod 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoException			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoInternalThread		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoIOSelectorJob			ICALL_HANDLES_WRAP_OBJ
@@ -213,6 +214,7 @@ typedef MonoStringHandle MonoStringOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoMulticastDelegate		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionAssembly		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionAssemblyBuilder 	ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoReflectionDynamicMethod 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionEvent		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionMonoEvent		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionField		ICALL_HANDLES_WRAP_OBJ

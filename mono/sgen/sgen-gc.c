@@ -1786,6 +1786,7 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	SGEN_LOG (2, "Old generation scan: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
 
 	sgen_pin_stats_report ();
+	sgen_gchandle_stats_report ();
 
 	TV_GETTIME (atv);
 	time_minor_scan_pinned += TV_ELAPSED (btv, atv);
@@ -1914,7 +1915,6 @@ typedef enum {
 static void
 major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par)
 {
-	LOSObject *bigobj;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 	/* FIXME: only use these values for the precise scan
@@ -1998,26 +1998,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	sgen_find_section_pin_queue_start_end (sgen_nursery_section);
 	/* identify possible pointers to the insize of large objects */
 	SGEN_LOG (6, "Pinning from large objects");
-	for (bigobj = sgen_los_object_list; bigobj; bigobj = bigobj->next) {
-		size_t dummy;
-		if (sgen_find_optimized_pin_queue_area ((char*)bigobj->data, (char*)bigobj->data + sgen_los_object_size (bigobj), &dummy, &dummy)) {
-			sgen_binary_protocol_pin (bigobj->data, (gpointer)LOAD_VTABLE (bigobj->data), safe_object_get_size (bigobj->data));
-
-			if (sgen_los_object_is_pinned (bigobj->data)) {
-				SGEN_ASSERT (0, mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, "LOS objects can only be pinned here after concurrent marking.");
-				continue;
-			}
-			sgen_los_pin_object (bigobj->data);
-			if (SGEN_OBJECT_HAS_REFERENCES (bigobj->data))
-				GRAY_OBJECT_ENQUEUE_SERIAL (gc_thread_gray_queue, bigobj->data, sgen_obj_get_descriptor ((GCObject*)bigobj->data));
-			sgen_pin_stats_register_object (bigobj->data, GENERATION_OLD);
-			SGEN_LOG (6, "Marked large object %p (%s) size: %lu from roots", bigobj->data,
-					sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (bigobj->data)),
-					(unsigned long)sgen_los_object_size (bigobj));
-
-			sgen_client_pinned_los_object (bigobj->data);
-		}
-	}
+	sgen_los_pin_objects (gc_thread_gray_queue, mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT);
 
 	pin_objects_in_nursery (mode == COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT, ctx);
 
@@ -3611,6 +3592,8 @@ sgen_gc_init (void)
 				debug_print_allowance = TRUE;
 			} else if (!strcmp (opt, "print-pinning")) {
 				sgen_pin_stats_enable ();
+			} else if (!strcmp (opt, "print-gchandles")) {
+				sgen_gchandle_stats_enable ();
 			} else if (!strcmp (opt, "verify-before-allocs")) {
 				sgen_verify_before_allocs = 1;
 				sgen_has_per_allocation_action = TRUE;
@@ -3719,6 +3702,7 @@ sgen_gc_init (void)
 				fprintf (stderr, "  check-scan-starts\n");
 				fprintf (stderr, "  print-allowance\n");
 				fprintf (stderr, "  print-pinning\n");
+				fprintf (stderr, "  print-gchandles\n");
 				fprintf (stderr, "  heap-dump=<filename>\n");
 				fprintf (stderr, "  binary-protocol=<filename>[:<file-size-limit>]\n");
 				fprintf (stderr, "  nursery-canaries\n");

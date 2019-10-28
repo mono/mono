@@ -67,7 +67,12 @@ namespace System.Diagnostics {
 #if MONO_FEATURE_CAS
                     new EnvironmentPermission(EnvironmentPermissionAccess.Read, "Path").Assert();
 #endif
-                    appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    // Make sure we have command line arguments before accessing them
+                    // prevents index out of range exception.
+                    // For example Wasm does not have access to command line arguments through browser
+                    var clArgs = Environment.GetCommandLineArgs();
+                    if (clArgs.Length > 0)
+                        appName = Path.GetFileName(clArgs[0]);
                 }
                 return appName;
             }

@@ -1178,6 +1178,10 @@ handle_enum:
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
+#ifdef ENABLE_NETCORE
+	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
+	return NULL;
+#else
 	ERROR_DECL (error);
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
@@ -1242,6 +1246,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	MonoAsyncResult *result = mono_threadpool_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params, error);
 	mono_error_set_pending_exception (error);
 	return result;
+#endif
 }
 
 static char*
@@ -1887,6 +1892,10 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
+#ifdef ENABLE_NETCORE
+	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
+	return NULL;
+#else
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoAsyncResult *ares;
@@ -1986,6 +1995,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
 	return res;
+#endif
 }
 
 #ifndef ENABLE_ILGEN
@@ -3045,7 +3055,6 @@ mono_marshal_get_llvm_func_wrapper (MonoLLVMFuncWrapperSubtype subtype)
 	WrapperInfo *info;
 	MonoMethodSignature *csig = NULL;
 	MonoType *void_type = mono_get_void_type ();
-	MonoType *int_type = mono_get_int_type ();
 	char *name = g_strdup_printf ("llvm_func_wrapper_%d", subtype);
 
 	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
@@ -3461,7 +3470,8 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	WrapperInfo *info;
 
 	g_assert (method != NULL);
-	g_assert (mono_method_signature_internal (method)->pinvoke);
+	g_assertf (mono_method_signature_internal (method)->pinvoke, "%s flags:%X iflags:%X param_count:%X",
+		method->name, method->flags, method->iflags, mono_method_signature_internal (method)->param_count);
 
 	GHashTable **cache_ptr;
 
@@ -5178,6 +5188,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 	return GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id));
 }
 
+void
+ves_icall_System_Runtime_InteropServices_Marshal_SetLastWin32Error (guint32 err)
+{
+	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (err));
+}
+
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandle rtype, MonoError *error)
 {
@@ -5602,7 +5618,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement 
 MonoDelegateHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error)
 {
-	MonoClass *klass = mono_type_get_class (MONO_HANDLE_GETVAL (type, type));
+	MonoClass *klass = mono_type_get_class_internal (MONO_HANDLE_GETVAL (type, type));
 	if (!mono_class_init_checked (klass, error))
 		return MONO_HANDLE_CAST (MonoDelegate, NULL_HANDLE);
 
@@ -5613,20 +5629,6 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegateHandle delegate, MonoError *error)
 {
 	return mono_delegate_to_ftnptr_impl (delegate, error);
-}
-
-int
-ves_icall_System_Runtime_InteropServices_Marshal_GetArrayElementSize (MonoReflectionTypeHandle type_h, MonoError *error)
-{
-	MonoClass *eklass = mono_type_get_class (MONO_HANDLE_GETVAL (type_h, type));
-
-	mono_class_init_internal (eklass);
-
-	if (m_class_has_references (eklass)) {
-		mono_error_set_argument (error, NULL, NULL);
-		return 0;
-	}
-	return mono_class_array_element_size (eklass);
 }
 
 MonoBoolean

@@ -99,9 +99,8 @@ static guint32 jinfo_try_holes_size;
 #define mono_jit_unlock() mono_os_mutex_unlock (&jit_mutex)
 static mono_mutex_t jit_mutex;
 
-static MonoBackend *current_backend;
-
 #ifndef DISABLE_JIT
+static MonoBackend *current_backend;
 
 gpointer
 mono_realloc_native_code (MonoCompile *cfg)
@@ -2868,14 +2867,16 @@ insert_safepoints (MonoCompile *cfg)
 
 	g_assert (mini_safepoints_enabled ());
 
+#ifndef MONO_LLVM_LOADED
 	if (COMPILE_LLVM (cfg)) {
-		if (!cfg->llvm_only && cfg->compile_aot) {
+		if (!cfg->llvm_only) {
 			/* We rely on LLVM's safepoints insertion capabilities. */
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
 			return;
 		}
 	}
+#endif
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
@@ -3871,7 +3872,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 
 	if (cfg->verbose_level >= 2) {
-		char *id =  mono_method_full_name (cfg->method, FALSE);
+		char *id =  mono_method_full_name (cfg->method, TRUE);
 		g_print ("\n*** ASM for %s ***\n", id);
 		mono_disassemble_code (cfg, cfg->native_code, cfg->code_len, id + 3);
 		g_print ("***\n\n");
@@ -4301,4 +4302,23 @@ mono_target_pagesize (void)
 	 * for those cases.
 	 */
 	return 4 * 1024;
+}
+
+MonoCPUFeatures
+mini_get_cpu_features (MonoCompile* cfg)
+{
+	MonoCPUFeatures features = (MonoCPUFeatures)0;
+#if !defined(MONO_CROSS_COMPILE)
+	if (!cfg->compile_aot || cfg->use_current_cpu) {
+		// detect current CPU features if we are in JIT mode or AOT with use_current_cpu flag.
+#if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED)
+		features = mono_llvm_get_cpu_features (); // llvm has a nice built-in API to detect features
+#elif defined(TARGET_AMD64)
+		features = mono_arch_get_cpu_features ();
+#endif
+	}
+#endif
+
+	// apply parameters passed via -mattr
+	return (features | mono_cpu_features_enabled) & ~mono_cpu_features_disabled;
 }

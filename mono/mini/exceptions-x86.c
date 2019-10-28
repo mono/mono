@@ -27,6 +27,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-x86.h"
@@ -64,8 +65,8 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 		return (*mono_old_win_toplevel_exception_filter)(ep);
 	}
 #endif
-
-	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -477,7 +478,7 @@ mono_x86_throw_exception (host_mgreg_t *regs, MonoObject *exc,
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -892,7 +893,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		else
 			/* the lmf is always stored on the stack, so the following
 			 * expression points to a stack location which can be used as ESP */
-			new_ctx->esp = (unsigned long)&((*lmf)->eip);
+			new_ctx->esp = (gsize)&((*lmf)->eip);
 
 		*lmf = (MonoLMF*)(((gsize)(*lmf)->previous_lmf) & ~3);
 
@@ -1091,8 +1092,8 @@ prepare_for_guard_pages (MonoContext *mctx)
 	sp -= 1;
 	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
-	mctx->eip = (unsigned long)restore_soft_guard_pages;
-	mctx->esp = (unsigned long)sp;
+	mctx->eip = (gsize)restore_soft_guard_pages;
+	mctx->esp = (gsize)sp;
 }
 
 static void
@@ -1137,7 +1138,10 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	if (!ji) {
 		MonoContext mctx;
 		mono_sigctx_to_monoctx (sigctx, &mctx);
-		mono_handle_native_crash ("SIGSEGV", &mctx, siginfo);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", &mctx, siginfo);
+		else
+			abort ();
 	}
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
@@ -1230,7 +1234,7 @@ mono_tasklets_arch_restore (void)
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
-	int align = (((gint32)MONO_CONTEXT_GET_SP (ctx)) % MONO_ARCH_FRAME_ALIGNMENT + 4);
+	gssize align = (((gssize)MONO_CONTEXT_GET_SP (ctx)) % MONO_ARCH_FRAME_ALIGNMENT + 4);
 
 	if (align != 0)
 		MONO_CONTEXT_SET_SP (ctx, (gsize)MONO_CONTEXT_GET_SP (ctx) - align);

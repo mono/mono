@@ -424,47 +424,52 @@ namespace System
 			}
 		}
 
+		static bool TrySZBinarySearch (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZIndexOf (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZLastIndexOf (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
+		{
+			retVal = default;
+			return false;
+		}
+
+		static bool TrySZReverse (Array array, int index, int count) => false;
+
+		static bool TrySZSort (Array keys, Array? items, int left, int right) => false;
+
 		public int GetUpperBound (int dimension)
 		{
 			return GetLowerBound (dimension) + GetLength (dimension) - 1;
 		}
 
+		[Intrinsic]
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawSzArrayData ()
 		{
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
+		[Intrinsic]
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawArrayData ()
 		{
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
+		[Intrinsic]
 		internal int GetElementSize ()
 		{
-			return Marshal.GetArrayElementSize (GetType ());
-		}
-
-		//
-		// Moved value from instance into target of different type with no checks (JIT intristics)
-		//
-		// Restrictions:
-		//
-		// S and R must either:
-		// 	 both be blitable valuetypes
-		// 	 both be reference types (IOW, an unsafe cast)
-		// S and R cannot be float or double
-		// S and R must either:
-		//	 both be a struct
-		// 	 both be a scalar
-		// S and R must either:
-		// 	 be of same size
-		// 	 both be a scalar of size <= 4
-		//
-		internal static R UnsafeMov<S,R> (S instance)
-		{
-			return (R)(object) instance;
+			ThrowHelper.ThrowNotSupportedException ();
+			return 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -496,7 +501,7 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void GetGenericValueImpl<T> (int pos, out T value);
+		extern static void GetGenericValue_icall<T> (ref Array self, int pos, out T value);
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -504,7 +509,21 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void SetGenericValueImpl<T> (int pos, ref T value);
+		extern static void SetGenericValue_icall<T> (ref Array self, int pos, ref T value);
+
+		// This is a special case in the runtime.
+		void GetGenericValueImpl<T> (int pos, out T value)
+		{
+			var self = this;
+			GetGenericValue_icall (ref self, pos, out value);
+		}
+
+		// This is a special case in the runtime.
+		void SetGenericValueImpl<T> (int pos, ref T value)
+		{
+			var self = this;
+			SetGenericValue_icall (ref self, pos, ref value);
+		}
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -553,7 +572,7 @@ namespace System
 
 		internal bool InternalArray__ICollection_Contains<T> (T item)
 		{
-			return IndexOf (this, item, 0, Length) >= 0;
+			return IndexOf ((T[])this, item, 0, Length) >= 0;
 		}
 
 		internal void InternalArray__ICollection_CopyTo<T> (T[] array, int arrayIndex)
@@ -567,6 +586,7 @@ namespace System
 				ThrowHelper.ThrowArgumentOutOfRange_IndexException ();
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -588,7 +608,7 @@ namespace System
 
 		internal int InternalArray__IndexOf<T> (T item)
 		{
-			return IndexOf (this, item, 0, Length);
+			return IndexOf ((T[])this, item, 0, Length);
 		}
 
 		internal T InternalArray__get_Item<T> (int index)
@@ -597,6 +617,7 @@ namespace System
 				ThrowHelper.ThrowArgumentOutOfRange_IndexException ();
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -611,6 +632,7 @@ namespace System
 				return;
 			}
 
+			// Do not change this to call SetGenericValue_icall directly, due to special casing in the runtime.
 			SetGenericValueImpl (index, ref item);
 		}
 	}

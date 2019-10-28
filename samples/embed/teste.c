@@ -1,6 +1,7 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
 #include <mono/utils/mono-publib.h>
+#include <mono/metadata/mono-config.h>
 #include <stdlib.h>
 
 /*
@@ -52,7 +53,7 @@ main(int argc, char* argv[]) {
 	}
 	file = argv [1];
 
-	MonoAllocatorVTable mem_vtable = {custom_malloc};
+	MonoAllocatorVTable mem_vtable = { MONO_ALLOCATOR_VTABLE_VERSION, custom_malloc, NULL, NULL, NULL };
 	mono_set_allocator_vtable (&mem_vtable);
 
 	/*

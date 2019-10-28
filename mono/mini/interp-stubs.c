@@ -82,6 +82,11 @@ stub_stop_single_stepping (void)
 }
 
 static void
+stub_cleanup (void)
+{
+}
+
+static void
 stub_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
 	g_assert_not_reached ();
@@ -192,6 +197,12 @@ stub_frame_arg_to_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig
 
 static void
 stub_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer storage)
+{
+	g_assert_not_reached ();
+}
+
+static void
+stub_free_context (gpointer context)
 {
 	g_assert_not_reached ();
 }

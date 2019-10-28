@@ -76,18 +76,18 @@ partial_sharing_supported (void)
 static int
 type_check_context_used (MonoType *type, gboolean recursive)
 {
-	switch (mono_type_get_type (type)) {
+	switch (mono_type_get_type_internal (type)) {
 	case MONO_TYPE_VAR:
 		return MONO_GENERIC_CONTEXT_USED_CLASS;
 	case MONO_TYPE_MVAR:
 		return MONO_GENERIC_CONTEXT_USED_METHOD;
 	case MONO_TYPE_SZARRAY:
-		return mono_class_check_context_used (mono_type_get_class (type));
+		return mono_class_check_context_used (mono_type_get_class_internal (type));
 	case MONO_TYPE_ARRAY:
 		return mono_class_check_context_used (mono_type_get_array_type (type)->eklass);
 	case MONO_TYPE_CLASS:
 		if (recursive)
-			return mono_class_check_context_used (mono_type_get_class (type));
+			return mono_class_check_context_used (mono_type_get_class_internal (type));
 		else
 			return 0;
 	case MONO_TYPE_GENERICINST:
@@ -1410,7 +1410,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	MonoMethod *res, *cached;
 	WrapperInfo *info;
 	MonoMethodSignature *csig, *gsharedvt_sig;
-	int i, pindex, retval_var = 0;
+	int i, pindex;
 	char **param_names;
 	static GHashTable *cache;
 
@@ -1469,6 +1469,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 #endif
 
 #ifndef DISABLE_JIT
+	int retval_var = 0;
 	if (sig->ret->type != MONO_TYPE_VOID)
 		retval_var = mono_mb_add_local (mb, sig->ret);
 
@@ -1529,7 +1530,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	MonoMethod *res, *cached;
 	WrapperInfo *info;
 	MonoMethodSignature *normal_sig, *csig;
-	int i, pindex, args_start, ldind_op, stind_op;
+	int i, pindex, args_start;
 	char **param_names;
 	static GHashTable *cache;
 
@@ -1591,6 +1592,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 #endif
 
 #ifndef DISABLE_JIT
+	int ldind_op, stind_op;
 	if (sig->ret->type != MONO_TYPE_VOID)
 		/* Load return address */
 		mono_mb_emit_ldarg (mb, sig->hasthis ? 1 : 0);
@@ -1678,7 +1680,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	MonoMethod *res, *cached;
 	WrapperInfo *info;
 	MonoMethodSignature *csig, *entry_sig;
-	int i, pindex, retval_var = 0;
+	int i, pindex;
 	static GHashTable *cache;
 	const char *name;
 	gboolean generic = FALSE;
@@ -1771,6 +1773,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		mb->method->save_lmf = 1;
 
 #ifndef DISABLE_JIT
+	int retval_var = 0;
 	if (return_native_struct) {
 		retval_var = mono_mb_add_local (mb, int_type);
 		mono_mb_emit_icon (mb, mono_class_native_size (sig->ret->data.klass, NULL));
@@ -2892,8 +2895,12 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			}
 			break;
 		}
-		if (!rgctx [offset + 0])
-			rgctx [offset + 0] = alloc_rgctx_array (domain, i + 1, is_mrgctx);
+		if (!rgctx [offset + 0]) {
+			gpointer *array = alloc_rgctx_array (domain, i + 1, is_mrgctx);
+			/* Make sure that this array is zeroed if other threads access it */
+			mono_memory_write_barrier ();
+			rgctx [offset + 0] = array;
+		}
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
 		size = mono_class_rgctx_get_array_size (i + 1, is_mrgctx);
@@ -2920,10 +2927,13 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
-	if (rgctx [rgctx_index])
+	if (rgctx [rgctx_index]) {
 		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
-	else
+	} else {
+		/* Make sure other threads see the contents of info */
+		mono_memory_write_barrier ();
 		rgctx [rgctx_index] = info;
+	}
 
 	mono_domain_unlock (domain);
 
@@ -2954,6 +2964,8 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 	rgctx = class_vtable->runtime_generic_context;
 	if (!rgctx) {
 		rgctx = alloc_rgctx_array (domain, 0, FALSE);
+		/* Make sure that this array is zeroed if other threads access it */
+		mono_memory_write_barrier ();
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
 	}

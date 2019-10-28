@@ -51,8 +51,16 @@ void
 mono_llvm_dump_value (LLVMValueRef value)
 {
 	/* Same as LLVMDumpValue (), but print to stdout */
+	outs () << (*unwrap<Value> (value)) << "\n";
 	fflush (stdout);
-	outs () << (*unwrap<Value> (value));
+}
+
+void
+mono_llvm_dump_module (LLVMModuleRef module)
+{
+	/* Same as LLVMDumpModule (), but print to stdout */
+	outs () << (*unwrap (module));
+	fflush (stdout);
 }
 
 /* Missing overload for building an alloca with an alignment */
@@ -211,6 +219,14 @@ mono_llvm_build_weighted_branch (LLVMBuilderRef builder, LLVMValueRef cond, LLVM
 	auto weights = mdb.createBranchWeights (t_weight, f_weight);
 	auto ins = b->CreateCondBr (unwrap (cond), unwrap (t), unwrap (f), weights);
 	return wrap (ins);
+}
+
+void
+mono_llvm_add_string_metadata (LLVMValueRef insref, const char* label, const char* text)
+{
+	auto ins = unwrap<Instruction> (insref);
+	auto &ctx = ins->getContext ();
+	ins->setMetadata (label, MDNode::get (ctx, MDString::get (ctx, text)));
 }
 
 void
@@ -381,6 +397,8 @@ convert_attr (AttrKind kind)
 		return Attribute::NoInline;
 	case LLVM_ATTR_OPTIMIZE_FOR_SIZE:
 		return Attribute::OptimizeForSize;
+	case LLVM_ATTR_OPTIMIZE_NONE:
+		return Attribute::OptimizeNone;
 	case LLVM_ATTR_IN_REG:
 		return Attribute::InReg;
 	case LLVM_ATTR_STRUCT_RET:
@@ -512,4 +530,34 @@ mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 
 	return wrap(SafepointPoll);
 #endif
+}
+
+gboolean
+mono_llvm_remove_gc_safepoint_poll (LLVMModuleRef module)
+{
+	llvm::Function *func = unwrap (module)->getFunction ("gc.safepoint_poll");
+	if (func == nullptr)
+		return FALSE;
+	func->eraseFromParent ();
+	return TRUE;
+}
+
+int
+mono_llvm_check_cpu_features (const CpuFeatureAliasFlag *features, int length)
+{
+	int flags = 0;
+	llvm::StringMap<bool> HostFeatures;
+	if (llvm::sys::getHostCPUFeatures (HostFeatures)) {
+		for (int i=0; i<length; i++) {
+			CpuFeatureAliasFlag feature = features [i];
+			if (HostFeatures [feature.alias])
+				flags |= feature.flag;
+		}
+		/*
+		for (auto &F : HostFeatures)
+			if (F.second)
+				outs () << "X: " << F.first () << "\n";
+		*/
+	}
+	return flags;
 }

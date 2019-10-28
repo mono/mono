@@ -106,6 +106,7 @@
     </ClCompile>
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\mono-route.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\monitor.h" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\native-library.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\normalization-tables.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\number-formatter.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\number-ms.h" />
@@ -140,7 +141,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\threads.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\threads-types.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\threadpool.c" />
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\threadpool-netcore.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\threadpool.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\threadpool-worker-default.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\threadpool-worker.h" />

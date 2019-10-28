@@ -248,6 +248,7 @@ System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
+System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
@@ -1620,7 +1621,6 @@ corefx/CryptoConfigForwarder.cs
 corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
-corefx/MethodInfo.cs
 corefx/RandomNumberGenerator.cs
 corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs
@@ -1631,6 +1631,11 @@ corefx/AesGcm.cs
 corefx/IncrementingEventCounter.cs
 corefx/IncrementingPollingCounter.cs
 corefx/PollingCounter.cs
+corefx/NullableAttributes.cs
+corefx/ArrayBufferWriter.cs
+corefx/SequenceReader.cs
+corefx/SequenceReader.Search.cs
+corefx/SequenceReaderExtensions.Binary.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs

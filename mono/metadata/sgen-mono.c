@@ -121,7 +121,7 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int coun
 		for (i = 0; i < count; ++i) {
 			scan_object_for_binary_protocol_copy_wbarrier ((char*)dest + i * element_size,
 					(char*)src + i * element_size - MONO_ABI_SIZEOF (MonoObject),
-					(mword) klass->gc_descr);
+					(mword) m_class_get_gc_descr (klass));
 		}
 	}
 #endif
@@ -254,7 +254,7 @@ emit_nursery_check_noilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 }
 
 static void
-emit_managed_allocater_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
+emit_managed_allocator_noilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
 {
 }
 
@@ -264,7 +264,7 @@ install_noilgen (void)
 	MonoSgenMonoCallbacks cb;
 	cb.version = MONO_SGEN_MONO_CALLBACKS_VERSION;
 	cb.emit_nursery_check = emit_nursery_check_noilgen;
-	cb.emit_managed_allocater = emit_managed_allocater_noilgen;
+	cb.emit_managed_allocator = emit_managed_allocator_noilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
 
@@ -811,6 +811,18 @@ clear_domain_free_major_pinned_object_callback (GCObject *obj, size_t size, Mono
 }
 
 static void
+clear_domain_process_los_object_callback (GCObject *obj, size_t size, MonoDomain *domain)
+{
+	clear_domain_process_object (obj, domain);
+}
+
+static gboolean
+clear_domain_free_los_object_callback (GCObject *obj, size_t size, MonoDomain *domain)
+{
+	return need_remove_object_for_domain (obj, domain);
+}
+
+static void
 sgen_finish_concurrent_work (const char *reason, gboolean stw)
 {
 	if (sgen_get_concurrent_collection_in_progress ())
@@ -876,25 +888,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 	   dereference a pointer from an object to another object if
 	   the first object is a proxy. */
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)clear_domain_process_major_object_callback, domain);
-	for (bigobj = sgen_los_object_list; bigobj; bigobj = bigobj->next)
-		clear_domain_process_object ((GCObject*)bigobj->data, domain);
 
-	prev = NULL;
-	for (bigobj = sgen_los_object_list; bigobj;) {
-		if (need_remove_object_for_domain ((GCObject*)bigobj->data, domain)) {
-			LOSObject *to_free = bigobj;
-			if (prev)
-				prev->next = bigobj->next;
-			else
-				sgen_los_object_list = bigobj->next;
-			bigobj = bigobj->next;
-			SGEN_LOG (4, "Freeing large object %p", bigobj->data);
-			sgen_los_free_object (to_free);
-			continue;
-		}
-		prev = bigobj;
-		bigobj = bigobj->next;
-	}
+	sgen_los_iterate_objects ((IterateObjectCallbackFunc)clear_domain_process_los_object_callback, domain);
+	sgen_los_iterate_objects_free ((IterateObjectResultCallbackFunc)clear_domain_free_los_object_callback, domain);
+
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_NON_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_non_pinned_object_callback, domain);
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_pinned_object_callback, domain);
 
@@ -1042,7 +1039,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
 
-	get_sgen_mono_cb ()->emit_managed_allocater (mb, slowpath, profiler, atype);
+	get_sgen_mono_cb ()->emit_managed_allocator (mb, slowpath, profiler, atype);
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
 	info->d.alloc.gc_name = "sgen";
@@ -1456,6 +1453,7 @@ mono_gc_set_string_length (MonoString *str, gint32 new_length)
 #define SPECIAL_ADDRESS_FIN_QUEUE ((mono_byte*)1)
 #define SPECIAL_ADDRESS_CRIT_FIN_QUEUE ((mono_byte*)2)
 #define SPECIAL_ADDRESS_EPHEMERON ((mono_byte*)3)
+#define SPECIAL_ADDRESS_TOGGLEREF ((mono_byte*)4)
 
 typedef struct {
 	int count;		/* must be the first field */
@@ -1879,6 +1877,20 @@ report_ephemeron_roots (void)
 }
 
 static void
+report_toggleref_root (MonoObject* obj, gpointer data)
+{
+	report_gc_root ((GCRootReport*)data, SPECIAL_ADDRESS_TOGGLEREF, obj);
+}
+
+static void
+report_toggleref_roots (void)
+{
+	GCRootReport report = { 0 };
+	sgen_foreach_toggleref_root (report_toggleref_root, &report);
+	notify_gc_roots (&report);
+}
+
+static void
 sgen_report_all_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
 {
 	if (!MONO_PROFILER_ENABLED (gc_roots))
@@ -1886,6 +1898,7 @@ sgen_report_all_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *crit
 
 	report_registered_roots ();
 	report_ephemeron_roots ();
+	report_toggleref_roots ();
 	report_pin_queue ();
 	report_finalizer_roots_from_queue (fin_ready_queue, SPECIAL_ADDRESS_FIN_QUEUE);
 	report_finalizer_roots_from_queue (critical_fin_queue, SPECIAL_ADDRESS_CRIT_FIN_QUEUE);
@@ -2148,6 +2161,8 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 	MonoNativeThreadId tid;
 
 	mono_tls_set_sgen_thread_info (NULL);
+
+	sgen_increment_bytes_allocated_detached (p->total_bytes_allocated);
 
 	tid = mono_thread_info_get_tid (p);
 
@@ -2589,6 +2604,12 @@ mono_gc_get_allocated_bytes_for_current_thread (void)
 
 	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
 	return info->total_bytes_allocated + info->tlab_next - info->tlab_start;
+}
+
+guint64
+mono_gc_get_total_allocated_bytes (MonoBoolean precise)
+{
+	return sgen_get_total_allocated_bytes (precise);
 }
 
 gpointer
@@ -3079,6 +3100,7 @@ sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_FIN_QUEUE, 1, MONO_ROOT_SOURCE_FINALIZER_QUEUE, NULL, "Finalizer Queue"));
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_CRIT_FIN_QUEUE, 1, MONO_ROOT_SOURCE_FINALIZER_QUEUE, NULL, "Finalizer Queue (Critical)"));
 		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_EPHEMERON, 1, MONO_ROOT_SOURCE_EPHEMERON, NULL, "Ephemerons"));
+		MONO_PROFILER_RAISE (gc_root_register, (SPECIAL_ADDRESS_TOGGLEREF, 1, MONO_ROOT_SOURCE_TOGGLEREF, NULL, "ToggleRefs"));
 	}
 
 #ifndef DISABLE_PERFCOUNTERS

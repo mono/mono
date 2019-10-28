@@ -27,6 +27,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-ppc.h"
@@ -340,7 +341,7 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -673,7 +674,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 		abort ();
 	}
 	if (!ji)
-		mono_handle_native_crash ("SIGSEGV", sigctx, siginfo);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * The frame looks like:

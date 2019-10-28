@@ -390,6 +390,7 @@ mono_marshal_ftnptr_eh_callback (guint32 gchandle);
 MONO_PAL_API void
 mono_marshal_set_last_error (void);
 
+ICALL_EXTERN_C
 void
 mono_marshal_clear_last_error (void);
 
@@ -410,8 +411,8 @@ mono_wrapper_info_create (MonoMethodBuilder *mb, WrapperSubtype subtype);
 void
 mono_marshal_set_wrapper_info (MonoMethod *method, WrapperInfo *info);
 
-WrapperInfo*
-mono_marshal_get_wrapper_info (MonoMethod *wrapper) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL WrapperInfo*
+mono_marshal_get_wrapper_info (MonoMethod *wrapper);
 
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method);
@@ -449,14 +450,14 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type);
 MonoMethod *
 mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions);
 
-MonoMethod *
-mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoMethod *
+mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype);
 
-const char *
-mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL const char *
+mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype);
 
-MonoMethod *
-mono_marshal_get_llvm_func_wrapper (MonoLLVMFuncWrapperSubtype subtype) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoMethod *
+mono_marshal_get_llvm_func_wrapper (MonoLLVMFuncWrapperSubtype subtype);
 
 MonoMethod *
 mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, gboolean aot);
@@ -529,9 +530,11 @@ mono_marshal_unlock_internal (void);
 void * 
 mono_marshal_alloc (gsize size, MonoError *error);
 
+ICALL_EXTERN_C
 void 
 mono_marshal_free (gpointer ptr);
 
+ICALL_EXTERN_C
 void
 mono_marshal_free_array (gpointer *ptr, int size);
 
@@ -544,26 +547,28 @@ mono_cominterop_release_all_rcws (void);
 MONO_API void *
 mono_marshal_string_to_utf16 (MonoString *s);
 
+ICALL_EXTERN_C
 void
 mono_marshal_set_last_error_windows (int error);
 
+ICALL_EXTERN_C
 void 
 mono_struct_delete_old (MonoClass *klass, char *ptr);
-
-MonoObject*
-mono_object_isinst_icall (MonoObject *obj, MonoClass *klass);
 
 int
 mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t, 
 	      MonoMarshalSpec *spec, int conv_arg, 
 	      MonoType **conv_arg_type, MarshalAction action);
 
+ICALL_EXTERN_C
 MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache);
 
+ICALL_EXTERN_C
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params);
 
+ICALL_EXTERN_C
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params);
 
@@ -594,11 +599,16 @@ mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 gboolean
 mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
 
+ICALL_EXTERN_C
 MonoObject* mono_marshal_get_type_object (MonoClass *klass);
 
 ICALL_EXPORT
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void);
+
+ICALL_EXPORT
+void
+ves_icall_System_Runtime_InteropServices_Marshal_SetLastWin32Error (guint32 err);
 
 ICALL_EXPORT
 mono_bstr
@@ -640,8 +650,8 @@ mono_win32_compat_MoveMemory (gpointer dest, gconstpointer source, gsize length)
 MONO_API void
 mono_win32_compat_ZeroMemory (gpointer dest, gsize length);
 
-void
-mono_marshal_find_nonzero_bit_offset (guint8 *buf, int len, int *byte_offset, guint8 *bitmask) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL void
+mono_marshal_find_nonzero_bit_offset (guint8 *buf, int len, int *byte_offset, guint8 *bitmask);
 
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method);

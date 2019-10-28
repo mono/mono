@@ -12,9 +12,7 @@
  */
 
 #include <config.h>
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #if HAVE_SCHED_SETAFFINITY
 #include <sched.h>
 #endif
@@ -76,8 +74,8 @@
 static FILE *mini_stats_fd;
 
 static void mini_usage (void);
-static void mono_runtime_set_execution_mode (MonoEEMode mode);
-static void mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override);
+static void mono_runtime_set_execution_mode (int mode);
+static void mono_runtime_set_execution_mode_full (int mode, gboolean override);
 static int mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 
 #ifdef HOST_WIN32
@@ -1249,7 +1247,7 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	mono_thread_create_checked (mono_domain_get (), (gpointer)compile_all_methods_thread_main, &args, error);
 	mono_error_assert_ok (error);
 
-	mono_thread_manage ();
+	mono_thread_manage_internal ();
 }
 
 /**
@@ -1980,7 +1978,6 @@ mono_main (int argc, char* argv[])
 	MonoAssembly *assembly;
 	MonoMethodDesc *desc;
 	MonoMethod *method;
-	MonoCompile *cfg;
 	MonoDomain *domain;
 	MonoImageOpenStatus open_status;
 	const char* aname, *mname = NULL;
@@ -2623,7 +2620,7 @@ mono_main (int argc, char* argv[])
 		main_args.opts = opt;
 		main_args.aot_options = aot_options;
 		main_thread_handler (&main_args);
-		mono_thread_manage ();
+		mono_thread_manage_internal ();
 
 		mini_cleanup (domain);
 
@@ -2651,6 +2648,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifndef DISABLE_JIT
+	MonoCompile *cfg;
 	if (action == DO_DRAW) {
 		int part = 0;
 
@@ -2754,7 +2752,9 @@ mono_main (int argc, char* argv[])
 MonoDomain * 
 mono_jit_init (const char *file)
 {
-	return mini_init (file, NULL);
+	MonoDomain *ret = mini_init (file, NULL);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
 }
 
 /**
@@ -2780,7 +2780,16 @@ mono_jit_init (const char *file)
 MonoDomain * 
 mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
-	return mini_init (domain_name, runtime_version);
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
+}
+
+MonoDomain * 
+mono_jit_init_version_for_test_only (const char *domain_name, const char *runtime_version)
+{
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	return ret;
 }
 
 /**
@@ -2789,11 +2798,16 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
-	MONO_ENTER_GC_UNSAFE;
-	mono_thread_manage ();
+	MONO_STACKDATA (dummy);
+	(void) mono_threads_enter_gc_unsafe_region_unbalanced_internal (&dummy);
+
+	// after mini_cleanup everything is cleaned up so MONO_EXIT_GC_UNSAFE
+	// can't work and doesn't make sense.
+
+	mono_thread_manage_internal ();
 
 	mini_cleanup (domain);
-	MONO_EXIT_GC_UNSAFE;
+
 }
 
 void
@@ -2804,7 +2818,7 @@ mono_jit_set_aot_only (gboolean val)
 }
 
 static void
-mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override)
+mono_runtime_set_execution_mode_full (int mode, gboolean override)
 {
 	static gboolean mode_initialized = FALSE;
 	if (mode_initialized && !override)
@@ -2871,7 +2885,7 @@ mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override)
 }
 
 static void
-mono_runtime_set_execution_mode (MonoEEMode mode)
+mono_runtime_set_execution_mode (int mode)
 {
 	mono_runtime_set_execution_mode_full (mode, TRUE);
 }
@@ -2889,7 +2903,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	mono_aot_mode = mode;
 	inited = TRUE;
 	
-	mono_runtime_set_execution_mode ((MonoEEMode)mode);
+	mono_runtime_set_execution_mode (mode);
 }
 
 mono_bool

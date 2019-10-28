@@ -27,9 +27,10 @@ typedef enum
 } MintOpArgType;
 
 #define OPDEF(a,b,c,d,e,f) a,
-enum {
+typedef enum {
 #include "mintops.def"
-};
+	MINT_LASTOP
+} MintOpcode;
 #undef OPDEF
 
 #if NO_UNALIGNED_ACCESS
@@ -57,6 +58,16 @@ enum {
 #define MINT_IS_STLOC(op) ((op) >= MINT_STLOC_I1 && (op) <= MINT_STLOC_VT)
 #define MINT_IS_MOVLOC(op) ((op) >= MINT_MOVLOC_1 && (op) <= MINT_MOVLOC_VT)
 #define MINT_IS_STLOC_NP(op) ((op) >= MINT_STLOC_NP_I4 && (op) <= MINT_STLOC_NP_O)
+#define MINT_IS_CONDITIONAL_BRANCH(op) ((op) >= MINT_BRFALSE_I4 && (op) <= MINT_BLT_UN_R8_S)
+#define MINT_IS_CALL(op) ((op) >= MINT_CALL && (op) <= MINT_JIT_CALL)
+#define MINT_IS_NEWOBJ(op) ((op) >= MINT_NEWOBJ && (op) <= MINT_NEWOBJ_MAGIC)
+#define MINT_IS_LDC_I4(op) ((op) >= MINT_LDC_I4_M1 && (op) <= MINT_LDC_I4)
+#define MINT_IS_UNOP(op) ((op) >= MINT_ADD1_I4 && (op) <= MINT_CEQ0_I4)
+#define MINT_IS_BINOP(op) ((op) >= MINT_ADD_I4 && (op) <= MINT_CLT_UN_R8)
+#define MINT_IS_LDLOCFLD(op) ((op) >= MINT_LDLOCFLD_I1 && (op) <= MINT_LDLOCFLD_P)
+#define MINT_IS_STLOCFLD(op) ((op) >= MINT_STLOCFLD_I1 && (op) <= MINT_STLOCFLD_P)
+#define MINT_IS_LOCUNOP(op) ((op) >= MINT_LOCADD1_I4 && (op) <= MINT_LOCSUB1_I8)
+
 
 #define MINT_POP_ALL	-2
 #define MINT_VAR_PUSH	-1
@@ -66,7 +77,7 @@ extern unsigned char const mono_interp_oplen[];
 extern int const mono_interp_oppop[];
 extern int const mono_interp_oppush[];
 extern MintOpArgType const mono_interp_opargtype[];
-extern char* mono_interp_dis_mintop (const unsigned short *base, const guint16 *ip);
+extern char* mono_interp_dis_mintop (gint32 ins_offset, gboolean native_offset, const guint16 *ip, guint16 opcode);
 extern const guint16* mono_interp_dis_mintop_len (const guint16 *ip);
 
 // This, instead of an array of pointers, to optimize away a pointer and a relocation per string.

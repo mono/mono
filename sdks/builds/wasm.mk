@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.43
+EMSCRIPTEN_VERSION=1.39.0
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -40,8 +40,8 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)-upstream
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)
 	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
 	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/emscripten-pr-8457.diff; exit 0)
 	touch $@
@@ -87,7 +87,7 @@ _wasm_$(1)_CONFIGURE_FLAGS = \
 	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
 	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
-	$$(wasm-$(1)_CONFIGURE_FLAGS) \
+	$$(wasm_$(1)_CONFIGURE_FLAGS) \
 	CFLAGS="$(WASM_RUNTIME_BASE_CFLAGS) $$(wasm_$(1)_CFLAGS)" \
 	CXXFLAGS="$(WASM_RUNTIME_BASE_CXXFLAGS) $$(wasm_$(1)_CXXFLAGS)"
 
@@ -143,6 +143,7 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime-netcore_CONFIGURE_FLAGS=--with-core=only
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
 
@@ -155,6 +156,9 @@ $(eval $(call WasmRuntimeTemplate,runtime-threads))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call WasmRuntimeTemplate,runtime-dynamic))
+endif
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
 
 ##
@@ -252,3 +256,15 @@ $(eval $(call WasmCrossMXETemplate,cross-win,x86_64,wasm32,runtime,llvm-llvmwin6
 endif
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
+
+ifdef ENABLE_WASM_NETCORE
+
+build-wasm-bcl-netcore: build-wasm-runtime-netcore
+	cp wasm-runtime-netcore-release/netcore/config.make ../../netcore/config.make
+	make -C ../../netcore
+
+package-wasm-bcl-netcore: build-wasm-bcl-netcore
+	mkdir -p ../out/wasm-bcl/netcore
+	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
+
+endif

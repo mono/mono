@@ -311,8 +311,8 @@ load_image (MonoAotModule *amodule, int index, MonoError *error)
 	}
 
 	if (strcmp (assembly->image->guid, amodule->image_guids [index])) {
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable (GUID of dependent assembly %s doesn't match (expected '%s', got '%s').", amodule->aot_name, amodule->image_names [index].name, amodule->image_guids [index], assembly->image->guid);
-		mono_error_set_bad_image_by_name (error, amodule->aot_name, "module is unusable (GUID of dependent assembly %s doesn't match (expected '%s', got '%s').", amodule->image_names [index].name, amodule->image_guids [index], assembly->image->guid);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable (GUID of dependent assembly %s doesn't match (expected '%s', got '%s')).", amodule->aot_name, amodule->image_names [index].name, amodule->image_guids [index], assembly->image->guid);
+		mono_error_set_bad_image_by_name (error, amodule->aot_name, "module is unusable (GUID of dependent assembly %s doesn't match (expected '%s', got '%s')).", amodule->image_names [index].name, amodule->image_guids [index], assembly->image->guid);
 		amodule->out_of_date = TRUE;
 		return NULL;
 	}
@@ -1933,18 +1933,20 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
  * TABLE should point to a table of call instructions. Return the address called by the INDEXth entry.
  */
 static void*
-get_call_table_entry (void *table, int index)
+get_call_table_entry (void *table, int index, int entry_size)
 {
 #if defined(TARGET_ARM)
 	guint32 *ins_addr;
 	guint32 ins;
 	gint32 offset;
 
-	ins_addr = (guint32 *)table + (index * 2);
-	if ((guint32) *ins_addr == (guint32 ) 0xe51ff004) { // ldr pc, =<label>
+	if (entry_size == 8) {
+		ins_addr = (guint32 *)table + (index * 2);
+		g_assert ((guint32) *ins_addr == (guint32 ) 0xe51ff004); // ldr pc, =<label>
 		return *((char **) (ins_addr + 1));
 	}
 
+	g_assert (entry_size == 4);
 	ins_addr = (guint32*)table + index;
 	ins = *ins_addr;
 	if ((ins >> ARMCOND_SHIFT) == ARMCOND_NV) {
@@ -2367,7 +2369,7 @@ if (container_assm_name && !container_amodule) {
 
 		/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
 		if (!addr && amodule->info.method_addresses) {
-			addr = get_call_table_entry (amodule->info.method_addresses, i);
+			addr = get_call_table_entry (amodule->info.method_addresses, i, amodule->info.call_table_entry_size);
 			g_assert (addr);
 			if (addr == amodule->info.method_addresses)
 				addr = NULL;
@@ -4767,71 +4769,29 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		}
 
 		/*
-		 * Special case Array.GetGenericValueImpl which is a generic icall.
+		 * Special case Array.GetGenericValue_icall which is a generic icall.
 		 * Generic sharing currently can't handle it, but the icall returns data using
 		 * an out parameter, so the managed-to-native wrappers can share the same code.
 		 */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValueImpl")) {
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValue_icall")) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
-			MonoType *args [16];
 
 			if (mono_method_signature_internal (method)->params [1]->type == MONO_TYPE_OBJECT)
 				/* Avoid recursion */
 				return NULL;
 
-			m = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetGenericValueImpl", 2, 0, error);
+			m = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetGenericValue_icall", 3, 0, error);
 			mono_error_assert_ok (error);
 			g_assert (m);
 
 			memset (&ctx, 0, sizeof (ctx));
-			args [0] = m_class_get_byval_arg (mono_defaults.object_class);
+			MonoType *args [ ] = { m_class_get_byval_arg (mono_defaults.object_class) };
 			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
 
 			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
 			if (!m)
 				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
-
-			/* 
-			 * Get the code for the <object> instantiation which should be emitted into
-			 * the mscorlib aot image by the AOT compiler.
-			 */
-			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
-			mono_error_cleanup (inner_error);
-			if (code)
-				return code;
-		}
-
-		const char *klass_name_space = m_class_get_name_space (method->klass);
-		const char *klass_name = m_class_get_name (method->klass);
-		/* Same for CompareExchange<T> and Exchange<T> */
-		/* Same for Volatile.Read<T>/Write<T> */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && m_class_get_image (method->klass) == mono_defaults.corlib && 
-			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1]))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->ret)))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1])))))) {
-			MonoMethod *m;
-			MonoGenericContext ctx;
-			MonoType *args [16];
-			gpointer iter = NULL;
-
-			while ((m = mono_class_get_methods (method->klass, &iter))) {
-				if (mono_method_signature_internal (m)->generic_param_count && !strcmp (m->name, method->name))
-					break;
-			}
-			g_assert (m);
-
-			memset (&ctx, 0, sizeof (ctx));
-			args [0] = mono_get_object_type ();
-			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
-
-			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
-			if (!m)
-				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
-
-			/* Avoid recursion */
-			if (method == m)
-				return NULL;
 
 			/* 
 			 * Get the code for the <object> instantiation which should be emitted into
@@ -5995,7 +5955,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 		}
 	}
 
-	code = get_call_table_entry (amodule->unbox_trampoline_addresses, entry_index);
+	code = get_call_table_entry (amodule->unbox_trampoline_addresses, entry_index, amodule->info.call_table_entry_size);
 	g_assert (code);
 
 	tinfo = mono_tramp_info_create (NULL, (guint8 *)code, 0, NULL, NULL);

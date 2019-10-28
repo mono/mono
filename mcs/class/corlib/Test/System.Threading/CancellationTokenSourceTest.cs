@@ -29,9 +29,11 @@
 
 
 using System;
-using System.Threading;
 using NUnit.Framework;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Threading
 {
@@ -496,33 +498,102 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-		[Test] // https://github.com/mono/mono/issues/12421
-		public void EnsurePostIsNotCalled ()
+		[Test] // https://github.com/mono/mono/issues/16759
+		[Category("NotWasm")]
+		public void EnsureCanceledContinuationsAreOnSameThread ()
 		{
-			SynchronizationContext mainContext = SynchronizationContext.Current;
-			var asc = new AssertSyncContext ();
-			SynchronizationContext.SetSynchronizationContext (asc);
-			var ct = new CancellationTokenSource ();
-			var tcs = new TaskCompletionSource<bool> ();
-			ct.Token.Register (() => tcs.TrySetCanceled ());
+			AsyncPump.Run(async delegate {
+				var _tcs = new TaskCompletionSource<bool>();
+				var _cts = new CancellationTokenSource();
 
-			bool taskIsCancelled = false;
-			Action awaitAction = async () => {
-					try { await tcs.Task; }
-					catch (OperationCanceledException) { 
-						taskIsCancelled = true;
-					}
-				};
-			awaitAction ();
-			ct.Cancel (); // should not trigger SynchronizationContext.Post
-			Assert.IsTrue (taskIsCancelled);
-			SynchronizationContext.SetSynchronizationContext (mainContext);
+				var curThreadId = Thread.CurrentThread.ManagedThreadId;
+				var taskThreadId = 0;
+				var taskIsCancelled = false;
+                
+                var task = Task.Run(() =>
+                {
+					taskThreadId = Thread.CurrentThread.ManagedThreadId;
+                    _cts.Cancel();
+                });
+
+                _cts.Token.Register(() => _tcs.TrySetCanceled());
+                try
+                {
+                    await _tcs.Task;
+                }
+                catch (OperationCanceledException)
+                {
+					// Continuation should run on the same thread before the task started.					
+                    Assert.AreEqual(curThreadId, Thread.CurrentThread.ManagedThreadId, "#1");
+					taskIsCancelled = true;
+                }
+
+				Assert.IsTrue (taskIsCancelled, "#2");
+				Assert.AreNotEqual(taskThreadId, curThreadId, "#3");
+			});			
 		}
 
-		class AssertSyncContext : SynchronizationContext
+		public static class AsyncPump
 		{
-			public override void Post (SendOrPostCallback d, object state) =>
-				throw new InvalidOperationException ("SynchronizationContext.Post was not expected.");
+			/// <summary>Runs the specified asynchronous function.</summary>
+			/// <param name="func">The asynchronous function to execute.</param>
+			public static void Run(Func<Task> func)
+			{
+				if (func == null) throw new ArgumentNullException("func");
+
+				var prevCtx = SynchronizationContext.Current;
+				try
+				{
+					// Establish the new context
+					var syncCtx = new SingleThreadSynchronizationContext();
+					SynchronizationContext.SetSynchronizationContext(syncCtx);
+
+					// Invoke the function and alert the context to when it completes
+					var t = func();
+					if (t == null) throw new InvalidOperationException("No task provided.");
+					t.ContinueWith(delegate { syncCtx.Complete(); }, TaskScheduler.Default);
+
+					// Pump continuations and propagate any exceptions
+					syncCtx.RunOnCurrentThread();
+					t.GetAwaiter().GetResult();
+				}
+				finally { SynchronizationContext.SetSynchronizationContext(prevCtx); }
+			}
+
+			/// <summary>Provides a SynchronizationContext that's single-threaded.</summary>
+			private sealed class SingleThreadSynchronizationContext : SynchronizationContext
+			{
+				/// <summary>The queue of work items.</summary>
+				private readonly BlockingCollection<KeyValuePair<SendOrPostCallback, object>> m_queue =
+					new BlockingCollection<KeyValuePair<SendOrPostCallback, object>>();
+				/// <summary>The processing thread.</summary>
+				private readonly Thread m_thread = Thread.CurrentThread;
+
+				/// <summary>Dispatches an asynchronous message to the synchronization context.</summary>
+				/// <param name="d">The System.Threading.SendOrPostCallback delegate to call.</param>
+				/// <param name="state">The object passed to the delegate.</param>
+				public override void Post(SendOrPostCallback d, object state)
+				{
+					if (d == null) throw new ArgumentNullException("d");
+					m_queue.Add(new KeyValuePair<SendOrPostCallback, object>(d, state));
+				}
+
+				/// <summary>Not supported.</summary>
+				public override void Send(SendOrPostCallback d, object state)
+				{
+					throw new NotSupportedException("Synchronously sending is not supported.");
+				}
+
+				/// <summary>Runs an loop to process all queued work items.</summary>
+				public void RunOnCurrentThread()
+				{
+					foreach (var workItem in m_queue.GetConsumingEnumerable())
+						workItem.Key(workItem.Value);
+				}
+
+				/// <summary>Notifies the context that no more work will arrive.</summary>
+				public void Complete() { m_queue.CompleteAdding(); }
+			}
 		}
 	}
 }

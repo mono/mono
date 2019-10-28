@@ -50,3 +50,67 @@
 -nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_GetHashCodeCompare
 -nomethod System.Collections.Tests.HashtableTests.HashCodeProvider_Set_ImpactsSearch
 -nomethod System.Collections.Tests.HashtableTests.Comparer_Set_ImpactsSearch
+
+# System.Data
+# Hangs
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbConnection
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbCommand
+-nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbDataReader
+
+# https://github.com/mono/mono/issues/17052
+-nomethod System.Data.Tests.DataViewTest.Find_3
+
+# https://github.com/mono/mono/issues/17051
+-nomethod System.Data.Tests.DataTableTest5.XmlTest3
+-nomethod System.Data.Tests.DataTableTest5.XmlTest4
+-nomethod System.Data.Tests.DataTableTest5.XmlTest14
+
+# https://github.com/mono/mono/issues/17050
+-nomethod System.Data.Tests.DataTableTest4.XmlTest5
+-nomethod System.Data.Tests.DataTableTest4.XmlTest6
+-nomethod System.Data.Tests.DataTableTest4.XmlTest7
+-nomethod System.Data.Tests.DataTableTest4.XmlTest8
+-nomethod System.Data.Tests.DataTableTest4.XmlTest9
+-nomethod System.Data.Tests.DataTableTest4.XmlTest29
+
+# https://github.com/mono/mono/issues/17049
+-nomethod System.Data.Tests.DataTableTest3.XmlSchemaTest5
+
+# https://github.com/mono/mono/issues/17048
+-nomethod System.Data.Tests.DataTableTest2.Columns
+
+# https://github.com/mono/mono/issues/17046
+-nomethod System.Data.Tests.DataRowTest2.DataRowExpressionDefaultValueTest
+
+# https://github.com/mono/mono/issues/17045
+-noclass System.Data.Tests.DataRowTest
+
+# https://github.com/mono/mono/issues/17044
+-nomethod System.Data.Tests.DataColumnCollectionTest.Contains
+-nomethod System.Data.Tests.DataColumnCollectionTest.IndexOf
+-nomethod System.Data.Tests.DataColumnCollectionTest.Remove
+-nomethod System.Data.Tests.DataColumnCollectionTest.CaseSensitiveIndexOfTest
+-nomethod System.Data.Tests.DataColumnCollectionTest2.Indexer2
+
+# System.Numerics
+# Crashes in GC 
+-nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
+
+# System.Net.Http.UnitTests
+# Hangs
+-nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
+
+# System.Net.Tests.WebClientTest
+# WebClient.Proxy throws PlatformNotSupportedException
+-nomethod System.Net.Tests.WebClientTest.DefaultCtor_PropertiesReturnExpectedValues
+-nomethod System.Net.Tests.WebClientTest.Proxy_Roundtrips
+
+# System.Net.Sockets.Tests
+# Socket ctor throws PlatformNotSupportedException
+-nomethod System.Net.Sockets.Tests.NetworkStreamTest.Ctor_NotConnected_ThrowsIOException
+
+# System.IO.Compression
+-noclass System.IO.Compression.Tests.BrotliEncoderTests
+
+# System
+-nonamespace System.Net.Security.Tests

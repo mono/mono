@@ -93,9 +93,7 @@
 #endif
 
 #include <fcntl.h>
-#ifndef HOST_WIN32
-#include <dlfcn.h>
-#endif
+#include <gmodule.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -231,7 +229,10 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 		if (mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 		mono_sigctx_to_monoctx (ctx, &mctx);
-		mono_handle_native_crash ("SIGABRT", &mctx, info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGABRT", &mctx, info);
+		else
+			abort ();
 	}
 }
 
@@ -248,8 +249,14 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 
 	// Will return when the dumping is done, so this thread can continue
 	// running. Returns FALSE on unrecoverable error.
-	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
-		g_error ("Crash reporter dumper exited due to fatal error.");
+	if (mono_dump_start ()) {
+		// Process was killed from outside since crash reporting wasn't running yet.
+		mono_handle_native_crash ("SIGTERM", &mctx, NULL);
+	} else {
+		// Crash reporting already running and we got a second SIGTERM from as part of thread-summarizing
+		if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
+			g_error ("Crash reporter dumper exited due to fatal error.");
+	}
 #endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -938,12 +945,12 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 
 	for (int i = 0; i < size; ++i) {
 		gpointer ip = array [i];
-		Dl_info info;
-		gboolean success = dladdr ((void*) ip, &info);
+		char sname [256], fname [256];
+		gboolean success = g_module_address ((void*)ip, fname, 256, NULL, sname, 256, NULL);
 		if (!success) {
 			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
-			g_async_safe_printf ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
+			g_async_safe_printf ("\t%p - %s : %s\n", ip, fname, sname);
 		}
 	}
 
@@ -953,10 +960,10 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 		pid_t pid;
 		int status;
 		pid_t crashed_pid = getpid ();
-		gchar *output = NULL;
-		MonoStackHash hashes;
 
 #ifndef DISABLE_CRASH_REPORTING
+		gchar *output = NULL;
+		MonoStackHash hashes;
 		MonoStateMem merp_mem;
 		memset (&merp_mem, 0, sizeof (merp_mem));
 
@@ -967,11 +974,13 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 			dump_for_merp = mono_merp_enabled ();
 #endif
 
+#ifndef DISABLE_STRUCTURED_CRASH
+			mini_register_sigterm_handler ();
+#endif
+
 			if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
 				leave = TRUE;
-#else
-				mini_register_sigterm_handler ();
 #endif
 			}
 
@@ -1053,7 +1062,6 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 						g_async_safe_printf("\nThe MERP upload step has succeeded.\n");
 						mono_summarize_timeline_phase_log (MonoSummaryDone);
 					}
-
 					mono_summarize_toggle_assertions (FALSE);
 				} else {
 					g_async_safe_printf("\nMerp dump step not run, no dump created.\n");
@@ -1118,7 +1126,6 @@ void
 mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 	dump_native_stacktrace (signal, mctx);
-
 	dump_memory_around_ip (mctx);
 }
 

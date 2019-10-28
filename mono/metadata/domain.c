@@ -589,7 +589,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		mono_fixup_exe_image (exe_image);
 #endif
 	} else if (runtime_version != NULL) {
-		runtimes = g_slist_prepend (runtimes, (gpointer)get_runtime_by_version (DEFAULT_RUNTIME_VERSION));
+		runtimes = g_slist_prepend (runtimes, (gpointer)get_runtime_by_version (runtime_version));
 	}
 
 	if (runtimes == NULL) {
@@ -806,12 +806,14 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	ERROR_DECL (error);
 
+#ifndef ENABLE_NETCORE
 	MonoClass *threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
 		threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
 	mono_error_assert_ok (error);
+#endif
 
 	domain->friendly_name = g_path_get_basename (filename);
 

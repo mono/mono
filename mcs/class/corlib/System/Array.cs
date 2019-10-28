@@ -110,6 +110,7 @@ namespace System
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
 				T value;
+				// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 				GetGenericValueImpl (i, out value);
 				if (item == null){
 					if (value == null) {
@@ -138,6 +139,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("index");
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -165,6 +167,7 @@ namespace System
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
 				T value;
+				// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 				GetGenericValueImpl (i, out value);
 				if (item == null){
 					if (value == null)
@@ -190,6 +193,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("index");
 
 			T value;
+			// Do not change this to call GetGenericValue_icall directly, due to special casing in the runtime.
 			GetGenericValueImpl (index, out value);
 			return value;
 		}
@@ -204,16 +208,31 @@ namespace System
 				oarray [index] = (object)item;
 				return;
 			}
+			// Do not change this to call SetGenericValue_icall directly, due to special casing in the runtime.
 			SetGenericValueImpl (index, ref item);
 		}
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void GetGenericValueImpl<T> (int pos, out T value);
+		extern static void GetGenericValue_icall<T> (ref Array self, int pos, out T value);
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void SetGenericValueImpl<T> (int pos, ref T value);
+		extern static void SetGenericValue_icall<T> (ref Array self, int pos, ref T value);
+
+		// This is a special case in the runtime.
+		internal void GetGenericValueImpl<T> (int pos, out T value)
+		{
+			var self = this;
+			GetGenericValue_icall (ref self, pos, out value);
+		}
+
+		// This is a special case in the runtime.
+		internal void SetGenericValueImpl<T> (int pos, ref T value)
+		{
+			var self = this;
+			SetGenericValue_icall (ref self, pos, ref value);
+		}
 
 		internal struct InternalEnumerator<T> : IEnumerator<T>
 		{

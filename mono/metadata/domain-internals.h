@@ -488,8 +488,8 @@ typedef struct  {
 
 typedef MonoDomain* (*MonoLoadFunc) (const char *filename, const char *runtime_version);
 
-void mono_domain_lock (MonoDomain *domain) MONO_LLVM_INTERNAL;
-void mono_domain_unlock (MonoDomain *domain) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL void mono_domain_lock (MonoDomain *domain);
+MONO_LLVM_INTERNAL void mono_domain_unlock (MonoDomain *domain);
 
 void
 mono_install_runtime_load  (MonoLoadFunc func);
@@ -506,6 +506,9 @@ typedef void (*MonoFreeDomainFunc) (MonoDomain *domain);
 
 void
 mono_install_free_domain_hook (MonoFreeDomainFunc func);
+
+void
+mono_runtime_quit_internal (void);
 
 void 
 mono_cleanup (void);
@@ -565,8 +568,8 @@ mono_domain_alloc0_lock_free (MonoDomain *domain, guint size);
 
 #define mono_domain_alloc0_lock_free(domain, size) (g_cast (mono_domain_alloc0_lock_free ((domain), (size))))
 
-void*
-mono_domain_code_reserve (MonoDomain *domain, int size) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL void*
+mono_domain_code_reserve (MonoDomain *domain, int size);
 
 #define mono_domain_code_reserve(domain, size) (g_cast (mono_domain_code_reserve ((domain), (size))))
 

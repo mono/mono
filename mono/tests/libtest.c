@@ -2593,11 +2593,17 @@ LIBTEST_API void STDCALL
 mono_safe_handle_ref (void **handle)
 {
 	if (*handle != 0){
-		*handle = (void *) 0xbad;
+		*handle = (void *) 0x800d;
 		return;
 	}
 
-	*handle = (void *) 0x800d;
+	*handle = (void *) 0xbad;
+}
+
+LIBTEST_API void* STDCALL
+mono_safe_handle_ref_nomod (void **handle)
+{
+	return *handle;
 }
 
 LIBTEST_API double STDCALL
@@ -3401,6 +3407,7 @@ typedef struct
 	int (STDCALL *IntOut)(MonoComObject* pUnk, int *a);
 	int (STDCALL *ArrayIn)(MonoComObject* pUnk, void *array);
 	int (STDCALL *ArrayIn2)(MonoComObject* pUnk, void *array);
+	int (STDCALL *ArrayIn3)(MonoComObject* pUnk, void *array);
 	int (STDCALL *GetDefInterface1)(MonoComObject* pUnk, MonoDefItfObject **iface);
 	int (STDCALL *GetDefInterface2)(MonoComObject* pUnk, MonoDefItfObject **iface);
 } MonoIUnknown;
@@ -3550,6 +3557,12 @@ ArrayIn2(MonoComObject* pUnk, void *array)
 }
 
 LIBTEST_API int STDCALL
+ArrayIn3(MonoComObject* pUnk, void *array)
+{
+	return S_OK;
+}
+
+LIBTEST_API int STDCALL
 GetDefInterface1(MonoComObject* pUnk, MonoDefItfObject **obj)
 {
 	return S_OK;
@@ -3596,6 +3609,7 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->IntOut = IntOut;
 	(*pOut)->vtbl->ArrayIn = ArrayIn;
 	(*pOut)->vtbl->ArrayIn2 = ArrayIn2;
+	(*pOut)->vtbl->ArrayIn3 = ArrayIn3;
 	(*pOut)->vtbl->GetDefInterface1 = GetDefInterface1;
 	(*pOut)->vtbl->GetDefInterface2 = GetDefInterface2;
 }
@@ -4577,7 +4591,7 @@ mono_test_managed_Winx64_struct5_in(managed_struct5_delegate func)
 	winx64_struct5 val;
 	val.a = 5;
 	val.b = 0x10;
-	val.c = 0x99;
+	val.c = (char)0x99;
 	return func (val);
 }
 
@@ -5657,6 +5671,8 @@ mono_test_marshal_safearray_in_ccw(MonoComObject *pUnk)
 	ret = pUnk->vtbl->ArrayIn (pUnk, (void *)array);
 	if (!ret)
 		ret = pUnk->vtbl->ArrayIn2 (pUnk, (void *)array);
+	if (!ret)
+		ret = pUnk->vtbl->ArrayIn3 (pUnk, (void *)array);
 
 	SafeArrayDestroy(array);
 

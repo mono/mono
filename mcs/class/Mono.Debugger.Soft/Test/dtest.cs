@@ -1767,7 +1767,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[7].ParameterType;
 		Assert.AreEqual ("Tests", t.Name);
 		var nested = (from nt in t.GetNestedTypes () where nt.IsNestedPublic select nt).ToArray ();
-		Assert.AreEqual (1, nested.Length);
+		Assert.AreEqual (2, nested.Length);
 		Assert.AreEqual ("NestedClass", nested [0].Name);
 		Assert.IsTrue (t.BaseType.IsAssignableFrom (t));
 		Assert.IsTrue (!t.IsAssignableFrom (t.BaseType));
@@ -4233,8 +4233,6 @@ public class DebuggerTests
 		var e = run_until ("unhandled_exception_endinvoke");
 		vm.Resume ();
 
-		var e1 = GetNextEvent (); //this should be the exception
-		vm.Resume ();
 		var e2 = GetNextEvent ();
 		Assert.IsFalse (e2 is ExceptionEvent);
 
@@ -4278,6 +4276,23 @@ public class DebuggerTests
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
 		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException4 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-perform-wait-callback");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_perform_wait_callback");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is VMDeathEvent);
 		vm = null;
 	}
 
@@ -5085,6 +5100,58 @@ public class DebuggerTests
 		Assert.AreEqual("d", min.Value);
 	}
 
+	[Test]
+	public void TestExceptionFilterWin () {
+		Event e = run_until ("test_new_exception_filter1");
+		var req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.Exception"), true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		Event ev = GetNextEvent ();
+		var l = ev.Thread.GetFrames ()[0].Location;
+				
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter2");
+		req2 = vm.CreateExceptionRequest (null, true, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		run_until ("test_new_exception_filter3");
+		var req3 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req3.Enable ();
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		req2.Disable ();
+		req3.Disable ();
+		run_until ("test_new_exception_filter4");
+		req2 = vm.CreateExceptionRequest (null, true, true, true);
+		req2.Enable ();
+		req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"), false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		ev = GetNextEvent ();
+	}
+
+	[Test]
+	public void TestRuntimeInvokeHybridSuspendExceptions () {
+		TearDown ();
+		Start (dtest_app_path, "runtime_invoke_hybrid_exceptions", forceExit: true);
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
+	
 #endif
 } // class DebuggerTests
 } // namespace

@@ -23,9 +23,7 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #include <mono/utils/memcheck.h>
 
@@ -71,6 +69,7 @@
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/mono-state.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
 
@@ -126,6 +125,10 @@ int mini_verbose = 0;
 gboolean mono_use_llvm = FALSE;
 
 gboolean mono_use_fast_math = FALSE;
+
+// Lists of whitelisted and blacklisted CPU features 
+MonoCPUFeatures mono_cpu_features_enabled = (MonoCPUFeatures)0;
+MonoCPUFeatures mono_cpu_features_disabled = (MonoCPUFeatures)0;
 
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
@@ -948,8 +951,10 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 		return;
 	mono_free_altstack (jit_tls);
 
+	if (jit_tls->interp_context)
+		mini_get_interp_callbacks ()->free_context (jit_tls->interp_context);
+
 	g_free (jit_tls->first_lmf);
-	g_free (jit_tls->interp_context);
 	g_free (jit_tls);
 }
 
@@ -1336,6 +1341,8 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 	case MONO_PATCH_INFO_NONE:
 		return 1;
+	default:
+		break;
 	}
 
 	return ji1->data.target == ji2->data.target;
@@ -1569,7 +1576,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		}
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
-		target = mono_thread_interruption_request_flag ();
+		target = &mono_thread_interruption_request_flag;
 		break;
 	case MONO_PATCH_INFO_METHOD_RGCTX:
 		target = mini_method_get_rgctx (patch_info->data.method);
@@ -3219,7 +3226,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 			goto exit;
 
 		mono_sigctx_to_monoctx (ctx, &mctx);
-		mono_handle_native_crash ("SIGFPE", &mctx, info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGFPE", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			goto exit;
@@ -3242,7 +3250,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 		exit (1);
 
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	mono_handle_native_crash ("SIGILL", &mctx, info);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGILL", &mctx, info);
 	if (mono_do_crash_chaining) {
 		mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 		return;
@@ -3266,8 +3275,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 
 #endif
 
-static gboolean
-is_addr_implicit_null_check (void *addr)
+gboolean
+mono_is_addr_implicit_null_check (void *addr)
 {
 	/* implicit null checks are only expected to work on the first page. larger
 	 * offsets are expected to have an explicit null check */
@@ -3285,10 +3294,12 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 {
 	MonoJitInfo *ji = NULL;
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	gpointer fault_addr = NULL;
 	MonoContext mctx;
 
+#if defined(HAVE_SIG_INFO) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+#endif
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 #else
@@ -3321,7 +3332,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (!mono_domain_get () || !jit_tls) {
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_crash ("SIGSEGV", &mctx, info);
+		if (mono_dump_start())
+			mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
@@ -3355,11 +3367,18 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		if (is_addr_implicit_null_check (info->si_addr)) {
+#ifdef TARGET_AMD64
+		/* exceptions-amd64.c handles the check itself */
+		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
+#else
+		if (mono_is_addr_implicit_null_check (info->si_addr)) {
 			mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 		} else {
-			mono_handle_native_crash ("SIGSEGV", &mctx, info);
+			// FIXME: This shouldn't run on the altstack
+			if (mono_dump_start ())
+				mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		}
+#endif
 	}
 #else
 
@@ -3367,7 +3386,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -3375,10 +3395,11 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		}
 	}
 
-	if (is_addr_implicit_null_check (fault_addr)) {
+	if (mono_is_addr_implicit_null_check (fault_addr)) {
 		mono_arch_handle_exception (ctx, NULL);
 	} else {
-		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 	}
 #endif
 }
@@ -3708,7 +3729,10 @@ mini_parse_debug_option (const char *option)
 	else if (!strcmp (option, "verbose-gdb"))
 		mini_debug_options.verbose_gdb = TRUE;
 	else if (!strcmp (option, "clr-memory-model"))
-		mini_debug_options.clr_memory_model = TRUE;
+		// FIXME Kill this debug flag
+		mini_debug_options.weak_memory_model = FALSE;
+	else if (!strcmp (option, "weak-memory-model"))
+		mini_debug_options.weak_memory_model = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
 	else if (!strncmp (option, "aot-skip=", 9)) {
@@ -3740,7 +3764,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'clr-memory-model'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'weak-memory-model'.\n");
 			exit (1);
 		}
 	}
@@ -4779,6 +4803,8 @@ mini_cleanup (MonoDomain *domain)
 	g_free (vtable_trampolines);
 
 	mini_jit_cleanup ();
+
+	mini_get_interp_callbacks ()->cleanup ();
 
 	mono_tramp_info_cleanup ();
 

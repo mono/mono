@@ -96,7 +96,7 @@ namespace Mono.Net.Security
 		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, object provider, object settings)
 		{
 			#if SECURITY_DEP
-			return new HttpWebRequest (requestUri, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
+			return new HttpWebRequest (requestUri, (MobileTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif
