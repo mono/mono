@@ -6300,8 +6300,8 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const 
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, appPath, configDir);
 
-	// Why does this install the sigterm handler so early?
-	// mono_get_runtime_callbacks ()->install_state_summarizer ();
+	// Install SIGTERM handler, so we get crash reports when users Force Quit.
+	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
