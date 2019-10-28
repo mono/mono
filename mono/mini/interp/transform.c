@@ -7458,8 +7458,8 @@ exit:
 static mono_mutex_t calc_section;
 
 #ifdef ENABLE_EXPERIMENT_TIERED
-static
-gboolean tiered_patcher (MiniTieredPatchPointContext *ctx, gpointer patchsite)
+static gboolean
+tiered_patcher (MiniTieredPatchPointContext *ctx, gpointer patchsite)
 {
 	ERROR_DECL (error);
 	MonoMethod *m = ctx->target_method;
