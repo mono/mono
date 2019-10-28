@@ -2567,24 +2567,27 @@ mono_gc_get_heap_size (void)
 	return (int64_t)sgen_gc_get_total_heap_allocation ();
 }
 
-static
-GENERATE_GET_CLASS_WITH_CACHE(gcinfo, "System", "GCMemoryInfo")
-
-MonoObjectHandle
-mono_gc_get_gcmemoryinfo (MonoError* error)
+void
+mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
+						  gint64* memory_load_bytes,
+						  gint64* total_available_memory_bytes,
+						  gint64* heap_size_bytes,
+						  gint64* fragmented_bytes)
 {
-	MonoClass* gcinfo_class = mono_class_get_gcinfo_class();
-	MonoObjectHandle  gcinfo_obj = mono_object_new_handle (mono_domain_get (), gcinfo_class, error);
+	*high_memory_load_threshold_bytes = sgen_gc_info.high_memory_load_threshold_bytes;
+	*fragmented_bytes = sgen_gc_info.fragmented_bytes;
+	
+	*heap_size_bytes = sgen_gc_info.heap_size_bytes;
 
-	MonoClassField* high_memory_load_threshold_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "<HighMemoryLoadThresholdBytes>k__BackingField", NULL);
-	MonoClassField* memory_load_bytes_field = mono_class_get_field_from_name_full (gcinfo_class, "<MemoryLoadBytes>k__BackingField", NULL);
-	MonoClassField* total_available_memory_bytes = mono_class_get_field_from_name_full (gcinfo_class, "<TotalAvailableMemoryBytes>k__BackingField", NULL);
-	MonoClassField* HeapSizeBytes = mono_class_get_field_from_name_full (gcinfo_class, "<HeapSizeBytes>k__BackingField", NULL);
+	*memory_load_bytes = sgen_gc_info.memory_load_bytes;
+	*total_available_memory_bytes = sgen_gc_info.total_available_memory_bytes;
 
-	MONO_HANDLE_SET_FIELD_VAL(gcinfo_obj, guint64, high_memory_load_threshold_bytes_field, 999L);
-
-	return gcinfo_obj;
-}
+	*high_memory_load_threshold_bytes = 1L;
+	*memory_load_bytes = 2L;
+	*total_available_memory_bytes = 3L;
+	*heap_size_bytes = 4L;
+	*fragmented_bytes = 5L;
+}	
 
 MonoGCDescriptor
 mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
