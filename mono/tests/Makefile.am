@@ -1031,7 +1031,8 @@ TESTS_IL_SRC=			\
 	module-cctor-entrypoint.il \
 	bug-gh-9706.il \
 	localloc-noinit.il \
-	calli_native.il
+	calli_native.il \
+	override-interface.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
