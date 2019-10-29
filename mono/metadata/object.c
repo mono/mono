@@ -110,9 +110,11 @@ static MonoCoopMutex ldstr_section;
 void
 mono_runtime_object_init (MonoObject *this_obj)
 {
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	mono_runtime_object_init_checked (this_obj, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
