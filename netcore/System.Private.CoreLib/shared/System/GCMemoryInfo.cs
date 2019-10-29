@@ -33,15 +33,9 @@ namespace System
 
         /// <summary>
         /// The total fragmentation when the last GC ocurred
-        ///
-        /// Let's take the example below:
-        ///  | OBJ_A |     OBJ_B     | OBJ_C |   OBJ_D   | OBJ_E |
-        ///
-        /// Let's say OBJ_B, OBJ_C and and OBJ_E are garbage and get collected, but the heap does not get compacted, the resulting heap will look like the following:
-        ///  | OBJ_A |           F           |   OBJ_D   |
-        ///
-        /// The memory between OBJ_A and OBJ_D marked `F` is considered part of the FragmentedBytes, and will be used to allocate new objects. The memory after OBJ_D will not be
-        /// considered part of the FragmentedBytes, and will also be used to allocate new objects
+        /// We define this as the total ammount of memory allocated to the heap,
+        /// minus the total amount contained in objects within the heap. This it 
+        /// includes both internal and external fragmentation.
         /// </summary>
         public long FragmentedBytes { get; }
 
