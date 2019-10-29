@@ -106,7 +106,7 @@ test_mono_embed_SOURCES = main.c
 test_mono_embed_CFLAGS = $(test-cflags) -DMAIN=test_mono_embed_main
 test_mono_embed_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-embed.lo
 test_mono_embed_LDFLAGS = $(test_ldflags)
-test_mono_callspec_DEPENDENCIES = test-embed.exe
+test_mono_embed_DEPENDENCIES = test-embed.exe
 
 test_path_SOURCES = test-path.c
 test_path_CFLAGS = $(test-cflags)
@@ -136,7 +136,7 @@ check-local:
 	fi;
 
 clean-local:
-	rm -f callspec.exe callspec.pdb
+	rm -f callspec.exe callspec.pdb 
 	rm -f test-embed.exe test-embed.pdb
 
 %.exe: %.cs
