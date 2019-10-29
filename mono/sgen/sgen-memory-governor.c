@@ -299,7 +299,7 @@ sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const ch
 void
 sgen_memgov_collection_start (int generation)
 {
-} 
+}
 
 static void
 sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
