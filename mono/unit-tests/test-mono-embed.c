@@ -17,7 +17,7 @@
  * 	./teste test.exe
  */
 
-static const void*
+static MonoString*
 gimme () {
 	return mono_string_new (mono_domain_get (), "All your monos are belong to us!");
 }
@@ -84,7 +84,7 @@ test_mono_embed_main (void)
 	 * We add our special internal call, so that C# code
 	 * can call us back.
 	 */
-	mono_add_internal_call ("MonoEmbed::gimme", gimme);
+	mono_add_internal_call ("MonoEmbed::gimme", (const void *)gimme);
 
 	main_function (domain, file, argc - 1, argv + 1);
 	
