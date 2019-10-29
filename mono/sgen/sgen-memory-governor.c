@@ -503,7 +503,7 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 
 	if (max_heap == 0)
 	{
-		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size();
+		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size ();
 		return;
 	}
 

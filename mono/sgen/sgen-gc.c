@@ -2647,7 +2647,6 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		initialize_sgen_gc_info();
 	}
 
-
 	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, forced_serial, stw);
 }
 /*

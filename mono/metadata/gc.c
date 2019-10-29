@@ -572,7 +572,7 @@ ves_icall_System_GC_GetGCMemoryInfo (void* something,
 									 gint64* heap_size_bytes,
 									 gint64* fragmented_bytes)
 {
-	mono_gc_get_gcmemoryinfo(high_memory_load_threshold_bytes, memory_load_bytes, total_available_memory_bytes, heap_size_bytes,  fragmented_bytes);
+	mono_gc_get_gcmemoryinfo (high_memory_load_threshold_bytes, memory_load_bytes, total_available_memory_bytes, heap_size_bytes,  fragmented_bytes);
 }
 
 void
