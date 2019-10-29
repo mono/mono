@@ -62,7 +62,8 @@ libtestlib_la_SOURCES = \
 	test-conc-hashtable.c \
 	test-mono-handle.c \
 	test-mono-callspec.c \
-	test-mono-string.c
+	test-mono-string.c \
+	test-mono-embed.c
 libtestlib_la_LIBADD = ../metadata/libmonoruntimesgen.la ../sgen/libmonosgen.la ../utils/libmonoutils.la
 
 test_sgen_qsort_SOURCES = main.c
@@ -101,6 +102,12 @@ test_mono_string_CFLAGS = $(test-cflags) -DMAIN=test_mono_string_main
 test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-string.lo
 test_mono_string_LDFLAGS = $(test_ldflags)
 
+test_mono_embed_SOURCES = main.c
+test_mono_embed_CFLAGS = $(test-cflags) -DMAIN=test_mono_embed_main
+test_mono_embed_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-embed.lo
+test_mono_embed_LDFLAGS = $(test_ldflags)
+test_mono_callspec_DEPENDENCIES = test-embed.exe
+
 test_path_SOURCES = test-path.c
 test_path_CFLAGS = $(test-cflags)
 test_path_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
@@ -108,11 +115,11 @@ test_path_LDFLAGS = $(test_ldflags)
 
 check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
 		 test-path \
-		 test-mono-callspec test-mono-string
+		 test-mono-callspec test-mono-string test-mono-embed
 
 TESTS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle \
 	test-path \
-	test-mono-callspec test-mono-string
+	test-mono-callspec test-mono-string test-mono-embed
 
 AM_TESTS_ENVIRONMENT = export MONO_PATH=$(mcs_topdir)/class/lib/build;
 
@@ -130,6 +137,7 @@ check-local:
 
 clean-local:
 	rm -f callspec.exe callspec.pdb
+	rm -f test-embed.exe test-embed.pdb
 
 %.exe: %.cs
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
