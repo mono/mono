@@ -1,4 +1,7 @@
+#ifndef _TESTCASE_
 #include <mono/jit/jit.h>
+#endif
+
 #include <mono/metadata/environment.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/mono-config.h>
@@ -8,9 +11,9 @@
  * Very simple mono embedding example.
  * Compile with: 
  * 	gcc -o teste teste.c `pkg-config --cflags --libs mono-2` -lm
- * 	mcs test.cs
+ * 	mcs -out:test-embed.exe test.cs
  * Run with:
- * 	./teste test.exe
+ * 	./teste
  */
 
 static MonoString*
@@ -41,9 +44,26 @@ static void* custom_malloc(size_t bytes)
 	return malloc(bytes);
 }
 
+#ifdef _TESTCASE_
+#ifdef __cplusplus
+extern "C"
+#endif
+int
+test_mono_embed_main (void);
+
 int 
-main(int argc, char* argv[]) {
+test_mono_embed_main() {
+#else
+int main() {
+#endif
+
 	MonoDomain *domain;
+	int argc = 2;
+    char *argv[] = {
+                        (char*)"test-mono-embed.exe",
+                        (char*)"test-embed.exe",
+                        NULL
+                    };
 	const char *file;
 	int retval;
 	
@@ -71,7 +91,7 @@ main(int argc, char* argv[]) {
 	 * We add our special internal call, so that C# code
 	 * can call us back.
 	 */
-	mono_add_internal_call ("MonoEmbed::gimme", gimme);
+	mono_add_internal_call ("MonoEmbed::gimme", (const void *)gimme);
 
 	main_function (domain, file, argc - 1, argv + 1);
 	

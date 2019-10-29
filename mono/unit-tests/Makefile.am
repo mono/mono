@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono -I$(top_srcdir)/samples $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
@@ -98,15 +98,15 @@ test_mono_callspec_LDFLAGS = $(test_ldflags)
 test_mono_callspec_DEPENDENCIES = callspec.exe
 
 test_mono_string_SOURCES = main.c
-test_mono_string_CFLAGS = $(test-cflags) -DMAIN=test_mono_string_main
+test_mono_string_CFLAGS = $(test_cflags) -DMAIN=test_mono_string_main
 test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-string.lo
 test_mono_string_LDFLAGS = $(test_ldflags)
 
 test_mono_embed_SOURCES = main.c
-test_mono_embed_CFLAGS = $(test-cflags) -DMAIN=test_mono_embed_main
+test_mono_embed_CFLAGS = $(test_cflags) -DMAIN=test_mono_embed_main
 test_mono_embed_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-embed.lo
 test_mono_embed_LDFLAGS = $(test_ldflags)
-test_mono_embed_DEPENDENCIES = test-embed.exe
+test_mono_embed_DEPENDENCIES = build_mono_embed_test
 
 test_path_SOURCES = test-path.c
 test_path_CFLAGS = $(test-cflags)
@@ -141,6 +141,9 @@ clean-local:
 
 %.exe: %.cs
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+build_mono_embed_test:
+	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed.exe ../../samples/embed/test.cs $<
 
 endif !HOST_WIN32
 endif !CROSS_COMPILE
