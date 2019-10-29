@@ -24,7 +24,5 @@ void   mono_perfcounter_free_data       (void *impl);
 typedef gboolean (*PerfCounterEnumCallback) (char *category_name, char *name, unsigned char type, gint64 value, gpointer user_data);
 MONO_API void mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer user_data);
 
-guint64 mono_determine_physical_ram_size (void);
-
 #endif /* __MONO_PERFCOUNTERS_H__ */
 
