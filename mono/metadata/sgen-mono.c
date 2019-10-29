@@ -2581,12 +2581,6 @@ mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
 
 	*memory_load_bytes = sgen_gc_info.memory_load_bytes;
 	*total_available_memory_bytes = sgen_gc_info.total_available_memory_bytes;
-
-	*high_memory_load_threshold_bytes = 1L;
-	*memory_load_bytes = 2L;
-	*total_available_memory_bytes = 3L;
-	*heap_size_bytes = 4L;
-	*fragmented_bytes = 5L;
 }	
 
 MonoGCDescriptor

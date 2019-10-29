@@ -22,6 +22,7 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/determine_physical_ram_size.h"
 
 /*
  * The allowance we are targeting is a third of the current heap size. Still, we
@@ -501,7 +502,10 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_LOG_ENTRY, sizeof (SgenLogEntry));
 
 	if (max_heap == 0)
+	{
+		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size();
 		return;
+	}
 
 	if (max_heap < soft_limit) {
 		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Setting to minimum.", "`max-heap-size` must be at least as large as `soft-heap-limit`.");
@@ -513,6 +517,8 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 		max_heap = SGEN_DEFAULT_NURSERY_SIZE * 4;
 	}
 	max_heap_size = max_heap - SGEN_DEFAULT_NURSERY_SIZE;
+
+	sgen_gc_info.total_available_memory_bytes = max_heap;
 
 	if (allowance_ratio)
 		default_allowance_nursery_size_ratio = allowance_ratio;

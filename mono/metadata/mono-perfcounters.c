@@ -415,7 +415,7 @@ predef_cleanup (ImplVtable *vtable)
 	perfctr_unlock ();
 }
 
-static guint64
+guint64
 mono_determine_physical_ram_size (void)
 {
 #if defined (TARGET_WIN32)
