@@ -235,7 +235,7 @@ class Driver {
 	}
 
 	static void Import (string ra, AssemblyKind kind) {
-		if (!asm_map.Add (ra))
+		if (!asm_map.Add (Path.GetFullPath (ra)))
 			return;
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
