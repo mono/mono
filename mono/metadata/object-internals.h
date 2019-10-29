@@ -581,15 +581,11 @@ void
 mono_gstring_append_thread_name (GString*, MonoInternalThread*);
 
 
-#ifdef ENABLE_NETCORE
 /*
- * There is only one thread object, MonoInternalThread is aliased to MonoThread,
+ * NETCORE: There is only one thread object,
  * thread->internal_thread points to itself.
  */
-struct _MonoThread {
-#else
 struct _MonoInternalThread {
-#endif
 	// FIXME: Mechanize keeping this in sync with managed.
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
@@ -632,7 +628,7 @@ struct _MonoInternalThread {
 	gsize thread_state;
 
 #ifdef ENABLE_NETCORE
-	struct _MonoThread *internal_thread;
+	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 #else
@@ -645,9 +641,7 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
-#ifdef ENABLE_NETCORE
-#define _MonoInternalThread _MonoThread
-#else
+#ifndef ENABLE_NETCORE
 struct _MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
@@ -2292,6 +2286,7 @@ mono_string_hash_internal (MonoString *s);
 int
 mono_object_hash_internal (MonoObject* obj);
 
+ICALL_EXTERN_C
 void
 mono_value_copy_internal (void* dest, const void* src, MonoClass *klass);
 
@@ -2376,6 +2371,7 @@ mono_gchandle_new_internal (MonoObject *obj, mono_bool pinned);
 uint32_t
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
 
+ICALL_EXTERN_C
 MonoObject*
 mono_gchandle_get_target_internal (uint32_t gchandle);
 
@@ -2417,6 +2413,7 @@ mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value);
 void
 mono_gc_wbarrier_generic_store_atomic_internal (void *ptr, MonoObject *value);
 
+ICALL_EXTERN_C
 void
 mono_gc_wbarrier_generic_nostore_internal (void* ptr);
 

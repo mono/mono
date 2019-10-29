@@ -28,7 +28,7 @@ using Mono.Security.Interface;
 
 namespace Mono.AppleTls
 {
-	class AppleTlsProvider : MonoTlsProvider
+	class AppleTlsProvider : MNS.MobileTlsProvider
 	{
 		public override string Name {
 			get { return "apple-tls"; }
@@ -38,14 +38,7 @@ namespace Mono.AppleTls
 			get { return MNS.MonoTlsProviderFactory.AppleTlsId; }
 		}
 
-		public override IMonoSslStream CreateSslStream (
-			Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings = null)
-		{
-			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
-		}
-
-		internal override IMonoSslStream CreateSslStreamInternal (
+		internal override MNS.MobileAuthenticatedStream CreateSslStream (
 			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings)
 		{
@@ -73,9 +66,9 @@ namespace Mono.AppleTls
 		}
 
 		internal override bool ValidateCertificate (
-			ICertificateValidator2 validator, string targetHost, bool serverMode,
+			MNS.ChainValidationHelper validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
-			ref MonoSslPolicyErrors errors, ref int status11)
+			ref SslPolicyErrors errors, ref int status11)
 		{
 			if (wantsChain)
 				chain = MNS.SystemCertificateValidator.CreateX509Chain (certificates);

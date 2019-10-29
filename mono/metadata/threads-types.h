@@ -106,6 +106,9 @@ mono_thread_create_internal_handle (MonoDomain *domain, T func, gpointer arg, Mo
 }
 #endif
 
+void
+mono_thread_manage_internal (void);
+
 /* Data owned by a MonoInternalThread that must live until both the finalizer
  * for MonoInternalThread has run, and the underlying machine thread has
  * detached.
@@ -371,6 +374,7 @@ gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
 gboolean mono_thread_interruption_requested (void);
 
+ICALL_EXTERN_C
 MonoException*
 mono_thread_interruption_checkpoint (void);
 
@@ -383,6 +387,7 @@ mono_thread_interruption_checkpoint_void (void);
 MonoExceptionHandle
 mono_thread_interruption_checkpoint_handle (void);
 
+ICALL_EXTERN_C
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 
 /**
@@ -397,7 +402,10 @@ MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 extern gint32 mono_thread_interruption_request_flag;
 
 uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits);
+
+ICALL_EXTERN_C
 void*    mono_get_special_static_data   (uint32_t offset);
+
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 
 void

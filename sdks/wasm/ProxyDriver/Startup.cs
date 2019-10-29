@@ -28,7 +28,7 @@ namespace WsProxy {
 		public IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IHostingEnvironment env)
+		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IWebHostEnvironment env)
 		{
 			var options  = 	optionsAccessor.CurrentValue;
 			app.UseDeveloperExceptionPage ()

@@ -189,7 +189,7 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
-#if !__WATCHOS__			
+#if !MONOTOUCH_WATCH			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif		
 #endif
@@ -1111,7 +1111,7 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
-#if !__WATCHOS__			
+#if !MONOTOUCH_WATCH			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif		
 #endif
