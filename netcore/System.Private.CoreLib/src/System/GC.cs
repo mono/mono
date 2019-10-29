@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace System
 {
@@ -257,7 +258,7 @@ namespace System
 							 ref totalAvailableMemoryBytes,
 							 ref heapSizeBytes,
 							 ref fragmentedBytes );
-
+			
 			return new GCMemoryInfo(highMemoryLoadThresholdBytes, memoryLoadBytes, totalAvailableMemoryBytes, heapSizeBytes, fragmentedBytes);
 		}
 
