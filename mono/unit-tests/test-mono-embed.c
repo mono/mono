@@ -17,7 +17,7 @@
  * 	./teste test.exe
  */
 
-static void*
+static const void*
 gimme () {
 	return mono_string_new (mono_domain_get (), "All your monos are belong to us!");
 }
