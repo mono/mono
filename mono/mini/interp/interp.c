@@ -2541,6 +2541,12 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 
 	method = rmethod->method;
 	sig = mono_method_signature_internal (method);
+	if (method->string_ctor) {
+		MonoMethodSignature *newsig = g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		memcpy (newsig, sig, mono_metadata_signature_size (sig));
+		newsig->ret = m_class_get_byval_arg (mono_defaults.string_class);
+		sig = newsig;
+	}
 
 	args = (stackval*)alloca (sizeof (stackval) * (sig->param_count + (sig->hasthis ? 1 : 0)));
 
