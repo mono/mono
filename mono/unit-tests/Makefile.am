@@ -63,7 +63,8 @@ libtestlib_la_SOURCES = \
 	test-mono-handle.c \
 	test-mono-callspec.c \
 	test-mono-string.c \
-	test-mono-embed.c
+	test-mono-embed.c \
+	test-embed-invoke.c 
 libtestlib_la_LIBADD = ../metadata/libmonoruntimesgen.la ../sgen/libmonosgen.la ../utils/libmonoutils.la
 
 test_sgen_qsort_SOURCES = main.c
@@ -113,13 +114,20 @@ test_path_CFLAGS = $(test-cflags)
 test_path_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
 test_path_LDFLAGS = $(test_ldflags)
 
+test_embed_invoke_SOURCES = main.c
+test_embed_invoke_CFLAGS = $(test_cflags) -DMAIN=test_mono_embed_invoke_main
+test_embed_invoke_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-embed-invoke.lo
+test_embed_invoke_LDFLAGS = $(test_ldflags)
+test_embed_invoke_DEPENDENCIES = build_mono_embed_invoke_test
+
+
 check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
 		 test-path \
-		 test-mono-callspec test-mono-string test-mono-embed
+		 test-mono-callspec test-mono-string test-mono-embed test-embed-invoke
 
 TESTS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle \
 	test-path \
-	test-mono-callspec test-mono-string test-mono-embed
+	test-mono-callspec test-mono-string test-mono-embed test-embed-invoke
 
 AM_TESTS_ENVIRONMENT = export MONO_PATH=$(mcs_topdir)/class/lib/build;
 
@@ -143,7 +151,10 @@ clean-local:
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 build_mono_embed_test:
-	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed.exe ../../samples/embed/test.cs $<
+	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed.exe ../../samples/embed/test.cs 
+	
+build_mono_embed_invoke_test:
+	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed-invoke-cs.exe ../../samples/embed/invoke.cs $<
 
 endif !HOST_WIN32
 endif !CROSS_COMPILE
