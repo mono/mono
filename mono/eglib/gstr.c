@@ -978,11 +978,11 @@ g_strdelimit (gchar *string, gchar delimiter, gchar new_delimiter)
 	}
 }
 
-gsize 
+void
 g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
 {
 #ifdef HAVE_STRLCPY
-	return strlcpy (dest, src, dest_size);
+	strlcpy (dest, src, dest_size);
 #else
 	gchar *d;
 	const gchar *s;
@@ -994,7 +994,7 @@ g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
 
 	len = dest_size;
 	if (len == 0)
-		return 0;
+		return;
 
 	s = src;
 	d = dest;
@@ -1002,14 +1002,11 @@ g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
 		c = *s++;
 		*d++ = c;
 		if (c == '\0')
-			return (dest_size - len - 1);
+			return;
 	}
 
 	/* len is 0 i we get here */
-	*d = '\0';
-	/* we need to return the length of src here */
-	while (*s++) ; /* instead of a plain strlen, we use 's' */
-	return s - src - 1;
+	*d = 0;
 #endif
 }
 
