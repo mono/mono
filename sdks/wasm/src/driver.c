@@ -47,6 +47,10 @@ static MonoClass* datetimeoffset_class;
 
 int mono_wasm_enable_gc;
 
+MONO_API void*  xamarin_timezone_get_data (MonoString* name, int *size);
+MONO_API char**  xamarin_timezone_get_names (int *count);
+MONO_API MonoString*  xamarin_timezone_get_local_name (void);
+
 /* Not part of public headers */
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -76,6 +80,8 @@ m_strdup (const char *str)
 }
 
 static MonoDomain *root_domain;
+
+static int ZONE_INFO_FIRST_TIME = 1;
 
 static MonoString*
 mono_wasm_invoke_js (MonoString *str, int *is_exception)
@@ -673,4 +679,147 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_enable_on_demand_gc (void)
 {
 	mono_wasm_enable_gc = 1;
+}
+
+MonoAssembly* GetZoneInfoAssembly()
+{
+	static MonoAssembly* zoneInfoAssembly;
+
+	if (ZONE_INFO_FIRST_TIME) {
+
+		fprintf (stdout, "%s\n", "Locating ZoneInfo assembly.");
+		// try to open the ZoneInfo assembly
+		zoneInfoAssembly = mono_domain_assembly_open (root_domain, "WebAssembly.ZoneInfo");
+		// if not open then try to load it.
+		if (!zoneInfoAssembly) {
+			MonoImageOpenStatus status;
+			MonoAssemblyName* aname = mono_assembly_name_new ("WebAssembly.ZoneInfo");
+			zoneInfoAssembly = mono_assembly_load (aname, NULL, &status);
+			mono_assembly_name_free (aname);
+		}
+
+		if (zoneInfoAssembly)
+			fprintf (stdout, "%s\n", "ZoneInfo assembly located and loaded.");
+		else
+			fprintf (stdout, "%s\n", "ZoneInfo assembly could not be located.");
+
+		ZONE_INFO_FIRST_TIME = 0;
+	}
+
+    return zoneInfoAssembly;
+}
+
+MonoClass* GetZoneInfoClass()
+{
+    static MonoClass* klass;
+    if (!klass)
+        klass = mono_class_from_name(mono_assembly_get_image(GetZoneInfoAssembly()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
+    return klass;
+}
+
+void*
+xamarin_timezone_get_data (MonoString* name, int *size)
+{
+	//char *native_name = mono_string_to_utf8 (name);
+	//fprintf (stdout, "Called mono_timezone_get_data for %s\n", native_name);
+	//mono_free (native_name);
+	*size = 0;
+
+	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
+	if (zoneInfoClass)
+	{
+		//fprintf (stdout, "%s\n", "We have class");
+	    static MonoMethod* method;
+		MonoException* exc = NULL;
+
+    	if (!method)
+    	{
+        	method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_data", -1);
+    	}
+		
+		void* args[] = {name, size};
+		if (!name)
+			args[0] = xamarin_timezone_get_local_name();
+
+    	MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
+		if (!size)
+			return NULL;
+
+		MonoArray* buffer =(MonoArray*)ret;
+		void* result = malloc (*size);
+		memcpy(result, mono_array_addr_with_size(buffer, sizeof(char), 0), *size);
+		return result;
+	}
+
+	return NULL;
+}
+
+// Returns the local timezone default is UTC.
+EM_JS(int, mono_wasm_timezone_get_local_name, (), {
+	var res = "UTC";
+	try {
+		return WebAssembly_ZoneInfo.mono_wasm_timezone_get_local_name()
+	}
+	catch (wte) {
+		try { 
+			res = Intl.DateTimeFormat().resolvedOptions().timeZone; 
+		} 
+		catch(e) {} 
+
+		var buff = Module._malloc((res.length + 1) * 2);
+		stringToUTF16 (res, buff, (res.length + 1) * 2);
+		return buff;
+	}
+})
+
+
+MonoString*
+xamarin_timezone_get_local_name ()
+{
+	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name();
+	MonoString *name = mono_string_from_utf16 (tzd_local_name);
+	free (tzd_local_name);
+	return name;
+}
+
+
+char**
+xamarin_timezone_get_names (int *count)
+{
+	*count = 0;
+
+	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
+	if (zoneInfoClass)
+	{
+	    static MonoMethod* method;
+		MonoException* exc = NULL;
+
+    	if (!method)
+    	{
+        	method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_names", -1);
+    	}
+		
+		void* args[] = {count};
+
+    	MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
+		if (!*count)
+			return NULL;
+
+		if(!exc)
+		{
+			MonoArray* names =(MonoArray*)ret;
+			*count = mono_array_length(names);
+			char** result = (char**) malloc (sizeof (char*) * (*count));
+			for (unsigned int i = 0; i < *count; i++)
+			{
+				MonoString* s = mono_array_get(names, MonoString*, i);
+				result [i] = strdup (mono_string_to_utf8(s));
+			}
+			return result;
+		}
+
+		return NULL;
+	}
+
+	return NULL;
 }
