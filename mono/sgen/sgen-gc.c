@@ -3316,16 +3316,6 @@ init_sgen_mode (SgenMode mode)
 }
 
 void
-initialize_sgen_gc_info() 
-{
-	sgen_gc_info.fragmented_bytes = 0;
-	sgen_gc_info.heap_size_bytes = 0;
-	sgen_gc_info.high_memory_load_threshold_bytes = 0;
-	sgen_gc_info.memory_load_bytes = 0;
-	sgen_gc_info.total_available_memory_bytes = 0;
-}
-
-void
 sgen_gc_init (void)
 {
 	char *env;
@@ -3341,8 +3331,6 @@ sgen_gc_init (void)
 	gboolean debug_print_allowance = FALSE;
 	double allowance_ratio = 0, save_target = 0;
 	gboolean cement_enabled = TRUE;
-
-	initialize_sgen_gc_info();
 
 	do {
 		result = mono_atomic_cas_i32 (&gc_initialized, -1, 0);
