@@ -55,6 +55,8 @@ SgenThreadInfo *mono_tls_get_sgen_thread_info (void)
 	return (SgenThreadInfo*)MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
+#define mono_get_lmf_addr mono_tls_get_lmf_addr
+
 MONO_INLINE
 MonoLMF **mono_tls_get_lmf_addr (void)
 {
