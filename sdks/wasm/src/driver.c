@@ -790,7 +790,7 @@ xamarin_timezone_get_names (int *count)
 	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
 	if (zoneInfoClass)
 	{
-	    static MonoMethod* method;
+		static MonoMethod* method;
 		MonoException* exc = NULL;
 
 		if (!method)
