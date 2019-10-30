@@ -68,7 +68,7 @@ load_profiler_from_executable (const char *name, const char *desc)
 	 * invoking the dynamic linker which is not async-signal-safe. Passing
 	 * MONO_DL_EAGER will ask the dynamic linker to resolve everything upfront.
 	 */
-	MonoDl *module = mono_dl_open (NULL, MONO_DL_EAGER, &err);
+	MonoDl *module = mono_dl_open_internal (NULL, MONO_DL_EAGER, &err);
 
 	if (!module) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_PROFILER, "Could not open main executable: %s", err);
@@ -86,7 +86,7 @@ load_profiler_from_directory (const char *directory, const char *libname, const 
 	void *iter = NULL;
 
 	while ((path = mono_dl_build_path (directory, libname, &iter))) {
-		MonoDl *module = mono_dl_open (path, MONO_DL_EAGER, &err);
+		MonoDl *module = mono_dl_open_internal (path, MONO_DL_EAGER, &err);
 
 		if (!module) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_PROFILER, "Could not open from directory \"%s\": %s", path, err);

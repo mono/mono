@@ -2864,7 +2864,7 @@ init_com_provider_ms (void)
 		return TRUE;
 	}
 
-	module = mono_dl_open(scope, MONO_DL_LAZY, &error_msg);
+	module = mono_dl_open_internal (scope, MONO_DL_LAZY, &error_msg);
 	if (error_msg) {
 		g_warning ("Error loading COM support library '%s': %s", scope, error_msg);
 		g_assert_not_reached ();

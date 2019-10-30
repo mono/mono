@@ -168,6 +168,14 @@ fix_libc_name (const char *name)
 }
 #endif
 
+int
+mono_dl_flags_external_to_internal (int flags)
+{
+	if (!(flags & MONO_DL_LOCAL))
+		flags |= MONO_DL_GLOBAL;
+	return flags;
+}
+
 /**
  * mono_dl_open:
  * \param name name of file containing shared module
@@ -186,6 +194,32 @@ fix_libc_name (const char *name)
  */
 MonoDl*
 mono_dl_open (const char *name, int flags, char **error_msg)
+{
+	flags = mono_dl_flags_external_to_internal (flags);
+	return mono_dl_open_internal (name, flags, error_msg);
+}
+
+/**
+ * mono_dl_open_internal:
+ * \param name name of file containing shared module
+ * \param flags flags
+ * \param error_msg pointer for error message on failure
+ *
+ * Load the given file \p name as a shared library or dynamically loadable
+ * module. \p name can be NULL to indicate loading the currently executing
+ * binary image.
+ * \p flags can have the \c MONO_DL_GLOBAL bit set to export symbols
+ * from the module to the shared namespace. The \c MONO_DL_LAZY bit can be set
+ * to lazily load the symbols instead of resolving everithing at load time.
+ * \p error_msg points to a string where an error message will be stored in
+ * case of failure.   The error must be released with \c g_free.
+ * \returns a \c MonoDl pointer on success, NULL on failure.
+ *
+ * Note that this differs from the public function in that it defaults to
+ * RTLD_LOCAL unless MONO_DL_GLOBAL is set.
+ */
+MonoDl*
+mono_dl_open_internal (const char *name, int flags, char **error_msg)
 {
 	MonoDl *module;
 	void *lib;
@@ -470,7 +504,7 @@ try_load (const char *lib_name, char *dir, int flags, char **err)
 	*err = NULL;
 	while ((path = mono_dl_build_path (dir, lib_name, &iter))) {
 		g_free (*err);
-		runtime_lib = mono_dl_open (path, flags, err);
+		runtime_lib = mono_dl_open_internal (path, flags, err);
 		g_free (path);
 		if (runtime_lib)
 			return runtime_lib;

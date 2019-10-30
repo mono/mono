@@ -29,7 +29,12 @@ typedef struct {
 } MonoDl;
 
 
-MONO_API MonoDl* mono_dl_open  (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL_NO_EXTERN_C;
+MONO_API MONO_RT_EXTERNAL_ONLY MonoDl*
+mono_dl_open (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL_NO_EXTERN_C;
+
+MonoDl*
+mono_dl_open_internal (const char *name, int flags, char **error_msg);
+
 MONO_EXTERN_C
 char*       mono_dl_symbol     (MonoDl *module, const char *name, void **symbol) MONO_LLVM_INTERNAL_NO_EXTERN_C;
 MONO_EXTERN_C
@@ -50,6 +55,7 @@ int mono_dl_convert_flags (int flags);
 char* mono_dl_current_error_string (void);
 int mono_dl_get_executable_path (char *buf, int buflen);
 const char* mono_dl_get_system_dir (void);
+int mono_dl_flags_external_to_internal (int flags);
 
 #endif /* __MONO_UTILS_DL_H__ */
 

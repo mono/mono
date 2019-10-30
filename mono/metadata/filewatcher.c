@@ -82,10 +82,10 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	int lib_used = 4; /* gamin */
 	char *err;
 
-	fam_module = mono_dl_open ("libgamin-1.so", MONO_DL_LAZY, NULL);
+	fam_module = mono_dl_open_internal ("libgamin-1.so", MONO_DL_LAZY, NULL);
 	if (fam_module == NULL) {
 		lib_used = 2; /* FAM */
-		fam_module = mono_dl_open ("libfam.so", MONO_DL_LAZY, NULL);
+		fam_module = mono_dl_open_internal ("libfam.so", MONO_DL_LAZY, NULL);
 	}
 
 	if (fam_module == NULL)

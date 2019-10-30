@@ -4942,7 +4942,7 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0, NULL);
+	libc_handle = mono_dl_open_internal ("/usr/lib/libc.dylib", 0, NULL);
 	g_assert (libc_handle);
 	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
 #endif

@@ -262,7 +262,7 @@ cached_module_load (const char *name, int flags, char **err)
 	if (res)
 		goto exit;
 
-	res = mono_dl_open (name, flags, err);
+	res = mono_dl_open_internal (name, flags, err);
 	if (res)
 		g_hash_table_insert (global_module_map, g_strdup (name), res);
 
@@ -624,7 +624,7 @@ pinvoke_probe_for_module (MonoImage *image, const char *new_scope, char **found_
 		/* we allow a special name to dlopen from the running process namespace */
 		if (strcmp (new_scope, "__Internal") == 0){
 			if (internal_module == NULL)
-				internal_module = mono_dl_open (NULL, MONO_DL_LAZY, &error_msg);
+				internal_module = mono_dl_open_internal (NULL, MONO_DL_LAZY, &error_msg);
 			module = internal_module;
 		}
 	}

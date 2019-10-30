@@ -180,7 +180,7 @@ save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 	buffer = load_from_region (fd, offset, size);
 	g_file_set_contents (file, buffer, size, NULL);
 
-	lib = mono_dl_open (file, MONO_DL_LAZY, &err);
+	lib = mono_dl_open_internal (file, MONO_DL_LAZY, &err);
 	if (lib == NULL){
 		fprintf (stderr, "Error loading shared library: %s %s\n", file, err);
 		exit (1);

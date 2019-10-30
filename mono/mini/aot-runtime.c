@@ -1631,7 +1631,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	g_free (tmp2);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: loading from cache: '%s'.", fname);
-	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
+	module = mono_dl_open_internal (fname, MONO_DL_LAZY, NULL);
 
 	if (module) {
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: found in cache: '%s'.", fname);
@@ -1723,7 +1723,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 		}
 	}
 
-	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
+	module = mono_dl_open_internal (fname, MONO_DL_LAZY, NULL);
 
 	return module;
 }
@@ -2134,7 +2134,7 @@ if (container_assm_name && !container_amodule) {
 		if (!sofile) {
 			aot_name = g_strdup_printf ("%s%s", assembly->image->name, MONO_SOLIB_EXT);
 
-			sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
+			sofile = mono_dl_open_internal (aot_name, MONO_DL_LAZY, &err);
 			if (sofile) {
 				found_aot_name = g_strdup (aot_name);
 			} else {
@@ -2148,7 +2148,7 @@ if (container_assm_name && !container_amodule) {
 			char *basename = g_path_get_basename (assembly->image->name);
 			aot_name = g_strdup_printf ("%s/mono/aot-cache/%s/%s%s", mono_assembly_getrootdir(), MONO_ARCHITECTURE, basename, MONO_SOLIB_EXT);
 			g_free (basename);
-			sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
+			sofile = mono_dl_open_internal (aot_name, MONO_DL_LAZY, &err);
 			if (!sofile) {
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: image '%s' not found: %s", aot_name, err);
 				g_free (err);
@@ -2164,7 +2164,7 @@ if (container_assm_name && !container_amodule) {
 
 				char *basename = g_path_get_basename (assembly->image->name);
 				aot_name = g_strdup_printf ("%s/%s%s", path, basename, MONO_SOLIB_EXT);
-				sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
+				sofile = mono_dl_open_internal (aot_name, MONO_DL_LAZY, &err);
 				if (sofile) {
 					found_aot_name = g_strdup (aot_name);
 				} else {

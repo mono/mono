@@ -55,16 +55,21 @@ mono_dl_current_error_string (void)
 	return g_strdup ("");
 }
 
-
 int
 mono_dl_convert_flags (int flags)
 {
-	int lflags = flags & MONO_DL_LOCAL ? 0 : RTLD_GLOBAL;
+	int lflags = 0;
+
+	if (flags & MONO_DL_LOCAL)
+		flags |= RTLD_LOCAL;
+	else if (flags & MONO_DL_GLOBAL)
+		flags |= RTLD_GLOBAL;
 
 	if (flags & MONO_DL_LAZY)
 		lflags |= RTLD_LAZY;
 	else
 		lflags |= RTLD_NOW;
+	
 	return lflags;
 }
 
