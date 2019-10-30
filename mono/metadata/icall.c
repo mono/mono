@@ -8130,31 +8130,19 @@ G_EXTERN_C MonoString* xamarin_timezone_get_local_name (void);
 gpointer
 ves_icall_System_TimeZoneInfo_xamarin_timezone_get_data (MonoString* name, gint32 *size)
 {
-#ifdef MONO_CROSS_COMPILE
-	return NULL;
-#else
 	return xamarin_timezone_get_data (name, size); 
-#endif
 }
 
 gpointer
 ves_icall_System_TimeZoneInfo_xamarin_timezone_get_names (gint32 *count)
 {
-#ifdef MONO_CROSS_COMPILE
-	return NULL;
-#else
 	return xamarin_timezone_get_names (count); 
-#endif
 }
 
 MonoString*
 ves_icall_System_TimeZoneInfo_xamarin_timezone_get_local_name ()
 {
-#ifdef MONO_CROSS_COMPILE
-	return NULL;
-#else
 	return xamarin_timezone_get_local_name (); 
-#endif
 }
 #endif
 
