@@ -25,6 +25,9 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
+TZ_INPUT=$(TOP)/sdks/wasm/zoneinfodata
+TZ_OUTPUT=$(TOP)/sdks/wasm/zoneinfo
+
 
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
@@ -249,7 +252,7 @@ mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-$(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
+$(WASM_FRAMEWORK)/.stamp-framework:  build-tz-data $(WASM_FRAMEWORK_SOURCES)
 	$(DOTNET_BUILD) $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
 	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
 	touch $@
@@ -324,6 +327,43 @@ $(eval $(call XunitTestTemplate,System.Xml-xunit,System.Xml-xunit,wasm_System.Xm
 $(eval $(call XunitTestTemplate,System.Xml.Linq-xunit,System.Xml.Linq-xunit,wasm_System.Xml.Linq_xunit-test.dll))
 $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
 
+#
+# Targets for building time zone data
+#
+
+
+$(TZ_INPUT)/.stamp-tz-data:
+	mkdir -p $(TZ_INPUT)
+	mkdir -p $(TZ_OUTPUT)
+	curl -L https://data.iana.org/time-zones/tzdata-latest.tar.gz -o $(TZ_INPUT)/tzdata.tar.gz
+	tar xvzf $(TZ_INPUT)/tzdata.tar.gz -C $(TZ_INPUT)
+	touch $@
+
+##
+# Parameters:
+# $(1) - input directory
+# $(2) - output directory
+# $(3) - continent
+define TZExtractTemplate
+
+zic/$(3): $(TZ_INPUT)/.stamp-tz-data
+	zic -d $(2) $(1)/$(3)
+
+build-tz-data: zic/$(3)
+
+endef
+
+
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),africa))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),antarctica))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),asia))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),australasia))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),etcetera))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),europe))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),northamerica))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),southamerica))
+$(eval $(call TZExtractTemplate,$(TZ_INPUT),$(TZ_OUTPUT),backward))
+
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
 	(cd $(BROWSER_TEST) && npm install)
@@ -369,6 +409,15 @@ build-zlib-aot-sample: packager.exe zlibtest.exe
 
 run-zlib-aot-sample: build-zlib-aot-sample
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
+
+tzdtest.exe: tzdtest.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) /r:./framework/WebAssembly.ZoneInfo.dll tzdtest.cs
+
+run-tzd-test: build-tzd-sample
+	(cd bin/tzdtest-sample && $(SM) runtime.js --run tzdtest.exe)
+
+build-tzd-sample: packager.exe tzdtest.exe
+	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample tzdtest.exe
 
 build-mixed-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
@@ -562,6 +611,7 @@ clean: clean-browser-tests
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
+	$(RM) -rf $(TZ_INPUT) $(TZ_OUTPUT)
 
 package: build build-sdk build-dbg-proxy
 	rm -rf tmp
