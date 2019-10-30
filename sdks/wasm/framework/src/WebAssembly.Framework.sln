@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.Http", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.WebSockets", "WebAssembly.Net.WebSockets\WebAssembly.Net.WebSockets.csproj", "{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.ZoneInfo", "WebAssembly.ZoneInfo\WebAssembly.ZoneInfo.csproj", "{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,18 @@ Global
 		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x64.Build.0 = Release|Any CPU
 		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.ActiveCfg = Release|Any CPU
 		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.Build.0 = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|x64.Build.0 = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Debug|x86.Build.0 = Debug|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|x64.ActiveCfg = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|x64.Build.0 = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|x86.ActiveCfg = Release|Any CPU
+		{3AA6D40C-E679-4346-8822-8A3E1AA45D5A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

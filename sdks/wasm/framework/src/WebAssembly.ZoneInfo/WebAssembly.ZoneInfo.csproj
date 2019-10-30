@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>WebAssembly.ZoneInfo</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <Version>$(ZoneInfoVersion)</Version>    
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.ZoneInfo.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.ZoneInfos.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="LinkDescriptor\WebAssembly.ZoneInfo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LinkDescriptor\WebAssembly.ZoneInfo.xml">
+      <LogicalName>WebAssembly.ZoneInfo.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="zoneinfo\**\*" />
+  </ItemGroup>
+
+  <Target Name="_CopyAndResolveZoneInfo" BeforeTargets="ResolveReferences">
+    <ItemGroup>
+        <ZONEINFO Include="..\..\..\zoneinfo\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZONEINFO)" DestinationFolder="$(ProjectDir)\zoneinfo\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <EmbeddedResource Include="zoneinfo\**\*" />
+    </ItemGroup>
+  </Target>
+
+</Project>

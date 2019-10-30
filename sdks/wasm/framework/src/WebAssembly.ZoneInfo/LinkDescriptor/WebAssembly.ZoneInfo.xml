@@ -1,0 +1,7 @@
+<linker>
+  
+  <!--
+  Preserve the whole assembly
+  -->
+    <!-- <assembly fullname="WebAssembly.ZoneInfo"/> -->
+</linker>

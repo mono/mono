@@ -2,3 +2,5 @@
 *.json
 !src/WebAssembly.Bindings/LinkDescriptor/*
 !src/WebAssembly.Net.Http/LinkDescriptor/*
+!src/WebAssembly.ZoneInfo/LinkDescriptor/*
+src/WebAssembly.ZoneInfo/zoneinfo

@@ -52,6 +52,18 @@
     <ClientWebSocketVersion>$(ClientWebSocketVersionPrefix)</ClientWebSocketVersion>
     <PreviousClientWebSocketReleaseVersion Condition=" '$(ClientWebSocketPatchVersion)' != '0' ">$(ClientWebSocketMajorVersion).$(ClientWebSocketMinorVersion).$([MSBuild]::Subtract($(ClientWebSocketPatchVersion), 1))</PreviousClientWebSocketReleaseVersion>
   </PropertyGroup>
+  <PropertyGroup Label="ZoneInfo Version settings">
+    <ZoneInfoMajorVersion>0</ZoneInfoMajorVersion>
+    <ZoneInfoMinorVersion>1</ZoneInfoMinorVersion>
+    <ZoneInfoPatchVersion>0</ZoneInfoPatchVersion>
+    <ZoneInfoPreReleasePreviewNumber>1</ZoneInfoPreReleasePreviewNumber>
+    <ZoneInfoPreReleaseVersionLabel>preview$(ZoneInfoPreReleasePreviewNumber)</ZoneInfoPreReleaseVersionLabel>
+    <ZoneInfoPreReleaseBrandingLabel>Preview $(ZoneInfoPreReleasePreviewNumber)</ZoneInfoPreReleaseBrandingLabel>
+    <ZoneInfoMajorMinorVersion>$(ZoneInfoMajorVersion).$(ZoneInfoMinorVersion)</ZoneInfoMajorMinorVersion>
+    <ZoneInfoVersionPrefix>$(ZoneInfoMajorVersion).$(ZoneInfoMinorVersion).$(ZoneInfoPatchVersion)</ZoneInfoVersionPrefix>
+    <ZoneInfoVersion>$(ZoneInfoVersionPrefix)</ZoneInfoVersion>
+    <PreviousZoneInfoReleaseVersion Condition=" '$(ZoneInfoPatchVersion)' != '0' ">$(ZoneInfoMajorVersion).$(ZoneInfoMinorVersion).$([MSBuild]::Subtract($(ZoneInfoPatchVersion), 1))</PreviousZoneInfoReleaseVersion>
+  </PropertyGroup>
   <PropertyGroup Label="SDK Version settings">
     <SDKPackageMajorVersion>0</SDKPackageMajorVersion>
     <SDKPackageMinorVersion>2</SDKPackageMinorVersion>
