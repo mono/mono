@@ -735,10 +735,9 @@ typedef struct _SgenGCInfo {
 	guint64 high_memory_load_threshold_bytes;
 	guint64 memory_load_bytes;
 	guint64 total_available_memory_bytes;
-
 } SgenGCInfo;
 
-SgenGCInfo sgen_gc_info;
+extern SgenGCInfo sgen_gc_info;
 
 void initialize_sgen_gc_info(void);
 
