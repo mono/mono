@@ -32,7 +32,7 @@ typedef struct {
 MONO_API MONO_RT_EXTERNAL_ONLY MonoDl*
 mono_dl_open (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL_NO_EXTERN_C;
 
-MonoDl*
+MONO_LLVM_INTERNAL MonoDl*
 mono_dl_open_internal (const char *name, int flags, char **error_msg);
 
 MONO_EXTERN_C

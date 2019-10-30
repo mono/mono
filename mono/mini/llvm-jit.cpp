@@ -170,7 +170,7 @@ struct MonoLLVMJIT {
 			if (!strcmp(namebuf, "___bzero")) {
 				return JITSymbol{(uint64_t)(gssize)(void*)bzero, flags};
 			}
-			auto current = mono_dl_open (NULL, MONO_DL_LOCAL, NULL);
+			auto current = mono_dl_open_internal (NULL, 0, NULL);
 			g_assert (current);
 			auto name = namebuf[0] == '_' ? namebuf + 1 : namebuf;
 			void *sym = nullptr;
@@ -326,7 +326,7 @@ public:
 						  MonoDl *current;
 						  char *err;
 						  void *symbol;
-						  current = mono_dl_open (NULL, MONO_DL_LOCAL, NULL);
+						  current = mono_dl_open_internal (NULL, 0, NULL);
 						  g_assert (current);
 						  if (name [0] == '_')
 							  err = mono_dl_symbol (current, name + 1, &symbol);
