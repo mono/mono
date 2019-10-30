@@ -793,10 +793,10 @@ xamarin_timezone_get_names (int *count)
 	    static MonoMethod* method;
 		MonoException* exc = NULL;
 
-    	if (!method)
-    	{
-        	method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_names", -1);
-    	}
+		if (!method)
+		{
+			method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_names", -1);
+		}
 		
 		void* args[] = {count};
 		MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
