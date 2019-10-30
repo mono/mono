@@ -81,7 +81,7 @@ m_strdup (const char *str)
 
 static MonoDomain *root_domain;
 
-static int try_load_zone_info;
+static char try_load_zone_info;
 
 static MonoString*
 mono_wasm_invoke_js (MonoString *str, int *is_exception)
