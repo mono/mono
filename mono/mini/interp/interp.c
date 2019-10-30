@@ -6417,41 +6417,32 @@ common_vcall:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
+
 		MINT_IN_CASE(MINT_PROF_ENTER) {
-			ip += 1;
+			guint16 flag = ip [1];
+			ip += 2;
 
-			if (MONO_PROFILER_ENABLED (method_enter)) {
-				MonoProfilerCallContext *prof_ctx = NULL;
-
-				if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT) {
-					prof_ctx = g_new0 (MonoProfilerCallContext, 1);
-					prof_ctx->interp_frame = frame;
-					prof_ctx->method = frame->imethod->method;
-				}
-
-				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
-
+			if ((flag & TRACING_FLAG) || ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter) &&
+					(frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT))) {
+				MonoProfilerCallContext *prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+				prof_ctx->interp_frame = frame;
+				prof_ctx->method = frame->imethod->method;
+				if (flag & TRACING_FLAG)
+					mono_trace_enter_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
+				if (flag & PROFILING_FLAG)
+					MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
 				g_free (prof_ctx);
+			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, NULL));
 			}
-
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_TRACE_ENTER) {
-			ip += 1;
-
-			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
-
-			mono_trace_enter_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
-			MINT_IN_BREAK;
-		}
-
-		MINT_IN_CASE(MINT_TRACE_EXIT)
-		MINT_IN_CASE(MINT_TRACE_EXIT_VOID) {
+		MINT_IN_CASE(MINT_PROF_EXIT)
+		MINT_IN_CASE(MINT_PROF_EXIT_VOID) {
+			guint16 flag = ip [1];
 			// Set retval
-			int const i32 = READ32 (ip + 1);
+			int const i32 = READ32 (ip + 2);
 			if (i32 == -1) {
 			} else if (i32) {
 				sp--;
@@ -6461,12 +6452,27 @@ common_vcall:
 				*frame->retval = *sp;
 			}
 
-			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
+			if ((flag & TRACING_FLAG) || ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_leave) &&
+					(frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT))) {
+				MonoProfilerCallContext *prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+				prof_ctx->interp_frame = frame;
+				prof_ctx->method = frame->imethod->method;
+				if (i32 != -1) {
+					if (i32)
+						prof_ctx->return_value = frame->retval->data.p;
+					else
+						prof_ctx->return_value = frame->retval;
+				}
+				if (flag & TRACING_FLAG)
+					mono_trace_leave_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
+				if (flag & PROFILING_FLAG)
+					MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
+				g_free (prof_ctx);
+			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+				MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, NULL));
+			}
 
-			mono_trace_leave_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
-			ip += 3;
+			ip += 4;
 			goto exit_frame;
 		}
 
@@ -6760,34 +6766,6 @@ exit_frame:
 
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
-
-	if (!context->has_resume_state && MONO_PROFILER_ENABLED (method_leave) &&
-	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
-		MonoProfilerCallContext *prof_ctx = NULL;
-
-		if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
-			prof_ctx = g_new0 (MonoProfilerCallContext, 1);
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
-
-			MonoType *rtype = mono_method_signature_internal (frame->imethod->method)->ret;
-
-			switch (rtype->type) {
-			case MONO_TYPE_VOID:
-				break;
-			case MONO_TYPE_VALUETYPE:
-				prof_ctx->return_value = frame->retval->data.p;
-				break;
-			default:
-				prof_ctx->return_value = frame->retval;
-				break;
-			}
-		}
-
-		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
-
-		g_free (prof_ctx);
-	}
 
 	DEBUG_LEAVE ();
 }
