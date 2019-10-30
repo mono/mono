@@ -37,6 +37,8 @@ MonoInternalThread *mono_tls_get_thread (void)
 	return (MonoInternalThread*)MONO_TLS_GET_VALUE (mono_tls_thread, mono_tls_key_thread);
 }
 
+#define mono_get_jit_tls mono_tls_get_jit_tls
+
 MONO_INLINE
 MonoJitTlsData *mono_tls_get_jit_tls (void)
 {
