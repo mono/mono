@@ -142,6 +142,7 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	/* FIXME: Might be better to pass the ji itself */
 	if (!ji)
 		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
+	g_assert (ji);
 
 	/* ENTER:i <- interp
 	 * ENTER:c <- compiled (JIT or AOT)
@@ -152,15 +153,12 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	sig = mono_method_signature_internal (method);
 
 	if (method->is_inflated) {
-
-		if (ji) {
-			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && gsctx->is_gsharedvt) {
-				/* Needs a ctx to get precise method */
-				printf (") <gsharedvt>\n");
-				mono_atomic_store_release (&output_lock, 0);
-				return;
-			}
+		gsctx = mono_jit_info_get_generic_sharing_context (ji);
+		if (gsctx && gsctx->is_gsharedvt) {
+			/* Needs a ctx to get precise method */
+			printf (") <gsharedvt>\n");
+			mono_atomic_store_release (&output_lock, 0);
+			return;
 		}
 	}
 
@@ -322,6 +320,7 @@ mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	/* FIXME: Might be better to pass the ji itself from the JIT */
 	if (!ji)
 		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
+	g_assert (ji);
 
 	/* LEAVE:i <- interp
 	 * LEAVE:c <- compiled (JIT or AOT)
@@ -330,14 +329,12 @@ mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	g_free (fname);
 
 	if (method->is_inflated) {
-		if (ji) {
-			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && gsctx->is_gsharedvt) {
-				/* Needs a ctx to get precise method */
-				printf (") <gsharedvt>\n");
-				mono_atomic_store_release (&output_lock, 0);
-				return;
-			}
+		gsctx = mono_jit_info_get_generic_sharing_context (ji);
+		if (gsctx && gsctx->is_gsharedvt) {
+			/* Needs a ctx to get precise method */
+			printf (") <gsharedvt>\n");
+			mono_atomic_store_release (&output_lock, 0);
+			return;
 		}
 	}
 
