@@ -383,6 +383,7 @@ TESTS_CS_SRC=		\
 	params.cs		\
 	reflection.cs		\
 	interface.cs		\
+	interface-2.cs		\
 	iface.cs		\
 	iface2.cs		\
 	iface3.cs		\
@@ -1031,8 +1032,7 @@ TESTS_IL_SRC=			\
 	module-cctor-entrypoint.il \
 	bug-gh-9706.il \
 	localloc-noinit.il \
-	calli_native.il \
-	override-interface.il
+	calli_native.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
