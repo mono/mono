@@ -3,5 +3,5 @@
   <!--
   Preserve the whole assembly
   -->
-    <!-- <assembly fullname="WebAssembly.ZoneInfo"/> -->
+    <assembly fullname="WebAssembly.ZoneInfo"/>
 </linker>

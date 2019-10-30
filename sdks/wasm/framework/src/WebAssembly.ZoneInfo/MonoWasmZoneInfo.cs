@@ -9,11 +9,6 @@ namespace WebAssembly.ZoneInfo
 	public static class MonoWasmZoneInfo
 	{
 		const string zoneInfoPrefix = "WebAssembly.ZoneInfo.zoneinfo.";
-
-		static MonoWasmZoneInfo ()
-		{
-            var local = TimeZoneInfo.Local;
-		}
 		public static byte[] mono_timezone_get_data(string name, ref int size)
 		{
 			var data = GetEmbeddedResource(name);
