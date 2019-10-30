@@ -711,10 +711,10 @@ MonoAssembly* GetZoneInfoAssembly()
 
 MonoClass* GetZoneInfoClass()
 {
-    static MonoClass* klass;
-    if (!klass)
-        klass = mono_class_from_name(mono_assembly_get_image(GetZoneInfoAssembly()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
-    return klass;
+	static MonoClass* klass;
+	if (!klass)
+		klass = mono_class_from_name(mono_assembly_get_image(GetZoneInfoAssembly()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
+	return klass;
 }
 
 void*
@@ -728,20 +728,19 @@ xamarin_timezone_get_data (MonoString* name, int *size)
 	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
 	if (zoneInfoClass)
 	{
-		//fprintf (stdout, "%s\n", "We have class");
 	    static MonoMethod* method;
 		MonoException* exc = NULL;
 
-    	if (!method)
-    	{
-        	method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_data", -1);
-    	}
+		if (!method)
+		{
+			method = mono_class_get_method_from_name(zoneInfoClass, "mono_timezone_get_data", -1);
+		}
 		
 		void* args[] = {name, size};
 		if (!name)
 			args[0] = xamarin_timezone_get_local_name();
 
-    	MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
+		MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
 		if (!size)
 			return NULL;
 
@@ -800,8 +799,7 @@ xamarin_timezone_get_names (int *count)
     	}
 		
 		void* args[] = {count};
-
-    	MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
+		MonoObject* ret = mono_runtime_invoke(method, NULL, args, (MonoObject**)&exc);
 		if (!*count)
 			return NULL;
 
@@ -817,9 +815,7 @@ xamarin_timezone_get_names (int *count)
 			}
 			return result;
 		}
-
 		return NULL;
 	}
-
 	return NULL;
 }
