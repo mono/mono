@@ -198,6 +198,13 @@ ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_Flush (g
 ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_ReadZStream (gpointer stream, gpointer buffer, gint32 length);
 ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer stream, gpointer buffer, gint32 length);
 #endif
+
+#if defined(TARGET_WASM)
+ICALL_EXPORT gpointer ves_icall_System_TimeZoneInfo_xamarin_timezone_get_data (MonoString* name, gint32 *size);
+ICALL_EXPORT gpointer ves_icall_System_TimeZoneInfo_xamarin_timezone_get_names (gint32 *count);
+ICALL_EXPORT MonoString* ves_icall_System_TimeZoneInfo_xamarin_timezone_get_local_name (void);
+#endif
+
 #if defined(ENABLE_MONODROID)
 ICALL_EXPORT gpointer ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CreateNLSocket (void);
 ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size);

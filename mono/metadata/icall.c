@@ -8121,6 +8121,44 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 
 #endif
 
+#if defined(TARGET_WASM) 
+
+G_EXTERN_C gpointer xamarin_timezone_get_data (MonoString* name, gint32 *size);
+G_EXTERN_C gpointer xamarin_timezone_get_names (gint32 *count);
+G_EXTERN_C MonoString* xamarin_timezone_get_local_name (void);
+
+gpointer
+ves_icall_System_TimeZoneInfo_xamarin_timezone_get_data (MonoString* name, gint32 *size)
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return xamarin_timezone_get_data (name, size); 
+#endif
+}
+
+gpointer
+ves_icall_System_TimeZoneInfo_xamarin_timezone_get_names (gint32 *count)
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return xamarin_timezone_get_names (count); 
+#endif
+}
+
+MonoString*
+ves_icall_System_TimeZoneInfo_xamarin_timezone_get_local_name ()
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return xamarin_timezone_get_local_name (); 
+#endif
+}
+#endif
+
+
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
 ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, gint32 path_name_length, guint64 *free_bytes_avail,

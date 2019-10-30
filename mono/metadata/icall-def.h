@@ -1104,6 +1104,13 @@ ICALL_TYPE(WAITH, "System.Threading.WaitHandle", WAITH_1)
 HANDLES(WAITH_1, "SignalAndWait_Internal", ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal, gint32, 3, (gpointer, gpointer, gint32))
 HANDLES(WAITH_2, "Wait_internal", ves_icall_System_Threading_WaitHandle_Wait_internal, gint32, 4, (gpointer_ptr, gint32, MonoBoolean, gint32))
 
+#if defined(TARGET_WASM)
+ICALL_TYPE(TZINFO, "System.TimeZoneInfo", TZINFO_1)
+NOHANDLES(ICALL(TZINFO_1, "xamarin_timezone_get_data", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_data))
+NOHANDLES(ICALL(TZINFO_2, "xamarin_timezone_get_local_name", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_local_name))
+NOHANDLES(ICALL(TZINFO_3, "xamarin_timezone_get_names", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_names))
+#endif
+
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)
 HANDLES(TYPE_1, "internal_from_handle", ves_icall_System_Type_internal_from_handle, MonoReflectionType, 1, (MonoType_ref))
 
