@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Experimental Preview</Description>
+    <!-- Use an explicit .nuspec file because 'dotnet pack' is doing weird stuff otherwise. -->
+    <NuspecFile>Mono.WebAssembly.Runtime.Aot.nuspec</NuspecFile>
+  </PropertyGroup>
+</Project>

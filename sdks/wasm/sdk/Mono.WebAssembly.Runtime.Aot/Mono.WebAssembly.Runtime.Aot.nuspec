@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Mono.WebAssembly.Runtime.Aot</id>
+    <version>0.2.2</version>
+    <authors>Martin Baulig</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Experimental Preview</description>
+  </metadata>
+  <files>
+    <file src="../../../out/wasm-cross-release/bin/wasm*" target="wasm-cross-release/bin" />
+    <file src="../../../out/wasm-cross-release/include/**" target="wasm-cross-release/include" />
+    <file src="../../../out/wasm-cross-release/share/**" target="wasm-cross-release/share" />
+    <file src="../../../out/wasm-runtime-release/**" target="wasm-runtime-release" />
+  </files>
+</package>

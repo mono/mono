@@ -30,4 +30,15 @@
 
     <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" PackagePath="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\wasm\runtime.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\runtime-tests.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\driver.c" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\zlib-helper.c" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\pinvoke-tables-default.h" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\pinvoke-tables-default-netcore.h" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\library_mono.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\dotnet_support.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\binding_support.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>
