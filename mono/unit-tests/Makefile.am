@@ -107,7 +107,7 @@ test_mono_embed_SOURCES = main.c
 test_mono_embed_CFLAGS = $(test_cflags) -DMAIN=test_mono_embed_main
 test_mono_embed_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-embed.lo
 test_mono_embed_LDFLAGS = $(test_ldflags)
-test_mono_embed_DEPENDENCIES = build_mono_embed_test
+test_mono_embed_DEPENDENCIES = test-embed.exe
 
 test_path_SOURCES = test-path.c
 test_path_CFLAGS = $(test-cflags)
@@ -118,7 +118,7 @@ test_embed_invoke_SOURCES = main.c
 test_embed_invoke_CFLAGS = $(test_cflags) -DMAIN=test_mono_embed_invoke_main
 test_embed_invoke_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-embed-invoke.lo
 test_embed_invoke_LDFLAGS = $(test_ldflags)
-test_embed_invoke_DEPENDENCIES = build_mono_embed_invoke_test
+test_embed_invoke_DEPENDENCIES = test-embed-invoke-cs.exe
 
 
 check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
@@ -146,15 +146,16 @@ check-local:
 clean-local:
 	rm -f callspec.exe callspec.pdb 
 	rm -f test-embed.exe test-embed.pdb
+	rm -f test-embed-invoke-cs.exe test-embed-invoke-cs.pdb
 
 %.exe: %.cs
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
-build_mono_embed_test:
-	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed.exe ../../samples/embed/test.cs 
+test-embed.exe: $(top_srcdir)/samples/embed/test.cs
+	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 	
-build_mono_embed_invoke_test:
-	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:test-embed-invoke-cs.exe ../../samples/embed/invoke.cs $<
+test-embed-invoke-cs.exe: $(top_srcdir)/samples/embed/invoke.cs
+	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll  -out:$@ $<
 
 endif !HOST_WIN32
 endif !CROSS_COMPILE

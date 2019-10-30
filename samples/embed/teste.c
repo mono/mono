@@ -59,18 +59,14 @@ int main() {
 
 	MonoDomain *domain;
 	int argc = 2;
-    char *argv[] = {
-                        (char*)"test-mono-embed.exe",
-                        (char*)"test-embed.exe",
-                        NULL
-                    };
+	char *argv[] = {
+						(char*)"test-mono-embed.exe",
+						(char*)"test-embed.exe",
+						NULL
+					};
 	const char *file;
 	int retval;
-	
-	if (argc < 2){
-		fprintf (stderr, "Please provide an assembly to load\n");
-		return 1;
-	}
+
 	file = argv [1];
 
 	MonoAllocatorVTable mem_vtable = { MONO_ALLOCATOR_VTABLE_VERSION, custom_malloc, NULL, NULL, NULL };
