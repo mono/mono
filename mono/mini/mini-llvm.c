@@ -5980,9 +5980,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				 * FIXME: If later code uses the regs defined by these instructions,
 				 * compilation will fail.
 				 */
-				const char *spec = INS_INFO (next->opcode);
-				if (spec [MONO_INST_DEST] == 'i')
-					ctx->values [next->dreg] = LLVMConstNull (LLVMInt32Type ());
 				MONO_DELETE_INS (bb, next);
 			}				
 			break;
