@@ -59,6 +59,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/metadata/w32subset.h>
 #include <mono/metadata/mono-config.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -2468,12 +2469,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volat
 	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
-void
-ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
-{
-	ves_icall_System_Threading_Interlocked_CompareExchange_Object (location, value, comparand, res);
-}
-
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
 {
 	return mono_atomic_cas_ptr(location, value, comparand);
@@ -2529,18 +2524,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 	}
 #endif
 	return mono_atomic_cas_i64 (location, value, comparand);
-}
-
-void
-ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
-{
-	// Coop-equivalency here via pointers to pointers.
-	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
-	//
-	// This is not entirely convincing due to lack of volatile in the caller.
-	//
-	MONO_CHECK_NULL (location, );
-	ves_icall_System_Threading_Interlocked_Exchange_Object (location, value, res);
 }
 
 gint32 
