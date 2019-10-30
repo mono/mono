@@ -81,7 +81,7 @@ m_strdup (const char *str)
 
 static MonoDomain *root_domain;
 
-static int ZONE_INFO_FIRST_TIME = 1;
+static int try_load_zone_info;
 
 static MonoString*
 mono_wasm_invoke_js (MonoString *str, int *is_exception)
@@ -681,11 +681,11 @@ mono_wasm_enable_on_demand_gc (void)
 	mono_wasm_enable_gc = 1;
 }
 
-MonoAssembly* GetZoneInfoAssembly()
+MonoAssembly* get_zone_Info_assembly()
 {
 	static MonoAssembly* zoneInfoAssembly;
 
-	if (ZONE_INFO_FIRST_TIME) {
+	if (!try_load_zone_info) {
 
 		fprintf (stdout, "%s\n", "Locating ZoneInfo assembly.");
 		// try to open the ZoneInfo assembly
@@ -703,17 +703,17 @@ MonoAssembly* GetZoneInfoAssembly()
 		else
 			fprintf (stdout, "%s\n", "ZoneInfo assembly could not be located.");
 
-		ZONE_INFO_FIRST_TIME = 0;
+		try_load_zone_info = 1;
 	}
 
     return zoneInfoAssembly;
 }
 
-MonoClass* GetZoneInfoClass()
+MonoClass* get_zone_Info_class()
 {
 	static MonoClass* klass;
 	if (!klass)
-		klass = mono_class_from_name(mono_assembly_get_image(GetZoneInfoAssembly()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
+		klass = mono_class_from_name(mono_assembly_get_image(get_zone_Info_assembly()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
 	return klass;
 }
 
@@ -725,7 +725,7 @@ xamarin_timezone_get_data (MonoString* name, int *size)
 	//mono_free (native_name);
 	*size = 0;
 
-	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
+	MonoClass *zoneInfoClass = get_zone_Info_class(); 
 	if (zoneInfoClass)
 	{
 	    static MonoMethod* method;
@@ -787,7 +787,7 @@ xamarin_timezone_get_names (int *count)
 {
 	*count = 0;
 
-	MonoClass *zoneInfoClass = GetZoneInfoClass(); 
+	MonoClass *zoneInfoClass = get_zone_Info_class(); 
 	if (zoneInfoClass)
 	{
 		static MonoMethod* method;
