@@ -215,8 +215,8 @@ mono_dl_open (const char *name, int flags, char **error_msg)
  * case of failure.   The error must be released with \c g_free.
  * \returns a \c MonoDl pointer on success, NULL on failure.
  *
- * Note that this differs from the public function in that it defaults to
- * RTLD_LOCAL unless MONO_DL_GLOBAL is set.
+ * This differs from the public function in that it defaults to RTLD_LOCAL 
+ * unless MONO_DL_GLOBAL is set.
  */
 MonoDl*
 mono_dl_open_internal (const char *name, int flags, char **error_msg)

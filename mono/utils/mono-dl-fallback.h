@@ -13,6 +13,7 @@ enum {
 	MONO_DL_EAGER  = 0,
 	MONO_DL_LAZY   = 1,
 	MONO_DL_LOCAL  = 2,
+	// This is unused internally and no longer a full mask, given the introduction of MONO_DL_GLOBAL. Avoid.
 	MONO_DL_MASK   = 3,
 	MONO_DL_GLOBAL = 4
 };

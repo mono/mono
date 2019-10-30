@@ -60,6 +60,7 @@ mono_dl_convert_flags (int flags)
 {
 	int lflags = 0;
 
+	// Specifying both will default to LOCAL
 	if (flags & MONO_DL_LOCAL)
 		flags |= RTLD_LOCAL;
 	else if (flags & MONO_DL_GLOBAL)
