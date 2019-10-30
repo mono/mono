@@ -3211,14 +3211,13 @@ mono_interp_call (InterpFrame *frame, ThreadContext *context, InterpFrame *child
 	frame->ip = ip;
 
 	child_frame->imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-	ip += 2;
 	if (!is_void) {
 		sp->data.p = vt_sp;
 		child_frame->retval = sp;
 	}
 
 	/* decrement by the actual number of args */
-	sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis;
+	sp -= ip [2];
 
 	if (is_virtual) {
 		MonoObject *this_arg = (MonoObject*)sp->data.p;
@@ -3653,7 +3652,7 @@ main_loop:
 #ifdef ENABLE_EXPERIMENT_TIERED
 			ip += 5;
 #else
-			ip += 2;
+			ip += 3;
 #endif
 common_call:
 			child_frame.stack_args = sp;
@@ -3671,7 +3670,7 @@ vcall_return:
 #ifdef ENABLE_EXPERIMENT_TIERED
 			ip += 5;
 #else
-			ip += 2;
+			ip += 3;
 #endif
 common_vcall:
 			child_frame.stack_args = sp;
@@ -3679,11 +3678,13 @@ common_vcall:
 			goto vcall_return;
 
 		MINT_IN_CASE(MINT_CALLVIRT)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, TRUE, FALSE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, TRUE, FALSE);
+			ip += 3;
 			goto common_call;
 
 		MINT_IN_CASE(MINT_VCALLVIRT)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, TRUE, TRUE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, TRUE, TRUE);
+			ip += 3;
 			goto common_vcall;
 
 		MINT_IN_CASE(MINT_JIT_CALL) {
