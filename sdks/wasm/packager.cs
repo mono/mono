@@ -707,6 +707,19 @@ class Driver {
 		if (!emit_ninja)
 			return 0;
 
+		var filenames = new Dictionary<string, string> ();
+		foreach (var a in assemblies) {
+			var assembly = a.src_path;
+			if (assembly == null)
+				continue;
+			string filename = Path.GetFileName (assembly);
+			if (filenames.ContainsKey (filename)) {
+				Console.WriteLine ("Duplicate input assembly: " + assembly + " " + filenames [filename]);
+				return 1;
+			}
+			filenames [filename] = assembly;
+		}
+
 		if (build_wasm) {
 			if (sdkdir == null) {
 				Console.WriteLine ("The --mono-sdkdir argument is required.");
