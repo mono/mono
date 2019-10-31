@@ -119,6 +119,22 @@ is_gshared_vt_wrapper (MonoMethod *m)
 	return !strcmp (m->name, "interp_in") || !strcmp (m->name, "gsharedvt_out_sig");
 }
 
+/* ENTER:i <- interp
+ * ENTER:c <- compiled (JIT or AOT)
+ * ENTER:u <- no JitInfo available
+ */
+static char
+frame_kind (MonoJitInfo *ji)
+{
+	if (!ji)
+		return 'u';
+
+	if (ji->is_interp)
+		return 'i';
+
+	return 'c';
+}
+
 void
 mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallContext *ctx)
 {
@@ -142,17 +158,13 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	/* FIXME: Might be better to pass the ji itself */
 	if (!ji)
 		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
-	g_assert (ji);
 
-	/* ENTER:i <- interp
-	 * ENTER:c <- compiled (JIT or AOT)
-	 */
-	printf ("ENTER:%c %s(", ji->is_interp ? 'i' : 'c' , fname);
+	printf ("ENTER:%c %s(", frame_kind (ji), fname);
 	g_free (fname);
 
 	sig = mono_method_signature_internal (method);
 
-	if (method->is_inflated) {
+	if (method->is_inflated && ji) {
 		gsctx = mono_jit_info_get_generic_sharing_context (ji);
 		if (gsctx && gsctx->is_gsharedvt) {
 			/* Needs a ctx to get precise method */
@@ -320,15 +332,11 @@ mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	/* FIXME: Might be better to pass the ji itself from the JIT */
 	if (!ji)
 		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
-	g_assert (ji);
 
-	/* LEAVE:i <- interp
-	 * LEAVE:c <- compiled (JIT or AOT)
-	 */
-	printf ("LEAVE:%c %s(", ji->is_interp ? 'i' : 'c' , fname);
+	printf ("LEAVE:%c %s(", frame_kind (ji), fname);
 	g_free (fname);
 
-	if (method->is_inflated) {
+	if (method->is_inflated && ji) {
 		gsctx = mono_jit_info_get_generic_sharing_context (ji);
 		if (gsctx && gsctx->is_gsharedvt) {
 			/* Needs a ctx to get precise method */
