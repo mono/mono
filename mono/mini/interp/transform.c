@@ -6896,7 +6896,7 @@ retry:
 		}
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
-		if (td->verbose_level) {
+		if (td->verbose_level && ins->opcode != MINT_NOP) {
 			dump_interp_inst (ins);
 			g_print (", sp %d, (pop %d, push %d)\n", sp - stack, pop, push);
 		}
