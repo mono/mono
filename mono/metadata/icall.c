@@ -8923,11 +8923,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void)
 MonoBoolean
 ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (void)
 {
-#if HAVE_BTLS
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 #endif /* ENABLE_NETCORE */
 
