@@ -3380,7 +3380,7 @@ main_loop:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
-#define LDC(n) do { sp->data.i = (n); ++ip; ++sp; } while (0)
+#define LDC(n) do { sp->data.l = (gint64) (gint32) (n); ++ip; ++sp; } while (0)
 		MINT_IN_CASE(MINT_LDC_I4_M1)
 			LDC(-1);
 			MINT_IN_BREAK;
@@ -3412,13 +3412,13 @@ main_loop:
 			LDC(8);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDC_I4_S) 
-			sp->data.i = (short)ip [1];
+			sp->data.l = (gint64)(short)ip [1];
 			ip += 2;
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDC_I4)
 			++ip;
-			sp->data.i = READ32 (ip);
+			sp->data.l = (gint64) (gint32) READ32 (ip);
 			ip += 2;
 			++sp;
 			MINT_IN_BREAK;
