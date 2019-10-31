@@ -337,7 +337,7 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll $(test_lib_dir)/xunit.execution.dotnet.dll
+xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(patsubst %,$(test_lib_dir)/%.dll,$(xunit_core) xunit.runner.utility.net452) $(test_lib_dir)/xunit.console.exe
 run-xunit-test-local: run-xunit-test-lib
 
 $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
@@ -347,8 +347,8 @@ $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
 $(test_lib_dir)/Xunit.NetCore.Extensions.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll | $(test_lib_dir)
 	@cp -f $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll $@
 
-$(test_lib_dir)/xunit.execution.dotnet.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll | $(test_lib_dir)
-	@cp -f $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll $@
+$(test_lib_dir)/xunit.%: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/xunit.% | $(test_lib_dir)
+	@cp -f $(topdir)/../external/xunit-binaries/xunit.$* $@
 
 run-xunit-test-lib: xunit-test-local
 	ok=:; \
