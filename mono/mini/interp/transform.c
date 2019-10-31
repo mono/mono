@@ -1039,7 +1039,7 @@ void
 mono_interp_print_code (InterpMethod *imethod)
 {
 	MonoJitInfo *jinfo = imethod->jinfo;
-	const guint16 *start;
+	const guint8 *start;
 
 	if (!jinfo)
 		return;
@@ -1048,8 +1048,8 @@ mono_interp_print_code (InterpMethod *imethod)
 	g_print ("Method : %s\n", name);
 	g_free (name);
 
-	start = (guint16*) jinfo->code_start;
-	dump_mint_code (start, start + jinfo->code_size);
+	start = (guint8*) jinfo->code_start;
+	dump_mint_code ((const guint16*)start, (const guint16*)(start + jinfo->code_size));
 }
 
 
