@@ -14,7 +14,8 @@ namespace System.Threading
 			SafeWaitHandle handle = ValidateHandle (out bool release);
 
 			try {
-				return SetEventInternal (handle.DangerousGetHandle ());
+				WaitSubsystem.SetEvent (handle.DangerousGetHandle ());
+				return true;
 			} finally {
 				if (release)
 					handle.DangerousRelease ();
@@ -26,23 +27,20 @@ namespace System.Threading
 			SafeWaitHandle handle = ValidateHandle (out bool release);
 
 			try {
-				return ResetEventInternal (handle.DangerousGetHandle ());
+				WaitSubsystem.ResetEvent (handle.DangerousGetHandle ());
+				return true;
 			} finally {
 				if (release)
 					handle.DangerousRelease ();
 			}
 		}
 
-		unsafe void CreateEventCore (bool initialState, EventResetMode mode, string name, out bool createdNew)
+		void CreateEventCore (bool initialState, EventResetMode mode, string name, out bool createdNew)
 		{
 			if (name != null)
 				throw new PlatformNotSupportedException (SR.PlatformNotSupported_NamedSynchronizationPrimitives);
 
-			SafeWaitHandle handle = new SafeWaitHandle (CreateEventInternal (mode == EventResetMode.ManualReset, initialState, null, 0, out int errorCode), ownsHandle: true);
-			if (errorCode != 0)
-				throw new NotImplementedException ("errorCode");
-			SafeWaitHandle = handle;
-
+			SafeWaitHandle = WaitSubsystem.NewEvent (initialState, mode);
 			createdNew = true;
 		}
 
@@ -56,7 +54,8 @@ namespace System.Threading
 			bool release = false;
 			try {
 				waitHandle.DangerousAddRef (ref release);
-				return SetEventInternal (waitHandle.DangerousGetHandle ());
+				WaitSubsystem.SetEvent (waitHandle.DangerousGetHandle ());
+				return true;
 			} finally {
 				if (release)
 					waitHandle.DangerousRelease ();
@@ -69,23 +68,11 @@ namespace System.Threading
 			// to ensure that one instance is used in all places in this method
 			SafeWaitHandle waitHandle = SafeWaitHandle;
 			if (waitHandle.IsInvalid)
-			{
 				throw new InvalidOperationException ();
-			}
 
 			success = false;
 			waitHandle.DangerousAddRef (ref success);
 			return waitHandle;
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		unsafe static extern IntPtr CreateEventInternal (bool manual, bool initialState, char *name, int name_length, out int errorCode);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool ResetEventInternal (IntPtr handle);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool SetEventInternal (IntPtr handle);
-
 	}
 }

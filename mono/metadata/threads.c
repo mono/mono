@@ -1234,7 +1234,7 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 #ifdef ENABLE_NETCORE
 		static MonoMethod *cb;
 
-		/* Call a callback in the RuntimeThread class */
+		/* Call a callback in the Thread class */
 		g_assert (start_delegate == NULL);
 		if (!cb) {
 			cb = mono_class_get_method_from_name_checked (internal->obj.vtable->klass, "StartCallback", 0, 0, error);

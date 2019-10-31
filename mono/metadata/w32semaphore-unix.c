@@ -233,6 +233,8 @@ exit:
 	return handle;
 }
 
+#ifndef ENABLE_NETCORE
+
 // These functions appear to be using coop-aware locking functions, and so this file does not include explicit
 // GC-safe transitions like its corresponding Windows version
 
@@ -354,6 +356,8 @@ exit:
 	g_free (utf8_name);
 	return handle;
 }
+
+#endif /* ENABLE_NETCORE */
 
 MonoW32HandleNamespace*
 mono_w32semaphore_get_namespace (MonoW32HandleNamedSemaphore *semaphore)

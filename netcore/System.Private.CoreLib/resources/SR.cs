@@ -1221,4 +1221,6 @@ partial class SR
 	public const string InvalidOperation_SpanOverlappedOperation = "This operation is invalid on overlapping buffers.";
 	public const string SetterHasNoParams = "Setter must have parameters.";
 	public const string NotSupported_Overlapped = "This API is not supported on this platform.";
+	public const string InvalidOperation_InvalidHandle = "The handle is invalid.";
+	public const string Overflow_MutexReacquireCount = "The current thread attempted to reacquire a mutex that has reached its maximum acquire count.";
 }

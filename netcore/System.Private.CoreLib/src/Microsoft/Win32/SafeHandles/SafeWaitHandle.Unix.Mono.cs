@@ -12,11 +12,8 @@ namespace Microsoft.Win32.SafeHandles
 	{
 		protected override bool ReleaseHandle ()
 		{
-			CloseEventInternal (handle);
+			WaitSubsystem.DeleteHandle (handle);
 			return true;
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void CloseEventInternal (IntPtr handle);
 	}
 }

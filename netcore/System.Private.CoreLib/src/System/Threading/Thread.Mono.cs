@@ -79,6 +79,8 @@ namespace System.Threading
 		internal ExecutionContext _executionContext;
 		internal SynchronizationContext _synchronizationContext;
 
+		internal WaitSubsystem.ThreadWaitInfo WaitInfo;
+
 		Thread ()
 		{
 			InitInternal (this);
@@ -258,6 +260,9 @@ namespace System.Threading
 				m_start_arg = null;
 				pdel (arg);
 			}
+
+			if (WaitInfo != null)
+				WaitSubsystem.OnThreadExiting (this);
 		}
 
 		partial void ThreadNameChanged (string value)
@@ -279,6 +284,16 @@ namespace System.Threading
 			if ((state & ThreadState.Stopped) != 0)
 				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
 			return state;
+		}
+
+		internal void SetWaitSleepJoinState ()
+		{
+			SetState (this, ThreadState.WaitSleepJoin);
+		}
+
+		internal void ClearWaitSleepJoinState ()
+		{
+			ClrState (this, ThreadState.WaitSleepJoin);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

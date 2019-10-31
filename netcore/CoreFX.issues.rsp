@@ -937,3 +937,8 @@
 # Requires NativeLibrary implementation
 -nomethod System.Net.Tests.HttpWebRequestTest.ServicePoint_GetValue_ExpectedResult
 
+# Not supported on mono
+-nomethod System.Threading.Tests.MutexTests.Ctor_ValidName
+-nomethod System.Threading.Tests.MutexTests.OpenExisting
+-nomethod System.Threading.Tests.MutexTests.OpenExisting_UnavailableName
+-nomethod System.Threading.Tests.MutexTests.AbandonExisting

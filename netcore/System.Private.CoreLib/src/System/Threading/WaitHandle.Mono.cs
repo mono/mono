@@ -9,43 +9,24 @@ namespace System.Threading
 {
 	partial class WaitHandle
 	{
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
+		private static int WaitOneCore(IntPtr handle, int millisecondsTimeout) =>
+			WaitSubsystem.Wait(handle, millisecondsTimeout, true);
 
-		static int WaitOneCore (IntPtr waitHandle, int millisecondsTimeout)
-		{
-			unsafe {
-				return Wait_internal (&waitHandle, 1, false, millisecondsTimeout);
-			}
-		}
+		internal static int WaitMultipleIgnoringSyncContext(Span<IntPtr> handles, bool waitAll, int millisecondsTimeout) =>
+			WaitSubsystem.Wait(handles, waitAll, millisecondsTimeout);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		static extern int SignalAndWait_Internal (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout);
-
-		const int ERROR_TOO_MANY_POSTS = 0x12A;
-		const int ERROR_NOT_OWNED_BY_CALLER = 0x12B;
-
-		static int SignalAndWaitCore (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout)
-		{
-			int ret = SignalAndWait_Internal (waitHandleToSignal, waitHandleToWaitOn, millisecondsTimeout);
-			if (ret == ERROR_TOO_MANY_POSTS)
-				throw new InvalidOperationException (SR.Threading_WaitHandleTooManyPosts);
-			if (ret == ERROR_NOT_OWNED_BY_CALLER)
-				throw new ApplicationException("Attempt to release mutex not owned by caller");
-			return ret;
-		}
-
-		internal static int WaitMultipleIgnoringSyncContext (Span<IntPtr> waitHandles, bool waitAll, int millisecondsTimeout)
-		{
-			unsafe {
-				fixed (IntPtr* handles = &MemoryMarshal.GetReference (waitHandles)) {
-					return Wait_internal (handles, waitHandles.Length, waitAll, millisecondsTimeout);
-				}
-			}
-		}
+		private static int SignalAndWaitCore(IntPtr handleToSignal, IntPtr handleToWaitOn, int millisecondsTimeout) =>
+			WaitSubsystem.SignalAndWait(handleToSignal, handleToWaitOn, millisecondsTimeout);
 
 		// FIXME: Move to shared
 		internal static int WaitAny (ReadOnlySpan<WaitHandle> waitHandles, int millisecondsTimeout) =>
 			WaitMultiple (waitHandles, false, millisecondsTimeout);
+
+		internal static void ThrowInvalidHandleException ()
+		{
+			var ex = new InvalidOperationException (SR.InvalidOperation_InvalidHandle);
+			ex.HResult = HResults.E_HANDLE;
+			throw ex;
+		}
 	}
 }

@@ -127,7 +127,8 @@
     <!-- Disable nullability-related warnings -->
     <NoWarn>$(NoWarn),CS8597,CS8600,CS8601,CS8602,CS8603,CS8604,CS8609,CS8611,CS8618,CS8620,CS8625,CS8631,CS8632,CS8634</NoWarn>
     <NoWarn>$(NoWarn),618,67</NoWarn>
-
+	<!-- Disable xml comment warnings -->
+	<NoWarn>$(NoWarn),CS1574;CS1587</NoWarn>
     <DefineConstants>FEATURE_DEFAULT_INTERFACES;FEATURE_MANAGED_ETW_CHANNELS;$(DefineConstants)</DefineConstants>
     <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;MONO_FEATURE_SRE;$(DefineConstants)</DefineConstants>
 
@@ -263,6 +264,12 @@
       <Compile Include="src\System\Threading\LowLevelLock.cs" />
       <Compile Include="src\System\Threading\LowLevelSpinWaiter.cs" />
       <Compile Include="src\System\Threading\WaitHandle.Mono.cs" />
+      <Compile Include="src\System\Threading\LowLevelMonitor.cs" />
+      <Compile Include="src\System\Threading\LowLevelMonitor.Mono.cs" />
+      <Compile Include="src\System\Threading\WaitSubsystem.Unix.cs" />
+      <Compile Include="src\System\Threading\WaitSubsystem.HandleManager.Unix.cs" />
+      <Compile Include="src\System\Threading\WaitSubsystem.ThreadWaitInfo.Unix.cs" />
+      <Compile Include="src\System\Threading\WaitSubsystem.WaitableObject.Unix.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetsUnix)' == 'true'">
       <Compile Include="src\Microsoft\Win32\SafeHandles\SafeWaitHandle.Unix.Mono.cs" />
