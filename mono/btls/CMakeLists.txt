@@ -17,7 +17,7 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-if (MSVC OR CYGWIN)
+if (MSVC OR CYGWIN OR MINGW)
 	set(BTLS_HOST_WIN32 1)
 endif ()
 
@@ -127,6 +127,6 @@ if (BTLS_HOST_WIN32)
 	set (CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif ()
 
-if (CYGWIN)
+if (BTLS_HOST_WIN32 AND NOT MSVC)
 	target_link_libraries (mono-btls-shared wsock32 ws2_32)
 endif ()
