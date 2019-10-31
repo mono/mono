@@ -301,7 +301,7 @@ xunit-runner.exe: xunit-runner.cs
 define XunitTestTemplate
 
 bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
-	mono packager.exe --debugrt --search-path=$(WASM_BCL_DIR)/tests --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+	mono packager.exe --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 	ninja -v -C obj/$(2)
 
 build-$(1): bin/$(2)/mono.js
