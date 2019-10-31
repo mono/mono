@@ -60,6 +60,8 @@ WASM_RUNTIME_AC_VARS= \
 WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
 WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
+WASM_DISABLED_FEATURES=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac
+
 WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
 	--disable-nls \
@@ -71,7 +73,6 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -85,6 +86,7 @@ define WasmRuntimeTemplate
 
 _wasm_$(1)_CONFIGURE_FLAGS = \
 	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
+	--enable-minimal=$(WASM_DISABLED_FEATURES)$$(wasm_$(1)_DISABLED_FEATURES) \
 	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
 	$$(wasm_$(1)_CONFIGURE_FLAGS) \
@@ -143,6 +145,8 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime_DISABLED_FEATURES=,threads
+wasm_runtime-netcore_DISABLED_FEATURES=,threads
 wasm_runtime-netcore_CONFIGURE_FLAGS=--with-core=only
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread
