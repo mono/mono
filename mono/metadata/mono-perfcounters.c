@@ -47,7 +47,7 @@
 #include "utils/mono-proclib.h"
 #include "utils/mono-networkinterfaces.h"
 #include "utils/mono-error-internals.h"
-#include "utils/determine_physical_ram_size.h"
+#include "utils/memfuncs.h"
 #include "utils/atomic.h"
 #include "utils/unlocked.h"
 #include "icall-decl.h"

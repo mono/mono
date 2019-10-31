@@ -22,7 +22,7 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-client.h"
-#include "mono/utils/determine_physical_ram_size.h"
+#include "mono/utils/memfuncs.h"
 
 /*
  * The allowance we are targeting is a third of the current heap size. Still, we

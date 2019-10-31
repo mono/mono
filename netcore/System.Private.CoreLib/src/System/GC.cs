@@ -239,25 +239,19 @@ namespace System
 
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern GCMemoryInfo _GetGCMemoryInfo (ref long highMemoryLoadThresholdBytes,
-														     ref long memoryLoadBytes,
-															 ref long totalAvailableMemoryBytes,
-															 ref long heapSizeBytes,
-															 ref long fragmentedBytes); 
+		private static extern GCMemoryInfo _GetGCMemoryInfo (out long highMemoryLoadThresholdBytes,
+														     out long memoryLoadBytes,
+															 out long totalAvailableMemoryBytes,
+															 out long heapSizeBytes,
+															 out long fragmentedBytes); 
 
 		public static GCMemoryInfo GetGCMemoryInfo ()
 		{
-			long highMemoryLoadThresholdBytes = 0L;
-			long memoryLoadBytes = 0L;
-			long totalAvailableMemoryBytes = 0L;
-			long heapSizeBytes = 0L;
-			long fragmentedBytes = 0L;
-
-			_GetGCMemoryInfo(ref highMemoryLoadThresholdBytes,
-							 ref memoryLoadBytes,
-							 ref totalAvailableMemoryBytes,
-							 ref heapSizeBytes,
-							 ref fragmentedBytes );
+			_GetGCMemoryInfo(out long highMemoryLoadThresholdBytes,
+							 out long memoryLoadBytes,
+							 out long totalAvailableMemoryBytes,
+							 out long heapSizeBytes,
+							 out long fragmentedBytes );
 			
 			return new GCMemoryInfo(highMemoryLoadThresholdBytes, memoryLoadBytes, totalAvailableMemoryBytes, heapSizeBytes, fragmentedBytes);
 		}
