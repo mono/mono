@@ -187,7 +187,7 @@ mono_dl_flags_external_to_internal (int flags)
  * binary image.
  * \p flags can have the \c MONO_DL_LOCAL bit set to avoid exporting symbols
  * from the module to the shared namespace. The \c MONO_DL_LAZY bit can be set
- * to lazily load the symbols instead of resolving everithing at load time.
+ * to lazily load the symbols instead of resolving everything at load time.
  * \p error_msg points to a string where an error message will be stored in
  * case of failure.   The error must be released with \c g_free.
  * \returns a \c MonoDl pointer on success, NULL on failure.
@@ -211,7 +211,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
  * \p flags can have the \c MONO_DL_GLOBAL bit set to export symbols
  * from the module to the shared namespace, the MONO_DL_LOCAL bit set to prevent that,
  * and in the case of both being set MONO_DL_LOCAL wins out. The \c MONO_DL_LAZY bit 
- * can be set to lazily load the symbols instead of resolving everithing at load time.
+ * can be set to lazily load the symbols instead of resolving everything at load time.
  * \p error_msg points to a string where an error message will be stored in
  * case of failure.   The error must be released with \c g_free.
  * \returns a \c MonoDl pointer on success, NULL on failure.
