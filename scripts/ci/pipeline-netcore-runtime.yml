@@ -262,6 +262,24 @@ stages:
           env:
             CHERE_INVOKING: yes
 
+        - script: |
+            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore update-tests-corefx"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
+            %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin USE_TIMEOUT=1 make -C netcore run-tests-corefx"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
+          displayName: 'Download and Run CoreFX Tests'
+          env:
+            CHERE_INVOKING: yes
+          timeoutInMinutes: 90
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
+
+        - task: PublishTestResults@2
+          inputs:
+            testRunTitle: $(poolname)
+            testResultsFormat: 'XUnit'
+            testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
+          condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'public'))
+
         - powershell: eng\common\build.ps1 -ci -restore -publish -configuration $(_BuildConfig) /p:DotNetPublishUsingPipelines=true /p:DotNetPublishToBlobFeed=true /p:DotNetPublishBlobFeedUrl=$(_DotNetFeedUrl) /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1) /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) -projects $(Build.SourcesDirectory)\eng\empty.csproj
           displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
