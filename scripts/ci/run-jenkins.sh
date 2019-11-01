@@ -327,25 +327,30 @@ fi
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
         echo "ENABLE_WASM=1" > sdks/Make.config
-        echo "ENABLE_WINDOWS=1" >> sdks/Make.config
+
+        if [[ ${CI_TAGS} != *'osx-amd64'* ]]; then
+            echo "ENABLE_WINDOWS=1" >> sdks/Make.config
+            echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+        fi
+
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
-        echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+
         echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
 
-	   export aot_test_suites="System.Core"
-	   export mixed_test_suites="System.Core"
-	   export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
+        export aot_test_suites="System.Core"
+        export mixed_test_suites="System.Core"
+        export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
 
-	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
+        ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
-	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
+        ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
+        ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
+        ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
@@ -369,7 +374,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
             ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
-	   exit 0
+        exit 0
 fi
 
 
