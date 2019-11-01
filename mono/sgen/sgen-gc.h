@@ -738,9 +738,6 @@ typedef struct _SgenGCInfo {
 } SgenGCInfo;
 
 extern SgenGCInfo sgen_gc_info;
-SgenGCInfo sgen_gc_info;
-
-void initialize_sgen_gc_info(void);
 
 SgenRememberedSet *sgen_get_remset (void);
 

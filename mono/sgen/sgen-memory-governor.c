@@ -74,6 +74,8 @@ static mword last_used_slots_size = 0;
 
 static mword sgen_memgov_available_free_space (void);
 
+/*Used for GC.GetGCMemoryInfo */
+SgenGCInfo sgen_gc_info;
 
 /* GC trigger heuristics. */
 
