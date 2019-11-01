@@ -1859,11 +1859,11 @@ namespace System
         {
             public Enum.EnumInfo EnumInfo;
             public TypeCode TypeCode;
-			// this is the displayed form: special characters
-			// ,+*&*[]\ in the identifier portions of the names
-			// have been escaped with a leading backslash (\)
-			public string full_name;
-			public RuntimeConstructorInfo default_ctor;
+            // this is the displayed form: special characters
+            // ,+*&*[]\ in the identifier portions of the names
+            // have been escaped with a leading backslash (\)
+            public string full_name;
+            public RuntimeConstructorInfo default_ctor;
         }
 
 
