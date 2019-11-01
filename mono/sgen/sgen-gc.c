@@ -434,6 +434,34 @@ SgenMinorCollector sgen_minor_collector;
 
 static SgenRememberedSet remset;
 
+#ifdef MONO_ATOMIC_USES_LOCK
+#include <pthread.h>
+static pthread_mutex_t sgen_atomic_spin_lock G_GNUC_UNUSED = PTHREAD_MUTEX_INITIALIZER;
+
+static gint64
+mono_sgen_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
+{
+	gint64 old;
+	int ret;
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock, (void *)&sgen_atomic_spin_lock);
+	ret = pthread_mutex_lock(&sgen_atomic_spin_lock);
+	g_assert (ret == 0);
+
+	old= *dest;
+	if(old==comp) {
+		*dest=exch;
+	}
+
+	ret = pthread_mutex_unlock(&sgen_atomic_spin_lock);
+	g_assert (ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(old);
+}
+#endif
+
 /*
  * The gray queue a worker job must use.  If we're not parallel or
  * concurrent, we use the main gray queue.
@@ -1448,7 +1476,7 @@ job_scan_major_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (btv);
 
 	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
-	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_major_blocks, elapsed_time);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_major_blocks, elapsed_time);
 
 	if (worker_data_untyped)
 		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
@@ -1467,7 +1495,7 @@ job_scan_los_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (btv);
 
 	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
-	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, elapsed_time);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, elapsed_time);
 
 	if (worker_data_untyped)
 		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
@@ -1487,7 +1515,7 @@ job_scan_major_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJo
 	SGEN_TV_GETTIME (btv);
 
 	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
-	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, time_major_scan_mod_union_blocks);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, time_major_scan_mod_union_blocks);
 
 	if (worker_data_untyped)
 		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
@@ -1507,7 +1535,7 @@ job_scan_los_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJob 
 	SGEN_TV_GETTIME (btv);
 
 	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
-	mono_atomic_add_i64 ((volatile gint64 *)&time_minor_scan_los, time_major_scan_mod_union_los);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, time_major_scan_mod_union_los);
 
 	if (worker_data_untyped)
 		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
