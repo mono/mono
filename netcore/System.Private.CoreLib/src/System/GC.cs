@@ -239,7 +239,7 @@ namespace System
 
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern GCMemoryInfo _GetGCMemoryInfo (out long highMemoryLoadThresholdBytes,
+		static extern GCMemoryInfo _GetGCMemoryInfo (out long highMemoryLoadThresholdBytes,
 														     out long memoryLoadBytes,
 															 out long totalAvailableMemoryBytes,
 															 out long heapSizeBytes,
