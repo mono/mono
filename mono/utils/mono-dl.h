@@ -5,7 +5,6 @@
 #ifndef __MONO_UTILS_DL_H__
 #define __MONO_UTILS_DL_H__
 
-#include "mono/utils/mono-publib.h"
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-dl-fallback.h"
 
