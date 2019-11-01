@@ -343,7 +343,7 @@ mono_ios_runtime_init (void)
 // See in XI runtime/xamarin-support.m
 
 void*
-xamarin_timezone_get_data (const char *name, unsigned long *size)
+xamarin_timezone_get_data (const char *name, uint32_t *size)
 {
 	NSTimeZone *tz = nil;
 	if (name) {
@@ -372,13 +372,13 @@ xamarin_timezone_get_local_name ()
 }
 
 char**
-xamarin_timezone_get_names (unsigned long *count)
+xamarin_timezone_get_names (uint32_t *count)
 {
 	// COOP: no managed memory access: any mode.
 	NSArray *array = [NSTimeZone knownTimeZoneNames];
 	*count = array.count;
 	char** result = (char**) malloc (sizeof (char*) * (*count));
-	for (unsigned long i = 0; i < *count; i++) {
+	for (uint32_t i = 0; i < *count; i++) {
 		NSString *s = [array objectAtIndex: i];
 		result [i] = strdup (s.UTF8String);
 	}
