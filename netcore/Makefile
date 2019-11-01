@@ -19,7 +19,7 @@ ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
 PLATFORM_AOT_PREFIX :=
 NETCORESDK_EXT = zip
-UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
+UNZIPCMD = powershell -ExecutionPolicy Bypass -Command Expand-Archive -DestinationPath . -Path
 XUNIT_FLAGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
 TESTS_PLATFORM = Windows_NT.x64
 ON_RUNTIME_EXTRACT = chmod -R 755 {host,shared,./dotnet}
