@@ -158,8 +158,8 @@ runtime:
 
 link-mono: $(SHAREDRUNTIME)/.stamp-link-mono
 
-$(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb
-	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
+$(SHAREDRUNTIME)/.stamp-link-mono: ../mono/mini/.libs/$(PLATFORM_AOT_PREFIX)monosgen-2.0$(PLATFORM_AOT_SUFFIX) System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb
+	cp ../mono/mini/.libs/$(PLATFORM_AOT_PREFIX)monosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(SHAREDRUNTIME)
 	cp System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.pdb $(SHAREDRUNTIME)
 	touch $@
