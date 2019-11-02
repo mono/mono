@@ -1213,7 +1213,7 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 # use these C99 print macros in the command line, since glib may not win first inttypes include
 #CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
 CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
-CXXFLAGS_COMMON="$CXXFLAGS_COMMON -D__STDC_LIMIT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS"
+CXXFLAGS_COMMON="$CXXFLAGS_COMMON -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS"
 # "c++0x" instead of C++11, for compat with Centos6/gcc4.4
 
 # -stdlib=libc++ is needed by clang for iOS 6.0 (-miphoneos-version-min=6.0)
