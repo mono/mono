@@ -1878,21 +1878,19 @@ namespace System
 			var cache = Cache;
 			RuntimeConstructorInfo ctor = null;
 
-			if (cache.default_ctor_cached) {
+			if (Volatile.Read (ref cache.default_ctor_cached))
 				return cache.default_ctor;
-			}
 
 			var ctors = GetConstructorCandidates (
 				null,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly, CallingConventions.Any,
 				Array.Empty<Type> (), false);
 
-			if (ctors.Count == 1) {
+			if (ctors.Count == 1)
 				cache.default_ctor = ctor = (RuntimeConstructorInfo) ctors [0];						
-			}
 
 			// Note down even if we found no constructors
-			cache.default_ctor_cached = true;
+			Volatile.Write (ref cache.default_ctor_cached, true);
 
 			return ctor;
 		}
