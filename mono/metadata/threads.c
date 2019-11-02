@@ -5659,7 +5659,8 @@ mono_thread_is_foreign (MonoThread *thread)
 static void
 threads_native_thread_join_lock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	/* This is a bit ugly, but handles platforms with small pthread_t. */
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	if (thread != pthread_self ()) {
 		MONO_ENTER_GC_SAFE;
 		/* This shouldn't block */
@@ -5672,7 +5673,7 @@ threads_native_thread_join_lock (gpointer tid, gpointer value)
 static void
 threads_native_thread_join_nolock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	MONO_ENTER_GC_SAFE;
 	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
