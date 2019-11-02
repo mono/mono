@@ -12,12 +12,20 @@ namespace System {
 	public partial class TimeZoneInfo {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static string xamarin_timezone_get_local_name ();
+		extern static IntPtr mono_timezone_get_local_name ();
+
+		static string GetMonoWasmLocalName ()
+		{
+			IntPtr localNamePtr = mono_timezone_get_local_name ();
+			var localName = Marshal.PtrToStringAnsi (localNamePtr);
+			Marshal.FreeHGlobal (localNamePtr);
+			return localName;
+		}
 
 		static TimeZoneInfo CreateLocal ()
 		{
 			using (Stream stream = GetMonoWasmData (null)) {
-				return BuildFromStream (xamarin_timezone_get_local_name (), stream);
+				return BuildFromStream (GetMonoWasmLocalName (), stream);
 			}
 		}
 
@@ -40,12 +48,12 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static IntPtr xamarin_timezone_get_names (ref int count);
+		extern static IntPtr mono_timezone_get_names (ref int count);
 
 		static ReadOnlyCollection<string> GetMonoWasmNames ()
 		{
 			int count = 0;
-			IntPtr array = xamarin_timezone_get_names (ref count);
+			IntPtr array = mono_timezone_get_names (ref count);
 			if (count > 0)
 			{
 				string [] names = new string [count];
@@ -62,19 +70,19 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static IntPtr xamarin_timezone_get_data (string name, ref int size);
+		unsafe extern static IntPtr mono_timezone_get_data (char* name, int name_length, ref int size);
 
-		static Stream GetMonoWasmData (string name, bool throw_on_error = true)
+		unsafe static Stream GetMonoWasmData (string name, bool throw_on_error = true)
 		{ 
 			int size = 0;
-			IntPtr data = xamarin_timezone_get_data (name, ref size);
-			if (size <= 0) {
-				if (throw_on_error)
-					throw new TimeZoneNotFoundException (name);
-				return null;
-			}
-
-			unsafe {
+			fixed (char* fixed_name = name)
+			{
+				IntPtr data = mono_timezone_get_data (fixed_name, name?.Length ?? 0, ref size);
+				if (size <= 0) {
+					if (throw_on_error)
+						throw new TimeZoneNotFoundException (name);
+					return null;
+				}
 				return new HGlobalUnmanagedMemoryStream ((byte*) data, size, data);
 			}
 		}

@@ -1106,9 +1106,9 @@ HANDLES(WAITH_2, "Wait_internal", ves_icall_System_Threading_WaitHandle_Wait_int
 
 #if defined(TARGET_WASM)
 ICALL_TYPE(TZINFO, "System.TimeZoneInfo", TZINFO_1)
-NOHANDLES(ICALL(TZINFO_1, "xamarin_timezone_get_data", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_data))
-NOHANDLES(ICALL(TZINFO_2, "xamarin_timezone_get_local_name", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_local_name))
-NOHANDLES(ICALL(TZINFO_3, "xamarin_timezone_get_names", ves_icall_System_TimeZoneInfo_xamarin_timezone_get_names))
+NOHANDLES(ICALL(TZINFO_1, "mono_timezone_get_data", ves_icall_System_TimeZoneInfo_mono_timezone_get_data))
+NOHANDLES(ICALL(TZINFO_2, "mono_timezone_get_local_name", ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name))
+NOHANDLES(ICALL(TZINFO_3, "mono_timezone_get_names", ves_icall_System_TimeZoneInfo_mono_timezone_get_names))
 #endif
 
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)

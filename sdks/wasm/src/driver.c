@@ -47,10 +47,6 @@ static MonoClass* datetimeoffset_class;
 
 int mono_wasm_enable_gc;
 
-MONO_API void*  xamarin_timezone_get_data (MonoString* name, int *size);
-MONO_API char**  xamarin_timezone_get_names (int *count);
-MONO_API MonoString*  xamarin_timezone_get_local_name (void);
-
 /* Not part of public headers */
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -601,7 +597,7 @@ mono_wasm_unbox_float (MonoObject *obj)
 {
 	if (!obj)
 		return 0;
-	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+	MonoType *type = mono_class_get_type (mono_object_get_class (obj));
 
 	void *ptr = mono_object_unbox (obj);
 	switch (mono_type_get_type (type)) {
@@ -686,14 +682,12 @@ mono_get_zone_Info_assembly (void)
 {
 	static MonoAssembly* zoneInfoAssembly;
 
-	if (!try_load_zone_info) 
-	{
+	if (!try_load_zone_info) {
 		fprintf (stdout, "%s\n", "Locating ZoneInfo assembly.");
 		// try to open the ZoneInfo assembly
 		zoneInfoAssembly = mono_domain_assembly_open (root_domain, "WebAssembly.ZoneInfo");
 		// if not open then try to load it.
-		if (!zoneInfoAssembly) 
-		{
+		if (!zoneInfoAssembly) {
 			MonoImageOpenStatus status;
 			MonoAssemblyName* aname = mono_assembly_name_new ("WebAssembly.ZoneInfo");
 			zoneInfoAssembly = mono_assembly_load (aname, NULL, &status);
@@ -720,42 +714,6 @@ mono_get_zone_Info_class (void)
 	return klass;
 }
 
-void*
-xamarin_timezone_get_data (MonoString* name, int *size)
-{
-	//char *native_name = mono_string_to_utf8 (name);
-	//fprintf (stdout, "Called mono_timezone_get_data for %s\n", native_name);
-	//mono_free (native_name);
-	*size = 0;
-
-	MonoClass *zoneInfoClass = mono_get_zone_Info_class (); 
-	if (zoneInfoClass)
-	{
-	    static MonoMethod* method;
-		MonoException* exc = NULL;
-
-		if (!method)
-		{
-			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_data", -1);
-		}
-		
-		void* args[] = {name, size};
-		if (!name)
-			args[0] = xamarin_timezone_get_local_name ();
-
-		MonoObject* ret = mono_runtime_invoke (method, NULL, args, (MonoObject**)&exc);
-		if (!size)
-			return NULL;
-
-		MonoArray* buffer = (MonoArray*)ret;
-		void* result = malloc (*size);
-		memcpy(result, mono_array_addr_with_size (buffer, sizeof(char), 0), *size);
-		return result;
-	}
-
-	return NULL;
-}
-
 // Returns the local timezone default is UTC.
 EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 	var res = "UTC";
@@ -774,9 +732,17 @@ EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 	}
 })
 
+void*
+ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void)
+{
+	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
+	MonoString *name = mono_string_from_utf16 (tzd_local_name);
+	free (tzd_local_name);
+	return strdup (mono_string_to_utf8 (name));
+}
 
 MonoString*
-xamarin_timezone_get_local_name (void)
+mono_timezone_get_local_name (void)
 {
 	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
 	MonoString *name = mono_string_from_utf16 (tzd_local_name);
@@ -784,35 +750,66 @@ xamarin_timezone_get_local_name (void)
 	return name;
 }
 
-
-char**
-xamarin_timezone_get_names (int *count)
+void*
+ves_icall_System_TimeZoneInfo_mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 {
-	*count = 0;
 
+	MonoString *zi_name;
+	if (!name)
+		zi_name = mono_timezone_get_local_name ();
+	else
+		zi_name = mono_string_new_utf16(root_domain, name, name_length);
+	// char *native_name = mono_string_to_utf8(zi_name);
+	// fprintf (stdout, "Called mono_timezone_get_data for %s - %i\n", native_name, name_length);
+	// mono_free (native_name);
+	*size = 0;
+	
 	MonoClass *zoneInfoClass = mono_get_zone_Info_class (); 
 	if (zoneInfoClass)
 	{
-		static MonoMethod* method;
+	    static MonoMethod* method;
 		MonoException* exc = NULL;
 
-		if (!method)
-		{
-			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_names", -1);
+		if (!method) {
+			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_data", -1);
 		}
+		
+		void* args[] = {zi_name, size};
+		MonoObject* ret = mono_runtime_invoke (method, NULL, args, (MonoObject**)&exc);
+		if (!size)
+			return NULL;
+
+		MonoArray* buffer = (MonoArray*)ret;
+		void* result = malloc (*size);
+		memcpy(result, mono_array_addr_with_size (buffer, sizeof(char), 0), *size);
+		return result;
+	}
+
+	return NULL;
+}
+
+char**
+ves_icall_System_TimeZoneInfo_mono_timezone_get_names (int *count)
+{
+	*count = 0;
+	
+	MonoClass *zoneInfoClass = mono_get_zone_Info_class (); 
+	if (zoneInfoClass) {
+		static MonoMethod* method;
+		MonoException* exc = NULL;
+		if (!method)
+			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_names", -1);
 		
 		void* args[] = {count};
 		MonoObject* ret = mono_runtime_invoke (method, NULL, args, (MonoObject**)&exc);
 		if (!*count)
 			return NULL;
 
-		if(!exc)
-		{
+		if(!exc) {
 			MonoArray* names =(MonoArray*)ret;
 			*count = mono_array_length (names);
 			char** result = (char**) malloc (sizeof (char*) * (*count));
-			for (unsigned int i = 0; i < *count; i++)
-			{
+			for (unsigned int i = 0; i < *count; i++) {
 				MonoString* s = mono_array_get(names, MonoString*, i);
 				result [i] = strdup (mono_string_to_utf8 (s));
 			}
