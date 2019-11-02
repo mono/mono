@@ -57,17 +57,17 @@ parallel (
         }
     },
 */
-    "iOS (Xcode 11.2 beta2)": {
+    "iOS (Xcode 11.2)": {
         throttle(['provisions-ios-toolchain']) {
-            node ("xcode112b2") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode112b2")
+            node ("xcode112") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode112")
             }
         }
     },
-    "Mac (Xcode 11.2 beta2)": {
+    "Mac (Xcode 11.2)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode112b2") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode112b2")
+            node ("xcode112") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode112")
             }
         }
     },
