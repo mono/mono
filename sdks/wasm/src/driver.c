@@ -733,7 +733,7 @@ EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 })
 
 void*
-ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void)
+mono_timezone_get_local_name (void)
 {
 	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
 	MonoString *name = mono_string_from_utf16 (tzd_local_name);
@@ -742,7 +742,7 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void)
 }
 
 MonoString*
-mono_timezone_get_local_name (void)
+mono_wasm_timezone_get_local_name_string (void)
 {
 	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
 	MonoString *name = mono_string_from_utf16 (tzd_local_name);
@@ -751,12 +751,12 @@ mono_timezone_get_local_name (void)
 }
 
 void*
-ves_icall_System_TimeZoneInfo_mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
+mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 {
 
 	MonoString *zi_name;
 	if (!name)
-		zi_name = mono_timezone_get_local_name ();
+		zi_name = mono_wasm_timezone_get_local_name_string ();
 	else
 		zi_name = mono_string_new_utf16(root_domain, name, name_length);
 	// char *native_name = mono_string_to_utf8(zi_name);
@@ -789,7 +789,7 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_data (mono_unichar2 *name, int n
 }
 
 char**
-ves_icall_System_TimeZoneInfo_mono_timezone_get_names (int *count)
+mono_timezone_get_names (int *count)
 {
 	*count = 0;
 	

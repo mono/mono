@@ -8126,6 +8126,43 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 
 #endif
 
+#if defined(TARGET_WASM)
+
+G_EXTERN_C gpointer mono_timezone_get_data (const gunichar2* name, gint32 name_length, gint32 *size);
+G_EXTERN_C gpointer mono_timezone_get_local_name (void);
+G_EXTERN_C char** mono_timezone_get_names (gint32 *count);
+
+gpointer 
+ves_icall_System_TimeZoneInfo_mono_timezone_get_data (const gunichar2* name, gint32 name_length, gint32 *size)
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return mono_timezone_get_data (name, name_length, size);
+#endif
+}
+
+gpointer
+ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void)
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return mono_timezone_get_local_name ();
+#endif
+}
+
+char**
+ves_icall_System_TimeZoneInfo_mono_timezone_get_names (gint32 *count)
+{
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
+	return mono_timezone_get_names (count);
+#endif
+}
+#endif
+
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
 ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, gint32 path_name_length, guint64 *free_bytes_avail,
