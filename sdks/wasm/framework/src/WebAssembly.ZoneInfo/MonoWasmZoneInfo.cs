@@ -29,7 +29,7 @@ namespace WebAssembly.ZoneInfo
 			count = zoneInfoIDS.Count;
 			return zoneInfoIDS.ToArray();
 		}
-		public static byte[] GetEmbeddedResource(String filename)
+		private static byte[] GetEmbeddedResource(String filename)
 		{
 			var assembly = typeof(MonoWasmZoneInfo).Assembly;
 			var dataResourceName = $"{zoneInfoPrefix}{filename.Replace('/', '.')}";
