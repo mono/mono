@@ -25,6 +25,7 @@
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-counters.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef HAVE_ALLOCA_H
 #   include <alloca.h>
@@ -378,7 +379,10 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 	imethod->param_count = sig->param_count;
 	imethod->hasthis = sig->hasthis;
 	imethod->vararg = sig->call_convention == MONO_CALL_VARARG;
-	imethod->rtype = mini_get_underlying_type (sig->ret);
+	if (imethod->method->string_ctor)
+		imethod->rtype = m_class_get_byval_arg (mono_defaults.string_class);
+	else
+		imethod->rtype = mini_get_underlying_type (sig->ret);
 	imethod->param_types = (MonoType**)mono_domain_alloc0 (domain, sizeof (MonoType*) * sig->param_count);
 	for (i = 0; i < sig->param_count; ++i)
 		imethod->param_types [i] = mini_get_underlying_type (sig->params [i]);
@@ -2105,7 +2109,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	 * Call JITted code through a gsharedvt_out wrapper. These wrappers receive every argument
 	 * by ref and return a return value using an explicit return value argument.
 	 */
-	if (!rmethod->jit_wrapper) {
+	if (G_UNLIKELY (!rmethod->jit_wrapper)) {
 		MonoMethod *method = rmethod->method;
 
 		sig = mono_method_signature_internal (method);
@@ -2538,6 +2542,12 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 
 	method = rmethod->method;
 	sig = mono_method_signature_internal (method);
+	if (method->string_ctor) {
+		MonoMethodSignature *newsig = g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		memcpy (newsig, sig, mono_metadata_signature_size (sig));
+		newsig->ret = m_class_get_byval_arg (mono_defaults.string_class);
+		sig = newsig;
+	}
 
 	args = (stackval*)alloca (sizeof (stackval) * (sig->param_count + (sig->hasthis ? 1 : 0)));
 
@@ -2719,6 +2729,12 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	}
 
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
+	if (method->string_ctor) {
+		MonoMethodSignature *newsig = g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		memcpy (newsig, sig, mono_metadata_signature_size (sig));
+		newsig->ret = m_class_get_byval_arg (mono_defaults.string_class);
+		sig = newsig;
+	}
 
 	if (mono_llvm_only)
 		/* The caller should call interp_create_method_pointer_llvmonly */
@@ -2927,7 +2943,13 @@ static MONO_NEVER_INLINE gboolean
 mono_interp_isinst (MonoObject* object, MonoClass* klass)
 {
 	ERROR_DECL (error);
-	const gboolean isinst = mono_object_isinst_checked (object, klass, error) != NULL;
+	gboolean isinst;
+	MonoClass *obj_class = mono_object_class (object);
+	// mono_class_is_assignable_from_checked can't handle remoting casts
+	if (mono_class_is_transparent_proxy (obj_class))
+		isinst = mono_object_isinst_checked (object, klass, error) != NULL;
+	else
+		mono_class_is_assignable_from_checked (klass, obj_class, &isinst, error);
 	mono_error_cleanup (error); // FIXME: do not swallow the error
 	return isinst;
 }
@@ -3184,17 +3206,18 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
 }
 
 static MONO_ALWAYS_INLINE stackval*
-mono_interp_call (InterpFrame *frame, ThreadContext *context, InterpFrame *child_frame, const guint16 *ip, stackval *sp, guchar *vt_sp, gboolean is_virtual)
+mono_interp_call (InterpFrame *frame, ThreadContext *context, InterpFrame *child_frame, const guint16 *ip, stackval *sp, guchar *vt_sp, gboolean is_virtual, gboolean is_void)
 {
 	frame->ip = ip;
 
 	child_frame->imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-	ip += 2;
-	sp->data.p = vt_sp;
-	child_frame->retval = sp;
+	if (!is_void) {
+		sp->data.p = vt_sp;
+		child_frame->retval = sp;
+	}
 
 	/* decrement by the actual number of args */
-	sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis;
+	sp -= ip [2];
 
 	if (is_virtual) {
 		MonoObject *this_arg = (MonoObject*)sp->data.p;
@@ -3299,8 +3322,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		sp++;
 	}
 
+#ifdef ENABLE_EXPERIMENT_TIERED
+	mini_tiered_inc (frame->imethod->domain, frame->imethod->method, &frame->imethod->tiered_counter, 0);
+#endif
 	//g_print ("(%p) Call %s\n", mono_thread_internal_current (), mono_method_get_full_name (frame->imethod->method));
 
+#if defined(ENABLE_HYBRID_SUSPEND) || defined(ENABLE_COOP_SUSPEND)
+	mono_threads_safepoint ();
+#endif
 	/*
 	 * using while (ip < end) may result in a 15% performance drop, 
 	 * but it may be useful for debug
@@ -3619,7 +3648,12 @@ main_loop:
 			goto common_vcall;
 		}
 		MINT_IN_CASE(MINT_CALL)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, FALSE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, FALSE, FALSE);
+#ifdef ENABLE_EXPERIMENT_TIERED
+			ip += 5;
+#else
+			ip += 3;
+#endif
 common_call:
 			child_frame.stack_args = sp;
 			interp_exec_method (&child_frame, context, error);
@@ -3632,18 +3666,25 @@ vcall_return:
 			MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_VCALL)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, FALSE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, FALSE, TRUE);
+#ifdef ENABLE_EXPERIMENT_TIERED
+			ip += 5;
+#else
+			ip += 3;
+#endif
 common_vcall:
 			child_frame.stack_args = sp;
 			interp_exec_method (&child_frame, context, error);
 			goto vcall_return;
 
 		MINT_IN_CASE(MINT_CALLVIRT)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, TRUE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, TRUE, FALSE);
+			ip += 3;
 			goto common_call;
 
 		MINT_IN_CASE(MINT_VCALLVIRT)
-			sp = mono_interp_call (frame, context, &child_frame, (ip += 2) - 2, sp, vt_sp, TRUE);
+			sp = mono_interp_call (frame, context, &child_frame, ip, sp, vt_sp, TRUE, TRUE);
+			ip += 3;
 			goto common_vcall;
 
 		MINT_IN_CASE(MINT_JIT_CALL) {
@@ -3662,6 +3703,29 @@ common_vcall:
 			if (rmethod->rtype->type != MONO_TYPE_VOID)
 				sp++;
 
+			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_JIT_CALL2) {
+#ifdef ENABLE_EXPERIMENT_TIERED
+			InterpMethod *rmethod = (InterpMethod *) READ64 (ip + 1);
+
+			MONO_API_ERROR_INIT (error);
+			frame->ip = ip;
+
+			sp = do_jit_call (sp, vt_sp, context, frame, rmethod, error);
+			if (!is_ok (error)) {
+				MonoException *ex = mono_error_convert_to_exception (error);
+				THROW_EX (ex, ip);
+			}
+			ip += 5;
+
+			CHECK_RESUME_STATE (context);
+
+			if (rmethod->rtype->type != MONO_TYPE_VOID)
+				sp++;
+#else
+			g_error ("MINT_JIT_ICALL2 shouldn't be used");
+#endif
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALLRUN) {
@@ -3709,24 +3773,45 @@ common_vcall:
 				g_warning_d ("ret.vt: more values on stack: %d", sp - frame->stack);
 			goto exit_frame;
 		}
-		MINT_IN_CASE(MINT_BR_S)
-			ip += (short) *(ip + 1);
+
+#ifdef ENABLE_EXPERIMENT_TIERED
+#define BACK_BRANCH_PROFILE(offset) do { \
+		if (offset < 0) \
+			mini_tiered_inc (frame->imethod->domain, frame->imethod->method, &frame->imethod->tiered_counter, 0); \
+	} while (0);
+#else
+#define BACK_BRANCH_PROFILE(offset)
+#endif
+
+		MINT_IN_CASE(MINT_BR_S) {
+			short br_offset = (short) *(ip + 1);
+			BACK_BRANCH_PROFILE (br_offset);
+			ip += br_offset;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_BR)
-			ip += (gint32) READ32(ip + 1);
+		}
+		MINT_IN_CASE(MINT_BR) {
+			gint32 br_offset = (gint32) READ32(ip + 1);
+			BACK_BRANCH_PROFILE (br_offset);
+			ip += br_offset;
 			MINT_IN_BREAK;
+		}
+
 #define ZEROP_S(datamem, op) \
 	--sp; \
-	if (sp->data.datamem op 0) \
-		ip += (gint16)ip [1]; \
-	else \
+	if (sp->data.datamem op 0) { \
+		gint16 br_offset = (gint16) ip [1]; \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 2;
 
 #define ZEROP(datamem, op) \
 	--sp; \
-	if (sp->data.datamem op 0) \
-		ip += (gint32)READ32(ip + 1); \
-	else \
+	if (sp->data.datamem op 0) { \
+		gint32 br_offset = (gint32)READ32(ip + 1); \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 3;
 
 		MINT_IN_CASE(MINT_BRFALSE_I4_S)
@@ -3779,18 +3864,22 @@ common_vcall:
 			MINT_IN_BREAK;
 #define CONDBR_S(cond) \
 	sp -= 2; \
-	if (cond) \
-		ip += (gint16)ip [1]; \
-	else \
+	if (cond) { \
+		gint16 br_offset = (gint16) ip [1]; \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 2;
 #define BRELOP_S(datamem, op) \
 	CONDBR_S(sp[0].data.datamem op sp[1].data.datamem)
 
 #define CONDBR(cond) \
 	sp -= 2; \
-	if (cond) \
-		ip += (gint32)READ32(ip + 1); \
-	else \
+	if (cond) { \
+		gint32 br_offset = (gint32) READ32 (ip + 1); \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 3;
 
 #define BRELOP(datamem, op) \
@@ -3943,16 +4032,20 @@ common_vcall:
 
 #define BRELOP_S_CAST(datamem, op, type) \
 	sp -= 2; \
-	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) \
-		ip += (gint16)ip [1]; \
-	else \
+	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) { \
+		gint16 br_offset = (gint16) ip [1]; \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 2;
 
 #define BRELOP_CAST(datamem, op, type) \
 	sp -= 2; \
-	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) \
-		ip += (gint32)READ32(ip + 1); \
-	else \
+	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) { \
+		gint32 br_offset = (gint32) ip [1]; \
+		BACK_BRANCH_PROFILE (br_offset); \
+		ip += br_offset; \
+	} else \
 		ip += 3;
 
 		MINT_IN_CASE(MINT_BGE_UN_I4_S)
@@ -5575,81 +5668,58 @@ common_vcall:
 			ip += 3;
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_STELEM_I)  /* fall through */
-		MINT_IN_CASE(MINT_STELEM_I1) /* fall through */ 
-		MINT_IN_CASE(MINT_STELEM_U1) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_I2) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_U2) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_I4) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_I8) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_R4) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_R8) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_REF) /* fall through */
+#define STELEM_PROLOG(o, aindex) do { \
+	sp -= 3; \
+	o = (MonoArray*)sp [0].data.p; \
+	NULL_CHECK (o); \
+	aindex = sp [1].data.i; \
+	if (aindex >= mono_array_length_internal (o)) \
+		THROW_EX (mono_get_exception_index_out_of_range (), ip); \
+} while (0)
+
+#define STELEM(datamem,elemtype) do { \
+	MonoArray *o; \
+	gint32 aindex; \
+	STELEM_PROLOG(o, aindex); \
+	mono_array_set_fast (o, elemtype, aindex, sp [2].data.datamem); \
+	ip++; \
+} while (0)
+		MINT_IN_CASE(MINT_STELEM_I1) STELEM(i, gint8); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_U1) STELEM(i, guint8); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_I2) STELEM(i, gint16); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_U2) STELEM(i, guint16); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_I4) STELEM(i, gint32); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_I8) STELEM(l, gint64); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_I)  STELEM(nati, mono_i); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_R4) STELEM(f_r4, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_R8) STELEM(f, double); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STELEM_REF) {
+			MonoArray *o;
+			gint32 aindex;
+			STELEM_PROLOG(o, aindex);
+
+			if (sp [2].data.o) {
+				gboolean isinst = mono_interp_isinst (sp [2].data.o, m_class_get_element_class (mono_object_class (o)));
+				if (!isinst)
+					THROW_EX (mono_get_exception_array_type_mismatch (), ip);
+			}
+			mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
+			ip++;
+			MINT_IN_BREAK;
+		}
+
 		MINT_IN_CASE(MINT_STELEM_VT) {
-			mono_u aindex;
+			MonoArray *o;
+			gint32 aindex;
+			STELEM_PROLOG(o, aindex);
 
-			sp -= 3;
+			MonoClass *klass_vt = (MonoClass*)frame->imethod->data_items [ip [1]];
+			int const i32 = READ32 (ip + 2);
+			char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 
-			MonoObject* const o = sp [0].data.o;
-			NULL_CHECK (o);
-
-			aindex = sp [1].data.i;
-			if (aindex >= mono_array_length_internal ((MonoArray *)o))
-				THROW_EX (mono_get_exception_index_out_of_range (), ip);
-
-			switch (*ip) {
-			case MINT_STELEM_I:
-				mono_array_set_fast ((MonoArray *)o, mono_i, aindex, sp [2].data.nati);
-				break;
-			case MINT_STELEM_I1:
-				mono_array_set_fast ((MonoArray *)o, gint8, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_U1:
-				mono_array_set_fast ((MonoArray *) o, guint8, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I2:
-				mono_array_set_fast ((MonoArray *)o, gint16, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_U2:
-				mono_array_set_fast ((MonoArray *)o, guint16, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I4:
-				mono_array_set_fast ((MonoArray *)o, gint32, aindex, sp [2].data.i);
-				break;
-			case MINT_STELEM_I8:
-				mono_array_set_fast ((MonoArray *)o, gint64, aindex, sp [2].data.l);
-				break;
-			case MINT_STELEM_R4:
-				mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f_r4);
-				break;
-			case MINT_STELEM_R8:
-				mono_array_set_fast ((MonoArray *)o, double, aindex, sp [2].data.f);
-				break;
-			case MINT_STELEM_REF: {
-				if (sp [2].data.p) {
-					MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.o, m_class_get_element_class (mono_object_class (o)), error);
-					mono_interp_error_cleanup (error); /* FIXME: don't swallow the error */
-					if (!isinst_obj)
-						THROW_EX (mono_get_exception_array_type_mismatch (), ip);
-				}
-				mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
-				break;
-			}
-			case MINT_STELEM_VT: {
-				MonoClass *klass_vt = (MonoClass*)frame->imethod->data_items [ip [1]];
-				int const i32 = READ32 (ip + 2);
-				char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
-
-				mono_value_copy_internal (dst_addr, sp [2].data.vt, klass_vt);
-				vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-				ip += 3;
-				break;
-			}
-			default:
-				ves_abort();
-			}
-
-			++ip;
+			mono_value_copy_internal (dst_addr, sp [2].data.vt, klass_vt);
+			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CONV_OVF_I4_U4)
@@ -6347,41 +6417,32 @@ common_vcall:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
+
 		MINT_IN_CASE(MINT_PROF_ENTER) {
-			ip += 1;
+			guint16 flag = ip [1];
+			ip += 2;
 
-			if (MONO_PROFILER_ENABLED (method_enter)) {
-				MonoProfilerCallContext *prof_ctx = NULL;
-
-				if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT) {
-					prof_ctx = g_new0 (MonoProfilerCallContext, 1);
-					prof_ctx->interp_frame = frame;
-					prof_ctx->method = frame->imethod->method;
-				}
-
-				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
-
+			if ((flag & TRACING_FLAG) || ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter) &&
+					(frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT))) {
+				MonoProfilerCallContext *prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+				prof_ctx->interp_frame = frame;
+				prof_ctx->method = frame->imethod->method;
+				if (flag & TRACING_FLAG)
+					mono_trace_enter_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
+				if (flag & PROFILING_FLAG)
+					MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
 				g_free (prof_ctx);
+			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, NULL));
 			}
-
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_TRACE_ENTER) {
-			ip += 1;
-
-			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
-
-			mono_trace_enter_method (frame->imethod->method, prof_ctx);
-			MINT_IN_BREAK;
-		}
-
-		MINT_IN_CASE(MINT_TRACE_EXIT)
-		MINT_IN_CASE(MINT_TRACE_EXIT_VOID) {
+		MINT_IN_CASE(MINT_PROF_EXIT)
+		MINT_IN_CASE(MINT_PROF_EXIT_VOID) {
+			guint16 flag = ip [1];
 			// Set retval
-			int const i32 = READ32 (ip + 1);
+			int const i32 = READ32 (ip + 2);
 			if (i32 == -1) {
 			} else if (i32) {
 				sp--;
@@ -6391,12 +6452,27 @@ common_vcall:
 				*frame->retval = *sp;
 			}
 
-			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
+			if ((flag & TRACING_FLAG) || ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_leave) &&
+					(frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT))) {
+				MonoProfilerCallContext *prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+				prof_ctx->interp_frame = frame;
+				prof_ctx->method = frame->imethod->method;
+				if (i32 != -1) {
+					if (i32)
+						prof_ctx->return_value = frame->retval->data.p;
+					else
+						prof_ctx->return_value = frame->retval;
+				}
+				if (flag & TRACING_FLAG)
+					mono_trace_leave_method (frame->imethod->method, frame->imethod->jinfo, prof_ctx);
+				if (flag & PROFILING_FLAG)
+					MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
+				g_free (prof_ctx);
+			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+				MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, NULL));
+			}
 
-			mono_trace_leave_method (frame->imethod->method, prof_ctx);
-			ip += 3;
+			ip += 4;
 			goto exit_frame;
 		}
 
@@ -6690,35 +6766,6 @@ exit_frame:
 
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
-
-	if (!context->has_resume_state && MONO_PROFILER_ENABLED (method_leave) &&
-	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
-		MonoProfilerCallContext *prof_ctx = NULL;
-
-		if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
-			prof_ctx = g_new0 (MonoProfilerCallContext, 1);
-			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
-
-			MonoType *rtype = mono_method_signature_internal (frame->imethod->method)->ret;
-
-			switch (rtype->type) {
-			case MONO_TYPE_VOID:
-				break;
-			case MONO_TYPE_VALUETYPE:
-				prof_ctx->return_value = frame->retval->data.p;
-				break;
-			default:
-				prof_ctx->return_value = frame->retval;
-				break;
-			}
-		}
-
-		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
-
-		g_free (prof_ctx);
-	} else if (context->has_resume_state && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
-		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, mono_gchandle_get_target_internal (context->exc_gchandle)));
 
 	DEBUG_LEAVE ();
 }
@@ -7075,6 +7122,7 @@ register_interp_stats (void)
 {
 	mono_counters_init ();
 	mono_counters_register ("Total transform time", MONO_COUNTER_INTERP | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_interp_stats.transform_time);
+	mono_counters_register ("Methods transformed", MONO_COUNTER_INTERP | MONO_COUNTER_LONG, &mono_interp_stats.methods_transformed);
 	mono_counters_register ("Total cprop time", MONO_COUNTER_INTERP | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_interp_stats.cprop_time);
 	mono_counters_register ("Total super instructions time", MONO_COUNTER_INTERP | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_interp_stats.super_instructions_time);
 	mono_counters_register ("STLOC_NP count", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.stloc_nps);

@@ -246,10 +246,13 @@ stages:
         - script: |
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
             CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl CORLIB_BUILD_FLAGS='-c $(_BuildConfig)'"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             MKDIR mono\mini\.libs\
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             MKDIR artifacts\log\$(_BuildConfig)\
             MKDIR artifacts\SymStore\$(_BuildConfig)\
             MKDIR artifacts\packages\$(_BuildConfig)\Shipping\

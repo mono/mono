@@ -139,6 +139,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t--native-lib=x  Link the native library 'x' into the final executable.");
+		Console.WriteLine ("\t--preload-file=x Preloads the file or directory 'x' into the virtual filesystem.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -234,7 +235,7 @@ class Driver {
 	}
 
 	static void Import (string ra, AssemblyKind kind) {
-		if (!asm_map.Add (ra))
+		if (!asm_map.Add (Path.GetFullPath (ra)))
 			return;
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
@@ -396,6 +397,7 @@ class Driver {
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
 		var native_libs = new List<string> ();
+		var preload_files = new List<string> ();
 		var pinvoke_libs = "";
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
@@ -443,6 +445,7 @@ class Driver {
 				{ "link-descriptor=", s => linkDescriptor = s },
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
 				{ "native-lib=", s => native_libs.Add (s) },
+				{ "preload-file=", s => preload_files.Add (s) },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
 					};
@@ -704,6 +707,19 @@ class Driver {
 		if (!emit_ninja)
 			return 0;
 
+		var filenames = new Dictionary<string, string> ();
+		foreach (var a in assemblies) {
+			var assembly = a.src_path;
+			if (assembly == null)
+				continue;
+			string filename = Path.GetFileName (assembly);
+			if (filenames.ContainsKey (filename)) {
+				Console.WriteLine ("Duplicate input assembly: " + assembly + " " + filenames [filename]);
+				return 1;
+			}
+			filenames [filename] = assembly;
+		}
+
 		if (build_wasm) {
 			if (sdkdir == null) {
 				Console.WriteLine ("The --mono-sdkdir argument is required.");
@@ -760,6 +776,8 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
+		foreach (var pf in preload_files)
+			emcc_flags += "--preload-file " + pf + " ";
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";

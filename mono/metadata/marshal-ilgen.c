@@ -1865,11 +1865,12 @@ gc_safe_transition_builder_cleanup (GCSafeTransitionBuilder *builder)
  * \param method if non-NULL, the pinvoke method to call
  * \param check_exceptions Whenever to check for pending exceptions after the native call
  * \param func_param the function to call is passed as a boxed IntPtr as the first parameter
+ * \param skip_gc_trans Whenever to skip GC transitions
  *
  * generates IL code for the pinvoke wrapper, the generated code calls \p func .
  */
 static void
-emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions, gboolean func_param)
+emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions, gboolean func_param, gboolean skip_gc_trans)
 {
 	EmitMarshalContext m;
 	MonoMethodSignature *csig;
@@ -1884,7 +1885,8 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 	m.sig = sig;
 	m.piinfo = piinfo;
 
-	need_gc_safe = gc_safe_transition_builder_init (&gc_safe_transition_builder, mb, func_param);
+	if (!skip_gc_trans)
+		need_gc_safe = gc_safe_transition_builder_init (&gc_safe_transition_builder, mb, func_param);
 
 	/* we copy the signature, so that we can set pinvoke to 0 */
 	if (func_param) {
@@ -6433,21 +6435,14 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			mono_error_assert_ok (error);
 		}
 
-		// Add a MonoError argument (due to a fragile test external/coreclr/tests/src/CoreMangLib/cti/system/weakreference/weakreferenceisaliveb.exe),
-		// vs. on the native side.
 		// FIXME: The stuff from mono_metadata_signature_dup_internal_with_padding ()
-		call_sig = mono_metadata_signature_alloc (get_method_image (method), csig->param_count + 1);
-		call_sig->param_count = csig->param_count + 1;
+		call_sig = mono_metadata_signature_alloc (get_method_image (method), csig->param_count);
+		call_sig->param_count = csig->param_count;
 		call_sig->ret = csig->ret;
 		call_sig->pinvoke = csig->pinvoke;
 
 		/* TODO support adding wrappers to non-static struct methods */
 		g_assert (!sig->hasthis || !m_class_is_valuetype (mono_method_get_class (method)));
-
-		/* Add MonoError* param */
-		MonoClass * const error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
-		int const error_var = mono_mb_add_local (mb, m_class_get_byval_arg (error_class));
-		call_sig->params [csig->param_count] = mono_class_get_byref_type (error_class);
 
 		handles_locals = g_new0 (IcallHandlesLocal, csig->param_count);
 
@@ -6535,7 +6530,6 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 					g_assert_not_reached ();
 			}
 		}
-		mono_mb_emit_ldloc_addr (mb, error_var);
 	} else {
 		for (int i = 0; i < csig->param_count; i++)
 			mono_mb_emit_ldarg (mb, i);

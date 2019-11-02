@@ -36,12 +36,14 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-amd64.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "tasklets.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef TARGET_WIN32
 static void (*restore_stack) (void);
@@ -63,7 +65,8 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -94,7 +97,7 @@ get_win32_restore_stack (void)
 	amd64_call_reg (code, AMD64_R11);
 
 	/* get jit_tls with context to restore */
-	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls);
+	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls_extern);
 	amd64_call_reg (code, AMD64_R11);
 
 	/* move jit_tls from return reg to arg reg */
@@ -871,8 +874,12 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, guint32 flags)
 	gboolean stack_ovf = (flags & 1) != 0;
 	gboolean nullref = (flags & 2) != 0;
 
-	if (!ji || (!stack_ovf && !nullref))
-		mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+	if (!ji || (!stack_ovf && !nullref)) {
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+		// if couldn't dump or if mono_handle_native_crash returns, abort
+		abort ();
+	}
 
 	mctx = *ctx;
 

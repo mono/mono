@@ -106,6 +106,9 @@ mono_thread_create_internal_handle (MonoDomain *domain, T func, gpointer arg, Mo
 }
 #endif
 
+void
+mono_thread_manage_internal (void);
+
 /* Data owned by a MonoInternalThread that must live until both the finalizer
  * for MonoInternalThread has run, and the underlying machine thread has
  * detached.
@@ -187,12 +190,6 @@ gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single(gfloat *loc
 
 ICALL_EXPORT
 gdouble ves_icall_System_Threading_Interlocked_CompareExchange_Double(gdouble *location, gdouble value, gdouble comparand);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile*res);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res);
 
 ICALL_EXPORT
 gint32 ves_icall_System_Threading_Interlocked_Add_Int(gint32 *location, gint32 value);

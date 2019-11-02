@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=811DFDEB-0230-4C72-91AD-A1AC9CFDA823
+MONO_CORLIB_VERSION=4e2d4257-1f2b-418c-9829-dd006fe09df5
 
 #
 # Put a quoted #define in config.h.
@@ -1752,7 +1752,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac.],
+	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1967,6 +1967,11 @@ fi
 if test "x$mono_feature_disable_dllmap" = "xyes"; then
     AC_DEFINE(DISABLE_DLLMAP,1,[Disables use of DllMaps in MonoVM])
     AC_MSG_NOTICE([Disabled DllMap in the loader.])
+fi
+
+if test "x$mono_feature_disable_threads" = "xyes"; then
+	AC_DEFINE(DISABLE_THREADS, 1, [Disable Threads])
+	AC_MSG_NOTICE([Disabled threading support])
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -5691,7 +5696,7 @@ dnl *** feature experiments ***
 dnl ***************************
 
 dnl When adding experiments, also add to mono/utils/mono-experiments.def
-AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null],[
+AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null,tiered],[
 
 	if test x$enable_experiment != x ; then
 		AC_DEFINE(ENABLE_EXPERIMENTS,1,[Enable feature experiments])
@@ -5702,13 +5707,19 @@ AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental f
 
 	if test "x$mono_experiment_test_enable_all" = "xyes"; then
 		eval "mono_experiment_test_enable_null='yes'"
+		eval "mono_experiment_test_enable_tiered='yes'"
 		true
 	fi
 
 	if test "x$mono_experiment_test_enable_null" = "xyes"; then
 		AC_DEFINE(ENABLE_EXPERIMENT_null, 1, [Enable experiment 'null'])
 	fi
+	if test "x$mono_experiment_test_enable_tiered" = "xyes"; then
+		AC_DEFINE(ENABLE_EXPERIMENT_TIERED, 1, [Enable experiment 'Tiered Compilation'])
+	fi
 ],[])
+
+AM_CONDITIONAL(ENABLE_EXPERIMENT_TIERED, test x$mono_experiment_test_enable_tiered = xyes)
 
 dnl **********************
 dnl *** checked builds ***

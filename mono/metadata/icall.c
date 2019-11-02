@@ -6556,6 +6556,9 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	memset (&hashes, 0, sizeof (MonoStackHash));
 	MonoContext *ctx = NULL;
 
+	while (!mono_dump_start ())
+		g_usleep (1000); // wait around for other dump to finish
+
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 
 	mono_summarize_timeline_start ();
@@ -6574,6 +6577,8 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	g_free (scratch);
 
 	mono_summarize_timeline_phase_log (MonoSummaryDone);
+
+	mono_dump_complete ();
 #else
 	*portable_hash = 0;
 	*unportable_hash = 0;
@@ -7670,7 +7675,7 @@ ves_icall_System_Environment_Exit (int result)
 	mono_thread_suspend_all_other_threads ();
 #endif
 
-	mono_runtime_quit ();
+	mono_runtime_quit_internal ();
 
 	/* we may need to do some cleanup here... */
 	exit (result);
@@ -9141,6 +9146,15 @@ no_icall_table (void)
 	g_assert_not_reached ();
 }
 
+gboolean
+mono_is_missing_icall_addr (gconstpointer addr)
+{
+	return addr == NULL || addr == no_icall_table;
+}
+
+/*
+ * Returns either NULL or no_icall_table for missing icalls.
+ */
 gconstpointer
 mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_missing, guint32 *flags)
 {

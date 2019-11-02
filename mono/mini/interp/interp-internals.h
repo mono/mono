@@ -23,6 +23,8 @@
 #define MINT_TYPE_VT 10
 
 #define INLINED_METHOD_FLAG 0xffff
+#define TRACING_FLAG 0x1
+#define PROFILING_FLAG 0x2
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -169,6 +171,9 @@ typedef struct _InterpMethod
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
 	MonoProfilerCallInstrumentationFlags prof_flags;
+#ifdef ENABLE_EXPERIMENT_TIERED
+	MiniTieredCounter tiered_counter;
+#endif
 } InterpMethod;
 
 struct _InterpFrame {
@@ -198,6 +203,7 @@ typedef struct {
 
 typedef struct {
 	gint64 transform_time;
+	gint64 methods_transformed;
 	gint64 cprop_time;
 	gint64 super_instructions_time;
 	gint32 stloc_nps;

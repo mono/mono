@@ -52,6 +52,7 @@
 #include <mono/metadata/coree.h>
 #include <mono/utils/mono-experiments.h>
 #include "external-only.h"
+#include "mono/utils/mono-tls-inline.h"
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -700,8 +701,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.multicastdelegate_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "MulticastDelegate");
 
+#ifndef ENABLE_NETCORE
 	mono_defaults.manualresetevent_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "ManualResetEvent");
+#endif
 
 	mono_defaults.typehandle_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "RuntimeTypeHandle");

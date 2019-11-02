@@ -111,3 +111,10 @@
 
 # System.IO.Compression
 -noclass System.IO.Compression.Tests.BrotliEncoderTests
+
+# System
+-nonamespace System.Net.Security.Tests
+
+# System.Xml.Linq
+# fails on OSX
+-nomethod CoreXml.Test.XLinq.FunctionalTests.EventsTests.EventsReplaceNodes.XElementReplaceNodes
