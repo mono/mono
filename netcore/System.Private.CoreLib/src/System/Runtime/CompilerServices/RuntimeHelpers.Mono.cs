@@ -118,7 +118,7 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[Intrinsic]
-		internal static bool ArrayHasReferences (Array array)
+		internal static bool ObjectHasReferences (object array)
 		{
 			return RuntimeTypeHandle.HasReferences (array.GetType () as RuntimeType);
 		}

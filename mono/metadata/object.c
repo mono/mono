@@ -2010,6 +2010,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	gpointer iter;
 	gpointer *interface_offsets;
 	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
+	gboolean is_array = FALSE;
 
 	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
 	mono_domain_lock (domain);
@@ -2032,6 +2033,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	/* Array types require that their element type be valid*/
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
+		is_array = TRUE;
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (!m_class_is_inited (element_class))
 			mono_class_init_internal (element_class);
@@ -2105,8 +2107,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	vt->domain = domain;
 	if ((vt->rank > 0) || klass == mono_get_string_class ())
 		vt->flags |= MONO_VT_FLAG_ARRAY_OR_STRING;
-
-	if (klass->has_references)
+	
+	if (m_class_has_references (klass) || (!is_array && !m_class_is_valuetype (klass)))
 		vt->flags |= MONO_VT_FLAG_HAS_REFERENCES;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
