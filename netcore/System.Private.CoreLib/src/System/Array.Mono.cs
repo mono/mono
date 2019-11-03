@@ -71,7 +71,7 @@ namespace System
 			ref byte ptr = ref Unsafe.AddByteOffset (ref array.GetRawSzArrayData(), (uint) offset * (nuint) elementSize);
 			nuint byteLength = (uint) length * (nuint) elementSize;
 
-			if (RuntimeHelpers.ElementTypeHasReferences (array))
+			if (RuntimeHelpers.ArrayObjectHasReferences (array))
 				SpanHelpers.ClearWithReferences (ref Unsafe.As<byte, IntPtr> (ref ptr), byteLength / (uint)sizeof (IntPtr));
 			else
 				SpanHelpers.ClearWithoutReferences (ref ptr, byteLength);
