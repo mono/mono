@@ -202,7 +202,7 @@ ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_WriteZSt
 #if defined(TARGET_WASM)
 ICALL_EXPORT gpointer ves_icall_System_TimeZoneInfo_mono_timezone_get_data (const gunichar2* name, gint32 name_length, gint32 *size);
 ICALL_EXPORT char** ves_icall_System_TimeZoneInfo_mono_timezone_get_names (gint32 *count);
-ICALL_EXPORT gpointer ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void);
+ICALL_EXPORT void ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile*result);
 #endif
 
 #if defined(ENABLE_MONODROID)

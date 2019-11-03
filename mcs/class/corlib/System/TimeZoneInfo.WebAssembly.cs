@@ -12,13 +12,12 @@ namespace System {
 	public partial class TimeZoneInfo {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static IntPtr mono_timezone_get_local_name ();
+		extern static void mono_timezone_get_local_name (ref string name);
 
 		static string GetMonoWasmLocalName ()
 		{
-			IntPtr localNamePtr = mono_timezone_get_local_name ();
-			var localName = Marshal.PtrToStringAnsi (localNamePtr);
-			Marshal.FreeHGlobal (localNamePtr);
+			string localName = null;
+			mono_timezone_get_local_name (ref localName);
 			return localName;
 		}
 

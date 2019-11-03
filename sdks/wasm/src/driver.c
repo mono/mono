@@ -732,13 +732,12 @@ EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 	}
 })
 
-void*
-mono_timezone_get_local_name (void)
+void
+mono_timezone_get_local_name (MonoString *volatile*result)
 {
 	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
-	MonoString *name = mono_string_from_utf16 (tzd_local_name);
+	*result = mono_string_from_utf16 (tzd_local_name);
 	free (tzd_local_name);
-	return strdup (mono_string_to_utf8 (name));
 }
 
 MonoString*

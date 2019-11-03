@@ -8129,7 +8129,7 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 #if defined(TARGET_WASM)
 
 G_EXTERN_C gpointer mono_timezone_get_data (const gunichar2* name, gint32 name_length, gint32 *size);
-G_EXTERN_C gpointer mono_timezone_get_local_name (void);
+G_EXTERN_C void mono_timezone_get_local_name (MonoString *volatile*result);
 G_EXTERN_C char** mono_timezone_get_names (gint32 *count);
 
 gpointer 
@@ -8142,13 +8142,11 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_data (const gunichar2* name, gin
 #endif
 }
 
-gpointer
-ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (void)
+void
+ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile*result)
 {
-#ifdef MONO_CROSS_COMPILE
-	return NULL;
-#else
-	return mono_timezone_get_local_name ();
+#ifndef MONO_CROSS_COMPILE
+	return mono_timezone_get_local_name (result);
 #endif
 }
 
