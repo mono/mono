@@ -856,17 +856,14 @@ ves_icall_System_Array_InternalCreate (MonoReflectionTypeHandle type, gint32 ran
 			mono_error_set_argument_out_of_range (error, NULL, "Each value has to be >= 0.");
 			return NULL_HANDLE_ARRAY;
 		}
-		if (pLowerBounds != NULL)
-		{
+		if (pLowerBounds != NULL) {
 			lower_bounds [i] = pLowerBounds [i];
-			if ((gint64) pLowerBounds [i] + (gint64) pLengths [i] > G_MAXINT32)
-			{	
+			if ((gint64) pLowerBounds [i] + (gint64) pLengths [i] > G_MAXINT32) {
 				mono_error_set_argument_out_of_range (error, NULL, "Length + bound must not exceed Int32.MaxValue.");
 				return NULL_HANDLE_ARRAY;
 			}
 		}
-		else
-			lower_bounds [i] = 0;
+		else lower_bounds [i] = 0;
 		sizes [i] = pLengths [i];
 	}
 	return mono_array_new_full_handle (MONO_HANDLE_DOMAIN (type), aklass, sizes, lower_bounds, error);

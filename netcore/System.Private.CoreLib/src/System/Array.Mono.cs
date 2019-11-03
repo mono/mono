@@ -246,10 +246,8 @@ namespace System
 			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
 			if (t == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
-			int* pLengths = stackalloc int [2];
-			pLengths [0] = length1;
-			pLengths [1] = length2;
-			return InternalCreate (t, 2, pLengths, null);
+			int* lengths = stackalloc int [] { length1, length2 };
+			return InternalCreate (t, 2, lengths, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int length1, int length2, int length3)
@@ -266,11 +264,8 @@ namespace System
 			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
 			if (t == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
-			int* pLengths = stackalloc int [3];
-			pLengths [0] = length1;
-			pLengths [1] = length2;
-			pLengths [2] = length3;
-			return InternalCreate (t, 3, pLengths, null);
+			int* lengths = stackalloc int [] { length1, length2, length3 };
+			return InternalCreate (t, 3, lengths, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, params int[] lengths)
@@ -285,14 +280,6 @@ namespace System
 			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
 			if (t == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
-
-			// Check to make sure the lengths are all positive. Note that we check this here to give
-			// a good exception message if they are not; however we check this again inside the execution
-			// engine's low level allocation function after having made a copy of the array to prevent a
-			// malicious caller from mutating the array after this check.
-			for (int i = 0; i < lengths.Length; i++)
-				if (lengths [i] < 0)
-					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
 			fixed (int* pLengths = &lengths [0])
 				return InternalCreate (t, lengths.Length, pLengths, null);
@@ -314,14 +301,6 @@ namespace System
 			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
 			if (t == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
-
-			// Check to make sure the lenghts are all positive. Note that we check this here to give
-			// a good exception message if they are not; however we check this again inside the execution
-			// engine's low level allocation function after having made a copy of the array to prevent a
-			// malicious caller from mutating the array after this check.
-			for (int i = 0; i < lengths.Length; i++)
-				if (lengths[i] < 0)
-					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
 			fixed (int* pLengths = &lengths [0])
 			fixed (int* pLowerBounds = &lowerBounds [0])
