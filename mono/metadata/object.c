@@ -2106,8 +2106,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	if ((vt->rank > 0) || klass == mono_get_string_class ())
 		vt->flags |= MONO_VT_FLAG_ARRAY_OR_STRING;
 
-	if (klass == mono_get_array_class () && klass->element_class->has_references)
-		vt->flags |= MONO_VT_FLAG_ARRAY_HAS_REFERENCES;
+	if (klass->has_references)
+		vt->flags |= MONO_VT_FLAG_HAS_REFERENCES;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
 
