@@ -3908,7 +3908,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 		} 
 		g_free (dir);
 		total += length + 1;
-		mounts = (struct vmount *)((void*)mounts + mounts->vmt_length); // next!
+		mounts = (struct vmount *)((char*)mounts + mounts->vmt_length); // next!
 	}
 	if (total < len)
 		buf [total] = 0;

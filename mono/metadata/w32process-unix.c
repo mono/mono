@@ -3199,7 +3199,7 @@ big_up_string_block (gconstpointer data_ptr, version_data *block)
 			return(NULL);
 		}
 		memcpy ((gpointer)data_ptr, big_value,
-			unicode_chars ((const gunichar2*)data_ptr) * 2);
+			unicode_chars ((const gunichar2*)data_ptr) * sizeof(gunichar2));
 		g_free (big_value);
 
 		data_ptr = ((gunichar2 *)data_ptr) + block->value_len;
