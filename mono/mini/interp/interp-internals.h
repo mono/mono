@@ -176,6 +176,19 @@ typedef struct _InterpMethod
 #endif
 } InterpMethod;
 
+typedef struct _StackFragment StackFragment;
+struct _StackFragment {
+	guint8 *pos, *end;
+	struct _StackFragment *next;
+	double data [1];
+};
+
+typedef struct {
+	StackFragment *first, *last, *current;
+	/* For GC sync */
+	int inited;
+} FrameStack;
+
 struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */

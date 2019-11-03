@@ -25,7 +25,8 @@
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-counters.h>
-#include "mono/utils/mono-tls-inline.h"
+#include <mono/utils/mono-tls-inline.h>
+#include <mono/utils/mono-membar.h>
 
 #ifdef HAVE_ALLOCA_H
 #   include <alloca.h>
@@ -98,6 +99,101 @@ typedef struct {
 	MonoException *filter_exception;
 	InterpFrame *base_frame;
 } FrameClauseArgs;
+
+/*
+ * This code synchronizes with interp_mark_stack () using compiler memory barriers.
+ */
+
+static StackFragment*
+stack_frag_new (int size)
+{
+	StackFragment *frag = (StackFragment*)g_malloc (size);
+
+	frag->pos = (guint8*)&frag->data;
+	frag->end = (guint8*)frag + size;
+	frag->next = NULL;
+	return frag;
+}
+
+static void
+frame_stack_init (FrameStack *stack, int size)
+{
+	StackFragment *frag;
+
+	frag = stack_frag_new (size);
+	stack->first = stack->last = stack->current = frag;
+	mono_compiler_barrier ();
+	stack->inited = 1;
+}
+
+static StackFragment*
+add_frag (FrameStack *stack, int size)
+{
+	StackFragment *new_frag;
+
+	// FIXME:
+	int frag_size = 4096;
+	if (size > frag_size)
+		frag_size = size + sizeof (StackFragment);
+	new_frag = stack_frag_new (frag_size);
+	mono_compiler_barrier ();
+	stack->last->next = new_frag;
+	stack->last = new_frag;
+	stack->current = new_frag;
+	return new_frag;
+}
+
+static gpointer
+frame_stack_alloc (FrameStack *stack, int size, StackFragment **out_frag)
+{
+	StackFragment *current = stack->current;
+	gpointer res;
+
+	if (G_LIKELY (current->pos + size <= current->end)) {
+		res = current->pos;
+		current->pos += size;
+	} else {
+		if (current->next && current->next->pos + size <= current->next->end) {
+			current = stack->current = current->next;
+			current->pos = (guint8*)&current->data;
+		} else {
+			current = add_frag (stack, size);
+		}
+		g_assert (current->pos + size <= current->end);
+		res = (gpointer)current->pos;
+		current->pos += size;
+	}
+
+	mono_compiler_barrier ();
+
+	if (out_frag)
+		*out_frag = current;
+	return res;
+}
+
+static void
+frame_stack_pop (FrameStack *stack, StackFragment *frag, gpointer pos)
+{
+	g_assert ((guint8*)pos >= (guint8*)&frag->data && (guint8*)pos <= (guint8*)frag->end);
+	stack->current = frag;
+	mono_compiler_barrier ();
+	stack->current->pos = (guint8*)pos;
+	mono_compiler_barrier ();
+	//memset (stack->current->pos, 0, stack->current->end - stack->current->pos);
+}
+
+static void
+frame_stack_free (FrameStack *stack)
+{
+	stack->inited = 0;
+	mono_compiler_barrier ();
+	StackFragment *frag = stack->first;
+	while (frag) {
+		StackFragment *next = frag->next;
+		g_free (frag);
+		frag = next;
+	}
+}
 
 static void
 init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
