@@ -120,7 +120,7 @@ namespace System.Runtime.CompilerServices
 		[Intrinsic]
 		internal static bool ArrayObjectHasReferences (object obj)
 		{
-			return RuntimeTypeHandle.HasReferences (obj.GetType ().GetElementType () as RuntimeType);
+			return RuntimeTypeHandle.HasReferences (obj.GetType () as RuntimeType);
 		}
 
 		static object GetUninitializedObjectInternal (Type type)
