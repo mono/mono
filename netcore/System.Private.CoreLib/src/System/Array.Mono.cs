@@ -291,7 +291,7 @@ namespace System
 			// engine's low level allocation function after having made a copy of the array to prevent a
 			// malicious caller from mutating the array after this check.
 			for (int i = 0; i < lengths.Length; i++)
-				if (lengths i] < 0)
+				if (lengths [i] < 0)
 					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
 			fixed (int* pLengths = &lengths [0])
@@ -328,8 +328,8 @@ namespace System
 				return InternalCreate (t, lengths.Length, pLengths, pLowerBounds);
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern unsafe Array InternalCreate (Type elementType, int rank, int* pLengths, int* pLowerBounds);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern unsafe Array InternalCreate (Type elementType, int rank, int* pLengths, int* pLowerBounds);
 
 		public object GetValue (int index)
 		{
