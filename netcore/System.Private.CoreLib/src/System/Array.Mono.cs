@@ -231,6 +231,8 @@ namespace System
 			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
+
+			GC.KeepAlive(runtimeType);
 			return InternalCreate (runtimeType._impl.Value, 1, &length, null);
 		}
 
@@ -246,6 +248,8 @@ namespace System
 			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
+
+			GC.KeepAlive(runtimeType);
 			int* lengths = stackalloc int [] { length1, length2 };
 			return InternalCreate (runtimeType._impl.Value, 2, lengths, null);
 		}
@@ -264,6 +268,8 @@ namespace System
 			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
+
+			GC.KeepAlive(runtimeType);
 			int* lengths = stackalloc int [] { length1, length2, length3 };
 			return InternalCreate (runtimeType._impl.Value, 3, lengths, null);
 		}
@@ -281,6 +287,7 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
+			GC.KeepAlive(runtimeType);
 			fixed (int* pLengths = &lengths [0])
 				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
 		}
@@ -302,6 +309,7 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
+			GC.KeepAlive(runtimeType);
 			fixed (int* pLengths = &lengths [0])
 			fixed (int* pLowerBounds = &lowerBounds [0])
 				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
