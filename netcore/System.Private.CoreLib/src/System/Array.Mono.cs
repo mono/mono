@@ -232,8 +232,9 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			GC.KeepAlive(runtimeType);
-			return InternalCreate (runtimeType._impl.Value, 1, &length, null);
+			Array array = InternalCreate (runtimeType._impl.Value, 1, &length, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int length1, int length2)
@@ -249,9 +250,10 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			GC.KeepAlive(runtimeType);
 			int* lengths = stackalloc int [] { length1, length2 };
-			return InternalCreate (runtimeType._impl.Value, 2, lengths, null);
+			Array array = InternalCreate (runtimeType._impl.Value, 2, lengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int length1, int length2, int length3)
@@ -269,9 +271,10 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			GC.KeepAlive(runtimeType);
 			int* lengths = stackalloc int [] { length1, length2, length3 };
-			return InternalCreate (runtimeType._impl.Value, 3, lengths, null);
+			Array array = InternalCreate (runtimeType._impl.Value, 3, lengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, params int[] lengths)
@@ -287,9 +290,11 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			GC.KeepAlive(runtimeType);
+			Array array;
 			fixed (int* pLengths = &lengths [0])
-				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
+				array = InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int[] lengths, int[] lowerBounds)
@@ -309,10 +314,12 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			GC.KeepAlive(runtimeType);
+			Array array;
 			fixed (int* pLengths = &lengths [0])
 			fixed (int* pLowerBounds = &lowerBounds [0])
-				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
+				array = InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
