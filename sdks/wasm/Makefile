@@ -28,7 +28,6 @@ MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
 TZ_INPUT=$(TOP)/sdks/wasm/zoneinfodata
 TZ_OUTPUT=$(TOP)/sdks/wasm/zoneinfo
 
-
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
 DOTNET_CMD := "$(subst \,/,$(DOTNET))"
