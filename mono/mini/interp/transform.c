@@ -5906,6 +5906,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				save_last_error = TRUE;
 				++td->ip;
 				break;
+			case CEE_MONO_GET_SP:
+				interp_add_ins (td, MINT_MONO_GET_SP);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+				++td->ip;
+				break;
 			default:
 				g_error ("transform.c: Unimplemented opcode: 0xF0 %02x at 0x%x\n", *td->ip, td->ip-header->code);
 			}

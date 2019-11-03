@@ -6165,6 +6165,11 @@ common_vcall:
 			++sp;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MONO_GET_SP)
+			sp->data.p = &frame;
+			++sp;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SDB_INTR_LOC)
 			if (G_UNLIKELY (ss_enabled)) {
 				typedef void (*T) (void);
