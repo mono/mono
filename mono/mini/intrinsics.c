@@ -912,7 +912,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, dreg, -1);
 			ins->type = STACK_I4;
 			return ins;
-		} else if (!strcmp (cmethod->name, "ArrayObjectHasReferences")) {
+		} else if (!strcmp (cmethod->name, "ArrayHasReferences")) {
 			int dreg = alloc_ireg (cfg);
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
