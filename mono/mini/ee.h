@@ -60,6 +60,7 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (void, stop_single_stepping, (void)) \
 	MONO_EE_CALLBACK (void, free_context, (gpointer)) \
 	MONO_EE_CALLBACK (void, cleanup, (void)) \
+	MONO_EE_CALLBACK (void, mark_stack, (gpointer thread_info, GcScanFunc func, gpointer gc_data, gboolean precise)) \
 
 typedef struct _MonoEECallbacks {
 

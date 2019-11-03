@@ -7097,6 +7097,21 @@ interp_stop_single_stepping (void)
 	ss_enabled = FALSE;
 }
 
+/*
+ * interp_mark_stack:
+ *
+ *   Mark the interpreter stack frames for a thread.
+ *
+ */
+static void
+interp_mark_stack (gpointer thread_data, GcScanFunc func, gpointer gc_data, gboolean precise)
+{
+	if (!mono_use_interpreter)
+		return;
+	if (precise)
+		return;
+}
+
 #if COUNT_OPS
 
 static int

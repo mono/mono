@@ -213,6 +213,11 @@ stub_free_context (gpointer context)
 	g_assert_not_reached ();
 }
 
+static void
+stub_mark_stack (gpointer thread_data, GcScanFunc func, gpointer gc_data, gboolean precise)
+{
+}
+
 #undef MONO_EE_CALLBACK
 #define MONO_EE_CALLBACK(ret, name, sig) stub_ ## name,
 
