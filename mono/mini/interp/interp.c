@@ -6608,7 +6608,7 @@ common_vcall:
 		}
 		MINT_IN_CASE(MINT_ENDFILTER)
 			/* top of stack is result of filter */
-			frame->retval = &sp [-1];
+			frame->retval->data.i = sp [-1].data.i;
 			goto exit_frame;
 		MINT_IN_CASE(MINT_INITOBJ)
 			--sp;
