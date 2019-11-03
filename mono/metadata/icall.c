@@ -851,18 +851,13 @@ ves_icall_System_Array_InternalCreate (MonoType* type, gint32 rank, gint32* pLen
 
 	// Copy lengths and lower_bounds from gint32 to [u]intptr_t.
 	for (uintptr_t i = 0; i < aklass_rank; ++i) {
-		if (pLengths [i] < 0) {
-			mono_error_set_argument_out_of_range (error, NULL, "Each value has to be >= 0.");
-			return NULL_HANDLE_ARRAY;
-		}
 		if (pLowerBounds != NULL) {
 			lower_bounds [i] = pLowerBounds [i];
 			if ((gint64) pLowerBounds [i] + (gint64) pLengths [i] > G_MAXINT32) {
 				mono_error_set_argument_out_of_range (error, NULL, "Length + bound must not exceed Int32.MaxValue.");
 				return NULL_HANDLE_ARRAY;
 			}
-		}
-		else {
+		} else {
 			lower_bounds [i] = 0;
 		}
 		sizes [i] = pLengths [i];

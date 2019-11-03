@@ -290,6 +290,10 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
+			for (int i = 0; i < lengths.Length; i++)
+				if (lengths [i] < 0)
+					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+
 			Array array;
 			fixed (int* pLengths = &lengths [0])
 				array = InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
@@ -309,6 +313,10 @@ namespace System
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_RanksAndBounds);
 			if (lengths.Length == 0)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_NeedAtLeast1Rank);
+
+			for (int i = 0; i < lengths.Length; i++)
+				if (lengths [i] < 0)
+					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
 			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
 			if (runtimeType == null)
