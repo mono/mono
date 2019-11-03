@@ -228,10 +228,10 @@ namespace System
 			if (length < 0)
 				ThrowHelper.ThrowLengthArgumentOutOfRange_ArgumentOutOfRange_NeedNonNegNum ();
 
-			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
-			if (t == null)
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
-			return InternalCreate (t, 1, &length, null);
+			return InternalCreate (runtimeType._impl.Value, 1, &length, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int length1, int length2)
@@ -243,11 +243,11 @@ namespace System
 			if (length2 < 0)
 				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length2, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
-			if (t == null)
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 			int* lengths = stackalloc int [] { length1, length2 };
-			return InternalCreate (t, 2, lengths, null);
+			return InternalCreate (runtimeType._impl.Value, 2, lengths, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int length1, int length2, int length3)
@@ -261,11 +261,11 @@ namespace System
 			if (length3 < 0)
 				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length3, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
-			if (t == null)
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 			int* lengths = stackalloc int [] { length1, length2, length3 };
-			return InternalCreate (t, 3, lengths, null);
+			return InternalCreate (runtimeType._impl.Value, 3, lengths, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, params int[] lengths)
@@ -277,12 +277,12 @@ namespace System
 			if (lengths.Length == 0)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_NeedAtLeast1Rank);
 
-			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
-			if (t == null)
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
 			fixed (int* pLengths = &lengths [0])
-				return InternalCreate (t, lengths.Length, pLengths, null);
+				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
 		}
 
 		public static unsafe Array CreateInstance (Type elementType, int[] lengths, int[] lowerBounds)
@@ -298,17 +298,17 @@ namespace System
 			if (lengths.Length == 0)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_NeedAtLeast1Rank);
 
-			RuntimeType? t = elementType.UnderlyingSystemType as RuntimeType;
-			if (t == null)
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
 			fixed (int* pLengths = &lengths [0])
 			fixed (int* pLowerBounds = &lowerBounds [0])
-				return InternalCreate (t, lengths.Length, pLengths, pLowerBounds);
+				return InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		static extern unsafe Array InternalCreate (Type elementType, int rank, int* pLengths, int* pLowerBounds);
+		static extern unsafe Array InternalCreate (IntPtr elementType, int rank, int* pLengths, int* pLowerBounds);
 
 		public object GetValue (int index)
 		{

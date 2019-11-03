@@ -819,10 +819,9 @@ ves_icall_System_Array_SetValue (MonoArrayHandle arr, MonoObjectHandle value,
 
 #ifdef ENABLE_NETCORE
 MonoArrayHandle
-ves_icall_System_Array_InternalCreate (MonoReflectionTypeHandle type, gint32 rank, gint32* pLengths, gint32* pLowerBounds, MonoError *error)
+ves_icall_System_Array_InternalCreate (MonoType* type, gint32 rank, gint32* pLengths, gint32* pLowerBounds, MonoError *error)
 {
-	MonoType* mono_type = MONO_HANDLE_GETVAL (type, type);
-	MonoClass* klass = mono_class_from_mono_type_internal (mono_type);
+	MonoClass* klass = mono_class_from_mono_type_internal (type);
 	if (!mono_class_init_checked (klass, error))
 		return NULL_HANDLE_ARRAY;
 
@@ -831,19 +830,19 @@ ves_icall_System_Array_InternalCreate (MonoReflectionTypeHandle type, gint32 ran
 		return NULL_HANDLE_ARRAY;
 	}
 
-	if (mono_type->byref || m_class_is_byreflike (klass)) {
+	if (type->byref || m_class_is_byreflike (klass)) {
 		mono_error_set_not_supported (error, NULL);
 		return NULL_HANDLE_ARRAY;
 	}
 
 	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
-	if (is_generic_parameter (mono_type) || mono_class_is_gtd (klass) || (gklass && gklass->context.class_inst->is_open)) {
+	if (is_generic_parameter (type) || mono_class_is_gtd (klass) || (gklass && gklass->context.class_inst->is_open)) {
 		mono_error_set_not_supported (error, NULL);
 		return NULL_HANDLE_ARRAY;
 	}
 
 	/* vectors are not the same as one dimensional arrays with non-zero bounds */
-	gboolean bounded = pLowerBounds != NULL && rank == 1 && pLowerBounds [0] != 0;
+	const gboolean bounded = pLowerBounds != NULL && rank == 1 && pLowerBounds [0] != 0;
 
 	MonoClass* const aklass = mono_class_create_bounded_array (klass, rank, bounded);
 	uintptr_t const aklass_rank = m_class_get_rank (aklass);
@@ -863,10 +862,13 @@ ves_icall_System_Array_InternalCreate (MonoReflectionTypeHandle type, gint32 ran
 				return NULL_HANDLE_ARRAY;
 			}
 		}
-		else lower_bounds [i] = 0;
+		else {
+			lower_bounds [i] = 0;
+		}
 		sizes [i] = pLengths [i];
 	}
-	return mono_array_new_full_handle (MONO_HANDLE_DOMAIN (type), aklass, sizes, lower_bounds, error);
+	
+	return mono_array_new_full_handle (mono_domain_get (), aklass, sizes, lower_bounds, error);
 }
 #endif
 
