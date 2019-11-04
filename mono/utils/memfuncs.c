@@ -235,6 +235,7 @@ mono_gc_memmove_atomic (void *dest, const void *src, size_t size)
 		mono_gc_memmove_aligned (dest, src, size);
 }
 
+/* This function was moved from mono-perfcounters.c */
 guint64
 mono_determine_physical_ram_size (void)
 {
