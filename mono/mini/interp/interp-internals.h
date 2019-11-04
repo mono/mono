@@ -197,6 +197,8 @@ struct _InterpFrame {
 	stackval       *stack;
 	/* An address on the native stack associated with the frame, used during EH */
 	gpointer       native_stack_addr;
+	/* Stack fragments this frame was allocated from */
+	StackFragment *iframe_frag, *data_frag;
 	/* exception info */
 	const unsigned short  *ip;
 };
@@ -214,6 +216,10 @@ typedef struct {
 	MonoJitExceptionInfo *handler_ei;
 	/* Exception that is being thrown. Set with rest of resume state */
 	guint32 exc_gchandle;
+	/* Stack of InterpFrames */
+	FrameStack iframe_stack;
+	/* Stack of frame data */
+	FrameStack data_stack;
 } ThreadContext;
 
 typedef struct {
