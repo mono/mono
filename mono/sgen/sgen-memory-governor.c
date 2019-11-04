@@ -507,9 +507,9 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 	{
 		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size ();
 
-		if (sgen_gc_info.total_available_memory_bytes = 0)
+		if (!sgen_gc_info.total_available_memory_bytes)
 		{
-			mono_trace_warning(MONO_TRACE_GC, "Warning: Unable to determine physical ram size for GCMemoryInfo")''
+			mono_trace_warning(MONO_TRACE_GC, "Warning: Unable to determine physical ram size for GCMemoryInfo");
 		}
 
 		return;
