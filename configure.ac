@@ -192,9 +192,6 @@ case "$host" in
 		with_tls=pthread
 		with_sgen_default_concurrent=yes
 		LN_S=cp
-
-		# This forces libgc to use the DllMain based thread registration code on win32
-		libgc_configure_args="$libgc_configure_args --enable-win32-dllmain=yes"
 		;;
 	*-*-*netbsd*)
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DGC_NETBSD_THREADS -D_GNU_SOURCE"
