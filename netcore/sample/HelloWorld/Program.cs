@@ -1,16 +1,14 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
-namespace HelloWorld
+public class Program
 {
-    class Program
+    static void Main()
     {
-        static void Main(string[] args)
-        {
-            bool isMono = typeof(object).Assembly.GetType("Mono.RuntimeStructs") != null;
-            Console.WriteLine("Hello World " + (isMono ? "from Mono!" : "from CoreCLR!"));
-            Console.WriteLine(typeof(object).Assembly.FullName);
-            Console.WriteLine(System.Reflection.Assembly.GetEntryAssembly ());
-            Console.WriteLine(System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
-        }
+        dynamic a = new int[] {1};
+        Console.WriteLine(a.Foo1() + " (False)");
+        Console.WriteLine(a.Foo2() + " (False)");
+        Console.WriteLine(a.Foo3() + " (True)");
+        Console.WriteLine(a.Foo4() + " (True)");
     }
 }
