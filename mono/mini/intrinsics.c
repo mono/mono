@@ -399,8 +399,12 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 			ins->klass = mono_get_object_class ();
 			return ins;
 		} else if (ctx->method_inst->type_argc == 1) {
-			if (mini_is_gsharedvt_variable_type (t))
+			if (mini_is_gsharedvt_variable_type (t)) {
+#ifdef ENABLE_NETCORE
+				g_warning ("Unable to intrinsify Unsafe.As<T>(object value) call in %s since T is a gsharedvt variable type: %s.", mono_method_full_name (cfg->method, 1), mono_type_full_name (t));
+#endif
 				return NULL;
+			}
 			// Casts the given object to the specified type, performs no dynamic type checking.
 			g_assert (fsig->param_count == 1);
 			g_assert (fsig->params [0]->type == MONO_TYPE_OBJECT);
