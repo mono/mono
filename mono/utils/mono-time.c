@@ -94,77 +94,6 @@ mono_100ns_datetime (void)
 /* a made up uptime of 300 seconds */
 #define MADEUP_BOOT_TIME (300 * MTICKS_PER_SEC)
 
-#if defined(ANDROID)
-#include <math.h>
-/*  CLOCK_MONOTONIC is the most reliable clock type on Android. However, it
-    does not tick when the device is sleeping (case 867885, case 1037712).
-    CLOCK_BOOTTIME includes that time, but is very unreliable. Some older
- 
-    devices had this time ticking back or jumping back and forth (case 970945)
-    To fix this issue we combine both clocks to produce a CLOCK_MONOTONIC-based
-    clock that ticks even when the device is disabled.
-*/
-gint64 android_get_time_since_startup(double current_monotonic_time, double current_boottime_time)
-{
-	static double monotonic_start_time = -HUGE_VAL;
-	static double boottime_start_time = -HUGE_VAL;
-	static double boottime_adjustment = 0;
-	static int broken_boottime = 0;
-	static double broken_boottime_detection_hysteresis = 0.001;
-	static double adjustment_hysteresis_when_bootime_good = 0.001;
-	static double adjustment_hysteresis_when_bootime_broken = 8;
-
-	if (monotonic_start_time == -HUGE_VAL)
-		monotonic_start_time = current_monotonic_time;
-	if (boottime_start_time == -HUGE_VAL)
-		boottime_start_time = current_boottime_time;
-	double monotonicSinceStart = current_monotonic_time - monotonic_start_time;
-	double boottimeSinceStart = current_boottime_time - boottime_start_time;
-	/*  In theory, boottime can only go faster than monotonic, so whenever we detect
-		this condition we assume that device was asleep and we must adjust the returned
-		time by the amount of time that the boottime jumped forwards.
-		In the real world, boottime can go slower than monotonic or even backwards.
-		We work around this by only taking into account the total difference between
-		boottime and monotonic times and only adjusting monotonic time when this difference
-		increases.
-		There's also a problem that on some devices the boottime continuously jumps
-		forwards and backwards by ~4 seconds. This means that a naive implementation would
-		often do more than one time jump after device sleeps, depending on which part
-		of the jump "cycle" we landed. We work around this by introducing hysteresis of
-		hysteresisSeconds seconds and adjusting monotonic time only when this adjustment
-		changes by more than hysteresisSeconds amount, but only on broken devices.
-		On devices with broken CLOCK_BOOTTIME behaviour this would ignore device sleeps of
-		hysteresisSeconds or less, which is small compromise to make.
-	*/
-	if (boottimeSinceStart - monotonicSinceStart < -broken_boottime_detection_hysteresis)
-		broken_boottime = 1;
-	double hysteresisSeconds = broken_boottime ? adjustment_hysteresis_when_bootime_broken : adjustment_hysteresis_when_bootime_good;
-	if (boottimeSinceStart - monotonicSinceStart > boottime_adjustment + hysteresisSeconds)
-		boottime_adjustment = boottimeSinceStart - monotonicSinceStart;
-	return (gint64)(monotonicSinceStart + boottime_adjustment);
-}
-#endif
-
-#if defined(CLOCK_MONOTONIC)
-static gint64
-get_posix_time_for_class(int clock_class)
-{
-	struct timespec tspec;
-	static struct timespec tspec_freq = {0};
-	static int can_use_clock = 0;
-	if (!tspec_freq.tv_nsec) {
-		can_use_clock = clock_getres (clock_class, &tspec_freq) == 0;
-		/*printf ("resolution: %lu.%lu\n", tspec_freq.tv_sec, tspec_freq.tv_nsec);*/
-	}
-	if (can_use_clock) {
-		if (clock_gettime (clock_class, &tspec) == 0) {
-			/*printf ("time: %lu.%lu\n", tspec.tv_sec, tspec.tv_nsec); */
-			return ((gint64)tspec.tv_sec * MTICKS_PER_SEC + tspec.tv_nsec / 100);
-		}
-	}
-}
-#endif
- 
 static gint64
 get_boot_time (void)
 {
@@ -203,7 +132,11 @@ gint64
 mono_msec_boottime (void)
 {
 #if defined(ANDROID)
-	return get_posix_time_for_class(CLOCK_BOOTTIME);
+	struct timespec ts;
+	if (clock_gettime (CLOCK_MONOTONIC, &ts) != 0) {
+		return (gint64)MADEUP_BOOT_TIME;
+	}
+	return (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 #else
 	static gint64 boot_time = 0;
 	gint64 now;
@@ -230,11 +163,19 @@ mono_100ns_ticks (void)
 	}
 	return now * timebase.numer / timebase.denom;
 #elif defined(CLOCK_MONOTONIC)
-#if defined(ANDROID)
-	return android_get_time_since_startup(get_posix_time_for_class(CLOCK_BOOTTIME), get_posix_time_for_class(CLOCK_MONOTONIC));
-#else
-	return get_posix_time_for_class(CLOCK_MONOTONIC);
-#endif
+	struct timespec tspec;
+	static struct timespec tspec_freq = {0};
+	static int can_use_clock = 0;
+	if (!tspec_freq.tv_nsec) {
+		can_use_clock = clock_getres (CLOCK_MONOTONIC, &tspec_freq) == 0;
+		/*printf ("resolution: %lu.%lu\n", tspec_freq.tv_sec, tspec_freq.tv_nsec);*/
+	}
+	if (can_use_clock) {
+		if (clock_gettime (CLOCK_MONOTONIC, &tspec) == 0) {
+			/*printf ("time: %lu.%lu\n", tspec.tv_sec, tspec.tv_nsec); */
+			return ((gint64)tspec.tv_sec * MTICKS_PER_SEC + tspec.tv_nsec / 100);
+		}
+	}
 #endif
 	if (gettimeofday (&tv, NULL) == 0)
 		return ((gint64)tv.tv_sec * 1000000 + tv.tv_usec) * 10;
