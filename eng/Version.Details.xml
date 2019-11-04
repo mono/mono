@@ -5,9 +5,9 @@
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>17c14aa2b50cfb5920d03ea8835c9a4932b5359c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App" Version="5.0.0-alpha1.19527.2">
+    <Dependency Name="Microsoft.NETCore.App" Version="5.0.0-alpha.1.19554.1">
       <Uri>https://github.com/dotnet/core-setup</Uri>
-      <Sha>b3749864f47f38599a94070497225c665124fe82</Sha>
+      <Sha>59b0c432ab3622cde2d2e1fe35150b7ff64e5f96</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers" Version="3.3.1-beta4-19476-06">
       <Uri>https://github.com/dotnet/roslyn</Uri>
