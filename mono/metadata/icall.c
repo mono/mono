@@ -8135,6 +8135,8 @@ G_EXTERN_C char** mono_timezone_get_names (gint32 *count);
 gpointer 
 ves_icall_System_TimeZoneInfo_mono_timezone_get_data (const gunichar2* name, gint32 name_length, gint32 *size)
 {
+	// MONO_CROSS_COMPILE returns undefined symbol "_mono_timezone_get_data"
+	// The icall offsets will be generated and linked at build time
 #ifdef MONO_CROSS_COMPILE
 	return NULL;
 #else
@@ -8145,6 +8147,8 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_data (const gunichar2* name, gin
 void
 ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile*result)
 {
+	// MONO_CROSS_COMPILE returns undefined symbol "_mono_timezone_get_local_name"
+	// The icall offsets will be generated and linked at build time
 #ifndef MONO_CROSS_COMPILE
 	return mono_timezone_get_local_name (result);
 #endif
@@ -8153,6 +8157,8 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile
 char**
 ves_icall_System_TimeZoneInfo_mono_timezone_get_names (gint32 *count)
 {
+	// MONO_CROSS_COMPILE returns undefined symbol "_mono_timezone_get_names"
+	// The icall offsets will be generated and linked at build time
 #ifdef MONO_CROSS_COMPILE
 	return NULL;
 #else
