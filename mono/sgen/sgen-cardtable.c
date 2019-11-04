@@ -441,17 +441,25 @@ sgen_card_table_clear_cards (void)
 }
 
 static void
-sgen_card_table_start_scan_remsets (void)
+sgen_card_table_start_scan_remsets (gboolean is_parallel, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par)
 {
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	/*FIXME we should have a bit on each block/los object telling if the object have marked cards.*/
 	/*First we copy*/
+#ifdef SGEN_USE_SIMPLE_PAR_COPY_CLEAR_CARDS
+	sgen_iterate_all_block_ranges (move_cards_to_shadow_table, is_parallel, object_ops_nopar, object_ops_par);
+#else
 	sgen_major_collector_iterate_block_ranges (move_cards_to_shadow_table);
 	sgen_los_iterate_live_block_ranges (move_cards_to_shadow_table);
 	sgen_wbroots_iterate_live_block_ranges (move_cards_to_shadow_table);
+#endif
 
 	/*Then we clear*/
+#ifdef SGEN_USE_SIMPLE_PAR_COPY_CLEAR_CARDS
+	sgen_iterate_all_block_ranges (clear_cards, is_parallel, object_ops_nopar, object_ops_par);
+#else
 	sgen_card_table_clear_cards ();
+#endif
 #endif
 }
 

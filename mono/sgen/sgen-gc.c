@@ -428,6 +428,7 @@ static void scan_from_registered_roots (char *addr_start, char *addr_end, int ro
 static void pin_from_roots (void *start_nursery, void *end_nursery, ScanCopyContext ctx);
 static void finish_gray_stack (int generation, ScanCopyContext ctx);
 
+static void job_wbroots_iterate_live_block_ranges (void *worker_data_untyped, SgenThreadPoolJob *job);
 
 SgenMajorCollector sgen_major_collector;
 SgenMinorCollector sgen_minor_collector;
@@ -1363,6 +1364,11 @@ typedef struct {
 	int data;
 } ParallelScanJob;
 
+typedef struct {
+	ParallelScanJob pscan_job;
+	sgen_cardtable_block_callback callback;
+} ParallelIterateBlockRangesJob;
+
 static ScanCopyContext
 scan_copy_context_for_scan_job (void *worker_data_untyped, ScanJob *job)
 {
@@ -1453,6 +1459,13 @@ job_scan_major_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 }
 
 static void
+job_major_collector_iterate_block_ranges (void *worker_data_untyped, SgenThreadPoolJob *job)
+{
+	ParallelIterateBlockRangesJob *job_data = (ParallelIterateBlockRangesJob*)job;
+	sgen_major_collector.iterate_block_ranges_in_parallel (job_data->callback, job_data->pscan_job.job_index, job_data->pscan_job.job_split_count, job_data->pscan_job.data);
+}
+
+static void
 job_scan_los_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 {
 	SGEN_TV_DECLARE (atv);
@@ -1467,6 +1480,13 @@ job_scan_los_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 
 	if (worker_data_untyped)
 		((WorkerData*)worker_data_untyped)->los_scan_time += SGEN_TV_ELAPSED (atv, btv);
+}
+
+static void
+job_los_iterate_live_block_ranges (void *worker_data_untyped, SgenThreadPoolJob *job)
+{
+	ParallelIterateBlockRangesJob *job_data = (ParallelIterateBlockRangesJob*)job;
+	sgen_los_iterate_live_block_range_jobs (job_data->callback, job_data->pscan_job.job_index, job_data->pscan_job.job_split_count);
 }
 
 static void
@@ -1616,6 +1636,46 @@ enqueue_scan_remembered_set_jobs (SgenGrayQueue *gc_thread_gray_queue, SgenObjec
 		psj->job_index = i;
 		psj->job_split_count = split_count;
 		sgen_workers_enqueue_job (GENERATION_NURSERY, &psj->scan_job.job, enqueue);
+	}
+}
+
+void
+sgen_iterate_all_block_ranges (sgen_cardtable_block_callback callback, gboolean is_parallel, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par)
+{
+	int i, split_count = sgen_workers_get_job_split_count (GENERATION_NURSERY);
+	size_t num_major_sections = sgen_major_collector.get_num_major_sections ();
+	ParallelIterateBlockRangesJob *pjob;
+
+	pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate wbroots block ranges", job_wbroots_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
+	pjob->pscan_job.scan_job.ops = is_parallel ? NULL : object_ops_nopar;
+	pjob->pscan_job.scan_job.gc_thread_gray_queue = NULL;
+	pjob->pscan_job.job_index = 0;
+	pjob->pscan_job.job_split_count = split_count;
+	pjob->callback = callback;
+	sgen_workers_enqueue_job (GENERATION_NURSERY, &pjob->pscan_job.scan_job.job, is_parallel);
+
+	for (i = 0; i < split_count; i++) {
+		pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate major block ranges", job_major_collector_iterate_block_ranges, sizeof (ParallelIterateBlockRangesJob));
+		pjob->pscan_job.scan_job.ops = is_parallel ? NULL : object_ops_nopar;
+		pjob->pscan_job.scan_job.gc_thread_gray_queue = NULL;
+		pjob->pscan_job.job_index = i;
+		pjob->pscan_job.job_split_count = split_count;
+		pjob->pscan_job.data = num_major_sections / split_count;
+		pjob->callback = callback;
+		sgen_workers_enqueue_job (GENERATION_NURSERY, &pjob->pscan_job.scan_job.job, is_parallel);
+
+		pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate LOS block ranges", job_los_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
+		pjob->pscan_job.scan_job.ops = is_parallel ? NULL : object_ops_nopar;
+		pjob->pscan_job.scan_job.gc_thread_gray_queue = NULL;
+		pjob->pscan_job.job_index = i;
+		pjob->pscan_job.job_split_count = split_count;
+		pjob->callback = callback;
+		sgen_workers_enqueue_job (GENERATION_NURSERY, &pjob->pscan_job.scan_job.job, is_parallel);
+	}
+
+	if (is_parallel) {
+		sgen_workers_start_all_workers (GENERATION_NURSERY, object_ops_nopar, object_ops_par, NULL);
+		sgen_workers_join (GENERATION_NURSERY);
 	}
 }
 
@@ -1776,7 +1836,7 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 	sgen_client_pinning_end ();
 
-	remset.start_scan_remsets ();
+	remset.start_scan_remsets (is_parallel, object_ops_nopar, object_ops_par);
 	TV_GETTIME (btv);
 
 	SGEN_LOG (2, "Minor scan copy/clear remsets: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
@@ -2861,6 +2921,16 @@ sgen_wbroots_iterate_live_block_ranges (sgen_cardtable_block_callback cb)
 	SGEN_HASH_TABLE_FOREACH (&sgen_roots_hash [ROOT_TYPE_WBARRIER], void **, start_root, RootRecord *, root) {
 		cb ((mword)start_root, (mword)root->end_root - (mword)start_root);
 	} SGEN_HASH_TABLE_FOREACH_END;
+}
+
+static void
+job_wbroots_iterate_live_block_ranges (void *worker_data_untyped, SgenThreadPoolJob *job)
+{
+	ParallelIterateBlockRangesJob *job_data = (ParallelIterateBlockRangesJob*)job;
+
+	// Currently we only iterate live wbroots block ranges on one job.
+	if (job_data->pscan_job.job_index == 0)
+		sgen_wbroots_iterate_live_block_ranges (job_data->callback);
 }
 
 /* Root equivalent of sgen_client_cardtable_scan_object */
