@@ -1502,7 +1502,7 @@ gboolean
 mono_method_is_constructor (MonoMethod *method);
 
 gboolean
-mono_class_has_default_constructor (MonoClass *klass);
+mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
 
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"

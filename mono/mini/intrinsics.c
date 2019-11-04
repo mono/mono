@@ -1842,7 +1842,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				cmethod->is_inflated &&
 				!mini_method_check_context_used (cfg, cmethod)) {
 			MonoClass *arg0 = mono_class_from_mono_type_internal (method_context->method_inst->type_argv [0]);
-			if (m_class_is_valuetype (arg0) && !mono_class_has_default_constructor (arg0)) {
+			if (m_class_is_valuetype (arg0) && !mono_class_has_default_constructor (arg0, FALSE)) {
 				MONO_INST_NEW (cfg, ins, MONO_CLASS_IS_SIMD (cfg, arg0) ? OP_XZERO : OP_VZERO);
 				ins->dreg = mono_alloc_dreg (cfg, STACK_VTYPE);
 				ins->type = STACK_VTYPE;

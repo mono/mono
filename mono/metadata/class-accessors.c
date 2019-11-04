@@ -5,7 +5,6 @@
  */
 #include <config.h>
 #include <mono/metadata/class-internals.h>
-#include <mono/metadata/class-init.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class-abi-details.h>
@@ -28,9 +27,6 @@ typedef enum {
 	PROP_WEAK_BITMAP = 9,
 	PROP_DIM_CONFLICTS = 10 /* GSList of MonoMethod* */
 }  InfrequentDataKind;
-
-#define CTOR_REQUIRED_FLAGS (METHOD_ATTRIBUTE_SPECIAL_NAME | METHOD_ATTRIBUTE_RT_SPECIAL_NAME)
-#define CTOR_INVALID_FLAGS (METHOD_ATTRIBUTE_STATIC)
 
 /* Accessors based on class kind*/
 
@@ -443,37 +439,6 @@ mono_class_has_dim_conflicts (MonoClass *klass)
 		return gklass->has_dim_conflicts;
 	}
 
-	return FALSE;
-}
-
-gboolean
-mono_method_is_constructor (MonoMethod *method)
-{
-	return ((method->flags & CTOR_REQUIRED_FLAGS) == CTOR_REQUIRED_FLAGS &&
-			!(method->flags & CTOR_INVALID_FLAGS) &&
-			!strcmp (".ctor", method->name));
-}
-
-gboolean
-mono_class_has_default_constructor (MonoClass *klass)
-{
-	MonoMethod *method;
-	int i;
-
-	mono_class_setup_methods (klass);
-	if (mono_class_has_failure (klass))
-		return FALSE;
-
-	int mcount = mono_class_get_method_count (klass);
-	MonoMethod **klass_methods = m_class_get_methods (klass);
-	for (i = 0; i < mcount; ++i) {
-		method = klass_methods [i];
-		if (mono_method_is_constructor (method) &&
-			mono_method_signature_internal (method) &&
-			mono_method_signature_internal (method)->param_count == 0 &&
-			(method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC)
-			return TRUE;
-	}
 	return FALSE;
 }
 
