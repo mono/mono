@@ -14,7 +14,7 @@ namespace System
 {
 	partial class Buffer
 	{
-		static extern bool IsPrimitiveTypeArray (Array array) => array.IsPrimitive ();
+		static bool IsPrimitiveTypeArray (Array array) => array.IsPrimitive ();
 
 		internal static unsafe void Memcpy (byte* dest, byte* src, int len) => Memmove (dest, src, (nuint) len);
 
