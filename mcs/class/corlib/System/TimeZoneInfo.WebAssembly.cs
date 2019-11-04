@@ -23,7 +23,12 @@ namespace System {
 
 		static TimeZoneInfo CreateLocal ()
 		{
-			using (Stream stream = GetMonoWasmData (null)) {
+			// Call GetMonoWasmData and do not throw on error
+			// If there is no stream data returned then the zone information database
+			// was not found and we should return back a UTC value.
+			using (Stream stream = GetMonoWasmData (null, false)) {
+				if (stream == null)
+					return Utc;
 				return BuildFromStream (GetMonoWasmLocalName (), stream);
 			}
 		}
