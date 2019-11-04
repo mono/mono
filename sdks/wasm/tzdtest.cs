@@ -34,6 +34,8 @@ public class TZDTest {
 		var tzd = TimeZoneInfo.FindSystemTimeZoneById("US/Eastern");
 		Console.WriteLine($"TimeZone: {tzd}");
 
+		Console.WriteLine($"TimeZone: {TimeZoneInfo.FindSystemTimeZoneById("Pacific/Honolulu")}");
+		
 		var tzs = TimeZoneInfo.GetSystemTimeZones();
 		foreach(var tzi in tzs)
 		{
@@ -109,7 +111,7 @@ public class TZDTest {
                 }
                 catch
                 {
-                    TimeZone = "Etc/GMT-10";
+                    TimeZone = "Pacific/Honolulu";
                     _timeZoneInstance = TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
                 }
             }

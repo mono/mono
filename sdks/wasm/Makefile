@@ -409,6 +409,7 @@ build-zlib-aot-sample: packager.exe zlibtest.exe
 run-zlib-aot-sample: build-zlib-aot-sample
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
+# TimeZoneInfo tests
 tzdtest.exe: tzdtest.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) /r:./framework/WebAssembly.ZoneInfo.dll tzdtest.cs
 
@@ -417,6 +418,22 @@ run-tzd-test: build-tzd-sample
 
 build-tzd-sample: packager.exe tzdtest.exe
 	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample tzdtest.exe
+
+build-tzd-interp-sample: packager.exe tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-tzd-sample --nobinding --builddir=obj/interp-tzd-sample --template=runtime-tests.js tzdtest.exe --linker --link-icalls
+	ninja -v -C obj/interp-tzd-sample
+
+run-tzd-interp-sample: build-tzd-interp-sample
+	(cd bin/interp-tzd-sample && $(SM) runtime.js --run tzdtest.exe)
+
+build-tzd-aot-sample: packager.exe tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js tzdtest.exe
+	ninja -v -C obj/aot-tzd-sample
+
+run-tzd-aot-sample: build-tzd-aot-sample
+	(cd bin/aot-tzd-sample && $(SM) runtime.js --run tzdtest.exe)
+
+# end TimeZoneInfo tests
 
 build-mixed-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
