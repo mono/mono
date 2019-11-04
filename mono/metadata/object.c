@@ -2010,7 +2010,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	gpointer iter;
 	gpointer *interface_offsets;
 	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
-	gboolean is_array = FALSE;
 
 	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
 	mono_domain_lock (domain);
@@ -2033,7 +2032,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	/* Array types require that their element type be valid*/
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
-		is_array = TRUE;
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (!m_class_is_inited (element_class))
 			mono_class_init_internal (element_class);
