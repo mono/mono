@@ -565,8 +565,7 @@ ves_icall_System_GC_KeepAlive (MonoObjectHandle obj, MonoError *error)
 }
 
 void
-ves_icall_System_GC_GetGCMemoryInfo (void* self,
-								    gint64* high_memory_load_threshold_bytes,
+ves_icall_System_GC_GetGCMemoryInfo (gint64* high_memory_load_threshold_bytes,
 									gint64* memory_load_bytes,
 									gint64* total_available_memory_bytes,
 									gint64* heap_size_bytes,
