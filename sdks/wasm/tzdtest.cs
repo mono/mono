@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 
 public class TZDTest {
+	static TimeZoneInfo _timeZoneInstance;
+	static string _timeZone;
 	public static void Main (String [] args)
 	{
 		var local = TimeZoneInfo.Local;
@@ -58,19 +60,19 @@ public class TZDTest {
         return TimeZoneInfo.ConvertTimeFromUtc(utcTime.Value, TimeZoneInstance);
     }
 
-  /// <summary>
-    /// Converts local server time to the user's timezone and
-    /// returns the UTC date.
-    /// 
-    /// Use this to convert user captured date inputs and convert
-    /// them to UTC.  
-    /// 
-    /// User input (their local time) comes in as local server time 
-    /// -> convert to user's timezone from server time
-    /// -> convert to UTC
-    /// </summary>
-    /// <param name="localServerTime"></param>
-    /// <returns></returns>
+	/// <summary>
+	/// Converts local server time to the user's timezone and
+	/// returns the UTC date.
+	/// 
+	/// Use this to convert user captured date inputs and convert
+	/// them to UTC.  
+	/// 
+	/// User input (their local time) comes in as local server time 
+	/// -> convert to user's timezone from server time
+	/// -> convert to UTC
+	/// </summary>
+	/// <param name="localServerTime"></param>
+	/// <returns></returns>
     public static DateTime GetUtcUserTime(DateTime? localServerTime)
     {
         if (localServerTime == null)
@@ -91,8 +93,6 @@ public class TZDTest {
             _timeZone = value;
         } 
     }
-    private static string _timeZone;
-
     public static TimeZoneInfo TimeZoneInstance
     {
         get
@@ -113,11 +113,4 @@ public class TZDTest {
         }
         private set { _timeZoneInstance = value; }
     }
-
-    private static TimeZoneInfo _timeZoneInstance;
-
-
-
-
-
 }
