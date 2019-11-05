@@ -289,22 +289,13 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
-// mono_thread_set_name_constant_ignore_error and mono_threadpool_set_thread_name
-// are partial duplicates of each other. Maintain them together.
-//
 static void
 mono_threadpool_set_thread_name (MonoInternalThread *thread)
 {
-	// Any thread can set any other thread name at any time.
-	// So this is unavoidably racy.
-	// This only partly fights against that -- i.e. not atomic and not a loop.
-	// It is reliable against the thread setting its own name, and somewhat
-	// reliable against other threads setting this thread's name.
-	static const char name [ ] = "Thread Pool Worker";
-	if (name != thread->name.chars)
-		mono_thread_set_name (thread, name, G_N_ELEMENTS (name) - 1,
-			MONO_THREAD_NAME_WINDOWS_CONSTANT ("Thread Pool Worker"),
-			MonoSetThreadNameFlag_Reset | MonoSetThreadNameFlag_Constant, NULL);
+	mono_thread_set_name_constant_ignore_error (
+		thread,
+		"Thread Pool Worker",
+		MonoSetThreadNameFlag_Reset | MonoSetThreadNameFlag_RepeatedlyButOptimized);
 }
 
 static void

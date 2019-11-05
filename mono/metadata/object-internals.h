@@ -564,8 +564,7 @@ struct _MonoThreadInfo;
 
 typedef struct MonoThreadName {
 	char* volatile chars;      // null check outside of lock
-	gsize volatile generation; // hypothetically read outside of lock; no longer actually used
-	gint32 free;
+	gint32 free; // bool
 	gint32 length;
 } MonoThreadName;
 
