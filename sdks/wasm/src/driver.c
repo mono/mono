@@ -684,12 +684,10 @@ EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 	var res = "UTC";
 	try {
 		return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_local_name ()
-	}
-	catch (wte) {
+	} catch (wte) {
 		try { 
 			res = Intl.DateTimeFormat().resolvedOptions().timeZone; 
-		} 
-		catch(e) {} 
+		} catch(e) {} 
 
 		var buff = Module._malloc((res.length + 1) * 2);
 		stringToUTF16 (res, buff, (res.length + 1) * 2);
@@ -721,10 +719,8 @@ mono_wasm_timezone_get_local_name_string (void)
 }
 
 // Returns the timezone information for a specfic id.
-EM_JS(int, mono_wasm_zoneinfo_timezone_get_data, (int id, int *size), {
-
-	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
-	{
+EM_JS(int, mono_wasm_zoneinfo_timezone_get_data, (char* id, int *size), {
+	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined") {
 		var str = UTF8ToString (id);
 		return Mono_WebAssembly_ZoneInfo.mono_timezone_get_data(str, size);
 	}
@@ -734,7 +730,6 @@ EM_JS(int, mono_wasm_zoneinfo_timezone_get_data, (int id, int *size), {
 void*
 mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 {
-
 	MonoString *zi_name;
 	if (!name)
 		zi_name = mono_wasm_timezone_get_local_name_string ();
@@ -762,15 +757,12 @@ EM_JS(int, mono_wasm_zoneinfo_timezone_get_name_count, (), {
 
 // Returns the number of zone id name at a given index.
 EM_JS(char*, mono_wasm_zoneinfo_timezone_get_name_at_index, (int index), {
-
 	var res = "";
 	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
 	{
 		try {
 			return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_name_at_index (index);
-		}
-		catch (wte) {
-		}
+		} catch (wte) { }
 	}
 	return null;
 })
