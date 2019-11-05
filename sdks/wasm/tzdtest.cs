@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using WebAssembly.ZoneInfo;
 
 public class TZDTest {
 	public static void Main (String [] args)
@@ -41,11 +40,6 @@ public class TZDTest {
 		{
 			Console.WriteLine(tzi);
 		}
-
-		int size = 0;
-		var data = MonoWasmZoneInfo.mono_timezone_get_data("Europe/Luxembourg", ref size);
-		Console.WriteLine($"data length: {data.Length}");
-
 	}
 
 	/// <summary>
