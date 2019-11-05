@@ -677,48 +677,15 @@ mono_wasm_enable_on_demand_gc (void)
 	mono_wasm_enable_gc = 1;
 }
 
-static MonoAssembly* 
-mono_get_zone_Info_assembly (void)
-{
-	static MonoAssembly* zoneInfoAssembly;
-
-	if (!try_load_zone_info) {
-		fprintf (stdout, "%s\n", "Locating ZoneInfo assembly.");
-		// try to open the ZoneInfo assembly
-		zoneInfoAssembly = mono_domain_assembly_open (root_domain, "WebAssembly.ZoneInfo");
-		// if not open then try to load it.
-		if (!zoneInfoAssembly) {
-			MonoImageOpenStatus status;
-			MonoAssemblyName* aname = mono_assembly_name_new ("WebAssembly.ZoneInfo");
-			zoneInfoAssembly = mono_assembly_load (aname, NULL, &status);
-			mono_assembly_name_free (aname);
-		}
-
-		if (zoneInfoAssembly)
-			fprintf (stdout, "%s\n", "ZoneInfo assembly located and loaded.");
-		else
-			fprintf (stdout, "%s\n", "ZoneInfo assembly could not be located.");
-
-		try_load_zone_info = 1;
-	}
-
-    return zoneInfoAssembly;
-}
-
-static MonoClass* 
-mono_get_zone_Info_class (void)
-{
-	static MonoClass* klass;
-	if (!klass)
-		klass = mono_class_from_name (mono_assembly_get_image(mono_get_zone_Info_assembly ()), "WebAssembly.ZoneInfo", "MonoWasmZoneInfo");
-	return klass;
-}
+//
+// The following timezone information routines depends on the Mono_WebAssembly_ZoneInfo module being available.
+//
 
 // Returns the local timezone default is UTC.
 EM_JS(int, mono_wasm_timezone_get_local_name, (), {
 	var res = "UTC";
 	try {
-		return WebAssembly_ZoneInfo.mono_wasm_timezone_get_local_name ()
+		return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_local_name ()
 	}
 	catch (wte) {
 		try { 
@@ -755,6 +722,17 @@ mono_wasm_timezone_get_local_name_string (void)
 	return name;
 }
 
+// Returns the timezone information for a specfic id.
+EM_JS(int, mono_wasm_zoneinfo_timezone_get_data, (int id, int *size), {
+
+	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
+	{
+		var str = UTF8ToString (id);
+		return Mono_WebAssembly_ZoneInfo.mono_timezone_get_data(str, size);
+	}
+	return null;
+})
+
 void*
 mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 {
@@ -769,58 +747,52 @@ mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 	// mono_free (native_name);
 	*size = 0;
 	
-	MonoClass *zoneInfoClass = mono_get_zone_Info_class (); 
-	if (zoneInfoClass)
-	{
-	    static MonoMethod* method;
-		MonoException* exc = NULL;
-
-		if (!method) {
-			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_data", -1);
-		}
-		
-		void* args[] = {zi_name, size};
-		MonoObject* ret = mono_runtime_invoke (method, NULL, args, (MonoObject**)&exc);
-		if (!size)
-			return NULL;
-
-		MonoArray* buffer = (MonoArray*)ret;
-		void* result = malloc (*size);
-		memcpy(result, mono_array_addr_with_size (buffer, sizeof(char), 0), *size);
-		return result;
-	}
-
-	return NULL;
+	char *native_val = mono_string_to_utf8 (zi_name);
+	int buffer = mono_wasm_zoneinfo_timezone_get_data((int)native_val, size);
+	return (void*)buffer;
 }
+
+// Returns the number of zone id's available.
+EM_JS(int, mono_wasm_zoneinfo_timezone_get_name_count, (), {
+
+	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
+	{
+		return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_names_count ();
+	}
+	return null;
+})
+
+// Returns the number of zone id name at a given index.
+EM_JS(char*, mono_wasm_zoneinfo_timezone_get_name_at_index, (int index), {
+
+	var res = "";
+	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
+	{
+		try {
+			return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_name_at_index (index);
+		}
+		catch (wte) {
+		}
+	}
+	return null;
+})
 
 char**
 mono_timezone_get_names (int *count)
 {
-	*count = 0;
-	
-	MonoClass *zoneInfoClass = mono_get_zone_Info_class (); 
-	if (zoneInfoClass) {
-		static MonoMethod* method;
-		MonoException* exc = NULL;
-		if (!method)
-			method = mono_class_get_method_from_name (zoneInfoClass, "mono_timezone_get_names", -1);
-		
-		void* args[] = {count};
-		MonoObject* ret = mono_runtime_invoke (method, NULL, args, (MonoObject**)&exc);
-		if (!*count)
-			return NULL;
-
-		if(!exc) {
-			MonoArray* names =(MonoArray*)ret;
-			*count = mono_array_length (names);
-			char** result = (char**) malloc (sizeof (char*) * (*count));
-			for (unsigned int i = 0; i < *count; i++) {
-				MonoString* s = mono_array_get(names, MonoString*, i);
-				result [i] = strdup (mono_string_to_utf8 (s));
-			}
-			return result;
-		}
+	*count = mono_wasm_zoneinfo_timezone_get_name_count ();
+	if (!*count)
 		return NULL;
+
+	char** result = (char**) malloc (sizeof (char*) * (*count));
+	for (unsigned int i = 0; i < *count; i++) {
+		// mono_wasm_zoneinfo_timezone_get_name_at_index returns a char* to a utf8 string
+		// which the memory for the string will be released in the TimeZoneInfo.WebAssembly managed code. 
+		result [i] = mono_wasm_zoneinfo_timezone_get_name_at_index (i);
 	}
-	return NULL;
+	return result;
 }
+
+//
+// End TimeZoneInfo routines
+//
