@@ -45,7 +45,8 @@ namespace Mono.Btls
 	static class MonoBtlsX509StoreManager
 	{
 		static bool initialized;
-#if !MONODROID
+#if MX_WINCRYPTO
+#elif !MONODROID
 		static string machineTrustedRootPath;
 		static string machineIntermediateCAPath;
 		static string machineUntrustedPath;
@@ -89,12 +90,15 @@ namespace Mono.Btls
 		{
 #if MONODROID
 			return false;
+#elif MX_WINCRYPTO
+			return true;
 #else
 			var path = GetStorePath (type);
 			return path != null && Directory.Exists (path);
 #endif
 		}
 
+#if !MX_WINCRYPTO
 		public static string GetStorePath (MonoBtlsX509StoreType type)
 		{
 #if MONODROID
@@ -119,6 +123,7 @@ namespace Mono.Btls
 			}
 #endif
 		}
+#endif
 	}
 }
 #endif

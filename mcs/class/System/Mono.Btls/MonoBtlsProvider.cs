@@ -397,7 +397,17 @@ namespace Mono.Btls
 #endif
 		}
 
-#if !MONODROID
+#if MX_WINCRYPTO
+		static void AddUserStore (MonoBtlsX509Store store)
+		{
+			store.AddWinCryptoLookup (StoreLocation.CurrentUser);
+		}
+
+		static void AddMachineStore (MonoBtlsX509Store store)
+		{
+			store.AddWinCryptoLookup (StoreLocation.LocalMachine);
+		}
+#elif !MONODROID
 		static void AddUserStore (MonoBtlsX509Store store)
 		{
 			var userPath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.UserTrustedRoots);
@@ -421,6 +431,7 @@ namespace Mono.Btls
 			store.AddCollection (settings.TrustAnchors, trust);
 		}
 
+#if !MX_WINCRYPTO
 		public static string GetSystemStoreLocation ()
 		{
 #if MONODROID
@@ -429,6 +440,7 @@ namespace Mono.Btls
 			return MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
 #endif
 		}
+#endif
 
 		public static X509Certificate2 CreateCertificate (byte[] data, MonoBtlsX509Format format)
 		{

@@ -1,6 +1,8 @@
 #include net_4_x_System.dll.sources
 #include corefx.windows.sources
 
+Mono.Btls/MonoBtlsX509LookupWinCrypto.cs
+
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs

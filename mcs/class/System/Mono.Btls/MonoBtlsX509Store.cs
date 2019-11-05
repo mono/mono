@@ -193,6 +193,7 @@ namespace Mono.Btls
 			return lookup;
 		}
 
+#if !MX_WINCRPTO
 		public void AddDirectoryLookup (string dir, MonoBtlsX509FileType type)
 		{
 			var lookup = AddLookup (MonoBtlsX509LookupType.HASH_DIR);
@@ -204,6 +205,7 @@ namespace Mono.Btls
 			var lookup = AddLookup (MonoBtlsX509LookupType.FILE);
 			lookup.LoadFile (file, type);
 		}
+#endif
 
 		public void AddCollection (X509CertificateCollection collection, MonoBtlsX509TrustKind trust)
 		{
@@ -211,6 +213,16 @@ namespace Mono.Btls
 			var lookup = new MonoBtlsX509Lookup (this, MonoBtlsX509LookupType.MONO);
 			lookup.AddMono (monoLookup);
 		}
+
+#if MX_WINCRYPTO
+		public void AddWinCryptoLookup (StoreLocation location)
+		{
+			var winCryptoLookup = new MonoBtlsX509LookupWinCrypto ();
+			winCryptoLookup.Location = location;
+			var lookup = new MonoBtlsX509Lookup (this, MonoBtlsX509LookupType.MONO);
+			lookup.AddMono (winCryptoLookup);
+		}
+#endif
 
 #if MONODROID
 		public void AddAndroidLookup ()

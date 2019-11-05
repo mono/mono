@@ -254,6 +254,7 @@ net_4_x_dirs := \
 	System	\
 	System.XML
 
+# Wine Mono hack: Do not build Mono.Btls.Interface. Our BTLS changes break it, and it's not needed.
 net_4_x_parallel_dirs = \
 	System.Security			\
 	Mono.Posix			\
@@ -330,7 +331,6 @@ net_4_x_parallel_dirs = \
 	I18N				\
 	Cscompmgd			\
 	Mono.CompilerServices.SymbolWriter \
-	Mono.Btls.Interface		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	Mono.Cecil			\
