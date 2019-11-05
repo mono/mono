@@ -746,13 +746,13 @@ mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 	*size = 0;
 	
 	char *native_val = mono_string_to_utf8 (zi_name);
-	int buffer = mono_wasm_zoneinfo_timezone_get_data((int)native_val, size);
+	int buffer = mono_wasm_zoneinfo_timezone_get_data(native_val, size);
+	mono_free (native_val);
 	return (void*)buffer;
 }
 
 // Returns the number of zone id's available.
 EM_JS(int, mono_wasm_zoneinfo_timezone_get_name_count, (), {
-
 	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined")
 	{
 		return Mono_WebAssembly_ZoneInfo.mono_wasm_timezone_get_names_count ();
