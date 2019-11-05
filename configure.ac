@@ -173,7 +173,6 @@ case "$host" in
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
 		x86_64-*-* | amd64-*-*)
-			support_boehm=no
 			with_gc=sgen
 			RID="win-x64"
 			COREARCH="x64"
