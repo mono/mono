@@ -30,6 +30,8 @@ if HOST_DARWIN
 test_ldflags = -framework CoreFoundation -framework Foundation
 endif
 
+test_ldflags += -static
+
 monodir=$(top_builddir)
 sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
