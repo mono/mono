@@ -1,0 +1,100 @@
+#!/usr/bin/env perl
+
+my $interpreter = shift;
+my $test = shift;
+my $disabled_tests = shift;
+my $output = $test;
+my $stdout = $test.'.stdout';
+my $stderr = $test.'.stderr';
+
+my $teamcity = $ENV{UNITY_THISISABUILDMACHINE};
+$output =~ s/\.exe$/.output/;
+
+$| = 0;
+if ($teamcity) {
+	print "##teamcity[testStarted name='$test']\n";
+}
+else {
+	print "Testing $test... ";
+}
+
+foreach $disabled (split (/ /, $disabled_tests)) {
+	if ($disabled eq $test) {
+		print "disabled.\n";
+		exit (0);
+	}
+}
+
+my $res;
+my $cpid = fork ();
+if (!defined ($cpid)) {
+	$res = system("$interpreter @ARGV $test 2>$stderr 1>$stdout");
+} elsif ($cpid == 0) {
+	exec ("$interpreter @ARGV $test 2>$stderr 1>$stdout") || die "Cannot exec: $!";
+} else {
+	# in the parent, setup the alarm
+	# test must complete in 30 seconds or it is considered buggy
+	my $timeout = 30;
+	alarm ($timeout);
+	$SIG{ALRM} = sub {
+		print "failed after $timeout seconds timeout.\n";
+		if ($teamcity) {
+			print "##teamcity[testFailed name='$test' message='failed after $timeout seconds timeout.' details='message and stack trace']\n";
+			print "##teamcity[testFinished name='$test']\n";
+		}
+		# process group kill
+		kill (-9, $cpid);
+		exit (3);
+	};
+	$res = wait ();
+	$SIG{ALRM} = sub {};
+	$res = $? >> 8;
+}
+
+if ($teamcity && -f $stdout) {
+	$text = read_file ($stdout);
+	print "##teamcity[testStdOut name='$test' out='$text']\n";	
+} 
+
+if ($teamcity && -f $stderr) {
+	$text = read_file ($stderr);
+	print "##teamcity[testStdErr name='$test' out='$text']\n";	
+} 
+
+if ($res) {
+	$failedText = sprintf ("failed $? (%d) signal (%d).", $? >> 8, $? & 127);
+	if ($teamcity) {
+		print "##teamcity[testFailed name='$test' message='$failedText' details='message and stack trace']\n";
+		print "##teamcity[testFinished name='$test']\n";
+	} else {
+		print "$failedText\n";
+	}
+
+	if (($? & 127) == 2) {
+		exit (2);
+	} else {
+		exit (1);
+	}
+}
+if (-f $output && (read_file ($output) ne read_file ($stdout))) {
+    	print "failed output.\n";
+	exit (1);
+}
+
+if ($teamcity) {
+	print "##teamcity[testFinished name='$test']\n";
+}
+else {
+	print "pass.\n";
+}
+unlink ($stderr);
+exit (0);
+
+sub read_file {
+	local ($/);
+	my $out = shift;
+	open (F, "<$out") || die $!;
+	$out = <F>;
+	close(F);
+	return $out;
+}

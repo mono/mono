@@ -1,0 +1,14 @@
+name: build_win_bare_minimum
+
+agent:
+  type: Unity::VM
+  image: platform-foundation/windows-mono-bokken:latest
+  flavor: b1.xlarge
+
+commands:
+  - .yamato/build_win_bare_minimum.bat
+
+artifacts: 
+  bareminimum:
+    paths:
+      - incomingbuilds\bareminimum\**

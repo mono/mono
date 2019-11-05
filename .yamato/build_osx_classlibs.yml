@@ -1,0 +1,15 @@
+name: build_osx_classlibs
+
+agent:
+  type: Unity::VM::osx
+  image: platform-foundation/mac-bokken:latest
+  flavor: m1.mac
+
+commands:
+  - .yamato/build_osx_classlibs.sh
+
+
+artifacts: 
+  classlibs:
+    paths:
+      - incomingbuilds/classlibs/**
