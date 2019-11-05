@@ -27,10 +27,10 @@ test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
 	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
 
-test_ldflags = -static
-
 if HOST_DARWIN
-test_ldflags += -framework CoreFoundation -framework Foundation
+test_ldflags = -static -framework CoreFoundation -framework Foundation
+else
+test_ldflags = -static
 endif
 
 monodir=$(top_builddir)
