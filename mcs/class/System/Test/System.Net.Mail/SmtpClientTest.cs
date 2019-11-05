@@ -40,6 +40,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -49,6 +50,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -67,6 +69,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -80,6 +83,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -99,6 +103,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -116,6 +121,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -134,6 +140,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -153,6 +160,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -166,6 +174,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -195,6 +204,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -212,6 +222,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -230,6 +241,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -249,6 +261,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -265,6 +278,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -295,6 +309,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -317,6 +332,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -345,6 +361,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -367,6 +384,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -388,6 +406,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -401,6 +420,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -412,6 +432,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
