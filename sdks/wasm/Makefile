@@ -441,8 +441,7 @@ build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini
-	(cd bin/aot-mini && $(SM) runtime.js 
-	 mini_tests.dll)
+	(cd bin/aot-mini && $(SM) runtime.js  --regression mini_tests.dll)
 
 get-sysnative-exports:
 	nm ../out/wasm-runtime-release/lib/libmono-native.a  | grep SystemNative | cut -d ' ' -f 3 | grep -v '^$$'
