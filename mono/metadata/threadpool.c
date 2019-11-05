@@ -289,8 +289,11 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
+// mono_thread_set_name_constant_ignore_error and mono_threadpool_set_thread_name
+// are partial duplicates of each other. Maintain them together.
+//
 static void
-set_thread_name (MonoInternalThread *thread)
+mono_threadpool_set_thread_name (MonoInternalThread *thread)
 {
 	// Any thread can set any other thread name at any time.
 	// So this is unavoidably racy.
@@ -340,7 +343,7 @@ worker_callback (void)
 	mono_defaults.threadpool_perform_wait_callback_method->save_lmf = TRUE;
 
 	/* Set the name if this is the first call to worker_callback on this thread */
-	set_thread_name (thread);
+	mono_threadpool_set_thread_name (thread);
 
 	domains_lock ();
 
@@ -373,7 +376,7 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		set_thread_name (thread);
+		mono_threadpool_set_thread_name (thread);
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,
@@ -401,7 +404,7 @@ worker_callback (void)
 		mono_thread_pop_appdomain_ref ();
 
 		/* Reset name after every callback */
-		set_thread_name (thread);
+		mono_threadpool_set_thread_name (thread);
 
 		domains_lock ();
 
