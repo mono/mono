@@ -1032,26 +1032,29 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 #endif
 
 MonoBoolean
-ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArrayHandle dest, int dest_idx, int length, MonoError *error)
+ves_icall_System_Array_FastCopy (MonoArray *volatile* source_handle, int source_idx, MonoArray *volatile* dest_handle, int dest_idx, int length)
 {
-	MonoVTable * const src_vtable = MONO_HANDLE_GETVAL (source, obj.vtable);
-	MonoVTable * const dest_vtable = MONO_HANDLE_GETVAL (dest, obj.vtable);
+	MonoArray* const source = *source_handle;
+	MonoArray* const dest = *dest_handle;
+	MonoVTable* const src_vtable = source->obj.vtable;
+	MonoVTable* const dest_vtable = dest->obj.vtable;
+	int const src_rank = src_vtable->rank;
 
-	if (src_vtable->rank != dest_vtable->rank)
+	if (src_rank != dest_vtable->rank)
 		return FALSE;
 
-	MonoArrayBounds *source_bounds = MONO_HANDLE_GETVAL (source, bounds);
-	MonoArrayBounds *dest_bounds = MONO_HANDLE_GETVAL (dest, bounds);
+	MonoArrayBounds *source_bounds = source->bounds;
+	MonoArrayBounds *dest_bounds = dest->bounds;
 
-	for (int i = 0; i < src_vtable->rank; i++) {
+	for (int i = 0; i < src_rank; i++) {
 		if ((source_bounds && source_bounds [i].lower_bound > 0) ||
 			(dest_bounds && dest_bounds [i].lower_bound > 0))
 			return FALSE;
 	}
 
 	/* there's no integer overflow since mono_array_length_internal returns an unsigned integer */
-	if ((dest_idx + length > mono_array_handle_length (dest)) ||
-		(source_idx + length > mono_array_handle_length (source)))
+	if ((dest_idx + length > mono_array_length_internal (dest)) ||
+		(source_idx + length > mono_array_length_internal (source)))
 		return FALSE;
 
 	MonoClass * const src_class = m_class_get_element_class (src_vtable->klass);
@@ -1082,23 +1085,20 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 	}
 
 	if (m_class_is_valuetype (dest_class)) {
-		gsize const element_size = mono_array_element_size (MONO_HANDLE_GETVAL (source, obj.vtable->klass));
-
-		MONO_ENTER_NO_SAFEPOINTS; // gchandle would also work here, is slow, breaks profiler tests.
+		gsize const element_size = mono_array_element_size (source->obj.vtable->klass);
 
 		gconstpointer const source_addr =
-			mono_array_addr_with_size_fast (MONO_HANDLE_RAW (source), element_size, source_idx);
+			mono_array_addr_with_size_fast (source, element_size, source_idx);
+
 		if (m_class_has_references (dest_class)) {
-			mono_value_copy_array_handle (dest, dest_idx, source_addr, length);
+			mono_value_copy_array_internal (dest, dest_idx, source_addr, length);
 		} else {
 			gpointer const dest_addr =
-				mono_array_addr_with_size_fast (MONO_HANDLE_RAW (dest), element_size, dest_idx);
+				mono_array_addr_with_size_fast (dest, element_size, dest_idx);
 			mono_gc_memmove_atomic (dest_addr, source_addr, element_size * length);
 		}
-
-		MONO_EXIT_NO_SAFEPOINTS;
 	} else {
-		mono_array_handle_memcpy_refs (dest, dest_idx, source, source_idx, length);
+		mono_array_memcpy_refs_internal (dest, dest_idx, source, source_idx, length);
 	}
 
 	return TRUE;

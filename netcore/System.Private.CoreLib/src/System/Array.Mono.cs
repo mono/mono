@@ -113,7 +113,7 @@ namespace System
 			if (destinationIndex < 0)
 				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Value has to be >= 0.");
 
-			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
+			if (FastCopy (ref sourceArray, sourceIndex, ref destinationArray, destinationIndex, length))
 				return;
 
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
@@ -476,7 +476,7 @@ namespace System
 		extern static bool CanChangePrimitive (ref Type srcType, ref Type dstType, bool reliable);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
+		internal extern static bool FastCopy (ref Array source, int source_idx, ref Array dest, int dest_idx, int length);
 
 		[Intrinsic] // when dimension is `0` constant
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -285,7 +285,9 @@ namespace System.Reflection
 
 			// Have to clone because GetParametersInfo icall returns cached value
 			var dest = new ParameterInfo [src.Length];
-			Array.FastCopy (src, 0, dest, 0, src.Length);
+			System.Array src_array = src;
+			System.Array dest_array = dest;
+			Array.FastCopy (ref src_array, 0, ref dest_array, 0, src.Length);
 			return dest;
 		}
 

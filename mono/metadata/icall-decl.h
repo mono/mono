@@ -166,9 +166,15 @@ ICALL_EXPORT int ves_icall_System_Threading_Thread_SystemMaxStackSize (void);
 ICALL_EXPORT int ves_icall_get_method_attributes (MonoMethod* method);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char*, const char*);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForAllNativeLibs (void);
-ICALL_EXPORT void ves_icall_System_Array_GetGenericValue_icall (MonoArray**, guint32, gpointer);
-ICALL_EXPORT void ves_icall_System_Array_SetGenericValue_icall (MonoArray**, guint32, gpointer);
-ICALL_EXPORT void ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32 count);
+
+ICALL_EXPORT void	 ves_icall_System_Array_GetGenericValue_icall (MonoArray**, guint32, gpointer);
+ICALL_EXPORT void	 ves_icall_System_Array_SetGenericValue_icall (MonoArray**, guint32, gpointer);
+ICALL_EXPORT void	 ves_icall_System_Array_InternalCreate (MonoArray *volatile* result, MonoType* type, gint32 rank, gint32* pLengths, gint32* pLowerBounds);
+ICALL_EXPORT MonoBoolean ves_icall_System_Array_CanChangePrimitive (MonoReflectionType *volatile* ref_src_type_handle, MonoReflectionType *volatile* ref_dst_type_handle, MonoBoolean reliable);
+ICALL_EXPORT MonoBoolean ves_icall_System_Array_FastCopy (MonoArray*volatile* source_handle, int source_idx, MonoArray*volatile* dest_handle, int dest_idx, int length);
+
+ICALL_EXPORT void	 ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32 count);
+
 ICALL_EXPORT void ves_icall_System_Environment_Exit (int);
 ICALL_EXPORT void ves_icall_System_GCHandle_FreeHandle (guint32 handle);
 ICALL_EXPORT void ves_icall_System_GC_InternalCollect (int generation);
