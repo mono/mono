@@ -792,7 +792,7 @@ signal_monitor (gpointer mon_untyped)
 }
 
 #if ENABLE_NETCORE
-gint32 thread_contentions; /* for Monitor.LockContentionCount, otherwise mono_perfcounters struct is used */
+static gint32 thread_contentions; /* for Monitor.LockContentionCount, otherwise mono_perfcounters struct is used */
 #endif
 
 /* If allow_interruption==TRUE, the method will be interrupted if abort or suspend
