@@ -28,9 +28,7 @@ test_ldadd = libtestlib.la \
 	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
 
 if HOST_DARWIN
-test_ldflags = -static -framework CoreFoundation -framework Foundation
-else
-test_ldflags = -static
+test_ldflags = -framework CoreFoundation -framework Foundation
 endif
 
 monodir=$(top_builddir)
