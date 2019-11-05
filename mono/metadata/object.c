@@ -2033,7 +2033,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	/* Array types require that their element type be valid*/
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
-		is_array = TRUE;
 		MonoClass *element_class = m_class_get_element_class (klass);
 		is_primitive_type_array = m_class_is_primitive (element_class);
 		if (!m_class_is_inited (element_class))
