@@ -4607,17 +4607,17 @@ get_async_method_builder (DbgEngineStackFrame *frame)
 	MonoClassField *builder_field;
 	gpointer builder;
 	gpointer this_addr;
-	MonoClass* class = frame->method->klass;
+	MonoClass* klass = frame->method->klass;
 
-	class = get_class_to_get_builder_field(frame);
-	builder_field = mono_class_get_field_from_name_full (class, "<>t__builder", NULL);
+	klass = get_class_to_get_builder_field(frame);
+	builder_field = mono_class_get_field_from_name_full (klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	this_addr = get_this_addr (frame);
 	if (!this_addr)
 		return NULL;
 
-	if (m_class_is_valuetype (class)) {
+	if (m_class_is_valuetype (klass)) {
 		builder = mono_vtype_get_field_addr (*(guint8**)this_addr, builder_field);
 	} else {
 		this_obj = *(MonoObject**)this_addr;
