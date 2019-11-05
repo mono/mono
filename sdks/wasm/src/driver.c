@@ -680,7 +680,7 @@ mono_wasm_enable_on_demand_gc (void)
 //
 
 // Returns the local timezone default is UTC.
-EM_JS(int, mono_wasm_timezone_get_local_name, (), 
+EM_JS(size_t, mono_wasm_timezone_get_local_name, (), 
 {
 	var res = "UTC";
 	try {
@@ -720,7 +720,7 @@ mono_wasm_timezone_get_local_name_string (void)
 }
 
 // Returns the timezone information for a specfic id.
-EM_JS(int, mono_wasm_zoneinfo_timezone_get_data, (char* id, int *size), 
+EM_JS(size_t, mono_wasm_zoneinfo_timezone_get_data, (char* id, int *size), 
 {
 	if (typeof Mono_WebAssembly_ZoneInfo !== "undefined") {
 		var str = UTF8ToString (id);
@@ -743,7 +743,7 @@ mono_timezone_get_data (mono_unichar2 *name, int name_length, int *size)
 	*size = 0;
 	
 	char *native_val = mono_string_to_utf8 (zi_name);
-	int buffer = mono_wasm_zoneinfo_timezone_get_data(native_val, size);
+	size_t buffer = mono_wasm_zoneinfo_timezone_get_data(native_val, size);
 	mono_free (native_val);
 	return (void*)buffer;
 }
