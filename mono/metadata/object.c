@@ -7702,6 +7702,7 @@ char *
 mono_string_to_utf8 (MonoString *s)
 {
 	char *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	result = mono_string_to_utf8_checked_internal (s, error);
 	
@@ -7709,6 +7710,7 @@ mono_string_to_utf8 (MonoString *s)
 		mono_error_cleanup (error);
 		result = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
