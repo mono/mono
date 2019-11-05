@@ -13,7 +13,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\zlib\deflate.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\errno.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\errno.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\zlib\infback.c">
@@ -28,19 +28,19 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\zlib\inftrees.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\map.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\map.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\signal.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\signal.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\stdio.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\stdio.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\stdlib.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\stdlib.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\string.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\string.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\zlib\trees.c">
@@ -64,10 +64,10 @@
     <ClCompile Include="$(MonoSourceLocation)\support\minizip\ioapi.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\fcntl.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\fcntl.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\zlib\sys-stat.c">
+    <ClCompile Include="$(MonoSourceLocation)\support\sys-stat.c">
       <Filter>Source Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClCompile>
   </ItemGroup>
@@ -93,7 +93,7 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\zlib\inftrees.h">
       <Filter>Header Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClInclude>
-    <ClInclude Include="$(MonoSourceLocation)\mono\zlib\map.h">
+    <ClInclude Include="$(MonoSourceLocation)\support\map.h">
       <Filter>Header Files$(MonoPosixHelperFilterSubFolder)</Filter>
     </ClInclude>
     <ClInclude Include="$(MonoSourceLocation)\mono\zlib\mph.h">
