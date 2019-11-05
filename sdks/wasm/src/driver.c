@@ -778,7 +778,7 @@ mono_timezone_get_names (int *count)
 	if (!*count)
 		return NULL;
 
-	char** result = (char**) malloc (sizeof (char*) * (*count));
+	char** result = (char**) calloc (*count, sizeof (char*));
 	for (unsigned int i = 0; i < *count; i++) {
 		// mono_wasm_zoneinfo_timezone_get_name_at_index returns a char* to a utf8 string
 		// which the memory for the string will be released in the TimeZoneInfo.WebAssembly managed code. 
