@@ -101,6 +101,7 @@ profilers = [];
 setenv = {};
 runtime_args = [];
 enable_gc = false;
+enable_zoneinfo = false;
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -122,11 +123,17 @@ while (true) {
 	} else if (args [0] == "--enable-gc") {
 		enable_gc = true;
 		args = args.slice (1);
+	} else if (args [0] == "--enable-zoneinfo") {
+		enable_zoneinfo = true;
+		args = args.slice (1);		
 	} else {
 		break;
 	}
 }
 testArguments = args;
+
+if (enable_zoneinfo)
+	load ("mono-webassembly-zoneinfo.js");
 
 if (typeof window == "undefined")
   load ("mono-config.js");
