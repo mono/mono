@@ -6039,10 +6039,6 @@ fi
 AM_CONDITIONAL(ENABLE_MSVC, test x$enable_msvc = xyes)
 
 if test "x$enable_msvc" = "xyes"; then
-	if test "x$support_boehm" = "xyes"; then
-		echo "Error, Boehm GC is not supported when using --enable-msvc."
-		exit 1
-	fi
 	mono_msvc_build_dir='$(top_srcdir)'/msvc/build/sgen
 	if test "x$host_cpu" = "xi686"; then
 		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/Win32/lib/Release
