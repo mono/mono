@@ -26,11 +26,12 @@ glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
 	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
-if HOST_DARWIN
-test_ldflags = -framework CoreFoundation -framework Foundation
-endif
 
-test_ldflags += -static
+test_ldflags = -static
+
+if HOST_DARWIN
+test_ldflags += -framework CoreFoundation -framework Foundation
+endif
 
 monodir=$(top_builddir)
 sgen_libs = \
