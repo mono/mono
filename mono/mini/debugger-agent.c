@@ -4526,7 +4526,7 @@ get_object_id_for_debugger_method (MonoClass* async_builder_class)
  * generic_info is either a MonoMethodRuntimeGenericContext or a MonoVTable.
  */
 MonoGenericContext
-get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
+mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
 	MonoGenericContext context = { NULL, NULL };
 	MonoClass *klass, *method_container_class;
@@ -4584,7 +4584,7 @@ get_class_to_get_builder_field(DbgEngineStackFrame *frame)
 		MonoType *inflated_type;
 
 		g_assert (this_obj);
-		context = get_generic_context_from_stack_frame (frame->ji, this_obj->vtable);
+		context = mono_get_generic_context_from_stack_frame (frame->ji, this_obj->vtable);
 		inflated_type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (original_class), &context, error);
 		mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
