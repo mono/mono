@@ -503,12 +503,10 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_LOG_ENTRY, sizeof (SgenLogEntry));
 
-	if (max_heap == 0)
-	{
+	if (max_heap == 0) {
 		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size ();
 
-		if (!sgen_gc_info.total_available_memory_bytes)
-		{
+		if (!sgen_gc_info.total_available_memory_bytes){
 			SGEN_LOG(9, "Warning: Unable to determine physical ram size for GCMemoryInfo");
 		}
 

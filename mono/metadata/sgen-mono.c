@@ -56,6 +56,9 @@ gboolean sgen_mono_xdomain_checks = FALSE;
 /* Functions supplied by the runtime to be called by the GC */
 static MonoGCCallbacks gc_callbacks;
 
+/* Used for GetGCMemoryInfo */
+SgenGCInfo sgen_gc_info;
+
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,
 
