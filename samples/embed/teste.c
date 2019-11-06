@@ -54,7 +54,8 @@ test_mono_embed_main (void);
 int 
 test_mono_embed_main() {
 #else
-int main() {
+int
+main (void) {
 #endif
 
 	MonoDomain *domain;
