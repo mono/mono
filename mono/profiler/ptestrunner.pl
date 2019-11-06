@@ -80,6 +80,12 @@ check_report_calls ($report, "T:Main (string[])" => 1, "T:throw_ex ()" => 1000);
 check_report_exceptions ($report, 1000, 1000, 1000);
 report_errors ();
 add_xml_testcase_result ();
+# test native-to-managed and managed-to-native wrappers
+$report = run_test ("test-pinvokes.exe", "report,calls");
+check_report_basics ($report);
+check_report_calls ($report, "(wrapper managed-to-native) T:test_reverse_pinvoke (System.Action)" => 1, "(wrapper native-to-managed) T:CallBack ()" => 1, "T:CallBack ()" => 1);
+report_errors ();
+add_xml_testcase_result ();
 # test heapshot
 $report = run_test ("test-heapshot.exe", "report,heapshot,legacy");
 if ($report ne "missing binary") {
