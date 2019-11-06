@@ -4571,7 +4571,8 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	return context;
 }
 
-static MonoClass *get_class_to_get_builder_field(DbgEngineStackFrame *frame)
+static MonoClass *
+get_class_to_get_builder_field(DbgEngineStackFrame *frame)
 {
 	ERROR_DECL (error);
 	gpointer this_addr = get_this_addr (frame);
