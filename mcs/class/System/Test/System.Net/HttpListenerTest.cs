@@ -39,6 +39,7 @@ namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -55,6 +56,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -65,6 +67,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -75,6 +78,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -88,6 +92,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -102,6 +107,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -115,6 +121,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -227,6 +234,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -271,6 +279,7 @@ namespace MonoTests.System.Net {
 		}
 		
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -292,6 +301,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -308,6 +318,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -321,6 +332,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -334,6 +346,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -360,6 +373,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -373,6 +387,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -386,6 +401,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
