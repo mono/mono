@@ -72,6 +72,7 @@
 #include "mini.h"
 #include "trace.h"
 #include "debugger-agent.h"
+#include "debugger-engine.h"
 #include "seq-points.h"
 #include "llvm-runtime.h"
 #include "mini-llvm.h"

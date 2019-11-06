@@ -45,7 +45,4 @@ mono_debugger_agent_stub_init (void);
 MONO_API gboolean
 mono_debugger_agent_transport_handshake (void);
 
-MonoGenericContext
-mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info);
-
 #endif
