@@ -328,7 +328,8 @@ int
 test_mono_embed_invoke_main (void);
 
 int 
-test_mono_embed_invoke_main() {
+test_mono_embed_invoke_main (void)
+{
 #else
 int
 main (void)
