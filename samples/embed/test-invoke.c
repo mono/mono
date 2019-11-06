@@ -338,11 +338,11 @@ main (void)
 
 	MonoDomain *domain;
 	int argc = 2;
-    char *argv[] = {
-                        (char*)"test-embed-invoke.exe",
-                        (char*)"test-embed-invoke-cs.exe",
-                        NULL
-                    };
+	char *argv[] = {
+						(char*)"test-embed-invoke.exe",
+						(char*)"test-embed-invoke-cs.exe",
+						NULL
+					};
 	const char *file;
 	int retval;
 	file = argv [1];
