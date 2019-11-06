@@ -237,7 +237,6 @@ namespace System
 			return 1024 * 1024 * 16;
 		}
 
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void _GetGCMemoryInfo (out long highMemoryLoadThresholdBytes,
 										out long memoryLoadBytes,
