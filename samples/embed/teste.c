@@ -52,7 +52,7 @@ int
 test_mono_embed_main (void);
 
 int 
-test_mono_embed_main() {
+test_mono_embed_main (void) {
 #else
 int
 main (void) {
