@@ -68,3 +68,7 @@
 [submodule "external/illinker-test-assets"]
 	path = external/illinker-test-assets
 	url = git://github.com/mono/illinker-test-assets.git
+[submodule "coreclr"]
+	path = external/coreclr
+	url = git://github.com/mono/coreclr.git
+	branch = mono-coregc
