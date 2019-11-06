@@ -41,6 +41,12 @@ sgen_libs = \
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(glib_libs)
 
+coregc_libs = \
+	$(monodir)/mono/metadata/libmonoruntimecoregc.la	\
+	$(monodir)/mono/coregc/libmonocoregc.la	\
+	$(monodir)/mono/utils/libmonoutils.la \
+	$(glib_libs)
+
 if ENABLE_LLVM
 
 include $(mono_build_root)/llvm/llvm_config.mk
@@ -120,14 +126,25 @@ boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_min
 boehm_binaries  = mono-boehm
 endif
 
+if SUPPORT_COREGC
+coregc_binaries = mono-coregc
+coregc_libraries = libmonocoregc-2.0.la
+coregc_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(coregc_libs)
+endif
+
 endif # !ENABLE_MSVC_ONLY
 
 if SUPPORT_SGEN
 mono_bin_suffix = sgen
 libmono_suffix = sgen
 else
+if SUPPORT_BOEHM
 mono_bin_suffix = boehm
 libmono_suffix = boehm
+else
+mono_bin_suffix = coregc
+libmono_suffix = coregc
+endif
 endif
 
 if DISABLE_EXECUTABLES
@@ -145,6 +162,9 @@ mono:
 	ln -sf $(mono_msvc_build_bin_dir)/mono-$(mono_bin_suffix)$(EXEEXT) ./mono.exe
 if SUPPORT_SGEN
 	ln -sf $(mono_msvc_build_bin_dir)/mono-$(mono_bin_suffix)$(EXEEXT) ./mono-sgen.exe
+endif
+if SUPPORT_COREGC
+	ln -sf $(mono_msvc_build_bin_dir)/mono-$(mono_bin_suffix)$(EXEEXT) ./mono-coregc.exe
 endif
 
 mono.exe: mono
@@ -168,9 +188,9 @@ if !ENABLE_MSVC_ONLY
 if DISABLE_EXECUTABLES
 else
 if HOST_WIN32
-bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries) monow
+bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries) $(coregc_binaries) monow
 else
-bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries)
+bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries) $(coregc_binaries)
 endif
 endif
 
@@ -181,10 +201,10 @@ noinst_PROGRAMS = mono
 endif
 
 if DISABLE_EXECUTABLES
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(sgen_libraries) $(coregc_libraries)
 else
 if SHARED_MONO
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(sgen_libraries) $(coregc_libraries)
 endif
 endif
 
@@ -207,6 +227,9 @@ noinst_LIBRARIES = libmain.a
 libmain_a_SOURCES = main-sgen.c
 if SUPPORT_BOEHM
 libmain_a_SOURCES += main.c
+endif
+if SUPPORT_COREGC
+libmain_a_SOURCES += main-coregc.c
 endif
 libmain_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
@@ -232,6 +255,9 @@ AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
 mono_sgen_SOURCES =
 mono_sgen_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
+mono_coregc_SOURCES =
+mono_coregc_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
+
 # We build this after libmono was built so it contains the date when the final
 # link was done
 if SUPPORT_BOEHM
@@ -244,6 +270,11 @@ buildver-sgen.h: libmini.la $(monodir)/mono/metadata/libmonoruntimesgen.la $(mon
 	@echo "const char *build_date = \"`date`\";" > buildver-sgen.h
 
 libmain_a-main-sgen.$(OBJEXT): buildver-sgen.h
+
+buildver-coregc.h: libmini.la $(monodir)/mono/metadata/libmonoruntimecoregc.la $(monodir)/mono/coregc/libmonocoregc.la
+	@echo "const char *build_date = \"`date`\";" > buildver-coregc.h
+
+libmain_a-main-coregc.$(OBJEXT): buildver-coregc.h
 
 if DTRACE_G_REQUIRED
 LIBMONO_DTRACE_OBJECT = .libs/mono-dtrace.$(OBJEXT)
@@ -262,9 +293,11 @@ if STATIC_MONO
 # This leads to higher performance, especially with TLS
 MONO_LIB=$(boehm_static_libraries)
 MONO_SGEN_LIB=$(sgen_static_libraries)
+MONO_COREGC_LIB=$(coregc_static_libraries)
 else 
 MONO_LIB=libmonoboehm-2.0.la
 MONO_SGEN_LIB=libmonosgen-2.0.la
+MONO_COREGC_LIB=libmonocoregc-2.0.la
 endif
 
 if LOADED_LLVM
@@ -299,8 +332,22 @@ mono_sgen_LDADD = \
 
 mono_sgen_LDFLAGS = $(static_flags) $(monobinldflags) $(monobin_platform_ldflags)
 
+
+mono_coregc_LDADD = \
+	libmain_a-main-coregc.$(OBJEXT) \
+	$(MONO_COREGC_LIB)	\
+	$(glib_libs)		\
+	$(LLVMMONOF)		\
+	$(LIBICONV)		\
+	$(Z_LIBS)		\
+	-lm			\
+	$(MONO_DTRACE_OBJECT)
+
+mono_coregc_LDFLAGS = $(static_flags) $(monobinldflags) $(monobin_platform_ldflags)
+
 if ENABLE_STATIC_GCC_LIBS
 mono_sgen_LDFLAGS += -all-static
+mono_coregc_LDFLAGS += -all-static
 endif
 
 if BITCODE
@@ -778,6 +825,12 @@ libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS) @CXX_ADD_CFLAGS@
 
 libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
+
+libmonocoregc_2_0_la_SOURCES =
+libmonocoregc_2_0_la_CFLAGS = $(mono_coregc_CFLAGS) @CXX_ADD_CFLAGS@
+
+libmonocoregc_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(coregc_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonocoregc_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 endif # !ENABLE_MSVC_ONLY
 

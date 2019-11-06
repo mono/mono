@@ -83,6 +83,10 @@ if SUPPORT_BOEHM
 boehm_libraries = libmonoruntime.la
 endif
 
+if SUPPORT_COREGC
+coregc_libraries = libmonoruntimecoregc.la
+endif
+
 if DISABLE_ICALL_TABLES
 icall_table_libraries = libmono-icall-table.la
 endif
@@ -139,7 +143,7 @@ Z_LIBS=
 endif
 endif
 
-noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries)
+noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries) $(coregc_libraries)
 
 lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
@@ -447,6 +451,10 @@ sgen_sources = \
 	sgen-mono.h		\
 	sgen-client-mono.h
 
+coregc_sources = \
+	coregc-mono.c \
+	coregc-mono.h
+
 endif # !ENABLE_MSVC_ONLY
 
 # Per-library to workaround CoreFX/native until/unless https://github.com/dotnet/corefx/pull/31342.
@@ -464,6 +472,11 @@ libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilge
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
+
+libmonoruntimecoregc_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(coregc_sources)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmonoruntimecoregc_la_CFLAGS = $(COREGC_DEFINES) @CXX_ADD_CFLAGS@
+libmonoruntimecoregc_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
 
 endif # !ENABLE_MSVC_ONLY
 

@@ -4940,6 +4940,23 @@ fi
 AC_SUBST(SGEN_DEFINES)
 AM_CONDITIONAL(SUPPORT_SGEN, test x$buildsgen = xyes)
 
+dnl
+dnl CoreCLR GC checks (coregc)
+dnl
+COREGC_DEFINES=
+AC_ARG_WITH(coregc, [ --with-coregc=yes,no   CoreCLR GC, default=yes],[buildcoregc=$with_coregc],[buildcoregc=yes])
+if test x$buildcoregc = xyes; then
+   AC_DEFINE(HAVE_MOVING_COLLECTOR, 1, [Moving collector])
+   COREGC_DEFINES="-DHAVE_CORE_GC --std=gnu++11"
+   if test "x$gc_msg" = "x"; then
+      gc_msg="coregc"
+   else
+      gc_msg="coregc and $gc_msg"
+   fi
+fi
+AC_SUBST(COREGC_DEFINES)
+AM_CONDITIONAL(SUPPORT_COREGC, test x$buildcoregc = xyes)
+
 jit_status="Building and using the JIT"
 
 libsuffix=".so"
@@ -6720,6 +6737,7 @@ mono/arch/arm64/Makefile
 mono/arch/mips/Makefile
 mono/arch/riscv/Makefile
 mono/sgen/Makefile
+mono/coregc/Makefile
 mono/native/platform-type.c
 mono/native/platform-type-compat.c
 mono/native/platform-type-unified.c

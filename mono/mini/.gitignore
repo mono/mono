@@ -31,6 +31,8 @@
 /TAGS
 /mono-sgen
 /mono-boehm
+/mono-coregc
 /buildver-sgen.h
 /buildver-boehm.h
+/buildver-coregc.h
 /regressiontests.out
