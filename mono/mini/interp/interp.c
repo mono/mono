@@ -2735,8 +2735,7 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
 
 	/* Write back the return value */
-	// FIXME: frame is freed
-	NOT_IMPLEMENTED;
+	/* 'frame' is still valid */
 	mono_arch_set_native_call_context_ret (ccontext, frame, sig);
 }
 
