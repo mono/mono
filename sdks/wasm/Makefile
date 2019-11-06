@@ -26,6 +26,8 @@ CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
 
+PACKAGER=mono --debug packager.exe --no-native-strip
+
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
 DOTNET_CMD := "$(subst \,/,$(DOTNET))"
@@ -121,6 +123,7 @@ emsdk_env.sh:
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
+MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0
@@ -165,8 +168,8 @@ endef
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
 ifdef ENABLE_WASM_THREADS
-$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_LIBS)))
-$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
+$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
@@ -215,7 +218,7 @@ samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
 	netcore build samples/hello -f netcoreapp3.0
 
 build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll
-	mono --debug packager.exe --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/hello-netcore
 
 bin/hello-netcore/bin/mono.js: build-hello-netcore
@@ -268,17 +271,17 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
+$(PACKAGER): packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
-	mono --debug packager.exe --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
+	$(PACKAGER) --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
 	touch $@	
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 XUNIT_DIR = $(TOP)/external/xunit-binaries
@@ -300,7 +303,7 @@ xunit-runner.exe: xunit-runner.cs
 define XunitTestTemplate
 
 bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
-	mono packager.exe --debugrt --search-path=$(XUNIT_DIR) --search-path=$(WASM_BCL_DIR)/tests --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(XUNIT_DIR)/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 	ninja -v -C obj/$(2)
 
 build-$(1): bin/$(2)/mono.js
@@ -334,16 +337,16 @@ $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_F
 	touch $@
 
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
-	mono packager.exe --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
 build-aot-sample: packager.exe hello.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-sample
 
 build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
 	ninja -v -C obj/aot-sample-profiled
 
 zlibtest.exe: zlibtest.cs
@@ -353,24 +356,24 @@ run-zlib-test: build-zlib-sample
 	(cd bin/zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-zlib-sample: packager.exe zlibtest.exe
-	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
+	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
 
 build-zlib-interp-sample: packager.exe zlibtest.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls --zlib
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls --zlib
 	ninja -v -C obj/interp-zlib-sample
 
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-zlib-aot-sample: packager.exe zlibtest.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js zlibtest.exe  --zlib
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
 run-zlib-aot-sample: build-zlib-aot-sample
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-mixed-sample: packager.exe hello.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
 	ninja -v -C obj/mixed-sample
 
 run-mixed-sample: build-mixed-sample
@@ -386,7 +389,7 @@ run-aot-sample-profiled: build-aot-sample-profiled
 	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
 
 build-interp-sample: packager.exe hello.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
 	ninja -v -C obj/interp-sample
 
 run-interp-sample: build-interp-sample
@@ -396,7 +399,7 @@ threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
 
 build-threads-sample: packager.exe threads.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --asset=tests/runtime/index.html --threads threads.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js --asset=tests/runtime/index.html --threads threads.exe
 	ninja -v -C obj/threads-sample
 
 # (cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
@@ -404,7 +407,7 @@ run-threads-sample: build-threads-sample
 	(npm install --prefix tests/runtime/ && npm start --prefix tests/runtime)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini
@@ -414,11 +417,11 @@ get-sysnative-exports:
 	nm ../out/wasm-runtime-release/lib/libmono-native.a  | grep SystemNative | cut -d ' ' -f 3 | grep -v '^$$'
 
 build-aot-bindings-sample: packager.exe sample.dll
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
 	ninja -v -C obj/aot-bindings-sample
 
 build-aot-bindings-interp-sample: packager.exe sample.dll
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
 	ninja -v -C obj/aot-bindings-interp-sample
 
 aot-profile/main.exe: aot-profile/main.cs
@@ -426,7 +429,7 @@ aot-profile/main.exe: aot-profile/main.cs
 
 .PHONY: build-aot-profile
 build-aot-profile: packager.exe aot-profile/main.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-profile --builddir=obj/aot-profile --profile=aot --template=aot-profile/runtime.js --asset=aot-profile/index.html aot-profile/main.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-profile --builddir=obj/aot-profile --profile=aot --template=aot-profile/runtime.js --asset=aot-profile/index.html aot-profile/main.exe
 	ninja -C obj/aot-profile
 
 data.aotprofile: build-aot-profile
@@ -438,7 +441,7 @@ data.aotprofile: build-aot-profile
 #
 define InterpTestTemplate
 build-interp-$(1): packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/interp-$(1) --builddir=obj/interp-$(1) --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	$(PACKAGER) --template=runtime-tests.js --appdir=bin/interp-$(1) --builddir=obj/interp-$(1) --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/interp-$(1)
 
 clean-interp-$(1):
@@ -459,7 +462,7 @@ $(eval $(call InterpTestTemplate,System))
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe $$(WASM_FRAMEWORK)/.stamp-framework $$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono --debug packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
+	$(PACKAGER) --emscripten-sdkdir=$$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
@@ -537,9 +540,8 @@ run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
 
-run-browser-safar-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm run testsafari)
-
 
 clean: clean-browser-tests
 	$(RM) -r *.o
@@ -562,7 +564,7 @@ clean: clean-browser-tests
 	$(RM) emsdk_env.sh
 	$(RM) .configured
 
-package: build build-dbg-proxy
+package: build build-sdk build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
@@ -600,10 +602,10 @@ package: build build-dbg-proxy
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.dll tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
-	cp -r ProxyDriver/bin/Debug/netcoreapp2.1/ tmp/dbg-proxy/
+	cp -r ProxyDriver/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
 	mkdir tmp/docs
 	cp -r ./docs/ tmp/docs/
 	mkdir tmp/packages

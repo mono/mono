@@ -70,6 +70,7 @@
 #include "aot-runtime.h"
 #include "jit-icalls.h"
 #include "mini-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifndef DISABLE_AOT
 
@@ -4802,14 +4803,6 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			if (code)
 				return code;
 		}
-
-		const char *klass_name_space = m_class_get_name_space (method->klass);
-		const char *klass_name = m_class_get_name (method->klass);
-
-		gboolean interlocked = FALSE;
-		gboolean volatil = FALSE;
-		MonoMethodSignature *sig;
-
 
 		/* For ARRAY_ACCESSOR wrappers with reference types, use the <object> instantiation saved in corlib */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_OTHER) {

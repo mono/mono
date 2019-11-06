@@ -23,9 +23,7 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #include <mono/utils/memcheck.h>
 
@@ -71,6 +69,7 @@
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/mono-state.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
 
@@ -101,6 +100,7 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
+#include "mono/utils/mono-tls-inline.h"
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -233,7 +233,9 @@ mono_get_method_from_ip (void *ip)
 	if (location)
 		file_loc = g_strdup_printf ("[%s :: %du]", location->source_file, location->row);
 
-	res = g_strdup_printf (" %s [{%p} + 0x%x] %s (%p %p) [%p - %s]", method_name, method, (int)((char*)ip - (char*)ji->code_start), file_loc ? file_loc : "", ji->code_start, (char*)ji->code_start + ji->code_size, domain, domain->friendly_name);
+	const char *in_interp = ji->is_interp ? " interp" : "";
+
+	res = g_strdup_printf (" %s [{%p} + 0x%x%s] %s (%p %p) [%p - %s]", method_name, method, (int)((char*)ip - (char*)ji->code_start), in_interp, file_loc ? file_loc : "", ji->code_start, (char*)ji->code_start + ji->code_size, domain, domain->friendly_name);
 
 	mono_debug_free_source_location (location);
 	g_free (method_name);
@@ -952,8 +954,10 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 		return;
 	mono_free_altstack (jit_tls);
 
+	if (jit_tls->interp_context)
+		mini_get_interp_callbacks ()->free_context (jit_tls->interp_context);
+
 	g_free (jit_tls->first_lmf);
-	g_free (jit_tls->interp_context);
 	g_free (jit_tls);
 }
 
@@ -1570,7 +1574,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		} else {
 			target = mono_lookup_internal_call (patch_info->data.method);
 
-			if (!target && run_cctors)
+			if (mono_is_missing_icall_addr (target) && run_cctors)
 				g_error ("Unregistered icall '%s'\n", mono_method_full_name (patch_info->data.method, TRUE));
 		}
 		break;
@@ -3225,7 +3229,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 			goto exit;
 
 		mono_sigctx_to_monoctx (ctx, &mctx);
-		mono_handle_native_crash ("SIGFPE", &mctx, info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGFPE", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			goto exit;
@@ -3248,7 +3253,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 		exit (1);
 
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	mono_handle_native_crash ("SIGILL", &mctx, info);
+	if (mono_dump_start ())
+		mono_handle_native_crash ("SIGILL", &mctx, info);
 	if (mono_do_crash_chaining) {
 		mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 		return;
@@ -3272,8 +3278,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 
 #endif
 
-static gboolean
-is_addr_implicit_null_check (void *addr)
+gboolean
+mono_is_addr_implicit_null_check (void *addr)
 {
 	/* implicit null checks are only expected to work on the first page. larger
 	 * offsets are expected to have an explicit null check */
@@ -3329,7 +3335,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (!mono_domain_get () || !jit_tls) {
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_crash ("SIGSEGV", &mctx, info);
+		if (mono_dump_start())
+			mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
@@ -3363,11 +3370,18 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		if (is_addr_implicit_null_check (info->si_addr)) {
+#ifdef TARGET_AMD64
+		/* exceptions-amd64.c handles the check itself */
+		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
+#else
+		if (mono_is_addr_implicit_null_check (info->si_addr)) {
 			mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 		} else {
-			mono_handle_native_crash ("SIGSEGV", &mctx, info);
+			// FIXME: This shouldn't run on the altstack
+			if (mono_dump_start ())
+				mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		}
+#endif
 	}
 #else
 
@@ -3375,7 +3389,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -3383,10 +3398,11 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		}
 	}
 
-	if (is_addr_implicit_null_check (fault_addr)) {
+	if (mono_is_addr_implicit_null_check (fault_addr)) {
 		mono_arch_handle_exception (ctx, NULL);
 	} else {
-		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		if (mono_dump_start ())
+			mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 	}
 #endif
 }
@@ -4369,6 +4385,13 @@ mini_init (const char *filename, const char *runtime_version)
 	MONO_PROFILER_RAISE (thread_name, (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main"));
 #endif
 
+#ifdef ENABLE_EXPERIMENT_TIERED
+	if (!mono_compile_aot) {
+		/* create compilation thread in background */
+		mini_tiered_init ();
+	}
+#endif
+
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_setup_stat_profiler ();
 
@@ -4408,8 +4431,8 @@ register_icalls (void)
 	register_icall (mono_profiler_raise_method_tail_call, mono_icall_sig_void_ptr_ptr, TRUE);
 	register_icall (mono_profiler_raise_exception_clause, mono_icall_sig_void_ptr_int_int_object, TRUE);
 
-	register_icall (mono_trace_enter_method, mono_icall_sig_void_ptr_ptr, TRUE);
-	register_icall (mono_trace_leave_method, mono_icall_sig_void_ptr_ptr, TRUE);
+	register_icall (mono_trace_enter_method, mono_icall_sig_void_ptr_ptr_ptr, TRUE);
+	register_icall (mono_trace_leave_method, mono_icall_sig_void_ptr_ptr_ptr, TRUE);
 	g_assert (mono_get_lmf_addr == mono_tls_get_lmf_addr);
 	register_icall (mono_jit_set_domain, mono_icall_sig_void_ptr, TRUE);
 	register_icall (mono_domain_get, mono_icall_sig_ptr, TRUE);
@@ -4653,11 +4676,11 @@ register_icalls (void)
 	register_icall (pthread_getspecific, mono_icall_sig_ptr_ptr, TRUE);
 #endif
 	/* Register tls icalls */
-	register_icall_no_wrapper (mono_tls_get_thread, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_jit_tls, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_domain, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_sgen_thread_info, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_lmf_addr, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_thread_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_jit_tls_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_domain_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_sgen_thread_info_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_lmf_addr_extern, mono_icall_sig_ptr);
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, mono_icall_sig_void_ptr_ptr);
 	register_icall_no_wrapper (mono_interp_to_native_trampoline, mono_icall_sig_void_ptr_ptr);
@@ -4757,7 +4780,9 @@ mini_cleanup (MonoDomain *domain)
 	mono_runtime_cleanup (domain);
 #endif
 
+#ifndef ENABLE_NETCORE
 	mono_threadpool_cleanup ();
+#endif
 
 	MONO_PROFILER_RAISE (runtime_shutdown_end, ());
 

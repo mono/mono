@@ -434,6 +434,34 @@ SgenMinorCollector sgen_minor_collector;
 
 static SgenRememberedSet remset;
 
+#ifdef MONO_ATOMIC_USES_LOCK
+#include <pthread.h>
+static pthread_mutex_t sgen_atomic_spin_lock G_GNUC_UNUSED = PTHREAD_MUTEX_INITIALIZER;
+
+static gint64
+mono_sgen_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
+{
+	gint64 old;
+	int ret;
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock, (void *)&sgen_atomic_spin_lock);
+	ret = pthread_mutex_lock(&sgen_atomic_spin_lock);
+	g_assert (ret == 0);
+
+	old= *dest;
+	if(old==comp) {
+		*dest=exch;
+	}
+
+	ret = pthread_mutex_unlock(&sgen_atomic_spin_lock);
+	g_assert (ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(old);
+}
+#endif
+
 /*
  * The gray queue a worker job must use.  If we're not parallel or
  * concurrent, we use the main gray queue.
@@ -1446,10 +1474,12 @@ job_scan_major_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (atv);
 	sgen_major_collector.scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx, job_data->job_index, job_data->job_split_count, job_data->data);
 	SGEN_TV_GETTIME (btv);
-	time_minor_scan_major_blocks += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_major_blocks, elapsed_time);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->major_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
 }
 
 static void
@@ -1463,10 +1493,12 @@ job_scan_los_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
 	SGEN_TV_GETTIME (atv);
 	sgen_los_scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx, job_data->job_index, job_data->job_split_count);
 	SGEN_TV_GETTIME (btv);
-	time_minor_scan_los += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, elapsed_time);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->los_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
 }
 
 static void
@@ -1481,10 +1513,12 @@ job_scan_major_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJo
 	SGEN_TV_GETTIME (atv);
 	sgen_major_collector.scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx, job_data->job_index, job_data->job_split_count, job_data->data);
 	SGEN_TV_GETTIME (btv);
-	time_major_scan_mod_union_blocks += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, time_major_scan_mod_union_blocks);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->major_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->major_scan_time += elapsed_time;
 }
 
 static void
@@ -1499,10 +1533,12 @@ job_scan_los_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJob 
 	SGEN_TV_GETTIME (atv);
 	sgen_los_scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx, job_data->job_index, job_data->job_split_count);
 	SGEN_TV_GETTIME (btv);
-	time_major_scan_mod_union_los += SGEN_TV_ELAPSED (atv, btv);
+
+	gint64 elapsed_time = SGEN_TV_ELAPSED (atv, btv);
+	SGEN_ATOMIC_ADD_I64 (time_minor_scan_los, time_major_scan_mod_union_los);
 
 	if (worker_data_untyped)
-		((WorkerData*)worker_data_untyped)->los_scan_time += SGEN_TV_ELAPSED (atv, btv);
+		((WorkerData*)worker_data_untyped)->los_scan_time += elapsed_time;
 }
 
 static void
@@ -1777,13 +1813,18 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	sgen_client_pinning_end ();
 
 	remset.start_scan_remsets ();
-
-	enqueue_scan_remembered_set_jobs (&gc_thread_gray_queue, is_parallel ? NULL : object_ops_nopar, is_parallel);
-
-	/* we don't have complete write barrier yet, so we scan all the old generation sections */
 	TV_GETTIME (btv);
-	time_minor_scan_remsets += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Old generation scan: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
+
+	SGEN_LOG (2, "Minor scan copy/clear remsets: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
+
+	TV_GETTIME (atv);
+	enqueue_scan_remembered_set_jobs (&gc_thread_gray_queue, is_parallel ? NULL : object_ops_nopar, is_parallel);
+	TV_GETTIME (btv);
+
+	if (!is_parallel) {
+		time_minor_scan_remsets += TV_ELAPSED (atv, btv);
+		SGEN_LOG (2, "Minor scan remsets: %lld usecs", (long long)(TV_ELAPSED (atv, btv)/10));
+	}
 
 	sgen_pin_stats_report ();
 	sgen_gchandle_stats_report ();
@@ -1800,7 +1841,20 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	}
 
 	TV_GETTIME (btv);
-	time_minor_scan_roots += TV_ELAPSED (atv, btv);
+	if (!is_parallel) {
+		time_minor_scan_roots += TV_ELAPSED (atv, btv);
+
+		SGEN_LOG (2, "Minor scan roots: %lld usecs",
+			(long long)(TV_ELAPSED (atv, btv) / 10));
+	} else {
+		SGEN_LOG (2, "Minor scan remsets + roots: %lld usecs",
+			(long long)(TV_ELAPSED (atv, btv) / 10));
+
+		SGEN_LOG (2, "Minor scan remsets: accumulated major scan=%lld usecs, accumulated los scan=%lld usecs, workers=%d",
+			(long long)((time_minor_scan_major_blocks - major_scan_start) / 10),
+			(long long)((time_minor_scan_los - los_scan_start) / 10),
+			sgen_workers_get_active_worker_count (GENERATION_NURSERY));
+	}
 
 	finish_gray_stack (GENERATION_NURSERY, ctx);
 
@@ -1915,7 +1969,6 @@ typedef enum {
 static void
 major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par)
 {
-	LOSObject *bigobj;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 	/* FIXME: only use these values for the precise scan
@@ -1999,26 +2052,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	sgen_find_section_pin_queue_start_end (sgen_nursery_section);
 	/* identify possible pointers to the insize of large objects */
 	SGEN_LOG (6, "Pinning from large objects");
-	for (bigobj = sgen_los_object_list; bigobj; bigobj = bigobj->next) {
-		size_t dummy;
-		if (sgen_find_optimized_pin_queue_area ((char*)bigobj->data, (char*)bigobj->data + sgen_los_object_size (bigobj), &dummy, &dummy)) {
-			sgen_binary_protocol_pin (bigobj->data, (gpointer)LOAD_VTABLE (bigobj->data), safe_object_get_size (bigobj->data));
-
-			if (sgen_los_object_is_pinned (bigobj->data)) {
-				SGEN_ASSERT (0, mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, "LOS objects can only be pinned here after concurrent marking.");
-				continue;
-			}
-			sgen_los_pin_object (bigobj->data);
-			if (SGEN_OBJECT_HAS_REFERENCES (bigobj->data))
-				GRAY_OBJECT_ENQUEUE_SERIAL (gc_thread_gray_queue, bigobj->data, sgen_obj_get_descriptor ((GCObject*)bigobj->data));
-			sgen_pin_stats_register_object (bigobj->data, GENERATION_OLD);
-			SGEN_LOG (6, "Marked large object %p (%s) size: %lu from roots", bigobj->data,
-					sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (bigobj->data)),
-					(unsigned long)sgen_los_object_size (bigobj));
-
-			sgen_client_pinned_los_object (bigobj->data);
-		}
-	}
+	sgen_los_pin_objects (gc_thread_gray_queue, mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT);
 
 	pin_objects_in_nursery (mode == COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT, ctx);
 

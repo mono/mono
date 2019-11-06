@@ -32,7 +32,7 @@ PLATFORM_AOT_SUFFIX := .dylib
 PLATFORM_AOT_PREFIX := lib
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
-XUNIT_FLAGS = -notrait category=nonosxtests
+XUNIT_FLAGS = -notrait category=nonosxtests @../../../../CoreFX.issues_mac.rsp
 TESTS_PLATFORM = OSX.x64
 DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
@@ -70,13 +70,13 @@ $(NETCORESDK_FILE):
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
-	$(DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
+	$(DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/ -p:UseSharedCompilation=false
 	touch $@
 
 update-roslyn: roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/microsoft.net.compilers.toolset.nuspec
 
 roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/microsoft.net.compilers.toolset.nuspec:
-	$(DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
+	$(DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/ -p:UseSharedCompilation=false
 
 run-sample: prepare
 	$(DOTNET) build sample/HelloWorld
@@ -145,7 +145,7 @@ System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/sr
 CORLIB_BUILD_FLAGS?=-c Release
 
 bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
-	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
+	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:UseSharedCompilation=false -p:BuildArch=$(COREARCH) \
 	-p:OutputPath=bin/$(COREARCH) \
 	-p:RoslynPropsFile="../roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
 	System.Private.CoreLib/System.Private.CoreLib.csproj
@@ -252,6 +252,7 @@ coreclr/.stamp-tests:
 
 .PHONY: corerun
 corerun:
+	$(MAKE) -C corerun
 	cp corerun/corerun $(SHAREDRUNTIME)
 
 run-tests-coreclr: prepare update-tests-coreclr corerun

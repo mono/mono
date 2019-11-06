@@ -6,12 +6,8 @@
 #include <stdint.h>
 #include <errno.h>
 #include <unistd.h>
-
 #include "config.h"
-
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #define TIMEOUT 30
 

@@ -96,14 +96,6 @@ namespace Mono.Security.Interface
 		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509CertificateCollection certificates);
 	}
 
-	internal interface ICertificateValidator2 : ICertificateValidator
-	{
-		/*
-		 * Internal use only.
-		 */
-		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain);
-	}
-
 	public static class CertificateValidationHelper
 	{
 		const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";

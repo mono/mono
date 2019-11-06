@@ -24,7 +24,7 @@ namespace WsProxy
 		public static void Main(string[] args)
 		{
 			var host = new WebHostBuilder()
-				.UseSetting (nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
+				.UseSetting ("UseIISIntegration", false.ToString ())
 				.UseKestrel ()
 				.UseContentRoot (Directory.GetCurrentDirectory())
 				.UseStartup<Startup> ()
@@ -54,7 +54,7 @@ namespace WsProxy
 					return;
 
 				var h = new WebHostBuilder()
-					.UseSetting(nameof(WebHostBuilderIISExtensions.UseIISIntegration), false.ToString())
+					.UseSetting ("UseIISIntegration", false.ToString ())
 					.ConfigureServices (services => {
 						services.Configure<TestHarnessOptions> (options => {
 							options.ChromePath = chromePath;

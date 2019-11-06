@@ -15,6 +15,7 @@
 #include "debugger-agent.h"
 
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/class-abi-details.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/monitor.h>
 #include <mono/utils/mono-memory-model.h>
@@ -391,8 +392,6 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		g_assert (ctx->method_inst);
 
 		t = ctx->method_inst->type_argv [0];
-		if (mini_is_gsharedvt_variable_type (t))
-			return NULL;
 		if (ctx->method_inst->type_argc == 2) {
 			dreg = alloc_preg (cfg);
 			EMIT_NEW_UNALU (cfg, ins, OP_MOVE, dreg, args [0]->dreg);
@@ -400,6 +399,8 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 			ins->klass = mono_get_object_class ();
 			return ins;
 		} else if (ctx->method_inst->type_argc == 1) {
+			if (mini_is_gsharedvt_variable_type (t))
+				return NULL;
 			// Casts the given object to the specified type, performs no dynamic type checking.
 			g_assert (fsig->param_count == 1);
 			g_assert (fsig->params [0]->type == MONO_TYPE_OBJECT);
@@ -574,6 +575,11 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		MONO_ADD_INS (cfg->cbb, ins);
 		return ins;
 	}
+	else if (!strcmp (cmethod->name, "SkipInit")) {
+ 		MONO_INST_NEW (cfg, ins, OP_NOP);
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	}
 #endif
 
 	return NULL;
@@ -725,6 +731,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (strcmp (cmethod->name, "GetType") == 0 && fsig->param_count + fsig->hasthis == 1) {
 			int dreg = alloc_ireg_ref (cfg);
 			int vt_reg = alloc_preg (cfg);
+
 			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, type));
 			mini_type_from_op (cfg, ins, NULL, NULL);
@@ -753,6 +760,24 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		else if (!strcmp (cmethod->name, "GetRawSzArrayData") || !strcmp (cmethod->name, "GetRawArrayData")) {
 			int dreg = alloc_preg (cfg);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoArray, vector));
+			return ins;
+		}
+		else if (!strcmp (cmethod->name, "GetElementSize")) {
+			int vt_reg = alloc_preg (cfg);
+			int class_reg = alloc_preg (cfg);
+			int sizes_reg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vt_reg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, class_reg, vt_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, sizes_reg, class_reg, m_class_offsetof_sizes ());
+			return ins;
+		} else if (!strcmp (cmethod->name, "IsPrimitive")) {
+			int dreg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, dreg, dreg, MONO_VT_FLAG_ARRAY_IS_PRIMITIVE);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_COMPARE_IMM, -1, dreg, 0);
+			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, dreg, -1);
+			ins->type = STACK_I4;
 			return ins;
 		}
 
@@ -892,6 +917,15 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, dreg, dreg, 	MONO_VT_FLAG_ARRAY_OR_STRING);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_COMPARE_IMM, -1, dreg, 0);
+			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, dreg, -1);
+			ins->type = STACK_I4;
+			return ins;
+		} else if (!strcmp (cmethod->name, "ObjectHasReferences")) {
+			int dreg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, dreg, dreg, MONO_VT_FLAG_HAS_REFERENCES);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_COMPARE_IMM, -1, dreg, 0);
 			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, dreg, -1);
 			ins->type = STACK_I4;
@@ -1815,6 +1849,26 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
 			   !strcmp (cmethod_klass_name, "JitHelpers")) {
 		return emit_jit_helpers_intrinsics (cfg, cmethod, fsig, args);
+	}  else if (in_corlib &&
+			   (strcmp (cmethod_klass_name_space, "System") == 0) &&
+			   (strcmp (cmethod_klass_name, "Activator") == 0)) {
+		MonoGenericContext *method_context = mono_method_get_context (cmethod);
+		if (!strcmp (cmethod->name, "CreateInstance") &&
+				fsig->param_count == 0 &&
+				method_context != NULL &&
+				method_context->method_inst->type_argc == 1 &&
+				cmethod->is_inflated &&
+				!mini_method_check_context_used (cfg, cmethod)) {
+			MonoClass *arg0 = mono_class_from_mono_type_internal (method_context->method_inst->type_argv [0]);
+			if (m_class_is_valuetype (arg0) && !mono_class_has_default_constructor (arg0, FALSE)) {
+				MONO_INST_NEW (cfg, ins, MONO_CLASS_IS_SIMD (cfg, arg0) ? OP_XZERO : OP_VZERO);
+				ins->dreg = mono_alloc_dreg (cfg, STACK_VTYPE);
+				ins->type = STACK_VTYPE;
+				ins->klass = arg0;
+				MONO_ADD_INS (cfg->cbb, ins);
+				return ins;
+			}
+		}
 	}
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
@@ -1989,6 +2043,7 @@ emit_array_unsafe_mov (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **a
 	return NULL;
 }
 
+#ifndef ENABLE_NETCORE
 MonoInst*
 mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -2003,6 +2058,7 @@ mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoM
 
 	return NULL;
 }
+#endif
 
 MonoInst*
 mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)

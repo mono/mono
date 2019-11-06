@@ -17,12 +17,14 @@
 #include "checked-build.h"
 #include "mono-threads.h"
 #include "mono-threads-api.h"
+#include "mono/metadata/icalls.h"
 
 /* JIT specific interface */
 extern volatile size_t mono_polling_required;
 
 /* Internal API */
 
+ICALL_EXTERN_C
 void
 mono_threads_state_poll (void);
 
@@ -69,7 +71,9 @@ mono_threads_suspend_policy_is_multiphase_stw_enabled (MonoThreadsSuspendPolicy 
 gboolean
 mono_threads_suspend_policy_is_blocking_transition_enabled (MonoThreadsSuspendPolicy p);
 
-extern char mono_threads_suspend_policy_hidden_dont_modify MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL_EXTERN_C_BEGIN
+extern char mono_threads_suspend_policy_hidden_dont_modify MONO_LLVM_INTERNAL_NO_EXTERN_C;
+MONO_LLVM_INTERNAL_EXTERN_C_END
 
 static inline MonoThreadsSuspendPolicy
 mono_threads_suspend_policy (void) {

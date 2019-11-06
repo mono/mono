@@ -2867,14 +2867,16 @@ insert_safepoints (MonoCompile *cfg)
 
 	g_assert (mini_safepoints_enabled ());
 
+#ifndef MONO_LLVM_LOADED
 	if (COMPILE_LLVM (cfg)) {
-		if (!cfg->llvm_only && cfg->compile_aot) {
+		if (!cfg->llvm_only) {
 			/* We rely on LLVM's safepoints insertion capabilities. */
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
 			return;
 		}
 	}
+#endif
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
@@ -4316,10 +4318,7 @@ mini_get_cpu_features (MonoCompile* cfg)
 #endif
 	}
 #endif
-	MonoCPUFeatures features_ = features;
 
 	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
-	return features;
+	return (features | mono_cpu_features_enabled) & ~mono_cpu_features_disabled;
 }

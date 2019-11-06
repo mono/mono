@@ -2009,6 +2009,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	guint32 vtable_size, class_size;
 	gpointer iter;
 	gpointer *interface_offsets;
+	gboolean is_primitive_type_array = FALSE;
 	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
 
 	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
@@ -2033,6 +2034,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	/* Array types require that their element type be valid*/
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
 		MonoClass *element_class = m_class_get_element_class (klass);
+		is_primitive_type_array = m_class_is_primitive (element_class);
 		if (!m_class_is_inited (element_class))
 			mono_class_init_internal (element_class);
 
@@ -2105,6 +2107,12 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	vt->domain = domain;
 	if ((vt->rank > 0) || klass == mono_get_string_class ())
 		vt->flags |= MONO_VT_FLAG_ARRAY_OR_STRING;
+	
+	if (m_class_has_references (klass))
+		vt->flags |= MONO_VT_FLAG_HAS_REFERENCES;
+
+	if (is_primitive_type_array)
+		vt->flags |= MONO_VT_FLAG_ARRAY_IS_PRIMITIVE;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
 
@@ -5092,7 +5100,7 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 	mono_thread_create_checked (domain, mfunc, margs, error);
 	mono_error_assert_ok (error);
 
-	mono_thread_manage ();
+	mono_thread_manage_internal ();
 
 	MONO_EXIT_GC_UNSAFE;
 }
@@ -8125,6 +8133,8 @@ mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx)
 	eh_callbacks.mono_raise_exception_with_ctx (ex, ctx);
 }
 
+#ifndef ENABLE_NETCORE
+
 /**
  * mono_wait_handle_new:
  * \param domain Domain where the object will be created
@@ -8172,6 +8182,8 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	mono_field_get_value_internal ((MonoObject*)handle, f_safe_handle, &sh);
 	return sh->handle;
 }
+
+#endif /* ENABLE_NETCORE */
 
 /*
  * Returns the MonoMethod to call to Capture the ExecutionContext.
@@ -8223,6 +8235,8 @@ mono_runtime_capture_context (MonoDomain *domain, MonoError *error)
 #endif
 }
 
+#ifndef ENABLE_NETCORE
+
 /**
  * mono_async_result_new:
  * \param domain domain where the object will be created.
@@ -8269,7 +8283,6 @@ mono_message_invoke (MonoThreadInfo* mono_thread_info_current_var,
 		     MonoObject* target, MonoMethodMessage* msg,
 		     MonoObject** exc, MonoArray** out_args, MonoError* error);
 
-#ifndef ENABLE_NETCORE
 MonoObjectHandle
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultHandle aresh, MonoError* error)
 {
@@ -8342,7 +8355,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResultH
 	}
 	return res;
 }
-#endif
+#endif /* ENABLE_NETCORE */
 
 gboolean
 mono_message_init (MonoDomain *domain,

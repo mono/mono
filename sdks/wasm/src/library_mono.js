@@ -1,6 +1,6 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message',
+	$MONO__postset: 'MONO.export_functions (Module);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
@@ -17,6 +17,11 @@ var MonoSupportLib = {
 				--MONO.pump_count;
 				this.mono_background_exec ();
 			}
+		},
+
+		export_functions: function (module) {
+			module ["pump_message"] = MONO.pump_message;
+			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
 		},
 
 		mono_wasm_get_call_stack: function() {
@@ -93,7 +98,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_runtime_ready: function () {
-			console.log (">>mono_wasm_runtime_ready");
+			console.log ("MONO-WASM: Runtime is ready.");
 			this.mono_wasm_runtime_is_ready = true;
 			debugger;
 		},
@@ -162,7 +167,7 @@ var MonoSupportLib = {
 				if (ENVIRONMENT_IS_NODE) {
 					var fs = require('fs');
 					fetch_file_cb = function (asset) {
-						console.log("Loading... " + asset);
+						console.log("MONO_WASM: Loading... " + asset);
 						var binary = fs.readFileSync (asset);
 						var resolve_func2 = function(resolve, reject) {
 							resolve(new Uint8Array (binary));
@@ -195,7 +200,7 @@ var MonoSupportLib = {
 				fetch_promise.then (function (response) {
 					if (!response.ok) {
 						// If it's a 404 on a .pdb, we don't want to block the app from starting up.
-          					// We'll just skip that file and continue (though the 404 is logged in the console).
+						// We'll just skip that file and continue (though the 404 is logged in the console).
 						if (response.status === 404 && file_name.match(/\.pdb$/) && MONO.mono_wasm_ignore_pdb_load_errors) {
 							--pending;
 							throw "MONO-WASM: Skipping failed load for .pdb file: '" + file_name + "'";
@@ -221,14 +226,14 @@ var MonoSupportLib = {
 						MONO.loaded_files = loaded_files;
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
-						console.log ("initializing mono runtime");
-						if (ENVIRONMENT_IS_SHELL) {
+						console.log ("MONO_WASM: Initializing mono runtime");
+						if (ENVIRONMENT_IS_SHELL || ENVIRONMENT_IS_NODE) {
 							try {
 								load_runtime (vfs_prefix, enable_debugging);
 							} catch (ex) {
-								print ("load_runtime () failed: " + ex);
+								print ("MONO_WASM: load_runtime () failed: " + ex);
 								var err = new Error();
-								print ("Stacktrace: \n");
+								print ("MONO_WASM: Stacktrace: \n");
 								print (err.stack);
 
 								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
@@ -363,6 +368,8 @@ var MonoSupportLib = {
 			window.setTimeout (MONO.pump_message, 0);
 		} else if (ENVIRONMENT_IS_WORKER) {
 			self.setTimeout (MONO.pump_message, 0);
+		} else if (ENVIRONMENT_IS_NODE) {
+			global.setTimeout (MONO.pump_message, 0);
 		}
 	},
 
@@ -376,6 +383,10 @@ var MonoSupportLib = {
 		} else if (ENVIRONMENT_IS_WORKER) {
 			self.setTimeout (function () {
 				this.mono_set_timeout_exec (id);
+			}, timeout);
+		} else if (ENVIRONMENT_IS_NODE) {
+			global.setTimeout (function () {
+				global.mono_set_timeout_exec (id);
 			}, timeout);
 		} else {
 			++MONO.pump_count;
