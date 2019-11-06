@@ -372,12 +372,7 @@ run-zlib-aot-sample: build-zlib-aot-sample
 
 # TimeZoneInfo tests
 
-zoneinfo/.stamp-tz-data:
-	mkdir zoneinfo
-	curl -L https://kjpou1.github.io/zoneinfo/1.0.0/mono-webassembly-zoneinfo.js -o zoneinfo/mono-webassembly-zoneinfo.js
-	touch $@
-
-tzdtest.exe: tzdtest.cs zoneinfo/.stamp-tz-data
+tzdtest.exe: tzdtest.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) tzdtest.cs
 
 run-tzd-test: build-tzd-sample
@@ -593,7 +588,6 @@ clean: clean-browser-tests
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
-	$(RM) -r zoneinfo
 
 package: build build-sdk build-dbg-proxy
 	rm -rf tmp
@@ -645,6 +639,8 @@ package: build build-sdk build-dbg-proxy
 	cp -r ./sdk/Templates tmp/
 	mkdir tmp/support
 	cp -r $(ZLIB_HEADERS) tmp/support
+	mkdir tmp/zoneinfo
+	cp -r ./zoneinfo/ tmp/zoneinfo/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

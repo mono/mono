@@ -8,4 +8,3 @@ emsdk_env.sh
 builds/threads-debug
 builds/threads-release
 .configured
-zoneinfo*
