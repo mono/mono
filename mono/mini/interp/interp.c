@@ -195,17 +195,6 @@ frame_stack_free (FrameStack *stack)
 	}
 }
 
-static void
-init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
-{
-	frame->parent = parent_frame;
-	frame->stack_args = method_args;
-	frame->retval = method_retval;
-	frame->imethod = rmethod;
-	frame->ip = NULL;
-	frame->native_stack_addr = frame;
-}
-
 /*
  * alloc_frame:
  *
@@ -228,6 +217,7 @@ alloc_frame (ThreadContext *ctx, gpointer native_stack_addr, InterpFrame *parent
 	frame->retval = retval;
 	frame->stack = NULL;
 	frame->ip = NULL;
+	frame->state.ip = NULL;
 
 	return frame;
 }
@@ -3436,9 +3426,63 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 	g_error (format, x1, s, x2);
 }
 
+static void
+method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing, MonoException **out_ex)
+{
+#if DEBUG_INTERP
+	debug_enter (frame, out_tracing);
+#endif
+
+	*out_ex = NULL;
+	if (!frame->imethod->transformed) {
+#if DEBUG_INTERP
+		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
+		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
+		g_free (mn);
+#endif
+
+		frame->ip = NULL;
+		MonoException *ex = do_transform_method (frame, context);
+		if (ex) {
+			*out_ex = ex;
+			return;
+		}
+	}
+
+	alloc_stack_data (context, frame, frame->imethod->alloca_size);
+}
+
+/* Save the state of the interpeter main loop into FRAME */
+#define SAVE_INTERP_STATE(frame) do { \
+	frame->state.ip = ip;  \
+	frame->state.sp = sp; \
+	frame->state.vt_sp = vt_sp; \
+	frame->state.finally_ips = finally_ips; \
+	frame->state.clause_args = clause_args; \
+	} while (0)
+
+/* Load and clear state from FRAME */
+#define LOAD_INTERP_STATE(frame) do { \
+	ip = frame->state.ip; \
+	sp = frame->state.sp; \
+	vt_sp = frame->state.vt_sp; \
+	finally_ips = frame->state.finally_ips; \
+	clause_args = (FrameClauseArgs*)frame->state.clause_args;			\
+	locals = (unsigned char *)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
+	frame->state.ip = NULL; \
+	} while (0)
+
+/* Initialize interpreter state for executing FRAME */
+#define INIT_INTERP_STATE(frame, _clause_args) do {	 \
+	ip = _clause_args ? ((FrameClauseArgs*)_clause_args)->start_with_ip : (frame)->imethod->code; \
+	sp = (frame)->stack; \
+	vt_sp = (unsigned char *) sp + (frame)->imethod->stack_size; \
+	locals = (unsigned char *) vt_sp + (frame)->imethod->vt_stack_size; \
+	finally_ips = NULL; \
+	} while (0)
+
 /*
- * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
- * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
+ * If CLAUSE_ARGS is non-null, start executing from it.
  * The ERROR argument is used to avoid declaring an error object for every interp frame, its not used
  * to return error information.
  * FRAME is only valid until the next call to alloc_frame ().
@@ -3446,16 +3490,18 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 static void
 interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
-	InterpFrame *child_frame;
-	GSList *finally_ips = NULL;
+	/* Interpreter main loop state (InterpState) */
 	const guint16 *ip = NULL;
 	stackval *sp;
+	unsigned char *vt_sp;
+	unsigned char *locals = NULL;
+	GSList *finally_ips = NULL;
+
+	InterpFrame *child_frame;
 #if DEBUG_INTERP
 	gint tracing = global_tracing;
 	unsigned char *vtalloc;
 #endif
-	unsigned char *vt_sp;
-	unsigned char *locals = NULL;
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
 #define OPDEF(a,b,c,d,e,f) &&LAB_ ## a,
@@ -3484,21 +3530,19 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	if (!clause_args) {
 		//frame->stack = (stackval*)g_alloca (frame->imethod->alloca_size);
 		alloc_stack_data (context, frame, frame->imethod->alloca_size);
-		ip = frame->imethod->code;
 	} else {
-		ip = clause_args->start_with_ip;
 		if (clause_args->base_frame) {
 			//frame->stack = (stackval*)g_alloca (frame->imethod->alloca_size);
 			alloc_stack_data (context, frame, frame->imethod->alloca_size);
 			memcpy (frame->stack, clause_args->base_frame->stack, frame->imethod->alloca_size);
 		}
 	}
-	sp = frame->stack;
-	vt_sp = (unsigned char *) sp + frame->imethod->stack_size;
+
+	INIT_INTERP_STATE (frame, clause_args);
+
 #if DEBUG_INTERP
 	vtalloc = vt_sp;
 #endif
-	locals = (unsigned char *) vt_sp + frame->imethod->vt_stack_size;
 
 	if (clause_args && clause_args->filter_exception) {
 		sp->data.p = clause_args->filter_exception;
@@ -3877,6 +3921,34 @@ main_loop:
 #else
 			ip += 3;
 #endif
+
+			if (TRUE) {
+				/*
+				 * Make a non-recursive call by loading the new interpreter state based on child frame,
+				 * and going back to the main loop.
+				 */
+				if (is_void)
+					child_frame->retval = NULL;
+
+				SAVE_INTERP_STATE (frame);
+
+				MonoException *ex;
+				gboolean tracing;
+				method_entry (context, child_frame, &tracing, &ex);
+				if (ex) {
+					frame = child_frame;
+					frame->ip = NULL;
+					THROW_EX (ex, NULL);
+					EXCEPTION_CHECKPOINT;
+				}
+
+				frame = child_frame;
+
+				INIT_INTERP_STATE (frame, NULL);
+				clause_args = NULL;
+
+				MINT_IN_BREAK;
+			}
 
 			interp_exec_method (child_frame, context, error);
 			CHECK_RESUME_STATE (context);
@@ -6259,9 +6331,8 @@ main_loop:
 #endif
 			// FIXME Null check for frame->imethod follows deref.
 			if (frame->imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME))) {
+					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME)))
 				goto exit_frame;
-			}
 			guint32 const ip_offset = frame->ip - frame->imethod->code;
 
 			finally_ips = g_slist_prepend (finally_ips, (void *)endfinally_ip);
@@ -6949,6 +7020,7 @@ invalid_cast_label:
 	THROW_EX (mono_get_exception_invalid_cast (), ip);
 resume:
 	g_assert (context->has_resume_state);
+	g_assert (frame->imethod);
 
 	if (frame == context->handler_frame && (!clause_args || context->handler_ip < clause_args->end_at_ip)) {
 		/* Set the current execution state to the resume state in context */
@@ -6970,8 +7042,31 @@ resume:
 exit_frame:
 	error_init_reuse (error);
 
+	g_assert (frame->imethod);
+
 	if (clause_args && clause_args->base_frame)
 		memcpy (clause_args->base_frame->stack, frame->stack, frame->imethod->alloca_size);
+
+	if (!clause_args && frame->parent && frame->parent->state.ip) {
+		/* Return to the main loop after a non-recursive interpreter call */
+		//printf ("R: %s -> %s %p\n", mono_method_get_full_name (frame->imethod->method), mono_method_get_full_name (frame->parent->imethod->method), frame->parent->state.ip);
+		stackval *retval = frame->retval;
+
+		InterpFrame *child_frame = frame;
+
+		frame = frame->parent;
+		LOAD_INTERP_STATE (frame);
+
+		pop_frame (context, child_frame);
+
+		CHECK_RESUME_STATE (context);
+
+		if (retval) {
+			*sp = *retval;
+			sp ++;
+		}
+		goto main_loop;
+	}
 
 	if (!clause_args)
 		pop_frame (context, frame);
@@ -7059,14 +7154,20 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	ThreadContext *context = get_context ();
 	const unsigned short *old_ip = iframe->ip;
 	FrameClauseArgs clause_args;
+	const guint16 *saved_ip;
 
 	memset (&clause_args, 0, sizeof (FrameClauseArgs));
 	clause_args.start_with_ip = (const guint16*)handler_ip;
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.exit_clause = clause_index;
 
+	saved_ip = iframe->state.ip;
+	iframe->state.ip = NULL;
+
 	ERROR_DECL (error);
 	interp_exec_method_full (iframe, context, &clause_args, error);
+	iframe->state.ip = saved_ip;
+	iframe->state.clause_args = NULL;
 	if (context->has_resume_state) {
 		return TRUE;
 	} else {
