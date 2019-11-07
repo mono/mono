@@ -1,8 +1,30 @@
+#include <config.h>
+
 #include <stdio.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#if defined(WIN32) && defined (_MSC_VER)
+#define LIBTEST_API __declspec(dllexport)
+#elif defined(__GNUC__)
+#define LIBTEST_API  __attribute__ ((__visibility__ ("default")))
+#else
+#define LIBTEST_API
+#endif
+
 typedef void (*fn_ptr) (void);
 
-void
+LIBTEST_API void
 test_reverse_pinvoke (fn_ptr p);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 void
 test_reverse_pinvoke (fn_ptr p)
