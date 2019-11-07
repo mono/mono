@@ -31,7 +31,7 @@ if ($builddir eq "out-of-tree") {
 	$mprofreportdir = dirname ($monosgen);
 } else {
 	$monosgen = "$builddir/mono/mini/mono-sgen";
-	$profmoduledir = "$builddir/mono/mini/.libs";
+	$profmoduledir = "$builddir/mono/profiler/.libs";
 	$mprofreportdir = "$builddir/mono/profiler";
 }
 
