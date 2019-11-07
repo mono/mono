@@ -127,14 +127,17 @@ run-ios-sim-%: harness.exe
 	mono harness.exe --run-sim --logfile ios-sim-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-sim/test-$*.app $(ARGS) $($*_ARGS)
 
 run-ios-dev-%: harness.exe test-runner.exe
-	mono harness.exe --run-dev --logfile ios-dev-$*.log --bundle-dir bin/ios-dev/test-$*.app $(ARGS) $($*_ARGS)
+	mono harness.exe --run-dev --logfile ios-dev-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-dev/test-$*.app $(ARGS) $($*_ARGS)
 
 clean:
 	$(MAKE) -C runtime clean
 	$(RM) -rf bin obj *.exe *.log aot-cache
 
+build-ios-sim-all:
+	for suite in $(TEST_SUITES); do $(MAKE) build-ios-sim-$$suite || exit 1; done
+
 run-ios-sim-all:
-	for suite in $(TEST_SUITES); do $(MAKE) build-ios-sim-$$suite || exit 1; $(MAKE) run-ios-sim-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
 	rm -rf aot-cache
@@ -215,7 +218,7 @@ Mono.Data.Tds_ASSEMBLIES = $(BCL_DIR)/Mono.Data.Tds.dll $(TESTDIR)/monotouch_Mon
 Mono.Data.Tds_ARGS = $(NUNIT) monotouch_Mono.Data.Tds_test.dll
 System.Security_ASSEMBLIES = $(BCL_DIR)/System.Security.dll $(TESTDIR)/monotouch_System.Security_test.dll
 System.Security_ARGS = $(NUNIT) monotouch_System.Security_test.dll
-System.Xml_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(TESTDIR)/monotouch_System.Xml_test.dll
+System.Xml_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Xml_test.dll
 System.Xml_ARGS = $(NUNIT) monotouch_System.Xml_test.dll
 System.Xml.Linq_ASSEMBLIES = $(BCL_DIR)/System.Xml.Linq.dll $(TESTDIR)/monotouch_System.Xml.Linq_test.dll
 System.Xml.Linq_ARGS = $(NUNIT) monotouch_System.Xml.Linq_test.dll
