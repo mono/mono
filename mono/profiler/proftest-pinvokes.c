@@ -21,7 +21,7 @@ extern "C" {
 #define LIBTEST_API
 #endif
 
-typedef void (*fn_ptr) (void);
+typedef void (STDCALL *fn_ptr) (void);
 
 LIBTEST_API void STDCALL
 test_reverse_pinvoke (fn_ptr p);
@@ -32,7 +32,7 @@ test_reverse_pinvoke (fn_ptr p);
 
 
 
-void
+void STDCALL
 test_reverse_pinvoke (fn_ptr p)
 {
 	printf ("testfunc called\n");
