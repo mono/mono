@@ -70,7 +70,7 @@ typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
-void
+G_EXTERN_C void
 mono_thread_callbacks_init (void);
 
 typedef enum {

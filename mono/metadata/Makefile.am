@@ -452,7 +452,7 @@ sgen_sources = \
 	sgen-client-mono.h
 
 coregc_sources = \
-	coregc-mono.c \
+	coregc-mono.cpp \
 	coregc-mono.h
 
 endif # !ENABLE_MSVC_ONLY

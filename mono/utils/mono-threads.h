@@ -398,7 +398,7 @@ mono_thread_info_cleanup (void);
  * @thread_info_size is sizeof (GcThreadInfo), a struct the GC defines to make it possible to have
  * a single block with info from both camps. 
  */
-void
+G_EXTERN_C void
 mono_thread_info_init (size_t thread_info_size);
 
 /*

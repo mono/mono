@@ -7,6 +7,7 @@
  */
 
 #include "config.h"
+
 #include <glib.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internals.h>
@@ -18,9 +19,11 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/metadata/null-gc-handles.h>
 
-#ifdef HAVE_CORE_GC
-
+#include <external/coreclr/src/gc/env/gcenv.base.h>
+#include <external/coreclr/src/gc/gcinterface.h>
 static gboolean gc_inited = FALSE;
+
+G_BEGIN_DECLS
 
 void
 mono_gc_base_init (void)
@@ -639,7 +642,4 @@ mono_gchandle_free_domain (MonoDomain *unloading)
 	g_assert_not_reached ();
 }
 
-#else
-
-MONO_EMPTY_SOURCE_FILE (null_gc);
-#endif /* HAVE_CORE_GC */
+G_END_DECLS
