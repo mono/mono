@@ -95,6 +95,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (AddressFamily)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -176,6 +177,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -240,6 +242,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (IPEndPoint)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -313,6 +316,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -346,6 +350,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -426,6 +431,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -443,6 +449,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
