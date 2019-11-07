@@ -41,6 +41,11 @@
 #include <sys/vmmeter.h>
 #endif
 
+
+#if defined(TARGET_WIN32)
+#include <windows.h>
+#endif 
+
 #include "memfuncs.h"
 
 #define ptr_mask ((sizeof (void*) - 1))
