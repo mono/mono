@@ -150,7 +150,15 @@ mprof_report_LDFLAGS = -no-undefined
 noinst_LTLIBRARIES = libproftest_pinvokes.la
 
 libproftest_pinvokes_la_SOURCES = proftest-pinvokes.c
-libproftest_pinvokes_la_LDFLAGS = -shared -rpath `pwd`
+if HOST_WIN32
+# (borrowed from mono/tests/Makefile.am libtest_la_LDFLAGS)
+# the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
+# can't find them. So we use --kill-at to remove the @ suffix as well.
+libproftest_pinvokes_la_LDFLAGS = -no-undefined -rpath `pwd` -Wl,--kill-at
+else
+libproftest_pinvokes_la_LDFLAGS = -no-undefined -rpath `pwd`
+endif
+
 
 PLOG_TESTS_SRC = \
 	test-alloc.cs \

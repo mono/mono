@@ -7,6 +7,12 @@ extern "C" {
 #endif
 
 
+#ifdef WIN32
+#define STDCALL __stdcall
+#else
+#define STDCALL
+#endif
+
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
 #elif defined(__GNUC__)
@@ -17,7 +23,7 @@ extern "C" {
 
 typedef void (*fn_ptr) (void);
 
-LIBTEST_API void
+LIBTEST_API void STDCALL
 test_reverse_pinvoke (fn_ptr p);
 
 #ifdef __cplusplus
