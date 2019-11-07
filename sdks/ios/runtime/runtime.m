@@ -334,6 +334,26 @@ mono_ios_runtime_init (void)
 	exit (res);
 }
 
+static int *testPassed, *testSkipped, *testFailed;
+
+void
+mono_sdks_ui_register_testcase_result_fields (int *passed, int *skipped, int *failed)
+{
+	testPassed = passed;
+	testSkipped = skipped;
+	testFailed = failed;
+}
+
+void
+mono_sdks_ui_increment_testcase_result (int type)
+{
+	switch (type) {
+		case 0: (*testPassed)++; break;
+		case 1: (*testSkipped)++; break;
+		case 2: (*testFailed)++; break;
+	}
+}
+
 //
 // ICALLS used by the mobile profile of mscorlib
 //
