@@ -2381,7 +2381,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
 			int align, arg_size;
 			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vararg_stack += ALIGN_TO (arg_size, align);
+			vararg_stack = ALIGN_TO (vararg_stack, align);
+			vararg_stack += arg_size;
 		}
 		/* allocate space for the pointer to varargs space start */
 		vararg_stack += sizeof (gpointer);
