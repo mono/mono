@@ -3860,6 +3860,31 @@ main_loop:
 			}
 			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
 			child_frame->stack_args = sp;
+
+			if (TRUE) {
+				if (is_void)
+					child_frame->retval = NULL;
+
+				SAVE_INTERP_STATE (frame);
+
+				MonoException *ex;
+				gboolean tracing;
+				method_entry (context, child_frame, &tracing, &ex);
+				if (ex) {
+					frame = child_frame;
+					frame->ip = NULL;
+					THROW_EX (ex, NULL);
+					EXCEPTION_CHECKPOINT;
+				}
+
+				frame = child_frame;
+
+				INIT_INTERP_STATE (frame, NULL);
+				clause_args = NULL;
+
+				MINT_IN_BREAK;
+			}
+
 			interp_exec_method (child_frame, context, error);
 			CHECK_RESUME_STATE (context);
 			if (!is_void) {
