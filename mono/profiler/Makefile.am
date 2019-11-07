@@ -178,7 +178,7 @@ test-bundle-local:
 	mkdir -p $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L .libs/libmono-profiler-log$(libsuffix) $(TEST_BUNDLE_PATH)/
 	cp -L $(PLOG_TESTS) $(TEST_BUNDLE_PATH)/tests/profiler/
-	cp -L .libs/libproftest-pinvokes$(libsuffix) $(TEST_BUNDLE_PATH)/tests/profiler/
+	cp -L .libs/libproftest_pinvokes$(libsuffix) $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L ptestrunner.pl $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L mprof-report $(TEST_BUNDLE_PATH)/
 	chmod +x $(TEST_BUNDLE_PATH)/mprof-report
