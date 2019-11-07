@@ -6,6 +6,7 @@ namespace System.Runtime.CompilerServices
 {
 	partial class RuntimeFeature
 	{
+		// the JIT/AOT compiler will change these flags to false for FullAOT scenarios
 		public static bool IsDynamicCodeSupported => true;
 		public static bool IsDynamicCodeCompiled => true;
 	}
