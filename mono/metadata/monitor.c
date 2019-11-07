@@ -791,8 +791,8 @@ signal_monitor (gpointer mon_untyped)
 	mono_coop_mutex_unlock (mon->entry_mutex);
 }
 
-#if ENABLE_NETCORE
-static gint32 thread_contentions; /* for Monitor.LockContentionCount, otherwise mono_perfcounters struct is used */
+#ifdef ENABLE_NETCORE
+static gint64 thread_contentions; /* for Monitor.LockContentionCount, otherwise mono_perfcounters struct is used */
 #endif
 
 /* If allow_interruption==TRUE, the method will be interrupted if abort or suspend
@@ -852,8 +852,8 @@ retry:
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->thread_contentions);
 #else
-#if ENABLE_NETCORE
-	mono_atomic_inc_i32 (thread_contentions);
+#ifdef ENABLE_NETCORE
+	mono_atomic_inc_i32 (&thread_contentions);
 #endif
 #endif
 
