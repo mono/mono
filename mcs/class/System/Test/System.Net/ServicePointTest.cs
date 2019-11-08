@@ -187,6 +187,7 @@ public class ServicePointTest
 	}
 
 	[Test]
+	[Category ("NotWasm")]
 	[Category ("RequiresBSDSockets")] // Tests internals, so it doesn't make sense to assert that PlatformNotSupportedExceptions are thrown.
 	public void DnsRefreshTimeout ()
 	{
