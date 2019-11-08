@@ -43,7 +43,7 @@ namespace System.Reflection
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
-			if ((type is RuntimeType) || (RuntimeFeature.IsDynamicCodeSupported && type.IsTypeBuilder ()))
+			if ((type is RuntimeType) || (RuntimeFeature.IsDynamicCodeSupported && type?.IsTypeBuilder () == true))
 				return false;
 			if ((obj is Type))
 				return true;
