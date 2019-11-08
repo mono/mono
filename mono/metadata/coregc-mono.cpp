@@ -18,12 +18,36 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/metadata/null-gc-handles.h>
+#include "coregc-mono.h"
 
-#include <external/coreclr/src/gc/env/gcenv.base.h>
-#include <external/coreclr/src/gc/gcinterface.h>
 static gboolean gc_inited = FALSE;
 
 G_BEGIN_DECLS
+
+extern "C" HRESULT GC_Initialize(IGCToCLR* clrToGC, IGCHeap** gcHeap, IGCHandleManager** gcHandleManager, GcDacVars* gcDacVars);
+
+static IGCHeap *pGCHeap;
+static IGCHandleManager *pGCHandleManager;
+
+static void
+mono_init_coreclr_gc (void)
+{
+	//
+	// Initialize GC heap
+	//
+	GcDacVars dacVars;
+	if (GC_Initialize(nullptr, &pGCHeap, &pGCHandleManager, &dacVars) != S_OK)
+		g_assert_not_reached ();
+
+	if (FAILED(pGCHeap->Initialize()))
+		g_assert_not_reached ();
+
+	//
+	// Initialize handle manager
+	//
+	if (!pGCHandleManager->Initialize())
+		g_assert_not_reached ();
+}
 
 void
 mono_gc_base_init (void)
@@ -40,9 +64,7 @@ mono_gc_base_init (void)
 	mono_thread_callbacks_init ();
 	mono_thread_info_init (sizeof (MonoThreadInfo));
 
-	mono_thread_info_attach ();
-
-	// null_gc_handles_init ();
+	mono_init_coreclr_gc ();
 
 	gc_inited = TRUE;
 }
@@ -643,3 +665,195 @@ mono_gchandle_free_domain (MonoDomain *unloading)
 }
 
 G_END_DECLS
+
+// Interface which coregc library links against
+
+void GCToEEInterface::SuspendEE(SUSPEND_REASON reason)
+{
+	pGCHeap->SetGCInProgress(true);
+}
+
+void GCToEEInterface::RestartEE(bool bFinishedGC)
+{
+	pGCHeap->SetGCInProgress(false);
+}
+
+void GCToEEInterface::GcScanRoots(promote_func* fn,  int condemned, int max_gen, ScanContext* sc)
+{
+}
+
+void GCToEEInterface::GcStartWork(int condemned, int max_gen)
+{
+}
+
+void GCToEEInterface::AfterGcScanRoots(int condemned, int max_gen, ScanContext* sc)
+{
+}
+
+void GCToEEInterface::GcBeforeBGCSweepWork()
+{
+}
+
+void GCToEEInterface::GcDone(int condemned)
+{
+}
+
+bool GCToEEInterface::RefCountedHandleCallbacks(Object * pObject)
+{
+	return false;
+}
+
+bool GCToEEInterface::IsPreemptiveGCDisabled()
+{
+}
+
+bool GCToEEInterface::EnablePreemptiveGC()
+{
+	return false;
+}
+
+void GCToEEInterface::DisablePreemptiveGC()
+{
+}
+
+Thread* GCToEEInterface::GetThread()
+{
+	return NULL;
+}
+
+gc_alloc_context * GCToEEInterface::GetAllocContext()
+{
+	return NULL;
+}
+
+void GCToEEInterface::GcEnumAllocContexts (enum_alloc_context_func* fn, void* param)
+{
+}
+
+uint8_t* GCToEEInterface::GetLoaderAllocatorObjectForGC(Object* pObject)
+{
+	return NULL;
+}
+
+void GCToEEInterface::SyncBlockCacheWeakPtrScan(HANDLESCANPROC /*scanProc*/, uintptr_t /*lp1*/, uintptr_t /*lp2*/)
+{
+}
+
+void GCToEEInterface::SyncBlockCacheDemote(int /*max_gen*/)
+{
+}
+
+void GCToEEInterface::SyncBlockCachePromotionsGranted(int /*max_gen*/)
+{
+}
+
+void GCToEEInterface::DiagGCStart(int gen, bool isInduced)
+{
+}
+
+void GCToEEInterface::DiagUpdateGenerationBounds()
+{
+}
+
+void GCToEEInterface::DiagGCEnd(size_t index, int gen, int reason, bool fConcurrent)
+{
+}
+
+void GCToEEInterface::DiagWalkFReachableObjects(void* gcContext)
+{
+}
+
+void GCToEEInterface::DiagWalkSurvivors(void* gcContext, bool fCompacting)
+{
+}
+
+void GCToEEInterface::DiagWalkLOHSurvivors(void* gcContext)
+{
+}
+
+void GCToEEInterface::DiagWalkBGCSurvivors(void* gcContext)
+{
+}
+
+void GCToEEInterface::StompWriteBarrier(WriteBarrierParameters* args)
+{
+}
+
+void GCToEEInterface::EnableFinalization(bool foundFinalizers)
+{
+    // Signal to finalizer thread that there are objects to finalize
+    // TODO: Implement for finalization
+}
+
+void GCToEEInterface::HandleFatalError(unsigned int exitCode)
+{
+	abort();
+}
+
+bool GCToEEInterface::EagerFinalized(Object* obj)
+{
+	return false;
+}
+
+bool GCToEEInterface::GetBooleanConfigValue(const char* key, bool* value)
+{
+    return false;
+}
+
+bool GCToEEInterface::GetIntConfigValue(const char* key, int64_t* value)
+{
+	return false;
+}
+
+bool GCToEEInterface::GetStringConfigValue(const char* key, const char** value)
+{
+	return false;
+}
+
+void GCToEEInterface::FreeStringConfigValue(const char *value)
+{
+
+}
+
+bool GCToEEInterface::IsGCThread()
+{
+	return false;
+}
+
+bool GCToEEInterface::WasCurrentThreadCreatedByGC()
+{
+	return false;
+}
+
+MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
+{
+	return NULL;
+}
+
+bool GCToEEInterface::CreateThread(void (*threadStart)(void*), void* arg, bool is_suspendable, const char* name)
+{
+	return false;
+}
+
+void GCToEEInterface::WalkAsyncPinnedForPromotion(Object* object, ScanContext* sc, promote_func* callback)
+{
+}
+
+void GCToEEInterface::WalkAsyncPinned(Object* object, void* context, void (*callback)(Object*, Object*, void*))
+{
+}
+
+uint32_t GCToEEInterface::GetTotalNumSizedRefHandles()
+{
+	return -1;
+}
+
+inline bool GCToEEInterface::AnalyzeSurvivorsRequested(int condemnedGeneration)
+{
+	return false;
+}
+
+inline void GCToEEInterface::AnalyzeSurvivorsFinished(int condemnedGeneration)
+{
+
+}

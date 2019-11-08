@@ -42,7 +42,9 @@ monocoregc_sources = \
 	../../external/coreclr/src/gc/unix/gcenv.unix.cpp \
 	../../external/coreclr/src/gc/unix/events.cpp \
 	../../external/coreclr/src/gc/unix/cgroup.cpp \
-	../../external/coreclr/src/gc/unix/cgroup.h
+	../../external/coreclr/src/gc/unix/cgroup.h \
+	../../external/coreclr/src/gc/gcscan.cpp \
+	../../external/coreclr/src/gc/gcscan.h
 
 #	../../external/coreclr/src/gc/WarningControl.h \
 #	../../external/coreclr/src/gc/env \
@@ -61,8 +63,6 @@ monocoregc_sources = \
 #	../../external/coreclr/src/gc/gcinterface.h \
 #	../../external/coreclr/src/gc/gcpriv.h \
 #	../../external/coreclr/src/gc/gcrecord.h \
-#	../../external/coreclr/src/gc/gcscan.cpp \
-#	../../external/coreclr/src/gc/gcscan.h \
 #	../../external/coreclr/src/gc/handletable.inl \
 #	../../external/coreclr/src/gc/unix/CMakeLists.txt
 #	../../external/coreclr/src/gc/unix/config.gc.h.in \
@@ -72,5 +72,6 @@ monocoregc_sources = \
 libmonocoregc_la_SOURCES = $(monocoregc_sources)
 libmonocoregc_la_CFLAGS = $(COREGC_DEFINES)
 libmonocoregc_la_CXXFLAGS = $(COREGC_DEFINES)
+libmonocoregc_la_LDFLAGS = -lc++
 
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
