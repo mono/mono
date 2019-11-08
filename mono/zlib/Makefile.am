@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-ZLIB_SOURCES = \
+ZLIB_SOURCE = \
 	adler32.c	\
 	compress.c	\
 	crc32.c		\
