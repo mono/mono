@@ -116,7 +116,7 @@ setup-custom-wasm-$(1):
 # zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
 .PHONY: package-wasm-$(1)
 package-wasm-$(1):
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
+	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
 	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
 	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
 
