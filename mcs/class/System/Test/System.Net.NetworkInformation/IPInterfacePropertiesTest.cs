@@ -19,6 +19,7 @@ namespace MonoTests.System.Net.NetworkInformation
 	public class IPInterfacePropertiesTest
 	{
 		[Test]
+		[Category ("NotWasm")]
 		public void AtLeastOneUnicastAddress ()
 		{
 			int numUnicastAddresses = 0;
@@ -112,6 +113,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+		[Category ("NotWasm")]
 		public void DnsEnabled ()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -126,6 +128,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+		[Category ("NotWasm")]
 		// The code works as expected when part of a regular app. It fails when executed from within an NUnit test
 		// Might be a problem with the test suite. To investigate.
 		[Category("AndroidNotWorking")]
