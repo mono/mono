@@ -87,7 +87,7 @@ namespace Mono.Security {
 
 			if ((m_nTag & 0x20) == 0x20) {
 				int nStart = 0;
-				Decode(m_aValue, ref nStart, m_aValue.Length);
+				Decode (m_aValue, ref nStart, m_aValue.Length);
 			}
 		}
 
