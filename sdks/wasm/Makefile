@@ -394,7 +394,7 @@ run-tzd-interp-sample: build-tzd-interp-sample
 	(cd bin/interp-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
 
 build-tzd-aot-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe
 	ninja -v -C obj/aot-tzd-sample
 
 run-tzd-aot-sample: build-tzd-aot-sample
