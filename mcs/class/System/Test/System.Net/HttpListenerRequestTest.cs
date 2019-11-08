@@ -202,6 +202,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
