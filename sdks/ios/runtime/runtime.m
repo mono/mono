@@ -334,6 +334,26 @@ mono_ios_runtime_init (void)
 	exit (res);
 }
 
+static int *testPassed, *testSkipped, *testFailed;
+
+void
+mono_sdks_ui_register_testcase_result_fields (int *passed, int *skipped, int *failed)
+{
+	testPassed = passed;
+	testSkipped = skipped;
+	testFailed = failed;
+}
+
+void
+mono_sdks_ui_increment_testcase_result (int type)
+{
+	switch (type) {
+		case 0: (*testPassed)++; break;
+		case 1: (*testSkipped)++; break;
+		case 2: (*testFailed)++; break;
+	}
+}
+
 //
 // ICALLS used by the mobile profile of mscorlib
 //
@@ -343,7 +363,7 @@ mono_ios_runtime_init (void)
 // See in XI runtime/xamarin-support.m
 
 void*
-xamarin_timezone_get_data (const char *name, int *size)
+xamarin_timezone_get_data (const char *name, uint32_t *size)
 {
 	NSTimeZone *tz = nil;
 	if (name) {
@@ -372,13 +392,13 @@ xamarin_timezone_get_local_name ()
 }
 
 char**
-xamarin_timezone_get_names (int *count)
+xamarin_timezone_get_names (uint32_t *count)
 {
 	// COOP: no managed memory access: any mode.
 	NSArray *array = [NSTimeZone knownTimeZoneNames];
 	*count = array.count;
 	char** result = (char**) malloc (sizeof (char*) * (*count));
-	for (int i = 0; i < *count; i++) {
+	for (uint32_t i = 0; i < *count; i++) {
 		NSString *s = [array objectAtIndex: i];
 		result [i] = strdup (s.UTF8String);
 	}

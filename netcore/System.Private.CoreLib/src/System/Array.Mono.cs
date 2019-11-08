@@ -5,8 +5,15 @@
 using Internal.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Mono;
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
 
 namespace System
 {
@@ -48,24 +55,27 @@ namespace System
 			}
 		}
 
-		public static void Clear (Array array, int index, int length)
+		public static unsafe void Clear (Array array, int index, int length)
 		{
 			if (array == null)
-				ThrowHelper.ThrowArgumentNullException(ExceptionArgument.array);
-			if (length < 0)
-				ThrowHelper.ThrowIndexOutOfRangeException();
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.array);
 
-			int low = array!.GetLowerBound (0);
-			if (index < low)
-				ThrowHelper.ThrowIndexOutOfRangeException();
+			int lowerBound = array.GetLowerBound (0);
+			int elementSize = array.GetElementSize ();
+			nuint numComponents = (nuint) Unsafe.As<RawData> (array).Count;
 
-			index = index - low;
+			int offset = index - lowerBound;
 
-			// re-ordered to avoid possible integer overflow
-			if (index > array.Length - length)
-				ThrowHelper.ThrowIndexOutOfRangeException();
+			if (index < lowerBound || offset < 0 || length < 0 || (uint) (offset + length) > numComponents)
+				ThrowHelper.ThrowIndexOutOfRangeException ();
 
-			ClearInternal (array, index, length);
+			ref byte ptr = ref Unsafe.AddByteOffset (ref array.GetRawSzArrayData(), (uint) offset * (nuint) elementSize);
+			nuint byteLength = (uint) length * (nuint) elementSize;
+
+			if (RuntimeHelpers.ObjectHasReferences (array))
+				SpanHelpers.ClearWithReferences (ref Unsafe.As<byte, IntPtr> (ref ptr), byteLength / (uint)sizeof (IntPtr));
+			else
+				SpanHelpers.ClearWithoutReferences (ref ptr, byteLength);
 		}
 
 		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
@@ -221,105 +231,120 @@ namespace System
 			return false;
 		}
 
-		public static Array CreateInstance (Type elementType, int length)
+		public static unsafe Array CreateInstance (Type elementType, int length)
 		{
+			if (elementType is null)
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.elementType);
 			if (length < 0)
-				throw new ArgumentOutOfRangeException (nameof (length));
+				ThrowHelper.ThrowLengthArgumentOutOfRange_ArgumentOutOfRange_NeedNonNegNum ();
 
-			int[] lengths = {length};
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			return CreateInstance (elementType, lengths);
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 1, &length, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
-		public static Array CreateInstance (Type elementType, int length1, int length2)
+		public static unsafe Array CreateInstance (Type elementType, int length1, int length2)
 		{
+			if (elementType is null)
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.elementType);
 			if (length1 < 0)
-				throw new ArgumentOutOfRangeException (nameof (length1));
+				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length1, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 			if (length2 < 0)
-				throw new ArgumentOutOfRangeException (nameof (length2));
+				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length2, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			int[] lengths = {length1, length2};
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			return CreateInstance (elementType, lengths);
+			int* lengths = stackalloc int [] { length1, length2 };
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 2, lengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
-		public static Array CreateInstance (Type elementType, int length1, int length2, int length3)
+		public static unsafe Array CreateInstance (Type elementType, int length1, int length2, int length3)
 		{
+			if (elementType is null)
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.elementType);
 			if (length1 < 0)
-				throw new ArgumentOutOfRangeException (nameof (length1));
+				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length1, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 			if (length2 < 0)
-				throw new ArgumentOutOfRangeException (nameof (length2));
+				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length2, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 			if (length3 < 0)
-				throw new ArgumentOutOfRangeException (nameof (length3));
+				ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.length3, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			int[] lengths = {length1, length2, length3};
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			return CreateInstance (elementType, lengths);
+			int* lengths = stackalloc int [] { length1, length2, length3 };
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 3, lengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
-		public static Array CreateInstance (Type elementType, params int[] lengths)
+		public static unsafe Array CreateInstance (Type elementType, params int[] lengths)
 		{
-			if (elementType == null)
-				throw new ArgumentNullException ("elementType");
+			if (elementType is null)
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.elementType);
 			if (lengths == null)
-				throw new ArgumentNullException ("lengths");
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.lengths);
 			if (lengths.Length == 0)
-				throw new ArgumentException (nameof (lengths));
-			if (lengths.Length > 255)
-				throw new TypeLoadException ();
-			for (int i = 0; i < lengths.Length; ++i) {
-				if (lengths [i] < 0)
-					throw new ArgumentOutOfRangeException ($"lengths[{i}]", SR.ArgumentOutOfRange_NeedNonNegNum);
-			}
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_NeedAtLeast1Rank);
 
-			if (!(elementType.UnderlyingSystemType is RuntimeType et))
-				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
-			if (et.Equals (typeof (void)))
-				throw new NotSupportedException ("Array type can not be void");
-			if (et.ContainsGenericParameters)
-				throw new NotSupportedException ("Array type can not be an open generic type");
-			if (et.IsByRef)
-				throw new NotSupportedException (SR.NotSupported_Type);
-			
-			return CreateInstanceImpl (et, lengths, null);
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
+
+			for (int i = 0; i < lengths.Length; i++)
+				if (lengths [i] < 0)
+					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+
+			Array array = null;
+			fixed (int* pLengths = &lengths [0])
+				InternalCreate (ref array, runtimeType._impl.Value, lengths.Length, pLengths, null);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
 
-		public static Array CreateInstance (Type elementType, int[] lengths, int [] lowerBounds)
+		public static unsafe Array CreateInstance (Type elementType, int[] lengths, int[] lowerBounds)
 		{
 			if (elementType == null)
-				throw new ArgumentNullException ("elementType");
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.elementType);
 			if (lengths == null)
-				throw new ArgumentNullException ("lengths");
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.lengths);
 			if (lowerBounds == null)
-				throw new ArgumentNullException ("lowerBounds");
+				ThrowHelper.ThrowArgumentNullException (ExceptionArgument.lowerBounds);
+			if (lengths.Length != lowerBounds!.Length)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_RanksAndBounds);
+			if (lengths.Length == 0)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_NeedAtLeast1Rank);
 
-			if (!(elementType.UnderlyingSystemType is RuntimeType rt))
-				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
-			if (rt.Equals (typeof (void)))
-				throw new NotSupportedException ("Array type can not be void");
-			if (rt.ContainsGenericParameters)
-				throw new NotSupportedException ("Array type can not be an open generic type");
-			if (rt.IsByRef)
-				throw new NotSupportedException (SR.NotSupported_Type);
+			for (int i = 0; i < lengths.Length; i++)
+				if (lengths [i] < 0)
+					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			if (lengths.Length < 1)
-				throw new ArgumentException ("Arrays must contain >= 1 elements.");
+			RuntimeType? runtimeType = elementType.UnderlyingSystemType as RuntimeType;
+			if (runtimeType == null)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			if (lengths.Length != lowerBounds.Length)
-				throw new ArgumentException ("Arrays must be of same size.");
-
-			for (int j = 0; j < lowerBounds.Length; j ++) {
-				if (lengths [j] < 0)
-					throw new ArgumentOutOfRangeException ($"lengths[{j}]", "Each value has to be >= 0.");
-				if ((long)lowerBounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
-					throw new ArgumentOutOfRangeException (null, "Length + bound must not exceed Int32.MaxValue.");
-			}
-
-			if (lengths.Length > 255)
-				throw new TypeLoadException ();
-
-			return CreateInstanceImpl (elementType, lengths, lowerBounds);
+			Array array = null;
+			fixed (int* pLengths = &lengths [0])
+			fixed (int* pLowerBounds = &lowerBounds [0])
+				InternalCreate (ref array, runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
+			GC.KeepAlive (runtimeType);
+			return array;
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern unsafe void InternalCreate (ref Array result, IntPtr elementType, int rank, int* lengths, int* lowerBounds);
 
 		public object GetValue (int index)
 		{
@@ -401,29 +426,6 @@ namespace System
 			SetValue (value, ind);
 		}
 
-		static void SortImpl (Array keys, Array? items, int index, int length, IComparer comparer)
-		{
-			/* TODO: CoreCLR optimizes this case via an internal call
-			if (comparer == Comparer.Default)
-			{
-				bool r = TrySZSort(keys, items, index, index + length - 1);
-				if (r)
-					return;
-			}*/
-
-			object[]? objKeys = keys as object[];
-			object[]? objItems = null;
-			if (objKeys != null)
-				objItems = items as object[];
-			if (objKeys != null && (items == null || objItems != null)) {
-				SorterObjectArray sorter = new SorterObjectArray (objKeys, objItems, comparer);
-				sorter.Sort(index, length);
-			} else {
-				SorterGenericArray sorter = new SorterGenericArray (keys, items, comparer);
-				sorter.Sort(index, length);
-			}
-		}
-
 		static bool TrySZBinarySearch (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
 		{
 			retVal = default;
@@ -443,8 +445,6 @@ namespace System
 		}
 
 		static bool TrySZReverse (Array array, int index, int count) => false;
-
-		static bool TrySZSort (Array keys, Array? items, int left, int right) => false;
 
 		public int GetUpperBound (int dimension)
 		{
@@ -472,11 +472,12 @@ namespace System
 			return 0;
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void ClearInternal (Array a, int index, int count);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static Array CreateInstanceImpl (Type elementType, int[] lengths, int[]? bounds);
+		[Intrinsic]
+		public bool IsPrimitive ()
+		{
+			ThrowHelper.ThrowNotSupportedException ();
+			return false;
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static bool CanChangePrimitive (Type srcType, Type dstType, bool reliable);
@@ -490,6 +491,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int GetLength (int dimension);
 
+		[Intrinsic] // when dimension is `0` constant
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int GetLowerBound (int dimension);
 

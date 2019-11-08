@@ -188,6 +188,7 @@ public class Harness
 		//
 		TextWriter w = new StreamWriter (logfile_name);
 		string result_line = null;
+		TextWriter xml_results_file = null;
 		var client = server.AcceptTcpClient ();
 		var stream = client.GetStream ();
 		var reader = new StreamReader (stream);
@@ -195,6 +196,20 @@ public class Harness
 			var line = reader.ReadLine ();
 			if (line == null)
 				break;
+			if (line.Contains ("STARTRESULTXML")) {
+				Console.Write ("Getting test result XML data...");
+				xml_results_file = File.CreateText (Path.Combine (Path.GetDirectoryName (bundle_dir), $"TestResult_{bundle_id}.xml"));
+				continue;
+			} else if (line.Contains ("ENDRESULTXML")) {
+				Console.WriteLine ("done");
+				xml_results_file.Close ();
+				xml_results_file = null;
+				continue;
+			}
+			if (xml_results_file != null) {
+				xml_results_file.WriteLine (line);
+				continue;
+			}
 			Console.WriteLine (line);
 			w.WriteLine (line);
 			if (line.Contains ("Tests run:"))
@@ -203,6 +218,7 @@ public class Harness
 			if (line.Contains ("Exit code:"))
 				break;
 		}
+		w.Close ();
 
 		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
@@ -251,6 +267,7 @@ public class Harness
 		//
 		TextWriter w = new StreamWriter (logfile_name);
 		string result_line = null;
+		TextWriter xml_results_file = null;
 
 		Console.WriteLine ("*** test-runner output ***");
 
@@ -271,6 +288,20 @@ public class Harness
 			var line = reader.ReadLine ();
 			if (line == null)
 				break;
+			if (line.Contains ("STARTRESULTXML")) {
+				Console.Write ("Getting test result XML data...");
+				xml_results_file = File.CreateText (Path.Combine (Path.GetDirectoryName (bundle_dir), $"TestResult_{bundle_id}.xml"));
+				continue;
+			} else if (line.Contains ("ENDRESULTXML")) {
+				Console.WriteLine ("done");
+				xml_results_file.Close ();
+				xml_results_file = null;
+				continue;
+			}
+			if (xml_results_file != null) {
+				xml_results_file.WriteLine (line);
+				continue;
+			}
 			Console.WriteLine (line);
 			w.WriteLine (line);
 			if (line.Contains ("Tests run:"))
@@ -279,6 +310,7 @@ public class Harness
 			if (line.Contains ("Exit code:"))
 				break;
 		}
+		w.Close ();
 
 		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
