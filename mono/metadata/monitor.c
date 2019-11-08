@@ -853,7 +853,7 @@ retry:
 	mono_atomic_inc_i32 (&mono_perfcounters->thread_contentions);
 #else
 #ifdef ENABLE_NETCORE
-	mono_atomic_inc_i32 (&thread_contentions);
+	mono_atomic_inc_i64 (&thread_contentions);
 #endif
 #endif
 
