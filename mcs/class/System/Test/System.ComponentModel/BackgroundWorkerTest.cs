@@ -81,6 +81,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void CancelBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();
@@ -117,6 +118,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void ExceptionBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();
@@ -154,6 +156,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void CompleteBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();
