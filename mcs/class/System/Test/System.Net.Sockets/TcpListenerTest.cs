@@ -93,6 +93,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -104,6 +105,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
@@ -115,6 +117,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
