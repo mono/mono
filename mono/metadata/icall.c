@@ -8129,6 +8129,18 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 }
 
 #endif
+#if defined(TARGET_WASM)
+G_EXTERN_C void mono_timezone_get_local_name (MonoString *volatile*result);
+void
+ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile*result)
+{
+	// MONO_CROSS_COMPILE returns undefined symbol "_mono_timezone_get_local_name"
+	// The icall offsets will be generated and linked at build time
+#ifndef MONO_CROSS_COMPILE
+	return mono_timezone_get_local_name (result);
+#endif
+}
+#endif
 
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean

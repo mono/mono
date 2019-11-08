@@ -2169,7 +2169,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2523,7 +2523,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2786,7 +2786,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3041,7 +3041,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3608,7 +3608,7 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -3864,7 +3864,7 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -4120,7 +4120,7 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -4371,7 +4371,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -4622,7 +4622,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -4873,7 +4873,7 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+        <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -5409,7 +5409,7 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -5664,7 +5664,7 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -5919,7 +5919,7 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
+            <!-- <Compile Include="System\TimeZoneInfo.WebAssembly.cs" /> -->
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
