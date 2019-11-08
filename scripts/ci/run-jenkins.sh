@@ -356,7 +356,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
             ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
-            ${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-System
+            ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
             ${TESTCMD} --label=system-core --timeout=20m $gnumake -C sdks/wasm run-all-System.Core
             for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
