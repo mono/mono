@@ -399,12 +399,8 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 			ins->klass = mono_get_object_class ();
 			return ins;
 		} else if (ctx->method_inst->type_argc == 1) {
-			if (mini_is_gsharedvt_variable_type (t)) {
-#ifdef ENABLE_NETCORE
-				g_warning ("Unable to intrinsify Unsafe.As<T>(object value) call in %s since T is a gsharedvt variable type: %s.", mono_method_full_name (cfg->method, 1), mono_type_full_name (t));
-#endif
+			if (mini_is_gsharedvt_variable_type (t))
 				return NULL;
-			}
 			// Casts the given object to the specified type, performs no dynamic type checking.
 			g_assert (fsig->param_count == 1);
 			g_assert (fsig->params [0]->type == MONO_TYPE_OBJECT);
@@ -1912,12 +1908,12 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		return ins;
 	}
 
-	// Return false for RuntimeFeature.IsDynamicCodeSupported and RuntimeFeature.IsDynamicCodeCompiled on FullAOT
-	if (in_corlib && cfg->full_aot &&
+	// Return false for RuntimeFeature.IsDynamicCodeSupported and RuntimeFeature.IsDynamicCodeCompiled on FullAOT, otherwise true
+	if (in_corlib &&
 		!strcmp ("System.Runtime.CompilerServices", cmethod_klass_name_space) &&
 		!strcmp ("RuntimeFeature", cmethod_klass_name)) {
 		if (!strcmp (cmethod->name, "get_IsDynamicCodeSupported") || !strcmp (cmethod->name, "get_IsDynamicCodeCompiled")) {
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, cfg->full_aot ? 0 : 1);
 			ins->type = STACK_I4;
 			return ins;
 		}
