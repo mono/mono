@@ -247,6 +247,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort ()
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void Sort1 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -288,6 +289,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [])
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void Sort2 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -345,6 +347,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (IComparer)
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void Sort3 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -402,6 +405,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [], IComparer)
+		[NUnit.Framework.CategoryAttribute ("NotWasm")]
 		public void Sort4 ()
 		{
 			PropertyDescriptorCollection descriptors;
