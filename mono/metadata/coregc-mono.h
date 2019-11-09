@@ -6,27 +6,7 @@
 #ifndef __MONO_COREGC_MONO_H__
 #define __MONO_COREGC_MONO_H__
 
-/* FIXME */
-#define BIT64
-
-
-#if defined(_DEBUG)
-#ifndef _DEBUG_IMPL
-#define _DEBUG_IMPL 1
-#endif
-#define ASSERT(_expr) assert(_expr)
-#else
-#define ASSERT(_expr)
-#endif
-
-#ifndef _ASSERTE
-#define _ASSERTE(_expr) ASSERT(_expr)
-#endif
-
 #include <external/coreclr/src/gc/env/gcenv.base.h>
-#include <external/coreclr/src/gc/env/gcenv.interlocked.h>
-#include <external/coreclr/src/gc/env/gcenv.interlocked.inl>
-#include <external/coreclr/src/gc/env/gcenv.object.h>
 #include <external/coreclr/src/gc/gcinterface.h>
 
 class GCToEEInterface
