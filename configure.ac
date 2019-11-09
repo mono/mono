@@ -2179,6 +2179,25 @@ if test x$host_win32 = xno; then
 	AC_SEARCH_LIBS(clock_gettime, rt)
 	AC_CHECK_FUNCS(clock_nanosleep)
 
+	AC_MSG_CHECKING(for _SC_AVPHYS_PAGES)
+	AC_TRY_COMPILE([#include <unistd.h>], [
+		const int foo = _SC_AVPHYS_PAGES;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE__SC_AVPHYS_PAGES, 1, [_SC_AVPHYS_PAGES])
+	], [
+		AC_MSG_RESULT(no)
+	])
+	AC_MSG_CHECKING(for _SC_PHYS_PAGES)
+	AC_TRY_COMPILE([#include <unistd.h>], [
+		const int foo = _SC_PHYS_PAGES;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE__SC_PHYS_PAGES, 1, [_SC_PHYS_PAGES])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 	dnl dynamic loader support
 	AC_CHECK_FUNC(dlopen, DL_LIB="",
 		AC_CHECK_LIB(dl, dlopen, DL_LIB="-ldl", dl_support=no)
@@ -2775,6 +2794,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(pthread_attr_setstacksize)
 	AC_CHECK_FUNCS(pthread_attr_getstack pthread_attr_getstacksize)
 	AC_CHECK_FUNCS(pthread_get_stacksize_np pthread_get_stackaddr_np)
+	AC_CHECK_FUNCS(pthread_condattr_setclock)
 	dnl check that pthread_mutexattr_setprotocol is declared
 	AC_CHECK_DECLS([pthread_mutexattr_setprotocol], [], [], [[#include <pthread.h>]])
 	AC_CHECK_FUNCS(mincore mlock munlock)
