@@ -72,6 +72,5 @@ monocoregc_sources = \
 libmonocoregc_la_SOURCES = $(monocoregc_sources)
 libmonocoregc_la_CFLAGS = $(COREGC_DEFINES)
 libmonocoregc_la_CXXFLAGS = $(COREGC_DEFINES)
-libmonocoregc_la_LDFLAGS = -lc++
 
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@

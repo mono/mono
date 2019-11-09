@@ -6666,7 +6666,7 @@ AC_SUBST(MONO_NATIVE_PLATFORM_TYPE_UNIFIED)
 #  mono/mini/Makefile.am.in we have CCLD=$MONO_CXXLD and CXXLD=$MONO_CXXLD which bypasses
 #  automake's autodetection and lets us use the linker that we want.
 #
-if test "x$enable_llvm_runtime" = "xyes"; then
+if test "x$enable_llvm_runtime" = "xyes" || test "x$buildcoregc" = "xyes"; then
 	AC_SUBST(MONO_CXXLD, [$CXX])
 else
 	AC_SUBST(MONO_CXXLD, [$CC])
