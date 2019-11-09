@@ -827,7 +827,16 @@ bool GCToEEInterface::WasCurrentThreadCreatedByGC()
 
 MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
 {
-	return NULL;
+	//
+	// Initialize free object methodtable. The GC uses a special array-like methodtable as placeholder
+	// for collected free space.
+	//
+	static MethodTable *freeObjectMT;
+	if (!freeObjectMT) {
+		freeObjectMT = (MethodTable *) g_malloc (sizeof (MethodTable));
+		freeObjectMT->InitializeFreeObject();
+	}
+	return freeObjectMT;
 }
 
 bool GCToEEInterface::CreateThread(void (*threadStart)(void*), void* arg, bool is_suspendable, const char* name)
