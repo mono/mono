@@ -857,6 +857,10 @@ uint32_t GCToEEInterface::GetTotalNumSizedRefHandles()
 	return -1;
 }
 
+void GCToEEInterface::UpdateGCEventStatus(int publicLevel, int publicKeywords, int privateLevel, int privateKeywords)
+{
+}
+
 inline bool GCToEEInterface::AnalyzeSurvivorsRequested(int condemnedGeneration)
 {
 	return false;
