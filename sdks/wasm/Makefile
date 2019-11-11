@@ -192,8 +192,14 @@ bcl:
 
 ifdef ENABLE_WASM_NETCORE
 
-NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
-NETCOREAPP_DIR=../../netcore/shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
+#NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
+NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+NETCOREAPP_VERSION := 5.0.0-alpha.1.19559.6
+NETCOREAPP_NAME=runtime.webassembly-wasm.Microsoft.Private.CoreFx.NETCoreApp
+NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
+
+$(NETCOREAPP_DIR):
+	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
 
 .PHONY: runtime-netcore
 runtime-netcore:
@@ -205,20 +211,14 @@ bcl-netcore:
 
 build-managed: bcl-netcore
 
-# Set COREFX_ROOT to a compatible corefx source repo
-# Apply netcore-corefx.diff
-netcore-System.Native.bc:
-	@if test x$(COREFX_ROOT) == x; then echo "Set COREFX_ROOT."; exit 1; fi
-	cd $(COREFX_ROOT)/src/Native && touch _version.c && cd Unix && mkdir -p build && cd build && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcmake cmake "-DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1" "-DCMAKE_TOOLCHAIN_FILE=$(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -G Ninja -DCMAKE_BUILD_TYPE=Debug .. && ninja && cp System.Native/System.Native.bc $(PWD)/$@
-
 src/pinvoke-tables-default-netcore.h:
 	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(NETCOREAPP_DIR)/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/System.Console.dll > $@
 
 samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
-	netcore build samples/hello -f netcoreapp3.0
+	dotnet build samples/hello -f netcoreapp3.0
 
-build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/hello-netcore
 
 bin/hello-netcore/bin/mono.js: build-hello-netcore
