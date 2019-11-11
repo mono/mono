@@ -6,19 +6,19 @@ EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
 
-MONO_SUPPORT=$(TOP)/support
+MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 ZLIB_HEADERS = \
-	$(MONO_SUPPORT)/crc32.h		\
-	$(MONO_SUPPORT)/deflate.h  	\
-	$(MONO_SUPPORT)/inffast.h  	\
-	$(MONO_SUPPORT)/inffixed.h  	\
-	$(MONO_SUPPORT)/inflate.h  	\
-	$(MONO_SUPPORT)/inftrees.h  	\
-	$(MONO_SUPPORT)/trees.h  	\
-	$(MONO_SUPPORT)/zconf.h  	\
-	$(MONO_SUPPORT)/zlib.h  	\
-	$(MONO_SUPPORT)/zutil.h
+	$(MONO_ZLIB_DIR)/crc32.h		\
+	$(MONO_ZLIB_DIR)/deflate.h  	\
+	$(MONO_ZLIB_DIR)/inffast.h  	\
+	$(MONO_ZLIB_DIR)/inffixed.h  	\
+	$(MONO_ZLIB_DIR)/inflate.h  	\
+	$(MONO_ZLIB_DIR)/inftrees.h  	\
+	$(MONO_ZLIB_DIR)/trees.h  	\
+	$(MONO_ZLIB_DIR)/zconf.h  	\
+	$(MONO_ZLIB_DIR)/zlib.h  	\
+	$(MONO_ZLIB_DIR)/zutil.h
 
 ifeq ($(UNAME),Darwin)
 WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
