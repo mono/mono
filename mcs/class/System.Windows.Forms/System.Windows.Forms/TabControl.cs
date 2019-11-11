@@ -1306,13 +1306,13 @@ namespace System.Windows.Forms {
 			
 			if (widthOnly) {
 				page.TabBounds = new Rectangle (xpos, 0, width, 0);
-				page.Row = row_count;
 				if (xpos + width > row_width && multiline) {
 					xpos = 0;
 					row_count++;
 				} else if (xpos + width > row_width) {
 					show_slider = true;	
 				}
+				page.Row = row_count;
 				if (i == selected_index && show_slider) {
 					for (int j = i-1; j >= 0; j--) {
 						if (TabPages [j].TabBounds.Left < xpos + width - row_width) {
