@@ -24,7 +24,7 @@ MINI_PATH=$(TOP)/mono/mini
 CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
-MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
+MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 PACKAGER=mono --debug packager.exe --no-native-strip
 
@@ -39,16 +39,16 @@ DOTNET_PACK=$(DOTNET_CMD) pack
 DOTNET_BUILD=$(DOTNET_CMD) build
 
 ZLIB_HEADERS = \
-	$(MONO_SUPPORT)/crc32.h		\
-	$(MONO_SUPPORT)/deflate.h  	\
-	$(MONO_SUPPORT)/inffast.h  	\
-	$(MONO_SUPPORT)/inffixed.h  	\
-	$(MONO_SUPPORT)/inflate.h  	\
-	$(MONO_SUPPORT)/inftrees.h  	\
-	$(MONO_SUPPORT)/trees.h  	\
-	$(MONO_SUPPORT)/zconf.h  	\
-	$(MONO_SUPPORT)/zlib.h  	\
-	$(MONO_SUPPORT)/zutil.h
+	$(MONO_ZLIB_DIR)/crc32.h		\
+	$(MONO_ZLIB_DIR)/deflate.h  	\
+	$(MONO_ZLIB_DIR)/inffast.h  	\
+	$(MONO_ZLIB_DIR)/inffixed.h  	\
+	$(MONO_ZLIB_DIR)/inflate.h  	\
+	$(MONO_ZLIB_DIR)/inftrees.h  	\
+	$(MONO_ZLIB_DIR)/trees.h  	\
+	$(MONO_ZLIB_DIR)/zconf.h  	\
+	$(MONO_ZLIB_DIR)/zlib.h  	\
+	$(MONO_ZLIB_DIR)/zutil.h
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
