@@ -143,26 +143,21 @@ add_frag (FrameStack *stack, int size)
 	return new_frag;
 }
 
-static gpointer
-frame_stack_alloc (FrameStack *stack, int size, StackFragment **out_frag)
+static MONO_ALWAYS_INLINE gpointer
+frame_stack_alloc_ovf (FrameStack *stack, int size, StackFragment **out_frag)
 {
 	StackFragment *current = stack->current;
 	gpointer res;
 
-	if (G_LIKELY (current->pos + size <= current->end)) {
-		res = current->pos;
-		current->pos += size;
+	if (current->next && current->next->pos + size <= current->next->end) {
+		current = stack->current = current->next;
+		current->pos = (guint8*)&current->data;
 	} else {
-		if (current->next && current->next->pos + size <= current->next->end) {
-			current = stack->current = current->next;
-			current->pos = (guint8*)&current->data;
-		} else {
-			current = add_frag (stack, size);
-		}
-		g_assert (current->pos + size <= current->end);
-		res = (gpointer)current->pos;
-		current->pos += size;
+		current = add_frag (stack, size);
 	}
+	g_assert (current->pos + size <= current->end);
+	res = (gpointer)current->pos;
+	current->pos += size;
 
 	mono_compiler_barrier ();
 
@@ -171,7 +166,26 @@ frame_stack_alloc (FrameStack *stack, int size, StackFragment **out_frag)
 	return res;
 }
 
-static void
+static MONO_ALWAYS_INLINE gpointer
+frame_stack_alloc (FrameStack *stack, int size, StackFragment **out_frag)
+{
+	StackFragment *current = stack->current;
+	gpointer res;
+
+	if (G_LIKELY (current->pos + size <= current->end)) {
+		res = current->pos;
+		current->pos += size;
+		mono_compiler_barrier ();
+
+		if (out_frag)
+			*out_frag = current;
+		return res;
+	} else {
+		return frame_stack_alloc_ovf (stack, size, out_frag);
+	}
+}
+
+static MONO_ALWAYS_INLINE void
 frame_stack_pop (FrameStack *stack, StackFragment *frag, gpointer pos)
 {
 	g_assert ((guint8*)pos >= (guint8*)&frag->data && (guint8*)pos <= (guint8*)frag->end);
@@ -200,7 +214,7 @@ frame_stack_free (FrameStack *stack)
  *
  *   Allocate a new frame from the frame stack.
  */
-static InterpFrame*
+static MONO_ALWAYS_INLINE InterpFrame*
 alloc_frame (ThreadContext *ctx, gpointer native_stack_addr, InterpFrame *parent, InterpMethod *imethod, stackval *args, stackval *retval)
 {
 	StackFragment *frag;
@@ -227,7 +241,7 @@ alloc_frame (ThreadContext *ctx, gpointer native_stack_addr, InterpFrame *parent
  *
  *   Allocate stack space for a frame.
  */
-static void
+static MONO_ALWAYS_INLINE void
 alloc_stack_data (ThreadContext *ctx, InterpFrame *frame, int size)
 {
 	StackFragment *frag;
@@ -3379,31 +3393,6 @@ mono_interp_store_remote_field_vt (InterpFrame* frame, const guint16* ip, stackv
 	return ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 }
 
-static MONO_ALWAYS_INLINE stackval*
-mono_interp_call (InterpFrame *frame, ThreadContext *context, InterpFrame *child_frame, const guint16 *ip, stackval *sp, guchar *vt_sp, gboolean is_virtual)
-{
-	frame->ip = ip;
-
-	child_frame->imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-	sp->data.p = vt_sp;
-	child_frame->retval = sp;
-
-	/* decrement by the actual number of args */
-	sp -= ip [2];
-
-	if (is_virtual) {
-		MonoObject *this_arg = (MonoObject*)sp->data.p;
-
-		child_frame->imethod = get_virtual_method (child_frame->imethod, this_arg->vtable);
-		if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
-			/* unbox */
-			gpointer unboxed = mono_object_unbox_internal (this_arg);
-			sp [0].data.p = unboxed;
-		}
-	}
-	return sp;
-}
-
 // varargs in wasm consumes extra linear stack per call-site.
 // These g_warning/g_error wrappers fix that. It is not the
 // small wasm stack, but conserving it is still desirable.
@@ -3425,7 +3414,7 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 	g_error (format, x1, s, x2);
 }
 
-static void
+static MONO_ALWAYS_INLINE void
 method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing, MonoException **out_ex)
 {
 #if DEBUG_INTERP
@@ -3433,7 +3422,7 @@ method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing,
 #endif
 
 	*out_ex = NULL;
-	if (!frame->imethod->transformed) {
+	if (!G_UNLIKELY (frame->imethod->transformed)) {
 #if DEBUG_INTERP
 		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
@@ -3832,65 +3821,52 @@ main_loop:
 		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
 			stackval *retval;
 			MonoObject *this_arg;
-			InterpMethod *target_imethod;
+			InterpMethod *imethod;
+			gboolean is_void = *ip == MINT_VCALLVIRT_FAST;
 			int slot;
 
 			// FIXME Have it handle also remoting calls and use a single opcode for virtual calls
 
 			frame->ip = ip;
 
-			target_imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
+			imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
 			slot = (gint16)ip [2];
 			ip += 3;
 			sp->data.p = vt_sp;
 
-			retval = sp;
-			child_frame = alloc_frame (context, &retval, frame, NULL, NULL, retval);
+			retval = is_void ? NULL : sp;
 
 			/* decrement by the actual number of args */
-			sp -= target_imethod->param_count + target_imethod->hasthis;
+			sp -= imethod->param_count + imethod->hasthis;
 
 			this_arg = (MonoObject*)sp->data.p;
 
-			child_frame->imethod = get_virtual_method_fast (target_imethod, this_arg->vtable, slot);
-			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (child_frame->imethod->method->klass)) {
+			imethod = get_virtual_method_fast (imethod, this_arg->vtable, slot);
+			if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (imethod->method->klass)) {
 				/* unbox */
 				gpointer unboxed = mono_object_unbox_internal (this_arg);
 				sp [0].data.p = unboxed;
 			}
-			const gboolean is_void = ip [-3] == MINT_VCALLVIRT_FAST;
-			child_frame->stack_args = sp;
 
-			if (TRUE) {
-				if (is_void)
-					child_frame->retval = NULL;
+			child_frame = alloc_frame (context, &retval, frame, imethod, sp, retval);
 
-				SAVE_INTERP_STATE (frame);
+			SAVE_INTERP_STATE (frame);
 
-				MonoException *ex;
-				gboolean tracing;
-				method_entry (context, child_frame, &tracing, &ex);
-				if (ex) {
-					frame = child_frame;
-					frame->ip = NULL;
-					THROW_EX (ex, NULL);
-					EXCEPTION_CHECKPOINT;
-				}
-
+			MonoException *ex;
+			gboolean tracing;
+			method_entry (context, child_frame, &tracing, &ex);
+			if (G_UNLIKELY (ex)) {
 				frame = child_frame;
-
-				INIT_INTERP_STATE (frame, NULL);
-				clause_args = NULL;
-
-				MINT_IN_BREAK;
+				frame->ip = NULL;
+				THROW_EX (ex, NULL);
+				EXCEPTION_CHECKPOINT;
 			}
 
-			interp_exec_method (child_frame, context, error);
-			CHECK_RESUME_STATE (context);
-			if (!is_void) {
-				*sp = *retval;
-				sp++;
-			}
+			frame = child_frame;
+
+			INIT_INTERP_STATE (frame, NULL);
+			clause_args = NULL;
+
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
@@ -3931,55 +3907,57 @@ main_loop:
 			stackval *retval;
 			gboolean is_void = *ip == MINT_VCALL || *ip == MINT_VCALLVIRT;
 			gboolean is_virtual = *ip == MINT_CALLVIRT || *ip == MINT_VCALLVIRT;
+			gpointer native_stack_addr = frame->native_stack_addr ? (gpointer)((guint8*)frame->native_stack_addr - 1) : (gpointer)&retval;
+			InterpMethod *imethod;
 
-			if (frame->native_stack_addr)
-				child_frame = alloc_frame (context, (guint8*)frame->native_stack_addr - 1, frame, NULL, NULL, NULL);
-			else
-				child_frame = alloc_frame (context, &retval, frame, NULL, NULL, NULL);
-			sp = mono_interp_call (frame, context, child_frame, ip, sp, vt_sp, is_virtual);
-			child_frame->stack_args = sp;
-			retval = child_frame->retval;
+			imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
+			sp->data.p = vt_sp;
+			retval = is_void ? NULL : sp;
 
+			/* decrement by the actual number of args */
+			sp -= ip [2];
+
+			if (is_virtual) {
+				MonoObject *this_arg = (MonoObject*)sp->data.p;
+
+				imethod = get_virtual_method (imethod, this_arg->vtable);
+				if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (imethod->method->klass)) {
+					/* unbox */
+					gpointer unboxed = mono_object_unbox_internal (this_arg);
+					sp [0].data.p = unboxed;
+				}
+			}
+
+			frame->ip = ip;
 #ifdef ENABLE_EXPERIMENT_TIERED
 			ip += 5;
 #else
 			ip += 3;
 #endif
 
-			if (TRUE) {
-				/*
-				 * Make a non-recursive call by loading the new interpreter state based on child frame,
-				 * and going back to the main loop.
-				 */
-				if (is_void)
-					child_frame->retval = NULL;
+			child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
 
-				SAVE_INTERP_STATE (frame);
+			/*
+			 * Make a non-recursive call by loading the new interpreter state based on child frame,
+			 * and going back to the main loop.
+			 */
+			SAVE_INTERP_STATE (frame);
 
-				MonoException *ex;
-				gboolean tracing;
-				method_entry (context, child_frame, &tracing, &ex);
-				if (ex) {
-					frame = child_frame;
-					frame->ip = NULL;
-					THROW_EX (ex, NULL);
-					EXCEPTION_CHECKPOINT;
-				}
-
+			MonoException *ex;
+			gboolean tracing;
+			method_entry (context, child_frame, &tracing, &ex);
+			if (G_UNLIKELY (ex)) {
 				frame = child_frame;
-
-				INIT_INTERP_STATE (frame, NULL);
-				clause_args = NULL;
-
-				MINT_IN_BREAK;
+				frame->ip = NULL;
+				THROW_EX (ex, NULL);
+				EXCEPTION_CHECKPOINT;
 			}
 
-			interp_exec_method (child_frame, context, error);
-			CHECK_RESUME_STATE (context);
-			if (!is_void) {
-				*sp = *retval;
-				sp++;
-			}
+			frame = child_frame;
+
+			INIT_INTERP_STATE (frame, NULL);
+			clause_args = NULL;
+
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
