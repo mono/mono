@@ -23,6 +23,7 @@
 #include <mono/utils/refcount.h>
 #include <mono/utils/mono-error-internals.h>
 
+#include "mono-publib.h"
 #include <glib.h>
 #include <config.h>
 #ifdef HOST_WIN32
@@ -56,6 +57,8 @@ typedef thread_port_t MonoNativeThreadHandle;
 typedef pid_t MonoNativeThreadHandle;
 
 #endif /* defined(__MACH__) */
+
+MONO_BEGIN_DECLS
 
 typedef pthread_t MonoNativeThreadId;
 
@@ -396,7 +399,7 @@ mono_thread_info_cleanup (void);
 
 /*
  * @thread_info_size is sizeof (GcThreadInfo), a struct the GC defines to make it possible to have
- * a single block with info from both camps. 
+ * a single block with info from both camps.
  */
 G_EXTERN_C void
 mono_thread_info_init (size_t thread_info_size);
@@ -441,9 +444,6 @@ mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info);
 gboolean
 mono_thread_info_is_exiting (void);
 
-#ifdef HOST_WIN32
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
-#endif
 THREAD_INFO_TYPE *
 mono_thread_info_current (void);
 
@@ -535,7 +535,6 @@ mono_thread_info_is_interrupt_state (THREAD_INFO_TYPE *info);
 void
 mono_thread_info_describe_interrupt_token (THREAD_INFO_TYPE *info, GString *text);
 
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
@@ -553,6 +552,7 @@ mono_threads_open_native_thread_handle (MonoNativeThreadHandle handle);
 
 void
 mono_threads_close_native_thread_handle (MonoNativeThreadHandle handle);
+
 
 #if !defined(HOST_WIN32)
 
@@ -634,8 +634,8 @@ mono_native_thread_id_get (void);
 /*
  * This does _not_ return the same value as mono_native_thread_id_get, except on Windows.
  * On POSIX, mono_native_thread_id_get returns the value from pthread_self, which is then
- * passed around as an identifier to other pthread functions. However this function, where 
- * possible, returns the OS-unique thread id value, fetched in a platform-specific manner. 
+ * passed around as an identifier to other pthread functions. However this function, where
+ * possible, returns the OS-unique thread id value, fetched in a platform-specific manner.
  * It will not work with the various pthread functions, should never be used as a
  * MonoNativeThreadId, and is intended solely to match the output of various diagonistic tools.
  */
@@ -650,15 +650,6 @@ mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
 MONO_API gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
-
-#ifdef __cplusplus
-template <typename T>
-inline gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, T func, gpointer arg)
-{
-	return  mono_native_thread_create (tid, (gpointer)func, arg);
-}
-#endif
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
@@ -748,7 +739,6 @@ gboolean mono_threads_transition_peek_blocking_suspend_requested (THREAD_INFO_TY
 void mono_threads_transition_begin_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
 void mono_threads_transition_end_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
 
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
 
 gpointer
@@ -757,15 +747,12 @@ mono_threads_enter_gc_unsafe_region_cookie (void);
 
 void mono_thread_info_wait_for_resume (THREAD_INFO_TYPE *info);
 /* Advanced suspend API, used for suspending multiple threads as once. */
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_is_running (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_is_live (THREAD_INFO_TYPE *info);
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
 gboolean mono_thread_is_gc_unsafe_mode (void);
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_will_not_safepoint (THREAD_INFO_TYPE *info);
 
 /* Suspend phases:
@@ -797,13 +784,9 @@ typedef enum {
 	MONO_THREAD_BEGIN_SUSPEND_NEXT_PHASE = 2,
 } MonoThreadBeginSuspendResult;
 
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadBeginSuspendResult mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info, MonoThreadSuspendPhase phase);
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
-G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_begin_pulse_resume_and_request_suspension (THREAD_INFO_TYPE *info);
 
 
@@ -857,6 +840,7 @@ mono_win32_interrupt_wait (PVOID thread_info, HANDLE native_thread_handle, DWORD
 void
 mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
+
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT \
 	const DWORD _last_error_restore_point = GetLastError ();
 
@@ -870,6 +854,17 @@ mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 #define W32_DEFINE_LAST_ERROR_RESTORE_POINT /* nothing */
 #define W32_RESTORE_LAST_ERROR_FROM_RESTORE_POINT /* nothing */
 
+#endif
+
+MONO_END_DECLS
+
+#ifdef __cplusplus
+template <typename T>
+inline gboolean
+mono_native_thread_create (MonoNativeThreadId *tid, T func, gpointer arg)
+{
+	return  mono_native_thread_create (tid, (gpointer)func, arg);
+}
 #endif
 
 #endif /* __MONO_THREADS_H__ */

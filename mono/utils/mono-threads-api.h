@@ -14,6 +14,9 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/mono-compiler.h>
+#include "mono-publib.h"
+
+MONO_BEGIN_DECLS
 
 /*
 >>>> WARNING WARNING WARNING <<<<
@@ -165,5 +168,8 @@ mono_thread_set_coop_aware (void);
 
 MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_thread_get_coop_aware (void);
+
+
+MONO_END_DECLS
 
 #endif /* __MONO_LOGGER_H__ */
