@@ -43,7 +43,7 @@ configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
 
 .PHONY: build-llvm
 build-llvm: configure-llvm
-	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
+	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE) -j) -C $(LLVM_BUILD)
 
 .PHONY: install-llvm
 install-llvm: build-llvm
