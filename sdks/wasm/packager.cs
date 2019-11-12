@@ -527,6 +527,10 @@ class Driver {
 					Console.Error.WriteLine ("The --netcore-sdkdir= argument is required.");
 					return 1;
 				}
+				if (!Directory.Exists (netcore_sdkdir)) {
+					Console.Error.WriteLine ($"The directory '{netcore_sdkdir}' doesn't exist.");
+					return 1;
+				}
 			} else {
 				Console.Error.WriteLine ("The only valid value for --framework is 'netcoreapp...'");
 				return 1;
