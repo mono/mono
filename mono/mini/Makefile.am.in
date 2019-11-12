@@ -116,7 +116,7 @@ endif
 
 if SUPPORT_BOEHM
 boehm_libraries = libmonoboehm-2.0.la
-boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(libgc_static_libs)
+boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs)
 boehm_binaries  = mono-boehm
 endif
 
