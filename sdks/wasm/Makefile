@@ -201,6 +201,9 @@ NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
 $(NETCOREAPP_DIR):
 	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
 
+netcore-System.Native.bc: $(NETCOREAPP_DIR)
+	cp $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/native/System.Native.bc $@
+
 .PHONY: runtime-netcore
 runtime-netcore:
 	$(MAKE) -C ../builds package-wasm-runtime-netcore
@@ -271,7 +274,7 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-$(PACKAGER): packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
+packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
@@ -560,6 +563,7 @@ clean: clean-browser-tests
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
+	$(RM) netcore-System.Native.bc
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
