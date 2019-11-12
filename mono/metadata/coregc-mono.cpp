@@ -295,10 +295,82 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int coun
 	g_assert_not_reached ();
 }
 
+static int
+get_size_for_vtable (gpointer vtable, gpointer o)
+{
+	MonoClass *klass = ((MonoVTable*)vtable)->klass;
+
+	// FIXME: use gc desc for fast path
+
+	/*
+	 * We depend on mono_string_length_fast and
+	 * mono_array_length_internal not using the object's vtable.
+	 */
+	if (klass == mono_defaults.string_class) {
+		return MONO_SIZEOF_MONO_STRING + 2 * mono_string_length_fast ((MonoString*) o) + 2;
+	} else if (m_class_get_rank (klass)) {
+		g_error ("niy");
+		// return sgen_mono_array_size (vtable, (MonoArray*)o, NULL, 0);
+	} else {
+		/* from a created object: the class must be inited already */
+		return m_class_get_instance_size (klass);
+	}
+}
+
+#if TARGET_SIZEOF_VOID_P == 8
+#define card_byte_shift     11
+#else
+#define card_byte_shift     10
+#endif
+
+#define card_byte(addr) (((size_t)(addr)) >> card_byte_shift)
+
+extern "C" guint32* g_gc_card_table;
+extern "C" guint8* g_gc_lowest_address;
+extern "C" guint8* g_gc_highest_address;
+
+static void
+coregc_mark_card_table (gpointer addr)
+{
+    if (((guint8 *) addr < g_gc_lowest_address) || ((guint8 *) addr >= g_gc_highest_address))
+        return;
+
+    // volatile is used here to prevent fetch of g_card_table from being reordered
+    // with g_lowest/highest_address check above. See comments in StompWriteBarrier
+    guint8* cardByte = (guint8 *)*(volatile guint8 **)(&g_gc_card_table) + card_byte((guint8 *)addr);
+	*cardByte = 0xff;
+}
+
+#ifndef MAX
+#define MAX(a,b) (((a)>(b)) ? (a) : (b))
+#endif
+
+static int
+number_of_cards (gpointer start, int size)
+{
+	gpointer end = (guint8 *) start + MAX (1, size) - 1;
+	return ((intptr_t) end >> card_byte_shift) - ((intptr_t) start >> card_byte_shift) + 1;
+}
+
 void
 mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 {
-	g_assert_not_reached ();
+	size_t size = get_size_for_vtable (obj->vtable, obj);
+
+	// TLAB_ACCESS_INIT;
+	// ENTER_CRITICAL_REGION;
+
+	mono_gc_memmove_aligned ((char *) obj + COREGC_CLIENT_OBJECT_HEADER_SIZE, (char *) src + COREGC_CLIENT_OBJECT_HEADER_SIZE, size - COREGC_CLIENT_OBJECT_HEADER_SIZE);
+
+	int num_cards = number_of_cards (obj, size);
+#if 0
+	memset (obj, 0xff, num_cards);
+#else
+	for (int i = 0; i < size; i++)
+		coregc_mark_card_table ((char *) obj + i);
+#endif
+
+	// EXIT_CRITICAL_REGION;
 }
 
 gboolean
@@ -394,7 +466,6 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 MonoMethod*
 mono_gc_get_write_barrier (void)
 {
-	g_assert_not_reached ();
 	return NULL;
 }
 
