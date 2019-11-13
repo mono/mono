@@ -87,7 +87,7 @@ typedef void* MonoGCDescriptor;
 
 gboolean mono_gc_parse_environment_string_extract_number (const char *str, size_t *out);
 
-MonoGCDescriptor mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+MonoGCDescriptor mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_t obj_size)
     MONO_PERMIT (need (sgen_lock_gc));
 MonoGCDescriptor mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
     MONO_PERMIT (need (sgen_lock_gc));

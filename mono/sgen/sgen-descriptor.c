@@ -113,7 +113,7 @@ sgen_get_complex_descriptor (SgenDescriptor desc)
  * Descriptor builders.
  */
 SgenDescriptor
-mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_t obj_size)
 {
 	int first_set = -1, num_set = 0, last_set = -1, i;
 	SgenDescriptor desc = 0;

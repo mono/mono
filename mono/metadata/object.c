@@ -1218,7 +1218,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 			mono_loader_unlock ();
 		}
 
-		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, m_class_get_instance_size (klass));
+		gc_descr = mono_gc_make_descr_for_object (klass, bitmap, max_set + 1, m_class_get_instance_size (klass));
 	}
 
 	if (bitmap != default_bitmap)

@@ -20,6 +20,7 @@ typedef struct _CoreClrThreadInfo CoreClrThreadInfo;
 
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/abi-details.h>
@@ -57,7 +58,7 @@ static gboolean gc_inited = FALSE;
 
 G_BEGIN_DECLS
 
-extern "C" HRESULT GC_Initialize(IGCToCLR* clrToGC, IGCHeap** gcHeap, IGCHandleManager** gcHandleManager, GcDacVars* gcDacVars);
+HRESULT GC_Initialize(IGCToCLR* clrToGC, IGCHeap** gcHeap, IGCHandleManager** gcHandleManager, GcDacVars* gcDacVars);
 
 static IGCHeap *pGCHeap;
 static IGCHandleManager *pGCHandleManager;
@@ -189,28 +190,60 @@ mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr
 	g_assert_not_reached ();
 }
 
-
 void
 mono_gc_deregister_root (char* addr)
 {
 }
 
+typedef struct {
+	uint16_t m_componentSize;
+	uint16_t m_flags;
+	uint32_t m_baseSize;
+} mono_gc_descr;
+
+typedef union {
+	mono_gc_descr struct_gc_descr;
+	gpointer ptr_gc_descr;
+} mono_gc_descr_union;
+
+#define MTFlag_ContainsPointers     0x0100
+#define MTFlag_HasCriticalFinalizer 0x0800
+#define MTFlag_HasFinalizer         0x0010
+#define MTFlag_IsArray              0x0008
+#define MTFlag_Collectible          0x1000
+#define MTFlag_HasComponentSize     0x8000
+
 void*
-mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
+mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_t obj_size)
 {
-	g_assert_not_reached ();
+	MonoClass *casted_class = (MonoClass*) klass;
+	mono_gc_descr_union gc_descr;
+	gc_descr.struct_gc_descr.m_componentSize = 0; // not array or string
+	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers;
+	if (casted_class->has_finalize)
+		gc_descr.struct_gc_descr.m_flags |= MTFlag_HasFinalizer;
+	gc_descr.struct_gc_descr.m_baseSize = obj_size + 8;
+	return gc_descr.ptr_gc_descr;
 }
 
 void*
-mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 {
-	g_assert_not_reached ();
+	mono_gc_descr_union gc_descr;
+	gc_descr.struct_gc_descr.m_componentSize = 2;
+	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
+	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoString) + 8;
+	return gc_descr.ptr_gc_descr;
 }
 
 void*
 mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
 {
-	g_assert_not_reached ();
+	mono_gc_descr_union gc_descr;
+	gc_descr.struct_gc_descr.m_componentSize = elem_size;
+	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
+	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoArray) + 8;
+	return gc_descr.ptr_gc_descr;
 }
 
 void*
@@ -1193,9 +1226,30 @@ bool GCToEEInterface::WasCurrentThreadCreatedByGC()
 	return false;
 }
 
+/* Vtable of the objects used to fill out nursery fragments before a collection */
+static MonoVTable *array_fill_vtable;
+
 MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
 {
-	return NULL;
+	if (!array_fill_vtable) {
+		static char _vtable[sizeof(MonoVTable)+8];
+		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((size_t)_vtable, 8);
+		gsize bmap;
+
+		vtable->klass = mono_class_create_array_fill_type ();
+
+		bmap = 0;
+		mono_gc_descr_union desc;
+		desc.ptr_gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
+		// Remove bounds from the reported size, since coreclr gc expects this object
+		// to the size of ArrayBase
+		desc.struct_gc_descr.m_baseSize -= 8;
+		vtable->gc_descr = desc.ptr_gc_descr;
+		vtable->rank = 1;
+
+		array_fill_vtable = vtable;
+	}
+	return (MethodTable*)array_fill_vtable;
 }
 
 bool GCToEEInterface::CreateThread(void (*threadStart)(void*), void* arg, bool is_suspendable, const char* name)
