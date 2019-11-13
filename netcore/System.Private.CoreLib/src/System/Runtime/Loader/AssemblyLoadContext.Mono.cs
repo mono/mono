@@ -71,15 +71,7 @@ namespace System.Runtime.Loader
 			if (rtAsm != null) {
 				RuntimeAssembly runtimeAssembly = rtAsm;
 				IntPtr ptrAssemblyLoadContext = GetLoadContextForAssembly (runtimeAssembly);
-				if (ptrAssemblyLoadContext == IntPtr.Zero)
-				{
-					// If the load context is returned null, then the assembly was bound using the TPA binder
-					// and we shall return reference to the active "Default" binder - which could be the TPA binder
-					// or an overridden CLRPrivBinderAssemblyLoadContext instance.
-					loadContextForAssembly = AssemblyLoadContext.Default;
-				} else {
-					loadContextForAssembly = (AssemblyLoadContext) (GCHandle.FromIntPtr (ptrAssemblyLoadContext).Target)!;
-				}
+				loadContextForAssembly = GetAssemblyLoadContext (ptrAssemblyLoadContext);
 			}
 
 			return loadContextForAssembly;
@@ -128,6 +120,29 @@ namespace System.Runtime.Loader
 		static Assembly? MonoResolveUsingResolveSatelliteAssembly (IntPtr gchALC, string assemblyName)
 		{
 			return ResolveSatelliteAssembly (gchALC, new AssemblyName (assemblyName));
+		}
+
+		private static AssemblyLoadContext GetAssemblyLoadContext (IntPtr gchManagedAssemblyLoadContext)
+		{
+			AssemblyLoadContext context;
+			// This check exists because the function can be called early in startup, before the default ALC is initialized
+			if (gchManagedAssemblyLoadContext == IntPtr.Zero)
+				context = AssemblyLoadContext.Default;
+			else
+				context = (AssemblyLoadContext)(GCHandle.FromIntPtr (gchManagedAssemblyLoadContext).Target)!;
+			return context;
+		}
+
+		private static void MonoResolveUnmanagedDll (string unmanagedDllName, IntPtr gchManagedAssemblyLoadContext, ref IntPtr dll)
+		{
+			AssemblyLoadContext context = GetAssemblyLoadContext (gchManagedAssemblyLoadContext);
+			dll = context.LoadUnmanagedDll(unmanagedDllName);
+		}
+
+		private static void MonoResolveUnmanagedDllUsingEvent (string unmanagedDllName, Assembly assembly, IntPtr gchManagedAssemblyLoadContext, ref IntPtr dll)
+		{
+			AssemblyLoadContext context = GetAssemblyLoadContext (gchManagedAssemblyLoadContext);
+			dll = context.GetResolvedUnmanagedDll(assembly, unmanagedDllName);
 		}
 
 #region Copied from AssemblyLoadContext.CoreCLR.cs, modified until our AssemblyBuilder implementation is functional

@@ -31,6 +31,8 @@
 		  <method name="MonoResolveUsingResolveSatelliteAssembly" />
 		  <!-- appdomain.c: mono_try_assembly_resolve_handle () -->
 		  <method name="OnAssemblyResolve"/>
+		  <!-- native-library.c: netcore_resolve_with_load () -->
+		  <method name="MonoResolveUnmanagedDll"/>
 		</type>
 		
 		<!-- marshal.c: emit_marshal_custom (should not be used on devices)
@@ -669,6 +671,13 @@
 		<!-- marshal.c: mono_mb_emit_exception_marshal_directive -->
 		<type fullname="System.Runtime.InteropServices.MarshalDirectiveException">
 			<method signature="System.Void .ctor(System.String)" />
+		</type>
+
+		<!-- native-library.c: mono_class_get_native_library_class -->
+		<type fullname="System.Runtime.InteropServices.NativeLibrary">
+			<method name="MonoLoadLibraryCallbackStub" />
+			<method name="MonoResolveUnmanagedDll" />
+			<method name="MonoResolveUnmanagedDllUsingEvent" />
 		</type>
 		
 		<!-- domain.c: mono_defaults.monitor_class -->
