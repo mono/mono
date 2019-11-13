@@ -5149,7 +5149,12 @@ AC_SEARCH_LIBS(dlopen, dl)
 # Apple -bind_at_load
 # The rest GNU.
 #
-AX_APPEND_LINK_FLAGS([-Wl,--export-dynamic -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
+export_link_flags=--export-dynamic
+case $host_os in
+	mingw*|cygwin*)
+	export_link_flags=--export-all-symbols
+esac
+AX_APPEND_LINK_FLAGS([-Wl,$export_link_flags -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
 dnl giconv.c will check on HAVE_ICONV_H but we need this for link time
