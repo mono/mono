@@ -648,6 +648,7 @@ package: build build-sdk build-dbg-proxy
 	cp -r ./sdk/Templates tmp/
 	mkdir tmp/support
 	cp -r $(ZLIB_HEADERS) tmp/support
+	cp -r ./zoneinfo tmp
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
