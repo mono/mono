@@ -285,6 +285,4 @@ void mono_de_process_single_step (void *tls, gboolean from_signal);
 DbgEngineErrorCode mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 void mono_de_cancel_ss (void);
 
-MonoGenericContext
-mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info);
 #endif
