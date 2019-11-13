@@ -15,6 +15,7 @@ if (monoBranch == 'master') {
 }
 
 parallel (
+/*
     "Android Darwin (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
@@ -64,6 +65,22 @@ parallel (
             }
         }
     },
+*/
+    "iOS (Xcode 11.3 beta1)": {
+        throttle(['provisions-ios-toolchain']) {
+            node ("xcode113b1") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode113b1")
+            }
+        }
+    },
+    "Mac (Xcode 11.3 beta1)": {
+        throttle(['provisions-mac-toolchain']) {
+            node ("xcode113b1") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode113b1")
+            }
+        }
+    },
+/*
     "WASM Linux": {
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
@@ -71,6 +88,7 @@ parallel (
             }
         }
     }
+*/
 )
 
 def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "", xcodeVersion = "") {

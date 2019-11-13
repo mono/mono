@@ -170,7 +170,14 @@ fi
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
         # configuration on our bots
-        if [[ ${CI_TAGS} == *'xcode112'* ]]; then
+        if [[ ${CI_TAGS} == *'xcode113b1'* ]]; then
+            export XCODE_DIR=/Applications/Xcode113b1.app/Contents/Developer
+            export MACOS_VERSION=10.15
+            export IOS_VERSION=13.2
+            export TVOS_VERSION=13.2
+            export WATCHOS_VERSION=6.1
+            export WATCHOS64_32_VERSION=6.1
+        elif [[ ${CI_TAGS} == *'xcode112'* ]]; then
             export XCODE_DIR=/Applications/Xcode112.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.2
@@ -240,11 +247,11 @@ fi
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots
-    if [[ ${CI_TAGS} == *'xcode112'* ]]; then
-        export XCODE_DIR=/Applications/Xcode112.app/Contents/Developer
+    if [[ ${CI_TAGS} == *'xcode113b1'* ]]; then
+        export XCODE_DIR=/Applications/Xcode113b1.app/Contents/Developer
         export MACOS_VERSION=10.15
-    elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
-        export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
+    elif [[ ${CI_TAGS} == *'xcode112'* ]]; then
+        export XCODE_DIR=/Applications/Xcode112.app/Contents/Developer
         export MACOS_VERSION=10.15
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
