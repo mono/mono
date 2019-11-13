@@ -780,6 +780,8 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
+		// Filesystem support forced to enable Emscripten's file_packager.py in a later phase
+		emcc_flags += "-s FORCE_FILESYSTEM=1 ";
 		foreach (var pf in preload_files)
 			emcc_flags += "--preload-file " + pf + " ";
 		string emcc_link_flags = "";
