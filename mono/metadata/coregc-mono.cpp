@@ -309,7 +309,7 @@ mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers;
 	if (casted_class->has_finalize)
 		gc_descr.struct_gc_descr.m_flags |= MTFlag_HasFinalizer;
-	gc_descr.struct_gc_descr.m_baseSize = obj_size + 8;
+	gc_descr.struct_gc_descr.m_baseSize = obj_size;
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -319,7 +319,7 @@ mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = 2;
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
-	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoString) + 8;
+	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoString);
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -329,7 +329,7 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = elem_size;
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
-	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoArray) + 8;
+	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoArray);
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -1494,6 +1494,8 @@ MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
 		// Remove bounds from the reported size, since coreclr gc expects this object
 		// to the size of ArrayBase
 		desc.struct_gc_descr.m_baseSize -= 8;
+		// Add the header slot
+		desc.struct_gc_descr.m_baseSize += 8;
 		vtable->gc_descr = desc.ptr_gc_descr;
 		vtable->rank = 1;
 
