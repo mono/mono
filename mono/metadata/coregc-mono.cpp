@@ -628,12 +628,14 @@ number_of_cards (gpointer start, int size)
 void
 mono_gc_wbarrier_set_field_internal (MonoObject *obj, gpointer field_ptr, MonoObject* value)
 {
+	*(MonoObject**)field_ptr = value;
 	coregc_mark_card_table (field_ptr);
 }
 
 void
 mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
 {
+	*(MonoObject**)slot_ptr = value;
 	coregc_mark_card_table (slot_ptr);
 }
 
@@ -1365,6 +1367,7 @@ bool GCToEEInterface::RefCountedHandleCallbacks(Object * pObject)
 
 bool GCToEEInterface::IsPreemptiveGCDisabled()
 {
+	return true;
 }
 
 bool GCToEEInterface::EnablePreemptiveGC()
