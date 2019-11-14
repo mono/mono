@@ -564,7 +564,7 @@ MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *o = mono_gc_alloc_obj (vtable, size);
-	pGCHandleManager->GetGlobalHandleStore ()->CreateHandleOfType ((Object*)o, HNDTYPE_PINNED);
+	pGCHandleManager->CreateGlobalHandleOfType ((Object*)o, HNDTYPE_PINNED);
 	return o;
 }
 
@@ -1023,7 +1023,7 @@ guint64 mono_gc_get_total_allocated_bytes (MonoBoolean precise)
 MonoObject*
 mono_gchandle_get_target_internal (gpointer gchandle)
 {
-	g_assert_not_reached ();
+	return *((MonoObject**)gchandle);
 }
 
 gboolean
@@ -1035,25 +1035,31 @@ mono_gchandle_is_in_domain (gpointer gchandle, MonoDomain *domain)
 gpointer
 mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 {
-	g_assert_not_reached ();
+	if (pinned)
+		return pGCHandleManager->CreateGlobalHandleOfType ((Object*)obj, HNDTYPE_PINNED);
+	else
+		return pGCHandleManager->CreateGlobalHandleOfType ((Object*)obj, HNDTYPE_STRONG);
 }
 
 gpointer
 mono_gchandle_new_weakref_internal (MonoObject* obj, gboolean track_resurrection)
 {
-	g_assert_not_reached ();
+	if (track_resurrection)
+		return pGCHandleManager->CreateGlobalHandleOfType ((Object*)obj, HNDTYPE_WEAK_LONG);
+	else
+		return pGCHandleManager->CreateGlobalHandleOfType ((Object*)obj, HNDTYPE_WEAK_SHORT);
 }
 
 void
 mono_gchandle_set_target (gpointer gchandle, MonoObject *obj)
 {
-	g_assert_not_reached ();
+	*((MonoObject**)gchandle) = obj;
 }
 
 void
 mono_gchandle_free_internal (gpointer gchandle)
 {
-	g_assert_not_reached ();
+	pGCHandleManager->DestroyHandleOfUnknownType ((OBJECTHANDLE)gchandle);
 }
 
 void
