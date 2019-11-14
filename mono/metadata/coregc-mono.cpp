@@ -515,17 +515,18 @@ mono_gc_free_fixed (void* addr)
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
-	gpointer o;
+	MonoObject *o;
 	uint32_t flags = 0;
 	if (vtable->klass->has_finalize)
 		flags |= GC_ALLOC_FINALIZE;
 	if (size < 85000) {
 		CoreGCThreadInfo *info = (CoreGCThreadInfo*) mono_thread_info_current ();
-		o = pGCHeap->Alloc (&info->alloc_context, size, flags);
+		o = (MonoObject*) pGCHeap->Alloc (&info->alloc_context, size, flags);
 	} else {
-		o = pGCHeap->AllocLHeap (size, flags);
+		o = (MonoObject*) pGCHeap->AllocLHeap (size, flags);
 	}
-	return (MonoObject*) o;
+	o->vtable = vtable;
+	return o;
 }
 
 MonoArray*
