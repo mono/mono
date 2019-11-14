@@ -677,6 +677,7 @@ mono_gc_is_critical_method (MonoMethod *method)
 gpointer
 mono_gc_thread_attach (THREAD_INFO_TYPE * info)
 {
+	info->info.handle_stack = mono_handle_stack_alloc ();
 	return info;
 }
 

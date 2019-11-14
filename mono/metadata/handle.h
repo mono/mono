@@ -25,6 +25,8 @@
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/class-internals.h>
 
+G_BEGIN_DECLS
+
 /*
 Handle stack.
 
@@ -673,5 +675,7 @@ mono_handle_hash (MonoObjectHandle object);
 
 guint32
 mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handle);
+
+G_END_DECLS
 
 #endif /* __MONO_HANDLE_H__ */
