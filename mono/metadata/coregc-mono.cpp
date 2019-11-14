@@ -50,6 +50,20 @@ HRESULT GC_Initialize(IGCToCLR* clrToGC, IGCHeap** gcHeap, IGCHandleManager** gc
 static IGCHeap *pGCHeap;
 static IGCHandleManager *pGCHandleManager;
 
+MonoCoopMutex coreclr_gc_mutex;
+
+void
+coreclr_gc_lock (void)
+{
+	mono_coop_mutex_lock (&coreclr_gc_mutex);
+}
+
+void
+coreclr_gc_unlock (void)
+{
+	mono_coop_mutex_unlock (&coreclr_gc_mutex);
+}
+
 static void
 mono_init_coreclr_gc (void)
 {
@@ -86,6 +100,8 @@ mono_gc_base_init (void)
 	mono_thread_info_init (sizeof (THREAD_INFO_TYPE));
 
 	mono_init_coreclr_gc ();
+
+	mono_coop_mutex_init (&coreclr_gc_mutex);
 
 	gc_inited = TRUE;
 }
@@ -233,23 +249,166 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 	return gc_descr.ptr_gc_descr;
 }
 
-void*
+// Root descriptors
+
+enum {
+        ROOT_DESC_CONSERVATIVE, /* 0, so matches NULL value */
+        ROOT_DESC_BITMAP,
+        ROOT_DESC_RUN_LEN,
+        ROOT_DESC_COMPLEX,
+        ROOT_DESC_VECTOR,
+        ROOT_DESC_USER,
+        ROOT_DESC_TYPE_MASK = 0x7,
+        ROOT_DESC_TYPE_SHIFT = 3,
+};
+
+#if TARGET_SIZEOF_VOID_P == 4
+typedef guint32 target_mword;
+#else
+typedef guint64 target_mword;
+#endif
+
+typedef target_mword RootDescriptor;
+
+typedef void (*UserMarkFunc)     (MonoObject **addr, void *gc_data);
+typedef void (*UserRootMarkFunc) (void *addr, UserMarkFunc mark_func, void *gc_data);
+
+#define GC_BITS_PER_WORD (sizeof (target_mword) * 8)
+#define LOW_TYPE_BITS 3
+
+#define MAX_USER_DESCRIPTORS 16
+
+#define MAKE_ROOT_DESC(type,val) ((type) | ((val) << ROOT_DESC_TYPE_SHIFT))
+
+static gsize* complex_descriptors = NULL;
+static int complex_descriptors_size = 0;
+static int complex_descriptors_next = 0;
+
+static UserRootMarkFunc user_descriptors [MAX_USER_DESCRIPTORS];
+static int user_descriptors_next = 0;
+static RootDescriptor all_ref_root_descrs [32];
+
+static int
+alloc_complex_descriptor (gsize *bitmap, int numbits)
+{
+	int nwords, res, i;
+
+	numbits = ALIGN_TO (numbits, GC_BITS_PER_WORD);
+	nwords = numbits / GC_BITS_PER_WORD + 1;
+
+	coreclr_gc_lock ();
+	res = complex_descriptors_next;
+	/* linear search, so we don't have duplicates with domain load/unload
+	* this should not be performance critical or we'd have bigger issues
+	* (the number and size of complex descriptors should be small).
+	*/
+	for (i = 0; i < complex_descriptors_next; ) {
+		if (complex_descriptors [i] == nwords) {
+			int j, found = TRUE;
+			for (j = 0; j < nwords - 1; ++j) {
+				if (complex_descriptors [i + 1 + j] != bitmap [j]) {
+					found = FALSE;
+					break;
+				}
+			}
+			if (found) {
+				coreclr_gc_unlock ();
+				return i;
+			}
+		}
+		i += (int)complex_descriptors [i];
+	}
+	if (complex_descriptors_next + nwords > complex_descriptors_size) {
+		int new_size = complex_descriptors_size * 2 + nwords;
+		complex_descriptors = g_realloc (complex_descriptors, new_size * sizeof (gsize));
+		complex_descriptors_size = new_size;
+	}
+	complex_descriptors_next += nwords;
+	complex_descriptors [res] = nwords;
+	for (i = 0; i < nwords - 1; ++i) {
+		complex_descriptors [res + 1 + i] = bitmap [i];
+	}
+	coreclr_gc_unlock ();
+	return res;
+}
+
+static void*
+coreclr_get_complex_descriptor_bitmap (RootDescriptor desc)
+{
+        return complex_descriptors + (desc >> ROOT_DESC_TYPE_SHIFT);
+}
+
+static gsize*
+coreclr_get_complex_descriptor (RootDescriptor desc)
+{
+        return complex_descriptors + (desc >> LOW_TYPE_BITS);
+}
+
+/**
+ * mono_gc_make_descr_from_bitmap:
+ */
+MonoGCDescriptor
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
-	g_assert_not_reached ();
+	if (numbits == 0) {
+		return (MonoGCDescriptor)MAKE_ROOT_DESC (ROOT_DESC_BITMAP, 0);
+	} else if (numbits < ((sizeof (*bitmap) * 8) - ROOT_DESC_TYPE_SHIFT)) {
+		return (MonoGCDescriptor)MAKE_ROOT_DESC (ROOT_DESC_BITMAP, bitmap [0]);
+	} else {
+		RootDescriptor complex = alloc_complex_descriptor (bitmap, numbits);
+		return (MonoGCDescriptor)MAKE_ROOT_DESC (ROOT_DESC_COMPLEX, complex);
+	}
 }
 
-void*
+MonoGCDescriptor
 mono_gc_make_vector_descr (void)
 {
-	g_assert_not_reached ();
+	return (MonoGCDescriptor)MAKE_ROOT_DESC (ROOT_DESC_VECTOR, 0);
 }
 
-void*
+MonoGCDescriptor
 mono_gc_make_root_descr_all_refs (int numbits)
 {
-	g_assert_not_reached ();
-	return NULL;
+	gsize *gc_bitmap;
+	RootDescriptor descr;
+	int num_bytes = numbits / 8;
+
+	if (numbits < 32 && all_ref_root_descrs [numbits])
+		return (MonoGCDescriptor)all_ref_root_descrs [numbits];
+
+	gc_bitmap = (gsize *)g_malloc0 (ALIGN_TO (ALIGN_TO (numbits, 8) + 1, sizeof (gsize)));
+	memset (gc_bitmap, 0xff, num_bytes);
+	if (numbits < ((sizeof (*gc_bitmap) * 8) - ROOT_DESC_TYPE_SHIFT))
+		gc_bitmap[0] = GUINT64_TO_LE(gc_bitmap[0]);
+	else if (numbits && num_bytes % (sizeof (*gc_bitmap)))
+		gc_bitmap[num_bytes / 8] = GUINT64_TO_LE(gc_bitmap [num_bytes / 8]);
+	if (numbits % 8)
+		gc_bitmap [numbits / 8] = (1 << (numbits % 8)) - 1;
+	descr = (RootDescriptor)mono_gc_make_descr_from_bitmap (gc_bitmap, numbits);
+	g_free (gc_bitmap);
+
+	if (numbits < 32)
+		all_ref_root_descrs [numbits] = descr;
+
+	return (MonoGCDescriptor)descr;
+}
+
+static RootDescriptor
+coreclr_make_user_root_descriptor (UserRootMarkFunc marker)
+{
+	RootDescriptor descr;
+
+	g_assert (user_descriptors_next < MAX_USER_DESCRIPTORS);
+	descr = MAKE_ROOT_DESC (ROOT_DESC_USER, (RootDescriptor)user_descriptors_next);
+	user_descriptors [user_descriptors_next ++] = marker;
+
+	return descr;
+}
+
+static UserRootMarkFunc
+coreclr_get_user_descriptor_func (RootDescriptor desc)
+{
+	return user_descriptors [desc >> ROOT_DESC_TYPE_SHIFT];
 }
 
 MonoObject*
@@ -435,7 +594,7 @@ mono_gc_is_critical_method (MonoMethod *method)
 gpointer
 mono_gc_thread_attach (THREAD_INFO_TYPE * info)
 {
-	g_assert_not_reached ();
+	return info;
 }
 
 void
