@@ -84,7 +84,7 @@ extern void mono_gc_set_stack_end (void *stack_end);
 gboolean mono_object_is_alive (MonoObject* obj);
 gboolean mono_gc_is_finalizer_thread (MonoThread *thread);
 
-void mono_gchandle_set_target (guint32 gchandle, MonoObject *obj);
+void mono_gchandle_set_target (MonoGCHandle gchandle, MonoObject *obj);
 
 /*Ephemeron functionality. Sgen only*/
 gboolean    mono_gc_ephemeron_array_add (MonoObject *obj);
@@ -119,7 +119,7 @@ mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *k
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
-gboolean mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain);
+gboolean mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain);
 void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
@@ -362,7 +362,7 @@ typedef struct _RefQueueEntry RefQueueEntry;
 
 struct _RefQueueEntry {
 	void *dis_link;
-	guint32 gchandle;
+	MonoGCHandle gchandle;
 	MonoDomain *domain;
 	void *user_data;
 	RefQueueEntry *next;
