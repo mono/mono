@@ -232,7 +232,6 @@ coregc_register_root (char *start, size_t size, RootDescriptor descr, int root_t
 		RootRecord *root = (RootRecord *)g_hash_table_lookup (coregc_roots_hash [i], start);
 		/* we allow changing the size and the descriptor (for thread statics etc) */
 		if (root) {
-			size_t old_size = root->end_root - start;
 			root->end_root = start + size;
 			root->root_desc = descr;
 			coregc_unlock ();
@@ -273,7 +272,7 @@ int
 mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	// FIXME we should kill this api and have these allocated as managed objects that automatically use card tables
-	mono_gc_register_root (start, size, descr, source, key, msg);
+	return mono_gc_register_root (start, size, descr, source, key, msg);
 }
 
 void
@@ -568,48 +567,6 @@ mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 	return o;
 }
 
-void
-mono_gc_wbarrier_set_field_internal (MonoObject *obj, gpointer field_ptr, MonoObject* value)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_ptr, int count)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_generic_store_atomic_internal (gpointer ptr, MonoObject *value)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
-{
-	g_assert_not_reached ();
-}
-
 static int
 get_size_for_vtable (gpointer vtable, gpointer o)
 {
@@ -668,6 +625,61 @@ number_of_cards (gpointer start, int size)
 }
 
 void
+mono_gc_wbarrier_set_field_internal (MonoObject *obj, gpointer field_ptr, MonoObject* value)
+{
+	coregc_mark_card_table (field_ptr);
+}
+
+void
+mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
+{
+	coregc_mark_card_table (slot_ptr);
+}
+
+void
+mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_ptr, int count)
+{
+	gpointer *dest = (gpointer*)dest_ptr;
+	gpointer *src = (gpointer*)src_ptr;
+	gpointer *end = dest + count;
+	for (; dest < end; ++src, ++dest) {
+		*dest = *src;
+		coregc_mark_card_table (dest);
+	}
+}
+
+void
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
+{
+	*(MonoObject**)ptr = value;
+	coregc_mark_card_table ((gpointer)ptr);
+}
+
+void
+mono_gc_wbarrier_generic_store_atomic_internal (gpointer ptr, MonoObject *value)
+{
+	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
+	coregc_mark_card_table (ptr);
+}
+
+void
+mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
+{
+	coregc_mark_card_table (ptr);
+}
+
+void
+mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
+{
+	int size = count * mono_class_value_size (klass, NULL);
+	mono_gc_memmove_atomic (dest, src, size);
+
+	// FIXME use memset
+	for (int i = 0; i < size; i++)
+		coregc_mark_card_table ((char *) dest + i);
+}
+
+void
 mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 {
 	size_t size = get_size_for_vtable (obj->vtable, obj);
@@ -677,13 +689,9 @@ mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 
 	mono_gc_memmove_aligned ((char *) obj + COREGC_CLIENT_OBJECT_HEADER_SIZE, (char *) src + COREGC_CLIENT_OBJECT_HEADER_SIZE, size - COREGC_CLIENT_OBJECT_HEADER_SIZE);
 
-	int num_cards = number_of_cards (obj, size);
-#if 0
-	memset (obj, 0xff, num_cards);
-#else
+	// FIXME use memset
 	for (int i = 0; i < size; i++)
 		coregc_mark_card_table ((char *) obj + i);
-#endif
 
 	// EXIT_CRITICAL_REGION;
 }
