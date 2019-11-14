@@ -8,11 +8,11 @@
 
 #include "config.h"
 
-#define THREAD_INFO_TYPE CoreClrThreadInfo
+#define THREAD_INFO_TYPE CoreGCThreadInfo
 
-struct _CoreClrThreadInfo;
+struct _CoreGCThreadInfo;
 
-typedef struct _CoreClrThreadInfo CoreClrThreadInfo;
+typedef struct _CoreGCThreadInfo CoreGCThreadInfo;
 
 #include <glib.h>
 
@@ -30,8 +30,9 @@ typedef struct _CoreClrThreadInfo CoreClrThreadInfo;
 #include <mono/metadata/null-gc-handles.h>
 #include "coregc-mono.h"
 
-struct _CoreClrThreadInfo {
+struct _CoreGCThreadInfo {
 	MonoThreadInfo info;
+	gc_alloc_context alloc_context;
 	gboolean skip, suspend_done;
 
 	void *stack_end;
@@ -515,37 +516,56 @@ mono_gc_free_fixed (void* addr)
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
-	g_assert_not_reached ();
+	gpointer o;
+	uint32_t flags = 0;
+	if (vtable->klass->has_finalize)
+		flags |= GC_ALLOC_FINALIZE;
+	if (size < 85000) {
+		CoreGCThreadInfo *info = (CoreGCThreadInfo*) mono_thread_info_current ();
+		o = pGCHeap->Alloc (&info->alloc_context, size, flags);
+	} else {
+		o = pGCHeap->AllocLHeap (size, flags);
+	}
+	return (MonoObject*) o;
 }
 
 MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
-	g_assert_not_reached ();
+	MonoArray *arr = (MonoArray*) mono_gc_alloc_obj (vtable, size);
+	arr->max_length = max_length;
+	return arr;
 }
 
 MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
-	g_assert_not_reached ();
+	MonoArray *arr = (MonoArray*) mono_gc_alloc_obj (vtable, size);
+	arr->max_length = max_length;
+        arr->bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
+	return arr;
 }
 
 MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
-	g_assert_not_reached ();
+	MonoString *str = (MonoString*) mono_gc_alloc_obj (vtable, size);
+	str->length = len;
+	return str;
 }
 
 MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
-	g_assert_not_reached ();
+	return mono_gc_alloc_obj (vtable, size);
 }
 
 MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
-	g_assert_not_reached ();
+	MonoObject *o = mono_gc_alloc_obj (vtable, size);
+	pGCHandleManager->GetGlobalHandleStore ()->CreateHandleOfType ((Object*)o, HNDTYPE_PINNED);
+	return o;
 }
 
 void
@@ -951,7 +971,7 @@ mono_gc_get_vtable (MonoObject *obj)
 guint
 mono_gc_get_vtable_bits (MonoClass *klass)
 {
-	g_assert_not_reached ();
+	// FIXME we could store the HasFinalizer here instead of the gc descr
 	return 0;
 }
 
