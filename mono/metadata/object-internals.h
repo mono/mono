@@ -2109,6 +2109,12 @@ mono_ldstr_handle (MonoDomain *domain, MonoImage *image, uint32_t str_index, Mon
 MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
 
+static inline void
+mono_string_new_out (MonoString *volatile* result, MonoDomain *domain, const char *text, MonoError *error)
+{
+	*result = mono_string_new_checked (domain, text, error);
+}
+
 MonoString*
 mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
