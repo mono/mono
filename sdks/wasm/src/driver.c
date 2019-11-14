@@ -171,6 +171,10 @@ mono_wasm_setenv (const char *name, const char *value)
 	monoeg_g_setenv (strdup (name), strdup (value), 1);
 }
 
+#ifdef ENABLE_NETCORE
+static void *sysglobal_native_handle;
+#endif
+
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
@@ -178,6 +182,11 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
 	}
+
+#ifdef ENABLE_NETCORE
+	if (!strcmp (name, "System.Globalization.Native"))
+		return sysglobal_native_handle;
+#endif
 
 #if WASM_SUPPORTS_DLOPEN
 	return dlopen(name, flags);
@@ -187,7 +196,8 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 }
 
 static mono_bool
-wasm_dl_is_pinvoke_tables (void* handle) {
+wasm_dl_is_pinvoke_tables (void* handle)
+{
 	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
 		if (pinvoke_tables [i] == handle) {
 			return 1;
@@ -199,6 +209,11 @@ wasm_dl_is_pinvoke_tables (void* handle) {
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
+#ifdef ENABLE_NETCORE
+	if (handle == sysglobal_native_handle)
+		assert (0);
+#endif
+
 #if WASM_SUPPORTS_DLOPEN
 	if (!wasm_dl_is_pinvoke_tables (handle)) {
 		return dlsym (handle, name);
@@ -249,7 +264,7 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 	const char *image_name = mono_image_get_name (mono_class_get_image (mono_method_get_class (method)));
 
 #ifdef ICALL_TABLE_mscorlib
-	if (!strcmp (image_name, "mscorlib")) {
+	if (!strcmp (image_name, "mscorlib") || !strcmp (image_name, "System.Private.CoreLib")) {
 		indexes = mscorlib_icall_indexes;
 		indexes_size = sizeof (mscorlib_icall_indexes) / 4;
 		handles = mscorlib_icall_handles;

@@ -20,12 +20,19 @@ int SystemNative_GetEUid ();
 int SystemNative_GetHostName (int,int);
 int SystemNative_GetPid ();
 int SystemNative_GetPwUidR (int,int,int,int);
+int SystemNative_GetPwNamR (int,int,int,int);
 void SystemNative_GetNonCryptographicallySecureRandomBytes (int,int);
+int64_t SystemNative_GetSystemTimeAsTicks ();
+uint64_t SystemNative_GetTimestampResolution ();
+uint64_t SystemNative_GetTimestamp ();
+int SystemNative_GetUnixName ();
 int SystemNative_GetUnixRelease ();
+int SystemNative_LockFileRegion (int,int64_t,int64_t,int);
 int64_t SystemNative_LSeek (int,int64_t,int);
 int SystemNative_MksTemps (int,int);
 int SystemNative_GetAllMountPoints (int);
 int SystemNative_Open (int,int,int);
+int SystemNative_PathConf (int,int);
 int SystemNative_PosixFAdvise (int,int64_t,int64_t,int);
 int SystemNative_Read (int,int,int);
 int SystemNative_OpenDir (int);
@@ -60,7 +67,6 @@ int SystemNative_GetSignalForBreak ();
 int SystemNative_SetSignalForBreak (int);
 int SystemNative_SNPrintF (int,int,int,int);
 int SystemNative_SNPrintF (int,int,int,int);
-int SystemNative_FStat (int,int);
 int SystemNative_Read (int,int,int);
 int SystemNative_Write (int,int,int);
 int SystemNative_GetWindowSize (int);
@@ -87,12 +93,19 @@ static PinvokeImport System_Native_imports [] = {
 {"SystemNative_GetHostName", SystemNative_GetHostName},
 {"SystemNative_GetPid", SystemNative_GetPid},
 {"SystemNative_GetPwUidR", SystemNative_GetPwUidR},
+{"SystemNative_GetPwNamR", SystemNative_GetPwNamR},
 {"SystemNative_GetNonCryptographicallySecureRandomBytes", SystemNative_GetNonCryptographicallySecureRandomBytes},
+{"SystemNative_GetSystemTimeAsTicks", SystemNative_GetSystemTimeAsTicks},
+{"SystemNative_GetTimestampResolution", SystemNative_GetTimestampResolution},
+{"SystemNative_GetTimestamp", SystemNative_GetTimestamp},
+{"SystemNative_GetUnixName", SystemNative_GetUnixName},
 {"SystemNative_GetUnixRelease", SystemNative_GetUnixRelease},
+{"SystemNative_LockFileRegion", SystemNative_LockFileRegion},
 {"SystemNative_LSeek", SystemNative_LSeek},
 {"SystemNative_MksTemps", SystemNative_MksTemps},
 {"SystemNative_GetAllMountPoints", SystemNative_GetAllMountPoints},
 {"SystemNative_Open", SystemNative_Open},
+{"SystemNative_PathConf", SystemNative_PathConf},
 {"SystemNative_PosixFAdvise", SystemNative_PosixFAdvise},
 {"SystemNative_Read", SystemNative_Read},
 {"SystemNative_OpenDir", SystemNative_OpenDir},
@@ -127,7 +140,6 @@ static PinvokeImport System_Native_imports [] = {
 {"SystemNative_SetSignalForBreak", SystemNative_SetSignalForBreak},
 {"SystemNative_SNPrintF", SystemNative_SNPrintF},
 {"SystemNative_SNPrintF", SystemNative_SNPrintF},
-{"SystemNative_FStat", SystemNative_FStat},
 {"SystemNative_Read", SystemNative_Read},
 {"SystemNative_Write", SystemNative_Write},
 {"SystemNative_GetWindowSize", SystemNative_GetWindowSize},

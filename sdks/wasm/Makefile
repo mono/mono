@@ -137,19 +137,21 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 #
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a}
-MONO_NETCORE_LIBS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a} netcore-System.Native.bc
+MONO_NETCORE_LIBS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a,System.Native.bc}
+MONO_NETCORE_DEPS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc
 NETCORE_CFLAGS=-DENABLE_NETCORE
 
 # $(1) - name
 # $(2) - runtime dir
 # $(3) - EMCC_FLAGS
 # $(4) - libs
+# $(5) - extra deps
 define InterpBuildTemplate
 
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh
+builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/mono.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
@@ -175,10 +177,8 @@ ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
 endif
 ifdef ENABLE_WASM_NETCORE
-$(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS)))
-$(eval $(call InterpBuildTemplate,netcore-release,wasm-runtime-netcore-release,$(EMCC_RELEASE_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS)))
-
-builds/netcore-debug/mono.js builds/netcore-release/mono.js: netcore-System.Native.bc
+$(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
+$(eval $(call InterpBuildTemplate,netcore-release,wasm-runtime-netcore-release,$(EMCC_RELEASE_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
 endif
 
 runtime:
@@ -201,7 +201,7 @@ NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
 $(NETCOREAPP_DIR):
 	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
 
-netcore-System.Native.bc: $(NETCOREAPP_DIR)
+$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc: $(NETCOREAPP_DIR)
 	cp $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/native/System.Native.bc $@
 
 .PHONY: runtime-netcore
@@ -212,10 +212,13 @@ runtime-netcore:
 bcl-netcore:
 	$(MAKE) -C ../builds package-wasm-bcl-netcore
 
+cross-netcore:
+	$(MAKE) -C ../builds package-wasm-cross-netcore
+
 build-managed: bcl-netcore
 
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(NETCOREAPP_DIR)/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/System.Console.dll > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/System.Console.dll > $@
 
 samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
 	dotnet build samples/hello -f netcoreapp3.0
@@ -224,10 +227,19 @@ build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dl
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/hello-netcore
 
-bin/hello-netcore/bin/mono.js: build-hello-netcore
+bin/hello-netcore/mono.js: build-hello-netcore
 
-run-hello-netcore: bin/hello-netcore/bin/mono.js
+run-hello-netcore: bin/hello-netcore/mono.js
 	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
+
+build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	ninja -v -C obj/aot-hello-netcore
+
+bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
+
+run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
+	(cd bin/aot-hello-netcore && $(SM) runtime.js --run hello.dll)
 
 endif
 
@@ -274,7 +286,7 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
+packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
