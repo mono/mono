@@ -100,7 +100,12 @@ namespace System.Diagnostics
 		/// A string representing the message to show.
 		/// </param>
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void Log(int level, string category, string message);
+		static extern void Log_icall (int level, ref string category, ref string message);
+
+		public static void Log (int level, string category, string message)
+		{
+			Log_icall (level, ref category, ref message);
+		}
 
 		public static void NotifyOfCrossThreadDependency ()
 		{
