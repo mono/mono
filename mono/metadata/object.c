@@ -6644,11 +6644,12 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoString *s;
-	
 	error_init (error);
-	
-	s = mono_string_new_size_checked (domain, len, error);
+
+	if (len == 0 && domain->empty_string)
+		return domain->empty_string;
+
+	MonoString *s = mono_string_new_size_checked (domain, len, error);
 	if (s != NULL)
 		memcpy (mono_string_chars_internal (s), text, len * 2);
 
@@ -6734,13 +6735,16 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 MonoStringHandle
 mono_string_new_size_handle (MonoDomain *domain, gint32 len, MonoError *error)
 {
+	error_init (error);
+
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	if (len == 0 && domain->empty_string)
+		return mono_string_empty_handle (domain);
 
 	MonoStringHandle s;
 	MonoVTable *vtable;
 	size_t size;
-
-	error_init (error);
 
 	/* check for overflow */
 	if (len < 0 || len > ((SIZE_MAX - G_STRUCT_OFFSET (MonoString, chars) - 8) / 2)) {
@@ -6804,6 +6808,9 @@ mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, Mo
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
+
+	if (length == 0 && domain->empty_string)
+		return mono_string_empty_handle (domain);
 
 	GError *eg_error = NULL;
 	MonoStringHandle o = NULL_HANDLE_STRING;
@@ -6880,17 +6887,18 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	error_init (error);
+
+	gsize const len = strlen (text);
+
+	if (len == 0 && domain->empty_string)
+		return domain->empty_string;
+
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
-	gunichar2 *ut;
 	glong items_written;
-	int len;
-
-	error_init (error);
 	
-	len = strlen (text);
-	
-	ut = g_utf8_to_utf16 (text, len, NULL, &items_written, &eg_error);
+	gunichar2 *ut = g_utf8_to_utf16 (text, len, NULL, &items_written, &eg_error);
 	
 	if (!eg_error)
 		o = mono_string_new_utf16_checked (domain, ut, items_written, error);
@@ -6943,6 +6951,9 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
+
+	if (length == 0 && domain->empty_string)
+		return domain->empty_string;
 
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
