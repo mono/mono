@@ -269,5 +269,16 @@ ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_ReAlloc
 ICALL_EXPORT      char* ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi    (const gunichar2*, int);
 ICALL_EXPORT gunichar2*	ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni	(const gunichar2*, int);
 
+ICALL_EXPORT gpointer ves_icall_System_Net_Sockets_Socket_Accept (gsize, gint32*, MonoBoolean);
+ICALL_EXPORT gint32 ves_icall_System_Net_Sockets_Socket_Available (gsize, gint32*);
+
+ICALL_EXPORT void ves_icall_Mono_Runtime_DumpStateSingle (MonoString *volatile* result, guint64 *portable_hash, guint64 *unportable_hash);
+ICALL_EXPORT void ves_icall_Mono_Runtime_DumpStateTotal (MonoString *volatile* result, guint64 *portable_hash, guint64 *unportable_hash);
+ICALL_EXPORT void ves_icall_Mono_Runtime_DumpTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash);
+ICALL_EXPORT void ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir);
+ICALL_EXPORT void ves_icall_Mono_Runtime_ExceptionToState (MonoString *volatile* result, MonoException *volatile* exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out);
+ICALL_EXPORT void ves_icall_Mono_Runtime_GetDisplayName_icall (MonoString *volatile* display_name);
+ICALL_EXPORT void ves_icall_Mono_Runtime_GetNativeStackTrace_icall (MonoString *volatile* result, MonoException *volatile* exc, MonoObject *volatile* temp_handle1);
+ICALL_EXPORT void ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash);
 
 #endif // __MONO_METADATA_ICALL_DECL_H__

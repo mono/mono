@@ -61,19 +61,62 @@ namespace Mono {
 		}
 #endif
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void GetDisplayName_icall (ref string result);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static string GetDisplayName_internal ()
+		{
+			// Initialize results to reduce unverified requirement on native code.
+			// i.e. Favor "ref" over "out".
+			//
+			string result = "";
+			GetDisplayName_icall (ref result);
+			return result;
+		}
+
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 #if MOBILE || XAMMAC_4_5
 		public
 #else
 		internal
 #endif
-		static extern string GetDisplayName ();
+		static string GetDisplayName ()
+		{
+			return GetDisplayName_internal ();
+		}
 
+		// This is not used, but perhaps via reflection (via GetNativeStackTrace).
+		//
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string GetNativeStackTrace (Exception exception);
+		static extern void GetNativeStackTrace_icall (ref string result, ref Exception exception, ref object temp1);
+
+		// This is not used, but perhaps via reflection.
+		//
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static string GetNativeStackTrace_internal (Exception exception)
+		{
+			// Initialize results to reduce unverified requirement on native code.
+			// i.e. Favor "ref" over "out".
+			//
+			string result = "";
+			object temp1 = null;
+			GetNativeStackTrace_icall (ref result, ref exception, ref temp1);
+			return result;
+		}
+
+		// This is not used, but perhaps via reflection.
+		//
+		static string GetNativeStackTrace (Exception exception)
+		{
+			return GetNativeStackTrace_internal (exception);
+		}
 
 		public static bool SetGCAllowSynchronousMajor (bool flag)
 		{
@@ -84,7 +127,22 @@ namespace Mono {
 		static object exception_capture = new object ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string ExceptionToState_internal (Exception exc, out ulong portable_hash, out ulong unportable_hash);
+		static extern void ExceptionToState_icall (ref string result, ref Exception exc, ref ulong portable_hash, ref ulong unportable_hash);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static string ExceptionToState_internal (Exception exc, out ulong portable_hash, out ulong unportable_hash)
+		{
+			// Initialize results to reduce unverified requirement on native code.
+			// i.e. Favor "ref" over "out".
+			//
+			portable_hash = 0;
+			unportable_hash = 0;
+			string payload_str = "";
+			ExceptionToState_icall (ref payload_str, ref exc, ref portable_hash, ref unportable_hash);
+			return payload_str;
+		}
 
 		static Tuple<String, ulong, ulong>
 		ExceptionToState (Exception exc)
@@ -93,9 +151,9 @@ namespace Mono {
 			ulong unportable_hash;
 			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
 
+			// FIXME use a named type instead of tuple.
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}
-
 
 #if !MOBILE 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -115,6 +173,7 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
+			// FIXME One icall instead of two.
 			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
 			using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
 			{
@@ -145,8 +204,10 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
+
 			lock (exception_capture)
 			{
+				// FIXME One icall instead of two.
 				string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
 				SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
 			}
@@ -172,10 +233,38 @@ namespace Mono {
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash);
+		static extern void DumpStateSingle_icall (ref string result, ref ulong portable_hash, ref ulong unportable_hash);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string DumpStateTotal_internal (out ulong portable_hash, out ulong unportable_hash);
+		static extern void DumpStateTotal_icall (ref string result, ref ulong portable_hash, ref ulong unportable_hash);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash)
+		{
+			// Initialize in managed to reduce unverified requirements on native code.
+			//
+			portable_hash = 0;
+			unportable_hash = 0;
+			string payload_str = "";
+			DumpStateSingle_icall (ref payload_str, ref portable_hash, ref unportable_hash);
+			return payload_str;
+		}
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static string DumpStateTotal_internal (out ulong portable_hash, out ulong unportable_hash)
+		{
+			// Initialize in managed to reduce unverified requirements on native code.
+			//
+			portable_hash = 0;
+			unportable_hash = 0;
+			string payload_str = "";
+			DumpStateTotal_icall (ref payload_str, ref portable_hash, ref unportable_hash);
+			return payload_str;
+		}
 
 		static Tuple<String, ulong, ulong>
 		DumpStateSingle ()
@@ -184,6 +273,7 @@ namespace Mono {
 			ulong unportable_hash;
 			string payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
 
+			// FIXME use a named type instead of tuple.
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}
 
@@ -194,6 +284,7 @@ namespace Mono {
 			ulong unportable_hash;
 			string payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
 
+			// FIXME use a named type instead of tuple.
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}
 

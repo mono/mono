@@ -6444,7 +6444,7 @@ ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry (const char *key, const char *
 }
 
 void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *appPath, const char *configDir)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, appPath, configDir);
@@ -6461,15 +6461,16 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const 
 // before doing so.
 #define MONO_MAX_SUMMARY_LEN_ICALL 500000
 
-MonoStringHandle
-ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out, MonoError *error)
+void
+ves_icall_Mono_Runtime_ExceptionToState (MonoString *volatile* result, MonoException *volatile* exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out)
 {
-	MonoStringHandle result;
-
-#ifndef DISABLE_CRASH_REPORTING
+#if !DISABLE_CRASH_REPORTING
 	if (mono_get_eh_callbacks ()->mono_summarize_exception) {
-		// FIXME: Push handles down into mini/mini-exceptions.c
-		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
+
+		ERROR_DECL (error);
+
+		// FIXME: Maybe push handles down into mini/mini-exceptions.c
+		MonoException *exc = *exc_handle;
 		MonoThreadSummary out;
 		mono_summarize_timeline_start ();
 		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
@@ -6489,30 +6490,27 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
 		char *output = mono_native_state_free (&writer, FALSE);
 		mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
-		result = mono_string_new_handle (mono_domain_get (), output, error);
+		mono_string_new_out (result, mono_domain_get (), output, error);
 		g_free (output);
 		g_free (scratch);
-		return result;
+		mono_error_set_pending_exception (error);
 	}
 #endif
-
-	*portable_hash_out = 0;
-	*unportable_hash_out = 0;
-	result = mono_string_new_handle (mono_domain_get (), "", error);
-	return result;
 }
 
 void
-ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
+	ERROR_DECL (error);
+
 	if (!mono_merp_enabled ())
 		g_error ("Cannot send telemetry without registering parameters first");
 
 	pid_t crashed_pid = getpid ();
 
 	MonoStackHash hashes;
-	memset (&hashes, 0, sizeof (MonoStackHash));
+	memset (&hashes, 0, sizeof (hashes));
 	hashes.offset_free_hash = portable_hash;
 	hashes.offset_rich_hash = unportable_hash;
 
@@ -6524,6 +6522,8 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 port
 		//g_assert_not_reached ();
 		mono_error_set_generic_error (error, "System", "Exception", "We were unable to start the Microsoft Error Reporting client.");
 	}
+
+	mono_error_set_pending_exception (error);
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
@@ -6531,55 +6531,55 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 port
 }
 
 void
-ves_icall_Mono_Runtime_DumpTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_DumpTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash)
 {
 #ifndef DISABLE_CRASH_REPORTING
 	MonoStackHash hashes;
-	memset (&hashes, 0, sizeof (MonoStackHash));
+	memset (&hashes, 0, sizeof (hashes));
 	hashes.offset_free_hash = portable_hash;
 	hashes.offset_rich_hash = unportable_hash;
 	mono_crash_dump (payload, &hashes);
-#else
-	return;
 #endif
 }
 
-MonoStringHandle
-ves_icall_Mono_Runtime_DumpStateSingle (guint64 *portable_hash, guint64 *unportable_hash, MonoError *error)
+void
+ves_icall_Mono_Runtime_DumpStateSingle (MonoString *volatile* result, guint64 *portable_hash, guint64 *unportable_hash)
 {
-	MonoStringHandle result;
 
-#ifndef DISABLE_CRASH_REPORTING
+#if !DISABLE_CRASH_REPORTING
+
 	MonoStackHash hashes;
-	memset (&hashes, 0, sizeof (MonoStackHash));
+	memset (&hashes, 0, sizeof (hashes));
 	MonoContext *ctx = NULL;
-
 	MonoThreadSummary this_thread;
+
 	if (!mono_threads_summarize_one (&this_thread, ctx))
-		return mono_string_new_handle (mono_domain_get (), "", error);
+		return;
 
 	*portable_hash = (guint64) this_thread.hashes.offset_free_hash;
 	*unportable_hash = (guint64) this_thread.hashes.offset_rich_hash;
 
 	MonoStateWriter writer;
+
 	char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
+
 	mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 	mono_native_state_init (&writer);
 	gboolean first_thread_added = TRUE;
 	mono_native_state_add_thread (&writer, &this_thread, NULL, first_thread_added, TRUE);
+
 	char *output = mono_native_state_free (&writer, FALSE);
-	result = mono_string_new_handle (mono_domain_get (), output, error);
+
+	ERROR_DECL (error);
+	mono_string_new_out (result, mono_domain_get (), output, error);
 	g_free (output);
 	g_free (scratch);
-#else
-	*portable_hash = 0;
-	*unportable_hash = 0;
-	result = mono_string_new_handle (mono_domain_get (), "", error);
+
+	mono_error_set_pending_exception (error);
+
 #endif
 
-	return result;
 }
-
 
 void
 ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, const char *module_name)
@@ -6617,17 +6617,19 @@ ves_icall_Mono_Runtime_CheckCrashReportingLog (const char *directory, MonoBoolea
 	return ret;
 }
 
-MonoStringHandle
-ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportable_hash, MonoError *error)
+void
+ves_icall_Mono_Runtime_DumpStateTotal (MonoString *volatile* result, guint64 *portable_hash, guint64 *unportable_hash)
 {
-	MonoStringHandle result;
 
-#ifndef DISABLE_CRASH_REPORTING
+#if !DISABLE_CRASH_REPORTING
+
+	ERROR_DECL (error);
+
 	char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 
 	char *out;
 	MonoStackHash hashes;
-	memset (&hashes, 0, sizeof (MonoStackHash));
+	memset (&hashes, 0, sizeof (hashes));
 	MonoContext *ctx = NULL;
 
 	while (!mono_dump_start ())
@@ -6641,25 +6643,24 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	mono_summarize_timeline_phase_log (MonoSummaryCleanup);
 
 	if (!success)
-		return mono_string_new_handle (mono_domain_get (), "", error);
+		goto exit;
 
 	*portable_hash = (guint64) hashes.offset_free_hash;
 	*unportable_hash = (guint64) hashes.offset_rich_hash;
-	result = mono_string_new_handle (mono_domain_get (), out, error);
+	mono_string_new_out (result, mono_domain_get (), out, error);
 
-	// out is now a pointer into garbage memory
+	// out now points to garbage.
 	g_free (scratch);
+	scratch = NULL;
 
 	mono_summarize_timeline_phase_log (MonoSummaryDone);
 
 	mono_dump_complete ();
-#else
-	*portable_hash = 0;
-	*unportable_hash = 0;
-	result = mono_string_new_handle (mono_domain_get (), "", error);
-#endif
+exit:
+	g_free (scratch);
+	mono_error_set_pending_exception (error);
 
-	return result;
+#endif
 }
 
 MonoBoolean
@@ -8889,18 +8890,14 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal (MonoObjectHandle obj,
 	return mono_reflection_get_custom_attrs_data_checked (obj, error);
 }
 
-
-MonoStringHandle
-ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
+void
+ves_icall_Mono_Runtime_GetDisplayName_icall (MonoString *volatile* display_name)
 {
-	char *info;
-	MonoStringHandle display_name;
-
-	error_init (error);
-	info = mono_get_runtime_callbacks ()->get_runtime_build_info ();
-	display_name = mono_string_new_handle (mono_domain_get (), info, error);
+	ERROR_DECL (error);
+	char *info = mono_get_runtime_callbacks ()->get_runtime_build_info ();
+	mono_string_new_out (display_name, mono_domain_get (), info, error);
 	g_free (info);
-	return display_name;
+	mono_error_set_pending_exception (error);
 }
 
 #ifndef HOST_WIN32

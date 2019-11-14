@@ -8614,14 +8614,13 @@ mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error)
 	return (MonoString*) mono_runtime_try_invoke (method, target, NULL, exc, error);
 }
 
-
-
 static char *
-get_native_backtrace (MonoException *exc_raw)
+get_native_backtrace (MonoException *exception)
 {
 	HANDLE_FUNCTION_ENTER ();
-	MONO_HANDLE_DCL(MonoException, exc);
-	char * const trace = mono_exception_handle_get_native_backtrace (exc);
+	char * const trace = mono_exception_get_native_backtrace (
+		MONO_HANDLE_REF (MONO_HANDLE_NEW (MonoException, exception)),
+		MONO_HANDLE_REF (MONO_HANDLE_NEW (MonoObject, NULL)));
 	HANDLE_FUNCTION_RETURN_VAL (trace);
 }
 

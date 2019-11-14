@@ -1145,65 +1145,82 @@ mono_exception_get_managed_backtrace (MonoException *exc)
 }
 
 char *
-mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
+mono_exception_get_native_backtrace (MonoException *volatile* exception, MonoObject *volatile* temp_handle1)
 {
+	// temp_handle1 exposes implementation details of this function
+	// to it caller, in order to favor handles being created on the managed
+	// side, where they are much more efficient to create than in native.
+
 #ifdef HAVE_BACKTRACE_SYMBOLS
+
 	MonoDomain *domain;
-	MonoArrayHandle arr = MONO_HANDLE_NEW(MonoArray, NULL);
-	int i, len;
-	GString *text;
+	int i;
+	int len;
+	GString *text = NULL;
 	char **messages;
 
-	MONO_HANDLE_GET (arr, exc, native_trace_ips);
+	MonoArray *native_trace_ips = (*exception)->native_trace_ips;
+	*temp_handle1 = (MonoObject*)native_trace_ips;
+	if (!native_trace_ips)
+		goto exit;
 
-	if (MONO_HANDLE_IS_NULL(arr))
-		return g_strdup ("");
 	domain = mono_domain_get ();
-	len = mono_array_handle_length (arr);
+	len = mono_array_length_internal (native_trace_ips);
 	text = g_string_new_len (NULL, len * 20);
 	uint32_t gchandle;
-	gpointer *addr = MONO_ARRAY_HANDLE_PIN (arr, gpointer, 0, &gchandle);
+	gpointer *addr;
+	addr = (gpointer*)mono_array_pin (native_trace_ips, &gchandle);
+
 	MONO_ENTER_GC_SAFE;
 	messages = backtrace_symbols (addr, len);
 	MONO_EXIT_GC_SAFE;
+
 	mono_gchandle_free_internal (gchandle);
 
 	for (i = 0; i < len; ++i) {
-		gpointer ip;
-		MONO_HANDLE_ARRAY_GETVAL (ip, arr, gpointer, i);
+		gpointer ip = addr [i];
 		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 		if (ji) {
 			char *msg = mono_debug_print_stack_frame (mono_jit_info_get_method (ji), (char*)ip - (char*)ji->code_start, domain);
-			g_string_append_printf (text, "%s\n", msg);
+			g_string_append (text, msg);
 			g_free (msg);
 		} else {
-			g_string_append_printf (text, "%s\n", messages [i]);
+			g_string_append (text, messages [i]);
 		}
+		g_string_append_c (text, '\n');
 	}
 
+exit:
 	g_free (messages);
-	return g_string_free (text, FALSE);
-#else
-	return g_strdup ("");
+	if (text)
+		return g_string_free (text, FALSE);
+
 #endif
+
+	return g_strdup ("");
 }
 
-MonoStringHandle
-ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *error)
+void
+ves_icall_Mono_Runtime_GetNativeStackTrace_icall (MonoString *volatile* result,
+						  MonoException *volatile* exception,
+						  MonoObject *volatile* temp_handle1)
 {
-	char *trace;
-	MonoStringHandle res;
-	error_init (error);
+	ERROR_DECL (error);
 
-	if (MONO_HANDLE_IS_NULL (exc)) {
+	g_assert (exception);
+
+	if (!*exception) {
 		mono_error_set_argument_null (error, "exception", "");
-		return NULL_HANDLE_STRING;
+		goto exit;
 	}
 
-	trace = mono_exception_handle_get_native_backtrace (exc);
-	res = mono_string_new_handle (mono_domain_get (), trace, error);
+	char *trace;
+	trace = mono_exception_get_native_backtrace (exception, temp_handle1);
+	mono_string_new_out (result, mono_domain_get (), trace, error);
 	g_free (trace);
-	return res;
+
+exit:
+	mono_error_set_pending_exception (error);
 }
 
 /**

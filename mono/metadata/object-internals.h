@@ -2033,7 +2033,7 @@ mono_string_is_interned_lookup (MonoStringHandle str, gboolean insert, MonoError
 #define mono_string_is_interned_internal(str, error) (mono_string_is_interned_lookup ((str), FALSE, (error)))
 
 char *
-mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc);
+mono_exception_get_native_backtrace (MonoException *volatile* exception, MonoObject *volatile* temp_handle1);
 
 char *
 mono_exception_get_managed_backtrace (MonoException *exc);
@@ -2344,7 +2344,7 @@ mono_runtime_get_aotid_arr (void);
  * A handle can be created to refer to a managed object and either prevent it
  * from being garbage collected or moved or to be able to know if it has been
  * collected or not (weak references).
- * mono_gchandle_new () is used to prevent an object from being garbage collected
+ * mono_gchandle_new_internal () is used to prevent an object from being garbage collected
  * until mono_gchandle_free() is called. Use a TRUE value for the pinned argument to
  * prevent the object from being moved (this should be avoided as much as possible
  * and this should be used only for shorts periods of time or performance will suffer).
@@ -2358,6 +2358,15 @@ mono_gchandle_new_internal (MonoObject *obj, mono_bool pinned);
 
 uint32_t
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
+
+typedef uint32_t gchandle_t;
+
+static inline void*
+mono_array_pin (MonoArray *array, gchandle_t *gchandle)
+{
+	*gchandle = mono_gchandle_new_internal (&array->obj, TRUE); // pinned
+	return array->vector;
+}
 
 ICALL_EXTERN_C
 MonoObject*
