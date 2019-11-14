@@ -54,6 +54,8 @@ Additional options (--option/--no-option):
         type: bool  default: false
   --zlib (enable the use of zlib for System.IO.Compression support)
         type: bool  default: false
+  --enable-fs (enable filesystem support —through Emscripten's file_packager.py in a later phase)
+        type: bool  default: false
   --threads (enable threads)
         type: bool  default: false        
 
