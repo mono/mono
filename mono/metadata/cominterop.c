@@ -158,7 +158,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (com_default_interface_attribute, "System.R
  */
 typedef struct {
 	guint32 ref_count;
-	guint32 gc_handle;
+	gpointer gc_handle;
 	GHashTable* vtable_hash;
 #ifdef  HOST_WIN32
 	MonoIUnknown *free_marshaler; // actually IMarshal
@@ -1798,7 +1798,7 @@ mono_System_ComObject_ReleaseInterfaces (MonoComObjectHandle obj)
 		return;
 
 	mono_cominterop_lock ();
-	guint32 const gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (rcw_hash, MONO_HANDLE_GETVAL (obj, iunknown)));
+	gpointer gchandle = g_hash_table_lookup (rcw_hash, MONO_HANDLE_GETVAL (obj, iunknown));
 	if (gchandle) {
 		mono_gchandle_free_internal (gchandle);
 		g_hash_table_remove (rcw_hash, MONO_HANDLE_GETVAL (obj, iunknown));
@@ -1823,7 +1823,7 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 {
 	gchandle_t gchandle = 0;
 
-	gchandle = GPOINTER_TO_UINT (value);
+	gchandle = value;
 	if (gchandle) {
 		MonoComInteropProxy* proxy = (MonoComInteropProxy*)mono_gchandle_get_target_internal (gchandle);
 
@@ -1882,12 +1882,12 @@ void
 ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxyHandle proxy, MonoError *error)
 {
 #ifndef DISABLE_COM
-	guint32 const gchandle = mono_gchandle_new_weakref_from_handle (MONO_HANDLE_CAST (MonoObject, proxy));
+	gpointer gchandle = mono_gchandle_new_weakref_from_handle (MONO_HANDLE_CAST (MonoObject, proxy));
 
 	mono_cominterop_lock ();
 	if (!rcw_hash)
 		rcw_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	g_hash_table_insert (rcw_hash, pUnk, GUINT_TO_POINTER (gchandle));
+	g_hash_table_insert (rcw_hash, pUnk, gchandle);
 	mono_cominterop_unlock ();
 #else
 	g_assert_not_reached ();
@@ -1902,7 +1902,7 @@ ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoError *erro
 
 	mono_cominterop_lock ();
 	if (rcw_hash)
-		gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (rcw_hash, pUnk));
+		gchandle = g_hash_table_lookup (rcw_hash, pUnk);
 	mono_cominterop_unlock ();
 	if (!gchandle)
 		return MONO_HANDLE_NEW (MonoComInteropProxy, NULL);
@@ -2558,7 +2558,7 @@ cominterop_ccw_addref_impl (MonoCCWInterface* ccwe)
 	g_assert (ccw->gc_handle);
 	gint32 const ref_count = mono_atomic_inc_i32 ((gint32*)&ccw->ref_count);
 	if (ref_count == 1) {
-		guint32 oldhandle = ccw->gc_handle;
+		gpointer oldhandle = ccw->gc_handle;
 		g_assert (oldhandle);
 		/* since we now have a ref count, alloc a strong handle*/
 		ccw->gc_handle = mono_gchandle_from_handle (mono_gchandle_get_target_handle (oldhandle), FALSE);
@@ -2590,7 +2590,7 @@ cominterop_ccw_release_impl (MonoCCWInterface* ccwe)
 	gint32 const ref_count = mono_atomic_dec_i32 ((gint32*)&ccw->ref_count);
 	if (ref_count == 0) {
 		/* allow gc of object */
-		guint32 oldhandle = ccw->gc_handle;
+		gpointer oldhandle = ccw->gc_handle;
 		g_assert (oldhandle);
 		ccw->gc_handle = mono_gchandle_new_weakref_from_handle (mono_gchandle_get_target_handle (oldhandle));
 		mono_gchandle_free_internal (oldhandle);

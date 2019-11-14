@@ -259,34 +259,34 @@ typedef struct {
 	guint32 value;
 } Uint32Property;
 
-guint32
+typedef struct {
+	MonoPropertyBagItem head;
+	gpointer value;
+} PointerProperty;
+
+gpointer
 mono_class_get_ref_info_handle (MonoClass *klass)
 {
-	Uint32Property *prop = (Uint32Property*)mono_property_bag_get (m_class_get_infrequent_data (klass), PROP_REF_INFO_HANDLE);
+	PointerProperty *prop = (PointerProperty*)mono_property_bag_get (m_class_get_infrequent_data (klass), PROP_REF_INFO_HANDLE);
 	return prop ? prop->value : 0;
 }
 
-guint32
-mono_class_set_ref_info_handle (MonoClass *klass, guint32 value)
+gpointer
+mono_class_set_ref_info_handle (MonoClass *klass, gpointer value)
 {
 	if (!value) {
-		Uint32Property *prop = (Uint32Property*)mono_property_bag_get (m_class_get_infrequent_data (klass), PROP_REF_INFO_HANDLE);
+		PointerProperty *prop = (PointerProperty*)mono_property_bag_get (m_class_get_infrequent_data (klass), PROP_REF_INFO_HANDLE);
 		if (prop)
 			prop->value = 0;
 		return 0;
 	}
 
-	Uint32Property *prop = (Uint32Property*)mono_class_alloc (klass, sizeof (Uint32Property));
+	PointerProperty *prop = (PointerProperty*)mono_class_alloc (klass, sizeof (PointerProperty));
 	prop->head.tag = PROP_REF_INFO_HANDLE;
 	prop->value = value;
-	prop = (Uint32Property*)mono_property_bag_add (m_class_get_infrequent_data (klass), prop);
+	prop = (PointerProperty*)mono_property_bag_add (m_class_get_infrequent_data (klass), prop);
 	return prop->value;
 }
-
-typedef struct {
-	MonoPropertyBagItem head;
-	gpointer value;
-} PointerProperty;
 
 static void
 set_pointer_property (MonoClass *klass, InfrequentDataKind property, gpointer value)

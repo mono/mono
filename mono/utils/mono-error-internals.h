@@ -32,7 +32,7 @@ typedef union _MonoErrorInternal {
 			/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
 			 * Generic error specified by a managed instance.
 			 */
-			uint32_t instance_handle;
+			gpointer instance_handle;
 		} exn;
 		const char *full_message;
 		const char *full_message_with_fields;

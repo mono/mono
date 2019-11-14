@@ -1021,37 +1021,37 @@ guint64 mono_gc_get_total_allocated_bytes (MonoBoolean precise)
 }
 
 MonoObject*
-mono_gchandle_get_target_internal (guint32 gchandle)
+mono_gchandle_get_target_internal (gpointer gchandle)
 {
 	g_assert_not_reached ();
 }
 
 gboolean
-mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
+mono_gchandle_is_in_domain (gpointer gchandle, MonoDomain *domain)
 {
 	g_assert_not_reached ();
 }
 
-guint32
+gpointer
 mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 {
 	g_assert_not_reached ();
 }
 
-guint32
+gpointer
 mono_gchandle_new_weakref_internal (MonoObject* obj, gboolean track_resurrection)
 {
 	g_assert_not_reached ();
 }
 
 void
-mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
+mono_gchandle_set_target (gpointer gchandle, MonoObject *obj)
 {
 	g_assert_not_reached ();
 }
 
 void
-mono_gchandle_free_internal (guint32 gchandle)
+mono_gchandle_free_internal (gpointer gchandle)
 {
 	g_assert_not_reached ();
 }

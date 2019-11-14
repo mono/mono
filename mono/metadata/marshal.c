@@ -242,7 +242,7 @@ mono_marshal_init (void)
 		register_icall (mono_delegate_begin_invoke, mono_icall_sig_object_object_ptr, FALSE);
 		register_icall (mono_delegate_end_invoke, mono_icall_sig_object_object_ptr, FALSE);
 		register_icall (mono_gc_wbarrier_generic_nostore_internal, mono_icall_sig_void_ptr, FALSE);
-		register_icall (mono_gchandle_get_target_internal, mono_icall_sig_object_int32, TRUE);
+		register_icall (mono_gchandle_get_target_internal, mono_icall_sig_object_ptr, TRUE);
 		register_icall (mono_marshal_isinst_with_cache, mono_icall_sig_object_object_ptr_ptr, FALSE);
 		register_icall (mono_threads_enter_gc_safe_region_unbalanced, mono_icall_sig_ptr_ptr, TRUE);
 		register_icall (mono_threads_exit_gc_safe_region_unbalanced, mono_icall_sig_void_ptr_ptr, TRUE);
@@ -290,7 +290,7 @@ mono_delegate_to_ftnptr_impl (MonoDelegateHandle delegate, MonoError *error)
 	gpointer result = NULL;
 	MonoMethod *method, *wrapper;
 	MonoClass *klass;
-	uint32_t target_handle = 0;
+	gpointer target_handle = 0;
 
 	if (MONO_HANDLE_IS_NULL (delegate))
 		goto leave;
@@ -364,7 +364,7 @@ delegate_hash_table_new (void) {
 static void 
 delegate_hash_table_remove (MonoDelegate *d)
 {
-	guint32 gchandle = 0;
+	gpointer gchandle = NULL;
 
 	if (!d->target)
 		return;
@@ -372,7 +372,7 @@ delegate_hash_table_remove (MonoDelegate *d)
 	mono_marshal_lock ();
 	if (delegate_hash_table == NULL)
 		delegate_hash_table = delegate_hash_table_new ();
-	gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, d->delegate_trampoline));
+	gchandle = g_hash_table_lookup (delegate_hash_table, d->delegate_trampoline);
 	g_hash_table_remove (delegate_hash_table, d->delegate_trampoline);
 	mono_marshal_unlock ();
 	if (gchandle)
@@ -390,21 +390,21 @@ delegate_hash_table_add (MonoDelegateHandle d)
 	if (has_target) {
 		// If the delegate has an instance method there is 1 to 1 mapping between
 		// the delegate object and the delegate_trampoline
-		guint32 gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, delegate_trampoline));
+		gpointer gchandle = g_hash_table_lookup (delegate_hash_table, delegate_trampoline);
 		if (gchandle) {
 			// Somehow, some other thread beat us to it ?
 			g_assert (mono_gchandle_target_equal (gchandle, MONO_HANDLE_CAST (MonoObject, d)));
 		} else {
 			gchandle = mono_gchandle_new_weakref_from_handle (MONO_HANDLE_CAST (MonoObject, d));
-			g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
+			g_hash_table_insert (delegate_hash_table, delegate_trampoline, gchandle);
 		}
 	} else {
 		if (g_hash_table_lookup (delegate_hash_table, delegate_trampoline) == NULL) {
-			guint32 gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
+			gpointer gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, d), FALSE);
 			// This delegate will always be associated with its delegate_trampoline in the table.
 			// We don't free this delegate object because it is too expensive to keep track of these
 			// pairs and avoid races with the delegate finalization.
-			g_hash_table_insert (delegate_hash_table, delegate_trampoline, GUINT_TO_POINTER (gchandle));
+			g_hash_table_insert (delegate_hash_table, delegate_trampoline, gchandle);
 		}
 	}
 	mono_marshal_unlock ();
@@ -459,7 +459,7 @@ parse_unmanaged_function_pointer_attr (MonoClass *klass, MonoMethodPInvoke *piin
 MonoDelegateHandle
 mono_ftnptr_to_delegate_impl (MonoClass *klass, gpointer ftn, MonoError *error)
 {
-	guint32 gchandle;
+	gpointer gchandle;
 	MonoDelegateHandle d = MONO_HANDLE_NEW (MonoDelegate, NULL);
 
 	if (ftn == NULL)
@@ -468,7 +468,7 @@ mono_ftnptr_to_delegate_impl (MonoClass *klass, gpointer ftn, MonoError *error)
 	mono_marshal_lock ();
 	if (delegate_hash_table == NULL)
 		delegate_hash_table = delegate_hash_table_new ();
-	gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (delegate_hash_table, ftn));
+	gchandle = g_hash_table_lookup (delegate_hash_table, ftn);
 	mono_marshal_unlock ();
 	if (gchandle)
 		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_CAST (MonoDelegate, mono_gchandle_get_target_handle (gchandle)));
@@ -539,7 +539,7 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 	}
 
 	if (ptr) {
-		uint32_t gchandle;
+		gpointer gchandle;
 		void **method_data;
 		MonoMethod *method;
 
@@ -552,7 +552,7 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 		method_data = (void **)((MonoMethodWrapper*)method)->method_data;
 
 		/*the target gchandle is the first entry after size and the wrapper itself.*/
-		gchandle = GPOINTER_TO_UINT (method_data [2]);
+		gchandle = method_data [2];
 
 		if (gchandle)
 			mono_gchandle_free_internal (gchandle);
@@ -3809,14 +3809,14 @@ mono_marshal_get_native_func_wrapper_aot (MonoClass *klass)
  * THIS_LOC is the memory location where the target of the delegate is stored.
  */
 void
-mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle)
+mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, gpointer target_handle)
 {
 	get_marshal_cb ()->emit_managed_wrapper (mb, invoke_sig, mspecs, m, method, target_handle);
 }
 
 #ifndef ENABLE_ILGEN
 static void
-emit_managed_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle)
+emit_managed_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, gpointer target_handle)
 {
 	MonoMethodSignature *sig, *csig;
 	int i;
@@ -3859,7 +3859,7 @@ emit_managed_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke
  * If \p target_handle is \c 0, the wrapper info will be a \c WrapperInfo structure.
  */
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle, MonoError *error)
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, gpointer target_handle, MonoError *error)
 {
 	MonoMethodSignature *sig, *csig, *invoke_sig;
 	MonoMethodBuilder *mb;
@@ -3899,7 +3899,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_NATIVE_TO_MANAGED);
 
 	/*the target gchandle must be the first entry after size and the wrapper itself.*/
-	mono_mb_add_data (mb, GUINT_TO_POINTER (target_handle));
+	mono_mb_add_data (mb, target_handle);
 
 	/* we copy the signature, so that we can modify it */
 	if (target_handle)
@@ -5109,7 +5109,7 @@ mono_marshal_clear_last_error (void)
 
 static gsize
 copy_managed_common (MonoArrayHandle managed, gconstpointer native, gint32 start_index,
-		gint32 length, gpointer *managed_addr, guint32 *gchandle, MonoError *error)
+		gint32 length, gpointer *managed_addr, gpointer *gchandle, MonoError *error)
 {
 	MONO_CHECK_ARG_NULL_HANDLE (managed, 0);
 	MONO_CHECK_ARG_NULL (native, 0);
@@ -5147,7 +5147,7 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHandle src, gint32 start_index,
 		gpointer dest, gint32 length, gconstpointer managed_source_addr, MonoError *error)
 {
-	guint32 gchandle = 0;
+	gpointer gchandle = 0;
 	gsize const bytes = copy_managed_common (src, dest, start_index, length, (gpointer*)&managed_source_addr, &gchandle, error);
 	if (bytes)
 		memmove (dest, managed_source_addr, bytes); // no references should be involved
@@ -5158,7 +5158,7 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpointer src, gint32 start_index,
 		MonoArrayHandle dest, gint32 length, gpointer managed_dest_addr, MonoError *error)
 {
-	guint32 gchandle = 0;
+	gpointer gchandle = 0;
 	gsize const bytes = copy_managed_common (dest, src, start_index, length, &managed_dest_addr, &gchandle, error);
 	if (bytes)
 		memmove (managed_dest_addr, src, bytes); // no references should be involved

@@ -2410,7 +2410,7 @@ ves_icall_RuntimeFieldInfo_SetValueInternal (MonoReflectionFieldHandle field, Mo
 	return_if_nok (error);
 
 	gboolean isref = FALSE;
-	uint32_t value_gchandle = 0;
+	gpointer value_gchandle = 0;
 	gchar *v = NULL;
 	if (!type->byref) {
 		switch (type->type) {
@@ -2457,7 +2457,7 @@ ves_icall_RuntimeFieldInfo_SetValueInternal (MonoReflectionFieldHandle field, Mo
 				MonoObjectHandle nullable = mono_object_new_handle (mono_domain_get (), nklass, error);
 				return_if_nok (error);
 
-				uint32_t nullable_gchandle = 0;
+				gpointer  nullable_gchandle = 0;
 				guint8 *nval = (guint8*)mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
 				mono_nullable_init_from_handle (nval, value, nklass);
 
@@ -2557,7 +2557,7 @@ ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionFieldHandle fi
 	} else if (MONO_TYPE_IS_REFERENCE (f->type)) {
 		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), MONO_HANDLE_RAW (value_h), FALSE);
 	} else {
-		guint gchandle = 0;
+		gpointer gchandle = 0;
 		g_assert (MONO_HANDLE_RAW (value_h));
 		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_handle_pin_unbox (value_h, &gchandle), FALSE);
 		mono_gchandle_free_internal (gchandle);
@@ -3293,7 +3293,7 @@ ves_icall_RuntimeTypeHandle_GetGenericTypeDefinition_impl (MonoReflectionTypeHan
 	if (mono_class_is_ginst (klass)) {
 		MonoClass *generic_class = mono_class_get_generic_class (klass)->container_class;
 
-		guint32 ref_info_handle = mono_class_get_ref_info_handle (generic_class);
+		gpointer ref_info_handle = mono_class_get_ref_info_handle (generic_class);
 		
 		if (m_class_was_typebuilder (generic_class) && ref_info_handle) {
 			MonoObjectHandle tb = mono_gchandle_get_target_handle (ref_info_handle);
@@ -7091,7 +7091,7 @@ ves_icall_System_Reflection_RuntimeModule_ResolveSignature (MonoImage *image, gu
 
 	// FIXME MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle.
 
-	uint32_t h;
+	gpointer h;
 	gpointer array_base = MONO_ARRAY_HANDLE_PIN (res, guint8, 0, &h);
 	memcpy (array_base, ptr, len);
 	mono_gchandle_free_internal (h);

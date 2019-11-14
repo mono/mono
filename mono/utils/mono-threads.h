@@ -270,7 +270,7 @@ typedef struct _MonoThreadInfo {
 	gpointer stack_mark;
 
 	/* GCHandle to MonoInternalThread */
-	guint32 internal_thread_gchandle;
+	gpointer internal_thread_gchandle;
 
 	/*
 	 * Used by the sampling code in mini-posix.c to ensure that a thread has
@@ -433,10 +433,10 @@ MONO_API void
 mono_thread_info_detach (void);
 
 gboolean
-mono_thread_info_try_get_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 *gchandle);
+mono_thread_info_try_get_internal_thread_gchandle (THREAD_INFO_TYPE *info, gpointer *gchandle);
 
 void
-mono_thread_info_set_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 gchandle);
+mono_thread_info_set_internal_thread_gchandle (THREAD_INFO_TYPE *info, gpointer gchandle);
 
 void
 mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info);

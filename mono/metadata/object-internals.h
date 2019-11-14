@@ -588,7 +588,7 @@ struct _MonoInternalThread {
 	MonoThreadName name;
 	guint32	    state;      /* must be accessed while longlived->synch_cs is locked */
 	MonoException *abort_exc;
-	int abort_state_handle;
+	gpointer abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
 	gsize debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 	gpointer *static_data;
@@ -2349,17 +2349,17 @@ mono_runtime_get_aotid_arr (void);
  * mono_gchandle_get_target () can be used to get the object referenced by both kinds
  * of handle: for a weakref handle, if an object has been collected, it will return NULL.
  */
-uint32_t
+gpointer
 mono_gchandle_new_internal (MonoObject *obj, mono_bool pinned);
 
-uint32_t
+gpointer
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
 
 ICALL_EXTERN_C
 MonoObject*
-mono_gchandle_get_target_internal (uint32_t gchandle);
+mono_gchandle_get_target_internal (gpointer gchandle);
 
-void mono_gchandle_free_internal (uint32_t gchandle);
+void mono_gchandle_free_internal (gpointer gchandle);
 
 /* Reference queue support
  *

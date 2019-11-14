@@ -39,10 +39,10 @@
  *
  * \returns a handle that can be used to access the object from unmanaged code.
  */
-uint32_t
+gpointer
 mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 {
-	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_internal (obj, pinned));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (gpointer, mono_gchandle_new_internal (obj, pinned));
 }
 
 /**
@@ -66,10 +66,10 @@ mono_gchandle_new (MonoObject *obj, mono_bool pinned)
  * \returns a handle that can be used to access the object from
  * unmanaged code.
  */
-uint32_t
+gpointer
 mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 {
-	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (gpointer, mono_gchandle_new_weakref_internal (obj, track_resurrection));
 }
 
 /**
@@ -83,7 +83,7 @@ mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
  * NULL for a collected object if using a weakref handle.
  */
 MonoObject*
-mono_gchandle_get_target (uint32_t gchandle)
+mono_gchandle_get_target (gpointer gchandle)
 {
 	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoObject*, mono_gchandle_get_target_internal (gchandle));
 }
@@ -97,7 +97,7 @@ mono_gchandle_get_target (uint32_t gchandle)
  * object wrapped.
  */
 void
-mono_gchandle_free (uint32_t gchandle)
+mono_gchandle_free (gpointer gchandle)
 {
 	/* Xamarin.Mac and Xamarin.iOS can call this from a worker thread
 	 * that's not attached to the runtime. This is okay for SGen because

@@ -286,7 +286,7 @@ struct _MonoJitInfo {
 
 typedef struct {
 	gpointer *static_data; /* Used to free the static data without going through the MonoAppContext object itself. */
-	uint32_t gc_handle;
+	gpointer gc_handle;
 } ContextStaticData;
 
 struct _MonoAppContext {

@@ -198,7 +198,7 @@ typedef struct {
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
 	/* Exception that is being thrown. Set with rest of resume state */
-	guint32 exc_gchandle;
+	gpointer exc_gchandle;
 } ThreadContext;
 
 typedef struct {

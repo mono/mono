@@ -692,7 +692,7 @@ ves_icall_System_GCHandle_InternalSet (gpointer handle, MonoObjectHandle obj, Mo
 #else
 
 MonoObjectHandle
-ves_icall_System_GCHandle_GetTarget (guint32 handle, MonoError *error)
+ves_icall_System_GCHandle_GetTarget (gpointer handle, MonoError *error)
 {
 	return mono_gchandle_get_target_handle (handle);
 }
@@ -700,8 +700,8 @@ ves_icall_System_GCHandle_GetTarget (guint32 handle, MonoError *error)
 /*
  * if type == -1, change the target of the handle, otherwise allocate a new handle.
  */
-guint32
-ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, guint32 handle, gint32 type, MonoError *error)
+gpointer
+ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, gpointer handle, gint32 type, MonoError *error)
 {
 	if (type == -1) {
 		mono_gchandle_set_target_handle (handle, obj);
@@ -724,20 +724,18 @@ ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, guint32 handle,
 }
 
 void
-ves_icall_System_GCHandle_FreeHandle (guint32 handle)
+ves_icall_System_GCHandle_FreeHandle (gpointer handle)
 {
 	mono_gchandle_free_internal (handle);
 }
 
 gpointer
-ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
+ves_icall_System_GCHandle_GetAddrOfPinnedObject (gpointer handle)
 {
 	// Handles seem to only be in the way here, and the object is pinned.
 
 	MonoObject *obj;
 
-	if (MONO_GC_HANDLE_TYPE (handle) != HANDLE_PINNED)
-		return (gpointer)-2;
 	obj = mono_gchandle_get_target_internal (handle);
 	if (obj) {
 		MonoClass *klass = mono_object_class (obj);
@@ -762,7 +760,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
 }
 
 MonoBoolean
-ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle)
+ves_icall_System_GCHandle_CheckCurrentDomain (gpointer gchandle)
 {
 	return mono_gchandle_is_in_domain (gchandle, mono_domain_get ());
 }
@@ -1191,7 +1189,7 @@ reference_queue_proccess (MonoReferenceQueue *queue)
 	RefQueueEntry *entry;
 	while ((entry = *iter)) {
 		if (queue->should_be_deleted || !mono_gchandle_get_target_internal (entry->gchandle)) {
-			mono_gchandle_free_internal ((guint32)entry->gchandle);
+			mono_gchandle_free_internal (entry->gchandle);
 			ref_list_remove_element (iter, entry);
 			queue->callback (entry->user_data);
 			g_free (entry);
@@ -1246,7 +1244,7 @@ reference_queue_clear_for_domain (MonoDomain *domain)
 		RefQueueEntry *entry;
 		while ((entry = *iter)) {
 			if (entry->domain == domain) {
-				mono_gchandle_free_internal ((guint32)entry->gchandle);
+				mono_gchandle_free_internal (entry->gchandle);
 				ref_list_remove_element (iter, entry);
 				queue->callback (entry->user_data);
 				g_free (entry);
