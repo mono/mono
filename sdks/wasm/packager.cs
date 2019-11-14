@@ -363,6 +363,7 @@ class Driver {
 		public bool ILStrip;
 		public bool LinkerVerbose;
 		public bool EnableZLib;
+		public bool EnableFS;
 		public bool EnableThreads;
 		public bool NativeStrip;
 	}
@@ -389,6 +390,7 @@ class Driver {
 		bool link_icalls = false;
 		bool gen_pinvoke = false;
 		bool enable_zlib = false;
+		bool enable_fs = false;
 		bool enable_threads = false;
 		bool is_netcore = false;
 		var il_strip = false;
@@ -418,6 +420,7 @@ class Driver {
 				ILStrip = true,
 				LinkerVerbose = false,
 				EnableZLib = false,
+				EnableFS = false,
 				NativeStrip = true
 			};
 
@@ -458,6 +461,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
 		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
+		AddFlag (p, new BoolFlag ("enable-fs", "enable filesystem support (through Emscripten's file_packager.py in a later phase)", opts.EnableFS, b => opts.EnableFS = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 
@@ -491,6 +495,7 @@ class Driver {
 		linker_verbose = opts.LinkerVerbose;
 		gen_pinvoke = pinvoke_libs != "";
 		enable_zlib = opts.EnableZLib;
+		enable_fs = opts.EnableFS;
 		enable_threads = opts.EnableThreads;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
@@ -780,8 +785,8 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
-		// Filesystem support forced to enable Emscripten's file_packager.py in a later phase
-		emcc_flags += "-s FORCE_FILESYSTEM=1 ";
+		if (enable_fs)
+			emcc_flags += "-s FORCE_FILESYSTEM=1 ";
 		foreach (var pf in preload_files)
 			emcc_flags += "--preload-file " + pf + " ";
 		string emcc_link_flags = "";
