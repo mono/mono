@@ -173,6 +173,6 @@ mono_w32process_get_modules (pid_t pid)
 
 #else
 
-MONO_EMPTY_SOURCE_FILE (w32process_unix_bsd);
+MONO_EMPTY_SOURCE_FILE (w32process_unix_osx);
 
 #endif
