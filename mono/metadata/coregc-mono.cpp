@@ -50,22 +50,24 @@ HRESULT GC_Initialize(IGCToCLR* clrToGC, IGCHeap** gcHeap, IGCHandleManager** gc
 static IGCHeap *pGCHeap;
 static IGCHandleManager *pGCHandleManager;
 
-MonoCoopMutex coreclr_gc_mutex;
+static void coregc_roots_init (void);
+
+MonoCoopMutex coregc_mutex;
 
 void
-coreclr_gc_lock (void)
+coregc_lock (void)
 {
-	mono_coop_mutex_lock (&coreclr_gc_mutex);
+	mono_coop_mutex_lock (&coregc_mutex);
 }
 
 void
-coreclr_gc_unlock (void)
+coregc_unlock (void)
 {
-	mono_coop_mutex_unlock (&coreclr_gc_mutex);
+	mono_coop_mutex_unlock (&coregc_mutex);
 }
 
 static void
-mono_init_coreclr_gc (void)
+mono_init_coregc (void)
 {
 	//
 	// Initialize GC heap
@@ -99,9 +101,11 @@ mono_gc_base_init (void)
 	mono_thread_callbacks_init ();
 	mono_thread_info_init (sizeof (THREAD_INFO_TYPE));
 
-	mono_init_coreclr_gc ();
+	mono_init_coregc ();
 
-	mono_coop_mutex_init (&coreclr_gc_mutex);
+	mono_coop_mutex_init (&coregc_mutex);
+
+	coregc_roots_init ();
 
 	gc_inited = TRUE;
 }
@@ -181,21 +185,100 @@ mono_object_is_alive (MonoObject* o)
 	g_assert_not_reached ();
 }
 
+// Root registering
+#if TARGET_SIZEOF_VOID_P == 4
+typedef guint32 target_mword;
+#else
+typedef guint64 target_mword;
+#endif
+
+typedef target_mword RootDescriptor;
+
+typedef struct _RootRecord RootRecord;
+struct _RootRecord {
+	char *end_root;
+	RootDescriptor root_desc;
+	int source;
+	const char *msg;
+};
+
+enum {
+	ROOT_TYPE_NORMAL = 0, /* "normal" roots */
+	ROOT_TYPE_PINNED = 1, /* roots without a GC descriptor */
+	ROOT_TYPE_WBARRIER = 2, /* roots with a write barrier */
+	ROOT_TYPE_NUM
+};
+
+GHashTable* coregc_roots_hash [ROOT_TYPE_NUM];
+
+static void
+coregc_roots_init (void)
+{
+	int i;
+	for (i = 0; i < ROOT_TYPE_NUM; i++) {
+		coregc_roots_hash [i] = g_hash_table_new (NULL, NULL);
+	}
+}
+
+int
+coregc_register_root (char *start, size_t size, RootDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
+{
+	RootRecord new_root;
+	int i;
+
+	coregc_lock ();
+	for (i = 0; i < ROOT_TYPE_NUM; i++) {
+		RootRecord *root = (RootRecord *)g_hash_table_lookup (coregc_roots_hash [i], start);
+		/* we allow changing the size and the descriptor (for thread statics etc) */
+		if (root) {
+			size_t old_size = root->end_root - start;
+			root->end_root = start + size;
+			root->root_desc = descr;
+			coregc_unlock ();
+			return TRUE;
+		}
+	}
+
+	new_root.end_root = start + size;
+	new_root.root_desc = descr;
+	new_root.source = source;
+	new_root.msg = msg;
+
+	g_hash_table_replace (coregc_roots_hash [root_type], start, &new_root);
+
+	coregc_unlock ();
+	return TRUE;
+}
+
+void
+coregc_deregister_root (char* addr)
+{
+	int root_type;
+
+	coregc_lock ();
+	for (root_type = 0; root_type < ROOT_TYPE_NUM; ++root_type) {
+		g_hash_table_remove (coregc_roots_hash [root_type], addr);
+	}
+	coregc_unlock ();
+}
+
 int
 mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	g_assert_not_reached ();
+	return coregc_register_root (start, size, (RootDescriptor)descr, descr ? ROOT_TYPE_NORMAL : ROOT_TYPE_PINNED, source, key, msg);
 }
 
 int
 mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	g_assert_not_reached ();
+	// FIXME we should kill this api and have these allocated as managed objects that automatically use card tables
+	mono_gc_register_root (start, size, descr, source, key, msg);
 }
 
 void
 mono_gc_deregister_root (char* addr)
 {
+	coregc_deregister_root (addr);
 }
 
 typedef struct {
@@ -262,14 +345,6 @@ enum {
         ROOT_DESC_TYPE_SHIFT = 3,
 };
 
-#if TARGET_SIZEOF_VOID_P == 4
-typedef guint32 target_mword;
-#else
-typedef guint64 target_mword;
-#endif
-
-typedef target_mword RootDescriptor;
-
 typedef void (*UserMarkFunc)     (MonoObject **addr, void *gc_data);
 typedef void (*UserRootMarkFunc) (void *addr, UserMarkFunc mark_func, void *gc_data);
 
@@ -296,7 +371,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 	numbits = ALIGN_TO (numbits, GC_BITS_PER_WORD);
 	nwords = numbits / GC_BITS_PER_WORD + 1;
 
-	coreclr_gc_lock ();
+	coregc_lock ();
 	res = complex_descriptors_next;
 	/* linear search, so we don't have duplicates with domain load/unload
 	* this should not be performance critical or we'd have bigger issues
@@ -312,7 +387,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 				}
 			}
 			if (found) {
-				coreclr_gc_unlock ();
+				coregc_unlock ();
 				return i;
 			}
 		}
@@ -328,7 +403,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 	for (i = 0; i < nwords - 1; ++i) {
 		complex_descriptors [res + 1 + i] = bitmap [i];
 	}
-	coreclr_gc_unlock ();
+	coregc_unlock ();
 	return res;
 }
 
@@ -414,19 +489,27 @@ coreclr_get_user_descriptor_func (RootDescriptor desc)
 MonoObject*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	g_assert_not_reached ();
+	void *res = g_calloc (1, size);
+	if (!res)
+		return NULL;
+	if (!mono_gc_register_root ((char *)res, size, descr, source, key, msg)) {
+		g_free (res);
+		res = NULL;
+	}
+	return (MonoObject*)res;
 }
 
 MonoObject*
 mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *key, const char *msg)
 {
-	g_assert_not_reached ();
+	return mono_gc_alloc_fixed (size, 0, source, key, msg);
 }
 
 void
 mono_gc_free_fixed (void* addr)
 {
-	g_assert_not_reached ();
+	mono_gc_deregister_root ((char *)addr);
+	g_free (addr);
 }
 
 MonoObject*
