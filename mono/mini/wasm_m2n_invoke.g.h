@@ -628,6 +628,16 @@ wasm_invoke_ili (void *target_func, InterpMethodArguments *margs)
 }
 
 static void
+wasm_invoke_iilli (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), (int)(gssize)margs->iargs [5]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
 wasm_invoke_l (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(void);
@@ -663,6 +673,16 @@ wasm_invoke_lil (void *target_func, InterpMethodArguments *margs)
 	typedef gint64 (*T)(int arg_0, gint64 arg_1);
 	T func = (T)target_func;
 	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1));
+	*(gint64*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_lili (void *target_func, InterpMethodArguments *margs)
+{
+	typedef gint64 (*T)(int arg_0, gint64 arg_1, int arg_2);
+	T func = (T)target_func;
+	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3]);
 	*(gint64*)margs->retval = res;
 
 }
@@ -1489,6 +1509,13 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 							}
 						}
 					}
+					else if (cookie[4] == 'I') {
+						if (cookie[5] == '\0') {
+							// found: IILLI depth 11
+							wasm_invoke_iilli (target_func, margs);
+							return;
+						}
+					}
 				}
 				else if (cookie[3] == '\0') {
 					// found: IIL depth 9
@@ -1568,6 +1595,11 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 							wasm_invoke_lilii (target_func, margs);
 							return;
 						}
+					}
+					else if (cookie[4] == '\0') {
+						// found: LILI depth 8
+						wasm_invoke_lili (target_func, margs);
+						return;
 					}
 				}
 				else if (cookie[3] == 'L') {
