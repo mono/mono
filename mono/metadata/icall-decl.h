@@ -226,5 +226,11 @@ ICALL_EXPORT MonoBoolean ves_icall_System_Array_CanChangePrimitive (MonoReflecti
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsLogging (void);
 ICALL_EXPORT void ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *volatile* category, MonoString *volatile* message);
+ICALL_EXPORT void ves_icall_System_String_InternalIntern (MonoString *volatile* str, MonoString *volatile* scratch);
+ICALL_EXPORT void ves_icall_System_String_InternalIsInterned (MonoString *volatile* str, MonoString *volatile* scratch);
+ICALL_EXPORT void ves_icall_System_Reflection_RuntimeModule_ResolveStringToken (MonoString *volatile* result, MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error);
+
+// FIXME This is intrinsic.
+//ICALL_EXPORT void ves_icall_System_String_FastAllocateString (MonoString *volatile* result, gint32 length);
 
 #endif // __MONO_METADATA_ICALL_H__

@@ -30,7 +30,9 @@ namespace System
 			if (str == null)
 				throw new ArgumentNullException(nameof(str));
 
-			return InternalIntern (str);
+			String scratch;
+			InternalIntern (ref str, out scratch);
+			return str;
 		}
 
 		public static String IsInterned (String str)
@@ -38,17 +40,19 @@ namespace System
 			if (str == null)
 				throw new ArgumentNullException(nameof(str));
 
-			return InternalIsInterned (str);
+			string scratch;
+			InternalIsInterned (ref str, out scratch);
+			return str;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String FastAllocateString (int length);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static String InternalIsInterned (String str);
+		extern static void InternalIsInterned (ref String str, out String scratch);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static String InternalIntern (String str);
+		extern static void InternalIntern (ref String str, out String scratch);
 
 		// TODO: Should be pointing to Buffer instead
 		#region Runtime method-to-ir dependencies

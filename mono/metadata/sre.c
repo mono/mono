@@ -4298,8 +4298,11 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 	error_init (error);
 
 	if (strcmp (oklass->name, "String") == 0) {
-		result = MONO_HANDLE_RAW (mono_string_intern_checked (MONO_HANDLE_NEW (MonoString, (MonoString*)obj), error));
+		MonoStringHandle string_handle = MONO_HANDLE_NEW (MonoString, (MonoString*)obj);
+		MonoStringHandle scratch_handle = MONO_HANDLE_NEW (MonoString, NULL);
+		mono_string_intern_checked (MONO_HANDLE_REF (string_handle), MONO_HANDLE_REF (scratch_handle), error);
 		goto_if_nok (error, return_null);
+		result = MONO_HANDLE_RAW (string_handle);
 		*handle_class = mono_defaults.string_class;
 		g_assert (result);
 	} else if (strcmp (oklass->name, "RuntimeType") == 0) {
@@ -4465,8 +4468,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			mono_memory_barrier ();
 			resolve_method = m;
 		}
-		void *args [16];
-		args [0] = obj;
+		void *args [ ] = { obj };
 		obj = mono_runtime_invoke_checked (resolve_method, NULL, args, error);
 		goto_if_nok (error, return_null);
 		g_assert (obj);

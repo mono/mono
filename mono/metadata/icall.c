@@ -6958,9 +6958,12 @@ ves_icall_System_Reflection_RuntimeModule_ResolveMethodToken (MonoImage *image, 
 	return module_resolve_method_token (image, token, type_args, method_args, resolve_error, error);
 }
 
-MonoStringHandle
-ves_icall_System_Reflection_RuntimeModule_ResolveStringToken (MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error, MonoError *error)
+void
+ves_icall_System_Reflection_RuntimeModule_ResolveStringToken (MonoString *volatile* result, MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error)
 {
+	ERROR_DECL (error);
+
+	*result = NULL;
 	int index = mono_metadata_token_index (token);
 
 	*resolve_error = ResolveTokenError_Other;
@@ -6968,25 +6971,26 @@ ves_icall_System_Reflection_RuntimeModule_ResolveStringToken (MonoImage *image, 
 	/* Validate token */
 	if (mono_metadata_token_code (token) != MONO_TOKEN_STRING) {
 		*resolve_error = ResolveTokenError_BadTable;
-		return NULL_HANDLE_STRING;
+		goto exit;
 	}
 
 	if (image_is_dynamic (image)) {
 		ERROR_DECL (ignore_inner_error);
 		// FIXME ignoring error
-		// FIXME Push MONO_HANDLE_NEW to lower layers.
-		MonoStringHandle result = MONO_HANDLE_NEW (MonoString, (MonoString*)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, ignore_inner_error));
+		mono_lookup_dynamic_token_class_out ((void**)result, image, token, FALSE, NULL, NULL, ignore_inner_error);
 		mono_error_cleanup (ignore_inner_error);
-		return result;
+		goto exit;
 	}
 
 	if ((index <= 0) || (index >= image->heap_us.size)) {
 		*resolve_error = ResolveTokenError_OutOfRange;
-		return NULL_HANDLE_STRING;
+		goto exit;
 	}
 
 	/* FIXME: What to do if the index points into the middle of a string ? */
-	return mono_ldstr_handle (mono_domain_get (), image, index, error);
+	mono_ldstr_out (result, mono_domain_get (), image, index, error);
+exit:
+	mono_error_set_pending_exception (error);
 }
 
 static MonoClassField*

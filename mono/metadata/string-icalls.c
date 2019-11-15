@@ -34,22 +34,40 @@ ves_icall_System_String_ctor_RedirectToCreateString (void)
 	g_assert_not_reached ();
 }
 
+#if 0 // FIXME This is intrinsic.
+
+void
+ves_icall_System_String_FastAllocateString (MonoString *volatile* result, gint32 length)
+{
+	ERROR_DECL (error);
+	mono_string_new_size_out (result, length, error);
+	mono_error_set_pending_exception (error);
+}
+
+#else
+
 MonoStringHandle
 ves_icall_System_String_FastAllocateString (gint32 length, MonoError *error)
 {
 	return mono_string_new_size_handle (mono_domain_get (), length, error);
 }
 
-MonoStringHandle
-ves_icall_System_String_InternalIntern (MonoStringHandle str, MonoError *error)
+#endif
+
+void
+ves_icall_System_String_InternalIntern (MonoString *volatile* str, MonoString *volatile* scratch)
 {
-	return mono_string_intern_checked (str, error);
+	ERROR_DECL (error);
+	mono_string_intern_checked (str, scratch, error);
+	mono_error_set_pending_exception (error);
 }
 
-MonoStringHandle
-ves_icall_System_String_InternalIsInterned (MonoStringHandle str, MonoError *error)
+void
+ves_icall_System_String_InternalIsInterned (MonoString *volatile* str, MonoString *volatile* scratch)
 {
-	return mono_string_is_interned_internal (str, error);
+	ERROR_DECL (error);
+	mono_string_is_interned_internal (str, scratch, error);
+	mono_error_set_pending_exception (error);
 }
 
 int

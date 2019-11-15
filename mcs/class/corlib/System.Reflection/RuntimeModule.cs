@@ -281,7 +281,8 @@ namespace System.Reflection {
 		internal static string ResolveString (Module module, IntPtr monoModule, int metadataToken) {
 			ResolveTokenError error;
 
-			string s = ResolveStringToken (monoModule, metadataToken, out error);
+			string s = null;
+			ResolveStringToken (ref s, monoModule, metadataToken, out error);
 			if (s == null)
 				throw resolve_token_exception (module.Name, metadataToken, error, "string");
 			else
@@ -426,7 +427,7 @@ namespace System.Reflection {
 		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string ResolveStringToken (IntPtr module, int token, out ResolveTokenError error);
+		internal static extern void ResolveStringToken (ref string result, IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);

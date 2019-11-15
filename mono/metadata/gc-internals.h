@@ -127,30 +127,35 @@ typedef void (*FinalizerThreadCallback) (gpointer user_data);
 MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
+// FIXME Use out parameter instead of return value.
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
 
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
 
+// FIXME Use out parameter instead of return value.
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
 
 MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
 
+// FIXME Use out parameter instead of return value.
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
 
 MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 
+// FIXME Use out parameter instead of return value.
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
 
 MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
+// FIXME Use out parameter instead of return value.
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 
@@ -159,6 +164,7 @@ mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
+// FIXME Use out parameter instead of return value.
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
 

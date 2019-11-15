@@ -2013,8 +2013,8 @@ mono_string_to_utf8_ignore (MonoString *s);
 gboolean
 mono_monitor_is_il_fastpath_wrapper (MonoMethod *method);
 
-MonoStringHandle
-mono_string_is_interned_lookup (MonoStringHandle str, gboolean insert, MonoError *error);
+void
+mono_string_is_interned_lookup (MonoString *volatile* str, gboolean insert, MonoString *volatile* scratch, MonoError *error);
 
 /**
  * mono_string_intern_checked:
@@ -2023,14 +2023,22 @@ mono_string_is_interned_lookup (MonoStringHandle str, gboolean insert, MonoError
  * Interns the string passed.
  * \returns The interned string. On failure returns NULL and sets \p error
  */
-#define mono_string_intern_checked(str, error) (mono_string_is_interned_lookup ((str), TRUE, (error)))
+static inline void
+mono_string_intern_checked (MonoString *volatile* str, MonoString *volatile* scratch, MonoError *error)
+{
+	mono_string_is_interned_lookup (str, TRUE, scratch, error);
+}
 
 /**
  * mono_string_is_interned_internal:
  * \param o String to probe
  * \returns Whether the string has been interned.
  */
-#define mono_string_is_interned_internal(str, error) (mono_string_is_interned_lookup ((str), FALSE, (error)))
+static inline void
+mono_string_is_interned_internal (MonoString *volatile *str, MonoString *volatile* scratch, MonoError *error)
+{
+	mono_string_is_interned_lookup (str, FALSE, scratch, error);
+}
 
 char *
 mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc);
@@ -2100,11 +2108,17 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
+static inline void
+mono_string_new_size_out (MonoString *volatile* result, MonoDomain *domain, gint32 len, MonoError *error)
+{
+	*result = mono_string_new_size_checked (domain, len, error);
+}
+
 MonoString*
 mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, MonoError *error);
 
-MonoStringHandle
-mono_ldstr_handle (MonoDomain *domain, MonoImage *image, uint32_t str_index, MonoError *error);
+void
+mono_ldstr_out (MonoString *volatile* result, MonoDomain *domain, MonoImage *image, uint32_t str_index, MonoError *error);
 
 MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
@@ -2117,6 +2131,13 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
+
+static inline void
+mono_string_new_utf16_out (MonoString *volatile* str, MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
+{
+	// FIXME invert relationship
+	*str = mono_string_new_utf16_checked (domain, text, len, error);
+}
 
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error);

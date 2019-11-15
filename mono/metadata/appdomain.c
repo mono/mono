@@ -231,7 +231,8 @@ create_domain_objects (MonoDomain *domain)
 	g_assert (string_empty_fld);
 	MonoStringHandle empty_str = mono_string_new_handle (domain, "", error);
 	mono_error_assert_ok (error);
-	empty_str = mono_string_intern_checked (empty_str, error);
+	MonoStringHandle scratch_handle = MONO_HANDLE_NEW (MonoString, NULL);
+	mono_string_intern_checked (MONO_HANDLE_REF (empty_str), MONO_HANDLE_REF (scratch_handle), error);
 	mono_error_assert_ok (error);
 	mono_field_static_set_value_internal (string_vt, string_empty_fld, MONO_HANDLE_RAW (empty_str));
 	domain->empty_string = MONO_HANDLE_RAW (empty_str);

@@ -222,10 +222,10 @@ namespace System
 		internal extern static String FastAllocateString (int length);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string InternalIsInterned (string str);
+		private extern static void InternalIsInterned (ref string str, out string scratch);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string InternalIntern (string str);
+		private extern static void InternalIntern (ref string str, out string scratch);
 
 		static unsafe int FastCompareStringHelper (uint* strAChars, int countA, uint* strBChars, int countB)
 		{
@@ -400,7 +400,9 @@ namespace System
 				throw new ArgumentNullException ("str");
 			}
 
-			return InternalIntern (str);
+			string scratch;
+			InternalIntern (ref str, out scratch);
+			return str;
 		}
 
 		public static String IsInterned (String str)
@@ -408,7 +410,9 @@ namespace System
 			if (str == null)
 				throw new ArgumentNullException ("str");
 
-			return InternalIsInterned (str);
+			string scratch;
+			InternalIsInterned (ref str, out scratch);
+			return str;
 		}
 
 		int LegacyStringGetHashCode ()

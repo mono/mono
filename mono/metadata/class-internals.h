@@ -831,8 +831,22 @@ mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def
 gpointer
 mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error);
 
+static inline void
+mono_lookup_dynamic_token_out (void *volatile* result, MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error)
+{
+	// FIXME Invert this relationship.
+	*result = mono_lookup_dynamic_token (image, token, context, error);
+}
+
 gpointer
 mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, gboolean check_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
+
+static inline void
+mono_lookup_dynamic_token_class_out (void *volatile* result, MonoImage *image, guint32 token, gboolean check_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error)
+{
+	// FIXME Invert this relationship.
+	*result = mono_lookup_dynamic_token_class (image, token, check_token, handle_class, context, error);
+}
 
 gpointer
 mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error);

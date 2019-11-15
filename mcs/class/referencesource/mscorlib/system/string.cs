@@ -3307,7 +3307,9 @@ namespace System {
             Contract.EndContractBlock();
 
 #if MONO
-            return InternalIntern (str);
+            string scratch;
+            InternalIntern (ref str, out scratch);
+            return str;
 #else
             return Thread.GetDomain().GetOrInternString(str);
 #endif
@@ -3323,7 +3325,9 @@ namespace System {
             Contract.EndContractBlock();
 
 #if MONO
-            return InternalIsInterned (str);
+            string scratch;
+            InternalIsInterned (ref str, out scratch);
+            return str;
 #else
             return Thread.GetDomain().IsStringInterned(str);
 #endif

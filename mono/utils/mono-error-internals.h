@@ -124,6 +124,7 @@ if (!local ## _overwrite_temp) \
 //void error_init(MonoError*);
 
 #define is_ok(error) ((error)->error_code == MONO_ERROR_NONE)
+#define is_nok(error) ((error)->error_code != MONO_ERROR_NONE)
 
 #define return_if_nok(error) do { if (!is_ok ((error))) return; } while (0)
 #define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
