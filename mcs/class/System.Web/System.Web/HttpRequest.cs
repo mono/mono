@@ -2200,7 +2200,7 @@ namespace System.Web
 
 					if (buffer [bl - 2] == '-' && buffer [bl - 1] == '-') {
 						at_eof = true;
-					} else if (buffer [bl - 2] != CR || buffer [bl - 1] != LF) {
+					} else if (!(buffer[bl - 2] == CR && buffer[bl - 1] == LF) && buffer[bl - 2] != LF) {  //CRLF or LF
 						state = 0;
 						data.Position = retval + 2;
 						if (got_cr) {
@@ -2213,6 +2213,8 @@ namespace System.Web
 					data.Position = retval + 2;
 					if (got_cr)
 						data.Position++;
+					else						// LF not a CRLF
+						data.Position--;
 					break;
 				} else {
 					// state == 1
