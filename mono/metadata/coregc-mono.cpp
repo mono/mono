@@ -955,7 +955,6 @@ mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
 int
 mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
-	g_assert_not_reached ();
 	return pthread_create (new_thread, attr, start_routine, arg);
 }
 #endif
@@ -963,13 +962,22 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 void
 mono_gc_skip_thread_changing (gboolean skip)
 {
-	g_assert_not_reached ();
-	// No STW, nothing needs to be done.
+	coregc_lock ();
+
+        if (skip) {
+                /*
+                 * If we skip scanning a thread with a non-empty handle stack, we may move an
+                 * object but fail to update the reference in the handle.
+                 */
+                HandleStack *stack = mono_thread_info_current ()->info.handle_stack;
+                g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
+        }
 }
 
 void
 mono_gc_skip_thread_changed (gboolean skip)
 {
+	coregc_unlock ();
 }
 
 #ifdef HOST_WIN32
