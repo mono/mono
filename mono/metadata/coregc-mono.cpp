@@ -308,7 +308,7 @@ mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers;
 	if (casted_class->has_finalize)
 		gc_descr.struct_gc_descr.m_flags |= MTFlag_HasFinalizer;
-	gc_descr.struct_gc_descr.m_baseSize = obj_size;
+	gc_descr.struct_gc_descr.m_baseSize = obj_size + 8;
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -318,7 +318,7 @@ mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = 2;
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
-	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoString);
+	gc_descr.struct_gc_descr.m_baseSize = MONO_SIZEOF_MONO_STRING + 8;
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -328,7 +328,7 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = elem_size;
 	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
-	gc_descr.struct_gc_descr.m_baseSize = sizeof (MonoArray);
+	gc_descr.struct_gc_descr.m_baseSize = MONO_SIZEOF_MONO_ARRAY + 8;
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -512,11 +512,19 @@ mono_gc_free_fixed (void* addr)
 	g_free (addr);
 }
 
+// CoreGC doesn't accept objects smaller than this, since it needs to replace them with array fill
+// vtable which contains header_ptr, vtable_ptr, sync_ptr and length
+#define MIN_OBJECT_SIZE (4 * sizeof (void*))
+
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *o;
 	uint32_t flags = 0;
+	// Add header size that the runtime doesn't know about.
+	size += sizeof (gpointer);
+	if (size < MIN_OBJECT_SIZE)
+		size = MIN_OBJECT_SIZE;
 	if (vtable->klass->has_finalize)
 		flags |= GC_ALLOC_FINALIZE;
 	if (size < 85000) {
@@ -1512,8 +1520,6 @@ MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
 		// Remove bounds from the reported size, since coreclr gc expects this object
 		// to the size of ArrayBase
 		desc.struct_gc_descr.m_baseSize -= 8;
-		// Add the header slot
-		desc.struct_gc_descr.m_baseSize += 8;
 		vtable->gc_descr = desc.ptr_gc_descr;
 		vtable->rank = 1;
 
