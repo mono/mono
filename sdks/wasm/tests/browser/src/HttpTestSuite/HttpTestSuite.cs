@@ -102,25 +102,19 @@ namespace TestSuite
                 return WasmHttpMessageHandler.FetchCredentialsOptionPropertyKey;
         }
 
-        public static FetchCredentialsOption GetDefaultFetchCredentials()
+        public static string GetRequestCachePropertyKey()
         {
             using (HttpClient httpClient = CreateHttpClient())
-                return WasmHttpMessageHandler.DefaultCredentials;
+                return WasmHttpMessageHandler.RequestCachePropertyKey;
         }
 
-        public static RequestCache GetDefaultRequestCache()
+        public static string GetRequestModePropertyKey()
         {
             using (HttpClient httpClient = CreateHttpClient())
-                return WasmHttpMessageHandler.Cache;
+                return WasmHttpMessageHandler.RequestModePropertyKey;
         }
 
-        public static RequestMode GetDefaultRequestMode()
-        {
-            using (HttpClient httpClient = CreateHttpClient())
-                return WasmHttpMessageHandler.Mode;
-        }
-
-        public static async Task<object> Override_Default_Options(string option, object value, string url)
+        public static async Task<object> GetAsync_Override_Default_Options(string option, object value, string url)
         {
             var requestTcs = new TaskCompletionSource<object>();
 

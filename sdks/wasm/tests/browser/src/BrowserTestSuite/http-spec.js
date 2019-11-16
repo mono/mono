@@ -459,19 +459,81 @@ describe("The WebAssembly Http Test Suite",function(){
       );
     }, DEFAULT_WS_TIMEOUT);  
     
-    it('OverrideDefaultOptions: should override credentials.', (done) => {
+    it('OverrideDefaultOptions: should override default fetch credentials option.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
       spyOn(fetch, 'apply');
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:GetStreamAsync_ReadZeroBytes_Success", []).then(
+      var fetchCredentialsPropertyKey = _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetFetchCredentialsOptionPropertyKey', []);
+      _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetAsync_Override_Default_Options', [fetchCredentialsPropertyKey, 'omit', blobUrl]).then(
         (result) => 
         {
             try {
               expect(fetch.apply).toHaveBeenCalledWith(window, [
-                ''
-              ])
-              assert.equal(result, 0, "result doesn't match expected result 0");
-              done()
+                blobUrl,
+                {
+                  credentials: 'omit'
+                }
+              ]);
+              done();
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('OverrideDefaultOptions: should override default request cache option.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
+      spyOn(fetch, 'apply');
+      var requestCachePropertyKey = _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetRequestCachePropertyKey', []);
+      _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetAsync_Override_Default_Options', [requestCachePropertyKey, 'no-cache', blobUrl]).then(
+        (result) => 
+        {
+            try {
+              expect(fetch.apply).toHaveBeenCalledWith(window, [
+                blobUrl,
+                {
+                  cache: 'no-cache'
+                }
+              ]);
+              done();
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('OverrideDefaultOptions: should override default request mode option.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
+      spyOn(fetch, 'apply');
+      var requestModePropertyKey = _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetRequestModePropertyKey', []);
+      _document.Module.BINDING.call_static_method('[HttpTestSuite]TestSuite.Program:GetAsync_Override_Default_Options', [requestModePropertyKey, 'no-cors', blobUrl]).then(
+        (result) => 
+        {
+            try {
+              expect(fetch.apply).toHaveBeenCalledWith(window, [
+                blobUrl,
+                {
+                  cache: 'no-cors'
+                }
+              ]);
+              done();
             } catch (e) {
               done.fail(e);
             }
@@ -481,3 +543,4 @@ describe("The WebAssembly Http Test Suite",function(){
       );
     }, DEFAULT_TIMEOUT)
   });
+
