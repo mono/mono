@@ -140,6 +140,7 @@ class Driver {
 		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t--native-lib=x  Link the native library 'x' into the final executable.");
 		Console.WriteLine ("\t--preload-file=x Preloads the file or directory 'x' into the virtual filesystem.");
+		Console.WriteLine ("\t--embed-file=x  Embeds the file or directory 'x' into the virtual filesystem.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -400,6 +401,7 @@ class Driver {
 		var profilers = new List<string> ();
 		var native_libs = new List<string> ();
 		var preload_files = new List<string> ();
+		var embed_files = new List<string> ();
 		var pinvoke_libs = "";
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
@@ -449,6 +451,7 @@ class Driver {
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
 				{ "native-lib=", s => native_libs.Add (s) },
 				{ "preload-file=", s => preload_files.Add (s) },
+				{ "embed-file=", s => embed_files.Add (s) },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
 					};
@@ -507,7 +510,7 @@ class Driver {
 			link_icalls = true;
 		if (!enable_linker || !enable_aot)
 			enable_dedup = false;
-		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0 || preload_files.Count > 0)
+		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0 || preload_files.Count > 0 || embed_files.Count > 0)
 			build_wasm = true;
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
@@ -799,6 +802,8 @@ class Driver {
 			emcc_flags += "-s FORCE_FILESYSTEM=1 ";
 		foreach (var pf in preload_files)
 			emcc_flags += "--preload-file " + pf + " ";
+		foreach (var f in embed_files)
+			emcc_flags += "--embed-file " + f + " ";
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
