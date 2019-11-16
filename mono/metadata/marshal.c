@@ -742,6 +742,8 @@ mono_string_builder_new (int starting_string_length, MonoError *error)
 		mono_method_desc_free (desc);
 		mono_memory_barrier ();
 		sb_ctor = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	// We make a new array in the _to_builder function, so this
@@ -1440,19 +1442,25 @@ mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec 
  * Return the hash table pointed to by VAR, lazily creating it if neccesary.
  */
 static GHashTable*
-get_cache (GHashTable **var, GHashFunc hash_func, GCompareFunc equal_func)
+get_cache (GHashTable **pvar, GHashFunc hash_func, GCompareFunc equal_func)
 {
-	if (!(*var)) {
+	GHashTable *var = *pvar;
+
+	if (!var) {
 		mono_marshal_lock ();
-		if (!(*var)) {
-			GHashTable *cache = 
-				g_hash_table_new (hash_func, equal_func);
-			mono_memory_barrier ();
-			*var = cache;
+		var = *pvar;
+		if (!var) {
+			var = g_hash_table_new (hash_func, equal_func);
+			if (var) {
+				mono_memory_barrier ();
+				*pvar = var;
+			}
 		}
 		mono_marshal_unlock ();
+	} else {
+		mono_memory_read_barrier ();
 	}
-	return *var;
+	return var;
 }
 
 GHashTable*
@@ -2783,8 +2791,10 @@ mono_marshal_get_runtime_invoke_dynamic (void)
 	char *name;
 	WrapperInfo *info;
 
-	if (method)
+	if (method) {
+		mono_memory_read_barrier ();
 		return method;
+	}
 
 	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 4);
 
@@ -4122,8 +4132,10 @@ mono_marshal_get_castclass_with_cache (void)
 	MonoMethodSignature *sig;
 	WrapperInfo *info;
 
-	if (cached)
+	if (cached) {
+		mono_memory_read_barrier ();
 		return cached;
+	}
 
 	MonoType *object_type = mono_get_object_type ();
 	MonoType *int_type = mono_get_int_type ();
@@ -4192,8 +4204,10 @@ mono_marshal_get_isinst_with_cache (void)
 	MonoMethodSignature *sig;
 	WrapperInfo *info;
 
-	if (cached)
+	if (cached) {
+		mono_memory_read_barrier ();
 		return cached;
+	}
 
 	MonoType *object_type = mono_get_object_type ();
 	MonoType *int_type = mono_get_int_type ();
@@ -4257,6 +4271,8 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 		ERROR_DECL (error);
 		stoptr = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "StructureToPtr", 3, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (stoptr);
 
@@ -4316,6 +4332,8 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 		sig->pinvoke = 0;
 		mono_memory_barrier ();
 		ptostr = sig;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	mb = mono_mb_new (klass, "PtrToStructure", MONO_WRAPPER_OTHER);
@@ -4450,22 +4468,30 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 	mono_marshal_lock ();
 
 	if (!enter_method) {
-		MonoMethodDesc *desc;
-
-		desc = mono_method_desc_new ("Monitor:Enter(object,bool&)", FALSE);
+		MonoMethodDesc *desc = mono_method_desc_new ("Monitor:Enter(object,bool&)", FALSE);
 		enter_method = mono_method_desc_search_in_class (desc, mono_defaults.monitor_class);
 		g_assert (enter_method);
 		mono_method_desc_free (desc);
+	} else {
+		mono_memory_read_barrier ();
+	}
 
-		desc = mono_method_desc_new ("Monitor:Exit", FALSE);
+	if (!exit_method) {
+		MonoMethodDesc *desc = mono_method_desc_new ("Monitor:Exit", FALSE);
 		exit_method = mono_method_desc_search_in_class (desc, mono_defaults.monitor_class);
 		g_assert (exit_method);
 		mono_method_desc_free (desc);
+	} else {
+		mono_memory_read_barrier ();
+	}
 
-		desc = mono_method_desc_new ("Type:GetTypeFromHandle", FALSE);
+	if (!gettypefromhandle_method) {
+		MonoMethodDesc *desc = mono_method_desc_new ("Type:GetTypeFromHandle", FALSE);
 		gettypefromhandle_method = mono_method_desc_search_in_class (desc, mono_defaults.systemtype_class);
 		g_assert (gettypefromhandle_method);
 		mono_method_desc_free (desc);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	mono_marshal_unlock ();
@@ -4611,12 +4637,15 @@ get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 	static MonoMethodSignature *signature;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
+	MonoMethod *cached;
 	char *name;
 	const char *param_names [16];
 	WrapperInfo *info;
 
-	if (cached_methods [kind])
-		return cached_methods [kind];
+	if ((cached = cached_methods [kind])) {
+		mono_memory_read_barrier ();
+		return cached;
+	}
 
 	MonoType *void_type = mono_get_void_type ();
 	MonoType *object_type = mono_get_object_type ();
@@ -4647,16 +4676,19 @@ get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 	res->flags |= METHOD_ATTRIBUTE_VIRTUAL;
 
 	mono_marshal_lock ();
-	if (!cached_methods [kind]) {
+	if (!((cached = cached_methods [kind]))) {
+		mono_memory_barrier ();
 		cached_methods [kind] = res;
 		mono_marshal_unlock ();
 	} else {
+		mono_memory_read_barrier ();
 		mono_marshal_unlock ();
 		mono_free_method (res);
+		res = cached;
 	}
 
 	mono_mb_free (mb);
-	return cached_methods [kind];
+	return res;
 }
 
 MonoMethod*
@@ -5848,6 +5880,8 @@ mono_marshal_load_type_info (MonoClass* klass)
 		mono_class_set_marshal_info (klass, info);
 		++class_marshal_info_count;
 		info2 = info;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	mono_marshal_unlock ();
 

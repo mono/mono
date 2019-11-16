@@ -83,12 +83,20 @@ static MonoMethod *sh_dangerous_add_ref;
 static MonoMethod *sh_dangerous_release;
 
 static MonoMethod*
-get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
+get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_name, int num_params, int flags)
 {
-	MonoMethod *method;
-	ERROR_DECL (error);
-	method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
-	mono_error_assert_ok (error);
+	MonoMethod *method = pmethod ? *pmethod : NULL;
+	if (method) {
+		mono_memory_read_barrier (); // pmethod is usually to a global accessed from multiple thread
+	} else {
+		ERROR_DECL (error);
+		method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
+		mono_error_assert_ok (error);
+		if (method && pmethod) {
+			mono_memory_barrier ();
+			*pmethod = method;
+		}
+	}
 	g_assertf (method, "Could not lookup method %s in %s", method_name, m_class_get_name (klass));
 	return method;
 }
@@ -96,10 +104,8 @@ get_method_nofail (MonoClass *klass, const char *method_name, int num_params, in
 static void
 init_safe_handle (void)
 {
-	sh_dangerous_add_ref = get_method_nofail (
-		mono_class_try_get_safehandle_class (), "DangerousAddRef", 1, 0);
-	sh_dangerous_release = get_method_nofail (
-		mono_class_try_get_safehandle_class (), "DangerousRelease", 0, 0);
+	get_method_nofail (&sh_dangerous_add_ref, mono_class_try_get_safehandle_class (), "DangerousAddRef", 1, 0);
+	get_method_nofail (&sh_dangerous_release, mono_class_try_get_safehandle_class (), "DangerousRelease", 0, 0);
 }
 
 static MonoImage*
@@ -1108,10 +1114,8 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 					static MonoMethod *variant_clear = NULL;
 					static MonoMethod *get_object_for_native_variant = NULL;
 
-					if (!variant_clear)
-						variant_clear = get_method_nofail (mono_class_get_variant_class (), "Clear", 0, 0);
-					if (!get_object_for_native_variant)
-						get_object_for_native_variant = get_method_nofail (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
+					get_method_nofail (&variant_clear, mono_class_get_variant_class (), "Clear", 0, 0);
+					get_method_nofail (&get_object_for_native_variant, mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
 					mono_mb_emit_ldloc (mb, 1);
 					mono_mb_emit_ldloc (mb, 0);
 					mono_mb_emit_managed_call (mb, get_object_for_native_variant, NULL);
@@ -1123,8 +1127,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 				else {
 					static MonoMethod *get_native_variant_for_object = NULL;
 
-					if (!get_native_variant_for_object)
-						get_native_variant_for_object = get_method_nofail (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
+					get_method_nofail (&get_native_variant_for_object, mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
 
 					mono_mb_emit_ldloc (mb, 0);
 					mono_mb_emit_byte(mb, CEE_LDIND_REF);
@@ -4348,10 +4351,12 @@ emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *klass, MonoM
 	if (!Marshal) {
 		Marshal = mono_class_try_get_marshal_class ();
 		g_assert (Marshal);
-
-		get_instance = get_method_nofail (Marshal, "GetCustomMarshalerInstance", 2, 0);
-		g_assert (get_instance);
+	} else {
+		mono_memory_read_barrier ();
 	}
+
+	get_method_nofail (&get_instance, Marshal, "GetCustomMarshalerInstance", 2, 0);
+	g_assert (get_instance);
 
 	// HACK: We cannot use ldtoken in this type of wrapper.
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
@@ -4406,17 +4411,19 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			return 0;
 		}
 
-		cleanup_native = get_method_nofail (klass, "CleanUpNativeData", 1, 0);
+		get_method_nofail (&cleanup_native, klass, "CleanUpNativeData", 1, 0);
 		g_assert (cleanup_native);
-		cleanup_managed = get_method_nofail (klass, "CleanUpManagedData", 1, 0);
+		get_method_nofail (&cleanup_managed, klass, "CleanUpManagedData", 1, 0);
 		g_assert (cleanup_managed);
-		marshal_managed_to_native = get_method_nofail (klass, "MarshalManagedToNative", 1, 0);
+		get_method_nofail (&marshal_managed_to_native, klass, "MarshalManagedToNative", 1, 0);
 		g_assert (marshal_managed_to_native);
-		marshal_native_to_managed = get_method_nofail (klass, "MarshalNativeToManaged", 1, 0);
+		get_method_nofail (&marshal_native_to_managed, klass, "MarshalNativeToManaged", 1, 0);
 		g_assert (marshal_native_to_managed);
 
 		mono_memory_barrier ();
 		ICustomMarshaler = klass;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	if (spec->data.custom_data.image)
@@ -4704,8 +4711,7 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			/* Convert it to an OLE DATE type */
 			static MonoMethod *to_oadate;
 
-			if (!to_oadate)
-				to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
+			get_method_nofail (&to_oadate, date_time_class, "ToOADate", 0, 0);
 			g_assert (to_oadate);
 
 			conv_arg = mono_mb_add_local (mb, double_type);
@@ -4810,8 +4816,7 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				break;
 
 			if (!((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))) {
-				if (!from_oadate)
-					from_oadate = get_method_nofail (date_time_class, "FromOADate", 1, 0);
+				get_method_nofail (&from_oadate, date_time_class, "FromOADate", 1, 0);
 				g_assert (from_oadate);
 
 				mono_mb_emit_ldarg (mb, argnum);
@@ -5008,8 +5013,7 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (encoding == MONO_NATIVE_VBBYREFSTR) {
 			static MonoMethod *m;
 
-			if (!m)
-				m = get_method_nofail (mono_defaults.string_class, "get_Length", -1, 0);
+			get_method_nofail (&m, mono_defaults.string_class, "get_Length", -1, 0);
 
 			if (!t->byref) {
 				char *msg = g_strdup ("VBByRefStr marshalling requires a ref parameter.");
@@ -5909,12 +5913,9 @@ emit_marshal_variant_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	MonoType *variant_type_byref = m_class_get_this_arg (mono_class_get_variant_class ());
 	MonoType *object_type = mono_get_object_type ();
 
-	if (!get_object_for_native_variant)
-		get_object_for_native_variant = get_method_nofail (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
+	get_method_nofail (&get_object_for_native_variant, mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
 	g_assert (get_object_for_native_variant);
-
-	if (!get_native_variant_for_object)
-		get_native_variant_for_object = get_method_nofail (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
+	get_method_nofail (&get_native_variant_for_object, mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
 	g_assert (get_native_variant_for_object);
 
 	switch (action) {
@@ -5940,10 +5941,8 @@ emit_marshal_variant_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_CONV_OUT: {
 		static MonoMethod *variant_clear = NULL;
 
-		if (!variant_clear)
-			variant_clear = get_method_nofail (mono_class_get_variant_class (), "Clear", 0, 0);
+		get_method_nofail (&variant_clear, mono_class_get_variant_class (), "Clear", 0, 0);
 		g_assert (variant_clear);
-
 
 		if (t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT || !(t->attrs & PARAM_ATTRIBUTE_IN))) {
 			mono_mb_emit_ldarg (mb, argnum);

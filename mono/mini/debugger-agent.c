@@ -3552,12 +3552,18 @@ init_jit_info_dbg_attrs (MonoJitInfo *ji)
 
 	if (!hidden_klass)
 		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
+	else
+		mono_memory_read_barrier ();
 
 	if (!step_through_klass)
 		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
+	else
+		mono_memory_read_barrier ();
 
 	if (!non_user_klass)
 		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
+	else
+		mono_memory_read_barrier ();
 
 	ainfo = mono_custom_attrs_from_method_checked (jinfo_get_method (ji), error);
 	mono_error_cleanup (error); /* FIXME don't swallow the error? */

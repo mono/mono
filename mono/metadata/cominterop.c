@@ -250,6 +250,8 @@ mono_class_try_get_com_object_class (void)
 		tmp_class = klass;
 		mono_memory_barrier ();
 		inited = TRUE;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	return tmp_class;
 }
@@ -559,6 +561,8 @@ cominterop_set_hr_error (MonoError *oerror, int hr)
 	if (!throw_exception_for_hr) {
 		throw_exception_for_hr = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetExceptionForHR", 1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	ex = (MonoException*)mono_runtime_invoke_checked (throw_exception_for_hr, NULL, params, error);
@@ -779,12 +783,16 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 			ERROR_DECL (error);
 			com_interop_proxy_get_proxy = mono_class_get_method_from_name_checked (mono_class_get_interop_proxy_class (), "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 #ifndef DISABLE_REMOTING
 		if (!get_transparent_proxy) {
 			ERROR_DECL (error);
 			get_transparent_proxy = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "GetTransparentProxy", 0, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 #endif
 
@@ -795,7 +803,7 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_ptr (mb, m_class_get_byval_arg (mono_class_get_com_object_class ()));
 		mono_mb_emit_icall (mb, cominterop_type_from_handle);
 		mono_mb_emit_managed_call (mb, com_interop_proxy_get_proxy, NULL);
-		mono_mb_emit_managed_call (mb, get_transparent_proxy, NULL);
+		mono_mb_emit_managed_call (mb, get_transparent_proxy, NULL); // FIXME DISABLE_REMOTING?
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
 			g_assert (klass);
  			mono_mb_emit_op (mb, CEE_CASTCLASS, klass);
@@ -876,6 +884,8 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 			
 			if (!iunknown)
 				iunknown = mono_class_get_property_from_name_internal (mono_class_get_com_object_class (), "IUnknown");
+			else
+				mono_memory_read_barrier ();
 			mono_mb_emit_managed_call (mb, iunknown->get, NULL);
 		}
 		else if (conv == MONO_MARSHAL_CONV_OBJECT_IDISPATCH) {
@@ -883,6 +893,8 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 			
 			if (!idispatch)
 				idispatch = mono_class_get_property_from_name_internal (mono_class_get_com_object_class (), "IDispatch");
+			else
+				mono_memory_read_barrier ();
 			mono_mb_emit_managed_call (mb, idispatch->get, NULL);
 		}
 		else {
@@ -1067,6 +1079,8 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 				ERROR_DECL (error);
 				ctor = mono_class_get_method_from_name_checked (mono_class_get_com_object_class (), ".ctor", 0, 0, error);
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 			mono_mb_emit_ldarg (mb, 0);
 			mono_mb_emit_managed_call (mb, ctor, NULL);
@@ -1123,6 +1137,8 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 					ERROR_DECL (error);
 					ThrowExceptionForHR = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "ThrowExceptionForHR", 1, 0, error);
 					mono_error_assert_ok (error);
+				} else {
+					mono_memory_read_barrier ();
 				}
 				mono_mb_emit_managed_call (mb, ThrowExceptionForHR, NULL);
 
@@ -1215,6 +1231,8 @@ mono_cominterop_get_invoke (MonoMethod *method)
 			ERROR_DECL (error);
 			cache_proxy = mono_class_get_method_from_name_checked (mono_class_get_interop_proxy_class (), "CacheProxy", 0, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 
 		mono_mb_emit_ldarg (mb, 0);
@@ -1274,22 +1292,32 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 	if (!get_object_for_iunknown) {
 		get_object_for_iunknown = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetObjectForIUnknown", 1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	if (!get_iunknown_for_object_internal) {
 		get_iunknown_for_object_internal = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetIUnknownForObjectInternal", 1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	if (!get_idispatch_for_object_internal) {
 		get_idispatch_for_object_internal = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetIDispatchForObjectInternal", 1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	if (!get_com_interface_for_object_internal) {
 		get_com_interface_for_object_internal = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetComInterfaceForObjectInternal", 2, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	if (!marshal_release) {
 		marshal_release = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "Release", 1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 #ifdef DISABLE_JIT
@@ -1512,6 +1540,8 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 			if (!AddRef) {
 				AddRef = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "AddRef", 1, 0, error);
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 
 			mono_mb_emit_ldarg (mb, argnum);
@@ -1557,6 +1587,8 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 		if (!AddRef) {
 			AddRef = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "AddRef", 1, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 
 		/* store return value */
@@ -2134,6 +2166,9 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		static MonoClass* coclass_attribute = NULL;
 		if (!coclass_attribute)
 			coclass_attribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "CoClassAttribute");
+		else
+			mono_memory_read_barrier ();
+
 		if (mono_custom_attrs_has_attr (cinfo, coclass_attribute)) {
 			g_assert(m_class_get_interface_count (itf) && m_class_get_interfaces (itf)[0]);
 			itf = m_class_get_interfaces (itf)[0];
@@ -2387,6 +2422,8 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 		ERROR_DECL (error);
 		get_hr_for_exception = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetHRForException", -1, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	sig = mono_method_signature_internal (method);
@@ -2768,6 +2805,8 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 	/* Handle DispIdAttribute */
 	if (!ComDispIdAttribute)
 		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
+	else
+		mono_memory_read_barrier ();
 
 	g_assert (object);
 	klass = mono_object_class (object);
@@ -2860,7 +2899,7 @@ init_com_provider_ms (void)
 	if (initialized) {
 		// Barrier here prevents reads of sys_alloc_string_len_ms etc.
 		// from being reordered before initialized.
-		mono_memory_barrier ();
+		mono_memory_barrier (); // FIXME mono_memory_read_barrier () should suffice.
 		return TRUE;
 	}
 
@@ -3124,6 +3163,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			ERROR_DECL (error);
 			get_value_impl = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetValueImpl", 1, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 		g_assert (get_value_impl);
 
@@ -3141,6 +3182,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			ERROR_DECL (error);
 			get_native_variant_for_object = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 		g_assert (get_native_variant_for_object);
 
@@ -3158,6 +3201,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			ERROR_DECL (error);
 			variant_clear = mono_class_get_method_from_name_checked (mono_class_get_variant_class (), "Clear", 0, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 
 		mono_mb_emit_ldloc_addr (mb, elem_var);
@@ -3262,6 +3307,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 				ERROR_DECL (error);
 				get_object_for_native_variant = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0, error);
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 			g_assert (get_object_for_native_variant);
 
@@ -3269,6 +3316,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 				ERROR_DECL (error);
 				set_value_impl = mono_class_get_method_from_name_checked (mono_defaults.array_class, "SetValueImpl", 2, 0, error);
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 			g_assert (set_value_impl);
 
@@ -3371,6 +3420,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			ERROR_DECL (error);
 			get_object_for_native_variant = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 		g_assert (get_object_for_native_variant);
 
@@ -3378,6 +3429,8 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			ERROR_DECL (error);
 			set_value_impl = mono_class_get_method_from_name_checked (mono_defaults.array_class, "SetValueImpl", 2, 0, error);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 		g_assert (set_value_impl);
 

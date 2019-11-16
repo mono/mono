@@ -1472,9 +1472,12 @@ is_corlib_type (MonoClass *klass)
 
 #define check_corlib_type_cached(_class, _namespace, _name) do { \
 	static MonoClass *cached_class; \
-	if (cached_class) \
+	if (cached_class) { \
+		mono_memory_read_barrier (); \
 		return cached_class == _class; \
+	} \
 	if (is_corlib_type (_class) && !strcmp (_name, _class->name) && !strcmp (_namespace, _class->name_space)) { \
+		mono_memory_barrier (); \
 		cached_class = _class; \
 		return TRUE; \
 	} \
@@ -1658,6 +1661,8 @@ mono_reflection_type_get_underlying_system_type (MonoReflectionTypeHandle t, Mon
 	if (!method_get_underlying_system_type) {
 		method_get_underlying_system_type = mono_class_get_method_from_name_checked (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
@@ -4464,6 +4469,8 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			g_assert (m);
 			mono_memory_barrier ();
 			resolve_method = m;
+		} else {
+			mono_memory_read_barrier ();
 		}
 		void *args [16];
 		args [0] = obj;

@@ -161,6 +161,8 @@ mono_alc_invoke_resolve_using_load (MonoAssemblyLoadContext *alc, MonoAssemblyNa
 		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 
@@ -194,6 +196,8 @@ mono_alc_invoke_resolve_using_resolving_event (MonoAssemblyLoadContext *alc, Mon
 		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 
@@ -227,6 +231,8 @@ mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, M
 		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 

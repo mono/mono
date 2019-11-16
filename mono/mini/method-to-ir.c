@@ -2279,12 +2279,20 @@ emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee
 }
 
 static MonoMethod*
-get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
+get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_name, int num_params, int flags)
 {
-	MonoMethod *method;
-	ERROR_DECL (error);
-	method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
-	mono_error_assert_ok (error);
+	MonoMethod *method = pmethod ? *pmethod : NULL;
+	if (method) {
+		mono_memory_read_barrier (); // pmethod is usually to a global accessed from multiple thread
+	} else {
+		ERROR_DECL (error);
+		method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
+		if (method && pmethod) {
+			mono_memory_barrier ();
+			*pmethod = method;
+		}
+		mono_error_assert_ok (error);
+	}
 	g_assertf (method, "Could not lookup method %s in %s", method_name, m_class_get_name (klass));
 	return method;
 }
@@ -2293,11 +2301,10 @@ MonoMethod*
 mini_get_memcpy_method (void)
 {
 	static MonoMethod *memcpy_method = NULL;
-	if (!memcpy_method) {
-		memcpy_method = get_method_nofail (mono_defaults.string_class, "memcpy", 3, 0);
-		if (!memcpy_method)
-			g_error ("Old corlib found. Install a new one");
-	}
+	get_method_nofail (&memcpy_method, mono_defaults.string_class, "memcpy", 3, 0);
+	if (!memcpy_method)
+		g_error ("Old corlib found. Install a new one");
+
 	return memcpy_method;
 }
 
@@ -2381,11 +2388,9 @@ MonoMethod*
 mini_get_memset_method (void)
 {
 	static MonoMethod *memset_method = NULL;
-	if (!memset_method) {
-		memset_method = get_method_nofail (mono_defaults.string_class, "memset", 3, 0);
-		if (!memset_method)
-			g_error ("Old corlib found. Install a new one");
-	}
+	get_method_nofail (&memset_method, mono_defaults.string_class, "memset", 3, 0);
+	if (!memset_method)
+		g_error ("Old corlib found. Install a new one");
 	return memset_method;
 }
 
@@ -2398,15 +2403,14 @@ mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass
 	MonoMethod *memset_method;
 	MonoInst *size_ins = NULL;
 	MonoInst *bzero_ins = NULL;
-	static MonoMethod *bzero_method;
+	static MonoMethod *bzero_method = NULL;;
 
 	/* FIXME: Optimize this for the case when dest is an LDADDR */
 	mono_class_init_internal (klass);
 	if (mini_is_gsharedvt_klass (klass)) {
 		size_ins = mini_emit_get_gsharedvt_info_klass (cfg, klass, MONO_RGCTX_INFO_VALUE_SIZE);
 		bzero_ins = mini_emit_get_gsharedvt_info_klass (cfg, klass, MONO_RGCTX_INFO_BZERO);
-		if (!bzero_method)
-			bzero_method = get_method_nofail (mono_defaults.string_class, "bzero_aligned_1", 2, 0);
+		get_method_nofail (&bzero_method, mono_defaults.string_class, "bzero_aligned_1", 2, 0);
 		g_assert (bzero_method);
 		iargs [0] = dest;
 		iargs [1] = size_ins;
@@ -3020,12 +3024,8 @@ mini_emit_check_array_type (MonoCompile *cfg, MonoInst *obj, MonoClass *array_cl
 static MonoInst*
 handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass, int context_used)
 {
-	MonoMethod* method;
-
-	if (m_class_is_enumtype (mono_class_get_nullable_param_internal (klass)))
-		method = get_method_nofail (klass, "UnboxExact", 1, 0);
-	else
-		method = get_method_nofail (klass, "Unbox", 1, 0);
+	gboolean const exact = m_class_is_enumtype (mono_class_get_nullable_param_internal (klass));
+	MonoMethod* method = get_method_nofail (NULL, klass, exact ? "UnboxExact" : "Unbox", 1, 0);
 	g_assert (method);
 
 	if (context_used) {
@@ -3300,7 +3300,7 @@ mini_emit_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_us
 	}
 
 	if (mono_class_is_nullable (klass)) {
-		MonoMethod* method = get_method_nofail (klass, "Box", 1, 0);
+		MonoMethod* method = get_method_nofail (NULL, klass, "Box", 1, 0);
 
 		if (context_used) {
 			if (cfg->llvm_only && cfg->gsharedvt) {
@@ -4874,7 +4874,9 @@ throw_exception (void)
 
 	if (!method) {
 		MonoSecurityManager *secman = mono_security_manager_get_methods ();
-		method = get_method_nofail (secman->securitymanager, "ThrowException", 1, 0);
+		get_method_nofail (&method, secman->securitymanager, "ThrowException", 1, 0);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (method);
 	return method;
@@ -7094,7 +7096,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoType *base_type = mono_class_enum_basetype_internal (constrained_class);
 					g_assert (base_type);
 					constrained_class = mono_class_from_mono_type_internal (base_type);
-					cmethod = get_method_nofail (constrained_class, cmethod->name, 0, 0);
+					cmethod = get_method_nofail (NULL, constrained_class, cmethod->name, 0, 0);
 					g_assert (cmethod);
 				}
 			}

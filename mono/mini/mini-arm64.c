@@ -177,8 +177,10 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 	if (has_target) {
 		static guint8* cached = NULL;
 
-		if (cached)
+		if (cached) {
+			mono_memory_read_barrier (); // FIXME execute_barrier
 			return cached;
+		}
 
 		if (mono_ee_features.use_aot_trampolines)
 			start = (guint8*)mono_aot_get_trampoline ("delegate_invoke_impl_has_target");

@@ -629,6 +629,8 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 	if (!current_thread_field) {
 		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	ERROR_DECL (thread_vt_error);
@@ -1240,6 +1242,8 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 			cb = mono_class_get_method_from_name_checked (internal->obj.vtable->klass, "StartCallback", 0, 0, error);
 			g_assert (cb);
 			mono_error_assert_ok (error);
+		} else {
+			mono_memory_read_barrier ();
 		}
 		mono_runtime_invoke_checked (cb, internal, NULL, error);
 #else

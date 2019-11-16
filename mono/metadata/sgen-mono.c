@@ -294,6 +294,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethodBuilder *mb;
 	MonoMethodSignature *sig;
 	MonoMethod **write_barrier_method_addr;
+	MonoMethod *write_barrier_method;
 	WrapperInfo *info;
 	// FIXME: Maybe create a separate version for ctors (the branch would be
 	// correctly predicted more times)
@@ -302,8 +303,10 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	else
 		write_barrier_method_addr = &write_barrier_noconc_method;
 
-	if (*write_barrier_method_addr)
-		return *write_barrier_method_addr;
+	if ((write_barrier_method = *write_barrier_method_addr)) {
+		mono_memory_read_barrier ();
+		return write_barrier_method;
+	}
 
 	/* Create the IL version of mono_gc_barrier_generic_store () */
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
@@ -323,9 +326,11 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_free (mb);
 
 	LOCK_GC;
-	if (*write_barrier_method_addr) {
+	if ((write_barrier_method = *write_barrier_method_addr)) {
 		/* Already created */
+		mono_memory_read_barrier ();
 		mono_free_method (res);
+		res = write_barrier_method;
 	} else {
 		/* double-checked locking */
 		mono_memory_barrier ();
@@ -333,7 +338,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	}
 	UNLOCK_GC;
 
-	return *write_barrier_method_addr;
+	return res;
 }
 
 MonoMethod*

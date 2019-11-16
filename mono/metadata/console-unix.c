@@ -236,6 +236,8 @@ do_console_cancel_event (void)
 	if (System_Console_DoConsoleCancelEventBackground_method == NULL)
 		return;
 
+	mono_memory_read_barrier ();
+
 	mono_runtime_invoke_checked (System_Console_DoConsoleCancelEventBackground_method, NULL, NULL, error);
 	mono_error_assert_ok (error);
 }

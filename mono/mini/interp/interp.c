@@ -1322,17 +1322,23 @@ interp_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *
 static MonoPIFunc
 get_interp_to_native_trampoline (void)
 {
-	static MonoPIFunc trampoline = NULL;
+	static MonoPIFunc static_trampoline;
+	MonoPIFunc trampoline = static_trampoline;
 
 	if (!trampoline) {
 		if (mono_ee_features.use_aot_trampolines) {
-			trampoline = (MonoPIFunc) mono_aot_get_trampoline ("interp_to_native_trampoline");
+			trampoline = (MonoPIFunc)mono_aot_get_trampoline ("interp_to_native_trampoline");
 		} else {
 			MonoTrampInfo *info;
-			trampoline = (MonoPIFunc) mono_arch_get_interp_to_native_trampoline (&info);
+			trampoline = (MonoPIFunc)mono_arch_get_interp_to_native_trampoline (&info);
 			mono_tramp_info_register (info, NULL);
 		}
-		mono_memory_barrier ();
+		if (trampoline) {
+			mono_memory_barrier ();
+			static_trampoline = trampoline;
+		}
+	} else  {
+		mono_memory_read_barrier (); // FIXME execute_barrier
 	}
 	return trampoline;
 }
@@ -6162,6 +6168,8 @@ common_vcall:
 					void *tramp = mini_get_single_step_trampoline ();
 					mono_memory_barrier ();
 					ss_tramp = (T)tramp;
+				} else {
+					mono_memory_read_barrier ();
 				}
 
 				/*
@@ -6192,6 +6200,8 @@ common_vcall:
 				void *tramp = mini_get_breakpoint_trampoline ();
 				mono_memory_barrier ();
 				bp_tramp = (T)tramp;
+			} else {
+				mono_memory_read_barrier ();
 			}
 
 			frame->ip = ip;

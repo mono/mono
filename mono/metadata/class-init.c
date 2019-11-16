@@ -5672,6 +5672,8 @@ mono_class_create_array_fill_type (void)
 	klass.size_inited = 1;
 	klass.name = "array_filler_type";
 
+	mono_memory_read_barrier ();
+
 	return &klass;
 }
 

@@ -181,8 +181,10 @@ mono_remoting_marshal_init (void)
 	static gboolean module_initialized = FALSE;
 	static gboolean icalls_registered = FALSE;
 
-	if (module_initialized)
+	if (module_initialized) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	byte_array_class = mono_class_create_array (mono_defaults.byte_class, 1);
 
@@ -1486,6 +1488,8 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 		tp_load = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_load != NULL);
+	} else {
+		mono_memory_read_barrier ();
 	}
 #endif
 
@@ -1788,6 +1792,8 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		tp_store = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_store != NULL);
+	} else {
+		mono_memory_read_barrier ();
 	}
 #endif
 

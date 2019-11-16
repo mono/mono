@@ -2748,7 +2748,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		mono_memory_barrier ();
 		param_reg_to_index_inited = 1;
 	} else {
-		mono_memory_barrier ();
+		mono_memory_barrier (); // FIXME mono_memory_read_barrier () should suffice.
 	}
 
 	p->res = 0;
@@ -8516,8 +8516,10 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 	if (has_target) {
 		static guint8* cached = NULL;
 
-		if (cached)
+		if (cached) {
+			mono_memory_read_barrier (); // FIXME execute_barrier
 			return cached;
+		}
 
 		if (mono_ee_features.use_aot_trampolines) {
 			start = (guint8 *)mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
@@ -8539,8 +8541,10 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			return NULL;
 
 		code = cache [sig->param_count];
-		if (code)
+		if (code) {
+			mono_memory_read_barrier (); // FIXME execute_barrier
 			return code;
+		}
 
 		if (mono_ee_features.use_aot_trampolines) {
 			char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", sig->param_count);

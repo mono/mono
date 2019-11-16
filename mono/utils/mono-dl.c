@@ -322,8 +322,11 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	}
 
 	if (sym) {
-		if (symbol)
+		if (symbol) {
+			// Caller is often but not always caching in a global.
+			mono_memory_barrier ();
 			*symbol = sym;
+		}
 		return NULL;
 	}
 	if (symbol)

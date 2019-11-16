@@ -1002,12 +1002,16 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				g_assert (m);
 				mono_memory_barrier ();
 				memcpy_method [size] = m;
+			} else {
+				mono_memory_read_barrier ();
 			}
 			if (!domain_info->memcpy_addr [size]) {
 				gpointer addr = mono_compile_method_checked (memcpy_method [size], error);
 				mono_memory_barrier ();
 				domain_info->memcpy_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 			return domain_info->memcpy_addr [size];
 		} else {
@@ -1023,12 +1027,16 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				g_assert (m);
 				mono_memory_barrier ();
 				bzero_method [size] = m;
+			} else {
+				mono_memory_read_barrier ();
 			}
 			if (!domain_info->bzero_addr [size]) {
 				gpointer addr = mono_compile_method_checked (bzero_method [size], error);
 				mono_memory_barrier ();
 				domain_info->bzero_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 			return domain_info->bzero_addr [size];
 		}
@@ -2027,6 +2035,8 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_memory_barrier ();
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
+		} else {
+			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
 		addr = tramp_addr;
 	} else {
@@ -2039,6 +2049,8 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_memory_barrier ();
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
+		} else {
+			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
 		addr = tramp_addr;
 	}

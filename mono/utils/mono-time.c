@@ -143,7 +143,7 @@ mono_msec_boottime (void)
 		timebase_inited = TRUE;
 	} else {
 		// This barrier prevents reading s_TimebaseInfo before reading timebase_inited.
-		mono_memory_barrier ();
+		mono_memory_barrier (); // FIXME mono_memory_read_barrier () is sufficient.
 	}
 	return (mach_absolute_time () * s_TimebaseInfo.numer / s_TimebaseInfo.denom) / tccMillieSecondsToNanoSeconds;
 

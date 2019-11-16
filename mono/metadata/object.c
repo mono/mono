@@ -3709,6 +3709,8 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 			m = mono_class_get_method_from_name_checked (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC, error);
 			goto_if_nok (error, return_null);
 			g_assert (m);
+		} else {
+			mono_memory_read_barrier ();
 		}
 
 		v = &ptr;
@@ -4768,11 +4770,15 @@ serialize_or_deserialize_object (MonoObjectHandle obj, const gchar *method_name,
 		MonoClass *klass = mono_class_get_remoting_services_class ();
 		*method = mono_class_get_method_from_name_checked (klass, method_name, -1, 0, error);
 		return_val_if_nok (error, mono_new_null ());
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	if (!*method) {
 		mono_error_set_exception_instance (error, NULL);
 		return mono_new_null ();
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	void *params [ ] = { MONO_HANDLE_RAW (obj) };
@@ -4808,6 +4814,8 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 	if (!get_proxy_method) {
 		get_proxy_method = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "GetTransparentProxy", 0, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 		
 	g_assert (mono_class_is_marshalbyref (MONO_HANDLE_GETVAL (obj, vtable)->klass));
@@ -5638,6 +5646,8 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			if (!box_method) {
 				box_method = mono_class_get_method_from_name_checked (pointer_class, "Box", -1, 0, error);
 				mono_error_assert_ok (error);
+			} else {
+				mono_memory_read_barrier ();
 			}
 
 			g_assert (res->vtable->klass == mono_defaults.int_class);
@@ -5897,6 +5907,8 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 				return NULL;
 			}
 			vtable->domain->create_proxy_for_type_method = im;
+		} else {
+			mono_memory_read_barrier ();
 		}
 	
 		pa [0] = mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (vtable->klass), error);
@@ -5943,7 +5955,10 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 				mono_error_set_not_supported (error, "Linked away.");
 				return MONO_HANDLE_NEW (MonoObject, NULL);
 			}
+			mono_memory_barrier ();
 			vtable->domain->create_proxy_for_type_method = im;
+		} else {
+			mono_memory_read_barrier ();
 		}
 
 		// FIXMEcoop
@@ -8167,6 +8182,8 @@ mono_wait_handle_new (MonoDomain *domain, HANDLE handle, MonoError *error)
 	/* Even though this method is virtual, it's safe to invoke directly, since the object type matches.  */
 	if (!handle_set)
 		handle_set = mono_class_get_property_from_name_internal (mono_defaults.manualresetevent_class, "Handle")->set;
+	else
+		mono_memory_read_barrier ();
 
 	params [0] = &handle;
 
@@ -8185,6 +8202,8 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	if (!f_safe_handle) {
 		f_safe_handle = mono_class_get_field_from_name_full (mono_defaults.manualresetevent_class, "safeWaitHandle", NULL);
 		g_assert (f_safe_handle);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	mono_field_get_value_internal ((MonoObject*)handle, f_safe_handle, &sh);
@@ -8208,6 +8227,8 @@ mono_get_context_capture_method (void)
 		mono_class_init_internal (execution_context);
 		method = mono_class_get_method_from_name_checked (execution_context, "Capture", 0, 0, error);
 		mono_error_assert_ok (error);
+	} else if (method) {
+		mono_memory_read_barrier ();
 	}
 
 	return method;
@@ -8380,6 +8401,8 @@ mono_message_init (MonoDomain *domain,
 		init_message_method = mono_class_get_method_from_name_checked (mono_defaults.mono_method_message_class, "InitMessage", 2, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (init_message_method != NULL);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	error_init (error);
@@ -8431,6 +8454,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 			return NULL;
 		}
 		real_proxy->vtable->domain->private_invoke_method = im;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	pa [0] = real_proxy;
@@ -8497,6 +8522,8 @@ mono_message_invoke (MonoThreadInfo *mono_thread_info_current_var,
 
 		mono_memory_barrier ();
 		object_array_klass = klass;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	MonoVTable *vt = mono_class_vtable_checked (domain, object_array_klass, error);
@@ -8551,6 +8578,8 @@ prepare_to_string_method (MonoObject *obj, void **target)
 		ERROR_DECL (error);
 		to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	method = mono_object_get_virtual_method_internal (obj, to_string);
@@ -8986,6 +9015,8 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 			mono_error_set_not_supported (error, "Linked away.");
 			goto return_null;
 		}
+	} else {
+		mono_memory_read_barrier ();
 	}
 	
 	field_class = mono_class_from_mono_type_internal (field->type);
@@ -9090,6 +9121,8 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
 		}
+	} else {
+		mono_memory_read_barrier ();
 	}
 	
 	/* MonoType *type = m_class_get_byval_arg (klass); */
@@ -9207,6 +9240,8 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 			mono_error_set_not_supported (error, "Linked away.");
 			return FALSE;
 		}
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	gpointer args[3];

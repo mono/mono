@@ -922,6 +922,8 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 		mono_class_init_internal (missing_klass);
 		missing_value_field = mono_class_get_field_from_name_full (missing_klass, "Value", NULL);
 		g_assert (missing_value_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, missing_value_field, NULL, error));
@@ -941,6 +943,8 @@ get_dbnull_object (MonoDomain *domain, MonoError *error)
 		dbnull_klass = mono_class_get_dbnull_class ();
 		dbnull_value_field = mono_class_get_field_from_name_full (dbnull_klass, "Value", NULL);
 		g_assert (dbnull_value_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, error));
@@ -979,6 +983,8 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 		g_assert (m);
 		mono_memory_barrier ();
 		ctor = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	void *args [16];
@@ -1300,6 +1306,8 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 
 		mono_memory_barrier ();
 		ctor = tmp;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	MonoReflectionMethodBodyHandle ret;
@@ -2408,6 +2416,8 @@ mono_reflection_get_param_info_member_and_pos (MonoReflectionParameterHandle p, 
 		MonoClassField *f = mono_class_get_field_from_name_full (klass, "MemberImpl", NULL);
 		g_assert (f);
 		member_field = f;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	MonoObject *member;
 	mono_field_get_value_internal (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, p)), member_field, &member);
@@ -2418,6 +2428,8 @@ mono_reflection_get_param_info_member_and_pos (MonoReflectionParameterHandle p, 
 		MonoClassField *f = mono_class_get_field_from_name_full (klass, "PositionImpl", NULL);
 		g_assert (f);
 		pos_field = f;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	mono_field_get_value_internal (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, p)), pos_field, out_position);
 }
@@ -3129,6 +3141,8 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableTo", 1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (method);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	/* 

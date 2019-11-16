@@ -174,10 +174,14 @@ mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, Mo
 
 	if (!threadpool_class)
 		threadpool_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "ThreadPool");
+	else
+		mono_memory_read_barrier ();
 
 	if (!unsafe_queue_custom_work_item_method) {
 		unsafe_queue_custom_work_item_method = mono_class_get_method_from_name_checked (threadpool_class, "UnsafeQueueCustomWorkItem", 2, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (unsafe_queue_custom_work_item_method);
 
@@ -454,6 +458,8 @@ mono_threadpool_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod
 
 	if (!async_call_klass)
 		async_call_klass = mono_class_load_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
+	else
+		mono_memory_read_barrier ();
 
 	error_init (error);
 

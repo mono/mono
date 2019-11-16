@@ -820,6 +820,8 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 	if (field == NULL) {
 		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
 		g_assert (field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	/*pedump doesn't create an appdomin, so the domain object doesn't exist.*/
@@ -878,8 +880,10 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
 	static MonoMethod *method; // cache
 
-	if (method)
+	if (method) {
+		mono_memory_read_barrier ();
 		return method;
+	}
 
 	// not cached yet, fill cache under caller's lock
 
@@ -901,8 +905,10 @@ mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
 	static MonoMethod *method; // cache
 
-	if (method)
+	if (method) {
+		mono_memory_read_barrier ();
 		return method;
+	}
 
 	// not cached yet, fill cache under caller's lock
 
@@ -1377,6 +1383,8 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 
 	g_assert (domain != NULL && !MONO_HANDLE_IS_NULL (fname));
 
+	// FIXME cache?
+
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoAssemblyResolve", -1, 0, error);
 	g_assert (method != NULL);
 
@@ -1407,7 +1415,9 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		goto leave;
 	}
 #else
-	if (!method) {
+	if (method) {
+		mono_memory_read_barrier ();
+	} else {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
@@ -1575,6 +1585,8 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	if (assembly_load_field == NULL) {
 		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
 		g_assert (assembly_load_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	if (!MONO_HANDLE_GET_FIELD_BOOL (appdomain, MonoObject*, assembly_load_field))
@@ -1587,6 +1599,8 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	if (assembly_load_method == NULL) {
 		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, error);
 		g_assert (assembly_load_method);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	void *params [1];

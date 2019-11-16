@@ -543,6 +543,8 @@ netcore_resolve_with_dll_import_resolver (MonoAssemblyLoadContext *alc, MonoAsse
 		MonoMethod *m = mono_class_get_method_from_name_checked (native_lib_class, "MonoLoadLibraryCallbackStub", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 
@@ -604,6 +606,8 @@ netcore_resolve_with_load (MonoAssemblyLoadContext *alc, const char *scope, Mono
 		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDll", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 
@@ -662,6 +666,8 @@ netcore_resolve_with_resolving_event (MonoAssemblyLoadContext *alc, MonoAssembly
 		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDllUsingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 		resolve = m;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	g_assert (resolve);
 

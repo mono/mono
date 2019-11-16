@@ -219,6 +219,8 @@ test_toggleref_callback (MonoObject *obj)
 	if (!mono_toggleref_test_field) {
 		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	/* In coop mode, important to not call a helper that will pin obj! */

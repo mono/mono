@@ -626,8 +626,10 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 	if (!ctor) {
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
-	
+
 	params [0] = mono_type_get_object_checked (mono_domain_get (), t, error);
 	return_val_if_nok (error, NULL);
 
@@ -654,6 +656,8 @@ create_cattr_named_arg (void *minfo, MonoObject *typedarg, MonoError *error)
 	if (!ctor) {
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	params [0] = minfo;
@@ -1454,6 +1458,8 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 
 		mono_memory_barrier (); //safe publish!
 		ctor = tmp;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	domain = mono_domain_get ();

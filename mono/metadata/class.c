@@ -2338,6 +2338,9 @@ mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoTyp
 				if (!mono_metadata_type_equal_full (type, field_type, TRUE))
 					continue;
 			}
+			// Caller is often but not always caching in a global, accessed from multiple threads.
+			// FIXME Remove this when all callers fixed.
+			mono_memory_barrier ();
 			return field;
 		}
 		klass = m_class_get_parent (klass);
@@ -3329,6 +3332,10 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 	if (!klass)
 		g_error ("Runtime critical type %s.%s not found", name_space, name);
 	mono_error_assertf_ok (error, "Could not load runtime critical type %s.%s", name_space, name);
+
+	// Caller is often but not always caching in a global accessed from multiple threads.
+	mono_memory_barrier ();
+
 	return klass;
 }
 
@@ -5440,6 +5447,9 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 		if (res)
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
 
+		if (res)
+			mono_memory_barrier(); // Caller often caches in global.
+
 		return res;
 	}
 
@@ -5469,6 +5479,9 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	else {
 	    res = mono_find_method_in_metadata (klass, name, param_count, flags);
 	}
+
+	if (res)
+		mono_memory_barrier(); // Caller often caches in global.
 
 	return res;
 }

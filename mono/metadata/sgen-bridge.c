@@ -585,6 +585,8 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 	if (!mono_bridge_test_field) {
 		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
 		g_assert (mono_bridge_test_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	/*We mark all objects in a scc with live objects as reachable by scc*/
@@ -635,6 +637,8 @@ bridge_test_positive_status (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs
 	if (!mono_bridge_test_field) {
 		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
 		g_assert (mono_bridge_test_field);
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	/*We mark all objects in a scc with live objects as reachable by scc*/

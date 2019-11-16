@@ -170,7 +170,7 @@ emit_aotconst (MonoCompile *cfg, guint8 *code, int dreg, int patch_type, gpointe
 const char*
 mono_arch_regname (int reg)
 {
-	static const char * rnames[] = {
+	static const char * const rnames[] = {
 		"arm_r0", "arm_r1", "arm_r2", "arm_r3", "arm_v1",
 		"arm_v2", "arm_v3", "arm_v4", "arm_v5", "arm_v6",
 		"arm_v7", "arm_fp", "arm_ip", "arm_sp", "arm_lr",

@@ -2653,7 +2653,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 	GSList *list;
 
 	if (ass->friend_assembly_names_inited)
-		return;
+		goto exit;
 
 	attrs = mono_custom_attrs_from_assembly_checked (ass, FALSE, error);
 	mono_error_assert_ok (error);
@@ -2661,13 +2661,13 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		mono_assemblies_lock ();
 		ass->friend_assembly_names_inited = TRUE;
 		mono_assemblies_unlock ();
-		return;
+		goto exit;
 	}
 
 	mono_assemblies_lock ();
 	if (ass->friend_assembly_names_inited) {
 		mono_assemblies_unlock ();
-		return;
+		goto exit;
 	}
 	mono_assemblies_unlock ();
 
@@ -2710,14 +2710,17 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		mono_assemblies_unlock ();
 		g_slist_foreach (list, free_item, NULL);
 		g_slist_free (list);
-		return;
+		goto exit;
 	}
 	ass->friend_assembly_names = list;
 
 	/* Because of the double checked locking pattern above */
 	mono_memory_barrier ();
+
 	ass->friend_assembly_names_inited = TRUE;
 	mono_assemblies_unlock ();
+exit:
+	mono_memory_read_barrier ();
 }
 
 struct HasReferenceAssemblyAttributeIterData {

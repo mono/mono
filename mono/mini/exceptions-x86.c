@@ -1182,8 +1182,10 @@ mono_tasklets_arch_restore (void)
 	static guint8* saved = NULL;
 	guint8 *code, *start;
 
-	if (saved)
+	if (saved) {
+		mono_memory_read_barrier (); // FIXME execute_barrier
 		return (MonoContinuationRestore)saved;
+	}
 
 	const int size = 48;
 

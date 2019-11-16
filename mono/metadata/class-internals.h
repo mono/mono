@@ -1014,7 +1014,9 @@ mono_class_get_##shortname##_class (void)	\
 		klass = mono_class_load_from_name (mono_defaults.corlib, name_space, name);	\
 		mono_memory_barrier ();	\
 		tmp_class = klass;	\
-	}	\
+	} else {	\
+		mono_memory_read_barrier (); \
+	} \
 	return klass;	\
 }
 
@@ -1031,7 +1033,9 @@ mono_class_try_get_##shortname##_class (void)	\
 		tmp_class = klass;	\
 		mono_memory_barrier ();	\
 		inited = TRUE;	\
-	}	\
+	} else {	\
+		mono_memory_read_barrier ();	\
+	} \
 	return klass;	\
 }
 
