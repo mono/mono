@@ -459,4 +459,25 @@ describe("The WebAssembly Http Test Suite",function(){
       );
     }, DEFAULT_WS_TIMEOUT);  
     
+    it('OverrideDefaultOptions: should override credentials.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      spyOn(fetch, 'apply');
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:GetStreamAsync_ReadZeroBytes_Success", []).then(
+        (result) => 
+        {
+            try {
+              expect(fetch.apply).toHaveBeenCalledWith(window, [
+                ''
+              ])
+              assert.equal(result, 0, "result doesn't match expected result 0");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
   });

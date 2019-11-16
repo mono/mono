@@ -12,11 +12,18 @@ namespace WebAssembly.Net.Http.HttpClient {
 		static JSObject fetch;
 		static JSObject window;
 
-		/// <summary>
-		/// Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
-		/// Defaults to <see cref="FetchCredentialsOption.SameOrigin"/>.
-		/// </summary>
-		public static FetchCredentialsOption DefaultCredentials { get; set; }
+        public static string FetchCredentialsOptionPropertyKey { get; }
+            = $"{nameof(WasmHttpMessageHandler)}+{nameof(FetchCredentialsOption)}";
+        public static string RequestCachePropertyKey { get; } 
+            = $"{nameof(WasmHttpMessageHandler)}+{nameof(RequestCache)}";
+        public static string RequestModePropertyKey { get; } 
+            = $"{nameof(WasmHttpMessageHandler)}+{nameof(RequestMode)}";
+
+        /// <summary>
+        /// Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
+        /// Defaults to <see cref="FetchCredentialsOption.SameOrigin"/>.
+        /// </summary>
+        public static FetchCredentialsOption DefaultCredentials { get; set; }
 		    = FetchCredentialsOption.SameOrigin;
 
 		public static RequestCache Cache { get; set; }
@@ -24,8 +31,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 		public static RequestMode Mode { get; set; }
 		    = RequestMode.Cors;
-
-
+       
 		/// <summary>
 		/// Gets whether the current Browser supports streaming responses
 		/// </summary>
@@ -76,17 +82,41 @@ namespace WebAssembly.Net.Http.HttpClient {
 				var requestObject = new JSObject ();
 				requestObject.SetObjectProperty ("method", request.Method.Method);
 
+                var requestProperties = request.Properties;
 				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
 				// standard values and meanings
-				requestObject.SetObjectProperty ("credentials", DefaultCredentials);
+                if (requestProperties.ContainsKey(FetchCredentialsOptionPropertyKey))
+                {
+                    requestObject.SetObjectProperty("credentials", requestProperties[FetchCredentialsOptionPropertyKey]);
+                }
+                else
+                {
+                    requestObject.SetObjectProperty("credentials", DefaultCredentials);
+                }
 
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("cache", Cache);
 
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("mode", Mode);
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
+                // standard values and meanings
+                if (requestProperties.ContainsKey(RequestCachePropertyKey))
+                {
+                    requestObject.SetObjectProperty("cache", requestProperties[RequestCachePropertyKey]);
+                }
+                else
+                {
+                    requestObject.SetObjectProperty("cache", Cache);
+                }
+
+
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
+                // standard values and meanings
+                if (requestProperties.ContainsKey(RequestModePropertyKey))
+                {
+                    requestObject.SetObjectProperty("mode", requestProperties[RequestModePropertyKey]);
+                }
+                else
+                {
+                    requestObject.SetObjectProperty("mode", Mode);
+                }                
 
 				// We need to check for body content
 				if (request.Content != null) {

@@ -96,6 +96,55 @@ namespace TestSuite
             return requestTcs.Task;
         }
 
+        public static string GetFetchCredentialsOptionPropertyKey()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.FetchCredentialsOptionPropertyKey;
+        }
+
+        public static FetchCredentialsOption GetDefaultFetchCredentials()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.DefaultCredentials;
+        }
+
+        public static RequestCache GetDefaultRequestCache()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.Cache;
+        }
+
+        public static RequestMode GetDefaultRequestMode()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.Mode;
+        }
+
+        public static async Task<object> Override_Default_Options(string option, object value, string url)
+        {
+            var requestTcs = new TaskCompletionSource<object>();
+
+            var message = new HttpRequestMessage(HttpMethod.Get, url);
+            message.Properties[option] = value;
+            cts = new CancellationTokenSource();
+
+            try
+            {
+                using (HttpClient httpClient = CreateHttpClient())
+                {
+                    using (var rspMsg = await httpClient.SendAsync(message, cts.Token))
+                    {
+                        requestTcs.SetResult(rspMsg.Content?.ReadAsStringAsync().Result.Length);
+                    }
+                }
+            }
+            catch (Exception exc2)
+            {
+                requestTcs.SetException(exc2);
+            }
+            return requestTcs.Task;
+        }
+
         static HttpClient CreateHttpClient()
         {
             //Console.WriteLine("Create  HttpClient");
