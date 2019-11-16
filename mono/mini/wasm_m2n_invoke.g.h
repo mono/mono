@@ -851,6 +851,16 @@ wasm_invoke_iili (void *target_func, InterpMethodArguments *margs)
 }
 
 static void
+wasm_invoke_iiliiil (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3, int arg_4, gint64 arg_5);
+	T func = (T)target_func;
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], get_long_arg (margs, 6));
+	*(int*)margs->retval = res;
+
+}
+
+static void
 wasm_invoke_iillli (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, gint64 arg_1, gint64 arg_2, gint64 arg_3, int arg_4);
@@ -1488,6 +1498,13 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 								if (cookie[7] == '\0') {
 									// found: IILIIII depth 11
 									wasm_invoke_iiliiii (target_func, margs);
+									return;
+								}
+							}
+							else if (cookie[6] == 'L') {
+								if (cookie[7] == '\0') {
+									// found: IILIIIL depth 12
+									wasm_invoke_iiliiil (target_func, margs);
 									return;
 								}
 							}

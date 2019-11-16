@@ -115,6 +115,7 @@ class Driver {
 		"FI",
 		"IIL",
 		"IILI",
+		"IILIIIL",
 		"IILLLI",
 		"IDIII",
 		"LII",
