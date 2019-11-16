@@ -85,38 +85,27 @@ namespace WebAssembly.Net.Http.HttpClient {
                 var requestProperties = request.Properties;
 				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
 				// standard values and meanings
-                if (requestProperties.ContainsKey(FetchCredentialsOptionPropertyKey))
-                {
-                    requestObject.SetObjectProperty("credentials", requestProperties[FetchCredentialsOptionPropertyKey]);
+                if (requestProperties.ContainsKey (FetchCredentialsOptionPropertyKey)) {
+                    requestObject.SetObjectProperty ("credentials", requestProperties[FetchCredentialsOptionPropertyKey]);
+                } else {
+                    requestObject.SetObjectProperty ("credentials", DefaultCredentials);
                 }
-                else
-                {
-                    requestObject.SetObjectProperty("credentials", DefaultCredentials);
-                }
-
 
                 // See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
                 // standard values and meanings
-                if (requestProperties.ContainsKey(RequestCachePropertyKey))
-                {
-                    requestObject.SetObjectProperty("cache", requestProperties[RequestCachePropertyKey]);
+                if (requestProperties.ContainsKey (RequestCachePropertyKey)) {
+                    requestObject.SetObjectProperty ("cache", requestProperties[RequestCachePropertyKey]);
+                } else {
+                    requestObject.SetObjectProperty ("cache", Cache);
                 }
-                else
-                {
-                    requestObject.SetObjectProperty("cache", Cache);
-                }
-
 
                 // See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
                 // standard values and meanings
-                if (requestProperties.ContainsKey(RequestModePropertyKey))
-                {
-                    requestObject.SetObjectProperty("mode", requestProperties[RequestModePropertyKey]);
+                if (requestProperties.ContainsKey(RequestModePropertyKey)) {
+                    requestObject.SetObjectProperty ("mode", requestProperties[RequestModePropertyKey]);
+                } else {
+                    requestObject.SetObjectProperty ("mode", Mode);
                 }
-                else
-                {
-                    requestObject.SetObjectProperty("mode", Mode);
-                }                
 
 				// We need to check for body content
 				if (request.Content != null) {
