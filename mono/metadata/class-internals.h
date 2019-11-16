@@ -1004,35 +1004,40 @@ MonoClass* mono_class_get_##shortname##_class (void);
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_try_get_##shortname##_class (void);
 
+// GENERATE_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name whenever
+// its cache is null. i.e. potentially repeatedly, though it is expected to succeed
+// the first time.
+//
 #define GENERATE_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
-mono_class_get_##shortname##_class (void)	\
-{	\
-	static MonoClass *tmp_class;	\
-	MonoClass *klass = tmp_class;	\
-	if (!klass) {	\
+mono_class_get_##shortname##_class (void)							\
+{												\
+	MONO_STATIC_POINTER_INIT (MonoClass, klass)						\
 		klass = mono_class_load_from_name (mono_defaults.corlib, name_space, name);	\
-		mono_memory_barrier ();	\
-		tmp_class = klass;	\
-	}	\
-	return klass;	\
+	MONO_STATIC_POINTER_INIT_END (MonoClass, klass)						\
+	return klass;										\
 }
 
-#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
-MonoClass*	\
-mono_class_try_get_##shortname##_class (void)	\
-{	\
-	static volatile MonoClass *tmp_class;	\
-	static volatile gboolean inited;	\
-	MonoClass *klass = (MonoClass *)tmp_class;	\
-	mono_memory_barrier ();	\
-	if (!inited) {	\
+// GENERATE_TRY_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name approximately
+// only once. i.e. if it fails, it will return null and not retry.
+// In a race it might try a few times, but not indefinitely.
+//
+#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name)				\
+MonoClass*											\
+mono_class_try_get_##shortname##_class (void)							\
+{												\
+	static volatile MonoClass *static_class;	/* FIXME remove volatile */		\
+	static volatile gboolean inited;		/* FIXME remove volatile */		\
+	MonoClass *klass = (MonoClass *)static_class;	/* FIXME remove cast */			\
+	mono_memory_barrier ();				/* FIXME remove this */			\
+	if (!inited) {										\
 		klass = mono_class_try_load_from_name (mono_defaults.corlib, name_space, name);	\
-		tmp_class = klass;	\
-		mono_memory_barrier ();	\
-		inited = TRUE;	\
-	}	\
-	return klass;	\
+		mono_memory_barrier ();								\
+		static_class = klass;								\
+		mono_memory_barrier ();								\
+		inited = TRUE;									\
+	}											\
+	return klass;										\
 }
 
 GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL (safehandle)
@@ -1506,6 +1511,39 @@ mono_method_is_constructor (MonoMethod *method);
 
 gboolean
 mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
+
+// There are many ways to do on-demand initialization.
+//   Some allow multiple concurrent initializations. Some do not.
+//   Some allow multiple concurrent writes to the global. Some do not.
+//
+// Booleans or names capturing these factors would be desirable.
+//	RacyInit?
+//
+// This form allows both such races, on the understanding that,
+// even if the initialization occurs multiple times, every result is equivalent,
+// and the goal is not to initialize no more than once, but for the steady state
+// to stop rerunning the initialization.
+//
+// It may be desirable to replace this with mono_lazy_initialize, etc.
+//
+// These macros cannot be wrapped in do/while as they inject "name" into invoking scope.
+//
+#define MONO_STATIC_POINTER_INIT(type, name)					\
+	static type *static_ ## name;						\
+	type *name; 								\
+	name = static_ ## name;							\
+	if (!name) {								\
+		/* Custom code here to initialize name */
+#define MONO_STATIC_POINTER_INIT_END(type, name)				\
+		if (name) {							\
+			/* Success, commit to static. */			\
+			mono_memory_barrier ();					\
+			static_ ## name = name;					\
+		} else {							\
+			/* Try one more time in case another thread did it. */	\
+			name = static_ ## name;					\
+		}								\
+	}									\
 
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"

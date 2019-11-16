@@ -914,15 +914,16 @@ static MonoObjectHandle
 mono_get_reflection_missing_object (MonoDomain *domain)
 {
 	ERROR_DECL (error);
-	static MonoClassField *missing_value_field = NULL;
-	
-	if (!missing_value_field) {
-		MonoClass *missing_klass;
-		missing_klass = mono_class_get_missing_class ();
+
+	MONO_STATIC_POINTER_INIT (MonoClassField, missing_value_field)
+
+		MonoClass *missing_klass = mono_class_get_missing_class ();
 		mono_class_init_internal (missing_klass);
 		missing_value_field = mono_class_get_field_from_name_full (missing_klass, "Value", NULL);
 		g_assert (missing_value_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, missing_value_field)
+
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, missing_value_field, NULL, error));
 	mono_error_assert_ok (error);
@@ -932,16 +933,16 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 static MonoObjectHandle
 get_dbnull_object (MonoDomain *domain, MonoError *error)
 {
-	static MonoClassField *dbnull_value_field = NULL;
-
 	error_init (error);
 
-	if (!dbnull_value_field) {
-		MonoClass *dbnull_klass;
-		dbnull_klass = mono_class_get_dbnull_class ();
+	MONO_STATIC_POINTER_INIT (MonoClassField, dbnull_value_field)
+
+		MonoClass *dbnull_klass = mono_class_get_dbnull_class ();
 		dbnull_value_field = mono_class_get_field_from_name_full (dbnull_klass, "Value", NULL);
 		g_assert (dbnull_value_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, dbnull_value_field)
+
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, error));
 	return obj;
@@ -973,13 +974,12 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	MonoReflectionParameterHandle param = MONO_HANDLE_CAST (MonoReflectionParameter, mono_object_new_handle (domain, mono_class_get_mono_parameter_info_class (), error));
 	goto_if_nok (error, leave);
 
-	static MonoMethod *ctor;
-	if (!ctor) {
-		MonoMethod *m = mono_class_get_method_from_name_checked (mono_class_get_mono_parameter_info_class (), ".ctor", 7, 0, error);
-		g_assert (m);
-		mono_memory_barrier ();
-		ctor = m;
-	}
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
+
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_mono_parameter_info_class (), ".ctor", 7, 0, error);
+		g_assert (ctor);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	void *args [16];
 
@@ -1292,15 +1292,13 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	} else
 		local_var_sig_token = 0; //FIXME
 
-	static MonoMethod *ctor;
-	if (!ctor) {
-		MonoMethod *tmp = mono_class_get_method_from_name_checked (mono_class_get_method_body_class (), ".ctor", 6, 0, error);
-		mono_error_assert_ok (error);
-		g_assert (tmp);
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
 
-		mono_memory_barrier ();
-		ctor = tmp;
-	}
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_method_body_class (), ".ctor", 6, 0, error);
+		mono_error_assert_ok (error);
+		g_assert (ctor);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	MonoReflectionMethodBodyHandle ret;
 	ret = MONO_HANDLE_CAST (MonoReflectionMethodBody, mono_object_new_handle (domain, mono_class_get_method_body_class (), error));
@@ -2403,22 +2401,20 @@ mono_reflection_get_param_info_member_and_pos (MonoReflectionParameterHandle p, 
 
 	/* These two fields are part of ParameterInfo instead of RuntimeParameterInfo, and they cannot be moved */
 
-	static MonoClassField *member_field;
-	if (!member_field) {
-		MonoClassField *f = mono_class_get_field_from_name_full (klass, "MemberImpl", NULL);
-		g_assert (f);
-		member_field = f;
-	}
+	MONO_STATIC_POINTER_INIT (MonoClassField, member_field)
+		member_field = mono_class_get_field_from_name_full (klass, "MemberImpl", NULL);
+		g_assert (member_field);
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, member_field)
+
 	MonoObject *member;
 	mono_field_get_value_internal (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, p)), member_field, &member);
 	MONO_HANDLE_ASSIGN_RAW (member_impl, member);
 
-	static MonoClassField *pos_field;
-	if (!pos_field) {
-		MonoClassField *f = mono_class_get_field_from_name_full (klass, "PositionImpl", NULL);
-		g_assert (f);
-		pos_field = f;
-	}
+	MONO_STATIC_POINTER_INIT (MonoClassField, pos_field)
+		pos_field = mono_class_get_field_from_name_full (klass, "PositionImpl", NULL);
+		g_assert (pos_field);
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, pos_field)
+
 	mono_field_get_value_internal (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, p)), pos_field, out_position);
 }
 
@@ -3121,15 +3117,16 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 {
 	MonoObject *res, *exc;
 	void *params [1];
-	static MonoMethod *method = NULL;
 
 	error_init (error);
 
-	if (method == NULL) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
+
 		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableTo", 1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (method);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	/* 
 	 * The result of mono_type_get_object_checked () might be a System.MonoType but we

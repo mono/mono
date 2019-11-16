@@ -2717,6 +2717,7 @@ print_unimplemented_interface_method_info (MonoClass *klass, MonoClass *ic, Mono
 static MonoMethod*
 mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 {
+	// FIXME move state to caller
 	gboolean static_iter = FALSE;
 
 	if (!iter)
@@ -4089,34 +4090,27 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	g_free (fields_has_references);
 }
 
-static MonoMethod *default_ghc = NULL;
-static MonoMethod *default_finalize = NULL;
 static int finalize_slot = -1;
-static int ghc_slot = -1;
 
 static void
 initialize_object_slots (MonoClass *klass)
 {
-	int i;
-	if (default_ghc)
+	if (klass != mono_defaults.object_class || finalize_slot >= 0)
 		return;
-	if (klass == mono_defaults.object_class) {
-		mono_class_setup_vtable (klass);
-		for (i = 0; i < klass->vtable_size; ++i) {
-			MonoMethod *cm = klass->vtable [i];
-       
-			if (!strcmp (cm->name, "GetHashCode"))
-				ghc_slot = i;
-			else if (!strcmp (cm->name, "Finalize"))
-				finalize_slot = i;
+
+	int i;
+
+	mono_class_setup_vtable (klass);
+
+	for (i = 0; i < klass->vtable_size; ++i) {
+		if (!strcmp (klass->vtable [i]->name, "Finalize")) {
+			int const j = finalize_slot;
+			g_assert (j == i || j == -1);
+			finalize_slot = i;
 		}
-
-		g_assert (ghc_slot >= 0);
-		default_ghc = klass->vtable [ghc_slot];
-
-		g_assert (finalize_slot >= 0);
-		default_finalize = klass->vtable [finalize_slot];
 	}
+
+	g_assert (finalize_slot >= 0);
 }
 
 int
@@ -4128,7 +4122,8 @@ mono_class_get_object_finalize_slot ()
 MonoMethod *
 mono_class_get_default_finalize_method ()
 {
-	return default_finalize;
+	int const i = finalize_slot;
+	return (i < 0) ? NULL : mono_defaults.object_class->vtable [i];
 }
 
 typedef struct {
@@ -4426,8 +4421,7 @@ mono_class_init_internal (MonoClass *klass)
 
 	mono_class_setup_supertypes (klass);
 
-	if (!default_ghc)
-		initialize_object_slots (klass);
+	initialize_object_slots (klass);
 
 	/* 
 	 * Initialize the rest of the data without creating a generic vtable if possible.
@@ -4476,18 +4470,6 @@ mono_class_init_internal (MonoClass *klass)
 		vtable_size = gklass->vtable_size;
 	} else {
 		/* General case */
-
-		/* ghcimpl is not currently used
-		klass->ghcimpl = 1;
-		if (klass->parent) {
-			MonoMethod *cmethod = klass->vtable [ghc_slot];
-			if (cmethod->is_inflated)
-				cmethod = ((MonoMethodInflated*)cmethod)->declaring;
-			if (cmethod == default_ghc) {
-				klass->ghcimpl = 0;
-			}
-		}
-		*/
 
 		/* C# doesn't allow interfaces to have cctors */
 		if (!MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || klass->image != mono_defaults.corlib) {
@@ -5671,6 +5653,8 @@ mono_class_create_array_fill_type (void)
 	klass.sizes.element_size = 8;
 	klass.size_inited = 1;
 	klass.name = "array_filler_type";
+
+	mono_memory_barrier ();
 
 	return &klass;
 }

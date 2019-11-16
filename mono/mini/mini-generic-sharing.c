@@ -1003,12 +1003,14 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				mono_memory_barrier ();
 				memcpy_method [size] = m;
 			}
+
 			if (!domain_info->memcpy_addr [size]) {
 				gpointer addr = mono_compile_method_checked (memcpy_method [size], error);
 				mono_memory_barrier ();
 				domain_info->memcpy_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
 			}
+
 			return domain_info->memcpy_addr [size];
 		} else {
 			if (!bzero_method [size]) {
@@ -1024,12 +1026,14 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				mono_memory_barrier ();
 				bzero_method [size] = m;
 			}
+
 			if (!domain_info->bzero_addr [size]) {
 				gpointer addr = mono_compile_method_checked (bzero_method [size], error);
 				mono_memory_barrier ();
 				domain_info->bzero_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
 			}
+
 			return domain_info->bzero_addr [size];
 		}
 	}
@@ -1045,11 +1049,14 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 			/* This can happen since all the entries in MonoGSharedVtMethodInfo are inflated, even those which are not used */
 			return NULL;
 
-		if (info_type == MONO_RGCTX_INFO_NULLABLE_CLASS_BOX)
-			method = mono_class_get_method_from_name_checked (klass, "Box", 1, 0, error);
-		else
-			method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
+		const char *name;
 
+		if (info_type == MONO_RGCTX_INFO_NULLABLE_CLASS_BOX)
+			name = "Box";
+		else
+			name = "Unbox";
+
+		method = mono_class_get_method_from_name_checked (klass, name, 1, 0, error);
 		return_val_if_nok (error, NULL);
 
 		addr = mono_jit_compile_method (method, error);
@@ -2028,6 +2035,7 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
 		}
+
 		addr = tramp_addr;
 	} else {
 		static gpointer tramp_addr;
@@ -2040,6 +2048,7 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
 		}
+
 		addr = tramp_addr;
 	}
 
@@ -2901,6 +2910,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			mono_memory_write_barrier ();
 			rgctx [offset + 0] = array;
 		}
+
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
 		size = mono_class_rgctx_get_array_size (i + 1, is_mrgctx);
@@ -2927,8 +2937,9 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
-	if (rgctx [rgctx_index]) {
-		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
+	gpointer const existing_info = rgctx [rgctx_index];
+	if (existing_info) {
+		info = existing_info;
 	} else {
 		/* Make sure other threads see the contents of info */
 		mono_memory_write_barrier ();

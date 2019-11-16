@@ -288,7 +288,7 @@ mono_hazard_pointer_restore_for_signal_handler (int small_id)
 
 	mono_memory_write_barrier ();
 
-	memset (hp_overflow, 0, sizeof (MonoThreadHazardPointers));
+	memset (hp_overflow, 0, sizeof (*hp_overflow));
 
 	mono_memory_write_barrier ();
 

@@ -1650,15 +1650,16 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 static MonoReflectionTypeHandle
 mono_reflection_type_get_underlying_system_type (MonoReflectionTypeHandle t, MonoError *error)
 {
-	static MonoMethod *method_get_underlying_system_type = NULL;
 	HANDLE_FUNCTION_ENTER ();
 
 	error_init (error);
 
-	if (!method_get_underlying_system_type) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, method_get_underlying_system_type)
+
 		method_get_underlying_system_type = mono_class_get_method_from_name_checked (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0, 0, error);
 		mono_error_assert_ok (error);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method_get_underlying_system_type)
 
 	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 
@@ -4457,16 +4458,16 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			   !strcmp (oklass->name, "FieldOnTypeBuilderInst") ||
 			   !strcmp (oklass->name, "MethodOnTypeBuilderInst") ||
 			   !strcmp (oklass->name, "ConstructorOnTypeBuilderInst")) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_checked (mono_class_get_module_builder_class (), "RuntimeResolve", 1, 0, error);
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, resolve_method)
+
+			resolve_method = mono_class_get_method_from_name_checked (mono_class_get_module_builder_class (), "RuntimeResolve", 1, 0, error);
 			mono_error_assert_ok (error);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		void *args [16];
-		args [0] = obj;
+			g_assert (resolve_method);
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve_method)
+
+		void *args [ ] = { obj };
 		obj = mono_runtime_invoke_checked (resolve_method, NULL, args, error);
 		goto_if_nok (error, return_null);
 		g_assert (obj);

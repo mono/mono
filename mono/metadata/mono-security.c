@@ -610,32 +610,47 @@ static MonoMethod *mono_method_securestring_encrypt;
 
 static void
 mono_invoke_protected_memory_method (MonoArrayHandle data, MonoObjectHandle scope,
-	const char *method_name, MonoMethod **method, MonoError *error)
+	const char *method_name, MonoMethod **pmethod, MonoError *error)
 {
-	if (!*method) {
+	MonoMethod *method = *pmethod;
+
+	if (!method) {
 		MonoDomain *domain = mono_domain_get ();
 		MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
 		if (system_security_assembly == NULL) {
-			system_security_assembly = mono_image_loaded_internal (alc, "System.Security", FALSE);
-			if (!system_security_assembly) {
+			MonoImage *image = mono_image_loaded_internal (alc, "System.Security", FALSE);
+			if (image) {
+				mono_memory_barrier ();
+				system_security_assembly = image;
+			} else {
 				MonoAssemblyOpenRequest req;
 				mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
 				MonoAssembly *sa = mono_assembly_request_open ("System.Security.dll", &req, NULL);
 				g_assert (sa);
-				system_security_assembly = mono_assembly_get_image_internal (sa);
+				image = mono_assembly_get_image_internal (sa);
+				if (image) {
+					mono_memory_barrier ();
+					system_security_assembly = image;
+				}
 			}
 		}
+
 		MonoClass *klass = mono_class_load_from_name (system_security_assembly,
 									  "System.Security.Cryptography", "ProtectedMemory");
-		*method = mono_class_get_method_from_name_checked (klass, method_name, 2, 0, error);
+		method = mono_class_get_method_from_name_checked (klass, method_name, 2, 0, error);
+		if (method) {
+			mono_memory_barrier ();
+			*pmethod = method;
+		}
 		mono_error_assert_ok (error);
-		g_assert (*method);
+		g_assert (method);
 	}
+
 	void *params [ ] = {
 		MONO_HANDLE_RAW (data),
 		MONO_HANDLE_RAW (scope) // MemoryProtectionScope.SameProcess
 	};
-	mono_runtime_invoke_handle_void (*method, NULL_HANDLE, params, error);
+	mono_runtime_invoke_handle_void (method, NULL_HANDLE, params, error);
 }
 
 void

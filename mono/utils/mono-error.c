@@ -86,12 +86,10 @@ mono_error_prepare (MonoErrorInternal *error)
 static MonoClass*
 get_class (MonoErrorInternal *error)
 {
-	MonoClass *klass = NULL;
 	if (is_managed_exception (error))
-		klass = mono_object_class (mono_gchandle_get_target_internal (error->exn.instance_handle));
-	else
-		klass = error->exn.klass;
-	return klass;
+		return mono_object_class (mono_gchandle_get_target_internal (error->exn.instance_handle));
+
+	return error->exn.klass;
 }
 
 static const char*

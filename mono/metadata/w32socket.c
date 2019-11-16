@@ -910,13 +910,21 @@ create_object_handle_from_sockaddr (struct sockaddr *saddr, int sa_size, gint32 
 	
 	/* Locate the SocketAddress data buffer in the object */
 	if (!domain->sockaddr_data_field) {
-		domain->sockaddr_data_field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Buffer", NULL);
+		MonoClassField* field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Buffer", NULL);
+		if (field) {
+			mono_memory_barrier ();
+			domain->sockaddr_data_field = field;
+		}
 		g_assert (domain->sockaddr_data_field);
 	}
 
 	/* Locate the SocketAddress data buffer length in the object */
 	if (!domain->sockaddr_data_length_field) {
-		domain->sockaddr_data_length_field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Size", NULL);
+		MonoClassField* field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Size", NULL);
+		if (field) {
+			mono_memory_barrier ();
+			domain->sockaddr_data_length_field = field;
+		}
 		g_assert (domain->sockaddr_data_length_field);
 	}
 
@@ -1109,18 +1117,31 @@ create_sockaddr_from_handle (MonoObjectHandle saddr_obj, socklen_t *sa_size, gin
 
 	error_init (error);
 
-	if (!domain->sockaddr_class)
-		domain->sockaddr_class = mono_class_load_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
+	if (!domain->sockaddr_class) {
+		MonoClass *klass = mono_class_load_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
+		if (klass) {
+			mono_memory_barrier ();
+			domain->sockaddr_class = klass;
+		}
+	}
 
 	/* Locate the SocketAddress data buffer in the object */
 	if (!domain->sockaddr_data_field) {
-		domain->sockaddr_data_field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Buffer", NULL);
+		MonoClassField* field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Buffer", NULL);
+		if (field) {
+			mono_memory_barrier ();
+			domain->sockaddr_data_field = field;
+		}
 		g_assert (domain->sockaddr_data_field);
 	}
 
 	/* Locate the SocketAddress data buffer length in the object */
 	if (!domain->sockaddr_data_length_field) {
-		domain->sockaddr_data_length_field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Size", NULL);
+		MonoClassField* field = mono_class_get_field_from_name_full (domain->sockaddr_class, "m_Size", NULL);
+		if (field) {
+			mono_memory_barrier ();
+			domain->sockaddr_data_length_field = field;
+		}
 		g_assert (domain->sockaddr_data_length_field);
 	}
 

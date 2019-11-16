@@ -294,6 +294,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethodBuilder *mb;
 	MonoMethodSignature *sig;
 	MonoMethod **write_barrier_method_addr;
+	MonoMethod *write_barrier_method;
 	WrapperInfo *info;
 	// FIXME: Maybe create a separate version for ctors (the branch would be
 	// correctly predicted more times)
@@ -302,8 +303,8 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	else
 		write_barrier_method_addr = &write_barrier_noconc_method;
 
-	if (*write_barrier_method_addr)
-		return *write_barrier_method_addr;
+	if ((write_barrier_method = *write_barrier_method_addr))
+		return write_barrier_method;
 
 	/* Create the IL version of mono_gc_barrier_generic_store () */
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
@@ -323,17 +324,19 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_free (mb);
 
 	LOCK_GC;
-	if (*write_barrier_method_addr) {
+	if ((write_barrier_method = *write_barrier_method_addr)) {
 		/* Already created */
 		mono_free_method (res);
+		res = write_barrier_method;
 	} else {
 		/* double-checked locking */
 		mono_memory_barrier ();
 		*write_barrier_method_addr = res;
 	}
+
 	UNLOCK_GC;
 
-	return *write_barrier_method_addr;
+	return res;
 }
 
 MonoMethod*
@@ -347,14 +350,14 @@ mono_gc_get_write_barrier (void)
  */
 
 /* Vtable of the objects used to fill out nursery fragments before a collection */
-static GCVTable array_fill_vtable;
+static GCVTable volatile array_fill_vtable;
 
 static GCVTable
 get_array_fill_vtable (void)
 {
 	if (!array_fill_vtable) {
-		static char _vtable[sizeof(MonoVTable)+8];
-		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((mword)_vtable, 8);
+		static char static_array_vtable_storage [sizeof(MonoVTable)+8];
+		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((mword)static_array_vtable_storage, 8);
 		gsize bmap;
 
 		MonoClass *klass = mono_class_create_array_fill_type ();
@@ -366,6 +369,17 @@ get_array_fill_vtable (void)
 		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 8);
 		vtable->rank = 1;
 
+		mono_memory_barrier ();
+
+		// It is important that the compiler not "see through" this
+		// and return static_array_vtable_storage instead, as that would
+		// take the "data dependency" away from the processor and allow
+		// for races on the read side.
+		//
+		// volatile is placed on array_fill_vtable to attempt to mitigate this risk.
+		//
+		// mono_memory_read_barrier () would also fix this.
+		//
 		array_fill_vtable = vtable;
 	}
 	return array_fill_vtable;
