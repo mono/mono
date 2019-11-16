@@ -104,6 +104,18 @@ int SystemNative_GetUnixName ();
 int SystemNative_GetUnixVersion (int,int);
 int SystemNative_GetOSArchitecture ();
 int SystemNative_GetProcessArchitecture ();
+int SystemNative_ConvertErrorPlatformToPal (int);
+int SystemNative_ConvertErrorPalToPlatform (int);
+int SystemNative_StrErrorR (int,int,int);
+int SystemNative_MMap (int,uint64_t,int,int,int,int64_t);
+int SystemNative_MUnmap (int,uint64_t);
+int SystemNative_MSync (int,uint64_t,int);
+int64_t SystemNative_SysConf (int);
+int SystemNative_FTruncate (int,int64_t);
+int SystemNative_MAdvise (int,uint64_t,int);
+int SystemNative_ShmOpen (int,int,int);
+int SystemNative_ShmUnlink (int);
+int SystemNative_Unlink (int);
 static PinvokeImport System_Native_imports [] = {
 {"SystemNative_ConvertErrorPlatformToPal", SystemNative_ConvertErrorPlatformToPal},
 {"SystemNative_ConvertErrorPalToPlatform", SystemNative_ConvertErrorPalToPlatform},
@@ -205,6 +217,18 @@ static PinvokeImport System_Native_imports [] = {
 {"SystemNative_GetUnixVersion", SystemNative_GetUnixVersion},
 {"SystemNative_GetOSArchitecture", SystemNative_GetOSArchitecture},
 {"SystemNative_GetProcessArchitecture", SystemNative_GetProcessArchitecture},
+{"SystemNative_ConvertErrorPlatformToPal", SystemNative_ConvertErrorPlatformToPal},
+{"SystemNative_ConvertErrorPalToPlatform", SystemNative_ConvertErrorPalToPlatform},
+{"SystemNative_StrErrorR", SystemNative_StrErrorR},
+{"SystemNative_MMap", SystemNative_MMap},
+{"SystemNative_MUnmap", SystemNative_MUnmap},
+{"SystemNative_MSync", SystemNative_MSync},
+{"SystemNative_SysConf", SystemNative_SysConf},
+{"SystemNative_FTruncate", SystemNative_FTruncate},
+{"SystemNative_MAdvise", SystemNative_MAdvise},
+{"SystemNative_ShmOpen", SystemNative_ShmOpen},
+{"SystemNative_ShmUnlink", SystemNative_ShmUnlink},
+{"SystemNative_Unlink", SystemNative_Unlink},
 {NULL, NULL}
 };
 static void *pinvoke_tables[] = { System_Native_imports,};
