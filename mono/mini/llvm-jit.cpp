@@ -133,7 +133,7 @@ MonoJitMemoryManager::finalizeMemory(std::string *ErrMsg)
 #if LLVM_API_VERSION >= 900
 		sys::Memory::InvalidateInstructionCache (Block.base (), Block.allocatedSize ());
 #else
-                sys::Memory::InvalidateInstructionCache (Block.base (), Block.size ());
+		sys::Memory::InvalidateInstructionCache (Block.base (), Block.size ());
 #endif
 	}
 	PendingCodeMem.clear ();
