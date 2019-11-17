@@ -2403,7 +2403,7 @@ mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass
 	MonoMethod *memset_method;
 	MonoInst *size_ins = NULL;
 	MonoInst *bzero_ins = NULL;
-	static MonoMethod *bzero_method = NULL;;
+	static MonoMethod *bzero_method;
 
 	/* FIXME: Optimize this for the case when dest is an LDADDR */
 	mono_class_init_internal (klass);
