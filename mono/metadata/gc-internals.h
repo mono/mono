@@ -159,7 +159,7 @@ mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 
-MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
+MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits, GPtrArray **gc_descr_full);
 
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);

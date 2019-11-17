@@ -296,40 +296,105 @@ typedef union {
 #define MTFlag_ContainsPointers     0x0100
 #define MTFlag_HasCriticalFinalizer 0x0800
 #define MTFlag_HasFinalizer         0x0010
+#define MTFlag_IsString             0x0004
 #define MTFlag_IsArray              0x0008
 #define MTFlag_Collectible          0x1000
 #define MTFlag_HasComponentSize     0x8000
 
+#define BITMAP_EL_SIZE (sizeof (gsize) * 8)
+
+// CoreGC doesn't accept objects smaller than this, since it needs to replace them with array fill
+// vtable which contains header_ptr, vtable_ptr, sync_ptr and length
+#define MIN_OBJECT_SIZE (4 * sizeof (void*))
+
 void*
-mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_t obj_size)
+mono_gc_make_descr_for_object (gpointer klass, gsize *bitmap, int numbits, size_t obj_size, GPtrArray **gc_descr_full)
 {
 	MonoClass *casted_class = (MonoClass*) klass;
+	gboolean has_ptrs = FALSE;
+	// Include the Header expected by the GC
+	obj_size += 8;
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = 0; // not array or string
-	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers;
+	gc_descr.struct_gc_descr.m_flags = 0;
 	if (casted_class->has_finalize)
 		gc_descr.struct_gc_descr.m_flags |= MTFlag_HasFinalizer;
-	gc_descr.struct_gc_descr.m_baseSize = obj_size + 8;
+	gc_descr.struct_gc_descr.m_baseSize = obj_size;
+	if (gc_descr.struct_gc_descr.m_baseSize < MIN_OBJECT_SIZE)
+		gc_descr.struct_gc_descr.m_baseSize = MIN_OBJECT_SIZE;
+
+	GPtrArray *full = g_ptr_array_new ();
+
+	size_t last_start_offset = -1;
+	size_t serie_size = 0;
+	// Space for series length
+
+	g_ptr_array_add (full, NULL);
+	for (int i = 0; i < numbits; i++) {
+		int is_set = bitmap [i / BITMAP_EL_SIZE] & (((gsize)1) << (i % BITMAP_EL_SIZE));
+		if (is_set) {
+			has_ptrs = TRUE;
+			if (last_start_offset == -1)
+				last_start_offset = i * SIZEOF_VOID_P;
+			serie_size += SIZEOF_VOID_P;
+		} else if (last_start_offset != -1) {
+			g_assert (serie_size > 0);
+			g_ptr_array_add (full, (gpointer)last_start_offset);
+			g_ptr_array_add (full, (gpointer)(serie_size - obj_size));
+			serie_size = 0;
+			last_start_offset = -1;
+		}
+	}
+	if (last_start_offset != -1) {
+		g_assert (serie_size > 0);
+		g_ptr_array_add (full, (gpointer)last_start_offset);
+		g_ptr_array_add (full, (gpointer)(serie_size - obj_size));
+	}
+	full->pdata [0] = (gpointer)((size_t)full->len / 2);
+
+	// Reverse the array so it can be stored directly in the vtable
+	for (int i = 0; i < full->len / 2; i++) {
+		gpointer tmp = full->pdata [i];
+		full->pdata [i] = full->pdata [full->len - 1 - i];
+		full->pdata [full->len - 1 - i] = tmp;
+	}
+
+	*gc_descr_full = full;
+	if (has_ptrs)
+		gc_descr.struct_gc_descr.m_flags |= MTFlag_ContainsPointers;
 	return gc_descr.ptr_gc_descr;
 }
 
 void*
-mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
+mono_gc_make_descr_for_string (gsize *bitmap, int numbits, GPtrArray **gc_descr_full)
 {
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = 2;
-	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
+	gc_descr.struct_gc_descr.m_flags = MTFlag_IsArray | MTFlag_IsString | MTFlag_HasComponentSize;
 	gc_descr.struct_gc_descr.m_baseSize = MONO_SIZEOF_MONO_STRING + 8;
 	return gc_descr.ptr_gc_descr;
 }
 
 void*
-mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
+mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size, GPtrArray **gc_descr_full)
 {
 	mono_gc_descr_union gc_descr;
 	gc_descr.struct_gc_descr.m_componentSize = elem_size;
-	gc_descr.struct_gc_descr.m_flags = MTFlag_ContainsPointers | MTFlag_IsArray | MTFlag_HasComponentSize;
+	gc_descr.struct_gc_descr.m_flags = MTFlag_IsArray | MTFlag_HasComponentSize;
 	gc_descr.struct_gc_descr.m_baseSize = MONO_SIZEOF_MONO_ARRAY + 8;
+
+	if (numbits == 1 && elem_size == sizeof (gpointer) && *elem_bitmap == 1) {
+		// Array of references. We don't handle array of value types yet.
+		gc_descr.struct_gc_descr.m_flags |= MTFlag_ContainsPointers;
+		GPtrArray *full = g_ptr_array_new ();
+		// The series size will be added with the entire array size, resulting
+		// in scanning everything
+		g_ptr_array_add (full, (gpointer) (-8 - MONO_SIZEOF_MONO_ARRAY));
+		// Add start offset
+		g_ptr_array_add (full, (gpointer)MONO_SIZEOF_MONO_ARRAY);
+		g_ptr_array_add (full, (gpointer)1);
+		*gc_descr_full = full;
+	}
 	return gc_descr.ptr_gc_descr;
 }
 
@@ -512,10 +577,6 @@ mono_gc_free_fixed (void* addr)
 	mono_gc_deregister_root ((char *)addr);
 	g_free (addr);
 }
-
-// CoreGC doesn't accept objects smaller than this, since it needs to replace them with array fill
-// vtable which contains header_ptr, vtable_ptr, sync_ptr and length
-#define MIN_OBJECT_SIZE (4 * sizeof (void*))
 
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
@@ -1414,6 +1475,10 @@ gc_alloc_context * GCToEEInterface::GetAllocContext()
 
 void GCToEEInterface::GcEnumAllocContexts (enum_alloc_context_func* fn, void* param)
 {
+	CoreGCThreadInfo *info;
+	FOREACH_THREAD_ALL (info) {
+		fn (&info->alloc_context, param);
+	} FOREACH_THREAD_END
 }
 
 uint8_t* GCToEEInterface::GetLoaderAllocatorObjectForGC(Object* pObject)
@@ -1520,12 +1585,13 @@ MethodTable* GCToEEInterface::GetFreeObjectMethodTable()
 		static char _vtable[sizeof(MonoVTable)+8];
 		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((size_t)_vtable, 8);
 		gsize bmap;
+		GPtrArray *gc_descr_full = NULL;
 
 		vtable->klass = mono_class_create_array_fill_type ();
 
 		bmap = 0;
 		mono_gc_descr_union desc;
-		desc.ptr_gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
+		desc.ptr_gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1, &gc_descr_full);
 		// Remove bounds from the reported size, since coreclr gc expects this object
 		// to the size of ArrayBase
 		desc.struct_gc_descr.m_baseSize -= 8;
