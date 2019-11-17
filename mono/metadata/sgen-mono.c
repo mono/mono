@@ -2167,8 +2167,6 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 
 	tid = mono_thread_info_get_tid (p);
 
-	mono_threads_add_joinable_runtime_thread (&p->client_info.info);
-
 	if (mono_gc_get_gc_callbacks ()->thread_detach_func) {
 		mono_gc_get_gc_callbacks ()->thread_detach_func (p->client_info.runtime_data);
 		p->client_info.runtime_data = NULL;
@@ -2176,10 +2174,6 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 
 	sgen_binary_protocol_thread_unregister ((gpointer)tid);
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)tid);
-
-	HandleStack *handles = p->client_info.info.handle_stack;
-	p->client_info.info.handle_stack = NULL;
-	mono_handle_stack_free (handles);
 }
 
 void

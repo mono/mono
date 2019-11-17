@@ -723,7 +723,6 @@ mono_gc_thread_attach (THREAD_INFO_TYPE * info)
 void
 mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *p)
 {
-	g_assert_not_reached ();
 }
 
 gboolean
@@ -1075,7 +1074,8 @@ mono_gchandle_set_target (gpointer gchandle, MonoObject *obj)
 void
 mono_gchandle_free_internal (gpointer gchandle)
 {
-	pGCHandleManager->DestroyHandleOfUnknownType ((OBJECTHANDLE)gchandle);
+	if (gchandle != NULL)
+		pGCHandleManager->DestroyHandleOfUnknownType ((OBJECTHANDLE)gchandle);
 }
 
 void
