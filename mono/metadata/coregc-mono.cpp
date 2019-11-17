@@ -225,7 +225,7 @@ coregc_roots_init (void)
 int
 coregc_register_root (char *start, size_t size, RootDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
 {
-	RootRecord new_root;
+	RootRecord *new_root;
 	int i;
 
 	coregc_lock ();
@@ -240,12 +240,13 @@ coregc_register_root (char *start, size_t size, RootDescriptor descr, int root_t
 		}
 	}
 
-	new_root.end_root = start + size;
-	new_root.root_desc = descr;
-	new_root.source = source;
-	new_root.msg = msg;
+	new_root = (RootRecord*) malloc (sizeof (RootRecord));
+	new_root->end_root = start + size;
+	new_root->root_desc = descr;
+	new_root->source = source;
+	new_root->msg = msg;
 
-	g_hash_table_replace (coregc_roots_hash [root_type], start, &new_root);
+	g_hash_table_replace (coregc_roots_hash [root_type], start, new_root);
 
 	coregc_unlock ();
 	return TRUE;
@@ -258,6 +259,7 @@ coregc_deregister_root (char* addr)
 
 	coregc_lock ();
 	for (root_type = 0; root_type < ROOT_TYPE_NUM; ++root_type) {
+		// FIXME free root
 		g_hash_table_remove (coregc_roots_hash [root_type], addr);
 	}
 	coregc_unlock ();
@@ -991,6 +993,14 @@ mono_gc_set_gc_callbacks (MonoGCCallbacks *callbacks)
 void
 mono_gc_set_stack_end (void *stack_end)
 {
+	CoreGCThreadInfo *info;
+
+	coregc_lock ();
+	info = mono_thread_info_current ();
+	if (info) {
+		info->stack_end = stack_end;
+	}
+	coregc_unlock ();
 }
 
 int
@@ -1207,7 +1217,6 @@ coreclr_is_thread_in_current_stw (THREAD_INFO_TYPE *info, int *reason)
 static void
 coregc_unified_suspend_stop_world (void)
 {
-        printf("coregc_unified_suspend_stop_world\n");
 	int sleep_duration = -1;
 
 	// we can't lead STW if we promised not to safepoint.
@@ -1392,7 +1401,6 @@ coregc_unified_suspend_stop_world (void)
 static void
 coreclr_unified_suspend_restart_world (void)
 {
-        printf("coreclr_unified_suspend_restart_world\n");
 	THREADS_STW_DEBUG ("[GC-STW-END] *** BEGIN RESUME ***\n");
 	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		int reason = 0;
@@ -1412,8 +1420,37 @@ coreclr_unified_suspend_restart_world (void)
 	mono_threads_end_global_suspend ();
 }
 
+inline static void*
+align_pointer (void *ptr)
+{
+	size_t p = (size_t)ptr;
+	p += sizeof (gpointer) - 1;
+	p &= ~ (sizeof (gpointer) - 1);
+	return (void*)p;
+}
+
+static void
+update_current_thread_stack (void)
+{
+	int stack_guard = 0;
+	CoreGCThreadInfo *info = mono_thread_info_current ();
+
+	info->stack_start = align_pointer (&stack_guard);
+	g_assert (info->stack_start);
+	g_assert (info->stack_start >= info->stack_start_limit && info->stack_start < info->stack_end);
+
+#if !defined(MONO_CROSS_COMPILE) && MONO_ARCH_HAS_MONO_CONTEXT
+	MONO_CONTEXT_GET_CURRENT (info->ctx);
+#elif defined (HOST_WASM)
+	//nothing
+#else
+	g_error ("Sgen STW requires a working mono-context");
+#endif
+}
+
 void GCToEEInterface::SuspendEE(SUSPEND_REASON reason)
 {
+	update_current_thread_stack ();
 	pGCHeap->SetGCInProgress(true);
         coregc_unified_suspend_stop_world();
 }
@@ -1424,8 +1461,50 @@ void GCToEEInterface::RestartEE(bool bFinishedGC)
 	pGCHeap->SetGCInProgress(false);
 }
 
+typedef struct {
+	promote_func *fn;
+	ScanContext* sc;
+} coregc_root_scan_args;
+
+void
+coregc_scan_root (gpointer key, gpointer value, gpointer user_data)
+{
+	coregc_root_scan_args *args = (coregc_root_scan_args*) user_data;
+	RootRecord *root = (RootRecord*) value;
+	gpointer *start_root = (gpointer*)key;
+	gpointer *end_root = (gpointer*)root->end_root;
+
+	while (start_root < end_root) {
+		// FIXME look at the root descriptor so we don't use conservative scan
+		args->fn ((PTR_PTR_Object)start_root, args->sc, GC_CALL_PINNED | GC_CALL_INTERIOR);
+		start_root++;
+	}
+}
+
 void GCToEEInterface::GcScanRoots(promote_func* fn,  int condemned, int max_gen, ScanContext* sc)
 {
+	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+		gpointer *start = (gpointer*)(size_t) ALIGN_TO ((size_t)info->stack_start, SIZEOF_VOID_P);
+		gpointer *end = (gpointer*)info->stack_end;
+		while (start < end) {
+			fn ((PTR_PTR_Object)start, sc, GC_CALL_PINNED | GC_CALL_INTERIOR);
+			start++;
+		}
+		start = (gpointer*)&info->ctx;
+		end = (gpointer*)(&info->ctx + 1);
+		while (start < end) {
+			fn ((PTR_PTR_Object)start, sc, GC_CALL_PINNED | GC_CALL_INTERIOR);
+			start++;
+		}
+	} FOREACH_THREAD_END
+
+	coregc_root_scan_args args;
+	args.fn = fn;
+	args.sc = sc;
+
+	for (int root_type = ROOT_TYPE_NORMAL; root_type <= ROOT_TYPE_PINNED; root_type++) {
+		g_hash_table_foreach (coregc_roots_hash [root_type], coregc_scan_root, &args);
+	}
 }
 
 void GCToEEInterface::GcStartWork(int condemned, int max_gen)
@@ -1475,7 +1554,6 @@ gc_alloc_context * GCToEEInterface::GetAllocContext()
 
 void GCToEEInterface::GcEnumAllocContexts (enum_alloc_context_func* fn, void* param)
 {
-	CoreGCThreadInfo *info;
 	FOREACH_THREAD_ALL (info) {
 		fn (&info->alloc_context, param);
 	} FOREACH_THREAD_END
