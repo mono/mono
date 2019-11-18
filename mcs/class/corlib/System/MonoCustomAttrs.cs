@@ -626,6 +626,8 @@ namespace System
 					MethodInfo bmethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 					if (bmethod == method)
 						return null;
+					if (parinfo.Position == -1)
+						return bmethod.ReturnParameter;
 					return bmethod.GetParameters ()[parinfo.Position];
 				}
 			}
