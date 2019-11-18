@@ -883,23 +883,16 @@ exit:
 static MonoMethod *
 mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
-	static MonoMethod *static_method;
-	MonoMethod *method = static_method;
+	MONO_TRY_CACHE (MonoMethod*, method)
 
-	if (method) {
-		mono_memory_read_barrier ();
-		return method;
-	}
+		// not cached yet, fill cache under caller's lock
 
-	// not cached yet, fill cache under caller's lock
+		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
 
-	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
+	MONO_TRY_CACHE_END (MonoMethod*, method)
 
 	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
-	} else {
-		mono_memory_barrier ();
-		static_method = method;
 	}
 
 	return method;
@@ -913,23 +906,16 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 static MonoMethod *
 mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
-	static MonoMethod *static_method;
-	MonoMethod *method = static_method;
+	MONO_TRY_CACHE (MonoMethod*, method)
 
-	if (method) {
-		mono_memory_read_barrier ();
-		return method;
-	}
+		// not cached yet, fill cache under caller's lock
 
-	// not cached yet, fill cache under caller's lock
+		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
 
-	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
+	MONO_TRY_CACHE_END (MonoMethod*, method)
 
 	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeBuilderResolve not found. %s\n", __func__, mono_error_get_message (error));
-	} else {
-		mono_memory_barrier ();
-		static_method = method;
 	}
 
 	return method;
@@ -1431,22 +1417,16 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		goto leave;
 	}
 #else
-	static MonoMethod *static_method;
-	MonoMethod *method = static_method;
+	MONO_TRY_CACHE (MonoMethod*, method)
 
-	if (method) {
-		mono_memory_read_barrier ();
-	} else {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
 		method = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		if (method) {
-			mono_memory_barrier ();
-			static_method = method;
-		}
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, method)
+
 	g_assert (method);
 
 	MonoReflectionAssemblyHandle requesting_handle;
@@ -1625,21 +1605,13 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	reflection_assembly = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_assert_ok (error);
 
-	static MonoMethod *static_assembly_load_method;
-	MonoMethod *assembly_load_method;
+	MONO_TRY_CACHE (MonoMethod*, assembly_load_method)
 
-	assembly_load_method = static_assembly_load_method;
-
-	if (assembly_load_method == NULL) {
 		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, error);
-		if (assembly_load_method) {
-			mono_memory_barrier ();
-			static_assembly_load_method = assembly_load_method;
-		}
-		g_assert (assembly_load_method);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, assembly_load_method)
+
+	g_assert (assembly_load_method);
 
 	void *params [1];
 	params [0] = MONO_HANDLE_RAW (reflection_assembly);

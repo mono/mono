@@ -223,14 +223,20 @@ tty_teardown (void)
 static void
 do_console_cancel_event (void)
 {
-	static MonoMethod *System_Console_DoConsoleCancelEventBackground_method = (MonoMethod*)(intptr_t)-1;
+	static MonoMethod *static_System_Console_DoConsoleCancelEventBackground_method = (MonoMethod*)(intptr_t)-1;
 	ERROR_DECL (error);
 
 	if (mono_class_try_get_console_class () == NULL)
 		return;
 
+	MonoMethod *System_Console_DoConsoleCancelEventBackground_method = static_System_Console_DoConsoleCancelEventBackground_method;
+
 	if (System_Console_DoConsoleCancelEventBackground_method == (gpointer)(intptr_t)-1) {
 		System_Console_DoConsoleCancelEventBackground_method = mono_class_get_method_from_name_checked (mono_class_try_get_console_class (), "DoConsoleCancelEventInBackground", 0, 0, error);
+		if (System_Console_DoConsoleCancelEventBackground_method) {
+			mono_memory_barrier ();
+			static_System_Console_DoConsoleCancelEventBackground_method = System_Console_DoConsoleCancelEventBackground_method;
+		}
 		mono_error_assert_ok (error);
 	}
 	if (System_Console_DoConsoleCancelEventBackground_method == NULL)

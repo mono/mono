@@ -617,18 +617,17 @@ load_cattr_value_boxed (MonoDomain *domain, MonoImage *image, MonoType *t, const
 static MonoObject*
 create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 {
-	static MonoMethod *ctor;
 	MonoObject *retval;
 	void *params [2], *unboxed;
 
 	error_init (error);
 
-	if (!ctor) {
+	MONO_TRY_CACHE (MonoMethod*, ctor)
+
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, ctor)
 
 	params [0] = mono_type_get_object_checked (mono_domain_get (), t, error);
 	return_val_if_nok (error, NULL);
@@ -647,18 +646,17 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 static MonoObject*
 create_cattr_named_arg (void *minfo, MonoObject *typedarg, MonoError *error)
 {
-	static MonoMethod *ctor;
 	MonoObject *retval;
 	void *unboxed, *params [2];
 
 	error_init (error);
 
-	if (!ctor) {
+	MONO_TRY_CACHE (MonoMethod*, ctor)
+
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, ctor)
 
 	params [0] = minfo;
 	params [1] = typedarg;
@@ -1449,19 +1447,13 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	MonoClass *cattr_data = try_get_cattr_data_class (error);
 	goto_if_nok (error, result_null);
 
-	static MonoMethod *static_ctor;
-	MonoMethod *ctor = static_ctor;
+	MONO_TRY_CACHE (MonoMethod*, ctor)
 
-	if (!ctor) {
-		MonoMethod *tmp = mono_class_get_method_from_name_checked (cattr_data, ".ctor", 4, 0, error);
+		ctor = mono_class_get_method_from_name_checked (cattr_data, ".ctor", 4, 0, error);
 		mono_error_assert_ok (error);
-		g_assert (tmp);
+		g_assert (ctor);
 
-		mono_memory_barrier (); //safe publish!
-		ctor = tmp;
-	} else {
-		mono_memory_read_barrier ();
-	}
+	MONO_TRY_CACHE_END (MonoMethod*, ctor)
 
 	domain = mono_domain_get ();
 

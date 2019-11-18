@@ -977,15 +977,12 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	MonoReflectionParameterHandle param = MONO_HANDLE_CAST (MonoReflectionParameter, mono_object_new_handle (domain, mono_class_get_mono_parameter_info_class (), error));
 	goto_if_nok (error, leave);
 
-	static MonoMethod *ctor;
-	if (!ctor) {
-		MonoMethod *m = mono_class_get_method_from_name_checked (mono_class_get_mono_parameter_info_class (), ".ctor", 7, 0, error);
-		g_assert (m);
-		mono_memory_barrier ();
-		ctor = m;
-	} else {
-		mono_memory_read_barrier ();
-	}
+	MONO_TRY_CACHE (MonoMethod*, ctor)
+
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_mono_parameter_info_class (), ".ctor", 7, 0, error);
+		g_assert (ctor);
+
+	MONO_TRY_CACHE_END (MonoMethod*, ctor)
 
 	void *args [16];
 
@@ -1298,17 +1295,13 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	} else
 		local_var_sig_token = 0; //FIXME
 
-	static MonoMethod *ctor;
-	if (!ctor) {
-		MonoMethod *tmp = mono_class_get_method_from_name_checked (mono_class_get_method_body_class (), ".ctor", 6, 0, error);
-		mono_error_assert_ok (error);
-		g_assert (tmp);
+	MONO_TRY_CACHE (MonoMethod*, ctor)
 
-		mono_memory_barrier ();
-		ctor = tmp;
-	} else {
-		mono_memory_read_barrier ();
-	}
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_method_body_class (), ".ctor", 6, 0, error);
+		mono_error_assert_ok (error);
+		g_assert (ctor);
+
+	MONO_TRY_CACHE_END (MonoMethod*, ctor)
 
 	MonoReflectionMethodBodyHandle ret;
 	ret = MONO_HANDLE_CAST (MonoReflectionMethodBody, mono_object_new_handle (domain, mono_class_get_method_body_class (), error));
@@ -3133,17 +3126,16 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 {
 	MonoObject *res, *exc;
 	void *params [1];
-	static MonoMethod *method = NULL;
 
 	error_init (error);
 
-	if (method == NULL) {
+	MONO_TRY_CACHE (MonoMethod*, method)
+
 		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableTo", 1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (method);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, method)
 
 	/* 
 	 * The result of mono_type_get_object_checked () might be a System.MonoType but we

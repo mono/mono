@@ -534,18 +534,15 @@ netcore_resolve_with_dll_import_resolver (MonoAssemblyLoadContext *alc, MonoAsse
 	gpointer lib = NULL;
 	MonoDomain *domain = mono_alc_domain (alc);
 
-	static MonoMethod *resolve;
+	MONO_TRY_CACHE (MonoMethod*, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *native_lib_class = mono_class_get_native_library_class ();
 		g_assert (native_lib_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (native_lib_class, "MonoLoadLibraryCallbackStub", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (native_lib_class, "MonoLoadLibraryCallbackStub", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, resolve)
 	g_assert (resolve);
 
 	if (mono_runtime_get_no_exec ())
@@ -597,18 +594,15 @@ netcore_resolve_with_load (MonoAssemblyLoadContext *alc, const char *scope, Mono
 	MonoDl *result = NULL;
 	gpointer lib = NULL;
 
-	static MonoMethod *resolve;
+	MONO_TRY_CACHE (MonoMethod*, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDll", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDll", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, resolve)
 	g_assert (resolve);
 
 	if (mono_runtime_get_no_exec ())
@@ -657,18 +651,15 @@ netcore_resolve_with_resolving_event (MonoAssemblyLoadContext *alc, MonoAssembly
 	gpointer lib = NULL;
 	MonoDomain *domain = mono_alc_domain (alc);
 
-	static MonoMethod *resolve;
+	MONO_TRY_CACHE (MonoMethod*, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDllUsingEvent", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUnmanagedDllUsingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, resolve)
 	g_assert (resolve);
 
 	if (mono_runtime_get_no_exec ())

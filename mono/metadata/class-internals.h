@@ -1511,6 +1511,29 @@ mono_method_is_constructor (MonoMethod *method);
 gboolean
 mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
 
+
+#define MONO_TRY_CACHE(type, name)				\
+	static type static_ ## name;				\
+	type name; 						\
+	name = static_ ## name;					\
+	if (!name) {						\
+		/* Custom code here to initialize name */	\
+
+// FIXME InterlockedCompareExchangePointer might be better here.
+#define MONO_TRY_CACHE_END(type, name)						\
+		if (name) {							\
+			/* Success, commit to static. */			\
+			mono_memory_barrier ();					\
+			static_ ## name = name;					\
+		} else {							\
+			/* Try one more time in case another thread did it. */	\
+			name = static_ ## name;					\
+			mono_memory_read_barrier ();				\
+		}								\
+	} else {								\
+		mono_memory_read_barrier ();					\
+	}									\
+
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"
 

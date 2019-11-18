@@ -4266,7 +4266,6 @@ MonoMethod *
 mono_marshal_get_struct_to_ptr (MonoClass *klass)
 {
 	MonoMethodBuilder *mb;
-	static MonoMethod *stoptr = NULL;
 	MonoMethod *res;
 	WrapperInfo *info;
 
@@ -4278,13 +4277,15 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 	if (marshal_info->str_to_ptr)
 		return marshal_info->str_to_ptr;
 
-	if (!stoptr) {
+	MONO_TRY_CACHE (MonoMethod*, stoptr)
+
+		// Cache miss, initialize.
 		ERROR_DECL (error);
 		stoptr = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "StructureToPtr", 3, 0, error);
 		mono_error_assert_ok (error);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_TRY_CACHE_END (MonoMethod*, stoptr)
+
 	g_assert (stoptr);
 
 	mb = mono_mb_new (klass, stoptr->name, MONO_WRAPPER_OTHER);
