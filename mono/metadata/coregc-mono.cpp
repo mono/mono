@@ -792,7 +792,7 @@ mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *p)
 gboolean
 mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info)
 {
-	g_assert_not_reached ();
+	return FALSE;
 }
 
 int
