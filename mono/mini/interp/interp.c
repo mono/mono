@@ -3848,22 +3848,26 @@ main_loop:
 				sp [0].data.p = unboxed;
 			}
 
-			child_frame = alloc_frame (context, &retval, frame, imethod, sp, retval);
-
 			SAVE_INTERP_STATE (frame);
 
-			MonoException *ex;
-			gboolean tracing;
-			method_entry (context, child_frame, &tracing, &ex);
-			if (G_UNLIKELY (ex)) {
-				frame = child_frame;
-				frame->ip = NULL;
-				THROW_EX (ex, NULL);
-				EXCEPTION_CHECKPOINT;
+			if (G_UNLIKELY (!imethod->transformed)) {
+				MonoException *ex;
+				gboolean tracing;
+
+				child_frame = alloc_frame (context, &retval, frame, imethod, sp, retval);
+				method_entry (context, child_frame, &tracing, &ex);
+				if (G_UNLIKELY (ex)) {
+					frame = child_frame;
+					frame->ip = NULL;
+					THROW_EX (ex, NULL);
+					EXCEPTION_CHECKPOINT;
+				}
+			} else {
+				child_frame = alloc_frame (context, &retval, frame, imethod, sp, retval);
+				alloc_stack_data (context, child_frame, imethod->alloca_size);
 			}
 
 			frame = child_frame;
-
 			INIT_INTERP_STATE (frame, NULL);
 			clause_args = NULL;
 
@@ -3935,26 +3939,33 @@ main_loop:
 			ip += 3;
 #endif
 
-			child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
-
 			/*
 			 * Make a non-recursive call by loading the new interpreter state based on child frame,
 			 * and going back to the main loop.
 			 */
 			SAVE_INTERP_STATE (frame);
 
-			MonoException *ex;
-			gboolean tracing;
-			method_entry (context, child_frame, &tracing, &ex);
-			if (G_UNLIKELY (ex)) {
-				frame = child_frame;
-				frame->ip = NULL;
-				THROW_EX (ex, NULL);
-				EXCEPTION_CHECKPOINT;
+			if (G_UNLIKELY (!imethod->transformed)) {
+				MonoException *ex;
+				gboolean tracing;
+
+				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
+				method_entry (context, child_frame, &tracing, &ex);
+				if (G_UNLIKELY (ex)) {
+					frame = child_frame;
+					frame->ip = NULL;
+					THROW_EX (ex, NULL);
+					EXCEPTION_CHECKPOINT;
+				}
+			} else {
+				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
+				alloc_stack_data (context, child_frame, imethod->alloca_size);
+#if DEBUG_INTERP
+				debug_enter (child_frame, out_tracing);
+#endif
 			}
 
 			frame = child_frame;
-
 			INIT_INTERP_STATE (frame, NULL);
 			clause_args = NULL;
 
