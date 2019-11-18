@@ -2109,8 +2109,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	interface_offsets = (gpointer*)((char*)gc_descr_full_mem + gc_descr_full_bytes);
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
 	/* If on interp, skip the interp interface table */
-	if (use_interpreter)
-		interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
+	interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
 	g_assert (!((gsize)vt & 7));
 
 	vt->klass = klass;
