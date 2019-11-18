@@ -1273,11 +1273,17 @@ mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (
 static MonoToggleRefStatus
 test_toggleref_callback (MonoObject *obj)
 {
-	static MonoClassField *mono_toggleref_test_field;
+	static MonoClassField *static_mono_toggleref_test_field;
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
+
+	MonoClassField *mono_toggleref_test_field = static_mono_toggleref_test_field;
 
 	if (!mono_toggleref_test_field) {
 		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_class (obj), "__test", NULL);
+		if (mono_toggleref_test_field) {
+			mono_memory_barrier ();
+			static_mono_toggleref_test_field = mono_toggleref_test_field;
+		}
 		g_assert (mono_toggleref_test_field);
 	} else {
 		mono_memory_read_barrier ();

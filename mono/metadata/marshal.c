@@ -2785,11 +2785,13 @@ emit_runtime_invoke_dynamic_noilgen (MonoMethodBuilder *mb)
 MonoMethod*
 mono_marshal_get_runtime_invoke_dynamic (void)
 {
-	static MonoMethod *method;
 	MonoMethodSignature *csig;
 	MonoMethodBuilder *mb;
 	char *name;
 	WrapperInfo *info;
+
+	static MonoMethod *static_method;
+	MonoMethod *method = static_method;
 
 	if (method) {
 		mono_memory_read_barrier ();
@@ -2816,9 +2818,18 @@ mono_marshal_get_runtime_invoke_dynamic (void)
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_RUNTIME_INVOKE_DYNAMIC);
 
 	mono_marshal_lock ();
+
 	/* double-checked locking */
-	if (!method)
+
+	method = static_method;
+
+	if (!method) {
 		method = mono_mb_create (mb, csig, 16, info);
+		if (method) {
+			mono_memory_barrier ();
+			static_method = method;
+		}
+	}
 
 	mono_marshal_unlock ();
 

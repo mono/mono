@@ -152,15 +152,19 @@ leave:
 static MonoAssembly*
 mono_alc_invoke_resolve_using_load (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	static MonoMethod *static_resolve;
+	MonoMethod *resolve = static_resolve;
 
 	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
+		if (resolve) {
+			mono_memory_barrier ();
+			static_resolve = resolve;
+		}
 	} else {
 		mono_memory_read_barrier ();
 	}
@@ -187,15 +191,19 @@ mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAss
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolving_event (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	static MonoMethod *static_resolve;
+	MonoMethod *resolve = static_resolve;
 
 	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
+		if (resolve) {
+			mono_memory_barrier ();
+			static_resolve = resolve;
+		}
 	} else {
 		mono_memory_read_barrier ();
 	}
@@ -222,15 +230,19 @@ mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *a
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	static MonoMethod *static_resolve;
+	MonoMethod *resolve = static_resolve;
 
 	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
+		if (resolve) {
+			mono_memory_barrier ();
+			static_resolve = resolve;
+		}
 	} else {
 		mono_memory_read_barrier ();
 	}

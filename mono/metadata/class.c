@@ -2338,7 +2338,6 @@ mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoTyp
 				if (!mono_metadata_type_equal_full (type, field_type, TRUE))
 					continue;
 			}
-			// Caller is often but not always caching in a global, accessed from multiple threads.
 			// FIXME Remove this when all callers fixed.
 			mono_memory_barrier ();
 			return field;
@@ -2433,6 +2432,9 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 		def_values [field_index].def_type = (MonoTypeEnum)constant_cols [MONO_CONSTANT_TYPE];
 		mono_memory_barrier ();
 		def_values [field_index].data = (const char *)mono_metadata_blob_heap (field_parent_image, constant_cols [MONO_CONSTANT_VALUE]);
+		mono_memory_barrier ();
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	*def_type = def_values [field_index].def_type;
@@ -3334,6 +3336,7 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 	mono_error_assertf_ok (error, "Could not load runtime critical type %s.%s", name_space, name);
 
 	// Caller is often but not always caching in a global accessed from multiple threads.
+	// FIXME Remove this barrier once all the callers are fixed.
 	mono_memory_barrier ();
 
 	return klass;
@@ -5447,8 +5450,8 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 		if (res)
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
 
-		if (res)
-			mono_memory_barrier(); // Caller often caches in global.
+		// FIXME Remove this barrier once all the callers are fixed.
+		mono_memory_barrier ();
 
 		return res;
 	}
@@ -5480,8 +5483,8 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	    res = mono_find_method_in_metadata (klass, name, param_count, flags);
 	}
 
-	if (res)
-		mono_memory_barrier(); // Caller often caches in global.
+	// FIXME Remove this barrier once all the callers are fixed.
+	mono_memory_barrier ();
 
 	return res;
 }
@@ -6155,6 +6158,7 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error)
 			g_free (full_name);
 		}
 	}
+	// FIXME WHere is the read barrier?
 	mono_memory_barrier ();
 	field->type = ftype;
 }

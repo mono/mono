@@ -371,7 +371,11 @@ get_array_fill_vtable (void)
 		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 8);
 		vtable->rank = 1;
 
+		mono_memory_barrier ();
+
 		array_fill_vtable = vtable;
+	} else {
+		mono_memory_read_barrier ();
 	}
 	return array_fill_vtable;
 }

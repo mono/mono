@@ -814,11 +814,16 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 #ifdef ENABLE_NETCORE
 	return FALSE;
 #else
-	static MonoClassField *field = NULL;
+	static MonoClassField *static_field;
+	MonoClassField *field = static_field;
 	MonoObject *o;
 
 	if (field == NULL) {
 		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
+		if (field) {
+			mono_memory_barrier ();
+			static_field = field;
+		}
 		g_assert (field);
 	} else {
 		mono_memory_read_barrier ();
@@ -878,7 +883,8 @@ exit:
 static MonoMethod *
 mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
-	static MonoMethod *method; // cache
+	static MonoMethod *static_method;
+	MonoMethod *method = static_method;
 
 	if (method) {
 		mono_memory_read_barrier ();
@@ -889,8 +895,12 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
 
-	if (method == NULL)
+	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
+	} else {
+		mono_memory_barrier ();
+		static_method = method;
+	}
 
 	return method;
 }
@@ -903,7 +913,8 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 static MonoMethod *
 mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
-	static MonoMethod *method; // cache
+	static MonoMethod *static_method;
+	MonoMethod *method = static_method;
 
 	if (method) {
 		mono_memory_read_barrier ();
@@ -914,8 +925,12 @@ mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
 
-	if (method == NULL)
+	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeBuilderResolve not found. %s\n", __func__, mono_error_get_message (error));
+	} else {
+		mono_memory_barrier ();
+		static_method = method;
+	}
 
 	return method;
 }
@@ -1372,12 +1387,13 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 	HANDLE_FUNCTION_ENTER ();
 	MonoAssembly *ret = NULL;
 	MonoDomain *domain = mono_alc_domain (alc);
-	static MonoMethod *method;
 
 	if (mono_runtime_get_no_exec ())
 		goto leave;
 
 #ifndef ENABLE_NETCORE
+
+	static MonoMethod *method;
 	MonoBoolean isrefonly;
 	gpointer params [3];
 
@@ -1415,15 +1431,21 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		goto leave;
 	}
 #else
+	static MonoMethod *static_method;
+	MonoMethod *method = static_method;
+
 	if (method) {
 		mono_memory_read_barrier ();
 	} else {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *found = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
+		method = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		method = found;
+		if (method) {
+			mono_memory_barrier ();
+			static_method = method;
+		}
 	}
 	g_assert (method);
 
@@ -1556,8 +1578,6 @@ static void
 mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out)
 {
 	HANDLE_FUNCTION_ENTER ();
-	static MonoClassField *assembly_load_field;
-	static MonoMethod *assembly_load_method;
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_alc_domain (alc);
 	MonoClass *klass;
@@ -1582,8 +1602,17 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	add_assembly_to_alc (alc, assembly);
 #endif
 
+	static MonoClassField *static_assembly_load_field;
+	MonoClassField *assembly_load_field;
+
+	assembly_load_field = static_assembly_load_field;
+
 	if (assembly_load_field == NULL) {
 		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
+		if (assembly_load_field) {
+			mono_memory_barrier ();
+			static_assembly_load_field = assembly_load_field;
+		}
 		g_assert (assembly_load_field);
 	} else {
 		mono_memory_read_barrier ();
@@ -1596,8 +1625,17 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	reflection_assembly = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_assert_ok (error);
 
+	static MonoMethod *static_assembly_load_method;
+	MonoMethod *assembly_load_method;
+
+	assembly_load_method = static_assembly_load_method;
+
 	if (assembly_load_method == NULL) {
 		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, error);
+		if (assembly_load_method) {
+			mono_memory_barrier ();
+			static_assembly_load_method = assembly_load_method;
+		}
 		g_assert (assembly_load_method);
 	} else {
 		mono_memory_read_barrier ();

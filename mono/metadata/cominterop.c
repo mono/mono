@@ -241,19 +241,16 @@ mono_marshal_safearray_free_indices (gpointer indices);
 MonoClass*
 mono_class_try_get_com_object_class (void)
 {
-	static MonoClass *tmp_class;
-	static gboolean inited;
-	MonoClass *klass;
-	if (!inited) {
+	static MonoClass *static_class;
+	MonoClass *klass = static_class;
+	if (!klass) {
 		klass = mono_class_load_from_name (mono_defaults.corlib, "System", "__ComObject");
 		mono_memory_barrier ();
-		tmp_class = klass;
-		mono_memory_barrier ();
-		inited = TRUE;
+		static_class = klass;
 	} else {
 		mono_memory_read_barrier ();
 	}
-	return tmp_class;
+	return klass;
 }
 
 /**
@@ -553,13 +550,19 @@ cominterop_com_visible (MonoClass* klass)
 static void
 cominterop_set_hr_error (MonoError *oerror, int hr)
 {
-	static MonoMethod* throw_exception_for_hr = NULL;
 	ERROR_DECL (error);
 	MonoException* ex;
 	void* params[1] = {&hr};
 
+	static MonoMethod* static_throw_exception_for_hr;
+	MonoMethod* throw_exception_for_hr = static_throw_exception_for_hr;
+
 	if (!throw_exception_for_hr) {
 		throw_exception_for_hr = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetExceptionForHR", 1, 0, error);
+		if (throw_exception_for_hr) {
+			mono_memory_barrier ();
+			static_throw_exception_for_hr = throw_exception_for_hr;
+		}
 		mono_error_assert_ok (error);
 	} else {
 		mono_memory_read_barrier ();
@@ -1073,11 +1076,16 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 		 * instead of just __ComObject .ctor.
 		 */
 		if (!strcmp(method->name, ".ctor")) {
-			static MonoMethod *ctor = NULL;
+			static MonoMethod *static_ctor;
+			MonoMethod *ctor = static_ctor;
 
 			if (!ctor) {
 				ERROR_DECL (error);
 				ctor = mono_class_get_method_from_name_checked (mono_class_get_com_object_class (), ".ctor", 0, 0, error);
+				if (ctor) {
+					mono_memory_barrier ();
+					static_ctor = ctor;
+				}
 				mono_error_assert_ok (error);
 			} else {
 				mono_memory_read_barrier ();

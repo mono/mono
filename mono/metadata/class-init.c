@@ -2717,6 +2717,7 @@ print_unimplemented_interface_method_info (MonoClass *klass, MonoClass *ic, Mono
 static MonoMethod*
 mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 {
+	// FIXME move state to caller
 	gboolean static_iter = FALSE;
 
 	if (!iter)
@@ -4918,8 +4919,10 @@ mono_class_setup_methods (MonoClass *klass)
 	int i, count;
 	MonoMethod **methods;
 
-	if (klass->methods)
+	if (klass->methods) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	if (mono_class_is_ginst (klass)) {
 		ERROR_DECL (error);
@@ -5082,6 +5085,8 @@ mono_class_setup_methods (MonoClass *klass)
 		mono_memory_barrier ();
 
 		klass->methods = methods;
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	mono_image_unlock (klass->image);
@@ -5228,8 +5233,10 @@ mono_class_setup_events (MonoClass *klass)
 	MonoEvent *events;
 
 	MonoClassEventInfo *info = mono_class_get_event_info (klass);
-	if (info)
+	if (info) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	if (mono_class_is_ginst (klass)) {
 		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
@@ -5379,8 +5386,10 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 
 	error_init (error);
 
-	if (klass->interfaces_inited)
+	if (klass->interfaces_inited) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	if (klass->rank == 1 && m_class_get_byval_arg (klass)->type != MONO_TYPE_ARRAY) {
 		MonoType *args [1];
@@ -5449,8 +5458,10 @@ mono_class_setup_has_finalizer (MonoClass *klass)
 {
 	gboolean has_finalize = FALSE;
 
-	if (m_class_is_has_finalize_inited (klass))
+	if (m_class_is_has_finalize_inited (klass)) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	/* Interfaces and valuetypes are not supposed to have finalizers */
 	if (!(MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || m_class_is_valuetype (klass))) {
@@ -5519,8 +5530,10 @@ mono_class_setup_supertypes (MonoClass *klass)
 	MonoClass **supertypes;
 
 	mono_atomic_load_acquire (supertypes, MonoClass **, &klass->supertypes);
-	if (supertypes)
+	if (supertypes) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	if (klass->parent && !klass->parent->supertypes)
 		mono_class_setup_supertypes (klass->parent);
@@ -5565,8 +5578,10 @@ mono_class_setup_nested_types (MonoClass *klass)
 	GList *classes, *nested_classes, *l;
 	int i;
 
-	if (klass->nested_classes_inited)
+	if (klass->nested_classes_inited) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
 	if (!klass->type_token) {
 		mono_loader_lock ();
@@ -5628,6 +5643,7 @@ mono_class_setup_runtime_info (MonoClass *klass, MonoDomain *domain, MonoVTable 
 	MonoClassRuntimeInfo *old_info = m_class_get_runtime_info (klass);
 	if (old_info && old_info->max_domain >= domain->domain_id) {
 		/* someone already created a large enough runtime info */
+		mono_memory_read_barrier ();
 		old_info->domain_vtables [domain->domain_id] = vtable;
 	} else {
 		int new_size = domain->domain_id;
@@ -5672,7 +5688,7 @@ mono_class_create_array_fill_type (void)
 	klass.size_inited = 1;
 	klass.name = "array_filler_type";
 
-	mono_memory_read_barrier ();
+	mono_memory_barrier ();
 
 	return &klass;
 }

@@ -1438,8 +1438,6 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 {
 	HANDLE_FUNCTION_ENTER ();
 
-	static MonoMethod *ctor;
-
 	MonoDomain *domain;
 	void *params [4];
 
@@ -1450,6 +1448,9 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 
 	MonoClass *cattr_data = try_get_cattr_data_class (error);
 	goto_if_nok (error, result_null);
+
+	static MonoMethod *static_ctor;
+	MonoMethod *ctor = static_ctor;
 
 	if (!ctor) {
 		MonoMethod *tmp = mono_class_get_method_from_name_checked (cattr_data, ".ctor", 4, 0, error);

@@ -2912,6 +2912,8 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			/* Make sure that this array is zeroed if other threads access it */
 			mono_memory_write_barrier ();
 			rgctx [offset + 0] = array;
+		} else {
+			mono_memory_read_barrier ();
 		}
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
@@ -2939,8 +2941,10 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
-	if (rgctx [rgctx_index]) {
-		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
+	gpointer existing_info = rgctx [rgctx_index];
+	if (existing_info) {
+		mono_memory_read_barrier ();
+		info = existing_info;
 	} else {
 		/* Make sure other threads see the contents of info */
 		mono_memory_write_barrier ();
@@ -2980,6 +2984,8 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 		mono_memory_write_barrier ();
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
+	} else {
+		mono_memory_read_barrier ();
 	}
 
 	mono_domain_unlock (domain);
