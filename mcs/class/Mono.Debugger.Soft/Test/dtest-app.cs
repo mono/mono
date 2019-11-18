@@ -604,6 +604,7 @@ public class Tests : TestsBase, ITest2
 		if_property_stepping();
 		fixed_size_array();
 		test_new_exception_filter();
+		test_async_debug_generics();
 		return 3;
 	}
 
@@ -901,6 +902,17 @@ public class Tests : TestsBase, ITest2
 		}
 		catch (Exception e) {
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_async_debug_generics () {
+		ExecuteAsync_Broken<object>().Wait ();
+	}
+
+	async static Task<T> ExecuteAsync_Broken<T>()
+	{
+		await Task.Delay(2);
+		return default;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

@@ -37,7 +37,7 @@ NOHANDLES(ICALL(ARGI_3, "IntGetNextArgWithType", ves_icall_System_ArgIterator_In
 NOHANDLES(ICALL(ARGI_4, "Setup",                 ves_icall_System_ArgIterator_Setup))
 
 ICALL_TYPE(ARRAY, "System.Array", ARRAY_0)
-HANDLES(ARRAY_0, "CanChangePrimitive",  ves_icall_System_Array_CanChangePrimitive, MonoBoolean, 3, (MonoReflectionType, MonoReflectionType, MonoBoolean))
+NOHANDLES(ICALL(ARRAY_0, "CanChangePrimitive", ves_icall_System_Array_CanChangePrimitive))
 HANDLES(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy, MonoBoolean, 5, (MonoArray, int, MonoArray, int, int))
 HANDLES(ARRAY_4a, "GetCorElementTypeOfElementType", ves_icall_System_Array_GetCorElementTypeOfElementType, gint32, 1, (MonoArray))
 NOHANDLES(ICALL(ARRAY_5, "GetGenericValue_icall", ves_icall_System_Array_GetGenericValue_icall))
@@ -65,9 +65,9 @@ HANDLES(DELEGATE_2, "CreateDelegate_internal", ves_icall_System_Delegate_CreateD
 HANDLES(DELEGATE_3, "GetVirtualMethod_internal", ves_icall_System_Delegate_GetVirtualMethod_internal, MonoReflectionMethod, 1, (MonoDelegate))
 
 ICALL_TYPE(DEBUGR, "System.Diagnostics.Debugger", DEBUGR_1)
-HANDLES(DEBUGR_1, "IsAttached_internal", ves_icall_System_Diagnostics_Debugger_IsAttached_internal, MonoBoolean, 0, ())
-HANDLES(DEBUGR_2, "IsLogging", ves_icall_System_Diagnostics_Debugger_IsLogging, MonoBoolean, 0, ())
-HANDLES(DEBUGR_3, "Log", ves_icall_System_Diagnostics_Debugger_Log, void, 3, (int, MonoString, MonoString))
+NOHANDLES(ICALL(DEBUGR_1, "IsAttached_internal", ves_icall_System_Diagnostics_Debugger_IsAttached_internal))
+NOHANDLES(ICALL(DEBUGR_2, "IsLogging", ves_icall_System_Diagnostics_Debugger_IsLogging))
+NOHANDLES(ICALL(DEBUGR_3, "Log_icall", ves_icall_System_Diagnostics_Debugger_Log))
 
 ICALL_TYPE(ENUM, "System.Enum", ENUM_1)
 HANDLES(ENUM_1, "GetEnumValuesAndNames", ves_icall_System_Enum_GetEnumValuesAndNames, MonoBoolean, 3, (MonoReflectionType, MonoArrayOut, MonoArrayOut))
