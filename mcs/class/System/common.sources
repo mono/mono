@@ -750,6 +750,8 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
 
+../referencesource/System/sys/system/Reflection/ICustomTypeProvider.cs
+
 ../referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
 ../referencesource/System/sys/system/runtime/interopservices/handlecollector.cs
 
