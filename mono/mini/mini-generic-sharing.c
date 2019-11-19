@@ -2944,7 +2944,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
-	gpointer existing_info = rgctx [rgctx_index];
+	gpointer const existing_info = rgctx [rgctx_index];
 	if (existing_info) {
 		info = existing_info;
 	} else {
