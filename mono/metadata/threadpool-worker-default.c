@@ -109,13 +109,14 @@ typedef struct {
 } ThreadPoolHillClimbing;
 
 typedef union {
+	gint64 as_gint64;
+	double align;
 	struct {
 		gint16 max_working; /* determined by heuristic */
 		gint16 starting; /* starting, but not yet in worker_thread */
 		gint16 working; /* executing worker_thread */
 		gint16 parked; /* parked */
 	} _;
-	gint64 as_gint64;
 } ThreadPoolWorkerCounter
 #ifdef __GNUC__
 __attribute__((aligned(64)))
@@ -171,6 +172,7 @@ static ThreadPoolWorker worker;
 		g_assert (counter._.max_working > 0); \
 		g_assert (counter._.starting >= 0); \
 		g_assert (counter._.working >= 0); \
+		g_assert (counter._.parked >= 0); \
 	} while (0)
 
 #define COUNTER_ATOMIC(var,block) \
@@ -187,9 +189,14 @@ static ThreadPoolWorker worker;
 static ThreadPoolWorkerCounter
 COUNTER_READ (void)
 {
-	ThreadPoolWorkerCounter counter;
-	counter.as_gint64 = mono_atomic_load_i64 (&worker.counters.as_gint64);
+	ThreadPoolWorkerCounter const counter = { mono_atomic_load_i64 (&worker.counters.as_gint64) };
 	return counter;
+}
+
+static int
+thread_count (ThreadPoolWorkerCounter counter)
+{
+	return counter._.starting + counter._.working + counter._.parked;
 }
 
 static guint32
@@ -462,8 +469,12 @@ worker_thread (gpointer unused)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker starting",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
-	if (!mono_refcount_tryinc (&worker))
+	if (!mono_refcount_tryinc (&worker)) {
+		COUNTER_ATOMIC (counter, {
+			counter._.starting --;
+		});
 		return 0;
+	}
 
 	COUNTER_ATOMIC (counter, {
 		counter._.starting --;
@@ -686,8 +697,6 @@ monitor_thread (gpointer unused)
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
 	do {
-		ThreadPoolWorkerCounter counter;
-		gboolean limit_worker_max_reached;
 		gint32 interval_left = MONITOR_INTERVAL;
 		gint32 awake = 0; /* number of spurious awakes we tolerate before doing a round of rebalancing */
 
@@ -726,21 +735,6 @@ monitor_thread (gpointer unused)
 		if (!monitor_sufficient_delay_since_last_dequeue ())
 			continue;
 
-		limit_worker_max_reached = FALSE;
-
-		COUNTER_ATOMIC (counter, {
-			if (counter._.max_working >= worker.limit_worker_max) {
-				limit_worker_max_reached = TRUE;
-				break;
-			}
-			counter._.max_working ++;
-		});
-
-		if (limit_worker_max_reached)
-			continue;
-
-		hill_climbing_force_change (counter._.max_working, TRANSITION_STARVATION);
-
 		for (i = 0; i < 5; ++i) {
 			if (mono_runtime_is_shutting_down ())
 				break;
@@ -750,6 +744,24 @@ monitor_thread (gpointer unused)
 					GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 				break;
 			}
+
+
+			gboolean limit_worker_max_reached = FALSE;
+			ThreadPoolWorkerCounter counter = { 0 };
+			int new_thread_count = 0;
+
+			COUNTER_ATOMIC (counter, {
+				new_thread_count = thread_count (counter) + 1;
+				if (new_thread_count > worker.limit_worker_max) {
+					limit_worker_max_reached = TRUE;
+					break;
+				}
+			});
+
+			if (limit_worker_max_reached)
+				continue;
+
+			hill_climbing_force_change (new_thread_count, TRANSITION_STARVATION);
 
 			if (worker_try_create ()) {
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, created",
@@ -1094,6 +1106,8 @@ heuristic_adjust (void)
 			COUNTER_ATOMIC (counter, {
 				counter._.max_working = new_thread_count;
 			});
+
+			// FIXME This can never be true.
 
 			if (new_thread_count > counter._.max_working)
 				worker_request ();
