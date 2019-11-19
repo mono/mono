@@ -595,7 +595,7 @@ clean: clean-browser-tests
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
-	$(RM) netcore-System.Native.bc
+	$(RM) -r $(NETCOREAPP_DIR)
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
