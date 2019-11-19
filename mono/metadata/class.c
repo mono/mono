@@ -3334,9 +3334,7 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 		g_error ("Runtime critical type %s.%s not found", name_space, name);
 	mono_error_assertf_ok (error, "Could not load runtime critical type %s.%s", name_space, name);
 
-	// Caller is often but not always caching in a global accessed from multiple threads.
-	// FIXME Remove this barrier once all the callers are fixed.
-	mono_memory_barrier ();
+	// Many callers could use a barrier here, but they place it themselves.
 
 	return klass;
 }
@@ -5449,9 +5447,8 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 		if (res)
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
 
-		// FIXME Remove this barrier once all the callers are fixed.
-		mono_memory_barrier ();
-
+		// Many callers could use a barrier here, but they place it themselves.
+	
 		return res;
 	}
 
@@ -5482,8 +5479,7 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	    res = mono_find_method_in_metadata (klass, name, param_count, flags);
 	}
 
-	// FIXME Remove this barrier once all the callers are fixed.
-	mono_memory_barrier ();
+	// Many callers could use a barrier here, but they place it themselves.
 
 	return res;
 }
