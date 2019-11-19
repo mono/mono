@@ -1508,9 +1508,9 @@ mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
 //   Some allow multiple concurrent writes to the global. Some do not.
 //
 // Booleans or names capturing these factors would be desirable.
-//  RacyInit?
+//	RacyInit?
 //
-// This form allows both such races, on the understanding that.
+// This form allows both such races, on the understanding that,
 // even if the initialization occurs multiple times, every result is equivalent,
 // and the goal is not to initialize no more than once, but for the steady state
 // to stop rerunning the initialization.

@@ -245,6 +245,8 @@ mono_remoting_marshal_init (void)
 
 	mono_loader_unlock ();
 
+	mono_memory_barrier ();
+
 	module_initialized = TRUE;
 }
 

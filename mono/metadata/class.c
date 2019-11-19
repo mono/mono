@@ -5444,11 +5444,12 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	if (mono_class_is_ginst (klass) && !m_class_get_methods (klass)) {
 		res = mono_class_get_method_from_name_checked (mono_class_get_generic_class (klass)->container_class, name, param_count, flags, error);
 
-		if (res)
+		if (res) {
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
 
-		// Many callers could use a barrier here, but they place it themselves.
-	
+			// Many callers could use a barrier here, but they place it themselves.
+		}
+
 		return res;
 	}
 
