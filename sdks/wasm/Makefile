@@ -244,6 +244,7 @@ run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
 
+# Need to embed corelib because BenchmarkDotNet reads version info from it
 build-bench: packager.exe $(NETCOREAPP_DIR) bench-runner/WasmRunner.cs
 	@if test -z "$(PERF_REPO_ROOT)"; then echo "PERF_REPO_ROOT is not set"; exit 1; fi
 	cd bench-runner && dotnet build /nologo /p:Configuration=Release
