@@ -4103,8 +4103,11 @@ initialize_object_slots (MonoClass *klass)
 	mono_class_setup_vtable (klass);
 
 	for (i = 0; i < klass->vtable_size; ++i) {
-		if (!strcmp (klass->vtable [i]->name, "Finalize"))
+		if (!strcmp (klass->vtable [i]->name, "Finalize")) {
+			int const j = finalize_slot;
+			g_assert (j == i || j == -1);
 			finalize_slot = i;
+		}
 	}
 
 	g_assert (finalize_slot >= 0);
@@ -4119,7 +4122,8 @@ mono_class_get_object_finalize_slot ()
 MonoMethod *
 mono_class_get_default_finalize_method ()
 {
-	return mono_defaults.object_class->vtable [finalize_slot];
+	int const i = finalize_slot;
+	return (i < 0) ? NULL : mono_defaults.object_class->vtable [i];
 }
 
 typedef struct {
