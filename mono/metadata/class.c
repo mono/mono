@@ -2433,9 +2433,8 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 		mono_memory_barrier ();
 		def_values [field_index].data = (const char *)mono_metadata_blob_heap (field_parent_image, constant_cols [MONO_CONSTANT_VALUE]);
 		mono_memory_barrier ();
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	*def_type = def_values [field_index].def_type;
 	return def_values [field_index].data;

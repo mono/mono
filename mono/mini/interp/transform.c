@@ -7647,9 +7647,9 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 		imethod->transformed = TRUE;
 		mono_interp_stats.methods_transformed++;
 		mono_atomic_fetch_add_i32 (&mono_jit_stats.methods_with_interp, 1);
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
+
 	mono_os_mutex_unlock (&calc_section);
 
 	mono_domain_lock (domain);

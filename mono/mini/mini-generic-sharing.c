@@ -1002,17 +1002,17 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				g_assert (m);
 				mono_memory_barrier ();
 				memcpy_method [size] = m;
-			} else {
-				mono_memory_read_barrier ();
 			}
+			mono_memory_read_barrier ();
+
 			if (!domain_info->memcpy_addr [size]) {
 				gpointer addr = mono_compile_method_checked (memcpy_method [size], error);
 				mono_memory_barrier ();
 				domain_info->memcpy_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
-			} else {
-				mono_memory_read_barrier ();
 			}
+			mono_memory_read_barrier ();
+
 			return domain_info->memcpy_addr [size];
 		} else {
 			if (!bzero_method [size]) {
@@ -1027,17 +1027,17 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 				g_assert (m);
 				mono_memory_barrier ();
 				bzero_method [size] = m;
-			} else {
-				mono_memory_read_barrier ();
 			}
+			mono_memory_read_barrier ();
+
 			if (!domain_info->bzero_addr [size]) {
 				gpointer addr = mono_compile_method_checked (bzero_method [size], error);
 				mono_memory_barrier ();
 				domain_info->bzero_addr [size] = (gpointer *)addr;
 				mono_error_assert_ok (error);
-			} else {
-				mono_memory_read_barrier ();
 			}
+			mono_memory_read_barrier ();
+
 			return domain_info->bzero_addr [size];
 		}
 	}
@@ -2038,9 +2038,9 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_memory_barrier ();
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
-		} else {
-			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
+		mono_memory_read_barrier (); // FIXME execute_barrier
+
 		addr = tramp_addr;
 	} else {
 		static gpointer tramp_addr;
@@ -2052,9 +2052,9 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 			mono_memory_barrier ();
 			mono_error_assert_ok (error);
 			tramp_addr = addr;
-		} else {
-			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
+		mono_memory_read_barrier (); // FIXME execute_barrier
+
 		addr = tramp_addr;
 	}
 
@@ -2915,9 +2915,9 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			/* Make sure that this array is zeroed if other threads access it */
 			mono_memory_write_barrier ();
 			rgctx [offset + 0] = array;
-		} else {
-			mono_memory_read_barrier ();
 		}
+		mono_memory_read_barrier ();
+
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
 		size = mono_class_rgctx_get_array_size (i + 1, is_mrgctx);
@@ -2946,13 +2946,14 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	   meantime. */
 	gpointer existing_info = rgctx [rgctx_index];
 	if (existing_info) {
-		mono_memory_read_barrier ();
 		info = existing_info;
 	} else {
 		/* Make sure other threads see the contents of info */
 		mono_memory_write_barrier ();
 		rgctx [rgctx_index] = info;
 	}
+
+	mono_memory_read_barrier ();
 
 	mono_domain_unlock (domain);
 
@@ -2987,9 +2988,8 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 		mono_memory_write_barrier ();
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	mono_domain_unlock (domain);
 

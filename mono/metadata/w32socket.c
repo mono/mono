@@ -916,9 +916,8 @@ create_object_handle_from_sockaddr (struct sockaddr *saddr, int sa_size, gint32 
 			domain->sockaddr_data_field = field;
 		}
 		g_assert (domain->sockaddr_data_field);
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	/* Locate the SocketAddress data buffer length in the object */
 	if (!domain->sockaddr_data_length_field) {
@@ -928,9 +927,8 @@ create_object_handle_from_sockaddr (struct sockaddr *saddr, int sa_size, gint32 
 			domain->sockaddr_data_length_field = field;
 		}
 		g_assert (domain->sockaddr_data_length_field);
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	/* May be the +2 here is too conservative, as sa_len returns
 	 * the length of the entire sockaddr_in/in6, including

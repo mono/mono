@@ -4424,9 +4424,8 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		mono_memory_barrier ();
 		ICustomMarshaler = klass;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	if (spec->data.custom_data.image)
 		mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, alc, spec->data.custom_data.image, error);

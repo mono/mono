@@ -4444,8 +4444,8 @@ mono_class_init_internal (MonoClass *klass)
 
 	if (!default_ghc)
 		initialize_object_slots (klass);
-	else
-		mono_memory_read_barrier ();
+
+	mono_memory_read_barrier ();
 
 	/* 
 	 * Initialize the rest of the data without creating a generic vtable if possible.
@@ -5102,9 +5102,8 @@ mono_class_setup_methods (MonoClass *klass)
 		mono_memory_barrier ();
 
 		klass->methods = methods;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	mono_image_unlock (klass->image);
 }

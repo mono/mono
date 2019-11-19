@@ -2282,9 +2282,7 @@ static MonoMethod*
 get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_name, int num_params, int flags)
 {
 	MonoMethod *method = pmethod ? *pmethod : NULL;
-	if (method) {
-		mono_memory_read_barrier (); // pmethod is usually to a global accessed from multiple thread
-	} else {
+	if (!method) {
 		ERROR_DECL (error);
 		method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
 		if (method && pmethod) {
@@ -2293,6 +2291,7 @@ get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_na
 		}
 		mono_error_assert_ok (error);
 	}
+	mono_memory_read_barrier ();
 	g_assertf (method, "Could not lookup method %s in %s", method_name, m_class_get_name (klass));
 	return method;
 }
@@ -4875,9 +4874,8 @@ throw_exception (void)
 	if (!method) {
 		MonoSecurityManager *secman = mono_security_manager_get_methods ();
 		get_method_nofail (&method, secman->securitymanager, "ThrowException", 1, 0);
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 	g_assert (method);
 	return method;
 }

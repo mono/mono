@@ -4775,16 +4775,14 @@ serialize_or_deserialize_object (MonoObjectHandle obj, const gchar *method_name,
 			*pmethod = method;
 		}
 		return_val_if_nok (error, mono_new_null ()); // FIXME mono_new_null is overkill
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	if (!method) {
 		mono_error_set_exception_instance (error, NULL);
 		return mono_new_null ();
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	void *params [ ] = { MONO_HANDLE_RAW (obj) };
 	return mono_runtime_try_invoke_handle (method, NULL_HANDLE, params, error);
@@ -5909,9 +5907,8 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 			}
 			mono_memory_barrier ();
 			vtable->domain->create_proxy_for_type_method = im;
-		} else {
-			mono_memory_read_barrier ();
 		}
+		mono_memory_read_barrier ();
 	
 		pa [0] = mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (vtable->klass), error);
 		if (!is_ok (error))
@@ -5959,9 +5956,8 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 			}
 			mono_memory_barrier ();
 			vtable->domain->create_proxy_for_type_method = im;
-		} else {
-			mono_memory_read_barrier ();
 		}
+		mono_memory_read_barrier ();
 
 		// FIXMEcoop
 		gpointer pa[ ] = { mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (vtable->klass), error) };
@@ -8173,12 +8169,12 @@ mono_wait_handle_new (MonoDomain *domain, HANDLE handle, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoWaitHandle *res;
-	gpointer params [1];
-
 	error_init (error);
-	res = (MonoWaitHandle *)mono_object_new_checked (domain, mono_defaults.manualresetevent_class, error);
+
+	MonoWaitHandle *res = (MonoWaitHandle *)mono_object_new_checked (domain, mono_defaults.manualresetevent_class, error);
 	return_val_if_nok (error, NULL);
+
+	/* Even though this method is virtual, it's safe to invoke directly, since the object type matches.  */
 
 	MONO_STATIC_POINTER_INIT(MonoMethod, handle_set)
 
@@ -8186,9 +8182,10 @@ mono_wait_handle_new (MonoDomain *domain, HANDLE handle, MonoError *error)
 
 	MONO_STATIC_POINTER_INIT_END(MonoMethod, handle_set)
 
-	params [0] = &handle;
+	gpointer params [ ] = { &handle };
 
 	mono_runtime_invoke_checked (handle_set, res, params, error);
+
 	return res;
 }
 
@@ -8454,9 +8451,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 		}
 		mono_memory_barrier ();
 		real_proxy->vtable->domain->private_invoke_method = im;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	pa [0] = real_proxy;
 	pa [1] = msg;

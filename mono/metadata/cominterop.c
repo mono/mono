@@ -788,7 +788,7 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 
 		MONO_STATIC_POINTER_INIT_END (MonoMethod, get_transparent_proxy)
 #else
-		static MonoMethod* get_transparent_proxy; // FIXME?
+		static MonoMethod* const get_transparent_proxy = NULL; // FIXME?
 #endif
 
 		mono_mb_add_local (mb, m_class_get_byval_arg (mono_class_get_interop_proxy_class ()));
@@ -1523,7 +1523,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 				AddRef = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "AddRef", 1, 0, error);
 				mono_error_assert_ok (error);
 			MONO_STATIC_POINTER_INIT_END (MonoMethod, AddRef)
-	
+
 			mono_mb_emit_ldarg (mb, argnum);
 			mono_mb_emit_byte (mb, CEE_LDC_I4_0);
 			mono_mb_emit_byte (mb, CEE_STIND_I);

@@ -2355,8 +2355,8 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	int exc_id = mini_exception_id_by_name (exc_type);
 	if (!exc_classes [exc_id])
 		exc_classes [exc_id] = mono_class_load_from_name (mono_get_corlib (), "System", exc_type);
-	else
-		mono_memory_read_barrier ();
+
+	mono_memory_read_barrier ();
 	exc_class = exc_classes [exc_id];
 	
 	ex_bb = gen_bb (ctx, "EX_BB");

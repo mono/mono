@@ -328,7 +328,6 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	LOCK_GC;
 	if ((write_barrier_method = *write_barrier_method_addr)) {
 		/* Already created */
-		mono_memory_read_barrier ();
 		mono_free_method (res);
 		res = write_barrier_method;
 	} else {
@@ -336,6 +335,9 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 		mono_memory_barrier ();
 		*write_barrier_method_addr = res;
 	}
+
+	mono_memory_read_barrier ();
+
 	UNLOCK_GC;
 
 	return res;
@@ -374,9 +376,8 @@ get_array_fill_vtable (void)
 		mono_memory_barrier ();
 
 		array_fill_vtable = vtable;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 	return array_fill_vtable;
 }
 

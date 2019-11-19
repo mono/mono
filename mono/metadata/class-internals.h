@@ -1026,9 +1026,8 @@ mono_class_try_get_##shortname##_class (void)							\
 		klass = mono_class_try_load_from_name (mono_defaults.corlib, name_space, name);	\
 		mono_memory_barrier ();								\
 		static_class = klass;								\
-	} else {										\
-		mono_memory_read_barrier ();							\
 	}											\
+	mono_memory_read_barrier ();								\
 	return klass;										\
 }
 
@@ -1534,7 +1533,7 @@ mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
 			name = static_ ## name;					\
 		}								\
 	}									\
-	mono_memory_read_barrier ();
+	mono_memory_read_barrier ();						\
 
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"

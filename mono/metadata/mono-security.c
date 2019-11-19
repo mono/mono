@@ -645,9 +645,9 @@ mono_invoke_protected_memory_method (MonoArrayHandle data, MonoObjectHandle scop
 		}
 		mono_error_assert_ok (error);
 		g_assert (method);
-	} else  {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
+
 	void *params [ ] = {
 		MONO_HANDLE_RAW (data),
 		MONO_HANDLE_RAW (scope) // MemoryProtectionScope.SameProcess

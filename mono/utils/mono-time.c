@@ -141,10 +141,10 @@ mono_msec_boottime (void)
 		memcpy (&s_TimebaseInfo, &tmp, sizeof (mach_timebase_info_data_t));
 		mono_memory_barrier ();
 		timebase_inited = TRUE;
-	} else {
-		// This barrier prevents reading s_TimebaseInfo before reading timebase_inited.
-		mono_memory_barrier (); // FIXME mono_memory_read_barrier () is sufficient.
 	}
+	// This barrier prevents reading s_TimebaseInfo before reading timebase_inited.
+	mono_memory_barrier (); // FIXME mono_memory_read_barrier () is sufficient.
+
 	return (mach_absolute_time () * s_TimebaseInfo.numer / s_TimebaseInfo.denom) / tccMillieSecondsToNanoSeconds;
 
 #elif HAVE_GETHRTIME

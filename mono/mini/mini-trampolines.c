@@ -1667,9 +1667,8 @@ mini_get_single_step_trampoline (void)
 		}
 		mono_memory_barrier ();
 		trampoline = tramp;
-	} else {
-		mono_memory_read_barrier (); // FIXME execute_barrier
 	}
+	mono_memory_read_barrier (); // FIXME execute_barrier
 
 	return trampoline;
 }
@@ -1701,9 +1700,8 @@ mini_get_breakpoint_trampoline (void)
 		}
 		mono_memory_barrier ();
 		trampoline = tramp;
-	} else {
-		mono_memory_read_barrier (); // FIXME execute_barrier
 	}
+	mono_memory_read_barrier (); // FIXME execute_barrier
 
 	return trampoline;
 }

@@ -2749,9 +2749,8 @@ get_image_set (MonoImage **images, int nimages)
 	if (nimages == 1 && images [0] == mono_defaults.corlib) {
 		mono_memory_barrier ();
 		mscorlib_image_set = set;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	image_sets_unlock ();
 

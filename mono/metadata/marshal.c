@@ -1454,9 +1454,8 @@ get_cache (GHashTable **pvar, GHashFunc hash_func, GCompareFunc equal_func)
 			}
 		}
 		mono_marshal_unlock ();
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 	return var;
 }
 
@@ -2575,9 +2574,8 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		sig->ret = mono_get_void_type ();
 		mono_memory_barrier ();
 		cctor_signature = sig;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	if (!finalize_signature) {
 		MonoMethodSignature *sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
@@ -2585,9 +2583,8 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		sig->hasthis = 1;
 		mono_memory_barrier ();
 		finalize_signature = sig;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	cache_table = &mono_method_get_wrapper_cache (method)->runtime_invoke_method_cache;
 	method_cache = get_cache (cache_table, (GHashFunc) wrapper_cache_method_key_hash, (GCompareFunc) wrapper_cache_method_key_equal);
@@ -2835,9 +2832,8 @@ mono_marshal_get_runtime_invoke_dynamic (void)
 			mono_memory_barrier ();
 			static_method = method;
 		}
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	mono_marshal_unlock ();
 
@@ -4282,8 +4278,11 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 	mono_marshal_load_type_info (klass);
 
 	MonoMarshalType *marshal_info = mono_class_get_marshal_info (klass);
-	if (marshal_info->str_to_ptr)
-		return marshal_info->str_to_ptr;
+
+	if ((res = marshal_info->str_to_ptr)) {
+		mono_memory_read_barrier ();
+		return res;
+	}
 
 	MONO_STATIC_POINTER_INIT (MonoMethod, stoptr)
 
@@ -4304,10 +4303,15 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 	mono_mb_free (mb);
 
 	mono_marshal_lock ();
-	if (!marshal_info->str_to_ptr)
+
+	if (!marshal_info->str_to_ptr) {
+		mono_memory_barrier ();
 		marshal_info->str_to_ptr = res;
-	else
+	} else {
 		res = marshal_info->str_to_ptr;
+	}
+	mono_memory_read_barrier ();
+
 	mono_marshal_unlock ();
 	return res;
 }
@@ -4354,9 +4358,8 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 		sig->pinvoke = 0;
 		mono_memory_barrier ();
 		ptostr = sig;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	mb = mono_mb_new (klass, "PtrToStructure", MONO_WRAPPER_OTHER);
 
@@ -4374,6 +4377,7 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 	} else {
 		res = marshal_info->ptr_to_str;
 	}
+	mono_memory_read_barrier ();
 
 	mono_marshal_unlock ();
 
@@ -4685,9 +4689,8 @@ get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 		sig->params [1] = object_type;
 		mono_memory_barrier ();
 		signature = sig;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
 
 	param_names [0] = "index";
 	param_names [1] = "value";
@@ -4704,11 +4707,11 @@ get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 		cached_methods [kind] = res;
 		mono_marshal_unlock ();
 	} else {
-		mono_memory_read_barrier ();
 		mono_marshal_unlock ();
 		mono_free_method (res);
 		res = cached;
 	}
+	mono_memory_read_barrier ();
 
 	mono_mb_free (mb);
 	return res;
@@ -5904,9 +5907,9 @@ mono_marshal_load_type_info (MonoClass* klass)
 		mono_class_set_marshal_info (klass, info);
 		++class_marshal_info_count;
 		info2 = info;
-	} else {
-		mono_memory_read_barrier ();
 	}
+	mono_memory_read_barrier ();
+
 	mono_marshal_unlock ();
 
 	return info2;

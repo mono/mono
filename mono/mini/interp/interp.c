@@ -1339,11 +1339,10 @@ get_interp_to_native_trampoline (void)
 		} else {
 			// Try again in case another thread succeeded.
 			trampoline = static_trampoline;
-			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
-	} else  {
-		mono_memory_read_barrier (); // FIXME execute_barrier
 	}
+	mono_memory_read_barrier (); // FIXME execute_barrier
+
 	return trampoline;
 }
 
@@ -6172,9 +6171,8 @@ common_vcall:
 					void *tramp = mini_get_single_step_trampoline ();
 					mono_memory_barrier ();
 					ss_tramp = (T)tramp;
-				} else {
-					mono_memory_read_barrier ();
 				}
+				mono_memory_read_barrier ();
 
 				/*
 				 * Make this point to the MINT_SDB_SEQ_POINT instruction which follows this since
@@ -6204,9 +6202,8 @@ common_vcall:
 				void *tramp = mini_get_breakpoint_trampoline ();
 				mono_memory_barrier ();
 				bp_tramp = (T)tramp;
-			} else {
-				mono_memory_read_barrier ();
 			}
+			mono_memory_read_barrier ();
 
 			frame->ip = ip;
 
