@@ -4090,48 +4090,37 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	g_free (fields_has_references);
 }
 
-static MonoMethod *default_ghc;
 static MonoMethod *default_finalize;
 static int finalize_slot = -1;
-static int ghc_slot = -1;
 
 static void
 initialize_object_slots (MonoClass *klass)
 {
+	if (klass != mono_defaults.object_class)
+		return;
+
 	int i;
 
-	MonoMethod *ghc = default_ghc;
-	mono_memory_read_barrier ();
-
 	MonoMethod *finalize = default_finalize;
+
 	mono_memory_read_barrier ();
 
-	if (ghc && finalize) {
+	if (finalize) {
 		return;
 	}
 
-	if (klass == mono_defaults.object_class) {
-		mono_class_setup_vtable (klass);
-		for (i = 0; i < klass->vtable_size; ++i) {
-			MonoMethod *cm = klass->vtable [i];
-       
-			if (!strcmp (cm->name, "GetHashCode"))
-				ghc_slot = i;
-			else if (!strcmp (cm->name, "Finalize"))
-				finalize_slot = i;
-		}
+	mono_class_setup_vtable (klass);
+	for (i = 0; i < klass->vtable_size; ++i) {
+		MonoMethod *cm = klass->vtable [i];
 
-		g_assert (ghc_slot >= 0);
-
-		mono_memory_barrier ();
-
-		default_ghc = klass->vtable [ghc_slot];
-
-		mono_memory_barrier ();
-
-		g_assert (finalize_slot >= 0);
-		default_finalize = klass->vtable [finalize_slot];
+		if (!strcmp (cm->name, "Finalize"))
+			finalize_slot = i;
 	}
+
+	mono_memory_barrier ();
+
+	g_assert (finalize_slot >= 0);
+	default_finalize = klass->vtable [finalize_slot];
 }
 
 int
@@ -4442,10 +4431,7 @@ mono_class_init_internal (MonoClass *klass)
 
 	mono_class_setup_supertypes (klass);
 
-	if (!default_ghc)
-		initialize_object_slots (klass);
-
-	mono_memory_read_barrier ();
+	initialize_object_slots (klass);
 
 	/* 
 	 * Initialize the rest of the data without creating a generic vtable if possible.
@@ -4494,18 +4480,6 @@ mono_class_init_internal (MonoClass *klass)
 		vtable_size = gklass->vtable_size;
 	} else {
 		/* General case */
-
-		/* ghcimpl is not currently used
-		klass->ghcimpl = 1;
-		if (klass->parent) {
-			MonoMethod *cmethod = klass->vtable [ghc_slot];
-			if (cmethod->is_inflated)
-				cmethod = ((MonoMethodInflated*)cmethod)->declaring;
-			if (cmethod == default_ghc) {
-				klass->ghcimpl = 0;
-			}
-		}
-		*/
 
 		/* C# doesn't allow interfaces to have cctors */
 		if (!MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || klass->image != mono_defaults.corlib) {
