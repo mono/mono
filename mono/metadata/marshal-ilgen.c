@@ -86,9 +86,7 @@ static MonoMethod*
 get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_name, int num_params, int flags)
 {
 	MonoMethod *method = pmethod ? *pmethod : NULL;
-	if (method) {
-		mono_memory_read_barrier ();
-	} else {
+	if (!method) {
 		ERROR_DECL (error);
 		method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
 		mono_error_assert_ok (error);
@@ -97,6 +95,7 @@ get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_na
 			*pmethod = method;
 		}
 	}
+	mono_memory_read_barrier ();
 	g_assertf (method, "Could not lookup method %s in %s", method_name, m_class_get_name (klass));
 	return method;
 }
