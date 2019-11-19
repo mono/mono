@@ -4657,7 +4657,7 @@ mono_marshal_get_strelemref_wrapper_name (MonoStelemrefKind kind)
 static MonoMethod*
 get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 {
-	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT] = { NULL }; /*object iface sealed regular*/
+	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT]; /*object iface sealed regular*/
 	static MonoMethodSignature *signature;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
@@ -4875,9 +4875,9 @@ typedef struct {
 } ArrayElemAddr;
 
 /* LOCKING: vars accessed under the marshal lock */
-static ArrayElemAddr *elem_addr_cache = NULL;
-static int elem_addr_cache_size = 0;
-static int elem_addr_cache_next = 0;
+static ArrayElemAddr *elem_addr_cache;
+static int elem_addr_cache_size;
+static int elem_addr_cache_next;
 
 /**
  * mono_marshal_get_array_address:

@@ -2299,7 +2299,7 @@ get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_na
 MonoMethod*
 mini_get_memcpy_method (void)
 {
-	static MonoMethod *memcpy_method = NULL;
+	static MonoMethod *memcpy_method;
 	get_method_nofail (&memcpy_method, mono_defaults.string_class, "memcpy", 3, 0);
 	if (!memcpy_method)
 		g_error ("Old corlib found. Install a new one");
@@ -2386,7 +2386,7 @@ mini_emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 MonoMethod*
 mini_get_memset_method (void)
 {
-	static MonoMethod *memset_method = NULL;
+	static MonoMethod *memset_method;
 	get_method_nofail (&memset_method, mono_defaults.string_class, "memset", 3, 0);
 	if (!memset_method)
 		g_error ("Old corlib found. Install a new one");
@@ -4869,7 +4869,7 @@ mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *conte
 static MonoMethod*
 throw_exception (void)
 {
-	static MonoMethod *method = NULL;
+	static MonoMethod *method;
 
 	if (!method) {
 		MonoSecurityManager *secman = mono_security_manager_get_methods ();
