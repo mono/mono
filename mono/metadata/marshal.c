@@ -2554,8 +2554,8 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 	GHashTable **cache_table = NULL;
 	MonoClass *target_klass;
 	MonoMethod *res = NULL;
-	static MonoMethodSignature *cctor_signature;
-	static MonoMethodSignature *finalize_signature;
+	static MonoMethodSignature *cctor_signature = NULL;
+	static MonoMethodSignature *finalize_signature = NULL;
 	char *name;
 	const char *param_names [16];
 	WrapperInfo *info;
@@ -4332,7 +4332,7 @@ MonoMethod *
 mono_marshal_get_ptr_to_struct (MonoClass *klass)
 {
 	MonoMethodBuilder *mb;
-	static MonoMethodSignature *ptostr;
+	static MonoMethodSignature *ptostr = NULL;
 	MonoMethod *res;
 	WrapperInfo *info;
 
@@ -4657,7 +4657,7 @@ mono_marshal_get_strelemref_wrapper_name (MonoStelemrefKind kind)
 static MonoMethod*
 get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 {
-	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT]; /*object iface sealed regular*/
+	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT] = { NULL }; /*object iface sealed regular*/
 	static MonoMethodSignature *signature;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
@@ -4875,9 +4875,9 @@ typedef struct {
 } ArrayElemAddr;
 
 /* LOCKING: vars accessed under the marshal lock */
-static ArrayElemAddr *elem_addr_cache;
-static int elem_addr_cache_size;
-static int elem_addr_cache_next;
+static ArrayElemAddr *elem_addr_cache = NULL;
+static int elem_addr_cache_size = 0;
+static int elem_addr_cache_next = 0;
 
 /**
  * mono_marshal_get_array_address:
