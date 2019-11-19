@@ -1472,7 +1472,7 @@ is_corlib_type (MonoClass *klass)
 
 #define check_corlib_type_cached(_class, _namespace, _name) do { \
 	static MonoClass *cached_class; \
-	if (cached_class) {
+	if (cached_class) \
 		return cached_class == _class; \
 	if (is_corlib_type (_class) && !strcmp (_name, _class->name) && !strcmp (_namespace, _class->name_space)) { \
 		cached_class = _class; \
