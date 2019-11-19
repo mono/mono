@@ -4090,37 +4090,24 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	g_free (fields_has_references);
 }
 
-static MonoMethod *default_finalize;
 static int finalize_slot = -1;
 
 static void
 initialize_object_slots (MonoClass *klass)
 {
-	if (klass != mono_defaults.object_class)
+	if (klass != mono_defaults.object_class || finalize_slot >= 0)
 		return;
 
 	int i;
 
-	MonoMethod *finalize = default_finalize;
-
-	mono_memory_read_barrier ();
-
-	if (finalize) {
-		return;
-	}
-
 	mono_class_setup_vtable (klass);
-	for (i = 0; i < klass->vtable_size; ++i) {
-		MonoMethod *cm = klass->vtable [i];
 
-		if (!strcmp (cm->name, "Finalize"))
+	for (i = 0; i < klass->vtable_size; ++i) {
+		if (!strcmp (klass->vtable [i]->name, "Finalize"))
 			finalize_slot = i;
 	}
 
-	mono_memory_barrier ();
-
 	g_assert (finalize_slot >= 0);
-	default_finalize = klass->vtable [finalize_slot];
 }
 
 int
@@ -4132,8 +4119,7 @@ mono_class_get_object_finalize_slot ()
 MonoMethod *
 mono_class_get_default_finalize_method ()
 {
-	mono_memory_read_barrier ();
-	return default_finalize;
+	return mono_defaults.object_class->vtable [finalize_slot];
 }
 
 typedef struct {
