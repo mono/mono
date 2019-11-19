@@ -879,15 +879,14 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
 	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
-		// not cached yet, fill cache under caller's lock
+	// not cached yet, fill cache under caller's lock
 
-		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
+	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
 
 	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
-	if (method == NULL) {
+	if (method == NULL)
 		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
-	}
 
 	return method;
 }
@@ -902,15 +901,14 @@ mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
 	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
-		// not cached yet, fill cache under caller's lock
+	// not cached yet, fill cache under caller's lock
 
-		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
+	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
 
 	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
-	if (method == NULL) {
+	if (method == NULL)
 		g_warning ("%s method AppDomain.DoTypeBuilderResolve not found. %s\n", __func__, mono_error_get_message (error));
-	}
 
 	return method;
 }
