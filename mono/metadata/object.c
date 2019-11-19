@@ -110,9 +110,11 @@ static MonoCoopMutex ldstr_section;
 void
 mono_runtime_object_init (MonoObject *this_obj)
 {
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	mono_runtime_object_init_checked (this_obj, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
@@ -2009,6 +2011,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	guint32 vtable_size, class_size;
 	gpointer iter;
 	gpointer *interface_offsets;
+	gboolean is_primitive_type_array = FALSE;
 	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
 
 	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
@@ -2033,6 +2036,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	/* Array types require that their element type be valid*/
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
 		MonoClass *element_class = m_class_get_element_class (klass);
+		is_primitive_type_array = m_class_is_primitive (element_class);
 		if (!m_class_is_inited (element_class))
 			mono_class_init_internal (element_class);
 
@@ -2105,6 +2109,12 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	vt->domain = domain;
 	if ((vt->rank > 0) || klass == mono_get_string_class ())
 		vt->flags |= MONO_VT_FLAG_ARRAY_OR_STRING;
+	
+	if (m_class_has_references (klass))
+		vt->flags |= MONO_VT_FLAG_HAS_REFERENCES;
+
+	if (is_primitive_type_array)
+		vt->flags |= MONO_VT_FLAG_ARRAY_IS_PRIMITIVE;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
 
@@ -7162,7 +7172,11 @@ mono_object_get_domain_internal (MonoObject *obj)
 MonoDomain*
 mono_object_get_domain (MonoObject *obj)
 {
-	MONO_EXTERNAL_ONLY (MonoDomain*, mono_object_get_domain_internal (obj));
+	MonoDomain* ret = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	ret = mono_object_get_domain_internal (obj);
+	MONO_EXIT_GC_UNSAFE;
+	return ret;
 }
 
 /**
@@ -7696,6 +7710,7 @@ char *
 mono_string_to_utf8 (MonoString *s)
 {
 	char *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	result = mono_string_to_utf8_checked_internal (s, error);
 	
@@ -7703,6 +7718,7 @@ mono_string_to_utf8 (MonoString *s)
 		mono_error_cleanup (error);
 		result = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 

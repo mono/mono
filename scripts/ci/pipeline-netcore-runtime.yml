@@ -71,9 +71,9 @@ stages:
           displayName: 'Clean up working directory'
 
         - bash: |
-            git submodule update --init -- external/llvm
+            git submodule update --init -- external/llvm-project
           condition: eq(variables['llvm'], 'true')
-          displayName: 'Checkout external/llvm'
+          displayName: 'Checkout external/llvm-project'
 
         - bash: |
             sudo apt update
@@ -153,9 +153,9 @@ stages:
           displayName: 'Clean up working directory'
 
         - bash: |
-            git submodule update --init -- external/llvm
+            git submodule update --init -- external/llvm-project
           condition: eq(variables['llvm'], 'true')
-          displayName: 'Checkout external/llvm'
+          displayName: 'Checkout external/llvm-project'
 
         - bash: |
             brew install autoconf automake libtool gnu-sed

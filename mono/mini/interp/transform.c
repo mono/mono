@@ -1527,6 +1527,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			*op = MINT_LDLEN;
 		} else if (!strcmp (tm, "GetElementSize")) {
 			*op = MINT_ARRAY_ELEMENT_SIZE;
+		} else if (!strcmp (tm, "IsPrimitive")) {
+			*op = MINT_ARRAY_IS_PRIMITIVE;
 		} else if (!strcmp (tm, "Address")) {
 			MonoClass *check_class = readonly ? NULL : m_class_get_element_class (target_method->klass);
 			interp_emit_ldelema (td, target_method->klass, check_class);
@@ -1714,10 +1716,14 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && target_method->klass == mono_defaults.object_class) {
 		if (!strcmp (tm, "InternalGetHashCode"))
 			*op = MINT_INTRINS_GET_HASHCODE;
-#ifdef DISABLE_REMOTING
-		else if (!strcmp (tm, "GetType"))
-			*op = MINT_INTRINS_GET_TYPE;
+		else if (!strcmp (tm, "GetType")
+#ifndef DISABLE_REMOTING
+			// Invoking GetType via reflection on proxies has some special semantics
+			// See InterfaceProxyGetTypeViaReflectionOkay corlib test
+			&& td->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE
 #endif
+				)
+			*op = MINT_INTRINS_GET_TYPE;
 #ifdef ENABLE_NETCORE
 		else if (!strcmp (tm, "GetRawData")) {
 #if SIZEOF_VOID_P == 8
@@ -1839,6 +1845,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				*op = MINT_CEQ_I4;
 			}
 		}
+	} else if (in_corlib &&
+			   !strcmp ("System.Runtime.CompilerServices", klass_name_space) &&
+			   !strcmp ("RuntimeFeature", klass_name)) {
+		if (!strcmp (tm, "get_IsDynamicCodeSupported") || !strcmp (tm, "get_IsDynamicCodeCompiled"))
+			*op = MINT_LDC_I4_1;
 	}
 
 	return FALSE;
@@ -1992,6 +2003,10 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method)
 	if (td->method == method)
 		return FALSE;
 
+	if (method->flags & METHOD_ATTRIBUTE_REQSECOBJ)
+		/* Used to mark methods containing StackCrawlMark locals */
+		return FALSE;
+
 	if (!mono_method_get_header_summary (method, &header))
 		return FALSE;
 
@@ -2002,7 +2017,7 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method)
 	    header.has_clauses)
 		return FALSE;
 
-	if (header.code_size >= INLINE_LENGTH_LIMIT)
+	if (header.code_size >= INLINE_LENGTH_LIMIT && !(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
 		return FALSE;
 
 	if (mono_class_needs_cctor_run (method->klass, NULL)) {

@@ -17,7 +17,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign]
+AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign subdir-objects]
                  m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
                              *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
                              esac]))                                     # TODO: remove this hack once we require automake 1.11+
@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=4e2d4257-1f2b-418c-9829-dd006fe09df5
+MONO_CORLIB_VERSION=423e7794-9279-49a3-a477-f1cb2432e9f4
 
 #
 # Put a quoted #define in config.h.
@@ -3409,6 +3409,15 @@ if test x$host_win32 = xno; then
 	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
 
+	AC_CHECK_DECL(lchflags,          [AC_DEFINE(HAVE_LCHFLAGS, 1, [lchflags])], [], 
+		[[#include <sys/types.h> 
+		#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct stat.st_flags,
+		[AC_DEFINE(HAVE_STAT_FLAGS, 1, [struct stat.st_flags])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+
 	AC_CHECK_MEMBER(struct stat.st_birthtimespec,
 		[AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtimespec])],
 		[],
@@ -6707,6 +6716,7 @@ mono/native/Makefile
 mono/utils/Makefile
 mono/utils/jemalloc/Makefile
 mono/metadata/Makefile
+mono/zlib/Makefile
 mono/dis/Makefile
 mono/cil/Makefile
 mono/arch/Makefile

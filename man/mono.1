@@ -1763,6 +1763,12 @@ Automatically generates sequence points where the
 IL stack is empty.  These are places where the debugger can set a
 breakpoint.
 .TP
+\fBllvm-disable-implicit-null-checks\fR
+Makes the LLVM backend use explicit NULL checks on variable dereferences
+instead of depending on operating system support for signals or traps when
+an invalid memory location is accessed. Unconditionally enabled by
+explicit-null-checks.
+.TP
 \fBno-compact-seq-points\fR
 Unless the option is used, the runtime generates sequence points data that
 maps native offsets to IL offsets. Sequence point data is used to

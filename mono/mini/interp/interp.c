@@ -5576,6 +5576,13 @@ common_vcall:
 			ip++;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_ARRAY_IS_PRIMITIVE) {
+			MonoObject* const o = sp [-1].data.o;
+			NULL_CHECK (o);
+			sp [-1].data.i = m_class_is_primitive (m_class_get_element_class (mono_object_class (o)));
+			ip++;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDELEMA1) {
 			/* No bounds, one direction */
 			MonoArray *ao = (MonoArray*)sp [-2].data.o;
@@ -6432,7 +6439,7 @@ common_vcall:
 				if (flag & PROFILING_FLAG)
 					MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
 				g_free (prof_ctx);
-			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+			} else if ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
 				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, NULL));
 			}
 			MINT_IN_BREAK;
@@ -6468,7 +6475,7 @@ common_vcall:
 				if (flag & PROFILING_FLAG)
 					MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
 				g_free (prof_ctx);
-			} else if ((flag && PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
+			} else if ((flag & PROFILING_FLAG) && MONO_PROFILER_ENABLED (method_enter)) {
 				MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, NULL));
 			}
 
