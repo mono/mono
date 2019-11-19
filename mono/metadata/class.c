@@ -2338,8 +2338,7 @@ mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoTyp
 				if (!mono_metadata_type_equal_full (type, field_type, TRUE))
 					continue;
 			}
-			// FIXME Remove this when all callers fixed.
-			mono_memory_barrier ();
+			// Many callers desire a barrier here, but they generally provide it themselves.
 			return field;
 		}
 		klass = m_class_get_parent (klass);
