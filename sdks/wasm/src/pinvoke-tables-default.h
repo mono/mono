@@ -21,8 +21,6 @@ int SystemNative_ChMod (int,int);
 int SystemNative_CopyFile (int,int);
 int SystemNative_GetEGid ();
 int SystemNative_GetEUid ();
-int SystemNative_LChflags (int,int);
-int SystemNative_LChflagsCanSetHiddenFlag ();
 int SystemNative_Link (int,int);
 int SystemNative_MkDir (int,int);
 int SystemNative_Rename (int,int);
@@ -50,8 +48,6 @@ static PinvokeImport System_Native_imports [] = {
 {"SystemNative_CopyFile", SystemNative_CopyFile},
 {"SystemNative_GetEGid", SystemNative_GetEGid},
 {"SystemNative_GetEUid", SystemNative_GetEUid},
-{"SystemNative_LChflags", SystemNative_LChflags},
-{"SystemNative_LChflagsCanSetHiddenFlag", SystemNative_LChflagsCanSetHiddenFlag},
 {"SystemNative_Link", SystemNative_Link},
 {"SystemNative_MkDir", SystemNative_MkDir},
 {"SystemNative_Rename", SystemNative_Rename},
