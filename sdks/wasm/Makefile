@@ -241,6 +241,18 @@ bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
 run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
 	(cd bin/aot-hello-netcore && $(SM) runtime.js --run hello.dll)
 
+# Path to a fully built https://github.com/dotnet/performance
+PERF_REPO_ROOT=
+
+build-bench: packager.exe $(NETCOREAPP_DIR) bench-runner/WasmRunner.cs
+	@if test -z "$(PERF_REPO_ROOT)"; then echo "PERF_REPO_ROOT is not set"; exit 1; fi
+	cd bench-runner && dotnet build /nologo /p:Configuration=Release
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/bench --nobinding --builddir=obj/bench --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --search-path=bench-runner/bin/Release/netcoreapp3.0 --embed-file System.Private.CoreLib.dll@System.Private.CoreLib.dll --embed-file System.Text.RegularExpressions.dll --search-path=$(PERF_REPO_ROOT)/artifacts/bin/MicroBenchmarks/Release/netcoreapp5.0 --search-path=$(PERF_REPO_ROOT)/artifacts/bin/MicroBenchmarks/Release/netcoreapp5.0/runtimes/unix/lib/netstandard2.0 bench-runner/bin/Release/netcoreapp3.0/bench.dll MicroBenchmarks.dll
+	ninja -v -C obj/bench
+
+run-bench: build-bench
+	(cd bin/bench && $(SM) runtime.js --enable-gc --setenv=MONO_LOG_MASK= --run bench.dll MicroBenchmarks.dll Perf_HashCode)
+
 endif
 
 runtime-threads:
@@ -407,7 +419,7 @@ run-aot-sample-profiled: build-aot-sample-profiled
 	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
 
 build-interp-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe
 	ninja -v -C obj/interp-sample
 
 build-io-sample: packager.exe hello-io.exe
