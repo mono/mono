@@ -2299,7 +2299,7 @@ get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_na
 MonoMethod*
 mini_get_memcpy_method (void)
 {
-	static MonoMethod *memcpy_method;
+	static MonoMethod *memcpy_method = NULL;
 	get_method_nofail (&memcpy_method, mono_defaults.string_class, "memcpy", 3, 0);
 	if (!memcpy_method)
 		g_error ("Old corlib found. Install a new one");
@@ -2386,7 +2386,7 @@ mini_emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 MonoMethod*
 mini_get_memset_method (void)
 {
-	static MonoMethod *memset_method;
+	static MonoMethod *memset_method = NULL;
 	get_method_nofail (&memset_method, mono_defaults.string_class, "memset", 3, 0);
 	if (!memset_method)
 		g_error ("Old corlib found. Install a new one");
@@ -2402,7 +2402,7 @@ mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass
 	MonoMethod *memset_method;
 	MonoInst *size_ins = NULL;
 	MonoInst *bzero_ins = NULL;
-	static MonoMethod *bzero_method;
+	static MonoMethod *bzero_method = NULL;
 
 	/* FIXME: Optimize this for the case when dest is an LDADDR */
 	mono_class_init_internal (klass);
