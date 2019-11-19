@@ -6158,7 +6158,7 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error)
 			g_free (full_name);
 		}
 	}
-	// FIXME WHere is the read barrier?
+	// FIXME Where is the read barrier?
 	mono_memory_barrier ();
 	field->type = ftype;
 }

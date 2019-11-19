@@ -3543,27 +3543,26 @@ dbg_path_get_basename (const char *filename)
 static void
 init_jit_info_dbg_attrs (MonoJitInfo *ji)
 {
-	static MonoClass *hidden_klass, *step_through_klass, *non_user_klass;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *ainfo;
 
-	if (ji->dbg_attrs_inited)
+	if (ji->dbg_attrs_inited) {
+		mono_memory_read_barrier ();
 		return;
+	}
 
-	if (!hidden_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, hidden_klass)
 		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
-	else
-		mono_memory_read_barrier ();
+	MONO_STATIC_POINTER_INIT_END (MonoClass, hidden_klass)
 
-	if (!step_through_klass)
+
+	MONO_STATIC_POINTER_INIT (MonoClass, step_through_klass)
 		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
-	else
-		mono_memory_read_barrier ();
+	MONO_STATIC_POINTER_INIT_END (MonoClass, step_through_klass)
 
-	if (!non_user_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, non_user_klass)
 		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
-	else
-		mono_memory_read_barrier ();
+	MONO_STATIC_POINTER_INIT_END (MonoClass, non_user_klass)
 
 	ainfo = mono_custom_attrs_from_method_checked (jinfo_get_method (ji), error);
 	mono_error_cleanup (error); /* FIXME don't swallow the error? */

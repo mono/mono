@@ -814,20 +814,14 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 #ifdef ENABLE_NETCORE
 	return FALSE;
 #else
-	static MonoClassField *static_field;
-	MonoClassField *field = static_field;
 	MonoObject *o;
 
-	if (field == NULL) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, field)
+
 		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
-		if (field) {
-			mono_memory_barrier ();
-			static_field = field;
-		}
 		g_assert (field);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, field)
 
 	/*pedump doesn't create an appdomin, so the domain object doesn't exist.*/
 	if (!domain->domain)
@@ -883,13 +877,13 @@ exit:
 static MonoMethod *
 mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
-	MONO_TRY_CACHE (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 		// not cached yet, fill cache under caller's lock
 
 		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
@@ -906,13 +900,13 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 static MonoMethod *
 mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
-	MONO_TRY_CACHE (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 		// not cached yet, fill cache under caller's lock
 
 		method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	if (method == NULL) {
 		g_warning ("%s method AppDomain.DoTypeBuilderResolve not found. %s\n", __func__, mono_error_get_message (error));
@@ -1417,7 +1411,7 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		goto leave;
 	}
 #else
-	MONO_TRY_CACHE (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
@@ -1425,7 +1419,7 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		method = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	g_assert (method);
 
@@ -1582,21 +1576,12 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	add_assembly_to_alc (alc, assembly);
 #endif
 
-	static MonoClassField *static_assembly_load_field;
-	MonoClassField *assembly_load_field;
+	MONO_STATIC_POINTER_INIT (MonoClassField, assembly_load_field)
 
-	assembly_load_field = static_assembly_load_field;
-
-	if (assembly_load_field == NULL) {
 		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
-		if (assembly_load_field) {
-			mono_memory_barrier ();
-			static_assembly_load_field = assembly_load_field;
-		}
 		g_assert (assembly_load_field);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, assembly_load_field)
 
 	if (!MONO_HANDLE_GET_FIELD_BOOL (appdomain, MonoObject*, assembly_load_field))
 		goto leave; // No events waiting to be triggered
@@ -1605,13 +1590,12 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	reflection_assembly = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE (MonoMethod*, assembly_load_method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, assembly_load_method)
 
 		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, error);
+		g_assert (assembly_load_method);
 
-	MONO_TRY_CACHE_END (MonoMethod*, assembly_load_method)
-
-	g_assert (assembly_load_method);
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, assembly_load_method)
 
 	void *params [1];
 	params [0] = MONO_HANDLE_RAW (reflection_assembly);

@@ -3703,14 +3703,14 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 		gpointer args [2];
 		gpointer *ptr;
 
-		MONO_TRY_CACHE (MonoMethod*, m)
+		MONO_STATIC_POINTER_INIT (MonoMethod, m)
 
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
 			m = mono_class_get_method_from_name_checked (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC, error);
 			goto_if_nok (error, return_null);
 			g_assert (m);
 
-		MONO_TRY_CACHE_END (MonoMethod*, m)
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, m)
 
 		v = &ptr;
 		if (is_literal) {
@@ -4814,12 +4814,12 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MONO_TRY_CACHE (MonoMethod*, get_proxy_method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, get_proxy_method)
 
 		get_proxy_method = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "GetTransparentProxy", 0, 0, error);
 		mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, get_proxy_method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_proxy_method)
 		
 	g_assert (mono_class_is_marshalbyref (MONO_HANDLE_GETVAL (obj, vtable)->klass));
 
@@ -5646,10 +5646,10 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			 */
 			pointer_class = mono_class_get_pointer_class ();
 
-			MONO_TRY_CACHE (MonoMethod*, box_method)
+			MONO_STATIC_POINTER_INIT (MonoMethod, box_method)
 				box_method = mono_class_get_method_from_name_checked (pointer_class, "Box", -1, 0, error);
 				mono_error_assert_ok (error);
-			MONO_TRY_CACHE_END (MonoMethod*, box_method)
+			MONO_STATIC_POINTER_INIT_END (MonoMethod, box_method)
 
 			g_assert (res->vtable->klass == mono_defaults.int_class);
 			box_args [0] = ((MonoIntPtr*)res)->m_value;
@@ -5907,6 +5907,7 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 				mono_error_set_not_supported (error, "Linked away.");
 				return NULL;
 			}
+			mono_memory_barrier ();
 			vtable->domain->create_proxy_for_type_method = im;
 		} else {
 			mono_memory_read_barrier ();
@@ -8174,17 +8175,16 @@ mono_wait_handle_new (MonoDomain *domain, HANDLE handle, MonoError *error)
 
 	MonoWaitHandle *res;
 	gpointer params [1];
-	static MonoMethod *handle_set;
 
 	error_init (error);
 	res = (MonoWaitHandle *)mono_object_new_checked (domain, mono_defaults.manualresetevent_class, error);
 	return_val_if_nok (error, NULL);
 
-	/* Even though this method is virtual, it's safe to invoke directly, since the object type matches.  */
-	if (!handle_set)
+	MONO_STATIC_POINTER_INIT(MonoMethod, handle_set)
+
 		handle_set = mono_class_get_property_from_name_internal (mono_defaults.manualresetevent_class, "Handle")->set;
-	else
-		mono_memory_read_barrier ();
+
+	MONO_STATIC_POINTER_INIT_END(MonoMethod, handle_set)
 
 	params [0] = &handle;
 
@@ -8197,15 +8197,14 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	static MonoClassField *f_safe_handle = NULL;
 	MonoSafeHandle *sh;
 
-	if (!f_safe_handle) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, f_safe_handle)
+
 		f_safe_handle = mono_class_get_field_from_name_full (mono_defaults.manualresetevent_class, "safeWaitHandle", NULL);
 		g_assert (f_safe_handle);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, f_safe_handle)
 
 	mono_field_get_value_internal ((MonoObject*)handle, f_safe_handle, &sh);
 	return sh->handle;
@@ -8224,14 +8223,14 @@ mono_get_context_capture_method (void)
 	if (!execution_context)
 		return NULL;
 
-	MONO_TRY_CACHE (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 		ERROR_DECL (error);
 		mono_class_init_internal (execution_context);
 		method = mono_class_get_method_from_name_checked (execution_context, "Capture", 0, 0, error);
 		mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	return method;
 }
@@ -8397,13 +8396,13 @@ mono_message_init (MonoDomain *domain,
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MONO_TRY_CACHE (MonoMethod*, init_message_method)
+	MONO_STATIC_POINTER_INIT (MonoMethod, init_message_method)
 
 		init_message_method = mono_class_get_method_from_name_checked (mono_defaults.mono_method_message_class, "InitMessage", 2, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (init_message_method != NULL);
 
-	MONO_TRY_CACHE_END (MonoMethod*, init_message_method)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, init_message_method)
 
 	error_init (error);
 	/* FIXME set domain instead? */
@@ -8479,7 +8478,6 @@ mono_message_invoke (MonoThreadInfo *mono_thread_info_current_var,
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	static MonoClass *object_array_klass;
 	error_init (error);
 
 	MonoDomain *domain; 
@@ -8515,17 +8513,12 @@ mono_message_invoke (MonoThreadInfo *mono_thread_info_current_var,
 			outarg_count++;
 	}
 
-	if (!object_array_klass) {
-		MonoClass *klass;
+	MONO_STATIC_POINTER_INIT (MonoClass, object_array_klass)
 
-		klass = mono_class_create_array (mono_defaults.object_class, 1);
-		g_assert (klass);
+		object_array_klass = mono_class_create_array (mono_defaults.object_class, 1);
+		g_assert (object_array_klass);
 
-		mono_memory_barrier ();
-		object_array_klass = klass;
-	} else {
-		mono_memory_read_barrier ();
-	}
+	MONO_STATIC_POINTER_INIT_END (MonoClass, object_array_klass)
 
 	MonoVTable *vt = mono_class_vtable_checked (domain, object_array_klass, error);
 	return_val_if_nok (error, NULL);
@@ -8574,13 +8567,13 @@ prepare_to_string_method (MonoObject *obj, void **target)
 
 	*target = obj;
 
-	MONO_TRY_CACHE (MonoMethod*, to_string)
+	MONO_STATIC_POINTER_INIT (MonoMethod, to_string)
 
 		ERROR_DECL (error);
 		to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
 		mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, to_string)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, to_string)
 
 	method = mono_object_get_virtual_method_internal (obj, to_string);
 
@@ -9006,7 +8999,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 		goto exit;
 	}
 
-	MONO_TRY_CACHE (MonoMethod*, getter)
+	MONO_STATIC_POINTER_INIT (MonoMethod, getter)
 	
 		getter = mono_class_get_method_from_name_checked (mono_defaults.object_class, "FieldGetter", -1, 0, error);
 		goto_if_nok (error, return_null);
@@ -9015,7 +9008,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 			goto return_null;
 		}
 
-	MONO_TRY_CACHE_END (MonoMethod*, getter)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, getter)
 	
 	field_class = mono_class_from_mono_type_internal (field->type);
 
@@ -9110,7 +9103,7 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
-	MONO_TRY_CACHE (MonoMethod*, tp_load)
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_load)
 
 		tp_load = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1, 0, error);
 		return_val_if_nok (error, NULL);
@@ -9119,7 +9112,7 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 			return NULL;
 		}
 
-	MONO_TRY_CACHE_END (MonoMethod*, tp_load)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_load)
 	
 	/* MonoType *type = m_class_get_byval_arg (klass); */
 
@@ -9227,7 +9220,7 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
-	MONO_TRY_CACHE (MonoMethod*, tp_store)
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_store)
 
 		tp_store = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1, 0, error);
 		return_val_if_nok (error, FALSE);
@@ -9236,7 +9229,7 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 			return FALSE;
 		}
 
-	MONO_TRY_CACHE_END (MonoMethod*, tp_store)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_store)
 
 	gpointer args[3];
 	args [0] = &klass;

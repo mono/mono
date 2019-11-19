@@ -178,8 +178,8 @@ mono_remoting_marshal_init (void)
 	ERROR_DECL (error);
 	MonoClass *klass;
 
-	static gboolean module_initialized = FALSE;
-	static gboolean icalls_registered = FALSE;
+	static gboolean module_initialized;
+	static gboolean icalls_registered;
 
 	if (module_initialized) {
 		mono_memory_read_barrier ();
@@ -1451,7 +1451,6 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 	WrapperInfo *info;
 	char *name;
 	int t, pos0, pos1 = 0;
-	static MonoMethod* tp_load = NULL;
 
 	type = mono_type_get_underlying_type (type);
 
@@ -1483,14 +1482,16 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 		return res;
 
 #ifndef DISABLE_REMOTING
-	if (!tp_load) {
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_load)
+
 		ERROR_DECL (error);
 		tp_load = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_load != NULL);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_load)
+
 #endif
 
 	/* we add the %p pointer value of klass because class names are not unique */
@@ -1756,7 +1757,6 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 	WrapperInfo *info;
 	char *name;
 	int t, pos;
-	static MonoMethod *tp_store = NULL;
 
 	type = mono_type_get_underlying_type (type);
 	t = type->type;
@@ -1787,14 +1787,16 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		return res;
 
 #ifndef DISABLE_REMOTING
-	if (!tp_store) {
-		ERROR_DECL (error);
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_store)
+
+ 		ERROR_DECL (error);
 		tp_store = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_store != NULL);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_store)
+
 #endif
 
 	/* we add the %p pointer value of klass because class names are not unique */

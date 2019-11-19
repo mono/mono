@@ -87,7 +87,7 @@ get_method_nofail (MonoMethod **pmethod, MonoClass *klass, const char *method_na
 {
 	MonoMethod *method = pmethod ? *pmethod : NULL;
 	if (method) {
-		mono_memory_read_barrier (); // pmethod is usually to a global accessed from multiple thread
+		mono_memory_read_barrier ();
 	} else {
 		ERROR_DECL (error);
 		method = mono_class_get_method_from_name_checked (klass, method_name, num_params, flags, error);
@@ -1111,8 +1111,8 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 			case MONO_TYPE_OBJECT: {
 #ifndef DISABLE_COM
 				if (to_object) {
-					static MonoMethod *variant_clear = NULL;
-					static MonoMethod *get_object_for_native_variant = NULL;
+					static MonoMethod *variant_clear;
+					static MonoMethod *get_object_for_native_variant;
 
 					get_method_nofail (&variant_clear, mono_class_get_variant_class (), "Clear", 0, 0);
 					get_method_nofail (&get_object_for_native_variant, mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
@@ -1125,7 +1125,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 					mono_mb_emit_managed_call (mb, variant_clear, NULL);
 				}
 				else {
-					static MonoMethod *get_native_variant_for_object = NULL;
+					static MonoMethod *get_native_variant_for_object;
 
 					get_method_nofail (&get_native_variant_for_object, mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
 
@@ -4345,15 +4345,14 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 static void
 emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *klass, MonoMarshalSpec *spec)
 {
-	static MonoClass *Marshal = NULL;
 	static MonoMethod *get_instance;
 
-	if (!Marshal) {
+	MONO_STATIC_POINTER_INIT (MonoClass, Marshal)
+
 		Marshal = mono_class_try_get_marshal_class ();
 		g_assert (Marshal);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClass, Marshal)
 
 	get_method_nofail (&get_instance, Marshal, "GetCustomMarshalerInstance", 2, 0);
 	g_assert (get_instance);
@@ -4376,7 +4375,7 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	ERROR_DECL (error);
 	MonoType *mtype;
 	MonoClass *mklass;
-	static MonoClass *ICustomMarshaler = NULL;
+	static MonoClass *ICustomMarshaler;
 	static MonoMethod *cleanup_native, *cleanup_managed;
 	static MonoMethod *marshal_managed_to_native, *marshal_native_to_managed;
 	MonoMethodBuilder *mb = m->mb;
@@ -4413,10 +4412,13 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		get_method_nofail (&cleanup_native, klass, "CleanUpNativeData", 1, 0);
 		g_assert (cleanup_native);
+
 		get_method_nofail (&cleanup_managed, klass, "CleanUpManagedData", 1, 0);
 		g_assert (cleanup_managed);
+
 		get_method_nofail (&marshal_managed_to_native, klass, "MarshalManagedToNative", 1, 0);
 		g_assert (marshal_managed_to_native);
+
 		get_method_nofail (&marshal_native_to_managed, klass, "MarshalNativeToManaged", 1, 0);
 		g_assert (marshal_native_to_managed);
 
@@ -5907,14 +5909,15 @@ emit_marshal_variant_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 {
 #ifndef DISABLE_COM
 	MonoMethodBuilder *mb = m->mb;
-	static MonoMethod *get_object_for_native_variant = NULL;
-	static MonoMethod *get_native_variant_for_object = NULL;
+	static MonoMethod *get_object_for_native_variant;
+	static MonoMethod *get_native_variant_for_object;
 	MonoType *variant_type = m_class_get_byval_arg (mono_class_get_variant_class ());
 	MonoType *variant_type_byref = m_class_get_this_arg (mono_class_get_variant_class ());
 	MonoType *object_type = mono_get_object_type ();
 
 	get_method_nofail (&get_object_for_native_variant, mono_defaults.marshal_class, "GetObjectForNativeVariant", 1, 0);
 	g_assert (get_object_for_native_variant);
+
 	get_method_nofail (&get_native_variant_for_object, mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
 	g_assert (get_native_variant_for_object);
 
@@ -5939,7 +5942,7 @@ emit_marshal_variant_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	}
 
 	case MARSHAL_ACTION_CONV_OUT: {
-		static MonoMethod *variant_clear = NULL;
+		static MonoMethod *variant_clear;
 
 		get_method_nofail (&variant_clear, mono_class_get_variant_class (), "Clear", 0, 0);
 		g_assert (variant_clear);

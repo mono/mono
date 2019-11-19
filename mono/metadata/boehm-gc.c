@@ -1273,21 +1273,14 @@ mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (
 static MonoToggleRefStatus
 test_toggleref_callback (MonoObject *obj)
 {
-	static MonoClassField *static_mono_toggleref_test_field;
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
-	MonoClassField *mono_toggleref_test_field = static_mono_toggleref_test_field;
+	MONO_STATIC_POINTER_INIT (MonoClassField, mono_toggleref_test_field)
 
-	if (!mono_toggleref_test_field) {
 		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_class (obj), "__test", NULL);
-		if (mono_toggleref_test_field) {
-			mono_memory_barrier ();
-			static_mono_toggleref_test_field = mono_toggleref_test_field;
-		}
 		g_assert (mono_toggleref_test_field);
-	} else {
-		mono_memory_read_barrier ();
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField*, mono_toggleref_test_field)
 
 	mono_field_get_value_internal (obj, mono_toggleref_test_field, &status);
 	printf ("toggleref-cb obj %d\n", status);

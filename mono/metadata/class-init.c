@@ -4090,8 +4090,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	g_free (fields_has_references);
 }
 
-static MonoMethod *default_ghc = NULL;
-static MonoMethod *default_finalize = NULL;
+static MonoMethod *default_ghc;
+static MonoMethod *default_finalize;
 static int finalize_slot = -1;
 static int ghc_slot = -1;
 
@@ -4099,8 +4099,17 @@ static void
 initialize_object_slots (MonoClass *klass)
 {
 	int i;
-	if (default_ghc)
+
+	MonoMethod *ghc = default_ghc;
+	mono_memory_read_barrier ();
+
+	MonoMethod *finalize = default_finalize;
+	mono_memory_read_barrier ();
+
+	if (ghc && finalize) {
 		return;
+	}
+
 	if (klass == mono_defaults.object_class) {
 		mono_class_setup_vtable (klass);
 		for (i = 0; i < klass->vtable_size; ++i) {
@@ -4113,7 +4122,12 @@ initialize_object_slots (MonoClass *klass)
 		}
 
 		g_assert (ghc_slot >= 0);
+
+		mono_memory_barrier ();
+
 		default_ghc = klass->vtable [ghc_slot];
+
+		mono_memory_barrier ();
 
 		g_assert (finalize_slot >= 0);
 		default_finalize = klass->vtable [finalize_slot];
@@ -4129,6 +4143,7 @@ mono_class_get_object_finalize_slot ()
 MonoMethod *
 mono_class_get_default_finalize_method ()
 {
+	mono_memory_read_barrier ();
 	return default_finalize;
 }
 
@@ -4429,6 +4444,8 @@ mono_class_init_internal (MonoClass *klass)
 
 	if (!default_ghc)
 		initialize_object_slots (klass);
+	else
+		mono_memory_read_barrier ();
 
 	/* 
 	 * Initialize the rest of the data without creating a generic vtable if possible.

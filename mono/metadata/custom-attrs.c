@@ -622,12 +622,12 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 
 	error_init (error);
 
-	MONO_TRY_CACHE (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
 
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	params [0] = mono_type_get_object_checked (mono_domain_get (), t, error);
 	return_val_if_nok (error, NULL);
@@ -651,12 +651,12 @@ create_cattr_named_arg (void *minfo, MonoObject *typedarg, MonoError *error)
 
 	error_init (error);
 
-	MONO_TRY_CACHE (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
 
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	params [0] = minfo;
 	params [1] = typedarg;
@@ -1447,13 +1447,13 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	MonoClass *cattr_data = try_get_cattr_data_class (error);
 	goto_if_nok (error, result_null);
 
-	MONO_TRY_CACHE (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
 
 		ctor = mono_class_get_method_from_name_checked (cattr_data, ".ctor", 4, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (ctor);
 
-	MONO_TRY_CACHE_END (MonoMethod*, ctor)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	domain = mono_domain_get ();
 

@@ -223,6 +223,8 @@ tty_teardown (void)
 static void
 do_console_cancel_event (void)
 {
+	// FIXME Consider MONO_STATIC_POINTER_INIT here.
+
 	static MonoMethod *static_System_Console_DoConsoleCancelEventBackground_method = (MonoMethod*)(intptr_t)-1;
 	ERROR_DECL (error);
 

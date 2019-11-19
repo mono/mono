@@ -1336,6 +1336,10 @@ get_interp_to_native_trampoline (void)
 		if (trampoline) {
 			mono_memory_barrier ();
 			static_trampoline = trampoline;
+		} else {
+			// Try again in case another thread succeeded.
+			trampoline = static_trampoline;
+			mono_memory_read_barrier (); // FIXME execute_barrier
 		}
 	} else  {
 		mono_memory_read_barrier (); // FIXME execute_barrier

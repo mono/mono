@@ -1053,11 +1053,14 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 			/* This can happen since all the entries in MonoGSharedVtMethodInfo are inflated, even those which are not used */
 			return NULL;
 
-		if (info_type == MONO_RGCTX_INFO_NULLABLE_CLASS_BOX)
-			method = mono_class_get_method_from_name_checked (klass, "Box", 1, 0, error);
-		else
-			method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
+		const char *name;
 
+		if (info_type == MONO_RGCTX_INFO_NULLABLE_CLASS_BOX)
+			name = "Box";
+		else
+			name = "Unbox";
+
+		method = mono_class_get_method_from_name_checked (klass, name, 1, 0, error);
 		return_val_if_nok (error, NULL);
 
 		addr = mono_jit_compile_method (method, error);

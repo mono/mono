@@ -152,7 +152,7 @@ leave:
 static MonoAssembly*
 mono_alc_invoke_resolve_using_load (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	MONO_TRY_CACHE (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
@@ -160,7 +160,7 @@ mono_alc_invoke_resolve_using_load (MonoAssemblyLoadContext *alc, MonoAssemblyNa
 		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
 
 	g_assert (resolve);
 
@@ -185,7 +185,7 @@ mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAss
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolving_event (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	MONO_TRY_CACHE (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
@@ -193,7 +193,7 @@ mono_alc_invoke_resolve_using_resolving_event (MonoAssemblyLoadContext *alc, Mon
 		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
 
 	g_assert (resolve);
 
@@ -218,7 +218,7 @@ mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *a
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	MONO_TRY_CACHE (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
@@ -226,7 +226,7 @@ mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, M
 		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
 
-	MONO_TRY_CACHE_END (MonoMethod*, resolve)
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
 
 	g_assert (resolve);
 

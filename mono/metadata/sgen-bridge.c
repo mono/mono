@@ -583,11 +583,14 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 	gboolean modified;
 
 	if (!mono_bridge_test_field) {
-		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
-		g_assert (mono_bridge_test_field);
-	} else {
-		mono_memory_read_barrier ();
+		MonoClassField *local_mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
+		g_assert (local_mono_bridge_test_field);
+		if (local_mono_bridge_test_field) {
+			mono_memory_barrier ();
+			mono_bridge_test_field = local_mono_bridge_test_field;
+		}
 	}
+	mono_memory_read_barrier ();
 
 	/*We mark all objects in a scc with live objects as reachable by scc*/
 	for (i = 0; i < num_sccs; ++i) {
@@ -634,12 +637,18 @@ bridge_test_positive_status (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs
 {
 	int i;
 
+	// FIXME This function does not use mono_bridge_test_field.
+	// Must it initialize it?
+
 	if (!mono_bridge_test_field) {
-		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
-		g_assert (mono_bridge_test_field);
-	} else {
-		mono_memory_read_barrier ();
+		MonoClassField *local_mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
+		g_assert (local_mono_bridge_test_field);
+		if (local_mono_bridge_test_field) {
+			mono_memory_barrier ();
+			mono_bridge_test_field = local_mono_bridge_test_field;
+		}
 	}
+	mono_memory_read_barrier ();
 
 	/*We mark all objects in a scc with live objects as reachable by scc*/
 	for (i = 0; i < num_sccs; ++i) {

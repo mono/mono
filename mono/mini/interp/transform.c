@@ -4696,10 +4696,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				SET_TYPE (td->sp - 1, stack_type [mt], klass);
 			} else if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method;
+				const char *name = "Unbox";
+
 				if (m_class_is_enumtype (mono_class_get_nullable_param_internal (klass)))
-					target_method = mono_class_get_method_from_name_checked (klass, "UnboxExact", 1, 0, error);
-				else
-					target_method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
+					name = "UnboxExact";
+
+				target_method = mono_class_get_method_from_name_checked (klass, name, 1, 0, error);
 				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
 				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE, FALSE))
