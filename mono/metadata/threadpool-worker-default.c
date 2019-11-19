@@ -109,13 +109,13 @@ typedef struct {
 } ThreadPoolHillClimbing;
 
 typedef union {
+	gint64 as_gint64;
 	struct {
 		gint16 max_working; /* determined by heuristic */
 		gint16 starting; /* starting, but not yet in worker_thread */
 		gint16 working; /* executing worker_thread */
 		gint16 parked; /* parked */
-	} _;
-	gint64 as_gint64;
+	};
 } ThreadPoolWorkerCounter
 #ifdef __GNUC__
 __attribute__((aligned(64)))
@@ -168,9 +168,9 @@ static ThreadPoolWorker worker;
 
 #define COUNTER_CHECK(counter) \
 	do { \
-		g_assert (counter._.max_working > 0); \
-		g_assert (counter._.starting >= 0); \
-		g_assert (counter._.working >= 0); \
+		g_assert (counter.max_working > 0); \
+		g_assert (counter.starting >= 0); \
+		g_assert (counter.working >= 0); \
 	} while (0)
 
 #define COUNTER_ATOMIC(var,block) \
@@ -187,8 +187,7 @@ static ThreadPoolWorker worker;
 static ThreadPoolWorkerCounter
 COUNTER_READ (void)
 {
-	ThreadPoolWorkerCounter counter;
-	counter.as_gint64 = mono_atomic_load_i64 (&worker.counters.as_gint64);
+	ThreadPoolWorkerCounter counter = { mono_atomic_load_i64 (&worker.counters.as_gint64) };
 	return counter;
 }
 
@@ -223,7 +222,6 @@ destroy (gpointer data)
 void
 mono_threadpool_worker_init (MonoThreadPoolWorkerCallback callback)
 {
-	ThreadPoolHillClimbing *hc;
 	const char *threads_per_cpu_env;
 	gint threads_per_cpu;
 	gint threads_count;
@@ -241,7 +239,7 @@ mono_threadpool_worker_init (MonoThreadPoolWorkerCallback callback)
 	worker.heuristic_adjustment_interval = 10;
 	mono_coop_mutex_init (&worker.heuristic_lock);
 
-	hc = &worker.heuristic_hill_climbing;
+	ThreadPoolHillClimbing * const hc = &worker.heuristic_hill_climbing;
 
 	hc->wave_period = HILL_CLIMBING_WAVE_PERIOD;
 	hc->max_thread_wave_magnitude = HILL_CLIMBING_MAX_WAVE_MAGNITUDE;
@@ -282,7 +280,7 @@ mono_threadpool_worker_init (MonoThreadPoolWorkerCallback callback)
 	worker.limit_worker_max = threads_count * 100;
 #endif
 
-	worker.counters._.max_working = worker.limit_worker_min;
+	worker.counters.max_working = worker.limit_worker_min;
 
 	worker.cpu_usage_state = g_new0 (MonoCpuUsageState, 1);
 
@@ -358,7 +356,7 @@ gint64 mono_threadpool_worker_get_completed_threads_count (void)
 gint32 mono_threadpool_worker_get_threads_count (void)
 {
 	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
-	return counter._.working;
+	return counter.working;
 }
 #endif
 
@@ -377,8 +375,8 @@ worker_park (void)
 		ThreadPoolWorkerCounter counter;
 
 		COUNTER_ATOMIC (counter, {
-			counter._.working --;
-			counter._.parked ++;
+			counter.working --;
+			counter.parked ++;
 		});
 
 		do {
@@ -412,8 +410,8 @@ worker_park (void)
 		}
 
 		COUNTER_ATOMIC (counter, {
-			counter._.working ++;
-			counter._.parked --;
+			counter.working ++;
+			counter.parked --;
 		});
 	}
 
@@ -466,8 +464,8 @@ worker_thread (gpointer unused)
 		return 0;
 
 	COUNTER_ATOMIC (counter, {
-		counter._.starting --;
-		counter._.working ++;
+		counter.starting --;
+		counter.working ++;
 	});
 
 	thread = mono_thread_internal_current ();
@@ -501,7 +499,7 @@ worker_thread (gpointer unused)
 	}
 
 	COUNTER_ATOMIC (counter, {
-		counter._.working --;
+		counter.working --;
 	});
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker finishing",
@@ -549,13 +547,13 @@ worker_try_create (void)
 	}
 
 	COUNTER_ATOMIC (counter, {
-		if (counter._.working >= counter._.max_working) {
+		if (counter.working >= counter.max_working) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: maximum number of working threads reached",
 				GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 			mono_coop_mutex_unlock (&worker.worker_creation_lock);
 			return FALSE;
 		}
-		counter._.starting ++;
+		counter.starting ++;
 	});
 
 	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)worker_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL, error);
@@ -565,7 +563,7 @@ worker_try_create (void)
 		mono_error_cleanup (error);
 
 		COUNTER_ATOMIC (counter, {
-			counter._.starting --;
+			counter.starting --;
 		});
 
 		mono_coop_mutex_unlock (&worker.worker_creation_lock);
@@ -658,7 +656,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 	if (worker.cpu_usage < CPU_USAGE_LOW) {
 		threshold = MONITOR_INTERVAL;
 	} else {
-		threshold = COUNTER_READ ()._.max_working * MONITOR_INTERVAL * 2;
+		threshold = COUNTER_READ ().max_working * MONITOR_INTERVAL * 2;
 	}
 
 	return mono_msec_ticks () >= worker.heuristic_last_dequeue + threshold;
@@ -695,7 +693,7 @@ monitor_thread (gpointer unused)
 
 		// counter = COUNTER_READ ();
 		// printf ("monitor_thread: starting = %d working = %d parked = %d max_working = %d\n",
-		// 	counter._.starting, counter._.working, counter._.parked, counter._.max_working);
+		// 	counter.starting, counter.working, counter.parked, counter.max_working);
 
 		do {
 			gint64 ts;
@@ -729,17 +727,17 @@ monitor_thread (gpointer unused)
 		limit_worker_max_reached = FALSE;
 
 		COUNTER_ATOMIC (counter, {
-			if (counter._.max_working >= worker.limit_worker_max) {
+			if (counter.max_working >= worker.limit_worker_max) {
 				limit_worker_max_reached = TRUE;
 				break;
 			}
-			counter._.max_working ++;
+			counter.max_working ++;
 		});
 
 		if (limit_worker_max_reached)
 			continue;
 
-		hill_climbing_force_change (counter._.max_working, TRANSITION_STARVATION);
+		hill_climbing_force_change (counter.max_working, TRANSITION_STARVATION);
 
 		for (i = 0; i < 5; ++i) {
 			if (mono_runtime_is_shutting_down ())
@@ -804,12 +802,10 @@ monitor_ensure_running (void)
 static void
 hill_climbing_change_thread_count (gint16 new_thread_count, ThreadPoolHeuristicStateTransition transition)
 {
-	ThreadPoolHillClimbing *hc;
-
-	hc = &worker.heuristic_hill_climbing;
-
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] hill climbing, change max number of threads %d",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())), new_thread_count);
+
+	ThreadPoolHillClimbing * const hc = &worker.heuristic_hill_climbing;
 
 	hc->last_thread_count = new_thread_count;
 	hc->current_sample_interval = rand_next (hc->sample_interval_low, hc->sample_interval_high);
@@ -820,9 +816,7 @@ hill_climbing_change_thread_count (gint16 new_thread_count, ThreadPoolHeuristicS
 static void
 hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTransition transition)
 {
-	ThreadPoolHillClimbing *hc;
-
-	hc = &worker.heuristic_hill_climbing;
+	ThreadPoolHillClimbing * const hc = &worker.heuristic_hill_climbing;
 
 	if (new_thread_count != hc->last_thread_count) {
 		hc->current_control_setting += new_thread_count - hc->last_thread_count;
@@ -833,22 +827,20 @@ hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTra
 static double_complex
 hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble period)
 {
-	ThreadPoolHillClimbing *hc;
-	gdouble w, cosine, sine, coeff, q0, q1, q2;
-	guint i;
-
 	g_assert (sample_count >= period);
 	g_assert (period >= 2);
 
-	hc = &worker.heuristic_hill_climbing;
+	double const w = 2.0 * M_PI / period;
+	double const cosine = cos (w);
+	double const sine = sin (w);
+	double const coeff = 2.0 * cosine;
+	double q0 = 0;
+	double q1 = 0;
+	double q2 = 0;
 
-	w = 2.0 * M_PI / period;
-	cosine = cos (w);
-	sine = sin (w);
-	coeff = 2.0 * cosine;
-	q0 = q1 = q2 = 0;
+	ThreadPoolHillClimbing * const hc = &worker.heuristic_hill_climbing;
 
-	for (i = 0; i < sample_count; ++i) {
+	for (guint i = 0; i < sample_count; ++i) {
 		q0 = coeff * q1 - q2 + samples [(hc->total_samples - sample_count + i) % hc->samples_to_measure];
 		q2 = q1;
 		q1 = q0;
@@ -860,7 +852,6 @@ hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble 
 static gint16
 hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint32 completions, gint64 *adjustment_interval)
 {
-	ThreadPoolHillClimbing *hc;
 	ThreadPoolHeuristicStateTransition transition;
 	gdouble throughput;
 	gdouble throughput_error_estimate;
@@ -877,7 +868,7 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 
 	g_assert (adjustment_interval);
 
-	hc = &worker.heuristic_hill_climbing;
+	ThreadPoolHillClimbing * const hc = &worker.heuristic_hill_climbing;
 
 	/* If someone changed the thread count without telling us, update our records accordingly. */
 	if (current_thread_count != hc->last_thread_count)
@@ -1071,7 +1062,7 @@ heuristic_should_adjust (void)
 {
 	if (worker.heuristic_last_dequeue > worker.heuristic_last_adjustment + worker.heuristic_adjustment_interval) {
 		ThreadPoolWorkerCounter const counter = COUNTER_READ ();
-		if (counter._.working <= counter._.max_working)
+		if (counter.working <= counter.max_working)
 			return TRUE;
 	}
 
@@ -1089,13 +1080,13 @@ heuristic_adjust (void)
 		if (sample_duration >= worker.heuristic_adjustment_interval / 2) {
 
 			ThreadPoolWorkerCounter counter = COUNTER_READ ();
-			gint16 const new_thread_count = hill_climbing_update (counter._.max_working, sample_duration, completions, &worker.heuristic_adjustment_interval);
+			gint16 const new_thread_count = hill_climbing_update (counter.max_working, sample_duration, completions, &worker.heuristic_adjustment_interval);
 
 			COUNTER_ATOMIC (counter, {
-				counter._.max_working = new_thread_count;
+				counter.max_working = new_thread_count;
 			});
 
-			if (new_thread_count > counter._.max_working)
+			if (new_thread_count > counter.max_working)
 				worker_request ();
 
 			worker.heuristic_sample_start = sample_end;
@@ -1122,7 +1113,7 @@ mono_threadpool_worker_notify_completed (void)
 	heuristic_notify_work_completed ();
 
 	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
-	return counter._.working <= counter._.max_working;
+	return counter.working <= counter.max_working;
 }
 
 gint32
