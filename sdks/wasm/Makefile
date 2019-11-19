@@ -190,6 +190,10 @@ cross:
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
 
+#
+# NETCORE TARGETS
+#
+
 ifdef ENABLE_WASM_NETCORE
 
 #NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
@@ -240,6 +244,33 @@ bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
 
 run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
 	(cd bin/aot-hello-netcore && $(SM) runtime.js --run hello.dll)
+
+# Path to <mono repo>/netcore/netcore/corefx/tests/extracted
+COREFX_TESTS_DIR=
+
+##
+# Parameters:
+# $(1) - make target suffix
+# $(2) - directory name
+# $(3) - test directory
+# $(4) - test assembly
+# $(5) - command line arguments
+define NetcoreTestTemplate
+
+bin/$(2)/mono.js: packager.exe runtime-tests.js
+	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
+	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
+	ninja -v -C obj/$(2)
+#	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
+
+build-$(1): bin/$(2)/mono.js
+
+run-$(1): bin/$(2)/mono.js
+	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4))
+
+endef
+
+$(eval $(call NetcoreTestTemplate,Common-netcore,Common-netcore,Common.Tests,Common.Tests.dll))
 
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
@@ -314,8 +345,8 @@ build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.
 
 XUNIT_DIR = $(TOP)/external/xunit-binaries
 
-xunit-runner.exe: xunit-runner.cs
-	csc /out:$@ /r:$(XUNIT_DIR)/xunit.abstractions.dll /r:$(XUNIT_DIR)/xunit.core.dll /r:$(XUNIT_DIR)/xunit.console.exe /r:$(WASM_BCL_DIR)/Facades/System.Runtime.dll /r:$(WASM_BCL_DIR)/Facades/System.Reflection.dll /r:$(WASM_BCL_DIR)/Facades/System.Collections.dll /r:$(XUNIT_DIR)/xunit.execution.dotnet.dll /r:$(XUNIT_DIR)/xunit.runner.utility.net452.dll xunit-runner.cs
+xunit-runner.exe: xunit-runner/xunit-runner.cs
+	csc /out:$@ /r:$(XUNIT_DIR)/xunit.abstractions.dll /r:$(XUNIT_DIR)/xunit.core.dll /r:$(XUNIT_DIR)/xunit.console.exe /r:$(WASM_BCL_DIR)/Facades/System.Runtime.dll /r:$(WASM_BCL_DIR)/Facades/System.Reflection.dll /r:$(WASM_BCL_DIR)/Facades/System.Collections.dll /r:$(XUNIT_DIR)/xunit.execution.dotnet.dll /r:$(XUNIT_DIR)/xunit.runner.utility.net452.dll xunit-runner/xunit-runner.cs
 
 #
 # Targets for running xunit tests
