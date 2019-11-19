@@ -386,18 +386,18 @@ run-tzd-sample: build-tzd-sample
 	(cd bin/tzdtest-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
 
 build-tzd-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
-	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample --copy=ifnewer --enable-fs --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata $(TEST_SOURCE_DIR)/tzdtest.exe
 	cp -r /usr/share/zoneinfo ./bin/tzdtest-sample/zoneinfo
 
 build-tzd-interp-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata -appdir=bin/interp-tzd-sample --nobinding --builddir=obj/interp-tzd-sample --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe --linker --link-icalls
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out --copy=ifnewer --enable-fs --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata -appdir=bin/interp-tzd-sample --nobinding --builddir=obj/interp-tzd-sample --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe --linker --link-icalls
 	ninja -v -C obj/interp-tzd-sample
 
 run-tzd-interp-sample: build-tzd-interp-sample
 	(cd bin/interp-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
 
 build-tzd-aot-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --copy=ifnewer --enable-fs --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe
 	ninja -v -C obj/aot-tzd-sample
 
 run-tzd-aot-sample: build-tzd-aot-sample
