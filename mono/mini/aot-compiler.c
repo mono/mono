@@ -1125,6 +1125,7 @@ arch_init (MonoAotCompile *acfg)
 	/* NOP */
 	acfg->align_pad_value = 0x90;
 #endif
+	g_string_append (acfg->llc_args, " -enable-implicit-null-checks -disable-fault-maps");
 
 	if (mono_use_fast_math) {
 		// same parameters are passed to opt and LLVM JIT
@@ -4948,7 +4949,7 @@ add_wrappers (MonoAotCompile *acfg)
 				slen = mono_metadata_decode_value (p, &p);
 				n = (char *)g_memdup (p, slen + 1);
 				n [slen] = 0;
-				t = mono_reflection_type_from_name_checked (n, acfg->image, error);
+				t = mono_reflection_type_from_name_checked (n, mono_domain_ambient_alc (mono_domain_get ()), acfg->image, error);
 				g_assert (t);
 				mono_error_assert_ok (error);
 				g_free (n);
@@ -5266,6 +5267,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		else
 			name_prefix = g_strdup_printf ("%s.%s", klass_name_space, klass_name);
 
+#ifndef ENABLE_NETCORE
 		/* Add the T[]/InternalEnumerator class */
 		if (!strcmp (klass_name, "IEnumerable`1") || !strcmp (klass_name, "IEnumerator`1")) {
 			ERROR_DECL (error);
@@ -5281,6 +5283,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 			mono_error_assert_ok (error); /* FIXME don't swallow the error */
 			add_generic_class (acfg, nclass, FALSE, "ICollection<T>");
 		}
+#endif
 
 		iter = NULL;
 		while ((method = mono_class_get_methods (array_class, &iter))) {
@@ -5647,6 +5650,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
 
+#ifndef ENABLE_NETCORE
 			ninsts = 0;
 			insts [ninsts ++] = int16_type;
 			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "ShortEnumEqualityComparer`1");
@@ -5662,6 +5666,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			insts [ninsts ++] = int64_type;
 			insts [ninsts ++] = uint64_type;
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
+#endif
 		}
 
 		/* Add instances of the array generic interfaces for primitive types */
@@ -8989,6 +8994,12 @@ append_mangled_type (GString *s, MonoType *t)
 	case MONO_TYPE_VOID:
 		g_string_append_printf (s, "void");
 		break;
+	case MONO_TYPE_BOOLEAN:
+		g_string_append_printf (s, "bool");
+		break;
+	case MONO_TYPE_CHAR:
+		g_string_append_printf (s, "char");
+		break;
 	case MONO_TYPE_I1:
 		g_string_append_printf (s, "i1");
 		break;
@@ -9030,19 +9041,26 @@ append_mangled_type (GString *s, MonoType *t)
 		break;
 	default: {
 		char *fullname = mono_type_full_name (t);
+		char *name = fullname;
 		GString *temp;
 		char *temps;
+		gboolean is_system = FALSE;
 		int i, len;
 
+		len = strlen ("System.");
+		if (strncmp (fullname, "System.", len) == 0) {
+			name = fullname + len;
+			is_system = TRUE;
+		}
 		/*
 		 * Have to create a mangled name which is:
 		 * - a valid symbol
 		 * - unique
 		 */
 		temp = g_string_new ("");
-		len = strlen (fullname);
+		len = strlen (name);
 		for (i = 0; i < len; ++i) {
-			char c = fullname [i];
+			char c = name [i];
 			if (isalnum (c)) {
 				g_string_append_c (temp, c);
 			} else if (c == '_') {
@@ -9050,13 +9068,17 @@ append_mangled_type (GString *s, MonoType *t)
 				g_string_append_c (temp, '_');
 			} else {
 				g_string_append_c (temp, '_');
-				g_string_append_printf (temp, "%x", (int)c);
+				if (c == '.')
+					g_string_append_c (temp, 'd');
+				else
+					g_string_append_printf (temp, "%x", (int)c);
 			}
 		}
 		temps = g_string_free (temp, FALSE);
 		/* Include the length to avoid different length type names aliasing each other */
-		g_string_append_printf (s, "cl%x_%s_", (int)strlen (temps), temps);
+		g_string_append_printf (s, "cl%s%x_%s_", is_system ? "s" : "", (int)strlen (temps), temps);
 		g_free (temps);
+		g_free (fullname);
 	}
 	}
 	if (t->attrs)

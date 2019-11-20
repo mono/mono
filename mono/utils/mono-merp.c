@@ -343,7 +343,6 @@ mono_merp_send (MERPStruct *merp)
 		exit (-1);
 	} else {
 		int status;
-		waitpid (pid, &status, 0);
 		int exit_status = FALSE;
 
 		while (TRUE) {
@@ -638,5 +637,11 @@ mono_merp_enabled (void)
 {
 	return config.enable_merp;
 }
+
+#else
+
+#include <mono/utils/mono-compiler.h>
+
+MONO_EMPTY_SOURCE_FILE (mono_merp);
 
 #endif // TARGET_OSX

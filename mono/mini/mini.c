@@ -2867,14 +2867,16 @@ insert_safepoints (MonoCompile *cfg)
 
 	g_assert (mini_safepoints_enabled ());
 
+#ifndef MONO_LLVM_LOADED
 	if (COMPILE_LLVM (cfg)) {
-		if (!cfg->llvm_only && cfg->compile_aot) {
+		if (!cfg->llvm_only) {
 			/* We rely on LLVM's safepoints insertion capabilities. */
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
 			return;
 		}
 	}
+#endif
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
@@ -3171,11 +3173,13 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/* coop requires loop detection to happen */
 	if (mini_safepoints_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
-	if (cfg->backend->explicit_null_checks) {
+	cfg->disable_llvm_implicit_null_checks = mini_debug_options.llvm_disable_implicit_null_checks;
+	if (cfg->backend->explicit_null_checks || mini_debug_options.explicit_null_checks) {
 		/* some platforms have null pages, so we can't SIGSEGV */
 		cfg->explicit_null_checks = TRUE;
+		cfg->disable_llvm_implicit_null_checks = TRUE;
 	} else {
-		cfg->explicit_null_checks = mini_debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
+		cfg->explicit_null_checks = flags & JIT_FLAG_EXPLICIT_NULL_CHECKS;
 	}
 	cfg->soft_breakpoints = mini_debug_options.soft_breakpoints;
 	cfg->check_pinvoke_callconv = mini_debug_options.check_pinvoke_callconv;
@@ -3187,6 +3191,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
 	if (cfg->compile_aot)
 		cfg->method_index = aot_method_index;
+
+	if (cfg->compile_llvm)
+		cfg->explicit_null_checks = TRUE;
 
 	/*
 	if (!mono_debug_count ())

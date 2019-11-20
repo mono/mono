@@ -1,4 +1,5 @@
 import lldb
+import traceback
 
 def print_frames(thread, num_frames, current_thread):
     # TODO: Make output header similar to bt.
@@ -19,11 +20,11 @@ def print_frames(thread, num_frames, current_thread):
                 ipoffset = frame.EvaluateExpression('ip').GetValueAsUnsigned()
                 insn = ''
                 if ipoffset != 0:
-                    ipoffset -= frame.EvaluateExpression('imethod->code').GetValueAsUnsigned()
-                    insn = "\"" + frame.EvaluateExpression('mono_interp_opname [*ip]').summary[1:-1] + "\""
+                    ipoffset -= frame.EvaluateExpression('frame->imethod->code').GetValueAsUnsigned()
+                    insn = "\"" + frame.EvaluateExpression('mono_interp_opname (*ip)').summary[1:-1] + "\""
                 var = '%s @ %d %s || %s' % (methoddesc, ipoffset, insn, frame)
             except Exception as e:
-                print("DBG: execfail:" + str(e))
+                traceback.print_exc()
         elif function_name == "mono_interp_transform_method":
             try:
                 s = 'runtime_method->method'

@@ -1088,6 +1088,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -1227,6 +1228,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -1321,6 +1323,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -1450,6 +1453,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -1574,6 +1578,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -1897,6 +1902,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -2369,6 +2375,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -2881,6 +2888,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -3381,6 +3389,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -3817,6 +3826,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -3954,6 +3964,7 @@
         <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
         <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
         <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+        <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
         <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
         <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -4107,6 +4118,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -4227,6 +4239,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -4368,6 +4381,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
@@ -4509,6 +4523,7 @@
             <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
             <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
             <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsProvider.cs" />
             <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
             <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />

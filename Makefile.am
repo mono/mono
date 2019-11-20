@@ -21,7 +21,7 @@ endif
 
 if ENABLE_NETCORE
 update_submodules = 
-SUBDIRS = mk llvm mono runtime netcore netcore/corerun
+SUBDIRS = mk llvm mono runtime netcore
 else
 update_submodules = update_submodules
 SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
@@ -67,6 +67,9 @@ dist-hook:
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
 	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*' -not -path '*/helix-binaries/*'`
 	rm -rf "$(top_distdir)/external/linker/test"
+	rm -rf "$(top_distdir)/external/llvm-project/lldb/test"
+	rm -rf "$(top_distdir)/external/llvm-project/libcxx/test"
+	rm -rf "$(top_distdir)/external/llvm-project/clang/test"
 
 pkgconfigdir = $(libdir)/pkgconfig
 noinst_DATA = mono-uninstalled.pc

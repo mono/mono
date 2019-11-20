@@ -1,24 +1,24 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.48
+EMSCRIPTEN_VERSION=1.39.3
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
 
-MONO_SUPPORT=$(TOP)/support
+MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 ZLIB_HEADERS = \
-	$(MONO_SUPPORT)/crc32.h		\
-	$(MONO_SUPPORT)/deflate.h  	\
-	$(MONO_SUPPORT)/inffast.h  	\
-	$(MONO_SUPPORT)/inffixed.h  	\
-	$(MONO_SUPPORT)/inflate.h  	\
-	$(MONO_SUPPORT)/inftrees.h  	\
-	$(MONO_SUPPORT)/trees.h  	\
-	$(MONO_SUPPORT)/zconf.h  	\
-	$(MONO_SUPPORT)/zlib.h  	\
-	$(MONO_SUPPORT)/zutil.h
+	$(MONO_ZLIB_DIR)/crc32.h		\
+	$(MONO_ZLIB_DIR)/deflate.h  	\
+	$(MONO_ZLIB_DIR)/inffast.h  	\
+	$(MONO_ZLIB_DIR)/inffixed.h  	\
+	$(MONO_ZLIB_DIR)/inflate.h  	\
+	$(MONO_ZLIB_DIR)/inftrees.h  	\
+	$(MONO_ZLIB_DIR)/trees.h  	\
+	$(MONO_ZLIB_DIR)/zconf.h  	\
+	$(MONO_ZLIB_DIR)/zlib.h  	\
+	$(MONO_ZLIB_DIR)/zutil.h
 
 ifeq ($(UNAME),Darwin)
 WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
@@ -40,8 +40,8 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)-upstream
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)-upstream
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)
 	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
 	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/emscripten-pr-8457.diff; exit 0)
 	touch $@
@@ -60,6 +60,8 @@ WASM_RUNTIME_AC_VARS= \
 WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
 WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
+WASM_DISABLED_FEATURES=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac
+
 WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
 	--disable-nls \
@@ -71,7 +73,6 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -85,6 +86,7 @@ define WasmRuntimeTemplate
 
 _wasm_$(1)_CONFIGURE_FLAGS = \
 	$(WASM_RUNTIME_BASE_CONFIGURE_FLAGS) \
+	--enable-minimal=$(WASM_DISABLED_FEATURES)$$(wasm_$(1)_DISABLED_FEATURES) \
 	--cache-file=$(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION) \
 	$$(wasm_$(1)_CONFIGURE_FLAGS) \
@@ -114,7 +116,7 @@ setup-custom-wasm-$(1):
 # zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
 .PHONY: package-wasm-$(1)
 package-wasm-$(1):
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
+	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
 	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
 	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
 
@@ -143,6 +145,8 @@ wasm_ARCHIVE += wasm-$(1)-$(CONFIGURATION)
 
 endef
 
+wasm_runtime_DISABLED_FEATURES=,threads
+wasm_runtime-netcore_DISABLED_FEATURES=,threads
 wasm_runtime-netcore_CONFIGURE_FLAGS=--with-core=only
 wasm_runtime-threads_CFLAGS=-s USE_PTHREADS=1 -pthread
 wasm_runtime-threads_CXXFLAGS=-s USE_PTHREADS=1 -pthread

@@ -2,11 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+
+#pragma warning disable SA1121 // explicitly using type aliases instead of built-in types
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
 
 namespace System.IO
 {
@@ -206,6 +214,76 @@ namespace System.IO
         /// Returns true if the stream can be written to; otherwise returns false.
         /// </summary>
         public override bool CanWrite => _isOpen && (_access & FileAccess.Write) != 0;
+
+        /// <summary>
+        /// Calls the given callback with a span of the memory stream data
+        /// </summary>
+        /// <param name="callback">the callback to be called</param>
+        /// <param name="state">A user-defined state, passed to the callback</param>
+        /// <param name="bufferSize">the maximum size of the memory span</param>
+        public override void CopyTo(ReadOnlySpanAction<byte, object?> callback, object? state, int bufferSize)
+        {
+            // If we have been inherited into a subclass, the following implementation could be incorrect
+            // since it does not call through to Read() which a subclass might have overridden.
+            // To be safe we will only use this implementation in cases where we know it is safe to do so,
+            // and delegate to our base class (which will call into Read) when we are not sure.
+            if (GetType() != typeof(UnmanagedMemoryStream))
+            {
+                base.CopyTo(callback, state, bufferSize);
+                return;
+            }
+
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+
+            EnsureNotClosed();
+            EnsureReadable();
+
+            // Use a local variable to avoid a race where another thread
+            // changes our position after we decide we can read some bytes.
+            long pos = Interlocked.Read(ref _position);
+            long len = Interlocked.Read(ref _length);
+            long n = len - pos;
+            if (n <= 0)
+            {
+                return;
+            }
+
+            int nInt = (int)n; // Safe because n <= count, which is an Int32
+            if (nInt < 0)
+            {
+                return;  // _position could be beyond EOF
+            }
+
+            unsafe
+            {
+                if (_buffer != null)
+                {
+                    byte* pointer = null;
+
+                    RuntimeHelpers.PrepareConstrainedRegions();
+                    try
+                    {
+                        _buffer.AcquirePointer(ref pointer);
+                        ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(pointer + pos + _offset, nInt);
+                        Interlocked.Exchange(ref _position, pos + n);
+                        callback(span, state);
+                    }
+                    finally
+                    {
+                        if (pointer != null)
+                        {
+                            _buffer.ReleasePointer();
+                        }
+                    }
+                }
+                else
+                {
+                    ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_mem + pos, nInt);
+                    Interlocked.Exchange(ref _position, pos + n);
+                    callback(span, state);
+                }
+            }
+        }
 
         /// <summary>
         /// Closes the stream. The stream's memory needs to be dealt with separately.
@@ -620,7 +698,7 @@ namespace System.IO
             {
                 unsafe
                 {
-                    Buffer.ZeroMemory(_mem + len, value - len);
+                    Buffer.ZeroMemory(_mem + len, (nuint)(value - len));
                 }
             }
             Interlocked.Exchange(ref _length, value);
@@ -690,7 +768,7 @@ namespace System.IO
                 // zero any memory in the middle.
                 if (pos > len)
                 {
-                    Buffer.ZeroMemory(_mem + len, pos - len);
+                    Buffer.ZeroMemory(_mem + len, (nuint)(pos - len));
                 }
 
                 // set length after zeroing memory to avoid race condition of accessing unzeroed memory
@@ -831,7 +909,7 @@ namespace System.IO
                     {
                         unsafe
                         {
-                            Buffer.ZeroMemory(_mem + len, pos - len);
+                            Buffer.ZeroMemory(_mem + len, (nuint)(pos - len));
                         }
                     }
 

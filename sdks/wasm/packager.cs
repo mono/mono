@@ -139,6 +139,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t--native-lib=x  Link the native library 'x' into the final executable.");
+		Console.WriteLine ("\t--preload-file=x Preloads the file or directory 'x' into the virtual filesystem.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -234,7 +235,7 @@ class Driver {
 	}
 
 	static void Import (string ra, AssemblyKind kind) {
-		if (!asm_map.Add (ra))
+		if (!asm_map.Add (Path.GetFullPath (ra)))
 			return;
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
@@ -362,6 +363,7 @@ class Driver {
 		public bool ILStrip;
 		public bool LinkerVerbose;
 		public bool EnableZLib;
+		public bool EnableFS;
 		public bool EnableThreads;
 		public bool NativeStrip;
 	}
@@ -388,6 +390,7 @@ class Driver {
 		bool link_icalls = false;
 		bool gen_pinvoke = false;
 		bool enable_zlib = false;
+		bool enable_fs = false;
 		bool enable_threads = false;
 		bool is_netcore = false;
 		var il_strip = false;
@@ -396,6 +399,7 @@ class Driver {
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
 		var native_libs = new List<string> ();
+		var preload_files = new List<string> ();
 		var pinvoke_libs = "";
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
@@ -416,6 +420,7 @@ class Driver {
 				ILStrip = true,
 				LinkerVerbose = false,
 				EnableZLib = false,
+				EnableFS = false,
 				NativeStrip = true
 			};
 
@@ -443,6 +448,7 @@ class Driver {
 				{ "link-descriptor=", s => linkDescriptor = s },
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
 				{ "native-lib=", s => native_libs.Add (s) },
+				{ "preload-file=", s => preload_files.Add (s) },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
 					};
@@ -455,6 +461,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
 		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
+		AddFlag (p, new BoolFlag ("enable-fs", "enable filesystem support (through Emscripten's file_packager.py in a later phase)", opts.EnableFS, b => opts.EnableFS = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 
@@ -488,6 +495,7 @@ class Driver {
 		linker_verbose = opts.LinkerVerbose;
 		gen_pinvoke = pinvoke_libs != "";
 		enable_zlib = opts.EnableZLib;
+		enable_fs = opts.EnableFS;
 		enable_threads = opts.EnableThreads;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
@@ -499,7 +507,7 @@ class Driver {
 			link_icalls = true;
 		if (!enable_linker || !enable_aot)
 			enable_dedup = false;
-		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0)
+		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0 || preload_files.Count > 0)
 			build_wasm = true;
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
@@ -522,6 +530,10 @@ class Driver {
 				is_netcore = true;
 				if (netcore_sdkdir == "") {
 					Console.Error.WriteLine ("The --netcore-sdkdir= argument is required.");
+					return 1;
+				}
+				if (!Directory.Exists (netcore_sdkdir)) {
+					Console.Error.WriteLine ($"The directory '{netcore_sdkdir}' doesn't exist.");
 					return 1;
 				}
 			} else {
@@ -687,7 +699,6 @@ class Driver {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {
 				interp_files.Add ("mono.worker.js");
-				interp_files.Add ("mono.js.mem");
 			}
 			foreach (var fname in interp_files) {
 				File.Delete (Path.Combine (out_prefix, fname));
@@ -704,6 +715,19 @@ class Driver {
 
 		if (!emit_ninja)
 			return 0;
+
+		var filenames = new Dictionary<string, string> ();
+		foreach (var a in assemblies) {
+			var assembly = a.src_path;
+			if (assembly == null)
+				continue;
+			string filename = Path.GetFileName (assembly);
+			if (filenames.ContainsKey (filename)) {
+				Console.WriteLine ("Duplicate input assembly: " + assembly + " " + filenames [filename]);
+				return 1;
+			}
+			filenames [filename] = assembly;
+		}
 
 		if (build_wasm) {
 			if (sdkdir == null) {
@@ -761,6 +785,10 @@ class Driver {
 			emcc_flags += "--llvm-lto 1 ";
 		if (enable_zlib)
 			emcc_flags += "-s USE_ZLIB=1 ";
+		if (enable_fs)
+			emcc_flags += "-s FORCE_FILESYSTEM=1 ";
+		foreach (var pf in preload_files)
+			emcc_flags += "--preload-file " + pf + " ";
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
@@ -881,7 +909,6 @@ class Driver {
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
 			if (enable_threads) {
 				ninja.WriteLine ("build $appdir/mono.worker.js: cpifdiff $wasm_runtime_dir/mono.worker.js");
-				ninja.WriteLine ("build $appdir/mono.js.mem: cpifdiff $wasm_runtime_dir/mono.js.mem");
 			}
 		}
 		if (enable_aot)
