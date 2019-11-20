@@ -70,7 +70,7 @@ main (void) {
 
 	file = argv [1];
 
-	MonoAllocatorVTable mem_vtable = {custom_malloc};
+	MonoAllocatorVTable mem_vtable = {MONO_ALLOCATOR_VTABLE_VERSION, custom_malloc};
 	mono_set_allocator_vtable (&mem_vtable);
 
 	/*
