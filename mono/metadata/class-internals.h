@@ -1004,6 +1004,10 @@ MonoClass* mono_class_get_##shortname##_class (void);
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_try_get_##shortname##_class (void);
 
+// GENERATE_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name whenever
+// its cache is null. i.e. potentially repeatedly, though it is expected to succeed
+// the first time.
+//
 #define GENERATE_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
 mono_class_get_##shortname##_class (void)							\
@@ -1014,18 +1018,24 @@ mono_class_get_##shortname##_class (void)							\
 	return klass;										\
 }
 
+// GENERATE_TRY_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name approximately
+// only once. i.e. if it fails, it will return null and not retry.
+// In a race it might try a few times, but not indefinitely.
+//
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name)				\
 MonoClass*											\
 mono_class_try_get_##shortname##_class (void)							\
 {												\
-	/* FIXME Fix the rest, and then use MONO_STATIC_POINTER_INIT here. */			\
-	static volatile MonoClass *static_class; /* FIXME volatile is not needed. */		\
-	MonoClass *klass = (MonoClass *)static_class; /* FIXME and then remove cast. */		\
-	mono_memory_barrier ();	/* FIXME This is not needed. */					\
-	if (!klass) {										\
+	static volatile MonoClass *static_class;	/* FIXME remove volatile */		\
+	static volatile gboolean inited;		/* FIXME remove volatile */		\
+	MonoClass *klass = (MonoClass *)static_class;	/* FIXME remove cast */			\
+	mono_memory_barrier ();				/* FIXME remove this */			\
+	if (!inited) {										\
 		klass = mono_class_try_load_from_name (mono_defaults.corlib, name_space, name);	\
 		mono_memory_barrier ();								\
 		static_class = klass;								\
+		mono_memory_barrier ();								\
+		inited = TRUE;									\
 	}											\
 	mono_memory_read_barrier ();								\
 	return klass;										\
