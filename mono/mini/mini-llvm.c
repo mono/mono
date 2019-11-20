@@ -7461,6 +7461,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			case OP_FDIV:
 				values [ins->dreg] = LLVMBuildFDiv (builder, lhs, rhs, "");
 				break;
+#if defined(TARGET_AMD64) || defined(TARGET_X86)
 			case OP_FMAX:
 			case OP_FMIN: {
 				LLVMValueRef args [] = { lhs, rhs };
@@ -7472,6 +7473,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 					values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, is_r4 ? INTRINS_SSE_MINPS : INTRINS_SSE_MINPD), args, 2, dname);
 				break;
 			}
+#endif
 			case OP_IMAX: {
 				gboolean is_unsigned = ins->inst_c1 == MONO_TYPE_U1 || ins->inst_c1 == MONO_TYPE_U2 || ins->inst_c1 == MONO_TYPE_U4 || ins->inst_c1 == MONO_TYPE_U8;
 				LLVMValueRef cmp = LLVMBuildICmp (builder, is_unsigned ? LLVMIntUGT : LLVMIntSGT, lhs, rhs, "");
