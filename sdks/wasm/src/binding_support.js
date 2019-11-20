@@ -606,8 +606,7 @@ var BindingSupportLib = {
 				throw Error("Parameter count mismatch.");
 			
 			// check if the method signature needs argument mashalling
-			if (has_args_marshal && has_args)
-			{
+			if (has_args_marshal && has_args) {
 				var extra_args_mem = 0;
 				for (var i = 0; i < args.length; ++i) {
 					//long/double memory must be 8 bytes aligned and I'm being lazy here
@@ -672,8 +671,7 @@ var BindingSupportLib = {
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (has_args_marshal && has_args) 
-			{
+			if (has_args_marshal && has_args) {
 				if (args_marshal.length >= args.length && args_marshal [args.length] === "m")
 					return res;
 			}
