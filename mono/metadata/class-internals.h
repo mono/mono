@@ -1022,23 +1022,21 @@ mono_class_get_##shortname##_class (void)							\
 // only once. i.e. if it fails, it will return null and not retry.
 // In a race it might try a few times, but not indefinitely.
 //
-#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name)				\
-MonoClass*											\
-mono_class_try_get_##shortname##_class (void)							\
-{												\
-	static volatile MonoClass *static_class;	/* FIXME remove volatile */		\
-	static volatile gboolean inited;		/* FIXME remove volatile */		\
-	MonoClass *klass = (MonoClass *)static_class;	/* FIXME remove cast */			\
-	mono_memory_barrier ();				/* FIXME remove this */			\
-	if (!inited) {										\
+#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
+MonoClass*	\
+mono_class_try_get_##shortname##_class (void)	\
+{	\
+	static volatile MonoClass *tmp_class;	\
+	static volatile gboolean inited;	\
+	MonoClass *klass = (MonoClass *)tmp_class;	\
+	mono_memory_barrier ();	\
+	if (!inited) {	\
 		klass = mono_class_try_load_from_name (mono_defaults.corlib, name_space, name);	\
-		mono_memory_barrier ();								\
-		static_class = klass;								\
-		mono_memory_barrier ();								\
-		inited = TRUE;									\
-	}											\
-	mono_memory_read_barrier ();								\
-	return klass;										\
+		mono_memory_barrier ();	\
+		tmp_class = klass;	\
+		inited = TRUE;	\
+	}	\
+	return klass;	\
 }
 
 GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL (safehandle)
