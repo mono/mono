@@ -646,7 +646,6 @@ emit_arm64_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatur
 			}  else {
 				g_assert_not_reached ();
 			}
-			// the only llvm intrins I found is @llvm.aarch64.neon.cls.v2i32
 			ins->dreg = alloc_ireg (cfg);
 			ins->type = STACK_I4;
 			ins->sreg1 = args [0]->dreg;
