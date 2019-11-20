@@ -111,9 +111,23 @@ namespace System.Runtime.Serialization
 
         public void InternalSerializeReference(XmlWriterDelegator xmlWriter, object obj, bool isDeclaredType, bool writeXsiType, int declaredTypeID, RuntimeTypeHandle declaredTypeHandle)
         {
-            if (!OnHandleReference(xmlWriter, obj, true /*canContainCyclicReference*/))
-                InternalSerialize(xmlWriter, obj, isDeclaredType, writeXsiType, declaredTypeID, declaredTypeHandle);
-            OnEndHandleReference(xmlWriter, obj, true /*canContainCyclicReference*/);
+            // Check for declared type of Object with different object type. The mono DCS has special-case handling for this
+            // that allows for serialization of derived types (unlike .net framework). We should only do this handling, however,
+            // if there is no custom resolver supplied. Otherwise on deserialization the same custom resolver will
+            // not see what it expects.
+            bool isDeclaredObject = declaredTypeHandle.Equals(Globals.TypeOfObject.TypeHandle);
+            if (!isDeclaredType && isDeclaredObject && DataContractResolver == null) {
+                var dataContract = DataContract.GetDataContract(obj.GetType());
+                // write XML namespace and name from object data contract
+                xmlWriter.WriteAttributeQualifiedName(Globals.XsiPrefix, DictionaryGlobals.XsiTypeLocalName, DictionaryGlobals.SchemaInstanceNamespace, dataContract.Name,
+                                                      dataContract.Namespace);
+                // call ourselves to continue serializing as if declared type of property was same type as object
+                InternalSerializeReference(xmlWriter, obj, false, false, -1, Type.GetTypeHandle(obj));
+            } else {
+                if (!OnHandleReference(xmlWriter, obj, true /*canContainCyclicReference*/))
+                    InternalSerialize(xmlWriter, obj, isDeclaredType, writeXsiType, declaredTypeID, declaredTypeHandle);
+                OnEndHandleReference(xmlWriter, obj, true /*canContainCyclicReference*/);
+            }
         }
 
         public virtual void InternalSerialize(XmlWriterDelegator xmlWriter, object obj, bool isDeclaredType, bool writeXsiType, int declaredTypeID, RuntimeTypeHandle declaredTypeHandle)
