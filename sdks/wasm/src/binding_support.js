@@ -595,69 +595,84 @@ var BindingSupportLib = {
 		call_method: function (method, this_arg, args_marshal, args) {
 			this.bindings_lazy_init ();
 
-			var extra_args_mem = 0;
-			for (var i = 0; i < args.length; ++i) {
-				//long/double memory must be 8 bytes aligned and I'm being lazy here
-				if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd' || args_marshal[i] == 'j' || args_marshal[i] == 'k')
-					extra_args_mem += 8;
-			}
+			// Allocate memory for error
+			var is_error = Module._malloc (4);
+			// Set arguement memory to null;
+			var args_mem = null;
+			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
+			var has_args_marshal = args_marshal !== null && typeof args_marshal !== "undefined" && args_marshal.length > 0;
 
-			var extra_args_mem = extra_args_mem ? Module._malloc (extra_args_mem) : 0;
-			var extra_arg_idx = 0;
-			var args_mem = Module._malloc (args.length * 4);
-			var eh_throw = Module._malloc (4);
-			for (var i = 0; i < args.length; ++i) {
-				if (args_marshal[i] == 's') {
-					Module.setValue (args_mem + i * 4, this.js_string_to_mono_string (args [i]), "i32");
-				} else if (args_marshal[i] == 'm') {
-					Module.setValue (args_mem + i * 4, args [i], "i32");
-				} else if (args_marshal[i] == 'o') {
-					Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
-				} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
-					var enumVal = this.js_to_mono_enum(method, i, args[i]);
-		
-					var extra_cell = extra_args_mem + extra_arg_idx;
-					extra_arg_idx += 8;
+			if (has_args_marshal && (!has_args || args.length < args_marshal.leghth))
+				throw Error("Parameter count mismatch.");
+			
+			// check if the method signature needs argument mashalling
+			if (has_args_marshal && has_args)
+			{
+				var extra_args_mem = 0;
+				for (var i = 0; i < args.length; ++i) {
+					//long/double memory must be 8 bytes aligned and I'm being lazy here
+					if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd' || args_marshal[i] == 'j' || args_marshal[i] == 'k')
+						extra_args_mem += 8;
+				}
 
-					if (args_marshal[i] == 'j')
-						Module.setValue (extra_cell, enumVal, "i32");
-					else if (args_marshal[i] == 'k')
-						Module.setValue (extra_cell, enumVal, "i64");
+				var extra_args_mem = extra_args_mem ? Module._malloc (extra_args_mem) : 0;
+				var extra_arg_idx = 0;
+				args_mem = Module._malloc (args.length * 4);
 
-					Module.setValue (args_mem + i * 4, extra_cell, "i32");
-				} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
-					var extra_cell = extra_args_mem + extra_arg_idx;
-					extra_arg_idx += 8;
+				for (var i = 0; i < args.length; ++i) {
+					if (args_marshal[i] == 's') {
+						Module.setValue (args_mem + i * 4, this.js_string_to_mono_string (args [i]), "i32");
+					} else if (args_marshal[i] == 'm') {
+						Module.setValue (args_mem + i * 4, args [i], "i32");
+					} else if (args_marshal[i] == 'o') {
+						Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
+					} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
+						var enumVal = this.js_to_mono_enum(method, i, args[i]);
+			
+						var extra_cell = extra_args_mem + extra_arg_idx;
+						extra_arg_idx += 8;
 
-					if (args_marshal[i] == 'i')
-						Module.setValue (extra_cell, args [i], "i32");
-					else if (args_marshal[i] == 'l')
-						Module.setValue (extra_cell, args [i], "i64");
-					else if (args_marshal[i] == 'f')
-						Module.setValue (extra_cell, args [i], "float");
-					else
-						Module.setValue (extra_cell, args [i], "double");
+						if (args_marshal[i] == 'j')
+							Module.setValue (extra_cell, enumVal, "i32");
+						else if (args_marshal[i] == 'k')
+							Module.setValue (extra_cell, enumVal, "i64");
 
-					Module.setValue (args_mem + i * 4, extra_cell, "i32");
+						Module.setValue (args_mem + i * 4, extra_cell, "i32");
+					} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
+						var extra_cell = extra_args_mem + extra_arg_idx;
+						extra_arg_idx += 8;
+
+						if (args_marshal[i] == 'i')
+							Module.setValue (extra_cell, args [i], "i32");
+						else if (args_marshal[i] == 'l')
+							Module.setValue (extra_cell, args [i], "i64");
+						else if (args_marshal[i] == 'f')
+							Module.setValue (extra_cell, args [i], "float");
+						else
+							Module.setValue (extra_cell, args [i], "double");
+
+						Module.setValue (args_mem + i * 4, extra_cell, "i32");
+					}
 				}
 			}
-			Module.setValue (eh_throw, 0, "i32");
+			Module.setValue (is_error, 0, "i32");
 
-			var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
+			var res = this.invoke_method (method, this_arg, args_mem, is_error);
 
-			var eh_res = Module.getValue (eh_throw, "i32");
+			var eh_res = Module.getValue (is_error, "i32");
 
 			if (extra_args_mem)
 				Module._free (extra_args_mem);
-			Module._free (args_mem);
-			Module._free (eh_throw);
+			if (args_mem)
+				Module._free (args_mem);
+			Module._free (is_error);
 
 			if (eh_res != 0) {
 				var msg = this.conv_string (res);
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (args_marshal !== null && typeof args_marshal !== "undefined") 
+			if (has_args_marshal && has_args) 
 			{
 				if (args_marshal.length >= args.length && args_marshal [args.length] === "m")
 					return res;
