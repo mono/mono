@@ -37,7 +37,6 @@
 #include "mini-runtime.h"
 #include <mono/utils/mono-math.h>
 
-
 #ifndef DISABLE_JIT
 
 #if defined(TARGET_AMD64) && defined(TARGET_WIN32) && defined(HOST_WIN32) && defined(_MSC_VER)
