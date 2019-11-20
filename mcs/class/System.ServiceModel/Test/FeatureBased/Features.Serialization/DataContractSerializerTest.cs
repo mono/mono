@@ -13,8 +13,8 @@ using System.IO;
 namespace MonoTests.Features.Serialization
 {
 	[TestFixture]
-    public class DataContractSerializerTest : TestFixtureBase<DataContractTesterContractClient, DataContractTester, MonoTests.Features.Contracts.IDataContractTesterContract>
-	{		
+	public class DataContractSerializerTest : TestFixtureBase<DataContractTesterContractClient, DataContractTester, MonoTests.Features.Contracts.IDataContractTesterContract>
+	{
 
 		[Test]
 		public void TestPrimitiveComplexType () {
