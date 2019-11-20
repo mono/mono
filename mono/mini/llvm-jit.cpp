@@ -18,8 +18,10 @@
 
 #if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 600
 
+#include <llvm/ADT/SmallVector.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Host.h>
+#include <llvm/Support/Memory.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/IR/Mangler.h>
 #include "llvm/IR/LegacyPassNameParser.h"
@@ -31,6 +33,7 @@
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
 #include "llvm/ExecutionEngine/JITSymbol.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/CodeGen/GCs.h"
 
 #include <cstdlib>
 
@@ -81,6 +84,8 @@ public:
 								 StringRef SectionName) override;
 
 	bool finalizeMemory(std::string *ErrMsg = nullptr) override;
+private:
+	SmallVector<sys::MemoryBlock, 16> PendingCodeMem;
 };
 
 MonoJitMemoryManager::~MonoJitMemoryManager()
@@ -116,12 +121,22 @@ MonoJitMemoryManager::allocateCodeSection(uintptr_t Size,
 										  unsigned SectionID,
 										  StringRef SectionName)
 {
-	return alloc_code_mem_cb (NULL, Size);
+	uint8_t *mem = alloc_code_mem_cb (NULL, Size);
+	PendingCodeMem.push_back (sys::MemoryBlock ((void *)mem, Size));
+	return mem;
 }
 
 bool
 MonoJitMemoryManager::finalizeMemory(std::string *ErrMsg)
 {
+	for (sys::MemoryBlock &Block : PendingCodeMem) {
+#if LLVM_API_VERSION >= 900
+		sys::Memory::InvalidateInstructionCache (Block.base (), Block.allocatedSize ());
+#else
+		sys::Memory::InvalidateInstructionCache (Block.base (), Block.size ());
+#endif
+	}
+	PendingCodeMem.clear ();
 	return false;
 }
 
@@ -282,19 +297,25 @@ public:
 		initializeScalarOpts(registry);
 		initializeInstCombine(registry);
 		initializeTarget(registry);
+		initializeLoopIdiomRecognizeLegacyPassPass(registry);
+		linkCoreCLRGC(); // Mono uses built-in "coreclr" GCStrategy
 
+		// FIXME: find optimal mono specific order of passes
+		// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
+		// the following order is based on a stripped version of "OPT -O2"
+		const char *default_opts = " -simplifycfg -sroa -lower-expect -instcombine -loop-rotate -licm -simplifycfg -lcssa -loop-idiom -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg -enable-implicit-null-checks";
 		const char *opts = g_getenv ("MONO_LLVM_OPT");
-		if (opts == NULL) {
-			// FIXME: find optimal mono specific order of passes
-			// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
-			// the following order is based on a stripped version of "OPT -O2"
-			opts = " -simplifycfg -sroa -lower-expect -instcombine -licm -simplifycfg -lcssa -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg";
-		}
+		if (opts == NULL)
+			opts = default_opts;
+		else if (opts[0] == '+') // Append passes to the default order if starts with '+', overwrite otherwise
+			opts = g_strdup_printf ("%s %s", default_opts, opts + 1);
+		else if (opts[0] != ' ') // pass order has to start with a leading whitespace
+			opts = g_strdup_printf (" %s", opts);
 
 		char **args = g_strsplit (opts, " ", -1);
 		llvm::cl::ParseCommandLineOptions (g_strv_length (args), args, "");
 
-		for (int i = 0; i < PassList.size(); i++) {
+		for (size_t i = 0; i < PassList.size(); i++) {
 			Pass *pass = PassList[i]->getNormalCtor()();
 			if (pass->getPassKind () == llvm::PT_Function || pass->getPassKind () == llvm::PT_Loop) {
 				fpm.add (pass);
@@ -302,6 +323,9 @@ public:
 				printf("Opt pass is ignored: %s\n", args[i + 1]);
 			}
 		}
+		// -place-safepoints pass is mandatory
+		fpm.add (createPlaceSafepointsPass ());
+
 		g_strfreev (args);
 		fpm.doInitialization();
 	}
@@ -364,6 +388,7 @@ public:
 	gpointer compile (Function *F, int nvars, LLVMValueRef *callee_vars, gpointer *callee_addrs, gpointer *eh_frame) {
 		F->getParent ()->setDataLayout (TM->createDataLayout ());
 		fpm.run(*F);
+		// TODO: run module wide optimizations, e.g. remove dead globals/functions
 		// Orc uses a shared_ptr to refer to modules so we have to save them ourselves to keep a ref
 		std::shared_ptr<Module> m (F->getParent ());
 		modules.push_back (m);

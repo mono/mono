@@ -791,6 +791,10 @@ signal_monitor (gpointer mon_untyped)
 	mono_coop_mutex_unlock (mon->entry_mutex);
 }
 
+#ifdef ENABLE_NETCORE
+static gint64 thread_contentions; /* for Monitor.LockContentionCount, otherwise mono_perfcounters struct is used */
+#endif
+
 /* If allow_interruption==TRUE, the method will be interrupted if abort or suspend
  * is requested. In this case it returns -1.
  */ 
@@ -847,6 +851,10 @@ retry:
 	/* The object must be locked by someone else... */
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->thread_contentions);
+#else
+#ifdef ENABLE_NETCORE
+	mono_atomic_inc_i64 (&thread_contentions);
+#endif
 #endif
 
 	/* If ms is 0 we don't block, but just fail straight away */
@@ -1179,13 +1187,12 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset)
 }
 
 static void
-mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean *lockTaken, MonoError* error)
+mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean allow_interruption, MonoBoolean *lockTaken, MonoError* error)
 {
 	// The use of error here is unusual, but expedient, and easy enough to understand.
 	// Maybe clean it up later.
 
 	gint32 res;
-	gboolean allow_interruption = TRUE;
 
 	if (G_UNLIKELY (!obj)) {
 		if (error) {
@@ -1222,11 +1229,19 @@ mono_monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean
 	*lockTaken = res == 1;
 }
 
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean allow_interruption, MonoBoolean* lockTaken, MonoError* error)
+{
+	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, allow_interruption, lockTaken, error);
+}
+#else
 void
 ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObjectHandle obj, guint32 ms, MonoBoolean* lockTaken, MonoError* error)
 {
-	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, lockTaken, error);
+	mono_monitor_try_enter_with_atomic_var (MONO_HANDLE_RAW (obj), ms, TRUE, lockTaken, error);
 }
+#endif
 
 /**
  * mono_monitor_enter_v4:
@@ -1248,7 +1263,7 @@ mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 		mono_error_set_pending_exception (error);
 		return;
 	}
-	mono_monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, lock_taken, NULL);
+	mono_monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, FALSE, lock_taken, NULL);
 }
 
 /*
@@ -1360,8 +1375,8 @@ ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, Mono
 	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
 }
 
-MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
+static MonoBoolean
+mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
 
@@ -1404,7 +1419,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 	LOCK_DEBUG (g_message ("%s: (%d) queuing handle %p", __func__, id, event));
 
 	/* This looks superfluous */
-	if (mono_thread_current_check_pending_interrupt ()) {
+	if (allow_interruption && mono_thread_current_check_pending_interrupt ()) {
 		mono_w32event_close (event);
 		return FALSE;
 	}
@@ -1435,7 +1450,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 
 	/* Regain the lock with the previous nest count */
 	do {
-		regain = mono_monitor_try_enter_inflated (obj, MONO_INFINITE_WAIT, TRUE, id);
+		regain = mono_monitor_try_enter_inflated (obj, MONO_INFINITE_WAIT, allow_interruption, id);
 		/* We must regain the lock before handling interruption requests */
 	} while (regain == -1);
 
@@ -1477,20 +1492,34 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, gu
 	return success;
 }
 
+#ifdef ENABLE_NETCORE
+MonoBoolean
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
+{
+	return mono_monitor_wait (obj_handle, ms, allow_interruption, error);
+}
+#else
+MonoBoolean
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoError* error)
+{
+	return mono_monitor_wait (obj_handle, ms, TRUE, error);
+}
+#endif
+
 void
 ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObjectHandle obj, MonoError* error)
 {
 	mono_monitor_enter_internal (MONO_HANDLE_RAW (obj));
 }
 
-#if ENABLE_NETCORE
+#ifdef ENABLE_NETCORE
 gint64
 ves_icall_System_Threading_Monitor_Monitor_LockContentionCount (void)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	return mono_perfcounters->thread_contentions;
 #else
-	return 0;
+	return thread_contentions;
 #endif
 }
 #endif

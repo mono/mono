@@ -37,6 +37,7 @@
 #include "utils/mono-threads.h"
 #include "metadata/w32handle.h"
 #include "icall-signatures.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -55,6 +56,9 @@ gboolean sgen_mono_xdomain_checks = FALSE;
 
 /* Functions supplied by the runtime to be called by the GC */
 static MonoGCCallbacks gc_callbacks;
+
+/* Used for GetGCMemoryInfo */
+SgenGCInfo sgen_gc_info;
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,
@@ -811,6 +815,18 @@ clear_domain_free_major_pinned_object_callback (GCObject *obj, size_t size, Mono
 }
 
 static void
+clear_domain_process_los_object_callback (GCObject *obj, size_t size, MonoDomain *domain)
+{
+	clear_domain_process_object (obj, domain);
+}
+
+static gboolean
+clear_domain_free_los_object_callback (GCObject *obj, size_t size, MonoDomain *domain)
+{
+	return need_remove_object_for_domain (obj, domain);
+}
+
+static void
 sgen_finish_concurrent_work (const char *reason, gboolean stw)
 {
 	if (sgen_get_concurrent_collection_in_progress ())
@@ -876,25 +892,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 	   dereference a pointer from an object to another object if
 	   the first object is a proxy. */
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)clear_domain_process_major_object_callback, domain);
-	for (bigobj = sgen_los_object_list; bigobj; bigobj = bigobj->next)
-		clear_domain_process_object ((GCObject*)bigobj->data, domain);
 
-	prev = NULL;
-	for (bigobj = sgen_los_object_list; bigobj;) {
-		if (need_remove_object_for_domain ((GCObject*)bigobj->data, domain)) {
-			LOSObject *to_free = bigobj;
-			if (prev)
-				prev->next = bigobj->next;
-			else
-				sgen_los_object_list = bigobj->next;
-			bigobj = bigobj->next;
-			SGEN_LOG (4, "Freeing large object %p", bigobj->data);
-			sgen_los_free_object (to_free);
-			continue;
-		}
-		prev = bigobj;
-		bigobj = bigobj->next;
-	}
+	sgen_los_iterate_objects ((IterateObjectCallbackFunc)clear_domain_process_los_object_callback, domain);
+	sgen_los_iterate_objects_free ((IterateObjectResultCallbackFunc)clear_domain_free_los_object_callback, domain);
+
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_NON_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_non_pinned_object_callback, domain);
 	sgen_major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_pinned_object_callback, domain);
 
@@ -2566,6 +2567,22 @@ mono_gc_get_heap_size (void)
 {
 	return (int64_t)sgen_gc_get_total_heap_allocation ();
 }
+
+void
+mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
+						  gint64* memory_load_bytes,
+						  gint64* total_available_memory_bytes,
+						  gint64* heap_size_bytes,
+						  gint64* fragmented_bytes)
+{
+	*high_memory_load_threshold_bytes = sgen_gc_info.high_memory_load_threshold_bytes;
+	*fragmented_bytes = sgen_gc_info.fragmented_bytes;
+	
+	*heap_size_bytes = sgen_gc_info.heap_size_bytes;
+
+	*memory_load_bytes = sgen_gc_info.memory_load_bytes;
+	*total_available_memory_bytes = sgen_gc_info.total_available_memory_bytes;
+}	
 
 MonoGCDescriptor
 mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)

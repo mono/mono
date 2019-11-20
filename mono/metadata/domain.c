@@ -52,6 +52,7 @@
 #include <mono/metadata/coree.h>
 #include <mono/utils/mono-experiments.h>
 #include "external-only.h"
+#include "mono/utils/mono-tls-inline.h"
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -700,8 +701,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.multicastdelegate_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "MulticastDelegate");
 
+#ifndef ENABLE_NETCORE
 	mono_defaults.manualresetevent_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "ManualResetEvent");
+#endif
 
 	mono_defaults.typehandle_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "RuntimeTypeHandle");
@@ -806,12 +809,14 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	ERROR_DECL (error);
 
+#ifndef ENABLE_NETCORE
 	MonoClass *threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
 		threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
 	mono_error_assert_ok (error);
+#endif
 
 	domain->friendly_name = g_path_get_basename (filename);
 

@@ -71,6 +71,9 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
 GENERATE_TRY_GET_CLASS_WITH_CACHE (handleref, "System.Runtime.InteropServices", "HandleRef")
 
+#define CTOR_REQUIRED_FLAGS (METHOD_ATTRIBUTE_SPECIAL_NAME | METHOD_ATTRIBUTE_RT_SPECIAL_NAME)
+#define CTOR_INVALID_FLAGS (METHOD_ATTRIBUTE_STATIC)
+
 // define to print types whenever custom modifiers are appended during inflation
 #undef DEBUG_INFLATE_CMODS
 
@@ -1104,7 +1107,6 @@ MonoMethod *
 mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *context)
 {
 	ERROR_DECL (error);
-	error_init (error);
 	MonoMethod *res = mono_class_inflate_generic_method_full_checked (method, NULL, context, error);
 	mono_error_assert_msg_ok (error, "Could not inflate generic method");
 	return res;
@@ -2828,7 +2830,6 @@ MonoClass *
 mono_class_get (MonoImage *image, guint32 type_token)
 {
 	ERROR_DECL (error);
-	error_init (error);
 	MonoClass *result = mono_class_get_checked (image, type_token, error);
 	mono_error_assert_ok (error);
 	return result;
@@ -6253,7 +6254,17 @@ mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError 
 		return method;
 
 	klass = method->klass;
-	if (mono_class_is_ginst (klass)) {
+	if (mono_class_is_gtd (klass)) {
+		/* If we get a GTD like Foo`2 replace look instead at its instantiation with its own generic params: Foo`2<!0, !1>. */
+		/* In particular we want generic_inst to be initialized to <!0,
+		 * !1> so that we can inflate parent classes correctly as we go
+		 * up the class hierarchy. */
+		MonoType *ty = mono_class_gtd_get_canonical_inst (klass);
+		g_assert (ty->type == MONO_TYPE_GENERICINST);
+		MonoGenericClass *gklass = ty->data.generic_class;
+		generic_inst = mono_generic_class_get_context (gklass);
+		klass = gklass->container_class;
+	} else if (mono_class_is_ginst (klass)) {
 		generic_inst = mono_class_get_context (klass);
 		klass = mono_class_get_generic_class (klass)->container_class;
 	}
@@ -6301,6 +6312,10 @@ retry:
 			generic_inst = parent_inst;
 		}
 	} else {
+		/* When we get here, possibly after a retry, if generic_inst is
+		 * set, then the class is must be a gtd */
+		g_assert (generic_inst == NULL || mono_class_is_gtd (klass));
+
 		klass = m_class_get_parent (klass);
 		if (!klass)
 			return method;
@@ -6320,6 +6335,7 @@ retry:
 	if (generic_inst) {
 		klass = mono_class_inflate_generic_class_checked (klass, generic_inst, error);
 		return_val_if_nok (error, NULL);
+		generic_inst = NULL;
 	}
 
 	if (klass == method->klass)
@@ -6369,4 +6385,35 @@ retry:
 
 	g_assert (result != NULL);
 	return result;
+}
+
+gboolean
+mono_method_is_constructor (MonoMethod *method)
+{
+	return ((method->flags & CTOR_REQUIRED_FLAGS) == CTOR_REQUIRED_FLAGS &&
+			!(method->flags & CTOR_INVALID_FLAGS) &&
+			!strcmp (".ctor", method->name));
+}
+
+gboolean
+mono_class_has_default_constructor (MonoClass *klass, gboolean public_only)
+{
+	MonoMethod *method;
+	int i;
+
+	mono_class_setup_methods (klass);
+	if (mono_class_has_failure (klass))
+		return FALSE;
+
+	int mcount = mono_class_get_method_count (klass);
+	MonoMethod **klass_methods = m_class_get_methods (klass);
+	for (i = 0; i < mcount; ++i) {
+		method = klass_methods [i];
+		if (mono_method_is_constructor (method) &&
+			mono_method_signature_internal (method) &&
+			mono_method_signature_internal (method)->param_count == 0 &&
+			(!public_only || (method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC))
+			return TRUE;
+	}
+	return FALSE;
 }
