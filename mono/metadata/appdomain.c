@@ -387,6 +387,7 @@ mono_context_set_default_context (MonoDomain *domain)
 	HANDLE_FUNCTION_RETURN ();
 }
 
+#ifndef ENABLE_NETCORE
 static char*
 mono_get_corlib_version (void)
 {
@@ -417,6 +418,7 @@ mono_get_corlib_version (void)
 
 	return res;
 }
+#endif
 
 /**
  * mono_check_corlib_version:
@@ -442,7 +444,9 @@ mono_check_corlib_version_internal (void)
 	return NULL;
 #else
 	char *result = NULL;
-	char *version = mono_get_corlib_version ();
+	char *version = NULL;
+#ifndef ENABLE_NETCORE
+	version = mono_get_corlib_version ();
 	if (!version) {
 		result = g_strdup_printf ("expected corlib string (%s) but not found or not string", MONO_CORLIB_VERSION);
 		goto exit;
@@ -454,6 +458,7 @@ mono_check_corlib_version_internal (void)
 					  MONO_CORLIB_VERSION, version);
 		goto exit;
 	}
+#endif
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 	guint32 native_offset;

@@ -138,13 +138,9 @@ run-sample-local-dotnet-llvm: patch-local-dotnet
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
-System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/src/System/Environment.Mono.in config.make
-	test -n '$(MONO_CORLIB_VERSION)'
-	sed -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
-
 CORLIB_BUILD_FLAGS?=-c Release
 
-bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
+bcl: update-roslyn
 	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:UseSharedCompilation=false -p:BuildArch=$(COREARCH) \
 	-p:OutputPath=bin/$(COREARCH) \
 	-p:RoslynPropsFile="../roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \

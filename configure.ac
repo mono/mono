@@ -7018,7 +7018,6 @@ if test "x$with_core" = "xonly"; then
   echo "RID = $RID" >> netcore/config.make
   echo "COREARCH = $COREARCH" >> netcore/config.make
   echo "CORETARGETS = $CORETARGETS" >> netcore/config.make
-  echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> netcore/config.make
 
   if test x$build_darwin = xyes; then
     echo "HOST_PLATFORM ?= macos" >> netcore/config.make
