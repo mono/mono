@@ -47,16 +47,16 @@ stages:
               assetManifestPlatform: x64
               installDependencies: true
               llvm: false
-            x64_LLVM:
+            x64 LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64_LLVM
+              assetManifestPlatform: x64 LLVM
               installDependencies: true
               llvm: true
-            x64_Interpreter:
+            x64 Interpreter:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64_Interpreter
+              assetManifestPlatform: x64 Interpreter
               installDependencies: true
               interpreter: true
             ARM64:
@@ -118,9 +118,9 @@ stages:
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make run-tests-corefx USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
             elif [ $(interpreter) = true ]; then
-              make run-tests-corefx USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
             else
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi
