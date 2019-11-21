@@ -126,7 +126,7 @@ stages:
             fi
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
