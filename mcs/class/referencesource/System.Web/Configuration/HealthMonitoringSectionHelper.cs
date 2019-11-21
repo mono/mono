@@ -307,7 +307,7 @@ namespace System.Web.Configuration {
 
             // Create a public instance of the custom evaluator
             if (_customEvaluatorInstances[ruleInfo._customEvaluatorType] == null) {
-                _customEvaluatorInstances[ruleInfo._customEvaluatorType] = HttpRuntime.CreatePublicInstance(ruleInfo._customEvaluatorType);
+                _customEvaluatorInstances[ruleInfo._customEvaluatorType] = HttpRuntime.CreatePublicInstanceByWebObjectActivator(ruleInfo._customEvaluatorType);
             }
         }
 
@@ -544,7 +544,7 @@ namespace System.Web.Configuration {
                         provider = (WebEventProvider)HttpRuntime.CreateNonPublicInstance(type);
                     }
                     else {
-                        provider = (WebEventProvider)HttpRuntime.CreatePublicInstance(type);
+                        provider = (WebEventProvider)HttpRuntime.CreatePublicInstanceByWebObjectActivator(type);
                     }
 
                     using (new ProcessImpersonationContext()) {

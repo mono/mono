@@ -189,7 +189,7 @@ namespace System.Web.Configuration {
                 _type = t;
             }
 
-            return HttpRuntime.CreateNonPublicInstance(_type);
+            return HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_type);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace System.Web.Configuration.Common {
         }
 
         internal /*public*/ IHttpModule Create() {
-            return (IHttpModule)HttpRuntime.CreateNonPublicInstance(_type);
+            return (IHttpModule)HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_type);
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted=true)]

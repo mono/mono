@@ -50,7 +50,7 @@ namespace System.Web.Util {
             ConfigUtil.CheckBaseType(typeof(RequestValidator) /* expectedBaseType */, validatorType, "requestValidationType", runtimeSection);
 
             // instantiate
-            RequestValidator validator = (RequestValidator)HttpRuntime.CreatePublicInstance(validatorType);
+            RequestValidator validator = (RequestValidator)HttpRuntime.CreatePublicInstanceByWebObjectActivator(validatorType);
             return validator;
         }
 

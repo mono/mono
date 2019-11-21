@@ -186,7 +186,8 @@ internal class MemoryBuildResultCache: BuildResultCache {
             if (a == null) {
                 System.Web.Util.Debug.Trace("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
                 // VSWhidbey 500049 - add as NotRemovable to prevent the assembly from being prematurely deleted
-                HttpRuntime.Cache.InternalCache.Insert(assemblyKey, compiledResult.ResultAssembly, null);
+                HttpRuntime.Cache.InternalCache.Insert(assemblyKey, compiledResult.ResultAssembly,
+                    new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
             }
             else {
                 System.Web.Util.Debug.Assert(a == compiledResult.ResultAssembly);

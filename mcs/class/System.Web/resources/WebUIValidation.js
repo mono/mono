@@ -1,9 +1,11 @@
+//<script>
 var Page_ValidationVer = "125";
 var Page_IsValid = true;
 var Page_BlockSubmit = false;
 var Page_InvalidControlToBeFocused = null;
 var Page_TextTypes = /^(text|password|file|search|tel|url|email|number|range|color|datetime|date|month|week|time|datetime-local)$/i;
-function ValidatorUpdateDisplay(val) {
+
+ function ValidatorUpdateDisplay(val) {
     if (typeof(val.display) == "string") {
         if (val.display == "None") {
             return;
@@ -13,16 +15,23 @@ function ValidatorUpdateDisplay(val) {
             return;
         }
     }
+
+     // VSWhidbey 83164: There is a case that the static error text not shown
+    // when the page is browsed on Mac IE that the window is too small to have
+    // all controls shown.  The solution is to also set style.display and that
+    // seems to get around the problem.
     if ((navigator.userAgent.indexOf("Mac") > -1) &&
         (navigator.userAgent.indexOf("MSIE") > -1)) {
         val.style.display = "inline";
     }
     val.style.visibility = val.isvalid ? "hidden" : "visible";
 }
-function ValidatorUpdateIsValid() {
+
+ function ValidatorUpdateIsValid() {
     Page_IsValid = AllValidatorsValid(Page_Validators);
 }
-function AllValidatorsValid(validators) {
+
+ function AllValidatorsValid(validators) {
     if ((typeof(validators) != "undefined") && (validators != null)) {
         var i;
         for (i = 0; i < validators.length; i++) {
@@ -33,7 +42,8 @@ function AllValidatorsValid(validators) {
     }
     return true;
 }
-function ValidatorHookupControlID(controlID, val) {
+
+ function ValidatorHookupControlID(controlID, val) {
     if (typeof(controlID) != "string") {
         return;
     }
@@ -46,11 +56,13 @@ function ValidatorHookupControlID(controlID, val) {
         val.enabled = false;
     }
 }
-function ValidatorHookupControl(control, val) {
+
+ function ValidatorHookupControl(control, val) {
     if (typeof(control.tagName) != "string") {
-        return;  
+        return;  // The childNodes collection might contain TextNodes which do not have tagName defined
     }
-    if (control.tagName != "INPUT" && control.tagName != "TEXTAREA" && control.tagName != "SELECT") {
+
+     if (control.tagName != "INPUT" && control.tagName != "TEXTAREA" && control.tagName != "SELECT") {
         var i;
         for (i = 0; i < control.childNodes.length; i++) {
             ValidatorHookupControl(control.childNodes[i], val);
@@ -69,16 +81,20 @@ function ValidatorHookupControl(control, val) {
                     ValidatorHookupEvent(control, "onblur", "ValidatedControlOnBlur(event); ");
                 }
             }
-            ValidatorHookupEvent(control, eventType, "ValidatorOnChange(event); ");
-            if (Page_TextTypes.test(control.type)) {
+
+             ValidatorHookupEvent(control, eventType, "ValidatorOnChange(event); ");
+
+             if (Page_TextTypes.test(control.type)) {
                 ValidatorHookupEvent(control, "onkeypress", 
                     "event = event || window.event; if (!ValidatedTextBoxOnKeyPress(event)) { event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation(); return false; } ");
             }
-        }
+
+         }
         control.Validators[control.Validators.length] = val;
     }
 }
-function ValidatorHookupEvent(control, eventType, functionPrefix) {
+
+ function ValidatorHookupEvent(control, eventType, functionPrefix) {
     var ev = control[eventType];
     if (typeof(ev) == "function") {
         ev = ev.toString();
@@ -87,17 +103,22 @@ function ValidatorHookupEvent(control, eventType, functionPrefix) {
     else {
         ev = "";
     }
+    // in IE the event object is not a parameter, but some libraries pass it in when
+    // manually invoking events (jquery), which might be different than the actual window.event.
     control[eventType] = new Function("event", functionPrefix + " " + ev);
 }
-function ValidatorGetValue(id) {
+
+ function ValidatorGetValue(id) {
     var control;
     control = document.getElementById(id);
     if (typeof(control.value) == "string") {
         return control.value;
     }
-    return ValidatorGetValueRecursive(control);
+
+     return ValidatorGetValueRecursive(control);
 }
-function ValidatorGetValueRecursive(control)
+
+ function ValidatorGetValueRecursive(control)
 {
     if (typeof(control.value) == "string" && (control.type != "radio" || control.checked == true)) {
         return control.value;
@@ -109,8 +130,12 @@ function ValidatorGetValueRecursive(control)
     }
     return "";
 }
-function Page_ClientValidate(validationGroup) {
+
+ function Page_ClientValidate(validationGroup) {
     Page_InvalidControlToBeFocused = null;
+
+     // On postback login controls can disable all their validators, so Page_Validators can be undefined,
+    // this guards against that scenario.
     if (typeof(Page_Validators) == "undefined") {
         return true;
     }
@@ -123,21 +148,27 @@ function Page_ClientValidate(validationGroup) {
     Page_BlockSubmit = !Page_IsValid;
     return Page_IsValid;
 }
-function ValidatorCommonOnSubmit() {
+
+ function ValidatorCommonOnSubmit() {
     Page_InvalidControlToBeFocused = null;
     var result = !Page_BlockSubmit;
+
+     // It shouldn't be necessary to set event.returnValue as the function return value should do the job to stop the event.
+    // But it was done in V1 so the code is kept here.
     if ((typeof(window.event) != "undefined") && (window.event != null)) {
         window.event.returnValue = result;
     }
     Page_BlockSubmit = false;
     return result;
 }
-function ValidatorEnable(val, enable) {
+
+ function ValidatorEnable(val, enable) {
     val.enabled = (enable != false);
     ValidatorValidate(val);
     ValidatorUpdateIsValid();
 }
-function ValidatorOnChange(event) {
+
+ function ValidatorOnChange(event) {
     event = event || window.event;
     Page_InvalidControlToBeFocused = null;
     var targetedControl;
@@ -147,27 +178,37 @@ function ValidatorOnChange(event) {
     else {
         targetedControl = event.target;
     }
-    var vals;
+
+     var vals;
     if (typeof(targetedControl.Validators) != "undefined") {
         vals = targetedControl.Validators;
     }
     else {
+        // On Firefox, the triggered event would be from the label element associated
+        // with the input/radio element when the label is clicked.  In this case we
+        // need to look for the validators from the associated input element.
         if (targetedControl.tagName.toLowerCase() == "label") {
             targetedControl = document.getElementById(targetedControl.htmlFor);
             vals = targetedControl.Validators;
         }
     }
-    if (vals) {
+
+     if (vals) {
+        // Dev10 722166: if vals is undefined, no valdators to validate
         for (var i = 0; i < vals.length; i++) {
             ValidatorValidate(vals[i], null, event);
         }
     }
     ValidatorUpdateIsValid();
 }
-function ValidatedTextBoxOnKeyPress(event) {
+
+ function ValidatedTextBoxOnKeyPress(event) {
     event = event || window.event;
     if (event.keyCode == 13) {
         ValidatorOnChange(event);
+
+         // VSWhidbey 284439: The keypress event should return false only when
+        // any of the associated validators are invalid.
         var vals;
         if ((typeof(event.srcElement) != "undefined") && (event.srcElement != null)) {
             vals = event.srcElement.Validators;
@@ -179,7 +220,8 @@ function ValidatedTextBoxOnKeyPress(event) {
     }
     return true;
 }
-function ValidatedControlOnBlur(event) {
+
+ function ValidatedControlOnBlur(event) {
     event = event || window.event;
     var control;
     if ((typeof(event.srcElement) != "undefined") && (event.srcElement != null)) {
@@ -188,12 +230,14 @@ function ValidatedControlOnBlur(event) {
     else {
         control = event.target;
     }
-    if ((typeof(control) != "undefined") && (control != null) && (Page_InvalidControlToBeFocused == control)) {
+
+     if ((typeof(control) != "undefined") && (control != null) && (Page_InvalidControlToBeFocused == control)) {
         control.focus();
         Page_InvalidControlToBeFocused = null;
     }
 }
-function ValidatorValidate(val, validationGroup, event) {
+
+ function ValidatorValidate(val, validationGroup, event) {
     val.isvalid = true;
     if ((typeof(val.enabled) == "undefined" || val.enabled != false) && IsValidationGroupMatch(val, validationGroup)) {
         if (typeof(val.evaluationfunction) == "function") {
@@ -206,8 +250,12 @@ function ValidatorValidate(val, validationGroup, event) {
     }
     ValidatorUpdateDisplay(val);
 }
-function ValidatorSetFocus(val, event) {
+
+ function ValidatorSetFocus(val, event) {
     var ctrl;
+
+     // For CompareValidator that its ControlToCompare triggers the event,
+    // we need to correctly identify the control so the focus can be set right.
     if (typeof(val.controlhookup) == "string") {
         var eventCtrl;
         if ((typeof(event) != "undefined") && (event != null)) {
@@ -218,21 +266,29 @@ function ValidatorSetFocus(val, event) {
                 eventCtrl = event.target;
             }
         }
-        if ((typeof(eventCtrl) != "undefined") && (eventCtrl != null) &&
+
+         if ((typeof(eventCtrl) != "undefined") && (eventCtrl != null) &&
             (typeof(eventCtrl.id) == "string") &&
             (eventCtrl.id == val.controlhookup)) {
             ctrl = eventCtrl;
         }
     }
-    if ((typeof(ctrl) == "undefined") || (ctrl == null)) {
+
+     if ((typeof(ctrl) == "undefined") || (ctrl == null)) {
         ctrl = document.getElementById(val.controltovalidate);
     }
-    if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
-        (ctrl.tagName.toLowerCase() != "table" || (typeof(event) == "undefined") || (event == null)) && 
+
+     if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
+        (ctrl.tagName.toLowerCase() != "table" || (typeof(event) == "undefined") || (event == null)) && // For RadioButtonList, we should not refocus when user selects between radio buttons.
         ((ctrl.tagName.toLowerCase() != "input") || (ctrl.type.toLowerCase() != "hidden")) &&
         (typeof(ctrl.disabled) == "undefined" || ctrl.disabled == null || ctrl.disabled == false) &&
         (typeof(ctrl.visible) == "undefined" || ctrl.visible == null || ctrl.visible != false) &&
         (IsInVisibleContainer(ctrl))) {
+
+         // The focus() method on table only works on IE, but not Firefox and Opera.
+        // In those cases for RadioButtonList, we call the focus() method on the last input/radio element.
+        // DevDiv Bugs 157647: RadioButtonList renders SPAN in flow mode. The focus() method does not
+        // work on spans, in IE or Firefox. Look for last input for spans in all browsers.
         if ((ctrl.tagName.toLowerCase() == "table" && (typeof(__nonMSDOMBrowser) == "undefined" || __nonMSDOMBrowser)) ||
             (ctrl.tagName.toLowerCase() == "span")) {
             var inputElements = ctrl.getElementsByTagName("input");
@@ -241,12 +297,19 @@ function ValidatorSetFocus(val, event) {
                 ctrl = lastInputElement;
             }
         }
-        if (typeof(ctrl.focus) != "undefined" && ctrl.focus != null) {
+
+         if (typeof(ctrl.focus) != "undefined" && ctrl.focus != null) {
             ctrl.focus();
+
+             // VSWhidbey 339357: We also need to record the invalid control so the
+            // focus can be reset in the onblur event of the validaing control in case
+            // that this is simply a tabbing or clicking to a different control.
             Page_InvalidControlToBeFocused = ctrl;
         }
     }
 }
+
+ // VSWhidbey 140926
 function IsInVisibleContainer(ctrl) {
     if (typeof(ctrl.style) != "undefined" &&
         ( ( typeof(ctrl.style.display) != "undefined" &&
@@ -262,20 +325,26 @@ function IsInVisibleContainer(ctrl) {
     }
     return true;
 }
-function IsValidationGroupMatch(control, validationGroup) {
+
+ function IsValidationGroupMatch(control, validationGroup) {
+
+     // When validationGroup is null it means we don't care checking the group
     if ((typeof(validationGroup) == "undefined") || (validationGroup == null)) {
         return true;
     }
+    // Default to empty string group
     var controlGroup = "";
     if (typeof(control.validationGroup) == "string") {
         controlGroup = control.validationGroup;
     }
     return (controlGroup == validationGroup);
 }
-function ValidatorOnLoad() {
+
+ function ValidatorOnLoad() {
     if (typeof(Page_Validators) == "undefined")
         return;
-    var i, val;
+
+     var i, val;
     for (i = 0; i < Page_Validators.length; i++) {
         val = Page_Validators[i];
         if (typeof(val.evaluationfunction) == "string") {
@@ -292,19 +361,23 @@ function ValidatorOnLoad() {
         } else {
             val.isvalid = true;
         }
-        if (typeof(val.enabled) == "string") {
+
+         if (typeof(val.enabled) == "string") {
             val.enabled = (val.enabled != "False");
         }
-        if (typeof(val.controltovalidate) == "string") {
+
+         if (typeof(val.controltovalidate) == "string") {
             ValidatorHookupControlID(val.controltovalidate, val);
         }
-        if (typeof(val.controlhookup) == "string") {
+
+         if (typeof(val.controlhookup) == "string") {
             ValidatorHookupControlID(val.controlhookup, val);
         }
     }
     Page_ValidationActive = true;
 }
-function ValidatorConvert(op, dataType, val) {
+
+ function ValidatorConvert(op, dataType, val) {
     function GetFullYear(year) {
         var twoDigitCutoffYear = val.cutoffyear % 100;
         var cutoffYearCentury = val.cutoffyear - twoDigitCutoffYear;
@@ -323,6 +396,7 @@ function ValidatorConvert(op, dataType, val) {
         m = op.match(exp);
         if (m == null)
             return null;
+        // Make sure there are some valid digits
         if (m[2].length == 0 && m[3].length == 0)
             return null;
         cleanInput = (m[1] != null ? m[1] : "") + (m[2].length>0 ? m[2] : "0") + (m[3].length>0 ? "." + m[3] : "");
@@ -331,6 +405,8 @@ function ValidatorConvert(op, dataType, val) {
     }
     else if (dataType == "Currency") {
         var hasDigits = (val.digits > 0);
+
+         // NDPWhidbey 3352
         var beginGroupSize, subsequentGroupSize;
         var groupSizeNum = parseInt(val.groupsize, 10);
         if (!isNaN(groupSizeNum) && groupSizeNum > 0) {
@@ -340,12 +416,14 @@ function ValidatorConvert(op, dataType, val) {
         else {
             beginGroupSize = subsequentGroupSize = "+";
         }
-        exp = new RegExp("^\\s*([-\\+])?((\\d" + beginGroupSize + "(\\" + val.groupchar + "\\d" + subsequentGroupSize + ")+)|\\d*)"
+
+         exp = new RegExp("^\\s*([-\\+])?((\\d" + beginGroupSize + "(\\" + val.groupchar + "\\d" + subsequentGroupSize + ")+)|\\d*)"
                         + (hasDigits ? "\\" + val.decimalchar + "?(\\d{0," + val.digits + "})" : "")
                         + "\\s*$");
         m = op.match(exp);
         if (m == null)
             return null;
+        // Make sure there are some valid digits
         if (m[2].length == 0 && hasDigits && m[5].length == 0)
             return null;
         cleanInput = (m[1] != null ? m[1] : "") + m[2].replace(new RegExp("(\\" + val.groupchar + ")", "g"), "") + ((hasDigits && m[5].length > 0) ? "." + m[5] : "");
@@ -353,6 +431,12 @@ function ValidatorConvert(op, dataType, val) {
         return (isNaN(num) ? null : num);
     }
     else if (dataType == "Date") {
+        // ****************************************************************************************************************
+        // **                                                                                                            **
+        // ** NOTE: When updating the regular expressions in this section, you must also update the regular expressions  **
+        // **       in BaseCompareValidator.ConvertDate().  The server and client regular expressions must match.        **
+        // **                                                                                                            **
+        // ****************************************************************************************************************
         var yearFirstExp = new RegExp("^\\s*((\\d{4})|(\\d{2}))([-/]|\\. ?)(\\d{1,2})\\4(\\d{1,2})\\.?\\s*$");
         m = op.match(yearFirstExp);
         var day, month, year;
@@ -382,6 +466,10 @@ function ValidatorConvert(op, dataType, val) {
         }
         month -= 1;
         var date = new Date(year, month, day);
+
+         // If year is 4 digits and older than 100, the Date constructor would
+        // automatically add 1900 to it.  In case of it, we use setFullYear
+        // method to ensure the expected year is set correctly.
         if (year < 100) {
             date.setFullYear(year);
         }
@@ -391,7 +479,8 @@ function ValidatorConvert(op, dataType, val) {
         return op.toString();
     }
 }
-function ValidatorCompare(operand1, operand2, operator, val) {
+
+ function ValidatorCompare(operand1, operand2, operator, val) {
     var dataType = val.type;
     var op1, op2;
     if ((op1 = ValidatorConvert(operand1, dataType, val)) == null)
@@ -415,7 +504,8 @@ function ValidatorCompare(operand1, operand2, operator, val) {
             return (op1 == op2);
     }
 }
-function CompareValidatorEvaluateIsValid(val) {
+
+ function CompareValidatorEvaluateIsValid(val) {
     var value = ValidatorGetValue(val.controltovalidate);
     if (ValidatorTrim(value).length == 0)
         return true;
@@ -423,23 +513,28 @@ function CompareValidatorEvaluateIsValid(val) {
     if ((typeof(val.controltocompare) != "string") ||
         (typeof(document.getElementById(val.controltocompare)) == "undefined") ||
         (null == document.getElementById(val.controltocompare))) {
-        if (typeof(val.valuetocompare) == "string") {
+
+         if (typeof(val.valuetocompare) == "string") {
             compareTo = val.valuetocompare;
         }
     }
     else {
         compareTo = ValidatorGetValue(val.controltocompare);
     }
-    var operator = "Equal";
+
+     var operator = "Equal";
     if (typeof(val.operator) == "string") {
         operator = val.operator;
     }
-    return ValidatorCompare(value, compareTo, operator, val);
+
+     return ValidatorCompare(value, compareTo, operator, val);
 }
-function CustomValidatorEvaluateIsValid(val) {
+
+ function CustomValidatorEvaluateIsValid(val) {
     var value = "";
     if (typeof(val.controltovalidate) == "string") {
         value = ValidatorGetValue(val.controltovalidate);
+        // We return if value is empty and validateemptytext is false (default)
         if ((ValidatorTrim(value).length == 0) &&
             ((typeof(val.validateemptytext) != "string") || (val.validateemptytext != "true"))) {
             return true;
@@ -451,7 +546,8 @@ function CustomValidatorEvaluateIsValid(val) {
     }
     return args.IsValid;
 }
-function RegularExpressionValidatorEvaluateIsValid(val) {
+
+ function RegularExpressionValidatorEvaluateIsValid(val) {
     var value = ValidatorGetValue(val.controltovalidate);
     if (ValidatorTrim(value).length == 0)
         return true;
@@ -459,21 +555,25 @@ function RegularExpressionValidatorEvaluateIsValid(val) {
     var matches = rx.exec(value);
     return (matches != null && value == matches[0]);
 }
-function ValidatorTrim(s) {
+
+ function ValidatorTrim(s) {
     var m = s.match(/^\s*(\S+(\s+\S+)*)\s*$/);
     return (m == null) ? "" : m[1];
 }
-function RequiredFieldValidatorEvaluateIsValid(val) {
+
+ function RequiredFieldValidatorEvaluateIsValid(val) {
     return (ValidatorTrim(ValidatorGetValue(val.controltovalidate)) != ValidatorTrim(val.initialvalue))
 }
-function RangeValidatorEvaluateIsValid(val) {
+
+ function RangeValidatorEvaluateIsValid(val) {
     var value = ValidatorGetValue(val.controltovalidate);
     if (ValidatorTrim(value).length == 0)
         return true;
     return (ValidatorCompare(value, val.minimumvalue, "GreaterThanEqual", val) &&
             ValidatorCompare(value, val.maximumvalue, "LessThanEqual", val));
 }
-function ValidationSummaryOnSubmit(validationGroup) {
+
+ function ValidationSummaryOnSubmit(validationGroup) {
     if (typeof(Page_ValidationSummaries) == "undefined")
         return;
     var summary, sums, s;
@@ -497,7 +597,8 @@ function ValidationSummaryOnSubmit(validationGroup) {
                         post = "<br>";
                         end = "";
                         break;
-                    case "BulletList":
+
+                     case "BulletList":
                     default:
                         headerSep = "";
                         first = "<ul>";
@@ -505,7 +606,8 @@ function ValidationSummaryOnSubmit(validationGroup) {
                         post = "</li>";
                         end = "</ul>";
                         break;
-                    case "SingleParagraph":
+
+                     case "SingleParagraph":
                         headerSep = " ";
                         first = "";
                         pre = "";
@@ -532,7 +634,8 @@ function ValidationSummaryOnSubmit(validationGroup) {
                 if (typeof(summary.headertext) == "string") {
                     s += summary.headertext + "\r\n";
                 }
-                var lastValIndex = Page_Validators.length - 1;
+
+                 var lastValIndex = Page_Validators.length - 1;
                 for (i=0; i<=lastValIndex; i++) {
                     if (!Page_Validators[i].isvalid && typeof(Page_Validators[i].errormessage) == "string") {
                         switch (summary.displaymode) {
@@ -542,14 +645,16 @@ function ValidationSummaryOnSubmit(validationGroup) {
                                     s += "\r\n";
                                 }
                                 break;
-                            case "BulletList":
+
+                             case "BulletList":
                             default:
                                 s += "- " + Page_Validators[i].errormessage;
                                 if (i < lastValIndex) {
                                     s += "\r\n";
                                 }
                                 break;
-                            case "SingleParagraph":
+
+                             case "SingleParagraph":
                                 s += Page_Validators[i].errormessage + " ";
                                 break;
                         }
@@ -560,48 +665,85 @@ function ValidationSummaryOnSubmit(validationGroup) {
         }
     }
 }
-if (window.jQuery) {
+
+ if (window.jQuery) {
     (function ($) {
         var dataValidationAttribute = "data-val",
             dataValidationSummaryAttribute = "data-valsummary",
             normalizedAttributes = { validationgroup: "validationGroup", focusonerror: "focusOnError" };
-        function getAttributesWithPrefix(element, prefix) {
-            var i,
+
+         function getAttributesWithPrefix(element, prefix) {
+            // <summary>List all the attributes of an element that starts with the
+            // prefix and return them as an object.</summary>
+            // <param name="element" type="DOMElement">The element to get the attributes from.</param>
+            // <param name="prefix" type="String">The attribute prefix.</param>
+            // <returns type="Object" />
+
+             var i,
                 attribute,
                 list = {},
                 attributes = element.attributes,
                 length = attributes.length,
                 prefixLength = prefix.length;
-            prefix = prefix.toLowerCase();
+
+             prefix = prefix.toLowerCase();
             for (i = 0; i < length; i++) {
                 attribute = attributes[i];
                 if (attribute.specified && attribute.name.substr(0, prefixLength).toLowerCase() === prefix) {
                     list[attribute.name.substr(prefixLength)] = attribute.value;
                 }
             }
-            return list;
+
+             return list;
         }
-        function normalizeKey(key) {
-            key = key.toLowerCase();
+
+         function normalizeKey(key) {
+            // <summary>Some attributes require to have capital letters.
+            // Since the W3C mentions that attribute can potentially be transformed to lower-case,
+            // we have to put them back to their original value.</summary>
+            // <param name="key" type="string">Key to analyze.</param>
+            // <returns type="String" />
+
+             key = key.toLowerCase();
             return normalizedAttributes[key] === undefined ? key : normalizedAttributes[key];
         }
-        function addValidationExpando(element) {
-            var attributes = getAttributesWithPrefix(element, dataValidationAttribute + "-");
+
+         function addValidationExpando(element) {
+            // <summary>Parses the element and add the attributes "nnnn" in data-val-nnnn as expando.</summary>
+            // <param name="element" type="DOMElement">The element to add validation expando.</param>
+
+             var attributes = getAttributesWithPrefix(element, dataValidationAttribute + "-");
             $.each(attributes, function (key, value) {
                 element[normalizeKey(key)] = value;
             });
         }
-        function dispose(element) {
-            var index = $.inArray(element, Page_Validators);
+
+         function dispose(element) {
+            // <summary>Dispose method used in update panel scenario. Removes the element from the Page_Validators.</summary>
+            // <param name="element" type="DOMElement">The element to remove from Page_Validators.</param>
+
+             var index = $.inArray(element, Page_Validators);
             if (index >= 0) {
                 Page_Validators.splice(index, 1);
             }
         }
-        function addNormalizedAttribute(name, normalizedName) {
-            normalizedAttributes[name.toLowerCase()] = normalizedName;
+
+         function addNormalizedAttribute(name, normalizedName) {
+            // <summary>Adds a normalized attribute name to the object.</summary>
+            // <param name="name" type="String">Attribute name to be normalized.</param>
+            // <param name="normalizedName" type="String">Normalized attribute name.</param>
+
+             normalizedAttributes[name.toLowerCase()] = normalizedName;
         }
-        function parseSpecificAttribute(selector, attribute, validatorsArray) {
-            return $(selector).find("[" + attribute + "='true']").each(function (index, element) {
+
+         function parseSpecificAttribute(selector, attribute, validatorsArray) {
+            // <summary>Parses the selector to find validation elements based on the attribute and register them with the validatorsArray.</summary>
+            // <param name="selector" type="String">Selector where to search for validation elements.</param>
+            // <param name="attribute" type="String">Attribute to look for.</param>
+            // <param name="validatorsArray" type="Array">Array to modify.</param>
+            // <returns type="Number" />
+
+             return $(selector).find("[" + attribute + "='true']").each(function (index, element) {
                 addValidationExpando(element);
                 element.dispose = function () { dispose(element); element.dispose = null; };
                 if ($.inArray(element, validatorsArray) === -1) {
@@ -609,75 +751,107 @@ if (window.jQuery) {
                 }
             }).length;
         }
-        function parse(selector) {
-            var length = parseSpecificAttribute(selector, dataValidationAttribute, Page_Validators);
+
+         function parse(selector) {
+            // <summary>Parses the selector to find validation elements and register them with the Page_Validators and Page_ValidationSummaries.</summary>
+            // <param name="selector" type="String">Selector where to search for validation elements.</param>
+            // <returns type="Number" />
+
+             var length = parseSpecificAttribute(selector, dataValidationAttribute, Page_Validators);
             length += parseSpecificAttribute(selector, dataValidationSummaryAttribute, Page_ValidationSummaries);
-            return length;
+
+             return length;
         }
-        function loadValidators() {
+
+         function loadValidators() {
+            // <summary>Initialization of the validators.</summary>
             if (typeof (ValidatorOnLoad) === "function") {
                 ValidatorOnLoad();
             }
-            if (typeof (ValidatorOnSubmit) === "undefined") {
+
+             if (typeof (ValidatorOnSubmit) === "undefined") {
                 window.ValidatorOnSubmit = function () {
                     return Page_ValidationActive ? ValidatorCommonOnSubmit() : true;
                 };
             }
         }
-        function registerUpdatePanel() {
-            if (window.Sys && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+
+         function registerUpdatePanel() {
+            // <summary>Registers the script to the PageRequestManager if it exists to handle requests with UpdatePanel.</summary>
+
+             if (window.Sys && Sys.WebForms && Sys.WebForms.PageRequestManager) {
                 var prm = Sys.WebForms.PageRequestManager.getInstance(),
                     postBackElement, endRequestHandler;
+
+                 // If we are in async postback, it's too late to register the pageLoaded
+                // So we will grab the endRequest and we can scan the whole document since
+                // we were not previously loaded.
                 if (prm.get_isInAsyncPostBack()) {
                     endRequestHandler = function (sender, args) {
                         if (parse(document)) {
                             loadValidators();
                         }
-                        prm.remove_endRequest(endRequestHandler);
+
+                         prm.remove_endRequest(endRequestHandler);
                         endRequestHandler = null;
                     };
                     prm.add_endRequest(endRequestHandler);
                 }
-                prm.add_beginRequest(function (sender, args) {
+
+                 prm.add_beginRequest(function (sender, args) {
                     postBackElement = args.get_postBackElement();
                 });
-                prm.add_pageLoaded(function (sender, args) {
+
+                 prm.add_pageLoaded(function (sender, args) {
                     var i, panels, valFound = 0;
+
+                     // Checking if we are doing a postback since pageLoaded is called on PageLoad.
                     if (typeof (postBackElement) === "undefined") {
                         return;
                     }
-                    panels = args.get_panelsUpdated();
+
+                     panels = args.get_panelsUpdated();
                     for (i = 0; i < panels.length; i++) {
                         valFound += parse(panels[i]);
                     }
-                    panels = args.get_panelsCreated();
+
+                     panels = args.get_panelsCreated();
                     for (i = 0; i < panels.length; i++) {
                         valFound += parse(panels[i]);
                     }
-                    if (valFound) {
+
+                     if (valFound) {
                         loadValidators();
                     }
                 });
             }
         }
-        $(function () {
+
+         $(function () {
+            // Global variables used by WebUIValidation
             if (typeof (Page_Validators) === "undefined") {
                 window.Page_Validators = [];
             }
-            if (typeof (Page_ValidationSummaries) === "undefined") {
+
+             if (typeof (Page_ValidationSummaries) === "undefined") {
                 window.Page_ValidationSummaries = [];
             }
-            if (typeof (Page_ValidationActive) === "undefined") {
+
+             if (typeof (Page_ValidationActive) === "undefined") {
                 window.Page_ValidationActive = false;
             }
-            $.WebFormValidator = {
+
+             $.WebFormValidator = {
                 addNormalizedAttribute: addNormalizedAttribute,
                 parse: parse
             };
+
+             // If we have found something, then we will activate the unobtrusive mode.
             if (parse(document)) {
                 loadValidators();
             }
-            registerUpdatePanel();
+
+             registerUpdatePanel();
         });
     } (jQuery));
 }

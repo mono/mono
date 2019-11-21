@@ -6,6 +6,7 @@ namespace System.Web
 {
   internal sealed class SR
   {
+    internal const string AdditionalConfigErrorInfo="Click here to show additional error information";
     internal const string Parameter_Invalid = "Parameter_Invalid";
     internal const string Parameter_NullOrEmpty = "Parameter_NullOrEmpty";
     internal const string Property_NullOrEmpty = "Property_NullOrEmpty";

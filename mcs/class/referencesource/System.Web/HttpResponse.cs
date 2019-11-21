@@ -280,7 +280,16 @@ namespace System.Web {
                 {
                     cookie = _cookies[c];
                     if (cookie.Added) {
-                        if (!cookie.IsInResponseHeader) {
+                        bool setHeader = true;
+                        if (AppSettings.AvoidDuplicatedSetCookie) {
+                            if(!cookie.IsInResponseHeader) { 
+                                cookie.IsInResponseHeader = true;
+                            }
+                            else {
+                                setHeader = false;
+                            }
+                        }
+                        if(setHeader) {
                             // if a cookie was added, we generate a Set-Cookie header for it
                             cookieHeader = cookie.GetSetCookieHeader(_context);
                             headers.SetHeader(cookieHeader.Name, cookieHeader.Value, false);
@@ -315,6 +324,9 @@ namespace System.Web {
                     cookie.IsInResponseHeader = true;
                     cookie.Added = false;
                     cookie.Changed = false;
+                    if(AppSettings.AvoidDuplicatedSetCookie) {
+                        cookie.IsInResponseHeader = true;
+                    }
                 }
 
                 _cookies.Changed = false;

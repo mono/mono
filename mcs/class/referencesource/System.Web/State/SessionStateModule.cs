@@ -323,7 +323,7 @@ namespace System.Web.SessionState {
                 managerType = ConfigUtil.GetType(sessionIDManagerType, "sessionIDManagerType", config);
                 ConfigUtil.CheckAssignableType(typeof(ISessionIDManager), managerType, config, "sessionIDManagerType");
 
-                iManager = (ISessionIDManager)HttpRuntime.CreatePublicInstance(managerType);
+                iManager = (ISessionIDManager)HttpRuntime.CreatePublicInstanceByWebObjectActivator(managerType);
             }
 
             iManager.Initialize();
@@ -1434,6 +1434,8 @@ namespace System.Web.SessionState {
 
             /* determine if the request requires state at all */
             if (!context.RequiresSessionState) {
+                // VSO bug #463831, make sure the fields are reset in classic mode
+                ResetPerRequestFields();
                 return;
             }
 

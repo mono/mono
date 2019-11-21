@@ -27,7 +27,7 @@ namespace System.Web.Configuration {
 
         public IHttpHandler GetHandler(HttpContext context, String requestType, String url, String pathTranslated) {
             if (_handler == null)
-                _handler = (IHttpHandler)HttpRuntime.CreateNonPublicInstance(_handlerType);
+                _handler = (IHttpHandler)HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_handlerType);
 
             return _handler;
         }

@@ -14,7 +14,8 @@ namespace System.Web {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Globalization;
+    using System.Collections.Concurrent;
+    using System.Globalization;    
     using System.IO;
     using System.Reflection;
     using System.Runtime.Remoting.Messaging;
@@ -38,7 +39,6 @@ namespace System.Web {
      * Only one static instance of application factory is created.
      */
     internal class HttpApplicationFactory {
-
         internal const string applicationFileName = "global.asax";
 
         // the only instance of application factory
@@ -64,14 +64,11 @@ namespace System.Web {
         private Type _theApplicationType;
 
         // free list of app objects
-        private Stack _freeList = new Stack();
-        private int _numFreeAppInstances = 0;
-        private int _minFreeAppInstances = 0;
+        private ConcurrentBag<HttpApplication> _freeList = new ConcurrentBag<HttpApplication>();
 
         // free list of special (context-less) app objects 
         // to be used for global events (App_OnEnd, Session_OnEnd, etc.)
-        private Stack _specialFreeList = new Stack();
-        private int _numFreeSpecialAppInstances = 0;
+        private ConcurrentBag<HttpApplication> _specialFreeList = new ConcurrentBag<HttpApplication>();
         private const int _maxFreeSpecialAppInstances = 20;
 
         // results of the reflection on the app class
@@ -355,18 +352,7 @@ namespace System.Web {
         private HttpApplication GetNormalApplicationInstance(HttpContext context) {
             HttpApplication app = null;
 
-            lock (_freeList) {
-                if (_numFreeAppInstances > 0) {
-                    app = (HttpApplication)_freeList.Pop();
-                    _numFreeAppInstances--;
-
-                    if (_numFreeAppInstances < _minFreeAppInstances) {
-                        _minFreeAppInstances = _numFreeAppInstances;
-                    }
-                }
-            }
-
-            if (app == null) {
+            if (!_freeList.TryTake(out app)) {
                 // If ran out of instances, create a new one
                 app = (HttpApplication)HttpRuntime.CreateNonPublicInstance(_theApplicationType);
                 app.InitInternal(context, _state, _eventHandlerMethods);
@@ -381,46 +367,18 @@ namespace System.Web {
         }
 
         private void RecycleNormalApplicationInstance(HttpApplication app) {
-            lock (_freeList) {
-                _freeList.Push(app);
-                _numFreeAppInstances++;
-            }
+            _freeList.Add(app);
         }
 
         private void TrimApplicationInstanceFreeList(bool trimAll = false) {
-            // reset last min length
-            int minFreeAppInstances = _minFreeAppInstances;
-            _minFreeAppInstances = _numFreeAppInstances;
+            int freeAppInstances = _freeList.Count;
 
-            // if free list is empty or was empty since last trim, don't trim now
-            if (minFreeAppInstances <= 1) {
+            if (freeAppInstances <= 1) {
                 return;
             }
 
-            ArrayList apps = null;
-
-            lock (_freeList) {
-                if (_numFreeAppInstances > 1) {
-                    apps = new ArrayList();
-
-                    // trim a percentage at a time or 1 item
-                    int trimCount = (_numFreeAppInstances * 3)/100 + 1;  // 3% at the time
-
-                    while (trimCount > 0) {
-                        apps.Add(_freeList.Pop());
-                        _numFreeAppInstances--;
-                        trimCount--;
-                    }
-                    _minFreeAppInstances = _numFreeAppInstances;
-                }
-            }
-
-            // dispose the applications that were removed (if any)
-            if (apps != null) {
-                foreach (HttpApplication app in apps) {
-                    app.DisposeInternal();
-                }
-            }
+            int trimCount = (freeAppInstances * 3)/100 + 1;  // 3% at the time
+            DisposeHttpApplicationInstances(_freeList, trimCount);
         }
 
         internal static HttpApplication GetPipelineApplicationInstance(IntPtr appContext, HttpContext context) {
@@ -435,14 +393,7 @@ namespace System.Web {
         private HttpApplication GetSpecialApplicationInstance(IntPtr appContext, HttpContext context) {
             HttpApplication app = null;
 
-            lock (_specialFreeList) {
-                if (_numFreeSpecialAppInstances > 0) {
-                    app = (HttpApplication)_specialFreeList.Pop();
-                    _numFreeSpecialAppInstances--;
-                }
-            }
-            
-            if (app == null) {
+            if (!_specialFreeList.TryTake(out app)) {
                 //
                 //  Put the context on the thread, to make it available to anyone calling
                 //  HttpContext.Current from the HttpApplication constructor or module Init
@@ -462,11 +413,8 @@ namespace System.Web {
         }
 
         private void RecycleSpecialApplicationInstance(HttpApplication app) {
-            if (_numFreeSpecialAppInstances < _maxFreeSpecialAppInstances) {
-                lock (_specialFreeList) {
-                    _specialFreeList.Push(app);
-                    _numFreeSpecialAppInstances++;
-                }
+            if (_specialFreeList.Count < _maxFreeSpecialAppInstances) {
+                _specialFreeList.Add(app);
             }
             // else: don't dispose these
         }
@@ -586,7 +534,7 @@ namespace System.Web {
 
         private void Dispose() {
             // dispose all 'normal' application instances
-            DisposeHttpApplicationInstances(_freeList, ref _numFreeAppInstances);
+            DisposeHttpApplicationInstances(_freeList, _freeList.Count);
 
             // call application_onEnd (only if application_onStart was called before)
             if (_appOnStartCalled && !_appOnEndCalled) {
@@ -600,22 +548,26 @@ namespace System.Web {
 
             // dispose all 'special' application instances (DevDiv #109006)
             if (!AppSettings.DoNotDisposeSpecialHttpApplicationInstances) {
-                DisposeHttpApplicationInstances(_specialFreeList, ref _numFreeSpecialAppInstances);
+                DisposeHttpApplicationInstances(_specialFreeList, _specialFreeList.Count);
             }
         }
 
-        private static void DisposeHttpApplicationInstances(Stack freeList, ref int numFreeInstances) {
-            // freeList is the stack of HttpApplication instances, and numFreeInstances is the number of elements we're allowed to pop from the stack
-
-            List<HttpApplication> instances;
-            lock (freeList) {
-                instances = new List<HttpApplication>(numFreeInstances); // access 'numFreeInstances' only from within the lock
-                for (; numFreeInstances > 0; numFreeInstances--) {
-                    instances.Add((HttpApplication)freeList.Pop());
-                }
+        private static void DisposeHttpApplicationInstances(ConcurrentBag<HttpApplication> freeList, int numOfInstancesToDispose) {
+            if(numOfInstancesToDispose <= 0) {
+                return;
             }
 
-            // dispose of each instance outside the lock
+            List<HttpApplication> instances = new List<HttpApplication>();
+            HttpApplication appToDispose = null;
+            for(int i = 0; i < numOfInstancesToDispose; i++) {                
+                if(freeList.TryTake(out appToDispose)) {
+                    instances.Add(appToDispose);
+                }
+                else {
+                    break;
+                }
+            }
+            
             foreach (HttpApplication instance in instances) {
                 instance.DisposeInternal();
             }
@@ -657,7 +609,7 @@ namespace System.Web {
             if (_theApplicationFactory != null) {
                 if (removeAll) {
                     // Remove all pooled HttpApplication instances (potentially reclaiming memory eagerly)
-                    DisposeHttpApplicationInstances(_theApplicationFactory._freeList, ref _theApplicationFactory._numFreeAppInstances);
+                    DisposeHttpApplicationInstances(_theApplicationFactory._freeList, _theApplicationFactory._freeList.Count);
                 }
                 else {
                     // Remove only some pooled HttpApplication instances

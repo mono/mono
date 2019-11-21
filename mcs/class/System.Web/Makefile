@@ -61,8 +61,10 @@ RESOURCE_FILES_2 = \
 	resources/HtmlizedExceptionPage_CompilerOutput.html \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
+	System.Web.UI.WebControls/Focus.js \
 	System.Web.UI.WebControls/TreeView.js \
 	System.Web.UI.WebControls/Menu.js \
+	System.Web.UI.WebControls/MenuStandards.js \
 	resources/System.Web.resources
 
 RESOURCE_FILES_4 = \

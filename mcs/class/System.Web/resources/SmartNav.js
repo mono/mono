@@ -117,6 +117,7 @@ if ((typeof(window.__smartNav) == "undefined") || (window.__smartNav == null))
         var sc = document.scripts;
         for (i = 0; i < sc.length; i++)
         {
+            // This forces the script to re-execute.
             sc[i].text = sc[i].text;
         }
         sn.hif = document.all("__hifSmartNav");
@@ -160,7 +161,8 @@ if ((typeof(window.__smartNav) == "undefined") || (window.__smartNav == null))
         if ((typeof(window.__smartNav.sHif) != "undefined") && (window.__smartNav.sHif != null)
             && (typeof(document.all[window.__smartNav.siHif]) != "undefined")
             && (document.all[window.__smartNav.siHif] != null)) {
-            document.all[window.__smartNav.siHif].insertAdjacentElement(
+
+             document.all[window.__smartNav.siHif].insertAdjacentElement(
                         "BeforeBegin", window.__smartNav.sHif);
         }
     }
@@ -182,8 +184,10 @@ if ((typeof(window.__smartNav) == "undefined") || (window.__smartNav == null))
     window.__smartNav.init =  function()
     {
         var sn = window.__smartNav;
+        // Let the server know we're doing a smartNav postback
         window.__smartNav.form.__smartNavPostBack.value = 'true';
-        document.detachEvent("onstop", sn.stopHif);
+
+         document.detachEvent("onstop", sn.stopHif);
         document.attachEvent("onstop", sn.stopHif);
         try { if (window.event.returnValue == false) return; } catch(e) {}
         sn.inPost = true;

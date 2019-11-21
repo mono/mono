@@ -94,7 +94,11 @@ namespace System.Web.Services.Description {
         public static XmlSchema Schema {
             get {
                 if (schema == null) {
-                    schema = XmlSchema.Read(new StringReader(Schemas.WebRef), null);
+                    using (XmlTextReader reader = new XmlTextReader(new StringReader(Schemas.WebRef)))
+                    {
+                        reader.DtdProcessing = DtdProcessing.Ignore;
+                        schema = XmlSchema.Read(reader, null);
+                    }
                 }
                 return schema;
             }

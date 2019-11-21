@@ -112,7 +112,7 @@ namespace System.Web.Configuration {
             // This design should change - developers will want to know immediately
             // when they misspell a type
 
-            return HttpRuntime.CreateNonPublicInstance(GetHandlerType(type));
+            return HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(GetHandlerType(type));
         }
     }
 }

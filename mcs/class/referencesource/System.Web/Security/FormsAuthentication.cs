@@ -117,6 +117,7 @@ namespace System.Web.Security {
                 _CookieDomain = settings.Forms.Domain;
                 _EnableCrossAppRedirects = settings.Forms.EnableCrossAppRedirects;
                 _TicketCompatibilityMode = settings.Forms.TicketCompatibilityMode;
+                _cookieSameSite = settings.Forms.CookieSameSite;
 
                 _Initialized = true;
             }
@@ -417,6 +418,7 @@ namespace System.Web.Security {
                 cookie.Secure = _RequireSSL;
                 if (_CookieDomain != null)
                     cookie.Domain = _CookieDomain;
+                cookie.SameSite = _cookieSameSite;
                 context.Response.Cookies.RemoveCookie(FormsCookieName);
                 context.Response.Cookies.Add(cookie);
             }
@@ -513,6 +515,7 @@ namespace System.Web.Security {
                 cookie.Domain = _CookieDomain;
             if (ticket.IsPersistent)
                 cookie.Expires = ticket.Expiration;
+            cookie.SameSite = _cookieSameSite;
             return cookie;
         }
 
@@ -679,6 +682,8 @@ namespace System.Web.Security {
 
         public static TicketCompatibilityMode TicketCompatibilityMode { get { Initialize(); return _TicketCompatibilityMode; } }
 
+        public static SameSiteMode CookieSameSite { get { Initialize(); return _cookieSameSite; }}
+
         public static bool CookiesSupported {
             get {
                 HttpContext context = HttpContext.Current;
@@ -791,6 +796,7 @@ namespace System.Web.Security {
         private static string              _CookieDomain = null;
         private static bool                _EnableCrossAppRedirects;
         private static TicketCompatibilityMode _TicketCompatibilityMode;
+        private static SameSiteMode        _cookieSameSite;
 
         /////////////////////////////////////////////////////////////////////////////
         private static byte[] MakeTicketIntoBinaryBlob(FormsAuthenticationTicket ticket) {

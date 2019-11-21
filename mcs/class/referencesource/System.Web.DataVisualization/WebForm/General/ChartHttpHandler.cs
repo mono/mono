@@ -242,7 +242,7 @@ namespace System.Web.UI.DataVisualization.Charting
                         ResetControllerStream();
                         throw;
                     }
-                }
+                }                
                 ResetControllerStream(); 
                 throw new UnauthorizedAccessException(SR.ExceptionHttpHandlerTempDirectoryUnaccesible(Settings.Directory));
             }
@@ -1487,7 +1487,7 @@ namespace System.Web.UI.DataVisualization.Charting
 
                 byte[] data = Encoding.UTF8.GetBytes(sessionID + "/" + currentGuid);
 
-                using (SHA1 sha = new SHA1CryptoServiceProvider())
+                using (SHA256 sha = new SHA256CryptoServiceProvider())
                 {
                     return sha.ComputeHash(data);
                 }

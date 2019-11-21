@@ -12,7 +12,7 @@ RESOURCE_DEFS = \
 	System.Web.UI.DataVisualization.Charting.Design,resources/System.Web.UI.DataVisualization.Charting.Design.resx \
 	System.Web.UI.DataVisualization.Charting.SR,resources/System.Web.UI.DataVisualization.Charting.SR.resx 
 	 
-LIB_REFS = mscorlib System System.Data System.Drawing System.Web System.Xml
+LIB_REFS = mscorlib System System.Core System.Data System.Drawing System.Web System.Xml
 
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \

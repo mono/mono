@@ -301,7 +301,7 @@ namespace System.Web.UI.WebControls {
                         _labelAttributesState = new StateBag();
                         _labelAttributesState.TrackViewState();
                     }
-                    _labelAttributesState.LoadViewState(stateTriplet.Second);
+                    _labelAttributesState.LoadViewState(BinaryCompatibility.Current.TargetsAtLeastFramework48 ? stateTriplet.Third : stateTriplet.Second);
                 }
             }
         }
@@ -495,7 +495,9 @@ namespace System.Web.UI.WebControls {
         private void RenderLabel(HtmlTextWriter writer, string text, string clientID) {
             writer.AddAttribute(HtmlTextWriterAttribute.For, clientID);
 
-            if (_labelAttributes != null && _labelAttributes.Count != 0) {
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework48 && _labelAttributesState != null && _labelAttributesState.Count != 0) {
+                LabelAttributes.AddAttributes(writer);
+            } else if (_labelAttributes != null && _labelAttributes.Count != 0) {
                 _labelAttributes.AddAttributes(writer);
             }
 
@@ -568,7 +570,9 @@ namespace System.Web.UI.WebControls {
             if (i != 0)
                 writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, i.ToString(NumberFormatInfo.InvariantInfo));
 
-            if (_inputAttributes != null && _inputAttributes.Count != 0) {
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework48 && _inputAttributesState != null && _inputAttributesState.Count != 0) {
+                InputAttributes.AddAttributes(writer);
+            } else if (_inputAttributes != null && _inputAttributes.Count != 0) {
                 _inputAttributes.AddAttributes(writer);
             }
 

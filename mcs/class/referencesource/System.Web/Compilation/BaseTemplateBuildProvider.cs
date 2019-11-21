@@ -132,7 +132,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
 
         // tell the assembly builder to generate a fast factory for this type
         if (_instantiatableFullTypeName != null)
-            assemblyBuilder.GenerateTypeFactory(_instantiatableFullTypeName);
+            assemblyBuilder.GenerateTypeFactory(_instantiatableFullTypeName, ccu);
 
         _intermediateFullTypeName = treeGenerator.GetIntermediateFullTypeName();
     }

@@ -770,8 +770,16 @@ namespace System.Web {
                     storedResponseCookies = Response.GetCookiesNoCreate();
                 }
 
-                if (storedResponseCookies != null) {
-                    cookieCollection.Append(storedResponseCookies);
+                if (storedResponseCookies != null && storedResponseCookies.Count > 0) {
+                    if(AppSettings.AvoidDuplicatedSetCookie) {
+                        cookieCollection.Append(storedResponseCookies);
+                    }
+                    else {
+                        HttpCookie[] responseCookieArray = new HttpCookie[storedResponseCookies.Count];
+                        storedResponseCookies.CopyTo(responseCookieArray, 0);
+                        for (int iCookie = 0; iCookie < responseCookieArray.Length; iCookie++)
+                            cookieCollection.AddCookie(responseCookieArray[iCookie], append: true);
+                    }                    
                 }
 
                 // release any stored reference to the response cookie collection
@@ -878,6 +886,8 @@ namespace System.Web {
             else {
                 for (j = i; j < l; j++) {
                     if (headerValue[j] == ' ' || headerValue[j] == ',')
+                        break;
+                    if (!AppSettings.UseLegacyMultiValueHeaderHandling && headerValue[j] == ';')
                         break;
                 }
 

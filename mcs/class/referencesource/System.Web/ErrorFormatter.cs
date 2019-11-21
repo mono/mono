@@ -72,26 +72,33 @@ namespace System.Web {
         private StringCollection _adaptiveMiscContent;
         private StringCollection _adaptiveStackTrace;
         protected bool           _dontShowVersion = false;
+        internal bool            _fusionLogWritten = false;
 
-        private const string startExpandableBlock =
+        internal const string startExpandableBlock =
             "<br><div class=\"expandable\" onclick=\"OnToggleTOCLevel1('{0}')\">" +
             "{1}" +
             ":</div>\r\n" +
             "<div id=\"{0}\" style=\"display: none;\">\r\n" +
-            "            <br><table width=100% bgcolor=\"#ffffcc\">\r\n" +
+            "            <br>";
+
+        internal const string startColoredSquare =
+            "            <table width=100% bgcolor=\"#ffffcc\">\r\n" +
             "               <tr>\r\n" +
             "                  <td>\r\n" +
-            "                      <code><pre>\r\n\r\n";
+            "                      <code>";
+        
 
-        private const string endExpandableBlock =
-            "                      </pre></code>\r\n\r\n" +
+        internal const string endColoredSquare =
+            "                      </code>\r\n\r\n" +
             "                  </td>\r\n" +
             "               </tr>\r\n" +
-            "            </table>\r\n\r\n" +
+            "            </table>\r\n\r\n";
+
+        internal const string endExpandableBlock =
             "            \r\n\r\n" +
             "</div>\r\n";
 
-        private const string toggleScript = @"
+        internal const string toggleScript = @"
         <script type=""text/javascript"">
         function OnToggleTOCLevel1(level2ID)
         {
@@ -396,7 +403,7 @@ namespace System.Web {
             sb.Append("         .marker {font-weight: bold; color: black;text-decoration: none;}\r\n");
             sb.Append("         .version {color: gray;}\r\n");
             sb.Append("         .error {margin-bottom: 10px;}\r\n");
-            sb.Append("         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }\r\n");
+            sb.Append("         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }\r\n");
             sb.Append("         @media screen and (max-width: 639px) {\r\n");
             sb.Append("          pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }\r\n");
             sb.Append("         }\r\n");
@@ -409,25 +416,46 @@ namespace System.Web {
             sb.Append("            <span><H1>" + System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath) + "<hr width=100% size=1 color=silver></H1>\r\n\r\n");
             sb.Append("            <h2> <i>" + ErrorTitle + "</i> </h2></span>\r\n\r\n");
             sb.Append("            <font face=\"Arial, Helvetica, Geneva, SunSans-Regular, sans-serif \">\r\n\r\n");
-            sb.Append("            <b> " + System.Web.SR.GetString(System.Web.SR.Error_Formatter_Description) +  " </b>" + Description + "\r\n");
+
+            // Top-level description
+            sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Description) + " </b>" + Description + "\r\n");
             sb.Append("            <br><br>\r\n\r\n");
+
+            // Error details
+            WriteErrorDetails(sb, dontShowSensitiveInfo);
+
+             // Footer
+            if (!(dontShowSensitiveInfo || _dontShowVersion)) {  // don't show version for security reasons
+                sb.Append("            <hr width=100% size=1 color=silver>\r\n\r\n");
+                sb.Append("            <b>" + SR.GetString(SR.Error_Formatter_Version) + "</b>&nbsp;" +
+                                       SR.GetString(SR.Error_Formatter_CLR_Build) + VersionInfo.ClrVersion +
+                                       SR.GetString(SR.Error_Formatter_ASPNET_Build) + VersionInfo.EngineVersion + "\r\n\r\n");
+            }
+            sb.Append("            </font>\r\n\r\n");
+            sb.Append("    </body>\r\n");
+            sb.Append("</html>\r\n");
+
+             sb.Append(PostMessage);
+
+             return sb.ToString();
+        }
+
+        internal void WriteErrorDetails(StringBuilder sb, bool dontShowSensitiveInfo) {
+
+             // Error Message
             if (MiscSectionTitle != null) {
                 sb.Append("            <b> " + MiscSectionTitle + ": </b>" + MiscSectionContent + "<br><br>\r\n\r\n");
             }
 
-            WriteColoredSquare(sb, ColoredSquareTitle, ColoredSquareDescription, ColoredSquareContent, WrapColoredSquareContentLines);
-            if (ShowSourceFileInfo) {
-                string displayPath = GetDisplayPath();
-                if (displayPath == null)
-                    displayPath = System.Web.SR.GetString(System.Web.SR.Error_Formatter_No_Source_File);
-                sb.Append("            <b> " + System.Web.SR.GetString(System.Web.SR.Error_Formatter_Source_File) + " </b> " + displayPath + "<b> &nbsp;&nbsp; " + System.Web.SR.GetString(System.Web.SR.Error_Formatter_Line) + " </b> " + SourceFileLineNumber + "\r\n");
-                sb.Append("            <br><br>\r\n\r\n");
-            }
+            // Source Code Box
+            WritePrimaryBox(sb, dontShowSensitiveInfo);
 
+            // Additional config lines
             ConfigurationErrorsException configErrors = Exception as ConfigurationErrorsException;
             if (configErrors != null && configErrors.Errors.Count > 1) {
                 sb.Append(String.Format(CultureInfo.InvariantCulture, startExpandableBlock, "additionalConfigurationErrors",
                     System.Web.SR.GetString(System.Web.SR.TmplConfigurationAdditionalError)));
+                sb.Append(startColoredSquare + "<pre>");
 
                 //
                 // Get the configuration message as though there were user code on the stack,
@@ -444,9 +472,12 @@ namespace System.Web {
                     errorNumber++;
                 }
                 
+                sb.Append("</pre>" + endColoredSquare);
                 sb.Append(endExpandableBlock);
                 sb.Append(toggleScript);
             }
+
+            // FusionLog
             // If it's a FileNotFoundException/FileLoadException/BadImageFormatException with a FusionLog,
             // write it out (ASURT 83587)
 #if (!MONO || !FEATURE_PAL)
@@ -459,21 +490,23 @@ namespace System.Web {
             }
 #endif
 
-            WriteColoredSquare(sb, ColoredSquare2Title, ColoredSquare2Description, ColoredSquare2Content, false);
+            WriteSecondaryBox(sb, dontShowSensitiveInfo);
+        }
 
-            if (!(dontShowSensitiveInfo || _dontShowVersion)) {  // don't show version for security reasons
-                sb.Append("            <hr width=100% size=1 color=silver>\r\n\r\n");
-                sb.Append("            <b>" + System.Web.SR.GetString(System.Web.SR.Error_Formatter_Version) + "</b>&nbsp;" +
-                                       System.Web.SR.GetString(System.Web.SR.Error_Formatter_CLR_Build) + VersionInfo.ClrVersion +
-                                       System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Build) + VersionInfo.EngineVersion + "\r\n\r\n");
-                sb.Append("            </font>\r\n\r\n");
+        protected virtual void WritePrimaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+            WriteColoredSquare(sb, ColoredSquareTitle, ColoredSquareDescription, ColoredSquareContent, WrapColoredSquareContentLines);
+            if (ShowSourceFileInfo) {
+                string displayPath = GetDisplayPath();
+                if (displayPath == null)
+                    displayPath = SR.GetString(SR.Error_Formatter_No_Source_File);
+
+                sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Source_File) + " </b> " + displayPath + "<b> &nbsp;&nbsp; " + SR.GetString(SR.Error_Formatter_Line) + " </b> " + SourceFileLineNumber + "\r\n");
+                sb.Append("            <br><br>\r\n\r\n");
             }
-            sb.Append("    </body>\r\n");
-            sb.Append("</html>\r\n");
+        }
 
-            sb.Append(PostMessage);
-
-            return sb.ToString();
+        protected virtual void WriteSecondaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+            WriteColoredSquare(sb, ColoredSquare2Title, ColoredSquare2Description, ColoredSquare2Content, false);
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
@@ -502,29 +535,24 @@ namespace System.Web {
                                        System.Web.SR.GetString(System.Web.SR.Error_Formatter_FusionLogDesc, filename),
                                        HttpUtility.HtmlEncode(fusionLog),
                                        false /*WrapColoredSquareContentLines*/);
+                    _fusionLogWritten = true;
                     break;
                 }
             }
         }
 
-        private void WriteColoredSquare(StringBuilder sb, string title, string description,
+        protected void WriteColoredSquare(StringBuilder sb, string title, string description,
             string content, bool wrapContentLines) {
             if (title != null) {
                 sb.Append("            <b>" + title + ":</b> " + description + "<br><br>\r\n\r\n");
-                sb.Append("            <table width=100% bgcolor=\"#ffffcc\">\r\n");
-                sb.Append("               <tr>\r\n");
-                sb.Append("                  <td>\r\n");
-                sb.Append("                      <code>");
+                sb.Append(startColoredSquare);                
                 if (!wrapContentLines)
                     sb.Append("<pre>");
                 sb.Append("\r\n\r\n");
                 sb.Append(content);
                 if (!wrapContentLines)
                     sb.Append("</pre>");
-                sb.Append("</code>\r\n\r\n");
-                sb.Append("                  </td>\r\n");
-                sb.Append("               </tr>\r\n");
-                sb.Append("            </table>\r\n\r\n");
+                sb.Append(endColoredSquare);
                 sb.Append("            <br>\r\n\r\n");
             }
         }
@@ -1553,25 +1581,7 @@ namespace System.Web {
      * Formatter used for compilation errors
      */
     internal class DynamicCompileErrorFormatter : ErrorFormatter {
-
-        private const string startExpandableBlock =
-            "<br><div class=\"expandable\" onclick=\"OnToggleTOCLevel1('{0}')\">" +
-            "{1}" +
-            ":</div>\r\n" +
-            "<div id=\"{0}\" style=\"display: none;\">\r\n" +
-            "            <br><table width=100% bgcolor=\"#ffffcc\">\r\n" +
-            "               <tr>\r\n" +
-            "                  <td>\r\n" +
-            "                      <code><pre>\r\n\r\n";
-
-        private const string endExpandableBlock =
-            "</pre></code>\r\n\r\n" +
-            "                  </td>\r\n" +
-            "               </tr>\r\n" +
-            "            </table>\r\n\r\n" +
-            "            \r\n\r\n" +
-            "</div>\r\n";
-
+        
         // Number of lines before and after the error lines included in the report
         private const int errorRange = 2;
 
@@ -1726,10 +1736,12 @@ namespace System.Web {
                     if (results.Output.Count > 0) {                                                
                         sb.Append(String.Format(CultureInfo.CurrentCulture, startExpandableBlock, "compilerOutputDiv",
                             System.Web.SR.GetString(System.Web.SR.TmplCompilerCompleteOutput)));
+                        sb.Append(startColoredSquare + "<pre>");
                         foreach (string line in results.Output) {
                             sb.Append(HttpUtility.HtmlEncode(line));
                             sb.Append("\r\n");
                         }
+                        sb.Append("</pre>" + endColoredSquare);
                         sb.Append(endExpandableBlock);                        
                     }
 
@@ -1738,7 +1750,7 @@ namespace System.Web {
                     if (_excep.SourceCodeWithoutDemand != null) {
                         sb.Append(String.Format(CultureInfo.CurrentCulture, startExpandableBlock, "dynamicCodeDiv",
                             System.Web.SR.GetString(System.Web.SR.TmplCompilerGeneratedFile)));
-
+                        sb.Append(startColoredSquare + "<pre>");
                         string[] sourceLines = _excep.SourceCodeWithoutDemand.Split('\n');
                         int currentLine = 1;
                         foreach (string s in sourceLines) {
@@ -1751,24 +1763,11 @@ namespace System.Web {
 
                             sb.Append(HttpUtility.HtmlEncode(s));
                         }
+                        sb.Append("</pre>" + endColoredSquare);
                         sb.Append(endExpandableBlock);
                     }
 
-                    sb.Append(@"
-    <script type=""text/javascript"">
-    function OnToggleTOCLevel1(level2ID)
-    {
-      var elemLevel2 = document.getElementById(level2ID);
-      if (elemLevel2.style.display == 'none')
-      {
-        elemLevel2.style.display = '';
-      }
-      else {
-        elemLevel2.style.display = 'none';
-      }
-    }
-    </script>
-                          ");
+                    sb.Append(toggleScript);                    
                 }
 
                 return sb.ToString();
@@ -1893,6 +1892,81 @@ namespace System.Web {
 
                 return base.ColoredSquareContent;
             }
+        }
+
+        protected override bool WrapColoredSquareContentLines {
+            get {
+                if (!AllowSourceCode) {
+                    return true;
+                }
+
+                 return base.WrapColoredSquareContentLines;
+            }
+        }
+
+         protected override void WriteSecondaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+
+             ErrorFormatter nestedFormatter = GetFormatterForInnerException((ConfigurationException)_e);
+
+             // If there are no further relevant details, write the old-style box instead of the nested stuff.
+            if (nestedFormatter == null || _fusionLogWritten) {
+                base.WriteSecondaryBox(sb, dontShowSensitiveInfo);
+                return;
+            }
+
+             // Special nested formatting to give more context for config builder errors
+            sb.Append(String.Format(CultureInfo.InvariantCulture, startExpandableBlock, "additionalConfigErrorInfo",
+                SR.GetString(SR.AdditionalConfigErrorInfo)));
+            nestedFormatter.PrepareFormatter();
+            nestedFormatter.WriteErrorDetails(sb, dontShowSensitiveInfo);
+            sb.Append(endExpandableBlock);
+            sb.Append(toggleScript);
+        }
+
+         // Factory method to get the appropriate type of error formatter for the given
+        // exception. There are already multiple options for obtaining a top-level error
+        // formatter - and they kind of assume the top exception is an HttpException, or
+        // the formatter is being created for a specific context (HttpResponse, or
+        // TemplatedMailProvider). This helper is ONLY intended for NESTED formatting
+        // of non-config exceptions that result in config exceptions.
+        private static ErrorFormatter GetFormatterForInnerException(Exception e)
+        {
+            ErrorFormatter exceptionFormatter = null;
+
+             // First, grab the appropriate inner exception. Ignore config errors.
+            Exception nested = e.InnerException;
+            while (nested != null) {
+                if (!(nested is ConfigurationException))
+                    break;
+                nested = nested.InnerException;
+            }
+            if (nested == null) {
+                return null;
+            }
+
+
+             // Security errors
+            if (nested is SecurityException) {
+                return new SecurityErrorFormatter(e);
+            }
+
+             // Other known exceptions are HttpException-derived
+            if (exceptionFormatter == null) {
+                exceptionFormatter = HttpException.GetErrorFormatter(nested);
+
+                 // HttpException.GetErrorFormatter() might have returned a ConfigErrorFormatter. Don't use it.
+                // If we did use it though, be sure to propagate the value of this.AllowSourceCode.
+                if (exceptionFormatter is ConfigErrorFormatter) {
+                    exceptionFormatter = null;
+                }
+            }
+
+             // Unhandled/generic-unknown
+            if (exceptionFormatter == null) {
+                exceptionFormatter = new UnhandledErrorFormatter(nested);
+            }
+
+             return exceptionFormatter;
         }
     }
 

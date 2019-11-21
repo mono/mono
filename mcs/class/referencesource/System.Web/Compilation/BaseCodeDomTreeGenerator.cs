@@ -42,6 +42,7 @@ using System.Web.Hosting;
 using System.Web.Profile;
 using System.Web.Configuration;
 using System.Globalization;
+using System.Linq;
 
 
 internal abstract class BaseCodeDomTreeGenerator {
@@ -55,11 +56,12 @@ internal abstract class BaseCodeDomTreeGenerator {
     protected StringResourceBuilder _stringResourceBuilder;
     protected bool _usingVJSCompiler;
     private static IDictionary _generatedColumnOffsetDictionary;
+    private CodeMemberMethod _initMethod;
 
     private VirtualPath _virtualPath;
 
     // The constructors
-    protected CodeConstructor _ctor;
+    private CodeConstructor _ctor;
 
     protected CodeTypeReferenceExpression _classTypeExpr;
 
@@ -72,6 +74,8 @@ internal abstract class BaseCodeDomTreeGenerator {
 
     private const string _dummyVariable = "__dummyVar";
     private const int _defaultColumnOffset = 4;
+
+    private const string InitMethodName = "__Init";
 
     private TemplateParser _parser;
     TemplateParser Parser { get { return _parser; } }
@@ -87,6 +91,7 @@ internal abstract class BaseCodeDomTreeGenerator {
     private int _pragmaIdGenerator=1;
 
     private static bool _urlLinePragmas;
+    private bool _initMethodSet;
 
     static BaseCodeDomTreeGenerator() {
         CompilationSection config = MTConfigUtil.GetCompilationAppConfig();
@@ -341,10 +346,59 @@ internal abstract class BaseCodeDomTreeGenerator {
             _ctor = new CodeConstructor();
             AddDebuggerNonUserCodeAttribute(_ctor);
             _sourceDataClass.Members.Add(_ctor);
+            _ctor.Attributes &= ~MemberAttributes.AccessMask;
+            _ctor.Attributes |= MemberAttributes.Public;
             BuildDefaultConstructor();
         }
 
         return true;
+    }
+
+    private void SetInitMethod() {
+        Debug.Assert(_ctor != null);
+        Debug.Assert(Parser.BaseType != null);
+
+         if (BinaryCompatibility.Current.TargetsAtLeastFramework472 &&
+            Parser.BaseType.GetConstructors(BindingFlags.Instance | BindingFlags.Public).Any(c => c.GetParameters().Length > 0)) {
+
+             // Create __Init method
+            var method = new CodeMemberMethod();
+            AddDebuggerNonUserCodeAttribute(method);
+            method.Name = InitMethodName;
+            method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+            method.ReturnType = new CodeTypeReference(typeof(void));
+
+             if (Parser.BaseType.GetConstructor(Type.EmptyTypes) != null) {
+                // Invoke __init in default c-tor
+                _ctor.Statements.Add(CreateInitInvoke());
+            }
+            else {
+                // if base type doesn't have default constructor, the generated child class should not have either
+                _sourceDataClass.Members.Remove(_ctor);
+            }
+
+             _sourceDataClass.Members.Add(method);
+            _initMethod = method;
+        }
+    }
+
+     protected CodeMemberMethod InitMethod {
+        get {
+            if (!_initMethodSet) {
+                SetInitMethod();
+                _initMethodSet = true;
+            }
+
+             return _initMethod ?? _ctor;
+        }
+    }
+
+     protected static CodeMethodInvokeExpression CreateInitInvoke() { 
+        var invoke = new CodeMethodInvokeExpression();
+        invoke.Method.TargetObject = new CodeThisReferenceExpression();
+        invoke.Method.MethodName = InitMethodName;
+
+         return invoke;
     }
 
     /*
@@ -383,9 +437,6 @@ internal abstract class BaseCodeDomTreeGenerator {
      */
     protected virtual void BuildDefaultConstructor() {
 
-        _ctor.Attributes &= ~MemberAttributes.AccessMask;
-        _ctor.Attributes |= MemberAttributes.Public;
-
         // private static bool __initialized;
         CodeMemberField initializedField = new CodeMemberField(typeof(bool), initializedFieldName);
         initializedField.Attributes |= MemberAttributes.Static;
@@ -401,7 +452,7 @@ internal abstract class BaseCodeDomTreeGenerator {
                                                 CodeBinaryOperatorType.ValueEquality,
                                                 new CodePrimitiveExpression(false));
 
-        this.BuildInitStatements(initializedCondition.TrueStatements, _ctor.Statements);
+        this.BuildInitStatements(initializedCondition.TrueStatements, InitMethod.Statements);
 
         initializedCondition.TrueStatements.Add(new CodeAssignStatement(
                                                     new CodeFieldReferenceExpression(
@@ -410,7 +461,7 @@ internal abstract class BaseCodeDomTreeGenerator {
                                                     new CodePrimitiveExpression(true)));
 
         // i.e. __intialized = true;
-        _ctor.Statements.Add(initializedCondition);
+        InitMethod.Statements.Add(initializedCondition);
     }
 
     /*

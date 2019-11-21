@@ -419,6 +419,11 @@ namespace System.Web.UI.WebControls {
                 if (!Wrap) {
                     writer.AddAttribute(HtmlTextWriterAttribute.Wrap,"off");
                 }
+
+                //VSO449020 Add MaxLength Support for mutiple lines textbox, since in HTML5 this attribute is supported for textarea.
+                if (BinaryCompatibility.Current.TargetsAtLeastFramework472 &&  MaxLength > 0) {
+                    writer.AddAttribute(HtmlTextWriterAttribute.Maxlength, MaxLength.ToString(NumberFormatInfo.InvariantInfo));
+                }
             }
             else {
                 // Everything else renders as input

@@ -665,6 +665,9 @@ sealed class FileAttributesData {
 
     FileAttributesData() {
         FileSize = -1;
+        UtcCreationTime = new DateTime(0, DateTimeKind.Utc);
+        UtcLastAccessTime = new DateTime(0, DateTimeKind.Utc);
+        UtcLastWriteTime = new DateTime(0, DateTimeKind.Utc);
     }
 
     FileAttributesData(ref UnsafeNativeMethods.WIN32_FILE_ATTRIBUTE_DATA data) {

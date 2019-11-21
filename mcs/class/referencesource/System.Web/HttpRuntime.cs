@@ -3414,6 +3414,33 @@ namespace System.Web {
             }
         }
 
+        /// <devdoc>
+        ///     <para>Get/Set an IServiceProvider instance which will be responsible for
+        ///           service instance creation, e.g. moudle/handler/page/user control/custom control
+        ///     </para>
+        /// </devdoc>
+        public static IServiceProvider WebObjectActivator { get; set; }
+
+        internal static Object CreateNonPublicInstanceByWebObjectActivator(Type type) {
+            var activator = WebObjectActivator;
+
+             if (activator != null) {
+                return activator.GetService(type);
+            }
+
+             return CreateNonPublicInstance(type, null);
+        }
+
+        internal static Object CreatePublicInstanceByWebObjectActivator(Type type) {
+            var activator = WebObjectActivator;
+
+             if (activator != null) {
+                return activator.GetService(type);
+            }
+
+             return CreatePublicInstance(type);
+        }
+
         //
         // Helper to create instances (public vs. internal/private ctors, see 89781)
         //

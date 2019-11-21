@@ -182,6 +182,7 @@ namespace System.Web.SessionState {
 
             cookie = new HttpCookie(Config.CookieName, id);
             cookie.Path = "/";
+            cookie.SameSite = Config.CookieSameSite;
 
             // VSWhidbey 414687 Use HttpOnly to prevent client side script manipulation of cookie
             cookie.HttpOnly = true;

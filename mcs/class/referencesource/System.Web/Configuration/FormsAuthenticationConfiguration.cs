@@ -23,6 +23,7 @@
               slidingExpiration="[true|false]" - Should the forms-authentication-cookie and ticket be re-issued if they are about to expire
               defaultUrl="string" - Page to redirect to after login, if none has been specified
               cookieless="[UseCookies|UseUri|AutoDetect|UseDeviceProfile]" - Use Cookies or the URL path to store the forms authentication ticket
+              cookieSameSite="[None|Lax|Strict|-1]" - Set SameSite cookie header to the given value, or omit the header for the auth cookie entirely.
               domain="string" - Domain of the cookie
             -->
             <forms
@@ -35,7 +36,8 @@
                     slidingExpiration="true"
                     defaultUrl="default.aspx"
                     cookieless="UseDeviceProfile"
-                    enableCrossAppRedirects="false" >
+                    enableCrossAppRedirects="false"
+                    cookieSameSite="Lax" >
 
                 <!--
                 credentials Attributes:
@@ -184,6 +186,12 @@ namespace System.Web.Configuration {
                                         TicketCompatibilityMode.Framework20,
                                         ConfigurationPropertyOptions.None);
 
+        private static readonly ConfigurationProperty _propCookieSameSite = 
+            new ConfigurationProperty("cookieSameSite", 
+                                        typeof(SameSiteMode), 
+                                        SameSiteMode.Lax, 
+                                        ConfigurationPropertyOptions.None);
+
         static FormsAuthenticationConfiguration() {
             // Property initialization
             _properties = new ConfigurationPropertyCollection();
@@ -200,6 +208,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propDomain);
             _properties.Add(_propEnableCrossAppRedirects);
             _properties.Add(_propTicketCompatibilityMode);
+            _properties.Add(_propCookieSameSite);
         }
 
         public FormsAuthenticationConfiguration() {
@@ -362,6 +371,16 @@ namespace System.Web.Configuration {
             }
             set {
                 base[_propTicketCompatibilityMode] = value;
+            }
+        }
+
+        [ConfigurationProperty("cookieSameSite")]
+        public SameSiteMode CookieSameSite {
+            get {
+                return (SameSiteMode)base[_propCookieSameSite];
+            }
+            set {
+                base[_propCookieSameSite] = value;
             }
         }
 

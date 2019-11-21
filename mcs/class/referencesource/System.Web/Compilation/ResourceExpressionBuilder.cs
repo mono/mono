@@ -263,7 +263,7 @@ namespace System.Web.Compilation {
                 s_resourceProviderFactory = new ResXResourceProviderFactory();
             }
             else {
-                s_resourceProviderFactory = (ResourceProviderFactory) HttpRuntime.CreatePublicInstance(t);
+                s_resourceProviderFactory = (ResourceProviderFactory) HttpRuntime.CreatePublicInstanceByWebObjectActivator(t);
             }
         }
 

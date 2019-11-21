@@ -145,7 +145,7 @@ namespace System.Web.Util {
             ConfigUtil.CheckBaseType(typeof(HttpEncoder) /* expectedBaseType */, encoderType, "encoderType", runtimeSection);
 
             // instantiate
-            HttpEncoder encoder = (HttpEncoder)HttpRuntime.CreatePublicInstance(encoderType);
+            HttpEncoder encoder = (HttpEncoder)HttpRuntime.CreatePublicInstanceByWebObjectActivator(encoderType);
             return encoder;
         }
 

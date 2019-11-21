@@ -16,6 +16,8 @@ using System.Globalization;
 using System.Web.UI;
 using System.Web.Util;
 using Debug=System.Web.Util.Debug;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDomTreeGenerator {
 
@@ -267,5 +269,56 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
             appType, propRef)));
         _intermediateClass.Members.Add(prop);
     }
-}
+
+    protected override void BuildDefaultConstructor() {
+            base.BuildDefaultConstructor();
+
+             if (BinaryCompatibility.Current.TargetsAtLeastFramework472 &&
+                !(_designerMode || _sourceDataClass == null)) {
+                foreach (var c in Parser.BaseType.GetConstructors(BindingFlags.Instance | BindingFlags.Public)) {
+                    if (c.GetParameters().Length > 0) {
+                        AddConstructorToSource(c);
+                    }
+                }
+            }
+        }
+
+         private void AddConstructorToSource(ConstructorInfo ctor) {
+            Debug.Assert(ctor != null);
+            Debug.Assert(ctor.GetParameters().Length > 0);
+
+             var ctorCode = new CodeConstructor();
+            AddDebuggerNonUserCodeAttribute(ctorCode);
+            ctorCode.Attributes &= ~MemberAttributes.AccessMask;
+            ctorCode.Attributes |= MemberAttributes.Public;
+
+             // copy all the attributes of the contrustor parameters
+            foreach (var p in ctor.GetParameters()) {
+                var parameterExpr = new CodeParameterDeclarationExpression(p.ParameterType, p.Name);
+                foreach (var attr in p.CustomAttributes) {
+                    var attrArgs = new List<CodeAttributeArgument>();
+                    foreach (var arg in attr.ConstructorArguments) {
+                        attrArgs.Add(new CodeAttributeArgument(new CodePrimitiveExpression(arg.Value)));
+                    }
+
+                     foreach (var arg in attr.NamedArguments) {
+                        attrArgs.Add(new CodeAttributeArgument(arg.MemberName, new CodePrimitiveExpression(arg.TypedValue.Value)));
+                    }
+
+                     var customAttrExpr = new CodeAttributeDeclaration(new CodeTypeReference(attr.AttributeType), attrArgs.ToArray());
+                    parameterExpr.CustomAttributes.Add(customAttrExpr);
+                }
+                if (p.HasDefaultValue) {
+                    var defaultValAttrExpr = new CodeAttributeDeclaration(new CodeTypeReference(typeof(DefaultParameterValueAttribute)),
+                        new CodeAttributeArgument(new CodePrimitiveExpression(p.DefaultValue)));
+                    parameterExpr.CustomAttributes.Add(defaultValAttrExpr);
+                }
+                ctorCode.Parameters.Add(parameterExpr);
+                ctorCode.BaseConstructorArgs.Add(new CodeVariableReferenceExpression(p.Name));
+            }
+
+             ctorCode.Statements.Add(CreateInitInvoke());
+            _sourceDataClass.Members.Add(ctorCode);
+        }
+    }
 }

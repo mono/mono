@@ -46,6 +46,7 @@ using System.Web.Hosting;
 using System.Web.Util;
 using System.Web.UI;
 using System.Web.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 
 internal enum BuildResultTypeCode {
@@ -876,7 +877,7 @@ internal class BuildResultCompiledType : BuildResultCompiledAssemblyBase, ITyped
         // If the fast factory is not available, just call CreateInstance
         // 
         if (_instObj == null) {
-            return HttpRuntime.CreatePublicInstance(ResultType);
+            return HttpRuntime.CreatePublicInstanceByWebObjectActivator(ResultType);
         }
 
         // Call it to instantiate the object

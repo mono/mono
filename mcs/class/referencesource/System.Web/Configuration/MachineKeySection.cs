@@ -610,13 +610,8 @@ namespace System.Web.Configuration
 
                 if (!fEncrypt && modifier != null && modifier.Length > 0)
                 {
-                    // MSRC 10405: Crypto board suggests blinding where signature failed
-                    // to prevent timing attacks.
-                    bool modifierCheckFailed = false;
-                    for(int iter=0; iter<modifier.Length; iter++)
-                        if (bData[bData.Length - modifier.Length + iter] != modifier[iter])
-                            modifierCheckFailed = true;
-                    if (modifierCheckFailed) {
+                    // Compare the end of bData with the expected modifier to validate they are the same
+                    if (!CryptoUtil.BuffersAreEqual(bData, bData.Length - modifier.Length, modifier.Length, modifier, 0, modifier.Length)) {
                         throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
                     }
 
@@ -1371,13 +1366,7 @@ namespace System.Web.Configuration
                 return false;
             int lastPos = bufHashed.Length - _HashSize;
 
-            // From Tolga: To prevent a timing attack, we should verify the entire hash instead of failing
-            // early the first time we see a mismatched byte.
-            bool hashCheckFailed = false;
-            for (int iter = 0; iter < _HashSize; iter++)
-                if (bMac[iter] != bufHashed[lastPos + iter])
-                    hashCheckFailed = true;
-            return !hashCheckFailed;
+            return CryptoUtil.BuffersAreEqual(bMac, 0, _HashSize, bufHashed, lastPos, _HashSize);
         }
 
         internal static bool UsingCustomEncryption {

@@ -1,29 +1,42 @@
-function DetailsView_ClientEvent (ctrlId, evnt)
-{
-	var gridData = getDetails (ctrlId);
-	if (!gridData)
-	    return null;
-	var clientData = gridData.pageIndex + '|' + evnt;
-	WebForm_DoCallback (gridData.uid, clientData, DetailsView_ClientRender, ctrlId, DetailsView_ClientRender_Error, false, gridData.form);
+function DetailsView() {
+    this.pageIndex = null;
+    this.dataKeys = null;
+
+     this.createPropertyString = DetailsView_createPropertyString;
+    this.setStateField = DetailsView_setStateValue;
+    this.getHiddenFieldContents = DetailsView_getHiddenFieldContents;
+
+     this.stateField = null;
+    this.panelElement = null;
+
+     this.callback = null;
 }
 
-function DetailsView_ClientRender (data, ctx)
-{
-	var gridData = getDetails (ctx);
-	if (!gridData)
-	    return;
-	var grid = document.getElementById (ctx + "_div");
-	var i = data.indexOf ("|");
-	gridData.pageIndex = parseInt (data.substring (0, i));
-	grid.innerHTML = data.substr (i+1);
-	
-	var page = document.getElementById(ctx + "_Page");
-	page.value = gridData.pageIndex;
+ function DetailsView_createPropertyString() {
+    return createPropertyStringFromValues_DetailsView(this.pageIndex, this.dataKeys);
 }
 
-function DetailsView_ClientRender_Error (data, ctx)
-{
+ function DetailsView_setStateValue() {
+    this.stateField.value = this.createPropertyString();
 }
 
-function getDetails (detailsId) { try { return eval (detailsId + "_data"); } catch(e) { return null; } }
+ function DetailsView_OnCallback (result, context) {
+    var value = new String(result);
+    var valsArray = value.split("|");
+    var innerHtml = valsArray[2];
+    for (var i = 3; i < valsArray.length; i++) {
+        innerHtml += "|" + valsArray[i];
+    }
+    context.panelElement.innerHTML = innerHtml;
 
+     context.stateField.value = createPropertyStringFromValues_DetailsView(valsArray[0], valsArray[1]);
+}
+
+ function DetailsView_getHiddenFieldContents(arg) {
+    return arg + "|" + this.stateField.value;
+}
+
+ function createPropertyStringFromValues_DetailsView(pageIndex, dataKeys) {
+    var value = new Array(pageIndex, dataKeys);
+    return value.join("|");
+}

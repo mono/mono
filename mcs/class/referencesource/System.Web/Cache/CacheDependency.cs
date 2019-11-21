@@ -706,15 +706,16 @@ namespace System.Web.Caching {
         }
 
         public void KeepDependenciesAlive() {
-            if (_entries != null) {
+            object l_entries = _entries;
+            if (l_entries != null) {
                 // update the last access time of every cache item that depends on this dependency
-                DepCacheInfo oneEntry = _entries as DepCacheInfo;
+                DepCacheInfo oneEntry = l_entries as DepCacheInfo;
                 if (oneEntry != null) {
                     oneEntry._cacheStore.Get(oneEntry._key);
                     return;
                 }
 
-                foreach (DepCacheInfo entry in (DepCacheInfo[])_entries) {
+                foreach (DepCacheInfo entry in (DepCacheInfo[])l_entries) {
                     if (entry != null) {
                         object item = entry._cacheStore.Get(entry._key);
                     }

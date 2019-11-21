@@ -64,6 +64,7 @@ System.Web.Script.Services/MonoProxyGenerator.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/JavaScriptSerializer.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/JavaScriptString.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/SimpleTypeResolver.cs
+../referencesource/System.Web.Extensions/Script/Serialization/DictionaryTypeResolver.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/JavaScriptConverter.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/JavaScriptObjectDeserializer.cs
 ../referencesource/System.Web.Extensions/Script/Serialization/ScriptIgnoreAttribute.cs
@@ -166,6 +167,7 @@ System.Web.Script.Services/MonoProxyGenerator.cs
 ../referencesource/System.Web.Extensions/ui/UpdatePanelTriggerCollection.cs
 ../referencesource/System.Web.Extensions/ui/ExtenderControl.cs
 ../referencesource/System.Web.Extensions/ui/ScriptReferenceBase.cs
+../referencesource/System.Web.Extensions/ui/WebControls/LinqDataSourceContextData.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ListViewUpdateEventArgs.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ListViewSelectEventArgs.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/Dynamic.cs
@@ -199,7 +201,7 @@ System.Web.Script.Services/MonoProxyGenerator.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/InsertItemPosition.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ListViewDataItem.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ListViewEditEventArgs.cs
-../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceContextData.cs
+#../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceContextData.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/Expressions/SearchType.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/Expressions/CustomExpression.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/Expressions/OrderByExpression.cs

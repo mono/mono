@@ -3,8 +3,8 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
-Util/DisplayAttributeExtensions.cs
-Util/StringLocalizerUtil.cs
+../referencesource/System.Web.DynamicData/DynamicData/Util/DisplayAttributeExtensions.cs
+../referencesource/System.Web.DynamicData/DynamicData/Util/StringLocalizerUtil.cs
 ../referencesource/System.Web.DynamicData/Resources/DynamicDataResources.Designer.cs
 ../referencesource/System.Web.DynamicData/UI/ResourceDescriptionAttribute.cs
 ../referencesource/System.Web.DynamicData/UI/DataControlExtensions.cs
