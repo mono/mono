@@ -43,21 +43,6 @@
         <MONO_PRIVATE_CORLIB_BUILD_DIR>$(MSBuildThisFileDirectory)System.Private.CoreLib\bin\$(COREARCH)\</MONO_PRIVATE_CORLIB_BUILD_DIR>
     </PropertyGroup>
 
-    <Target Name="configure-mono-environment-source"
-            Inputs="$(MSBuildThisFileDirectory)..\configure.ac;$(MSBuildThisFileDirectory)System.Private.CoreLib\src\System\Environment.Mono.in"
-            Outputs="$(MSBuildThisFileDirectory)System.Private.CoreLib\src\System\Environment.Mono.cs">
-        <GetVersionsFromConfigureAC ConfigFileRoot="$(MSBuildThisFileDirectory)..\">
-            <Output TaskParameter="MonoVersion" PropertyName="_MonoVersion" />
-            <Output TaskParameter="MonoCorlibVersion" PropertyName="_MonoCorlibVersion" />
-        </GetVersionsFromConfigureAC>
-
-        <ReplaceInFile
-            Input="$(MSBuildThisFileDirectory)System.Private.CoreLib\src\System\Environment.Mono.in"
-            Output="$(MSBuildThisFileDirectory)System.Private.CoreLib\src\System\Environment.Mono.cs"
-            Match="@MONO_CORLIB_VERSION@"
-            Replace="$(_MonoCorlibVersion)" />
-    </Target>
-
     <Target Name="init-tools">
         <Exec Command="powershell -NoProfile -NoLogo -ExecutionPolicy ByPass -Command &quot;$(MSBuildThisFileDirectory)init-tools.ps1&quot;">
             <Output TaskParameter="ExitCode" PropertyName="_ExitCode" />
@@ -132,7 +117,7 @@
         <Touch Files="$(MSBuildThisFileDirectory)corefx\.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)" AlwaysCreate="true" />
     </Target>
 
-    <Target Name="bcl" DependsOnTargets="init-tools;update-roslyn;configure-mono-environment-source">
+    <Target Name="bcl" DependsOnTargets="init-tools;update-roslyn">
         <PropertyGroup>
             <_CorlibBuildArgs>-p:TargetsWindows=true</_CorlibBuildArgs>
             <_CorlibBuildArgs>$(_CorlibBuildArgs) $(CORLIB_BUILD_FLAGS)</_CorlibBuildArgs>
