@@ -7144,12 +7144,6 @@ retry:
 			int offset = ins->data [0];
 			for (int i = 1; i <= offset; i++)
 				sp [-i].ins = NULL;
-		} else if (ins->opcode == MINT_LD_DELEGATE_INVOKE_IMPL) {
-			int offset = ins->data [0];
-			for (int i = 1; i <= offset; i++)
-				sp [-i].ins = NULL;
-			memset (sp, 0, sizeof (StackContentInfo));
-			sp++;
 		} else if (ins->opcode == MINT_POP) {
 			sp--;
 			if (sp->ins) {
