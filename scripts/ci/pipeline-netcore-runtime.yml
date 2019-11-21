@@ -118,9 +118,9 @@ stages:
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
             elif [ $(interpreter) = true ]; then
-              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none" || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none"
             else
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi
