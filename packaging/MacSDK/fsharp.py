@@ -1,9 +1,9 @@
 class FsharpPackage(GitHubTarballPackage):
     def __init__(self):
         GitHubTarballPackage.__init__(self,
-            'fsharp', 'fsharp',
-            '4.5.0',
-            '3de387432de8d11a89f99d1af87aa9ce194fe21b',
+            'mono', 'fsharp',
+            '4.7.0',
+            '758e81e608fd836c8e91231c86da0d7275e611fd',
             configure='',
             override_properties={ 'make': 'make all install PREFIX="%{package_prefix}" DESTDIR=%{stage_root}' })
 
