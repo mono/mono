@@ -47,12 +47,18 @@ stages:
               assetManifestPlatform: x64
               installDependencies: true
               llvm: false
-            x64_LLVM:
+            x64 LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64_LLVM
+              assetManifestPlatform: x64 LLVM
               installDependencies: true
               llvm: true
+            x64 Interpreter:
+              poolname: Hosted Ubuntu 1604
+              assetManifestOS: linux
+              assetManifestPlatform: x64 Interpreter
+              installDependencies: true
+              interpreter: true
             ARM64:
               assetManifestOS: linux
               assetManifestPlatform: arm64
@@ -111,10 +117,16 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
+            if [ $(llvm) = true ]; then
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+            elif [ $(interpreter) = true ]; then
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none"
+            else
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib
+            fi
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:

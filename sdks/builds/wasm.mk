@@ -165,6 +165,19 @@ ifdef ENABLE_WASM_NETCORE
 $(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
 
+WASM_CROSS_BASE_CONFIGURE_FLAGS= \
+	--disable-boehm \
+	--disable-btls \
+	--disable-mcs-build \
+	--disable-nls \
+	--disable-support-build \
+	--enable-maintainer-mode \
+	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
+	--with-cooperative-gc=no \
+	--enable-hybrid-suspend=no \
+	--with-cross-offsets=wasm32-unknown-none.h
+
 ##
 # Parameters
 #  $(1): target
@@ -178,24 +191,19 @@ define WasmCrossTemplate
 _wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
-	--disable-boehm \
-	--disable-btls \
-	--disable-mcs-build \
-	--disable-nls \
-	--disable-support-build \
-	--enable-maintainer-mode \
-	--enable-minimal=appdomains,com,remoting \
-	--enable-icall-symbol-map \
-	--with-cooperative-gc=no \
-	--enable-hybrid-suspend=no \
-	--with-cross-offsets=wasm32-unknown-none.h
+	$(WASM_CROSS_BASE_CONFIGURE_FLAGS) \
+	$$(wasm_$(1)_CONFIGURE_FLAGS)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$(2)-unknown)),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
-# 64 bit cross compiler
+wasm_cross-netcore_CONFIGURE_FLAGS=--with-core=only
+
 $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call WasmCrossTemplate,cross-netcore,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
+endif
 
 ##
 # Parameters
@@ -269,6 +277,6 @@ build-wasm-bcl-netcore: build-wasm-runtime-netcore
 
 package-wasm-bcl-netcore: build-wasm-bcl-netcore
 	mkdir -p ../out/wasm-bcl/netcore
-	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
+	cp ../../netcore/System.Private.CoreLib/bin/wasm32/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
 
 endif
