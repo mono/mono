@@ -1458,7 +1458,7 @@ namespace System.Drawing
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
 		[DllImport(GdiPlus, SetLastError=true, CharSet=CharSet.Auto)]
-		internal static extern Status GdipCreateFontFromLogfont(IntPtr hdc, ref LOGFONT lf, out IntPtr ptr);
+		internal static extern Status GdipCreateFontFromLogfont(IntPtr hdc, IntPtr lf, out IntPtr ptr);
 
 		// These are our private functions, they exists in our own libgdiplus library, this way we
 		// avoid relying on wine in System.Drawing

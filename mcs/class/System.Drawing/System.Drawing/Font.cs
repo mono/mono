@@ -565,10 +565,21 @@ namespace System.Drawing
 		[MonoTODO ("The returned font may not have all it's properties initialized correctly.")]
 		public static Font FromLogFont (object lf, IntPtr hdc)
 		{
+			IntPtr unmanaged_lf;
 			IntPtr newObject;
-			LOGFONT o = (LOGFONT)lf;
-			Status status = GDIPlus.GdipCreateFontFromLogfont (hdc, ref o, out newObject);
-			GDIPlus.CheckStatus (status);
+			if (Marshal.SizeOf(lf) != Marshal.SizeOf<LOGFONT>())
+				throw new ArgumentException ("LOGFONT structure has wrong size");
+			unmanaged_lf = Marshal.AllocCoTaskMem (Marshal.SizeOf (lf));
+			try
+			{
+				Marshal.StructureToPtr (lf, unmanaged_lf, false);
+				Status status = GDIPlus.GdipCreateFontFromLogfont (hdc, unmanaged_lf, out newObject);
+				GDIPlus.CheckStatus (status);
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem (unmanaged_lf);
+			}
 			return new Font (newObject, "Microsoft Sans Serif", FontStyle.Regular, 10);
 		}
 
