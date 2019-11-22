@@ -426,8 +426,8 @@ namespace WsProxy {
 				return;
 			}
 
-			var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray();
-
+			try {
+			var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
 			var var_list = new List<JObject>();
 
 			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
@@ -437,22 +437,27 @@ namespace WsProxy {
 			{
 				string fieldName = (string)values[i]["name"];
 				if (fieldName.Contains("k__BackingField")){
-				fieldName = fieldName.Replace("k__BackingField", "");
-				fieldName = fieldName.Replace("<", "");
-				fieldName = fieldName.Replace(">", "");
-			}
-			var_list.Add(JObject.FromObject(new
-			{
-				name = fieldName,
-				value = values[i+1]["value"]
-			}));
+					fieldName = fieldName.Replace("k__BackingField", "");
+					fieldName = fieldName.Replace("<", "");
+					fieldName = fieldName.Replace(">", "");
+				}
+				var value = values [i + 1] ["value"];
+				if (((string)value ["description"]) == null)
+					value ["description"] = value ["value"]?.ToString ();
+
+				var_list.Add(JObject.FromObject(new {
+					name = fieldName,
+					value
+				}));
 
 			}
 			o = JObject.FromObject(new
 			{
 				result = var_list
 			});
-
+			} catch (Exception e) {
+				Debug ($"failed to parse {res.Value}");
+			}
 			SendResponse(msg_id, Result.Ok(o), token);
 		}
 
@@ -495,7 +500,7 @@ namespace WsProxy {
 
 				var_list.Add (JObject.FromObject (new {
 					name = vars [i].Name,
-					value = values [i] ["value"]
+					value
 				}));
 				i++;
 			}
@@ -506,9 +511,14 @@ namespace WsProxy {
 
 				if (name.IndexOf (">", StringComparison.Ordinal) > 0)
 					name = name.Substring (1, name.IndexOf (">", StringComparison.Ordinal) - 1);
+
+				var value = values [i+1] ["value"];
+				if (((string)value ["description"]) == null)
+					value ["description"] = value ["value"]?.ToString ();
+
 				var_list.Add (JObject.FromObject (new {
-					name =  name,
-					value = values [i+1] ["value"]
+					name,
+					value
 				}));
 				i = i + 2;
 			}
