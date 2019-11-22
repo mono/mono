@@ -121,62 +121,6 @@ mono_gc_base_init (void)
 	mono_w32handle_init ();
 #endif
 
-#if JON
-	/*
-	 * Handle the case when we are called from a thread different from the main thread,
-	 * confusing libgc.
-	 * FIXME: Move this to libgc where it belongs.
-	 *
-	 * we used to do this only when running on valgrind,
-	 * but it happens also in other setups.
-	 */
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
-	{
-		size_t size;
-		void *sstart;
-		pthread_attr_t attr;
-		pthread_getattr_np (pthread_self (), &attr);
-		pthread_attr_getstack (&attr, &sstart, &size);
-		pthread_attr_destroy (&attr); 
-		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
-		/* apparently with some linuxthreads implementations sstart can be NULL,
-		 * fallback to the more imprecise method (bug# 78096).
-		 */
-		if (sstart) {
-			GC_stackbottom = (char*)sstart + size;
-		} else {
-			int dummy;
-			gsize stack_bottom = (gsize)&dummy;
-			stack_bottom += 4095;
-			stack_bottom &= ~4095;
-			GC_stackbottom = (char*)stack_bottom;
-		}
-	}
-#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
-#elif defined(__OpenBSD__)
-#  include <pthread_np.h>
-	{
-		stack_t ss;
-		int rslt;
-
-		rslt = pthread_stackseg_np(pthread_self(), &ss);
-		g_assert (rslt == 0);
-
-		GC_stackbottom = (char*)ss.ss_sp;
-	}
-#else
-	{
-		int dummy;
-		gsize stack_bottom = (gsize)&dummy;
-		stack_bottom += 4095;
-		stack_bottom &= ~4095;
-		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
-		GC_stackbottom = (char*)stack_bottom;
-	}
-#endif
-#endif
-
 	roots = g_hash_table_new (NULL, NULL);
 	default_push_other_roots = GC_get_push_other_roots ();
 	GC_set_push_other_roots (mono_push_other_roots);
@@ -1142,7 +1086,6 @@ mono_gc_set_stack_end (void *stack_end)
 {
 }
 
-// FIXME
 void GC_start_blocking ()
 {
 
