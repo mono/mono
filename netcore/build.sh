@@ -106,8 +106,8 @@ if [[ "$configuration" == "Debug" ]]; then
   EXTRA_CFLAGS="-O0 -ggdb3 -fno-omit-frame-pointer"
   EXTRA_CXXFLAGS="-O0 -ggdb3 -fno-omit-frame-pointer"
 elif [[ "$configuration" == "Release" ]]; then
-  EXTRA_CFLAGS="-O2 -g"
-  EXTRA_CXXFLAGS="-O2 -g"
+  EXTRA_CFLAGS="-O0 -g"
+  EXTRA_CXXFLAGS="-O0 -g"
 fi
 
 if [ "$llvm" = "true" ]; then
