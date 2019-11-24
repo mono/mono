@@ -9,7 +9,6 @@ class FsharpPackage(GitHubTarballPackage):
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
         self.sources.extend(['patches/fsharp-portable-pdb.patch',
-                             'patches/fsharp-msbuild-16-0.patch',
                              'patches/fsharp-custom-prefix.patch'])
 
     def prep(self):
