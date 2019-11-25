@@ -154,7 +154,7 @@ namespace System
 
 			if (reliable) {
 				if (!dst_type.Equals (src_type) &&
-					!(dst_type.IsPrimitive && src_type.IsPrimitive && CanChangePrimitive(dst_type, src_type, true))) {
+					!(dst_type.IsPrimitive && src_type.IsPrimitive && CanChangePrimitive(ref dst_type, ref src_type, true))) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
 			} else {
@@ -219,7 +219,7 @@ namespace System
 				} else if (source.IsPrimitive && target.IsPrimitive) {
 					
 					// Allow primitive type widening
-					return CanChangePrimitive (source, target, false);
+					return CanChangePrimitive (ref source, ref target, false);
 				} else if (!source.IsValueType && !source.IsPointer) {
 					// Source is base class or interface of destination type
 					if (target.IsPointer)
@@ -242,7 +242,8 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			Array array = InternalCreate (runtimeType._impl.Value, 1, &length, null);
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 1, &length, null);
 			GC.KeepAlive (runtimeType);
 			return array;
 		}
@@ -261,7 +262,8 @@ namespace System
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
 			int* lengths = stackalloc int [] { length1, length2 };
-			Array array = InternalCreate (runtimeType._impl.Value, 2, lengths, null);
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 2, lengths, null);
 			GC.KeepAlive (runtimeType);
 			return array;
 		}
@@ -282,7 +284,8 @@ namespace System
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
 			int* lengths = stackalloc int [] { length1, length2, length3 };
-			Array array = InternalCreate (runtimeType._impl.Value, 3, lengths, null);
+			Array array = null;
+			InternalCreate (ref array, runtimeType._impl.Value, 3, lengths, null);
 			GC.KeepAlive (runtimeType);
 			return array;
 		}
@@ -304,9 +307,9 @@ namespace System
 				if (lengths [i] < 0)
 					ThrowHelper.ThrowArgumentOutOfRangeException (ExceptionArgument.lengths, i, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
 
-			Array array;
+			Array array = null;
 			fixed (int* pLengths = &lengths [0])
-				array = InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, null);
+				InternalCreate (ref array, runtimeType._impl.Value, lengths.Length, pLengths, null);
 			GC.KeepAlive (runtimeType);
 			return array;
 		}
@@ -332,16 +335,16 @@ namespace System
 			if (runtimeType == null)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_MustBeType, ExceptionArgument.elementType);
 
-			Array array;
+			Array array = null;
 			fixed (int* pLengths = &lengths [0])
 			fixed (int* pLowerBounds = &lowerBounds [0])
-				array = InternalCreate (runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
+				InternalCreate (ref array, runtimeType._impl.Value, lengths.Length, pLengths, pLowerBounds);
 			GC.KeepAlive (runtimeType);
 			return array;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		static extern unsafe Array InternalCreate (IntPtr elementType, int rank, int* pLengths, int* pLowerBounds);
+		static extern unsafe void InternalCreate (ref Array result, IntPtr elementType, int rank, int* lengths, int* lowerBounds);
 
 		public object GetValue (int index)
 		{
@@ -423,29 +426,6 @@ namespace System
 			SetValue (value, ind);
 		}
 
-		static void SortImpl (Array keys, Array? items, int index, int length, IComparer comparer)
-		{
-			/* TODO: CoreCLR optimizes this case via an internal call
-			if (comparer == Comparer.Default)
-			{
-				bool r = TrySZSort(keys, items, index, index + length - 1);
-				if (r)
-					return;
-			}*/
-
-			object[]? objKeys = keys as object[];
-			object[]? objItems = null;
-			if (objKeys != null)
-				objItems = items as object[];
-			if (objKeys != null && (items == null || objItems != null)) {
-				SorterObjectArray sorter = new SorterObjectArray (objKeys, objItems, comparer);
-				sorter.Sort(index, length);
-			} else {
-				SorterGenericArray sorter = new SorterGenericArray (keys, items, comparer);
-				sorter.Sort(index, length);
-			}
-		}
-
 		static bool TrySZBinarySearch (Array sourceArray, int sourceIndex, int count, object? value, out int retVal)
 		{
 			retVal = default;
@@ -465,8 +445,6 @@ namespace System
 		}
 
 		static bool TrySZReverse (Array array, int index, int count) => false;
-
-		static bool TrySZSort (Array keys, Array? items, int left, int right) => false;
 
 		public int GetUpperBound (int dimension)
 		{
@@ -501,8 +479,14 @@ namespace System
 			return false;
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		internal extern CorElementType GetCorElementTypeOfElementType();
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		extern bool IsValueOfElementType(object value);
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool CanChangePrimitive (Type srcType, Type dstType, bool reliable);
+		extern static bool CanChangePrimitive (ref Type srcType, ref Type dstType, bool reliable);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);

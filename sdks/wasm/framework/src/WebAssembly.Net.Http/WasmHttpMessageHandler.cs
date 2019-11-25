@@ -47,11 +47,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 			handlerInit ();
 		}
 
-		private static WasmHttpMessageHandler GetHttpMessageHandler ()
-		{
-			return new WasmHttpMessageHandler ();
-		}
-
 		private void handlerInit ()
 		{
 			window = (JSObject)WebAssembly.Runtime.GetGlobalObject ("window");

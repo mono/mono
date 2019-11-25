@@ -2829,6 +2829,18 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 #endif
 }
 
+static void
+interp_free_method (MonoDomain *domain, MonoMethod *method)
+{
+	MonoJitDomainInfo *info = domain_jit_info (domain);
+
+	mono_domain_jit_code_hash_lock (domain);
+	/* InterpMethod is allocated in the domain mempool. We might haven't
+	 * allocated an InterpMethod for this instance yet */
+	mono_internal_hash_table_remove (&info->interp_code_hash, method);
+	mono_domain_jit_code_hash_unlock (domain);
+}
+
 #if COUNT_OPS
 static long opcode_counts[MINT_LASTOP];
 
@@ -5572,7 +5584,7 @@ common_vcall:
 		MINT_IN_CASE(MINT_ARRAY_ELEMENT_SIZE) {
 			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
-			sp [-1].data.i = mono_class_array_element_size (mono_object_class (o));
+			sp [-1].data.i = mono_array_element_size (mono_object_class (o));
 			ip++;
 			MINT_IN_BREAK;
 		}

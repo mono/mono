@@ -1382,6 +1382,7 @@ typedef struct {
 	guint            ret_var_set : 1;
 	guint            unverifiable : 1;
 	guint            skip_visibility : 1;
+	guint            disable_llvm_implicit_null_checks : 1;
 	guint            disable_reuse_registers : 1;
 	guint            disable_reuse_stack_slots : 1;
 	guint            disable_reuse_ref_stack_slots : 1;
@@ -2907,5 +2908,8 @@ mini_safepoints_enabled (void)
 
 gpointer
 mono_arch_load_function (MonoJitICallId jit_icall_id);
+
+MonoGenericContext
+mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info);
 
 #endif /* __MONO_MINI_H__ */
