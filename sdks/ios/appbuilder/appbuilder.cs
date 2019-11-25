@@ -98,7 +98,7 @@ public class AppBuilder
 		string team_identifier = null;
 		bool isnetcore = false;
 		bool isdev = false;
-		bool isrelease = false;
+		bool isdebug = false;
 		bool isllvm = false;
 		bool isinterponly = false;
 		bool isinterpmixed = false;
@@ -119,6 +119,7 @@ public class AppBuilder
 				{ "team-identifier=", s => team_identifier = s },
 				{ "llvm", s => isllvm = true },
 				{ "netcore", s => isnetcore = true },
+				{ "debug", s => isdebug = true },
 				{ "interp-only", s => isinterponly = true },
 				{ "interp-mixed", s => isinterpmixed = true },
 				{ "exe=", s => exe = s },
@@ -148,9 +149,6 @@ public class AppBuilder
 			break;
 		}
 
-		if (isllvm)
-			isrelease = true;
-
 		string runtime = isnetcore ? "ios-netcore_target64-release" : "ios-target64-release";
 		string cross_runtime = isnetcore ? "ios-netcore_cross64-release" : "ios-cross64-release";
 
@@ -167,11 +165,16 @@ public class AppBuilder
 			aot_args = "full";
 		}
 
-		if (!isrelease)
+		if (isdebug)
 			aot_args += ",soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
 			aot_args += ",llvm-path=$mono_sdkdir/llvm-llvm64/bin,llvm-outfile=$llvm_outfile";
+
+			if (isdebug) {
+				Console.WriteLine ("--debug can't be used together with --llvm");
+				Environment.Exit (1);
+			}
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -263,6 +266,12 @@ public class AppBuilder
 				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
+
+			string pdb = Path.ChangeExtension (assembly, ".pdb");
+			if (isdebug && File.Exists (pdb)) {
+				File.Copy (pdb, Path.Combine (builddir, filename_noext + ".pdb"), true);
+				ninja.WriteLine ($"build $appdir/{filename_noext}.pdb: cpifdiff $builddir/{filename_noext}.pdb");
+			}
 
 			var assembly_dir = Path.GetDirectoryName (assembly);
 			var resource_filename = filename.Replace (".dll", ".resources.dll");

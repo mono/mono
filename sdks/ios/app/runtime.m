@@ -283,6 +283,7 @@ mono_ios_runtime_init (void)
 	}
 
 	int aindex = 1;
+	bool wait_for_debugger = FALSE;
 	while (aindex < nargs) {
 		char *arg = args [aindex];
 		if (!(arg [0] == '-' && arg [1] == '-'))
@@ -296,6 +297,9 @@ mono_ios_runtime_init (void)
 			char *val = strdup (eq + 1);
 			os_log_info (OS_LOG_DEFAULT, "%s=%s.", name, val);
 			setenv (name, val, TRUE);
+		}
+		else if (strstr (arg, "--wait-for-debugger") == arg) {
+			wait_for_debugger = TRUE;
 		}
 		aindex ++;
 	}
@@ -324,6 +328,14 @@ mono_ios_runtime_init (void)
 	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
+
+	if (wait_for_debugger) {
+		char* options[] = { "--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555" };
+		mono_jit_parse_options (1, options);
+	} else {
+		//char* options[] = { "--trace=N:nothing" };
+		//mono_jit_parse_options (1, options);
+	}
 
 	mono_jit_init_version ("Mono.ios", "mobile");
 
