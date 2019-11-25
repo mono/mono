@@ -140,14 +140,19 @@ clean-ios-sim-%:
 clean-ios-dev-%:
 	$(RM) -rf obj/ios-dev/test-$*.app bin/ios-dev/test-$*.app
 
-# Install and run % on the simulator with args $(ARGS) %_ARGS
+ifdef DEBUG
+APP_ARGS += --wait-for-debugger
+APPBUILDER_ARGS += --debug
+endif
+
+# Install and run % on the simulator with args $(APP_ARGS) %_ARGS
 run-ios-sim-%: harness.exe
 	mono harness.exe --start-sim
 	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
-	mono harness.exe --run-sim --logfile ios-sim-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-sim/test-$*.app $(ARGS) $($*_ARGS)
+	mono harness.exe --run-sim --logfile ios-sim-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-sim/test-$*.app $(APP_ARGS) $($*_ARGS)
 
 run-ios-dev-%: harness.exe
-	mono harness.exe --run-dev --logfile ios-dev-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-dev/test-$*.app $(ARGS) $($*_ARGS)
+	mono harness.exe --run-dev --logfile ios-dev-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-dev/test-$*.app $(APP_ARGS) $($*_ARGS)
 
 clean:
 	$(MAKE) -C app clean
@@ -187,7 +192,7 @@ install-ios-sim-%:
 
 run-ios-sim-direct-%:
 	xcrun simctl terminate $(SIM_NAME) com.xamarin.mono.ios.test-$*
-	xcrun simctl launch $(SIM_NAME) com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
+	xcrun simctl launch $(SIM_NAME) com.xamarin.mono.ios.test-$* $(APP_ARGS) $($*_ARGS)
 	log stream --level debug --predicate 'senderImagePath contains "$*"' --style compact
 
 create-sim:
