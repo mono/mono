@@ -68,26 +68,26 @@ load_aot_data (MonoAssembly *assembly, int size, void *user_data, void **out_han
 	const char *aname = mono_assembly_name_get_name (assembly_name);
 	const char *bundle = get_bundle_path ();
 
-	// LOG (PRODUCT ": Looking for aot data for assembly '%s'.", name);
+	os_log_info (OS_LOG_DEFAULT, "Looking for aot data for assembly '%s'.", aname);
 	res = snprintf (path, sizeof (path) - 1, "%s/%s.aotdata", bundle, aname);
 	assert (res > 0);
 
 	int fd = open (path, O_RDONLY);
 	if (fd < 0) {
-		//LOG (PRODUCT ": Could not load the aot data for %s from %s: %s\n", aname, path, strerror (errno));
+		os_log_info (OS_LOG_DEFAULT, "Could not load the aot data for %s from %s: %s\n", aname, path, strerror (errno));
 		return NULL;
 	}
 
 	void *ptr = mmap (NULL, size, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
 	if (ptr == MAP_FAILED) {
-		//LOG (PRODUCT ": Could not map the aot file for %s: %s\n", aname, strerror (errno));
+		os_log_info (OS_LOG_DEFAULT, "Could not map the aot file for %s: %s\n", aname, strerror (errno));
 		close (fd);
 		return NULL;
 	}
 
 	close (fd);
 
-	//LOG (PRODUCT ": Loaded aot data for %s.\n", name);
+	os_log_info (OS_LOG_DEFAULT, "Loaded aot data for %s.\n", aname);
 
 	*out_handle = ptr;
 
@@ -104,14 +104,25 @@ static MonoAssembly*
 load_assembly (const char *name, const char *culture)
 {
 	const char *bundle = get_bundle_path ();
+	char filename [1024];
 	char path [1024];
 	int res;
 
 	os_log_info (OS_LOG_DEFAULT, "assembly_preload_hook: %{public}s %{public}s %{public}s\n", name, culture, bundle);
+
+	int len = strlen (name);
+	int has_extension = len > 3 && name [len - 4] == '.' && (!strcmp ("exe", name + (len - 3)) || !strcmp ("dll", name + (len - 3)));
+
+	// add extensions if required.
+	strlcpy (filename, name, sizeof (filename));
+	if (!has_extension) {
+		strlcat (filename, ".dll", sizeof (filename));
+	}
+
 	if (culture && strcmp (culture, ""))
-		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, name);
+		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, filename);
 	else
-		res = snprintf (path, sizeof (path) - 1, "%s/%s", bundle, name);
+		res = snprintf (path, sizeof (path) - 1, "%s/%s", bundle, filename);
 	assert (res > 0);
 
 	if (file_exists (path)) {
