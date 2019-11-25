@@ -260,41 +260,50 @@ var BindingSupportLib = {
 			return heapBytes;
 		},
 		js_to_mono_obj: function (js_obj) {
-	  		this.bindings_lazy_init ();
+			this.bindings_lazy_init ();
 
-			if (js_obj == null || js_obj == undefined)
-				return 0;
-			if (typeof js_obj === 'number') {
-				if (parseInt(js_obj) == js_obj)
-					return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
-				return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
-			}
-			if (typeof js_obj === 'string')
-				return this.js_string_to_mono_string (js_obj);
-
-			if (typeof js_obj === 'boolean')
-				return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
-
-			if (Promise.resolve(js_obj) === js_obj) {
-				var the_task = this.try_extract_mono_obj (js_obj);
-				if (the_task)
-					return the_task;
-				var tcs = this.create_task_completion_source ();
-
-				js_obj.then (function (result) {
-					BINDING.set_task_result (tcs, result);
-				}, function (reason) {
-					BINDING.set_task_failure (tcs, reason);
-				})
-
-				return this.get_task_and_bind (tcs, js_obj);
+			// determines if the javascript object is a Promise or Promise like which can happen
+			// when using an external Promise library.  The javascript object should be marshalled 
+			// as managed Task objects.
+			// 
+			// Example is when Bluebird is included in a web page using a script tag, it overwrites the 
+			// global Promise object by default with its own version of Promise.
+			function isThenable() {
+				// When using an external Promise library the Promise.resolve may not be sufficient
+				// to identify the object as a Promise.
+				return Promise.resolve(js_obj) === js_obj || 
+						((typeof js_obj === "object" || typeof js_obj === "function") && typeof js_obj.then === "function")
 			}
 
-			if (js_obj.constructor.name === "Date")
-				// We may need to take into account the TimeZone Offset
-				return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
-
-			return this.extract_mono_obj (js_obj);
+			switch (true) {
+				case js_obj === null:
+				case typeof js_obj === "undefined":
+					return 0;
+				case typeof js_obj === "number":
+					if (parseInt(js_obj) == js_obj)
+						return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
+					return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
+				case typeof js_obj === "string":
+					return this.js_string_to_mono_string (js_obj);
+				case typeof js_obj === "boolean":
+					return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
+				case isThenable() === true:
+					var the_task = this.try_extract_mono_obj (js_obj);
+					if (the_task)
+						return the_task;
+					var tcs = this.create_task_completion_source ();
+					js_obj.then (function (result) {
+						BINDING.set_task_result (tcs, result);
+					}, function (reason) {
+						BINDING.set_task_failure (tcs, reason);
+					})
+					return this.get_task_and_bind (tcs, js_obj);
+				case js_obj.constructor.name === "Date":
+					// We may need to take into account the TimeZone Offset
+					return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+				default:
+					return this.extract_mono_obj (js_obj);
+			}
 		},
 		js_typed_array_to_array : function (js_obj) {
 
