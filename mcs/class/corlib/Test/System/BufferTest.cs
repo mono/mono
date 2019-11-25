@@ -282,14 +282,20 @@ namespace MonoTests.System {
 		[Test]
 		public void MemoryCopy_Simple ()
 		{
-			int a = 0xBC614E;
-			int b = 1;
+			uint a = 0xAABBCCDD;
+			uint b = 0;
 			unsafe {
 				Buffer.MemoryCopy (&a, &b, 4, 2);				
 			}
 
-			Assert.AreEqual (0xBC614E, a, "#1");
-			Assert.AreEqual (0x614E, b, "#2");
+			Assert.AreEqual (0xAABBCCDD, a, "#1");
+			// Byte order affects this test; it determines if we
+			// copy the low (0xCCDD) or high (0xAABB) bytes.
+			if (BitConverter.IsLittleEndian) {
+				Assert.AreEqual (0x0000CCDD, b, "#2");
+			} else {
+				Assert.AreEqual (0xAABB0000, b, "#2");
+			}
 		}
 	}
 }
