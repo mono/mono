@@ -5,8 +5,8 @@
 	<key>get-task-allow</key>
 	<true/>
 	<key>application-identifier</key>
-	<string>C9D4426WFH.com.xamarin.test2</string>
+	<string>TEAM_IDENTIFIER.com.xamarin.mono.ios</string>
 	<key>com.apple.developer.team-identifier</key>
-	<string>C9D4426WFH</string>
+	<string>TEAM_IDENTIFIER</string>
 </dict>
 </plist>

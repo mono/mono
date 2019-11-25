@@ -15,6 +15,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "runtime.h"
+
 //
 // Based on runtime/ in xamarin-macios
 //
@@ -27,6 +29,7 @@ static os_log_t stdout_log;
 typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void **out_handle);
 typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void *handle);
 void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, void *user_data);
+void mono_trace_init (void);
 
 bool
 file_exists (const char *path)
@@ -197,7 +200,7 @@ void
 log_callback (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
 {
 	os_log_info (OS_LOG_DEFAULT, "(%s %s) %s", log_domain, log_level, message);
-	NSLog (@"(%s %s) %s", log_domain, log_level, message);
+	//NSLog (@"(%s %s) %s", log_domain, log_level, message);
 	if (fatal) {
 		os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", 1);
 		exit (1);
@@ -208,6 +211,7 @@ static void
 register_dllmap (void)
 {
 	mono_dllmap_insert (NULL, "System.Native", NULL, "__Internal", NULL);
+	mono_dllmap_insert (NULL, "System.IO.Compression.Native", NULL, "__Internal", NULL);
 	mono_dllmap_insert (NULL, "System.Security.Cryptography.Native.Apple", NULL, "__Internal", NULL);
 }
 
@@ -224,6 +228,9 @@ mono_ios_runtime_init (void)
 	int res, nargs, config_nargs;
 	char *executable;
 	char **args, **config_args = NULL;
+
+	//setenv ("MONO_LOG_LEVEL", "debug", TRUE);
+	//setenv ("MONO_LOG_MASK", "all", TRUE);
 
 	stdout_log = os_log_create ("com.xamarin", "stdout");
 
@@ -302,11 +309,10 @@ mono_ios_runtime_init (void)
 	mono_install_assembly_preload_hook (assembly_preload_hook, NULL);
 	mono_install_load_aot_data_hook (load_aot_data, free_aot_data, NULL);
 	mono_install_unhandled_exception_hook (unhandled_exception_handler, NULL);
+	mono_trace_init ();
 	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
-
-	//setenv ("MONO_LOG_LEVEL", "debug", TRUE);
 
 	mono_jit_init_version ("Mono.ios", "mobile");
 
@@ -318,7 +324,7 @@ mono_ios_runtime_init (void)
 	char *managed_argv [128];
 	assert (managed_argc < 128 - 2);
 	int managed_aindex = 0;
-	managed_argv [managed_aindex ++] = "test-runner";
+	managed_argv [managed_aindex ++] = executable;
 	for (int i = 0; i < managed_argc; ++i) {
 		managed_argv [managed_aindex] = args [aindex];
 		os_log_info (OS_LOG_DEFAULT, "Arg: %s", managed_argv [managed_aindex]);
