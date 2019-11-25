@@ -9,6 +9,7 @@ module.exports = function(config) {
         },
         files: [
             {pattern: './publish/netstandard2.0/http-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/http-spec-with-prom-lib.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/core-bindings-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/issues-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/zip-spec.js',watched:true,served:true,included:true},
@@ -56,6 +57,7 @@ module.exports = function(config) {
                     //indicate 'index.html' file that will be loaded in the browser
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
                     {src:'./publish/netstandard2.0/http-spec.html', tag:'httpspec'},
+                    {src:'./publish/netstandard2.0/http-spec-with-prom-lib.html', tag:'httpspecwithpromlib'},
                     {src:'./publish/netstandard2.0/core-bindings-spec.html', tag:'corebindingsspec'},
                     {src:'./publish/netstandard2.0/issues-spec.html', tag:'issuesspec'},
                     {src:'./publish/netstandard2.0/zip-spec.html', tag:'zipspec'}
