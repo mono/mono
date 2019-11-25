@@ -289,7 +289,16 @@ namespace MonoTests.System {
 			}
 
 			Assert.AreEqual (0xBC614E, a, "#1");
-			Assert.AreEqual (0x614E, b, "#2");
+			if (BitConverter.IsLittleEndian) {
+				// On a little-endian system, the 0x01 byte
+				// gets overwritten by the the low bytes.
+				Assert.AreEqual (0x614E, b, "#2");
+			} else {
+				// On a big endian system, the 0x01 byte
+				// is preserved, and the two high bytes
+				// (0x00BC) are inserted.
+				Assert.AreEqual (0xBC0001, b, "#2");
+			}
 		}
 	}
 }
