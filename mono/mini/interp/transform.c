@@ -3168,6 +3168,33 @@ interp_emit_load_const (TransformData *td, gpointer field_addr, int mt)
 	return TRUE;
 }
 
+/*
+ * emit_convert:
+ *
+ *   Emit some implicit conversions which are not part of the .net spec, but are allowed by MS.NET.
+ */
+static void
+emit_convert (TransformData *td, int stack_type, MonoType *ftype)
+{
+	ftype = mini_get_underlying_type (ftype);
+
+	// FIXME: Add more
+	switch (ftype->type) {
+	case MONO_TYPE_I8: {
+		switch (stack_type) {
+		case STACK_TYPE_I4:
+			interp_add_ins (td, MINT_CONV_I8_I4);
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 static void
 interp_emit_sfld_access (TransformData *td, MonoClassField *field, MonoClass *field_class, int mt, gboolean is_load, MonoError *error)
 {
@@ -4940,6 +4967,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type_internal (field);
 			mt = mint_type (ftype);
+
+			emit_convert (td, td->sp [-1].type, ftype);
 
 			/* the vtable of the field might not be initialized at this point */
 			MonoClass *fld_klass = mono_class_from_mono_type_internal (ftype);
