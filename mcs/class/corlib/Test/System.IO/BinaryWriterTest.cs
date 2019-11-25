@@ -423,6 +423,8 @@ public class BinaryWriterTest {
 	[Test]
 	public void WriteDecimalAndReadBack()
 	{
+		// This value is the same used in BinaryReader.ReadDecimal, which will be
+		// problematic if BinaryWriter or BinaryReader are endianness-confused.
 		Decimal writeDec = -18295873486192640;
 		using (var ms = new MemoryStream(32)) {
 			using (var bw = new BinaryWriter(ms, new UTF8Encoding(), true)) {

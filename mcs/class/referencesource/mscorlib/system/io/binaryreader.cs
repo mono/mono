@@ -244,7 +244,7 @@ namespace System.IO {
             try {
                 int[] ints = new int[4];
                 Buffer.BlockCopy(m_buffer, 0, ints, 0, 16);
-                if (!BitConverter.IsLittleEndian && true) {
+                if (!BitConverter.IsLittleEndian) {
                     // We need to reverse the ints on BE
                     for (int i = 0; i < 4; i++) {
                          ints[i] = BinaryPrimitives.ReverseEndianness(ints[i]);
