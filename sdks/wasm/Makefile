@@ -257,20 +257,40 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
-bin/$(2)/mono.js: packager.exe runtime-tests.js
+bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
+	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
 build-$(1): bin/$(2)/mono.js
 
 run-$(1): bin/$(2)/mono.js
-	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4))
+	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
+
+run-corefx-tests-netcore: run-$(1)
 
 endef
 
-$(eval $(call NetcoreTestTemplate,Common-netcore,Common-netcore,Common.Tests,Common.Tests.dll))
+NETCORE_COREFX_FAILING_TEST_SUITES = \
+	System.CodeDom.Tests \
+	Microsoft.XmlSerializer.Generator.Tests
+
+NETCORE_COREFX_TEST_SUITES = \
+	Common.Tests \
+	Invariant.Tests \
+	Microsoft.CSharp.Tests \
+	Microsoft.VisualBasic.Core.Tests \
+	Microsoft.Win32.Primitives.Tests \
+	System.AppContext.Tests \
+	System.Buffers.Tests \
+	System.Collections.Concurrent.Tests \
+	System.Collections.Immutable.Tests \
+	System.Collections.NonGeneric.Tests \
+	System.Collections.Specialized.Tests \
+	System.Collections.Tests
+
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll)))
 
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
