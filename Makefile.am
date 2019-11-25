@@ -3,6 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 AM_CFLAGS = $(WERROR_CFLAGS)
 
 SUBDIRS = @MONO_SUBDIRS@
+noinst_SUBDIRS = @MONO_NOINST_SUBDIRS@
 DIST_SUBDIRS = $(SUBDIRS) m4 netcore netcore/corerun
 
 if !ENABLE_NETCORE
@@ -92,6 +93,21 @@ mcs-do-compiler-tests:
 .PHONY: bootstrap-world
 bootstrap-world: compiler-tests
 	$(MAKE) install
+
+install:
+	echo $(SUBDIRS)
+	for mydir in $(SUBDIRS) ; do \
+		do_install=1 ; \
+		for noinstdir in $(noinst_SUBDIRS) ; do \
+			if [ "x$${noinstdir}" = "x$${mydir}" ] ; then \
+				do_install=0 ; \
+				break ; \
+			fi \
+		done ; \
+		if [ "$${do_install}" = "1" ] ; then \
+			(cd $${mydir} && ${MAKE} install) \
+		fi \
+	done
 
 update-csproj:
 	-rm msvc/scripts/order 
