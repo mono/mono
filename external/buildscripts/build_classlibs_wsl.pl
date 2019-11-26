@@ -47,7 +47,7 @@ system(
 	"--skipmonomake=$skipMonoMake",
 	"--artifact=1",
 	"--artifactscommon=1",
-	"--buildusandboo=1",
+	"--buildusandboo=0",
 	"--forcedefaultbuilddeps=1",
 	"--windowssubsystemforlinux=1",
 	"--shortprefix=$shortPrefix") eq 0 or die ("Failed building mono\n");
