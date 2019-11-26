@@ -51,21 +51,6 @@ GetOptions(
 	'buildusandboo=i'=>\$buildUsAndBoo,
 );
 
-my $monoArch32Target = "i386";
-
-print(">>> Building $monoArch32Target\n");
-system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ("failing building $monoArch32Target");
-
-if ($artifactsCommon)
-{
-	push @passAlongArgs, "--artifactscommon=1";
-}
-
-if ($buildUsAndBoo)
-{
-	push @passAlongArgs, "--buildusandboo=1";
-}
-
 print(">>> Building x86_64\n");
 system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building x86_64');
 
@@ -75,15 +60,9 @@ if ($artifact)
 	# Merge stuff in the embedruntimes directory
 	my $embedDirRoot = "$buildsroot/embedruntimes";
 	my $embedDirDestination = "$embedDirRoot/osx";
-	my $embedDirSource32 = "$embedDirRoot/osx-tmp-$monoArch32Target";
 	my $embedDirSource64 = "$embedDirRoot/osx-tmp-x86_64";
 
 	system("mkdir -p $embedDirDestination");
-
-	if (!(-d $embedDirSource32))
-	{
-		die("Expected source directory not found : $embedDirSource32\n");
-	}
 
 	if (!(-d $embedDirSource64))
 	{
@@ -114,7 +93,6 @@ if ($artifact)
 	my $distDirRoot = "$buildsroot/monodistribution";
 	my $distDirDestinationBin = "$buildsroot/monodistribution/bin";
 	my $distDirDestinationLib = "$buildsroot/monodistribution/lib";
-	my $distDirSourceBin32 = "$distDirRoot/bin-osx-tmp-$monoArch32Target";
 	my $distDirSourceBin64 = "$distDirRoot/bin-osx-tmp-x86_64";
 
 	# Should always exist because build_all would have put stuff in it, but in some situations
@@ -129,20 +107,9 @@ if ($artifact)
 		system("mkdir -p $distDirDestinationLib");
 	}
 
-	if (!(-d $distDirSourceBin32))
-	{
-		die("Expected source directory not found : $distDirSourceBin32\n");
-	}
-
 	if (!(-d $distDirSourceBin64))
 	{
 		die("Expected source directory not found : $distDirSourceBin64\n");
-	}
-
-	for my $file ('mono','pedump')
-	{
-		print(">>> lipo $distDirSourceBin32/$file $distDirSourceBin64/$file -create -output $distDirDestinationBin/$file\n\n");
-		system ('lipo', "$distDirSourceBin32/$file", "$distDirSourceBin64/$file", '-create', '-output', "$distDirDestinationBin/$file");
 	}
 
 	for my $file ('libMonoPosixHelper.dylib')
@@ -155,9 +122,7 @@ if ($artifact)
 	{
 		print(">>> Clean up temporary arch specific build directories\n");
 
-		rmtree("$distDirSourceBin32");
 		rmtree("$distDirSourceBin64");
-		rmtree("$embedDirSource32");
 		rmtree("$embedDirSource64");
 	}
 }
