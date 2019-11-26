@@ -114,7 +114,7 @@ namespace System.Net
 		static RequestCachePolicy defaultCachePolicy;
 		int readWriteTimeout = 300000; // ms
 #if SECURITY_DEP
-		MonoTlsProvider tlsProvider;
+		MobileTlsProvider tlsProvider;
 		MonoTlsSettings tlsSettings;
 #endif
 		ServerCertValidationCallback certValidationCallback;
@@ -166,7 +166,7 @@ namespace System.Net
 		}
 
 #if SECURITY_DEP
-		internal HttpWebRequest (Uri uri, MonoTlsProvider tlsProvider, MonoTlsSettings settings = null)
+		internal HttpWebRequest (Uri uri, MobileTlsProvider tlsProvider, MonoTlsSettings settings = null)
 			: this (uri)
 		{
 			this.tlsProvider = tlsProvider;
@@ -265,7 +265,7 @@ namespace System.Net
 		}
 
 #if SECURITY_DEP
-		internal MonoTlsProvider TlsProvider {
+		internal MobileTlsProvider TlsProvider {
 			get { return tlsProvider; }
 		}
 

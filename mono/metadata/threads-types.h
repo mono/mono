@@ -106,6 +106,9 @@ mono_thread_create_internal_handle (MonoDomain *domain, T func, gpointer arg, Mo
 }
 #endif
 
+void
+mono_thread_manage_internal (void);
+
 /* Data owned by a MonoInternalThread that must live until both the finalizer
  * for MonoInternalThread has run, and the underlying machine thread has
  * detached.
@@ -187,12 +190,6 @@ gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single(gfloat *loc
 
 ICALL_EXPORT
 gdouble ves_icall_System_Threading_Interlocked_CompareExchange_Double(gdouble *location, gdouble value, gdouble comparand);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile*res);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res);
 
 ICALL_EXPORT
 gint32 ves_icall_System_Threading_Interlocked_Add_Int(gint32 *location, gint32 value);
@@ -360,7 +357,9 @@ mono_thread_set_name (MonoInternalThread *thread,
 		MONO_THREAD_NAME_WINDOWS_CONSTANT (name),               \
 		(flags) | MonoSetThreadNameFlag_Constant, NULL)
 
+#ifndef ENABLE_NETCORE
 void mono_thread_suspend_all_other_threads (void);
+#endif
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 
 void mono_thread_push_appdomain_ref (MonoDomain *domain);
@@ -369,6 +368,7 @@ gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
 gboolean mono_thread_interruption_requested (void);
 
+ICALL_EXTERN_C
 MonoException*
 mono_thread_interruption_checkpoint (void);
 
@@ -381,6 +381,7 @@ mono_thread_interruption_checkpoint_void (void);
 MonoExceptionHandle
 mono_thread_interruption_checkpoint_handle (void);
 
+ICALL_EXTERN_C
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 
 /**
@@ -395,7 +396,10 @@ MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 extern gint32 mono_thread_interruption_request_flag;
 
 uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits);
+
+ICALL_EXTERN_C
 void*    mono_get_special_static_data   (uint32_t offset);
+
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 
 void

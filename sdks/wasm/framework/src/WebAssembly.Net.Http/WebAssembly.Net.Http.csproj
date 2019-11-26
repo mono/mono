@@ -20,13 +20,4 @@
   <ItemGroup>
     <ProjectReference Include="..\WebAssembly.Bindings\WebAssembly.Bindings.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="LinkDescriptor\WebAssembly.Net.Http.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LinkDescriptor\WebAssembly.Net.Http.xml">
-      <LogicalName>WebAssembly.Net.Http.xml</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>

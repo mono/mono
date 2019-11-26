@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Private.CoreFx.NETCoreApp" Version="5.0.0-alpha1.19502.7">
+    <Dependency Name="Microsoft.Private.CoreFx.NETCoreApp" Version="5.0.0-alpha.1.19563.3">
       <Uri>https://github.com/dotnet/corefx</Uri>
-      <Sha>a50e056c5a62fb6dfe2e9475be47b93d33661700</Sha>
+      <Sha>5cee7c97d602f294e27c582d4dab81ec388f1d7b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App" Version="5.0.0-alpha1.19476.2">
+    <Dependency Name="Microsoft.NETCore.App" Version="5.0.0-alpha.1.19564.1">
       <Uri>https://github.com/dotnet/core-setup</Uri>
-      <Sha>5a0e8cf49b21c1c6551296f9ee02225c49cc4940</Sha>
+      <Sha>c77948d92a2f950140f09384f057cb893ec3955a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers" Version="3.3.1-beta4-19476-06">
       <Uri>https://github.com/dotnet/roslyn</Uri>
@@ -15,13 +15,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="5.0.0-beta.19506.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="5.0.0-beta.19574.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>7acc732c615d2c2326cd347c8c1841a300a632cb</Sha>
+      <Sha>87b59e17420bf0c3341edacbd8a6721e619afbac</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="5.0.0-beta.19506.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="5.0.0-beta.19574.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>7acc732c615d2c2326cd347c8c1841a300a632cb</Sha>
+      <Sha>87b59e17420bf0c3341edacbd8a6721e619afbac</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

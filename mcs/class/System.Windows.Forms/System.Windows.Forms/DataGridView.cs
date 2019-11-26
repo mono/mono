@@ -4739,7 +4739,7 @@ namespace System.Windows.Forms {
 			else
 				verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta);
 
-			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
+			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value, ScrollOrientation.VerticalScroll));
 		}
 
 		protected virtual void OnMultiSelectChanged (EventArgs e)
@@ -4954,8 +4954,8 @@ namespace System.Windows.Forms {
 			base.OnResize(e);
 			AutoResizeColumnsInternal ();
 			
-			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
-			OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
+			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value, ScrollOrientation.VerticalScroll));
+			OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value, ScrollOrientation.HorizontalScroll));
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e) {
@@ -6357,7 +6357,7 @@ namespace System.Windows.Forms {
 					}
 				
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value - delta_x);
-					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
+					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value, ScrollOrientation.HorizontalScroll));
 				} else if (disp_x > first_col_index + displayedColumnsCount - 1 && disp_x != 0) {
 					RefreshScrollBars ();
 					scrollbarsRefreshed = true;
@@ -6369,7 +6369,7 @@ namespace System.Windows.Forms {
 							delta_x += Columns[ColumnDisplayIndexToIndex (i)].Width;
 
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value + delta_x);
-					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
+					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value, ScrollOrientation.HorizontalScroll));
 				}
 
 				int disp_y = y;
@@ -6391,7 +6391,7 @@ namespace System.Windows.Forms {
 					}
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
-					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
+					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value, ScrollOrientation.VerticalScroll));
 				} else if (disp_y > first_row_index + displayedRowsCount - 1 && disp_y != 0) {
 					if (!scrollbarsRefreshed)
 						RefreshScrollBars ();
@@ -6403,7 +6403,7 @@ namespace System.Windows.Forms {
 							delta_y += GetRowInternal (i).Height;
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value + delta_y);
-					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));				
+					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value, ScrollOrientation.VerticalScroll));				
 				}
 			}
 			

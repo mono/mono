@@ -1,0 +1,68 @@
+# Takes too long
+-nomethod System.Net.Test.Common.VirtualNetworkTest.VirtualNetwork_SingleThreadIntegrityTest_Ok
+-nomethod System.Net.Test.Common.VirtualNetworkStreamTest.VirtualNetworkStream_SingleThreadIntegrityTest_Ok
+
+# Threads
+-nomethod System.Net.Test.Common.VirtualNetworkTest.VirtualNetwork_MultiThreadIntegrityTest_Ok
+-nomethod System.Net.Test.Common.VirtualNetworkStreamTest.VirtualNetworkStream_MultiThreadIntegrityTest_Ok
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.UsePoolInParallel
+-nonamespace System.Collections.Concurrent.Tests
+-noclass System.Collections.Immutable.Tests.ImmutableInterlockedTests
+-nomethod System.Collections.Immutable.Tests.ImmutableArrayTest.AddThreadSafety
+-nomethod System.Collections.Tests.ArrayList_SyncRootTests.GetSyncRoot
+-noclass System.Collections.Tests.ArrayList_SynchronizedTests
+-nomethod System.Collections.Tests.Queue_SyncRootTests.SyncRoot
+-nomethod System.Collections.Tests.Stack_SyncRootTests.GetSyncRootBasic
+-nomethod System.Collections.Tests.Hashtable_SyncRootTests.SyncRoot
+-nomethod System.Collections.Tests.Queue_SynchronizedTests.SynchronizedEnqueue
+
+# Needs crypto
+-noclass Tests.System.MarvinTests
+-noclass Tests.System.Security.IdentityHelperTests
+
+# File IO
+-nomethod Microsoft.VisualBasic.FileIO.Tests.FileSystemTests.GetDriveInfo_Drive
+
+# RemoteExecutor
+-nomethod Microsoft.VisualBasic.Tests.FileSystemTests.CloseAllFiles
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.RentingManyBuffersFiresExpectedDiagnosticEvents
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.RentBufferFiresRentedDiagnosticEvent
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.ReturnBufferFiresDiagnosticEvent
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.RentingNonExistentBufferFiresAllocatedDiagnosticEvent
+-nomethod System.Buffers.ArrayPool.Tests.ArrayPoolUnitTests.RentingBufferOverConfiguredMaximumSizeFiresDiagnosticEvent
+
+# Serialization + mscorlib not found
+-nomethod *.EqualityComparer_SerializationRoundtrip
+-nomethod *.IGenericSharedAPI_SerializeDeserialize
+-nomethod System.Collections.Tests.Dictionary_Tests.ComparerSerialization
+
+# Unclassified
+## Microsoft.VisualBasic.Core.Tests
+-noclass Microsoft.VisualBasic.Tests.ConversionsTests
+-noclass Microsoft.VisualBasic.Tests.ConversionTests
+-nomethod Microsoft.VisualBasic.Tests.FinancialTests.PV
+-nomethod Microsoft.VisualBasic.Tests.FinancialTests.Rate
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.CharTypeTests.FromObject_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.CharTypeTests.FromString_ThrowsInvalidCastException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.CharTypeTests.FromString_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.DateTypeTests.FromObject_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.DateTypeTests.FromString_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.IntegerTypeTests.FromString_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.LongTypeTests.FromString_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.DateTypeTests.FromObject_ThrowsInvalidCastException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.ObjectTypeTests.ObjTst
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.ProjectDataTests.EndApp
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.SingleTypeTests.FromObject_ThrowsOverflowException
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.StringTypeTests.StrCmp
+## System.Collections.Immutable.Tests
+-nomethod System.Collections.Immutable.Tests.ImmutableArrayTest.IStructuralEquatableGetHashCode
+## System.Collections.NonGeneric.Tests
+-nomethod System.Collections.Tests.CaseInsensitiveComparerTests.Ctor_CultureInfo_Compare_TurkishI
+-nomethod System.Collections.Tests.ComparerTests.Default_Compare
+-nomethod System.Collections.Tests.ComparerTests.DefaultInvariant_Compare
+-nomethod System.Collections.Tests.SortedListTests.Item_Get_DifferentCulture
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_CultureInfo_GetHashCodeCompare_TurkishI
+-nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_Compare_TurkishI
+## System.Collections.Specialized.Tests
+## System.Collections.Tests
+-nomethod System.Collections.Tests.StructuralComparisonsTests.StructuralComparer_Compare

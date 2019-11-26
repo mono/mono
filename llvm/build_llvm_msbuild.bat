@@ -60,7 +60,7 @@ if not "%~1" == "" (
 )
 shift
 
-set "VS_ADDITIONAL_ARGUMENTS=/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
+set VS_ADDITIONAL_ARGUMENTS=
 if not "%~1" == "" (
     set VS_ADDITIONAL_ARGUMENTS=%~1
 )
@@ -70,6 +70,10 @@ call %MONO_MSVC_SOURCE_DIR%setup-windows-env.bat
 
 :: Setup VS msbuild environment.
 call %MONO_MSVC_SOURCE_DIR%setup-vs-msbuild-env.bat
+
+if "%VS_ADDITIONAL_ARGUMENTS%" == "" (
+    set "VS_ADDITIONAL_ARGUMENTS=/p:PlatformToolset=%VS_DEFAULT_PLATFORM_TOOL_SET% /p:MONO_TARGET_GC=sgen"
+)
 
 if not "%MONO_LLVM_BUILD_DIR%" == "" (
     set VS_BUILD_ARGS=/p:_LLVMBuildDir="%MONO_LLVM_BUILD_DIR%"

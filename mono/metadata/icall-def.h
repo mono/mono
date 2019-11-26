@@ -115,18 +115,17 @@ ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
 NOHANDLES(ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString))
 
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
-// FIXME Much of this could be NOHANDLES().
-HANDLES(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess, MonoBoolean, 1, (gpointer))
-HANDLES(NATIVEMETHODS_2, "GetCurrentProcess", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess, gpointer, 0, ())
-HANDLES(NATIVEMETHODS_3, "GetCurrentProcessId", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId, gint32, 0, ())
-HANDLES(NATIVEMETHODS_4, "GetExitCodeProcess", ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess, MonoBoolean, 2, (gpointer, gint32_ref))
-HANDLES(NATIVEMETHODS_5, "GetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass, gint32, 1, (gpointer))
-HANDLES(NATIVEMETHODS_6, "GetProcessTimes", ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes, MonoBoolean, 5, (gpointer, gint64_ref, gint64_ref, gint64_ref, gint64_ref))
-HANDLES(NATIVEMETHODS_7, "GetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize, MonoBoolean, 3, (gpointer, gsize_ref, gsize_ref))
-HANDLES(NATIVEMETHODS_8, "SetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass, MonoBoolean, 2, (gpointer, gint32))
-HANDLES(NATIVEMETHODS_9, "SetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize, MonoBoolean, 3, (gpointer, gsize, gsize))
-HANDLES(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess, MonoBoolean, 2, (gpointer, gint32))
-HANDLES(NATIVEMETHODS_11, "WaitForInputIdle", ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle, gint32, 2, (gpointer, gint32))
+NOHANDLES(ICALL(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess))
+NOHANDLES(ICALL(NATIVEMETHODS_2, "GetCurrentProcess", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess))
+NOHANDLES(ICALL(NATIVEMETHODS_3, "GetCurrentProcessId", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId))
+NOHANDLES(ICALL(NATIVEMETHODS_4, "GetExitCodeProcess", ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess))
+NOHANDLES(ICALL(NATIVEMETHODS_5, "GetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass))
+NOHANDLES(ICALL(NATIVEMETHODS_6, "GetProcessTimes", ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes))
+NOHANDLES(ICALL(NATIVEMETHODS_7, "GetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize))
+NOHANDLES(ICALL(NATIVEMETHODS_8, "SetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass))
+NOHANDLES(ICALL(NATIVEMETHODS_9, "SetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize))
+NOHANDLES(ICALL(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess))
+NOHANDLES(ICALL(NATIVEMETHODS_11, "WaitForInputIdle", ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle))
 
 #ifndef DISABLE_COM
 ICALL_TYPE(COMPROX, "Mono.Interop.ComInteropProxy", COMPROX_1)
@@ -138,12 +137,12 @@ ICALL_TYPE(TLS_PROVIDER_FACTORY, "Mono.Net.Security.MonoTlsProviderFactory", TLS
 NOHANDLES(ICALL(TLS_PROVIDER_FACTORY_1, "IsBtlsSupported", ves_icall_Mono_TlsProviderFactory_IsBtlsSupported))
 
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_20)
-HANDLES(RUNTIME_20, "AnnotateMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry, void, 2, (const_char_ptr, const_char_ptr))
-HANDLES(RUNTIME_19, "CheckCrashReportLog_internal", ves_icall_Mono_Runtime_CheckCrashReportingLog, int, 2, (const_char_ptr, MonoBoolean))
-HANDLES(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry, void, 0, ())
+NOHANDLES(ICALL(RUNTIME_20, "AnnotateMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry))
+NOHANDLES(ICALL(RUNTIME_19, "CheckCrashReportLog_internal", ves_icall_Mono_Runtime_CheckCrashReportingLog))
+NOHANDLES(ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry))
 HANDLES(RUNTIME_15, "DumpStateSingle_internal", ves_icall_Mono_Runtime_DumpStateSingle, MonoString, 2, (guint64_ref, guint64_ref))
 HANDLES(RUNTIME_16, "DumpStateTotal_internal", ves_icall_Mono_Runtime_DumpStateTotal, MonoString, 2, (guint64_ref, guint64_ref))
-HANDLES(RUNTIME_18, "EnableCrashReportLog_internal", ves_icall_Mono_Runtime_EnableCrashReportingLog, void, 1, (const_char_ptr))
+NOHANDLES(ICALL(RUNTIME_18, "EnableCrashReportLog_internal", ves_icall_Mono_Runtime_EnableCrashReportingLog))
 HANDLES(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_EnableMicrosoftTelemetry, void, 6, (const_char_ptr, const_char_ptr, const_char_ptr, const_char_ptr, const_char_ptr, const_char_ptr))
 HANDLES(RUNTIME_3, "ExceptionToState_internal", ves_icall_Mono_Runtime_ExceptionToState, MonoString, 3, (MonoException, guint64_ref, guint64_ref))
 HANDLES(RUNTIME_4, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName, MonoString, 0, ())
@@ -157,7 +156,7 @@ ICALL_TYPE(RTCLASS, "Mono.RuntimeClassHandle", RTCLASS_1)
 HANDLES(RTCLASS_1, "GetTypeFromClass", ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass, MonoType_ptr, 1, (MonoClass_ptr))
 
 ICALL_TYPE(RTPTRARRAY, "Mono.RuntimeGPtrArrayHandle", RTPTRARRAY_1)
-HANDLES(RTPTRARRAY_1, "GPtrArrayFree", ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree, void, 1, (GPtrArray_ptr))
+NOHANDLES(ICALL(RTPTRARRAY_1, "GPtrArrayFree", ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree))
 
 ICALL_TYPE(RTMARSHAL, "Mono.RuntimeMarshal", RTMARSHAL_1)
 HANDLES(RTMARSHAL_1, "FreeAssemblyName", ves_icall_Mono_RuntimeMarshal_FreeAssemblyName, void, 2, (MonoAssemblyName_ref, MonoBoolean))
@@ -254,9 +253,9 @@ HANDLES(DELEGATE_2, "CreateDelegate_internal", ves_icall_System_Delegate_CreateD
 HANDLES(DELEGATE_3, "GetVirtualMethod_internal", ves_icall_System_Delegate_GetVirtualMethod_internal, MonoReflectionMethod, 1, (MonoDelegate))
 
 ICALL_TYPE(DEBUGR, "System.Diagnostics.Debugger", DEBUGR_1)
-HANDLES(DEBUGR_1, "IsAttached_internal", ves_icall_System_Diagnostics_Debugger_IsAttached_internal, MonoBoolean, 0, ())
-HANDLES(DEBUGR_2, "IsLogging", ves_icall_System_Diagnostics_Debugger_IsLogging, MonoBoolean, 0, ())
-HANDLES(DEBUGR_3, "Log", ves_icall_System_Diagnostics_Debugger_Log, void, 3, (int, MonoString, MonoString))
+NOHANDLES(ICALL(DEBUGR_1, "IsAttached_internal", ves_icall_System_Diagnostics_Debugger_IsAttached_internal))
+NOHANDLES(ICALL(DEBUGR_2, "IsLogging", ves_icall_System_Diagnostics_Debugger_IsLogging))
+NOHANDLES(ICALL(DEBUGR_3, "Log_icall", ves_icall_System_Diagnostics_Debugger_Log))
 
 ICALL_TYPE(TRACEL, "System.Diagnostics.DefaultTraceListener", TRACEL_1)
 HANDLES(TRACEL_1, "WriteWindowsDebugString", ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString, void, 1, (const_gunichar2_ptr))
@@ -337,7 +336,6 @@ HANDLES(GC_0a, "GetGeneration", ves_icall_System_GC_GetGeneration, int, 1, (Mono
 NOHANDLES(ICALL(GC_0b, "GetMaxGeneration", ves_icall_System_GC_GetMaxGeneration))
 NOHANDLES(ICALL(GC_1, "GetTotalMemory", ves_icall_System_GC_GetTotalMemory))
 NOHANDLES(ICALL(GC_2, "InternalCollect", ves_icall_System_GC_InternalCollect))
-HANDLES(GC_3, "KeepAlive", ves_icall_System_GC_KeepAlive, void, 1, (MonoObject))
 NOHANDLES(ICALL(GC_4a, "RecordPressure", ves_icall_System_GC_RecordPressure))
 NOHANDLES(ICALL(GC_6, "WaitForPendingFinalizers", ves_icall_System_GC_WaitForPendingFinalizers))
 HANDLES(GC_6b, "_ReRegisterForFinalize", ves_icall_System_GC_ReRegisterForFinalize, void, 1, (MonoObject))
@@ -530,7 +528,7 @@ NOHANDLES(ICALL(LINUXNETWORKCHANGE_2, "CreateNLSocket", ves_icall_System_Net_Net
 NOHANDLES(ICALL(LINUXNETWORKCHANGE_3, "ReadEvents", ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents))
 #endif
 
-#if !defined(DISABLE_SOCKETS) && (defined(HOST_DARWIN) || defined(HOST_BSD))
+#if !defined(DISABLE_SOCKETS)
 ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
 HANDLES(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal, MonoBoolean, 2, (MonoString, MonoArrayOut))
 #endif
@@ -760,7 +758,6 @@ HANDLES(MARSHAL_4, "DestroyStructure", ves_icall_System_Runtime_InteropServices_
 NOHANDLES(ICALL(MARSHAL_5, "FreeBSTR", ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR))
 NOHANDLES(ICALL(MARSHAL_6, "FreeCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem))
 NOHANDLES(ICALL(MARSHAL_7, "FreeHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal))
-HANDLES(MARSHAL_7a, "GetArrayElementSize", ves_icall_System_Runtime_InteropServices_Marshal_GetArrayElementSize, int, 1, (MonoReflectionType))
 #ifndef DISABLE_COM
 HANDLES(MARSHAL_44, "GetCCW", ves_icall_System_Runtime_InteropServices_Marshal_GetCCW, gpointer, 2, (MonoObject, MonoReflectionType))
 HANDLES(MARSHAL_8, "GetComSlotForMethodInfoInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal, guint32, 1, (MonoReflectionMethod))
@@ -980,8 +977,6 @@ NOHANDLES(ICALL(ILOCK_7, "CompareExchange(intptr&,intptr,intptr)", ves_icall_Sys
 NOHANDLES(ICALL(ILOCK_8, "CompareExchange(long&,long,long)", ves_icall_System_Threading_Interlocked_CompareExchange_Long))
 NOHANDLES(ICALL(ILOCK_9, "CompareExchange(object&,object&,object&,object&)", ves_icall_System_Threading_Interlocked_CompareExchange_Object))
 NOHANDLES(ICALL(ILOCK_10, "CompareExchange(single&,single,single)", ves_icall_System_Threading_Interlocked_CompareExchange_Single))
-// aot-compiler.c and aot-runtime.c know about this.
-NOHANDLES(ICALL(ILOCK_10b, "CompareExchange_T", ves_icall_System_Threading_Interlocked_CompareExchange_T))
 NOHANDLES(ICALL(ILOCK_11, "Decrement(int&)", ves_icall_System_Threading_Interlocked_Decrement_Int))
 NOHANDLES(ICALL(ILOCK_12, "Decrement(long&)", ves_icall_System_Threading_Interlocked_Decrement_Long))
 NOHANDLES(ICALL(ILOCK_14, "Exchange(double&,double)", ves_icall_System_Threading_Interlocked_Exchange_Double))
@@ -990,8 +985,6 @@ NOHANDLES(ICALL(ILOCK_16, "Exchange(intptr&,intptr)", ves_icall_System_Threading
 NOHANDLES(ICALL(ILOCK_17, "Exchange(long&,long)", ves_icall_System_Threading_Interlocked_Exchange_Long))
 NOHANDLES(ICALL(ILOCK_18, "Exchange(object&,object&,object&)", ves_icall_System_Threading_Interlocked_Exchange_Object))
 NOHANDLES(ICALL(ILOCK_19, "Exchange(single&,single)", ves_icall_System_Threading_Interlocked_Exchange_Single))
-// aot-compiler.c and aot-runtime.c know about this.
-NOHANDLES(ICALL(ILOCK_19b, "Exchange_T", ves_icall_System_Threading_Interlocked_Exchange_T))
 NOHANDLES(ICALL(ILOCK_20, "Increment(int&)", ves_icall_System_Threading_Interlocked_Increment_Int))
 NOHANDLES(ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlocked_Increment_Long))
 NOHANDLES(ICALL(ILOCK_22, "MemoryBarrierProcessWide", ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide))

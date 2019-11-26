@@ -15,10 +15,7 @@
 #include <config.h>
 #include <glib.h>
 #include <string.h>
-
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
@@ -75,6 +72,7 @@
 #include "mini.h"
 #include "trace.h"
 #include "debugger-agent.h"
+#include "debugger-engine.h"
 #include "seq-points.h"
 #include "llvm-runtime.h"
 #include "mini-llvm.h"
@@ -97,6 +95,7 @@
 #if !defined(DISABLE_CRASH_REPORTING)
 #include <gmodule.h>
 #endif
+#include "mono/utils/mono-tls-inline.h"
 
 /*
  * Raw frame information is stored in MonoException.trace_ips as an IntPtr[].
@@ -762,7 +761,10 @@ unwinder_unwind_frame (Unwinder *unwinder,
 		unwinder->in_interp = mini_get_interp_callbacks ()->frame_iter_next (&unwinder->interp_iter, frame);
 		if (frame->type == FRAME_TYPE_INTERP) {
 			parent = mini_get_interp_callbacks ()->frame_get_parent (frame->interp_frame);
-			unwinder->last_frame_addr = parent;
+			if (parent)
+				unwinder->last_frame_addr = mini_get_interp_callbacks ()->frame_get_native_stack_addr (parent);
+			else
+				unwinder->last_frame_addr = NULL;
 		}
 		if (!unwinder->in_interp)
 			return unwinder_unwind_frame (unwinder, domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf, save_locations, frame);
@@ -845,8 +847,8 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 /*
  * generic_info is either a MonoMethodRuntimeGenericContext or a MonoVTable.
  */
-static MonoGenericContext
-get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
+MonoGenericContext
+mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
 	MonoGenericContext context = { NULL, NULL };
 	MonoClass *klass, *method_container_class;
@@ -891,6 +893,7 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	return context;
 }
 
+
 static MonoMethod*
 get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
@@ -900,7 +903,7 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	
 	if (!ji->has_generic_jit_info || !mono_jit_info_get_generic_jit_info (ji)->has_this)
 		return jinfo_get_method (ji);
-	context = get_generic_context_from_stack_frame (ji, generic_info);
+	context = mono_get_generic_context_from_stack_frame (ji, generic_info);
 
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
@@ -1951,7 +1954,7 @@ get_exception_catch_class (MonoJitExceptionInfo *ei, MonoJitInfo *ji, MonoContex
 
 	if (!ji->has_generic_jit_info || !mono_jit_info_get_generic_jit_info (ji)->has_this)
 		return catch_class;
-	context = get_generic_context_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, ctx));
+	context = mono_get_generic_context_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, ctx));
 
 	/* FIXME: we shouldn't inflate but instead put the
 	   type in the rgctx and fetch it from there.  It
@@ -2218,7 +2221,7 @@ typedef enum {
  * return \c MONO_FIRST_PASS_CALLBACK_TO_NATIVE).
  */
 static MonoFirstPassResult
-handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception, StackFrameInfo *catch_frame, gboolean *has_perform_wait_callback_method)
+handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception, StackFrameInfo *catch_frame, gboolean *last_mono_wrapper_runtime_invoke)
 {
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
@@ -2242,7 +2245,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 	MonoFirstPassResult result = MONO_FIRST_PASS_UNHANDLED;
 
 	g_assert (ctx != NULL);
-
+	*last_mono_wrapper_runtime_invoke = TRUE;
 	if (obj == (MonoObject *)domain->stack_overflow_ex)
 		stack_overflow = TRUE;
 
@@ -2475,8 +2478,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 						//try to find threadpool_perform_wait_callback_method
 						unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &new_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
 						while (unwind_res) {
-							if (frame.ji && !frame.ji->is_trampoline && jinfo_get_method (frame.ji) == mono_defaults.threadpool_perform_wait_callback_method) {
-								*has_perform_wait_callback_method = TRUE;
+							if (frame.ji && !frame.ji->is_trampoline && jinfo_get_method (frame.ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
+								*last_mono_wrapper_runtime_invoke = FALSE;
 								break;
 							}
 							unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &new_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
@@ -2555,6 +2558,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	MonoObject *non_exception = NULL;
 	Unwinder unwinder;
 	gboolean in_interp;
+	gboolean is_caught_unmanaged = FALSE;
+	gboolean last_mono_wrapper_runtime_invoke = TRUE;
 
 	g_assert (ctx != NULL);
 	if (!obj) {
@@ -2593,6 +2598,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		while (1)
 			;
 	}
+
+	if (mono_ex->caught_in_unmanaged)
+		is_caught_unmanaged = TRUE;
+	
 
 	if (mono_object_isinst_checked (obj, mono_defaults.exception_class, error)) {
 		mono_ex = (MonoException*)obj;
@@ -2686,8 +2695,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 		StackFrameInfo catch_frame;
 		MonoFirstPassResult res;
-		gboolean has_perform_wait_callback_method = FALSE;
-		res = handle_exception_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception, &catch_frame, &has_perform_wait_callback_method);
+		res = handle_exception_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception, &catch_frame, &last_mono_wrapper_runtime_invoke);
 
 		if (res == MONO_FIRST_PASS_UNHANDLED) {
 			if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) {
@@ -2719,20 +2727,24 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			 * FIXME: The check below is hackish, but its hard to distinguish
 			 * these runtime invoke calls from others in the runtime.
 			 */
+#ifndef ENABLE_NETCORE
 			if (ji && jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
 				if (prev_ji && jinfo_get_method (prev_ji) == mono_defaults.threadpool_perform_wait_callback_method)
 					unhandled = TRUE;
 			}
+#endif
 
 			if (unhandled)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 			else if (!ji || (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)) {
-				if (!has_perform_wait_callback_method)
+				if (last_mono_wrapper_runtime_invoke && mono_thread_get_main () && (mono_thread_internal_current () == mono_thread_get_main ()->internal_thread))
 					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
-				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
+				else
+					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 			}
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
-				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
+				if (!is_caught_unmanaged)
+					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 		}
 	}
 
@@ -4013,7 +4025,7 @@ mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 reg
 			MonoType *inflated_type;
 
 			g_assert (rgctx || this_obj);
-			context = get_generic_context_from_stack_frame (jinfo, rgctx ? rgctx : this_obj->vtable);
+			context = mono_get_generic_context_from_stack_frame (jinfo, rgctx ? rgctx : this_obj->vtable);
 			inflated_type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (catch_class), &context, error);
 			mono_error_assert_ok (error); /* FIXME don't swallow the error */
 

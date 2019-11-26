@@ -23,8 +23,8 @@ if SUPPORT_NULLGC
 libgc_libs=
 libgc_static_libs=
 else
-libgc_libs=$(monodir)/libgc/libmonogc.la
-libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
+libgc_libs=$(monodir)/external/bdwgc/libgc.la
+libgc_static_libs=$(monodir)/external/bdwgc/libgc-static.la
 endif
 
 glib_libs = $(monodir)/mono/eglib/libeglib.la
@@ -214,6 +214,7 @@ if LOADED_LLVM
 lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
 libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
+libmono_llvm_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
 if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace 
@@ -550,6 +551,8 @@ common_sources = \
 	llvmonly-runtime.c \
 	aot-runtime.h	\
 	ee.h \
+	tiered.h \
+	tiered.c \
 	mini-runtime.h
 
 endif # !ENABLE_MSVC_ONLY

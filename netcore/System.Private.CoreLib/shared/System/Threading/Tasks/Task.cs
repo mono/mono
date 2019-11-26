@@ -1434,8 +1434,12 @@ namespace System.Threading.Tasks
         /// </remarks>
         public static TaskFactory Factory { get; } = new TaskFactory();
 
+        /// <summary>Singleton cached task that's been completed successfully.</summary>
+        /// <remarks>It's a <see cref="Task{VoidTaskResult}"/> so it can be shared with <see cref="AsyncTaskMethodBuilder"/>.</remarks>
+        internal static readonly Task<VoidTaskResult> s_cachedCompleted = new Task<VoidTaskResult>(false, default, (TaskCreationOptions)InternalTaskOptions.DoNotDispose, default);
+
         /// <summary>Gets a task that's already been completed successfully.</summary>
-        public static Task CompletedTask { get; } = new Task(false, (TaskCreationOptions)InternalTaskOptions.DoNotDispose, default);
+        public static Task CompletedTask => s_cachedCompleted;
 
         /// <summary>
         /// Provides an event that can be used to wait for completion.
@@ -2273,7 +2277,7 @@ namespace System.Threading.Tasks
 
             // ETW event for Task Started
             TplEventSource log = TplEventSource.Log;
-            Guid savedActivityID = new Guid();
+            Guid savedActivityID = default;
             bool etwIsEnabled = log.IsEnabled();
             if (etwIsEnabled)
             {
@@ -2550,7 +2554,6 @@ namespace System.Threading.Tasks
             // If we're unable to because the task has already completed, queue it.
             if (!AddTaskContinuation(stateMachineBox, addBeforeOthers: false))
             {
-                Debug.Assert(stateMachineBox is Task, "Every state machine box should derive from Task");
                 ThreadPool.UnsafeQueueUserWorkItemInternal(stateMachineBox, preferLocal: true);
             }
         }
@@ -2563,7 +2566,7 @@ namespace System.Threading.Tasks
         /// </returns>
         public static YieldAwaitable Yield()
         {
-            return new YieldAwaitable();
+            return default;
         }
         #endregion
 
@@ -2882,7 +2885,7 @@ namespace System.Threading.Tasks
             }
 
             int spinCount = Threading.SpinWait.SpinCountforSpinBeforeWait;
-            var spinner = new SpinWait();
+            SpinWait spinner = default;
             while (spinner.Count < spinCount)
             {
                 spinner.SpinOnce(sleep1Threshold: -1);

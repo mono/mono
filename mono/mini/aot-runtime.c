@@ -70,6 +70,7 @@
 #include "aot-runtime.h"
 #include "jit-icalls.h"
 #include "mini-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifndef DISABLE_AOT
 
@@ -186,8 +187,8 @@ static GHashTable *static_aot_modules;
  * and it needs to be fully loaded by the time the other code needs it, it
  * must be eagerly loaded before other modules.
  */
-static char *container_assm_name = NULL;
-static MonoAotModule *container_amodule = NULL;
+static char *container_assm_name;
+static MonoAotModule *container_amodule;
 
 /*
  * Maps MonoJitInfo* to the aot module they belong to, this can be different
@@ -272,6 +273,7 @@ load_image (MonoAotModule *amodule, int index, MonoError *error)
 {
 	MonoAssembly *assembly;
 	MonoImageOpenStatus status;
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
 
 	g_assert (index < amodule->image_table_len);
 
@@ -299,10 +301,17 @@ load_image (MonoAotModule *amodule, int index, MonoError *error)
 	 * current AOT module matches the wanted name and guid and just return
 	 * the AOT module's assembly.
 	 */
-	if (!strcmp (amodule->assembly->image->guid, amodule->image_guids [index]))
+	if (!strcmp (amodule->assembly->image->guid, amodule->image_guids [index])) {
 		assembly = amodule->assembly;
-	else
-		assembly = mono_assembly_load (&amodule->image_names [index], amodule->assembly->basedir, &status);
+	} else if (mono_get_corlib () && !strcmp (mono_get_corlib ()->guid, amodule->image_guids [index])) {
+		/* This might be called before corlib is added to the root domain */
+		assembly = mono_get_corlib ()->assembly;
+	} else {
+		MonoAssemblyByNameRequest req;
+		mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, alc);
+		req.basedir = amodule->assembly->basedir;
+		assembly = mono_assembly_request_byname (&amodule->image_names [index], &req, &status);
+	}
 	if (!assembly) {
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable because dependency %s is not found.", amodule->aot_name, amodule->image_names [index].name);
 		mono_error_set_bad_image_by_name (error, amodule->aot_name, "module is unusable because dependency %s is not found (error %d).\n", amodule->image_names [index].name, status);
@@ -2090,23 +2099,6 @@ load_aot_module (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer 
 
 	mono_aot_lock ();
 
-if (container_assm_name && !container_amodule) {
-	char *local_ref = container_assm_name;
-	container_assm_name = NULL;
-	MonoImageOpenStatus status = MONO_IMAGE_OK;
-	MonoAssemblyOpenRequest req;
-	gchar *dll = g_strdup_printf (		"%s.dll", local_ref);
-	mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
-	MonoAssembly *assm = mono_assembly_request_open (dll, &req, &status);
-	if (!assm) {
-		gchar *exe = g_strdup_printf ("%s.exe", local_ref);
-		assm = mono_assembly_request_open (exe, &req, &status);
-	}
-	g_assert (assm);
-	load_aot_module (alc, assm, NULL, error);
-	container_amodule = assm->image->aot_module;
-}
-
 	if (static_aot_modules)
 		info = (MonoAotFileInfo *)g_hash_table_lookup (static_aot_modules, assembly->aname.name);
 
@@ -2534,6 +2526,30 @@ void
 mono_aot_cleanup (void)
 {
 	g_hash_table_destroy (aot_modules);
+}
+
+static void
+load_container_amodule (MonoAssemblyLoadContext *alc)
+{
+	ERROR_DECL (error);
+
+	if (!container_assm_name || container_amodule)
+		return;
+
+	char *local_ref = container_assm_name;
+	container_assm_name = NULL;
+	MonoImageOpenStatus status = MONO_IMAGE_OK;
+	MonoAssemblyOpenRequest req;
+	gchar *dll = g_strdup_printf (		"%s.dll", local_ref);
+	mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
+	MonoAssembly *assm = mono_assembly_request_open (dll, &req, &status);
+	if (!assm) {
+		gchar *exe = g_strdup_printf ("%s.exe", local_ref);
+		assm = mono_assembly_request_open (exe, &req, &status);
+	}
+	g_assert (assm);
+	load_aot_module (alc, assm, NULL, error);
+	container_amodule = assm->image->aot_module;
 }
 
 static gboolean
@@ -4709,6 +4725,9 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		(method->flags & METHOD_ATTRIBUTE_ABSTRACT))
 		return NULL;
 
+	/* Load the dedup module lazily */
+	load_container_amodule (mono_assembly_get_alc (amodule->assembly));
+
 	/*
 	 * Use the original method instead of its invoke-with-check wrapper.
 	 * This is not a problem when using full-aot, since it doesn't support
@@ -4792,83 +4811,6 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
 			if (!m)
 				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
-
-			/* 
-			 * Get the code for the <object> instantiation which should be emitted into
-			 * the mscorlib aot image by the AOT compiler.
-			 */
-			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
-			mono_error_cleanup (inner_error);
-			if (code)
-				return code;
-		}
-
-		const char *klass_name_space = m_class_get_name_space (method->klass);
-		const char *klass_name = m_class_get_name (method->klass);
-
-		gboolean interlocked = FALSE;
-		gboolean volatil = FALSE;
-		MonoMethodSignature *sig;
-
-		/* Same for CompareExchange<T> and Exchange<T> */
-		/* Same for Volatile.Read<T>/Write<T> */
-
-		if (method_index == 0xffffff
-			&& method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE
-			&& m_class_get_image (method->klass) == mono_defaults.corlib
-			&& !strcmp (klass_name_space, "System.Threading") &&
-
-			(((interlocked = !strcmp (klass_name, "Interlocked"))
-				&& !strcmp (method->name, "CompareExchange_T")
-				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count
-				//FIXME && sig->param_count == 4
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [3])
-				) ||
-			 (interlocked
-				&& !strcmp (method->name, "Exchange_T")
-				&& (sig = mono_method_signature_internal (method))
-				&& sig->param_count
-				//FIXME && sig->param_count == 3
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [0])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [1])
-				//FIXME && MONO_TYPE_IS_REFERENCE (sig->params [2])
-				) ||
-			 (!interlocked
-				&& (volatil = !strcmp (klass_name, "Volatile"))
-				&& !strcmp (method->name, "Read")
-				&& (sig = mono_method_signature_internal (method))
-				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->ret))
-				) ||
-			 (volatil
-				&& !strcmp (method->name, "Write")
-				&& (sig = mono_method_signature_internal (method))
-				&& MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (sig->params [1]))))
-				) {
-			MonoMethod *m;
-			MonoGenericContext ctx;
-			gpointer iter = NULL;
-
-			while ((m = mono_class_get_methods (method->klass, &iter))) {
-				if (mono_method_signature_internal (m)->generic_param_count && !strcmp (m->name, method->name))
-					break;
-			}
-			g_assert (m);
-
-			memset (&ctx, 0, sizeof (ctx));
-			MonoType *args [ ] = { mono_get_object_type () };
-			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
-
-			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
-			if (!m)
-				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
-
-			/* Avoid recursion */
-			if (method == m)
-				return NULL;
 
 			/* 
 			 * Get the code for the <object> instantiation which should be emitted into

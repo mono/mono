@@ -258,5 +258,16 @@ namespace BindingsTestSuite
             var arr = new WebAssembly.Core.Array();
             return arr.Pop();
         }
+
+        public static int ParameterTest () 
+        { 
+            return -1;
+        }
+
+        public static int ParameterTest2 (string param1) 
+        { 
+            return -1;
+        }
+
     }
 }

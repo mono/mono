@@ -85,6 +85,7 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 #include "llvmonly-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #define BRANCH_COST 10
 #define CALL_COST 10
@@ -7240,6 +7241,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
 
+#ifndef ENABLE_NETCORE
 			if ((cfg->opt & MONO_OPT_INTRINS) && (ins = mini_emit_inst_for_sharable_method (cfg, cmethod, fsig, sp))) {
 				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 					mini_type_to_eval_stack_type ((cfg), fsig->ret, ins);
@@ -7250,6 +7252,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					mono_tailcall_print ("missed tailcall intrins_sharable %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
+#endif
 
 			/*
 			 * Implement a workaround for the inherent races involved in locking:
@@ -9090,6 +9093,7 @@ calli_end:
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE (method, field);
 			mono_class_init_internal (klass);
+			mono_class_setup_fields (klass);
 
 			/* if the class is Critical then transparent code cannot access it's fields */
 			if (!is_instance && mono_security_core_clr_enabled ())
@@ -9136,6 +9140,8 @@ calli_end:
 
 			/* INSTANCE CASE */
 
+			if (is_instance)
+				g_assert (field->offset);
 			foffset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject): field->offset;
 			if (il_op == MONO_CEE_STFLD) {
 				sp [1] = convert_value (cfg, field->type, sp [1]);
@@ -10699,6 +10705,13 @@ mono_ldptr:
 
 			*sp++ = ins;
 			break;
+		case MONO_CEE_MONO_GET_SP: {
+			/* Used by COOP only, so this is good enough */
+			MonoInst *var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
+			EMIT_NEW_VARLOADA (cfg, ins, var, NULL);
+			*sp++ = ins;
+			break;
+		}
 
 		case MONO_CEE_ARGLIST: {
 			/* somewhat similar to LDTOKEN */

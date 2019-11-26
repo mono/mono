@@ -23,6 +23,7 @@ TEST_CASES := \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs \
+	System/test-typeconverter.cs \
 	System.Core/test-plinq-01.cs
 
 ifdef INCLUDE_DISABLED
@@ -109,7 +110,7 @@ BINARY_TEST_CASES = \
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw -d ../../../external/binary-reference-assemblies/build/monowasm
 
 BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
 

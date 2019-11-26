@@ -2593,11 +2593,17 @@ LIBTEST_API void STDCALL
 mono_safe_handle_ref (void **handle)
 {
 	if (*handle != 0){
-		*handle = (void *) 0xbad;
+		*handle = (void *) 0x800d;
 		return;
 	}
 
-	*handle = (void *) 0x800d;
+	*handle = (void *) 0xbad;
+}
+
+LIBTEST_API void* STDCALL
+mono_safe_handle_ref_nomod (void **handle)
+{
+	return *handle;
 }
 
 LIBTEST_API double STDCALL
@@ -4585,7 +4591,7 @@ mono_test_managed_Winx64_struct5_in(managed_struct5_delegate func)
 	winx64_struct5 val;
 	val.a = 5;
 	val.b = 0x10;
-	val.c = 0x99;
+	val.c = (char)0x99;
 	return func (val);
 }
 
@@ -7748,9 +7754,6 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 typedef void (*VoidVoidCallback) (void);
 typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
 
-static jmp_buf test_jmp_buf;
-static guint32 test_gchandle;
-
 typedef long long MonoObject;
 typedef MonoObject MonoException;
 typedef int32_t mono_bool;
@@ -7788,6 +7791,10 @@ mono_test_init_symbols (void)
 	sym_inited = 1;
 }
 
+#ifndef TARGET_WASM
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
 
 static void
 mono_test_longjmp_callback (guint32 gchandle)
@@ -7810,6 +7817,8 @@ mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handl
 		*out_handle = test_gchandle;
 	}
 }
+
+#endif
 
 LIBTEST_API void STDCALL
 mono_test_marshal_bstr (void *ptr)

@@ -554,8 +554,6 @@ namespace System {
 			get {
 				if (!inited) {
 					Init ();
-				} else {
-					GetCursorPosition ();
 				}
 
 				return cursorLeft;
@@ -573,8 +571,6 @@ namespace System {
 			get {
 				if (!inited) {
 					Init ();
-				} else {
-					GetCursorPosition ();
 				}
 
 				return cursorTop;

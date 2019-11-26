@@ -34,22 +34,17 @@ namespace WebAssembly.Net.Http.HttpClient {
 		/// <summary>
 		/// Gets or sets whether responses should be streamed if supported
 		/// </summary>
-		public static bool StreamingEnabled { get; set; } = true;
+		public static bool StreamingEnabled { get; set; } = false;
 
 		static WasmHttpMessageHandler ()
 		{
-			using (var streamingSupported = new Function ("return 'body' in Response.prototype && typeof ReadableStream === 'function'"))
+			using (var streamingSupported = new Function ("return typeof Response !== 'undefined' && 'body' in Response.prototype && typeof ReadableStream === 'function'"))
 				StreamingSupported = (bool)streamingSupported.Call ();
 		}
 
 		public WasmHttpMessageHandler ()
 		{
 			handlerInit ();
-		}
-
-		private static WasmHttpMessageHandler GetHttpMessageHandler ()
-		{
-			return new WasmHttpMessageHandler ();
 		}
 
 		private void handlerInit ()
@@ -151,8 +146,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				requestObject.Dispose ();
 
-				var response = (Task<object>)fetch.Invoke ("apply", window, args);
+				var response = fetch.Invoke ("apply", window, args) as Task<object>;
 				args.Dispose ();
+				if (response == null)
+					throw new Exception("Internal error marshalling the response Promise from `fetch`.");
 
 				var t = await response;
 

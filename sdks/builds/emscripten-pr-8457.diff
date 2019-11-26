@@ -1,15 +1,5 @@
 --- a/emcc.py	2019-08-13 20:07:34.000000000 -0500
 +++ b/emcc.py	2019-08-27 08:05:39.000000000 -0500
-@@ -890,6 +890,9 @@
-     lib_dirs = [shared.path_from_root('system', 'local', 'lib'),
-                 shared.path_from_root('system', 'lib')]
- 
-+    # -c mean compile to object files(s), don't link
-+    has_dash_c = '-c' in newargs
-+
-     # find input files this a simple heuristic. we should really analyze
-     # based on a full understanding of gcc params, right now we just assume that
-     # what is left contains no more |-x OPT| things
 @@ -915,7 +918,7 @@
          file_suffix = get_file_suffix(arg)
          if file_suffix in SOURCE_ENDINGS + BITCODE_ENDINGS + DYNAMICLIB_ENDINGS + ASSEMBLY_ENDINGS + HEADER_ENDINGS or shared.Building.is_ar(arg): # we already removed -o <target>, so all these should be inputs
