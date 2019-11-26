@@ -78,8 +78,8 @@ namespace System.Net.Http
 		}
 
 		public bool UseProxy {
-			get => throw new PlatformNotSupportedException ("Property AutomaticDecompression is not supported.");
-			set => throw new PlatformNotSupportedException ("Property AutomaticDecompression is not supported.");
+			get => throw new PlatformNotSupportedException ("Property UseProxy is not supported.");
+			set => throw new PlatformNotSupportedException ("Property UseProxy is not supported.");
 		}
 
 		public IWebProxy Proxy {
