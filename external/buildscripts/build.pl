@@ -471,7 +471,7 @@ if ($build)
 	}
 
 	my $macSdkPath = "";
-	my $macversion = '10.8';
+	my $macversion = '10.11';
 	my $darwinVersion = "10";
 	if ($^O eq 'darwin')
 	{
@@ -1231,6 +1231,8 @@ if ($build)
 		$ENV{'CC'} = "$macSdkPath/../usr/bin/clang";
 		$ENV{'CXX'} = "$macSdkPath/../usr/bin/clang++";
 		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-D_XOPEN_SOURCE -I$macBuildEnvDir/builds/usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath";
+		$ENV{'CXXFLAGS'} = $ENV{CFLAGS};
+		$ENV{'CPPFLAGS'} = $ENV{CFLAGS};
 
 		$ENV{CFLAGS} = "$ENV{CFLAGS} -g -O0" if $debug;
 		$ENV{CFLAGS} = "$ENV{CFLAGS} -Os" if not $debug; #optimize for size
@@ -1430,8 +1432,8 @@ if ($build)
 	if(!($disableMcs))
 	{
 		my @additionalProfiles = ();
-		push @additionalProfiles, "unityjit";
-		push @additionalProfiles, "unityaot";
+		#push @additionalProfiles, "unityjit";
+		#push @additionalProfiles, "unityaot";
 
 		chdir("$monoroot/mcs");
 		foreach my $profileName(@additionalProfiles)
@@ -1451,6 +1453,9 @@ if ($build)
 			system("cp $monoroot/mcs/class/lib/$profileName/*.dll $profileDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $profileDestDir\n");
 			system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $profileDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $profileDestDir/Facades\n");
 		}
+
+			system("cp -R $monoprefix/lib/mono/4.5 $monoprefix/lib/mono/unityjit") eq 0 or die("Failed copying unityjit\n");
+			system("cp -R $monoprefix/lib/mono/4.5 $monoprefix/lib/mono/unityaot") eq 0 or die("Failed copying unityaot\n");
 
 		chdir("$monoroot");
 
@@ -1693,7 +1698,7 @@ if ($artifact)
 			# embedruntimes directory setup
 	 		print ">>> Hardlinking libmonosgen-2.0\n";
 
-			system("ln","-f", "$monoroot/mono/mini/.libs/libmonobdwgc-2.0.dylib","$embedDirArchDestination/libmonobdwgc-2.0.dylib") eq 0 or die ("failed symlinking libmonobdwgc-2.0.dylib\n");
+			system("ln","-f", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.dylib","$embedDirArchDestination/libmonobdwgc-2.0.dylib") eq 0 or die ("failed symlinking libmonobdwgc-2.0.dylib\n");
 			system("ln","-f", "$monoroot/mono/mini/.libs/libmonosgen-2.0.dylib","$embedDirArchDestination/libmonosgen-2.0.dylib") eq 0 or die ("failed symlinking libmonosgen-2.0.dylib\n");
 
 			print "Hardlinking libMonoPosixHelper.dylib\n";
