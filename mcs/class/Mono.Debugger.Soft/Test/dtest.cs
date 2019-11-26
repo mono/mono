@@ -2476,6 +2476,7 @@ public class DebuggerTests
 	[Test]
 	[Category("NotOnWindows")]
 	[Category ("AndroidSdksNotWorking")]
+	[Category ("NotWorkingRuntimeInterpreter")] /* See https://github.com/mono/mono/commit/0a90cf4303f8bea334bf826155b86a7269c61373 */
 	public void Crash () {
 		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
 
