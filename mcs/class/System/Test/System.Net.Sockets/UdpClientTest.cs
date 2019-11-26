@@ -95,8 +95,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (AddressFamily)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor2_Family_Invalid ()
@@ -177,8 +176,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor3_Port_OutOfRange ()
@@ -242,8 +240,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (IPEndPoint)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor4_LocalEP_Null ()
@@ -316,8 +313,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor5_Family_Invalid ()
@@ -350,8 +346,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor5_Port_OutOfRange ()
@@ -431,8 +426,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor6_HostName_Null ()
@@ -449,8 +443,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-		[Category ("NotWasm")]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor6_Port_OutOfRange ()
