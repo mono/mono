@@ -8,8 +8,7 @@ class FsharpPackage(GitHubTarballPackage):
             override_properties={ 'make': 'make all install PREFIX="%{package_prefix}" DESTDIR=%{stage_root}' })
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
-        self.sources.extend(['patches/fsharp-portable-pdb.patch',
-                             'patches/fsharp-custom-prefix.patch'])
+        self.sources.extend(['patches/fsharp-portable-pdb.patch'])
 
     def prep(self):
         Package.prep(self)
