@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libproc.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
