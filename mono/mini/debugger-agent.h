@@ -30,7 +30,7 @@ struct _MonoDebuggerCallbacks {
 	void (*debug_log) (int level, MonoString *category, MonoString *message);
 	gboolean (*debug_log_is_enabled) (void);
 	void (*send_crash) (char *json_dump, MonoStackHash *hashes, int pause);
-	void (*attach_debugger) ;
+	void (*attach_debugger) (void);
 };
 
 typedef struct _DebuggerTlsData DebuggerTlsData;
