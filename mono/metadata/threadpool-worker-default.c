@@ -195,9 +195,9 @@ COUNTER_READ (void)
 }
 
 static gint16
-counter_num_active (const ThreadPoolWorkerCounter *counter)
+counter_num_active (ThreadPoolWorkerCounter counter)
 {
-	gint16 num_active = counter->_.starting + counter->_.working + counter->_.parked;
+	gint16 num_active = counter._.starting + counter._.working + counter._.parked;
 	g_assert (num_active >= 0);
 	return num_active;
 }
@@ -509,11 +509,12 @@ worker_thread (gpointer unused)
 	if (worker_timed_out) {
 		gint16 decr_max_working;
 		COUNTER_ATOMIC (counter, {
-				decr_max_working = MAX (worker.limit_worker_min, MIN (counter_num_active (&counter), counter._.max_working));
+				decr_max_working = MAX (worker.limit_worker_min, MIN (counter_num_active (counter), counter._.max_working));
 				counter._.max_working = decr_max_working;
 		});
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker timed out, setting max_working to %d",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker timed out, starting = %d working = %d parked = %d, setting max_working to %d",
 			    GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())),
+			    counter._.starting, counter._.working, counter._.parked,
 			    decr_max_working);
 		hill_climbing_force_change (decr_max_working, TRANSITION_THREAD_TIMED_OUT);
 	}
@@ -706,6 +707,8 @@ monitor_thread (gpointer unused)
 		g_assert (worker.monitor_status != MONITOR_STATUS_NOT_RUNNING);
 
 #if 0
+		// This is ifdef'd out because otherwise we flood the log every
+		// MONITOR_INTERVAL ms, which is pretty noisy.
 		if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL)) {
 			ThreadPoolWorkerCounter trace_counter = COUNTER_READ ();
 			gint32 work_items = work_item_count ();
@@ -743,13 +746,14 @@ monitor_thread (gpointer unused)
 		if (!monitor_sufficient_delay_since_last_dequeue ())
 			continue;
 
-		limit_worker_max_reached = FALSE;
-		gboolean active_max_reached = FALSE;
+		gboolean active_max_reached;
 
 		COUNTER_ATOMIC (counter, {
+			limit_worker_max_reached = FALSE;
+			active_max_reached = FALSE;
 			if (counter._.max_working >= worker.limit_worker_max) {
 				limit_worker_max_reached = TRUE;
-				if (counter_num_active (&counter) >= counter._.max_working)
+				if (counter_num_active (counter) >= counter._.max_working)
 					active_max_reached = TRUE;
 				break;
 			}
@@ -765,7 +769,7 @@ monitor_thread (gpointer unused)
 			else
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] monitor thread, num_active (%d) < max_working, allowing active thread increase",
 					    GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())),
-					    counter_num_active (&counter));
+					    counter_num_active (counter));
 		}
 		else
 			hill_climbing_force_change (counter._.max_working, TRANSITION_STARVATION);
