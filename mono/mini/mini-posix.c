@@ -450,6 +450,8 @@ mono_runtime_posix_install_handlers (void)
 	sigaddset (&signal_set, SIGILL);
 	add_signal_handler (SIGBUS, mono_sigsegv_signal_handler, 0);
 	sigaddset (&signal_set, SIGBUS);
+	add_signal_handler (SIGXCPU, mono_sigxcpu_signal_handler, 0);
+	sigaddset (&signal_set, SIGXCPU);
 	if (mono_jit_trace_calls != NULL) {
 		add_signal_handler (SIGUSR2, sigusr2_signal_handler, SA_RESTART);
 		sigaddset (&signal_set, SIGUSR2);

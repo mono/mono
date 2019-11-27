@@ -317,6 +317,8 @@ void mono_thread_cleanup_apartment_state (void);
 
 void mono_threads_set_shutting_down (void);
 
+void mono_threads_attach_debugger (void);
+
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 
 ICALL_EXPORT

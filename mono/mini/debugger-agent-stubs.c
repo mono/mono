@@ -21,7 +21,7 @@ stub_debugger_agent_parse_options (char *options)
 }
 
 static void
-stub_debugger_agent_init (void)
+stub_debugger_agent_init (gboolean from_attach)
 {
 }
 

@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libproc.h>
+
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -87,6 +89,7 @@
 #include "mono/metadata/debug-mono-ppdb.h"
 #include "mono/metadata/custom-attrs-internals.h"
 
+
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
  * shutdown sequence.
@@ -121,6 +124,7 @@ typedef struct {
 	gboolean defer;
 	int keepalive;
 	gboolean setpgid;
+	gboolean attach;
 } AgentConfig;
 
 typedef struct
@@ -651,6 +655,8 @@ static void runtime_shutdown (MonoProfiler *prof);
 
 static void thread_startup (MonoProfiler *prof, uintptr_t tid);
 
+static void thread_attach (MonoProfiler *prof, uintptr_t tid, void *thread_internal, void* thread);
+
 static void thread_end (MonoProfiler *prof, uintptr_t tid);
 
 static void appdomain_load (MonoProfiler *prof, MonoDomain *domain);
@@ -711,6 +717,8 @@ static void process_profiler_event (EventKind event, gpointer arg);
 
 static void invalidate_frames (DebuggerTlsData *tls);
 
+static void suspend_vm (void);
+
 /* Callbacks used by debugger-engine */
 static MonoContext* tls_get_restore_state (void *the_tls);
 static gboolean try_process_suspend (void *tls, MonoContext *ctx);
@@ -727,6 +735,7 @@ static void* create_breakpoint_events (GPtrArray *ss_reqs, GPtrArray *bp_reqs, M
 static void process_breakpoint_events (void *_evts, MonoMethod *method, MonoContext *ctx, int il_offset);
 static int ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args);
 static void ss_args_destroy (SingleStepArgs *ss_args);
+static void send_type_load (MonoClass *klass);
 
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (fixed_buffer, "System.Runtime.CompilerServices", "FixedBufferAttribute")
 
@@ -821,7 +830,7 @@ debugger_agent_parse_options (char *options)
 	agent_config.defer = FALSE;
 	agent_config.address = NULL;
 
-	//agent_config.log_level = 10;
+	agent_config.log_level = 10;
 
 	args = g_strsplit (options, ",", -1);
 	for (ptr = args; ptr && *ptr; ptr ++) {
@@ -935,10 +944,19 @@ mono_debugger_is_disconnected (void)
 }
 
 static void
-debugger_agent_init (void)
+debugger_agent_init (gboolean from_attach)
 {
-	if (!agent_config.enabled)
+	if (!agent_config.enabled && !from_attach)
 		return;
+	if ( from_attach ) {
+		agent_config.server = TRUE;
+		agent_config.defer = TRUE;
+		agent_config.attach = TRUE;
+		agent_config.enabled = TRUE;
+		agent_config.transport = (char*) "dt_socket";
+		agent_config.address = (char*) "127.0.0.1:1235";
+		//agent_config.log_level = 10;
+	}
 
 	DebuggerEngineCallbacks cbs;
 	memset (&cbs, 0, sizeof (cbs));
@@ -984,6 +1002,7 @@ debugger_agent_init (void)
 	mono_profiler_set_jit_failed_callback (prof, jit_failed);
 	mono_profiler_set_gc_finalizing_callback (prof, gc_finalizing);
 	mono_profiler_set_gc_finalized_callback (prof, gc_finalized);
+	mono_profiler_set_thread_attached_callback (prof, thread_attach);
 	
 	mono_native_tls_alloc (&debugger_tls_id, NULL);
 
@@ -1001,7 +1020,8 @@ debugger_agent_init (void)
 	log_level = agent_config.log_level;
 
 	embedding = agent_config.embedding;
-	disconnected = TRUE;
+	if (!from_attach)
+		disconnected = TRUE;
 
 	if (agent_config.log_file) {
 		log_file = fopen (agent_config.log_file, "w+");
@@ -1018,24 +1038,10 @@ debugger_agent_init (void)
 	objrefs_init ();
 	suspend_init ();
 
-	mini_get_debug_options ()->gen_sdb_seq_points = TRUE;
-	/* 
-	 * This is needed because currently we don't handle liveness info.
-	 */
-	mini_get_debug_options ()->mdb_optimizations = TRUE;
-
 #ifndef MONO_ARCH_HAVE_CONTEXT_SET_INT_REG
 	/* This is needed because we can't set local variables in registers yet */
 	mono_disable_optimizations (MONO_OPT_LINEARS);
 #endif
-
-	/*
-	 * The stack walk done from thread_interrupt () needs to be signal safe, but it
-	 * isn't, since it can call into mono_aot_find_jit_info () which is not signal
-	 * safe (#3411). So load AOT info eagerly when the debugger is running as a
-	 * workaround.
-	 */
-	mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE;
 
 #ifdef HAVE_SETPGID
 	if (agent_config.setpgid)
@@ -1044,6 +1050,14 @@ debugger_agent_init (void)
 
 	if (!agent_config.onuncaught && !agent_config.onthrow)
 		finish_agent_init (TRUE);
+}
+
+
+static void 
+debugger_attach ()
+{
+	mono_thread_attach (mono_get_root_domain ());
+	debugger_agent_init (TRUE);
 }
 
 /*
@@ -1081,7 +1095,7 @@ finish_agent_init (gboolean on_startup)
 
 	transport_connect (agent_config.address);
 
-	if (!on_startup) {
+	if (!on_startup || agent_config.attach) {
 		/* Do some which is usually done after sending the VMStart () event */
 		vm_start_event_sent = TRUE;
 		ERROR_DECL (error);
@@ -2699,6 +2713,64 @@ typedef struct {
 	gboolean valid_info;
 } InterruptData;
 
+
+static void
+create_tls_for_thread_attached_on_debugger (gpointer user_data)
+{
+	ERROR_DECL (error);
+	MonoInternalThread* thread =  mono_thread_internal_current ();
+
+	//creating tls info for each thread when debugger is attached
+	DebuggerTlsData *tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	if (tls)
+		return;
+	// FIXME: Free this somewhere
+	tls = g_new0 (DebuggerTlsData, 1);
+	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Reference");
+	tls->thread = thread;
+	// Do so we have thread id even after termination
+	tls->thread_id = (intptr_t) thread->tid;
+	mono_native_tls_set_value (debugger_tls_id, tls);
+
+	DEBUG_PRINTF (1, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)thread->tid, thread, tls);
+
+	mono_loader_lock ();
+
+	mono_g_hash_table_insert_internal (thread_to_tls, thread, tls);
+	mono_loader_unlock ();
+
+	process_profiler_event (EVENT_KIND_THREAD_START, thread);
+	MonoDomain* domain =  mono_domain_get ();
+	mono_de_domain_add (domain);
+	MonoAssemblyLoadContext *alc = mono_domain_default_alc (domain);
+	mono_domain_assemblies_lock (domain);
+	GSList *tmp;
+	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly* ass = (MonoAssembly *)tmp->data;
+		mono_add_assembly (alc, ass, NULL, error);
+		for (int i = 0; i < ass->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
+			ERROR_DECL (error);
+			MonoClass *klass;
+			
+			guint32 token = MONO_TOKEN_TYPE_DEF | (i + 1);
+			klass = mono_class_get_checked (ass->image, token, error);
+			send_type_load ( klass );
+		}
+	}
+	mono_domain_assemblies_unlock (domain);
+
+
+	//suspend_current ();
+}
+
+
+static SuspendThreadResult
+debugger_interrupt_critical_attached (MonoThreadInfo *info, gpointer user_data)
+{
+	mono_thread_info_setup_async_call (info, create_tls_for_thread_attached_on_debugger, user_data);
+	return MonoResumeThread;
+}
+
 static SuspendThreadResult
 debugger_interrupt_critical (MonoThreadInfo *info, gpointer user_data)
 {
@@ -2715,6 +2787,33 @@ debugger_interrupt_critical (MonoThreadInfo *info, gpointer user_data)
 	/* This is signal safe */
 	thread_interrupt (data->tls, info, ji);
 	return MonoResumeThread;
+}
+
+/*
+ * notify_thread_attached:
+ *
+ *   Notify a thread that it needs to suspend and is attached.
+ */
+static void
+notify_thread_attached (MonoInternalThread *thread)
+{
+	MonoNativeThreadId tid = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
+
+	if (mono_thread_internal_is_current (thread)) {
+		create_tls_for_thread_attached_on_debugger(NULL);
+		return;
+	}
+
+	if (thread->debugger_thread) 
+		return;
+		
+	DEBUG_PRINTF (1, "[%p] Interrupting %p...\n", (gpointer) (gsize) mono_native_thread_id_get (), (gpointer)tid);
+
+	/* This is _not_ equivalent to mono_thread_internal_abort () */
+	InterruptData interrupt_data = { 0 };
+	interrupt_data.tls = NULL;
+
+	mono_thread_info_safe_suspend_and_run ((MonoNativeThreadId)(gsize)thread->tid, FALSE, debugger_interrupt_critical_attached, &interrupt_data);
 }
 
 /*
@@ -3475,6 +3574,8 @@ static void gc_finalizing (MonoProfiler *prof)
 		return;
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	if (agent_config.attach && !tls)
+		return;
 	g_assert (tls);
 	tls->gc_finalizing = TRUE;
 }
@@ -3487,6 +3588,8 @@ static void gc_finalized (MonoProfiler *prof)
 		return;
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	if (agent_config.attach && !tls)
+		return;
 	g_assert (tls);
 	tls->gc_finalizing = FALSE;
 }
@@ -4089,6 +4192,19 @@ runtime_shutdown (MonoProfiler *prof)
 	process_profiler_event (EVENT_KIND_VM_DEATH, NULL);
 
 	mono_debugger_agent_cleanup ();
+}
+
+static void
+thread_attach (MonoProfiler *prof, uintptr_t tid, void *thread_internal, void* thread)
+{
+	MonoInternalThread* internal = (MonoInternalThread*) thread_internal;
+	if (internal->debugger_thread)
+		return;
+	mono_loader_lock ();
+	mono_g_hash_table_insert_internal (tid_to_thread, (gpointer)tid, internal);
+	mono_g_hash_table_insert_internal (tid_to_thread_obj, GUINT_TO_POINTER (tid), thread);
+	mono_loader_unlock ();
+	notify_thread_attached(internal);
 }
 
 static void
@@ -6340,7 +6456,7 @@ count_thread_check_gc_finalizer (gpointer key, gpointer value, gpointer user_dat
 	gboolean *ret = (gboolean *)user_data;
 	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread)) {
 		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread->internal_thread);
-		if (!tls->gc_finalizing) { //GC Finalizer is not running some finalizer code, so ignore it
+		if (!tls || !tls->gc_finalizing) { //GC Finalizer is not running some finalizer code, so ignore it
 			*ret = TRUE;
 			return;
 		}
@@ -6354,7 +6470,7 @@ add_thread (gpointer key, gpointer value, gpointer user_data)
 	Buffer *buf = (Buffer *)user_data;
 	if (mono_gc_is_finalizer_internal_thread(thread->internal_thread)) {
 		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread->internal_thread);
-		if (!tls->gc_finalizing) //GC Finalizer is not running some finalizer code, so ignore it
+		if (!tls || !tls->gc_finalizing) //GC Finalizer is not running some finalizer code, so ignore it
 			return;
 	}
 	buffer_add_objid (buf, (MonoObject*)thread);
@@ -10015,6 +10131,14 @@ debugger_thread (void *arg)
 	internal->state |= ThreadState_Background;
 	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
+	if (agent_config.attach) {
+		if (!mono_debug_enabled ()) {
+			mono_debug_init (MONO_DEBUG_FORMAT_MONO);
+			mono_debug_domain_create (mono_domain_get ());
+		}
+		mono_threads_attach_debugger();
+	}
+	
 	if (agent_config.defer) {
 		if (!wait_for_attach ()) {
 			DEBUG_PRINTF (1, "[dbg] Can't attach, aborting debugger thread.\n");
@@ -10187,7 +10311,7 @@ debugger_thread (void *arg)
 }
 
 void
-mono_debugger_agent_init (void)
+mono_debugger_agent_init ()
 {
 	MonoDebuggerCallbacks cbs;
 
@@ -10208,6 +10332,7 @@ mono_debugger_agent_init (void)
 	cbs.debug_log = debugger_agent_debug_log;
 	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
 	cbs.send_crash = mono_debugger_agent_send_crash;
+	cbs.attach_debugger = debugger_attach;
 
 	mini_install_dbg_callbacks (&cbs);
 }

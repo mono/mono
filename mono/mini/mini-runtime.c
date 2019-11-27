@@ -3262,6 +3262,16 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 
 }
 
+
+MONO_SIG_HANDLER_FUNC (, mono_sigxcpu_signal_handler)
+{
+	MONO_ENTER_GC_UNSAFE_UNBALANCED;
+	ERROR_DECL (error);
+	MonoNativeThreadId attach_thread;
+	mono_native_thread_create (&attach_thread, (gpointer)mini_get_dbg_callbacks ()->attach_debugger, NULL);
+	MONO_EXIT_GC_UNSAFE_UNBALANCED;
+}
+
 #if defined(MONO_ARCH_USE_SIGACTION) || defined(HOST_WIN32)
 
 #define HAVE_SIG_INFO
@@ -4273,7 +4283,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (default_opt & MONO_OPT_AOT)
 		mono_aot_init ();
 
-	mini_get_dbg_callbacks ()->init ();
+	mini_get_dbg_callbacks ()->init (FALSE);
 
 #ifdef TARGET_WASM
 	mono_wasm_debugger_init ();

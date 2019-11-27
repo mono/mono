@@ -6727,5 +6727,17 @@ ves_icall_System_Threading_Thread_GetCurrentOSThreadId (MonoError *error)
 {
 	return mono_native_thread_os_id_get ();
 }
-
 #endif
+
+static
+void mono_thread_attach_debugger (gpointer key, gpointer value, gpointer user)
+{
+	MonoInternalThread* val = (MonoInternalThread*) value;
+	MONO_PROFILER_RAISE (thread_attached, ((uintptr_t) key, val, mono_thread_current_for_thread((MonoInternalThread*) value)));
+}
+
+void 
+mono_threads_attach_debugger ()
+{
+	mono_g_hash_table_foreach (threads, mono_thread_attach_debugger, NULL);
+}
