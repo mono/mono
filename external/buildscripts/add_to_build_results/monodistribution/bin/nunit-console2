@@ -1,0 +1,5 @@
+#!/bin/bash
+. $(dirname $0)/mono-env
+
+$MONO --debug $MONO_PREFIX/lib/mono/2.0/nunit-console.exe "$@"
+

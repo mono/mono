@@ -1,0 +1,20 @@
+MONOBINDIR=bin
+MONOLIBDIR=
+MONOETCDIR=
+
+os=$(uname -s)
+variant=$(uname -m)
+
+case "$os" in
+    Linux)
+		if [ "$variant" = "x86_64" ]; then
+            MONOBINDIR=bin-linux64
+            MONOLIBDIR=../embedruntimes/linux64
+            MONOETCDIR=etc-linux64
+		else
+            MONOBINDIR=bin-linux32
+            MONOLIBDIR=../embedruntimes/linux32
+            MONOETCDIR=etc-linux32
+		fi
+    ;;
+esac
