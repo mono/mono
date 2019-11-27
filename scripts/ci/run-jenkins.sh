@@ -175,8 +175,8 @@ fi
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
         # configuration on our bots
-        if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
-            export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+        if [[ ${CI_TAGS} == *'xcode112'* ]]; then
+            export XCODE_DIR=/Applications/Xcode112.app/Contents/Developer
             export MACOS_VERSION=10.15
             export IOS_VERSION=13.2
             export TVOS_VERSION=13.2
@@ -205,7 +205,6 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
         echo "ENABLE_IOS=1" > sdks/Make.config
-        echo "ENABLE_MAC=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
@@ -213,39 +212,42 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
 
-	   export device_test_suites="Mono.Runtime.Tests System.Core"
-
-	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
+        ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
+        ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
+        ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=run-sim --timeout=20m $gnumake -C sdks/ios run-ios-sim-all
-            ${TESTCMD} --label=build-ios-dev --timeout=60m $gnumake -C sdks/ios build-ios-dev-all
+            # Simulator runs
+            export sim_test_suites="Mono.Runtime.Tests corlib System.Core System.Data System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web Mono.Data.Tds Mono.Security"
+
+            ${TESTCMD} --label=build-ios-sim --timeout=20m $gnumake -C sdks/ios build-ios-sim-all
+            for suite in ${sim_test_suites}; do ${TESTCMD} --label=run-ios-sim-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-sim-${suite}; done
+
+            # Device runs
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                export device_test_suites="Mono.Runtime.Tests System.Core"
+
+                ${TESTCMD} --label=build-ios-dev --timeout=60m $gnumake -C sdks/ios build-ios-dev-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m $gnumake -C sdks/ios build-ios-dev-llvm-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m $gnumake -C sdks/ios build-ios-dev-llvm-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-only-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-only-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-mixed-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-mixed-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
         fi
-	   exit 0
+        exit 0
 fi
 
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots
-    if [[ ${CI_TAGS} == *'xcode112b2'* ]]; then
-        export XCODE_DIR=/Applications/Xcode112b2.app/Contents/Developer
+    if [[ ${CI_TAGS} == *'xcode112'* ]]; then
+        export XCODE_DIR=/Applications/Xcode112.app/Contents/Developer
         export MACOS_VERSION=10.15
     elif [[ ${CI_TAGS} == *'xcode111'* ]]; then
         export XCODE_DIR=/Applications/Xcode111.app/Contents/Developer
@@ -327,25 +329,31 @@ fi
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
         echo "ENABLE_WASM=1" > sdks/Make.config
-        echo "ENABLE_WINDOWS=1" >> sdks/Make.config
+
+        if [[ ${CI_TAGS} != *'osx-amd64'* ]]; then
+            echo "ENABLE_WINDOWS=1" >> sdks/Make.config
+            echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+        fi
+
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
-        echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+
         echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
+        echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
 
-	   export aot_test_suites="System.Core"
-	   export mixed_test_suites="System.Core"
-	   export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
+        export aot_test_suites="System.Core"
+        export mixed_test_suites="System.Core"
+        export xunit_test_suites="System.Core corlib System Microsoft.CSharp System.Data System.IO.Compression System.Net.Http.UnitTests System.Numerics System.Runtime.Serialization System.Security System.Xml System.Xml.Linq"
 
-	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
+        ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
-	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
+        ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
+        ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
+        ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
@@ -366,10 +374,12 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done
             for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-mixed-${suite}; done
+            # Requires a net 3.0 sdk
+            #${TESTCMD} --label=netcore --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-hello-netcore
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
             ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
-	   exit 0
+        exit 0
 fi
 
 
@@ -381,11 +391,11 @@ fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=boehm ${MSBUILD_CXX}"
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "boehm" "/p:PlatformToolset=v140 ${MSBUILD_CXX}"
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen ${MSBUILD_CXX}"
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "sgen" "/p:PlatformToolset=v140 ${MSBUILD_CXX}"
 fi
 
 if [[ ${CI_TAGS} == *'win-amd64'* ]];

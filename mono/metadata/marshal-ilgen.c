@@ -1760,7 +1760,6 @@ mono_mb_emit_auto_layout_exception (MonoMethodBuilder *mb, MonoClass *klass)
 typedef struct EmitGCSafeTransitionBuilder {
 	MonoMethodBuilder *mb;
 	gboolean func_param;
-	int coop_gc_stack_dummy;
 	int coop_gc_var;
 #ifndef DISABLE_COM
 	int coop_cominterop_fnptr;
@@ -1772,7 +1771,6 @@ gc_safe_transition_builder_init (GCSafeTransitionBuilder *builder, MonoMethodBui
 {
 	builder->mb = mb;
 	builder->func_param = func_param;
-	builder->coop_gc_stack_dummy = -1;
 	builder->coop_gc_var = -1;
 #ifndef DISABLE_COM
 	builder->coop_cominterop_fnptr = -1;
@@ -1791,9 +1789,7 @@ static void
 gc_safe_transition_builder_add_locals (GCSafeTransitionBuilder *builder)
 {
 	MonoType *int_type = mono_get_int_type();
-	/* local 4, dummy local used to get a stack address for suspend funcs */
-	builder->coop_gc_stack_dummy = mono_mb_add_local (builder->mb, int_type);
-	/* local 5, the local to be used when calling the suspend funcs */
+	/* local 4, the local to be used when calling the suspend funcs */
 	builder->coop_gc_var = mono_mb_add_local (builder->mb, int_type);
 #ifndef DISABLE_COM
 	if (!builder->func_param && MONO_CLASS_IS_IMPORT (builder->mb->method->klass)) {
@@ -1826,7 +1822,8 @@ gc_safe_transition_builder_emit_enter (GCSafeTransitionBuilder *builder, MonoMet
 	}
 #endif
 
-	mono_mb_emit_ldloc_addr (builder->mb, builder->coop_gc_stack_dummy);
+	mono_mb_emit_byte (builder->mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (builder->mb, CEE_MONO_GET_SP);
 	mono_mb_emit_icall (builder->mb, mono_threads_enter_gc_safe_region_unbalanced);
 	mono_mb_emit_stloc (builder->mb, builder->coop_gc_var);
 }
@@ -1840,7 +1837,8 @@ static void
 gc_safe_transition_builder_emit_exit (GCSafeTransitionBuilder *builder)
 {
 	mono_mb_emit_ldloc (builder->mb, builder->coop_gc_var);
-	mono_mb_emit_ldloc_addr (builder->mb, builder->coop_gc_stack_dummy);
+	mono_mb_emit_byte (builder->mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (builder->mb, CEE_MONO_GET_SP);
 	mono_mb_emit_icall (builder->mb, mono_threads_exit_gc_safe_region_unbalanced);
 }
 
@@ -1848,7 +1846,6 @@ static void
 gc_safe_transition_builder_cleanup (GCSafeTransitionBuilder *builder)
 {
 	builder->mb = NULL;
-	builder->coop_gc_stack_dummy = -1;
 	builder->coop_gc_var = -1;
 #ifndef DISABLE_COM
 	builder->coop_cominterop_fnptr = -1;
@@ -4227,7 +4224,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	MonoImage *image = get_method_image (method);
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	int param_count = sig->param_count + sig->hasthis + 1;
-	int pos_leave, coop_gc_var = 0, coop_gc_stack_dummy = 0;
+	int pos_leave, coop_gc_var = 0;
 	MonoExceptionClause *clause;
 	MonoType *object_type = mono_get_object_type ();
 #if defined (TARGET_WASM)
@@ -4244,9 +4241,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		mono_mb_add_local (mb, sig->ret);
 
 	if (do_blocking_transition) {
-		/* local 4, dummy local used to get a stack address for suspend funcs */
-		coop_gc_stack_dummy = mono_mb_add_local (mb, mono_get_int_type ());
-		/* local 5, the local to be used when calling the suspend funcs */
+		/* local 4, the local to be used when calling the suspend funcs */
 		coop_gc_var = mono_mb_add_local (mb, mono_get_int_type ());
 	}
 
@@ -4256,7 +4251,8 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 	if (do_blocking_transition) {
-		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_GET_SP);
 		mono_mb_emit_icall (mb, mono_threads_enter_gc_unsafe_region_unbalanced);
 		mono_mb_emit_stloc (mb, coop_gc_var);
 	}
@@ -4332,7 +4328,8 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 
 	if (do_blocking_transition) {
 		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_GET_SP);
 		mono_mb_emit_icall (mb, mono_threads_exit_gc_unsafe_region_unbalanced);
 	}
 
@@ -4375,6 +4372,7 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	static MonoMethod *cleanup_native, *cleanup_managed;
 	static MonoMethod *marshal_managed_to_native, *marshal_native_to_managed;
 	MonoMethodBuilder *mb = m->mb;
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
 	guint32 loc1;
 	int pos2;
 
@@ -4419,9 +4417,10 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	}
 
 	if (spec->data.custom_data.image)
-		mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, spec->data.custom_data.image, error);
+		mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, alc, spec->data.custom_data.image, error);
 	else
-		mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, m->image, error);
+		mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, alc, m->image, error);
+
 	g_assert (mtype != NULL);
 	mono_error_assert_ok (error);
 	mklass = mono_class_from_mono_type_internal (mtype);
@@ -6435,21 +6434,14 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			mono_error_assert_ok (error);
 		}
 
-		// Add a MonoError argument (due to a fragile test external/coreclr/tests/src/CoreMangLib/cti/system/weakreference/weakreferenceisaliveb.exe),
-		// vs. on the native side.
 		// FIXME: The stuff from mono_metadata_signature_dup_internal_with_padding ()
-		call_sig = mono_metadata_signature_alloc (get_method_image (method), csig->param_count + 1);
-		call_sig->param_count = csig->param_count + 1;
+		call_sig = mono_metadata_signature_alloc (get_method_image (method), csig->param_count);
+		call_sig->param_count = csig->param_count;
 		call_sig->ret = csig->ret;
 		call_sig->pinvoke = csig->pinvoke;
 
 		/* TODO support adding wrappers to non-static struct methods */
 		g_assert (!sig->hasthis || !m_class_is_valuetype (mono_method_get_class (method)));
-
-		/* Add MonoError* param */
-		MonoClass * const error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
-		int const error_var = mono_mb_add_local (mb, m_class_get_byval_arg (error_class));
-		call_sig->params [csig->param_count] = mono_class_get_byref_type (error_class);
 
 		handles_locals = g_new0 (IcallHandlesLocal, csig->param_count);
 
@@ -6537,7 +6529,6 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 					g_assert_not_reached ();
 			}
 		}
-		mono_mb_emit_ldloc_addr (mb, error_var);
 	} else {
 		for (int i = 0; i < csig->param_count; i++)
 			mono_mb_emit_ldarg (mb, i);

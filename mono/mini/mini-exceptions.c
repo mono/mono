@@ -72,6 +72,7 @@
 #include "mini.h"
 #include "trace.h"
 #include "debugger-agent.h"
+#include "debugger-engine.h"
 #include "seq-points.h"
 #include "llvm-runtime.h"
 #include "mini-llvm.h"
@@ -94,6 +95,7 @@
 #if !defined(DISABLE_CRASH_REPORTING)
 #include <gmodule.h>
 #endif
+#include "mono/utils/mono-tls-inline.h"
 
 /*
  * Raw frame information is stored in MonoException.trace_ips as an IntPtr[].
@@ -759,7 +761,10 @@ unwinder_unwind_frame (Unwinder *unwinder,
 		unwinder->in_interp = mini_get_interp_callbacks ()->frame_iter_next (&unwinder->interp_iter, frame);
 		if (frame->type == FRAME_TYPE_INTERP) {
 			parent = mini_get_interp_callbacks ()->frame_get_parent (frame->interp_frame);
-			unwinder->last_frame_addr = parent;
+			if (parent)
+				unwinder->last_frame_addr = mini_get_interp_callbacks ()->frame_get_native_stack_addr (parent);
+			else
+				unwinder->last_frame_addr = NULL;
 		}
 		if (!unwinder->in_interp)
 			return unwinder_unwind_frame (unwinder, domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf, save_locations, frame);
@@ -842,8 +847,8 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 /*
  * generic_info is either a MonoMethodRuntimeGenericContext or a MonoVTable.
  */
-static MonoGenericContext
-get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
+MonoGenericContext
+mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
 	MonoGenericContext context = { NULL, NULL };
 	MonoClass *klass, *method_container_class;
@@ -888,6 +893,7 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	return context;
 }
 
+
 static MonoMethod*
 get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
@@ -897,7 +903,7 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	
 	if (!ji->has_generic_jit_info || !mono_jit_info_get_generic_jit_info (ji)->has_this)
 		return jinfo_get_method (ji);
-	context = get_generic_context_from_stack_frame (ji, generic_info);
+	context = mono_get_generic_context_from_stack_frame (ji, generic_info);
 
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
@@ -1948,7 +1954,7 @@ get_exception_catch_class (MonoJitExceptionInfo *ei, MonoJitInfo *ji, MonoContex
 
 	if (!ji->has_generic_jit_info || !mono_jit_info_get_generic_jit_info (ji)->has_this)
 		return catch_class;
-	context = get_generic_context_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, ctx));
+	context = mono_get_generic_context_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, ctx));
 
 	/* FIXME: we shouldn't inflate but instead put the
 	   type in the rgctx and fetch it from there.  It
@@ -4019,7 +4025,7 @@ mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 reg
 			MonoType *inflated_type;
 
 			g_assert (rgctx || this_obj);
-			context = get_generic_context_from_stack_frame (jinfo, rgctx ? rgctx : this_obj->vtable);
+			context = mono_get_generic_context_from_stack_frame (jinfo, rgctx ? rgctx : this_obj->vtable);
 			inflated_type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (catch_class), &context, error);
 			mono_error_assert_ok (error); /* FIXME don't swallow the error */
 

@@ -104,6 +104,19 @@ extern MonoCoopMutex sgen_interruption_mutex;
 		} while (mono_atomic_cas_ptr ((void**)&(x), (void*)(__old_x + (i)), (void*)__old_x) != (void*)__old_x); \
 	} while (0)
 
+#ifndef MONO_ATOMIC_USES_LOCK
+#define SGEN_ATOMIC_ADD_I64(x,i) do { \
+		mono_atomic_add_i64 ((volatile gint64 *)&x, i); \
+	} while (0)
+#else
+#define SGEN_ATOMIC_ADD_I64(x,i) do { \
+		gint64 __old_x; \
+		do { \
+			__old_x = (x); \
+		} while (mono_sgen_atomic_cas_i64 ((volatile gint64 *)&(x), __old_x + (i), __old_x) != __old_x); \
+	} while (0)
+#endif /* BROKEN_64BIT_ATOMICS_INTRINSIC */
+
 #ifdef HEAVY_STATISTICS
 extern guint64 stat_objects_alloced_degraded;
 extern guint64 stat_bytes_alloced_degraded;
@@ -729,6 +742,16 @@ typedef struct _SgenRememberedSet {
 	gboolean (*find_address) (char *addr);
 	gboolean (*find_address_with_cards) (char *cards_start, guint8 *cards, char *addr);
 } SgenRememberedSet;
+
+typedef struct _SgenGCInfo {
+	guint64 fragmented_bytes;
+	guint64 heap_size_bytes;
+	guint64 high_memory_load_threshold_bytes;
+	guint64 memory_load_bytes;
+	guint64 total_available_memory_bytes;
+} SgenGCInfo;
+
+extern SgenGCInfo sgen_gc_info;
 
 SgenRememberedSet *sgen_get_remset (void);
 

@@ -114,3 +114,7 @@
 
 # System
 -nonamespace System.Net.Security.Tests
+
+# System.Xml.Linq
+# fails on OSX
+-nomethod CoreXml.Test.XLinq.FunctionalTests.EventsTests.EventsReplaceNodes.XElementReplaceNodes

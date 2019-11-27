@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebAssembly Http Test Suite with Promise Library</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <h3 id="header">WebAssembly Http Test Suite with Promise Library</h3>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.js"></script>
+    <script type="text/javascript" src="runtime.js"></script>
+    <script type="text/javascript">
+      var App = {
+          init: function () {
+            document.Module = Module;
+            document.Module.BINDING = BINDING;
+            document.onRuntimeDone();
+          },
+      };
+    </script>
+
+    <script defer src="mono.js"></script>
+
+  </body>
+</html>

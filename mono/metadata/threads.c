@@ -59,6 +59,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/metadata/w32subset.h>
 #include <mono/metadata/mono-config.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -2468,12 +2469,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volat
 	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
-void
-ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
-{
-	ves_icall_System_Threading_Interlocked_CompareExchange_Object (location, value, comparand, res);
-}
-
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
 {
 	return mono_atomic_cas_ptr(location, value, comparand);
@@ -2529,18 +2524,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 	}
 #endif
 	return mono_atomic_cas_i64 (location, value, comparand);
-}
-
-void
-ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
-{
-	// Coop-equivalency here via pointers to pointers.
-	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
-	//
-	// This is not entirely convincing due to lack of volatile in the caller.
-	//
-	MONO_CHECK_NULL (location, );
-	ves_icall_System_Threading_Interlocked_Exchange_Object (location, value, res);
 }
 
 gint32 
@@ -5676,7 +5659,11 @@ mono_thread_is_foreign (MonoThread *thread)
 static void
 threads_native_thread_join_lock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	/*
+	 * Have to cast to a pointer-sized integer first, as we can't narrow
+	 * from a pointer if pthread_t is an integer smaller than a pointer.
+	 */
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	if (thread != pthread_self ()) {
 		MONO_ENTER_GC_SAFE;
 		/* This shouldn't block */
@@ -5689,7 +5676,7 @@ threads_native_thread_join_lock (gpointer tid, gpointer value)
 static void
 threads_native_thread_join_nolock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	MONO_ENTER_GC_SAFE;
 	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
@@ -6701,6 +6688,11 @@ ves_icall_System_Threading_Thread_StartInternal (MonoThreadObjectHandle thread_h
 	gboolean res;
 
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p)", __func__, internal));
+
+#ifdef DISABLE_THREADS
+	mono_error_set_not_supported (error, NULL);
+	return;
+#endif
 
 	LOCK_THREAD (internal);
 

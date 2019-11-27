@@ -100,6 +100,7 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
+#include "mono/utils/mono-tls-inline.h"
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -2538,11 +2539,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	g_assert (method->dynamic);
 
 	if (mono_use_interpreter) {
-		mono_domain_jit_code_hash_lock (domain);
-		/* InterpMethod is allocated in the domain mempool. We might haven't
-		 * allocated an InterpMethod for this instance yet */
-		mono_internal_hash_table_remove (&info->interp_code_hash, method);
-		mono_domain_jit_code_hash_unlock (domain);
+		mini_get_interp_callbacks ()->free_method (domain, method);
 	}
 
 	mono_domain_lock (domain);
@@ -3571,7 +3568,7 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
 		g_assert (del->method);
 		/* del->method_ptr might already be set to no_llvmonly_interp_method_pointer if the delegate was created from the interpreter */
 		del->method_ptr = mini_llvmonly_load_method_delegate (del->method, FALSE, FALSE, &del->extra_arg, error);
-	} else if (!del->method_ptr && !del->interp_method) {
+	} else if (!del->method_ptr) {
 		del->method_ptr = create_delegate_method_ptr (del->method, error);
 		return_if_nok (error);
 	}
@@ -3693,6 +3690,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.llvm_disable_self_init = TRUE;
 	else if (!strcmp (option, "llvm-disable-inlining"))
 		mini_debug_options.llvm_disable_inlining = TRUE;
+	else if (!strcmp (option, "llvm-disable-implicit-null-checks"))
+		mini_debug_options.llvm_disable_implicit_null_checks = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -3766,7 +3765,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'weak-memory-model'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'llvm-disable-implicit-null-checks', 'weak-memory-model'.\n");
 			exit (1);
 		}
 	}
@@ -3786,7 +3785,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 #if defined(PPC_USES_FUNCTION_DESCRIPTOR)
 	gpointer* desc = NULL;
 
-	if ((desc = g_hash_table_lookup (domain->ftnptrs_hash, addr)))
+	if ((desc = (gpointer*)g_hash_table_lookup (domain->ftnptrs_hash, addr)))
 		return desc;
 #if defined(__mono_ppc64__)
 	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer));
@@ -4675,11 +4674,11 @@ register_icalls (void)
 	register_icall (pthread_getspecific, mono_icall_sig_ptr_ptr, TRUE);
 #endif
 	/* Register tls icalls */
-	register_icall_no_wrapper (mono_tls_get_thread, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_jit_tls, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_domain, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_sgen_thread_info, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_get_lmf_addr, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_thread_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_jit_tls_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_domain_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_sgen_thread_info_extern, mono_icall_sig_ptr);
+	register_icall_no_wrapper (mono_tls_get_lmf_addr_extern, mono_icall_sig_ptr);
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, mono_icall_sig_void_ptr_ptr);
 	register_icall_no_wrapper (mono_interp_to_native_trampoline, mono_icall_sig_void_ptr_ptr);

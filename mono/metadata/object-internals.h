@@ -438,14 +438,6 @@ struct _MonoReflectionType {
 /* Safely access System.Type from native code */
 TYPED_HANDLE_DECL (MonoReflectionType);
 
-/* This corresponds to System.RuntimeType */
-typedef struct {
-	MonoReflectionType type;
-	MonoObject *type_info;
-} MonoReflectionMonoType;
-
-TYPED_HANDLE_DECL (MonoReflectionMonoType);
-
 typedef struct {
 	MonoObject  object;
 	MonoReflectionType *class_to_proxy;	
@@ -827,7 +819,7 @@ typedef struct {
 	gpointer (*get_imt_trampoline) (MonoVTable *vtable, int imt_slot_index);
 	gboolean (*imt_entry_inited) (MonoVTable *vtable, int imt_slot_index);
 	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
-	void     (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
+	void     (*debug_log) (int level, MonoString *category, MonoString *message);
 	gboolean (*debug_log_is_enabled) (void);
 	void     (*init_delegate) (MonoDelegateHandle delegate, MonoError *error);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
@@ -1124,16 +1116,6 @@ typedef struct {
 	guint32 attrs;
 	MonoArray *other_methods;
 } MonoEventInfo;
-
-typedef struct {
-	MonoString *name;
-	MonoString *name_space;
-	MonoReflectionType *etype;
-	MonoReflectionType *nested_in;
-	MonoReflectionAssembly *assembly;
-	guint32 rank;
-	MonoBoolean isprimitive;
-} MonoTypeInfo;
 
 typedef struct {
 	MonoObject *member;
