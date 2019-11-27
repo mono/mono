@@ -68,20 +68,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 		private async Task doFetch (TaskCompletionSource<HttpResponseMessage> tcs, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			try {
-				var requestObject = new JSObject ();
-				requestObject.SetObjectProperty ("method", request.Method.Method);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("credentials", DefaultCredentials);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("cache", Cache);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("mode", Mode);
+				var requestObject = createRequestObject(request);
 
 				// We need to check for body content
 				if (request.Content != null) {
@@ -208,6 +195,42 @@ namespace WebAssembly.Net.Http.HttpClient {
 			} catch (Exception exception) {
 				tcs.SetException (exception);
 			}
+		}
+
+		JSObject createRequestObject (HttpRequestMessage request)
+		{
+			var requestObject = new JSObject ();
+			requestObject.SetObjectProperty ("method", request.Method.Method);
+
+			object prop;
+			// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
+			// standard values and meanings
+			if (request.Properties.TryGetValue ("FetchCredentialsOption", out prop)) {
+				requestObject.SetObjectProperty ("credentials", Runtime.EnumFromExportContract(typeof(FetchCredentialsOption), prop.ToString ().ToLower ()));
+
+			} else {
+				requestObject.SetObjectProperty ("credentials", DefaultCredentials);
+			}
+
+			// See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
+			// standard values and meanings
+			if (request.Properties.TryGetValue ("RequestCache", out prop)) {
+				requestObject.SetObjectProperty ("cache", Runtime.EnumFromExportContract (typeof (RequestCache), prop.ToString ().ToLower ()));
+
+			} else {
+				requestObject.SetObjectProperty ("cache", Cache);
+			}
+
+			//// See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
+			//// standard values and meanings
+			if (request.Properties.TryGetValue ("RequestMode", out prop)) {
+				requestObject.SetObjectProperty ("mode", Runtime.EnumFromExportContract (typeof (RequestMode), prop.ToString ().ToLower ()));
+
+			} else {
+				requestObject.SetObjectProperty ("mode", Mode);
+			}
+
+			return requestObject;
 		}
 
 		class WasmFetchResponse : IDisposable {
