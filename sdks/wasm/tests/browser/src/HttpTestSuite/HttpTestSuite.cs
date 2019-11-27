@@ -96,6 +96,36 @@ namespace TestSuite
             return requestTcs.Task;
         }
 
+        public static async Task<object> RequestMessageWith (string options, string values)
+         {
+             var requestTcs = new TaskCompletionSource<object>();
+
+             var keys = options.Split(';');
+             var keyValues = values.Split(';');
+
+             var message = new HttpRequestMessage(HttpMethod.Get, "base/publish/netstandard2.0/NowIsTheTime.txt");
+             for (int i = 0; i < keys.Length; i++)
+             {
+                 message.Properties[keys[i]] = keyValues[i];
+             }
+             cts = new CancellationTokenSource();
+
+             try
+             {
+                 using (HttpClient httpClient = CreateHttpClient())
+                 {
+                     using (var rspMsg = await httpClient.SendAsync(message, cts.Token))
+                     {
+                         requestTcs.SetResult(rspMsg.Content?.ReadAsStringAsync().Result.Length);
+                     }
+                 }
+             }
+             catch (Exception exc2)
+             {
+                 requestTcs.SetException(exc2);
+             }
+             return requestTcs.Task;
+         }        
         static HttpClient CreateHttpClient()
         {
             //Console.WriteLine("Create  HttpClient");

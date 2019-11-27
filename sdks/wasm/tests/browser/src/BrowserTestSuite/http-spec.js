@@ -457,6 +457,303 @@ describe("The WebAssembly Http Test Suite",function(){
         (error) => done.fail(error)
 
       );
-    }, DEFAULT_WS_TIMEOUT);  
+    }, DEFAULT_WS_TIMEOUT);
+
+    it('RequestMessageWith: should override credentials with FetchCredentialsOption omit.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["FetchCredentialsOption", "Omit"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override credentials with FetchCredentialsOption same-origin.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["FetchCredentialsOption", "same-origin"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override credentials with FetchCredentialsOption include.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["FetchCredentialsOption", "include"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should throw invalid credentials with FetchCredentialsOption foo.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["FetchCredentialsOption", "foo"]).then(
+        (result) => 
+        {
+          done.fail("Should have thrown invalid value.");
+        },
+        (error) => {
+          expect(error).toContain("Http.HttpClient.FetchCredentialsOption");
+          done();
+        }
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override cache with RequestCache default.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "DEFAULT"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override cache with RequestCache no-store.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "no-store"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should override cache with RequestCache reload.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "ReLoad"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should override cache with RequestCache no-cache.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "no-cache"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should override cache with RequestCache force-cache.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "force-cache"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should override cache with RequestCache only-if-cached.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode;RequestCache", "same-origin;only-if-cached"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
     
+    it('RequestMessageWith: should throw invalid cache with RequestCache only-if-cached and RequestMode cors default.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "only-if-cached"]).then(
+        (result) => 
+        {
+          done.fail("Should have thrown invalid value.");
+        },
+        (error) => {
+          expect(error).toContain("TypeError: Failed to execute 'fetch' on 'Window': 'only-if-cached' can be set only with 'same-origin' mode");
+          done();
+        }
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should throw invalid cache with RequestCache foo.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestCache", "foo"]).then(
+        (result) => 
+        {
+          done.fail("Should have thrown invalid value.");
+        },
+        (error) => {
+          expect(error).toContain("Http.HttpClient.RequestCache");
+          done();
+        }
+
+      );
+    }, DEFAULT_TIMEOUT)    
+
+    it('RequestMessageWith: should override mode with RequestMode same-origin.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode", "same-origin"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override mode with RequestMode no-cors.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode", "no-cors"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should override mode with RequestMode Cors.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode", "Cors"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT)
+
+    it('RequestMessageWith: should throw invalid cache with RequestMode Navigate.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode", "Navigate"]).then(
+        (result) => 
+        {
+          done.fail("Should have thrown invalid value.");
+        },
+        (error) => {
+          expect(error).toContain("TypeError: Failed to execute 'fetch' on 'Window': Cannot construct a Request with a RequestInit whose mode member is set as 'navigate'.");
+          done();
+        }
+
+      );
+    }, DEFAULT_TIMEOUT)   
+    
+
+    it('RequestMessageWith: should throw invalid cache with RequestMode foo.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestMessageWith", ["RequestMode", "foo"]).then(
+        (result) => 
+        {
+          done.fail("Should have thrown invalid value.");
+        },
+        (error) => {
+          expect(error).toContain("Http.HttpClient.RequestMode");
+          done();
+        }
+
+      );
+    }, DEFAULT_TIMEOUT)   
+
   });
