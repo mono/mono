@@ -38,7 +38,7 @@ stages:
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 120
+        timeoutInMinutes: 150
         strategy:
           matrix:
             x64:
@@ -118,14 +118,14 @@ stages:
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib --llvm
             elif [ $(interpreter) = true ]; then
-              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none"
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib --interpreter
             else
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi
           displayName: 'Download and Run CoreFX Tests'
-          timeoutInMinutes: 90
+          timeoutInMinutes: 150
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2

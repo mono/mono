@@ -23,6 +23,7 @@ usage()
   echo "Actions:"
   echo "  --pack                     Package build outputs into NuGet packages"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
+  echo "  --interpreter              Run tests with interpreter"
   echo "  --rebuild                  Run ../.autogen.sh"
   echo "  --llvm                     Enable LLVM support"
   echo "  --skipnative               Do not build runtime"
@@ -36,6 +37,7 @@ usage()
 
 pack=false
 configuration='Debug'
+test_flags=''
 properties=''
 force_rebuild=false
 test=false
@@ -63,6 +65,9 @@ while [[ $# > 0 ]]; do
     -test|-t)
       test=true
       ;;
+    -interpreter)
+      test_flags="$test_flags --interpreter"
+      ;;
     -rebuild)
       force_rebuild=true
       ;;
@@ -74,6 +79,7 @@ while [[ $# > 0 ]]; do
       ;;
     -llvm)
       llvm=true
+      test_flags="$test_flags --llvm"
       ;;
     -ci)
       ci=true
@@ -144,8 +150,8 @@ fi
 if [ "$test" = "true" ]; then
   make update-tests-corefx || (Write-PipelineTelemetryError -c "tests-download" -e 1 "Error downloading tests" && exit 1)
   if [ "$ci" = "true" ]; then
-    make run-tests-corefx USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS=$test_flags USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
   else
-    make run-tests-corefx
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS=$test_flags
   fi
 fi
