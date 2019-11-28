@@ -151,7 +151,7 @@
         <PropertyGroup>
             <RuntimeBuildTarget Condition="'$(RuntimeBuildTarget)' == ''">build</RuntimeBuildTarget>
         </PropertyGroup>
-        <MSBuild Projects="$(MSBuildThisFileDirectory)..\msvc\mono.sln" Targets="$(RuntimeBuildTarget)" Properties="Platform=$(COREARCH);Configuration=$(Configuration);MONO_TARGET_GC=sgen;MONO_ENABLE_LLVM=$(MONO_ENABLE_LLVM);MONO_ENABLE_NETCORE=true"/>
+        <MSBuild Projects="$(MSBuildThisFileDirectory)..\msvc\mono-netcore.sln" Targets="$(RuntimeBuildTarget)" Properties="Platform=$(COREARCH);Configuration=$(Configuration);MONO_TARGET_GC=sgen;MONO_ENABLE_LLVM=$(MONO_ENABLE_LLVM);MONO_ENABLE_NETCORE=true"/>
     </Target>
 
     <Target Name="link-mono">
