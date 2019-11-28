@@ -247,7 +247,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort ()
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
 		public void Sort1 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -289,7 +289,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [])
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
 		public void Sort2 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -347,7 +347,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (IComparer)
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
 		public void Sort3 ()
 		{
 			PropertyDescriptorCollection descriptors;
@@ -405,7 +405,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [], IComparer)
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
 		public void Sort4 ()
 		{
 			PropertyDescriptorCollection descriptors;
