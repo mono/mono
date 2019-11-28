@@ -150,8 +150,8 @@ fi
 if [ "$test" = "true" ]; then
   make update-tests-corefx || (Write-PipelineTelemetryError -c "tests-download" -e 1 "Error downloading tests" && exit 1)
   if [ "$ci" = "true" ]; then
-    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS=$test_flags USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_flags" USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
   else
-    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS=$test_flags
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_flags"
   fi
 fi
