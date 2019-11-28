@@ -132,7 +132,7 @@ namespace System.Net.Http
 			set => throw new PlatformNotSupportedException ("Property MaxRequestContentBufferSize is not supported.");
 		}
 
-		public IDictionary<string, object> Properties => throw new PlatformNotSupportedException ();
+		public IDictionary<string, object> Properties => throw new PlatformNotSupportedException ("Property Properties is not supported.");
 
 		public static Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> DangerousAcceptAnyServerCertificateValidator { get; } = delegate { return true; };
 
