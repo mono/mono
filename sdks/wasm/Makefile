@@ -222,7 +222,7 @@ cross-netcore:
 build-managed: bcl-netcore
 
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll} > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
 samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
 	dotnet build samples/hello -f netcoreapp3.0
@@ -259,7 +259,8 @@ define NetcoreTestTemplate
 
 bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
+	cd xunit-runner && dotnet build /nologo /v:q
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
@@ -268,15 +269,12 @@ build-$(1): bin/$(2)/mono.js
 run-$(1): bin/$(2)/mono.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
 
-run-corefx-tests-netcore: run-$(1)
-
 endef
 
-NETCORE_COREFX_FAILING_TEST_SUITES = \
-	System.CodeDom.Tests \
-	Microsoft.XmlSerializer.Generator.Tests
+include corefx-test-suites.mk
 
-NETCORE_COREFX_TEST_SUITES = \
+# Passing testsuites after exclusions
+NETCORE_COREFX_PASSING_TEST_SUITES = \
 	Common.Tests \
 	Invariant.Tests \
 	Microsoft.CSharp.Tests \
@@ -288,9 +286,23 @@ NETCORE_COREFX_TEST_SUITES = \
 	System.Collections.Immutable.Tests \
 	System.Collections.NonGeneric.Tests \
 	System.Collections.Specialized.Tests \
-	System.Collections.Tests
+	System.Collections.Tests \
+	System.IO.UnmanagedMemoryStream.Tests \
+	System.Json.Tests \
+	System.Memory.Tests \
+	System.Numerics.Vectors.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Runtime.CompilerServices.VisualC.Tests \
+	System.Runtime.Extensions.Tests \
+	System.Runtime.Handles.Tests \
+	System.Runtime.Tests
 
-$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll)))
+System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
+System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
+
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
+
+$(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
 
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
