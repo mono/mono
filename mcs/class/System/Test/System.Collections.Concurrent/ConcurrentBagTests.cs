@@ -197,7 +197,9 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
         [Test]
-        [Category ("NotWasm")]
+#if WASM
+        [Category ("MultiThreaded")]
+#endif
         public void BasicRemoveEmptyTest ()
         {
             int result;
@@ -206,7 +208,9 @@ namespace MonoTests.System.Collections.Concurrent
         }
 
         [Test]
-        [Category ("NotWasm")]
+#if WASM
+        [Category ("MultiThreaded")]
+#endif
         public void BasicRemoveTwiceTest()
         {
             bag.Add (1);
