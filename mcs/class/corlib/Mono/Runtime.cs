@@ -81,6 +81,8 @@ namespace Mono {
 			return true;
 		}
 
+		static object exception_capture = new object ();
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string ExceptionToState_internal (Exception exc, out ulong portable_hash, out ulong unportable_hash);
 
@@ -143,8 +145,11 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
-			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
-			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
+			lock (exception_capture)
+			{
+				string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+				SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
+			}
 		}
 
 		// All must be set except for configDir_str

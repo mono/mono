@@ -110,7 +110,7 @@ BINARY_TEST_CASES = \
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw -d ../../../external/binary-reference-assemblies/build/monowasm
 
 BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
 

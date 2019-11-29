@@ -462,7 +462,10 @@ mono_wasm_string_get_utf8 (MonoString *str)
 EMSCRIPTEN_KEEPALIVE MonoString *
 mono_wasm_string_from_js (const char *str)
 {
-	return mono_string_new (root_domain, str);
+	if (str)
+		return mono_string_new (root_domain, str);
+	else
+		return NULL;	
 }
 
 static int

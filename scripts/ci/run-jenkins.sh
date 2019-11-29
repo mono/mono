@@ -205,7 +205,6 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
         echo "ENABLE_IOS=1" > sdks/Make.config
-        echo "ENABLE_MAC=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
@@ -213,34 +212,35 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
 
-	   export sim_test_suites="Mono.Runtime.Tests corlib System.Core System.Data System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web Mono.Data.Tds Mono.Security"
-	   export device_test_suites="Mono.Runtime.Tests System.Core"
-
-	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
+        ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
+        ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
+        ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
+            # Simulator runs
+            export sim_test_suites="Mono.Runtime.Tests corlib System.Core System.Data System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web Mono.Data.Tds Mono.Security"
+
             ${TESTCMD} --label=build-ios-sim --timeout=20m $gnumake -C sdks/ios build-ios-sim-all
             for suite in ${sim_test_suites}; do ${TESTCMD} --label=run-ios-sim-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-sim-${suite}; done
-            ${TESTCMD} --label=build-ios-dev --timeout=60m $gnumake -C sdks/ios build-ios-dev-all
+
+            # Device runs
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                export device_test_suites="Mono.Runtime.Tests System.Core"
+
+                ${TESTCMD} --label=build-ios-dev --timeout=60m $gnumake -C sdks/ios build-ios-dev-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m $gnumake -C sdks/ios build-ios-dev-llvm-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m $gnumake -C sdks/ios build-ios-dev-llvm-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-only-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-only-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
-            fi
-            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-mixed-all
-            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+
+                ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-mixed-all
                 for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
         fi
-	   exit 0
+        exit 0
 fi
 
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];

@@ -274,7 +274,7 @@ public class Harness
 		int wait_time = 0;
 		while (!server.Pending ()) {
 			wait_time += 100;
-			if (wait_time == 10 * 1000) {
+			if (wait_time == 30 * 1000) {
 				Console.Error.WriteLine ("Timed out waiting for test runner to connect.");
 				Environment.Exit (1);
 			}

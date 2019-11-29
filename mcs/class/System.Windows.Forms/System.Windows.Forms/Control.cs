@@ -2589,6 +2589,16 @@ namespace System.Windows.Forms
 					if (!pea.Handled)
 						OnPaint (pea);
 				}
+
+				// Call DrawToBitmap for all children of the control
+				for (int i=0; i < child_controls.Count; i++) {
+					Rectangle childRect = child_controls[i].ClientRectangle;
+					Bitmap childBitmap = new Bitmap (childRect.Width, childRect.Height);
+					child_controls[i].DrawToBitmap (childBitmap, childRect);
+					g.DrawImage (childBitmap, new Rectangle (child_controls[i].Location, child_controls[i].Size));
+				}
+
+
 			}
 		}
 		

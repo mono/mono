@@ -2179,6 +2179,15 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 	}
 }
 
+static MonoMethod*
+interp_get_method (MonoMethod *method, guint32 token, MonoImage *image, MonoGenericContext *generic_context, MonoError *error)
+{
+	if (method->wrapper_type == MONO_WRAPPER_NONE)
+		return mono_get_method_checked (image, token, NULL, generic_context, error);
+	else
+		return (MonoMethod *)mono_method_get_wrapper_data (method, token);
+}
+
 /* Return FALSE if error, including inline failure */
 static gboolean
 interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, MonoClass *constrained_class, gboolean readonly, MonoError *error, gboolean check_visibility, gboolean save_last_error)
@@ -2220,11 +2229,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 			target_method = NULL;
 		} else {
-			if (method->wrapper_type == MONO_WRAPPER_NONE) {
-				target_method = mono_get_method_checked (image, token, NULL, generic_context, error);
-				return_val_if_nok (error, FALSE);
-			} else
-				target_method = (MonoMethod *)mono_method_get_wrapper_data (method, token);
+			target_method = interp_get_method (method, token, image, generic_context, error);
+			return_val_if_nok (error, FALSE);
 			csignature = mono_method_signature_internal (target_method);
 
 			if (generic_context) {
@@ -2381,7 +2387,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
 			int align, arg_size;
 			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vararg_stack += ALIGN_TO (arg_size, align);
+			vararg_stack = ALIGN_TO (vararg_stack, align);
+			vararg_stack += arg_size;
 		}
 		/* allocate space for the pointer to varargs space start */
 		vararg_stack += sizeof (gpointer);
@@ -3165,6 +3172,33 @@ interp_emit_load_const (TransformData *td, gpointer field_addr, int mt)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+/*
+ * emit_convert:
+ *
+ *   Emit some implicit conversions which are not part of the .net spec, but are allowed by MS.NET.
+ */
+static void
+emit_convert (TransformData *td, int stack_type, MonoType *ftype)
+{
+	ftype = mini_get_underlying_type (ftype);
+
+	// FIXME: Add more
+	switch (ftype->type) {
+	case MONO_TYPE_I8: {
+		switch (stack_type) {
+		case STACK_TYPE_I4:
+			interp_add_ins (td, MINT_CONV_I8_I4);
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 static void
@@ -4500,12 +4534,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			token = read32 (td->ip);
 			td->ip += 4;
 
-			if (method->wrapper_type != MONO_WRAPPER_NONE)
-				m = (MonoMethod *)mono_method_get_wrapper_data (method, token);
-			else  {
-				m = mono_get_method_checked (image, token, NULL, generic_context, error);
-				goto_if_nok (error, exit);
-			}
+			m = interp_get_method (method, token, image, generic_context, error);
+			goto_if_nok (error, exit);
 
 			csignature = mono_method_signature_internal (m);
 			klass = m->klass;
@@ -4939,6 +4969,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type_internal (field);
 			mt = mint_type (ftype);
+
+			emit_convert (td, td->sp [-1].type, ftype);
 
 			/* the vtable of the field might not be initialized at this point */
 			MonoClass *fld_klass = mono_class_from_mono_type_internal (ftype);
@@ -5665,7 +5697,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (next_ip < end &&
 					(inlining || !td->is_bb_start [next_ip - td->il_code]) &&
 					(*next_ip == CEE_CALL || *next_ip == CEE_CALLVIRT) &&
-					(cmethod = mono_get_method_checked (image, read32 (next_ip + 1), NULL, generic_context, error)) &&
+					(cmethod = interp_get_method (method, read32 (next_ip + 1), image, generic_context, error)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 				interp_add_ins (td, MINT_MONO_LDPTR);
@@ -5906,6 +5938,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				save_last_error = TRUE;
 				++td->ip;
 				break;
+			case CEE_MONO_GET_SP:
+				interp_add_ins (td, MINT_MONO_GET_SP);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+				++td->ip;
+				break;
 			default:
 				g_error ("transform.c: Unimplemented opcode: 0xF0 %02x at 0x%x\n", *td->ip, td->ip-header->code);
 			}
@@ -5996,12 +6033,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					--td->sp;
 				}
 				token = read32 (td->ip + 1);
-				if (method->wrapper_type != MONO_WRAPPER_NONE)
-					m = (MonoMethod *)mono_method_get_wrapper_data (method, token);
-				else {
-					m = mono_get_method_checked (image, token, NULL, generic_context, error);
-					goto_if_nok (error, exit);
-				}
+				m = interp_get_method (method, token, image, generic_context, error);
+				goto_if_nok (error, exit);
 
 				if (!mono_method_can_access_method (method, m))
 					interp_generate_mae_throw (td, method, m);
@@ -7434,7 +7467,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	rtm->stack_size = ALIGN_TO (rtm->stack_size, MINT_VT_ALIGNMENT);
 	rtm->vt_stack_size = td->max_vt_sp;
 	rtm->total_locals_size = td->total_locals_size;
-	rtm->alloca_size = rtm->total_locals_size + rtm->vt_stack_size + rtm->stack_size;
+	rtm->alloca_size = ALIGN_TO (rtm->total_locals_size + rtm->vt_stack_size + rtm->stack_size, 8);
 	rtm->data_items = (gpointer*)mono_domain_alloc0 (domain, td->n_data_items * sizeof (td->data_items [0]));
 	memcpy (rtm->data_items, td->data_items, td->n_data_items * sizeof (td->data_items [0]));
 
