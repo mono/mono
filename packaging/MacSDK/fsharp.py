@@ -3,7 +3,7 @@ class FsharpPackage(GitHubTarballPackage):
         GitHubTarballPackage.__init__(self,
             'nosami', 'visualfsharp',
             '4.7.0',
-            'c06257f50070a15841e9732eb19dd466cbf6960c',
+            'e330fa91252b927cb9a9d4073cd51259b2536002',
             configure='',
             override_properties={ 'make': 'make all install PREFIX="%{package_prefix}" DESTDIR=%{stage_root}' })
 
