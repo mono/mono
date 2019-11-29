@@ -3429,6 +3429,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (ult->type == MONO_TYPE_VOID)
 					vt_size = -1;
 				WRITE32_INS (td->last_ins, 0, &vt_size);
+				POP_VT (td, vt_size);
 				++td->ip;
 			} else {
 				if (vt_size == 0)
@@ -3436,6 +3437,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				else {
 					interp_add_ins (td, MINT_RET_VT);
 					WRITE32_INS (td->last_ins, 0, &vt_size);
+					POP_VT (td, vt_size);
 					++td->ip;
 				}
 			}
