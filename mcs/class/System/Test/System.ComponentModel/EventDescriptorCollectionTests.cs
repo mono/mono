@@ -151,7 +151,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort ()
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Sort1 ()
 		{
 			EventDescriptorCollection descriptors;
@@ -193,7 +195,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [])
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Sort2 ()
 		{
 			EventDescriptorCollection descriptors;
@@ -251,7 +255,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (IComparer)
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Sort3 ()
 		{
 			EventDescriptorCollection descriptors;
@@ -309,7 +315,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test] // Sort (String [], IComparer)
-		[NUnit.Framework.CategoryAttribute ("NotWasm")]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Sort4 ()
 		{
 			EventDescriptorCollection descriptors;
