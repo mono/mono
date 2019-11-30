@@ -8,6 +8,7 @@
 
 #define MONO_MAX_IREGS 1
 #define MONO_MAX_FREGS 1
+#define MONO_MAX_XREGS 1
 
 #define WASM_REG_0 0
 
@@ -34,6 +35,7 @@
 //mini-codegen stubs - this doesn't do anything
 #define MONO_ARCH_CALLEE_REGS (1 << 0)
 #define MONO_ARCH_CALLEE_FREGS (1 << 1)
+#define MONO_ARCH_CALLEE_XREGS (1 << 1)
 #define MONO_ARCH_CALLEE_SAVED_FREGS (1 << 2)
 #define MONO_ARCH_CALLEE_SAVED_REGS (1 << 3)
 #define MONO_ARCH_INST_FIXED_REG(desc) FALSE
@@ -90,6 +92,10 @@ typedef struct {
 
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_FLOAT32_SUPPORTED 1
+
+#ifdef ENABLE_NETCORE
+#define MONO_ARCH_SIMD_INTRINSICS 1
+#endif
 
 //mini-codegen stubs - this doesn't do anything
 #define MONO_ARCH_CALLEE_REGS (1 << 0)
