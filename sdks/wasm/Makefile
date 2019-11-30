@@ -167,6 +167,7 @@ build-native: builds/$(1)/mono.js
 
 endef
 
+ifndef DISABLE_WASM_NO_NETCORE
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
 ifdef ENABLE_WASM_THREADS
@@ -175,6 +176,7 @@ $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+endif
 endif
 ifdef ENABLE_WASM_NETCORE
 $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
@@ -224,8 +226,8 @@ build-managed: bcl-netcore
 src/pinvoke-tables-default-netcore.h:
 	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
-samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
-	dotnet build samples/hello -f netcoreapp3.0
+samples/hello/bin/Debug/netcoreapp3.0/hello.dll: samples/hello/Program.cs
+	dotnet build samples/hello -f netcoreapp3.0 --nologo -v q
 
 build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
