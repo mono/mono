@@ -367,6 +367,7 @@ class Driver {
 		public bool EnableFS;
 		public bool EnableThreads;
 		public bool NativeStrip;
+		public bool Simd;
 	}
 
 	int Run (string[] args) {
@@ -394,6 +395,7 @@ class Driver {
 		bool enable_fs = false;
 		bool enable_threads = false;
 		bool is_netcore = false;
+		bool enable_simd = false;
 		var il_strip = false;
 		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
@@ -423,7 +425,8 @@ class Driver {
 				LinkerVerbose = false,
 				EnableZLib = false,
 				EnableFS = false,
-				NativeStrip = true
+				NativeStrip = true,
+				Simd = false
 			};
 
 		var p = new OptionSet () {
@@ -467,6 +470,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("enable-fs", "enable filesystem support (through Emscripten's file_packager.py in a later phase)", opts.EnableFS, b => opts.EnableFS = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
+		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -500,6 +504,7 @@ class Driver {
 		enable_zlib = opts.EnableZLib;
 		enable_fs = opts.EnableFS;
 		enable_threads = opts.EnableThreads;
+		enable_simd = opts.Simd;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -807,10 +812,13 @@ class Driver {
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
-
 		string strip_cmd = "";
 		if (opts.NativeStrip)
 			strip_cmd = " && $wasm_strip $out_wasm";
+		if (enable_simd) {
+			aot_args += "mattr=simd,";
+			emcc_flags = "-s SIMD=1 ";
+		}
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
