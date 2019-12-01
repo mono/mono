@@ -444,12 +444,10 @@ struct _MonoDomain {
 	GSList *assembly_bindings;
 	gboolean assembly_bindings_parsed;
 
-	/* Used by socket-io.c */
+	/* Used by w32socket.c */
 	/* These are domain specific, since the assembly can be unloaded */
 	MonoImage *socket_assembly;
 	MonoClass *sockaddr_class;
-	MonoClassField *sockaddr_data_field;
-	MonoClassField *sockaddr_data_length_field;
 
 	/* Cache function pointers for architectures  */
 	/* that require wrappers */

@@ -163,7 +163,7 @@ namespace System.Net.Sockets
 
 		/* Creates a new system socket, returning the handle */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr Socket_icall (AddressFamily family, SocketType type, ProtocolType proto, out int error);
+		static extern IntPtr Socket_icall (AddressFamily family, SocketType type, ProtocolType proto, out int error);
 
 #endregion
 
@@ -173,8 +173,8 @@ namespace System.Net.Sockets
 			get {
 				ThrowIfDisposedAndClosed ();
 
-				int ret, error;
-				ret = Available_internal (m_Handle, out error);
+				int error = 0;
+				int ret = Available_internal (m_Handle, out error);
 
 				if (error != 0)
 					throw new SocketException (error);
@@ -281,7 +281,7 @@ namespace System.Net.Sockets
 				if (seed_endpoint == null)
 					return null;
 
-				int error;
+				int error = 0;
 				SocketAddress sa = LocalEndPoint_internal (m_Handle, (int) addressFamily, out error);
 
 				if (error != 0)
@@ -312,7 +312,7 @@ namespace System.Net.Sockets
 			set {
 				ThrowIfDisposedAndClosed ();
 
-				int error;
+				int error = 0;
 				Blocking_internal (m_Handle, value, out error);
 
 				if (error != 0)
@@ -367,7 +367,7 @@ namespace System.Net.Sockets
 				if (!is_connected || seed_endpoint == null)
 					return null;
 
-				int error;
+				int error = 0;
 				SocketAddress sa = RemoteEndPoint_internal (m_Handle, (int) addressFamily, out error);
 
 				if (error != 0)
@@ -418,7 +418,7 @@ namespace System.Net.Sockets
 			 *  - ERROR socket 0-n, null */
 			Socket [] sockets = list.ToArray ();
 
-			int error;
+			int error = 0;
 			Select_icall (ref sockets, microSeconds, out error);
 
 			if (error != 0)
@@ -493,7 +493,7 @@ namespace System.Net.Sockets
 			if (mode != SelectMode.SelectRead && mode != SelectMode.SelectWrite && mode != SelectMode.SelectError)
 				throw new NotSupportedException ("'mode' parameter is not valid.");
 
-			int error;
+			int error = 0;
 			bool result = Poll_internal (m_Handle, mode, microSeconds, out error);
 
 			if (error != 0)
@@ -780,7 +780,7 @@ namespace System.Net.Sockets
 				localEP = RemapIPEndPoint (ipEndPoint);	
 			}
 			
-			int error;
+			int error = 0;
 			Bind_internal (m_Handle, localEP.Serialize(), out error);
 
 			if (error != 0)
@@ -792,12 +792,15 @@ namespace System.Net.Sockets
 #endif // FEATURE_NO_BSD_SOCKETS
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		private static void Bind_internal (SafeSocketHandle safeHandle, SocketAddress sa, out int error)
 		{
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Bind_icall (safeHandle.DangerousGetHandle (), sa, out error);
+				Bind_icall (safeHandle.DangerousGetHandle (), ref sa, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -806,7 +809,7 @@ namespace System.Net.Sockets
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Bind_icall (IntPtr sock, SocketAddress sa, out int error);
+		private extern static void Bind_icall (IntPtr sock, ref SocketAddress sa, out int error);
 
 #endregion
 
@@ -819,8 +822,8 @@ namespace System.Net.Sockets
 			if (!is_bound)
 				throw new SocketException ((int) SocketError.InvalidArgument);
 
-			int error;
-			Listen_internal(m_Handle, backlog, out error);
+			int error = 0;
+			Listen_internal (m_Handle, backlog, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -896,6 +899,9 @@ namespace System.Net.Sockets
 			is_bound = true;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -910,7 +916,7 @@ namespace System.Net.Sockets
 			InitSocketAsyncEventArgs (e, null, e, SocketOperation.Connect);
 
 			try {
-				IPAddress [] addresses;
+				IPAddress [] addresses = null;
 				SocketAsyncResult ares;
 				bool pending;
 
@@ -919,7 +925,7 @@ namespace System.Net.Sockets
 				 * not an async operation is pending.
 				 */
 
-				if (!GetCheckedIPs (e, out addresses)) {
+				if (!GetCheckedIPs (e, ref addresses)) {
 					//NOTE: DualMode may cause Socket's RemoteEndpoint to differ in AddressFamily from the
 					// SocketAsyncEventArgs, but the SocketAsyncEventArgs itself is not changed
 
@@ -1121,7 +1127,7 @@ namespace System.Net.Sockets
 				// an error. Better to just close the socket and move on.
 				sockares.socket.connect_in_progress = false;
 				sockares.socket.m_Handle.Dispose ();
-				sockares.socket.m_Handle = new SafeSocketHandle (sockares.socket.Socket_icall (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
+				sockares.socket.m_Handle = new SafeSocketHandle (Socket_icall (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
 				if (error != 0) {
 					sockares.Complete (new SocketException (error), true);
 					return false;
@@ -1211,11 +1217,14 @@ namespace System.Net.Sockets
 			sockares.CheckIfThrowDelayedException();
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void Connect_internal (SafeSocketHandle safeHandle, SocketAddress sa, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				Connect_icall (safeHandle.DangerousGetHandle (), sa, out error, blocking);
+				Connect_icall (safeHandle.DangerousGetHandle (), ref sa, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
@@ -1223,12 +1232,12 @@ namespace System.Net.Sockets
 
 		/* Connects to the remote address */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Connect_icall (IntPtr sock, SocketAddress sa, out int error, bool blocking);
+		extern static void Connect_icall (IntPtr sock, ref SocketAddress sa, out int error, bool blocking);
 
 		/* Returns :
 		 *  - false when it is ok to use RemoteEndPoint
 		 *  - true when addresses must be used (and addresses could be null/empty) */
-		bool GetCheckedIPs (SocketAsyncEventArgs e, out IPAddress [] addresses)
+		bool GetCheckedIPs (SocketAsyncEventArgs e, ref IPAddress [] addresses)
 		{
 			addresses = null;
 
@@ -1380,7 +1389,7 @@ namespace System.Net.Sockets
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			int nativeError;
+			int nativeError = 0;
 			int ret;
 			unsafe {
 				fixed (byte* pbuffer = buffer) {
@@ -1403,7 +1412,7 @@ namespace System.Net.Sockets
 		{
 			ThrowIfDisposedAndClosed ();
 
-			int nativeError;
+			int nativeError = 0;
 			int ret;
 			unsafe {
 				using (var handle = buffer.Slice (offset, size).Pin ()) {
@@ -1431,7 +1440,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("buffers");
 
 			int numsegments = buffers.Count;
-			int nativeError;
+			int nativeError = 0;
 			int ret;
 
 			GCHandle[] gch = new GCHandle[numsegments];
@@ -1667,6 +1676,9 @@ namespace System.Net.Sockets
 
 #region ReceiveFrom
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
@@ -1685,6 +1697,9 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		internal int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, out SocketError errorCode)
 		{
 			SocketAddress sockaddr = remoteEP.Serialize();
@@ -1723,6 +1738,9 @@ namespace System.Net.Sockets
 			return cnt;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		int ReceiveFrom (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, out SocketError errorCode)
 		{
 			SocketAddress sockaddr = remoteEP.Serialize();
@@ -1877,6 +1895,9 @@ namespace System.Net.Sockets
 			return sockares.Total;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static unsafe int ReceiveFrom_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking)
 		{
 			try {
@@ -2241,7 +2262,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException("remoteEP");
 
-			int error;
+			int error = 0;
 			int ret;
 			unsafe {
 				fixed (byte *pbuffer = buffer) {
@@ -2270,7 +2291,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException("remoteEP");
 
-			int error;
+			int error = 0;
 			int ret;
 			unsafe {
 				using (var pbuffer = buffer.Slice (offset, size).Pin ()) {
@@ -2392,18 +2413,21 @@ namespace System.Net.Sockets
 			return sockares.Total;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static unsafe int SendTo_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return SendTo_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, sa, out error, blocking);
+				return SendTo_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, ref sa, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int SendTo_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking);
+		extern static unsafe int SendTo_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, ref SocketAddress sa, out int error, bool blocking);
 
 #endregion
 
@@ -2524,7 +2548,7 @@ namespace System.Net.Sockets
 #region DuplicateAndClose
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool Duplicate_icall (IntPtr handle, int targetProcessId, out IntPtr duplicateHandle, out MonoIOError error);
+		static extern bool Duplicate_icall (IntPtr handle, int targetProcessId, ref IntPtr duplicateHandle, out MonoIOError error);
 
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
@@ -2536,8 +2560,10 @@ namespace System.Net.Sockets
 				(is_blocking       ? 0 : SocketInformationOptions.NonBlocking) |
 				(useOverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
-			IntPtr duplicateHandle;
-			if (!Duplicate_icall (Handle, targetProcessId, out duplicateHandle, out MonoIOError error))
+			var duplicateHandle = IntPtr.Zero;
+			var error = MonoIOError.ERROR_SUCCESS;
+
+			if (!Duplicate_icall (Handle, targetProcessId, ref duplicateHandle, out error))
 				throw MonoIO.GetException (error);
 
 			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)duplicateHandle);
@@ -2550,6 +2576,9 @@ namespace System.Net.Sockets
 
 #region GetSocketOption
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			ThrowIfDisposedAndClosed ();
@@ -2557,18 +2586,21 @@ namespace System.Net.Sockets
 			if (optionValue == null)
 				throw new SocketException ((int) SocketError.Fault, "Error trying to dereference an invalid pointer");
 
-			int error;
+			int error = 0;
 			GetSocketOption_arr_internal (m_Handle, optionLevel, optionName, ref optionValue, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionLength)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			int error;
+			int error = 0;
 			byte[] byte_val = new byte [optionLength];
 			GetSocketOption_arr_internal (m_Handle, optionLevel, optionName, ref byte_val, out error);
 
@@ -2578,13 +2610,16 @@ namespace System.Net.Sockets
 			return byte_val;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			int error;
-			object obj_val;
-			GetSocketOption_obj_internal (m_Handle, optionLevel, optionName, out obj_val, out error);
+			int error = 0;
+			object obj_val = null;
+			GetSocketOption_obj_internal (m_Handle, optionLevel, optionName, ref obj_val, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -2599,6 +2634,9 @@ namespace System.Net.Sockets
 				return obj_val;
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void GetSocketOption_arr_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error)
 		{
 			bool release = false;
@@ -2614,12 +2652,15 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void GetSocketOption_arr_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
 
-		static void GetSocketOption_obj_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error)
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static void GetSocketOption_obj_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, ref object obj_val, out int error)
 		{
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				GetSocketOption_obj_icall (safeHandle.DangerousGetHandle (), level, name, out obj_val, out error);
+				GetSocketOption_obj_icall (safeHandle.DangerousGetHandle (), level, name, ref obj_val, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2627,12 +2668,15 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void GetSocketOption_obj_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
+		extern static void GetSocketOption_obj_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref object obj_val, out int error);
 
 #endregion
 
 #region SetSocketOption
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			ThrowIfDisposedAndClosed ();
@@ -2641,7 +2685,7 @@ namespace System.Net.Sockets
 			if (optionValue == null)
 				throw new SocketException ((int) SocketError.Fault, "Error trying to dereference an invalid pointer");
 
-			int error;
+			int error = 0;
 			SetSocketOption_internal (m_Handle, optionLevel, optionName, null, optionValue, 0, out error);
 
 			if (error != 0) {
@@ -2659,7 +2703,7 @@ namespace System.Net.Sockets
 			if (optionValue == null)
 				throw new ArgumentNullException("optionValue");
 
-			int error;
+			int error = 0;
 
 			if (optionLevel == SocketOptionLevel.Socket && optionName == SocketOptionName.Linger) {
 				LingerOption linger = optionValue as LingerOption;
@@ -2698,7 +2742,7 @@ namespace System.Net.Sockets
 		{
 			ThrowIfDisposedAndClosed ();
 
-			int error;
+			int error = 0;
 			SetSocketOption_internal (m_Handle, optionLevel, optionName, null, null, optionValue, out error);
 
 			if (error != 0) {
@@ -2708,6 +2752,9 @@ namespace System.Net.Sockets
 			}
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void SetSocketOption_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error)
 		{
 			bool release = false;
@@ -2732,7 +2779,7 @@ namespace System.Net.Sockets
 			if (CleanedUp)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			int error;
+			int error = 0;
 			int result = IOControl_internal (m_Handle, ioControlCode, optionInValue, optionOutValue, out error);
 
 			if (error != 0)
@@ -2793,7 +2840,7 @@ namespace System.Net.Sockets
 			if (!is_connected)
 				throw new SocketException (enotconn); // Not connected
 
-			int error;
+			int error = 0;
 			Shutdown_internal (m_Handle, how, out error);
 
 			if (error == enotconn) {
@@ -2849,13 +2896,16 @@ namespace System.Net.Sockets
 			}
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void Linger (IntPtr handle)
 		{
 			if (!is_connected || linger_timeout <= 0)
 				return;
 
 			/* We don't want to receive any more data */
-			int error;
+			int error = 0;
 			Shutdown_icall (handle, SocketShutdown.Receive, out error);
 
 			if (error != 0)
@@ -3005,7 +3055,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void cancel_blocking_socket_operation (Thread thread);
+		internal static extern void cancel_blocking_socket_operation (ref Thread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SupportsPortReuse (ProtocolType proto);

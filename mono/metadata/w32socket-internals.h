@@ -19,6 +19,99 @@
 
 #include <mono/utils/w32api.h>
 
+// MonoSocketAddress is something else.
+//
+typedef struct MonoManagedSocketAddress {
+	MonoObject	object;
+	gint32		m_Size;
+	MonoArray*	m_Buffer; // byte []
+	MonoBoolean	m_changed;
+	gint32		m_hash;
+} MonoManagedSocketAddress;
+
+TYPED_HANDLE_DECL (MonoManagedSocketAddress);
+
+#if 0 // old
+
+typedef struct MonoIPAddress {
+	MonoObject		object;
+	gint64			m_Address;
+	MonoString*		m_ToString;
+	gint32			m_Family;	// MonoAddressFamily
+	MonoArray*		m_Numbers;	// ushort[]
+	gint64			m_ScopeId;
+	gint32			m_HashCode;
+} MonoIPAddress;
+
+#else // corefx
+
+typedef struct MonoIPAddress {
+	MonoObject	object;
+	guint32		_addressOrScopeId;
+	MonoArray*	_numbers;	// ushort[]
+	MonoString*	_toString;
+	gint32		_hashCode;
+} MonoIPAddress;
+
+#endif
+
+TYPED_HANDLE_DECL (MonoIPAddress);
+
+typedef struct MonoLingerOption {
+	MonoObject	object;
+	MonoBoolean	enabled;
+	gint32		lingerTime;
+} MonoLingerOption;
+
+TYPED_HANDLE_DECL (MonoLingerOption);
+
+typedef struct MonoMulticastOption {
+	MonoObject	object;
+	MonoIPAddress*	group;
+	MonoIPAddress*	localAddress;
+	gint32		ifIndex;
+} MonoMulticastOption;
+
+TYPED_HANDLE_DECL (MonoMulticastOption);
+
+typedef struct MonoIPv6MulticastOption {
+	MonoObject	object;
+	MonoIPAddress*	m_Group;
+	gint64		m_Interface;
+} MonoIPv6MulticastOption;
+
+TYPED_HANDLE_DECL (MonoIPv6MulticastOption);
+
+// Details of this type are not needed.
+//
+typedef struct MonoSemaphoreSlim MonoSemaphoreSlim;
+
+// Details of this type are not needed.
+//
+typedef struct MonoEndPoint MonoEndPoint;
+
+typedef struct MonoSocket {
+	MonoObject		object;
+	MonoBoolean		is_closed;
+	MonoBoolean		is_listening;
+	MonoBoolean		useOverlappedIO;
+	gint32			linger_timeout;
+	gint32			addressFamily;	// enum AddressFamily
+	gint32			socketType;	// enum SocketType
+	gint32			protocolType;	// enum ProtocolType
+	MonoSafeHandle*		m_Handle;
+	MonoEndPoint*		seed_endpoint;
+	MonoSemaphoreSlim*	ReadSem;
+	MonoSemaphoreSlim*	WriteSem;
+	MonoBoolean		is_blocking;
+	MonoBoolean		is_bound;
+	MonoBoolean		is_connected;
+	gint32			m_IntCleanedUp;
+	MonoBoolean		connect_in_progress;
+} MonoSocket;
+
+TYPED_HANDLE_DECL (MonoSocket);
+
 #ifndef HAVE_SOCKLEN_T
 #define socklen_t int
 #endif

@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Net.Sockets {
@@ -40,6 +41,9 @@ namespace System.Net.Sockets {
 		{
 		}
 
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		protected override bool ReleaseHandle ()
 		{
 			int error = 0;
@@ -83,8 +87,10 @@ namespace System.Net.Sockets {
 							break;
 
 						// abort registered threads
-						foreach (var t in blocking_threads)
-							Socket.cancel_blocking_socket_operation (t);
+						foreach (var t in blocking_threads) {
+							var reft = t;
+							Socket.cancel_blocking_socket_operation (ref reft);
+						}
 
 						// Sleep so other threads can resume
 						in_cleanup = true;

@@ -154,6 +154,7 @@ fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 
 		getprotobyname_r (proto_name, &protoent_buf, buf, 1024, &pent);
 		*proto = pent ? pent->p_proto : default_val;
+		// FIXME barrier here
 		*cache = 1;
 	}
 	return *proto;
@@ -169,6 +170,7 @@ fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 
 		pent = getprotobyname (proto_name);
 		*proto = pent ? pent->p_proto : default_val;
+		// FIXME barrier here
 		*cache = 1;
 	}
 	return *proto;

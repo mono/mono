@@ -38,6 +38,7 @@
 #include "w32semaphore.h"
 #include "w32socket.h"
 #include "mono/utils/mono-proclib.h"
+#include "w32socket-internals.h"
 
 /* From MonoProperty.cs */
 typedef enum {
@@ -236,7 +237,94 @@ ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2*);
-ICALL_EXPORT gpointer ves_icall_System_Net_Sockets_Socket_Accept (gsize, gint32*, MonoBoolean);
-ICALL_EXPORT gint32 ves_icall_System_Net_Sockets_Socket_Available (gsize, gint32*);
+
+ICALL_EXPORT gpointer ves_icall_System_Net_Sockets_Socket_Accept_icall (gsize, gint32*, MonoBoolean);
+ICALL_EXPORT gint32   ves_icall_System_Net_Sockets_Socket_Available_icall (gsize, gint32*);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Net_Sockets_Socket_Socket_icall (gint32 family, gint32 type, gint32 proto, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Close_icall (gsize sock, gint32 *werror);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_icall (void);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Blocking_icall (gsize sock, MonoBoolean block, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Listen_icall (gsize sock, guint32 backlog, gint32 *werror);;
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_LocalEndPoint_icall (MonoManagedSocketAddress *volatile* socket_address_handle, gsize sock, gint32 af, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_RemoteEndPoint_icall (MonoManagedSocketAddress *volatile* socket_address_handle, gsize sock, gint32 af, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Bind_icall (gsize sock, MonoManagedSocketAddress *volatile* socket_address_handle, gint32 *werror);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_Poll_icall (gsize sock, gint mode, gint timeout, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Connect_icall (gsize sock, MonoManagedSocketAddress *volatile* socket_address_handle, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Disconnect_icall (gsize sock, MonoBoolean reuse, gint32 *werror);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_Duplicate_icall (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle, gint32 *werror);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_Receive_icall (gsize sock, gchar *buffer, gint32 count, gint32 flags, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_Receive_array_icall (gsize sock, WSABUF *buffers, gint32 count, gint32 flags, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_ReceiveFrom_icall (gsize sock, char *buffer, gint32 count, gint32 flags,
+	MonoManagedSocketAddress *volatile* socket_address_handle, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_Send_icall (gsize sock, gchar *buffer, gint32 count, gint32 flags, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_Send_array_icall (gsize sock, WSABUF *buffers, gint32 count, gint32 flags, gint32 *werror, MonoBoolean blocking);
+
+ICALL_EXPORT
+gint32
+ves_icall_System_Net_Sockets_Socket_SendTo_icall (gsize sock, char *buffer, gint32 count, gint32 flags,
+	MonoManagedSocketAddress *volatile* socket_address_handle, gint32 *werror, MonoBoolean blocking);;
+
+ICALL_EXPORT
+void
+ves_icall_System_Net_Sockets_Socket_Shutdown_icall (gsize sock, gint32 how, gint32 *werror);
+
+ICALL_EXPORT
+void
+ves_icall_cancel_blocking_socket_operation (MonoThreadObject *volatile* thread_handle);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_SupportPortReuse_icall (MonoProtocolType proto);
 
 #endif // __MONO_METADATA_ICALL_DECL_H__

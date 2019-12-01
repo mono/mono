@@ -154,7 +154,7 @@ namespace System.Net.Sockets {
             InitializeSockets();
 
 #if MONO
-            int error;
+            int error = 0;
             m_Handle = new SafeSocketHandle (Socket_icall (addressFamily, socketType, protocolType, out error), true);
 #else
             m_Handle = SafeCloseSocket.CreateWSASocket(
