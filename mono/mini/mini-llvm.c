@@ -3594,8 +3594,12 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 		switch (ainfo->storage) {
 		case LLVMArgVtypeInReg:
 		case LLVMArgVtypeByVal:
+#ifdef ENABLE_NETCORE
+			// FIXME: Enabling this fails on windows
 		case LLVMArgVtypeAddr:
-		case LLVMArgVtypeByRef: {
+		case LLVMArgVtypeByRef:
+#endif
+		{
 			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (ainfo->type)))
 				/* Treat these as normal values */
 				ctx->values [reg] = LLVMBuildLoad (builder, ctx->addresses [reg], "");
