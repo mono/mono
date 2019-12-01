@@ -77,7 +77,8 @@ namespace System.Windows.Forms
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 
 				template.ActiveLinkColor = value;
-
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows) {
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
 					if (cell != null)
@@ -113,6 +114,8 @@ namespace System.Windows.Forms
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 
 				template.LinkBehavior = value;
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows)
 				{
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
@@ -137,6 +140,8 @@ namespace System.Windows.Forms
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 				template.LinkColor = value;
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows)
 				{
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
@@ -184,6 +189,8 @@ namespace System.Windows.Forms
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 				template.TrackVisitedState = value;
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows)
 				{
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
@@ -210,6 +217,8 @@ namespace System.Windows.Forms
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 				template.UseColumnTextForLinkValue = value;
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows)
 				{
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
@@ -235,6 +244,8 @@ namespace System.Windows.Forms
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 				template.VisitedLinkColor = value;
+				if (DataGridView == null)
+					return;
 				foreach (DataGridViewRow row in DataGridView.Rows)
 				{
 					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
