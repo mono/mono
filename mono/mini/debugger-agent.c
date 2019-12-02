@@ -2716,7 +2716,6 @@ typedef struct {
 static void
 create_tls_for_thread_attached_on_debugger (gpointer user_data)
 {
-	ERROR_DECL (error);
 	MonoInternalThread* thread =  mono_thread_internal_current ();
 
 	//creating tls info for each thread when debugger is attached
@@ -2746,7 +2745,7 @@ create_tls_for_thread_attached_on_debugger (gpointer user_data)
 	GSList *tmp;
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly* ass = (MonoAssembly *)tmp->data;
-		mono_add_assembly (alc, ass, NULL, error);
+		mono_attach_add_assembly (alc, ass);
 		for (int i = 0; i < ass->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 			ERROR_DECL (error);
 			MonoClass *klass;

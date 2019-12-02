@@ -228,7 +228,7 @@ MONO_API int             mono_debugger_insert_breakpoint           (const char *
 MONO_API void mono_set_is_debugger_attached (mono_bool attached);
 MONO_API mono_bool mono_is_debugger_attached (void);
 
-MONO_API void mono_add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error);
+void mono_attach_add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly);
 
 MONO_END_DECLS
 
