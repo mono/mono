@@ -20,7 +20,7 @@ using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
 using System.IO;
-
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 using MonoTests.Helpers;
@@ -215,6 +215,10 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void ConnectFailAsync ()
 		{
+			// XXX: Hangs on AIX
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
+				Assert.Ignore ("Skipping on AIX/i");
+
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
