@@ -2504,13 +2504,6 @@ mono_main (int argc, char* argv[])
 	} else if (enable_debugging) {
 		mini_get_debug_options ()->gen_sdb_seq_points = TRUE;
 		mini_get_debug_options ()->mdb_optimizations = TRUE;
-		/*
-		* The stack walk done from thread_interrupt () needs to be signal safe, but it
-		* isn't, since it can call into mono_aot_find_jit_info () which is not signal
-		* safe (#3411). So load AOT info eagerly when the debugger is running as a
-		* workaround.
-		*/
-		mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE;
 		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
 	}
 #ifdef HOST_WIN32

@@ -1042,6 +1042,14 @@ debugger_agent_init (gboolean from_attach)
 	mono_disable_optimizations (MONO_OPT_LINEARS);
 #endif
 
+	/*
+	 * The stack walk done from thread_interrupt () needs to be signal safe, but it
+	 * isn't, since it can call into mono_aot_find_jit_info () which is not signal
+	 * safe (#3411). So load AOT info eagerly when the debugger is running as a
+	 * workaround.
+	 */
+	mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE;
+
 #ifdef HAVE_SETPGID
 	if (agent_config.setpgid)
 		setpgid (0, 0);
