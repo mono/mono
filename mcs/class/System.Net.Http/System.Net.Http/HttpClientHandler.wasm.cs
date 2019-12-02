@@ -78,8 +78,8 @@ namespace System.Net.Http
 		}
 
 		public bool UseProxy {
-			get => throw new PlatformNotSupportedException ("Property AutomaticDecompression is not supported.");
-			set => throw new PlatformNotSupportedException ("Property AutomaticDecompression is not supported.");
+			get => throw new PlatformNotSupportedException ("Property UseProxy is not supported.");
+			set => throw new PlatformNotSupportedException ("Property UseProxy is not supported.");
 		}
 
 		public IWebProxy Proxy {
@@ -132,7 +132,7 @@ namespace System.Net.Http
 			set => throw new PlatformNotSupportedException ("Property MaxRequestContentBufferSize is not supported.");
 		}
 
-		public IDictionary<string, object> Properties => throw new PlatformNotSupportedException ();
+		public IDictionary<string, object> Properties => throw new PlatformNotSupportedException ("Property Properties is not supported.");
 
 		public static Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> DangerousAcceptAnyServerCertificateValidator { get; } = delegate { return true; };
 
