@@ -247,6 +247,11 @@ mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 static void
 add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error)
 {
+	mono_add_assembly (alc, assembly);
+}
+
+void  mono_add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly)
+{
 	MonoDebugHandle *handle;
 	MonoImage *image;
 
@@ -256,12 +261,6 @@ add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer use
 	if (!handle)
 		mono_debug_open_image (image, NULL, 0);
 	mono_debugger_unlock ();
-}
-
-void  mono_attach_add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly)
-{
-	ERROR_DECL (error);
-	add_assembly(alc, assembly, NULL, error);
 }
 
 struct LookupMethodData

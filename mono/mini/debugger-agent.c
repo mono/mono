@@ -2745,7 +2745,7 @@ create_tls_for_thread_attached_on_debugger (gpointer user_data)
 	GSList *tmp;
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly* ass = (MonoAssembly *)tmp->data;
-		mono_attach_add_assembly (alc, ass);
+		mono_add_assembly (alc, ass);
 		for (int i = 0; i < ass->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 			ERROR_DECL (error);
 			MonoClass *klass;
