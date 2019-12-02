@@ -167,6 +167,7 @@ build-native: builds/$(1)/mono.js
 
 endef
 
+ifndef DISABLE_WASM_NO_NETCORE
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
 ifdef ENABLE_WASM_THREADS
@@ -175,6 +176,7 @@ $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+endif
 endif
 ifdef ENABLE_WASM_NETCORE
 $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
@@ -222,10 +224,10 @@ cross-netcore:
 build-managed: bcl-netcore
 
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll} > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
-samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
-	dotnet build samples/hello -f netcoreapp3.0
+samples/hello/bin/Debug/netcoreapp3.0/hello.dll: samples/hello/Program.cs
+	dotnet build samples/hello -f netcoreapp3.0 --nologo -v q
 
 build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
@@ -237,13 +239,13 @@ run-hello-netcore: bin/hello-netcore/mono.js
 	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
 
 build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
 bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
 
 run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
-	(cd bin/aot-hello-netcore && $(SM) runtime.js --run hello.dll)
+	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
 # Path to <mono repo>/netcore/netcore/corefx/tests/extracted
 COREFX_TESTS_DIR=
@@ -259,7 +261,8 @@ define NetcoreTestTemplate
 
 bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
+	cd xunit-runner && dotnet build /nologo /v:q
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
@@ -268,15 +271,12 @@ build-$(1): bin/$(2)/mono.js
 run-$(1): bin/$(2)/mono.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
 
-run-corefx-tests-netcore: run-$(1)
-
 endef
 
-NETCORE_COREFX_FAILING_TEST_SUITES = \
-	System.CodeDom.Tests \
-	Microsoft.XmlSerializer.Generator.Tests
+include corefx-test-suites.mk
 
-NETCORE_COREFX_TEST_SUITES = \
+# Passing testsuites after exclusions
+NETCORE_COREFX_PASSING_TEST_SUITES = \
 	Common.Tests \
 	Invariant.Tests \
 	Microsoft.CSharp.Tests \
@@ -288,9 +288,23 @@ NETCORE_COREFX_TEST_SUITES = \
 	System.Collections.Immutable.Tests \
 	System.Collections.NonGeneric.Tests \
 	System.Collections.Specialized.Tests \
-	System.Collections.Tests
+	System.Collections.Tests \
+	System.IO.UnmanagedMemoryStream.Tests \
+	System.Json.Tests \
+	System.Memory.Tests \
+	System.Numerics.Vectors.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Runtime.CompilerServices.VisualC.Tests \
+	System.Runtime.Extensions.Tests \
+	System.Runtime.Handles.Tests \
+	System.Runtime.Tests
 
-$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll)))
+System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
+System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
+
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
+
+$(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
 
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
@@ -595,6 +609,8 @@ CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
+
+RUN_V8=$(D8) --stack-trace-limit=1000 --expose_wasm
 
 run-ch-%: toolchain build-test-suite
 	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
