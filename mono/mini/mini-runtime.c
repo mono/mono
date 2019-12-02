@@ -3263,7 +3263,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 }
 
 
-MONO_SIG_HANDLER_FUNC (, mono_sigxcpu_signal_handler)
+MONO_SIG_HANDLER_FUNC (, mono_sigvtalrm_signal_handler)
 {
 	MONO_ENTER_GC_UNSAFE_UNBALANCED;
 	ERROR_DECL (error);
