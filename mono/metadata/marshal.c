@@ -5187,6 +5187,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 	return mono_string_new_utf8_len (mono_domain_get (), ptr, len, error);
 }
 
+#if !ENABLE_NETCORE
+
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error)
 {
@@ -5214,6 +5216,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunic
 	}
 	return mono_string_new_utf16_handle (mono_domain_get (), ptr, len, error);
 }
+
+#endif
 
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
