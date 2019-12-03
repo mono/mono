@@ -618,9 +618,6 @@ mono_config_for_assembly_internal (MonoImage *assembly)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoConfigParseState state = {NULL};
-#ifndef TARGET_ANDROID
-	int got_it = 0;
-#endif
 	int i;
 	char *aname, *cfg, *cfg_name;
 	const char *bundled_config;
@@ -637,7 +634,8 @@ mono_config_for_assembly_internal (MonoImage *assembly)
 	mono_config_parse_file_with_context (&state, cfg_name);
 	g_free (cfg_name);
 
-#ifndef TARGET_ANDROID
+#ifndef DISABLE_CFGDIR_CONFIG
+	int got_it = 0;
 	cfg_name = g_strdup_printf ("%s.config", mono_image_get_name (assembly));
 	const char *cfg_dir = mono_get_config_dir ();
 	if (!cfg_dir) {
