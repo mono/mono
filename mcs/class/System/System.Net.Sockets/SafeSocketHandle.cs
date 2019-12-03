@@ -44,10 +44,10 @@ namespace System.Net.Sockets {
 		{
 			int error = 0;
 
-			Socket.Blocking_internal (handle, false, out error);
+			Socket.Blocking_icall (handle, false, out error);
 #if FULL_AOT_DESKTOP
 			/* It's only for platforms that do not have working syscall abort mechanism, like WatchOS and TvOS */
-			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
+			Socket.Shutdown_icall (handle, SocketShutdown.Both, out error);
 #endif
 
 			if (blocking_threads != null) {
@@ -93,7 +93,7 @@ namespace System.Net.Sockets {
 				}
 			}
 
-			Socket.Close_internal (handle, out error);
+			Socket.Close_icall (handle, out error);
 
 			return error == 0;
 		}
