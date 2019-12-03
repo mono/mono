@@ -251,6 +251,10 @@ typedef guint32 gunichar;
 #define ALIGN_TO(val,align) ((((gssize)val) + ((align) - 1)) & ~((align) - 1))
 #endif
 
+#ifndef ALIGN_DOWN_TO
+#define ALIGN_DOWN_TO(val,align) (((gssize)val) & ~((align) - 1))
+#endif
+
 #ifndef ALIGN_PTR_TO
 #define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #endif
