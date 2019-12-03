@@ -58,6 +58,7 @@ g_module_open (const gchar *file, GModuleFlags flags)
 		f |= RTLD_LOCAL;
 
 	handle = dlopen (file, f);
+	fprintf (stderr, "LIBEST DLOPEN NULL ADDRESS: %p\n", handle);
 	if (handle == NULL)
 		return NULL;
 	
@@ -76,7 +77,10 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 	if (module == NULL || module->handle == NULL)
 		return FALSE;
 
+	dlerror();
 	*symbol = dlsym (module->handle, symbol_name);
+	if (*symbol == NULL)
+		fprintf(stderr, "DLSYM HAS FAILED: %s\n", dlerror());
 	return (*symbol != NULL);
 }
 
