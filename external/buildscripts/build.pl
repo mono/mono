@@ -1680,7 +1680,7 @@ if ($artifact)
 		elsif($^O eq "linux")
 		{
 			print ">>> Copying libmonosgen-2.0\n";
-			system("cp", "$monoroot/mono/mini/.libs/libmonobdwgc-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying libmonobdwgc-2.0.so\n");
+			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying libmonobdwgc-2.0.so\n");
 			system("cp", "$monoroot/mono/mini/.libs/libmonosgen-2.0.so","$embedDirArchDestination/libmonosgen-2.0.so") eq 0 or die ("failed copying libmonosgen-2.0.so\n");
 
 			print ">>> Copying libMonoPosixHelper.so\n";
