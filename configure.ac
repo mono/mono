@@ -871,11 +871,11 @@ if test x"$GCC" = xyes; then
 		CFLAGS="$CFLAGS -fwrapv"
 
 		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
-		if test x"$disable_visibility_hidden" = xno; then
-		   # Don't export any symbols by default
-		   SHARED_CFLAGS="-fvisibility=hidden"
-		   CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
-		fi
+		#if test x"$disable_visibility_hidden" = xno; then
+		#   # Don't export any symbols by default
+		#   SHARED_CFLAGS="-fvisibility=hidden"
+		#   CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+		#fi
 
 		ORIG_CFLAGS=$CFLAGS
 		# Check for the normal version, since gcc ignores unknown -Wno options
