@@ -3904,7 +3904,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 							break;
 					}
 #else
-					while ((method = mono_class_get_methods (ei->klass, &iter))) {
+					while (!found && (method = mono_class_get_methods (ei->klass, &iter))) {
 						MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
 
 						if (minfo) {
