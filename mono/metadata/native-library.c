@@ -1201,11 +1201,6 @@ lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_ou
 
 	g_assert (status_out);
 
-#ifndef ENABLE_NETCORE
-	// hacky attempt #1
-	fprintf (stderr, "PINVOKE DLOPEN NULL ADDRESS: %p\n", mono_dl_open (NULL, MONO_DL_LAZY, NULL)->handle);
-#endif
-
 	if (piinfo->addr)
 		return piinfo->addr;
 
