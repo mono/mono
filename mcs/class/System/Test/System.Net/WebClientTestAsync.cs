@@ -41,6 +41,7 @@ namespace MonoTests.System.Net
 	public class WebClientTestAsync
 	{
 		[Test]
+		[Category("NotWasm")]
 		[Category("Async")]
 		[Category("AndroidNotWorking")] // Attempts to access the test dll which won't work on Android
 		[Category("BitcodeNotSupported")]

@@ -272,7 +272,7 @@ $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
 ifdef ENABLE_WASM_NETCORE
 
 build-wasm-bcl-netcore: build-wasm-runtime-netcore
-	cp wasm-runtime-netcore-release/netcore/config.make ../../netcore/config.make
+	in=wasm-runtime-netcore-release/netcore/config.make; out=../../netcore/config.make; if ! cmp -s $$in $$out ; then cp $$in $$out ; fi
 	make -C ../../netcore
 
 package-wasm-bcl-netcore: build-wasm-bcl-netcore

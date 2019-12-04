@@ -254,6 +254,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void CaseInsensitive () 
 		{
 			// default constructor is case insensitive
@@ -347,6 +350,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Remove () 
 		{
 			string[] items = { "mono", "MoNo", "mOnO", "MONO" };
@@ -414,6 +420,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Constructor_IEqualityComparer_Null ()
 		{
 			NameValueCollection c1 = new NameValueCollection ((IEqualityComparer)null);
@@ -423,6 +432,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Constructor_NameValueCollection ()
 		{
 			NameValueCollection c1 = new NameValueCollection (StringComparer.InvariantCultureIgnoreCase);

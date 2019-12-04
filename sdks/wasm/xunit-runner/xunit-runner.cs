@@ -241,11 +241,12 @@ class WasmRunner : IMessageSink
 					IDataDiscoverer discoverer;
 					discoverer = ExtensibilityPointFactory.GetDataDiscoverer (this, discovererType);
 
-					var data = discoverer.GetData (dataAttribute, tc.TestMethod.Method);
-					Console.WriteLine (tc.DisplayName + " [" + data.Count () + "]");
-					foreach (var dataRow in data) {
-						nrun ++;
-						try {
+					try {
+						var data = discoverer.GetData (dataAttribute, tc.TestMethod.Method);
+						var data_arr = data.ToArray ();
+						Console.WriteLine (tc.DisplayName + " [" + data_arr.Length + "]");
+						foreach (var dataRow in data_arr) {
+							nrun ++;
 							object obj = null;
 							if (!method.IsStatic) {
 								var constructor = method.ReflectedType.GetConstructor (Type.EmptyTypes);
@@ -259,10 +260,10 @@ class WasmRunner : IMessageSink
 							for (int i = 0; i < dataRow.Length; ++i)
 								dataRow [i] = ConvertArg (dataRow [i], pars [i].ParameterType);
 							method.Invoke (obj, BindingFlags.Default, null, dataRow, null);
-						} catch (Exception ex) {
-							Console.WriteLine ("FAIL: " + ex);
-							nfail ++;
 						}
+					} catch (Exception ex) {
+						Console.WriteLine ("FAIL: " + tc.DisplayName + " " + ex);
+						failed = true;
 					}
 				}
 				if (failed) {
