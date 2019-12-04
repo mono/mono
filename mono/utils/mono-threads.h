@@ -422,6 +422,10 @@ mono_thread_info_register_small_id (void);
 MONO_API THREAD_INFO_TYPE *
 mono_thread_info_attach (void);
 
+MONO_RT_EXTERNAL_ONLY
+MONO_API void
+mono_threads_attach_tools_thread (void);
+
 MONO_API void
 mono_thread_info_detach (void);
 
