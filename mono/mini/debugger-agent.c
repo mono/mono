@@ -829,7 +829,7 @@ debugger_agent_parse_options (char *options)
 	agent_config.defer = FALSE;
 	agent_config.address = NULL;
 
-	agent_config.log_level = 10;
+	//agent_config.log_level = 10;
 
 	args = g_strsplit (options, ",", -1);
 	for (ptr = args; ptr && *ptr; ptr ++) {
@@ -953,7 +953,7 @@ debugger_agent_init (gboolean from_attach)
 		agent_config.attach = TRUE;
 		agent_config.enabled = TRUE;
 		agent_config.transport = (char*) "dt_socket";
-		agent_config.address = (char*) "127.0.0.1:1235";
+		agent_config.address = (char*) "127.0.0.1:0";
 		//agent_config.log_level = 10;
 	}
 
@@ -1021,6 +1021,8 @@ debugger_agent_init (gboolean from_attach)
 	embedding = agent_config.embedding;
 	if (!from_attach)
 		disconnected = TRUE;
+	else
+		disconnected = FALSE;
 
 	if (agent_config.log_file) {
 		log_file = fopen (agent_config.log_file, "w+");
@@ -1036,6 +1038,12 @@ debugger_agent_init (gboolean from_attach)
 	ids_init ();
 	objrefs_init ();
 	suspend_init ();
+
+	mini_get_debug_options ()->gen_sdb_seq_points = TRUE;
+	/* 
+	 * This is needed because currently we don't handle liveness info.
+	 */
+	mini_get_debug_options ()->mdb_optimizations = TRUE;
 
 #ifndef MONO_ARCH_HAVE_CONTEXT_SET_INT_REG
 	/* This is needed because we can't set local variables in registers yet */
@@ -1209,6 +1217,21 @@ socket_transport_accept (int socket_fd)
 	
 	return conn_fd;
 }
+static void 
+create_file_to_communicate_port (int sfd)
+{
+	struct sockaddr_in sin;
+	socklen_t len = sizeof(sin);
+	if (getsockname (sfd, (struct sockaddr *)&sin, &len) != -1) {
+		char* file_name = g_strdup_printf ("debugger_attach.%d", getpid());
+		char* full_path = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
+		FILE* tmp = fopen (full_path, "w");
+		fprintf (tmp, "%d", ntohs(sin.sin_port));
+		fclose (tmp);
+		g_free (file_name);
+		g_free (full_path);
+	}
+}
 
 static gboolean
 socket_transport_send (void *data, int len)
@@ -1318,6 +1341,9 @@ socket_transport_connect (const char *address)
 				res = bind (sfd, &sockaddr.addr, sock_len);
 				if (res == -1)
 					continue;
+
+				if (agent_config.attach) 
+					create_file_to_communicate_port (sfd);
 
 				res = listen (sfd, 16);
 				if (res == -1)
@@ -2725,7 +2751,8 @@ static void
 create_tls_for_thread_attached_on_debugger (gpointer user_data)
 {
 	MonoInternalThread* thread =  mono_thread_internal_current ();
-
+	if (!thread)
+		return;
 	//creating tls info for each thread when debugger is attached
 	DebuggerTlsData *tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	if (tls)
@@ -2818,7 +2845,8 @@ notify_thread_attached (MonoInternalThread *thread)
 	/* This is _not_ equivalent to mono_thread_internal_abort () */
 	InterruptData interrupt_data = { 0 };
 	interrupt_data.tls = NULL;
-
+	if (mono_gc_is_finalizer_internal_thread (thread))
+		return;
 	mono_thread_info_safe_suspend_and_run ((MonoNativeThreadId)(gsize)thread->tid, FALSE, debugger_interrupt_critical_attached, &interrupt_data);
 }
 
