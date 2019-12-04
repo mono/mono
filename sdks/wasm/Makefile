@@ -24,7 +24,6 @@ MINI_PATH=$(TOP)/mono/mini
 CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
-MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 PACKAGER=mono --debug packager.exe --no-native-strip
 
@@ -37,18 +36,6 @@ endif
 
 DOTNET_PACK=$(DOTNET_CMD) pack
 DOTNET_BUILD=$(DOTNET_CMD) build
-
-ZLIB_HEADERS = \
-	$(MONO_ZLIB_DIR)/crc32.h		\
-	$(MONO_ZLIB_DIR)/deflate.h  	\
-	$(MONO_ZLIB_DIR)/inffast.h  	\
-	$(MONO_ZLIB_DIR)/inffixed.h  	\
-	$(MONO_ZLIB_DIR)/inflate.h  	\
-	$(MONO_ZLIB_DIR)/inftrees.h  	\
-	$(MONO_ZLIB_DIR)/trees.h  	\
-	$(MONO_ZLIB_DIR)/zconf.h  	\
-	$(MONO_ZLIB_DIR)/zlib.h  	\
-	$(MONO_ZLIB_DIR)/zutil.h
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
@@ -97,6 +84,9 @@ BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
     --asset=$(BROWSER_TEST)/resources/archive.zip   \
     --asset=$(BROWSER_TEST)/resources/test.nupkg   \
+
+WASM_TESTS_SRC=$(TOP)/sdks/wasm/tests/src
+WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
@@ -161,7 +151,7 @@ builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
 
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
+	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -s USE_ZLIB=1 src/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
@@ -442,24 +432,27 @@ build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
 	ninja -v -C obj/aot-sample-profiled
 
-zlibtest.exe: zlibtest.cs
-	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
+$(WASM_TESTS_BIN):
+	mkdir -p $@
+
+$(WASM_TESTS_BIN)/zlibtest.exe: $(WASM_TESTS_SRC)/zlibtest.cs | $(WASM_TESTS_BIN)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) $(WASM_TESTS_SRC)/zlibtest.cs
 
 run-zlib-test: build-zlib-sample
 	(cd bin/zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
+build-zlib-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample $(WASM_TESTS_BIN)/zlibtest.exe
 
-build-zlib-interp-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls --zlib
+build-zlib-interp-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe --linker --link-icalls --zlib
 	ninja -v -C obj/interp-zlib-sample
 
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-aot-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js zlibtest.exe  --zlib
+build-zlib-aot-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
 run-zlib-aot-sample: build-zlib-aot-sample
@@ -717,7 +710,6 @@ package: build build-sdk build-dbg-proxy
 	mkdir tmp/Templates
 	cp -r ./sdk/Templates tmp/
 	mkdir tmp/support
-	cp -r $(ZLIB_HEADERS) tmp/support
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
