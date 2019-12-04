@@ -5058,6 +5058,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.WebSockets.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.WebSockets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>  
     <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.dll</HintPath>
