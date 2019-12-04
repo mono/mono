@@ -3808,7 +3808,12 @@ lookup_mono_symbol (const char *symbol_name)
 LIBTEST_API gpointer STDCALL
 mono_test_marshal_lookup_symbol (const char *symbol_name)
 {
+#ifndef HOST_WIN32
+	return dlsym (RTLD_DEFAULT, symbol_name);
+#else
+	// This isn't really proper, but it should work
 	return lookup_mono_symbol (symbol_name);
+#endif
 }
 
 
