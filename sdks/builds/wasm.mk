@@ -6,20 +6,6 @@ EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
 
-MONO_ZLIB_DIR=$(TOP)/mono/zlib
-
-ZLIB_HEADERS = \
-	$(MONO_ZLIB_DIR)/crc32.h		\
-	$(MONO_ZLIB_DIR)/deflate.h  	\
-	$(MONO_ZLIB_DIR)/inffast.h  	\
-	$(MONO_ZLIB_DIR)/inffixed.h  	\
-	$(MONO_ZLIB_DIR)/inflate.h  	\
-	$(MONO_ZLIB_DIR)/inftrees.h  	\
-	$(MONO_ZLIB_DIR)/trees.h  	\
-	$(MONO_ZLIB_DIR)/zconf.h  	\
-	$(MONO_ZLIB_DIR)/zlib.h  	\
-	$(MONO_ZLIB_DIR)/zutil.h
-
 ifeq ($(UNAME),Darwin)
 WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
 else ifeq ($(UNAME),Linux)
@@ -112,13 +98,9 @@ build-custom-wasm-$(1):
 setup-custom-wasm-$(1):
 	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
 
-# We do not build the support library but we will use the zlib headers to activate
-# zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
 .PHONY: package-wasm-$(1)
 package-wasm-$(1):
 	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
-	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
-	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
 
 .PHONY: clean-wasm-$(1)
 clean-wasm-$(1):
