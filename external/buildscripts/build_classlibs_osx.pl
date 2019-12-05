@@ -13,6 +13,7 @@ my $clean = 1;
 my $mcsOnly = 0;
 my $skipMonoMake = 0;
 my $stevedoreBuildDeps=1;
+my $cpus = `sysctl -n hw.ncpu`;
 
 # Handy troubleshooting/niche options
 
@@ -40,4 +41,5 @@ system(
 	"--buildusandboo=0",
 	"--forcedefaultbuilddeps=1",
 	"--stevedorebuilddeps=$stevedoreBuildDeps",
+	"--jobs=$cpus",
 	"--shortprefix=$shortPrefix") eq 0 or die ("Failed building mono\n");
