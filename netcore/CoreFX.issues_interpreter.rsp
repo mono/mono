@@ -25,6 +25,7 @@
 -noclass System.Net.Tests.HttpWebRequestTest
 -nonamespace System.Linq.Expressions.Tests
 -nonamespace System.Runtime.InteropServices.Tests
+-nomethod System.Text.Json.Tests.JsonEncodedTextTests.ReplacementCharacterUTF8
 
 # BrotliStream.BaseStream returned more bytes than requested in Read on Interpreter
 -nomethod System.IO.Compression.BrotliStreamUnitTests.Read

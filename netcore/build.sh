@@ -38,7 +38,7 @@ usage()
 pack=false
 configuration='Debug'
 test_mono_flags=''
-test_flags=''
+test_xunit_flags=''
 properties=''
 force_rebuild=false
 test=false
@@ -68,7 +68,7 @@ while [[ $# > 0 ]]; do
       ;;
     -interpreter)
       test_mono_flags="$test_mono_flags --interpreter"
-      test_flags="$test_flags @../../../../CoreFX.issues_interpreter.rsp -parallel none"
+      test_xunit_flags="$test_xunit_flags @../../../../CoreFX.issues_interpreter.rsp -parallel none"
       ;;
     -rebuild)
       force_rebuild=true
@@ -152,8 +152,8 @@ fi
 if [ "$test" = "true" ]; then
   make update-tests-corefx || (Write-PipelineTelemetryError -c "tests-download" -e 1 "Error downloading tests" && exit 1)
   if [ "$ci" = "true" ]; then
-    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_flags" USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_xunit_flags" USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
   else
-    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_flags"
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_xunit_flags"
   fi
 fi
