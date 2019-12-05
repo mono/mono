@@ -38,7 +38,7 @@ stages:
       ############ LINUX BUILD ############
       - job: Build_Linux
         displayName: Linux
-        timeoutInMinutes: 150
+        timeoutInMinutes: 250
         strategy:
           matrix:
             x64:
@@ -125,7 +125,7 @@ stages:
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi
           displayName: 'Download and Run CoreFX Tests'
-          timeoutInMinutes: 150
+          timeoutInMinutes: 250
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
