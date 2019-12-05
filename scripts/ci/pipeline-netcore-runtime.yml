@@ -118,8 +118,6 @@ stages:
 
         - bash: |
             if [ $(llvm) = true ]; then
-              # TODO: enable all tests for LLVM
-              # ./netcore/build.sh --ci --test --skipnative --skipmscorlib --llvm
               make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
               make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
             elif [ $(interpreter) = true ]; then
