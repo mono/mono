@@ -1311,7 +1311,7 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 
 		res = mono_runtime_try_run_main (method, argc, argv, &exc);
 		if (exc) {
-			mono_unhandled_exception_internal (exc);
+			mono_unhandled_exception_internal (exc, mini_debug_options.suspend_on_unhandled);
 			mono_invoke_unhandled_exception_hook (exc);
 			g_assert_not_reached ();
 		}
@@ -1321,7 +1321,7 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 		if (!is_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
 			if (ex) {
-				mono_unhandled_exception_internal (&ex->object);
+				mono_unhandled_exception_internal (&ex->object, mini_debug_options.suspend_on_unhandled);
 				mono_invoke_unhandled_exception_hook (&ex->object);
 				g_assert_not_reached ();
 			}

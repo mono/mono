@@ -1259,7 +1259,7 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 			MonoClass *klass = mono_object_class (ex);
 			if ((mono_runtime_unhandled_exception_policy_get () != MONO_UNHANDLED_POLICY_LEGACY) &&
 			    !is_threadabort_exception (klass)) {
-				mono_unhandled_exception_internal (&ex->object);
+				mono_unhandled_exception_internal (&ex->object, FALSE);
 				mono_invoke_unhandled_exception_hook (&ex->object);
 				g_assert_not_reached ();
 			}
@@ -5970,7 +5970,7 @@ mono_thread_internal_unhandled_exception (MonoObject* exc)
 		mono_thread_internal_reset_abort (mono_thread_internal_current ());
 	} else if (!is_appdomainunloaded_exception (klass)
 		&& mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT) {
-		mono_unhandled_exception_internal (exc);
+		mono_unhandled_exception_internal (exc, FALSE);
 		if (mono_environment_exitcode_get () == 1) {
 			mono_environment_exitcode_set (255);
 			mono_invoke_unhandled_exception_hook (exc);

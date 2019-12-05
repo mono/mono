@@ -2311,7 +2311,7 @@ MonoMethod*
 mono_get_delegate_end_invoke_internal (MonoClass *klass);
 
 void
-mono_unhandled_exception_internal (MonoObject *exc);
+mono_unhandled_exception_internal (MonoObject *exc, gboolean suspend);
 
 void
 mono_print_unhandled_exception_internal (MonoObject *exc);

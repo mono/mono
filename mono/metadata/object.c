@@ -4979,11 +4979,16 @@ mono_runtime_unhandled_exception_policy_get (void)
 }
 
 void
-mono_unhandled_exception_internal (MonoObject *exc_raw)
+mono_unhandled_exception_internal (MonoObject *exc_raw, gboolean suspend)
 {
 	ERROR_DECL (error);
 	HANDLE_FUNCTION_ENTER ();
 	MONO_HANDLE_DCL (MonoObject, exc);
+	if (suspend) {
+				mono_runtime_printf_err ("Unhandled exception, suspending...");
+				while (1)
+					;
+	}
 	mono_unhandled_exception_checked (exc, error);
 	mono_error_assert_ok (error);
 	HANDLE_FUNCTION_RETURN ();
@@ -5003,7 +5008,7 @@ mono_unhandled_exception_internal (MonoObject *exc_raw)
 void
 mono_unhandled_exception (MonoObject *exc)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_unhandled_exception_internal (exc));
+	MONO_EXTERNAL_ONLY_VOID (mono_unhandled_exception_internal (exc, FALSE));
 }
 
 /**

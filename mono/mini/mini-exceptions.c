@@ -2707,16 +2707,11 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				G_BREAKPOINT ();
 			mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 
-			if (mini_debug_options.suspend_on_unhandled && mono_object_class (obj) != mono_defaults.threadabortexception_class) {
-				mono_runtime_printf_err ("Unhandled exception, suspending...");
-				while (1)
-					;
-			}
-
 			// FIXME: This runs managed code so it might cause another stack overflow when
 			// we are handling a stack overflow
 			mini_set_abort_threshold (&catch_frame);
-			mono_unhandled_exception_internal (obj);
+			mono_unhandled_exception_internal (obj,
+												mini_debug_options.suspend_on_unhandled && mono_object_class (obj) != mono_defaults.threadabortexception_class);
 		} else {
 			gboolean unhandled = FALSE;
 
