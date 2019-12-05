@@ -1369,7 +1369,7 @@ if ($build)
 
 		if ($mcsOnly)
 		{
-			print("\n>>> Calling make in mcs\n");
+			print("\n>>> Calling make in mcs with $jobs jobs\n");
 			chdir("$monoroot/mcs");
 			my @makeCommand = (@commandPrefix, ('make', "-j$jobs"));
 			if($mcs ne '')
@@ -1381,7 +1381,7 @@ if ($build)
 		}
 		else
 		{
-			print("\n>>> Calling make\n");
+			print("\n>>> Calling make with $jobs jobs\n");
 			my @makeCommand = (@commandPrefix, ('make', "-j$jobs"));
 			if($mcs ne '')
 			{
@@ -1452,6 +1452,30 @@ if ($build)
 
 			system("cp $monoroot/mcs/class/lib/$profileName/*.dll $profileDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $profileDestDir\n");
 			system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $profileDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $profileDestDir/Facades\n");
+		}
+
+
+		my @hostPlatforms = ();
+		push @hostPlatforms, "win32";
+		push @hostPlatforms, "macos";
+		push @hostPlatforms, "linux";
+
+		foreach my $hostPlatform(@hostPlatforms)
+		{
+			print(">>> Making host platform : $hostPlatform\n");
+			system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=$hostPlatform") eq 0 or die ("Failed to make $hostPlatform host platform in mcs\n");
+
+			my $hostPlatformDestDir = "$monoprefix/lib/mono/net_4_x-$hostPlatform";
+			print(">>> Copying $hostPlatform to $hostPlatformDestDir directory\n");
+
+			print(">>> Cleaning $hostPlatformDestDir\n");
+			system("rm -rf $hostPlatformDestDir");
+
+			system("mkdir -p $hostPlatformDestDir") eq 0 or die("failed to make directory $hostPlatformDestDir\n");
+			system("mkdir -p $hostPlatformDestDir/Facades") eq 0 or die("failed to make directory $hostPlatformDestDir/Facades\n");
+
+			system("cp $monoroot/mcs/class/lib/net_4_x-$hostPlatform/*.dll $hostPlatformDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/net_4_x-$hostPlatform to $hostPlatformDestDir\n");
+			system("cp $monoroot/mcs/class/lib/net_4_x-$hostPlatform/Facades/*.dll $hostPlatformDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/net_4_x-$hostPlatform/Facades to $hostPlatformDestDir/Facades\n");
 		}
 
 			system("cp -R $monoprefix/lib/mono/4.5 $monoprefix/lib/mono/unityjit") eq 0 or die("Failed copying unityjit\n");
