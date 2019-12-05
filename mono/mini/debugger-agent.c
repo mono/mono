@@ -1226,8 +1226,10 @@ create_file_to_communicate_port (int sfd)
 		char* file_name = g_strdup_printf ("debugger_attach.%d", getpid());
 		char* full_path = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
 		FILE* tmp = fopen (full_path, "w");
-		fprintf (tmp, "%d", ntohs(sin.sin_port));
-		fclose (tmp);
+		if (tmp != NULL) {
+			fprintf (tmp, "%d", ntohs(sin.sin_port));
+			fclose (tmp);
+		}
 		g_free (file_name);
 		g_free (full_path);
 	}
@@ -10345,7 +10347,7 @@ debugger_thread (void *arg)
 }
 
 void
-mono_debugger_agent_init ()
+mono_debugger_agent_init (void)
 {
 	MonoDebuggerCallbacks cbs;
 
