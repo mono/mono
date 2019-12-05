@@ -153,7 +153,6 @@ public class Harness
 		//
 		// Test results are returned using an socket connection.
 		//
-		var host = Dns.GetHostEntry (Dns.GetHostName ());
 		var server = new TcpListener (System.Net.IPAddress.Loopback, 0);
 		server.Start ();
 		int port = ((IPEndPoint)server.LocalEndpoint).Port;
