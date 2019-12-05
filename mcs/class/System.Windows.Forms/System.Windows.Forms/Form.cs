@@ -102,6 +102,7 @@ namespace System.Windows.Forms {
 		private bool			autoscale_base_size_set;
 		internal ArrayList disabled_by_showdialog = new ArrayList();
 		internal static ArrayList modal_dialogs = new ArrayList();
+		internal bool 			dialog_result_changed;
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
@@ -637,6 +638,7 @@ namespace System.Windows.Forms {
 							typeof (DialogResult));
 
 				dialog_result = value;
+				dialog_result_changed = true;
 				if (dialog_result != DialogResult.None && is_modal)
 					RaiseCloseEvents (false, false); // .Net doesn't send WM_CLOSE here.
 			}

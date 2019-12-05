@@ -17,10 +17,10 @@ namespace MonoTests.System.Security.AccessControl {
 		private void CheckSddlConstructor (string sddl, byte[] expectedBinary)
 		{
 			RawSecurityDescriptor sd = new RawSecurityDescriptor (sddl);
-			
+
 			Assert.That (sd.BinaryLength, Is.GreaterThanOrEqualTo (0));
 			byte[] buffer = new byte[sd.BinaryLength];
-			
+
 			sd.GetBinaryForm (buffer, 0);
 			Assert.AreEqual (expectedBinary, buffer);
 		}
@@ -28,7 +28,7 @@ namespace MonoTests.System.Security.AccessControl {
 		private void CheckBinaryConstructor (string expectedSddl, byte[] binary)
 		{
 			RawSecurityDescriptor sd = new RawSecurityDescriptor (binary, 0);
-			
+
 			Assert.AreEqual (sd.BinaryLength, binary.Length);
 			Assert.AreEqual (expectedSddl, sd.GetSddlForm (AccessControlSections.All));
 		}
@@ -36,10 +36,10 @@ namespace MonoTests.System.Security.AccessControl {
 		private void CheckRoundTrip (string sddl)
 		{
 			RawSecurityDescriptor sd = new RawSecurityDescriptor (sddl);
-			
+
 			byte[] buffer = new byte[sd.BinaryLength];
 			sd.GetBinaryForm (buffer, 0);
-			
+
 			sd = new RawSecurityDescriptor (buffer, 0);
 			Assert.AreEqual (sddl, sd.GetSddlForm (AccessControlSections.All));
 		}
@@ -69,7 +69,7 @@ namespace MonoTests.System.Security.AccessControl {
 			CheckSddlConstructor ("G:BAO:BUD:(A;;RPWPCCDCLCSWRCWDWOGA;;;S-1-0-0)", sdBinary);
 			CheckSddlConstructor ("G:BAD:(A; ;RPWPCCDCLCSWRCWDWOGA;;;S-1-0-0)O:BU", sdBinary);
 			CheckSddlConstructor ("O:buG:baD:(a;;rpwpccdclcswrcwdwoga;;;s-1-0-0)", sdBinary);
-			
+
 			sdBinary = new byte[] {
 				0x01, 0x00, 0x00, 0x80, 0x14, 0x00, 0x00, 0x00, 0x24, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -78,7 +78,7 @@ namespace MonoTests.System.Security.AccessControl {
 				0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00, 0x20, 0x02,
 				0x00, 0x00 };
 			CheckSddlConstructor ("O:BUG:BA", sdBinary);
-			
+
 			sdBinary = new byte[] {
 				0x01, 0x00, 0x04, 0x80, 0x14, 0x00, 0x00, 0x00, 0x24, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00,
@@ -116,7 +116,7 @@ namespace MonoTests.System.Security.AccessControl {
 				0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00, 0x20, 0x02,
 				0x00, 0x00 };
 			CheckBinaryConstructor ("O:BUG:BA", sdBinary);
-			
+
 			sdBinary = new byte[] {
 				0x01, 0x00, 0x04, 0x80, 0x14, 0x00, 0x00, 0x00, 0x24, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00,
@@ -147,7 +147,7 @@ namespace MonoTests.System.Security.AccessControl {
 				0x01, 0x00, 0x04, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 			Assert.AreEqual (sdBinary, buffer);
-			
+
 			// Check unsetting DACL-present flag on SD with DACL
 			sd = new RawSecurityDescriptor ("O:BUG:BAD:(A;;RPWPCCDCLCSWRCWDWOGA;;;S-1-0-0)");
 			Assert.AreEqual (80, sd.BinaryLength);
@@ -175,7 +175,7 @@ namespace MonoTests.System.Security.AccessControl {
 			sd.DiscretionaryAcl = new RawAcl (1, 0);
 			sd.SystemAcl = new RawAcl (1, 0);
 			sd.SetFlags (sd.ControlFlags | ControlFlags.DiscretionaryAclPresent | ControlFlags.SystemAclPresent);
-			
+
 			// Empty ACL form
 			byte[] buffer = new byte[sd.BinaryLength];
 			sd.GetBinaryForm (buffer, 0);
@@ -188,7 +188,7 @@ namespace MonoTests.System.Security.AccessControl {
 				0x00, 0x00, 0x01, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x01, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00 };
 			Assert.AreEqual (sdBinary, buffer);
-			
+
 			// Add an ACE to the DACL
 			SecurityIdentifier builtInAdmins = new SecurityIdentifier (WellKnownSidType.BuiltinAdministratorsSid, null);
 			CommonAce ace = new CommonAce (AceFlags.None, AceQualifier.AccessAllowed, 0x7FFFFFFF, builtInAdmins, false, null);
@@ -207,7 +207,7 @@ namespace MonoTests.System.Security.AccessControl {
 				0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00, 0x20, 0x02,
 				0x00, 0x00 };
 			Assert.AreEqual (sdBinary, buffer);
-			
+
 			// This time with an Object ACE
 			ObjectAce objectAce = new ObjectAce (AceFlags.Inherited, AceQualifier.AccessAllowed, 0x12345678, builtInAdmins, ObjectAceFlags.ObjectAceTypePresent | ObjectAceFlags.InheritedObjectAceTypePresent, new Guid ("189c0dc7-b849-4dea-93a5-6d4cb8857a5c"), new Guid ("53b4a3d4-fe39-468b-bc60-b4fcba772fa5"), false, null);
 			sd.DiscretionaryAcl = new RawAcl (2, 0);
@@ -236,37 +236,37 @@ namespace MonoTests.System.Security.AccessControl {
 		{
 			RawSecurityDescriptor sd = new RawSecurityDescriptor ("");
 			Assert.AreEqual ("", sd.GetSddlForm (AccessControlSections.All));
-			
+
 			// Ask for part of SD that isn't represented
 			sd.Owner = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
 			sd.Group = new SecurityIdentifier (WellKnownSidType.BuiltinAdministratorsSid, null);
 			Assert.AreEqual ("", sd.GetSddlForm (AccessControlSections.Access));
-			
+
 			// Empty ACL form
 			sd.DiscretionaryAcl = new RawAcl (2, 0);
 			sd.SystemAcl = new RawAcl (1, 0);
 			sd.SetFlags (sd.ControlFlags | ControlFlags.DiscretionaryAclPresent | ControlFlags.SystemAclPresent);
 			Assert.AreEqual ("O:BUG:BAD:S:", sd.GetSddlForm (AccessControlSections.All));
-			
+
 			// Add an ACE to the DACL
 			SecurityIdentifier builtInAdmins = new SecurityIdentifier (WellKnownSidType.BuiltinAdministratorsSid, null);
 			CommonAce ace = new CommonAce (AceFlags.None, AceQualifier.AccessAllowed, 0x7FFFFFFF, builtInAdmins, false, null);
 			sd.DiscretionaryAcl.InsertAce (0, ace);
 			Assert.AreEqual ("O:BUG:BAD:(A;;0x7fffffff;;;BA)S:", sd.GetSddlForm (AccessControlSections.All));
-			
+
 			// Add second ACE to the DACL
 			SecurityIdentifier randomUser = new SecurityIdentifier ("S-1-5-21-324-23423-234-334");
 			ace = new CommonAce (AceFlags.Inherited | AceFlags.ContainerInherit, AceQualifier.AccessDenied, 0x12345678, randomUser, true, null);
 			sd.DiscretionaryAcl.InsertAce (0, ace);
 			Assert.AreEqual ("O:BUD:(XD;CIID;0x12345678;;;S-1-5-21-324-23423-234-334)(A;;0x7fffffff;;;BA)", sd.GetSddlForm (AccessControlSections.Owner | AccessControlSections.Access));
-			
+
 			// DACL & SACL flags
 			sd.SetFlags (sd.ControlFlags | ControlFlags.DiscretionaryAclProtected | ControlFlags.DiscretionaryAclAutoInherited | ControlFlags.DiscretionaryAclAutoInheritRequired | ControlFlags.SystemAclAutoInherited);
 			sd.DiscretionaryAcl = new RawAcl (1, 0);
 			ace = new CommonAce (AceFlags.None, AceQualifier.AccessAllowed, 0x7FFFFFFF, builtInAdmins, false, null);
 			sd.DiscretionaryAcl.InsertAce (0, ace);
 			Assert.AreEqual ("O:BUG:BAD:PARAI(A;;0x7fffffff;;;BA)S:AI", sd.GetSddlForm (AccessControlSections.All));
-			
+
 			sd.SetFlags (sd.ControlFlags | ControlFlags.ServerSecurity | ControlFlags.DiscretionaryAclDefaulted);
 			Assert.AreEqual ("O:BUG:BAD:PARAI(A;;0x7fffffff;;;BA)S:AI", sd.GetSddlForm (AccessControlSections.All));
 		}
@@ -281,6 +281,7 @@ namespace MonoTests.System.Security.AccessControl {
 			CheckRoundTrip ("O:SYG:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)");
 			CheckRoundTrip ("O:SYG:BAD:(A;OICINPIOID;0x12019f;;;SY)");
 			CheckRoundTrip ("O:SYG:BAS:(AU;SAFA;0x12019f;;;SY)");
+			CheckRoundTrip ("O:S-1-5-21-1356517589-3987021482-2501375073-1001G:S-1-5-21-1356517589-3987021482-2501375073-513D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;S-1-5-21-1356517589-3987021482-2501375073-1001)");
 		}
 	}
 }

@@ -93,7 +93,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -104,7 +104,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -115,7 +115,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]

@@ -3,8 +3,8 @@
  * Copyright 2018 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
-#ifndef __MONO_METADATA_ICALL_H__
-#define __MONO_METADATA_ICALL_H__
+#ifndef __MONO_METADATA_ICALL_DECL_H__
+#define __MONO_METADATA_ICALL_DECL_H__
 
 #include "appdomain-icalls.h"
 #include "class.h"
@@ -230,5 +230,11 @@ ICALL_EXPORT void ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray
 ICALL_EXPORT void ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct);
 ICALL_EXPORT void ves_icall_Mono_SafeStringMarshal_GFree (void *c_str);
 ICALL_EXPORT char* ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *volatile* s);
+ICALL_EXPORT MonoType* ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2*);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2*);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2*);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2*);
+ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2*);
 
-#endif // __MONO_METADATA_ICALL_H__
+#endif // __MONO_METADATA_ICALL_DECL_H__

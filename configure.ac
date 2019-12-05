@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.9.0],
+AC_INIT(mono, [6.11.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -355,6 +355,10 @@ case "$host" in
 			COREARCH="arm64"
 			;;
 		powerpc*-*-linux*)
+			# https://bugzilla.novell.com/show_bug.cgi?id=504411
+			disable_munmap=yes
+			;;
+		powerpc*-*-freebsd*)
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
 			disable_munmap=yes
 			;;
@@ -1751,7 +1755,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
+	 security, lldb, mdb, assert_messages, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1925,6 +1929,11 @@ fi
 if test "x$mono_feature_disable_assert_messages" = "xyes"; then
 	AC_DEFINE(DISABLE_ASSERT_MESSAGES, 1, [Disable assertion messages.])
 	AC_MSG_NOTICE([Disabled assertion messages.])
+fi
+
+if test "x$mono_feature_disable_cfgdir_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CFGDIR_CONFIG, 1, [Disable config directories.])
+	AC_MSG_NOTICE([Disabled config directories.])
 fi
 
 if test "x$mono_feature_disable_cleanup" = "xyes"; then
@@ -4458,7 +4467,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
+        powerpc*-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -6244,7 +6253,7 @@ fi
 
 # Top level Makefile.am subdirs
 if test "x$with_core" = "xonly"; then
-	MONO_SUBDIRS="mk llvm mono"
+	MONO_SUBDIRS="llvm mono"
 else
 	if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
 		mono_subdirs_libgc=external/bdwgc
@@ -6267,7 +6276,7 @@ else
 		mono_subdirs_ikvm_native=ikvm-native
 	fi
 
-	MONO_SUBDIRS="mk po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
 fi
 
 AC_SUBST(MONO_SUBDIRS)
