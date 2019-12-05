@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="unity_sources">
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-liveness.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-memory-info.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\unity-memory-info.h" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-utils.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\unity-utils.h" />
+    <!-- <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-icall.c" /> -->
+  </ItemGroup>
+</Project>

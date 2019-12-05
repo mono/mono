@@ -212,6 +212,8 @@ jit_info_table_chunk_index (MonoJitInfoTableChunk *chunk, MonoThreadHazardPointe
 	return left;
 }
 
+/* When changing this method, make sure to also update oop_jit_info_table_find
+   in mono/metadata/oop.c. */
 static MonoJitInfo*
 jit_info_table_find (MonoJitInfoTable *table, MonoThreadHazardPointers *hp, gint8 *addr)
 {

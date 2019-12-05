@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="unity_sources">
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-unity.c">
+      <Filter>Source Files$(MonoMiniFilterSubFolder)\unity</Filter>
+    </ClCompile>
+    <ClInclude Include="$(MonoSourceLocation)\mono\mini\mixed_callstack_plugin.h">
+      <Filter>Header Files$(MonoMiniFilterSubFolder)\common</Filter>
+    </ClInclude>
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mixed_callstack_plugin.c">
+      <Filter>Source Files$(MonoMiniFilterSubFolder)\common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files$(MonoMiniFilterSubFolder)\unity">
+      <UniqueIdentifier>{A8B401A4-3AAA-431C-90B2-9834DAFF7D84}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

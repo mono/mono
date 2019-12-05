@@ -1194,6 +1194,9 @@ mono_class_get_exception_for_failure (MonoClass *klass);
 char*
 mono_identifier_escape_type_name_chars (const char* identifier);
 
+UNITY_MONO_API char*
+mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
+
 char*
 mono_type_get_full_name (MonoClass *klass);
 

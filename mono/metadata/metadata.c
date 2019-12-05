@@ -7700,7 +7700,7 @@ mono_type_is_byref (MonoType *type)
  *
  * Returns: the param attributes.
  */
-uint16_t
+uint32_t
 mono_type_get_attrs (MonoType *type)
 {
 	return type->attrs;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="win32_sources">
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-liveness.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-memory-info.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClCompile>
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\unity-memory-info.h">
+      <Filter>Header Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClInclude>
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-utils.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClCompile>
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\unity-utils.h">
+      <Filter>Header Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClInclude>
+<!--     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-icall.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClCompile> -->
+
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files$(MonoRuntimeFilterSubFolder)\unity">
+      <UniqueIdentifier>{8F21E3A7-2BB9-403D-8339-DE0C45C84CCB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files$(MonoRuntimeFilterSubFolder)\unity">
+      <UniqueIdentifier>{A38D033E-5AFC-4BEB-9F12-9A76F00E7749}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

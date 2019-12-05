@@ -248,6 +248,7 @@ gint32 mono_thread_interruption_request_flag;
 static MonoOSEvent background_change_event;
 
 static gboolean shutting_down = FALSE;
+gboolean unity_shutting_down = FALSE;
 
 static gint32 managed_thread_id_counter = 0;
 
@@ -3767,7 +3768,7 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 
 		/* Ignore background threads, we abort them later */
 		/* Do not lock here since it is not needed and the caller holds threads_lock */
-		if (thread->state & ThreadState_Background) {
+		if (thread->state & ThreadState_Background || unity_shutting_down) {
 			THREAD_DEBUG (g_message ("%s: ignoring background thread %" G_GSIZE_FORMAT, __func__, (gsize)thread->tid));
 			return; /* just leave, ignore */
 		}

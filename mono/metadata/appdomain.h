@@ -26,6 +26,8 @@ typedef void (*MonoThreadAttachCB) (intptr_t tid, void* stack_start);
 typedef struct _MonoAppDomain MonoAppDomain;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
+typedef void (*MonoUnityExceptionFunc) (MonoObject* exc);
+typedef void (*MonoDomainAssemblyFunc) (MonoAssembly *assembly, void* user_data);
 
 MONO_API MonoDomain*
 mono_init                  (const char *filename);
@@ -102,6 +104,9 @@ mono_domain_from_appdomain (MonoAppDomain *appdomain);
 
 MONO_API void
 mono_domain_foreach        (MonoDomainFunc func, void* user_data);
+
+MONO_API void
+mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, void* user_data);
 
 MONO_API MONO_RT_EXTERNAL_ONLY MonoAssembly *
 mono_domain_assembly_open  (MonoDomain *domain, const char *name);

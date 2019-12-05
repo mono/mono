@@ -7,4 +7,5 @@
   <Import Project="$(MSBuildThisFileDirectory)libmini-interp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)libmini-llvm.targets" />
   <Import Project="$(MSBuildThisFileDirectory)libmini-netcore.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)libmini-unity.targets" />
 </Project>

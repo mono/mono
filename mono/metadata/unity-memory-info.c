@@ -13,6 +13,10 @@
 #include <glib.h>
 #include <stdlib.h>
 
+#if HAVE_BOEHM_GC
+
+#include "external/bdwgc/include/gc.h"
+
 typedef struct CollectMetadataContext
 {
 	GHashTable *allTypes;
@@ -20,148 +24,207 @@ typedef struct CollectMetadataContext
 	MonoMetadataSnapshot* metadata;
 } CollectMetadataContext;
 
-static void ContextInsertClass(CollectMetadataContext* context, MonoClass* klass)
+static void
+ContextRecurseClassData (CollectMetadataContext *context, MonoClass *klass)
 {
-	if (klass->inited && g_hash_table_lookup(context->allTypes, klass) == NULL)
-		g_hash_table_insert(context->allTypes, klass, (gpointer)(context->currentIndex++));
-}
+	gpointer orig_key, value;
+	gpointer iter = NULL;
+	MonoClassField *field = NULL;
+	int fieldCount;
 
-static void CollectHashMapClass(gpointer key, gpointer value, gpointer user_data)
-{
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoClass* klass = (MonoClass*)value;
-	ContextInsertClass(context, klass);
-}
+	/* use g_hash_table_lookup_extended as it returns boolean to indicate if value was found.
+	* If we use g_hash_table_lookup it returns the value which we were comparing to NULL. The problem is
+	* that 0 is a valid class index and was confusing our logic.
+	*/
+	if (klass->inited && !g_hash_table_lookup_extended (context->allTypes, klass, &orig_key, &value)) {
+		g_hash_table_insert (context->allTypes, klass, GINT_TO_POINTER (context->currentIndex++));
 
-static void CollectHashMapListClasses(gpointer key, gpointer value, gpointer user_data)
-{
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	GSList* list = (GSList*)value;
+		fieldCount = mono_class_num_fields (klass);
+		
+		if (fieldCount > 0) {
+			while ((field = mono_class_get_fields (klass, &iter))) {
+				MonoClass *fieldKlass = mono_class_from_mono_type (field->type);
 
-	while (list != NULL)
-	{
-		MonoClass* klass = (MonoClass*)list->data;
-		ContextInsertClass(context, klass);
-
-		list = g_slist_next(list);
+				if (fieldKlass != klass)
+					ContextRecurseClassData (context, fieldKlass);
+			}
+		}
 	}
 }
 
-static void CollectGenericClass(gpointer value, gpointer user_data)
+static void
+CollectHashMapClass (gpointer key, gpointer value, gpointer user_data)
 {
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoGenericClass* genericClass = (MonoGenericClass*)value;
-
-	if (genericClass->cached_class != NULL)
-		ContextInsertClass(context, genericClass->cached_class);
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	MonoClass *klass = (MonoClass *)value;
+	ContextRecurseClassData (context, klass);
 }
 
-static void CollectAssemblyMetaData(MonoAssembly *assembly, void *user_data)
+static void
+CollectHashMapListClasses (gpointer key, gpointer value, gpointer user_data)
+{
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	GSList *list = (GSList *)value;
+
+	while (list != NULL) {
+		MonoClass *klass = (MonoClass *)list->data;
+		ContextRecurseClassData (context, klass);
+
+		list = g_slist_next (list);
+	}
+}
+
+static void
+CollectGenericClass (MonoGenericClass *genericClass, gpointer user_data)
+{
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+
+	if (genericClass->cached_class != NULL)
+		ContextRecurseClassData (context, genericClass->cached_class);
+}
+
+static void
+CollectImageMetaData (MonoImage *image, gpointer value, CollectMetadataContext *context)
 {
 	int i;
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoImage* image = mono_assembly_get_image(assembly);
 	MonoTableInfo *tdef = &image->tables[MONO_TABLE_TYPEDEF];
+	GSList *list;
 
-	for (i = 0; i < tdef->rows - 1; ++i)
-	{
-		MonoClass* klass = mono_class_get(image, (i + 2) | MONO_TOKEN_TYPE_DEF);
-		ContextInsertClass(context, klass);
+	if (image->dynamic) {
+		GHashTableIter iter;
+		gpointer key;
+		MonoDynamicImage *dynamicImage = (MonoDynamicImage *)image;
+		g_hash_table_iter_init (&iter, dynamicImage->typeref);
+
+		while (g_hash_table_iter_next (&iter, &key, NULL)) {
+			MonoType *monoType = (MonoType *)key;
+			MonoClass *klass = mono_class_from_mono_type (monoType);
+
+			if (klass)
+				ContextRecurseClassData (context, klass);
+		}
+	}
+
+	/* Some classes are only in this list. 
+	   They are added in reflection_setup_internal_class_internal.
+	*/
+	list = image->reflection_info_unregister_classes;
+
+	while (list) {
+		MonoClass *klass = (MonoClass *)list->data;
+
+		if (klass)
+			ContextRecurseClassData (context, klass);
+
+		list = list->next;
+	}
+
+	for (i = 1; i < tdef->rows; ++i) {
+		MonoClass *klass;
+		MonoError error;
+
+		guint32 token = (i + 1) | MONO_TOKEN_TYPE_DEF;
+
+		klass = mono_class_get_checked (image, token, &error);
+
+		if (klass)
+			ContextRecurseClassData (context, klass);
 	}
 
 	if (image->array_cache)
-		g_hash_table_foreach(image->array_cache, CollectHashMapListClasses, user_data);
+		g_hash_table_foreach (image->array_cache, CollectHashMapListClasses, context);
 
 	if (image->szarray_cache)
-		g_hash_table_foreach(image->szarray_cache, CollectHashMapClass, user_data);
+		g_hash_table_foreach (image->szarray_cache, CollectHashMapClass, context);
 
 	if (image->ptr_cache)
-		g_hash_table_foreach(image->ptr_cache, CollectHashMapClass, user_data);
+		g_hash_table_foreach (image->ptr_cache, CollectHashMapClass, context);
 }
 
-static int FindClassIndex(GHashTable* hashTable, MonoClass* klass)
+static int
+FindClassIndex (GHashTable *hashTable, MonoClass *klass)
 {
-	gpointer value = g_hash_table_lookup(hashTable, klass);
+	gpointer orig_key, value;
 
-	if (!value)
+	if (!g_hash_table_lookup_extended (hashTable, klass, &orig_key, &value))
 		return -1;
 
-	return (int)value;
+	return GPOINTER_TO_INT (value);
 }
 
-static void AddMetadataType(gpointer key, gpointer value, gpointer user_data)
+static void
+AddMetadataType (gpointer key, gpointer value, gpointer user_data)
 {
-	MonoClass* klass = (MonoClass*)key;
-	int index = (int)value;
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoMetadataSnapshot* metadata = context->metadata;
-	MonoMetadataType* type = &metadata->types[index];
+	MonoClass *klass = (MonoClass *)key;
 
-	if (klass->rank > 0)
-	{
-		type->flags = (MonoMetadataTypeFlags)(kArray | (kArrayRankMask & (klass->rank << 16)));
-		type->baseOrElementTypeIndex = FindClassIndex(context->allTypes, mono_class_get_element_class(klass));
-	}
-	else
-	{
+	int index = GPOINTER_TO_INT (value);
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	MonoMetadataSnapshot *metadata = context->metadata;
+	MonoMetadataType *type = &metadata->types[index];
+
+	if (klass->rank > 0) {
+		type->flags = (MonoMetadataTypeFlags) (kArray | (kArrayRankMask & (klass->rank << 16)));
+		type->baseOrElementTypeIndex = FindClassIndex (context->allTypes, mono_class_get_element_class (klass));
+	} else {
 		gpointer iter = NULL;
 		int fieldCount = 0;
-		MonoClassField* field;
-		MonoClass* baseClass;
-		MonoVTable* vtable;
-		void* statics_data;
+		MonoClassField *field;
+		MonoClass *baseClass;
+		MonoVTable *vtable;
+		void *statics_data;
 
-		type->flags = (klass->valuetype || klass->byval_arg.type == MONO_TYPE_PTR) ? kValueType : kNone;
+		type->flags = (klass->valuetype || klass->_byval_arg.type == MONO_TYPE_PTR) ? kValueType : kNone;
 		type->fieldCount = 0;
+		fieldCount = mono_class_num_fields (klass);
+		if (fieldCount > 0) {
+			type->fields = g_new (MonoMetadataField, fieldCount);
 
-		if (mono_class_num_fields(klass) > 0)
-		{
-			type->fields = g_new(MonoMetadataField, mono_class_num_fields(klass));
+			while ((field = mono_class_get_fields (klass, &iter))) {
+				MonoMetadataField *metaField = &type->fields[type->fieldCount];
+				MonoClass *typeKlass = mono_class_from_mono_type (field->type);
 
-			while ((field = mono_class_get_fields(klass, &iter)))
-			{
-				MonoMetadataField* metaField = &type->fields[type->fieldCount];
-				metaField->typeIndex = FindClassIndex(context->allTypes, mono_class_from_mono_type(field->type));
+				metaField->typeIndex = FindClassIndex (context->allTypes, typeKlass);
 
 				// This will happen if fields type is not initialized
 				// It's OK to skip it, because it means the field is guaranteed to be null on any object
-				if (metaField->typeIndex == -1)
+				if (metaField->typeIndex == -1) {
 					continue;
+				}
 
 				// literals have no actual storage, and are not relevant in this context.
 				if ((field->type->attrs & FIELD_ATTRIBUTE_LITERAL) != 0)
 					continue;
 
 				metaField->isStatic = (field->type->attrs & FIELD_ATTRIBUTE_STATIC) != 0;
+
 				metaField->offset = field->offset;
 				metaField->name = field->name;
 				type->fieldCount++;
 			}
 		}
 
-		vtable = mono_class_try_get_vtable(mono_domain_get(), klass);
-		statics_data = vtable ? mono_vtable_get_static_field_data(vtable) : NULL;
+		vtable = mono_class_try_get_vtable (mono_domain_get (), klass);
+		statics_data = vtable ? mono_vtable_get_static_field_data (vtable) : NULL;
 
-		type->staticsSize = statics_data ? mono_class_data_size(klass) : 0;
+		type->staticsSize = statics_data ? mono_class_data_size (klass) : 0;
 		type->statics = NULL;
 
-		if (type->staticsSize > 0)
-		{
-			type->statics = g_new0(uint8_t, type->staticsSize);
-			memcpy(type->statics, statics_data, type->staticsSize);
+		if (type->staticsSize > 0) {
+			type->statics = g_new0 (uint8_t, type->staticsSize);
+			memcpy (type->statics, statics_data, type->staticsSize);
 		}
 
-		baseClass = mono_class_get_parent(klass);
-		type->baseOrElementTypeIndex = baseClass ? FindClassIndex(context->allTypes, baseClass) : -1;
+		baseClass = mono_class_get_parent (klass);
+		type->baseOrElementTypeIndex = baseClass ? FindClassIndex (context->allTypes, baseClass) : -1;
 	}
 
-	type->assemblyName = mono_class_get_image(klass)->assembly->aname.name;
-	type->name = mono_type_get_name_full(&klass->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
+	type->assemblyName = mono_class_get_image (klass)->assembly->aname.name;
+	type->name = mono_type_get_name_full (&klass->_byval_arg, MONO_TYPE_NAME_FORMAT_IL);
 	type->typeInfoAddress = (uint64_t)klass;
-	type->size = (klass->valuetype) != 0 ? (mono_class_instance_size(klass) - sizeof(MonoObject)) : mono_class_instance_size(klass);
+	type->size = (klass->valuetype) != 0 ? (mono_class_instance_size (klass) - sizeof (MonoObject)) : mono_class_instance_size (klass);
 }
 
-static void CollectMetadata(MonoMetadataSnapshot* metadata)
+static void CollectMetadata(MonoMetadataSnapshot* metadata, GHashTable* monoImages)
 {
 	CollectMetadataContext context;
 
@@ -169,7 +232,7 @@ static void CollectMetadata(MonoMetadataSnapshot* metadata)
 	context.currentIndex = 0;
 	context.metadata = metadata;
 
-	mono_assembly_foreach((GFunc)CollectAssemblyMetaData, &context);
+	g_hash_table_foreach(monoImages, (GHFunc)CollectImageMetaData, &context);
 
 	mono_metadata_generic_class_foreach(CollectGenericClass, &context);
 
@@ -237,21 +300,17 @@ static void CopyMemPoolChunk(void* chunkStart, void* chunkEnd, void* context)
 	CopyHeapSection(context, chunkStart, chunkEnd);
 }
 
-static void AddImageMemoryPoolChunkCount(MonoAssembly *assembly, MonoManagedHeap* heap)
-{
-	heap->sectionCount += MonoMemPoolNumChunks(assembly->image->mempool);
-}
-
-static void IncrementCountForImageMemPoolNumChunks(MonoAssembly *assembly, void *user_data)
+static void IncrementCountForImageMemPoolNumChunks(MonoImage *image, gpointer* value, void *user_data)
 {
 	int* count = (int*)user_data;
-	(*count) += MonoMemPoolNumChunks(assembly->image->mempool);
+	(*count) += MonoMemPoolNumChunks(image->mempool);
 }
 
-static int MonoImagesMemPoolNumChunks()
+static int MonoImagesMemPoolNumChunks(GHashTable* monoImages)
 {
 	int count = 0;
-	mono_assembly_foreach((GFunc)IncrementCountForImageMemPoolNumChunks, &count);
+
+	g_hash_table_foreach(monoImages, (GHFunc)IncrementCountForImageMemPoolNumChunks, &count);
 	return count;
 }
 
@@ -260,12 +319,9 @@ static void AllocateMemoryForMemPool(MonoMemPool* pool, void *user_data)
 	mono_mempool_foreach_block(pool, AllocateMemoryForMemPoolChunk, user_data);
 }
 
-static void AllocateMemoryForImageMemPool(MonoAssembly *assembly, void *user_data)
+static void AllocateMemoryForImageMemPool(MonoImage *image, gpointer value, void *user_data)
 {
-	MonoImage* image = assembly->image;
-	mono_image_lock(image);
 	AllocateMemoryForMemPool(image->mempool, user_data);
-	mono_image_unlock(image);
 }
 
 static void CopyMemPool(MonoMemPool *pool, SectionIterationContext *context)
@@ -273,45 +329,19 @@ static void CopyMemPool(MonoMemPool *pool, SectionIterationContext *context)
 	mono_mempool_foreach_block(pool, CopyMemPoolChunk, context);
 }
 
-static void CopyImageMemPool(MonoAssembly *assembly, SectionIterationContext *context)
+static void CopyImageMemPool(MonoImage *image, gpointer value, SectionIterationContext *context)
 {
-	MonoImage* image = assembly->image;
-
-	mono_image_lock(image);
 	CopyMemPool(image->mempool, context);
-	mono_image_unlock(image);
 }
 
-static void MonoImagesCountCallback(MonoAssembly *assembly, void *user_data)
+static void AllocateMemoryForImageClassCache(MonoImage *image, gpointer *value, void *user_data)
 {
-	int* count = (int*)user_data;
-	(*count)++;
-}
-
-static int MonoImagesCount()
-{
-	int count = 0;
-	mono_assembly_foreach((GFunc)MonoImagesCountCallback, &count);
-	return count;
-}
-
-static void AllocateMemoryForImageClassCache(MonoAssembly *assembly, void *user_data)
-{
-	MonoImage* image = assembly->image;
-	mono_image_lock(image);
-
 	AllocateMemoryForSection(user_data, image->class_cache.table, ((uint8_t*)image->class_cache.table) + image->class_cache.size);
-	mono_image_unlock(image);
 }
 
-static void CopyImageClassCache(MonoAssembly *assembly, SectionIterationContext *context)
+static void CopyImageClassCache(MonoImage *image, gpointer value, SectionIterationContext *context)
 {
-	MonoImage* image = assembly->image;
-	mono_image_lock(image);
-
 	CopyHeapSection(context, image->class_cache.table, ((uint8_t*)image->class_cache.table) + image->class_cache.size);
-
-	mono_image_unlock(image);
 }
 
 static void IncrementCountForImageSetMemPoolNumChunks(MonoImageSet *imageSet, void *user_data)
@@ -323,7 +353,7 @@ static void IncrementCountForImageSetMemPoolNumChunks(MonoImageSet *imageSet, vo
 static int MonoImageSetsMemPoolNumChunks()
 {
 	int count = 0;	
-	mono_metadata_image_set_foreach((GFunc)IncrementCountForImageSetMemPoolNumChunks, &count);
+	mono_metadata_image_set_foreach(IncrementCountForImageSetMemPoolNumChunks, &count);
 	return count;
 }
 
@@ -337,9 +367,19 @@ static void CopyImageSetMemPool(MonoImageSet* imageSet, void *user_data)
 	CopyMemPool(imageSet->mempool, user_data);
 }
 
-static void* CaptureHeapInfo(void* monoManagedHeap)
+typedef struct
 {
-	MonoManagedHeap* heap = (MonoManagedHeap*)monoManagedHeap;
+	MonoManagedHeap* heap;
+	GHashTable* monoImages;
+
+} CaptureHeapInfoData;
+
+static void* CaptureHeapInfo(void* user)
+{
+	CaptureHeapInfoData* data = (CaptureHeapInfoData*)user;
+	MonoManagedHeap* heap = data->heap;
+	GHashTable* monoImages = data->monoImages;
+
 	MonoDomain* domain = mono_domain_get();
 	MonoDomain* rootDomain = mono_get_root_domain();
 	SectionIterationContext iterationContext;
@@ -350,9 +390,9 @@ static void* CaptureHeapInfo(void* monoManagedHeap)
 	heap->sectionCount += MonoMemPoolNumChunks(rootDomain->mp);
 	heap->sectionCount += MonoMemPoolNumChunks(domain->mp);
 	// Increment count for each image mem pool chunk
-	heap->sectionCount += MonoImagesMemPoolNumChunks();
+	heap->sectionCount += MonoImagesMemPoolNumChunks(monoImages);
 	// Increment count for each image->class_cache hash table.
-	heap->sectionCount += MonoImagesCount();
+	heap->sectionCount += g_hash_table_size(monoImages);
 	// Increment count for each image set mem pool chunk
 	heap->sectionCount += MonoImageSetsMemPoolNumChunks();
 
@@ -370,11 +410,11 @@ static void* CaptureHeapInfo(void* monoManagedHeap)
 	mono_mempool_foreach_block(domain->mp, AllocateMemoryForMemPoolChunk, &iterationContext);
 	mono_domain_unlock(domain);
 	// Allocate memory for each image mem pool chunk
-	mono_assembly_foreach((GFunc)AllocateMemoryForImageMemPool, &iterationContext);
+	g_hash_table_foreach(monoImages, (GHFunc)AllocateMemoryForImageMemPool, &iterationContext);
 	// Allocate memory for each image->class_cache hash table.
-	mono_assembly_foreach((GFunc)AllocateMemoryForImageClassCache, &iterationContext);
+	g_hash_table_foreach(monoImages, (GHFunc)AllocateMemoryForImageClassCache, &iterationContext);
 	// Allocate memory for each image->class_cache hash table.
-	mono_metadata_image_set_foreach((GFunc)AllocateMemoryForImageSetMemPool, &iterationContext);
+	mono_metadata_image_set_foreach(AllocateMemoryForImageSetMemPool, &iterationContext);
 
 	return NULL;
 }
@@ -408,7 +448,7 @@ static void VerifyHeapSectionIsStillValid(void* context, void* sectionStart, voi
 	iterationContext->currentSection++;
 }
 
-static gboolean MonoManagedHeapStillValid(MonoManagedHeap* heap)
+static gboolean MonoManagedHeapStillValid(MonoManagedHeap* heap, GHashTable* monoImages)
 {
 	MonoDomain* rootDomain = mono_get_root_domain();
 	MonoDomain* domain = mono_domain_get();
@@ -419,8 +459,8 @@ static gboolean MonoManagedHeapStillValid(MonoManagedHeap* heap)
 	currentSectionCount = GC_get_heap_section_count();
 	currentSectionCount += MonoMemPoolNumChunks(rootDomain->mp);
 	currentSectionCount += MonoMemPoolNumChunks(domain->mp);
-	currentSectionCount += MonoImagesMemPoolNumChunks();
-	currentSectionCount += MonoImagesCount(); // image->class_cache hash table.
+	currentSectionCount += MonoImagesMemPoolNumChunks(monoImages);
+	currentSectionCount += g_hash_table_size(monoImages); // image->class_cache hash table.
 	currentSectionCount += MonoImageSetsMemPoolNumChunks();
 
 	if (heap->sectionCount != currentSectionCount)
@@ -445,35 +485,27 @@ static gboolean MonoManagedHeapStillValid(MonoManagedHeap* heap)
 //    allocated for their copies.
 // 5) Start the world again.
 
-static void CaptureManagedHeap(MonoManagedHeap* heap)
+static void CaptureManagedHeap(MonoManagedHeap* heap, GHashTable* monoImages)
 {
 	MonoDomain* rootDomain = mono_get_root_domain();
 	MonoDomain* domain = mono_domain_get();
 	SectionIterationContext iterationContext;
 
-	while (TRUE)
-	{
-		GC_call_with_alloc_lock(CaptureHeapInfo, heap);
-		GC_stop_world_external();
+	CaptureHeapInfoData data;
 
-		if (MonoManagedHeapStillValid(heap))
-			break;
+	data.heap = heap;
+	data.monoImages = monoImages;
 
-		GC_start_world_external();
-
-		FreeMonoManagedHeap(heap);
-	}
+	CaptureHeapInfo(&data);
 
 	iterationContext.currentSection = heap->sections;
 
 	GC_foreach_heap_section(&iterationContext, CopyHeapSection);
 	mono_mempool_foreach_block(rootDomain->mp, CopyMemPoolChunk, &iterationContext);
 	mono_mempool_foreach_block(domain->mp, CopyMemPoolChunk, &iterationContext);
-	mono_assembly_foreach((GFunc)CopyImageMemPool, &iterationContext);
-	mono_assembly_foreach((GFunc)CopyImageClassCache, &iterationContext);
-	mono_metadata_image_set_foreach((GFunc)CopyImageSetMemPool, &iterationContext);
-
-	GC_start_world_external();
+	g_hash_table_foreach(monoImages, (GHFunc)CopyImageMemPool, &iterationContext);
+	g_hash_table_foreach(monoImages, (GHFunc)CopyImageClassCache, &iterationContext);
+	mono_metadata_image_set_foreach(CopyImageSetMemPool, &iterationContext);
 }
 
 static void GCHandleIterationCallback(MonoObject* managedObject, GList** managedObjects)
@@ -531,13 +563,23 @@ static gboolean ManagedHeapContainsAddress(MonoManagedHeap* heap, uint64_t addre
 	return FALSE;
 }
 
-static void VerifySnapshot(MonoManagedMemorySnapshot* snapshot)
+static void VerifySnapshot(MonoManagedMemorySnapshot* snapshot, GHashTable* monoImages)
 {
 	uint32_t i;
 	FILE* file;
+	GHashTableIter iter;
+	gpointer key;
 	MonoMetadataSnapshot* meta = &snapshot->metadata;
 
 	file = fopen("MonoMemorySnapshotLog.txt", "w");
+
+	g_hash_table_iter_init(&iter, monoImages);
+
+	while (g_hash_table_iter_next(&iter, &key, NULL))
+	{
+		MonoImage* image = (MonoImage*)key;
+		fprintf(file, "MonoImage [0x%016llX] dynamic: %i name: '%s'\n", (uint64_t)image, image->dynamic, image->name);
+	}
 
 	/* Verify that we have collected memory sections for all types */
 	for (i = 0; i < meta->typeCount; ++i)
@@ -546,26 +588,182 @@ static void VerifySnapshot(MonoManagedMemorySnapshot* snapshot)
 
 		if (!ManagedHeapContainsAddress(&snapshot->heap, type->typeInfoAddress))
 		{
-			fprintf(file, "The memory for type '%s' @ 0x%016X is not the part the snapshot.\n", type->name, type->typeInfoAddress);
+			fprintf(file, "The memory for type '%s' @ 0x%016llX is not the part the snapshot.\n", type->name, type->typeInfoAddress);
 		}
 	}
 
 	fclose(file);
 }
 
+static void CollectMonoImage(MonoImage* image, GHashTable* monoImages)
+{
+	if (g_hash_table_lookup(monoImages, image) != NULL)
+		return;
+
+	g_hash_table_insert(monoImages, image, image);
+
+	if (image->assembly->image != NULL &&
+		image != image->assembly->image)
+	{
+		CollectMonoImage(image->assembly->image, monoImages);
+	}
+
+	if (image->module_count > 0)
+	{
+		int i;
+
+		for (i = 0; i < image->module_count; ++i)
+		{
+			MonoImage* moduleImage = image->modules[i];
+
+			if (moduleImage)
+				CollectMonoImage(moduleImage, monoImages);
+		}
+	}
+}
+
+static void CollectMonoImageFromAssembly(MonoAssembly *assembly, void *user_data)
+{
+	GHashTable* monoImages = (GHashTable*)user_data;
+	CollectMonoImage(assembly->image, monoImages);
+}
+
+
+
+typedef struct ClassReportContext {
+	ClassReportFunc callback;
+	void *user_data;
+} ClassReportContext;
+
+static void
+ReportHashMapClasses(gpointer key, gpointer value, gpointer user_data)
+{
+	ClassReportContext *context = (ClassReportContext *)user_data;
+	MonoClass *klass = (MonoClass *)value;
+	if (klass->inited)
+		context->callback(klass, context->user_data);
+}
+
+static void
+ReportHashMapListClasses(gpointer key, gpointer value, gpointer user_data)
+{
+	ClassReportContext *context = (ClassReportContext *)user_data;
+	GSList *list = (GSList *)value;
+
+	while (list != NULL) {
+		MonoClass *klass = (MonoClass *)list->data;
+
+		if (klass->inited)
+			context->callback(klass, context->user_data);
+
+		list = g_slist_next(list);
+	}
+}
+
+static void
+ReportClassesFromAssembly(MonoAssembly *assembly, void *user_data)
+{
+	MonoImage *image = mono_assembly_get_image(assembly);
+	int i;
+	MonoTableInfo *tdef = &image->tables[MONO_TABLE_TYPEDEF];
+	GSList *list;
+	ClassReportContext *context = (ClassReportContext*)user_data;
+
+	if (image->dynamic) {
+		GHashTableIter iter;
+		gpointer key;
+		MonoDynamicImage *dynamicImage = (MonoDynamicImage *)image;
+		g_hash_table_iter_init(&iter, dynamicImage->typeref);
+
+		while (g_hash_table_iter_next(&iter, &key, NULL)) {
+			MonoType *monoType = (MonoType *)key;
+			MonoClass *klass = mono_class_from_mono_type(monoType);
+
+			if (klass && klass->inited)
+				context->callback(klass, context->user_data);
+		}
+	}
+
+	/* Some classes are only in this list.
+	   They are added in reflection_setup_internal_class_internal.
+	*/
+	list = image->reflection_info_unregister_classes;
+
+	while (list) {
+		MonoClass *klass = (MonoClass *)list->data;
+
+		if (klass && klass->inited)
+			context->callback(klass, context->user_data);
+
+		list = list->next;
+	}
+
+	for (i = 1; i < tdef->rows; ++i) {
+		MonoClass *klass;
+		MonoError error;
+
+		guint32 token = (i + 1) | MONO_TOKEN_TYPE_DEF;
+
+		klass = mono_class_get_checked(image, token, &error);
+
+		if (klass && klass->inited)
+			context->callback(klass, context->user_data);
+	}
+
+	if (image->array_cache)
+		g_hash_table_foreach(image->array_cache, ReportHashMapListClasses, user_data);
+
+	if (image->szarray_cache)
+		g_hash_table_foreach(image->szarray_cache, ReportHashMapClasses, user_data);
+
+	if (image->ptr_cache)
+		g_hash_table_foreach(image->ptr_cache, ReportHashMapClasses, user_data);
+}
+
+static void
+ReportGenericClasses(MonoGenericClass *genericClass, gpointer user_data)
+{
+	ClassReportContext *context = (ClassReportContext *)user_data;
+
+	if (genericClass->cached_class != NULL)
+		context->callback(genericClass->cached_class, context->user_data);
+}
+
+void
+mono_unity_class_for_each(ClassReportFunc callback, void *user_data)
+{
+	ClassReportContext reportContext;
+	reportContext.callback = callback;
+	reportContext.user_data = user_data;
+	mono_domain_assembly_foreach(mono_domain_get(), ReportClassesFromAssembly, &reportContext);
+	mono_metadata_generic_class_foreach(ReportGenericClasses, &reportContext);
+}
+
 MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 {
+	GC_disable();
+	GC_stop_world_external();
+
 	MonoManagedMemorySnapshot* snapshot;
 	snapshot = g_new0(MonoManagedMemorySnapshot, 1);
 
-	CollectMetadata(&snapshot->metadata);
-	CaptureManagedHeap(&snapshot->heap);
+	GHashTable* monoImages = g_hash_table_new(NULL, NULL);
+
+	mono_domain_assembly_foreach(mono_domain_get(), CollectMonoImageFromAssembly, monoImages);
+
+	CollectMetadata(&snapshot->metadata, monoImages);
+	CaptureManagedHeap(&snapshot->heap, monoImages);
 	CaptureGCHandleTargets(&snapshot->gcHandles);
 	FillRuntimeInformation(&snapshot->runtimeInformation);
 
 #if _DEBUG
-	VerifySnapshot(snapshot);
+//	VerifySnapshot(snapshot, monoImages);
 #endif
+
+	g_hash_table_destroy(monoImages);
+
+	GC_start_world_external();
+	GC_enable();
 
 	return snapshot;
 }
@@ -592,4 +790,21 @@ void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapsho
 
 	g_free(metadata->types);
 	g_free(snapshot);
-} 
+}
+
+#else
+
+MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
+{
+	MonoManagedMemorySnapshot* snapshot;
+	snapshot = g_new0(MonoManagedMemorySnapshot, 1);
+
+	return snapshot;
+}
+
+void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapshot)
+{
+	g_free(snapshot);
+}
+
+#endif

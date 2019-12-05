@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-windows-dllmain.c" />
+    <ClCompile Include="..\mono\metadata\oop.c" />
   </ItemGroup>
   <Import Project="eglib.targets" />
   <Import Project="libmonoutils.targets" />

@@ -110,7 +110,15 @@ static const MonoRuntimeInfo *current_runtime = NULL;
 /* This is the list of runtime versions supported by this JIT.
  */
 static const MonoRuntimeInfo supported_runtimes[] = {
+// #if defined(HOST_WIN32)
+// 	{"v4.0.30319","net_4_x-win32", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+// #elif defined(HOST_DARWIN)
+// 	{"v4.0.30319","net_4_x-macos", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+// #elif defined(HOST_LINUX)
+// 	{"v4.0.30319","net_4_x-linux", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+// #else
 	{"v4.0.30319","4.5", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+// #endif
 	{"mobile",    "2.1", { {2,0,5,0}, {10,0,0,0}, {2,0,5,0}, {2,0,5,0}, {4,0,0,0} } },
 	{"moonlight", "2.1", { {2,0,5,0}, { 9,0,0,0}, {3,5,0,0}, {3,0,0,0}, NOT_AVAIL } },
 };
@@ -1056,6 +1064,27 @@ mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly)
 		}
 #endif
 	}
+}
+
+MONO_API void
+mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainFunc func, void* user_data)
+{
+	MonoAssembly* assembly;
+	GSList *iter;
+
+	/* Skipping internal assembly builders created by remoting,
+	   as it is done in ves_icall_System_AppDomain_GetAssemblies
+	*/
+	mono_domain_assemblies_lock(domain);
+	for (iter = domain->domain_assemblies; iter; iter = iter->next) 
+	{
+		assembly = (MonoAssembly *)iter->data;
+		if (assembly->corlib_internal)
+			continue;
+
+		func(assembly, user_data);
+	}
+	mono_domain_assemblies_unlock(domain);
 }
 
 /**

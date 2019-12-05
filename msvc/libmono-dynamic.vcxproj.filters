@@ -22,10 +22,16 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{58EC90AB-A91B-433C-AE1E-6B09A6D43A3E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\libmini\unity">
+      <UniqueIdentifier>{169b1a8b-01cd-40a3-84aa-a6bac9922770}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-windows-dllmain.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\metadata\oop.c">
+      <Filter>Source Files\libmini\unity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

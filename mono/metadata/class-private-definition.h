@@ -128,6 +128,8 @@ struct _MonoClass {
 
 	/* Infrequently used items. See class-accessors.c: InfrequentDataKind for what goes into here. */
 	MonoPropertyBag infrequent_data;
+
+	void *unity_user_data;
 };
 
 struct _MonoClassDef {

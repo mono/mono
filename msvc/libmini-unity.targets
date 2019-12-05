@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="unity_sources">
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-unity.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\mini\mixed_callstack_plugin.h" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mixed_callstack_plugin.c" />
+  </ItemGroup>
+</Project>

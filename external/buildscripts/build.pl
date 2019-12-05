@@ -1736,6 +1736,7 @@ if ($artifact)
 			InstallNameTool("$embedDirArchDestination/libmonobdwgc-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libmonosgen-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonosgen-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libMonoPosixHelper.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libMonoPosixHelper.dylib");
+			InstallNameTool("$embedDirArchDestination/libmono-native.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono-native.dylib");
 
 			print ">>> Copying mono public headers\n";
 			system("mkdir -p $includesroot/mono");

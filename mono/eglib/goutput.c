@@ -36,6 +36,7 @@ static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 static GLogFunc default_log_func;
 static gpointer default_log_func_user_data;
 static GPrintFunc stdout_handler, stderr_handler;
+static vprintf_func our_vprintf = vprintf;
 
 static void default_stdout_handler (const gchar *string);
 static void default_stderr_handler (const gchar *string);
@@ -416,5 +417,33 @@ g_set_printerr_handler (GPrintFunc func)
 	GPrintFunc old = stderr_handler;
 	stderr_handler = func;
 	return old;
+}
+
+void wrap_our_vprintf(const gchar *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	our_vprintf (format, args);
+	va_end (args);
+}
+
+static void
+unity_vprintf_GPrintFunc_adapter (const gchar *string)
+{
+	wrap_our_vprintf ("%s", string);
+}
+
+static void
+unity_vprintf_GLogFunc_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
+{
+	wrap_our_vprintf ("%s", message);
+}
+
+// Redirect all stdout output to unity vprintf function
+void set_vprintf_func(vprintf_func func)
+{
+	our_vprintf = func;
+	g_set_print_handler (unity_vprintf_GPrintFunc_adapter);
+	g_log_set_default_handler (unity_vprintf_GLogFunc_adapter, NULL);
 }
 

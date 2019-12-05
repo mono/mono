@@ -396,6 +396,9 @@ gint         g_vasprintf       (gchar **ret, const gchar *fmt, va_list ap);
 #define g_vsprintf vsprintf
 #define g_vsnprintf vsnprintf
 
+typedef int (*vprintf_func)(const char* msg, va_list args);
+void set_vprintf_func(vprintf_func func);
+
 gsize   g_strlcpy            (gchar *dest, const gchar *src, gsize dest_size);
 gchar  *g_stpcpy             (gchar *dest, const char *src);
 
