@@ -66,7 +66,7 @@ while [[ $# > 0 ]]; do
       test=true
       ;;
     -interpreter)
-      test_flags="$test_flags --interpreter"
+      test_flags="$test_flags --interpreter @../../../../CoreFX.issues_interpreter.rsp"
       ;;
     -rebuild)
       force_rebuild=true
