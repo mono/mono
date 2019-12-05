@@ -363,6 +363,8 @@ namespace WebAssembly {
 				default:
 					if (t == typeof(IntPtr)) { 
  						res += "i";
+					} else if (t == typeof (Uri)) {
+						res += "u";
 					} else {
  						if (t.IsValueType)
  							throw new Exception("Can't handle VT arguments");
@@ -492,6 +494,14 @@ namespace WebAssembly {
 		{
 			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
 			return unixTime.DateTime;
+		}
+		public static Type GetUriType()
+		{
+			return typeof(Uri);
+		}		
+		static Uri CreateUri (string uri)
+		{
+			return new Uri(uri);
 		}
 
 		// This is simple right now and will include FlagsAttribute later.

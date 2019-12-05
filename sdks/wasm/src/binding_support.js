@@ -98,6 +98,7 @@ var BindingSupportLib = {
 			this.object_to_string = get_method ("ObjectToString");
 			this.get_date_value = get_method ("GetDateValue");
 			this.create_date_time = get_method ("CreateDateTime");
+			this.create_uri = get_method ("CreateUri");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
@@ -228,6 +229,9 @@ var BindingSupportLib = {
 			case 21: // clr .NET DateTimeOffset
 				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
 				return dateoffsetValue;
+			case 22: // clr .NET Uri
+				var uriValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				return uriValue;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -301,6 +305,19 @@ var BindingSupportLib = {
 				case js_obj.constructor.name === "Date":
 					// We may need to take into account the TimeZone Offset
 					return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+				default:
+					return this.extract_mono_obj (js_obj);
+			}
+		},
+		js_to_mono_uri: function (js_obj) {
+			this.bindings_lazy_init ();
+
+			switch (true) {
+				case js_obj === null:
+				case typeof js_obj === "undefined":
+					return 0;
+				case typeof js_obj === "string":
+					return this.call_method(this.create_uri, null, "sm", [ js_obj ])
 				default:
 					return this.extract_mono_obj (js_obj);
 			}
@@ -634,6 +651,8 @@ var BindingSupportLib = {
 						Module.setValue (args_mem + i * 4, args [i], "i32");
 					} else if (args_marshal[i] == 'o') {
 						Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
+					} else if (args_marshal[i] == 'u') {
+						Module.setValue (args_mem + i * 4, this.js_to_mono_uri (args [i]), "i32");
 					} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
 						var enumVal = this.js_to_mono_enum(method, i, args[i]);
 			
