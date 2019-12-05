@@ -1544,9 +1544,6 @@ mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
 		if (name) {							\
 			/* Success, commit to static. */			\
 			mono_atomic_store_seq (&static_ ## name, name);		\
-		} else {							\
-			/* Try one more time in case another thread did it. */	\
-			name = static_ ## name;					\
 		}								\
 	}									\
 
