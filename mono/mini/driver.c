@@ -2501,10 +2501,8 @@ mono_main (int argc, char* argv[])
 		enable_debugging = TRUE;
 		g_print ("The Mono Debugger is no longer supported.\n");
 		return 1;
-	} else if (enable_debugging) {
-		mini_get_debug_options ()->gen_sdb_seq_points = TRUE;
+	} else if (enable_debugging) 
 		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
-	}
 #ifdef HOST_WIN32
 	if (mixed_mode)
 		mono_load_coree (argv [i]);
