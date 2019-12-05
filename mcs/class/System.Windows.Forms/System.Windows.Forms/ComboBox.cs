@@ -2135,8 +2135,6 @@ namespace System.Windows.Forms
 					
 				if (index < owner.SelectedIndex)
 					--owner.SelectedIndex;
-				else if (index == owner.SelectedIndex)
-					owner.SelectedIndex = -1;
 
 				object removed = object_items [index];
 
