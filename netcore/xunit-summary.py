@@ -38,8 +38,7 @@ for testfile in glob.glob(test_dir + "/*-xunit.xml"):
             int(assembly.attrib["errors"]), 
             float(assembly.attrib["time"])))
 
-# sort by name
-tests.sort(key=lambda item: item.name)
+tests.sort(key=lambda item: (item.failed, item.name))
 
 print("")
 print("=" * 105)

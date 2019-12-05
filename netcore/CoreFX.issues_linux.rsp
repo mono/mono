@@ -44,3 +44,19 @@
 
 # fails on Interpreter
 -nomethod System.Runtime.CompilerServices.Tests.RuntimeFeatureTests.DynamicCode_Jit
+-nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_*
+-nomethod XmlSerializerTests.Xml_Nullables
+-nomethod XmlSerializerTests.Xml_Soap_WithNullables
+-nomethod System.IO.Compression.DeflateStreamUnitTests.*
+-nomethod System.IO.Compression.GzipStreamUnitTests.*
+-nomethod System.Collections.Concurrent.Tests.ConcurrentDictionary_Generic_Tests_enum_enum.IDictionary_Generic_Add_DuplicateValue
+
+# https://github.com/mono/mono/issues/18061 [interpreter] Conversions.ToX(NaN) are expected to throw OverflowException
+-nomethod Microsoft.VisualBasic.Tests.ConversionsTests.*
+-nomethod Microsoft.VisualBasic.CompilerServices.Tests.IntegerTypeTests.FromString_ThrowsOverflowException
+
+# https://github.com/mono/mono/issues/18063 [interpreter] EqualityComparer<TEnum?>.Default.Equals doesn't work correctly
+-nomethod System.Collections.Generic.Tests.EqualityComparerTests.NullableEquals*
+
+# requires precise GC
+-nomethod System.Threading.Tests.ThreadLocalTests.RunThreadLocalTest7_WeakReference
