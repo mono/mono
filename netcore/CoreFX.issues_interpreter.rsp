@@ -22,10 +22,11 @@
 -nomethod System.Net.Tests.HttpRequestStreamTests.Read_LargeLengthSynchronous_Success
 -nomethod System.Net.Tests.FileWebRequestTest.InvalidArguments_Throws
 -nomethod System.Net.Tests.AuthorizationTest.MutuallyAuthenticated_Values_ExpectEqualValues
+-nomethod System.Text.Json.Tests.JsonEncodedTextTests.ReplacementCharacterUTF8
 -noclass System.Net.Tests.HttpWebRequestTest
 -nonamespace System.Linq.Expressions.Tests
 -nonamespace System.Runtime.InteropServices.Tests
--nomethod System.Text.Json.Tests.JsonEncodedTextTests.ReplacementCharacterUTF8
+-nonamespace System.Net.Tests
 
 # BrotliStream.BaseStream returned more bytes than requested in Read on Interpreter
 -nomethod System.IO.Compression.BrotliStreamUnitTests.Read

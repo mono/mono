@@ -126,7 +126,7 @@ stages:
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi
           displayName: 'Download and Run CoreFX Tests'
-          timeoutInMinutes: 100
+          timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
