@@ -883,15 +883,11 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringAnsi (IntPtr ptr, int len);
 
-		public static string PtrToStringUTF8 (IntPtr ptr)
-		{
-			return PtrToStringAnsi (ptr);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringUTF8 (IntPtr ptr);
 		
-		public static string PtrToStringUTF8 (IntPtr ptr, int byteLen)
-		{
-			return PtrToStringAnsi (ptr, byteLen);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringUTF8 (IntPtr ptr, int byteLen);
 		
 		public static string PtrToStringAuto (IntPtr ptr)
 		{
@@ -1192,9 +1188,33 @@ namespace System.Runtime.InteropServices
 				return BufferToBSTR (fixed_s, s.Length);
 		}
 
-		public static IntPtr StringToCoTaskMemAnsi (string s)
+		[DllImport("kernel32")]
+		unsafe private static extern int WideCharToMultiByte (int cp,
+			int flags, char* wstr, int wstr_len, IntPtr mbstr, int mbstr_len,
+			IntPtr default_char, IntPtr used_default_char);
+
+		unsafe public static IntPtr StringToCoTaskMemAnsi (string s)
 		{
-			return StringToAllocatedMemoryUTF8 (s);
+			if (s == null)
+				return IntPtr.Zero;
+
+			fixed (char *wstr = s)
+			{
+				int mbstr_size = WideCharToMultiByte(0, 0, wstr, s.Length,
+					IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero);
+
+				IntPtr mbstr = AllocCoTaskMem(mbstr_size + 1);
+			
+				if (mbstr == IntPtr.Zero)
+					throw new OutOfMemoryException();
+
+				WideCharToMultiByte(0, 0, wstr, s.Length,
+					mbstr, mbstr_size, IntPtr.Zero, IntPtr.Zero);
+
+				WriteByte(mbstr, mbstr_size, 0);
+
+				return mbstr;
+			}
 		}
 
 		public static IntPtr StringToCoTaskMemAuto (string s)

@@ -5176,11 +5176,59 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (const char *pt
 {
 	if (!ptr)
 		return NULL_HANDLE_STRING;
+#ifdef TARGET_WIN32
+	return ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (ptr, strlen(ptr), error);
+#else
 	return mono_string_new_handle (mono_domain_get (), ptr, error);
+#endif
 }
 
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char *ptr, gint32 len, MonoError *error)
+{
+	if (!ptr) {
+		mono_error_set_argument_null (error, "ptr", "");
+		return NULL_HANDLE_STRING;
+	}
+#ifdef TARGET_WIN32
+	LPWSTR wstr;
+	int wstr_len;
+	MonoStringHandle result;
+
+	if (!len)
+		return mono_string_empty_handle (mono_domain_get ());
+
+	wstr_len = MultiByteToWideChar(CP_ACP, 0, ptr, len, NULL, 0);
+
+	wstr = g_try_malloc (wstr_len * 2);
+
+	if (!wstr)
+	{
+		mono_error_set_out_of_memory (error, "");
+		return NULL_HANDLE_STRING;
+	}
+
+	MultiByteToWideChar(CP_ACP, 0, ptr, len, wstr, wstr_len);
+	result = mono_string_new_utf16_handle (mono_domain_get (), wstr, wstr_len, error);
+
+	g_free (wstr);
+
+	return result;
+#else
+	return mono_string_new_utf8_len (mono_domain_get (), ptr, len, error);
+#endif
+}
+
+MonoStringHandle
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUTF8 (const char *ptr, MonoError *error)
+{
+	if (!ptr)
+		return NULL_HANDLE_STRING;
+	return mono_string_new_handle (mono_domain_get (), ptr, error);
+}
+
+MonoStringHandle
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUTF8_len (const char *ptr, gint32 len, MonoError *error)
 {
 	if (!ptr) {
 		mono_error_set_argument_null (error, "ptr", "");

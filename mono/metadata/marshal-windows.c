@@ -59,24 +59,15 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 char*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error)
 {
-	// FIXME pass mono_utf16_to_utf8 an allocator to avoid double alloc/copy.
-
-	char* tres = mono_utf16_to_utf8 (s, length, error);
+	size_t len = WideCharToMultiByte (CP_ACP, 0, s, length, NULL, 0, NULL, NULL);
+	char* res = mono_marshal_alloc_hglobal (len+1, error);
 	return_val_if_nok (error, NULL);
-	if (!tres)
-		return tres;
+	if (!res)
+		return NULL;
 
-	/*
-	 * mono_utf16_to_utf8() returns a memory area at least as large as length,
-	 * even if it contains NULL characters. The copy we allocate here has to be equally
-	 * large.
-	 */
-	size_t len = MAX (strlen (tres) + 1, length);
-	char* ret = (char*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
-	if (ret)
-		memcpy (ret, tres, len);
-	g_free (tres);
-	return ret;
+	WideCharToMultiByte (CP_ACP, 0, s, length, res, len, NULL, NULL);
+	res[len] = 0;
+	return res;
 }
 
 gpointer
