@@ -41,7 +41,7 @@
 
 # extremely slow or hangs on Interpreter
 -nomethod System.IO.Compression.BrotliStreamUnitTests.WrapStreamReturningBadReadValues
--nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.SerializeHugeObjectGraphs
+-nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.*
 -nomethod System.Net.Sockets.Tests.SendReceiveSyncForceNonBlocking.TcpReceiveSendGetsCanceledByDispose
 
 # https://github.com/mono/mono/issues/18061 [interpreter] Conversions.ToX(NaN) are expected to throw OverflowException
