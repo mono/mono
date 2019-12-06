@@ -208,7 +208,7 @@ NOHANDLES(ICALL(ARGI_4, "Setup",                 ves_icall_System_ArgIterator_Se
 ICALL_TYPE(ARRAY, "System.Array", ARRAY_1)
 HANDLES(ARRAY_1, "ClearInternal", ves_icall_System_Array_ClearInternal, void, 3, (MonoArray, int, int))
 HANDLES(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl, MonoArray, 3, (MonoReflectionType, MonoArray, MonoArray))
-NOHANDLES(ICALL(ARRAY_4, "FastCopy", ves_icall_System_Array_FastCopy))
+NOHANDLES(ICALL(ARRAY_4, "FastCopy_icall", ves_icall_System_Array_FastCopy))
 NOHANDLES(ICALL(ARRAY_5, "GetGenericValue_icall", ves_icall_System_Array_GetGenericValue_icall))
 HANDLES(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength, gint32, 2, (MonoArray, gint32))
 HANDLES(ARRAY_15, "GetLongLength",   ves_icall_System_Array_GetLongLength, gint64, 2, (MonoArray, gint32))

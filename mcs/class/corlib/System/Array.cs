@@ -364,7 +364,14 @@ namespace System
 		internal extern void SetValueImpl (object value, int pos);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static bool FastCopy (ref Array source, int source_idx, ref Array dest, int dest_idx, int length);
+		extern static bool FastCopy_icall (ref Array source, int source_idx, ref Array dest, int dest_idx, int length);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		internal static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length)
+		{
+			return FastCopy_icall (ref source, source_idx, ref dest, dest_idx, length);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static Array CreateInstanceImpl (Type elementType, int[] lengths, int[] bounds);
@@ -562,7 +569,6 @@ namespace System
 				destinationArray.GetLowerBound (0), length);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
@@ -584,7 +590,7 @@ namespace System
 			if (destinationIndex < 0)
 				throw new ArgumentOutOfRangeException ("destinationIndex", "Value has to be >= 0.");
 
-			if (FastCopy (ref sourceArray, sourceIndex, ref destinationArray, destinationIndex, length))
+			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
 				return;
 
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);

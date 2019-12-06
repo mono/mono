@@ -93,7 +93,6 @@ namespace System
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, false);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		private static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length, bool reliable)
 		{
 			if (sourceArray == null)
@@ -114,7 +113,7 @@ namespace System
 			if (destinationIndex < 0)
 				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Value has to be >= 0.");
 
-			if (FastCopy (ref sourceArray, sourceIndex, ref destinationArray, destinationIndex, length))
+			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
 				return;
 
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
@@ -477,7 +476,14 @@ namespace System
 		extern static bool CanChangePrimitive (ref Type srcType, ref Type dstType, bool reliable);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static bool FastCopy (ref Array source, int source_idx, ref Array dest, int dest_idx, int length);
+		extern static bool FastCopy_icall (ref Array source, int source_idx, ref Array dest, int dest_idx, int length);
+
+		// Do not inline, to ensure icall handles are references to locals and native code can omit barriers.
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		internal static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length)
+		{
+			return FastCopy_icall (ref source, source_idx, ref dest, dest_idx, length);
+		}
 
 		[Intrinsic] // when dimension is `0` constant
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

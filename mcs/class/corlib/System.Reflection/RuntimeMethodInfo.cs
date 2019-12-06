@@ -333,7 +333,6 @@ namespace System.Reflection {
 			return MonoMethodInfo.GetMethodImplementationFlags (mhandle);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		public override ParameterInfo[] GetParameters ()
 		{
 			var src = MonoMethodInfo.GetParametersInfo (mhandle, this);
@@ -342,9 +341,7 @@ namespace System.Reflection {
 
 			// Have to clone because GetParametersInfo icall returns cached value
 			var dest = new ParameterInfo [src.Length];
-			System.Array src_array = src;
-			System.Array dest_array = dest;
-			Array.FastCopy (ref src_array, 0, ref dest_array, 0, src.Length);
+			Array.FastCopy (src, 0, dest, 0, src.Length);
 			return dest;
 		}
 
