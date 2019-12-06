@@ -14,14 +14,14 @@ namespace System.Net.Sockets {
     ///       remain after closing if data remains to be sent.</para>
     /// </devdoc>
     public class LingerOption {
-#if MONO
+
 #region Keep in sync with mono/metdata/w32socket-internals.h MonoLingerOption.
-#endif
+
         bool enabled;
         int lingerTime;
-#if MONO
+
 #endregion
-#endif
+
         /// <devdoc>
         ///    <para>
         ///       Initializes a new instance of the <see cref='Sockets.LingerOption'/> class.
