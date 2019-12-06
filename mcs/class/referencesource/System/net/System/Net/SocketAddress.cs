@@ -30,6 +30,8 @@ namespace System.Net {
         internal const int IPv6AddressSize = 28;
         internal const int IPv4AddressSize = 16;
 
+#region Keep in sync with mono/metdata/w32socket-internals.h MonoManagedSocketAddress.
+
         internal int m_Size;
         internal byte[] m_Buffer;
 
@@ -37,6 +39,8 @@ namespace System.Net {
         private const int MaxSize = 32; // IrDA requires 32 bytes
         private bool m_changed = true;
         private int m_hash;
+
+#endregion
 
         //
         // Address Family

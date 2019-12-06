@@ -15,13 +15,14 @@ namespace System.Net.Sockets {
     /// </devdoc>
     public class MulticastOption {
 #if MONO
-		// Don't change the names of these fields without also
-		// changing socket-io.c in the runtime
+#region Keep in sync with mono/metdata/w32socket-internals.h MonoMulticastOption.
 #endif
         IPAddress group;
         IPAddress localAddress;
         int ifIndex;
-
+#if MONO
+#endregion
+#endif
         /// <devdoc>
         ///    <para>
         ///       Creates a new instance of the MulticaseOption class with the specified IP
@@ -127,11 +128,13 @@ namespace System.Net.Sockets {
     /// </devdoc>
     public class IPv6MulticastOption {
 #if MONO
-		// Don't change the names of these fields without also
-		// changing socket-io.c in the runtime
+#region Keep in sync with mono/metdata/w32socket-internals.h MonoIPv6MulticastOption.
 #endif
         IPAddress m_Group;
         long      m_Interface;
+#if MONO
+#endregion
+#endif
 
         /// <devdoc>
         /// <para>

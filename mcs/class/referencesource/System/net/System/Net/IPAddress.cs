@@ -22,6 +22,8 @@ namespace System.Net {
 
         internal const long LoopbackMask = 0x00000000000000FF;
 
+#region This is old and unused that otherwise would be: Keep in sync with mono/metdata/w32socket-internals.h MonoIPAddress.
+
         //
         // IPv6 Changes: make this internal so other NCL classes that understand about
         //               IPv4 and IPv4 can still access it rather than the obsolete property.
@@ -44,6 +46,8 @@ namespace System.Net {
         private ushort[]      m_Numbers      = new ushort[NumberOfLabels];
         private long          m_ScopeId      = 0;                             // really uint !
         private int           m_HashCode     = 0;
+
+#endregion
 
         internal const int IPv4AddressBytes =  4;
         internal const int IPv6AddressBytes = 16;

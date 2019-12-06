@@ -19,8 +19,10 @@
 
 #include <mono/utils/w32api.h>
 
-// MonoSocketAddress is something else.
-//
+#if !ENABLE_NETCORE
+
+// MonoSocketAddress was already something else so add "Managed" to this name.
+// Keep in sync with class System.Net.SocketAddress in mcs/class/referencesource/System/net/System/Net/SocketAddress.cs.
 typedef struct MonoManagedSocketAddress {
 	MonoObject	object;
 	gint32		m_Size;
@@ -45,6 +47,7 @@ typedef struct MonoIPAddress {
 
 #else // corefx
 
+// Keep in sync with class System.Net.IPAddress in external/corefx/src/System.Net.Primitives/src/System/Net/IPAddress.cs.
 typedef struct MonoIPAddress {
 	MonoObject	object;
 	guint32		_addressOrScopeId;
@@ -57,6 +60,7 @@ typedef struct MonoIPAddress {
 
 TYPED_HANDLE_DECL (MonoIPAddress);
 
+// Keep in sync with System.Net.LingerOption in mcs/class/referencesource/System/net/System/Net/Sockets/LingerOption.cs.
 typedef struct MonoLingerOption {
 	MonoObject	object;
 	MonoBoolean	enabled;
@@ -65,6 +69,7 @@ typedef struct MonoLingerOption {
 
 TYPED_HANDLE_DECL (MonoLingerOption);
 
+// Keep in sync with System.Net.MulticastOption in mcs/class/System/System.Net.Sockets/Socket.cs.
 typedef struct MonoMulticastOption {
 	MonoObject	object;
 	MonoIPAddress*	group;
@@ -74,6 +79,7 @@ typedef struct MonoMulticastOption {
 
 TYPED_HANDLE_DECL (MonoMulticastOption);
 
+// Keep in sync with System.Net.IPv6MulticastOption in mcs/class/referencesource/System/net/System/Net/Sockets/MulticastOption.cs.
 typedef struct MonoIPv6MulticastOption {
 	MonoObject	object;
 	MonoIPAddress*	m_Group;
@@ -90,6 +96,7 @@ typedef struct MonoSemaphoreSlim MonoSemaphoreSlim;
 //
 typedef struct MonoEndPoint MonoEndPoint;
 
+// Keep in sync with System.Net.Socket in mcs/class/System/System.Net.Sockets/Socket.cs.
 typedef struct MonoSocket {
 	MonoObject		object;
 	MonoBoolean		is_closed;
@@ -111,6 +118,12 @@ typedef struct MonoSocket {
 } MonoSocket;
 
 TYPED_HANDLE_DECL (MonoSocket);
+
+#else
+
+// Netcore does not use these types.
+
+#endif // ENABLE_NETCORE
 
 #ifndef HAVE_SOCKLEN_T
 #define socklen_t int

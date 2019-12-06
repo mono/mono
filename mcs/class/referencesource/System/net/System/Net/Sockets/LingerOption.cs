@@ -15,12 +15,13 @@ namespace System.Net.Sockets {
     /// </devdoc>
     public class LingerOption {
 #if MONO
-		// Don't change the names of these fields without also
-		// changing socket-io.c in the runtime
+#region Keep in sync with mono/metdata/w32socket-internals.h MonoLingerOption.
 #endif
         bool enabled;
         int lingerTime;
-
+#if MONO
+#endregion
+#endif
         /// <devdoc>
         ///    <para>
         ///       Initializes a new instance of the <see cref='Sockets.LingerOption'/> class.

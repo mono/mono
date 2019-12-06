@@ -56,6 +56,8 @@ namespace System.Net.Sockets
 		const string TIMEOUT_EXCEPTION_MSG = "A connection attempt failed because the connected party did not properly respond" +
 			"after a period of time, or established connection failed because connected host has failed to respond";
 
+#region Keep in sync with mono/metdata/w32socket-internals.h MonoSocket.
+
 		/* true if we called Close_icall */
 		bool is_closed;
 
@@ -91,6 +93,8 @@ namespace System.Net.Sockets
 
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
+
+#endregion
 
 #if MONO_WEB_DEBUG
 		static int nextId;
