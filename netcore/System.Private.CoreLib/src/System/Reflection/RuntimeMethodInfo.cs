@@ -277,6 +277,7 @@ namespace System.Reflection
 			return MonoMethodInfo.GetMethodImplementationFlags (mhandle);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		public override ParameterInfo[] GetParameters ()
 		{
 			var src = MonoMethodInfo.GetParametersInfo (mhandle, this);

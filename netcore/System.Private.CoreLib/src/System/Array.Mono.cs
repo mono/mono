@@ -93,6 +93,7 @@ namespace System
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		private static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length, bool reliable)
 		{
 			if (sourceArray == null)

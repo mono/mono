@@ -562,6 +562,7 @@ namespace System
 				destinationArray.GetLowerBound (0), length);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // ensure icall "handles" are to locals
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
