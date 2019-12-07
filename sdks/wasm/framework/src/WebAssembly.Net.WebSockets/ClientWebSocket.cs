@@ -158,6 +158,7 @@ namespace WebAssembly.Net.WebSockets {
 			} else if (priorState != created) {
 				throw new InvalidOperationException ("WebSocket already started");
 			}
+
 			options.SetToReadOnly ();
 
 			return ConnectAsyncJavaScript (uri, cancellationToken);
@@ -300,6 +301,7 @@ namespace WebAssembly.Net.WebSockets {
 			Dispose ();
 
 		}
+
 
 		public override void Dispose ()
 		{
@@ -531,102 +533,100 @@ namespace WebAssembly.Net.WebSockets {
 			}
 		}
 
-		public sealed class ClientWebSocketOptions
-		{
+		public sealed class ClientWebSocketOptions {
 			private bool isReadOnly; // After ConnectAsync is called the options cannot be modified.
 			private readonly IList<string> requestedSubProtocols;
 
-			internal ClientWebSocketOptions()
+			internal ClientWebSocketOptions ()
 			{
-				requestedSubProtocols = new List<string>();
+				requestedSubProtocols = new List<string> ();
 			}
 
-			#region HTTP Settings 
+			#region HTTP Settings
 
 			// Note that some headers are restricted like Host.
-			public void SetRequestHeader(string headerName, string headerValue) => throw new PlatformNotSupportedException();
-
-			public bool UseDefaultCredentials
+			public void SetRequestHeader (string headerName, string headerValue)
 			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+				throw new PlatformNotSupportedException ();
 			}
 
-			public System.Net.ICredentials Credentials
-			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+			public bool UseDefaultCredentials {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
-			public System.Net.IWebProxy Proxy
-			{
-				get => throw new PlatformNotSupportedException();
-				set => ThrowIfReadOnly();
+			public System.Net.ICredentials Credentials {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
-			public X509CertificateCollection ClientCertificates
-			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+			public System.Net.IWebProxy Proxy {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
-			public System.Net.Security.RemoteCertificateValidationCallback RemoteCertificateValidationCallback
-			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+			public X509CertificateCollection ClientCertificates {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
-			public System.Net.CookieContainer Cookies
-			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+			public System.Net.Security.RemoteCertificateValidationCallback RemoteCertificateValidationCallback {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
+			}
+
+			public System.Net.CookieContainer Cookies {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			#endregion HTTP Settings
 
 			#region WebSocket Settings
 
-			public void AddSubProtocol(string subProtocol)
+			public void AddSubProtocol (string subProtocol)
 			{
-				ThrowIfReadOnly();
+				ThrowIfReadOnly ();
 
 				// Duplicates not allowed.
-				foreach (string item in requestedSubProtocols)
-				{
-					if (string.Equals(item, subProtocol, StringComparison.OrdinalIgnoreCase))
-					{
-						throw new ArgumentException($"Duplicate protocal '{subProtocol}' not allowed", nameof(subProtocol));
+				foreach (string item in requestedSubProtocols) {
+					if (string.Equals (item, subProtocol, StringComparison.OrdinalIgnoreCase)) {
+						throw new ArgumentException ($"Duplicate protocal '{subProtocol}' not allowed", nameof (subProtocol));
 					}
 				}
-				requestedSubProtocols.Add(subProtocol);
+				requestedSubProtocols.Add (subProtocol);
 			}
 
 			internal IList<string> RequestedSubProtocols { get { return requestedSubProtocols; } }
-			internal string[] RequestedSubProtocolsAsArray { get { return new string[0]; } }
 
-			public TimeSpan KeepAliveInterval
-			{
-				get => throw new PlatformNotSupportedException();
-				set => throw new PlatformNotSupportedException();
+			public TimeSpan KeepAliveInterval {
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
-			public void SetBuffer(int receiveBufferSize, int sendBufferSize) => throw new PlatformNotSupportedException();
-			public void SetBuffer(int receiveBufferSize, int sendBufferSize, ArraySegment<byte> buffer) => throw new PlatformNotSupportedException();
+			public void SetBuffer (int receiveBufferSize, int sendBufferSize)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public void SetBuffer (int receiveBufferSize, int sendBufferSize, ArraySegment<byte> buffer)
+			{
+				throw new PlatformNotSupportedException ();
+			}
 
 			#endregion WebSocket settings
 
 			#region Helpers
 
-			internal void SetToReadOnly()
+			internal void SetToReadOnly ()
 			{
 				isReadOnly = true;
 			}
 
-			private void ThrowIfReadOnly()
+			private void ThrowIfReadOnly ()
 			{
-				if (isReadOnly)
-				{
-					throw new InvalidOperationException("WebSocket has already been started.");
+				if (isReadOnly) {
+					throw new InvalidOperationException ("WebSocket has already been started.");
 				}
 			}
 
@@ -634,4 +634,5 @@ namespace WebAssembly.Net.WebSockets {
 		}
 
 	}
+
 }
