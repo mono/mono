@@ -495,10 +495,6 @@ namespace WebAssembly {
 			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
 			return unixTime.DateTime;
 		}
-		public static Type GetUriType()
-		{
-			return typeof(Uri);
-		}		
 		static Uri CreateUri (string uri)
 		{
 			return new Uri(uri);

@@ -491,24 +491,11 @@ class_is_task (MonoClass *klass)
 
 MonoClass* mono_get_uri_class(MonoException** exc) 
 {
-	MonoAssembly* assembly = mono_wasm_assembly_load ("WebAssembly.Bindings");
+	MonoAssembly* assembly = mono_wasm_assembly_load ("System");
 	if (!assembly)
 		return NULL;
-	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "WebAssembly", "Runtime");
-	*exc = NULL;
-	if (klass) {
-		MonoMethod* method = mono_class_get_method_from_name(klass, "GetUriType", -1);
-		if (!method)
-			return NULL;
-		MonoReflectionType* typeObject = (MonoReflectionType*)mono_runtime_invoke(method, NULL, NULL, (MonoObject**)exc);
-		if(*exc)
-			return NULL;
-
-		MonoType* type = mono_reflection_type_get_type(typeObject);
-		return mono_class_from_mono_type(type);
-	}
-
-	return NULL;    
+	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "System", "Uri");
+	return klass;    
 }
 
 #define MARSHAL_TYPE_INT 1
