@@ -700,4 +700,10 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
         var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringArrayIsNull", [null]);
         assert.isTrue(result);
     }, DEFAULT_TIMEOUT);     
+    it('BindingTestSuite: Should return Uri as string.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringToUri", ["ws://localhost"]);
+        assert.equal(result, "ws://localhost/", "result does not match value ws://localhost/.");
+    }, DEFAULT_TIMEOUT);     
   });

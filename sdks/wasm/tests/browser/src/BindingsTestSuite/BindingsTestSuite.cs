@@ -280,5 +280,9 @@ namespace BindingsTestSuite
         { 
             return param1 == null;
         }        
+        public static Uri StringToUri (string uri) 
+        { 
+            return new Uri(uri);
+        }        
     }
 }

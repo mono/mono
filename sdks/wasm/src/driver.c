@@ -44,6 +44,7 @@ void mono_free (void*);
 
 static MonoClass* datetime_class;
 static MonoClass* datetimeoffset_class;
+static MonoClass* uri_class;
 
 int mono_wasm_enable_gc;
 
@@ -488,6 +489,15 @@ class_is_task (MonoClass *klass)
 	return 0;
 }
 
+MonoClass* mono_get_uri_class(MonoException** exc) 
+{
+	MonoAssembly* assembly = mono_wasm_assembly_load ("System");
+	if (!assembly)
+		return NULL;
+	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "System", "Uri");
+	return klass;    
+}
+
 #define MARSHAL_TYPE_INT 1
 #define MARSHAL_TYPE_FP 2
 #define MARSHAL_TYPE_STRING 3
@@ -499,6 +509,7 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_ENUM 9
 #define MARSHAL_TYPE_DATE 20
 #define MARSHAL_TYPE_DATEOFFSET 21
+#define MARSHAL_TYPE_URI 22
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -520,6 +531,10 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		datetime_class = mono_class_from_name (mono_get_corlib(), "System", "DateTime");
 	if (!datetimeoffset_class)
 		datetimeoffset_class = mono_class_from_name (mono_get_corlib(), "System", "DateTimeOffset");
+	if (!uri_class) {
+		MonoException** exc = NULL;
+		uri_class = mono_get_uri_class(exc);
+	}
 
 	MonoClass *klass = mono_object_get_class (obj);
 	MonoType *type = mono_class_get_type (klass);
@@ -573,6 +588,8 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			return MARSHAL_TYPE_DATE;
 		if (klass == datetimeoffset_class)
 			return MARSHAL_TYPE_DATEOFFSET;
+		if (uri_class && mono_class_is_assignable_from(uri_class, klass))
+			return MARSHAL_TYPE_URI;
 		if (mono_class_is_enum (klass))
 			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt

@@ -630,8 +630,10 @@ run-all-%:
 test-debugger: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
-run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+run-browser-tests: build-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
+
+build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
