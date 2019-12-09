@@ -172,6 +172,7 @@ namespace Mono.Profiler.Log {
 		Debugger = 13,
 		Handle = 14,
 		Ephemeron = 15,
+		Toggleref = 16,
 	}
 
 	// mono/profiler/log.h : MonoProfilerMonitorEvent

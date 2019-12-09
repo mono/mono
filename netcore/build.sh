@@ -7,6 +7,12 @@ set -u
 # Prevents hidden errors caused by missing error code propagation.
 set -e
 
+# Handle being in the "wrong" directory
+cd "${BASH_SOURCE%/*}/"
+
+# Include VSTS logging helpers
+. ../eng/common/pipeline-logging-functions.sh
+
 usage()
 {
   echo "Common settings:"
@@ -17,10 +23,12 @@ usage()
   echo "Actions:"
   echo "  --pack                     Package build outputs into NuGet packages"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
+  echo "  --interpreter              Run tests with interpreter"
   echo "  --rebuild                  Run ../.autogen.sh"
   echo "  --llvm                     Enable LLVM support"
   echo "  --skipnative               Do not build runtime"
   echo "  --skipmscorlib             Do not build System.Private.CoreLib"
+  echo "  --ci                       Enable Azure DevOps telemetry decoration"
   echo ""
 
   echo "Command line arguments starting with '/p:' are passed through to MSBuild."
@@ -29,12 +37,16 @@ usage()
 
 pack=false
 configuration='Debug'
+test_mono_flags=''
+test_xunit_flags=''
 properties=''
 force_rebuild=false
 test=false
 skipmscorlib=false
 skipnative=false
+llvm=false
 autogen_params=''
+ci=false
 
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
@@ -54,6 +66,10 @@ while [[ $# > 0 ]]; do
     -test|-t)
       test=true
       ;;
+    -interpreter)
+      test_mono_flags="$test_mono_flags --interpreter"
+      test_xunit_flags="$test_xunit_flags @../../../../CoreFX.issues_interpreter.rsp -parallel none"
+      ;;
     -rebuild)
       force_rebuild=true
       ;;
@@ -64,7 +80,11 @@ while [[ $# > 0 ]]; do
       skipnative=true
       ;;
     -llvm)
-      autogen_params="$autogen_params --enable-llvm"
+      llvm=true
+      test_mono_flags="$test_mono_flags --llvm"
+      ;;
+    -ci)
+      ci=true
       ;;
     -p:*|/p:*)
       properties="$properties $1"
@@ -98,31 +118,42 @@ elif [[ "$configuration" == "Release" ]]; then
   EXTRA_CXXFLAGS="-O2 -g"
 fi
 
+if [ "$llvm" = "true" ]; then
+  git submodule update --init -- ../external/llvm-project || (Write-PipelineTelemetryError -c "git" -e 1 "Error fetching LLVM submodule" && exit 1)
+  autogen_params="$autogen_params --enable-llvm"
+fi
+
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
-  (cd .. && ./autogen.sh --with-core=only $autogen_params CFLAGS="$EXTRA_CFLAGS" CXXFLAGS="$EXTRA_CXXFLAGS")
+  (cd .. && ./autogen.sh --with-core=only $autogen_params CFLAGS="$EXTRA_CFLAGS" CXXFLAGS="$EXTRA_CXXFLAGS") || (Write-PipelineTelemetryError -c "configure" -e 1 "Error running autogen" && exit 1)
   touch .configured
 fi
 
 # build mono runtime
 if [ "$skipnative" = "false" ]; then
-  make runtime -j$CPU_COUNT
+  make runtime -j$CPU_COUNT || (Write-PipelineTelemetryError -c "runtime" -e 1 "Error building unmanaged runtime" && exit 1)
 fi
 
 # build System.Private.CoreLib (../mcs/class/System.Private.CoreLib)
 if [ "$skipmscorlib" = "false" ]; then
-  make bcl CORLIB_BUILD_FLAGS="$properties"
+  make bcl CORLIB_BUILD_FLAGS="$properties" || (Write-PipelineTelemetryError -c "bcl" -e 1 "Error building System.Private.CoreLib" && exit 1)
 fi
 
 # create a nupkg with runtime and System.Private.CoreLib
 if [ "$pack" = "true" ]; then
-  make nupkg
+  if [ "$llvm" = "true" ]; then
+    make nupkg-llvm || (Write-PipelineTelemetryError -c "nupkg" -e 1 "Error packing NuGet package" && exit 1)
+  else
+    make nupkg || (Write-PipelineTelemetryError -c "nupkg" -e 1 "Error packing NuGet package" && exit 1)
+  fi
 fi
 
 # run all xunit tests
 if [ "$test" = "true" ]; then
-  make update-tests-corefx
-  for testdir in corefx/tests/extracted/*; do
-    ../scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=15m make run-tests-corefx-$(basename $testdir)
-  done
+  make update-tests-corefx || (Write-PipelineTelemetryError -c "tests-download" -e 1 "Error downloading tests" && exit 1)
+  if [ "$ci" = "true" ]; then
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_xunit_flags" USE_TIMEOUT=1 || (Write-PipelineTelemetryError -c "tests" -e 1 "Error running tests" && exit 1)
+  else
+    make run-tests-corefx XUNIT_MONO_ENV_OPTIONS="$test_mono_flags" XUNIT_ARGS="$test_xunit_flags"
+  fi
 fi

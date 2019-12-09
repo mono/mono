@@ -3,7 +3,8 @@
 	<assembly fullname="System.Private.CoreLib">
 	
 		<!-- domain.c: mono_defaults.appdomain_class -->
-		<type fullname="Mono.MonoDomain" preserve="fields">
+		<type fullname="Mono.MonoDomain">
+			<field name="_mono_app_domain"/>
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
 			<!-- appdomain.c: mono_domain_try_type_builder_resolve -->
@@ -28,6 +29,10 @@
 		  <method name="MonoResolveUsingResolvingEvent" />
 		  <!-- assembly-load-context.c: mono_alc_invoke_resolve_using_resolve_satellite -->
 		  <method name="MonoResolveUsingResolveSatelliteAssembly" />
+		  <!-- appdomain.c: mono_try_assembly_resolve_handle () -->
+		  <method name="OnAssemblyResolve"/>
+		  <!-- native-library.c: netcore_resolve_with_load () -->
+		  <method name="MonoResolveUnmanagedDll"/>
 		</type>
 		
 		<!-- marshal.c: emit_marshal_custom (should not be used on devices)
@@ -62,6 +67,11 @@
 		<type fullname="System.ArithmeticException">
 			<!-- mono_exception_from_name -->
 			<method signature="System.Void .ctor()" />
+		</type>
+
+		<type fullname="System.Security.VerificationException" >
+		  <!-- mini.c:mini_method_verify -->
+		  <method signature="System.Void .ctor()" />
 		</type>
 		
 		<!-- domain.c: mono_defaults.array_class -->
@@ -136,6 +146,10 @@
 			<method signature="System.Void .ctor()" />
 		</type>
 
+		<!-- domain.c: mono_defaults.threadabortexception_class -->
+		<type fullname="System.Threading.ThreadAbortException">
+		</type>
+
 		<!-- debugger-agent.c: create_event_list -->
 		<type fullname="System.Diagnostics.DebuggerNonUserCodeAttribute"/>
 		<type fullname="System.Diagnostics.DebuggerHiddenAttribute"/>
@@ -153,7 +167,7 @@
 		-->
 		<type fullname="System.DllNotFoundException">
 			<!-- mono_exception_from_name_msg -->
-			<method signature="System.Void .ctor(System.String)" />
+			<method signature="System.Void .ctor()" />
 		</type>
 		
 		<!-- domain.c: mono_defaults.double_class -->
@@ -185,7 +199,7 @@
 		<!-- exception.c (mono_get_exception_execution_engine) -->
 		<type fullname="System.ExecutionEngineException">
 			<!-- mono_exception_from_name_msg -->
-			<method signature="System.Void .ctor(System.String)" />
+			<method signature="System.Void .ctor()" />
 		</type>
 
 		<type fullname="System.FieldAccessException">
@@ -267,14 +281,9 @@
         
 		<type fullname="System.MissingMethodException">
 			<!-- mini.c (mono_jit_compiler_method_inner) mono_exception_from_name_msg -->
-			<method signature="System.Void .ctor(System.String)" />
-		</type>
-		
-		<!-- threadpool.c: mono_thread_pool_init (assert) -->
-		<type fullname="System.MonoAsyncCall" preserve="fields" >
-			<!-- threadpool.c mono_object_new_checked in mono_threadpool_begin_invoke -->
 			<method signature="System.Void .ctor()" />
 		</type>
+		
 		<!-- mono-mlist.c (managed list): used in threadpool.c and gc.c -->
 		<type fullname="System.MonoListItem" preserve="fields" />
 		
@@ -350,7 +359,11 @@
 		
 		<!-- domain.c: mono_defaults.methodhandle_class -->
 		<type fullname="System.RuntimeMethodHandle" preserve="fields" />
-		
+
+		<!-- domain.c: mono_defaults.runtimetype_class -->
+		<!-- under mono, this has no runtime visible fields -->
+		<type fullname="System.RuntimeType" preserve="nothing" />
+
 		<!-- domain.c: mono_defaults.typehandle_class -->
 		<type fullname="System.RuntimeTypeHandle" preserve="fields" />
 
@@ -375,7 +388,7 @@
 		<!-- domain.c: mono_defaults.string_class -->
 		<type fullname="System.String" preserve="fields">
 			<!-- method-to-ir.c: mini_redirect_call -->
-			<method name="InternalAllocateStr" />
+			<method name="FastAllocateString" />
 			<!-- method-to-it.c: mini_emit_initobj -->
 			<method name="memset" />
 			<!-- mini-generic-sharing.c: class_type_info 
@@ -404,6 +417,7 @@
 		
 		<!-- domain.c: mono_defaults.systemtype_class -->
 		<type fullname="System.Type">
+			<field name="_impl"/>
 			<!-- marshal.c (mono_marshal_get_synchronized_wrapper) -->
 			<method name="GetTypeFromHandle" />
 			<!-- sre.c (mono_reflection_type_get_underlying_system_type) -->
@@ -488,14 +502,6 @@
 			<method name=".ctor" />
 		</type>
 
-		<!-- icalls - but (at least parts of them) are used thru interfaces at runtime and cannot be linked out -->
-		<type fullname="System.Globalization.DateTimeFormatInfo" preserve="fields" />
-		<type fullname="System.Globalization.CompareInfo" preserve="fields" />
-		<type fullname="System.Globalization.CultureInfo" preserve="fields" />
-		<type fullname="System.Globalization.NumberFormatInfo" preserve="fields" />
-		<type fullname="System.Globalization.RegionInfo" preserve="fields" />
-		<type fullname="System.Globalization.SortKey" preserve="fields" />
-
 		<type fullname="System.IO.FileNotFoundException">
 			<!-- mini.c (mono_jit_compiler_method_inner) mono_exception_from_name_msg -->
 			<method signature="System.Void .ctor(System.String)" />
@@ -510,7 +516,7 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
+		<!-- appdomain.c (ves_icall_System_Runtime_Loader_AssemblyLoadContext_InternalGetLoadedAssemblies) -->
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
 
 		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
@@ -646,8 +652,6 @@
 			<method signature="System.Void .ctor(System.Object)" />
 		</type>
 
-		<!-- icall.c | object-internal.h: MonoReflectionDllImportAttribute structure -->
-		<type fullname="System.Runtime.InteropServices.DllImportAttribute" preserve="fields"/> 
 		<!-- marshal.c: emit_marshal_custom (DISABLE_JIT is not defined for the AOT compiler, only the ARM runtimes) -->
 		<type fullname="System.Runtime.InteropServices.ICustomMarshaler" />
 
@@ -669,22 +673,11 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- exception.c (mono_get_exception_serialization) -->
-		<type fullname="System.Runtime.Serialization.SerializationException">
-			<!-- mono_exception_from_name_msg -->
-			<method signature="System.Void .ctor(System.String)" />
-		</type>
-
-		<!-- domain.c: mono_defaults.executioncontext_class -->
-		<type fullname="System.Threading.ExecutionContext">
-			<!-- security-manager.c: mono_get_context_capture_method (can likely be removed) -->
-			<method name="Capture" />
-		</type>
-
-		<!-- aot-runtime.c: mono_aot_get_method -->
-		<type fullname="System.Threading.Interlocked">
-			<method name="CompareExchange" />
-			<method name="Exchange" />
+		<!-- native-library.c: mono_class_get_native_library_class -->
+		<type fullname="System.Runtime.InteropServices.NativeLibrary">
+			<method name="MonoLoadLibraryCallbackStub" />
+			<method name="MonoResolveUnmanagedDll" />
+			<method name="MonoResolveUnmanagedDllUsingEvent" />
 		</type>
 		
 		<!-- domain.c: mono_defaults.monitor_class -->
@@ -695,12 +688,6 @@
 			<method name="Exit" />
 		</type>
 
-		<!-- domain.c: mono_defaults.manualresetevent_class -->
-		<type fullname="System.Threading.ManualResetEvent" >
-			<!-- runtime access fields and setter from inherited WaitHandle -->
-			<method signature="System.Void .ctor(System.Boolean)" />
-		</type>
-
 		<!-- exception.c (mono_get_exception_synchronization_lock) -->
 		<type fullname="System.Threading.SynchronizationLockException">
 			<!-- mono_exception_from_name_msg -->
@@ -708,6 +695,7 @@
 		</type>
 
 		<!-- domain.c: mono_defaults.thread_class -->
+		<!-- FIXME: -->
 		<type fullname="System.Threading.Thread" preserve="fields">
 			<method name="get_CurrentContext" />
 		</type>
@@ -730,22 +718,6 @@
 			<!-- mono_exception_from_name_msg -->
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
-		
-		<!-- object-internals.h: defines MonoWaitHandle, threadpool.c: gets the handle from the structure -->
-		<type fullname="System.Threading.WaitHandle" preserve="fields">
-			<!-- object.c: mono_wait_handle_new -->
-			<method name="set_Handle" />
-			<!-- object.c: mono_wait_handle_get_handle -->
-			<field name="safe_wait_handle" />
-		</type>
-
-		<!-- threadpool-ms.c (worker_thread) -->
-		<type fullname="System.Threading._ThreadPoolWaitCallback">
-		  <method name="PerformWaitCallback"/>
-		</type>
-
-		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
-		<type fullname="Mono.RuntimeStructs/MonoError" />
 
 		<type fullname="System.Threading.WasmRuntime"/>
 
@@ -760,6 +732,7 @@
 		<type fullname="System.AppContext">
 		  <!-- appdomain.c: mono_runtime_install_appctx_properties -->
 		  <method name="Setup"/>
+		  <method name="OnProcessExit"/>
 		</type>
 
 		<typename fullname="Mono.NullByRefReturnException">

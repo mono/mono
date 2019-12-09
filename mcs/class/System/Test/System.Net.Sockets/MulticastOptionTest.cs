@@ -15,6 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category("NotWasm")]
 	public class MulticastOptionTest
 	{
 		[Test] // .ctor (IPAddress)

@@ -197,6 +197,9 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
         [Test]
+#if WASM
+        [Category ("MultiThreaded")]
+#endif
         public void BasicRemoveEmptyTest ()
         {
             int result;
@@ -205,6 +208,9 @@ namespace MonoTests.System.Collections.Concurrent
         }
 
         [Test]
+#if WASM
+        [Category ("MultiThreaded")]
+#endif
         public void BasicRemoveTwiceTest()
         {
             bag.Add (1);
@@ -241,12 +247,14 @@ namespace MonoTests.System.Collections.Concurrent
         }
 		
 		[Test]
+		[Category("MultiThreaded")]
 		public void AddStressTest ()
 		{
 			CollectionStressTestHelper.AddStressTest (bag);
 		}
 		
 		[Test]
+		[Category("MultiThreaded")]
 		public void RemoveStressTest ()
 		{
 			CollectionStressTestHelper.RemoveStressTest (bag, CheckOrderingType.DontCare);

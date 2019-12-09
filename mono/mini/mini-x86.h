@@ -11,10 +11,7 @@
 
 #ifdef HOST_WIN32
 #include <windows.h>
-/* use SIG* defines if possible */
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoW32ExceptionHandler));
 
@@ -68,8 +65,10 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #define MONO_ARCH_SUPPORT_TASKLETS 1
 
 #ifndef DISABLE_SIMD
+#ifndef ENABLE_NETCORE
 #define MONO_ARCH_SIMD_INTRINSICS 1
 #define MONO_ARCH_NEED_SIMD_BANK 1
+#endif
 #endif
 
 /* we should lower this size and make sure we don't call heavy stack users in the segv handler */
@@ -242,14 +241,14 @@ typedef struct {
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
 
-#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
+#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg, ex_name) do { \
             MonoInst *inst; \
             MONO_INST_NEW ((cfg), inst, OP_X86_COMPARE_MEMBASE_REG); \
             inst->inst_basereg = array_reg; \
             inst->inst_offset = offset; \
             inst->sreg2 = index_reg; \
             MONO_ADD_INS ((cfg)->cbb, inst); \
-			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
+			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, ex_name); \
 	} while (0)
 
 // Does the ABI have a volatile non-parameter register, so tailcall

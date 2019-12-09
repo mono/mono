@@ -6,7 +6,7 @@ class MonoExtensionsPackage(Package):
     def __init__(self):
         Package.__init__(self, 'mono-extensions', None,
                          sources=['git@github.com:xamarin/mono-extensions.git'],
-                         revision='3cc5e2e1870b35f15b1540f835a370d2b011bacd'
+                         revision='4951cd7dcfa5ce5210a85599e2f466defffb5646'
                          )
         self.source_dir_name = 'mono-extensions'
 

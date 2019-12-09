@@ -198,7 +198,8 @@ static MonoType*
 cattr_type_from_name (char *n, MonoImage *image, gboolean is_enum, MonoError *error)
 {
 	ERROR_DECL (inner_error);
-	MonoType *t = mono_reflection_type_from_name_checked (n, image, inner_error);
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
+	MonoType *t = mono_reflection_type_from_name_checked (n, alc, image, inner_error);
 	if (!t) {
 		mono_error_set_type_load_name (error, g_strdup(n), NULL,
 					       "Could not load %s %s while decoding custom attribute: %s",
@@ -2293,8 +2294,6 @@ mono_reflection_get_custom_attrs_data_checked (MonoObjectHandle obj, MonoError *
 {
 	MonoArrayHandle result = MONO_HANDLE_NEW (MonoArray, NULL);
 	MonoCustomAttrInfo *cinfo;
-
-	error_init (error);
 
 	cinfo = mono_reflection_get_custom_attrs_info_checked (obj, error);
 	goto_if_nok (error, leave);

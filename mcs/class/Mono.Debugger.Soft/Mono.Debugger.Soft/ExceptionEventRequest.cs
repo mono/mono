@@ -6,9 +6,9 @@ namespace Mono.Debugger.Soft
 	public sealed class ExceptionEventRequest : EventRequest {
 
 		TypeMirror exc_type;
-		bool caught, uncaught, subclasses;
+		bool caught, uncaught, subclasses, not_filtered_feature, everything_else;
 		
-		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught) : base (vm, EventType.Exception) {
+		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught, bool not_filtered_feature = false, bool everything_else = false) : base (vm, EventType.Exception) {
 			if (exc_type != null) {
 				CheckMirror (vm, exc_type);
 				TypeMirror exception_type = vm.RootDomain.Corlib.GetType ("System.Exception", false, false);
@@ -19,6 +19,8 @@ namespace Mono.Debugger.Soft
 			this.caught = caught;
 			this.uncaught = uncaught;
 			this.subclasses = true;
+			this.not_filtered_feature = not_filtered_feature;
+			this.everything_else = everything_else;
 		}
 
 		public TypeMirror ExceptionType {
@@ -41,7 +43,7 @@ namespace Mono.Debugger.Soft
 
 		public override void Enable () {
 			var mods = new List <Modifier> ();
-			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses });
+			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses, NotFilteredFeature = not_filtered_feature, EverythingElse = everything_else });
 			SendReq (mods);
 		}
 	}

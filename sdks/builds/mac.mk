@@ -56,20 +56,17 @@ $$(eval $$(call RuntimeTemplate,mac,$(1),$(2)-apple-darwin10,yes))
 
 endef
 
-mac-mac32_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 mac-mac64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
-$(eval $(call MacTemplate,mac32,i386,$(XCODE32_DIR)))
 $(eval $(call MacTemplate,mac64,x86_64,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,mac,xammac xammac_net_4_5,xammac xammac_net_4_5))
 
-$(mac_BIN_DIR): package-mac-mac32 package-mac-mac64
+$(mac_BIN_DIR): package-mac-mac64
 	rm -rf $(mac_BIN_DIR)
 	mkdir -p $(mac_BIN_DIR)
 
 	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen
-	cp $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen-32
 
 $(mac_PKG_CONFIG_DIR): package-mac-mac64
 	rm -rf $(mac_PKG_CONFIG_DIR)
@@ -77,18 +74,18 @@ $(mac_PKG_CONFIG_DIR): package-mac-mac64
 
 	cp $(TOP)/sdks/builds/mac-mac64-$(CONFIGURATION)/data/mono-2.pc $(mac_PKG_CONFIG_DIR)
 
-$(mac_LIBS_DIR): package-mac-mac32 package-mac-mac64
+$(mac_LIBS_DIR): package-mac-mac64
 	rm -rf $(mac_LIBS_DIR)
 	mkdir -p $(mac_LIBS_DIR)
 
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib        $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib        -create -output $(mac_LIBS_DIR)/libmonosgen-2.0.dylib
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-compat.dylib  $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-compat.dylib  -create -output $(mac_LIBS_DIR)/libmono-native-compat.dylib
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-unified.dylib $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-unified.dylib -create -output $(mac_LIBS_DIR)/libmono-native-unified.dylib
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libMonoPosixHelper.dylib     $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libMonoPosixHelper.dylib     -create -output $(mac_LIBS_DIR)/libMonoPosixHelper.dylib
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmonosgen-2.0.a            $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmonosgen-2.0.a            -create -output $(mac_LIBS_DIR)/libmonosgen-2.0.a
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-compat.a      $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-compat.a      -create -output $(mac_LIBS_DIR)/libmono-native-compat.a
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-unified.a     $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-unified.a     -create -output $(mac_LIBS_DIR)/libmono-native-unified.a
-	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-profiler-log.a       $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-profiler-log.a       -create -output $(mac_LIBS_DIR)/libmono-profiler-log.a
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib        $(mac_LIBS_DIR)/libmonosgen-2.0.dylib
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-compat.dylib  $(mac_LIBS_DIR)/libmono-native-compat.dylib
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-unified.dylib $(mac_LIBS_DIR)/libmono-native-unified.dylib
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libMonoPosixHelper.dylib     $(mac_LIBS_DIR)/libMonoPosixHelper.dylib
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmonosgen-2.0.a            $(mac_LIBS_DIR)/libmonosgen-2.0.a
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-compat.a      $(mac_LIBS_DIR)/libmono-native-compat.a
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-unified.a     $(mac_LIBS_DIR)/libmono-native-unified.a
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-profiler-log.a       $(mac_LIBS_DIR)/libmono-profiler-log.a
 
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libmonosgen-2.0.dylib        $(mac_LIBS_DIR)/libmonosgen-2.0.dylib
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  $(mac_LIBS_DIR)/libmono-native-compat.dylib

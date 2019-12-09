@@ -76,26 +76,14 @@ namespace System.IO
 
         public virtual int ReadTimeout
         {
-            get
-            {
-                throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
-            }
-            set
-            {
-                throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
-            }
+            get => throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
+            set => throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
         }
 
         public virtual int WriteTimeout
         {
-            get
-            {
-                throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
-            }
-            set
-            {
-                throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
-            }
+            get => throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
+            set => throw new InvalidOperationException(SR.InvalidOperation_TimeoutsNotSupported);
         }
 
         public Task CopyToAsync(Stream destination)
@@ -199,6 +187,99 @@ namespace System.IO
             }
 
             return bufferSize;
+        }
+
+        public virtual void CopyTo(ReadOnlySpanAction<byte, object?> callback, object? state, int bufferSize)
+        {
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+
+            CopyTo(new WriteCallbackStream(callback, state), bufferSize);
+        }
+
+        public virtual Task CopyToAsync(Func<ReadOnlyMemory<byte>, object?, CancellationToken, ValueTask> callback, object? state, int bufferSize, CancellationToken cancellationToken)
+        {
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+
+            return CopyToAsync(new WriteCallbackStream(callback, state), bufferSize, cancellationToken);
+        }
+
+        private sealed class WriteCallbackStream : Stream
+        {
+            private readonly ReadOnlySpanAction<byte, object?>? _action;
+            private readonly Func<ReadOnlyMemory<byte>, object?, CancellationToken, ValueTask>? _func;
+            private readonly object? _state;
+
+            public WriteCallbackStream(ReadOnlySpanAction<byte, object?> action, object? state)
+            {
+                _action = action;
+                _state = state;
+            }
+
+            public WriteCallbackStream(Func<ReadOnlyMemory<byte>, object?, CancellationToken, ValueTask> func, object? state)
+            {
+                _func = func;
+                _state = state;
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                Write(new ReadOnlySpan<byte>(buffer, offset, count));
+            }
+
+            public override void Write(ReadOnlySpan<byte> span)
+            {
+                if (_action != null)
+                {
+                    _action(span, _state);
+                    return;
+                }
+
+                // In case a poorly implemented CopyToAsync(Stream, ...) method decides to call
+                // the destination stream's Write rather than WriteAsync, we make it work, but this
+                // does not need to be efficient.
+                Debug.Assert(_func != null);
+                _func(span.ToArray(), _state, CancellationToken.None).AsTask().GetAwaiter().GetResult();
+
+            }
+
+            public override Task WriteAsync(byte[] buffer, int offset, int length, CancellationToken cancellationToken)
+            {
+                return WriteAsync(new ReadOnlyMemory<byte>(buffer, offset, length), cancellationToken).AsTask();
+            }
+
+            public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
+            {
+                if (_func != null)
+                {
+                    return _func(buffer, _state, cancellationToken);
+                }
+
+                // In case a poorly implemented CopyTo(Stream, ...) method decides to call
+                // the destination stream's WriteAsync rather than Write, we make it work,
+                // but this does not need to be efficient.
+                Debug.Assert(_action != null);
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    _action(buffer.Span, _state);
+                    return default;
+                }
+                catch (Exception e)
+                {
+                    return new ValueTask(Task.FromException(e));
+                }
+            }
+
+            public override bool CanRead => false;
+            public override bool CanSeek => false;
+            public override bool CanWrite => true;
+            public override void Flush() { }
+            public override Task FlushAsync(CancellationToken token) => Task.CompletedTask;
+            public override long Length => throw new NotSupportedException();
+            public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+            public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
         }
 
         // Stream used to require that all cleanup logic went into Close(),
@@ -657,8 +738,7 @@ namespace System.IO
                 {
                     _context = null;
 
-                    ContextCallback? invokeAsyncCallback = s_invokeAsyncCallback;
-                    if (invokeAsyncCallback == null) s_invokeAsyncCallback = invokeAsyncCallback = InvokeAsyncCallback; // benign race condition
+                    ContextCallback? invokeAsyncCallback = s_invokeAsyncCallback ??= InvokeAsyncCallback;
 
                     ExecutionContext.RunInternal(context, invokeAsyncCallback, this);
                 }
@@ -878,7 +958,7 @@ namespace System.IO
 
             public override long Position
             {
-                get { return 0; }
+                get => 0;
                 set { }
             }
 
@@ -894,6 +974,22 @@ namespace System.IO
                 // Validate arguments here for compat, since previously this method
                 // was inherited from Stream (which did check its arguments).
                 StreamHelpers.ValidateCopyToArgs(this, destination, bufferSize);
+
+                return cancellationToken.IsCancellationRequested ?
+                    Task.FromCanceled(cancellationToken) :
+                    Task.CompletedTask;
+            }
+
+            public override void CopyTo(ReadOnlySpanAction<byte, object?> callback, object? state, int bufferSize)
+            {
+                StreamHelpers.ValidateCopyToArgs(this, callback, bufferSize);
+
+                // After we validate arguments this is a nop.
+            }
+
+            public override Task CopyToAsync(Func<ReadOnlyMemory<byte>, object?, CancellationToken, ValueTask> callback, object? state, int bufferSize, CancellationToken cancellationToken)
+            {
+                StreamHelpers.ValidateCopyToArgs(this, callback, bufferSize);
 
                 return cancellationToken.IsCancellationRequested ?
                     Task.FromCanceled(cancellationToken) :
@@ -1134,26 +1230,14 @@ namespace System.IO
 
             public override int ReadTimeout
             {
-                get
-                {
-                    return _stream.ReadTimeout;
-                }
-                set
-                {
-                    _stream.ReadTimeout = value;
-                }
+                get => _stream.ReadTimeout;
+                set => _stream.ReadTimeout = value;
             }
 
             public override int WriteTimeout
             {
-                get
-                {
-                    return _stream.WriteTimeout;
-                }
-                set
-                {
-                    _stream.WriteTimeout = value;
-                }
+                get => _stream.WriteTimeout;
+                set => _stream.WriteTimeout = value;
             }
 
             // In the off chance that some wrapped stream has different

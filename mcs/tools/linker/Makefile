@@ -23,6 +23,7 @@ TEST_CASES := \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs \
+	System/test-typeconverter.cs \
 	System.Core/test-plinq-01.cs
 
 ifdef INCLUDE_DISABLED
@@ -43,6 +44,12 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs \
 	System.Core/test-queryable-01.cs \
 	System.Core/test-queryable-02.cs
+endif
+
+ifdef MCS_MODE
+NO_INSTALL=1
+NO_BUILD=1
+NO_TEST=1
 endif
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
@@ -103,7 +110,7 @@ BINARY_TEST_CASES = \
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw -d ../../../external/binary-reference-assemblies/build/monowasm
 
 BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
 

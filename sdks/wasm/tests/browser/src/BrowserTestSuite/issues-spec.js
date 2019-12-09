@@ -33,7 +33,7 @@ describe("The WebAssembly Issues Test Suite",function(){
       var _document = karmaHTML.issuesspec.document;
 
 
-      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:BugInterpRecursion", []);
+      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:BugInterpRecursion", [null]);
       expect(_document.constructor.name).toEqual('HTMLDocument'); // really nothing to assert here except if a recursion occurs.
 
     }, DEFAULT_TIMEOUT);  

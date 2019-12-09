@@ -287,6 +287,7 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test] // bug https://bugzilla.novell.com/show_bug.cgi?id=325368
+		[Category ("NotWasm")]
 		public void EnabledInElapsed ()
 		{
 			var elapsedCount = 0;
@@ -309,6 +310,7 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void AutoResetEventFalseStopsFiringElapsed ()
 		{
 			var elapsedCount = 0;
@@ -329,6 +331,7 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
+		[Category ("NotWasm")] // Object.onAbort
 		public void TestRaceCondition ()
 		{
 			Assert.IsTrue (new RaceTest (true).Success, "#1");

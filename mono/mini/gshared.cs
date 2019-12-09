@@ -1031,6 +1031,28 @@ public class Tests
 		Two
 	};
 
+	class GetHashBase1 {
+		public override int GetHashCode () {
+			return 1;
+		}
+	}
+
+	class GetHashClass1 : GetHashBase1 {
+		public override int GetHashCode () {
+			return 2;
+		}
+	}
+
+	interface GetHashIFace {
+		int get_hash<T, T2> (T t, T2 t2);
+	}
+
+	class GetHashImpl : GetHashIFace {
+		public int get_hash<T, T2> (T t, T2 t2) {
+			return t.GetHashCode ();
+		}
+	}
+
 	public static int test_0_constrained_tostring () {
 		if (to_string<int, int> (1, 1) != "1")
 			return 1;
@@ -1055,6 +1077,9 @@ public class Tests
 			return 3;
 		if (get_hash<string, int> ("A", 1) != "A".GetHashCode ())
 			return 4;
+		GetHashIFace iface = new GetHashImpl ();
+		if (iface.get_hash<GetHashBase1, int> (new GetHashClass1 (), 1) != 2)
+			return 5;
 		return 0;
 	}
 
@@ -2191,6 +2216,30 @@ public class Tests
 		IFaceSpan iface = new ImplSpan ();
 		var s = new AStruct () { a = 1, b = 2 };
 		return iface.foo<AStruct> (s);
+	}
+
+	interface IFaceOpenDel {
+		object AMethod<T> ();
+	}
+
+	class ClassOpenDel : IFaceOpenDel {
+		public Nullable<int> field;
+
+		public Nullable<int> getField () {
+			return field;
+		}
+
+		public object AMethod<T> () {
+			var d = (Func<ClassOpenDel, T>)Delegate.CreateDelegate (typeof (Func<ClassOpenDel, T>), typeof (ClassOpenDel).GetMethod ("getField"));
+			return d (this);
+		}
+	}
+
+	// Open instance delegate returning a gsharedvt value
+	public static int test_0_open_delegate () {
+		IFaceOpenDel iface = new ClassOpenDel () { field = 42 };
+		var res = (Nullable<int>)iface.AMethod<Nullable<int>> ();
+		return res == 42 ? 0 : 1;
 	}
 }
 

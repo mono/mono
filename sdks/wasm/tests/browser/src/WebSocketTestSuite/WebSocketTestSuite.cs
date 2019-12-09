@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
-using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -39,7 +38,7 @@ namespace TestSuite
             }
             catch (Exception exc)
             {
-                Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
             }
             finally
             {
@@ -64,7 +63,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -90,7 +89,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -118,7 +117,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -152,7 +151,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -186,7 +185,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -220,7 +219,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -253,7 +252,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {
@@ -278,7 +277,7 @@ namespace TestSuite
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
                 }
                 finally
                 {

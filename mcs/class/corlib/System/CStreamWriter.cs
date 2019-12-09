@@ -166,6 +166,12 @@ namespace System.IO {
 				}
 			}
 		}
+
+		public override void WriteLine (string val)
+		{
+			Write (val);
+			Write (NewLine);
+		}
 	}
 }
 #endif

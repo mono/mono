@@ -32,7 +32,7 @@ namespace Mono.Net.Security
 {
 	abstract class MobileTlsContext : IDisposable
 	{
-		ICertificateValidator2 certificateValidator;
+		ChainValidationHelper certificateValidator;
 
 		protected MobileTlsContext (MobileAuthenticatedStream parent, MonoSslAuthenticationOptions options)
 		{
@@ -55,7 +55,7 @@ namespace Mono.Net.Security
 				}
 			}
 
-			certificateValidator = (ICertificateValidator2)ChainValidationHelper.GetInternalValidator (
+			certificateValidator = ChainValidationHelper.GetInternalValidator (
 				parent.SslStream, parent.Provider, parent.Settings);
 		}
 

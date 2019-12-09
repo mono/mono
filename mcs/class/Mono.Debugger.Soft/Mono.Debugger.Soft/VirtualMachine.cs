@@ -150,8 +150,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void Detach () {
-			conn.Close ();
+			// Notify the application that we are detaching
 			conn.VM_Dispose ();
+			// Close the connection. No further messages can be sent
+			// over the connection after this point.
+			conn.Close ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null, 0);
 		}
 
@@ -275,6 +278,13 @@ namespace Mono.Debugger.Soft
 
 		public ExceptionEventRequest CreateExceptionRequest (TypeMirror exc_type, bool caught, bool uncaught) {
 			return new ExceptionEventRequest (this, exc_type, caught, uncaught);
+		}
+
+		public ExceptionEventRequest CreateExceptionRequest (TypeMirror exc_type, bool caught, bool uncaught, bool everything_else) {
+			if (Version.AtLeast (2, 54))
+				return new ExceptionEventRequest (this, exc_type, caught, uncaught, true, everything_else);
+			else
+				return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
 
 		public AssemblyLoadEventRequest CreateAssemblyLoadRequest () {

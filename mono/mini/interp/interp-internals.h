@@ -22,7 +22,9 @@
 #define MINT_TYPE_P  9
 #define MINT_TYPE_VT 10
 
-#define BOX_NOT_CLEAR_VT_SP 0x4000
+#define INLINED_METHOD_FLAG 0xffff
+#define TRACING_FLAG 0x1
+#define PROFILING_FLAG 0x2
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -39,9 +41,11 @@ enum {
 };
 
 enum {
+	INTERP_OPT_NONE = 0,
 	INTERP_OPT_INLINE = 1,
 	INTERP_OPT_CPROP = 2,
-	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
+	INTERP_OPT_SUPER_INSTRUCTIONS = 4,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS
 };
 
 #if SIZEOF_VOID_P == 4
@@ -51,6 +55,50 @@ typedef gint32  mono_i;
 typedef guint64 mono_u;
 typedef gint64  mono_i;
 #endif
+
+
+/*
+ * GC SAFETY:
+ *
+ *  The interpreter executes in gc unsafe (non-preempt) mode. On wasm, the C stack is
+ * scannable but the wasm stack is not, so to make the code GC safe, the following rules
+ * should be followed:
+ * - every objref handled by the code needs to either be stored volatile or stored
+ *   into a volatile; volatile stores are stack packable, volatile values are not.
+ *   Use either OBJREF or stackval->data.o.
+ *   This will ensure the objects are pinned. A volatile local
+ *   is on the stack and not in registers. Volatile stores ditto.
+ * - minimize the number of MonoObject* locals/arguments (or make them volatile).
+ *
+ * Volatile on a type/local forces all reads and writes to go to memory/stack,
+ *   and each such local to have a unique address.
+ *
+ * Volatile absence on a type/local allows multiple locals to share storage,
+ *   if their lifetimes do not overlap. This is called "stack packing".
+ *
+ * Volatile absence on a type/local allows the variable to live in
+ * both stack and register, for fast reads and "write through".
+ */
+#ifdef TARGET_WASM
+
+#define WASM_VOLATILE volatile
+
+static inline MonoObject * WASM_VOLATILE *
+mono_interp_objref (MonoObject **o)
+{
+	return o;
+}
+
+#define OBJREF(x) (*mono_interp_objref (&x))
+
+#else
+
+#define WASM_VOLATILE /* nothing */
+
+#define OBJREF(x) x
+
+#endif
+
 
 /*
  * Value types are represented on the eval stack as pointers to the
@@ -67,11 +115,7 @@ typedef struct {
 		} pair;
 		float f_r4;
 		double f;
-#ifdef TARGET_WASM
-		MonoObject * volatile o;
-#else
-		MonoObject *o;
-#endif
+		MonoObject * WASM_VOLATILE o;
 		/* native size integer and pointer types */
 		gpointer p;
 		mono_u nati;
@@ -127,7 +171,32 @@ typedef struct _InterpMethod
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
 	MonoProfilerCallInstrumentationFlags prof_flags;
+#ifdef ENABLE_EXPERIMENT_TIERED
+	MiniTieredCounter tiered_counter;
+#endif
 } InterpMethod;
+
+typedef struct _StackFragment StackFragment;
+struct _StackFragment {
+	guint8 *pos, *end;
+	struct _StackFragment *next;
+	double data [1];
+};
+
+typedef struct {
+	StackFragment *first, *last, *current;
+	/* For GC sync */
+	int inited;
+} FrameStack;
+
+/* State of the interpreter main loop */
+typedef struct {
+	stackval *sp;
+	unsigned char *vt_sp;
+	const unsigned short  *ip;
+	GSList *finally_ips;
+	gpointer clause_args;
+} InterpState;
 
 struct _InterpFrame {
 	InterpFrame *parent; /* parent */
@@ -135,36 +204,49 @@ struct _InterpFrame {
 	stackval       *retval; /* parent */
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
-	/*
-	 * For GC tracking of local objrefs in exec_method ().
-	 * Storing into this field will keep the object pinned
-	 * until the objref can be stored into stackval->data.o.
-	 */
-#ifdef TARGET_WASM
-	MonoObject* volatile o;
-#endif
+	/* An address on the native stack associated with the frame, used during EH */
+	gpointer       native_stack_addr;
+	/* Stack fragments this frame was allocated from */
+	StackFragment *iframe_frag, *data_frag;
 	/* exception info */
 	const unsigned short  *ip;
-	MonoException     *ex;
+	/* State saved before calls */
+	/* This is valid if state.ip != NULL */
+	InterpState state;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
 
 typedef struct {
-	/* Resume state for resuming execution in mixed mode */
-	gboolean       has_resume_state;
+	/* Lets interpreter know it has to resume execution after EH */
+	gboolean has_resume_state;
 	/* Frame to resume execution at */
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
 	const guint16 *handler_ip;
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
+	/* Exception that is being thrown. Set with rest of resume state */
+	guint32 exc_gchandle;
+	/* Stack of InterpFrames */
+	FrameStack iframe_stack;
+	/* Stack of frame data */
+	FrameStack data_stack;
 } ThreadContext;
 
 typedef struct {
 	gint64 transform_time;
+	gint64 methods_transformed;
 	gint64 cprop_time;
+	gint64 super_instructions_time;
+	gint32 stloc_nps;
+	gint32 movlocs;
+	gint32 copy_propagations;
+	gint32 constant_folds;
 	gint32 killed_instructions;
+	gint32 emitted_instructions;
+	gint32 super_instructions;
+	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

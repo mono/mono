@@ -35,34 +35,25 @@ namespace System.Security.Policy {
 	[ComVisible (true)]
 	public sealed class ApplicationTrustEnumerator : IEnumerator {
 
-		private IEnumerator e;
+		ApplicationTrustCollection trusts;
+		int current;
 
-		internal ApplicationTrustEnumerator (ApplicationTrustCollection collection)
-		{
-			e = collection.GetEnumerator ();
+		internal ApplicationTrustEnumerator (ApplicationTrustCollection atc) {
+			trusts = atc;
+			current = -1;
 		}
 
-		// properties
+		public ApplicationTrust Current => trusts [current];
 
-		public ApplicationTrust Current {
-			get { return (ApplicationTrust) e.Current; }
-		}
+		object IEnumerator.Current => (object) trusts [current];
 
-		object IEnumerator.Current {
-			get { return e.Current; }
-		}
+		public void Reset () => current = -1;
 
-		// methods
-
-		public bool MoveNext ()
-		{
-			return e.MoveNext ();
-		}
-
-		public void Reset ()
-		{
-			e.Reset ();
+		public bool MoveNext () {
+			if (current == ((int) trusts.Count - 1))
+				return false;
+			current++;
+			return true;
 		}
 	}
 }
-

@@ -247,13 +247,11 @@ typedef guint32 gunichar;
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
 #endif
 
-#ifndef ALIGN_TO
 #define ALIGN_TO(val,align) ((((gssize)val) + ((align) - 1)) & ~((align) - 1))
-#endif
 
-#ifndef ALIGN_PTR_TO
+#define ALIGN_DOWN_TO(val,align) (((gssize)val) & ~((align) - 1))
+
 #define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
-#endif
 
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
@@ -335,9 +333,9 @@ gchar*           g_win32_getlocale(void);
 /*
  * Precondition macros
  */
-#define g_warn_if_fail(x)  G_STMT_START { if (!(x)) { g_warning ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); } } G_STMT_END
-#define g_return_if_fail(x)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return; } } G_STMT_END
-#define g_return_val_if_fail(x,e)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return (e); } } G_STMT_END
+#define g_warn_if_fail(x)  G_STMT_START { if (!(x)) { g_warning ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); } } G_STMT_END
+#define g_return_if_fail(x)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); return; } } G_STMT_END
+#define g_return_val_if_fail(x,e)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); return (e); } } G_STMT_END
 
 /*
  * Errors
@@ -379,6 +377,7 @@ gchar       *g_strchomp       (gchar *str);
 void         g_strdown        (gchar *string);
 gchar       *g_strnfill       (gsize length, gchar fill_char);
 gsize        g_strnlen        (const char*, gsize);
+char        *g_str_from_file_region (int fd, guint64 offset, gsize size);
 
 void	     g_strdelimit     (char *string, char delimiter, char new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
@@ -623,6 +622,7 @@ void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gp
 guint           g_hash_table_size            (GHashTable *hash);
 GList          *g_hash_table_get_keys        (GHashTable *hash);
 GList          *g_hash_table_get_values      (GHashTable *hash);
+gboolean        g_hash_table_contains (GHashTable *hash, gconstpointer key);
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
@@ -646,6 +646,7 @@ guint           g_spaced_primes_closest      (guint x);
 
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
+#define g_hash_table_add(h,k)         g_hash_table_insert_replace ((h),(k),(k),TRUE)
 
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
@@ -779,6 +780,9 @@ G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_log                  (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, ...);
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_assertion_message    (const gchar *format, ...) G_GNUC_NORETURN;
+void           mono_assertion_message_disabled  (const char *file, int line) G_GNUC_NORETURN;
+void           mono_assertion_message  (const char *file, int line, const char *condition) G_GNUC_NORETURN;
+void           mono_assertion_message_unreachable (const char *file, int line) G_GNUC_NORETURN;
 const char *   g_get_assertion_message (void);
 
 #ifdef HAVE_C99_SUPPORT
@@ -930,9 +934,10 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 
 /* g_assert is a boolean expression; the precise value is not preserved, just true or false. */
 #ifdef DISABLE_ASSERT_MESSAGES
-#define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, "<disabled>"), 0))
+// This is smaller than the equivalent mono_assertion_message (..."disabled");
+#define g_assert(x) (G_LIKELY((x)) ? 1 : (mono_assertion_message_disabled (__FILE__, __LINE__), 0))
 #else
-#define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
+#define g_assert(x) (G_LIKELY((x)) ? 1 : (mono_assertion_message (__FILE__, __LINE__, #x), 0))
 #endif
 
 #ifdef __cplusplus
@@ -941,7 +946,15 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define g_static_assert(x) g_assert (x)
 #endif
 
-#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+#define  g_assert_not_reached() G_STMT_START { mono_assertion_message_unreachable (__FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+
+#if ENABLE_NETCORE
+#define g_assert_netcore()     /* nothing */
+#define g_assert_not_netcore() g_assert (!"This function should only be called on mono-notnetcore.")
+#else
+#define g_assert_netcore()     g_assert (!"This function should only be called on mono-netcore.")
+#define g_assert_not_netcore() /* nothing */
+#endif
 
 /* f is format -- like printf and scanf
  * Where you might have said:
@@ -1417,6 +1430,7 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
 
+#if _WIN32
 // g_free the result
 // No MAX_PATH limit.
 gboolean
@@ -1436,6 +1450,7 @@ mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guin
 // No MAX_PATH limit.
 gboolean
 mono_get_current_directory (gunichar2 **pstr, guint32 *plength);
+#endif
 
 G_END_DECLS // FIXME: There is more extern C than there should be.
 

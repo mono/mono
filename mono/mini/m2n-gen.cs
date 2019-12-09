@@ -10,7 +10,7 @@ class EmitCtx
 		switch (c) {
 		case 'I':
 			iarg += 1;
-			return $"(int)margs->iargs [{iarg - 1}]";
+			return $"(int)(gssize)margs->iargs [{iarg - 1}]";
 		case 'F':
 			farg += 1;
 			return $"*(float*)&margs->fargs [FIDX ({farg - 1})]";
@@ -58,6 +58,8 @@ class Driver {
 		"IIIIIIIIIIIII",
 		"IIIIIIIIIIIIII",
 		"IILIIII",
+		"IF",
+		"ID",
 		"IIF",
 		"IIFI",
 		"IIFF",
@@ -92,14 +94,17 @@ class Driver {
 		"IFFFFFFI",
 		"IIFFIII",
 		"ILI",
+		"IILLI",
 		"L",
 		"LL",
 		"LI",
 		"LIL",
+		"LILI",
 		"LILII",
 		"DD",
 		"DDI",
 		"DDD",
+		"DDDD",
 		"VIF",
 		"VIFF",
 		"VIFFFF",
@@ -108,11 +113,14 @@ class Driver {
 		"VIFFFFFI",
 		"VIIFFI",
 		"FF",
+		"FFI",
 		"FFF",
+		"FFFF",
 		"DI",
 		"FI",
 		"IIL",
 		"IILI",
+		"IILIIIL",
 		"IILLLI",
 		"IDIII",
 		"LII",

@@ -212,7 +212,12 @@ namespace System.Net.Http
 			return value.Length;
 		}
 
-		protected internal abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);
+		internal Task SerializeToStreamAsync_internal (Stream stream, TransportContext context)
+		{
+			return SerializeToStreamAsync (stream, context);
+		}
+
+		protected abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);
 		protected internal abstract bool TryComputeLength (out long length);
 	}
 }

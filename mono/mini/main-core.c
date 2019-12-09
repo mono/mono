@@ -1,4 +1,5 @@
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
 
 #if ENABLE_NETCORE
 
@@ -6,6 +7,7 @@
 #include "mini-runtime.h"
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
+#include <mono/metadata/environment.h>
 #include <mono/metadata/loader-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 
@@ -281,6 +283,8 @@ int STDAPICALLTYPE coreclr_execute_assembly (void* hostHandle, unsigned int doma
 	*ptr = NULL;
 
 	mono_parse_env_options (&mono_argc, &mono_argv);
+
+	// TODO: Should be return code of Main only (mono_jit_exec result)
 	*exitCode = mono_main (mono_argc, mono_argv);
 
 	return 0;
@@ -292,6 +296,7 @@ int STDAPICALLTYPE coreclr_execute_assembly (void* hostHandle, unsigned int doma
 // Parameters:
 //  hostHandle              - Handle of the host
 //  domainId                - Id of the domain 
+//  latchedExitCode         - Latched exit code after domain unloaded
 //
 // Returns:
 //  HRESULT indicating status of the operation. S_OK if the assembly was successfully executed
@@ -306,6 +311,8 @@ int STDAPICALLTYPE coreclr_shutdown_2 (void* hostHandle, unsigned int domainId, 
 	MonoCoreTrustedPlatformAssemblies *a = trusted_platform_assemblies;
 	trusted_platform_assemblies = NULL;
 	mono_core_trusted_platform_assemblies_free (a);
+
+	*latchedExitCode = mono_environment_exitcode_get ();
 
 	return 0;
 }
@@ -331,5 +338,7 @@ int STDAPICALLTYPE coreclr_create_delegate (void* hostHandle, unsigned int domai
 	g_error ("Not implemented");
 	return 0;
 }
+#else
 
+MONO_EMPTY_SOURCE_FILE (main_core);
 #endif // ENABLE_NETCORE

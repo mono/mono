@@ -1,5 +1,5 @@
 
-ifeq ($(and $(DISABLE_IOS),$(DISABLE_MAC)),)
+ifneq ($(or $(ENABLE_IOS),$(ENABLE_MAC)),)
 
 CheckXcodeDir=$(or $(and $(wildcard $(1))),$(warning Could not find Xcode in "$(1)"))
 
@@ -9,7 +9,7 @@ endif
 
 endif
 
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 
 ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
 ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives

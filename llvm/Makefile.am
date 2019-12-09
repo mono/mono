@@ -19,6 +19,12 @@ llvm_extra_libs=
 endif
 endif
 
+if INTERNAL_LLVM_ASSERTS
+ENABLE_ASSERTS=On
+else
+ENABLE_ASSERTS=Off
+endif
+
 if INTERNAL_LLVM
 
 all-local: configure-llvm build-llvm install-llvm llvm_config.mk

@@ -19,8 +19,9 @@ namespace System.Diagnostics {
     using System.IO;
     using System.Text;
     using System.Runtime.InteropServices;
-    using System.Threading;    
-    using System.Collections;    
+    using System.Threading;
+    using System.Collections;
+    using Microsoft.Win32.SafeHandles;
         
     internal delegate void UserCallBack(String data);
  
@@ -58,10 +59,10 @@ namespace System.Diagnostics {
 
         // Cache the last position scanned in sb when searching for lines.
         private int currentLinePos;
-		
 #if MONO
-		//users to coordinate between Dispose and BeginReadLine
-		private object syncObject = new Object ();
+        //users to coordinate between Dispose and ReadBuffer
+        private object syncObject = new Object ();
+        private IAsyncResult asyncReadResult = null;
 #endif
 
         internal AsyncStreamReader(Process process, Stream stream, UserCallBack callback, Encoding encoding) 
@@ -115,8 +116,31 @@ namespace System.Diagnostics {
             lock (syncObject) {
 #endif
             if (disposing) {
-                if (stream != null)
+                if (stream != null) {
+#if MONO
+                    if (asyncReadResult != null && !asyncReadResult.IsCompleted) {
+                        // Closing underlying stream when having pending async read request in progress is
+                        // not portable and racy by design. Try to cancel pending async read before closing stream.
+                        // We are still holding lock that will prevent new async read requests to queue up
+                        // before we have closed and invalidated the stream.
+                        if (stream is FileStream) {
+                            SafeHandle tmpStreamHandle = ((FileStream)stream).SafeFileHandle;
+                            while (!asyncReadResult.IsCompleted) {
+                                MonoIOError error;
+                                if (!MonoIO.Cancel (tmpStreamHandle, out error) && error == MonoIOError.ERROR_NOT_SUPPORTED) {
+                                    // Platform don't support canceling pending IO requests on stream. If an async pending read
+                                    // is still in flight when closing stream, it could trigger a race condition.
+                                    break;
+                                }
+
+                                // Wait for a short time for pending async read to cancel/complete/fail.
+                                asyncReadResult.AsyncWaitHandle.WaitOne (200);
+                            }
+                        }
+                    }
+#endif
                     stream.Close();
+                }
             }
             if (stream != null) {
                 stream = null;
@@ -151,7 +175,11 @@ namespace System.Diagnostics {
             
             if( sb == null ) {
                 sb = new StringBuilder(DefaultBufferSize);
+#if MONO
+                asyncReadResult = stream.BeginRead (byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback (ReadBuffer), null);
+#else
                 stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
+#endif
             }
             else {
                 FlushMessageQueue();
@@ -169,12 +197,17 @@ namespace System.Diagnostics {
             
             try {
 #if MONO
-                var stream = this.stream;
-                if (stream == null)
-                byteLen = 0;
-                else
-#endif
+                lock (syncObject) {
+                    Debug.Assert (ar.IsCompleted);
+                    asyncReadResult = null;
+                    if (this.stream == null)
+                        byteLen = 0;
+                    else
+                        byteLen = stream.EndRead (ar);
+                }
+#else
                 byteLen = stream.EndRead(ar);
+#endif
             }
             catch (IOException ) {
                 // We should ideally consume errors from operations getting cancelled
@@ -242,10 +275,10 @@ retry_dispose:
                         byteLen = 0;
                         goto retry_dispose;
                     }
-#endif
-                stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
-#if MONO
+                    asyncReadResult = stream.BeginRead (byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
                 }
+#else
+                stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
 #endif
             }
         }

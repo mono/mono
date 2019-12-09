@@ -7,6 +7,7 @@ using System.Threading;
 namespace MonoTests.System.Net.NetworkInformation
 {
 	[TestFixture]
+	[Category("NotWasm")]
 	public partial class PingTest
 	{
 		partial void AndroidShouldPingWork (ref bool shouldWork);
@@ -89,6 +90,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 #if MONOTOUCH
 		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
 #endif
@@ -106,6 +108,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 #if MONOTOUCH
 		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
 #endif

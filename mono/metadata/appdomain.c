@@ -440,8 +440,7 @@ mono_check_corlib_version_internal (void)
 #if defined(MONO_CROSS_COMPILE)
 	/* Can't read the corlib version because we only have the target class layouts */
 	return NULL;
-#endif
-
+#else
 	char *result = NULL;
 	char *version = mono_get_corlib_version ();
 	if (!version) {
@@ -466,6 +465,7 @@ mono_check_corlib_version_internal (void)
 exit:
 	g_free (version);
 	return result;
+#endif
 }
 
 /**
@@ -547,8 +547,26 @@ mono_install_runtime_cleanup (MonoDomainFunc func)
  * mono_runtime_quit:
  */
 void
-mono_runtime_quit ()
+mono_runtime_quit (void)
 {
+	MONO_STACKDATA (dummy);
+	(void) mono_threads_enter_gc_unsafe_region_unbalanced_internal (&dummy);
+	// after quit_function (in particular, mini_cleanup) everything is
+	// cleaned up so MONO_EXIT_GC_UNSAFE can't work and doesn't make sense.
+	
+	mono_runtime_quit_internal ();
+}
+
+/**
+ * mono_runtime_quit_internal:
+ */
+void
+mono_runtime_quit_internal (void)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	// but note that when we return, we're not in GC Unsafe mode anymore.
+	// After clean up threads don't _have_ a thread state anymore.
+	
 	if (quit_function != NULL)
 		quit_function (mono_get_root_domain (), NULL);
 }
@@ -796,13 +814,14 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 #ifdef ENABLE_NETCORE
 	return FALSE;
 #else
-	static MonoClassField *field = NULL;
 	MonoObject *o;
 
-	if (field == NULL) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, field)
+
 		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
 		g_assert (field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, field)
 
 	/*pedump doesn't create an appdomin, so the domain object doesn't exist.*/
 	if (!domain->domain)
@@ -858,14 +877,13 @@ exit:
 static MonoMethod *
 mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
-	static MonoMethod *method; // cache
-
-	if (method)
-		return method;
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 	// not cached yet, fill cache under caller's lock
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	if (method == NULL)
 		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
@@ -881,14 +899,13 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 static MonoMethod *
 mono_class_get_appdomain_do_type_builder_resolve_method (MonoError *error)
 {
-	static MonoMethod *method; // cache
-
-	if (method)
-		return method;
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
 
 	// not cached yet, fill cache under caller's lock
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeBuilderResolve", -1, 0, error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
 
 	if (method == NULL)
 		g_warning ("%s method AppDomain.DoTypeBuilderResolve not found. %s\n", __func__, mono_error_get_message (error));
@@ -1348,16 +1365,19 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 	HANDLE_FUNCTION_ENTER ();
 	MonoAssembly *ret = NULL;
 	MonoDomain *domain = mono_alc_domain (alc);
-	static MonoMethod *method;
 
 	if (mono_runtime_get_no_exec ())
 		goto leave;
 
 #ifndef ENABLE_NETCORE
+
+	static MonoMethod *method;
 	MonoBoolean isrefonly;
 	gpointer params [3];
 
 	g_assert (domain != NULL && !MONO_HANDLE_IS_NULL (fname));
+
+	// FIXME cache?
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoAssemblyResolve", -1, 0, error);
 	g_assert (method != NULL);
@@ -1389,14 +1409,16 @@ mono_try_assembly_resolve_handle (MonoAssemblyLoadContext *alc, MonoStringHandle
 		goto leave;
 	}
 #else
-	if (!method) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, method)
+
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *found = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
+		method = mono_class_get_method_from_name_checked (alc_class, "OnAssemblyResolve", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		method = found;
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method)
+
 	g_assert (method);
 
 	MonoReflectionAssemblyHandle requesting_handle;
@@ -1528,8 +1550,6 @@ static void
 mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out)
 {
 	HANDLE_FUNCTION_ENTER ();
-	static MonoClassField *assembly_load_field;
-	static MonoMethod *assembly_load_method;
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_alc_domain (alc);
 	MonoClass *klass;
@@ -1554,10 +1574,12 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	add_assembly_to_alc (alc, assembly);
 #endif
 
-	if (assembly_load_field == NULL) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, assembly_load_field)
+
 		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
 		g_assert (assembly_load_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, assembly_load_field)
 
 	if (!MONO_HANDLE_GET_FIELD_BOOL (appdomain, MonoObject*, assembly_load_field))
 		goto leave; // No events waiting to be triggered
@@ -1566,10 +1588,12 @@ mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *asse
 	reflection_assembly = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_assert_ok (error);
 
-	if (assembly_load_method == NULL) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, assembly_load_method)
+
 		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, error);
 		g_assert (assembly_load_method);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, assembly_load_method)
 
 	void *params [1];
 	params [0] = MONO_HANDLE_RAW (reflection_assembly);
@@ -2085,8 +2109,6 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	MonoDomain *domain = mono_domain_get ();
 	char *shadow_dir;
 	gint32 copy_error;
-
-	error_init (oerror);
 
 	set_domain_search_path (domain);
 
@@ -2790,7 +2812,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 	req.basedir = basedir;
 	req.no_postload_search = TRUE;
 	ass = mono_assembly_request_byname (&aname, &req, &status);
-	mono_assembly_name_free (&aname);
+	mono_assembly_name_free_internal (&aname);
 
 	if (!ass) {
 		/* MS.NET doesn't seem to call the assembly resolve handler for refonly assemblies */
@@ -3003,6 +3025,8 @@ mono_domain_is_unloading (MonoDomain *domain)
 	else
 		return FALSE;
 }
+
+#ifndef ENABLE_NETCORE
 
 static void
 clear_cached_vtable (MonoVTable *vtable)
@@ -3326,6 +3350,8 @@ exit:
 	unload_data_unref (thread_data);
 	HANDLE_FUNCTION_RETURN ();
 }
+
+#endif /* ENABLE_NETCORE */
 
 #ifdef ENABLE_NETCORE
 

@@ -16,6 +16,17 @@
 typedef struct _MonoLoadedImages MonoLoadedImages;
 typedef struct _MonoAssemblyLoadContext MonoAssemblyLoadContext;
 
+#ifndef DISABLE_DLLMAP
+typedef struct _MonoDllMap MonoDllMap;
+struct _MonoDllMap {
+	char *dll;
+	char *target;
+	char *func;
+	char *target_func;
+	MonoDllMap *next;
+};
+#endif
+
 #ifdef ENABLE_NETCORE
 /* FIXME: this probably belongs somewhere else */
 struct _MonoAssemblyLoadContext {
@@ -27,11 +38,36 @@ struct _MonoAssemblyLoadContext {
 	 * collectible, the handle is weak, otherwise it's strong.
 	 */
 	uint32_t gchandle;
+
+	// Used in native-library.c for the hash table below; do not access anywhere else
+	MonoCoopMutex pinvoke_lock;
+	// Maps malloc-ed char* pinvoke scope -> MonoDl*
+	GHashTable *pinvoke_scopes;
 };
 #endif /* ENABLE_NETCORE */
 
+void
+mono_global_loader_data_lock (void);
+
+void
+mono_global_loader_data_unlock (void);
+
 gpointer
 mono_lookup_pinvoke_call_internal (MonoMethod *method, MonoError *error);
+
+#ifndef DISABLE_DLLMAP
+void
+mono_dllmap_insert_internal (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc);
+
+void
+mono_global_dllmap_cleanup (void);
+#endif
+
+void
+mono_global_loader_cache_init (void);
+
+void
+mono_global_loader_cache_cleanup (void);
 
 #ifdef ENABLE_NETCORE
 void
@@ -75,5 +111,8 @@ mono_alc_domain (MonoAssemblyLoadContext *alc)
 
 MonoLoadedImages *
 mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc);
+
+MONO_API void
+mono_loader_save_bundled_library (int fd, uint64_t offset, uint64_t size, const char *destfname);
 
 #endif

@@ -640,6 +640,7 @@ addsubpd: dest:x src1:x src2:x len:6 clob:1
 duppd: dest:x src1:x len:6
 
 pand: dest:x src1:x src2:x len:5 clob:1
+pandn: dest:x src1:x src2:x len:5 clob:1
 por: dest:x src1:x src2:x len:5 clob:1
 pxor: dest:x src1:x src2:x len:5 clob:1
 
@@ -827,3 +828,8 @@ generic_class_init: src1:A len:32 clob:c
 get_last_error: dest:i len:32
 
 fill_prof_call_ctx: src1:i len:128
+
+lzcnt32: dest:i src1:i len:16
+lzcnt64: dest:i src1:i len:16
+popcnt32: dest:i src1:i len:16
+popcnt64: dest:i src1:i len:16

@@ -57,12 +57,14 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-hwcap.h>
 
 #include "mini.h"
 #include "mini-s390x.h"
 #include "support-s390x.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 /*========================= End of Includes ========================*/
 
@@ -267,7 +269,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -339,6 +341,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		s390_std (code, i, 0, STK_BASE, pos);
 		pos += sizeof (gdouble);
 	}
+
 	/*------------------------------------------------------*/
 	/* save the access registers         			*/
 	/*------------------------------------------------------*/
@@ -499,7 +502,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	*new_ctx = *ctx;
 
 	if (ji != NULL) {
-		gint64 address;
+		uintptr_t address;
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -633,7 +636,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	ctx->uc_mcontext.gregs[2] = (gsize)user_data;
 
 	sp -= S390_MINIMAL_STACK_SIZE;
-	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
+	*(unsigned long *)sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
 	MONO_CONTEXT_SET_BP(ctx, sp);
 	MONO_CONTEXT_SET_IP(ctx, (gsize)async_cb);
 }

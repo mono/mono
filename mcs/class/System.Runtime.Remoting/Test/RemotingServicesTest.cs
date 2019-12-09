@@ -294,6 +294,7 @@ namespace MonoTests.Remoting
 			IDictionary props = new Hashtable ();
 			props ["name"] = objMarshal.Uri;
 			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
 			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 
@@ -317,6 +318,7 @@ namespace MonoTests.Remoting
 			IDictionary props = new Hashtable ();
 			props ["name"] = objMarshal.Uri;
 			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
 			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 
@@ -346,7 +348,10 @@ namespace MonoTests.Remoting
 		public void ExecuteMessage ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				MarshalObject objMarshal = NewMarshalObject ();
@@ -379,7 +384,10 @@ namespace MonoTests.Remoting
 		public void IsOneWay ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "MarshalObject.rem", WellKnownObjectMode.Singleton);
@@ -403,7 +411,10 @@ namespace MonoTests.Remoting
 		public void GetObjRefForProxy ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				// Register le factory as a SAO
@@ -427,7 +438,10 @@ namespace MonoTests.Remoting
 		public void GetRealProxy ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "MonoTests.System.Runtime.Remoting.RemotingServicesTest.MarshalObject.soap", WellKnownObjectMode.Singleton);
@@ -449,7 +463,10 @@ namespace MonoTests.Remoting
 		public void SetObjectUriForMarshal ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				MarshalObject objRem = NewMarshalObject ();
@@ -469,7 +486,10 @@ namespace MonoTests.Remoting
 		public void GetServeurTypeForUri ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			Type type = typeof (MarshalObject);
 			ChannelServices.RegisterChannel (chn);
 			try {
@@ -491,7 +511,10 @@ namespace MonoTests.Remoting
 		public void IsObjectOutOf ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "MarshalObject2.rem", WellKnownObjectMode.Singleton);
@@ -514,7 +537,10 @@ namespace MonoTests.Remoting
 		{
 			var port = NetworkHelpers.FindFreePort ();
 			RemotingConfiguration.ApplicationName = "app";
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "obj3.rem", WellKnownObjectMode.Singleton);
@@ -541,7 +567,10 @@ namespace MonoTests.Remoting
 		public void GetObjectWithChannelDataTest ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
-			TcpChannel chn = new TcpChannel (port);
+			IDictionary props = new Hashtable ();
+			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
+			TcpChannel chn = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chn);
 			try {
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "getobjectwithchanneldata.rem", WellKnownObjectMode.Singleton);

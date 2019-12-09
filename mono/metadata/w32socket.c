@@ -808,12 +808,11 @@ ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal (void)
 }
 
 gint32
-ves_icall_System_Net_Sockets_Socket_Available_internal (gsize sock, gint32 *werror, MonoError *error)
+ves_icall_System_Net_Sockets_Socket_Available_internal (gsize sock, gint32 *werror)
 {
 	int ret;
 	guint64 amount;
-	
-	error_init (error);
+
 	*werror = 0;
 
 	/* FIXME: this might require amount to be unsigned long. */
@@ -840,11 +839,10 @@ ves_icall_System_Net_Sockets_Socket_Blocking_internal (gsize sock, MonoBoolean b
 }
 
 gpointer
-ves_icall_System_Net_Sockets_Socket_Accept_internal (gsize sock, gint32 *werror, MonoBoolean blocking, MonoError *error)
+ves_icall_System_Net_Sockets_Socket_Accept_internal (gsize sock, gint32 *werror, MonoBoolean blocking)
 {
 	SOCKET newsock;
 
-	error_init (error);
 	*werror = 0;
 
 	newsock = mono_w32socket_accept (sock, NULL, 0, blocking);
@@ -1893,7 +1891,6 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 	}
 	}
 }
-
 void
 ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal (gsize sock, gint32 level, gint32 name, MonoArrayHandle byte_val, gint32 *werror, MonoError *error)
 {
@@ -1976,8 +1973,8 @@ ipaddress_handle_to_struct_in6_addr (MonoObjectHandle ipaddr)
 #endif
 #endif
 
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 #if defined(__APPLE__) || defined(__FreeBSD__)
-
 static int
 get_local_interface_id (int family)
 {
@@ -2008,8 +2005,8 @@ get_local_interface_id (int family)
 	return idx;
 #endif
 }
-
 #endif /* defined(__APPLE__) || defined(__FreeBSD__) */
+#endif /* HAVE_STRUCT_SOCKADDR_IN6 */
 
 void
 ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32 level, gint32 name, MonoObjectHandle obj_val, MonoArrayHandle byte_val, gint32 int_val, gint32 *werror, MonoError *error)
@@ -2668,4 +2665,4 @@ mono_network_cleanup (void)
 {
 }
 
-#endif /* #ifndef DISABLE_SOCKETS */
+#endif // !defined(DISABLE_SOCKETS) && !defined(ENABLE_NETCORE)
