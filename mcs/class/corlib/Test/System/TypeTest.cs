@@ -5106,6 +5106,16 @@ namespace MonoTests.System
 			typeof(UserByRefLikeStruct).MakeArrayType ();
 		}
 
+		[Test]
+		public void GetConstructorsOnArrayOfGenericArgumentsToArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095#issuecomment-470465597
+			// The assertion here isn't very important; what matters is that the runtime doesn't crash.
+			Type ilist_arg = typeof(IList<>).GetGenericArguments () [0];
+			Type ilist_arg_array = ilist_arg.MakeArrayType ();
+			Assert.NotNull (ilist_arg_array.GetConstructors ());
+		}
+
 	}
 
 	class UserType : Type
