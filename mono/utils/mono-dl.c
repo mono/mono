@@ -168,14 +168,6 @@ fix_libc_name (const char *name)
 }
 #endif
 
-static int
-mono_dl_flags_external_to_internal (int flags)
-{
-	if (!(flags & MONO_DL_LOCAL))
-		flags |= MONO_DL_GLOBAL;
-	return flags;
-}
-
 /**
  * mono_dl_open:
  * \param name name of file containing shared module
@@ -223,13 +215,12 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 
 	if (!lib) {
 		GSList *node;
-		int lflags_conv = mono_dl_convert_flags (mono_dl_flags_external_to_internal (flags));
 		for (node = fallback_handlers; node != NULL; node = node->next){
 			MonoDlFallbackHandler *handler = (MonoDlFallbackHandler *) node->data;
 			if (error_msg)
 				*error_msg = NULL;
 			
-			lib = handler->load_func (name, lflags_conv, error_msg, handler->user_data);
+			lib = handler->load_func (name, lflags, error_msg, handler->user_data);
 			if (error_msg && *error_msg != NULL)
 				g_free (*error_msg);
 			
