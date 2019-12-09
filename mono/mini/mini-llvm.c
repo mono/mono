@@ -389,6 +389,7 @@ typedef enum {
 	INTRINS_SSE_ROUNDSS,
 	INTRINS_SSE_ROUNDPD,
 	INTRINS_SSE_PTESTZ,
+	INTRINS_SSE_PSHUFB,
 #endif
 #ifdef TARGET_WASM
 	INTRINS_WASM_ANYTRUE_V16,
@@ -7373,6 +7374,28 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
+		case OP_SSE2_MOVMSK: {
+			LLVMValueRef args [1];
+			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
+			break;
+		}
+
+		case OP_SSSE3_SHUFFLE: {
+			LLVMValueRef args [] = { lhs, rhs };
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSHUFB), args, 2, dname);
+			break;
+		}
+
+		case OP_SSE3_MOVDDUP: {
+			// _mm_movedup_pd:
+			//    %2 = shufflevector <2 x double> %0, <2 x double> undef, <2 x i32> zeroinitializer
+			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs,
+				LLVMGetUndef (LLVMVectorType (LLVMDoubleType (), 2)), 
+				LLVMConstNull (LLVMVectorType (LLVMInt32Type (), 2)), "");
+			break;
+		}
+
 		case OP_SSE41_ROUNDSS: {
 			LLVMValueRef args [3];
 
@@ -7409,13 +7432,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef call = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PTESTZ), args, 2, dname);
 			LLVMValueRef cmp_zero = LLVMBuildICmp (builder, LLVMIntNE, call, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
 			values [ins->dreg] = LLVMBuildZExt (builder, cmp_zero, LLVMInt8Type (), "");
-			break;
-		}
-
-		case OP_SSE2_MOVMSK: {
-			LLVMValueRef args [1];
-			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
 			break;
 		}
 #endif
@@ -9008,6 +9024,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_PSUBUSB, "llvm.x86.sse2.psubus.b"},
 	{INTRINS_SSE_PAVGB, "llvm.x86.sse2.pavg.b"},
 	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"},
+	{INTRINS_SSE_PSHUFB, "llvm.x86.ssse3.pshuf.b.128"},
 	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"},
 	{INTRINS_SSE_ROUNDSS, "llvm.x86.sse41.round.ss"},
 	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"},
@@ -9329,6 +9346,7 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_SSE_ADDSUBPD:
 		add_sse_binary (module, name, MONO_TYPE_R8);
 		break;
+	case INTRINS_SSE_PSHUFB:
 	case INTRINS_SE_PADDSB:
 	case INTRINS_SSE_PSUBSB:
 	case INTRINS_SSE_PADDUSB:

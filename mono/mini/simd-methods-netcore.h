@@ -49,6 +49,10 @@ METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
 // Sse2
 METHOD(MoveMask)
+// Sse3
+METHOD(MoveAndDuplicate)
+// Ssse3
+METHOD(Shuffle)
 // Sse41
 METHOD(Insert)
 METHOD(TestZ)
