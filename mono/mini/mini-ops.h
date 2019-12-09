@@ -1004,8 +1004,11 @@ MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 /* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */
 MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
-/* sse 4.1 */
+/* sse 2 */
+/* inst_c0 is target type */
+MINI_OP(OP_SSE2_MOVMSK, "sse2_movmsk", IREG, XREG, NONE)
 
+/* sse 4.1 */
 /* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */
 MINI_OP(OP_SSE41_ROUNDPD, "roundpd", XREG, XREG, NONE)
 MINI_OP(OP_SSE41_ROUNDSS, "roundss", XREG, XREG, NONE)

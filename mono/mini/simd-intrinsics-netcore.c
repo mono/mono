@@ -597,6 +597,11 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 
 #ifdef TARGET_AMD64
 
+static guint16 sse2_methods [] = {
+	SN_MoveMask,
+	SN_get_IsSupported
+};
+
 static guint16 sse41_methods [] = {
 	SN_Insert,
 	SN_Max,
@@ -645,13 +650,47 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 	class_ns = m_class_get_name_space (klass);
 	class_name = m_class_get_name (klass);
+
+	if (!strcmp (class_name, "Sse2") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Sse41"))) {
+		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
+		if (id == -1)
+			return NULL;
+
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE2) != 0;
+		is_64bit = !strcmp (class_name, "X64");
+		
+		switch (id) {
+		case SN_get_IsSupported:
+			// we don't yet support the subset used by corlib
+			// but since we do it for SSE41 we have to implement Sse2.MoveMask() which is used 
+			// under Sse41.IsSupported condition
+			EMIT_NEW_ICONST (cfg, ins, 0); 
+			ins->type = STACK_I4;
+			return ins;
+		case SN_MoveMask: {
+			g_assert (fsig->param_count == 1);
+			MonoClass* arg_class = mono_class_from_mono_type_internal (fsig->params [0]);
+			MonoType* arg_type = mono_class_get_context (arg_class)->class_inst->type_argv [0];
+			MONO_INST_NEW (cfg, ins, OP_SSE2_MOVMSK);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->type = STACK_I4;
+			ins->inst_c0 = arg_type->type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		default:
+			return NULL;
+		}
+	}
+
 	if (!strcmp (class_name, "Sse41") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Sse41"))) {
 		id = lookup_intrins (sse41_methods, sizeof (sse41_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		// We only support the subset used by corelib	
-		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())	
+		// We only support the subset used by corelib
+		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())
 			return NULL;
 
 		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0;

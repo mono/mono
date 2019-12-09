@@ -7411,6 +7411,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildZExt (builder, cmp_zero, LLVMInt8Type (), "");
 			break;
 		}
+
+		case OP_SSE2_MOVMSK: {
+			LLVMValueRef args [1];
+			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
+			break;
+		}
 #endif
 
 #ifdef ENABLE_NETCORE
