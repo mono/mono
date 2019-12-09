@@ -652,6 +652,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	class_name = m_class_get_name (klass);
 
 	if (!strcmp (class_name, "Sse2") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Sse41"))) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
 		if (id == -1)
 			return NULL;
@@ -685,6 +687,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (!strcmp (class_name, "Sse41") || (!strcmp (class_name, "X64") && cmethod->klass->nested_in && !strcmp (m_class_get_name (cmethod->klass->nested_in), "Sse41"))) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse41_methods, sizeof (sse41_methods), cmethod);
 		if (id == -1)
 			return NULL;
