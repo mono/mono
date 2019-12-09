@@ -157,8 +157,6 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 	}
 }
 
-#if defined (ENABLE_COPY_STACK_DATA)
-
 static volatile gpointer* dummy_global;
 
 static MONO_NEVER_INLINE
@@ -235,7 +233,7 @@ copy_stack_data_internal_win32_wrapper (MonoThreadInfo *info, MonoStackData *sta
 		jmp edx
 	};
 }
-#endif /* TARGET_AMD64 */
+#endif
 
 static void
 copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
