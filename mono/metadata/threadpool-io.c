@@ -27,7 +27,6 @@
 #endif
 
 #include <mono/metadata/gc-internals.h>
-#include <mono/metadata/icall-decl.h>
 #include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/threadpool.h>
