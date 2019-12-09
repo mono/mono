@@ -1,5 +1,3 @@
--noclass System.IO.Pipes.Tests.AnonymousPipeTest_CreateClient
-
 # Threads
 -noclass TaskCoverage.Coverage
 -noclass Test.TaskContinueWhenAnyTests
@@ -114,7 +112,3 @@
 
 # System
 -nonamespace System.Net.Security.Tests
-
-# System.Xml.Linq
-# fails on OSX
--nomethod CoreXml.Test.XLinq.FunctionalTests.EventsTests.EventsReplaceNodes.XElementReplaceNodes
