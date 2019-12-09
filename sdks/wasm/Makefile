@@ -71,6 +71,7 @@ WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAM
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_DYNAMIC=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
@@ -119,7 +120,7 @@ MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
 EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
-EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
+EMCC_DYNAMIC_FLAGS=-s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
 
 #
@@ -165,7 +166,8 @@ $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(E
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
 endif
 endif
 ifdef ENABLE_WASM_NETCORE
@@ -419,6 +421,12 @@ $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
+$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
+	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
@@ -637,6 +645,9 @@ build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
+
+run-browser-dynamic-tests: $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite
+	(cd $(BROWSER_TEST_DYNAMIC) && npm test)
 
 run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm run testsafari)
