@@ -47,3 +47,6 @@ METHOD(ZeroHighBits)
 METHOD(MultiplyNoFlags)
 METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
+// Sse41
+METHOD(Insert)
+METHOD(TestZ)

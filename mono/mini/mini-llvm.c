@@ -388,6 +388,7 @@ typedef enum {
 	INTRINS_SSE_DPPS,
 	INTRINS_SSE_ROUNDSS,
 	INTRINS_SSE_ROUNDPD,
+	INTRINS_SSE_PTESTZ,
 #endif
 #ifdef TARGET_WASM
 	INTRINS_WASM_ANYTRUE_V16,
@@ -548,11 +549,15 @@ type_to_simd_type (int type)
 {
 	switch (type) {
 	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
 		return LLVMVectorType (LLVMInt8Type (), 16);
+	case MONO_TYPE_U2:
 	case MONO_TYPE_I2:
 		return LLVMVectorType (LLVMInt16Type (), 8);
+	case MONO_TYPE_U4:
 	case MONO_TYPE_I4:
 		return LLVMVectorType (LLVMInt32Type (), 4);
+	case MONO_TYPE_U8:
 	case MONO_TYPE_I8:
 		return LLVMVectorType (LLVMInt64Type (), 2);
 	case MONO_TYPE_R8:
@@ -605,6 +610,34 @@ create_llvm_type_for_type (MonoLLVMModule *module, MonoClass *klass)
 	return ltype;
 }
 
+static LLVMTypeRef
+primitive_type_to_llvm_type (MonoTypeEnum type)
+{
+	switch (type) {
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+			return LLVMInt8Type ();
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+			return LLVMInt16Type ();
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+			return LLVMInt32Type ();
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+			return LLVMInt64Type ();
+		case MONO_TYPE_R4:
+			return LLVMFloatType ();
+		case MONO_TYPE_R8:
+			return LLVMDoubleType ();
+		case MONO_TYPE_I:
+		case MONO_TYPE_U:
+			return IntPtrType ();
+		default:
+			return NULL;
+	}
+}
+
 /*
  * type_to_llvm_type:
  *
@@ -618,31 +651,13 @@ type_to_llvm_type (EmitContext *ctx, MonoType *t)
 
 	t = mini_get_underlying_type (t);
 
+	LLVMTypeRef prim_llvm_type = primitive_type_to_llvm_type (t->type);
+	if (prim_llvm_type != NULL)
+		return prim_llvm_type;
+
 	switch (t->type) {
 	case MONO_TYPE_VOID:
 		return LLVMVoidType ();
-	case MONO_TYPE_I1:
-		return LLVMInt8Type ();
-	case MONO_TYPE_I2:
-		return LLVMInt16Type ();
-	case MONO_TYPE_I4:
-		return LLVMInt32Type ();
-	case MONO_TYPE_U1:
-		return LLVMInt8Type ();
-	case MONO_TYPE_U2:
-		return LLVMInt16Type ();
-	case MONO_TYPE_U4:
-		return LLVMInt32Type ();
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return LLVMInt64Type ();
-	case MONO_TYPE_R4:
-		return LLVMFloatType ();
-	case MONO_TYPE_R8:
-		return LLVMDoubleType ();
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-		return IntPtrType ();
 	case MONO_TYPE_OBJECT:
 		return ObjRefType ();
 	case MONO_TYPE_PTR: {
@@ -7378,6 +7393,24 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDPD), args, 2, dname);
 			break;
 		}
+
+		case OP_SSE41_INSERT: {
+			values [ins->dreg] = LLVMBuildInsertElement (builder, 
+				values [ins->sreg1], 
+				convert (ctx, values [ins->sreg2], primitive_type_to_llvm_type (ins->inst_c0)), 
+				convert (ctx, values [ins->sreg3], LLVMInt8Type ()), dname);
+			break;
+		}
+
+		case OP_SSE41_PTESTZ: {
+			LLVMValueRef args [2];
+			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
+			args [1] = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef call = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PTESTZ), args, 2, dname);
+			LLVMValueRef cmp_zero = LLVMBuildICmp (builder, LLVMIntNE, call, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
+			values [ins->dreg] = LLVMBuildZExt (builder, cmp_zero, LLVMInt8Type (), "");
+			break;
+		}
 #endif
 
 #ifdef ENABLE_NETCORE
@@ -8971,6 +9004,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"},
 	{INTRINS_SSE_ROUNDSS, "llvm.x86.sse41.round.ss"},
 	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"},
+	{INTRINS_SSE_PTESTZ, "llvm.x86.sse41.ptestz"},
 #endif
 #ifdef TARGET_WASM
 	{INTRINS_WASM_ANYTRUE_V16, "llvm.wasm.anytrue.v16i8"},
@@ -9294,6 +9328,10 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_SSE_PSUBUSB:
 	case INTRINS_SSE_PAVGB:
 		add_sse_binary (module, name, MONO_TYPE_I1);
+		break;
+	case INTRINS_SSE_PTESTZ:
+		ret_type = type_to_simd_type (MONO_TYPE_I8);
+		AddFunc2 (module, name, LLVMInt32Type (), ret_type, ret_type);
 		break;
 	case INTRINS_SSE_PAUSE:
 		AddFunc (module, "llvm.x86.sse2.pause", LLVMVoidType (), NULL, 0);

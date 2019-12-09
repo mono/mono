@@ -1009,6 +1009,9 @@ MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 /* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */
 MINI_OP(OP_SSE41_ROUNDPD, "roundpd", XREG, XREG, NONE)
 MINI_OP(OP_SSE41_ROUNDSS, "roundss", XREG, XREG, NONE)
+/* inst_c0 is target type */
+MINI_OP3(OP_SSE41_INSERT, "sse41_insert", XREG, XREG, XREG, IREG)
+MINI_OP(OP_SSE41_PTESTZ, "sse41_ptestz", IREG, XREG, XREG)
 
 /* Intel BMI1 */
 /* Count trailing zeroes, return 32/64 if the input is 0 */
