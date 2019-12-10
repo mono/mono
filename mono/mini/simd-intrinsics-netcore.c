@@ -598,11 +598,13 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 #ifdef TARGET_AMD64
 
 static guint16 sse_methods [] = {
+	SN_Add,
 	SN_CompareEqual,
 	SN_MoveLowToHigh,
 	SN_MoveMask,
 	SN_MoveScalar,
 	SN_Shuffle,
+	SN_Subtract,
 	SN_UnpackLow,
 	SN_get_IsSupported
 };

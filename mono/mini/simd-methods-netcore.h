@@ -50,6 +50,8 @@ METHOD(MultiplyNoFlags)
 METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
 // Sse
+METHOD(Add)
+METHOD(Subtract)
 METHOD(CompareEqual)
 METHOD(MoveLowToHigh)
 METHOD(MoveMask)
