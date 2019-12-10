@@ -600,6 +600,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 static guint16 sse_methods [] = {
 	SN_Add,
 	SN_CompareEqual,
+	SN_CompareNotEqual,
 	SN_MoveLowToHigh,
 	SN_MoveMask,
 	SN_MoveScalar,
@@ -718,11 +719,15 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
+		case SN_CompareNotEqual:
 		case SN_CompareEqual: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			g_assert (vector_type == MONO_TYPE_R4);
-			return emit_xcompare (cfg, klass, vector_type, args [0], args [1]);
+			ins = emit_simd_ins (cfg, klass, OP_XCOMPARE_FP, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_CompareEqual ? CMP_EQ : CMP_NE;
+			ins->inst_c1 = vector_type;
+			return ins;
 		}
 		case SN_Add:
 		case SN_Multiply:

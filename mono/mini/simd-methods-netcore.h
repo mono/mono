@@ -51,6 +51,7 @@ METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
 // Sse
 METHOD(Add)
+METHOD(CompareNotEqual)
 METHOD(Store)
 METHOD(Subtract)
 METHOD(CompareEqual)
