@@ -94,10 +94,6 @@
 # Crashes in GC 
 -nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
 
-# System.Net.Http.UnitTests
-# Hangs
--nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
-
 # System.Net.Tests.WebClientTest
 # WebClient.Proxy throws PlatformNotSupportedException
 -nomethod System.Net.Tests.WebClientTest.DefaultCtor_PropertiesReturnExpectedValues
