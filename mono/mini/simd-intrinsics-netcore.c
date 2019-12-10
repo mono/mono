@@ -665,8 +665,7 @@ is_intrinsics_class (MonoClass *klass, const char *name, gboolean *is_64bit)
 	if ((!strcmp (class_name, "X64") || !strcmp (class_name, "Arm64")) && klass->nested_in) {
 		*is_64bit = TRUE;
 		return !strcmp (m_class_get_name (klass->nested_in), name); 
-	}
-	else {
+	} else {
 		*is_64bit = FALSE;
 		return !strcmp (class_name, name);
 	}
@@ -689,12 +688,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	MonoClass *klass = cmethod->klass;
 
 	if (is_intrinsics_class (klass, "Sse", &is_64bit)) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse_methods, sizeof (sse_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE) != 0 &&
-			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE) != 0 &&
+			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 		
 		switch (id) {
 		case SN_get_IsSupported:
@@ -719,18 +720,29 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (vector_type == MONO_TYPE_R4);
 			return emit_xcompare (cfg, klass, vector_type, args [0], args [1]);
 		}
+		case SN_Add:
+		case SN_Subtract: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_Add ? OP_FADD : OP_FSUB;
+			ins->inst_c1 = vector_type;
+			return ins;
+		}
 		default:
 			return NULL;
 		}
 	}
 
 	if (is_intrinsics_class (klass, "Sse2", &is_64bit)) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE2) != 0 &&
-			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE2) != 0 &&
+			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 		
 		switch (id) {
 		case SN_get_IsSupported:
@@ -754,12 +766,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Sse3", &is_64bit)) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse3_methods, sizeof (sse3_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE3) != 0 &&
-			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE3) != 0 &&
+			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
@@ -784,12 +798,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Ssse3", &is_64bit)) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (ssse3_methods, sizeof (ssse3_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSSE3) != 0 &&
-			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSSE3) != 0 &&
+			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
@@ -815,12 +831,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Sse41", &is_64bit)) {
+		if (!COMPILE_LLVM (cfg))
+			return NULL;
 		id = lookup_intrins (sse41_methods, sizeof (sse41_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
 		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0 &&
-			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
