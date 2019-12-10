@@ -7447,13 +7447,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_SHUFFLE: {
-			gint32 mask = ins->inst_c0;
 			LLVMValueRef shuffle_vec = create_vector_mask_4_i32 (
-				((mask >> 0) & 0x3) + 0, // take two elements from lhs
-				((mask >> 2) & 0x3) + 0, 
-				((mask >> 4) & 0x3) + 4, // and two from rhs
-				((mask >> 6) & 0x3) + 4);
-			values [ins->dreg] = LLVMBuildShuffleVector (builder, values [ins->sreg1], values [ins->sreg2], shuffle_vec, "");
+				((ins->inst_c0 >> 0) & 0x3) + 0, // take two elements from lhs
+				((ins->inst_c0 >> 2) & 0x3) + 0, 
+				((ins->inst_c0 >> 4) & 0x3) + 4, // and two from rhs
+				((ins->inst_c0 >> 6) & 0x3) + 4);
+			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, shuffle_vec, "");
 			break;
 		}
 
