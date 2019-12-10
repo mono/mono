@@ -90,10 +90,6 @@
 -nomethod System.Data.Tests.DataColumnCollectionTest.CaseSensitiveIndexOfTest
 -nomethod System.Data.Tests.DataColumnCollectionTest2.Indexer2
 
-# System.Numerics
-# Crashes in GC 
--nomethod System.Numerics.Tests.BigIntegerConstructorTest.RunCtorByteArrayTests
-
 # System.Net.Http.UnitTests
 # Hangs
 -nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
