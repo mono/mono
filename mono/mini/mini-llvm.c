@@ -4523,6 +4523,16 @@ emit_landing_pad (EmitContext *ctx, int group_index, int group_size)
 	return lpad_bb;
 }
 
+static LLVMValueRef
+create_vector_mask_4_i32 (int v0, int v1, int v2, int v3)
+{
+	LLVMValueRef mask [4];
+	mask [0] = LLVMConstInt (LLVMInt32Type (), v0, FALSE);
+	mask [1] = LLVMConstInt (LLVMInt32Type (), v1, FALSE);
+	mask [2] = LLVMConstInt (LLVMInt32Type (), v2, FALSE);
+	mask [3] = LLVMConstInt (LLVMInt32Type (), v3, FALSE);
+	return LLVMConstVector (mask, 4);
+}
 
 static void
 emit_llvmonly_handler_start (EmitContext *ctx, MonoBasicBlock *bb, LLVMBasicBlockRef cbb)
@@ -7385,18 +7395,42 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_MOVS: {
-			if (ins->inst_c0 == MONO_TYPE_R4) {
-				// %2 = shufflevector <4 x float> %0, <4 x float> %1, <4 x i32> <i32 4, i32 1, i32 2, i32 3>
-				LLVMValueRef mask [4];
-				mask [0] = LLVMConstInt (LLVMInt32Type (), 4, FALSE);
-				mask [1] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
-				mask [2] = LLVMConstInt (LLVMInt32Type (), 2, FALSE);
-				mask [3] = LLVMConstInt (LLVMInt32Type (), 3, FALSE);
-				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, LLVMConstVector (mask, 4), "");
-			} else {
-				// will be needed for other types later
-				g_assert_not_reached ();
-			}
+			if (ins->inst_c0 == MONO_TYPE_R4)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (4, 1, 2, 3), "");
+			else
+				g_assert_not_reached (); // will be needed for other types later
+			break;
+		}
+
+		case OP_SSE_MOVEHL: {
+			if (ins->inst_c0 == MONO_TYPE_R4)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (6, 7, 2, 3), "");
+			else
+				g_assert_not_reached (); // will be needed for other types later
+			break;
+		}
+
+		case OP_SSE_MOVELH: {
+			if (ins->inst_c0 == MONO_TYPE_R4)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (0, 1, 4, 5), "");
+			else
+				g_assert_not_reached (); // will be needed for other types later
+			break;
+		}
+
+		case OP_SSE_UNPACKLO: {
+			if (ins->inst_c0 == MONO_TYPE_R4)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (0, 4, 1, 5), "");
+			else
+				g_assert_not_reached (); // will be needed for other types later
+			break;
+		}
+
+		case OP_SSE_UNPACKHI: {
+			if (ins->inst_c0 == MONO_TYPE_R4)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (2, 6, 3, 7), "");
+			else
+				g_assert_not_reached (); // will be needed for other types later
 			break;
 		}
 

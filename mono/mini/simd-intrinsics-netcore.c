@@ -601,6 +601,7 @@ static guint16 sse_methods [] = {
 	SN_Add,
 	SN_CompareEqual,
 	SN_CompareNotEqual,
+	SN_MoveHighToLow,
 	SN_MoveLowToHigh,
 	SN_MoveMask,
 	SN_MoveScalar,
@@ -608,6 +609,7 @@ static guint16 sse_methods [] = {
 	SN_Shuffle,
 	SN_Store,
 	SN_Subtract,
+	SN_UnpackHigh,
 	SN_UnpackLow,
 	SN_get_IsSupported
 };
@@ -704,7 +706,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, 0); // TODO: implement subset used by corlib
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_MoveMask: {
@@ -723,13 +725,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			g_assert (vector_type == MONO_TYPE_R4);
-			MONO_INST_NEW (cfg, ins, OP_SSE_MOVS);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->sreg2 = args [1]->dreg;
-			ins->type = STACK_VTYPE;
+			ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS, args [0]->dreg, args [1]->dreg);
 			ins->inst_c0 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
 		case SN_CompareNotEqual:
@@ -759,8 +756,39 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->inst_c1 = vector_type;
 			return ins;
 		}
+		case SN_MoveHighToLow: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_MOVEHL, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
+		case SN_MoveLowToHigh: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_MOVELH, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
+		case SN_UnpackLow: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_UNPACKLO, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
+		case SN_UnpackHigh: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_UNPACKHI, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
 		case SN_Store: {
-			// Store(float*, Vector<float>)
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
 			g_assert (vector_type == MONO_TYPE_R4);
