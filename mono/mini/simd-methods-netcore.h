@@ -35,24 +35,29 @@ METHOD(ConvertToSingle)
 METHOD(ConvertToDouble)
 METHOD(Narrow)
 METHOD(Widen)
-// BMI1
+// Vector128
+METHOD(CreateScalarUnsafe)
+// Bmi1
 METHOD(AndNot)
 METHOD(BitFieldExtract)
 METHOD(ExtractLowestSetBit)
 METHOD(GetMaskUpToLowestSetBit)
 METHOD(ResetLowestSetBit)
 METHOD(TrailingZeroCount)
-// BMI2
+// Bmi2
 METHOD(ZeroHighBits)
 METHOD(MultiplyNoFlags)
 METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
-// Sse2
+// Sse
+METHOD(CompareEqual)
+METHOD(MoveLowToHigh)
 METHOD(MoveMask)
+METHOD(MoveScalar)
+METHOD(Shuffle)
+METHOD(UnpackLow)
 // Sse3
 METHOD(MoveAndDuplicate)
-// Ssse3
-METHOD(Shuffle)
 // Sse41
 METHOD(Insert)
 METHOD(TestZ)

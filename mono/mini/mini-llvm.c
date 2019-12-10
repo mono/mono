@@ -7374,9 +7374,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-		case OP_SSE2_MOVMSK: {
+		case OP_SSE_MOVMSK: {
 			LLVMValueRef args [1];
-			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
+			if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_R8)
+				args [0] = lhs;
+			else
+				args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
 			break;
 		}
@@ -7393,6 +7396,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs,
 				LLVMGetUndef (LLVMVectorType (LLVMDoubleType (), 2)), 
 				LLVMConstNull (LLVMVectorType (LLVMInt32Type (), 2)), "");
+			break;
+		}
+
+		case OP_CREATE_SCALAR_UNSAFE: {
+			LLVMValueRef uninit_vec = LLVMGetUndef (LLVMVectorType (LLVMInt32Type (), 2));
+			values [ins->dreg] = LLVMBuildInsertElement (builder, uninit_vec, lhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");;
 			break;
 		}
 

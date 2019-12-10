@@ -192,14 +192,14 @@ emit_simd_ins (MonoCompile *cfg, MonoClass *klass, int opcode, int sreg1, int sr
 }
 
 static MonoInst*
-emit_xcompare (MonoCompile *cfg, MonoClass *klass, MonoType *etype, MonoInst *arg1, MonoInst *arg2)
+emit_xcompare (MonoCompile *cfg, MonoClass *klass, MonoTypeEnum etype, MonoInst *arg1, MonoInst *arg2)
 {
 	MonoInst *ins;
-	gboolean is_fp = etype->type == MONO_TYPE_R4 || etype->type == MONO_TYPE_R8;
+	gboolean is_fp = etype == MONO_TYPE_R4 || etype == MONO_TYPE_R8;
 
 	ins = emit_simd_ins (cfg, klass, is_fp ? OP_XCOMPARE_FP : OP_XCOMPARE, arg1->dreg, arg2->dreg);
 	ins->inst_c0 = CMP_EQ;
-	ins->inst_c1 = etype->type;
+	ins->inst_c1 = etype;
 	return ins;
 }
 
@@ -350,7 +350,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	case SN_get_AllOnes: {
 		/* Compare a zero vector with itself */
 		ins = emit_simd_ins (cfg, klass, OP_XZERO, -1, -1);
-		return emit_xcompare (cfg, klass, etype, ins, ins);
+		return emit_xcompare (cfg, klass, etype->type, ins, ins);
 	}
 	case SN_get_Item: {
 		if (!COMPILE_LLVM (cfg))
@@ -471,7 +471,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 			return emit_simd_ins (cfg, klass, OP_XEQUAL, sreg1, args [1]->dreg);
 		} else if (fsig->param_count == 2 && mono_metadata_type_equal (fsig->ret, type) && mono_metadata_type_equal (fsig->params [0], type) && mono_metadata_type_equal (fsig->params [1], type)) {
 			/* Per element equality */
-			return emit_xcompare (cfg, klass, etype, args [0], args [1]);
+			return emit_xcompare (cfg, klass, etype->type, args [0], args [1]);
 		}
 		break;
 	case SN_op_Equality:
@@ -493,7 +493,7 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	case SN_LessThanOrEqual:
 		g_assert (fsig->param_count == 2 && mono_metadata_type_equal (fsig->ret, type) && mono_metadata_type_equal (fsig->params [0], type) && mono_metadata_type_equal (fsig->params [1], type));
 		is_unsigned = etype->type == MONO_TYPE_U1 || etype->type == MONO_TYPE_U2 || etype->type == MONO_TYPE_U4 || etype->type == MONO_TYPE_U8;
-		ins = emit_xcompare (cfg, klass, etype, args [0], args [1]);
+		ins = emit_xcompare (cfg, klass, etype->type, args [0], args [1]);
 		switch (id) {
 		case SN_GreaterThan:
 			ins->inst_c0 = is_unsigned ? CMP_GT_UN : CMP_GT;
@@ -597,6 +597,16 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 
 #ifdef TARGET_AMD64
 
+static guint16 sse_methods [] = {
+	SN_CompareEqual,
+	SN_MoveLowToHigh,
+	SN_MoveMask,
+	SN_MoveScalar,
+	SN_Shuffle,
+	SN_UnpackLow,
+	SN_get_IsSupported
+};
+
 static guint16 sse2_methods [] = {
 	SN_MoveMask,
 	SN_get_IsSupported
@@ -678,27 +688,59 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	gboolean supported, is_64bit;
 	MonoClass *klass = cmethod->klass;
 
-	if (is_intrinsics_class (klass, "Sse2", &is_64bit)) {
-		if (!COMPILE_LLVM (cfg))
-			return NULL;
-		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
+	if (is_intrinsics_class (klass, "Sse", &is_64bit)) {
+		id = lookup_intrins (sse_methods, sizeof (sse_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE2) != 0;
+		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE) != 0 &&
+			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
 		
 		switch (id) {
 		case SN_get_IsSupported:
-			// we don't yet support the subset used by corlib
-			// but since we do it for SSE41 we have to implement Sse2.MoveMask() which is used 
-			// under Sse41.IsSupported condition
-			EMIT_NEW_ICONST (cfg, ins, 0); 
+			EMIT_NEW_ICONST (cfg, ins, 0); // TODO: implement subset used by corlib
 			ins->type = STACK_I4;
 			return ins;
 		case SN_MoveMask: {
 			g_assert (fsig->param_count == 1);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			MONO_INST_NEW (cfg, ins, OP_SSE2_MOVMSK);
+			g_assert (vector_type == MONO_TYPE_R4);
+			MONO_INST_NEW (cfg, ins, OP_SSE_MOVMSK);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->type = STACK_I4;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		case SN_CompareEqual: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			return emit_xcompare (cfg, klass, vector_type, args [0], args [1]);
+		}
+		default:
+			return NULL;
+		}
+	}
+
+	if (is_intrinsics_class (klass, "Sse2", &is_64bit)) {
+		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
+		if (id == -1)
+			return NULL;
+
+		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE2) != 0 &&
+			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
+		
+		switch (id) {
+		case SN_get_IsSupported:
+			EMIT_NEW_ICONST (cfg, ins, 0);  // TODO: implement subset used by corlib
+			ins->type = STACK_I4;
+			return ins;
+		case SN_MoveMask: {
+			g_assert (fsig->param_count == 1);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			MONO_INST_NEW (cfg, ins, OP_SSE_MOVMSK);
 			ins->dreg = alloc_ireg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			ins->type = STACK_I4;
@@ -712,17 +754,12 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Sse3", &is_64bit)) {
-		if (!COMPILE_LLVM (cfg))
-			return NULL;
 		id = lookup_intrins (sse3_methods, sizeof (sse3_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		// We only support the subset used by corelib
-		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())
-			return NULL;
-
-		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE3) != 0;
+		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE3) != 0 &&
+			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
@@ -747,17 +784,12 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Ssse3", &is_64bit)) {
-		if (!COMPILE_LLVM (cfg))
-			return NULL;
 		id = lookup_intrins (ssse3_methods, sizeof (ssse3_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		// We only support the subset used by corelib
-		if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())
-			return NULL;
-
-		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSSE3) != 0;
+		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSSE3) != 0 &&
+			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
@@ -783,17 +815,12 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	}
 
 	if (is_intrinsics_class (klass, "Sse41", &is_64bit)) {
-		if (!COMPILE_LLVM (cfg))
-			return NULL;
 		id = lookup_intrins (sse41_methods, sizeof (sse41_methods), cmethod);
 		if (id == -1)
 			return NULL;
 
-		// We only support the subset used by corelib
-		//if (m_class_get_image (cfg->method->klass) != mono_get_corlib ())
-		//	return NULL;
-
-		supported = (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0;
+		supported = COMPILE_LLVM (cfg) && (mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41) != 0 &&
+			m_class_get_image (cfg->method->klass) != mono_get_corlib (); // We only support the subset used by corelib
 
 		switch (id) {
 		case SN_get_IsSupported:
@@ -1026,9 +1053,44 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 }
 #endif
 
+static guint16 vector_128_methods [] = {
+	SN_CreateScalarUnsafe,
+};
+
 static guint16 vector_128_t_methods [] = {
 	SN_get_Count,
 };
+
+static MonoInst*
+emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+	MonoType *type, *etype;
+	MonoClass *klass;
+	int id;
+
+	klass = cmethod->klass;
+	id = lookup_intrins (vector_128_methods, sizeof (vector_128_methods), cmethod);
+	if (id == -1)
+		return NULL;
+
+	switch (id) {
+	case SN_CreateScalarUnsafe: {
+		g_assert (fsig->param_count == 1);
+		MONO_INST_NEW (cfg, ins, OP_CREATE_SCALAR_UNSAFE);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->klass = klass;
+		ins->type = STACK_VTYPE;
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	}
+	default:
+		break;
+	}
+
+	return NULL;
+}
 
 static MonoInst*
 emit_vector128_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
@@ -1141,6 +1203,8 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	if (!strcmp (class_ns, "System.Runtime.Intrinsics")) {
 		if (!strcmp (class_name, "Vector128`1"))
 			return emit_vector128_t (cfg, cmethod, fsig, args);
+		if (!strcmp (class_name, "Vector128"))
+			return emit_vector128 (cfg, cmethod, fsig, args);
 		if (!strcmp (class_name, "Vector256`1"))
 			return emit_vector256_t (cfg, cmethod, fsig, args);
 	}

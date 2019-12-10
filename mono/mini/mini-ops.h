@@ -1004,9 +1004,9 @@ MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 /* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */
 MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
-/* sse 2 */
+/* sse 1 */
 /* inst_c0 is target type */
-MINI_OP(OP_SSE2_MOVMSK, "sse2_movmsk", IREG, XREG, NONE)
+MINI_OP(OP_SSE_MOVMSK, "sse_movmsk", IREG, XREG, NONE)
 
 /* sse 3 */
 MINI_OP(OP_SSE3_MOVDDUP, "sse3_movddup", XREG, XREG, NONE)
@@ -1043,6 +1043,8 @@ MINI_OP3(OP_MULX_HL32, "mulxhl32", IREG, IREG, IREG, IREG)
 MINI_OP3(OP_MULX_HL64, "mulxhl64", LREG, LREG, LREG, LREG)
 
 #endif
+
+MINI_OP(OP_CREATE_SCALAR_UNSAFE, "create_scalar_unsafe", XREG, XREG, NONE)
 
 MINI_OP(OP_XMOVE,   "xmove", XREG, XREG, NONE)
 MINI_OP(OP_XZERO,   "xzero", XREG, NONE, NONE)
