@@ -1007,6 +1007,7 @@ MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 /* sse 1 */
 /* inst_c0 is target type */
 MINI_OP(OP_SSE_MOVMSK, "sse_movmsk", IREG, XREG, NONE)
+MINI_OP(OP_SSE_STORE, "sse_store", NONE, XREG, XREG)
 
 /* sse 3 */
 MINI_OP(OP_SSE3_MOVDDUP, "sse3_movddup", XREG, XREG, NONE)

@@ -603,7 +603,9 @@ static guint16 sse_methods [] = {
 	SN_MoveLowToHigh,
 	SN_MoveMask,
 	SN_MoveScalar,
+	SN_Multiply,
 	SN_Shuffle,
+	SN_Store,
 	SN_Subtract,
 	SN_UnpackLow,
 	SN_get_IsSupported
@@ -723,12 +725,34 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return emit_xcompare (cfg, klass, vector_type, args [0], args [1]);
 		}
 		case SN_Add:
+		case SN_Multiply:
 		case SN_Subtract: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_Add ? OP_FADD : OP_FSUB;
+			if (id == SN_Add)
+				ins->inst_c0 = OP_FADD;
+			else if (id == SN_Multiply)
+				ins->inst_c0 = OP_FMUL;
+			else if (id == SN_Subtract)
+				ins->inst_c0 = OP_FSUB;
+			else
+				g_assert_not_reached ();
 			ins->inst_c1 = vector_type;
+			return ins;
+		}
+		case SN_Store: {
+			// Store(float*, Vector<float>)
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
+			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
+			MONO_INST_NEW (cfg, ins, OP_SSE_STORE);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
 		default:

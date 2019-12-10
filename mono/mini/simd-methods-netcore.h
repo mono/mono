@@ -51,11 +51,13 @@ METHOD(ParallelBitDeposit)
 METHOD(ParallelBitExtract)
 // Sse
 METHOD(Add)
+METHOD(Store)
 METHOD(Subtract)
 METHOD(CompareEqual)
 METHOD(MoveLowToHigh)
 METHOD(MoveMask)
 METHOD(MoveScalar)
+METHOD(Multiply)
 METHOD(Shuffle)
 METHOD(UnpackLow)
 // Sse3

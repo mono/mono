@@ -7384,6 +7384,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_SSE_STORE: {
+			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
+			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, 1);
+			break;
+		}
+
 		case OP_SSSE3_SHUFFLE: {
 			LLVMValueRef args [] = { lhs, rhs };
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSHUFB), args, 2, dname);
@@ -7391,8 +7397,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE3_MOVDDUP: {
-			// _mm_movedup_pd:
-			//    %2 = shufflevector <2 x double> %0, <2 x double> undef, <2 x i32> zeroinitializer
+			// %vec = shufflevector <2 x double> %lhs, <2 x double> undef, <2 x i32> zeroinitializer
 			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs,
 				LLVMGetUndef (LLVMVectorType (LLVMDoubleType (), 2)), 
 				LLVMConstNull (LLVMVectorType (LLVMInt32Type (), 2)), "");
