@@ -601,6 +601,7 @@ static guint16 sse_methods [] = {
 	SN_Add,
 	SN_CompareEqual,
 	SN_CompareNotEqual,
+	SN_LoadVector128,
 	SN_MoveHighToLow,
 	SN_MoveLowToHigh,
 	SN_MoveMask,
@@ -709,6 +710,16 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
+		case SN_LoadVector128: {
+			g_assert (fsig->param_count == 1);
+			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->type = STACK_VTYPE;
+			ins->inst_c0 = MONO_TYPE_R4;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
 		case SN_MoveMask: {
 			g_assert (fsig->param_count == 1);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
@@ -754,6 +765,25 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			else
 				g_assert_not_reached ();
 			ins->inst_c1 = vector_type;
+			return ins;
+		}
+		case SN_Shuffle: {
+			g_assert (fsig->param_count == 3);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			if (args [2]->opcode != OP_ICONST) {
+				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+				mono_error_set_generic_error (cfg->error, "System", "InvalidOperationException", "mask in Sse.Shuffle must be constant.", NULL, NULL);
+				return NULL;
+			}
+			MONO_INST_NEW (cfg, ins, OP_SSE_SHUFFLE);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->klass = klass;
+			ins->type = STACK_VTYPE;
+			ins->inst_c0 = args [2]->inst_c0; // mask
+			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
 		case SN_MoveHighToLow: {

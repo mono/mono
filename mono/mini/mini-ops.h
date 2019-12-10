@@ -1006,6 +1006,7 @@ MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
 /* sse 1 */
 /* inst_c0 is target type */
+MINI_OP(OP_SSE_LOADU, "sse_loadu", XREG, XREG, NONE)
 MINI_OP(OP_SSE_MOVMSK, "sse_movmsk", IREG, XREG, NONE)
 MINI_OP(OP_SSE_STORE, "sse_store", NONE, XREG, XREG)
 MINI_OP(OP_SSE_MOVS, "sse_movs", XREG, XREG, XREG)
@@ -1013,6 +1014,7 @@ MINI_OP(OP_SSE_MOVEHL, "sse_movehl", XREG, XREG, XREG)
 MINI_OP(OP_SSE_MOVELH, "sse_movelh", XREG, XREG, XREG)
 MINI_OP(OP_SSE_UNPACKLO, "sse_unpacklo", XREG, XREG, XREG)
 MINI_OP(OP_SSE_UNPACKHI, "sse_unpackhi", XREG, XREG, XREG)
+MINI_OP(OP_SSE_SHUFFLE, "sse_shuffle", XREG, XREG, XREG)
 
 /* sse 3 */
 MINI_OP(OP_SSE3_MOVDDUP, "sse3_movddup", XREG, XREG, NONE)

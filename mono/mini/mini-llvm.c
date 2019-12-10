@@ -7406,7 +7406,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->inst_c0 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (6, 7, 2, 3), "");
 			else
-				g_assert_not_reached (); // will be needed for other types later
+				g_assert_not_reached ();
 			break;
 		}
 
@@ -7414,7 +7414,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->inst_c0 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (0, 1, 4, 5), "");
 			else
-				g_assert_not_reached (); // will be needed for other types later
+				g_assert_not_reached ();
 			break;
 		}
 
@@ -7422,7 +7422,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->inst_c0 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (0, 4, 1, 5), "");
 			else
-				g_assert_not_reached (); // will be needed for other types later
+				g_assert_not_reached ();
 			break;
 		}
 
@@ -7430,13 +7430,30 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->inst_c0 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (2, 6, 3, 7), "");
 			else
-				g_assert_not_reached (); // will be needed for other types later
+				g_assert_not_reached ();
+			break;
+		}
+
+		case OP_SSE_LOADU: {
+			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
+			values [ins->dreg] = mono_llvm_build_aligned_load (builder, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), "", FALSE, 1);
 			break;
 		}
 
 		case OP_SSE_STORE: {
 			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
 			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, 1);
+			break;
+		}
+
+		case OP_SSE_SHUFFLE: {
+			gint32 mask = ins->inst_c0;
+			LLVMValueRef shuffle_vec = create_vector_mask_4_i32 (
+				((mask >> 0) & 0x3) + 0, // take two elements from lhs
+				((mask >> 2) & 0x3) + 0, 
+				((mask >> 4) & 0x3) + 4, // and two from rhs
+				((mask >> 6) & 0x3) + 4);
+			values [ins->dreg] = LLVMBuildShuffleVector (builder, values [ins->sreg1], values [ins->sreg2], shuffle_vec, "");
 			break;
 		}
 
