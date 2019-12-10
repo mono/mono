@@ -7384,6 +7384,22 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_SSE_MOVS: {
+			if (ins->inst_c0 == MONO_TYPE_R4) {
+				// %2 = shufflevector <4 x float> %0, <4 x float> %1, <4 x i32> <i32 4, i32 1, i32 2, i32 3>
+				LLVMValueRef mask [4];
+				mask [0] = LLVMConstInt (LLVMInt32Type (), 4, FALSE);
+				mask [1] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+				mask [2] = LLVMConstInt (LLVMInt32Type (), 2, FALSE);
+				mask [3] = LLVMConstInt (LLVMInt32Type (), 3, FALSE);
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, LLVMConstVector (mask, 4), "");
+			} else {
+				// will be needed for other types later
+				g_assert_not_reached ();
+			}
+			break;
+		}
+
 		case OP_SSE_STORE: {
 			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
 			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, 1);

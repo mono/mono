@@ -719,6 +719,19 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
+		case SN_MoveScalar: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			MONO_INST_NEW (cfg, ins, OP_SSE_MOVS);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = STACK_VTYPE;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
 		case SN_CompareNotEqual:
 		case SN_CompareEqual: {
 			g_assert (fsig->param_count == 2);
