@@ -64,6 +64,17 @@ METHOD(Multiply)
 METHOD(Shuffle)
 METHOD(UnpackHigh)
 METHOD(UnpackLow)
+// Sse2
+METHOD(And)
+METHOD(Or)
+METHOD(LoadAlignedVector128)
+METHOD(Xor)
+METHOD(CompareGreaterThan)
+METHOD(PackUnsignedSaturate)
+METHOD(StoreScalar)
+METHOD(StoreAligned)
+METHOD(ShiftRightLogical)
+METHOD(CompareLessThan)
 // Sse3
 METHOD(MoveAndDuplicate)
 // Sse41

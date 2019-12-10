@@ -616,7 +616,26 @@ static guint16 sse_methods [] = {
 };
 
 static guint16 sse2_methods [] = {
+	SN_Add,
+	SN_And,
+	SN_AndNot,
+	SN_CompareEqual,
+	SN_CompareGreaterThan,
+	SN_CompareLessThan,
+	SN_LoadAlignedVector128,
+	SN_LoadVector128,
 	SN_MoveMask,
+	SN_MoveScalar,
+	SN_Or,
+	SN_PackUnsignedSaturate,
+	SN_ShiftRightLogical,
+	SN_Store,
+	SN_StoreAligned,
+	SN_StoreScalar,
+	SN_Subtract,
+	SN_UnpackHigh,
+	SN_UnpackLow,
+	SN_Xor,
 	SN_get_IsSupported
 };
 
@@ -847,10 +866,62 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			m_class_get_image (cfg->method->klass) == mono_get_corlib (); // We only support the subset used by corelib
 		
 		switch (id) {
-		case SN_get_IsSupported:
+		case SN_get_IsSupported: {
 			EMIT_NEW_ICONST (cfg, ins, 0);  // TODO: implement subset used by corlib
 			ins->type = STACK_I4;
 			return ins;
+		}
+		case SN_Subtract:
+		case SN_Add: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_Add ? OP_IADD : OP_ISUB;
+			ins->inst_c1 = vector_type;
+			return ins;
+		}
+		case SN_And: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = OP_IAND;
+			ins->inst_c1 = vector_type;
+			return ins;
+		}
+		case SN_AndNot: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_ANDN, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
+		case SN_CompareEqual: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_CompareGreaterThan: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_CompareLessThan: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_LoadAlignedVector128: {
+			g_assert (fsig->param_count == 1);
+			return NULL;
+		}
+		case SN_LoadVector128: {
+			g_assert (fsig->param_count == 1);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->type = STACK_VTYPE;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
 		case SN_MoveMask: {
 			g_assert (fsig->param_count == 1);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
@@ -860,6 +931,56 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->type = STACK_I4;
 			ins->inst_c0 = vector_type;
 			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		case SN_MoveScalar: {
+			g_assert (fsig->param_count <= 2);
+			return NULL;
+		}
+		case SN_PackUnsignedSaturate: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_ShiftRightLogical: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_Store: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
+			g_assert (vector_type == MONO_TYPE_R4);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
+			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
+			MONO_INST_NEW (cfg, ins, OP_SSE_STORE);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		case SN_StoreAligned: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_StoreScalar: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_UnpackHigh: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_UnpackLow: {
+			g_assert (fsig->param_count == 2);
+			return NULL;
+		}
+		case SN_Or:
+		case SN_Xor: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_Or ? OP_IOR : OP_IXOR;
+			ins->inst_c1 = vector_type;
 			return ins;
 		}
 		default:

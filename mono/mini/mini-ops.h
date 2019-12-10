@@ -1016,6 +1016,9 @@ MINI_OP(OP_SSE_UNPACKLO, "sse_unpacklo", XREG, XREG, XREG)
 MINI_OP(OP_SSE_UNPACKHI, "sse_unpackhi", XREG, XREG, XREG)
 MINI_OP(OP_SSE_SHUFFLE, "sse_shuffle", XREG, XREG, XREG)
 
+/* sse 2 */
+MINI_OP(OP_SSE2_ANDN, "sse2_andn", XREG, XREG, XREG)
+
 /* sse 3 */
 MINI_OP(OP_SSE3_MOVDDUP, "sse3_movddup", XREG, XREG, NONE)
 
