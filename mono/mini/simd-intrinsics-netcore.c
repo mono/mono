@@ -1360,6 +1360,16 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 #endif
 
 static guint16 vector_128_methods [] = {
+	SN_AsByte,
+	SN_AsDouble,
+	SN_AsInt16,
+	SN_AsInt32,
+	SN_AsInt64,
+	SN_AsSByte,
+	SN_AsSingle,
+	SN_AsUInt16,
+	SN_AsUInt32,
+	SN_AsUInt64,
 	SN_CreateScalarUnsafe,
 };
 
@@ -1382,6 +1392,18 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 		return NULL;
 
 	switch (id) {
+	case SN_AsByte:
+	case SN_AsDouble:
+	case SN_AsInt16:
+	case SN_AsInt32:
+	case SN_AsInt64:
+	case SN_AsSByte:
+	case SN_AsSingle:
+	case SN_AsUInt16:
+	case SN_AsUInt32:
+	case SN_AsUInt64: {
+		return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
+	}
 	case SN_CreateScalarUnsafe: {
 		g_assert (fsig->param_count == 1);
 		MONO_INST_NEW (cfg, ins, OP_CREATE_SCALAR_UNSAFE);
@@ -1389,6 +1411,7 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 		ins->sreg1 = args [0]->dreg;
 		ins->klass = klass;
 		ins->type = STACK_VTYPE;
+		ins->inst_c0 = fsig->params [0]->type;
 		MONO_ADD_INS (cfg->cbb, ins);
 		return ins;
 	}
