@@ -7524,6 +7524,17 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_SSE2_SHUFFLE: {
+			LLVMValueRef shuffle_vec = create_vector_mask_4_i32 (
+				(ins->inst_c0 >> 0) & 0x3,
+				(ins->inst_c0 >> 2) & 0x3, 
+				(ins->inst_c0 >> 4) & 0x3,
+				(ins->inst_c0 >> 6) & 0x3);
+			g_assert (ins->inst_c1 == MONO_TYPE_I4 || ins->inst_c1 == MONO_TYPE_U4);
+			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, LLVMGetUndef (LLVMVectorType (LLVMInt32Type (), 4)), shuffle_vec, "");
+			break;
+		}
+
 		case OP_SSE2_ANDN: {
 			LLVMValueRef minus_one [2];
 			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
