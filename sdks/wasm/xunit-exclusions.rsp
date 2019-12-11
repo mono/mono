@@ -90,10 +90,6 @@
 -nomethod System.Data.Tests.DataColumnCollectionTest.CaseSensitiveIndexOfTest
 -nomethod System.Data.Tests.DataColumnCollectionTest2.Indexer2
 
-# System.Net.Http.UnitTests
-# Hangs
--nomethod System.Net.Http.Tests.HttpContentTest.Dispose_BufferContentThenDisposeContent_BufferedStreamGetsDisposed
-
 # System.Net.Tests.WebClientTest
 # WebClient.Proxy throws PlatformNotSupportedException
 -nomethod System.Net.Tests.WebClientTest.DefaultCtor_PropertiesReturnExpectedValues
