@@ -601,6 +601,7 @@ static guint16 sse_methods [] = {
 	SN_Add,
 	SN_CompareEqual,
 	SN_CompareNotEqual,
+	SN_LoadAlignedVector128,
 	SN_LoadVector128,
 	SN_MoveHighToLow,
 	SN_MoveLowToHigh,
@@ -729,6 +730,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
+		case SN_LoadAlignedVector128:
 		case SN_LoadVector128: {
 			g_assert (fsig->param_count == 1);
 			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
@@ -736,6 +738,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->sreg1 = args [0]->dreg;
 			ins->type = STACK_VTYPE;
 			ins->inst_c0 = MONO_TYPE_R4;
+			ins->inst_c1 = id == SN_LoadAlignedVector128 ? 16 : 1;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
@@ -895,22 +898,27 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->inst_c0 = vector_type;
 			return ins;
 		}
+		case SN_CompareNotEqual:
 		case SN_CompareEqual: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, vector_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, 
+				args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_CompareEqual ? CMP_EQ : CMP_NE;
+			ins->inst_c1 = vector_type;
+			return ins;
 		}
-		case SN_CompareGreaterThan: {
-			g_assert (fsig->param_count == 2);
-			return NULL;
-		}
+		case SN_CompareGreaterThan:
 		case SN_CompareLessThan: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, vector_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, 
+				args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = id == SN_CompareLessThan ? CMP_LT : CMP_GT;
+			ins->inst_c1 = vector_type;
+			return ins;
 		}
-		case SN_LoadAlignedVector128: {
-			g_assert (fsig->param_count == 1);
-			return NULL;
-		}
+		case SN_LoadAlignedVector128:
 		case SN_LoadVector128: {
 			g_assert (fsig->param_count == 1);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
@@ -919,6 +927,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->sreg1 = args [0]->dreg;
 			ins->type = STACK_VTYPE;
 			ins->inst_c0 = vector_type;
+			ins->inst_c1 = id == SN_LoadAlignedVector128 ? 16 : 1;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
