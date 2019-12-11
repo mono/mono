@@ -850,8 +850,6 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
 			g_assert (vector_type == MONO_TYPE_R4);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
-			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 			MONO_INST_NEW (cfg, ins, OP_SSE_STORE);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
@@ -1007,8 +1005,6 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_StoreAligned: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
-			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 			MONO_INST_NEW (cfg, ins, OP_SSE_STORE);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
@@ -1020,8 +1016,6 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_StoreScalar: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
-			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 			MONO_INST_NEW (cfg, ins, OP_SSE_STORES);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
