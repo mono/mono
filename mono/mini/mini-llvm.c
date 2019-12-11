@@ -336,6 +336,8 @@ typedef enum {
 	INTRINS_BEXTR_I64,
 #if defined(TARGET_AMD64) || defined(TARGET_X86)
 	INTRINS_SSE_PMOVMSKB,
+	INTRINS_SSE_MOVMSK_PS,
+	INTRINS_SSE_MOVMSK_PD,
 	INTRINS_SSE_PSRLI_W,
 	INTRINS_SSE_PSRAI_W,
 	INTRINS_SSE_PSLLI_W,
@@ -7406,11 +7408,16 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_SSE_MOVMSK: {
 			LLVMValueRef args [1];
-			if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_R8)
+			if (ins->inst_c0 == MONO_TYPE_R4) {
 				args [0] = lhs;
-			else
+				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PS), args, 1, dname);
+			} else if (ins->inst_c0 == MONO_TYPE_R8) {
+				args [0] = lhs;
+				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PD), args, 1, dname);
+			} else {
 				args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
+				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
+			}
 			break;
 		}
 
@@ -9167,6 +9174,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_PDEP_I64, "llvm.x86.bmi.pdep.64"},
 #if defined(TARGET_AMD64) || defined(TARGET_X86)
 	{INTRINS_SSE_PMOVMSKB, "llvm.x86.sse2.pmovmskb.128"},
+	{INTRINS_SSE_MOVMSK_PS, "llvm.x86.sse.movmsk.ps"},
+	{INTRINS_SSE_MOVMSK_PD, "llvm.x86.sse2.movmsk.pd"},
 	{INTRINS_SSE_PSRLI_W, "llvm.x86.sse2.psrli.w"},
 	{INTRINS_SSE_PSRAI_W, "llvm.x86.sse2.psrai.w"},
 	{INTRINS_SSE_PSLLI_W, "llvm.x86.sse2.pslli.w"},
@@ -9397,6 +9406,12 @@ add_intrinsic (LLVMModuleRef module, int id)
 		ret_type = LLVMInt32Type ();
 		arg_types [0] = type_to_simd_type (MONO_TYPE_I1);
 		AddFunc (module, name, ret_type, arg_types, 1);
+		break;
+	case INTRINS_SSE_MOVMSK_PS:
+		AddFunc1 (module, name, LLVMInt32Type (), type_to_simd_type (MONO_TYPE_R4));
+		break;
+	case INTRINS_SSE_MOVMSK_PD:
+		AddFunc1 (module, name, LLVMInt32Type (), type_to_simd_type (MONO_TYPE_R8));
 		break;
 	case INTRINS_SSE_PSRLI_W:
 	case INTRINS_SSE_PSRAI_W:
