@@ -873,7 +873,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		
 		switch (id) {
 		case SN_get_IsSupported: {
-			EMIT_NEW_ICONST (cfg, ins, 0);  // TODO: implement subset used by corlib
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		}
@@ -972,7 +972,12 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 		case SN_ShiftRightLogical: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_U2);
+			g_assert (fsig->params [1]->type == MONO_TYPE_U1);
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_SRLI, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
 		}
 		case SN_Store:
 		case SN_StoreAligned: {

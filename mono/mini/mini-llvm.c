@@ -7546,6 +7546,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_SSE2_SRLI: {
+			LLVMValueRef args [2] = { lhs, rhs };
+			values [ins->dreg] = convert (ctx, 
+				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSRLI_W), args, 2, dname), 
+				type_to_simd_type (ins->inst_c0));
+			break;
+		}
+
 		case OP_SSSE3_SHUFFLE: {
 			LLVMValueRef args [] = { lhs, rhs };
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSHUFB), args, 2, dname);
