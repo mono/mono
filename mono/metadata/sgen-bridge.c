@@ -709,6 +709,7 @@ sgen_bridge_handle_gc_debug (const char *opt)
 		if (selection != BRIDGE_PROCESSOR_INVALID) {
 			// Compare processor doesn't get config
 			init_bridge_processor (&compare_to_bridge_processor, selection);
+			bridge_processor_config.disable_non_bridge_scc = TRUE;
 		} else {
 			g_warning ("Invalid bridge implementation to compare against - ignoring.");
 		}

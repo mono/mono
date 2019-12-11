@@ -154,11 +154,16 @@ typedef struct _ScanData {
 	unsigned obj_state : 2;
 } ScanData;
 
+// If true, disable an optimization where sometimes SCC nodes don't contain any bridge objects, in order to reduce total xrefs.
+static gboolean disable_non_bridge_scc;
+
 /* Should color be made visible to client even though it has no bridges?
  * True if we predict the number of reduced edges to be enough to justify the extra node.
  */
 static gboolean
 bridgeless_color_is_heavy (ColorData *data) {
+	if (disable_non_bridge_scc)
+		return FALSE;
 	int fanin = data->incoming_colors;
 	int fanout = dyn_array_ptr_size (&data->other_colors);
 	return fanin > HEAVY_REFS_MIN && fanout > HEAVY_REFS_MIN
@@ -1240,6 +1245,8 @@ set_config (const SgenBridgeProcessorConfig *config)
 		hash_perturb = 0;
 		scc_precise_merge = TRUE;
 	}
+	if (config->disable_non_bridge_scc)
+		disable_non_bridge_scc = TRUE;
 }
 
 void
