@@ -4524,6 +4524,17 @@ emit_landing_pad (EmitContext *ctx, int group_index, int group_size)
 }
 
 static LLVMValueRef
+create_vector_mask_i32 (const int *mask, int count)
+{
+	LLVMValueRef *llvm_mask = g_new (LLVMValueRef, count);
+	for (int i = 0; i < count; i++)
+		llvm_mask [i] = LLVMConstInt (LLVMInt32Type (), mask [i], FALSE);
+	LLVMValueRef vec = LLVMConstVector (llvm_mask, count);
+	g_free (llvm_mask);
+	return vec;
+}
+
+static LLVMValueRef
 create_vector_mask_4_i32 (int v0, int v1, int v2, int v3)
 {
 	LLVMValueRef mask [4];
@@ -4532,6 +4543,15 @@ create_vector_mask_4_i32 (int v0, int v1, int v2, int v3)
 	mask [2] = LLVMConstInt (LLVMInt32Type (), v2, FALSE);
 	mask [3] = LLVMConstInt (LLVMInt32Type (), v3, FALSE);
 	return LLVMConstVector (mask, 4);
+}
+
+static LLVMValueRef
+create_vector_mask_2_i32 (int v0, int v1)
+{
+	LLVMValueRef mask [2];
+	mask [0] = LLVMConstInt (LLVMInt32Type (), v0, FALSE);
+	mask [1] = LLVMConstInt (LLVMInt32Type (), v1, FALSE);
+	return LLVMConstVector (mask, 2);
 }
 
 static void
@@ -7394,9 +7414,16 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE_MOVS: {
+		case OP_SSE_MOVS:
+		case OP_SSE_MOVS2: {
 			if (ins->inst_c0 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (4, 1, 2, 3), "");
+			else if (ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8)
+				values [ins->dreg] = LLVMBuildInsertElement (builder, lhs, 
+					LLVMConstInt (LLVMInt64Type (), 0, FALSE), 
+					LLVMConstInt (LLVMInt32Type (), 1, FALSE), "");
+			else if (ins->inst_c0 == MONO_TYPE_R8)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_2_i32 (0, 3), "");
 			else
 				g_assert_not_reached (); // will be needed for other types later
 			break;
@@ -7419,18 +7446,52 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_UNPACKLO: {
-			if (ins->inst_c0 == MONO_TYPE_R4)
+			if (ins->inst_c0 == MONO_TYPE_R8 || ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8) {
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_2_i32 (0, 2), "");
+			} else if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_I4  || ins->inst_c0 == MONO_TYPE_U4) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (0, 4, 1, 5), "");
-			else
+			} else if (ins->inst_c0 == MONO_TYPE_I2 || ins->inst_c0 == MONO_TYPE_U2) {
+				const int mask_values [] = { 0, 8, 1, 9, 2, 10, 3, 11 };
+				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
+					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I2)), 
+					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2)), 
+					create_vector_mask_i32 (mask_values, 8), "");
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+			} else if (ins->inst_c0 == MONO_TYPE_I1 || ins->inst_c0 == MONO_TYPE_U1) {
+				const int mask_values [] = { 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23 };
+				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
+					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1)), 
+					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I1)), 
+					create_vector_mask_i32 (mask_values, 16), "");
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+			} else {
 				g_assert_not_reached ();
+			}
 			break;
 		}
 
 		case OP_SSE_UNPACKHI: {
-			if (ins->inst_c0 == MONO_TYPE_R4)
+			if (ins->inst_c0 == MONO_TYPE_R8 || ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8) {
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_2_i32 (1, 3), "");
+			} else if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_I4  || ins->inst_c0 == MONO_TYPE_U4) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_vector_mask_4_i32 (2, 6, 3, 7), "");
-			else
+			} else if (ins->inst_c0 == MONO_TYPE_I2 || ins->inst_c0 == MONO_TYPE_U2) {
+				const int mask_values [] = { 4, 12, 5, 13, 6, 14, 7, 15 };
+				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
+					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I2)), 
+					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2)), 
+					create_vector_mask_i32 (mask_values, 8), "");
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+			} else if (ins->inst_c0 == MONO_TYPE_I1 || ins->inst_c0 == MONO_TYPE_U1) {
+				const int mask_values [] = { 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31 };
+				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
+					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1)), 
+					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I1)), 
+					create_vector_mask_i32 (mask_values, 16), "");
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+			} else {
 				g_assert_not_reached ();
+			}
 			break;
 		}
 
@@ -7443,7 +7504,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 		case OP_SSE_STORE: {
 			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
-			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, 1);
+			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, ins->inst_c1);
+			break;
+		}
+
+		case OP_SSE_STORES: {
+			LLVMValueRef first_elem = LLVMBuildExtractElement (builder, rhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
+			mono_llvm_build_aligned_store (builder, first_elem, lhs, FALSE, 1);
 			break;
 		}
 

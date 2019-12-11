@@ -610,6 +610,7 @@ static guint16 sse_methods [] = {
 	SN_Multiply,
 	SN_Shuffle,
 	SN_Store,
+	SN_StoreAligned,
 	SN_Subtract,
 	SN_UnpackHigh,
 	SN_UnpackLow,
@@ -758,7 +759,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			g_assert (vector_type == MONO_TYPE_R4);
-			ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS, args [0]->dreg, args [1]->dreg);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS2, args [0]->dreg, args [1]->dreg);
 			ins->inst_c0 = vector_type;
 			return ins;
 		}
@@ -840,7 +841,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->inst_c0 = vector_type;
 			return ins;
 		}
-		case SN_Store: {
+		case SN_Store:
+		case SN_StoreAligned: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
 			g_assert (vector_type == MONO_TYPE_R4);
@@ -850,6 +852,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
 			ins->inst_c0 = vector_type;
+			ins->inst_c1 = id == SN_StoreAligned ? 16 : 1;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
@@ -943,8 +946,21 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return ins;
 		}
 		case SN_MoveScalar: {
-			g_assert (fsig->param_count <= 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			if (fsig->param_count == 1) {
+				MONO_INST_NEW (cfg, ins, OP_SSE_MOVS);
+				ins->dreg = alloc_xreg (cfg);
+				ins->sreg1 = args [0]->dreg;
+				ins->type = STACK_VTYPE;
+				MONO_ADD_INS (cfg->cbb, ins);
+			} else if (fsig->param_count == 2) {
+				g_assert (vector_type == MONO_TYPE_R4 || vector_type == MONO_TYPE_R8);
+				ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS2, args [0]->dreg, args [1]->dreg);
+			} else {
+				g_assert_not_reached ();
+			}
+			ins->inst_c0 = vector_type;
+			return ins;
 		}
 		case SN_PackUnsignedSaturate: {
 			g_assert (fsig->param_count == 2);
@@ -954,34 +970,45 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (fsig->param_count == 2);
 			return NULL;
 		}
-		case SN_Store: {
+		case SN_Store:
+		case SN_StoreAligned: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
-			g_assert (vector_type == MONO_TYPE_R4);
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 			MONO_INST_NEW (cfg, ins, OP_SSE_STORE);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
 			ins->inst_c0 = vector_type;
+			ins->inst_c1 = id == SN_StoreAligned ? 16 : 1;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
-		case SN_StoreAligned: {
-			g_assert (fsig->param_count == 2);
-			return NULL;
-		}
 		case SN_StoreScalar: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
-		}
-		case SN_UnpackHigh: {
-			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [1]);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
+			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
+			MONO_INST_NEW (cfg, ins, OP_SSE_STORES);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = vector_type;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
 		}
 		case SN_UnpackLow: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_UNPACKLO, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
+		case SN_UnpackHigh: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_SSE_UNPACKHI, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
 		}
 		case SN_Or:
 		case SN_Xor: {
