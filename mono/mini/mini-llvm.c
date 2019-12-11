@@ -7496,21 +7496,22 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_LOADU: {
-			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
-			values [ins->dreg] = mono_llvm_build_aligned_load (builder, 
-				LLVMBuildBitCast (builder, lhs, vec_ptr, ""), "", FALSE, ins->inst_c1); // inst_c1 is alignment
+			LLVMValueRef dst_ptr = convert (ctx, lhs, LLVMPointerType (primitive_type_to_llvm_type (ins->inst_c0), 0));
+			LLVMValueRef dst_vec = LLVMBuildBitCast (builder, dst_ptr, LLVMPointerType (type_to_simd_type (ins->inst_c0), 0), "");
+			values [ins->dreg] = mono_llvm_build_aligned_load (builder, dst_vec, "", FALSE, ins->inst_c1); // inst_c1 is alignment
 			break;
 		}
 
 		case OP_SSE_STORE: {
-			LLVMTypeRef vec_ptr = LLVMPointerType (type_to_simd_type (ins->inst_c0), 0);
-			mono_llvm_build_aligned_store (builder, rhs, LLVMBuildBitCast (builder, lhs, vec_ptr, ""), FALSE, ins->inst_c1);
+			LLVMTypeRef dst_vec = convert (ctx, lhs, LLVMPointerType (LLVMTypeOf (rhs), 0));
+			mono_llvm_build_aligned_store (builder, rhs, dst_vec, FALSE, ins->inst_c1);
 			break;
 		}
 
 		case OP_SSE_STORES: {
 			LLVMValueRef first_elem = LLVMBuildExtractElement (builder, rhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
-			mono_llvm_build_aligned_store (builder, first_elem, lhs, FALSE, 1);
+			LLVMValueRef dst = convert (ctx, lhs, LLVMPointerType (LLVMTypeOf (first_elem), 0));
+			mono_llvm_build_aligned_store (builder, first_elem, dst, FALSE, 1);
 			break;
 		}
 
@@ -7721,7 +7722,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			// Extract [0]
 			LLVMValueRef first_elem = LLVMBuildExtractElement (builder, cmp, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
 			// convert to 0/1
-			LLVMValueRef cmp_zero = LLVMBuildICmp (builder, LLVMIntNE, first_elem, LLVMConstInt (LLVMInt8Type (), 0, FALSE), "");
+			LLVMValueRef cmp_zero = LLVMBuildICmp (builder, LLVMIntNE, first_elem, LLVMConstInt (elemt, 0, FALSE), "");
 			values [ins->dreg] = LLVMBuildZExt (builder, cmp_zero, LLVMInt8Type (), "");
 			break;
 		}
