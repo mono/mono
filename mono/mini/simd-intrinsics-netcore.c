@@ -1365,6 +1365,7 @@ static guint16 vector_128_methods [] = {
 
 static guint16 vector_128_t_methods [] = {
 	SN_get_Count,
+	SN_get_Zero,
 };
 
 static MonoInst*
@@ -1432,6 +1433,9 @@ emit_vector128_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 			break;
 		EMIT_NEW_ICONST (cfg, ins, len);
 		return ins;
+	case SN_get_Zero: {
+		return emit_simd_ins (cfg, klass, OP_XZERO, -1, -1);
+	}
 	default:
 		break;
 	}
