@@ -211,7 +211,10 @@ get_vector_t_elem_type (MonoType *vector_type)
 
 	g_assert (vector_type->type == MONO_TYPE_GENERICINST);
 	klass = mono_class_from_mono_type_internal (vector_type);
-	g_assert (!strcmp (m_class_get_name (klass), "Vector`1"));
+	g_assert (
+		!strcmp (m_class_get_name (klass), "Vector`1") || 
+		!strcmp (m_class_get_name (klass), "Vector128`1") || 
+		!strcmp (m_class_get_name (klass), "Vector256`1"));
 	etype = mono_class_get_context (klass)->class_inst->type_argv [0];
 	return etype;
 }
@@ -925,12 +928,13 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_LoadAlignedVector128:
 		case SN_LoadVector128: {
 			g_assert (fsig->param_count == 1);
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			MonoClass *ptr_klass = m_class_get_element_class (mono_class_from_mono_type_internal (fsig->params [0]));
+			MonoType *ptr_type = m_class_get_byval_arg (ptr_klass);
 			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
 			ins->dreg = alloc_xreg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			ins->type = STACK_VTYPE;
-			ins->inst_c0 = vector_type;
+			ins->inst_c0 = ptr_type->type;
 			ins->inst_c1 = id == SN_LoadAlignedVector128 ? 16 : 1;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
@@ -1370,6 +1374,7 @@ static guint16 vector_128_methods [] = {
 	SN_AsUInt16,
 	SN_AsUInt32,
 	SN_AsUInt64,
+	SN_Create,
 	SN_CreateScalarUnsafe,
 };
 
@@ -1403,6 +1408,15 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	case SN_AsUInt32:
 	case SN_AsUInt64: {
 		return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
+	}
+	case SN_Create: {
+		MonoType *etype = get_vector_t_elem_type (fsig->ret);
+		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
+			return emit_simd_ins (cfg, klass, type_to_expand_op (etype), args [0]->dreg, -1);
+		} else {
+			// TODO: Optimize Create(a1, a2, a3 ...) overloads 
+			return NULL;
+		}
 	}
 	case SN_CreateScalarUnsafe: {
 		g_assert (fsig->param_count == 1);

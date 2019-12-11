@@ -46,6 +46,7 @@ METHOD(AsSingle)
 METHOD(AsUInt16)
 METHOD(AsUInt32)
 METHOD(AsUInt64)
+METHOD(Create)
 METHOD(CreateScalarUnsafe)
 // Bmi1
 METHOD(AndNot)
