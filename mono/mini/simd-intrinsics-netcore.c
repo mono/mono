@@ -964,7 +964,11 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 		case SN_PackUnsignedSaturate: {
 			g_assert (fsig->param_count == 2);
-			return NULL;
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			g_assert (vector_type == MONO_TYPE_I2);
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_PACKUS, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
 		}
 		case SN_ShiftRightLogical: {
 			g_assert (fsig->param_count == 2);
