@@ -7580,7 +7580,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_CREATE_SCALAR_UNSAFE: {
-			LLVMValueRef uninit_vec = LLVMGetUndef (LLVMVectorType (LLVMInt32Type (), 2));
+			LLVMValueRef uninit_vec = LLVMGetUndef (simd_class_to_llvm_type (ctx, ins->klass));
 			values [ins->dreg] = LLVMBuildInsertElement (builder, uninit_vec, lhs, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");;
 			break;
 		}
