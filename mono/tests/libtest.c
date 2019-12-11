@@ -7881,6 +7881,42 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 	return pUnk == NULL && hr == S_OK;
 }
 
+typedef struct ccw_qi_shared_data {
+	MonoComObject *pUnk;
+	int i;
+} ccw_qi_shared_data;
+
+static void*
+ccw_qi_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	void *pp;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->QueryInterface (pUnk, &IID_ITest, &pp);
+
+	shared->i = (hr == S_OK) ? 43 : 0;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = malloc (sizeof (ccw_qi_shared_data));
+	shared->pUnk = pUnk;
+	shared->i = 0;
+	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	return result;
+#endif
+}
+
+
 LIBTEST_API void STDCALL
 mono_test_MerpCrashSnprintf (void)
 {
