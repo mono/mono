@@ -694,7 +694,7 @@ compute_low_index (ScanData *data, GCObject *obj)
 	other = find_data (obj);
 
 #if DUMP_GRAPH
-	printf ("\tcompute low %p ->%p (%s) %p (%d / %d)\n", data->obj, obj, safe_name_bridge (obj), other, other ? other->index : -2, other ? other->low_index : -2);
+	printf ("\tcompute low %p ->%p (%s) %p (%d / %d, color %p)\n", data->obj, obj, safe_name_bridge (obj), other, other ? other->index : -2, other ? other->low_index : -2, other->color);
 #endif
 	if (!other)
 		return;
@@ -778,27 +778,21 @@ create_scc (ScanData *data)
 			break;
 	}
 
-#if DUMP_GRAPH
-	printf ("|SCC rooted in %s (%p) has bridge %d\n", safe_name_bridge (data->obj), data->obj, found_bridge);
-	printf ("\tpoints-to-colors: ");
-	for (int i = 0; i < dyn_array_ptr_size (&color_merge_array); ++i)
-		printf ("%p ", dyn_array_ptr_get (&color_merge_array, i));
-	printf ("\n");
-
-	printf ("loop stack: ");
-	for (int i = 0; i < dyn_array_ptr_size (&loop_stack); ++i) {
-		ScanData *other = dyn_array_ptr_get (&loop_stack, i);
-		printf ("(%d/%d)", other->index, other->low_index);
-	}
-	printf ("\n");
-#endif
-
 	if (found_bridge) {
 		color_data = new_color (TRUE);
 		++num_colors_with_bridges;
 	} else {
 		color_data = reduce_color ();
 	}
+#if DUMP_GRAPH
+	printf ("|SCC %p rooted in %s (%p) has bridge %d\n", color_data, safe_name_bridge (data->obj), data->obj, found_bridge);
+	printf ("\tloop stack: ");
+	for (int i = 0; i < dyn_array_ptr_size (&loop_stack); ++i) {
+		ScanData *other = dyn_array_ptr_get (&loop_stack, i);
+		printf ("(%d/%d)", other->index, other->low_index);
+	}
+	printf ("\n");
+#endif
 
 	while (dyn_array_ptr_size (&loop_stack) > 0) {
 		ScanData *other = (ScanData *)dyn_array_ptr_pop (&loop_stack);
@@ -821,7 +815,6 @@ create_scc (ScanData *data)
 		if (other->is_bridge)
 			dyn_array_ptr_add (&color_data->bridges, other->obj);
 
-
 		// Maybe we should make sure we are not adding duplicates here. It is not really a problem
 		// since we will get rid of duplicates before submitting the SCCs to the client in gather_xrefs
 		if (color_data)
@@ -834,6 +827,13 @@ create_scc (ScanData *data)
 		}
 	}
 	g_assert (found);
+
+#if DUMP_GRAPH
+	printf ("\tpoints-to-colors: ");
+	for (int i = 0; i < dyn_array_ptr_size (&color_data->other_colors); i++)
+		printf ("%p ", dyn_array_ptr_get (&color_data->other_colors, i));
+	printf ("\n");
+#endif
 }
 
 static void
@@ -857,8 +857,8 @@ dfs (void)
 		 * We start scanning from A and push C before B. So, after the first iteration, the scan stack will have: A C B.
 		 * We then visit B, which will find C in its initial state and push again.
 		 * Finally after finish with C and B, the stack will be left with "A C" and at this point C should be ignored.
-         *
-         * The above explains FINISHED_ON_STACK, to explain FINISHED_OFF_STACK, consider if the root was D, which pointed
+		 *
+		 * The above explains FINISHED_ON_STACK, to explain FINISHED_OFF_STACK, consider if the root was D, which pointed
 		 * to A and C. A is processed first, leaving C on stack after that in the mentioned state.
 		 */
 		if (data->state == FINISHED_ON_STACK || data->state == FINISHED_OFF_STACK)
@@ -873,9 +873,6 @@ dfs (void)
 			dyn_array_ptr_push (&scan_stack, data);
 			dyn_array_ptr_push (&loop_stack, data);
 
-#if DUMP_GRAPH
-			printf ("+scanning %s (%p) index %d color %p\n", safe_name_bridge (data->obj), data->obj, data->index, data->color);
-#endif
 			/*push all refs */
 			push_all (data);
 		} else {

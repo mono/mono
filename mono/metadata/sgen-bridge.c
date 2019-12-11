@@ -319,7 +319,7 @@ dump_processor_state (SgenBridgeProcessor *p)
 		printf ("\tSCC %d:", i);
 		for (j = 0; j < scc->num_objs; ++j) {
 			MonoObject *obj = scc->objs [j];
-			printf (" %p", obj);
+			printf (" %p(%s)", obj, SGEN_LOAD_VTABLE (obj)->klass->name);
 		}
 		printf ("\n");
 	}
