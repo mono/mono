@@ -7243,8 +7243,8 @@ retry:
 		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_P && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
 			if (sp [-2].ins) {
 				InterpInst *obj_ins = sp [-2].ins;
-				if (obj_ins->opcode == MINT_LDLOC_O) {
-					int loc_index = obj_ins->data [0];
+				if (sp [-2].val.type == STACK_VALUE_LOCAL) {
+					int loc_index = sp [-2].val.local;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
 					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
