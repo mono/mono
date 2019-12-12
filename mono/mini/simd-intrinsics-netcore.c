@@ -976,11 +976,14 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_ShiftRightLogical: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			g_assert (vector_type == MONO_TYPE_U2);
-			g_assert (fsig->params [1]->type == MONO_TYPE_U1);
-			ins = emit_simd_ins (cfg, klass, OP_SSE2_SRLI, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = vector_type;
-			return ins;
+			if (vector_type == MONO_TYPE_U2 && fsig->params [1]->type == MONO_TYPE_U1) {
+				MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+				ins = emit_simd_ins (cfg, klass, OP_SSE2_SRLI, args [0]->dreg, args [1]->dreg);
+				ins->inst_c0 = vector_type;
+				return ins;
+			}
+			// TODO: implement other overloads
+			return NULL;
 		}
 		case SN_Shuffle: {
 			g_assert (fsig->param_count == 2);
@@ -1401,15 +1404,18 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	case SN_AsUInt16:
 	case SN_AsUInt32:
 	case SN_AsUInt64: {
-		return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
+		if (get_vector_underlying_type (fsig->params [0]) <= MONO_TYPE_R8) {
+			return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
+		}
+		break;
 	}
 	case SN_Create: {
 		MonoType *etype = get_vector_t_elem_type (fsig->ret);
 		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
 			return emit_simd_ins (cfg, klass, type_to_expand_op (etype), args [0]->dreg, -1);
 		} else {
-			// TODO: Optimize Create(a1, a2, a3 ...) overloads 
-			return NULL;
+			// TODO: Optimize Create(a1, a2, a3 ...) overloads
+			break;
 		}
 	}
 	case SN_CreateScalarUnsafe: {

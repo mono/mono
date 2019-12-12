@@ -391,6 +391,7 @@ typedef enum {
 	INTRINS_SSE_ROUNDSS,
 	INTRINS_SSE_ROUNDPD,
 	INTRINS_SSE_PTESTZ,
+	INTRINS_SSE_INSERTPS,
 	INTRINS_SSE_PSHUFB,
 #endif
 #ifdef TARGET_WASM
@@ -7617,10 +7618,20 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE41_INSERT: {
-			values [ins->dreg] = LLVMBuildInsertElement (builder, 
-				values [ins->sreg1], 
-				convert (ctx, values [ins->sreg2], primitive_type_to_llvm_type (ins->inst_c0)), 
-				convert (ctx, values [ins->sreg3], LLVMInt8Type ()), dname);
+			if (ins->inst_c0 == MONO_TYPE_R4) {
+				// special case for <float> overload
+				LLVMValueRef args [3];
+				args [0] = values [ins->sreg1];
+				args [1] = values [ins->sreg2];
+				args [2] = convert (ctx, values [ins->sreg3], LLVMInt8Type ());
+				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_INSERTPS), args, 3, dname);
+			} else {
+				// other overloads are implemented with `insertelement`
+				values [ins->dreg] = LLVMBuildInsertElement (builder, 
+					values [ins->sreg1], 
+					convert (ctx, values [ins->sreg2], primitive_type_to_llvm_type (ins->inst_c0)), 
+					convert (ctx, values [ins->sreg3], LLVMInt8Type ()), dname);
+			}
 			break;
 		}
 
@@ -9230,6 +9241,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_ROUNDSS, "llvm.x86.sse41.round.ss"},
 	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"},
 	{INTRINS_SSE_PTESTZ, "llvm.x86.sse41.ptestz"},
+	{INTRINS_SSE_INSERTPS, "llvm.x86.sse41.insertps"},
 #endif
 #ifdef TARGET_WASM
 	{INTRINS_WASM_ANYTRUE_V16, "llvm.wasm.anytrue.v16i8"},
@@ -9564,6 +9576,13 @@ add_intrinsic (LLVMModuleRef module, int id)
 	case INTRINS_SSE_PTESTZ:
 		ret_type = type_to_simd_type (MONO_TYPE_I8);
 		AddFunc2 (module, name, LLVMInt32Type (), ret_type, ret_type);
+		break;
+	case INTRINS_SSE_INSERTPS:
+		ret_type = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = ret_type;
+		arg_types [1] = ret_type;
+		arg_types [2] = LLVMInt8Type ();
+		AddFunc (module, name, ret_type, arg_types, 3);
 		break;
 	case INTRINS_SSE_PAUSE:
 		AddFunc (module, "llvm.x86.sse2.pause", LLVMVoidType (), NULL, 0);
