@@ -1,4 +1,17 @@
 <linker>
+  <assembly fullname="mscorlib">
+	<type fullname="System.Threading.PlatformHelper">
+	  <!-- IsSingleProcessor is a field -->
+	  <method signature="System.Int32 get_ProcessorCount()" body="stub" value="1"/>
+	</type>
+    <type fullname="System.IntPtr">
+	  <method signature="System.Int32 get_Size()" body="stub" value="4"/>
+	</type>
+    <type fullname="System.UIntPtr">
+	  <method signature="System.Int32 get_Size()" body="stub" value="4"/>
+	</type>
+  </assembly>
+
   <assembly fullname="System.Private.CoreLib">
     <type fullname="System.Numerics.Vector">
       <method signature="System.Boolean get_IsHardwareAccelerated()" body="stub"/>
@@ -34,6 +47,7 @@
 	  <method signature="System.Void OnSerializing(System.Runtime.Serialization.StreamingContext)" body="remove"/>
 	</type>
   </assembly>
+
   <assembly fullname="System.Console">
 	<type fullname="System.SR">
 	  <!-- Keeps resource manager alive -->
