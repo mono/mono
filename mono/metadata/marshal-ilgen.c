@@ -4729,10 +4729,13 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_CONV_IN:
 		if (klass == date_time_class) {
 			/* Convert it to an OLE DATE type */
-			static MonoMethod *to_oadate;
 
-			if (!to_oadate)
-				mono_atomic_store_seq (&to_oadate, get_method_nofail (date_time_class, "ToOADate", 0, 0));
+			MONO_STATIC_POINTER_INIT (MonoMethod, to_oadate)
+
+				to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
+
+			MONO_STATIC_POINTER_INIT_END (MonoMethod, to_oadate)
+
 			g_assert (to_oadate);
 
 			conv_arg = mono_mb_add_local (mb, double_type);
@@ -4831,14 +4834,16 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_CONV_OUT:
 		if (klass == date_time_class) {
 			/* Convert from an OLE DATE type */
-			static MonoMethod *from_oadate;
 
 			if (!t->byref)
 				break;
 
 			if (!((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))) {
-				if (!from_oadate)
-					mono_atomic_store_seq (&from_oadate, get_method_nofail (date_time_class, "FromOADate", 1, 0));
+
+				MONO_STATIC_POINTER_INIT (MonoMethod, from_oadate)
+					from_oadate =  get_method_nofail (date_time_class, "FromOADate", 1, 0);
+				MONO_STATIC_POINTER_INIT_END (MonoMethod, from_oadate)
+
 				g_assert (from_oadate);
 
 				mono_mb_emit_ldarg (mb, argnum);
