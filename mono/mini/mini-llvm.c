@@ -7511,7 +7511,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_STORE: {
-			LLVMTypeRef dst_vec = convert (ctx, lhs, LLVMPointerType (LLVMTypeOf (rhs), 0));
+			LLVMValueRef dst_vec = convert (ctx, lhs, LLVMPointerType (LLVMTypeOf (rhs), 0));
 			mono_llvm_build_aligned_store (builder, rhs, dst_vec, FALSE, ins->inst_c1);
 			break;
 		}
