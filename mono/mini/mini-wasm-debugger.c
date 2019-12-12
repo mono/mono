@@ -762,7 +762,6 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 	MonoClass *klass;
 
 	if (obj_val_ref) {	
-		DEBUG_PRINTF (2, "%s\n", "describe_object_properties my object has a value type" );
 		guint class_type = GPOINTER_TO_UINT (g_hash_table_lookup (val_to_types, GINT_TO_POINTER (objectId)));
 		switch (class_type) {
 		case 1: //DateTime
@@ -775,7 +774,7 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 			klass = guid_class;
 			break;
 		default:
-			g_error ("dunno class type %i", class_type);
+			g_error ("class type is not recognized: %i", class_type);
 		}		
 	} else {
 		klass = obj->vtable->klass;
@@ -795,9 +794,7 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 
 		gpointer field_value;
 		if (m_class_is_valuetype (klass)) {	
-			DEBUG_PRINTF (2, "mono_class_get_fields_internal mono_vtype_get_field_addr1 - %s - %x\n", f->name, f->type->type);
 			field_value = mono_vtype_get_field_addr (obj_val_ref, f);
-			DEBUG_PRINTF (2, "mono_class_get_fields_internal mono_vtype_get_field_addr2 - %s - %x\n", f->name, f->type->type);
 		} 
 		else 
 			field_value = (guint8*)obj + f->offset;
@@ -955,13 +952,11 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	int pos = data->variable;
 	if (pos < 0) {
 		pos = -pos - 1;
-		//DEBUG_PRINTF (2, "[dbg]   send arg %d.\n", pos);
 		type = mono_method_signature_internal (method)->params [pos];
 		addr = mini_get_interp_callbacks ()->frame_get_arg (frame, pos);
 	} else {
 		header = mono_method_get_header_checked (method, error);
 		mono_error_assert_ok (error); /* FIXME report error */
-		//DEBUG_PRINTF (2, "[dbg]   number of locals %d.\n", header->num_locals);
 		type = header->locals [pos];
 		addr = mini_get_interp_callbacks ()->frame_get_local (frame, pos);
 	}
