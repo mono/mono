@@ -38,7 +38,7 @@ namespace System.ServiceModel.Channels
 		// type members
 
 		public static MessageFault CreateFault (Message message, int maxBufferSize)
-		{			
+		{
 			try {
 				if (message.Version.Envelope == EnvelopeVersion.Soap11) {
 					return CreateFault11 (message, maxBufferSize);					
@@ -506,5 +506,5 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected abstract void OnWriteDetailContents (XmlDictionaryWriter writer);
-	}	
+	}
 }
