@@ -5038,16 +5038,18 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		if (encoding == MONO_NATIVE_VBBYREFSTR) {
-			static MonoMethod *m;
-
-			if (!m)
-				mono_atomic_store_seq (&m, get_method_nofail (mono_defaults.string_class, "get_Length", -1, 0));
 
 			if (!t->byref) {
 				char *msg = g_strdup ("VBByRefStr marshalling requires a ref parameter.");
 				mono_mb_emit_exception_marshal_directive (mb, msg);
 				break;
 			}
+
+			MONO_STATIC_POINTER_INIT (MonoMethod, m)
+
+				m = get_method_nofail (mono_defaults.string_class, "get_Length", -1, 0);
+
+			MONO_STATIC_POINTER_INIT_END (MonoMethod, m)
 
 			/* 
 			 * Have to allocate a new string with the same length as the original, and
