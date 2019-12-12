@@ -7884,7 +7884,7 @@ ccw_qi_foreign_thread (void *arg)
 	MonoComObject *pUnk = shared->pUnk;
 	int hr = pUnk->vtbl->QueryInterface (pUnk, &IID_ITest, &pp);
 
-	shared->i = (hr == S_OK) ? 43 : 0;
+	shared->i = (hr == S_OK) ? 0 : 43;
 	return NULL;
 }
 
@@ -7897,7 +7897,7 @@ mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
 	pthread_t t;
 	ccw_qi_shared_data *shared = malloc (sizeof (ccw_qi_shared_data));
 	shared->pUnk = pUnk;
-	shared->i = 0;
+	shared->i = 1;
 	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
