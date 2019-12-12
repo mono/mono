@@ -532,7 +532,6 @@ namespace WsProxy {
 				SendResponse (msg_id, Result.Ok (o), token);
 			}
 			catch (Exception exc) {
-				Console.WriteLine ($"MonoProxy::GetScopeProperties Error: {exc}");
 				SendResponse (msg_id, res, token);
 			}
 		}
