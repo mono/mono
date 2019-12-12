@@ -57,9 +57,11 @@ static GHashTable *obj_to_objref;
 static GHashTable *obj_to_val_refs;
 static GHashTable *val_to_types;
 static int objref_id = 0;
-static MonoClass* datetime_class = NULL;
-static MonoClass* datetimeoffset_class = NULL;
-static MonoClass* guid_class = NULL;
+
+// define our value type classes
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (datetime, "System", "DateTime");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (datetimeoffset, "System", "DateTimeOffset");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (guid, "System", "Guid");
 
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
@@ -598,15 +600,6 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 {
 	ERROR_DECL (error);
 
-	if (!datetime_class) {
-		datetime_class = mono_class_from_name_checked (mono_get_corlib(), "System", "DateTime", error);
-	}
-	if (!datetimeoffset_class) {
-		datetimeoffset_class = mono_class_from_name_checked (mono_get_corlib(), "System", "DateTimeOffset", error);
-	}
-	if (!guid_class) {
-		guid_class = mono_class_from_name_checked (mono_get_corlib(), "System", "Guid", error);
-	}
 	switch (type->type) {
 		case MONO_TYPE_BOOLEAN:
 			mono_wasm_add_bool_var (*(gint8*)addr);
@@ -684,7 +677,7 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_TYPEDBYREF: {
 			MonoClass *klass = mono_class_from_mono_type_internal (type);
-			if (klass == datetime_class) {
+			if (klass == mono_class_try_get_datetime_class ()) {
 				MonoObject *obj = *(MonoObject**)addr;
 				if (!obj) {
 					mono_wasm_add_string_var (NULL);
@@ -694,7 +687,7 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
 					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
 				}
-			} else if (klass == datetimeoffset_class) {
+			} else if (klass == mono_class_try_get_datetimeoffset_class ()) {
 				MonoObject *obj = *(MonoObject**)addr;
 				if (!obj) {
 					mono_wasm_add_string_var (NULL);
@@ -704,7 +697,7 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
 					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
 				}
-			} else if (klass == guid_class) {
+			} else if (klass == mono_class_try_get_guid_class ()) {
 				MonoObject *obj = *(MonoObject**)addr;
 				if (!obj) {
 					mono_wasm_add_string_var (NULL);
@@ -765,13 +758,13 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 		guint class_type = GPOINTER_TO_UINT (g_hash_table_lookup (val_to_types, GINT_TO_POINTER (objectId)));
 		switch (class_type) {
 		case 1: //DateTime
-			klass = datetime_class;
+			klass = mono_class_try_get_datetime_class ();
 			break;
 		case 2: //DateTimeOffset
-			klass = datetimeoffset_class;
+			klass = mono_class_try_get_datetimeoffset_class ();
 			break;
 		case 3: //Guid
-			klass = guid_class;
+			klass = mono_class_try_get_guid_class ();
 			break;
 		default:
 			g_error ("class type is not recognized: %i", class_type);
