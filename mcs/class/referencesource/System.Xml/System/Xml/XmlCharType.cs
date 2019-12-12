@@ -750,8 +750,7 @@ namespace System.Xml {
         // This method tests whether a value is in a given range with just one test; start and end should be constants
         private static bool InRange(int value, int start, int end) {
             Debug.Assert(start <= end);
-            return (uint)(value - start) <= (uint)(end - start);
-            //test
+            return (uint)(value - start) <= (uint)(end - start);            
         }
 
 #if XMLCHARTYPE_GEN_RESOURCE
