@@ -54,7 +54,12 @@ static gboolean debugger_enabled;
 static int event_request_id;
 static GHashTable *objrefs;
 static GHashTable *obj_to_objref;
+static GHashTable *obj_to_val_refs;
+static GHashTable *val_to_types;
 static int objref_id = 0;
+static MonoClass* datetime_class = NULL;
+static MonoClass* datetimeoffset_class = NULL;
+static MonoClass* guid_class = NULL;
 
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
@@ -331,6 +336,8 @@ mono_wasm_debugger_init (void)
 
 	obj_to_objref = g_hash_table_new (NULL, NULL);
 	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
+	obj_to_val_refs = g_hash_table_new (NULL, NULL);
+	val_to_types = g_hash_table_new (NULL, NULL);
 }
 
 MONO_API void
@@ -530,6 +537,8 @@ static int get_object_id(MonoObject *obj)
 	ref->handle = mono_gchandle_new_weakref_internal (obj, FALSE);
 	g_hash_table_insert (objrefs, GINT_TO_POINTER (ref->id), ref);
 	g_hash_table_insert (obj_to_objref, GINT_TO_POINTER (~((gsize)obj)), ref);
+	g_hash_table_remove (obj_to_val_refs, GINT_TO_POINTER (ref->id));
+	g_hash_table_remove (val_to_types, GINT_TO_POINTER (ref->id));
 	return ref->id;
 }
 
@@ -588,6 +597,16 @@ typedef struct {
 static gboolean describe_value(MonoType * type, gpointer addr)
 {
 	ERROR_DECL (error);
+
+	if (!datetime_class) {
+		datetime_class = mono_class_from_name_checked (mono_get_corlib(), "System", "DateTime", error);
+	}
+	if (!datetimeoffset_class) {
+		datetimeoffset_class = mono_class_from_name_checked (mono_get_corlib(), "System", "DateTimeOffset", error);
+	}
+	if (!guid_class) {
+		guid_class = mono_class_from_name_checked (mono_get_corlib(), "System", "Guid", error);
+	}
 	switch (type->type) {
 		case MONO_TYPE_BOOLEAN:
 			mono_wasm_add_bool_var (*(gint8*)addr);
@@ -662,6 +681,49 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 			}
 			break;
 		}
+		case MONO_TYPE_VALUETYPE:
+		case MONO_TYPE_TYPEDBYREF: {
+			MonoClass *klass = mono_class_from_mono_type_internal (type);
+			if (klass == datetime_class) {
+				MonoObject *obj = *(MonoObject**)addr;
+				if (!obj) {
+					mono_wasm_add_string_var (NULL);
+				} else {
+					int objectid = get_object_id(obj);
+					mono_wasm_add_obj_var ("System.DateTime", objectid);
+					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
+					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
+				}
+			} else if (klass == datetimeoffset_class) {
+				MonoObject *obj = *(MonoObject**)addr;
+				if (!obj) {
+					mono_wasm_add_string_var (NULL);
+				} else {
+					int objectid = get_object_id(obj);
+					mono_wasm_add_obj_var ("System.DateTimeOffset", objectid);
+					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
+					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
+				}
+			} else if (klass == guid_class) {
+				MonoObject *obj = *(MonoObject**)addr;
+				if (!obj) {
+					mono_wasm_add_string_var (NULL);
+				} else {
+					int objectid = get_object_id(obj);
+					mono_wasm_add_obj_var ("System.Guid", objectid);
+					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
+					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(2), TRUE);
+				}
+			} else {
+				char *type_name = mono_type_full_name (type);
+				char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
+				mono_wasm_add_string_var (msg);
+				g_free (msg);
+				g_free (type_name);
+			}
+			
+			break;
+		}		
 		default: {
 			char *type_name = mono_type_full_name (type);
 			char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
@@ -683,21 +745,44 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 	MonoMethodSignature *sig;
 	gpointer iter = NULL;
 	ERROR_DECL (error);
-	DEBUG_PRINTF (2, "describe_object_properties %d\n", objectId);
+	gpointer obj_val_ref = NULL;
+
 	ObjRef *ref = (ObjRef *)g_hash_table_lookup (objrefs, GINT_TO_POINTER (objectId));
 	if (!ref) {
 		DEBUG_PRINTF (2, "describe_object_properties !ref\n");
 		return FALSE;
 	}
-		
-	MonoObject *obj = mono_gchandle_get_target_internal (ref->handle);
+	MonoObject *obj = (MonoObject*)mono_gchandle_get_target_internal (ref->handle);
 	if (!obj) {
 		DEBUG_PRINTF (2, "describe_object_properties !obj\n");
 		return FALSE;
 	}
 
-	while (obj && (f = mono_class_get_fields_internal (obj->vtable->klass, &iter))) {
-		DEBUG_PRINTF (2, "mono_class_get_fields_internal - %s - %x\n", f->name, f->type->type);
+	obj_val_ref = g_hash_table_lookup (obj_to_val_refs, GINT_TO_POINTER (objectId));
+	MonoClass *klass;
+
+	if (obj_val_ref) {	
+		DEBUG_PRINTF (2, "%s\n", "describe_object_properties my object has a value type" );
+		guint class_type = GPOINTER_TO_UINT (g_hash_table_lookup (val_to_types, GINT_TO_POINTER (objectId)));
+		switch (class_type) {
+		case 1: //DateTime
+			klass = datetime_class;
+			break;
+		case 2: //DateTimeOffset
+			klass = datetimeoffset_class;
+			break;
+		case 3: //Guid
+			klass = guid_class;
+			break;
+		default:
+			g_error ("dunno class type %i", class_type);
+		}		
+	} else {
+		klass = obj->vtable->klass;
+	}
+
+	while (obj && (f = mono_class_get_fields_internal (klass, &iter))) {
+		
 		if (isAsyncLocalThis &&  (f->name[0] != '<' || (f->name[0] == '<' &&  f->name[1] == '>'))) {
 			continue;
 		}
@@ -705,14 +790,24 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 			continue;
 		if (mono_field_is_deleted (f))
 			continue;
+		DEBUG_PRINTF (2, "mono_class_get_fields_internal - %s - %x\n", f->name, f->type->type);
 		mono_wasm_add_properties_var(f->name);
-		gpointer field_value = (guint8*)obj + f->offset;
+
+		gpointer field_value;
+		if (m_class_is_valuetype (klass)) {	
+			DEBUG_PRINTF (2, "mono_class_get_fields_internal mono_vtype_get_field_addr1 - %s - %x\n", f->name, f->type->type);
+			field_value = mono_vtype_get_field_addr (obj_val_ref, f);
+			DEBUG_PRINTF (2, "mono_class_get_fields_internal mono_vtype_get_field_addr2 - %s - %x\n", f->name, f->type->type);
+		} 
+		else 
+			field_value = (guint8*)obj + f->offset;
+
 		
 		describe_value(f->type, field_value);
 	}
 
 	iter = NULL;
-	while ((p = mono_class_get_properties (obj->vtable->klass, &iter))) {
+	while ((p = mono_class_get_properties (klass, &iter))) {
 		DEBUG_PRINTF (2, "mono_class_get_properties - %s - %s\n", p->name, p->get->name);
 		if (p->get->name) { //if get doesn't have name means that doesn't have a getter implemented and we don't want to show value, like VS debug
 			if (isAsyncLocalThis &&  (p->name[0] != '<' || (p->name[0] == '<' &&  p->name[1] == '>'))) {
@@ -720,7 +815,13 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 			}
 			mono_wasm_add_properties_var(p->name); 
 			sig = mono_method_signature_internal (p->get);
-			res = mono_runtime_try_invoke (p->get, obj, NULL, &exc, error);
+			if (!obj_val_ref)
+				res = mono_runtime_try_invoke (p->get, obj, NULL, &exc, error);
+			else
+			{
+				res = mono_runtime_try_invoke (p->get, (gpointer) obj_val_ref , NULL, &exc, error);
+			}
+			
 			if (!is_ok (error) && exc == NULL)
 				exc = (MonoObject*) mono_error_convert_to_exception (error);
 			if (exc)
@@ -854,12 +955,13 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	int pos = data->variable;
 	if (pos < 0) {
 		pos = -pos - 1;
+		//DEBUG_PRINTF (2, "[dbg]   send arg %d.\n", pos);
 		type = mono_method_signature_internal (method)->params [pos];
 		addr = mini_get_interp_callbacks ()->frame_get_arg (frame, pos);
 	} else {
 		header = mono_method_get_header_checked (method, error);
 		mono_error_assert_ok (error); /* FIXME report error */
-
+		//DEBUG_PRINTF (2, "[dbg]   number of locals %d.\n", header->num_locals);
 		type = header->locals [pos];
 		addr = mini_get_interp_callbacks ()->frame_get_local (frame, pos);
 	}
