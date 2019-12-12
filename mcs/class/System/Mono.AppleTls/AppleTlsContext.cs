@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using SSA = System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -387,6 +388,8 @@ namespace Mono.AppleTls
 				ProtocolVersion = GetProtocol (protocol),
 				PeerDomainName = PeerDomainName
 			};
+
+			SslConnectionInfo.FillInConnectionInfo (connectionInfo);
 		}
 
 		static TlsProtocols GetProtocol (SslProtocol protocol)

@@ -991,17 +991,7 @@ namespace Mono.Net.Security
 				var info = GetConnectionInfo ();
 				if (info == null)
 					return 0;
-				switch (info.CipherAlgorithmType) {
-				case MSI.CipherAlgorithmType.None:
-				case MSI.CipherAlgorithmType.Aes128:
-				case MSI.CipherAlgorithmType.AesGcm128:
-					return 128;
-				case MSI.CipherAlgorithmType.Aes256:
-				case MSI.CipherAlgorithmType.AesGcm256:
-					return 256;
-				default:
-					throw new ArgumentOutOfRangeException (nameof (info.CipherAlgorithmType));
-				}
+				return info.CipherAlgorithmStrength;
 			}
 		}
 
@@ -1011,23 +1001,7 @@ namespace Mono.Net.Security
 				var info = GetConnectionInfo ();
 				if (info == null)
 					return 0;
-				switch (info.HashAlgorithmType) {
-				case MSI.HashAlgorithmType.Md5:
-				case MSI.HashAlgorithmType.Md5Sha1:
-					return 128;
-				case MSI.HashAlgorithmType.Sha1:
-					return 160;
-				case MSI.HashAlgorithmType.Sha224:
-					return 224;
-				case MSI.HashAlgorithmType.Sha256:
-					return 256;
-				case MSI.HashAlgorithmType.Sha384:
-					return 384;
-				case MSI.HashAlgorithmType.Sha512:
-					return 512;
-				default:
-					throw new ArgumentOutOfRangeException (nameof (info.HashAlgorithmType));
-				}
+				return info.HashAlgorithmStrength;
 			}
 		}
 

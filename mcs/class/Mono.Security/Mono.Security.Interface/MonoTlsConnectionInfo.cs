@@ -42,7 +42,15 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		public int CipherAlgorithmStrength {
+			get; set;
+		}
+
 		public HashAlgorithmType HashAlgorithmType {
+			get; set;
+		}
+
+		public int HashAlgorithmStrength {
 			get; set;
 		}
 

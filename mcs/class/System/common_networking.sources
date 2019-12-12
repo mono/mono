@@ -74,3 +74,10 @@ System.Net/FixedSizeReadStream.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslServerAuthenticationOptions.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslAuthenticationOptions.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslApplicationProtocol.cs
+
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsCipherSuite.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsCipherSuiteData.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsCipherSuiteData.Lookup.cs
+
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslConnectionInfo.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslConnectionInfo.OSX.cs

@@ -32,6 +32,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.Runtime.InteropServices;
@@ -313,6 +314,8 @@ namespace Mono.Btls
 				ProtocolVersion = GetProtocol (protocol),
 				PeerDomainName = serverName
 			};
+
+			SslConnectionInfo.FillInConnectionInfo (connectionInfo);
 		}
 
 		static TlsProtocols GetProtocol (TlsProtocolCode protocol)
