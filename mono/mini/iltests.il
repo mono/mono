@@ -3412,6 +3412,43 @@ L3:
 		ret
 	}
 
+	.method public hidebysig static void ldstarg_opt_helper (Tests/R1_class a) cil managed
+	{
+		ldarg.0
+
+		/* allocate second object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		dup
+		ldc.i4.1
+		/* stores '1' in the field */
+		stfld int32 Tests/R1_class::test_field
+		/* overwrite first argument */
+		starg 0
+
+		ldc.i4.3
+		/* stores '3' in the field */
+		stfld int32 Tests/R1_class::test_field  /* might get fused with ldarg.0 at start of method */
+		ret
+	}
+
+	.method public hidebysig static int32  test_3_ldstarg_opt () cil managed
+	{
+		/* allocate first object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		dup
+		ldc.i4.s 0x1337
+		/* stores '0x1337' in the field */
+		stfld int32 Tests/R1_class::test_field
+
+		dup
+		/* passing first object */
+		call void class Tests::ldstarg_opt_helper (Tests/R1_class)
+		/* should read '3' from first object */
+		ldfld int32 Tests/R1_class::test_field
+		ret
+	}
+
+
   .method public hidebysig static int32  test_10_rconv_to_u8_ovf_un() cil managed
   {
     // Code size       20 (0x14)
