@@ -77,6 +77,10 @@ struct _MonoMethod {
 	MonoMethodSignature *signature;
 	/* name is useful mostly for debugging */
 	const char *name;
+#ifdef IL2CPP_ON_MONO
+	void* method_pointer;
+	void* invoke_pointer;
+#endif
 	/* this is used by the inlining algorithm */
 	unsigned int inline_info:1;
 	unsigned int inline_failure:1;

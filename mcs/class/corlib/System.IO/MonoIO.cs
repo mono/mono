@@ -748,6 +748,9 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static void DumpHandles ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool RemapPath (string path, out string newPath);
 	}
 }
 

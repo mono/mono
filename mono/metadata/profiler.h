@@ -55,7 +55,9 @@ typedef void (*MonoProfilerCoverageCallback) (MonoProfiler *prof, const MonoProf
 
 MONO_API mono_bool mono_profiler_enable_coverage (void);
 MONO_API void mono_profiler_set_coverage_filter_callback (MonoProfilerHandle handle, MonoProfilerCoverageFilterCallback cb);
+#ifndef RUNTIME_IL2CPP
 MONO_API mono_bool mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, MonoProfilerCoverageCallback cb);
+#endif
 
 typedef enum {
 	/**

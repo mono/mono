@@ -86,12 +86,16 @@ mono_error_prepare (MonoErrorInternal *error)
 static MonoClass*
 get_class (MonoErrorInternal *error)
 {
+#ifndef RUNTIME_IL2CPP
 	MonoClass *klass = NULL;
 	if (is_managed_exception (error))
 		klass = mono_object_class (mono_gchandle_get_target_internal (error->exn.instance_handle));
 	else
 		klass = error->exn.klass;
 	return klass;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 static const char*
@@ -141,6 +145,7 @@ mono_error_init (MonoError *error)
 void
 mono_error_cleanup (MonoError *oerror)
 {
+#ifndef RUNTIME_IL2CPP
 	// This function is called a lot so it is optimized.
 
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
@@ -184,6 +189,9 @@ mono_error_cleanup (MonoError *oerror)
 	mono_error_free_string (&error->exception_name);
 	mono_error_free_string (&error->first_argument);
 	error->exn.klass = NULL;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 gboolean
@@ -367,12 +375,16 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 void
 mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
 {
+#ifndef RUNTIME_IL2CPP
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	mono_error_prepare (error);
 
 	error->error_code = error_code;
 	error->full_message = message;
 	error->flags |= MONO_ERROR_FREE_STRINGS;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void
@@ -512,11 +524,15 @@ mono_error_set_exception_instance (MonoError *oerror, MonoException *exc)
 void
 mono_error_set_exception_handle (MonoError *oerror, MonoExceptionHandle exc)
 {
+#ifndef RUNTIME_IL2CPP
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 
 	mono_error_prepare (error);
 	error->error_code = MONO_ERROR_EXCEPTION_INSTANCE;
 	error->exn.instance_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST(MonoObject, exc), FALSE);
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void
@@ -569,6 +585,7 @@ mono_error_set_argument_null (MonoError *oerror, const char *argument, const cha
 void
 mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char *msg_format, ...)
 {
+#ifndef RUNTIME_IL2CPP
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	mono_error_prepare (error);
 
@@ -579,6 +596,9 @@ mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char
 	}
 
 	set_error_message ();
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 
@@ -631,6 +651,7 @@ mono_error_prepare_exception_handle (MonoError *oerror, MonoError *error_out)
 MonoException*
 mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 {
+#ifndef RUNTIME_IL2CPP
 	HANDLE_FUNCTION_ENTER ();
 
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
@@ -663,7 +684,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		exception = mono_corlib_exception_new_with_args ("System", "MissingFieldException", error->full_message, error->first_argument, error_out);
 		break;
 	case MONO_ERROR_MEMBER_ACCESS:
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "MemberAccessException", error->full_message, error_out);
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "MemberAccessException", error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_TYPE_LOAD: {
@@ -697,7 +718,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				}
 			}
 		} else {
-			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "TypeLoadException", error->full_message, error_out);
+			exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "TypeLoadException", error->full_message, error_out);
 		}
 	}
 	break;
@@ -730,14 +751,14 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		message = g_strdup_printf ("Error in %s:%s %s", type_name, error->member_name, error->full_message);
 		if (!message)
 			goto out_of_memory;
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", message, error_out);
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System.Security", "VerificationException", message, error_out);
 		break;
 
 	case MONO_ERROR_GENERIC:
 		if (!error->exception_name_space || !error->exception_name)
 			mono_error_set_execution_engine (error_out, "MonoError with generic error but no exception name was supplied");
 		else
-			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, error->exception_name_space, error->exception_name, error->full_message, error_out);
+			exception = mono_exception_new_by_name_msg (mono_get_corlib (), error->exception_name_space, error->exception_name, error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_EXCEPTION_INSTANCE:
@@ -749,7 +770,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 
 	case MONO_ERROR_INVALID_PROGRAM:
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "InvalidProgramException",
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "InvalidProgramException",
 			(error->flags & MONO_ERROR_INCOMPLETE) ? "" : error->full_message, error_out);
 		break;
 
@@ -772,6 +793,10 @@ exit:
 	g_free (message);
 	g_free (type_name);
 	HANDLE_FUNCTION_RETURN_OBJ (exception);
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif
 }
 
 /*
@@ -823,6 +848,7 @@ mono_error_move (MonoError *dest, MonoError *src)
 MonoErrorBoxed*
 mono_error_box (const MonoError *ierror, MonoImage *image)
 {
+#ifndef RUNTIME_IL2CPP
 	MonoErrorInternal *from = (MonoErrorInternal*)ierror;
 	/* Don't know how to box a gchandle */
 	g_assert (!is_managed_exception (from));
@@ -854,6 +880,10 @@ mono_error_box (const MonoError *ierror, MonoImage *image)
 #undef DUP_STR
 	
 	return box;
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif
 }
 
 

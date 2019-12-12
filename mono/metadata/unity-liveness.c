@@ -276,7 +276,7 @@ static gboolean mono_traverse_object_internal (MonoObject* object, gboolean isSt
 			} else {
 				MonoObject* val = NULL;
 				MonoVTable *vtable = NULL;
-				mono_field_get_value (object, field, &val);
+				mono_field_get_value_internal (object, field, &val);
 				added_objects |= mono_add_process_object (val, state);
 			}
 		}
@@ -344,7 +344,7 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	
 	
 	element_class = GET_VTABLE(object)->klass->element_class;
-	has_references = !mono_class_is_valuetype(element_class);
+	has_references = !m_class_is_valuetype(element_class);
 	g_assert(element_class->size_inited != 0);
 	
 	for (i = 0; i < mono_class_get_field_count (element_class); i++)
@@ -355,14 +355,14 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	if (!has_references)
 		return;
 	
-	array_length = mono_array_length (array);
+	array_length = mono_array_length_internal (array);
 	if (element_class->valuetype)
 	{
 		size_t items_processed = 0;
 		elementClassSize = mono_class_array_element_size (element_class);
 		for (i = 0; i < array_length; i++)
 		{
-			MonoObject* object = (MonoObject*)mono_array_addr_with_size (array, elementClassSize, i);
+			MonoObject* object = (MonoObject*)mono_array_addr_with_size_internal (array, elementClassSize, i);
 			if (mono_traverse_object_internal (object, 1, element_class, state))
 				items_processed++;
 			
@@ -462,17 +462,18 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			}
 			else
 			{
-				MonoError error;
+				// MonoError error;
 				MonoObject* val = NULL;
 				MonoStringHandle string_handle = MONO_HANDLE_NEW (MonoString, NULL);
+				ERROR_DECL (error);
 
-				mono_field_static_get_value_checked (mono_class_vtable (domain, klass), field, &val, string_handle, &error);
+				mono_field_static_get_value_checked (mono_class_vtable_checked (domain, klass, error), field, &val, string_handle, error);
 
-				if (val && mono_error_ok (&error))
+				if (val && is_ok (error))
 				{
 					mono_add_process_object(val, liveness_state);
 				}
-				mono_error_cleanup (&error);
+				mono_error_cleanup (error);
 			}
 		}
 	}
@@ -502,14 +503,14 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal (GPOINTER_TO_UINT(filter_handle));
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
 	MonoError* error = NULL;
 
 	if (filter_type)
-		filter = mono_class_from_mono_type (filter_type->type);
+		filter = mono_class_from_mono_type_internal (filter_type->type);
 
 	objects = g_ptr_array_sized_new(1000);
 	objects->len = 0;
@@ -528,7 +529,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	g_ptr_array_free (objects, TRUE);
 
 	
-	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
+	return (gpointer)mono_gchandle_new_internal ((MonoObject*)res, FALSE);
 
 }
 
@@ -560,8 +561,8 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
-	MonoObject* root = mono_gchandle_get_target (GPOINTER_TO_UINT(root_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal (GPOINTER_TO_UINT(filter_handle));
+	MonoObject* root = mono_gchandle_get_target_internal (GPOINTER_TO_UINT(root_handle));
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
@@ -571,7 +572,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	objects->len = 0;
 
 	if (filter_type)
-		filter = mono_class_from_mono_type (filter_type->type);
+		filter = mono_class_from_mono_type_internal (filter_type->type);
 
 	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects, onWorldStartCallback, onWorldStopCallback);
 
@@ -587,7 +588,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 
 	g_ptr_array_free (objects, TRUE);
 
-	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
+	return (gpointer)mono_gchandle_new_internal ((MonoObject*)res, FALSE);
 }
 
 LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)

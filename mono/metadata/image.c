@@ -50,6 +50,7 @@
 #include <mono/metadata/w32process-internals.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mono-private-unstable.h>
+#include <mono/metadata/unity-utils.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H

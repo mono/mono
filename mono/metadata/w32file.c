@@ -218,9 +218,9 @@ ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error
 
 	if (path_remapped = mono_unity_remap_path_utf16 (path))
 		path = path_remapped;
-	
+
 	*error=ERROR_SUCCESS;
-	
+
 	ret=mono_w32file_remove_directory (path);
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
@@ -340,9 +340,9 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 
 	if (path_remapped = mono_unity_remap_path_utf16 (path))
 		path = path_remapped;
-	
+
 	*error=ERROR_SUCCESS;
-	
+
 	ret=mono_w32file_set_cwd (path);
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
@@ -356,7 +356,6 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 MonoBoolean
 ves_icall_System_IO_MonoIO_MoveFile (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
-
 	gboolean ret;
 	const gunichar2 *path_remapped;
 	const gunichar2 *dest_remapped;

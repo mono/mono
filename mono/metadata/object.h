@@ -51,7 +51,7 @@ typedef void	    (*MonoMainThreadFunc)    (void* user_data);
         mono_gc_wbarrier_generic_store (&((s)->field), (MonoObject*)(value)); \
     } while (0)
 
-#define mono_array_addr(array,type,index) ((type*)mono_array_addr_with_size ((array), sizeof (type), (index)))
+#define mono_array_addr(array,type,index) ((type*)mono_array_addr_with_size_internal ((array), sizeof (type), (index)))
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_set(array,type,index,value)	\
 	do {	\
@@ -61,7 +61,7 @@ typedef void	    (*MonoMainThreadFunc)    (void* user_data);
 #define mono_array_setref(array,index,value)	\
 	do {	\
 		void **__p = (void **) mono_array_addr ((array), void*, (index));	\
-		mono_gc_wbarrier_set_arrayref ((array), __p, (MonoObject*)(value));	\
+		mono_gc_wbarrier_set_arrayref_internal ((array), __p, (MonoObject*)(value));	\
 		/* *__p = (value);*/	\
 	} while (0)
 #define mono_array_memcpy_refs(dest,destidx,src,srcidx,count)	\

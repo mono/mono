@@ -46,7 +46,7 @@ static partial class Consts
 	public const string MonoProduct = "Mono Common Language Infrastructure";
 	public const string MonoCopyright = "(c) Various Mono authors";
 
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 	// Versions of .NET Framework for Silverlight 4.0
 	public const string FxVersion = "2.0.5.0";
 	public const string VsVersion = "9.0.0.0"; // unused, but needed for compilation
@@ -91,7 +91,7 @@ static partial class Consts
 #error No profile symbols defined.
 #endif
 
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 	const string PublicKeyToken = "7cec85d7bea7798e";
 #else
 	const string PublicKeyToken = "b77a5c561934e089";

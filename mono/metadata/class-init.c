@@ -40,6 +40,7 @@
 
 gboolean mono_print_vtable = FALSE;
 gboolean mono_align_small_structs = FALSE;
+extern gboolean mono_allow_gc_aware_layout;
 #ifdef ENABLE_NETCORE
 /* Set by the EE */
 gint32 mono_simd_register_size;
@@ -1966,9 +1967,14 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	 * what the default is for other runtimes.
 	 */
 	 /* corlib is missing [StructLayout] directives in many places */
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
+	if (mono_allow_gc_aware_layout && layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		if (!klass->valuetype)
 			gc_aware_layout = TRUE;
+		/* Unity depends on List`1 layout in native code */
+		if (klass->image == mono_defaults.corlib &&
+			strcmp (klass->name_space, "System.Collections.Generic") == 0 &&
+			strcmp (klass->name, "List`1") == 0)
+			gc_aware_layout = FALSE;
 	}
 
 	/* Compute klass->blittable */

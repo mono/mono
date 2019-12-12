@@ -1,0 +1,20 @@
+mono-version =
+Mono JIT compiler version 6.13.0 (Visual Studio built mono)
+Copyright (C) Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
+	TLS:           __thread
+	SIGSEGV:       normal
+	Notification:  Thread + polling
+	Architecture:  amd64
+	Disabled:      none
+	Misc:          softdebug 
+	Interpreter:   yes
+	LLVM:          supported, not enabled.
+	Suspend:       preemptive
+	GC:            sgen (concurrent by default)
+
+unity-mono-revision = 94d31e01206c8d38249990ec648a3d3b95854cf9
+
+unity-mono-build-scripts-revision = 94d31e01206c8d38249990ec648a3d3b95854cf9
+
+Fri 10/30/2020 
+

@@ -182,6 +182,9 @@ typedef struct
 /* Safely access Mono.Posix.PeerCredData from native code */
 TYPED_HANDLE_DECL (MonoPeerCredData);
 
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_IsProtocolSupported_internal (gint32 networkInterface);
+
 ICALL_EXPORT
 gint32
 ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_icall (void);

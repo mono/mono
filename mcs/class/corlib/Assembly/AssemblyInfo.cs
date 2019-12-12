@@ -59,7 +59,7 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 
 [assembly: AssemblyDelaySign (true)]
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]

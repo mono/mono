@@ -19,6 +19,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/metadata-internals.h>
@@ -691,7 +692,7 @@ MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *meth
 		args[0] = &method->klass->element_class->_byval_arg;
 		ctx.method_inst = mono_metadata_get_generic_inst(1, args);
 		m = mono_class_inflate_generic_method_checked(m, &ctx, &error);
-		g_assert(mono_error_ok(&error)); /* FIXME don't swallow the error */
+		g_assert(is_ok(&error)); /* FIXME don't swallow the error */
 	}
 
 	return m;

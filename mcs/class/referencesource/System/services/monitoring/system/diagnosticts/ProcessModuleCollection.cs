@@ -54,7 +54,7 @@ namespace System.Diagnostics {
             InnerList.CopyTo(array, index);
         }
 
-#if MOBILE
+#if MOBILE && !UNITY
         [Obsolete ("This API is no longer available", true)]
         public int Capacity {
             get {

@@ -95,6 +95,7 @@
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/loader-internals.h>
+#include <mono/metadata/unity-utils.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
@@ -8226,6 +8227,12 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 }
 
 #else /* DISABLE_REMOTING */
+
+ICALL_EXPORT MonoBoolean
+ves_icall_IsTransparentProxy (MonoObject *proxy)
+{
+	return 0;
+}
 
 #ifndef ENABLE_NETCORE
 void

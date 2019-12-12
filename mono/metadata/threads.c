@@ -63,6 +63,8 @@
 #include <mono/utils/lifo-semaphore.h>
 #include <mono/utils/w32subset.h>
 
+#include <mono/metadata/unity-utils.h>
+
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif

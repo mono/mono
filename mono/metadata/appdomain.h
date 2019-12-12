@@ -94,7 +94,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_domain_unload (MonoDomain *domain);
 
 MONO_API void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc);
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc,  MonoUnityExceptionFunc callback);
 
 MONO_API mono_bool
 mono_domain_is_unloading   (MonoDomain *domain);

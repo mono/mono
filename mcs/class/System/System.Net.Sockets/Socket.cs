@@ -3035,9 +3035,16 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if UNITY
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool IsProtocolSupported_internal(NetworkInterfaceComponent networkInterface);
+#endif
+
 		static bool IsProtocolSupported (NetworkInterfaceComponent networkInterface)
 		{
-#if MOBILE
+#if UNITY
+			return IsProtocolSupported_internal(networkInterface);
+#elif MOBILE
 			return true;
 #else
 			var nics = NetworkInterface.GetAllNetworkInterfaces ();

@@ -41,7 +41,12 @@ using System;
 using System.Diagnostics;
 
 namespace System.Diagnostics {
-	public enum EventLogEntryType {
+#if UNITY_AOT
+	internal
+#else
+	public
+#endif
+	enum EventLogEntryType {{
 		Error = 0x01,
 		Warning = 0x02,
 		Information = 0x04,
