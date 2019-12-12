@@ -102,5 +102,14 @@
 # System.IO.Compression
 -noclass System.IO.Compression.Tests.BrotliEncoderTests
 
-# System
--nonamespace System.Net.Security.Tests
+# System.Net.Security.Tests
+# System.NotSupportedException: TLS Support not available
+-nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Async.SslStream_StreamToStream_Flush_Propagated
+-nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_BeginEnd.SslStream_StreamToStream_Flush_Propagated
+-nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Sync.SslStream_StreamToStream_Flush_Propagated
+-nomethod System.Net.Security.Tests.SyncSslStreamSystemDefaultTest.ClientAndServer_OneOrBothUseDefault_Ok
+-nomethod System.Net.Security.Tests.SyncSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
+-nomethod System.Net.Security.Tests.ApmSslStreamSystemDefaultTest.ClientAndServer_OneOrBothUseDefault_Ok
+-nomethod System.Net.Security.Tests.ApmSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
+-nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneOrBothUseDefault_Ok
+-nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
