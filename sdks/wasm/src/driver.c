@@ -423,14 +423,17 @@ mono_wasm_assembly_find_method (MonoClass *klass, const char *name, int argument
 }
 
 EMSCRIPTEN_KEEPALIVE MonoObject*
-mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], int* got_exception)
+mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], MonoObject **out_exc)
 {
 	MonoObject *exc = NULL;
-	MonoObject *res = mono_runtime_invoke (method, this_arg, params, &exc);
-	*got_exception = 0;
+	MonoObject *res;
 
+	if (out_exc)
+		*out_exc = NULL;
+	res = mono_runtime_invoke (method, this_arg, params, &exc);
 	if (exc) {
-		*got_exception = 1;
+		if (out_exc)
+			*out_exc = exc;
 
 		MonoObject *exc2 = NULL;
 		res = (MonoObject*)mono_object_to_string (exc, &exc2); 
