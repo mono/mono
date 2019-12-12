@@ -54,6 +54,7 @@
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.Security.cs
 ../../../../external/corefx/src/Common/tests/System/Net/TestWebProxies.cs
 ../../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs
+../../../../external/corefx/src/Common/tests/System/Net/Http/*.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.AuthenticationHelpers.cs
 ../../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
