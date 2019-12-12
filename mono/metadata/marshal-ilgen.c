@@ -4730,14 +4730,6 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (klass == date_time_class) {
 			/* Convert it to an OLE DATE type */
 
-			MONO_STATIC_POINTER_INIT (MonoMethod, to_oadate)
-
-				to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
-
-			MONO_STATIC_POINTER_INIT_END (MonoMethod, to_oadate)
-
-			g_assert (to_oadate);
-
 			conv_arg = mono_mb_add_local (mb, double_type);
 
 			if (t->byref) {
@@ -4748,6 +4740,14 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (!(t->byref && !(t->attrs & PARAM_ATTRIBUTE_IN) && (t->attrs & PARAM_ATTRIBUTE_OUT))) {
 				if (!t->byref)
 					m->csig->params [argnum - m->csig->hasthis] = double_type;
+
+			    MONO_STATIC_POINTER_INIT (MonoMethod, to_oadate)
+
+				    to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
+
+			    MONO_STATIC_POINTER_INIT_END (MonoMethod, to_oadate)
+
+			    g_assert (to_oadate);
 
 				mono_mb_emit_ldarg_addr (mb, argnum);
 				mono_mb_emit_managed_call (mb, to_oadate, NULL);
