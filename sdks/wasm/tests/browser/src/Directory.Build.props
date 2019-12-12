@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <MonoWasmSdkPath>$(MSBuildThisFileDirectory)..\..\..\..\</MonoWasmSdkPath>
-    <MonoWasmLinkMode>Full</MonoWasmLinkMode>
+    <MonoWasmLinkMode>None</MonoWasmLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugThreads|AnyCPU' ">
     <EnableMonoWasmThreads>true</EnableMonoWasmThreads>  
