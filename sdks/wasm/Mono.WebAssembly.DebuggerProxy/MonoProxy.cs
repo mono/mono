@@ -428,8 +428,6 @@ namespace WsProxy {
 
 			try {
 				var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
-				foreach (var valss in values)
-					Console.WriteLine ($"MonoProxy::GetDetails {valss}");
 				var var_list = new List<JObject>();
 
 				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
@@ -498,7 +496,6 @@ namespace WsProxy {
 				// so skip returning variable values in that case.
 				while (values != null && i < vars.Length && i < values.Length) {
 					var value = values [i] ["value"];
-					Console.WriteLine ($"Value: {value}");
 					if (((string)value ["description"]) == null)
 						value ["description"] = value ["value"]?.ToString ();
 
