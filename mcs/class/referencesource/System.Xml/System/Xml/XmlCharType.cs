@@ -751,6 +751,7 @@ namespace System.Xml {
         private static bool InRange(int value, int start, int end) {
             Debug.Assert(start <= end);
             return (uint)(value - start) <= (uint)(end - start);
+            //test
         }
 
 #if XMLCHARTYPE_GEN_RESOURCE
