@@ -2544,11 +2544,11 @@ cominterop_ccw_addref (MonoCCWInterface* ccwe)
 {
 	int result;
 	gpointer dummy;
-	MonoDomain *orig = mono_threads_attach_coop (mono_domain_get (), &dummy);
+	gpointer orig_domain = mono_threads_attach_coop (mono_domain_get (), &dummy);
 	MONO_ENTER_GC_UNSAFE;
 	result = cominterop_ccw_addref_impl (ccwe);
 	MONO_EXIT_GC_UNSAFE;
-	mono_threads_detach_coop (orig, &dummy);
+	mono_threads_detach_coop (orig_domain, &dummy);
 	return result;
 }
 
@@ -2578,11 +2578,11 @@ cominterop_ccw_release (MonoCCWInterface* ccwe)
 {
 	int result;
 	gpointer dummy;
-	MonoDomain *orig = mono_threads_attach_coop (mono_domain_get (), &dummy);
+	gpointer orig_domain = mono_threads_attach_coop (mono_domain_get (), &dummy);
 	MONO_ENTER_GC_UNSAFE;
 	result = cominterop_ccw_release_impl (ccwe);
 	MONO_EXIT_GC_UNSAFE;
-	mono_threads_detach_coop (orig, &dummy);
+	mono_threads_detach_coop (orig_domain, &dummy);
 	return result;
 }
 
@@ -2630,14 +2630,11 @@ cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpoin
 {
 	int result;
 	gpointer dummy;
-	MonoDomain *orig = mono_threads_attach_coop (mono_domain_get (), &dummy);
-
+	gpointer orig_domain = mono_threads_attach_coop (mono_domain_get (), &dummy);
 	MONO_ENTER_GC_UNSAFE;
 	result = cominterop_ccw_queryinterface_impl (ccwe, riid, ppv);
 	MONO_EXIT_GC_UNSAFE;
-
-	mono_threads_detach_coop (orig, &dummy);
-
+	mono_threads_detach_coop (orig_domain, &dummy);
 	return result;
 }
 
@@ -2756,11 +2753,11 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 {
 	int result;
 	gpointer dummy;
-	MonoDomain *orig = mono_threads_attach_coop (mono_domain_get(), &dummy);
+	gpointer orig_domain = mono_threads_attach_coop (mono_domain_get(), &dummy);
 	MONO_ENTER_GC_UNSAFE;
 	result = cominterop_ccw_get_ids_of_names_impl (ccwe, riid, rgszNames, cNames, lcid, rgDispId);
 	MONO_EXIT_GC_UNSAFE;
-	mono_threads_detach_coop (orig, &dummy);
+	mono_threads_detach_coop (orig_domain, &dummy);
 	return result;
 }
 

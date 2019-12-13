@@ -7898,7 +7898,9 @@ mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
 	return 0;
 #else
 	pthread_t t;
-	ccw_qi_shared_data *shared = malloc (sizeof (ccw_qi_shared_data));
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
 	shared->pUnk = pUnk;
 	shared->i = 1;
 	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
@@ -7927,7 +7929,9 @@ mono_test_cominterop_ccw_itest_foreign_thread (MonoComObject *pUnk)
 	return 0;
 #else
 	pthread_t t;
-	ccw_qi_shared_data *shared = malloc (sizeof (ccw_qi_shared_data));
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
 	shared->pUnk = pUnk;
 	shared->i = 1;
 	int res = pthread_create (&t, NULL, ccw_itest_foreign_thread, (void*)shared);
