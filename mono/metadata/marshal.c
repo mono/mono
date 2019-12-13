@@ -4253,8 +4253,6 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 	mono_marshal_load_type_info (klass);
 
 	MonoMarshalType *marshal_info = mono_class_get_marshal_info (klass);
-	if (marshal_info->str_to_ptr)
-		return marshal_info->str_to_ptr;
 
 	if ((res = marshal_info->str_to_ptr))
 		return res;
