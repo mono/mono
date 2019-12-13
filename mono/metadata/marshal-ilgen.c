@@ -4741,13 +4741,13 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				if (!t->byref)
 					m->csig->params [argnum - m->csig->hasthis] = double_type;
 
-			    MONO_STATIC_POINTER_INIT (MonoMethod, to_oadate)
+				MONO_STATIC_POINTER_INIT (MonoMethod, to_oadate)
 
-				    to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
+				to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
 
-			    MONO_STATIC_POINTER_INIT_END (MonoMethod, to_oadate)
+				MONO_STATIC_POINTER_INIT_END (MonoMethod, to_oadate)
 
-			    g_assert (to_oadate);
+				g_assert (to_oadate);
 
 				mono_mb_emit_ldarg_addr (mb, argnum);
 				mono_mb_emit_managed_call (mb, to_oadate, NULL);
@@ -4841,7 +4841,7 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (!((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))) {
 
 				MONO_STATIC_POINTER_INIT (MonoMethod, from_oadate)
-					from_oadate =  get_method_nofail (date_time_class, "FromOADate", 1, 0);
+					from_oadate = get_method_nofail (date_time_class, "FromOADate", 1, 0);
 				MONO_STATIC_POINTER_INIT_END (MonoMethod, from_oadate)
 
 				g_assert (from_oadate);
