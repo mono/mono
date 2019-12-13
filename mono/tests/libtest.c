@@ -7912,7 +7912,7 @@ mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 	int result = shared->i;
-	g_free (shared);
+	free (shared);
 	return result;
 #endif
 }
@@ -7941,7 +7941,7 @@ mono_test_cominterop_ccw_itest_foreign_thread (MonoComObject *pUnk)
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 	int result = shared->i;
-	g_free (shared);
+	free (shared);
 	return result;
 #endif
 }
