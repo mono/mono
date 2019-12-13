@@ -287,7 +287,7 @@ run-tests-mono: prepare
 		test_prj_name=$$(basename $$test_prj); \
 		test_prj_name=$${test_prj_name%.*}; \
 		$(DOTNET) build -c Release $$test_prj; \
-		MONO_ENV_OPTIONS="--debug --llvm $(MONO_ENV_OPTIONS)" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" $$test_prj_dir/bin/netcoreapp3.0/$$test_prj_name.dll; \
+		MONO_ENV_OPTIONS="--debug $(MONO_ENV_OPTIONS)" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" $$test_prj_dir/bin/netcoreapp3.0/$$test_prj_name.dll; \
 		if [ $$? -ne 0 ]; then \
 			failures=$$((failures+1)); \
 		fi; \

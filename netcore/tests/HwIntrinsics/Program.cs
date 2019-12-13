@@ -12,93 +12,111 @@ namespace HelloWorld
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string [] args)
         {
             int failures = 0;
-            string refDataFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SRI-reference-data.txt");
-            string[] refData = null;
+            string refDataFile = Path.Combine (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location), "SRI-reference-data.txt");
+            string [] refData = null;
             bool validate = true;
 
             if (args.Length == 1 && 
-                args[0].Equals("-generate", StringComparison.InvariantCultureIgnoreCase))
+                args [0].Equals ("-generate", StringComparison.InvariantCultureIgnoreCase))
             {
                 validate = false;
-                File.Delete(refDataFile);
+                if (File.Exists (refDataFile))
+                    File.Delete (refDataFile);
             }
             else
             {
-                refData = File.ReadAllLines(refDataFile);
+                refData = File.ReadAllLines (refDataFile);
             }
 
-            Console.WriteLine("Sse:   " + typeof(Sse).GetMethods().Length + " methods");
-            Console.WriteLine("Sse2:  " + typeof(Sse2).GetMethods().Length + " methods");
-            Console.WriteLine("Sse3:  " + typeof(Sse3).GetMethods().Length + " methods");
-            Console.WriteLine("Ssse3: " + typeof(Ssse3).GetMethods().Length + " methods");
-            Console.WriteLine("Sse41: " + typeof(Sse41).GetMethods().Length + " methods");
-            Console.WriteLine("Sse42: " + typeof(Sse42).GetMethods().Length + " methods");
-            Console.WriteLine();
+            int sse1methods = typeof (Sse).GetMethods ().Length;
+            int sse2methods = typeof (Sse2).GetMethods ().Length;
+            int sse3methods = typeof (Sse3).GetMethods ().Length;
+            int ssse3methods = typeof (Ssse3).GetMethods ().Length;
+            int sse41methods = typeof (Sse41).GetMethods ().Length;
+            int sse42methods = typeof (Sse42).GetMethods ().Length;
+
+            Console.WriteLine ("Sse:   " + sse1methods + " methods");
+            Console.WriteLine ("Sse2:  " + sse2methods + " methods");
+            Console.WriteLine ("Sse3:  " + sse3methods + " methods");
+            Console.WriteLine ("Ssse3: " + ssse3methods + " methods");
+            Console.WriteLine ("Sse41: " + sse41methods + " methods");
+            Console.WriteLine ("Sse42: " + sse42methods + " methods");
+            Console.WriteLine ();
+
+            if (sse1methods != 92)
+                throw new Exception ("New changes in Sse (don't forget to update simd-intrinsics-netcore.c if necessary)");
+            if (sse2methods != 302)
+                throw new Exception ("New changes in Sse2 (don't forget to update simd-intrinsics-netcore.c if necessary)");
+            if (sse3methods != 23)
+                throw new Exception ("New changes in Sse3 (don't forget to update simd-intrinsics-netcore.c if necessary)");
+            if (ssse3methods != 29)
+                throw new Exception ("New changes in Ssse3 (don't forget to update simd-intrinsics-netcore.c if necessary)");
+            if (sse41methods != 144)
+                throw new Exception ("New changes in Sse41 (don't forget to update simd-intrinsics-netcore.c if necessary)");
+            if (sse42methods != 9)
+                throw new Exception ("New changes in Sse42 (don't forget to update simd-intrinsics-netcore.c if necessary)");
 
             int skipped = 0;
-            var tests = new SseTests();
-            for (int i = 0; i < 1; i++)
+            var tests = new SseTests ();
+            foreach (var method in typeof (SseTests).GetMethods ()
+                .OrderBy (m => m.Name) // TODO: the default order is different in Mono
+                .Where (m => m.GetParameters().Length == 0 && m.DeclaringType == typeof (SseTests)))
             {
-                foreach (var method in typeof(SseTests).GetMethods()
-                    .OrderBy(m => m.Name) // TODO: the default order is different in Mono
-                    .Where(m => m.GetParameters().Length == 0 && m.DeclaringType == typeof(SseTests)))
+                try
                 {
-                    try
+                    tests.ReloadArrays ();
+                    var obj = method.Invoke (tests, null);
+                    string array2Data = tests.GetArray2Data ();
+                    string actualResult = $"{method.Name}: {obj}. array2: ({array2Data})\n";
+                    if (!validate)
                     {
-                        tests.ReloadArrays();
-                        var obj = method.Invoke(tests, null);
-                        string array2Data = tests.GetArray2Data();
-                        string actualResult = $"{method.Name}: {obj}. array2: ({array2Data})\n";
-                        if (!validate)
+                        File.AppendAllText (refDataFile, actualResult);
+                    }
+                    else
+                    {
+                        var expectedResult = refData.FirstOrDefault (l => l.StartsWith (method.Name));
+                        if (expectedResult.Trim ('\r', '\n', ' ') != actualResult.Trim ('\r', '\n', ' '))
                         {
-                            File.AppendAllText(refDataFile, actualResult);
-                        }
-                        else
-                        {
-                            var expectedResult = refData.FirstOrDefault(l => l.StartsWith(method.Name));
-                            if (expectedResult.Trim('\r', '\n', ' ') != actualResult.Trim('\r', '\n', ' '))
-                            {
-                                Console.WriteLine($"[FAIL] Expected: {expectedResult}, Actual: {actualResult}");
-                                failures++;
-                            }
+                            Console.WriteLine ($"[FAIL] Expected: {expectedResult}, Actual: {actualResult}");
+                            failures++;
                         }
                     }
-                    catch (TargetInvocationException e)
+                }
+                catch (TargetInvocationException e)
+                {
+                    if (e.GetBaseException () is PlatformNotSupportedException)
                     {
-                        if (e.GetBaseException() is PlatformNotSupportedException)
-                        {
-                            skipped++;
-                            continue;
-                        }
-                        throw;
+                        skipped++;
+                        continue;
                     }
+                    throw;
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Skipped: " + skipped);
-            Console.WriteLine("Done.");
+            Console.WriteLine ();
+            Console.WriteLine ("Skipped: " + skipped);
+            Console.WriteLine ("Done.");
 
             if (failures != 0)
-                throw new Exception("Test failed.");
+                throw new Exception ("Test failed.");
         }
     }
 
     public unsafe class SseTests
     {
-        private Random rand = new Random(42);
+        private Random rand = new Random (42);
 
-        private static byte[] array1 = new byte[40];
-        private static byte[] array2 = new byte[40];
+        private static byte [] array1 = new byte [40];
+        private static byte [] array2 = new byte [40];
 
-        private static float[] floatArray1 = new float[10];
-        private static float[] floatArray2 = new float[10];
+        private static float [] floatArray1 = new float [10];
+        private static float [] floatArray2 = new float [10];
 
-        private static double[] doubleArray1 = new double[10];
-        private static double[] doubleArray2 = new double[10];
+        private static double [] doubleArray1 = new double [10];
+        private static double [] doubleArray2 = new double [10];
 
         private static GCHandle gchArrayPtr1;
         private static GCHandle gchArrayPtr2;
@@ -109,37 +127,37 @@ namespace HelloWorld
         private static GCHandle gchDoubleArrayPtr1;
         private static GCHandle gchDoubleArrayPtr2;
 
-        private static float* pArray1Float => (float*)gchFloatArrayPtr1.AddrOfPinnedObject();
-        private static float* pArray2Float => (float*)gchFloatArrayPtr2.AddrOfPinnedObject();
+        private static float* pArray1Float => (float*)gchFloatArrayPtr1.AddrOfPinnedObject ();
+        private static float* pArray2Float => (float*)gchFloatArrayPtr2.AddrOfPinnedObject ();
 
-        private static double* pArray1Double => (double*)gchDoubleArrayPtr1.AddrOfPinnedObject();
-        private static double* pArray2Double => (double*)gchDoubleArrayPtr2.AddrOfPinnedObject();
+        private static double* pArray1Double => (double*)gchDoubleArrayPtr1.AddrOfPinnedObject ();
+        private static double* pArray2Double => (double*)gchDoubleArrayPtr2.AddrOfPinnedObject ();
 
-        private static byte* pArray1 => (byte*)gchArrayPtr1.AddrOfPinnedObject();
-        private static byte* pArray2 => (byte*)gchArrayPtr2.AddrOfPinnedObject();
+        private static byte* pArray1 => (byte*)gchArrayPtr1.AddrOfPinnedObject ();
+        private static byte* pArray2 => (byte*)gchArrayPtr2.AddrOfPinnedObject ();
 
-        public void ReloadArrays()
+        public void ReloadArrays ()
         {
             for (byte i = 0; i < array1.Length; i++)
             {
-                array1[i] = i;
-                array2[i] = 0;
+                array1 [i] = i;
+                array2 [i] = 0;
             }
 
             for (int i = 0; i < floatArray1.Length; i++)
             {
-                floatArray1[i] = i / 2f;
-                floatArray2[i] = 0;
+                floatArray1 [i] = i / 2f;
+                floatArray2 [i] = 0;
             }
 
             for (int i = 0; i < doubleArray1.Length; i++)
             {
-                doubleArray1[i] = i / 3f;
-                doubleArray2[i] = 0;
+                doubleArray1 [i] = i / 3f;
+                doubleArray2 [i] = 0;
             }
         }
 
-        private bool IsEmpty<T>(T[] array)
+        private bool IsEmpty<T> (T[] array)
         {
             foreach (var item in array)
             {
@@ -153,42 +171,42 @@ namespace HelloWorld
             return true;
         }
 
-        private string PrintArray<T>(T[] array)
+        private string PrintArray<T> (T[] array)
         {
-            var sb = new StringBuilder();
-            sb.Append("<");
+            var sb = new StringBuilder ();
+            sb.Append ("<");
             foreach (var item in array)
-                sb.Append(item).Append(", ");
-            sb.Append(">");
-            return sb.ToString().Replace(", >", ">");
+                sb.Append (item).Append (", ");
+            sb.Append (">");
+            return sb.ToString ().Replace (", >", ">");
         }
 
         public string GetArray2Data()
         {
-            if (!IsEmpty(array2))
-                return PrintArray(array2);
-            if (!IsEmpty(floatArray2))
-                return PrintArray(floatArray2);
-            if (!IsEmpty(doubleArray2))
-                return PrintArray(doubleArray2);
+            if (!IsEmpty (array2))
+                return PrintArray (array2);
+            if (!IsEmpty (floatArray2))
+                return PrintArray (floatArray2);
+            if (!IsEmpty (doubleArray2))
+                return PrintArray (doubleArray2);
             return "";
         }
 
-        public SseTests()
+        public SseTests ()
         {
-            gchArrayPtr1 = GCHandle.Alloc(array1, GCHandleType.Pinned);
-            gchArrayPtr2 = GCHandle.Alloc(array2, GCHandleType.Pinned);
-            gchFloatArrayPtr1 = GCHandle.Alloc(floatArray1, GCHandleType.Pinned);
-            gchFloatArrayPtr2 = GCHandle.Alloc(floatArray2, GCHandleType.Pinned);
-            gchDoubleArrayPtr1 = GCHandle.Alloc(doubleArray1, GCHandleType.Pinned);
-            gchDoubleArrayPtr2 = GCHandle.Alloc(doubleArray2, GCHandleType.Pinned);
+            gchArrayPtr1 = GCHandle.Alloc (array1, GCHandleType.Pinned);
+            gchArrayPtr2 = GCHandle.Alloc (array2, GCHandleType.Pinned);
+            gchFloatArrayPtr1 = GCHandle.Alloc (floatArray1, GCHandleType.Pinned);
+            gchFloatArrayPtr2 = GCHandle.Alloc (floatArray2, GCHandleType.Pinned);
+            gchDoubleArrayPtr1 = GCHandle.Alloc (doubleArray1, GCHandleType.Pinned);
+            gchDoubleArrayPtr2 = GCHandle.Alloc (doubleArray2, GCHandleType.Pinned);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private Vector128<T> GetV128<T>() where T : unmanaged
+        [MethodImpl (MethodImplOptions.NoInlining)]
+        private Vector128<T> GetV128<T> () where T : unmanaged
         {
             int randMult = 1;
-            int rand0_10 = rand.Next(0, 11);
+            int rand0_10 = rand.Next (0, 11);
             if (rand0_10 % 3 == 0)
                 randMult = -1;
             else if (rand0_10 > 8)
@@ -196,60 +214,57 @@ namespace HelloWorld
 
             if (typeof(T) == typeof(float))
             {
-                return Vector128.Create(
-                    (float)(rand.Next() * randMult) / 2.0f,
-                    (float)(rand.Next() * randMult) / 3.0f,
-                    (float)(rand.Next() * randMult) / 4.0f,
-                    (float)(rand.Next() * randMult) / 5.0f).As<float, T>();
+                return Vector128.Create (
+                    (float)(rand.Next () * randMult) / 2.0f,
+                    (float)(rand.Next () * randMult) / 3.0f,
+                    (float)(rand.Next () * randMult) / 4.0f,
+                    (float)(rand.Next () * randMult) / 5.0f).As<float, T>();
             }
             else if (typeof(T) == typeof(double))
             {
-                return Vector128.Create(
-                    (double)(rand.Next() * randMult),
-                    (double)(rand.Next() * randMult)).As<double, T>();
+                return Vector128.Create (
+                    (double)(rand.Next () * randMult),
+                    (double)(rand.Next () * randMult)).As<double, T>();
             }
 
             return Vector128.Create(
-                rand.Next(0, int.MaxValue) * randMult,
-                rand.Next(0, int.MaxValue) * randMult,
-                rand.Next(0, int.MaxValue) * randMult,
-                rand.Next(0, int.MaxValue) * randMult).As<int, T>();
+                rand.Next (0, int.MaxValue) * randMult,
+                rand.Next (0, int.MaxValue) * randMult,
+                rand.Next (0, int.MaxValue) * randMult,
+                rand.Next (0, int.MaxValue) * randMult).As<int, T>();
         }
 
 
-        private T Get<T>()
+        private T Get<T> ()
         {
             int randMult = 1;
-            int rand0_10 = rand.Next(0, 11);
+            int rand0_10 = rand.Next (0, 11);
             if (rand0_10 % 3 == 0)
                 randMult = -1;
             else if (rand0_10 > 8)
                 randMult = 0;
 
-            if (typeof(T) == typeof(float))
-                return (T)(object)(float)((rand.Next() * randMult) / 2.0f);
-
-            if (typeof(T) == typeof(double))
-                return (T) (object) (double) ((rand.Next() * randMult) / 2.0);
-
-            if (typeof(T) == typeof(byte))
-                return (T)(object)(byte)((rand.Next(byte.MinValue, byte.MaxValue + 1)));
-            if (typeof(T) == typeof(sbyte))
-                return (T)(object)(sbyte)((rand.Next(sbyte.MinValue, sbyte.MaxValue + 1)));
-            if (typeof(T) == typeof(short))
-                return (T)(object)(short)((rand.Next(short.MinValue, short.MaxValue + 1)));
-            if (typeof(T) == typeof(ushort))
-                return (T)(object)(ushort)((rand.Next(ushort.MinValue, ushort.MaxValue + 1)));
-            if (typeof(T) == typeof(int))
-                return (T)(object)(int)((rand.Next(int.MinValue, int.MaxValue)));
-            if (typeof(T) == typeof(uint))
-                return (T)(object)(uint)((rand.Next(int.MinValue, int.MaxValue)));
-
-            if (typeof(T) == typeof(long))
-                return (T)(object)(long)((rand.Next(int.MinValue, int.MaxValue)));
-            if (typeof(T) == typeof(ulong))
-                return (T)(object)(ulong)((rand.Next(int.MinValue, int.MaxValue)));
-            throw new NotSupportedException();
+            if (typeof (T) == typeof (float))
+                return (T)(object)(float)((rand.Next () * randMult) / 2.0f);
+            if (typeof (T) == typeof (double))
+                return (T) (object)(double)((rand.Next () * randMult) / 2.0);
+            if (typeof (T) == typeof (byte))
+                return (T)(object)(byte)((rand.Next (byte.MinValue, byte.MaxValue + 1)));
+            if (typeof (T) == typeof (sbyte))
+                return (T)(object)(sbyte)((rand.Next (sbyte.MinValue, sbyte.MaxValue + 1)));
+            if (typeof (T) == typeof (short))
+                return (T)(object)(short)((rand.Next (short.MinValue, short.MaxValue + 1)));
+            if (typeof (T) == typeof (ushort))
+                return (T)(object)(ushort)((rand.Next (ushort.MinValue, ushort.MaxValue + 1)));
+            if (typeof (T) == typeof (int))
+                return (T)(object)(int)((rand.Next (int.MinValue, int.MaxValue)));
+            if (typeof (T) == typeof (uint))
+                return (T)(object)(uint)((rand.Next (int.MinValue, int.MaxValue)));
+            if (typeof (T) == typeof (long))
+                return (T)(object)(long)((rand.Next (int.MinValue, int.MaxValue)));
+            if (typeof (T) == typeof (ulong))
+                return (T)(object)(ulong)((rand.Next (int.MinValue, int.MaxValue)));
+            throw new NotSupportedException ();
         }
 
         public Vector128<Single>        Sse_Add_0()                              => Sse.Add(GetV128<Single>(), GetV128<Single>());
