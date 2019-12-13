@@ -628,7 +628,7 @@ var BindingSupportLib = {
 			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
 			var has_args_marshal = args_marshal !== null && typeof args_marshal !== "undefined" && args_marshal.length > 0;
 
-			if (has_args_marshal && (!has_args || args.length < args_marshal.leghth))
+			if (has_args_marshal && (!has_args || args.length < args_marshal.length))
 				throw Error("Parameter count mismatch.");
 			
 			// check if the method signature needs argument mashalling
