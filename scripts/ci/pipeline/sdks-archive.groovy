@@ -51,32 +51,18 @@ parallel (
             }
         }
     },
-    "iOS (Xcode 11.2)": {
-        throttle(['provisions-ios-toolchain']) {
-            node ("xcode112") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode112")
-            }
-        }
-    },
-    "Mac (Xcode 11.2)": {
-        throttle(['provisions-mac-toolchain']) {
-            node ("xcode112") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode112")
-            }
-        }
-    },
 */
-    "iOS (Xcode 11.3 beta1)": {
+    "iOS (Xcode 11.3)": {
         throttle(['provisions-ios-toolchain']) {
-            node ("xcode113b1") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode113b1")
+            node ("xcode113") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode113")
             }
         }
     },
-    "Mac (Xcode 11.3 beta1)": {
+    "Mac (Xcode 11.3)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode113b1") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode113b1")
+            node ("xcode113") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode113")
             }
         }
     },
