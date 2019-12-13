@@ -1150,6 +1150,12 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return ins;
 		case SN_Insert: {
 			g_assert (fsig->param_count == 3);
+			if (args [2]->opcode != OP_ICONST) {
+				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+				mono_error_set_generic_error (cfg->error, "System", 
+					"InvalidOperationException", "index in Sse41.Insert must be constant.");
+				return NULL;
+			}
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			MONO_INST_NEW (cfg, ins, OP_SSE41_INSERT);
 			ins->dreg = alloc_xreg (cfg);
