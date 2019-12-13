@@ -4679,6 +4679,112 @@ emit_marshal_asany_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 }
 
 static int
+emit_marshal_date_time_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
+					MonoMarshalSpec *spec,
+					int conv_arg, MonoType **conv_arg_type,
+					MarshalAction action)
+{
+	MonoType *date_time_type, *double_type, *double_ref_type;
+	MonoMethodBuilder *mb = m->mb;
+	static MonoMethod *to_oadate;
+	static MonoMethod *from_oadate;
+	MonoClass *date_time_class;
+	int pos = 0;
+
+	date_time_class = mono_class_get_date_time_class ();
+	double_type = m_class_get_byval_arg (mono_defaults.double_class);
+	double_ref_type = m_class_get_this_arg (mono_defaults.double_class);
+
+	if (!from_oadate)
+		from_oadate = get_method_nofail (date_time_class, "FromOADate", 1, 0);
+	g_assert (from_oadate);
+	if (!to_oadate)
+		to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
+	g_assert (to_oadate);
+
+	switch (action) {
+	case MARSHAL_ACTION_CONV_IN:
+		/* Convert it to an OLE DATE type */
+		conv_arg = mono_mb_add_local (mb, double_type);
+
+		if (t->byref) {
+			mono_mb_emit_ldarg (mb, argnum);
+			pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
+		}
+
+		if (!(t->byref && !(t->attrs & PARAM_ATTRIBUTE_IN) && (t->attrs & PARAM_ATTRIBUTE_OUT))) {
+			if (!t->byref)
+				m->csig->params [argnum - m->csig->hasthis] = double_type;
+
+			mono_mb_emit_ldarg_addr (mb, argnum);
+			mono_mb_emit_managed_call (mb, to_oadate, NULL);
+			mono_mb_emit_stloc (mb, conv_arg);
+		}
+
+		if (t->byref)
+			mono_mb_patch_branch (mb, pos);
+		break;
+
+	case MARSHAL_ACTION_PUSH:
+		if (t->byref)
+			mono_mb_emit_ldloc_addr (mb, conv_arg);
+		else
+			mono_mb_emit_ldloc (mb, conv_arg);
+		break;
+
+	case MARSHAL_ACTION_CONV_OUT:
+		/* Convert from an OLE DATE type */
+		if (!t->byref)
+			break;
+
+		if (!((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))) {
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldloc (mb, conv_arg);
+			mono_mb_emit_managed_call (mb, from_oadate, NULL);
+			mono_mb_emit_op (mb, CEE_STOBJ, date_time_class);
+		}
+		break;
+
+	case MARSHAL_ACTION_MANAGED_CONV_IN:
+		date_time_type = m_class_get_byval_arg (date_time_class);
+		conv_arg = mono_mb_add_local (mb, date_time_type);
+
+		if (t->byref)
+			*conv_arg_type = double_ref_type;
+		else
+			*conv_arg_type = double_type;
+
+		if (t->byref && !(t->attrs & PARAM_ATTRIBUTE_IN) && t->attrs & PARAM_ATTRIBUTE_OUT)
+			break;
+
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_ldarg (mb, argnum);
+		if (t->byref)
+			mono_mb_emit_byte (mb, CEE_LDIND_R8);
+		mono_mb_emit_managed_call (mb, from_oadate, NULL);
+		mono_mb_emit_op (mb, CEE_STOBJ, date_time_class);
+		break;
+
+	case MARSHAL_ACTION_MANAGED_CONV_OUT:
+		if (!t->byref)
+			break;
+
+		if ((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))
+			break;
+
+		mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_managed_call (mb, to_oadate, NULL);
+		mono_mb_emit_byte (mb, CEE_STIND_R8);
+		break;
+
+	default:
+		g_assert_not_reached ();
+	}
+	return conv_arg;
+}
+
+static int
 emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					MonoMarshalSpec *spec, 
 					int conv_arg, MonoType **conv_arg_type, 
@@ -4691,38 +4797,12 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	klass = mono_class_from_mono_type_internal (t);
 
 	date_time_class = mono_class_get_date_time_class ();
-
 	MonoType *int_type = mono_get_int_type ();
-	MonoType *double_type = m_class_get_byval_arg (mono_defaults.double_class);
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
 		if (klass == date_time_class) {
-			/* Convert it to an OLE DATE type */
-			static MonoMethod *to_oadate;
-
-			if (!to_oadate)
-				to_oadate = get_method_nofail (date_time_class, "ToOADate", 0, 0);
-			g_assert (to_oadate);
-
-			conv_arg = mono_mb_add_local (mb, double_type);
-
-			if (t->byref) {
-				mono_mb_emit_ldarg (mb, argnum);
-				pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
-			}
-
-			if (!(t->byref && !(t->attrs & PARAM_ATTRIBUTE_IN) && (t->attrs & PARAM_ATTRIBUTE_OUT))) {
-				if (!t->byref)
-					m->csig->params [argnum - m->csig->hasthis] = double_type;
-
-				mono_mb_emit_ldarg_addr (mb, argnum);
-				mono_mb_emit_managed_call (mb, to_oadate, NULL);
-				mono_mb_emit_stloc (mb, conv_arg);
-			}
-
-			if (t->byref)
-				mono_mb_patch_branch (mb, pos);
+			conv_arg = emit_marshal_date_time_ilgen (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 			break;
 		}
 
@@ -4780,10 +4860,7 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		if (klass == date_time_class) {
-			if (t->byref)
-				mono_mb_emit_ldloc_addr (mb, conv_arg);
-			else
-				mono_mb_emit_ldloc (mb, conv_arg);
+			conv_arg = emit_marshal_date_time_ilgen (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 			break;
 		}
 
@@ -4800,22 +4877,7 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	case MARSHAL_ACTION_CONV_OUT:
 		if (klass == date_time_class) {
-			/* Convert from an OLE DATE type */
-			static MonoMethod *from_oadate;
-
-			if (!t->byref)
-				break;
-
-			if (!((t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))) {
-				if (!from_oadate)
-					from_oadate = get_method_nofail (date_time_class, "FromOADate", 1, 0);
-				g_assert (from_oadate);
-
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_ldloc (mb, conv_arg);
-				mono_mb_emit_managed_call (mb, from_oadate, NULL);
-				mono_mb_emit_op (mb, CEE_STOBJ, date_time_class);
-			}
+			conv_arg = emit_marshal_date_time_ilgen (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 			break;
 		}
 
@@ -4866,6 +4928,11 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_MANAGED_CONV_IN:
+		if (klass == date_time_class) {
+			conv_arg = emit_marshal_date_time_ilgen (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+			break;
+		}
+
 		if (mono_class_is_explicit_layout (klass) || m_class_is_blittable (klass) || m_class_is_enumtype (klass)) {
 			conv_arg = 0;
 			break;
@@ -4898,6 +4965,11 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_MANAGED_CONV_OUT:
+		if (klass == date_time_class) {
+			conv_arg = emit_marshal_date_time_ilgen (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+			break;
+		}
+
 		if (mono_class_is_explicit_layout (klass) || m_class_is_blittable (klass) || m_class_is_enumtype (klass))
 			break;
 		if (t->byref && (t->attrs & PARAM_ATTRIBUTE_IN) && !(t->attrs & PARAM_ATTRIBUTE_OUT))
