@@ -75,6 +75,20 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		mono_wasm_get_value_type_properties: function(objId) {
+			if (!this.mono_wasm_get_value_type_properties_info)
+				this.mono_wasm_get_value_type_properties_info = Module.cwrap ("mono_wasm_get_value_type_properties", 'void', [ 'number' ]);
+
+			this.var_info = [];
+			console.log (">> mono_wasm_get_value_type_properties " + objId);
+			this.mono_wasm_get_value_type_properties_info (objId);
+
+			var res = this.var_info;
+			this.var_info = []
+
+			return res;
+		},
+
 		mono_wasm_get_array_values: function(objId) {
 			if (!this.mono_wasm_get_array_values_info)
 				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", 'void', [ 'number' ]);
@@ -327,6 +341,28 @@ var MonoSupportLib = {
 					className: Module.UTF8ToString (className),
 					description: Module.UTF8ToString (className),
 					objectId: "dotnet:object:"+ objectId,
+				}
+			});
+		}
+	},
+
+	mono_wasm_add_value_obj_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.var_info.push({
+				value: {
+					type: "object",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					subtype: "null"
+				}
+			});
+		} else {
+			MONO.var_info.push({
+				value: {
+					type: "object",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					objectId: "dotnet:valuetype:"+ objectId,
 				}
 			});
 		}

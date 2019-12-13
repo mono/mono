@@ -34,6 +34,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_setup_single_step (int kind);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_object_properties (int object_id);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_values (int object_id);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_get_value_type_properties (int object_id);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -45,6 +46,7 @@ extern void mono_wasm_add_obj_var (const char*, guint64);
 extern void mono_wasm_add_array_var (const char*, guint64);
 extern void mono_wasm_add_properties_var (const char*);
 extern void mono_wasm_add_array_item (int);
+extern void mono_wasm_add_value_obj_var (const char*, guint64);
 
 G_END_DECLS
 
@@ -58,12 +60,107 @@ static GHashTable *obj_to_val_refs;
 static GHashTable *val_to_types;
 static int objref_id = 0;
 
-// define our value type classes
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (datetime, "System", "DateTime");
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (datetimeoffset, "System", "DateTimeOffset");
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (guid, "System", "Guid");
-
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
+
+#define dbg_lock mono_de_lock
+#define dbg_unlock mono_de_unlock
+
+typedef enum {
+	ERR_NONE = 0,
+	ERR_INVALID_OBJECT = 20,
+	ERR_INVALID_FIELDID = 25,
+	ERR_INVALID_FRAMEID = 30,
+	ERR_NOT_IMPLEMENTED = 100,
+	ERR_NOT_SUSPENDED = 101,
+	ERR_INVALID_ARGUMENT = 102,
+	ERR_UNLOADED = 103,
+	ERR_NO_INVOCATION = 104,
+	ERR_ABSENT_INFORMATION = 105,
+	ERR_NO_SEQ_POINT_AT_IL_OFFSET = 106,
+	ERR_INVOKE_ABORTED = 107,
+	ERR_LOADER_ERROR = 200, /*XXX extend the protocol to pass this information down the pipe */
+} ErrorCode;
+
+/*
+ * IDS
+ */
+
+typedef enum {
+	ID_ASSEMBLY = 0,
+	ID_MODULE = 1,
+	ID_TYPE = 2,
+	ID_METHOD = 3,
+	ID_FIELD = 4,
+	ID_DOMAIN = 5,
+	ID_PROPERTY = 6,
+	ID_NUM
+} IdType;
+
+/*
+ * Represents a runtime structure accessible to the debugger client
+ */
+typedef struct {
+	/* Unique id used in the wire protocol */
+	int id;
+	/* Domain of the runtime structure, NULL if the domain was unloaded */
+	MonoDomain *domain;
+	union {
+		gpointer val;
+		MonoClass *klass;
+		MonoMethod *method;
+		MonoImage *image;
+		MonoAssembly *assembly;
+		MonoClassField *field;
+		MonoDomain *domain;
+		MonoProperty *property;
+	} data;
+} Id;
+
+typedef struct {
+	/* Maps runtime structure -> Id */
+	/* Protected by the dbg lock */
+	GHashTable *val_to_id [ID_NUM];
+	/* Classes whose class load event has been sent */
+	/* Protected by the loader lock */
+	GHashTable *loaded_classes;
+	/* Maps MonoClass->GPtrArray of file names */
+	GHashTable *source_files;
+	/* Maps source file basename -> GSList of classes */
+	GHashTable *source_file_to_class;
+	/* Same with ignore-case */
+	GHashTable *source_file_to_class_ignorecase;
+} AgentDomainInfo;
+
+/* Maps id -> Id */
+/* Protected by the dbg lock */
+static GPtrArray *ids [ID_NUM];
+
+static void
+ids_init (void)
+{
+	int i;
+
+	for (i = 0; i < ID_NUM; ++i)
+		ids [i] = g_ptr_array_new ();
+}
+
+static void
+ids_cleanup (void)
+{
+	int i, j;
+
+	for (i = 0; i < ID_NUM; ++i) {
+		if (ids [i]) {
+			for (j = 0; j < ids [i]->len; ++j)
+				g_free (g_ptr_array_index (ids [i], j));
+			g_ptr_array_free (ids [i], TRUE);
+		}
+		ids [i] = NULL;
+	}
+}
+
+static int get_id (MonoDomain *domain, IdType type, gpointer val);
+static MonoClass* decode_typeid (guint id, ErrorCode *err);
 
 static void
 inplace_tolower (char *c)
@@ -340,6 +437,8 @@ mono_wasm_debugger_init (void)
 	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
 	obj_to_val_refs = g_hash_table_new (NULL, NULL);
 	val_to_types = g_hash_table_new (NULL, NULL);
+
+	ids_init ();
 }
 
 MONO_API void
@@ -677,44 +776,18 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_TYPEDBYREF: {
 			MonoClass *klass = mono_class_from_mono_type_internal (type);
-			if (klass == mono_class_try_get_datetime_class ()) {
-				MonoObject *obj = *(MonoObject**)addr;
-				if (!obj) {
-					mono_wasm_add_string_var (NULL);
-				} else {
-					int objectid = get_object_id(obj);
-					mono_wasm_add_obj_var ("System.DateTime", objectid);
-					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
-					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
-				}
-			} else if (klass == mono_class_try_get_datetimeoffset_class ()) {
-				MonoObject *obj = *(MonoObject**)addr;
-				if (!obj) {
-					mono_wasm_add_string_var (NULL);
-				} else {
-					int objectid = get_object_id(obj);
-					mono_wasm_add_obj_var ("System.DateTimeOffset", objectid);
-					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
-					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(1), TRUE);
-				}
-			} else if (klass == mono_class_try_get_guid_class ()) {
-				MonoObject *obj = *(MonoObject**)addr;
-				if (!obj) {
-					mono_wasm_add_string_var (NULL);
-				} else {
-					int objectid = get_object_id(obj);
-					mono_wasm_add_obj_var ("System.Guid", objectid);
-					g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
-					g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(2), TRUE);
-				}
+			char *type_name = mono_type_full_name (type);
+			MonoObject *obj = *(MonoObject**)addr;
+			if (!obj) {
+				mono_wasm_add_string_var (NULL);
 			} else {
-				char *type_name = mono_type_full_name (type);
-				char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
-				mono_wasm_add_string_var (msg);
-				g_free (msg);
-				g_free (type_name);
+				int objectid = get_object_id(obj);
+				mono_wasm_add_value_obj_var (type_name, objectid);
+				g_hash_table_insert_replace (obj_to_val_refs, GINT_TO_POINTER(objectid), addr, TRUE);
+				int id = get_id (mono_domain_get (), ID_TYPE, klass);
+				g_hash_table_insert_replace (val_to_types, GINT_TO_POINTER(objectid), GINT_TO_POINTER(id), TRUE);
 			}
-			
+			g_free (type_name);
 			break;
 		}		
 		default: {
@@ -756,19 +829,10 @@ describe_object_properties (guint64 objectId, gboolean isAsyncLocalThis)
 
 	if (obj_val_ref) {	
 		guint class_type = GPOINTER_TO_UINT (g_hash_table_lookup (val_to_types, GINT_TO_POINTER (objectId)));
-		switch (class_type) {
-		case 1: //DateTime
-			klass = mono_class_try_get_datetime_class ();
-			break;
-		case 2: //DateTimeOffset
-			klass = mono_class_try_get_datetimeoffset_class ();
-			break;
-		case 3: //Guid
-			klass = mono_class_try_get_guid_class ();
-			break;
-		default:
+		ErrorCode err;
+		klass = decode_typeid (class_type, &err);
+		if (err != ERR_NONE)
 			g_error ("class type is not recognized: %i", class_type);
-		}		
 	} else {
 		klass = obj->vtable->klass;
 	}
@@ -984,6 +1048,14 @@ mono_wasm_get_object_properties (int object_id)
 }
 
 EMSCRIPTEN_KEEPALIVE void
+mono_wasm_get_value_type_properties (int object_id)
+{
+	DEBUG_PRINTF (2, "getting properties of value type %d\n", object_id);
+
+	describe_object_properties(object_id, FALSE);
+}
+
+EMSCRIPTEN_KEEPALIVE void
 mono_wasm_get_array_values (int object_id)
 {
 	DEBUG_PRINTF (2, "getting array values %d\n", object_id);
@@ -996,6 +1068,126 @@ gsize
 mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)
 {
 	return 1;
+}
+
+static gpointer
+decode_ptr_id (guint uid, IdType type, MonoDomain **domain, ErrorCode *err)
+{
+	Id *res;
+
+	int id = uid;
+
+	*err = ERR_NONE;
+	if (domain)
+		*domain = NULL;
+
+	if (id == 0)
+		return NULL;
+
+	// FIXME: error handling
+	dbg_lock ();
+	g_assert (id > 0 && id <= ids [type]->len);
+
+	res = (Id *)g_ptr_array_index (ids [type], GPOINTER_TO_INT (id - 1));
+	dbg_unlock ();
+
+	if (res->domain == NULL || res->domain->state == MONO_APPDOMAIN_UNLOADED) {
+		DEBUG_PRINTF (1, "ERR_UNLOADED, id=%d, type=%d.\n", id, type);
+		*err = ERR_UNLOADED;
+		return NULL;
+	}
+
+	if (domain)
+		*domain = res->domain;
+
+	return res->data.val;
+}
+
+static MonoClass*
+decode_typeid (guint id, ErrorCode *err)
+{
+	MonoClass *klass;
+	MonoDomain *d;
+
+	klass = (MonoClass *)decode_ptr_id (id, ID_TYPE, &d, err);
+	if (G_UNLIKELY (log_level >= 2) && klass) {
+		char *s;
+
+		s = mono_type_full_name (m_class_get_byval_arg (klass));
+		DEBUG_PRINTF (2, "[dbg]   recv class [%s]\n", s);
+		g_free (s);
+	}
+	return klass;
+}
+
+static AgentDomainInfo*
+get_agent_domain_info (MonoDomain *domain)
+{
+	AgentDomainInfo *info = NULL;
+	MonoJitDomainInfo *jit_info = domain_jit_info (domain);
+
+	info = (AgentDomainInfo *)jit_info->agent_info;
+
+	if (info) {
+		mono_memory_read_barrier ();
+		return info;
+	}
+
+	info = g_new0 (AgentDomainInfo, 1);
+	info->loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->source_files = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->source_file_to_class = g_hash_table_new (g_str_hash, g_str_equal);
+	info->source_file_to_class_ignorecase = g_hash_table_new (g_str_hash, g_str_equal);
+
+	mono_memory_write_barrier ();
+
+	gpointer other_info = mono_atomic_cas_ptr (&jit_info->agent_info, info, NULL);
+
+	if (other_info != NULL) {
+		g_hash_table_destroy (info->loaded_classes);
+		g_hash_table_destroy (info->source_files);
+		g_hash_table_destroy (info->source_file_to_class);
+		g_hash_table_destroy (info->source_file_to_class_ignorecase);
+		g_free (info);
+	}
+
+	return (AgentDomainInfo *)jit_info->agent_info;
+}
+
+static int
+get_id (MonoDomain *domain, IdType type, gpointer val)
+{
+	Id *id;
+	AgentDomainInfo *info;
+
+	if (val == NULL)
+		return 0;
+
+	info = get_agent_domain_info (domain);
+
+	dbg_lock ();
+
+	if (info->val_to_id [type] == NULL)
+		info->val_to_id [type] = g_hash_table_new (mono_aligned_addr_hash, NULL);
+
+	id = (Id *)g_hash_table_lookup (info->val_to_id [type], val);
+	if (id) {
+		dbg_unlock ();
+		return id->id;
+	}
+
+	id = g_new0 (Id, 1);
+	/* Reserve id 0 */
+	id->id = ids [type]->len + 1;
+	id->domain = domain;
+	id->data.val = val;
+
+	g_hash_table_insert (info->val_to_id [type], val, id);
+	g_ptr_array_add (ids [type], id);
+
+	dbg_unlock ();
+
+	return id->id;
 }
 
 #else // HOST_WASM
