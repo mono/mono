@@ -401,7 +401,6 @@ namespace MonoTests.System.IO
 				} catch (IOException ex) {
 					// process cannot access file ... because it is being used by another process
 					Assert.IsNull (ex.InnerException, "#2");
-					Assert.IsTrue (ex.Message.IndexOf (source) != -1, "#3");
 				}
 			} finally {
 				DeleteFile (source);
