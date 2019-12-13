@@ -943,7 +943,10 @@ class Driver {
 		}
 		if (enable_aot)
 			ninja.WriteLine ("build $builddir/aot-in: mkdir");
-
+		{
+			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "linker-subs.xml"));
+			ninja.WriteLine ($"build $builddir/linker-subs.xml: cpifdiff {source_file}");
+		}
 		var ofiles = "";
 		var bc_files = "";
 		string linker_infiles = "";
@@ -1085,6 +1088,8 @@ class Driver {
 			}
 
 			string linker_args = "";
+			linker_args += "--substitutions linker-subs.xml ";
+			linker_infiles += "| linker-subs.xml";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {
