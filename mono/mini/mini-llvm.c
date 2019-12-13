@@ -7425,13 +7425,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_SSE_MOVS:
 		case OP_SSE_MOVS2: {
 			if (ins->inst_c0 == MONO_TYPE_R4)
-				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_4_i32 (4, 1, 2, 3), "");
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_4_i32 (0, 5, 6, 7), "");
+			else if (ins->inst_c0 == MONO_TYPE_R8)
+				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_2_i32 (0, 3), "");
 			else if (ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8)
 				values [ins->dreg] = LLVMBuildInsertElement (builder, lhs, 
 					LLVMConstInt (LLVMInt64Type (), 0, FALSE), 
 					LLVMConstInt (LLVMInt32Type (), 1, FALSE), "");
-			else if (ins->inst_c0 == MONO_TYPE_R8)
-				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_2_i32 (0, 3), "");
 			else
 				g_assert_not_reached (); // will be needed for other types later
 			break;
@@ -7534,13 +7534,55 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE2_SHUFFLE: {
-			LLVMValueRef shuffle_vec = create_const_vector_4_i32 (
-				(ins->inst_c0 >> 0) & 0x3,
-				(ins->inst_c0 >> 2) & 0x3, 
-				(ins->inst_c0 >> 4) & 0x3,
-				(ins->inst_c0 >> 6) & 0x3);
-			g_assert (ins->inst_c1 == MONO_TYPE_I4 || ins->inst_c1 == MONO_TYPE_U4);
-			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, LLVMGetUndef (LLVMVectorType (LLVMInt32Type (), 4)), shuffle_vec, "");
+			LLVMValueRef right_vec;
+			LLVMValueRef shuffle_vec;
+			if (ins->inst_c1 == MONO_TYPE_R8) {
+				right_vec = rhs;
+				shuffle_vec = create_const_vector_2_i32 (
+					((ins->inst_c0 >> 0) & 0x1) + 0,
+					((ins->inst_c0 >> 1) & 0x1) + 2);
+			} else {
+				right_vec = LLVMGetUndef (LLVMVectorType (LLVMInt32Type (), 4));
+				shuffle_vec = create_const_vector_4_i32 (
+					(ins->inst_c0 >> 0) & 0x3,
+					(ins->inst_c0 >> 2) & 0x3, 
+					(ins->inst_c0 >> 4) & 0x3,
+					(ins->inst_c0 >> 6) & 0x3);
+			}
+			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, right_vec, shuffle_vec, "");
+			break;
+		}
+
+		case OP_SSE2_OR: {
+			LLVMValueRef minus_one [2];
+			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_and = LLVMBuildOr (builder, vec_lhs_i64, vec_rhs_i64, "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			break;
+		}
+
+		case OP_SSE2_XOR: {
+			LLVMValueRef minus_one [2];
+			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_and = LLVMBuildXor (builder, vec_lhs_i64, vec_rhs_i64, "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			break;
+		}
+
+		case OP_SSE2_AND: {
+			LLVMValueRef minus_one [2];
+			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
+			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
+			LLVMValueRef vec_and = LLVMBuildAnd (builder, vec_lhs_i64, vec_rhs_i64, "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
 			break;
 		}
 

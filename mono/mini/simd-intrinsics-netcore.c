@@ -627,6 +627,7 @@ static guint16 sse2_methods [] = {
 	SN_CompareEqual,
 	SN_CompareGreaterThan,
 	SN_CompareLessThan,
+	SN_CompareNotEqual,
 	SN_LoadAlignedVector128,
 	SN_LoadVector128,
 	SN_MoveMask,
@@ -800,7 +801,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (vector_type == MONO_TYPE_R4);
 			if (args [2]->opcode != OP_ICONST) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-				mono_error_set_generic_error (cfg->error, "System", "InvalidOperationException", "mask in Sse.Shuffle must be constant.", NULL, NULL);
+				mono_error_set_generic_error (cfg->error, "System", 
+					"InvalidOperationException", "mask in Sse.Shuffle must be constant.");
 				return NULL;
 			}
 			MONO_INST_NEW (cfg, ins, OP_SSE_SHUFFLE);
@@ -884,16 +886,18 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_Add ? OP_IADD : OP_ISUB;
+			if (vector_type == MONO_TYPE_R8)
+				ins->inst_c0 = id == SN_Add ? OP_FADD : OP_FSUB;
+			else
+				ins->inst_c0 = id == SN_Add ? OP_IADD : OP_ISUB;
 			ins->inst_c1 = vector_type;
 			return ins;
 		}
 		case SN_And: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = OP_IAND;
-			ins->inst_c1 = vector_type;
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_AND, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
 			return ins;
 		}
 		case SN_AndNot: {
@@ -957,7 +961,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 				ins->type = STACK_VTYPE;
 				MONO_ADD_INS (cfg->cbb, ins);
 			} else if (fsig->param_count == 2) {
-				g_assert (vector_type == MONO_TYPE_R4 || vector_type == MONO_TYPE_R8);
+				g_assert (vector_type == MONO_TYPE_R8);
 				ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS2, args [0]->dreg, args [1]->dreg);
 			} else {
 				g_assert_not_reached ();
@@ -986,20 +990,25 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return NULL;
 		}
 		case SN_Shuffle: {
-			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			g_assert (vector_type == MONO_TYPE_U4 || vector_type == MONO_TYPE_I4);
-			g_assert (fsig->params [1]->type == MONO_TYPE_U1);
-			if (args [1]->opcode != OP_ICONST) {
+			if ((vector_type == MONO_TYPE_R8 && args [2]->opcode != OP_ICONST) || 
+				(vector_type != MONO_TYPE_R8 && args [1]->opcode != OP_ICONST)) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-				mono_error_set_generic_error (cfg->error, "System", "InvalidOperationException", "mask in Sse2.Shuffle must be constant.", NULL, NULL);
+				mono_error_set_generic_error (cfg->error, "System", "InvalidOperationException",
+					"mask in Sse2.Shuffle must be constant.");
 				return NULL;
 			}
 			MONO_INST_NEW (cfg, ins, OP_SSE2_SHUFFLE);
 			ins->dreg = alloc_xreg (cfg);
 			ins->sreg1 = args [0]->dreg;
+			if (vector_type == MONO_TYPE_R8) {
+				ins->sreg2 = args [1]->dreg;
+				ins->inst_c0 = args [2]->inst_c0; // mask
+			} else {
+				ins->sreg2 = args [0]->dreg;
+				ins->inst_c0 = args [1]->inst_c0; // mask
+			}
 			ins->type = STACK_VTYPE;
-			ins->inst_c0 = args [1]->inst_c0; // mask
 			ins->inst_c1 = vector_type;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
@@ -1040,13 +1049,18 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->inst_c0 = vector_type;
 			return ins;
 		}
-		case SN_Or:
+		case SN_Or: {
+			g_assert (fsig->param_count == 2);
+			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_OR, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
+			return ins;
+		}
 		case SN_Xor: {
 			g_assert (fsig->param_count == 2);
 			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_Or ? OP_IOR : OP_IXOR;
-			ins->inst_c1 = vector_type;
+			ins = emit_simd_ins (cfg, klass, OP_SSE2_XOR, args [0]->dreg, args [1]->dreg);
+			ins->inst_c0 = vector_type;
 			return ins;
 		}
 		default:
