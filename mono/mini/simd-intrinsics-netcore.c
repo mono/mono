@@ -947,9 +947,9 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return ins;
 		}
 		case SN_Store:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORES, 1 /*alignment*/, fsig, args);
+			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 1 /*alignment*/, fsig, args);
 		case SN_StoreAligned:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORES, 16 /*alignment*/, fsig, args);
+			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 16 /*alignment*/, fsig, args);
 		case SN_StoreScalar:
 			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORES, -1, fsig, args);
 		case SN_UnpackLow:
