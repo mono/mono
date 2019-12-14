@@ -1012,19 +1012,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
-		case SN_Shuffle: {
-			g_assert (fsig->param_count == 2);
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			MONO_INST_NEW (cfg, ins, OP_SSSE3_SHUFFLE);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->sreg2 = args [1]->dreg;
-			ins->klass = klass;
-			ins->type = STACK_VTYPE;
-			ins->inst_c0 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
+		case SN_Shuffle:
+			return emit_simd_ins_binary (cfg, klass, OP_SSSE3_SHUFFLE, -1, fsig, args);
 		default:
 			return NULL;
 		}
@@ -1066,24 +1055,11 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return ins;
 		}
 		case SN_Max:
-		case SN_Min: {
-			g_assert (fsig->param_count == 2);
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_Min ? OP_IMIN : OP_IMAX;
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
-		case SN_TestZ: {
-			g_assert (fsig->param_count == 2);
-			MONO_INST_NEW (cfg, ins, OP_SSE41_PTESTZ);
-			ins->dreg = alloc_ireg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->sreg2 = args [1]->dreg;
-			ins->type = STACK_I4;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
+			return emit_simd_ins_binary (cfg, klass, OP_XBINOP, OP_IMAX, fsig, args);
+		case SN_Min:
+			return emit_simd_ins_binary (cfg, klass, OP_XBINOP, OP_IMIN, fsig, args);
+		case SN_TestZ:
+			return emit_simd_ins_binary (cfg, klass, OP_SSE41_PTESTZ, -1, fsig, args);
 		default:
 			return NULL;
 		}
