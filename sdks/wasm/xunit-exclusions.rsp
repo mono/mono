@@ -25,10 +25,6 @@
 # Crashes
 -noclass System.Tests.MathFTests
 
-# Crashes in GC
--nonamespace System.MemoryTests
--nonamespace System.SpanTests
-
 # OOM
 -nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeByteArrayOverflowingBitArray_ThrowsArgumentException
 -nomethod System.Collections.Tests.BitArray_CtorTests.Clone_LongLength_Works
@@ -48,6 +44,10 @@
 -nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_GetHashCodeCompare
 -nomethod System.Collections.Tests.HashtableTests.HashCodeProvider_Set_ImpactsSearch
 -nomethod System.Collections.Tests.HashtableTests.Comparer_Set_ImpactsSearch
+-nomethod System.SpanTests.ReadOnlySpanTests.Compare
+-nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_AllSubstrings
+-nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_EnglishUSCulture
+-nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_InvariantCulture
 
 # System.Data
 # Hangs
