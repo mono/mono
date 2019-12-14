@@ -832,7 +832,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		
 		switch (id) {
 		case SN_get_IsSupported: {
-			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
 		}
@@ -906,7 +906,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			} else {
 				g_assert_not_reached ();
 			}
-			ins->inst_c0 = vector_type;
+			ins->inst_c1 = vector_type;
 			return ins;
 		}
 		case SN_PackUnsignedSaturate:
@@ -916,7 +916,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			if (vector_type == MONO_TYPE_U2 && fsig->params [1]->type == MONO_TYPE_U1) {
 				MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
 				ins = emit_simd_ins (cfg, klass, OP_SSE2_SRLI, args [0]->dreg, args [1]->dreg);
-				ins->inst_c0 = vector_type;
+				ins->inst_c1 = vector_type;
 				return ins;
 			}
 			// TODO: implement other overloads
@@ -977,7 +977,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_MoveAndDuplicate: {
@@ -1009,7 +1009,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_Shuffle: {
@@ -1042,7 +1042,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
+			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_Insert: {
@@ -1061,7 +1061,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->sreg3 = args [2]->dreg;
 			ins->klass = klass;
 			ins->type = STACK_VTYPE;
-			ins->inst_c0 = vector_type;
+			ins->inst_c1 = vector_type;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}

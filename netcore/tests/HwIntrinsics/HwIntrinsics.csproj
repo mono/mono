@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <Optimize>True</Optimize>
-    <DebugType>None</DebugType>
+    <DebugType>Full</DebugType>
     <OutputPath>bin</OutputPath>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
