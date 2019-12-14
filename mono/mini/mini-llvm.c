@@ -7409,10 +7409,10 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 		case OP_SSE_MOVMSK: {
 			LLVMValueRef args [1];
-			if (ins->inst_c0 == MONO_TYPE_R4) {
+			if (ins->inst_c1 == MONO_TYPE_R4) {
 				args [0] = lhs;
 				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PS), args, 1, dname);
-			} else if (ins->inst_c0 == MONO_TYPE_R8) {
+			} else if (ins->inst_c1 == MONO_TYPE_R8) {
 				args [0] = lhs;
 				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PD), args, 1, dname);
 			} else {
@@ -7424,11 +7424,11 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 		case OP_SSE_MOVS:
 		case OP_SSE_MOVS2: {
-			if (ins->inst_c0 == MONO_TYPE_R4)
+			if (ins->inst_c1 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_4_i32 (0, 5, 6, 7), "");
-			else if (ins->inst_c0 == MONO_TYPE_R8)
+			else if (ins->inst_c1 == MONO_TYPE_R8)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_2_i32 (0, 3), "");
-			else if (ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8)
+			else if (ins->inst_c1 == MONO_TYPE_I8 || ins->inst_c1 == MONO_TYPE_U8)
 				values [ins->dreg] = LLVMBuildInsertElement (builder, lhs, 
 					LLVMConstInt (LLVMInt64Type (), 0, FALSE), 
 					LLVMConstInt (LLVMInt32Type (), 1, FALSE), "");
@@ -7438,7 +7438,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_MOVEHL: {
-			if (ins->inst_c0 == MONO_TYPE_R4)
+			if (ins->inst_c1 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_4_i32 (6, 7, 2, 3), "");
 			else
 				g_assert_not_reached ();
@@ -7446,7 +7446,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_MOVELH: {
-			if (ins->inst_c0 == MONO_TYPE_R4)
+			if (ins->inst_c1 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_4_i32 (0, 1, 4, 5), "");
 			else
 				g_assert_not_reached ();
@@ -7454,24 +7454,24 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_UNPACKLO: {
-			if (ins->inst_c0 == MONO_TYPE_R8 || ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8) {
+			if (ins->inst_c1 == MONO_TYPE_R8 || ins->inst_c1 == MONO_TYPE_I8 || ins->inst_c1 == MONO_TYPE_U8) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_2_i32 (0, 2), "");
-			} else if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_I4  || ins->inst_c0 == MONO_TYPE_U4) {
+			} else if (ins->inst_c1 == MONO_TYPE_R4 || ins->inst_c1 == MONO_TYPE_I4  || ins->inst_c1 == MONO_TYPE_U4) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_4_i32 (0, 4, 1, 5), "");
-			} else if (ins->inst_c0 == MONO_TYPE_I2 || ins->inst_c0 == MONO_TYPE_U2) {
+			} else if (ins->inst_c1 == MONO_TYPE_I2 || ins->inst_c1 == MONO_TYPE_U2) {
 				const int mask_values [] = { 0, 8, 1, 9, 2, 10, 3, 11 };
 				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
 					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I2)), 
 					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2)), 
 					create_const_vector_i32 (mask_values, 8), "");
-				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
-			} else if (ins->inst_c0 == MONO_TYPE_I1 || ins->inst_c0 == MONO_TYPE_U1) {
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c1));
+			} else if (ins->inst_c1 == MONO_TYPE_I1 || ins->inst_c1 == MONO_TYPE_U1) {
 				const int mask_values [] = { 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23 };
 				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
 					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1)), 
 					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I1)), 
 					create_const_vector_i32 (mask_values, 16), "");
-				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c1));
 			} else {
 				g_assert_not_reached ();
 			}
@@ -7479,24 +7479,24 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_UNPACKHI: {
-			if (ins->inst_c0 == MONO_TYPE_R8 || ins->inst_c0 == MONO_TYPE_I8 || ins->inst_c0 == MONO_TYPE_U8) {
+			if (ins->inst_c1 == MONO_TYPE_R8 || ins->inst_c1 == MONO_TYPE_I8 || ins->inst_c1 == MONO_TYPE_U8) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_2_i32 (1, 3), "");
-			} else if (ins->inst_c0 == MONO_TYPE_R4 || ins->inst_c0 == MONO_TYPE_I4  || ins->inst_c0 == MONO_TYPE_U4) {
+			} else if (ins->inst_c1 == MONO_TYPE_R4 || ins->inst_c1 == MONO_TYPE_I4  || ins->inst_c1 == MONO_TYPE_U4) {
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs, rhs, create_const_vector_4_i32 (2, 6, 3, 7), "");
-			} else if (ins->inst_c0 == MONO_TYPE_I2 || ins->inst_c0 == MONO_TYPE_U2) {
+			} else if (ins->inst_c1 == MONO_TYPE_I2 || ins->inst_c1 == MONO_TYPE_U2) {
 				const int mask_values [] = { 4, 12, 5, 13, 6, 14, 7, 15 };
 				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
 					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I2)), 
 					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2)), 
 					create_const_vector_i32 (mask_values, 8), "");
-				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
-			} else if (ins->inst_c0 == MONO_TYPE_I1 || ins->inst_c0 == MONO_TYPE_U1) {
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c1));
+			} else if (ins->inst_c1 == MONO_TYPE_I1 || ins->inst_c1 == MONO_TYPE_U1) {
 				const int mask_values [] = { 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31 };
 				LLVMValueRef shuffled = LLVMBuildShuffleVector (builder, 
 					convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1)), 
 					convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I1)), 
 					create_const_vector_i32 (mask_values, 16), "");
-				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c0));
+				values [ins->dreg] = convert (ctx, shuffled, type_to_simd_type (ins->inst_c1));
 			} else {
 				g_assert_not_reached ();
 			}
@@ -7504,15 +7504,15 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_LOADU: {
-			LLVMValueRef dst_ptr = convert (ctx, lhs, LLVMPointerType (primitive_type_to_llvm_type (ins->inst_c0), 0));
-			LLVMValueRef dst_vec = LLVMBuildBitCast (builder, dst_ptr, LLVMPointerType (type_to_simd_type (ins->inst_c0), 0), "");
-			values [ins->dreg] = mono_llvm_build_aligned_load (builder, dst_vec, "", FALSE, ins->inst_c1); // inst_c1 is alignment
+			LLVMValueRef dst_ptr = convert (ctx, lhs, LLVMPointerType (primitive_type_to_llvm_type (ins->inst_c1), 0));
+			LLVMValueRef dst_vec = LLVMBuildBitCast (builder, dst_ptr, LLVMPointerType (type_to_simd_type (ins->inst_c1), 0), "");
+			values [ins->dreg] = mono_llvm_build_aligned_load (builder, dst_vec, "", FALSE, ins->inst_c0); // inst_c0 is alignment
 			break;
 		}
 
 		case OP_SSE_STORE: {
 			LLVMValueRef dst_vec = convert (ctx, lhs, LLVMPointerType (LLVMTypeOf (rhs), 0));
-			mono_llvm_build_aligned_store (builder, rhs, dst_vec, FALSE, ins->inst_c1);
+			mono_llvm_build_aligned_store (builder, rhs, dst_vec, FALSE, ins->inst_c0);
 			break;
 		}
 
@@ -7560,7 +7560,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildOr (builder, vec_lhs_i64, vec_rhs_i64, "");
-			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c1), "");
 			break;
 		}
 
@@ -7571,7 +7571,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildXor (builder, vec_lhs_i64, vec_rhs_i64, "");
-			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c1), "");
 			break;
 		}
 
@@ -7582,7 +7582,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildAnd (builder, vec_lhs_i64, vec_rhs_i64, "");
-			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c1), "");
 			break;
 		}
 
@@ -7594,7 +7594,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef vec_xor = LLVMBuildXor (builder, vec_lhs_i64, LLVMConstVector (minus_one, 2), "");
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildAnd (builder, vec_rhs_i64, vec_xor, "");
-			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c0), "");
+			values [ins->dreg] = LLVMBuildBitCast (builder, vec_and, type_to_simd_type (ins->inst_c1), "");
 			break;
 		}
 
@@ -7604,7 +7604,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2));
 			values [ins->dreg] = convert (ctx, 
 				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PACKUSWB), args, 2, dname),
-				type_to_simd_type (ins->inst_c0));
+				type_to_simd_type (ins->inst_c1));
 			break;
 		}
 
@@ -7612,7 +7612,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2] = { lhs, rhs };
 			values [ins->dreg] = convert (ctx, 
 				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSRLI_W), args, 2, dname), 
-				type_to_simd_type (ins->inst_c0));
+				type_to_simd_type (ins->inst_c1));
 			break;
 		}
 
@@ -7633,7 +7633,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_CREATE_SCALAR_UNSAFE: {
 			values [ins->dreg] = LLVMBuildInsertElement (builder, 
 				LLVMGetUndef (simd_class_to_llvm_type (ctx, ins->klass)), 
-				convert (ctx, lhs, primitive_type_to_llvm_type (ins->inst_c0)),
+				convert (ctx, lhs, primitive_type_to_llvm_type (ins->inst_c1)),
 				LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
 			break;
 		}
@@ -7660,7 +7660,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE41_INSERT: {
-			if (ins->inst_c0 == MONO_TYPE_R4) {
+			if (ins->inst_c1 == MONO_TYPE_R4) {
 				// special case for <float> overload
 				LLVMValueRef args [3];
 				args [0] = values [ins->sreg1];
@@ -7671,7 +7671,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				// other overloads are implemented with `insertelement`
 				values [ins->dreg] = LLVMBuildInsertElement (builder, 
 					values [ins->sreg1], 
-					convert (ctx, values [ins->sreg2], primitive_type_to_llvm_type (ins->inst_c0)), 
+					convert (ctx, values [ins->sreg2], primitive_type_to_llvm_type (ins->inst_c1)), 
 					convert (ctx, values [ins->sreg3], LLVMInt8Type ()), dname);
 			}
 			break;
