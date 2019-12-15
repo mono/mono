@@ -4,6 +4,7 @@ var MonoSupportLib = {
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
+		value_type_buffer: [],
 		mono_wasm_runtime_is_ready : false,
 		mono_wasm_ignore_pdb_load_errors: true,
 		pump_message: function () {
@@ -77,11 +78,23 @@ var MonoSupportLib = {
 
 		mono_wasm_get_value_type_properties: function(objId) {
 			if (!this.mono_wasm_get_value_type_properties_info)
-				this.mono_wasm_get_value_type_properties_info = Module.cwrap ("mono_wasm_get_value_type_properties", 'void', [ 'number' ]);
+				this.mono_wasm_get_value_type_properties_info = Module.cwrap ("mono_wasm_get_value_type_properties", 'void', [ 'number', 'number', 'number' ]);
 
 			this.var_info = [];
 			console.log (">> mono_wasm_get_value_type_properties " + objId);
-			this.mono_wasm_get_value_type_properties_info (objId);
+			// retrieve our tracked value type buffer
+			var typedArray = this.value_type_buffer [objId];
+			// allocate heap memory for the buffer
+			var numBytes = typedArray.length;
+			var ptr = Module._malloc(numBytes);
+			// move it to heap so it can be accessed from the debugger module
+			var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
+			heapBytes.set(new Uint8Array(typedArray.buffer));
+			//console.log(typedArray);
+			this.mono_wasm_get_value_type_properties_info (objId, heapBytes.byteOffset, numBytes);
+
+			// free the allocated heap bytes.
+			Module._free(heapBytes.byteOffset);
 
 			var res = this.var_info;
 			this.var_info = []
@@ -346,7 +359,7 @@ var MonoSupportLib = {
 		}
 	},
 
-	mono_wasm_add_value_obj_var: function(className, objectId) {
+	mono_wasm_add_value_obj_var: function(className, objectId, buf_addr, buflen) {
 		if (objectId == 0) {
 			MONO.var_info.push({
 				value: {
@@ -357,6 +370,7 @@ var MonoSupportLib = {
 				}
 			});
 		} else {
+			console.log("mono_wasm_add_value_obj_var " + objectId + " address " + buf_addr + " len " + buflen)
 			MONO.var_info.push({
 				value: {
 					type: "object",
@@ -365,6 +379,14 @@ var MonoSupportLib = {
 					objectId: "dotnet:valuetype:"+ objectId,
 				}
 			});
+
+			// Save off the buffer passed to a typed array
+			var typedarrayBytes = new Uint8Array(buflen);
+			// Receive from heap
+			typedarrayBytes.set(Module.HEAPU8.subarray(buf_addr, buf_addr + buflen));
+			// add it to our tracked value types
+			MONO.value_type_buffer[objectId] = typedarrayBytes;
+			//console.log(typedarrayBytes);
 		}
 	},
 
