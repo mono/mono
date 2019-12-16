@@ -121,6 +121,8 @@ namespace Mono.WebAssembly.Build
 				arguments = arguments.Add("--verbose");
 			}
 
+			arguments = arguments.AddRange ("--deterministic");
+
 			// add exclude features
 			arguments = arguments.AddRange ("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
 
