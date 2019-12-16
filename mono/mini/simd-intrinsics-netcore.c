@@ -190,19 +190,18 @@ emit_simd_ins (MonoCompile *cfg, MonoClass *klass, int opcode, int sreg1, int sr
 }
 
 static MonoInst*
-emit_simd_ins_binary (MonoCompile *cfg, MonoClass *klass, int opcode, int instc0, MonoMethodSignature *fsig, MonoInst **args)
+emit_simd_ins_for_sig (MonoCompile *cfg, MonoClass *klass, int opcode, int instc0, int instc1, MonoMethodSignature *fsig, MonoInst **args)
 {
-	MonoTypeEnum first_arg_type;
-	MonoClass* arg0_klass = mono_class_from_mono_type_internal (fsig->params [0]);
-	if (fsig->params [0]->type == MONO_TYPE_PTR) {
-		first_arg_type = m_class_get_byval_arg (m_class_get_element_class (arg0_klass))->type;
-	} else {
-		first_arg_type = mono_class_get_context (arg0_klass)->class_inst->type_argv [0]->type;
-	}
-	MonoInst* ins = emit_simd_ins (cfg, klass, opcode, args [0]->dreg, args [1]->dreg);
+	g_assert (fsig->param_count <= 3);
+	MonoInst* ins = emit_simd_ins (cfg, klass, opcode,
+		fsig->param_count > 0 ? args [0]->dreg : -1,
+		fsig->param_count > 1 ? args [1]->dreg : -1);
 	if (instc0 != -1)
 		ins->inst_c0 = instc0;
-	ins->inst_c1 = first_arg_type;
+	if (instc1 != -1)
+		ins->inst_c1 = instc1;
+	if (fsig->param_count == 3)
+		ins->sreg3 = args [2]->dreg;
 	return ins;
 }
 
@@ -728,6 +727,18 @@ get_vector_underlying_type (MonoType *vector_type)
 	return underlying_type->type;
 }
 
+static MonoTypeEnum
+get_underlying_type (MonoType* type)
+{
+	MonoClass* klass = mono_class_from_mono_type_internal (type);
+	if (type->type == MONO_TYPE_PTR)
+		return m_class_get_byval_arg (m_class_get_element_class (klass))->type;
+	else if (type->type == MONO_TYPE_GENERICINST)
+		return mono_class_get_context (klass)->class_inst->type_argv [0]->type;
+	else
+		return type->type;
+}
+
 static MonoInst*
 emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -735,6 +746,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	int id;
 	gboolean supported, is_64bit;
 	MonoClass *klass = cmethod->klass;
+	MonoTypeEnum arg0_type = fsig->param_count > 0 ? get_underlying_type (fsig->params [0]) : MONO_TYPE_VOID;
 
 	if (is_intrinsics_class (klass, "Sse", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
@@ -752,48 +764,23 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->type = STACK_I4;
 			return ins;
 		case SN_LoadAlignedVector128:
-		case SN_LoadVector128: {
-			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->type = STACK_VTYPE;
-			ins->inst_c0 = id == SN_LoadAlignedVector128 ? 16 : 1;
-			ins->inst_c1 = MONO_TYPE_R4;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
-		case SN_MoveMask: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			MONO_INST_NEW (cfg, ins, OP_SSE_MOVMSK);
-			ins->dreg = alloc_ireg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->type = STACK_I4;
-			ins->inst_c1 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_LOADU, 16 /*alignment*/, arg0_type, fsig, args);
+		case SN_LoadVector128:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_LOADU, 1 /*alignment*/, arg0_type, fsig, args);
+		case SN_MoveMask:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
 		case SN_MoveScalar:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_MOVS2, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS2, -1, arg0_type, fsig, args);
 		case SN_CompareNotEqual:
-			return emit_simd_ins_binary (cfg, klass, OP_XCOMPARE_FP, CMP_NE, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_NE, arg0_type, fsig, args);
 		case SN_CompareEqual:
-			return emit_simd_ins_binary (cfg, klass, OP_XCOMPARE_FP, CMP_EQ, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_EQ, arg0_type, fsig, args);
 		case SN_Add:
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FADD, arg0_type, fsig, args);
 		case SN_Multiply:
-		case SN_Subtract: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			if (id == SN_Add)
-				ins->inst_c0 = OP_FADD;
-			else if (id == SN_Multiply)
-				ins->inst_c0 = OP_FMUL;
-			else if (id == SN_Subtract)
-				ins->inst_c0 = OP_FSUB;
-			else
-				g_assert_not_reached ();
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FMUL, arg0_type, fsig, args);
+		case SN_Subtract:
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FSUB, arg0_type, fsig, args);
 		case SN_Shuffle: {
 			if (args [2]->opcode != OP_ICONST) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
@@ -801,20 +788,20 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 					"InvalidOperationException", "mask in Sse.Shuffle must be constant.");
 				return NULL;
 			}
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_SHUFFLE, args [2]->inst_c0 /*mask*/, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_SHUFFLE, args [2]->inst_c0 /*mask*/, arg0_type, fsig, args);
 		}
 		case SN_MoveHighToLow:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_MOVEHL, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVEHL, -1, arg0_type, fsig, args);
 		case SN_MoveLowToHigh:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_MOVELH, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVELH, -1, arg0_type, fsig, args);
 		case SN_UnpackLow:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_UNPACKLO, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_UNPACKLO, -1, arg0_type, fsig, args);
 		case SN_UnpackHigh:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_UNPACKHI, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_UNPACKHI, -1, arg0_type, fsig, args);
 		case SN_Store:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 1 /*alignment*/, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_STORE, 1 /*alignment*/, arg0_type, fsig, args);
 		case SN_StoreAligned:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 16 /*alignment*/, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_STORE, 16 /*alignment*/, arg0_type, fsig, args);
 		default:
 			return NULL;
 		}
@@ -837,129 +824,69 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return ins;
 		}
 		case SN_Subtract:
-		case SN_Add: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, OP_XBINOP, args [0]->dreg, args [1]->dreg);
-			if (vector_type == MONO_TYPE_R8)
-				ins->inst_c0 = id == SN_Add ? OP_FADD : OP_FSUB;
-			else
-				ins->inst_c0 = id == SN_Add ? OP_IADD : OP_ISUB;
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, arg0_type == MONO_TYPE_R8 ? OP_FSUB : OP_ISUB, arg0_type, fsig, args);
+		case SN_Add:
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, arg0_type == MONO_TYPE_R8 ? OP_FADD : OP_IADD, arg0_type, fsig, args);
 		case SN_And:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE2_AND, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_AND, -1, arg0_type, fsig, args);
 		case SN_AndNot:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE2_ANDN, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_ANDN, -1, arg0_type, fsig, args);
 		case SN_CompareNotEqual:
-		case SN_CompareEqual: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, vector_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, 
-				args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_CompareEqual ? CMP_EQ : CMP_NE;
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, arg0_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, CMP_NE, arg0_type, fsig, args);
+		case SN_CompareEqual:
+			return emit_simd_ins_for_sig (cfg, klass, arg0_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, CMP_EQ, arg0_type, fsig, args);
 		case SN_CompareGreaterThan:
-		case SN_CompareLessThan: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			ins = emit_simd_ins (cfg, klass, vector_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, 
-				args [0]->dreg, args [1]->dreg);
-			ins->inst_c0 = id == SN_CompareLessThan ? CMP_LT : CMP_GT;
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, arg0_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, CMP_GT, arg0_type, fsig, args);
+		case SN_CompareLessThan:
+			return emit_simd_ins_for_sig (cfg, klass, arg0_type == MONO_TYPE_R8 ? OP_XCOMPARE_FP : OP_XCOMPARE, CMP_LT, arg0_type, fsig, args);
 		case SN_LoadAlignedVector128:
-		case SN_LoadVector128: {
-			MonoClass *ptr_klass = m_class_get_element_class (mono_class_from_mono_type_internal (fsig->params [0]));
-			MonoType *ptr_type = m_class_get_byval_arg (ptr_klass);
-			MONO_INST_NEW (cfg, ins, OP_SSE_LOADU);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->type = STACK_VTYPE;
-			ins->inst_c0 = id == SN_LoadAlignedVector128 ? 16 : 1;
-			ins->inst_c1 = ptr_type->type;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
-		case SN_MoveMask: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			MONO_INST_NEW (cfg, ins, OP_SSE_MOVMSK);
-			ins->dreg = alloc_ireg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->type = STACK_I4;
-			ins->inst_c0 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
-		case SN_MoveScalar: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			if (fsig->param_count == 1) {
-				MONO_INST_NEW (cfg, ins, OP_SSE_MOVS);
-				ins->dreg = alloc_xreg (cfg);
-				ins->sreg1 = args [0]->dreg;
-				ins->type = STACK_VTYPE;
-				MONO_ADD_INS (cfg->cbb, ins);
-			} else if (fsig->param_count == 2) {
-				g_assert (vector_type == MONO_TYPE_R8);
-				ins = emit_simd_ins (cfg, klass, OP_SSE_MOVS2, args [0]->dreg, args [1]->dreg);
-			} else {
-				g_assert_not_reached ();
-			}
-			ins->inst_c1 = vector_type;
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_LOADU, 16 /*alignment*/, arg0_type, fsig, args);
+		case SN_LoadVector128:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_LOADU, 1 /*alignment*/, arg0_type, fsig, args);
+		case SN_MoveMask:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
+		case SN_MoveScalar:
+			return emit_simd_ins_for_sig (cfg, klass, fsig->param_count == 2 ? OP_SSE_MOVS2 : OP_SSE_MOVS, -1, arg0_type, fsig, args);
 		case SN_PackUnsignedSaturate:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE2_PACKUS, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE2_PACKUS, -1, arg0_type, fsig, args);
 		case SN_ShiftRightLogical: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			if (vector_type == MONO_TYPE_U2 && fsig->params [1]->type == MONO_TYPE_U1) {
-				MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-				ins = emit_simd_ins (cfg, klass, OP_SSE2_SRLI, args [0]->dreg, args [1]->dreg);
-				ins->inst_c1 = vector_type;
-				return ins;
-			}
-			// TODO: implement other overloads
-			return NULL;
+			if (arg0_type != MONO_TYPE_U2 || fsig->params [1]->type != MONO_TYPE_U1)
+				return NULL; // TODO: implement other overloads
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE2_SRLI, -1, arg0_type, fsig, args);
 		}
 		case SN_Shuffle: {
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			if ((vector_type == MONO_TYPE_R8 && args [2]->opcode != OP_ICONST) || 
-				(vector_type != MONO_TYPE_R8 && args [1]->opcode != OP_ICONST)) {
+			if ((arg0_type == MONO_TYPE_R8 && args [2]->opcode != OP_ICONST) || 
+				(arg0_type != MONO_TYPE_R8 && args [1]->opcode != OP_ICONST)) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 				mono_error_set_generic_error (cfg->error, "System", "InvalidOperationException",
 					"mask in Sse2.Shuffle must be constant.");
 				return NULL;
 			}
-			MONO_INST_NEW (cfg, ins, OP_SSE2_SHUFFLE);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			if (vector_type == MONO_TYPE_R8) {
+			ins = emit_simd_ins_for_sig (cfg, klass, OP_SSE2_SHUFFLE, -1, arg0_type, fsig, args);
+			ins->sreg3 = -1; // last arg is always a constant mask
+			if (arg0_type == MONO_TYPE_R8) { // "double" overload accepts two vectors
 				ins->sreg2 = args [1]->dreg;
 				ins->inst_c0 = args [2]->inst_c0; // mask
 			} else {
 				ins->sreg2 = args [0]->dreg;
 				ins->inst_c0 = args [1]->inst_c0; // mask
 			}
-			ins->type = STACK_VTYPE;
-			ins->inst_c1 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
 		case SN_Store:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 1 /*alignment*/, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_STORE, 1 /*alignment*/, arg0_type, fsig, args);
 		case SN_StoreAligned:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORE, 16 /*alignment*/, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_STORE, 16 /*alignment*/, arg0_type, fsig, args);
 		case SN_StoreScalar:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_STORES, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_STORES, -1, arg0_type, fsig, args);
 		case SN_UnpackLow:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_UNPACKLO, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_UNPACKLO, -1, arg0_type, fsig, args);
 		case SN_UnpackHigh:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE_UNPACKHI, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_UNPACKHI, -1, arg0_type, fsig, args);
 		case SN_Or:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE2_OR, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_OR, -1, arg0_type, fsig, args);
 		case SN_Xor:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE2_XOR, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_XOR, -1, arg0_type, fsig, args);
 		default:
 			return NULL;
 		}
@@ -980,18 +907,8 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
-		case SN_MoveAndDuplicate: {
-			g_assert (fsig->param_count == 1);
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			g_assert (vector_type == MONO_TYPE_R8);
-			MONO_INST_NEW (cfg, ins, OP_SSE3_MOVDDUP);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->klass = klass;
-			ins->type = STACK_VTYPE;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
+		case SN_MoveAndDuplicate:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE3_MOVDDUP, -1, arg0_type, fsig, args);
 		default:
 			return NULL;
 		}
@@ -1013,7 +930,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			ins->type = STACK_I4;
 			return ins;
 		case SN_Shuffle:
-			return emit_simd_ins_binary (cfg, klass, OP_SSSE3_SHUFFLE, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSSE3_SHUFFLE, -1, arg0_type, fsig, args);
 		default:
 			return NULL;
 		}
@@ -1034,32 +951,20 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
-		case SN_Insert: {
-			g_assert (fsig->param_count == 3);
+		case SN_Insert:
 			if (args [2]->opcode != OP_ICONST) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 				mono_error_set_generic_error (cfg->error, "System", 
 					"InvalidOperationException", "index in Sse41.Insert must be constant.");
 				return NULL;
 			}
-			MonoTypeEnum vector_type = get_vector_underlying_type (fsig->params [0]);
-			MONO_INST_NEW (cfg, ins, OP_SSE41_INSERT);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->sreg2 = args [1]->dreg;
-			ins->sreg3 = args [2]->dreg;
-			ins->klass = klass;
-			ins->type = STACK_VTYPE;
-			ins->inst_c1 = vector_type;
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		}
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE41_INSERT, -1, arg0_type, fsig, args);
 		case SN_Max:
-			return emit_simd_ins_binary (cfg, klass, OP_XBINOP, OP_IMAX, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_IMAX, arg0_type, fsig, args);
 		case SN_Min:
-			return emit_simd_ins_binary (cfg, klass, OP_XBINOP, OP_IMIN, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_IMIN, arg0_type, fsig, args);
 		case SN_TestZ:
-			return emit_simd_ins_binary (cfg, klass, OP_SSE41_PTESTZ, -1, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE41_PTESTZ, -1, arg0_type, fsig, args);
 		default:
 			return NULL;
 		}

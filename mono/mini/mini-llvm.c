@@ -7553,7 +7553,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE2_OR: {
+		case OP_SSE_OR: {
 			LLVMValueRef minus_one [2];
 			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
@@ -7564,7 +7564,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE2_XOR: {
+		case OP_SSE_XOR: {
 			LLVMValueRef minus_one [2];
 			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
@@ -7575,7 +7575,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE2_AND: {
+		case OP_SSE_AND: {
 			LLVMValueRef minus_one [2];
 			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
@@ -7586,7 +7586,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE2_ANDN: {
+		case OP_SSE_ANDN: {
 			LLVMValueRef minus_one [2];
 			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
