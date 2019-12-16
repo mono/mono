@@ -368,6 +368,7 @@ class Driver {
 		public bool EnableThreads;
 		public bool NativeStrip;
 		public bool Simd;
+		public bool EnableDynamicRuntime;
 	}
 
 	int Run (string[] args) {
@@ -394,6 +395,7 @@ class Driver {
 		bool enable_zlib = false;
 		bool enable_fs = false;
 		bool enable_threads = false;
+		bool enable_dynamic_runtime = false;
 		bool is_netcore = false;
 		bool enable_simd = false;
 		var il_strip = false;
@@ -426,7 +428,8 @@ class Driver {
 				EnableZLib = false,
 				EnableFS = false,
 				NativeStrip = true,
-				Simd = false
+				Simd = false,
+				EnableDynamicRuntime = false
 			};
 
 		var p = new OptionSet () {
@@ -457,7 +460,7 @@ class Driver {
 				{ "embed-file=", s => embed_files.Add (s) },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
-					};
+			};
 
 		AddFlag (p, new BoolFlag ("debug", "enable c# debugging", opts.Debug, b => opts.Debug = b));
 		AddFlag (p, new BoolFlag ("debugrt", "enable debug runtime", opts.DebugRuntime, b => opts.DebugRuntime = b));
@@ -469,6 +472,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
 		AddFlag (p, new BoolFlag ("enable-fs", "enable filesystem support (through Emscripten's file_packager.py in a later phase)", opts.EnableFS, b => opts.EnableFS = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
+		AddFlag (p, new BoolFlag ("dynamic-runtime", "enable dynamic runtime (support for Emscripten's dlopen)", opts.EnableDynamicRuntime, b => opts.EnableDynamicRuntime = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
 
@@ -504,6 +508,7 @@ class Driver {
 		enable_zlib = opts.EnableZLib;
 		enable_fs = opts.EnableFS;
 		enable_threads = opts.EnableThreads;
+		enable_dynamic_runtime = opts.EnableDynamicRuntime;
 		enable_simd = opts.Simd;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
@@ -704,6 +709,8 @@ class Driver {
 			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/netcore-release" : "builds/netcore-debug");
 		else if (enable_threads)
 			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
+		else if (enable_dynamic_runtime)
+			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/dynamic-release" : "builds/dynamic-debug");
 		else
 			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
 		if (!emit_ninja) {
@@ -943,7 +950,10 @@ class Driver {
 		}
 		if (enable_aot)
 			ninja.WriteLine ("build $builddir/aot-in: mkdir");
-
+		{
+			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "linker-subs.xml"));
+			ninja.WriteLine ($"build $builddir/linker-subs.xml: cpifdiff {source_file}");
+		}
 		var ofiles = "";
 		var bc_files = "";
 		string linker_infiles = "";
@@ -1085,6 +1095,8 @@ class Driver {
 			}
 
 			string linker_args = "";
+			linker_args += "--substitutions linker-subs.xml ";
+			linker_infiles += "| linker-subs.xml";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {

@@ -622,7 +622,7 @@ var BindingSupportLib = {
 			this.bindings_lazy_init ();
 
 			// Allocate memory for error
-			var is_error = Module._malloc (4);
+			var out_exc = Module._malloc (4);
 			// Set arguement memory to null;
 			var args_mem = null;
 			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
@@ -682,17 +682,17 @@ var BindingSupportLib = {
 					}
 				}
 			}
-			Module.setValue (is_error, 0, "i32");
+			Module.setValue (out_exc, 0, "i32");
 
-			var res = this.invoke_method (method, this_arg, args_mem, is_error);
+			var res = this.invoke_method (method, this_arg, args_mem, out_exc);
 
-			var eh_res = Module.getValue (is_error, "i32");
+			var eh_res = Module.getValue (out_exc, "i32");
 
 			if (extra_args_mem)
 				Module._free (extra_args_mem);
 			if (args_mem)
 				Module._free (args_mem);
-			Module._free (is_error);
+			Module._free (out_exc);
 
 			if (eh_res != 0) {
 				var msg = this.conv_string (res);

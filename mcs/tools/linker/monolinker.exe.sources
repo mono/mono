@@ -52,4 +52,6 @@
 ../../../external/linker/src/linker/Linker.Steps/CodeRewriterStep.cs
 ../../../external/linker/src/linker/Linker.Steps/RemoveFeaturesStep.cs
 ../../../external/linker/src/linker/Linker.Steps/ReflectionBlockedStep.cs
+../../../external/linker/src/linker/Linker.Steps/BodySubstituterStep.cs
+../../../external/linker/src/linker/Linker.Steps/RemoveUnreachableBlocksStep.cs
 
