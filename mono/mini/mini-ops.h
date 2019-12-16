@@ -1005,13 +1005,12 @@ MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
 
 /* sse 1 */
-/* inst_c0 is target type */
+/* inst_c1 is target type */
 MINI_OP(OP_SSE_LOADU, "sse_loadu", XREG, XREG, NONE)
 MINI_OP(OP_SSE_MOVMSK, "sse_movmsk", IREG, XREG, NONE)
 MINI_OP(OP_SSE_STORE, "sse_store", NONE, XREG, XREG)
 MINI_OP(OP_SSE_STORES, "sse_stores", NONE, XREG, XREG)
 MINI_OP(OP_SSE_MOVS, "sse_movs", XREG, XREG, NONE)
-MINI_OP(OP_SSE_MOVS2, "sse_movs2", XREG, XREG, XREG)
 MINI_OP(OP_SSE_MOVEHL, "sse_movehl", XREG, XREG, XREG)
 MINI_OP(OP_SSE_MOVELH, "sse_movelh", XREG, XREG, XREG)
 MINI_OP(OP_SSE_UNPACKLO, "sse_unpacklo", XREG, XREG, XREG)
@@ -1031,14 +1030,12 @@ MINI_OP(OP_SSE2_SHUFFLE, "sse2_shuffle", XREG, XREG, XREG)
 MINI_OP(OP_SSE3_MOVDDUP, "sse3_movddup", XREG, XREG, NONE)
 
 /* ssse 3 */
-/* inst_c0 is target type */
 MINI_OP(OP_SSSE3_SHUFFLE, "ssse3_shuffle", XREG, XREG, XREG)
 
 /* sse 4.1 */
 /* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */
 MINI_OP(OP_SSE41_ROUNDPD, "roundpd", XREG, XREG, NONE)
 MINI_OP(OP_SSE41_ROUNDSS, "roundss", XREG, XREG, NONE)
-/* inst_c0 is target type */
 MINI_OP3(OP_SSE41_INSERT, "sse41_insert", XREG, XREG, XREG, IREG)
 MINI_OP(OP_SSE41_PTESTZ, "sse41_ptestz", IREG, XREG, XREG)
 

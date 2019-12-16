@@ -724,21 +724,13 @@ is_intrinsics_class (MonoClass *klass, const char *name, gboolean *is_64bit)
 	}
 }
 
-static MonoTypeEnum 
-get_vector_underlying_type (MonoType *vector_type)
-{
-	MonoClass* klass = mono_class_from_mono_type_internal (vector_type);
-	MonoType* underlying_type = mono_class_get_context (klass)->class_inst->type_argv [0];
-	return underlying_type->type;
-}
-
 static MonoTypeEnum
 get_underlying_type (MonoType* type)
 {
 	MonoClass* klass = mono_class_from_mono_type_internal (type);
-	if (type->type == MONO_TYPE_PTR)
+	if (type->type == MONO_TYPE_PTR) // e.g. int* => MONO_TYPE_I4
 		return m_class_get_byval_arg (m_class_get_element_class (klass))->type;
-	else if (type->type == MONO_TYPE_GENERICINST)
+	else if (type->type == MONO_TYPE_GENERICINST) // e.g. Vector128<int> => MONO_TYPE_I4
 		return mono_class_get_context (klass)->class_inst->type_argv [0]->type;
 	else
 		return type->type;
@@ -775,7 +767,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_MoveMask:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
 		case SN_MoveScalar:
-			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS2, -1, arg0_type, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS, -1, arg0_type, fsig, args);
 		case SN_CompareNotEqual:
 			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_NE, arg0_type, fsig, args);
 		case SN_CompareEqual:
@@ -861,7 +853,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_MoveMask:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
 		case SN_MoveScalar:
-			return emit_simd_ins_for_sig (cfg, klass, fsig->param_count == 2 ? OP_SSE_MOVS2 : OP_SSE_MOVS, -1, arg0_type, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS, -1, arg0_type, fsig, args);
 		case SN_PackUnsignedSaturate:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE2_PACKUS, -1, arg0_type, fsig, args);
 		case SN_ShiftRightLogical: {
@@ -1217,7 +1209,7 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	case SN_AsUInt16:
 	case SN_AsUInt32:
 	case SN_AsUInt64: {
-		if (get_vector_underlying_type (fsig->params [0]) <= MONO_TYPE_R8) {
+		if (get_underlying_type (fsig->params [0]) <= MONO_TYPE_R8) {
 			return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
 		}
 		break;

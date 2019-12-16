@@ -8,9 +8,4 @@
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup>
-    <None Update="SRI-reference-data.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

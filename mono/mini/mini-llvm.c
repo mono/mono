@@ -7422,8 +7422,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE_MOVS:
-		case OP_SSE_MOVS2: {
+		case OP_SSE_MOVS: {
 			if (ins->inst_c1 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_4_i32 (0, 5, 6, 7), "");
 			else if (ins->inst_c1 == MONO_TYPE_R8)
@@ -7623,7 +7622,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE3_MOVDDUP: {
-			// %vec = shufflevector <2 x double> %lhs, <2 x double> undef, <2 x i32> zeroinitializer
 			values [ins->dreg] = LLVMBuildShuffleVector (builder, lhs,
 				LLVMGetUndef (LLVMVectorType (LLVMDoubleType (), 2)), 
 				LLVMConstNull (LLVMVectorType (LLVMInt32Type (), 2)), "");
