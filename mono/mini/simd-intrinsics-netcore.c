@@ -826,7 +826,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		
 		switch (id) {
 		case SN_get_IsSupported: {
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		}
@@ -911,7 +911,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_MoveAndDuplicate:
@@ -933,7 +933,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_Shuffle:
@@ -955,7 +955,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 
 		switch (id) {
 		case SN_get_IsSupported:
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, supported ? 1 : 0);
 			ins->type = STACK_I4;
 			return ins;
 		case SN_Insert:
@@ -1201,6 +1201,8 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	if (id == -1)
 		return NULL;
 
+	MonoTypeEnum arg0_type = fsig->param_count > 0 ? get_underlying_type (fsig->params [0]) : MONO_TYPE_VOID;
+
 	switch (id) {
 	case SN_AsByte:
 	case SN_AsDouble:
@@ -1211,12 +1213,8 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	case SN_AsSingle:
 	case SN_AsUInt16:
 	case SN_AsUInt32:
-	case SN_AsUInt64: {
-		if (get_underlying_type (fsig->params [0]) <= MONO_TYPE_R8) {
-			return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
-		}
-		break;
-	}
+	case SN_AsUInt64:
+		return emit_simd_ins (cfg, klass, OP_XCAST, args [0]->dreg, -1);
 	case SN_Create: {
 		MonoType *etype = get_vector_t_elem_type (fsig->ret);
 		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype)) {
@@ -1226,17 +1224,8 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 			break;
 		}
 	}
-	case SN_CreateScalarUnsafe: {
-		g_assert (fsig->param_count == 1);
-		MONO_INST_NEW (cfg, ins, OP_CREATE_SCALAR_UNSAFE);
-		ins->dreg = alloc_xreg (cfg);
-		ins->sreg1 = args [0]->dreg;
-		ins->klass = klass;
-		ins->type = STACK_VTYPE;
-		ins->inst_c1 = fsig->params [0]->type;
-		MONO_ADD_INS (cfg->cbb, ins);
-		return ins;
-	}
+	case SN_CreateScalarUnsafe:
+		return emit_simd_ins_for_sig (cfg, klass, OP_CREATE_SCALAR_UNSAFE, -1, arg0_type, fsig, args);
 	default:
 		break;
 	}
