@@ -36,7 +36,7 @@
 	branch = mono
 [submodule "external/corefx"]
 	path = external/corefx
-	url = git://github.com/mono/corefx.git
+	url = git://github.com/baulig/corefx.git
 [submodule "external/bockbuild"]
 	path = external/bockbuild
 	url = git://github.com/mono/bockbuild.git
