@@ -616,8 +616,11 @@ emit_sys_numerics_vector_t (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 
 static guint16 sse_methods [] = {
 	SN_Add,
+	SN_And,
+	SN_AndNot,
 	SN_CompareEqual,
 	SN_CompareNotEqual,
+	SN_Divide,
 	SN_LoadAlignedVector128,
 	SN_LoadVector128,
 	SN_MoveHighToLow,
@@ -625,12 +628,14 @@ static guint16 sse_methods [] = {
 	SN_MoveMask,
 	SN_MoveScalar,
 	SN_Multiply,
+	SN_Or,
 	SN_Shuffle,
 	SN_Store,
 	SN_StoreAligned,
 	SN_Subtract,
 	SN_UnpackHigh,
 	SN_UnpackLow,
+	SN_Xor,
 	SN_get_IsSupported
 };
 
@@ -775,10 +780,20 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_NE, arg0_type, fsig, args);
 		case SN_CompareEqual:
 			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_EQ, arg0_type, fsig, args);
-		case SN_Add:
-			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FADD, arg0_type, fsig, args);
+		case SN_And:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_AND, -1, arg0_type, fsig, args);
+		case SN_AndNot:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_ANDN, -1, arg0_type, fsig, args);
+		case SN_Or:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_OR, -1, arg0_type, fsig, args);
+		case SN_Xor:
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_XOR, -1, arg0_type, fsig, args);
 		case SN_Multiply:
 			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FMUL, arg0_type, fsig, args);
+		case SN_Divide:
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FDIV, arg0_type, fsig, args);
+		case SN_Add:
+			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FADD, arg0_type, fsig, args);
 		case SN_Subtract:
 			return emit_simd_ins_for_sig (cfg, klass, OP_XBINOP, OP_FSUB, arg0_type, fsig, args);
 		case SN_Shuffle: {

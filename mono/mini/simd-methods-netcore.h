@@ -63,6 +63,7 @@ METHOD(ParallelBitExtract)
 // Sse
 METHOD(Add)
 METHOD(CompareNotEqual)
+METHOD(Divide)
 METHOD(Store)
 METHOD(Subtract)
 METHOD(CompareEqual)
