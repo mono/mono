@@ -767,7 +767,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_MoveMask:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
 		case SN_MoveScalar:
-			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS, -1, arg0_type, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS2, -1, arg0_type, fsig, args);
 		case SN_CompareNotEqual:
 			return emit_simd_ins_for_sig (cfg, klass, OP_XCOMPARE_FP, CMP_NE, arg0_type, fsig, args);
 		case SN_CompareEqual:
@@ -853,7 +853,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		case SN_MoveMask:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVMSK, -1, arg0_type, fsig, args);
 		case SN_MoveScalar:
-			return emit_simd_ins_for_sig (cfg, klass, OP_SSE_MOVS, -1, arg0_type, fsig, args);
+			return emit_simd_ins_for_sig (cfg, klass, fsig->param_count == 2 ? OP_SSE_MOVS2 : OP_SSE_MOVS, -1, arg0_type, fsig, args);
 		case SN_PackUnsignedSaturate:
 			return emit_simd_ins_for_sig (cfg, klass, OP_SSE2_PACKUS, -1, arg0_type, fsig, args);
 		case SN_ShiftRightLogical: {

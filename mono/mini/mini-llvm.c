@@ -7422,7 +7422,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
-		case OP_SSE_MOVS: {
+		case OP_SSE_MOVS:
+		case OP_SSE_MOVS2: {
 			if (ins->inst_c1 == MONO_TYPE_R4)
 				values [ins->dreg] = LLVMBuildShuffleVector (builder, rhs, lhs, create_const_vector_4_i32 (0, 5, 6, 7), "");
 			else if (ins->inst_c1 == MONO_TYPE_R8)
