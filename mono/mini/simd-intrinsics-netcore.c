@@ -1193,6 +1193,9 @@ emit_vector128 (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig
 	MonoClass *klass;
 	int id;
 
+	if (!COMPILE_LLVM (cfg))
+		return NULL;
+
 	klass = cmethod->klass;
 	id = lookup_intrins (vector_128_methods, sizeof (vector_128_methods), cmethod);
 	if (id == -1)
