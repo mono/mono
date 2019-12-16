@@ -123,7 +123,7 @@ var BindingSupportLib = {
 		},
 
 		is_nested_array: function (ele) {
-			return this.call_method (this.is_simple_array, null, "mi", [ ele ]);
+			return this.call_method (this.is_simple_array, null, "m", [ ele ]);
 		},
 
 		mono_array_to_js_array: function (mono_array) {
@@ -224,7 +224,7 @@ var BindingSupportLib = {
 				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
 			}
 			case 20: // clr .NET DateTime
-				var dateValue = this.call_method(this.get_date_value, null, "md", [ mono_obj ]);
+				var dateValue = this.call_method(this.get_date_value, null, "m", [ mono_obj ]);
 				return new Date(dateValue);
 			case 21: // clr .NET DateTimeOffset
 				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
@@ -304,7 +304,7 @@ var BindingSupportLib = {
 					return this.get_task_and_bind (tcs, js_obj);
 				case js_obj.constructor.name === "Date":
 					// We may need to take into account the TimeZone Offset
-					return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+					return this.call_method(this.create_date_time, null, "d", [ js_obj.getTime() ]);
 				default:
 					return this.extract_mono_obj (js_obj);
 			}
@@ -317,7 +317,7 @@ var BindingSupportLib = {
 				case typeof js_obj === "undefined":
 					return 0;
 				case typeof js_obj === "string":
-					return this.call_method(this.create_uri, null, "sm", [ js_obj ])
+					return this.call_method(this.create_uri, null, "s", [ js_obj ])
 				default:
 					return this.extract_mono_obj (js_obj);
 			}
@@ -533,7 +533,7 @@ var BindingSupportLib = {
 
 		wasm_get_raw_obj: function (gchandle)
 		{
-			return this.call_method (this.get_raw_mono_obj, null, "im", [gchandle]);
+			return this.call_method (this.get_raw_mono_obj, null, "i", [gchandle]);
 		},
 
 		try_extract_mono_obj:function (js_obj) {
@@ -563,11 +563,11 @@ var BindingSupportLib = {
 		free_task_completion_source: function (tcs) {
 			if (tcs.is_mono_tcs_result_set)
 			{
-				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_gchandle__ ]);
+				this.call_method (this.unbind_raw_obj_and_free, null, "i", [ tcs.__mono_gchandle__ ]);
 			}
 			if (tcs.__mono_bound_task__)
 			{
-				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_bound_task__ ]);
+				this.call_method (this.unbind_raw_obj_and_free, null, "i", [ tcs.__mono_bound_task__ ]);
 			}
 		},
 
@@ -628,9 +628,10 @@ var BindingSupportLib = {
 			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
 			var has_args_marshal = args_marshal !== null && typeof args_marshal !== "undefined" && args_marshal.length > 0;
 
-			if (has_args_marshal && (!has_args || args.length < args_marshal.length))
-				throw Error("Parameter count mismatch.");
-			
+			if (has_args_marshal && (!has_args || args.length < args_marshal.length)) {
+				if (args.length + 1 != args_marshal.length || args_marshal.slice(-1) != "m")
+					throw Error("Parameter count mismatch.");
+			}
 			// check if the method signature needs argument mashalling
 			if (has_args_marshal && has_args) {
 				var extra_args_mem = 0;
@@ -726,7 +727,7 @@ var BindingSupportLib = {
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
 			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.  
 			// This may need more analysis if causes problems again.
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mo", [ mono_args ]);
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
@@ -817,7 +818,7 @@ var BindingSupportLib = {
 		},
 		wasm_get_core_type: function (obj)
 		{
-			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+			return this.call_method (this.get_core_type, null, "s", [ "WebAssembly.Core."+obj.constructor.name ]);
 		},
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
