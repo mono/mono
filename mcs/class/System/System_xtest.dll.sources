@@ -35,6 +35,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/System.CodeDom/tests/*.cs:CodeGenerationTests.cs,CSharpCodeGenerationTests.cs,VBCodeGenerationTests.cs
 
 # System.Net.Requests
+../../../external/corefx/src/Common/tests/System/Net/Http/GenericLoopbackServer.cs
 ../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
