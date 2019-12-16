@@ -8,6 +8,7 @@
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/threads.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
@@ -394,6 +395,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_initialize_internals();
+
+	mono_thread_set_main (mono_thread_current ());
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
