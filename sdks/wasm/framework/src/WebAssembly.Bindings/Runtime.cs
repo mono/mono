@@ -402,7 +402,11 @@ namespace WebAssembly {
 				try {
 					if (task.Exception == null) {
 						var resultProperty = task.GetType ().GetProperty("Result");
-						cont_obj.Invoke ("resolve", resultProperty?.GetValue(task));
+						
+						if (resultProperty == null)
+							cont_obj.Invoke ("resolve", (object[])null);
+						else
+							cont_obj.Invoke ("resolve", resultProperty.GetValue(task));
 					} else {
 						cont_obj.Invoke ("reject", task.Exception.ToString ());
 					}
