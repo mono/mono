@@ -1095,7 +1095,7 @@ class Driver {
 			}
 
 			string linker_args = "";
-			linker_args += "--substitutions linker-subs.xml ";
+			//linker_args += "--substitutions linker-subs.xml ";
 			linker_infiles += "| linker-subs.xml";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
