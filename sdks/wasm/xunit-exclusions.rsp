@@ -22,9 +22,6 @@
 -nomethod System.Linq.Expressions.Tests.CompilerTests.CompileDeepTree_NoStackOverflow
 -nomethod System.Linq.Expressions.Tests.CompilerTests.CompileDeepTree_NoStackOverflowFast
 
-# Crashes
--noclass System.Tests.MathFTests
-
 # OOM
 -nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeByteArrayOverflowingBitArray_ThrowsArgumentException
 -nomethod System.Collections.Tests.BitArray_CtorTests.Clone_LongLength_Works
@@ -48,6 +45,8 @@
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_AllSubstrings
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_EnglishUSCulture
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_InvariantCulture
+-nomethod System.Tests.MathFTests.Round_Digits
+-nomethod System.Tests.MathFTests.Truncate
 
 # System.Data
 # Hangs
