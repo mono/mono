@@ -1,4 +1,4 @@
-#if SECURITY_DEP
+#if SECURITY_DEP && !MONOTOUCH_WATCH
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
