@@ -191,13 +191,13 @@ class WasmRunner : IMessageSink
 				continue;
 			}
 
-			var itrait_attrs = tc.TestMethod.Method.GetCustomAttributes(typeof(ITraitAttribute));
-			// FIXME:
-			if (itrait_attrs.Count () > 0) {
-				Console.WriteLine ("SKIP (ITraitAttribute): " + tc.DisplayName);
-				nfiltered ++;
-				continue;
-			}
+			// var itrait_attrs = tc.TestMethod.Method.GetCustomAttributes(typeof(ITraitAttribute));
+			// // FIXME:
+			// if (itrait_attrs.Count () > 0) {
+			// 	Console.WriteLine ("SKIP (ITraitAttribute): " + tc.DisplayName);
+			// 	nfiltered ++;
+			// 	continue;
+			// }
 			/*
 			foreach (var attr in itrait_attrs) {
 				Console.WriteLine (attr);
