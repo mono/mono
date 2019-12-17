@@ -6821,46 +6821,46 @@ fi
 ### Set -Werror options
 #
 # Anything involving -Werror must be done late because autoconf depends on compiling with warnings to be success.
+#if test x"$GCC" = xyes; then
+
+#	if test "x$with_jemalloc" != "xyes"; then
 #
-if test x"$GCC" = xyes; then
+#		# incompatible-pointer-types requires gcc circa 5.x
+#
+#		ORIG_CFLAGS=$CFLAGS
+#		CFLAGS="$CFLAGS -Wincompatible-pointer-types -Werror"
+#		AC_MSG_CHECKING(for -Wincompatible-pointer-types option to gcc)
+#		AC_TRY_COMPILE([],[
+#		], [
+#			AC_MSG_RESULT(yes)
+#			CFLAGS="$ORIG_CFLAGS -Werror=incompatible-pointer-types"
+#		], [
+#			AC_MSG_RESULT(no)
+#			CFLAGS=$ORIG_CFLAGS
+#		])
+#
+#		CFLAGS="$CFLAGS -Werror=return-type"
+#	fi
+#
+#	# Implicit function declarations are not 64 bit safe
+#	# Do this late, since this causes lots of configure tests to fail
+#	CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
+#	# jay has a lot of implicit declarations
+#	JAY_CFLAGS="-Wno-implicit-function-declaration"
+#
+#	ORIG_CFLAGS=$CFLAGS
+#	CFLAGS="$CFLAGS -Wsometimes-uninitialized -Werror"
+#	AC_MSG_CHECKING(for -Wsometimes-uninitialized option to gcc)
+#	AC_TRY_COMPILE([],[
+#	], [
+#		AC_MSG_RESULT(yes)
+#		CFLAGS="$ORIG_CFLAGS -Werror=sometimes-uninitialized"
+#	], [
+#		AC_MSG_RESULT(no)
+#		CFLAGS=$ORIG_CFLAGS
+#	])
+#fi
 
-	if test "x$with_jemalloc" != "xyes"; then
-
-		# incompatible-pointer-types requires gcc circa 5.x
-
-		ORIG_CFLAGS=$CFLAGS
-		CFLAGS="$CFLAGS -Wincompatible-pointer-types -Werror"
-		AC_MSG_CHECKING(for -Wincompatible-pointer-types option to gcc)
-		AC_TRY_COMPILE([],[
-		], [
-			AC_MSG_RESULT(yes)
-			CFLAGS="$ORIG_CFLAGS -Werror=incompatible-pointer-types"
-		], [
-			AC_MSG_RESULT(no)
-			CFLAGS=$ORIG_CFLAGS
-		])
-
-		CFLAGS="$CFLAGS -Werror=return-type"
-	fi
-
-	# Implicit function declarations are not 64 bit safe
-	# Do this late, since this causes lots of configure tests to fail
-	CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
-	# jay has a lot of implicit declarations
-	JAY_CFLAGS="-Wno-implicit-function-declaration"
-
-	ORIG_CFLAGS=$CFLAGS
-	CFLAGS="$CFLAGS -Wsometimes-uninitialized -Werror"
-	AC_MSG_CHECKING(for -Wsometimes-uninitialized option to gcc)
-	AC_TRY_COMPILE([],[
-	], [
-		AC_MSG_RESULT(yes)
-		CFLAGS="$ORIG_CFLAGS -Werror=sometimes-uninitialized"
-	], [
-		AC_MSG_RESULT(no)
-		CFLAGS=$ORIG_CFLAGS
-	])
-fi
 
 # zlib/configure checks if this program compiles and if so
 # defines _LARGEFILE64_SOURCE on the compiler command line (not config.h).
