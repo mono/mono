@@ -30,7 +30,9 @@
 -nonamespace System.IO.Pipes.Tests
 
 # corlib failures
--noclass System.Buffers.Text.Tests.ParserTests
+-nomethod System.Buffers.Text.Tests.ParserTests.TestParserDecimal
+-nomethod System.Buffers.Text.Tests.ParserTests.TestParserDouble
+-nomethod System.Buffers.Text.Tests.ParserTests.TestParserSingle
 -nomethod System.Collections.Tests.ComparerTests.Default_Compare
 -nomethod System.Text.Encodings.Tests.EncodingMiscTests.GetEncodingsTest
 -nomethod System.Tests.ValueTupleTests.TestCompareTo
