@@ -160,18 +160,20 @@ public static class Program {
         }
 
         int parts = files.Count == 0 ? 0 : files.Max (f => f.SplitNumber);
-        TextWriter[] outputs = new TextWriter[parts + 1];
+        if (useStdout && parts > 0)
+            throw new InvalidOperationException ("useStdout can't be used together with assembly splitting");
 
-        for (int i = 0; i < parts + 1; i++) {
+        TextWriter[] outputs = new TextWriter[parts + 1];
+        for (int i = 0; i < parts + 1; i++) { // we create one file with all sources and part assemblies with only common+specific ones
             outputs[i] = useStdout ? Console.Out : new StreamWriter (i == 0 ? outFile : $"{outFile}.part{i}");
         }
 
         foreach (var fileName in files) {
-            if (fileName.SplitNumber == 0) {
+            if (fileName.SplitNumber == 0) { // split number 0 is the special case: common files that should be included in all output parts
                 foreach (var output in outputs)
                     output.WriteLine (fileName.RelativePath);
             }
-            else {
+            else { // all other split numbers should only be included in the full assembly and the specific part assembly
                 outputs[0].WriteLine (fileName.RelativePath);
                 outputs[fileName.SplitNumber].WriteLine (fileName.RelativePath);
             }
