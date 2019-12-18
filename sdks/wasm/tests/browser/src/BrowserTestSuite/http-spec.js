@@ -378,11 +378,11 @@ describe("The WebAssembly Http Test Suite",function(){
     }, DEFAULT_TIMEOUT);    
 
         
-    it('RecieveHostCloseWebSocket: should return Closed.', (done) => {
+    it('ReceiveHostCloseWebSocket: should return Closed.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:RecieveHostCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ReceiveHostCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
         (result) => 
         {
             try {
