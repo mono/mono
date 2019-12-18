@@ -47,8 +47,6 @@
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_AllSubstrings
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_EnglishUSCulture
 -nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_InvariantCulture
--nomethod System.Tests.MathFTests.Round_Digits
--nomethod System.Tests.MathFTests.Truncate
 
 # System.Data
 # Hangs
