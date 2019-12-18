@@ -205,6 +205,31 @@ emit_simd_ins_for_sig (MonoCompile *cfg, MonoClass *klass, int opcode, int instc
 	return ins;
 }
 
+static gboolean
+is_hw_intrinsics_class (MonoClass *klass, const char *name, gboolean *is_64bit)
+{
+	const char *class_name = m_class_get_name (klass);
+	if ((!strcmp (class_name, "X64") || !strcmp (class_name, "Arm64")) && klass->nested_in) {
+		*is_64bit = TRUE;
+		return !strcmp (m_class_get_name (klass->nested_in), name); 
+	} else {
+		*is_64bit = FALSE;
+		return !strcmp (class_name, name);
+	}
+}
+
+static MonoTypeEnum
+get_underlying_type (MonoType* type)
+{
+	MonoClass* klass = mono_class_from_mono_type_internal (type);
+	if (type->type == MONO_TYPE_PTR) // e.g. int* => MONO_TYPE_I4
+		return m_class_get_byval_arg (m_class_get_element_class (klass))->type;
+	else if (type->type == MONO_TYPE_GENERICINST) // e.g. Vector128<int> => MONO_TYPE_I4
+		return mono_class_get_context (klass)->class_inst->type_argv [0]->type;
+	else
+		return type->type;
+}
+
 static MonoInst*
 emit_xcompare (MonoCompile *cfg, MonoClass *klass, MonoTypeEnum etype, MonoInst *arg1, MonoInst *arg2)
 {
@@ -711,31 +736,6 @@ static guint16 bmi2_methods [] = {
 	SN_get_IsSupported,
 };
 
-static gboolean
-is_intrinsics_class (MonoClass *klass, const char *name, gboolean *is_64bit)
-{
-	const char *class_name = m_class_get_name (klass);
-	if ((!strcmp (class_name, "X64") || !strcmp (class_name, "Arm64")) && klass->nested_in) {
-		*is_64bit = TRUE;
-		return !strcmp (m_class_get_name (klass->nested_in), name); 
-	} else {
-		*is_64bit = FALSE;
-		return !strcmp (class_name, name);
-	}
-}
-
-static MonoTypeEnum
-get_underlying_type (MonoType* type)
-{
-	MonoClass* klass = mono_class_from_mono_type_internal (type);
-	if (type->type == MONO_TYPE_PTR) // e.g. int* => MONO_TYPE_I4
-		return m_class_get_byval_arg (m_class_get_element_class (klass))->type;
-	else if (type->type == MONO_TYPE_GENERICINST) // e.g. Vector128<int> => MONO_TYPE_I4
-		return mono_class_get_context (klass)->class_inst->type_argv [0]->type;
-	else
-		return type->type;
-}
-
 static MonoInst*
 emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -745,7 +745,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 	MonoClass *klass = cmethod->klass;
 	MonoTypeEnum arg0_type = fsig->param_count > 0 ? get_underlying_type (fsig->params [0]) : MONO_TYPE_VOID;
 
-	if (is_intrinsics_class (klass, "Sse", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Sse", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (sse_methods, sizeof (sse_methods), cmethod);
@@ -814,7 +814,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 	}
 
-	if (is_intrinsics_class (klass, "Sse2", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Sse2", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (sse2_methods, sizeof (sse2_methods), cmethod);
@@ -899,7 +899,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 	}
 
-	if (is_intrinsics_class (klass, "Sse3", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Sse3", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (sse3_methods, sizeof (sse3_methods), cmethod);
@@ -921,7 +921,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 	}
 
-	if (is_intrinsics_class (klass, "Ssse3", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Ssse3", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (ssse3_methods, sizeof (ssse3_methods), cmethod);
@@ -943,7 +943,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 	}
 
-	if (is_intrinsics_class (klass, "Sse41", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Sse41", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (sse41_methods, sizeof (sse41_methods), cmethod);
@@ -977,7 +977,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 		}
 	}
 
-	if (is_intrinsics_class (klass, "Popcnt", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Popcnt", &is_64bit)) {
 		id = lookup_intrins (popcnt_methods, sizeof (popcnt_methods), cmethod);
 		if (id == -1)
 			return NULL;
@@ -1002,7 +1002,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return NULL;
 		}
 	}
-	if (is_intrinsics_class (klass, "Lzcnt", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Lzcnt", &is_64bit)) {
 		id = lookup_intrins (lzcnt_methods, sizeof (lzcnt_methods), cmethod);
 		if (id == -1)
 			return NULL;
@@ -1027,7 +1027,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			return NULL;
 		}
 	}
-	if (is_intrinsics_class (klass, "Bmi1", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Bmi1", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (bmi1_methods, sizeof (bmi1_methods), cmethod);
@@ -1100,7 +1100,7 @@ emit_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature 
 			g_assert_not_reached ();
 		}
 	}
-	if (is_intrinsics_class (klass, "Bmi2", &is_64bit)) {
+	if (is_hw_intrinsics_class (klass, "Bmi2", &is_64bit)) {
 		if (!COMPILE_LLVM (cfg))
 			return NULL;
 		id = lookup_intrins (bmi2_methods, sizeof (bmi2_methods), cmethod);
