@@ -214,6 +214,11 @@ corefx/GlobalizationMode.cs
 # FIXME: this is internal in corlib
 ../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
+
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
+
 # System.Runtime.Extensions
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
@@ -277,11 +282,6 @@ corefx/GlobalizationMode.cs
 # System.IO.TextWriter/StreamWriter
 ../../../external/corefx/src/System.IO/tests/TextReader/*.cs
 ../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
-
-
-#split monotouch
-#split monotouch_tv
-#split monotouch_watch
 
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
