@@ -255,8 +255,9 @@ var MonoSupportLib = {
 		},
 		
 		mono_wasm_clear_all_breakpoints: function() {
-			if (this.mono_clear_bps)
-				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
+			if (!this.mono_clear_bps)
+				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', null);
+
 			this.mono_clear_bps ();
 		},
 		
