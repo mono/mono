@@ -3793,7 +3793,7 @@ static gboolean
 method_does_not_return (MonoMethod *method)
 {
 	// limit to `void Throw*()` methods to reduce expensive checks
-	if (!MONO_TYPE_IS_VOID (method->signature->ret) || strstr (method->name, "Throw") != method->name)
+	if (strstr (method->name, "Throw") != method->name)
 		return FALSE;
 
 	if (m_class_get_image (method->klass) == mono_defaults.corlib && 
