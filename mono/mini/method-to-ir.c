@@ -3809,7 +3809,14 @@ method_does_not_return (MonoMethod *method)
 		return FALSE;
 	}
 	if (cattr) {
-		has_dnr_attr = mono_custom_attrs_has_attr (cattr, mono_class_try_get_does_not_return_attr_class ());
+		MonoClass *dnr_attr_klass = mono_class_try_get_does_not_return_attr_class ();
+		mono_class_init_checked (dnr_attr_klass, error);
+		if (!is_ok (error)) {
+			mono_error_cleanup (error);
+			mono_custom_attrs_free (cattr);
+			return FALSE;
+		}
+		has_dnr_attr = mono_custom_attrs_has_attr (cattr, dnr_attr_klass);
 		mono_custom_attrs_free (cattr);
 	}
 	return has_dnr_attr;
