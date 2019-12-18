@@ -9,7 +9,7 @@
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TestEnvironment.cs
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
-../../test-helpers/SkippedTestMessageBus.cs
+../../test-helpers/arcade/*.cs
 
 # Common Test Sources
 
@@ -34,9 +34,13 @@
 
 # System.Net.Http FunctionalTests
 
-../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs,PostScenarioTest.cs,SocketsHttpHandlerTest.cs,HttpClientHandlerTest.ServerCertificates.cs,HttpClientHandlerTest.ServerCertificates.Unix.cs
+# ../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs,PostScenarioTest.cs,SocketsHttpHandlerTest.cs,HttpClientHandlerTest.ServerCertificates.cs,HttpClientHandlerTest.ServerCertificates.Unix.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/HttpClientHandlerTestBase.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/HttpClientHandlerTest.MartinTest.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/DribbleStream.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/TestHelper.cs
 
 # Stubbed out
 
-DiagnosticsTests.cs
-HttpClientHandlerTest.Decompression.cs
+# DiagnosticsTests.cs
+# HttpClientHandlerTest.Decompression.cs
