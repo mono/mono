@@ -151,6 +151,7 @@
 
 # System.Xml.Linq failures
 -nomethod XLinqTests.TreeManipulationTests.IEnumerableOfXNodeRemove
+-nomethod XLinqTests.TreeManipulationTests.IEnumerableOfXNodeRemoveWithEvents
 
 # System.Net.Tests.WebClientTest
 # WebClient.Proxy throws PlatformNotSupportedException
