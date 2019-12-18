@@ -109,7 +109,12 @@ xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
 xtest_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_xtest$(ASSEMBLY_EXT)
 xtest_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_library).response
 xtest_makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_library).makefrag
-xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
+xtest_flags = $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
+
+ifndef NO_BUILD
+xtest_flags += -r:$(the_assembly)
+xtest_assembly_dep =  $(the_assembly)
+endif
 
 ifeq ($(wildcard $(xtest_sourcefile_base)),)
 xtest_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
@@ -273,10 +278,10 @@ $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(te
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 ifdef TEST_SPLIT_ASSEMBLIES
-$(test_lib_output:.dll=.part1.dll): $(test_assembly_dep) $(test_response) $(test_response).part1 $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
+$(test_lib_output:.dll=.part1.dll): $(test_lib_output) $(test_response).part1
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part1
 
-$(test_lib_output:.dll=.part2.dll): $(test_assembly_dep) $(test_response) $(test_response).part2 $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
+$(test_lib_output:.dll=.part2.dll): $(test_lib_output) $(test_response).part2
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part2
 
 tests_CLEAN_FILES += $(test_response).part1 $(test_response).part2
@@ -358,14 +363,14 @@ run-xunit-test-lib: xunit-test-local
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
-$(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
+$(xtest_lib_output): $(xtest_assembly_dep) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
 ifdef XTEST_SPLIT_ASSEMBLIES
-$(xtest_lib_output:.dll=.part1.dll): $(the_assembly) $(xtest_response) $(xtest_response).part1 $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
+$(xtest_lib_output:.dll=.part1.dll): $(xtest_lib_output) $(xtest_response).part1
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part1 $(xunit_src)
 
-$(xtest_lib_output:.dll=.part2.dll): $(the_assembly) $(xtest_response) $(xtest_response).part2 $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
+$(xtest_lib_output:.dll=.part2.dll): $(xtest_lib_output) $(xtest_response).part2
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part2 $(xunit_src)
 
 xtests_CLEAN_FILES += $(xtest_response).part1 $(xtest_response).part2

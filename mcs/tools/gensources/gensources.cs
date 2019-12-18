@@ -116,9 +116,6 @@ public static class Program {
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
         } else if (args.Count == 4) {
-            if (baseDir != null)
-                Console.Error.WriteLine ($"// WARNING: baseDir has no effect in this mode");
-
             var libraryFullName = Path.GetFullPath (args[1]);
             var platformName = args[2].Trim ();
             var profileName = args[3].Trim ();
