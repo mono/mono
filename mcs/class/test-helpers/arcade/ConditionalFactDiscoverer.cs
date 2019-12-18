@@ -12,7 +12,10 @@ namespace Microsoft.DotNet.XUnitExtensions
 {
     public class ConditionalFactDiscoverer : FactDiscoverer
     {
-        public ConditionalFactDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink) { }
+        public ConditionalFactDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink)
+        {
+            Console.Error.WriteLine($"CONDITIONAL FACT DISCOVERER!");
+        }
 
         protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
         {
