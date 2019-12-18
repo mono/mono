@@ -387,6 +387,7 @@ net_4_x_parallel_dirs = \
 	System.Runtime.CompilerServices.Unsafe \
 	legacy/Mono.Cecil \
 	SystemWebTestShim \
+	Microsoft.DotNet.XUnitExtensions \
 	$(xbuild_4_0_dirs)
 
 xbuild_4_0_dirs := \
