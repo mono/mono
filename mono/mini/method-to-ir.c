@@ -3787,14 +3787,32 @@ mono_emit_load_got_addr (MonoCompile *cfg)
 	MONO_ADD_INS (cfg->bb_exit, dummy_use);
 }
 
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (does_not_return_attr, "System.Diagnostics.CodeAnalysis", "DoesNotReturnAttribute")
+
 static gboolean
 method_does_not_return (MonoMethod *method)
 {
-	// FIXME: Under netcore, these are decorated with the [DoesNotReturn] attribute
-	return m_class_get_image (method->klass) == mono_defaults.corlib &&
-		!strcmp (m_class_get_name (method->klass), "ThrowHelper") &&
-		strstr (method->name, "Throw") == method->name &&
-		!method->is_inflated;
+	// limit to `void Throw*()` methods to reduce expensive checks
+	if (!MONO_TYPE_IS_VOID (method->signature->ret) || strstr (method->name, "Throw") != method->name)
+		return FALSE;
+
+	if (m_class_get_image (method->klass) == mono_defaults.corlib && 
+		!strcmp (m_class_get_name (method->klass), "ThrowHelper") && !method->is_inflated)
+		return TRUE; // all `Throw*` methods in corlib don't return
+
+	// check for `[DoesNotReturn]` attribute
+	ERROR_DECL (error);
+	gboolean has_dnr_attr = FALSE;
+	MonoCustomAttrInfo *cattr = mono_custom_attrs_from_method_checked (method, error);
+	if (!is_ok (error)) {
+		mono_error_cleanup (error);
+		return FALSE;
+	}
+	if (cattr) {
+		has_dnr_attr = mono_custom_attrs_has_attr (cattr, mono_class_try_get_does_not_return_attr_class ());
+		mono_custom_attrs_free (cattr);
+	}
+	return has_dnr_attr;
 }
 
 static int inline_limit, llvm_jit_inline_limit, llvm_aot_inline_limit;
