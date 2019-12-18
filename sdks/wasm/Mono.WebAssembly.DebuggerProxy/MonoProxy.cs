@@ -274,12 +274,18 @@ namespace WsProxy {
 					var frames = new List<Frame> ();
 					int frame_id = 0;
 					var the_mono_frames = res.Value? ["result"]? ["value"]? ["frames"]?.Values<JObject> ();
+
 					foreach (var mono_frame in the_mono_frames) {
 						var il_pos = mono_frame ["il_pos"].Value<int> ();
 						var method_token = mono_frame ["method_token"].Value<int> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
 						var asm = store.GetAssemblyByName (assembly_name);
+						if (asm == null) {
+							Info ($"Unable to find assembly: {assembly_name}");
+							continue;
+						}
+
 						var method = asm.GetMethodByToken (method_token);
 
 						if (method == null) {
