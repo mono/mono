@@ -4,6 +4,7 @@ namespace System.Net.Test.Common
 	{
 		public static partial class Http
 		{
+#if FIXME
 			static Http ()
 			{
 				var echoServers = new object[] { RemoteEchoServer };
@@ -21,6 +22,7 @@ namespace System.Net.Test.Common
 			public static readonly object[][] CompressedServers = { new object[] { RemoteDeflateServer }, new object[] { RemoteGZipServer } };
 			public static readonly object[][] Http2Servers = { new object[] { new Uri ("https://" + Http2Host) } };
 			public static readonly object[][] Http2NoPushServers = { new object[] { new Uri ("https://" + Http2NoPushHost) } };
+#endif
 		}
 	}
 }

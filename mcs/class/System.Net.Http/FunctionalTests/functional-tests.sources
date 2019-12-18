@@ -4,15 +4,12 @@
 ../corefx/Interop.VersionInfo.cs
 ../corefx/PlatformDetection.cs
 
-# Common Sources
-
-../../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
-
 # Test Utitities
 
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TestEnvironment.cs
 ../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
+../../test-helpers/SkippedTestMessageBus.cs
 
 # Common Test Sources
 
@@ -27,6 +24,7 @@
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.Security.cs
+../../../../external/corefx/src/Common/tests/System/Net/Configuration.Sockets.cs
 ../../../../external/corefx/src/Common/tests/System/Net/TestWebProxies.cs
 ../../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Http/GenericLoopbackServer.cs
@@ -36,7 +34,7 @@
 
 # System.Net.Http FunctionalTests
 
-../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs,PostScenarioTest.cs,SocketsHttpHandlerTest.cs,HttpClientHandlerTest.ServerCertificates.cs,HttpClientHandlerTest.ServerCertificates.Unix.cs
 
 # Stubbed out
 
