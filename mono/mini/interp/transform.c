@@ -7273,6 +7273,7 @@ retry:
 					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
 					ins->data [0] = loc_index;
 					ins->data [1] = fld_offset;
+					local_ref_count [loc_index]++;
 					interp_clear_ins (td, ins->prev);
 					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
