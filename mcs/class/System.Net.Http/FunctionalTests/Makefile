@@ -4,7 +4,7 @@ include ../../../build/rules.make
 
 ASSEMBLY = System.Net.Http.FunctionalTests
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
+XTEST_LIB_REFS = System System.Core Facades/System.Reflection Facades/System.Threading.Tasks
 USE_XTEST_REMOTE_EXECUTOR = YES
 
 XTEST_LIB_FLAGS = /resource:../../System/Test/TestData/testservereku.contoso.com.pfx
