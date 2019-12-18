@@ -60,8 +60,6 @@
 -nomethod System.Tests.GuidTests.Parse_Invalid_Netfx
 -nomethod System.Tests.MathFTests.Atan2_IEEE_Legacy
 -nomethod System.Tests.MathFTests.Pow_IEEE_Legacy
--nomethod System.Tests.MathFTests.Round_Digits
--nomethod System.Tests.MathFTests.Truncate
 -nomethod System.Tests.MathTests.Atan2_IEEE_Legacy
 -nomethod System.Tests.MathTests.Pow_IEEE_Legacy
 -nomethod System.Tests.MathTests.Tan_PiOver2_Legacy
