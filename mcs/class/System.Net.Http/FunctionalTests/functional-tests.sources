@@ -33,7 +33,7 @@
 
 # System.Net.Http FunctionalTests
 
-../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs,PostScenarioTest.cs,SocketsHttpHandlerTest.cs,HttpClientHandlerTest.ServerCertificates.cs,HttpClientHandlerTest.ServerCertificates.Unix.cs
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs,PostScenarioTest.cs,SocketsHttpHandlerTest.cs,HttpClientHandlerTest.ServerCertificates.cs,HttpClientHandlerTest.ServerCertificates.Unix.cs,HttpClientHandlerTest.ConnectionReuse.cs
 
 # Stubbed out
 
