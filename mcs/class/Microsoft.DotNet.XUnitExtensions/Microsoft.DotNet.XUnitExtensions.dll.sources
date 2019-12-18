@@ -1,0 +1,4 @@
+*.cs:DesktopTraceListener.cs
+Attributes/*.cs
+Discoverers/*.cs
+Extensions/*.cs

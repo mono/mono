@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.DotNet.XUnitExtensions</AssemblyName>
+    <IsPackable>true</IsPackable>    
+    <VersionPrefix>2.4.1</VersionPrefix>
+    <Description>This package provides things like various traits and discovers like OuterLoop/ActiveIssue that are used by .NET Core framework test projects.</Description>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
+    <PackageReference Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true" />
+    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true" />
+  </ItemGroup>
+
+</Project>
