@@ -4,6 +4,7 @@ include ../../../build/rules.make
 
 LIBRARY = System.Net.Http.UnitTests.dll
 NO_BUILD = yes
+NO_INSTALL = yes
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 USE_XTEST_REMOTE_EXECUTOR = YES
