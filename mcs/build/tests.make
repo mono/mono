@@ -22,7 +22,7 @@ ifndef NO_TEST
 test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Microsoft.DotNet.XUnitExtensions
+xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert
 xunit_deps := netstandard System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
@@ -60,6 +60,8 @@ xunit_libs_ref += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/Facades/%.dll,$
 
 xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/%.dll)
 xunit_libs_ref += $(xunit_libs_dep:%=-r:%)
+
+xunit_libs_ref += /r:$(topdir)/class/lib/$(PROFILE)/Microsoft.DotNet.XUnitExtensions.dll
 
 TEST_LIB_REFS_ALL = $(TEST_LIB_REFS) $(DEFAULT_REFERENCES)
 
