@@ -31,25 +31,6 @@ namespace Mono.Unity
 				}
 			}
 		}
-
-		public static X509CertificateCollection NativeChainToManagedCollection (UnityTls.unitytls_x509list_ref nativeCertificateChain, UnityTls.unitytls_errorstate* errorState)
-		{
-			X509CertificateCollection certificates = new X509CertificateCollection ();
-
-			var cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, (size_t)0, errorState);
-			for (int i = 0; cert.handle != UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE; ++i) {
-				size_t certBufferSize = UnityTls.NativeInterface.unitytls_x509_export_der (cert, null, (size_t)0, errorState);
-				var certBuffer = new byte[(int)certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
-				fixed(byte* certBufferPtr = certBuffer) {
-					UnityTls.NativeInterface.unitytls_x509_export_der (cert, certBufferPtr, certBufferSize, errorState);
-				}
-				certificates.Add (new X509Certificate (certBuffer));
-
-				cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, (size_t)i, errorState);
-			}
-
-			return certificates;
-		}
 	}
 }
 #endif

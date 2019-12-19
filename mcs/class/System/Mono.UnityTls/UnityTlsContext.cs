@@ -446,13 +446,17 @@ namespace Mono.Unity
 		private UnityTls.unitytls_x509verify_result VerifyCallback (UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
 		{
 			try {
-				X509CertificateCollection certificates = CertHelper.NativeChainToManagedCollection (chain, errorState);
-				remoteCertificate = new X509Certificate (certificates [0]);
+				using (var chainImpl = new X509ChainImplUnityTls(chain))
+				using (var managedChain = new X509Chain (chainImpl)) {
+					var leaf = managedChain.ChainElements[0].Certificate;
 
-				if (ValidateCertificate (certificates))
-					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
-				else
-					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
+					// Note that the overload of this method that takes a X509CertificateCollection will not pass on the chain to 
+					// user callbacks like ServicePointManager.ServerCertificateValidationCallback which can cause issues along the line.
+					if (ValidateCertificate (leaf, managedChain))
+						return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
+					else
+						return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
+				}
 			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
 				if (lastException == null)
 					lastException = ex;
