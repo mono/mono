@@ -264,8 +264,9 @@ class Driver {
 		assemblies.Add (data);
 
 		if (add_pdb && (kind == AssemblyKind.User || kind == AssemblyKind.Framework)) {
-			file_list.Add (Path.ChangeExtension (ra, "pdb"));
-			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
+			var pdb_path = Path.ChangeExtension (Path.GetFullPath (ra), "pdb");
+			file_list.Add (pdb_path);
+			assemblies_with_dbg_info.Add (pdb_path);
 		}
 
 		var parent_kind = kind;
