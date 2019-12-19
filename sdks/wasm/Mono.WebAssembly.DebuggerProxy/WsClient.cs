@@ -28,6 +28,13 @@ namespace WsProxy {
 			Dispose(true);
 		}
 
+
+		public async Task Close (CancellationToken cancellationToken)
+		{
+			if (socket.State == WebSocketState.Open)
+				await socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
+		}
+
 		protected virtual void Dispose (bool disposing) {
 			if (disposing)
 				socket.Dispose ();
@@ -88,6 +95,7 @@ namespace WsProxy {
 				side_exit.SetException (e);
 			}
 		}
+
 		protected async Task<bool> ConnectWithMainLoops(
 			Uri uri,
 			Func<string, CancellationToken, Task> receive,
