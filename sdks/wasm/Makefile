@@ -635,7 +635,7 @@ run-all-%:
 	$(MAKE) -C . run-sm-$*
 	$(MAKE) -C . run-jsc-$*
 
-test-debugger: build-debugger-test-app build-dbg-testsuite
+run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
 run-browser-tests: build-browser-test-suite
