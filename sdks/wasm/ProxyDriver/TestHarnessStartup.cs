@@ -147,6 +147,11 @@ namespace WsProxy {
 						if (!str.StartsWith ("DevTools listening on ", StringComparison.Ordinal))
 							return null;
 
+						// Unfortunately it does look like we have to wait
+						// for a bit after getting the response but before
+						// making the list request
+						Thread.Sleep (500);
+
 						var client = new HttpClient ();
 						var res = client.GetStringAsync (new Uri (devToolsUrl, "/json/list")).Result;
 						Console.WriteLine ("res is {0}", res);

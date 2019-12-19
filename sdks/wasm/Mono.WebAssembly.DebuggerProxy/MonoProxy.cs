@@ -380,7 +380,7 @@ namespace WsProxy {
 			//Debug ($"\t{is_ready}");
 			if (is_ready.HasValue && is_ready.Value == true) {
 				Debug ("RUNTIME LOOK READY. GO TIME!");
-				await RuntimeReady (token);
+				await OnRuntimeReady (token);
 			}
 		}
 

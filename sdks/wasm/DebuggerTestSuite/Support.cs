@@ -81,7 +81,9 @@ namespace DebuggerTests
 							Console.WriteLine("await cb(client, token)");
 							await cb(client, token);
 						}
+
 					}, cts.Token);
+					await client.Close (cts.Token);
 				}
 			}
 		}
