@@ -2836,7 +2836,7 @@ mono_assembly_binding_applies_to_image (MonoAssemblyLoadContext *alc, MonoImage*
 	MonoAssembly *result_ass = NULL;
 	MonoAssemblyName *result_name = &probed_aname;
 	result_name = mono_assembly_apply_binding (result_name, &dest_name);
-	if (result_name != &probed_aname && !mono_assembly_names_equal (result_name, &probed_aname)) {
+	if (result_name != &probed_aname && !mono_assembly_check_name_match (result_name, &probed_aname)) {
 		if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
 			char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
 			char *result_fullname = mono_stringify_assembly_name (result_name);
@@ -4552,7 +4552,7 @@ mono_assembly_check_name_match (MonoAssemblyName *wanted_name, MonoAssemblyName 
 	if (result && assembly_names_compare_versions (wanted_name, candidate_name, -1) > 0)
 		result = FALSE;
 #else
-	gboolean result = mono_assembly_names_equal (wanted_name, candidate_name);
+	gboolean result = mono_assembly_names_equal_flags (wanted_name, candidate_name, MONO_ANAME_EQ_NONE);
 #endif
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s\n",

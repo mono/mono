@@ -2514,12 +2514,14 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	MonoAssembly *ass;
 
 #ifdef ENABLE_NETCORE
+	const MonoAssemblyNameEqFlags eq_flags = MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE;
+
 	mono_alc_assemblies_lock (alc);
 	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		g_assert (ass != NULL);
-		// FIXME: Can dynamic assemblies match here for netcore? Should this be case-insensitive?
-		if (assembly_is_dynamic (ass) || !mono_assembly_check_name_match (aname, &ass->aname))
+		// FIXME: Can dynamic assemblies match here for netcore?
+		if (assembly_is_dynamic (ass) || !mono_assembly_names_equal_flags (aname, &ass->aname, eq_flags))
 			continue;
 
 		mono_alc_assemblies_unlock (alc);
