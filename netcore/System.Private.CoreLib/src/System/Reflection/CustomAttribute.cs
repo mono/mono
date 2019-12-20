@@ -135,12 +135,15 @@ namespace System.Reflection
 			if (obj == null)
 				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
-				throw new ArgumentNullException (nameof (attributeType));	
+				throw new ArgumentNullException (nameof (attributeType));
+			if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute)&& attributeType != typeof (CustomAttribute) && attributeType != typeof (System.Object))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
 			if (attributeType == typeof (CustomAttribute))
 				attributeType = null;
-
 			if (attributeType == typeof (Attribute))
+				attributeType = null;
+			if (attributeType == typeof (System.Object))
 				attributeType = null;
 
 			object[] r;
@@ -505,7 +508,9 @@ namespace System.Reflection
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");
+				throw new ArgumentNullException (nameof (attributeType));
+			if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
 			AttributeUsageAttribute usage = null;
 			do {
