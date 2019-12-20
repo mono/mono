@@ -1550,14 +1550,11 @@ if ($artifact)
 		system("cp -R $addtoresultsdistdir/. $distdir/") eq 0 or die ("Failed copying $addtoresultsdistdir to $distdir\n");
 
 		system("cp -r $monoprefix/lib/mono $distdir/lib");
+		# OSX needs these in the lib dir for building purposes now
+		system("cp $monoprefix/lib/libmono-native.dylib $distdir/lib");
+		system("cp $monoprefix/lib/libMonoPosixHelper.dylib $distdir/lib");
 
-		if($^O ne 'darwin')
-		{
-			# On OSX we build a universal binary for 32-bit and 64-bit in the mono executable. The class library build
-			# only creates the 64-bit slice, so we don't want to end up with a single slice binary in the output.
-			# If we do, it will step on the universal binary produced but the OSX runtime build.
-			system("cp -r $monoprefix/bin $distdir/") eq 0 or die ("failed copying bin folder\n");
-		}
+		system("cp -r $monoprefix/bin $distdir/") eq 0 or die ("failed copying bin folder\n");
 		system("cp -r $monoprefix/etc $distdir/") eq 0 or die("failed copying etc folder\n");
 
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
@@ -1732,6 +1729,8 @@ if ($artifact)
 
 			print "Hardlinking libMonoPosixHelper.dylib\n";
 			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $libtarget/libMonoPosixHelper.dylib\n");
+			print "Hardlinking libmono-native.dylib\n";
+			system("ln","-f", "$monoroot/mono/native/.libs/libmono-native.dylib","$embedDirArchDestination/libmono-native.dylib") eq 0 or die ("failed symlinking $libtarget/libmono-native.dylib\n");
 
 			InstallNameTool("$embedDirArchDestination/libmonobdwgc-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libmonosgen-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonosgen-2.0.dylib");
