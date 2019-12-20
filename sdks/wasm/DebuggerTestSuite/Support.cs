@@ -90,6 +90,8 @@ namespace DebuggerTests
 	}
 
 	public class DebuggerTestBase {
+		protected Task startTask;
+
 		static string FindTestPath () {
 			//FIXME how would I locate it otherwise?
 			var test_path = Environment.GetEnvironmentVariable ("TEST_SUITE_PATH");
@@ -107,7 +109,7 @@ namespace DebuggerTests
 			throw new Exception ("Missing TEST_SUITE_PATH env var and could not guess path from CWD");
 		}
 
-		static string[] PROBE_LIST = new[] {
+		static string[] PROBE_LIST = {
 			"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 			"/usr/bin/chromium",
@@ -115,11 +117,11 @@ namespace DebuggerTests
 		};
 		static string chrome_path;
 
-
-		static String FindChromePath ()
+		static string FindChromePath ()
 		{
 			if (chrome_path != null)
 				return chrome_path;
+
 			foreach (var s in PROBE_LIST){
 				if (File.Exists (s)) {
 					chrome_path = s;
@@ -130,8 +132,11 @@ namespace DebuggerTests
 			throw new Exception ("Could not find an installed Chrome to use");
 		}
 
-		public DebuggerTestBase () {
-			WsProxy.TestHarnessProxy.Start (FindChromePath (), FindTestPath (), "debugger-driver.html");
+		public DebuggerTestBase (string driver = "debugger-driver.html") {
+			startTask = WsProxy.TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
 		}
+
+		public Task Ready ()
+			=> startTask;
 	}
 } 
