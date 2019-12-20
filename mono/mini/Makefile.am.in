@@ -910,7 +910,7 @@ richeck: mono $(regtests)
 	$(INTERP_RUNTIME) --regression $(regtests)
 
 interp-whitebox: test-mono-interp-whitebox
-	./$< $(WHITEBOX_ASSEMBLY)
+	MONO_PATH=$(CLASS) ./$< $(WHITEBOX_ASSEMBLY)
 
 mixedcheck: mono mixed.exe
 	$(MINI_RUNTIME) --interp=jit=JitClass mixed.exe
