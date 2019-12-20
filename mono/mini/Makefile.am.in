@@ -781,6 +781,15 @@ libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 endif # !ENABLE_MSVC_ONLY
 
+WHITEBOX_ASSEMBLY=interp/whitebox-snippets.exe
+test_mono_interp_whitebox_SOURCES = interp/whitebox.c
+test_mono_interp_whitebox_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+test_mono_interp_whitebox_LDADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs)
+test_mono_interp_whitebox_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+test_mono_interp_whitebox_DEPENDENCIES = $(WHITEBOX_ASSEMBLY)
+
+check_PROGRAMS = test-mono-interp-whitebox
+
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
 # These are public headers.
@@ -899,6 +908,9 @@ rcheck: mono $(regtests)
 
 richeck: mono $(regtests)
 	$(INTERP_RUNTIME) --regression $(regtests)
+
+interp-whitebox: test-mono-interp-whitebox
+	./$< $(WHITEBOX_ASSEMBLY)
 
 mixedcheck: mono mixed.exe
 	$(MINI_RUNTIME) --interp=jit=JitClass mixed.exe
