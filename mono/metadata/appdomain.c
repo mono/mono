@@ -2434,7 +2434,7 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
 #if !defined(DISABLE_DESKTOP_LOADER)
-	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
@@ -2482,7 +2482,7 @@ mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyNa
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
 #if !defined(DISABLE_DESKTOP_LOADER)
-	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}

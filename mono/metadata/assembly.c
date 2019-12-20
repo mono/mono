@@ -2592,7 +2592,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 		 * predicate.  It could be that we previously loaded a
 		 * different version that happens to have the filename that
 		 * we're currently probing. */
-		if (mono_loader_get_strict_strong_names () &&
+		if (mono_loader_get_strict_assembly_name_check () &&
 		    load_req.predicate && !load_req.predicate (image->assembly, load_req.predicate_ud)) {
 			mono_image_close (image);
 			g_free (fname);
@@ -4665,7 +4665,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
 #if !defined(DISABLE_DESKTOP_LOADER)
-	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
