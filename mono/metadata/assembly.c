@@ -394,8 +394,6 @@ prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refon
 
 /* Assembly name matching */
 static gboolean
-exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name);
-static gboolean
 framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name);
 
 static const char *
@@ -4526,7 +4524,9 @@ mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointe
 		g_free (s);
 	}
 
-
+#ifdef ENABLE_NETCORE
+	return mono_assembly_check_name_match (wanted_name, candidate_name);
+#else
 	/* Wanted name has no token, not strongly named: always matches. */
 	if (0 == wanted_name->public_key_token [0]) {
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: wanted has no token, returning TRUE\n");
@@ -4539,12 +4539,13 @@ mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointe
 		return FALSE;
 	}
 
-	return exact_sn_match (wanted_name, candidate_name) ||
+	return mono_assembly_check_name_match (wanted_name, candidate_name) ||
 		framework_assembly_sn_match (wanted_name, candidate_name);
+#endif
 }
 
 gboolean
-exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name)
+mono_assembly_check_name_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name)
 {
 #if ENABLE_NETCORE
 	gboolean result = mono_assembly_names_equal_flags (wanted_name, candidate_name, MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_PUBKEY);
@@ -4664,7 +4665,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER)
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
 	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;

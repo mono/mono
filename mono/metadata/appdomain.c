@@ -2433,7 +2433,7 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER)
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
 	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
@@ -2481,7 +2481,7 @@ mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyNa
 {
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER)
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
 	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
@@ -2512,20 +2512,14 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	g_assert (aname != NULL);
 	GSList *tmp;
 	MonoAssembly *ass;
-	const gboolean strong_name = aname->public_key_token[0] != 0;
-	/* If it's not a strong name, any version that has the right simple
-	 * name is good enough to satisfy the request.  .NET Framework also
-	 * ignores case differences in this case. */
-	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
-		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
 #ifdef ENABLE_NETCORE
 	mono_alc_assemblies_lock (alc);
 	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		g_assert (ass != NULL);
-		// TODO: Can dynamic assemblies match here for netcore? Also, this ignores case while exact_sn_match does not.
-		if (assembly_is_dynamic (ass) || !mono_assembly_names_equal_flags (aname, &ass->aname, eq_flags))
+		// FIXME: Can dynamic assemblies match here for netcore? Should this be case-insensitive?
+		if (assembly_is_dynamic (ass) || !mono_assembly_check_name_match (aname, &ass->aname))
 			continue;
 
 		mono_alc_assemblies_unlock (alc);
@@ -2534,6 +2528,14 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	mono_alc_assemblies_unlock (alc);
 #else
 	MonoDomain *domain = mono_alc_domain (alc);
+
+	const gboolean strong_name = aname->public_key_token[0] != 0;
+	/* If it's not a strong name, any version that has the right simple
+	 * name is good enough to satisfy the request.  .NET Framework also
+	 * ignores case differences in this case. */
+	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
+		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
+
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
@@ -2591,6 +2593,17 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	g_free (name);
 	if (!parsed)
 		goto fail;
+
+	MonoAssemblyCandidatePredicate predicate = NULL;
+	void* predicate_ud = NULL;
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
+	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
+		predicate = &mono_assembly_candidate_predicate_sn_same_name;
+		predicate_ud = &aname;
+	}
+#endif
+	req.request.predicate = predicate;
+	req.request.predicate_ud = predicate_ud;
 
 	ass = mono_assembly_request_byname (&aname, &req, &status);
 	if (!ass)
