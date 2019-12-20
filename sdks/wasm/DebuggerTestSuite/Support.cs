@@ -60,13 +60,13 @@ namespace DebuggerTests
 				await eventListeners[method](args, token);
 		}
 
-		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null) {
+		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (60 * 1000); //tests have 1 minute to complete
-				var uri = new Uri ("ws://localhost:9300/launch-chrome-and-connect");
+				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
+				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
 				using (var client = new InspectorClient ()) {
 					await client.Connect (uri, OnMessage, async token => {
-						Task[] init_cmds = new Task [] {
+						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),
 							client.SendCommand ("Runtime.enable", null, token),
 							client.SendCommand ("Debugger.enable", null, token),

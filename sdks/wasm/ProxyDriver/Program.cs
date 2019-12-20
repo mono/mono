@@ -32,16 +32,11 @@ namespace WsProxy
 				{
 					config.AddCommandLine(args);
 				})
-				.UseDebugProxy ()
+				.UseUrls ("http://localhost:9300")
 				.Build ();
 
 			host.Run ();
 		}
-	}
-
-	public static class MonoProxyExtensions {
-		public static IWebHostBuilder UseDebugProxy (this IWebHostBuilder host) =>
-			host.UseUrls ("http://localhost:9300");
 	}
 
 	public class TestHarnessProxy {
@@ -49,6 +44,8 @@ namespace WsProxy
 		static Task hostTask;
 		static CancellationTokenSource cts = new CancellationTokenSource ();
 		static object proxyLock = new object ();
+
+		public static readonly Uri Endpoint = new Uri ("http://localhost:9400");
 
 		public static Task Start (string chromePath, string appPath, string pagePath)
 		{
@@ -68,7 +65,7 @@ namespace WsProxy
 					})
 					.UseKestrel ()
 					.UseStartup<TestHarnessStartup> ()
-					.UseDebugProxy ()
+					.UseUrls (Endpoint.ToString ())
 					.Build();
 				hostTask = host.StartAsync (cts.Token);
 			}
