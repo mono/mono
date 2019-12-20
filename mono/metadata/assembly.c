@@ -4665,12 +4665,10 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
-	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
-#endif
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, asmctx, alc);

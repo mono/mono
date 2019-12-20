@@ -2433,12 +2433,10 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
-	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
-#endif
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, alc);
 	req.request.predicate = predicate;
@@ -2481,12 +2479,10 @@ mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyNa
 {
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
-	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
-#endif
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, asmctx, mono_domain_default_alc (mono_domain_get ()));
 	req.request.predicate = predicate;
@@ -2598,12 +2594,10 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
-	if (G_LIKELY (mono_loader_get_strict_assembly_name_check ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = &aname;
 	}
-#endif
 	req.request.predicate = predicate;
 	req.request.predicate_ud = predicate_ud;
 
