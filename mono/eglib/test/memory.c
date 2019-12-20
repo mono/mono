@@ -45,35 +45,35 @@ test_align_signed_int (void)
 	gpointer result_ptr, exp_ptr;
 
 	// test case #1
-        int align = 1;
-	result = ALIGN_TO(orig_value, align);
+	int align = 1;
+	result = ALIGN_TO (orig_value, align);
 	exp_value = orig_value;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 
-	result = ALIGN_DOWN_TO(orig_value, align);
+	result = ALIGN_DOWN_TO (orig_value, align);
 	exp_value = orig_value;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 
-	result_ptr = ALIGN_PTR_TO(orig_ptr,align);
+	result_ptr = ALIGN_PTR_TO (orig_ptr,align);
 	exp_ptr = orig_ptr;
 	if (result_ptr != exp_ptr)
                 return FAILED ("Expected address after aligned is %p, however, the actual address is %p", exp_ptr, result_ptr);
 
 	// test case #2
 	align = 8;
-	result = ALIGN_TO(orig_value, align);
+	result = ALIGN_TO (orig_value, align);
 	exp_value = 72;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 
-	result_ptr = ALIGN_PTR_TO(orig_ptr,align);
+	result_ptr = ALIGN_PTR_TO (orig_ptr,align);
 	exp_ptr= (gpointer)exp_value;
 	if (result_ptr != exp_ptr)
                 return FAILED ("Expected address after aligned is %p, however, the actual address is %p", exp_ptr, result_ptr);
 
-	result = ALIGN_DOWN_TO(orig_value, align);
+	result = ALIGN_DOWN_TO (orig_value, align);
 	exp_value = 64;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
@@ -93,38 +93,38 @@ test_align_unsigned_int (void)
 	gssize orig_value = 67;
 	gssize result, exp_value;
 	gpointer orig_ptr = (gpointer)orig_value;
-        gpointer result_ptr, exp_ptr;
+	gpointer result_ptr, exp_ptr;
 
 	// test case #1
-        unsigned int align = 1;
-	result = ALIGN_TO(orig_value, align);
+	unsigned int align = 1;
+	result = ALIGN_TO (orig_value, align);
 	exp_value = orig_value;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 
-	result = ALIGN_DOWN_TO(orig_value, align);
+	result = ALIGN_DOWN_TO (orig_value, align);
 	exp_value = orig_value;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 	
-	result_ptr = ALIGN_PTR_TO(orig_ptr,align);
+	result_ptr = ALIGN_PTR_TO (orig_ptr,align);
 	exp_ptr = orig_ptr;
 	if (result_ptr != exp_ptr)
                 return FAILED ("Expected address after aligned is %p, however, the actual address is %p", exp_ptr, result_ptr);
 	
 	// test case #2
 	align= 16;
-	result = ALIGN_TO(orig_value, align);
+	result = ALIGN_TO (orig_value, align);
 	exp_value = 80;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
 
-	result_ptr = ALIGN_PTR_TO(orig_ptr,align);
+	result_ptr = ALIGN_PTR_TO (orig_ptr,align);
 	exp_ptr= (gpointer)exp_value;
 	if (result_ptr != exp_ptr)
                 return FAILED ("Expected address after aligned is %p, however, the actual address is %p", exp_ptr, result_ptr);
 
-	result = ALIGN_DOWN_TO(orig_value, align);
+	result = ALIGN_DOWN_TO (orig_value, align);
 	exp_value = 64;
 	if (result != exp_value)
                 return FAILED ("Expected value after aligned is %d, however, the actual value is %d", exp_value, result);
@@ -133,7 +133,7 @@ test_align_unsigned_int (void)
 }
 
 static Test memory_tests [] = {
-        {"zero_size_allocations", test_memory_zero_size_allocations},
+	{"zero_size_allocations", test_memory_zero_size_allocations},
 	{"align_signed_int", test_align_signed_int},
 	{"align_unsigned_int", test_align_unsigned_int},
         {NULL, NULL}
