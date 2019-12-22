@@ -59,7 +59,7 @@ verify_cprop_add_consts (TransformData *td)
 	InterpInst *ins = td->first_ins, *current;
 	if (expect (&ins, &current, MINT_LDC_I4))
 		return 1;
-	if (READ32 (&current->data [0]) != 0x4465) /* oops. will CI make boom boom? */
+	if (READ32 (&current->data [0]) != 0x4466)
 		return 2;
 	if (expect (&ins, NULL, MINT_RET))
 		return 3;
