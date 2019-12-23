@@ -8926,17 +8926,38 @@ calli_end:
 			/*
 			 * Common in generic code:
 			 * box T1, unbox.any T2.
+			 * with optional `isinst` inbetween
 			 */
-			if ((cfg->opt & MONO_OPT_INTRINS) &&
-			    next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip) &&
-			    (ip = il_read_unbox_any (next_ip, end, &unbox_any_token))) {
-				MonoClass *unbox_klass = mini_get_class (method, unbox_any_token, generic_context);
-				CHECK_TYPELOAD (unbox_klass);
+			if ((cfg->opt & MONO_OPT_INTRINS) && next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip)) {
 
-				if (klass == unbox_klass) {
-					next_ip = ip;
-					*sp++ = val;
-					break;
+				guint32 is_inst_token = 0;
+				guchar *is_inst_ip;
+				guchar *unbox_ip;
+
+				// optional: isinst inbetween
+				if (!(is_inst_ip = il_read_op_and_token(next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &is_inst_token)) &&
+					ip_in_bb (cfg, cfg->cbb, is_inst_ip))
+					is_inst_ip = next_ip;
+				
+				if ((ip = il_read_unbox_any (is_inst_ip, end, &unbox_any_token))) {
+					MonoClass *unbox_klass = mini_get_class (method, unbox_any_token, generic_context);
+					CHECK_TYPELOAD (unbox_klass);
+
+					if (klass == unbox_klass) {
+						g_assert (is_inst_token == 0 ^ is_inst_token == unbox_any_token);
+						next_ip = ip;
+						*sp++ = val;
+						break;
+					} else if (!mono_class_is_nullable (klass) && mono_class_is_nullable (unbox_klass)) {
+						MonoClass *underlying_klass = mono_class_get_nullable_param_internal (unbox_klass);
+						if (underlying_klass == klass) {
+							// TODO: emit:
+							//  newobj instance void valuetype [System.Private.CoreLib]System.Nullable`1<T>::.ctor(!0)
+						} else {
+							// TODO: emit:
+							//  initobj valuetype [System.Private.CoreLib]System.Nullable`1<T>
+						}
+					}
 				}
 			}
 
