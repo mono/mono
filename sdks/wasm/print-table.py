@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 #
 # print-table.py: Print the function table for a webassembly .wast file
