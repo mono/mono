@@ -8996,10 +8996,10 @@ calli_end:
 					CHECK_TYPELOAD (unbox_klass);
 					if (mono_class_is_nullable (unbox_klass)) {
 						if (klass == unbox_klass || klass == mono_class_get_nullable_param_internal (unbox_klass)) {
-							il_op = CEE_LDC_I4_1;
+							il_op = (MonoOpcodeEnum) CEE_LDC_I4_1;
 							EMIT_NEW_ICONST (cfg, ins, 1);
 						} else {
-							il_op = CEE_LDC_I4_0;
+							il_op = (MonoOpcodeEnum) CEE_LDC_I4_0;
 							EMIT_NEW_ICONST (cfg, ins, 0);
 						}
 						next_ip = ip;
