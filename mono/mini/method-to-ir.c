@@ -8932,11 +8932,10 @@ calli_end:
 
 				guint32 is_inst_token = 0;
 				guchar *is_inst_ip;
-				guchar *unbox_ip;
 
 				// optional: isinst inbetween
-				if (!(is_inst_ip = il_read_op_and_token(next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &is_inst_token)) &&
-					ip_in_bb (cfg, cfg->cbb, is_inst_ip))
+				if (!(is_inst_ip = il_read_op_and_token(next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &is_inst_token)) ||
+					!ip_in_bb (cfg, cfg->cbb, is_inst_ip))
 					is_inst_ip = next_ip;
 				
 				if ((ip = il_read_unbox_any (is_inst_ip, end, &unbox_any_token))) {
@@ -8944,18 +8943,39 @@ calli_end:
 					CHECK_TYPELOAD (unbox_klass);
 
 					if (klass == unbox_klass) {
-						g_assert (is_inst_token == 0 ^ is_inst_token == unbox_any_token);
+						g_assert ((is_inst_token == 0) ^ (is_inst_token == unbox_any_token));
 						next_ip = ip;
 						*sp++ = val;
 						break;
 					} else if (!mono_class_is_nullable (klass) && mono_class_is_nullable (unbox_klass)) {
 						MonoClass *underlying_klass = mono_class_get_nullable_param_internal (unbox_klass);
 						if (underlying_klass == klass) {
-							// TODO: emit:
-							//  newobj instance void valuetype [System.Private.CoreLib]System.Nullable`1<T>::.ctor(!0)
+							// Emit `new Nullable<T>(arg)`:
+							MonoMethod *ctor = get_method_nofail(unbox_klass, ".ctor", 1, 0);
+							MonoMethodSignature *ctor_sig = mono_method_signature_internal(ctor);
+							MonoInst this_ins;
+							this_ins.type = STACK_OBJ;
+							sp [1] = convert_value (cfg, ctor_sig->params [0], sp [0]);
+							sp [0] = &this_ins;
+							if (check_call_signature (cfg, ctor_sig, sp))
+								UNVERIFIED;
+
+							MonoInst *lcl_var = mono_compile_create_var (cfg, m_class_get_byval_arg (ctor->klass), OP_LOCAL);
+							emit_init_rvar (cfg, lcl_var->dreg, m_class_get_byval_arg (ctor->klass));
+							EMIT_NEW_TEMPLOADA (cfg, *sp, lcl_var->inst_c0);
+							handle_ctor_call (cfg, ctor, ctor_sig, context_used, sp, ip, &inline_costs);
+							CHECK_CFG_EXCEPTION;
+							EMIT_NEW_TEMPLOAD (cfg, ins, lcl_var->inst_c0);
+							mini_type_to_eval_stack_type (cfg, m_class_get_byval_arg (ins->klass), ins);
+							*sp++= ins;
+							next_ip = ip;
+							inline_costs += 5;
+							break;
 						} else {
 							// TODO: emit:
 							//  initobj valuetype [System.Private.CoreLib]System.Nullable`1<T>
+
+							// mini_emit_initobj (cfg, sp++, NULL, unbox_klass);
 						}
 					}
 				}
