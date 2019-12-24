@@ -3060,7 +3060,7 @@ handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass, int co
 			mono_error_assert_ok (cfg->error);
 			EMIT_NEW_VTABLECONST (cfg, rgctx_arg, vtable);
 		}
-
+//egor2
 		return mini_emit_method_call_full (cfg, method, NULL, FALSE, &val, NULL, NULL, rgctx_arg);
 	}
 }
@@ -8934,49 +8934,78 @@ calli_end:
 				guchar *is_inst_ip;
 
 				// optional: isinst inbetween
-				if (!(is_inst_ip = il_read_op_and_token(next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &is_inst_token)) ||
+				if ((is_inst_ip = il_read_op_and_token (next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &is_inst_token)) &&
 					!ip_in_bb (cfg, cfg->cbb, is_inst_ip))
-					is_inst_ip = next_ip;
+					is_inst_ip = 0;
 				
-				if ((ip = il_read_unbox_any (is_inst_ip, end, &unbox_any_token))) {
+				if ((ip = il_read_unbox_any (is_inst_ip ? is_inst_ip : next_ip, end, &unbox_any_token))) {
 					MonoClass *unbox_klass = mini_get_class (method, unbox_any_token, generic_context);
 					CHECK_TYPELOAD (unbox_klass);
-
+					// if types are the same - we simply remove the boxing-unboxing instructions
 					if (klass == unbox_klass) {
 						g_assert ((is_inst_token == 0) ^ (is_inst_token == unbox_any_token));
 						next_ip = ip;
 						*sp++ = val;
 						break;
-					} else if (!mono_class_is_nullable (klass) && mono_class_is_nullable (unbox_klass)) {
-						MonoClass *underlying_klass = mono_class_get_nullable_param_internal (unbox_klass);
-						if (underlying_klass == klass) {
-							// Emit `new Nullable<T>(arg)`:
+					} else if (mono_class_is_nullable (unbox_klass)) {
+						if (mono_class_get_nullable_param_internal (unbox_klass) == klass) {
+							// we have e.g. Int32 isinst Nullable<Int32>
+							// so just emit `new Nullable<Int32>(intArg)`
 							MonoMethod *ctor = get_method_nofail(unbox_klass, ".ctor", 1, 0);
 							MonoMethodSignature *ctor_sig = mono_method_signature_internal(ctor);
 							MonoInst this_ins;
 							this_ins.type = STACK_OBJ;
 							sp [1] = convert_value (cfg, ctor_sig->params [0], sp [0]);
 							sp [0] = &this_ins;
-							if (check_call_signature (cfg, ctor_sig, sp))
-								UNVERIFIED;
-
 							MonoInst *lcl_var = mono_compile_create_var (cfg, m_class_get_byval_arg (ctor->klass), OP_LOCAL);
 							emit_init_rvar (cfg, lcl_var->dreg, m_class_get_byval_arg (ctor->klass));
 							EMIT_NEW_TEMPLOADA (cfg, *sp, lcl_var->inst_c0);
 							handle_ctor_call (cfg, ctor, ctor_sig, context_used, sp, ip, &inline_costs);
+							inline_costs += 5;
 							CHECK_CFG_EXCEPTION;
 							EMIT_NEW_TEMPLOAD (cfg, ins, lcl_var->inst_c0);
 							mini_type_to_eval_stack_type (cfg, m_class_get_byval_arg (ins->klass), ins);
 							*sp++= ins;
 							next_ip = ip;
-							inline_costs += 5;
 							break;
 						} else {
-							// TODO: emit:
-							//  initobj valuetype [System.Private.CoreLib]System.Nullable`1<T>
-
-							// mini_emit_initobj (cfg, sp++, NULL, unbox_klass);
+							// we have e.g. `Int64 isinst Nullable<Int32>`
+							// emit `empty Nullable<Int32>` (Nu)
+							MonoInst *lcl_var = mono_compile_create_var (cfg, m_class_get_byval_arg (unbox_klass), OP_LOCAL);
+							emit_init_rvar (cfg, lcl_var->dreg, m_class_get_byval_arg (unbox_klass));
+							EMIT_NEW_TEMPLOAD (cfg, ins, lcl_var->inst_c0);
+							ins->type = STACK_VTYPE;
+							ins->klass = unbox_klass;
+							*sp++ = ins;
+							next_ip = ip;
+							break;
 						}
+					}
+				} else if (is_inst_ip && (ip = il_read_op (is_inst_ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ip) &&
+					(ip = il_read_op (ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)) && ip_in_bb (cfg, cfg->cbb, ip)) {
+					// Also, optimize `x is Nullable<T>`:
+					//
+					//  box
+					//  isinst
+					//  ldnull
+					//  cgt.un
+					//
+					// to `ldc.i4.0/1`
+					//
+					MonoClass *unbox_klass = mini_get_class (method, is_inst_token, generic_context);
+					CHECK_TYPELOAD (unbox_klass);
+					if (mono_class_is_nullable (unbox_klass)) {
+						if (klass == unbox_klass || klass == mono_class_get_nullable_param_internal (unbox_klass)) {
+							il_op = CEE_LDC_I4_1;
+							EMIT_NEW_ICONST (cfg, ins, 1);
+						} else {
+							il_op = CEE_LDC_I4_0;
+							EMIT_NEW_ICONST (cfg, ins, 0);
+						}
+						next_ip = ip;
+						ins->type = STACK_I4;
+						*sp++ = ins;
+						break;
 					}
 				}
 			}
