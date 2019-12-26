@@ -1083,6 +1083,9 @@ namespace System.Net.Sockets
 					sockares.CurrentAddress++;
 					sockares.EndPoint = new IPEndPoint (sockares.Addresses [i], sockares.Port);
 
+					if (!sockares.socket.CanTryAddressFamily(sockares.EndPoint.AddressFamily))
+						continue;
+
 					return BeginSConnect (sockares);
 				} catch (Exception e) {
 					exc = e;
