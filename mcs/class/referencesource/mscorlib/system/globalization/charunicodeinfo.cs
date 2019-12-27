@@ -1,3 +1,4 @@
+#if __MonoCS__
 // ==++==
 //
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -596,3 +597,4 @@ namespace System.Globalization {
         }
     }
 }
+#endif

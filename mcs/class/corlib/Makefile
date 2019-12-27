@@ -88,8 +88,14 @@ MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.cjkKOlv2.bin
 endif
 
+ifdef MCS_MODE
+	UNICODECHARINFO = resources/charinfo.nlp
+else
+	UNICODECHARINFO =
+endif
+
 RESOURCE_FILES = \
-	resources/charinfo.nlp \
+	$(UNICODECHARINFO) \
 	$(MANAGED_COLLATOR_RESOURCES_FILES) \
 	LinkerDescriptor/mscorlib.xml
 
