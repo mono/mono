@@ -1084,16 +1084,35 @@ mono_metadata_blob_heap (MonoImage *meta, guint32 index)
 }
 
 /**
+ * mono_metadata_blob_heap_null_ok:
+ * \param meta metadata context
+ * \param index index into the blob.
+ * \return an in-memory pointer to the \p index in the Blob heap.
+ * If the Blob heap is empty or missing and index is 0 returns NULL, instead of asserting.
+ */
+const char *
+mono_metadata_blob_heap_null_ok (MonoImage *meta, guint32 index)
+{
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
+	else
+		return mono_metadata_blob_heap (meta, index);
+}
+
+/**
  * mono_metadata_blob_heap_checked:
  * \param meta metadata context
  * \param index index into the blob.
  * \param error set on error
  * \returns an in-memory pointer to the \p index in the Blob heap.  On failure sets \p error and returns NULL;
+ * If the Blob heap is empty or missing and \p index is 0 returns NULL, without setting error.
  *
  */
 const char *
 mono_metadata_blob_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
 {
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
 	if (G_UNLIKELY (!(index < meta->heap_blob.size))) {
 		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "blob heap index %u out of bounds %u", index, meta->heap_blob.size);
 		return NULL;
