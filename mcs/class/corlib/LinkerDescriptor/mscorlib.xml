@@ -645,7 +645,6 @@
 		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields" feature="sre">
-			<method name="Mono_GetGuid" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" feature="sre" />
