@@ -26,7 +26,7 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 
-PACKAGER=mono --debug packager.exe --no-native-strip
+PACKAGER=mono --debug packager.exe --no-native-strip --filter-rewriter
 
 MSBUILD_QUIET_ARGS=--nologo -v q -consoleloggerparameters:NoSummary
 
@@ -377,8 +377,11 @@ tuner:
 	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
 	cp ../../mcs/class/lib/wasm_tools/wasm-tuner.exe* ../out/wasm-bcl/wasm_tools/wasm-tuner.exe*
 
-cil-strip:
+cil-strip: $(TOP)/mcs/tools/cil-strip/*.cs
 	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
+
+exception-filter-rewriter: $(TOP)/mcs/tools/exception-filter-rewriter/*.cs
+	$(MAKE) -C ../../mcs/tools/exception-filter-rewriter PROFILE=wasm_tools
 
 mono: runtime runtime-threads cross bcl
 
@@ -415,7 +418,7 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
+packager.exe: packager.cs Mono.Cecil.dll exception-filter-rewriter $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 debug_sample/dotnet.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js

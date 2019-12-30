@@ -845,5 +845,7 @@
 		<type fullname="Mono.ValueTuple`3" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`4" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`5" preserve="fields"/>
+
+		<type fullname="Mono.ExceptionFilter" />
 	</assembly>
 </linker>

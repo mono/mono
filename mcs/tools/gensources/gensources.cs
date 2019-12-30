@@ -86,6 +86,10 @@ public static class Program {
         var executablePath = Path.GetFullPath (codeBase.LocalPath);
         var executableDirectory = Path.GetDirectoryName (executablePath);
 
+        if (String.IsNullOrWhiteSpace (args[0])) {
+            Console.Error.WriteLine ("// ERROR: Output path is empty");
+            return 1;
+        }
         var outFile = Path.GetFullPath (args[0]);
 
         var platformsFolder = Path.Combine (platformsDir ?? executableDirectory, "platforms");
@@ -99,6 +103,15 @@ public static class Program {
         SourcesParser parser;
 
         if (args.Count == 3) {
+            if (String.IsNullOrWhiteSpace (args[1])) {
+                Console.Error.WriteLine ("// ERROR: Sources file path is empty");
+                return 1;
+            }
+            if (String.IsNullOrWhiteSpace (args[2])) {
+                Console.Error.WriteLine ("// ERROR: Excludes file path is empty");
+                return 1;
+            }
+
             var sourcesFile = Path.GetFullPath (args[1]);
             var excludesFile = Path.GetFullPath (args[2]);
             var directory = Path.GetDirectoryName (sourcesFile);
@@ -116,6 +129,11 @@ public static class Program {
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
         } else if (args.Count == 4) {
+            if (String.IsNullOrWhiteSpace (args[1])) {
+                Console.Error.WriteLine ("// ERROR: Library path is empty");
+                return 1;
+            }
+
             var libraryFullName = Path.GetFullPath (args[1]);
             var platformName = args[2].Trim ();
             var profileName = args[3].Trim ();

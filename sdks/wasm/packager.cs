@@ -372,6 +372,7 @@ class Driver {
 		public bool EnableDynamicRuntime;
 		public bool LinkerExcludeDeserialization;
 		public bool EnableCollation;
+		public bool FilterRewriter;
 	}
 
 	int Run (string[] args) {
@@ -483,6 +484,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
 		AddFlag (p, new BoolFlag ("linker-exclude-deserialization", "Link out .NET deserialization support", opts.LinkerExcludeDeserialization, b => opts.LinkerExcludeDeserialization = b));
 		AddFlag (p, new BoolFlag ("collation", "enable unicode collation support", opts.EnableCollation, b => opts.EnableCollation = b));
+		AddFlag (p, new BoolFlag ("filter-rewriter", "enable exception filter rewriter", opts.FilterRewriter, b => opts.FilterRewriter = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -649,6 +651,11 @@ class Driver {
 		}
 
 		if (!emit_ninja) {
+			if (opts.FilterRewriter) {
+				opts.FilterRewriter = false;
+				Console.Error.WriteLine("WARNING: Filter rewriter requires ninja. Ignoring");
+			}
+
 			if (!Directory.Exists (out_prefix))
 				Directory.CreateDirectory (out_prefix);
 			var bcl_dir = Path.Combine (out_prefix, deploy_prefix);
@@ -924,6 +931,9 @@ class Driver {
 		ninja.WriteLine ("rule ilstrip");
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe -q $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
+		ninja.WriteLine ("rule filter-rewriter");
+		ninja.WriteLine ("  command = mono --debug $tools_dir/exception-filter-rewriter.exe --verbose --no-generics --warn --mono $in $out");
+		ninja.WriteLine ("  description = [FILTER-REWRITER]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
@@ -1026,6 +1036,12 @@ class Driver {
 			if (il_strip) {
 				ninja.WriteLine ($"build $builddir/ilstrip-out/{filename} : ilstrip {infile}");
 				a.final_path = $"$builddir/ilstrip-out/{filename}";
+			}
+
+			if (opts.FilterRewriter) {
+				var filter_in_file = a.final_path;
+				ninja.WriteLine ($"build $builddir/filter-out/{filename} : filter-rewriter {filter_in_file}");
+				a.final_path = $"$builddir/filter-out/{filename}";
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
