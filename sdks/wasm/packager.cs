@@ -370,7 +370,7 @@ class Driver {
 		public bool NativeStrip;
 		public bool Simd;
 		public bool EnableDynamicRuntime;
-        public bool FilterRewriter;
+		public bool FilterRewriter;
 	}
 
 	int Run (string[] args) {
@@ -477,7 +477,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("dynamic-runtime", "enable dynamic runtime (support for Emscripten's dlopen)", opts.EnableDynamicRuntime, b => opts.EnableDynamicRuntime = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
-        AddFlag (p, new BoolFlag ("filter-rewriter", "enable exception filter rewriter", opts.FilterRewriter, b => opts.FilterRewriter = b));
+		AddFlag (p, new BoolFlag ("filter-rewriter", "enable exception filter rewriter", opts.FilterRewriter, b => opts.FilterRewriter = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -632,10 +632,10 @@ class Driver {
 		}
 
 		if (!emit_ninja) {
-            if (opts.FilterRewriter) {
-                Console.Error.WriteLine("Filter rewriter requires ninja");
-                return 1;
-            }
+			if (opts.FilterRewriter) {
+				Console.Error.WriteLine("Filter rewriter requires ninja");
+				return 1;
+			}
 
 			if (!Directory.Exists (out_prefix))
 				Directory.CreateDirectory (out_prefix);
@@ -907,7 +907,7 @@ class Driver {
 		ninja.WriteLine ("rule ilstrip");
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
-        ninja.WriteLine ("rule filter-rewriter");
+		ninja.WriteLine ("rule filter-rewriter");
 		ninja.WriteLine ("  command = mono $tools_dir/exception-rewriter.exe --no-generics --warn $in $out");
 		ninja.WriteLine ("  description = [FILTER-REWRITER]");
 
