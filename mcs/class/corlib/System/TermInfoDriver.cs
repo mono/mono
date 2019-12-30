@@ -195,7 +195,6 @@ namespace System {
 			lock (initLock){
 				if (inited)
 					return;
-				inited = true;
 				
 				/* This should not happen any more, since it is checked for in Console */
 				if (!ConsoleDriver.IsConsole)
@@ -265,6 +264,8 @@ namespace System {
 					cursorLeft = 0;
 					cursorTop = 0;
 				}
+
+				inited = true;
 			}
 		}
 
