@@ -908,7 +908,7 @@ class Driver {
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
 		ninja.WriteLine ("rule filter-rewriter");
-		ninja.WriteLine ("  command = mono $tools_dir/exception-rewriter.exe --no-generics --warn $in $out");
+		ninja.WriteLine ("  command = mono $tools_dir/exception-filter-rewriter.exe --no-generics --warn $in $out");
 		ninja.WriteLine ("  description = [FILTER-REWRITER]");
 
 		// Targets
@@ -1010,6 +1010,12 @@ class Driver {
 			if (il_strip) {
 				ninja.WriteLine ($"build $builddir/ilstrip-out/{filename} : ilstrip {infile}");
 				a.final_path = $"$builddir/ilstrip-out/{filename}";
+			}
+
+			if (opts.FilterRewriter) {
+				var filter_in_file = a.final_path;
+				ninja.WriteLine ($"build $builddir/filter-out/{filename} : filter-rewriter {filter_in_file}");
+				a.final_path = $"$builddir/filter-out/{filename}";
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");

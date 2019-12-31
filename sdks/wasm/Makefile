@@ -25,7 +25,7 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 
-PACKAGER=mono --debug packager.exe --no-native-strip
+PACKAGER=mono --debug packager.exe --no-native-strip --filter-rewriter
 
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
