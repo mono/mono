@@ -56,17 +56,19 @@ typedef struct
 
 #define STACK_VALUE_NONE 0
 #define STACK_VALUE_LOCAL 1
-#define STACK_VALUE_I4 2
-#define STACK_VALUE_I8 3
+#define STACK_VALUE_ARG 2
+#define STACK_VALUE_I4 3
+#define STACK_VALUE_I8 4
 
 // StackValue contains data to construct an InterpInst that is equivalent with the contents
-// of the stack slot / local.
+// of the stack slot / local / argument.
 typedef struct {
-	// Indicates the type of the stored information. It can be a local or a constant
+	// Indicates the type of the stored information. It can be a local, argument or a constant
 	int type;
 	// Holds the local index or the actual constant value
 	union {
 		int local;
+		int arg;
 		gint32 i;
 		gint64 l;
 	};
@@ -75,7 +77,7 @@ typedef struct {
 typedef struct
 {
 	// This indicates what is currently stored in this stack slot. This can be a constant
-	// or the copy of a local.
+	// or the copy of a local / argument.
 	StackValue val;
 	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
 	// of the stack slot, because we can't clear the instruction that set it.
@@ -1648,7 +1650,9 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->ip += 5;
 			return TRUE;
 		}
-	} else if (in_corlib && !strcmp (klass_name_space, "Internal.Runtime.CompilerServices") && !strcmp (klass_name, "Unsafe")) {
+	} else if (((in_corlib && !strcmp (klass_name_space, "Internal.Runtime.CompilerServices"))
+				|| !strcmp (klass_name_space, "System.Runtime.CompilerServices"))
+			   && !strcmp (klass_name, "Unsafe")) {
 #ifdef ENABLE_NETCORE
 		if (!strcmp (tm, "AddByteOffset"))
 			*op = MINT_INTRINS_UNSAFE_ADD_BYTE_OFFSET;
@@ -1708,6 +1712,26 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				*op = MINT_LDC_I4_0;
 		} else if (!strcmp (tm, "ObjectHasComponentSize")) {
 			*op = MINT_INTRINS_RUNTIMEHELPERS_OBJECT_HAS_COMPONENT_SIZE;
+		} else if (!strcmp (tm, "IsReferenceOrContainsReferences")) {
+			g_assert (csignature->param_count == 0);
+			MonoGenericContext *ctx = mono_method_get_context (target_method);
+			g_assert (ctx);
+			g_assert (ctx->method_inst);
+			g_assert (ctx->method_inst->type_argc == 1);
+			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
+
+			gboolean has_refs;
+
+			MonoClass *klass = mono_class_from_mono_type_internal (t);
+			mono_class_init_internal (klass);
+			if (MONO_TYPE_IS_REFERENCE (t))
+				has_refs = TRUE;
+			else if (MONO_TYPE_IS_PRIMITIVE (t))
+				has_refs = FALSE;
+			else
+				has_refs = m_class_has_references (klass);
+
+			*op = has_refs ? MINT_LDC_I4_1 : MINT_LDC_I4_0;
 		}
 #endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
@@ -1848,8 +1872,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib &&
 			   !strcmp ("System.Runtime.CompilerServices", klass_name_space) &&
 			   !strcmp ("RuntimeFeature", klass_name)) {
-		if (!strcmp (tm, "get_IsDynamicCodeSupported") || !strcmp (tm, "get_IsDynamicCodeCompiled"))
+		if (!strcmp (tm, "get_IsDynamicCodeSupported"))
 			*op = MINT_LDC_I4_1;
+		else if (!strcmp (tm, "get_IsDynamicCodeCompiled"))
+			*op = MINT_LDC_I4_0;
 	}
 
 	return FALSE;
@@ -2177,6 +2203,15 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 	}
 }
 
+static MonoMethod*
+interp_get_method (MonoMethod *method, guint32 token, MonoImage *image, MonoGenericContext *generic_context, MonoError *error)
+{
+	if (method->wrapper_type == MONO_WRAPPER_NONE)
+		return mono_get_method_checked (image, token, NULL, generic_context, error);
+	else
+		return (MonoMethod *)mono_method_get_wrapper_data (method, token);
+}
+
 /* Return FALSE if error, including inline failure */
 static gboolean
 interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, MonoClass *constrained_class, gboolean readonly, MonoError *error, gboolean check_visibility, gboolean save_last_error)
@@ -2218,11 +2253,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 			target_method = NULL;
 		} else {
-			if (method->wrapper_type == MONO_WRAPPER_NONE) {
-				target_method = mono_get_method_checked (image, token, NULL, generic_context, error);
-				return_val_if_nok (error, FALSE);
-			} else
-				target_method = (MonoMethod *)mono_method_get_wrapper_data (method, token);
+			target_method = interp_get_method (method, token, image, generic_context, error);
+			return_val_if_nok (error, FALSE);
 			csignature = mono_method_signature_internal (target_method);
 
 			if (generic_context) {
@@ -2379,7 +2411,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
 			int align, arg_size;
 			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vararg_stack += ALIGN_TO (arg_size, align);
+			vararg_stack = ALIGN_TO (vararg_stack, align);
+			vararg_stack += arg_size;
 		}
 		/* allocate space for the pointer to varargs space start */
 		vararg_stack += sizeof (gpointer);
@@ -3165,6 +3198,33 @@ interp_emit_load_const (TransformData *td, gpointer field_addr, int mt)
 	return TRUE;
 }
 
+/*
+ * emit_convert:
+ *
+ *   Emit some implicit conversions which are not part of the .net spec, but are allowed by MS.NET.
+ */
+static void
+emit_convert (TransformData *td, int stack_type, MonoType *ftype)
+{
+	ftype = mini_get_underlying_type (ftype);
+
+	// FIXME: Add more
+	switch (ftype->type) {
+	case MONO_TYPE_I8: {
+		switch (stack_type) {
+		case STACK_TYPE_I4:
+			interp_add_ins (td, MINT_CONV_I8_I4);
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 static void
 interp_emit_sfld_access (TransformData *td, MonoClassField *field, MonoClass *field_class, int mt, gboolean is_load, MonoError *error)
 {
@@ -3777,6 +3837,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				}
 				td->last_ins->data [0] = exit_profiling;
 				WRITE32_INS (td->last_ins, 1, &vt_size);
+				POP_VT (td, vt_size);
 				++td->ip;
 			} else {
 				if (vt_size == 0)
@@ -3784,6 +3845,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				else {
 					interp_add_ins (td, MINT_RET_VT);
 					WRITE32_INS (td->last_ins, 0, &vt_size);
+					POP_VT (td, vt_size);
 					++td->ip;
 				}
 			}
@@ -4498,12 +4560,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			token = read32 (td->ip);
 			td->ip += 4;
 
-			if (method->wrapper_type != MONO_WRAPPER_NONE)
-				m = (MonoMethod *)mono_method_get_wrapper_data (method, token);
-			else  {
-				m = mono_get_method_checked (image, token, NULL, generic_context, error);
-				goto_if_nok (error, exit);
-			}
+			m = interp_get_method (method, token, image, generic_context, error);
+			goto_if_nok (error, exit);
 
 			csignature = mono_method_signature_internal (m);
 			klass = m->klass;
@@ -4937,6 +4995,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type_internal (field);
 			mt = mint_type (ftype);
+
+			emit_convert (td, td->sp [-1].type, ftype);
 
 			/* the vtable of the field might not be initialized at this point */
 			MonoClass *fld_klass = mono_class_from_mono_type_internal (ftype);
@@ -5663,7 +5723,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (next_ip < end &&
 					(inlining || !td->is_bb_start [next_ip - td->il_code]) &&
 					(*next_ip == CEE_CALL || *next_ip == CEE_CALLVIRT) &&
-					(cmethod = mono_get_method_checked (image, read32 (next_ip + 1), NULL, generic_context, error)) &&
+					(cmethod = interp_get_method (method, read32 (next_ip + 1), image, generic_context, error)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 				interp_add_ins (td, MINT_MONO_LDPTR);
@@ -5904,6 +5964,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				save_last_error = TRUE;
 				++td->ip;
 				break;
+			case CEE_MONO_GET_SP:
+				interp_add_ins (td, MINT_MONO_GET_SP);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+				++td->ip;
+				break;
 			default:
 				g_error ("transform.c: Unimplemented opcode: 0xF0 %02x at 0x%x\n", *td->ip, td->ip-header->code);
 			}
@@ -5994,12 +6059,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					--td->sp;
 				}
 				token = read32 (td->ip + 1);
-				if (method->wrapper_type != MONO_WRAPPER_NONE)
-					m = (MonoMethod *)mono_method_get_wrapper_data (method, token);
-				else {
-					m = mono_get_method_checked (image, token, NULL, generic_context, error);
-					goto_if_nok (error, exit);
-				}
+				m = interp_get_method (method, token, image, generic_context, error);
+				goto_if_nok (error, exit);
 
 				if (!mono_method_can_access_method (method, m))
 					interp_generate_mae_throw (td, method, m);
@@ -6597,6 +6658,18 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 	}
 }
 
+// The value of argument has changed. This means the contents of the stack where the
+// argument was loaded, no longer contain the value of the argument. Clear them.
+static void
+clear_stack_content_info_for_argument (StackContentInfo *start, StackContentInfo *end, int argument)
+{
+	StackContentInfo *si;
+	for (si = start; si < end; si++) {
+		if (si->val.type == STACK_VALUE_ARG && si->val.arg == argument)
+			si->val.type = STACK_VALUE_NONE;
+	}
+}
+
 // The value of local has changed. This means we can no longer assume that any other local
 // is a copy of this local.
 static void
@@ -6770,7 +6843,7 @@ cfold_failed:
 	case opcode: \
 		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
 		result.type = STACK_VALUE_I4; \
-		result.field = (cast_type) sp [0].val.field relop (cast_type) sp [1].val.field; \
+		result.i = (cast_type) sp [0].val.field relop (cast_type) sp [1].val.field; \
 		break;
 
 
@@ -7055,7 +7128,7 @@ retry:
 				} else {
 					locals [dest_local].type = STACK_VALUE_NONE;
 				}
-			} else if (sp->val.type == STACK_VALUE_NONE) {
+			} else if (sp->val.type == STACK_VALUE_NONE || sp->val.type == STACK_VALUE_ARG) {
 				locals [dest_local].type = STACK_VALUE_NONE;
 			} else {
 				g_assert (sp->val.type == STACK_VALUE_I4 || sp->val.type == STACK_VALUE_I8);
@@ -7124,6 +7197,15 @@ retry:
 			// propagated instruction, so we remove the top of stack dependency
 			sp [-1].ins = NULL;
 			sp++;
+		} else if (MINT_IS_LDARG (ins->opcode)) {
+			sp->ins = ins;
+			sp->val.type = STACK_VALUE_ARG;
+			sp->val.arg = ins->opcode == MINT_LDARG_P0 ? 0 : ins->data [0];
+			sp++;
+		} else if (MINT_IS_STARG (ins->opcode)) {
+			int dest_arg = ins->data [0];
+			sp--;
+			clear_stack_content_info_for_argument (stack, sp, dest_arg);
 		} else if (ins->opcode >= MINT_BOX && ins->opcode <= MINT_BOX_NULLABLE) {
 			int offset = ins->data [1];
 			// Clear the stack slot that is boxed
@@ -7182,30 +7264,29 @@ retry:
 			ins = interp_fold_binop (td, sp, ins);
 			sp--;
 		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_P && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
-			if (sp [-2].ins) {
-				InterpInst *obj_ins = sp [-2].ins;
-				if (obj_ins->opcode == MINT_LDLOC_O) {
-					int loc_index = obj_ins->data [0];
+			StackContentInfo *src = &sp [-2];
+			if (src->ins) {
+				if (src->val.type == STACK_VALUE_LOCAL) {
+					int loc_index = src->val.local;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
 					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
 					ins->data [0] = loc_index;
 					ins->data [1] = fld_offset;
+					local_ref_count [loc_index]++;
 					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, obj_ins);
+					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
-				} else if (obj_ins->opcode == MINT_LDARG_O || obj_ins->opcode == MINT_LDARG_P0) {
-					int arg_index = 0;
+				} else if (src->val.type == STACK_VALUE_ARG) {
+					int arg_index = src->val.arg;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
-					if (obj_ins->opcode == MINT_LDARG_O)
-						arg_index = obj_ins->data [0];
 					ins = interp_insert_ins (td, ins, MINT_STARGFLD_I1 + mt);
 					ins->data [0] = arg_index;
 					ins->data [1] = fld_offset;
 					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, obj_ins);
+					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
 				}
@@ -7432,7 +7513,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	rtm->stack_size = ALIGN_TO (rtm->stack_size, MINT_VT_ALIGNMENT);
 	rtm->vt_stack_size = td->max_vt_sp;
 	rtm->total_locals_size = td->total_locals_size;
-	rtm->alloca_size = rtm->total_locals_size + rtm->vt_stack_size + rtm->stack_size;
+	rtm->alloca_size = ALIGN_TO (rtm->total_locals_size + rtm->vt_stack_size + rtm->stack_size, 8);
 	rtm->data_items = (gpointer*)mono_domain_alloc0 (domain, td->n_data_items * sizeof (td->data_items [0]));
 	memcpy (rtm->data_items, td->data_items, td->n_data_items * sizeof (td->data_items [0]));
 

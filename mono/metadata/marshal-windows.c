@@ -9,6 +9,7 @@
 #include <glib.h>
 
 #if defined(HOST_WIN32)
+
 #include <winsock2.h>
 #include <windows.h>
 #include <objbase.h>
@@ -16,13 +17,11 @@
 #include "icall-decl.h"
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 void*
-mono_marshal_alloc_hglobal (size_t size, MonoError *error)
+mono_marshal_alloc_hglobal (size_t size)
 {
-	void* p = GlobalAlloc (GMEM_FIXED, size);
-	if (!p)
-		mono_error_set_out_of_memory (error, "");
-	return p;
+	return GlobalAlloc (GMEM_FIXED, size);
 }
 
 gpointer
@@ -36,6 +35,7 @@ mono_marshal_free_hglobal (gpointer ptr)
 {
 	GlobalFree (ptr);
 }
+
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 void*
@@ -57,13 +57,21 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 }
 
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length);
+
+char*
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length)
 {
+	g_assert_not_netcore ();
+
+	ERROR_DECL (error);
 	size_t len = WideCharToMultiByte (CP_ACP, 0, s, length, NULL, 0, NULL, NULL);
-	char* res = mono_marshal_alloc_hglobal (len+1, error);
-	return_val_if_nok (error, NULL);
+	char* res = mono_marshal_alloc_hglobal_error (len+1, error);
 	if (!res)
+	{
+		mono_error_set_pending_exception (error);
 		return NULL;
+	}
 
 	WideCharToMultiByte (CP_ACP, 0, s, length, res, len, NULL, NULL);
 	res[len] = 0;

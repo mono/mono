@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -55,12 +56,18 @@ namespace MonoTests.Remoting
 	{
 		public override IChannelSender CreateClientChannel ()
 		{
-			return new TcpChannel (0);
+			Hashtable props = new Hashtable ();
+			props["port"] = 0;
+			props["bindTo"] = "127.0.0.1";
+			return new TcpChannel (props, null, null);
 		}
 
 		public override IChannelReceiver CreateServerChannel ()
 		{
-			return new TcpChannel (0);
+			Hashtable props = new Hashtable ();
+			props["port"] = 0;
+			props["bindTo"] = "127.0.0.1";
+			return new TcpChannel (props, null, null);
 		}
 	}
 }

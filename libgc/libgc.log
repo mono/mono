@@ -1,9 +1,0 @@
-2003-05-17  Martin Baulig  <martin@ximian.com>
-
-	* include/gc.h (GCThreadFunctions): New function vtable to allow a
-	client to provide custom versions of stopping/starting the world.
-
-	* linux_threads.c (GC_stop_world): Moved the functionality into
-	linux_stop_world(); just call it via the `gc_thread_vtable' here.
-	(GC_start_world, GC_push_all_stacks): Likewise.
-

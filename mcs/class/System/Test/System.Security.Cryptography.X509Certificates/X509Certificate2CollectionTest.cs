@@ -579,6 +579,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Find_FindByIssuerName ()
 		{
 			// empty
@@ -692,6 +695,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM CompareInfo - https://github.com/mono/mono/issues/17837")]
+#endif
 		public void Find_FindBySubjectName ()
 		{
 			// empty
