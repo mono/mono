@@ -57,7 +57,8 @@ namespace ExceptionRewriter {
 			{Code.Starg_S, OpCodes.Stloc }
 		};
 
-		public AssemblyRewriter (AssemblyDefinition assembly, RewriteOptions options) {
+		public AssemblyRewriter (AssemblyDefinition assembly, RewriteOptions options) 
+		{
 			Assembly = assembly;
 			Options = options;
 
@@ -94,7 +95,8 @@ namespace ExceptionRewriter {
 
 		// Locate an existing assembly reference to the specified assembly, then reference the
 		//  specified type by name from that assembly and import it
-		private TypeReference ImportReferencedType (ModuleDefinition module, string assemblyName, string @namespace, string name) {
+		private TypeReference ImportReferencedType (ModuleDefinition module, string assemblyName, string @namespace, string name) 
+		{
 			var s = module.TypeSystem.String;
 
 			foreach (var m in Assembly.Modules) {
@@ -114,7 +116,8 @@ namespace ExceptionRewriter {
 			return null;
 		}
 
-		private TypeReference GetExceptionFilter (ModuleDefinition module, bool autoAddReference = true) {
+		private TypeReference GetExceptionFilter (ModuleDefinition module, bool autoAddReference = true) 
+		{
 			var result = ImportReferencedType(module, "ExceptionFilterSupport", "Mono.Runtime.Internal", "ExceptionFilter");
 			if (result == null) {
 				if (!autoAddReference)
@@ -127,15 +130,18 @@ namespace ExceptionRewriter {
 			return result;
 		}
 
-		private TypeReference GetException (ModuleDefinition module) {
+		private TypeReference GetException (ModuleDefinition module) 
+		{
 			return ImportCorlibType(module, "System", "Exception");
 		}
 
-		private TypeReference GetExceptionDispatchInfo (ModuleDefinition module) {
+		private TypeReference GetExceptionDispatchInfo (ModuleDefinition module) 
+		{
 			return ImportCorlibType(module, "System.Runtime.ExceptionServices", "ExceptionDispatchInfo");
 		}
 
-		public void Rewrite () {
+		public void Rewrite () 
+		{
 			foreach (var mod in Assembly.Modules) {
 				// Make temporary copy of the types and methods lists because we mutate them while iterating
 				foreach (var type in mod.GetTypes())
@@ -173,14 +179,16 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private Instruction Patch (Instruction i, Instruction old, Instruction replacement) {
+		private Instruction Patch (Instruction i, Instruction old, Instruction replacement) 
+		{
 			if (i == old)
 				return replacement;
 			else
 				return i;
 		}
 
-		private void Patch (MethodDefinition method, Instruction old, Instruction replacement) {
+		private void Patch (MethodDefinition method, Instruction old, Instruction replacement) 
+		{
 			var body = method.Body.Instructions;
 			for (int i = 0; i < body.Count; i++) {
 				if (body[i].OpCode.Code == Code.Brtrue_S)
@@ -205,7 +213,8 @@ namespace ExceptionRewriter {
 				body.Insert(offset, ops[i]);
 		}
 
-		private Instruction ExtractExceptionHandlerExitTarget (ExceptionHandler eh) {
+		private Instruction ExtractExceptionHandlerExitTarget (ExceptionHandler eh) 
+		{
 			var leave = eh.HandlerEnd.Previous;
 			if (leave.OpCode == OpCodes.Rethrow)
 				return leave;
@@ -216,7 +225,8 @@ namespace ExceptionRewriter {
 			return leaveTarget;
 		}
 
-		private bool IsStoreOperation (Code opcode) {
+		private bool IsStoreOperation (Code opcode) 
+		{
 			switch (opcode) {
 				case Code.Stloc:
 				case Code.Stloc_S:
@@ -452,7 +462,8 @@ namespace ExceptionRewriter {
 			return result;
 		}
 
-		private MethodDefinition CreateConstructor (TypeDefinition type) {
+		private MethodDefinition CreateConstructor (TypeDefinition type) 
+		{
 			var ctorMethod = new MethodDefinition(
 				".ctor", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, 
 				type.Module.TypeSystem.Void
@@ -730,21 +741,24 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void CopyGenericParameters (TypeDefinition sourceType, TypeDefinition owner, Dictionary<TypeReference, GenericParameter> result) {
+		private void CopyGenericParameters (TypeDefinition sourceType, TypeDefinition owner, Dictionary<TypeReference, GenericParameter> result) 
+		{
 			foreach (var gp in sourceType.GenericParameters) {
 				result[gp] = new GenericParameter(gp.Name, owner);
 				owner.GenericParameters.Add(result[gp]);
 			}
 		}
 
-		private void CopyGenericParameters (MethodDefinition sourceMethod, TypeDefinition owner, Dictionary<TypeReference, GenericParameter> result) {
+		private void CopyGenericParameters (MethodDefinition sourceMethod, TypeDefinition owner, Dictionary<TypeReference, GenericParameter> result) 
+		{
 			foreach (var gp in sourceMethod.GenericParameters) {
 				result[gp] = new GenericParameter(gp.Name, owner);
 				owner.GenericParameters.Add(result[gp]);
 			}
 		}
 
-		private void CopyGenericParameters (MethodDefinition sourceMethod, MethodDefinition owner, Dictionary<TypeReference, GenericParameter> result) {
+		private void CopyGenericParameters (MethodDefinition sourceMethod, MethodDefinition owner, Dictionary<TypeReference, GenericParameter> result) 
+		{
 			foreach (var gp in sourceMethod.GenericParameters) {
 				result[gp] = new GenericParameter(gp.Name, owner);
 				owner.GenericParameters.Add(result[gp]);
@@ -889,7 +903,8 @@ namespace ExceptionRewriter {
 			return handler;
 		}
 
-		private OpCode SelectStindForOperand (object operand) {
+		private OpCode SelectStindForOperand (object operand) 
+		{
 			var vr = operand as VariableReference;
 			var pr = operand as ParameterReference;
 			var operandType = (vr != null) ? vr.VariableType : pr.ParameterType;
@@ -924,7 +939,8 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private OpCode SelectLdindForOperand (object operand) {
+		private OpCode SelectLdindForOperand (object operand) 
+		{
 			var vr = operand as VariableReference;
 			var pr = operand as ParameterReference;
 			var operandType = (vr != null) ? vr.VariableType : pr.ParameterType;
@@ -1108,7 +1124,8 @@ namespace ExceptionRewriter {
 			RemoveRange(method, firstIndex, lastIndex - (inclusive ? 0 : 1));
 		}
 
-		private void RemoveRange (MethodDefinition method, int firstIndex, int lastIndex) {
+		private void RemoveRange (MethodDefinition method, int firstIndex, int lastIndex) 
+		{
 			var coll = method.Body.Instructions;
 			var lastOne = coll[lastIndex];
 			var newLast = Instruction.Create(OpCodes.Nop);
@@ -1144,26 +1161,31 @@ namespace ExceptionRewriter {
 
 		public class InstructionPair {
 			public class Comparer : IEqualityComparer<InstructionPair> {
-				public bool Equals (InstructionPair lhs, InstructionPair rhs) {
+				public bool Equals (InstructionPair lhs, InstructionPair rhs) 
+				{
 					return lhs.Equals(rhs);
 				}
 
-				public int GetHashCode (InstructionPair ip) {
+				public int GetHashCode (InstructionPair ip) 
+				{
 					return ip.GetHashCode();
 				}
 			}
 
 			public Instruction A, B;
 
-			public override int GetHashCode () {
+			public override int GetHashCode () 
+			{
 				return (A?.GetHashCode() ^ B?.GetHashCode()) ?? 0;
 			}
 
-			public bool Equals (InstructionPair rhs) {
+			public bool Equals (InstructionPair rhs) 
+			{
 				return (A == rhs.A) && (B == rhs.B);
 			}
 
-			public override bool Equals (object o) {
+			public override bool Equals (object o) 
+			{
 				var ip = o as InstructionPair;
 				if (ip == null)
 					return false;
@@ -1175,15 +1197,18 @@ namespace ExceptionRewriter {
 			public TypeDefinition Type;
 			public ExceptionHandler Handler;
 
-			public bool Equals (FilterToInsert rhs) {
+			public bool Equals (FilterToInsert rhs)
+			{
 				return (Type == rhs.Type) && (Handler == rhs.Handler);
 			}
 
-			public override int GetHashCode () {
+			public override int GetHashCode () 
+			{
 				return (Type?.GetHashCode() ^ Handler?.GetHashCode()) ?? 0;
 			}
 
-			public override bool Equals (object o) {
+			public override bool Equals (object o) 
+			{
 				var fk = o as FilterToInsert;
 				if (fk == null)
 					return false;
@@ -1191,7 +1216,8 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void ExtractExceptionFilters (MethodDefinition method) {
+		private void ExtractExceptionFilters (MethodDefinition method) 
+		{
 			if (!method.HasBody)
 				return;
 
@@ -1471,7 +1497,10 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void CollectReferencedLocals (MethodDefinition method, ParameterDefinition fakeThis, HashSet<VariableReference> referencedVariables, HashSet<ParameterReference> referencedArguments) {
+		private void CollectReferencedLocals (
+			MethodDefinition method, ParameterDefinition fakeThis, 
+			HashSet<VariableReference> referencedVariables, HashSet<ParameterReference> referencedArguments
+		) {
 			foreach (var eh in method.Body.ExceptionHandlers)
 				if (eh.FilterStart != null)
 					CollectReferencedLocals(method, fakeThis, eh.FilterStart, eh.HandlerStart, referencedVariables, referencedArguments);
@@ -1506,7 +1535,8 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void CleanMethodBody (MethodDefinition method, MethodDefinition oldMethod, bool verify) {
+		private void CleanMethodBody (MethodDefinition method, MethodDefinition oldMethod, bool verify) 
+		{
 			var insns = method.Body.Instructions;
 			foreach (var i in insns)
 				i.Offset = insns.IndexOf(i);

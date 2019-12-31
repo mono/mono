@@ -7,7 +7,8 @@ using Mono.Cecil.Cil;
 
 namespace ExceptionRewriter {
 	class Program {
-		public static int Main (string[] _args) {
+		public static int Main (string[] _args) 
+		{
 			try {
 				var options = new RewriteOptions();
 
@@ -68,7 +69,8 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		static void ParseArgument (string arg, RewriteOptions options) {
+		static void ParseArgument (string arg, RewriteOptions options) 
+		{
 			if (!arg.StartsWith("-"))
 				return;
 
@@ -102,7 +104,8 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		static void Usage () {
+		static void Usage () 
+		{
 			Console.WriteLine(@"Expected: exception-filter-rewriter [options] input output [input2 output2] ...
 or        exception-filter-rewriter [options] --overwrite file1 [file2] ...
 --overwrite   Overwrite source file with rewritten output (input is a list of filenames instead of in/out pairs)
