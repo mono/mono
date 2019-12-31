@@ -633,8 +633,8 @@ class Driver {
 
 		if (!emit_ninja) {
 			if (opts.FilterRewriter) {
-				Console.Error.WriteLine("Filter rewriter requires ninja");
-				return 1;
+				opts.FilterRewriter = false;
+				Console.Error.WriteLine("WARNING: Filter rewriter requires ninja. Ignoring");
 			}
 
 			if (!Directory.Exists (out_prefix))

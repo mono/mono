@@ -50,12 +50,13 @@ net_4_5_dirs := \
 	mono-symbolicate	\
 	linker-analyzer \
 	gacutil \
-	exception-filter-rewriter
+	exception-filter-rewriter \
+	exception-filter-support
 
 build_SUBDIRS =
-build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html exception-filter-rewriter
+build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html exception-filter-rewriter exception-filter-support
 monodroid_tools_SUBDIRS =
-monodroid_tools_PARALLEL_SUBDIRS = aprofutil cil-strip linker-analyzer mkbundle mdoc mono-symbolicate corcompare mono-api-diff mono-api-html pdb2mdb nunit-lite exception-filter-rewriter
+monodroid_tools_PARALLEL_SUBDIRS = aprofutil cil-strip linker-analyzer mkbundle mdoc mono-symbolicate corcompare mono-api-diff mono-api-html pdb2mdb nunit-lite exception-filter-rewriter exception-filter-support
 monodroid_SUBDIRS = nunit-lite
 monotouch_SUBDIRS = nunit-lite
 monotouch_tv_SUBDIRS = nunit-lite
@@ -67,7 +68,7 @@ xammac_net_4_5_SUBDIRS = nunit-lite
 net_4_x_SUBDIRS =
 net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 wasm_tools_SUBDIRS =
-wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip exception-filter-rewriter
+wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip exception-filter-rewriter exception-filter-support
 
 DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 
