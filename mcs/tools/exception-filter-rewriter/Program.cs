@@ -63,7 +63,7 @@ namespace ExceptionRewriter {
 				return 0;
 			} finally {
 				if (Debugger.IsAttached) {
-					Console.WriteLine("Press enter to exit");
+					Console.WriteLine ("Press enter to exit");
 					Console.ReadLine ();
 				}
 			}
