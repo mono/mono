@@ -4,4 +4,4 @@ include ../../build/rules.make
 
 PROGRAM = exception-filter-support.dll
 
-include ../../build/library.make
+include ../../build/executable.make
