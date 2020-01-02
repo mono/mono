@@ -109,7 +109,11 @@ namespace System.Runtime.CompilerServices
 		internal static bool ObjectHasComponentSize (object obj) => ObjectHasComponentSize (obj);
 
 		[Intrinsic]
-		internal static bool ObjectHasReferences (object obj) => ObjectHasReferences (obj);
+		internal static bool ObjectHasReferences (object obj)
+		{
+			// TODO: Missing intrinsic in interpreter
+			return RuntimeTypeHandle.HasReferences (obj.GetType () as RuntimeType);
+		}
 
 		static object GetUninitializedObjectInternal (Type type)
 		{

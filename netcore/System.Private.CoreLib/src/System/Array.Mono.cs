@@ -448,21 +448,20 @@ namespace System
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawSzArrayData ()
 		{
-			throw new NotImplementedException ();
+			// TODO: Missing intrinsic in interpreter
+			return ref Unsafe.As<RawData>(this).Data;
 		}
 
 		[Intrinsic]
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawArrayData ()
 		{
-			throw new NotImplementedException ();
+			// TODO: Missing intrinsic in interpreter
+			return ref Unsafe.As<RawData>(this).Data;
 		}
 
 		[Intrinsic]
-		internal int GetElementSize ()
-		{
-			throw new NotImplementedException ();
-		}
+		internal int GetElementSize () => GetElementSize ();
 
 		[Intrinsic]
 		public bool IsPrimitive () => IsPrimitive ();

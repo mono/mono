@@ -9,10 +9,18 @@ namespace System.Threading
 	public static class Monitor
 	{
 		[Intrinsic]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)] // Interpreter is missing this intrinsic
 		public static void Enter (object obj) => Enter (obj);
 
 		[Intrinsic]
-		public static void Enter (object obj, ref bool lockTaken) => Enter (obj, ref lockTaken);
+		public static void Enter (object obj, ref bool lockTaken)
+		{
+			// TODO: Interpreter is missing this intrinsic
+			if (lockTaken)
+				throw new ArgumentException (SR.Argument_MustBeFalse, nameof (lockTaken));
+
+			ReliableEnterTimeout (obj, (int) Timeout.Infinite, ref lockTaken);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern void Exit (object obj);
