@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Dependency", "Sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.WebSockets", "WebAssembly.Net.WebSockets\WebAssembly.Net.WebSockets.csproj", "{31C114F5-837E-48FD-B183-31CB3A603956}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.WebAssembly.Runtime.Aot", "Mono.WebAssembly.Runtime.Aot\Mono.WebAssembly.Runtime.Aot.csproj", "{FC2805EC-74C4-4B82-8DD0-7386271D4D50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,6 +168,18 @@ Global
 		{31C114F5-837E-48FD-B183-31CB3A603956}.Release|x64.Build.0 = Release|Any CPU
 		{31C114F5-837E-48FD-B183-31CB3A603956}.Release|x86.ActiveCfg = Release|Any CPU
 		{31C114F5-837E-48FD-B183-31CB3A603956}.Release|x86.Build.0 = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|x64.Build.0 = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC2805EC-74C4-4B82-8DD0-7386271D4D50}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{698112D0-15B0-4B6F-91AF-22E860B58E39} = {8776EC91-E030-48FD-801A-EEA6D101DCC6}
