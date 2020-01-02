@@ -3279,6 +3279,8 @@ null-blob-tgt.dll: null-blob-tgt.cs
 null-blob-main.exe: null-blob-main.cs null-blob-tgt.dll null-blob-ref.dll null-blob-null-blob-assm.dll
 	$(MCS) -target:exe -out:$@ $<
 
+null-blob-main.exe$(PLATFORM_AOT_SUFFIX): null-blob-tgt.dll$(PLATFORM_AOT_SUFFIX) null-blob-ref.dll$(PLATFORM_AOT_SUFFIX) null-blob-null-blob-assm.dll$(PLATFORM_AOT_SUFFIX)
+
 # Contains copies of types which don't exist in the desktop profile so tests can use them
 Mono.Runtime.Testing.dll: weakattribute.cs
 	$(MCS) -target:library -out:$@ $<
