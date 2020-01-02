@@ -516,7 +516,7 @@ static const gint16 tableidx [] = {
 #undef TABLEDEF
 };
 
-/* On legacy. if TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
+/* On legacy, if TRUE (but also see DISABLE_DESKTOP_LOADER #define), Mono will check
  * that the public key token, culture and version of a candidate assembly matches
  * the requested strong name. On netcore, it will check the culture and version.
  * If FALSE, as long as the name matches, the candidate will be allowed.
