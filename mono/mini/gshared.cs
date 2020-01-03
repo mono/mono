@@ -2217,11 +2217,13 @@ public class Tests
 		return res == 42 ? 0 : 1;
 	}
 
+#if !__MonoCS__
 	public static int test_0_gsharedvt_out_dim () {
 		var c = new Outer<object>();
 		c.prop = new H ();
 		return (c.Foo () == "abcd") ? 0 : 1;
 	}
+#endif
 }
 
 // #13191
@@ -2269,6 +2271,7 @@ internal struct SparseArrayBuilder<T>
 }
 
 // #18276
+#if !__MonoCS__
 public class Outer<Q> {
 	public interface ID {
 		string Foo () {
@@ -2288,6 +2291,7 @@ public class H : Outer<object>.ID {
 		return "abcd";
 	}
 }
+#endif
 
 #if !__MOBILE__
 public class GSharedTests : Tests {
