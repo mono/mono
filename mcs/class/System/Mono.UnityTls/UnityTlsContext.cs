@@ -448,11 +448,11 @@ namespace Mono.Unity
 			try {
 				using (var chainImpl = new X509ChainImplUnityTls(chain))
 				using (var managedChain = new X509Chain (chainImpl)) {
-					var leaf = managedChain.ChainElements[0].Certificate;
+					remoteCertificate = managedChain.ChainElements[0].Certificate;
 
 					// Note that the overload of this method that takes a X509CertificateCollection will not pass on the chain to 
 					// user callbacks like ServicePointManager.ServerCertificateValidationCallback which can cause issues along the line.
-					if (ValidateCertificate (leaf, managedChain))
+					if (ValidateCertificate (remoteCertificate, managedChain))
 						return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
 					else
 						return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
