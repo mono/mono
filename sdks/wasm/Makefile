@@ -24,7 +24,6 @@ MINI_PATH=$(TOP)/mono/mini
 CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
-MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 PACKAGER=mono --debug packager.exe --no-native-strip
 
@@ -37,18 +36,6 @@ endif
 
 DOTNET_PACK=$(DOTNET_CMD) pack
 DOTNET_BUILD=$(DOTNET_CMD) build
-
-ZLIB_HEADERS = \
-	$(MONO_ZLIB_DIR)/crc32.h		\
-	$(MONO_ZLIB_DIR)/deflate.h  	\
-	$(MONO_ZLIB_DIR)/inffast.h  	\
-	$(MONO_ZLIB_DIR)/inffixed.h  	\
-	$(MONO_ZLIB_DIR)/inflate.h  	\
-	$(MONO_ZLIB_DIR)/inftrees.h  	\
-	$(MONO_ZLIB_DIR)/trees.h  	\
-	$(MONO_ZLIB_DIR)/zconf.h  	\
-	$(MONO_ZLIB_DIR)/zlib.h  	\
-	$(MONO_ZLIB_DIR)/zutil.h
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
@@ -84,6 +71,7 @@ WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAM
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_DYNAMIC=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
@@ -97,6 +85,9 @@ BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
     --asset=$(BROWSER_TEST)/resources/archive.zip   \
     --asset=$(BROWSER_TEST)/resources/test.nupkg   \
+
+WASM_TESTS_SRC=$(TOP)/sdks/wasm/tests/src
+WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
@@ -129,7 +120,7 @@ MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
 EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
-EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
+EMCC_DYNAMIC_FLAGS=-s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
 
 #
@@ -161,12 +152,13 @@ builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
 
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
+	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -s USE_ZLIB=1 src/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
 endef
 
+ifndef DISABLE_WASM_NO_NETCORE
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
 ifdef ENABLE_WASM_THREADS
@@ -174,7 +166,9 @@ $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(E
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+endif
 endif
 ifdef ENABLE_WASM_NETCORE
 $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
@@ -222,10 +216,10 @@ cross-netcore:
 build-managed: bcl-netcore
 
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll} > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
-samples/hello/bin/Debug/netcoreapp3.0/hello.dll:
-	dotnet build samples/hello -f netcoreapp3.0
+samples/hello/bin/Debug/netcoreapp3.0/hello.dll: samples/hello/Program.cs
+	dotnet build samples/hello -f netcoreapp3.0 --nologo -v q
 
 build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
@@ -237,13 +231,13 @@ run-hello-netcore: bin/hello-netcore/mono.js
 	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
 
 build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
 bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
 
 run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
-	(cd bin/aot-hello-netcore && $(SM) runtime.js --run hello.dll)
+	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
 # Path to <mono repo>/netcore/netcore/corefx/tests/extracted
 COREFX_TESTS_DIR=
@@ -257,20 +251,52 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
-bin/$(2)/mono.js: packager.exe runtime-tests.js
+bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	$(PACKAGER) --debugrt --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(COREFX_TESTS_DIR)/$(3)/$(4)
+	cd xunit-runner && dotnet build /nologo /v:q
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
 build-$(1): bin/$(2)/mono.js
 
 run-$(1): bin/$(2)/mono.js
-	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4))
+	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
 
 endef
 
-$(eval $(call NetcoreTestTemplate,Common-netcore,Common-netcore,Common.Tests,Common.Tests.dll))
+include corefx-test-suites.mk
+
+# Passing testsuites after exclusions
+NETCORE_COREFX_PASSING_TEST_SUITES = \
+	Common.Tests \
+	Invariant.Tests \
+	Microsoft.CSharp.Tests \
+	Microsoft.VisualBasic.Core.Tests \
+	Microsoft.Win32.Primitives.Tests \
+	System.AppContext.Tests \
+	System.Buffers.Tests \
+	System.Collections.Concurrent.Tests \
+	System.Collections.Immutable.Tests \
+	System.Collections.NonGeneric.Tests \
+	System.Collections.Specialized.Tests \
+	System.Collections.Tests \
+	System.IO.UnmanagedMemoryStream.Tests \
+	System.Json.Tests \
+	System.Memory.Tests \
+	System.Numerics.Vectors.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Runtime.CompilerServices.VisualC.Tests \
+	System.Runtime.Extensions.Tests \
+	System.Runtime.Handles.Tests \
+	System.Runtime.Tests
+
+System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
+System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
+
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
+
+$(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
 
 # Path to a fully built https://github.com/dotnet/performance
 PERF_REPO_ROOT=
@@ -395,6 +421,12 @@ $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
+$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
+	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
@@ -408,24 +440,27 @@ build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
 	ninja -v -C obj/aot-sample-profiled
 
-zlibtest.exe: zlibtest.cs
-	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
+$(WASM_TESTS_BIN):
+	mkdir -p $@
+
+$(WASM_TESTS_BIN)/zlibtest.exe: $(WASM_TESTS_SRC)/zlibtest.cs | $(WASM_TESTS_BIN)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) $(WASM_TESTS_SRC)/zlibtest.cs
 
 run-zlib-test: build-zlib-sample
 	(cd bin/zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
+build-zlib-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample $(WASM_TESTS_BIN)/zlibtest.exe
 
-build-zlib-interp-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls --zlib
+build-zlib-interp-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe --linker --link-icalls --zlib
 	ninja -v -C obj/interp-zlib-sample
 
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-aot-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js zlibtest.exe  --zlib
+build-zlib-aot-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
 run-zlib-aot-sample: build-zlib-aot-sample
@@ -576,6 +611,8 @@ D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
+RUN_V8=$(D8) --stack-trace-limit=1000 --expose_wasm
+
 run-ch-%: toolchain build-test-suite
 	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
@@ -598,14 +635,19 @@ run-all-%:
 	$(MAKE) -C . run-sm-$*
 	$(MAKE) -C . run-jsc-$*
 
-test-debugger: build-debugger-test-app build-dbg-testsuite
+run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
-run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+run-browser-tests: build-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
+
+build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
+
+run-browser-dynamic-tests: $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite
+	(cd $(BROWSER_TEST_DYNAMIC) && npm test)
 
 run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm run testsafari)
@@ -681,7 +723,6 @@ package: build build-sdk build-dbg-proxy
 	mkdir tmp/Templates
 	cp -r ./sdk/Templates tmp/
 	mkdir tmp/support
-	cp -r $(ZLIB_HEADERS) tmp/support
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

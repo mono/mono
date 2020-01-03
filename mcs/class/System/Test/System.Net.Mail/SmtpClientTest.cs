@@ -40,7 +40,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Credentials_Default ()
@@ -49,7 +49,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void DeliveryMethod ()
@@ -67,7 +67,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void EnableSsl ()
@@ -80,7 +80,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Host ()
@@ -99,7 +99,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Host_Value_Null ()
@@ -116,7 +116,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Host_Value_Empty ()
@@ -134,7 +134,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void PickupDirectoryLocation ()
@@ -153,7 +153,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Port ()
@@ -166,7 +166,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Port_Value_Invalid ()
@@ -195,7 +195,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_Message_Null ()
@@ -212,7 +212,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_Network_Host_Null ()
@@ -230,7 +230,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_Network_Host_Whitespace ()
@@ -249,7 +249,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory ()
@@ -265,7 +265,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_DirectoryNotFound ()
@@ -295,7 +295,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_Empty ()
@@ -317,7 +317,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_IllegalChars ()
@@ -345,7 +345,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_NotAbsolute ()
@@ -367,7 +367,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_Null ()
@@ -388,7 +388,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Timeout ()
@@ -401,7 +401,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -412,7 +412,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void UseDefaultCredentials_Default ()

@@ -15,6 +15,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "runtime.h"
+
 //
 // Based on runtime/ in xamarin-macios
 //
@@ -27,6 +29,8 @@ static os_log_t stdout_log;
 typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void **out_handle);
 typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void *handle);
 void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, void *user_data);
+void mono_trace_init (void);
+void mono_gc_init_finalizer_thread (void);
 
 bool
 file_exists (const char *path)
@@ -65,26 +69,26 @@ load_aot_data (MonoAssembly *assembly, int size, void *user_data, void **out_han
 	const char *aname = mono_assembly_name_get_name (assembly_name);
 	const char *bundle = get_bundle_path ();
 
-	// LOG (PRODUCT ": Looking for aot data for assembly '%s'.", name);
+	os_log_info (OS_LOG_DEFAULT, "Looking for aot data for assembly '%s'.", aname);
 	res = snprintf (path, sizeof (path) - 1, "%s/%s.aotdata", bundle, aname);
 	assert (res > 0);
 
 	int fd = open (path, O_RDONLY);
 	if (fd < 0) {
-		//LOG (PRODUCT ": Could not load the aot data for %s from %s: %s\n", aname, path, strerror (errno));
+		os_log_info (OS_LOG_DEFAULT, "Could not load the aot data for %s from %s: %s\n", aname, path, strerror (errno));
 		return NULL;
 	}
 
 	void *ptr = mmap (NULL, size, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
 	if (ptr == MAP_FAILED) {
-		//LOG (PRODUCT ": Could not map the aot file for %s: %s\n", aname, strerror (errno));
+		os_log_info (OS_LOG_DEFAULT, "Could not map the aot file for %s: %s\n", aname, strerror (errno));
 		close (fd);
 		return NULL;
 	}
 
 	close (fd);
 
-	//LOG (PRODUCT ": Loaded aot data for %s.\n", name);
+	os_log_info (OS_LOG_DEFAULT, "Loaded aot data for %s.\n", aname);
 
 	*out_handle = ptr;
 
@@ -101,14 +105,25 @@ static MonoAssembly*
 load_assembly (const char *name, const char *culture)
 {
 	const char *bundle = get_bundle_path ();
+	char filename [1024];
 	char path [1024];
 	int res;
 
 	os_log_info (OS_LOG_DEFAULT, "assembly_preload_hook: %{public}s %{public}s %{public}s\n", name, culture, bundle);
+
+	int len = strlen (name);
+	int has_extension = len > 3 && name [len - 4] == '.' && (!strcmp ("exe", name + (len - 3)) || !strcmp ("dll", name + (len - 3)));
+
+	// add extensions if required.
+	strlcpy (filename, name, sizeof (filename));
+	if (!has_extension) {
+		strlcat (filename, ".dll", sizeof (filename));
+	}
+
 	if (culture && strcmp (culture, ""))
-		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, name);
+		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, filename);
 	else
-		res = snprintf (path, sizeof (path) - 1, "%s/%s", bundle, name);
+		res = snprintf (path, sizeof (path) - 1, "%s/%s", bundle, filename);
 	assert (res > 0);
 
 	if (file_exists (path)) {
@@ -197,7 +212,7 @@ void
 log_callback (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
 {
 	os_log_info (OS_LOG_DEFAULT, "(%s %s) %s", log_domain, log_level, message);
-	NSLog (@"(%s %s) %s", log_domain, log_level, message);
+	//NSLog (@"(%s %s) %s", log_domain, log_level, message);
 	if (fatal) {
 		os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", 1);
 		exit (1);
@@ -208,6 +223,7 @@ static void
 register_dllmap (void)
 {
 	mono_dllmap_insert (NULL, "System.Native", NULL, "__Internal", NULL);
+	mono_dllmap_insert (NULL, "System.IO.Compression.Native", NULL, "__Internal", NULL);
 	mono_dllmap_insert (NULL, "System.Security.Cryptography.Native.Apple", NULL, "__Internal", NULL);
 }
 
@@ -224,6 +240,9 @@ mono_ios_runtime_init (void)
 	int res, nargs, config_nargs;
 	char *executable;
 	char **args, **config_args = NULL;
+
+	//setenv ("MONO_LOG_LEVEL", "debug", TRUE);
+	//setenv ("MONO_LOG_MASK", "all", TRUE);
 
 	stdout_log = os_log_create ("com.xamarin", "stdout");
 
@@ -265,6 +284,7 @@ mono_ios_runtime_init (void)
 	}
 
 	int aindex = 1;
+	bool wait_for_debugger = FALSE;
 	while (aindex < nargs) {
 		char *arg = args [aindex];
 		if (!(arg [0] == '-' && arg [1] == '-'))
@@ -278,6 +298,9 @@ mono_ios_runtime_init (void)
 			char *val = strdup (eq + 1);
 			os_log_info (OS_LOG_DEFAULT, "%s=%s.", name, val);
 			setenv (name, val, TRUE);
+		}
+		else if (strstr (arg, "--wait-for-debugger") == arg) {
+			wait_for_debugger = TRUE;
 		}
 		aindex ++;
 	}
@@ -302,13 +325,24 @@ mono_ios_runtime_init (void)
 	mono_install_assembly_preload_hook (assembly_preload_hook, NULL);
 	mono_install_load_aot_data_hook (load_aot_data, free_aot_data, NULL);
 	mono_install_unhandled_exception_hook (unhandled_exception_handler, NULL);
+	mono_trace_init ();
 	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
 
-	//setenv ("MONO_LOG_LEVEL", "debug", TRUE);
+	if (wait_for_debugger) {
+		char* options[] = { "--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555" };
+		mono_jit_parse_options (1, options);
+	} else {
+		//char* options[] = { "--trace=N:nothing" };
+		//mono_jit_parse_options (1, options);
+	}
 
 	mono_jit_init_version ("Mono.ios", "mobile");
+
+#ifdef DEVICE // device runtimes are configured to use lazy gc thread creation
+	mono_gc_init_finalizer_thread ();
+#endif
 
 	MonoAssembly *assembly = load_assembly (executable, NULL);
 	assert (assembly);
@@ -318,7 +352,7 @@ mono_ios_runtime_init (void)
 	char *managed_argv [128];
 	assert (managed_argc < 128 - 2);
 	int managed_aindex = 0;
-	managed_argv [managed_aindex ++] = "test-runner";
+	managed_argv [managed_aindex ++] = executable;
 	for (int i = 0; i < managed_argc; ++i) {
 		managed_argv [managed_aindex] = args [aindex];
 		os_log_info (OS_LOG_DEFAULT, "Arg: %s", managed_argv [managed_aindex]);

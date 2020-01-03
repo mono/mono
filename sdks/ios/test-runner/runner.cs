@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -80,6 +81,58 @@ class DiagnosticTextWriterMessageSink : LongLivedMarshalByRefObject, IMessageSin
         return true;
     }
 }
+
+class XunitArgumentsParser
+{
+	public static XunitFilters ParseArgumentsToFilter (Stack<string> arguments)
+	{
+		var filters = new XunitFilters ();
+
+		while (arguments.Count > 0)
+		{
+			var option = arguments.Pop ();
+			if (option.StartsWith ("@")) {  // response file handling
+				var fileName = option.Substring (1);
+				var fileContent = File.ReadAllLines (fileName);
+				foreach (var line in fileContent)
+				{
+					if (line.StartsWith ("#") || String.IsNullOrWhiteSpace (line)) continue;
+
+					var parts = line.Split (" ", StringSplitOptions.RemoveEmptyEntries);
+					for (var i = parts.Length - 1; i >= 0; i--)
+						arguments.Push (parts[i]);
+				}
+				continue;
+			}
+
+			switch (option)
+			{
+				case "-nomethod": filters.ExcludedMethods.Add (arguments.Pop ()); break;
+				case "-noclass": filters.ExcludedClasses.Add (arguments.Pop ()); break;
+				case "-nonamespace": filters.ExcludedNamespaces.Add (arguments.Pop ()); break;
+				case "-notrait": ParseEqualSeparatedArgument (filters.ExcludedTraits, arguments.Pop ()); break;
+				default: throw new ArgumentException ($"Not supported option: '{option}'");
+			};
+		}
+
+		return filters;
+	}
+
+	static void ParseEqualSeparatedArgument (Dictionary<string, List<string>> targetDictionary, string argument)
+	{
+		var parts = argument.Split ('=');
+		if (parts.Length != 2 || string.IsNullOrEmpty (parts[0]) || string.IsNullOrEmpty (parts[1]))
+			throw new ArgumentException (argument);
+
+		var name = parts[0];
+		var value = parts[1];
+		if (targetDictionary.TryGetValue (name, out List<string> excludedTraits)) {
+			excludedTraits.Add (value);
+		} else {
+			targetDictionary[name] = new List<string> { value };
+		}
+	}
+}
 #else
 class MonoSdksTextUI : TextUI,ITestListener
 {
@@ -115,27 +168,33 @@ class Interop
 public class TestRunner
 {
 	public static int Main(string[] args) {
+		var arguments = new Stack<string> ();
 		string host = null;
 		int port = 0;
 
+		for (var i = args.Length - 1; i >= 0; i--)
+			arguments.Push (args[i]);
+
 		// First argument is the connection string
-		if (args [0].StartsWith ("tcp:")) {
-			var parts = args [0].Split (':');
+		if (arguments.Peek ().StartsWith("tcp:", StringComparison.Ordinal)) {
+			var parts = arguments.Pop ().Split (':');
 			if (parts.Length != 3)
 				throw new Exception ();
 			host = parts [1];
 			port = Int32.Parse (parts [2]);
-			args = args.Skip (1).ToArray ();
 		}
 
+#if !ENABLE_NETCORE
 		// Make sure the TLS subsystem including the DependencyInjector is initialized.
 		// This would normally happen on system startup in
 		// `xamarin-macios/src/ObjcRuntime/Runtime.cs`.
 		MonoTlsProviderFactory.Initialize ();
+#endif
 
 #if XUNIT_RUNNER
 		var writer = new TcpWriter (host, port);
-		var assemblyFileName = args[0];
+		var assemblyFileName = arguments.Pop ();
+		var filters = XunitArgumentsParser.ParseArgumentsToFilter (arguments);
 		var configuration = new TestAssemblyConfiguration () { ShadowCopy = false };
 		var discoveryOptions = TestFrameworkOptions.ForDiscovery (configuration);
 		var discoverySink = new TestDiscoverySink ();
@@ -147,6 +206,7 @@ public class TestRunner
 		writer.WriteLine ($"Discovering tests for {assemblyFileName}");
 		controller.Find (includeSourceInformation: false, discoverySink, discoveryOptions);
 		discoverySink.Finished.WaitOne ();
+		var testCasesToRun = discoverySink.TestCases.Where (filters.Filter).ToList ();
 		writer.WriteLine ($"Discovery finished.");
 
 		var summarySink = new DelegatingExecutionSummarySink (testSink, () => false, (completed, summary) => { writer.WriteLine ($"Tests run: {summary.Total}, Errors: 0, Failures: {summary.Failed}, Skipped: {summary.Skipped}{Environment.NewLine}Time: {TimeSpan.FromSeconds ((double)summary.Time).TotalSeconds}s"); });
@@ -160,7 +220,7 @@ public class TestRunner
 		testSink.Execution.TestAssemblyStartingEvent += args => { writer.WriteLine ($"Running tests for {args.Message.TestAssembly.Assembly}"); };
 		testSink.Execution.TestAssemblyFinishedEvent += args => { writer.WriteLine ($"Finished {args.Message.TestAssembly.Assembly}{Environment.NewLine}"); };
 
-		controller.RunTests (discoverySink.TestCases, resultsSink, testOptions);
+		controller.RunTests (testCasesToRun, resultsSink, testOptions);
 		resultsSink.Finished.WaitOne ();
 
 		writer.WriteLine ($"STARTRESULTXML");
@@ -180,14 +240,15 @@ public class TestRunner
 		if (host != null) {
 			Console.WriteLine ($"Connecting to harness at {host}:{port}.");
 			resultsXml = Path.GetTempFileName ();
-			args = args.Concat (new string[] {"-format:xunit", $"-result:{resultsXml}"}).ToArray ();
+			arguments.Push ("-format:xunit");
+			arguments.Push ($"-result:{resultsXml}");
 			writer = new TcpWriter (host, port);
 			runner = new MonoSdksTextUI (writer);
 		} else {
 			runner = new MonoSdksTextUI ();
 		}
 
-		runner.Execute (args);
+		runner.Execute (arguments.ToArray ());
 
 		if (resultsXml != null) {
 			writer.WriteLine ($"STARTRESULTXML");

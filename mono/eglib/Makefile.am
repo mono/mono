@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 if !ENABLE_MSVC_ONLY
 
@@ -63,7 +63,11 @@ if !ENABLE_MSVC_ONLY
 eglibdir=$(datadir)/mono-$(API_VER)/mono/eglib
 eglib_DATA = eglib-config.h
 
-libeglib_la_CFLAGS = -g -Wall -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE
+libeglib_la_CFLAGS = -g -Wall -D_GNU_SOURCE
+
+if !HOST_WIN32
+libeglib_la_CFLAGS += -D_FORTIFY_SOURCE=2
+endif
 
 AM_CPPFLAGS = -I$(srcdir)
 

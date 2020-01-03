@@ -264,8 +264,9 @@ class Driver {
 		assemblies.Add (data);
 
 		if (add_pdb && (kind == AssemblyKind.User || kind == AssemblyKind.Framework)) {
-			file_list.Add (Path.ChangeExtension (ra, "pdb"));
-			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
+			var pdb_path = Path.ChangeExtension (Path.GetFullPath (ra), "pdb");
+			file_list.Add (pdb_path);
+			assemblies_with_dbg_info.Add (pdb_path);
 		}
 
 		var parent_kind = kind;
@@ -367,6 +368,8 @@ class Driver {
 		public bool EnableFS;
 		public bool EnableThreads;
 		public bool NativeStrip;
+		public bool Simd;
+		public bool EnableDynamicRuntime;
 	}
 
 	int Run (string[] args) {
@@ -393,7 +396,9 @@ class Driver {
 		bool enable_zlib = false;
 		bool enable_fs = false;
 		bool enable_threads = false;
+		bool enable_dynamic_runtime = false;
 		bool is_netcore = false;
+		bool enable_simd = false;
 		var il_strip = false;
 		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
@@ -423,7 +428,9 @@ class Driver {
 				LinkerVerbose = false,
 				EnableZLib = false,
 				EnableFS = false,
-				NativeStrip = true
+				NativeStrip = true,
+				Simd = false,
+				EnableDynamicRuntime = false
 			};
 
 		var p = new OptionSet () {
@@ -454,7 +461,7 @@ class Driver {
 				{ "embed-file=", s => embed_files.Add (s) },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
-					};
+			};
 
 		AddFlag (p, new BoolFlag ("debug", "enable c# debugging", opts.Debug, b => opts.Debug = b));
 		AddFlag (p, new BoolFlag ("debugrt", "enable debug runtime", opts.DebugRuntime, b => opts.DebugRuntime = b));
@@ -466,7 +473,9 @@ class Driver {
 		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
 		AddFlag (p, new BoolFlag ("enable-fs", "enable filesystem support (through Emscripten's file_packager.py in a later phase)", opts.EnableFS, b => opts.EnableFS = b));
 		AddFlag (p, new BoolFlag ("threads", "enable threads", opts.EnableThreads, b => opts.EnableThreads = b));
+		AddFlag (p, new BoolFlag ("dynamic-runtime", "enable dynamic runtime (support for Emscripten's dlopen)", opts.EnableDynamicRuntime, b => opts.EnableDynamicRuntime = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
+		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -500,6 +509,8 @@ class Driver {
 		enable_zlib = opts.EnableZLib;
 		enable_fs = opts.EnableFS;
 		enable_threads = opts.EnableThreads;
+		enable_dynamic_runtime = opts.EnableDynamicRuntime;
+		enable_simd = opts.Simd;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -696,11 +707,13 @@ class Driver {
 
 		string wasm_runtime_dir;
 		if (is_netcore)
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/netcore-release" : "builds/netcore-debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "netcore-release" : "netcore-debug");
 		else if (enable_threads)
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "threads-release" : "threads-debug");
+		else if (enable_dynamic_runtime)
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "dynamic-release" : "dynamic-debug");
 		else
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {
@@ -807,10 +820,13 @@ class Driver {
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
-
 		string strip_cmd = "";
 		if (opts.NativeStrip)
 			strip_cmd = " && $wasm_strip $out_wasm";
+		if (enable_simd) {
+			aot_args += "mattr=simd,";
+			emcc_flags = "-s SIMD=1 ";
+		}
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
@@ -924,7 +940,7 @@ class Driver {
 				ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
 
 				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c | $emsdk_env");
-				ninja.WriteLine ($"  flags = -I{runtime_dir}/include/mono-2.0 -I{runtime_dir}/include/support");
+				ninja.WriteLine ($"  flags = -s USE_ZLIB=1 -I{runtime_dir}/include/mono-2.0");
 			}
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
@@ -935,7 +951,10 @@ class Driver {
 		}
 		if (enable_aot)
 			ninja.WriteLine ("build $builddir/aot-in: mkdir");
-
+		{
+			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "linker-subs.xml"));
+			ninja.WriteLine ($"build $builddir/linker-subs.xml: cpifdiff {source_file}");
+		}
 		var ofiles = "";
 		var bc_files = "";
 		string linker_infiles = "";
@@ -970,6 +989,7 @@ class Driver {
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+				a.linkout_path = infile;
 				if (emit_pdb) {
 					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
 					infile_pdb = $"$builddir/{filename_pdb}";
@@ -1076,6 +1096,8 @@ class Driver {
 			}
 
 			string linker_args = "";
+			//linker_args += "--substitutions linker-subs.xml ";
+			linker_infiles += "| linker-subs.xml";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {

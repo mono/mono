@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.9.0],
+AC_INIT(mono, [6.11.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=423e7794-9279-49a3-a477-f1cb2432e9f4
+MONO_CORLIB_VERSION=3bf09a16-d684-401b-ae3c-2015596b0194
 
 #
 # Put a quoted #define in config.h.
@@ -358,6 +358,10 @@ case "$host" in
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
 			disable_munmap=yes
 			;;
+		powerpc*-*-freebsd*)
+			# https://bugzilla.novell.com/show_bug.cgi?id=504411
+			disable_munmap=yes
+			;;
 		riscv*)
 			support_boehm=no
 			with_gc=sgen
@@ -605,6 +609,7 @@ AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
+AM_PATH_PYTHON
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -1751,7 +1756,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
+	 security, lldb, mdb, assert_messages, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1925,6 +1930,11 @@ fi
 if test "x$mono_feature_disable_assert_messages" = "xyes"; then
 	AC_DEFINE(DISABLE_ASSERT_MESSAGES, 1, [Disable assertion messages.])
 	AC_MSG_NOTICE([Disabled assertion messages.])
+fi
+
+if test "x$mono_feature_disable_cfgdir_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CFGDIR_CONFIG, 1, [Disable config directories.])
+	AC_MSG_NOTICE([Disabled config directories.])
 fi
 
 if test "x$mono_feature_disable_cleanup" = "xyes"; then
@@ -4458,7 +4468,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
+        powerpc*-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -5143,8 +5153,12 @@ AC_SEARCH_LIBS(dlopen, dl)
 #
 export_link_flags=--export-dynamic
 case $host_os in
-	mingw*|cygwin*)
+mingw*|cygwin*)
 	export_link_flags=--export-all-symbols
+	;;
+*-*-darwin*)
+	export_link_flags=--export_dynamic
+	;;
 esac
 AX_APPEND_LINK_FLAGS([-Wl,$export_link_flags -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
@@ -6052,8 +6066,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -6244,7 +6258,7 @@ fi
 
 # Top level Makefile.am subdirs
 if test "x$with_core" = "xonly"; then
-	MONO_SUBDIRS="mk llvm mono"
+	MONO_SUBDIRS="llvm mono"
 else
 	if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
 		mono_subdirs_libgc=external/bdwgc
@@ -6267,7 +6281,7 @@ else
 		mono_subdirs_ikvm_native=ikvm-native
 	fi
 
-	MONO_SUBDIRS="mk po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
 	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
 fi
 
@@ -6728,40 +6742,6 @@ if test x$host_darwin = xyes; then
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
 fi
 
-force_enable_compiler_server=no;
-
-AC_MSG_CHECKING([compiler server])
-AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default,force      Enables or disables compiler server],[
-   if test x$withval = xyes; then
-       enable_compiler_server=yes;
-   # force will bypass any automatic disables to allow you to test the compiler server
-   #  in scenarios where it is disabled
-   elif test x$withval = xforce; then
-       enable_compiler_server=yes;
-       force_enable_compiler_server=yes;
-   elif test x$withval = xno; then
-       enable_compiler_server=no;
-   elif test x$withval = xdefault; then
-       enable_compiler_server=yes;
-   else
-       AC_MSG_ERROR([You must supply one of "yes", "no", "default" or "force" to the --with-compiler-server option])
-   fi
-],[enable_compiler_server=yes])
-
-AC_MSG_RESULT($enable_compiler_server)
-
-if test x$enable_compiler_server = xyes; then
-   if test x$force_enable_compiler_server = xyes; then
-       AC_MSG_WARN([forcing compiler server to stay enabled])
-   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
-       enable_compiler_server=no;
-   elif test x$csc_compiler = xmcs; then
-       AC_MSG_WARN([mcs does not support the compiler server])
-       enable_compiler_server=no;
-   fi
-fi
-
 (
   case $prefix in
   NONE) prefix=$ac_default_prefix ;;
@@ -6889,6 +6869,40 @@ fi
       echo "MONO_NATIVE_USING_COMPAT=true" >> $srcdir/$mcsdir/build/config.make
     else
       echo "MONO_NATIVE_USING_COMPAT=false" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    force_enable_compiler_server=no;
+
+    AC_MSG_CHECKING([compiler server])
+    AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default,force      Enables or disables compiler server],[
+       if test x$withval = xyes; then
+           enable_compiler_server=yes;
+       # force will bypass any automatic disables to allow you to test the compiler server
+       #  in scenarios where it is disabled
+       elif test x$withval = xforce; then
+           enable_compiler_server=yes;
+           force_enable_compiler_server=yes;
+       elif test x$withval = xno; then
+           enable_compiler_server=no;
+       elif test x$withval = xdefault; then
+           enable_compiler_server=yes;
+       else
+           AC_MSG_ERROR([You must supply one of "yes", "no", "default" or "force" to the --with-compiler-server option])
+       fi
+    ],[enable_compiler_server=yes])
+
+    AC_MSG_RESULT($enable_compiler_server)
+
+    if test x$enable_compiler_server = xyes; then
+       if test x$force_enable_compiler_server = xyes; then
+           AC_MSG_WARN([forcing compiler server to stay enabled])
+       elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+           AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
+           enable_compiler_server=no;
+       elif test x$csc_compiler = xmcs; then
+           AC_MSG_WARN([mcs does not support the compiler server])
+           enable_compiler_server=no;
+       fi
     fi
 
     echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make

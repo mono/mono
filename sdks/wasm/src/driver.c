@@ -8,6 +8,7 @@
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/threads.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
@@ -44,6 +45,7 @@ void mono_free (void*);
 
 static MonoClass* datetime_class;
 static MonoClass* datetimeoffset_class;
+static MonoClass* uri_class;
 
 int mono_wasm_enable_gc;
 
@@ -228,6 +230,16 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 	return NULL;
 }
 
+#ifdef ENABLE_NETCORE
+/* Missing System.Native symbols */
+int SystemNative_CloseNetworkChangeListenerSocket (int a) { return 0; }
+int SystemNative_CreateNetworkChangeListenerSocket (int a) { return 0; }
+void SystemNative_ReadEvents (int a,int b) {}
+int SystemNative_SchedGetAffinity (int a,int b) { return 0; }
+int SystemNative_SchedSetAffinity (int a,int b) { return 0; }
+int getgrouplist (int a,int b,int c,int d) { return 0; }
+#endif
+
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
 #define NEED_INTERP 1
 #ifndef LINK_ICALLS
@@ -383,6 +395,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_initialize_internals();
+
+	mono_thread_set_main (mono_thread_current ());
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
@@ -412,14 +426,17 @@ mono_wasm_assembly_find_method (MonoClass *klass, const char *name, int argument
 }
 
 EMSCRIPTEN_KEEPALIVE MonoObject*
-mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], int* got_exception)
+mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], MonoObject **out_exc)
 {
 	MonoObject *exc = NULL;
-	MonoObject *res = mono_runtime_invoke (method, this_arg, params, &exc);
-	*got_exception = 0;
+	MonoObject *res;
 
+	if (out_exc)
+		*out_exc = NULL;
+	res = mono_runtime_invoke (method, this_arg, params, &exc);
 	if (exc) {
-		*got_exception = 1;
+		if (out_exc)
+			*out_exc = exc;
 
 		MonoObject *exc2 = NULL;
 		res = (MonoObject*)mono_object_to_string (exc, &exc2); 
@@ -462,7 +479,10 @@ mono_wasm_string_get_utf8 (MonoString *str)
 EMSCRIPTEN_KEEPALIVE MonoString *
 mono_wasm_string_from_js (const char *str)
 {
-	return mono_string_new (root_domain, str);
+	if (str)
+		return mono_string_new (root_domain, str);
+	else
+		return NULL;	
 }
 
 static int
@@ -473,6 +493,15 @@ class_is_task (MonoClass *klass)
 		return 1;
 
 	return 0;
+}
+
+MonoClass* mono_get_uri_class(MonoException** exc) 
+{
+	MonoAssembly* assembly = mono_wasm_assembly_load ("System");
+	if (!assembly)
+		return NULL;
+	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "System", "Uri");
+	return klass;    
 }
 
 #define MARSHAL_TYPE_INT 1
@@ -486,6 +515,7 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_ENUM 9
 #define MARSHAL_TYPE_DATE 20
 #define MARSHAL_TYPE_DATEOFFSET 21
+#define MARSHAL_TYPE_URI 22
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -507,6 +537,10 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		datetime_class = mono_class_from_name (mono_get_corlib(), "System", "DateTime");
 	if (!datetimeoffset_class)
 		datetimeoffset_class = mono_class_from_name (mono_get_corlib(), "System", "DateTimeOffset");
+	if (!uri_class) {
+		MonoException** exc = NULL;
+		uri_class = mono_get_uri_class(exc);
+	}
 
 	MonoClass *klass = mono_object_get_class (obj);
 	MonoType *type = mono_class_get_type (klass);
@@ -560,6 +594,8 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			return MARSHAL_TYPE_DATE;
 		if (klass == datetimeoffset_class)
 			return MARSHAL_TYPE_DATEOFFSET;
+		if (uri_class && mono_class_is_assignable_from(uri_class, klass))
+			return MARSHAL_TYPE_URI;
 		if (mono_class_is_enum (klass))
 			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt

@@ -64,6 +64,7 @@ namespace Mono.Net.Security
 		}
 
 		SslStream sslStream;
+		readonly object sslStreamLock = new object ();
 
 		internal SslStream SslStream {
 			get { return sslStream; }
@@ -157,9 +158,11 @@ namespace Mono.Net.Security
 		}
 
 		void CloseSslStream () {
-			if (sslStream != null) {
-				sslStream.Dispose ();
-				sslStream = null;
+			lock (sslStreamLock) {
+				if (sslStream != null) {
+					sslStream.Dispose ();
+					sslStream = null;
+				}
 			}
 		}
 	}

@@ -153,7 +153,6 @@ public class Harness
 		//
 		// Test results are returned using an socket connection.
 		//
-		var host = Dns.GetHostEntry (Dns.GetHostName ());
 		var server = new TcpListener (System.Net.IPAddress.Loopback, 0);
 		server.Start ();
 		int port = ((IPEndPoint)server.LocalEndpoint).Port;
@@ -274,7 +273,7 @@ public class Harness
 		int wait_time = 0;
 		while (!server.Pending ()) {
 			wait_time += 100;
-			if (wait_time == 10 * 1000) {
+			if (wait_time == 30 * 1000) {
 				Console.Error.WriteLine ("Timed out waiting for test runner to connect.");
 				Environment.Exit (1);
 			}

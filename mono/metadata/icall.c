@@ -841,7 +841,8 @@ ves_icall_System_Array_InternalCreate (MonoArray *volatile* result, MonoType* ty
 		goto exit;
 	}
 
-	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
+	MonoGenericClass *gklass;
+	gklass = mono_class_try_get_generic_class (klass);
 	if (is_generic_parameter (type) || mono_class_is_gtd (klass) || (gklass && gklass->context.class_inst->is_open)) {
 		mono_error_set_not_supported (error, NULL);
 		goto exit;
@@ -1920,7 +1921,7 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 }
 
 MonoType*
-ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
 {
 	return m_class_get_byval_arg (klass);
 }
@@ -1932,15 +1933,18 @@ ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array)
 }
 
 void
-ves_icall_Mono_SafeStringMarshal_GFree (void *c_str, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_GFree (void *c_str)
 {
 	g_free (c_str);
 }
 
 char*
-ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoStringHandle s, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *volatile* s)
 {
-	return mono_string_handle_to_utf8 (s, error);
+	ERROR_DECL (error);
+	char *result = mono_string_to_utf8_checked_internal (*s, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
 
 /* System.TypeCode */
@@ -6408,7 +6412,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 #endif
 
 void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct)
 {
 	mono_assembly_name_free_internal (aname);
 	if (free_struct)
@@ -6467,7 +6471,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		// FIXME: Push handles down into mini/mini-exceptions.c
 		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
 		MonoThreadSummary out;
+		mono_summarize_timeline_start ();
+		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
+		mono_summarize_timeline_phase_log (MonoSummaryUnmanagedStacks);
 		mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+		mono_summarize_timeline_phase_log (MonoSummaryManagedStacks);
 
 		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
 		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
@@ -6476,9 +6484,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_native_state_init (&writer);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
 		gboolean first_thread_added = TRUE;
 		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
 		char *output = mono_native_state_free (&writer, FALSE);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
 		result = mono_string_new_handle (mono_domain_get (), output, error);
 		g_free (output);
 		g_free (scratch);
@@ -8101,8 +8111,6 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
 
-#endif /* ENABLE_NETCORE */
-
 #if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 // FIXME? Names should start "mono"?
@@ -8163,6 +8171,7 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 }
 
 #endif
+#endif /* ENABLE_NETCORE */
 
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
@@ -8582,8 +8591,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_Prelink (MonoReflectionMethodHa
 }
 
 void
+ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error);
+
+void
 ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error)
 {
+	g_assert_not_netcore ();
+
 	error_init (error);
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (type, type));
 	MonoMethod* m;
