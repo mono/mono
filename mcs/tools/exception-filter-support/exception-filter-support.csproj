@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
-    <AssemblyName>Mono.Runtime.ExceptionFilterSupport</AssemblyName>
-    <RootNamespace>Mono.Runtime.Internal</RootNamespace>
-  </PropertyGroup>
-</Project>

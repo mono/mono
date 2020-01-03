@@ -323,11 +323,8 @@ tuner:
 cil-strip:
 	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
 
-exception-filter-rewriter: exception-filter-support
+exception-filter-rewriter:
 	$(MAKE) -C ../../mcs/tools/exception-filter-rewriter PROFILE=wasm_tools
-
-exception-filter-support:
-	$(MAKE) -C ../../mcs/tools/exception-filter-support PROFILE=wasm_tools
 
 mono: runtime runtime-threads cross bcl
 
