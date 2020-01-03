@@ -118,7 +118,11 @@ namespace ExceptionRewriter {
 
 		private TypeReference GetExceptionFilter (ModuleDefinition module, bool autoAddReference = true) 
 		{
-			var result = ImportReferencedType (module, "ExceptionFilterSupport", "Mono.Runtime.Internal", "ExceptionFilter");
+			var result = ImportCorlibType (module, "Mono", "ExceptionFilter");
+			if (result != null)
+				return result;
+
+			result = ImportReferencedType (module, "ExceptionFilterSupport", "Mono", "ExceptionFilter");
 			if (result == null) {
 				if (!autoAddReference)
 					throw new Exception ("ExceptionFilterSupport is not referenced");
@@ -127,6 +131,7 @@ namespace ExceptionRewriter {
 				module.AssemblyReferences.Add (anr);
 				return GetExceptionFilter (module, false);
 			}
+			
 			return result;
 		}
 

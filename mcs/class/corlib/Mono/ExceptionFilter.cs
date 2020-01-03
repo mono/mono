@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Mono.Runtime.Internal {
+namespace Mono {
     public abstract class ExceptionFilter {
         private class HasFilterRunTable : Dictionary<ExceptionFilter, bool> {
         }
