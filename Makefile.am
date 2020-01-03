@@ -95,18 +95,8 @@ bootstrap-world: compiler-tests
 	$(MAKE) install
 
 install:
-	echo $(SUBDIRS)
-	for mydir in $(SUBDIRS) ; do \
-		do_install=1 ; \
-		for noinstdir in $(noinst_SUBDIRS) ; do \
-			if [ "x$${noinstdir}" = "x$${mydir}" ] ; then \
-				do_install=0 ; \
-				break ; \
-			fi \
-		done ; \
-		if [ "$${do_install}" = "1" ] ; then \
-			(cd $${mydir} && ${MAKE} install) \
-		fi \
+	for mydir in $(filter-out $(noinst_SUBDIRS),$(SUBDIRS)); do \
+	  (cd $${mydir} && ${MAKE} install) \
 	done
 
 update-csproj:
