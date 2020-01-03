@@ -131,7 +131,7 @@ namespace ExceptionRewriter {
 				module.AssemblyReferences.Add (anr);
 				return GetExceptionFilter (module, false);
 			}
-			
+
 			return result;
 		}
 
@@ -1710,7 +1710,7 @@ namespace ExceptionRewriter {
 					return CreateRemappedInstruction (operand, code, newOperand);
 				else
 					return Instruction.Create (code, p);
-			} else {
+			} else if ((newOperand != null) && (newOperand.GetType ().IsValueType)) {
 				throw new NotImplementedException (i.OpCode.ToString ());
 			}
 		}
