@@ -1,3 +1,5 @@
+#if SECURITY_DEP
+
 using System;
 using System.Text;
 using System.Security;
@@ -81,3 +83,5 @@ namespace Mono.Unity
 		}
 	}
 }
+
+#endif
