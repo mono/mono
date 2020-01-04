@@ -1711,6 +1711,17 @@ namespace ExceptionRewriter {
 				else
 					return Instruction.Create (code, p);
 			} else if ((newOperand != null) && (newOperand.GetType ().IsValueType)) {
+				var m = typeof(Instruction).GetMethod ("Create", new Type[] {
+					code.GetType(), newOperand.GetType()
+				});
+				if (m == null)
+				throw new Exception("Could not find Instruction.Create overload for operand " + newOperand.GetType ().Name);
+				return (Instruction)m.Invoke (null, new object[] {
+					code, newOperand
+				});
+			} else if (newOperand != null) {
+				throw new NotImplementedException (i.OpCode.ToString () + " " + newOperand.GetType().FullName);
+			} else {
 				throw new NotImplementedException (i.OpCode.ToString ());
 			}
 		}
