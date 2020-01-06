@@ -50,13 +50,13 @@ stages:
             x64 LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64 LLVM
+              assetManifestPlatform: x64_LLVM
               installDependencies: true
               llvm: true
             x64 Interpreter:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64 Interpreter
+              assetManifestPlatform: x64_Interpreter
               installDependencies: true
               interpreter: true
             ARM64:
@@ -119,8 +119,9 @@ stages:
         - bash: |
             if [ $(llvm) = true ]; then
               make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
             elif [ $(interpreter) = true ]; then
-              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--interpreter" XUNIT_ARGS="-parallel none"
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib --interpreter
             else
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib
             fi

@@ -24,7 +24,6 @@ MINI_PATH=$(TOP)/mono/mini
 CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
-MONO_ZLIB_DIR=$(TOP)/mono/zlib
 
 PACKAGER=mono --debug packager.exe --no-native-strip
 
@@ -37,18 +36,6 @@ endif
 
 DOTNET_PACK=$(DOTNET_CMD) pack
 DOTNET_BUILD=$(DOTNET_CMD) build
-
-ZLIB_HEADERS = \
-	$(MONO_ZLIB_DIR)/crc32.h		\
-	$(MONO_ZLIB_DIR)/deflate.h  	\
-	$(MONO_ZLIB_DIR)/inffast.h  	\
-	$(MONO_ZLIB_DIR)/inffixed.h  	\
-	$(MONO_ZLIB_DIR)/inflate.h  	\
-	$(MONO_ZLIB_DIR)/inftrees.h  	\
-	$(MONO_ZLIB_DIR)/trees.h  	\
-	$(MONO_ZLIB_DIR)/zconf.h  	\
-	$(MONO_ZLIB_DIR)/zlib.h  	\
-	$(MONO_ZLIB_DIR)/zutil.h
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
@@ -84,6 +71,7 @@ WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAM
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_DYNAMIC=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
@@ -97,6 +85,9 @@ BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
     --asset=$(BROWSER_TEST)/resources/archive.zip   \
     --asset=$(BROWSER_TEST)/resources/test.nupkg   \
+
+WASM_TESTS_SRC=$(TOP)/sdks/wasm/tests/src
+WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
@@ -129,7 +120,7 @@ MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
 EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
-EMCC_RELEASE_DYNAMIC_FLAGS=$(EMCC_RELEASE_FLAGS) -s MAIN_MODULE=2 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
+EMCC_DYNAMIC_FLAGS=-s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
 
 #
@@ -161,7 +152,7 @@ builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/corebindings.c -c -o $$@
 
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
-	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(WASM_RUNTIME_DIR)/include/support src/zlib-helper.c -c -o $$@
+	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -s USE_ZLIB=1 src/zlib-helper.c -c -o $$@
 
 build-native: builds/$(1)/mono.js
 
@@ -175,7 +166,8 @@ $(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(E
 $(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,release-dynamic,wasm-runtime-dynamic-release,$(EMCC_RELEASE_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
 endif
 endif
 ifdef ENABLE_WASM_NETCORE
@@ -429,40 +421,49 @@ $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
+$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
+	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
-build-aot-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
-	ninja -v -C obj/aot-sample
+build-aot-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --nobinding --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	ninja -v -C obj/aot-hello
 
-build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
-	ninja -v -C obj/aot-sample-profiled
+build-aot-hello-profiled: packager.exe hello.exe data.aotprofile
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-profiled --nobinding --builddir=obj/aot-hello-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-hello-profiled
 
-zlibtest.exe: zlibtest.cs
-	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
+$(WASM_TESTS_BIN):
+	mkdir -p $@
+
+$(WASM_TESTS_BIN)/zlibtest.exe: $(WASM_TESTS_SRC)/zlibtest.cs | $(WASM_TESTS_BIN)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) $(WASM_TESTS_SRC)/zlibtest.cs
 
 run-zlib-test: build-zlib-sample
 	(cd bin/zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
+build-zlib-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --nobinding --template=runtime-tests.js --out=bin/zlib-sample $(WASM_TESTS_BIN)/zlibtest.exe
 
-build-zlib-interp-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls --zlib
+build-zlib-interp-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe --linker --link-icalls --zlib
 	ninja -v -C obj/interp-zlib-sample
 
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-aot-sample: packager.exe zlibtest.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js zlibtest.exe  --zlib
+build-zlib-aot-hello: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
-run-zlib-aot-sample: build-zlib-aot-sample
+run-zlib-aot-hello: build-zlib-aot-hello
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-mixed-sample: packager.exe hello.exe
@@ -478,23 +479,23 @@ hello.exe: hello.cs
 hello-io.exe: hello-io.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello-io.cs
 
-run-aot-sample: build-aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+run-aot-hello: build-aot-hello
+	(cd bin/aot-hello && $(SM) runtime.js --run hello.exe)
 
-run-aot-sample-profiled: build-aot-sample-profiled
-	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
+run-aot-hello-profiled: build-aot-hello-profiled
+	(cd bin/aot-hello-profiled && $(SM) runtime.js --run hello.exe)
 
-build-interp-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe
-	ninja -v -C obj/interp-sample
+build-interp-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-hello --nobinding --builddir=obj/interp-hello --template=runtime-tests.js hello.exe
+	ninja -v -C obj/interp-hello
 
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
 	(cd bin/io-sample && python $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
 
-run-interp-sample: build-interp-sample
-	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
+run-interp-hello: build-interp-hello
+	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
 
 threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
@@ -634,14 +635,19 @@ run-all-%:
 	$(MAKE) -C . run-sm-$*
 	$(MAKE) -C . run-jsc-$*
 
-test-debugger: build-debugger-test-app build-dbg-testsuite
+run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
-run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+run-browser-tests: build-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
+
+build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
 	(cd $(BROWSER_TEST_THREADS) && npm test)
+
+run-browser-dynamic-tests: $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite
+	(cd $(BROWSER_TEST_DYNAMIC) && npm test)
 
 run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm run testsafari)
@@ -717,7 +723,6 @@ package: build build-sdk build-dbg-proxy
 	mkdir tmp/Templates
 	cp -r ./sdk/Templates tmp/
 	mkdir tmp/support
-	cp -r $(ZLIB_HEADERS) tmp/support
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
@@ -727,7 +732,7 @@ serve:
 canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
-check-aot: do-aot-sample
+check-aot: do-aot-hello
 
 clean-sdk:
 	$(RM) -r sdk/**/bin

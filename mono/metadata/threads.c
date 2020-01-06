@@ -622,14 +622,14 @@ get_context_static_data (MonoAppContext *ctx, guint32 offset)
 static MonoThread**
 get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *thread)
 {
-	static MonoClassField *current_thread_field = NULL;
-
 	guint32 offset;
 
-	if (!current_thread_field) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, current_thread_field)
+
 		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, current_thread_field)
 
 	ERROR_DECL (thread_vt_error);
 	mono_class_vtable_checked (domain, mono_defaults.thread_class, thread_vt_error);
@@ -1232,15 +1232,17 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 		start_func (start_func_arg);
 	} else {
 #ifdef ENABLE_NETCORE
-		static MonoMethod *cb;
-
 		/* Call a callback in the RuntimeThread class */
 		g_assert (start_delegate == NULL);
-		if (!cb) {
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, cb)
+
 			cb = mono_class_get_method_from_name_checked (internal->obj.vtable->klass, "StartCallback", 0, 0, error);
 			g_assert (cb);
 			mono_error_assert_ok (error);
-		}
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, cb)
+
 		mono_runtime_invoke_checked (cb, internal, NULL, error);
 #else
 		void *args [1];
@@ -1551,6 +1553,34 @@ mono_thread_attach (MonoDomain *domain)
 }
 
 /**
+ * mono_threads_attach_tools_thread:
+ *
+ * Attach the current thread as a tool thread. DON'T USE THIS FUNCTION WITHOUT READING ALL DISCLAIMERS.
+ *
+ * A tools thread is a very special kind of thread that needs access to core
+ * runtime facilities but should not be counted as a regular thread for high
+ * order facilities such as executing managed code or accessing the managed
+ * heap.
+ *
+ * This is intended only for low-level utilities than need to be able to use
+ * some low-level runtime facilities when doing things like resolving
+ * backtraces in their background processing thread.
+ *
+ * Note in particular that the thread is not fully attached - it does not have
+ * a "current domain" because it cannot run managed code or interact with
+ * managed objects.  However it can act on some metadata, and use our low-level
+ * locks and the coop thread state machine (ie GC Safe and GC Unsafe
+ * transitions make sense).
+ */
+void
+mono_threads_attach_tools_thread (void)
+{
+	MonoThreadInfo *info = mono_thread_info_attach ();
+	g_assert (info);
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
+}
+
+/**
  * mono_thread_detach:
  */
 void
@@ -1559,6 +1589,8 @@ mono_thread_detach (MonoThread *thread)
 	if (thread)
 		mono_thread_detach_internal (thread->internal_thread);
 }
+
+
 
 /**
  * mono_thread_detach_if_exiting:

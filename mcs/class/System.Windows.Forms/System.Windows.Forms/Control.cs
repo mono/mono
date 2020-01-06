@@ -5377,6 +5377,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonUp (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			MouseEventArgs me;
 
 			me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
@@ -5395,6 +5401,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonDown (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 

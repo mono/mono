@@ -79,6 +79,7 @@ try_get_method_nofail (MonoClass *klass, const char *method_name, int param_coun
 	return result;
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
 {
@@ -9814,11 +9815,13 @@ emit_llvm_file (MonoAotCompile *acfg)
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	} else {
-		opts = g_strdup ("-O2 -disable-tail-calls -place-safepoints -spp-all-backedges");
+		opts = g_strdup ("-disable-tail-calls -place-safepoints -spp-all-backedges");
 	}
 
 	if (acfg->aot_opts.llvm_opts) {
-		opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
+		opts = g_strdup_printf ("%s %s", acfg->aot_opts.llvm_opts, opts);
+	} else if (!acfg->aot_opts.llvm_only) {
+		opts = g_strdup_printf ("-O2 %s", opts);
 	}
 
 	if (acfg->aot_opts.use_current_cpu) {

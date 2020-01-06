@@ -90,6 +90,10 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo ("Mono.Android, PublicKey=0024000004800000940000000602000000240000525341310004000011000000438ac2a5acfbf16cbd2b2b47a62762f273df9cb2795ceccdf77d10bf508e69e7a362ea7a45455bbf3ac955e1f2e2814f144e5d817efc4c6502cc012df310783348304e3ae38573c6d658c234025821fda87a0be8a0d504df564e2c93b2b878925f42503e9d54dfef9f9586d9e6f38a305769587b1de01f6c0410328b2c9733db")]
 #endif
 
+#if WASM
+[assembly: InternalsVisibleTo ("WebAssembly.Net.WebSockets, PublicKey=00240000048000009400000006020000002400005253413100040000010001004b86c4cb78549b34bab61a3b1800e23bfeb5b3ec390074041536a7e3cbd97f5f04cf0f857155a8928eaa29ebfd11cfbbad3ba70efea7bda3226c6a8d370a4cd303f714486b6ebc225985a638471e6ef571cc92a4613c00b8fa65d61ccee0cbe5f36330c9a01f4183559f1bef24cc2917c6d913e3a541333a1d05d9bed22b38cb")]
+#endif
+
 [assembly: TypeForwardedTo (typeof (System.Collections.Generic.Stack<>))]
 [assembly: TypeForwardedTo (typeof (System.Collections.Generic.Queue<>))]
 [assembly: TypeForwardedTo (typeof (System.IO.Enumeration.FileSystemName))]

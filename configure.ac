@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=c56e3d94-a42d-48ae-8019-4b5e96efc3bc
+MONO_CORLIB_VERSION=104DDF82-D2EA-42EE-9565-B86456C02F47
 
 #
 # Put a quoted #define in config.h.
@@ -358,6 +358,10 @@ case "$host" in
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
 			disable_munmap=yes
 			;;
+		powerpc*-*-freebsd*)
+			# https://bugzilla.novell.com/show_bug.cgi?id=504411
+			disable_munmap=yes
+			;;
 		riscv*)
 			support_boehm=no
 			with_gc=sgen
@@ -605,6 +609,7 @@ AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
+AM_PATH_PYTHON
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -1751,7 +1756,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
+	 security, lldb, mdb, assert_messages, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1925,6 +1930,11 @@ fi
 if test "x$mono_feature_disable_assert_messages" = "xyes"; then
 	AC_DEFINE(DISABLE_ASSERT_MESSAGES, 1, [Disable assertion messages.])
 	AC_MSG_NOTICE([Disabled assertion messages.])
+fi
+
+if test "x$mono_feature_disable_cfgdir_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CFGDIR_CONFIG, 1, [Disable config directories.])
+	AC_MSG_NOTICE([Disabled config directories.])
 fi
 
 if test "x$mono_feature_disable_cleanup" = "xyes"; then
@@ -4458,7 +4468,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
+        powerpc*-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -5143,8 +5153,12 @@ AC_SEARCH_LIBS(dlopen, dl)
 #
 export_link_flags=--export-dynamic
 case $host_os in
-	mingw*|cygwin*)
+mingw*|cygwin*)
 	export_link_flags=--export-all-symbols
+	;;
+*-*-darwin*)
+	export_link_flags=--export_dynamic
+	;;
 esac
 AX_APPEND_LINK_FLAGS([-Wl,$export_link_flags -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
@@ -6052,8 +6066,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -6244,7 +6258,7 @@ fi
 
 # Top level Makefile.am subdirs
 if test "x$with_core" = "xonly"; then
-	MONO_SUBDIRS="mk llvm mono"
+	MONO_SUBDIRS="llvm mono"
 else
 	if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
 		mono_subdirs_libgc=external/bdwgc
@@ -6267,10 +6281,12 @@ else
 		mono_subdirs_ikvm_native=ikvm-native
 	fi
 
-	MONO_SUBDIRS="mk po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
 fi
 
 AC_SUBST(MONO_SUBDIRS)
+AC_SUBST(MONO_NOINST_SUBDIRS)
 
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
