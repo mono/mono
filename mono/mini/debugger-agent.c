@@ -76,6 +76,7 @@
 #include <mono/utils/networking.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-logger-internals.h>
 #include "debugger-state-machine.h"
 #include "debugger-agent.h"
 #include "mini.h"
@@ -902,8 +903,6 @@ mono_debugger_set_thread_state (DebuggerTlsData *tls, MonoDebuggerThreadState ex
 	g_assert (tls->thread_state == expected);
 
 	tls->thread_state = set;
-
-	return;
 }
 
 MonoDebuggerThreadState
@@ -1236,11 +1235,20 @@ socket_transport_connect (const char *address)
 	listen_fd = -1;
 
 	if (host) {
+		int hints[] = {
+			MONO_HINT_IPV4 | MONO_HINT_NUMERIC_HOST,
+			MONO_HINT_IPV6 | MONO_HINT_NUMERIC_HOST,
+			MONO_HINT_UNSPECIFIED
+		};
 
 		mono_network_init ();
 
-		/* Obtain address(es) matching host/port */
-		s = mono_get_address_info (host, port, MONO_HINT_UNSPECIFIED, &result);
+		for (int i = 0; i < sizeof(hints) / sizeof(int); i++) {
+			/* Obtain address(es) matching host/port */
+			s = mono_get_address_info (host, port, hints[i], &result);
+			if (s == 0)
+				break;
+		}
 		if (s != 0) {
 			g_printerr ("debugger-agent: Unable to resolve %s:%d: %d\n", host, port, s); // FIXME add portable error conversion functions
 			exit (1);
@@ -1883,7 +1891,7 @@ send_reply_packet (int id, int error, Buffer *data)
 {
 	ReplyPacket packet;
 
-	memset (&packet, 0, sizeof (ReplyPacket));
+	memset (&packet, 0, sizeof (packet));
 	packet.id = id;
 	packet.error = error;
 	packet.data = data;
@@ -2524,13 +2532,6 @@ save_thread_context (MonoContext *ctx)
 		mono_thread_state_init_from_current (&tls->context);
 }
 
-/* Number of threads suspended */
-/* 
- * If this is equal to the size of thread_to_tls, the runtime is considered
- * suspended.
- */
-static gint32 threads_suspend_count;
-
 static MonoCoopMutex suspend_mutex;
 
 /* Cond variable used to wait for suspend_count becoming 0 */
@@ -2708,11 +2709,13 @@ debugger_interrupt_critical (MonoThreadInfo *info, gpointer user_data)
 	MonoJitInfo *ji;
 
 	data->valid_info = TRUE;
-	ji = mono_jit_info_table_find_internal (
-			(MonoDomain *)mono_thread_info_get_suspend_state (info)->unwind_data [MONO_UNWIND_DATA_DOMAIN],
-			MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx),
-			TRUE,
-			TRUE);
+	MonoDomain *domain = (MonoDomain *) mono_thread_info_get_suspend_state (info)->unwind_data [MONO_UNWIND_DATA_DOMAIN];
+	if (!domain) {
+		/* not attached */
+		ji = NULL;
+	} else {
+		ji = mono_jit_info_table_find_internal ( domain, MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx), TRUE, TRUE);
+	}
 
 	/* This is signal safe */
 	thread_interrupt (data->tls, info, ji);
@@ -3013,8 +3016,6 @@ suspend_current (void)
 
 		tls->suspended = FALSE;
 		tls->really_suspended = FALSE;
-
-		threads_suspend_count --;
 
 		mono_coop_mutex_unlock (&suspend_mutex);
 
@@ -3545,21 +3546,24 @@ dbg_path_get_basename (const char *filename)
 static void
 init_jit_info_dbg_attrs (MonoJitInfo *ji)
 {
-	static MonoClass *hidden_klass, *step_through_klass, *non_user_klass;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *ainfo;
 
 	if (ji->dbg_attrs_inited)
 		return;
 
-	if (!hidden_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, hidden_klass)
 		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, hidden_klass)
 
-	if (!step_through_klass)
+
+	MONO_STATIC_POINTER_INIT (MonoClass, step_through_klass)
 		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, step_through_klass)
 
-	if (!non_user_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, non_user_klass)
 		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, non_user_klass)
 
 	ainfo = mono_custom_attrs_from_method_checked (jinfo_get_method (ji), error);
 	mono_error_cleanup (error); /* FIXME don't swallow the error? */
@@ -4526,6 +4530,31 @@ get_object_id_for_debugger_method (MonoClass* async_builder_class)
 	return method;
 }
 
+static MonoClass *
+get_class_to_get_builder_field(DbgEngineStackFrame *frame)
+{
+	ERROR_DECL (error);
+	gpointer this_addr = get_this_addr (frame);
+	MonoClass *original_class = frame->method->klass;
+	MonoClass *ret;
+	if (!m_class_is_valuetype (original_class) && mono_class_is_open_constructed_type (m_class_get_byval_arg (original_class))) {
+		MonoObject *this_obj = *(MonoObject**)this_addr;
+		MonoGenericContext context;
+		MonoType *inflated_type;
+
+		g_assert (this_obj);
+		context = mono_get_generic_context_from_stack_frame (frame->ji, this_obj->vtable);
+		inflated_type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (original_class), &context, error);
+		mono_error_assert_ok (error); /* FIXME don't swallow the error */
+
+		ret = mono_class_from_mono_type_internal (inflated_type);
+		mono_metadata_free_type (inflated_type);
+		return ret;
+	}
+	return original_class;
+}
+
+
 /* Return the address of the AsyncMethodBuilder struct belonging to the state machine method pointed to by FRAME */
 static gpointer
 get_async_method_builder (DbgEngineStackFrame *frame)
@@ -4534,15 +4563,17 @@ get_async_method_builder (DbgEngineStackFrame *frame)
 	MonoClassField *builder_field;
 	gpointer builder;
 	gpointer this_addr;
+	MonoClass* klass = frame->method->klass;
 
-	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
+	klass = get_class_to_get_builder_field(frame);
+	builder_field = mono_class_get_field_from_name_full (klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	this_addr = get_this_addr (frame);
 	if (!this_addr)
 		return NULL;
 
-	if (m_class_is_valuetype (frame->method->klass)) {
+	if (m_class_is_valuetype (klass)) {
 		builder = mono_vtype_get_field_addr (*(guint8**)this_addr, builder_field);
 	} else {
 		this_obj = *(MonoObject**)this_addr;
@@ -4574,7 +4605,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 	if (!builder)
 		return 0;
 
-	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
+	builder_field = mono_class_get_field_from_name_full (get_class_to_get_builder_field(frame), "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
@@ -4598,7 +4629,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 static gboolean
 set_set_notification_for_wait_completion_flag (DbgEngineStackFrame *frame)
 {
-	MonoClassField *builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
+	MonoClassField *builder_field = mono_class_get_field_from_name_full (get_class_to_get_builder_field(frame), "<>t__builder", NULL);
 	g_assert (builder_field);
 	gpointer builder = get_async_method_builder (frame);
 	g_assert (builder);
@@ -4790,7 +4821,7 @@ debugger_agent_user_break (void)
 		GSList *events;
 		UserBreakCbData data;
 
-		memset (&data, 0, sizeof (UserBreakCbData));
+		memset (&data, 0, sizeof (data));
 		data.ctx = &ctx;
 
 		/* Obtain a context */
@@ -5110,7 +5141,7 @@ mono_debugger_agent_send_crash (char *json_dump, MonoStackHash *hashes, int paus
  * Called from metadata by the icall for System.Diagnostics.Debugger:Log ().
  */
 static void
-debugger_agent_debug_log (int level, MonoStringHandle category, MonoStringHandle message)
+debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
 {
 	ERROR_DECL (error);
 	int suspend_policy;
@@ -5120,19 +5151,20 @@ debugger_agent_debug_log (int level, MonoStringHandle category, MonoStringHandle
 	if (!agent_config.enabled)
 		return;
 
+	memset (&ei, 0, sizeof (ei));
+
 	mono_loader_lock ();
 	events = create_event_list (EVENT_KIND_USER_LOG, NULL, NULL, NULL, &suspend_policy);
 	mono_loader_unlock ();
 
 	ei.level = level;
-	ei.category = NULL;
-	if (!MONO_HANDLE_IS_NULL (category)) {
-		ei.category = mono_string_handle_to_utf8 (category, error);
+	if (category) {
+		ei.category = mono_string_to_utf8_checked_internal (category, error);
 		mono_error_cleanup (error);
+		error_init (error);
 	}
-	ei.message = NULL;
-	if (!MONO_HANDLE_IS_NULL (message)) {
-		ei.message = mono_string_handle_to_utf8 (message, error);
+	if (message) {
+		ei.message = mono_string_to_utf8_checked_internal (message, error);
 		mono_error_cleanup  (error);
 	}
 
@@ -5159,7 +5191,7 @@ debugger_agent_unhandled_exception (MonoException *exc)
 	if (!inited)
 		return;
 
-	memset (&ei, 0, sizeof (EventInfo));
+	memset (&ei, 0, sizeof (ei));
 	ei.exc = (MonoObject*)exc;
 
 	mono_loader_lock ();
@@ -5173,6 +5205,12 @@ static void
 debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
 									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
 {
+	if (catch_ctx == NULL && catch_frame == NULL && mini_debug_options.suspend_on_unhandled && mono_object_class (exc) != mono_defaults.threadabortexception_class) {
+		mono_runtime_printf_err ("Unhandled exception, suspending...");
+		while (1)
+			;
+	}
+	
 	int i, j, suspend_policy;
 	GSList *events;
 	MonoJitInfo *ji, *catch_ji;
@@ -5192,7 +5230,7 @@ debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
 			return;
 	}
 
-	memset (&ei, 0, sizeof (EventInfo));
+	memset (&ei, 0, sizeof (ei));
 
 	/* Just-In-Time debugging */
 	if (!catch_ctx) {
@@ -6893,7 +6931,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	}
 	case CMD_VM_ALL_THREADS: {
 		// FIXME: Domains
-		gboolean remove_gc_finalizing;
+		gboolean remove_gc_finalizing = FALSE;
 		mono_loader_lock ();
 		int count = mono_g_hash_table_size (tid_to_thread_obj);
 		mono_g_hash_table_foreach (tid_to_thread_obj, count_thread_check_gc_finalizer, &remove_gc_finalizing);
@@ -10165,7 +10203,7 @@ mono_debugger_agent_init (void)
 {
 	MonoDebuggerCallbacks cbs;
 
-	memset (&cbs, 0, sizeof (MonoDebuggerCallbacks));
+	memset (&cbs, 0, sizeof (cbs));
 	cbs.version = MONO_DBG_CALLBACKS_VERSION;
 	cbs.parse_options = debugger_agent_parse_options;
 	cbs.init = debugger_agent_init;

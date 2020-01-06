@@ -276,11 +276,11 @@ var App = {
 			try {
 				var invoke_args = Module._malloc (4);
 				Module.setValue (invoke_args, app_args, "i32");
-				var eh_throw = Module._malloc (4);
-				Module.setValue (eh_throw, 0, "i32");
-				var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
-				var eh_res = Module.getValue (eh_throw, "i32");
-				if (eh_res == 1) {
+				var eh_exc = Module._malloc (4);
+				Module.setValue (eh_exc, 0, "i32");
+				var res = runtime_invoke (main_method, 0, invoke_args, eh_exc);
+				var eh_res = Module.getValue (eh_exc, "i32");
+				if (eh_res != 0) {
 					print ("Exception:" + string_get_utf8 (res));
 					test_exit (1);
 				}

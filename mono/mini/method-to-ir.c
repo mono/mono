@@ -2278,6 +2278,7 @@ emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee
 	mono_emit_jit_icall (cfg, mono_throw_bad_image, NULL);
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -6005,6 +6006,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	gboolean emitted_funccall_seq_point = FALSE;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
+	cfg->current_method = method;
 
 	image = m_class_get_image (method->klass);
 
@@ -6048,6 +6050,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	if (cfg->prof_coverage) {
 		if (cfg->compile_aot)
 			g_error ("Coverage profiling is not supported with AOT.");
+
+		INLINE_FAILURE ("coverage profiling");
 
 		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 	}
@@ -6132,8 +6136,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	cfg->cil_offset_to_bb = (MonoBasicBlock **)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * header->code_size);
 	cfg->cil_offset_to_bb_len = header->code_size;
-
-	cfg->current_method = method;
 
 	if (cfg->verbose_level > 2)
 		printf ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -8938,6 +8940,36 @@ calli_end:
 				}
 			}
 
+#ifdef ENABLE_NETCORE
+			// Optimize
+			// 
+			//    box
+			//    ldnull
+			//    ceq (or cgt.un)
+			//    
+			// to just
+			// 
+			//    ldc.i4.0 (or 1)
+			guchar* ldnull_ip;
+			if ((ldnull_ip = il_read_op (next_ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
+				gboolean is_eq = FALSE, is_neq = FALSE;
+				if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
+					is_eq = TRUE;
+				else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
+					is_neq = TRUE;
+
+				if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
+					!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
+					next_ip = ip;
+					il_op = (MonoOpcodeEnum) (is_eq ? CEE_LDC_I4_0 : CEE_LDC_I4_1);
+					EMIT_NEW_ICONST (cfg, ins, is_eq ? 0 : 1);
+					ins->type = STACK_I4;
+					*sp++ = ins;
+					break;
+				}
+			}
+#endif
+
 			gboolean is_true;
 
 			// FIXME: LLVM can't handle the inconsistent bb linking
@@ -10705,6 +10737,13 @@ mono_ldptr:
 
 			*sp++ = ins;
 			break;
+		case MONO_CEE_MONO_GET_SP: {
+			/* Used by COOP only, so this is good enough */
+			MonoInst *var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
+			EMIT_NEW_VARLOADA (cfg, ins, var, NULL);
+			*sp++ = ins;
+			break;
+		}
 
 		case MONO_CEE_ARGLIST: {
 			/* somewhat similar to LDTOKEN */

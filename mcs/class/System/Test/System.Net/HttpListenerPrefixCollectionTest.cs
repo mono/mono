@@ -38,7 +38,7 @@ namespace MonoTests.System.Net {
 	public class HttpListenerPrefixCollectionTest {
 		// NL -> Not listening -> tests when listener.IsListening == false
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void NL_DefaultProperties ()
@@ -51,7 +51,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void DefaultProperties ()
@@ -100,7 +100,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void EndsWithSlash ()
@@ -110,7 +110,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void DifferentPath ()
@@ -122,7 +122,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void NL_Clear ()
@@ -133,7 +133,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void NL_Remove ()
@@ -144,7 +144,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void NL_RemoveBadUri ()
@@ -155,7 +155,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentException))]
@@ -168,7 +168,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ArgumentException))]
@@ -180,7 +180,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void MultipleSlashes ()
@@ -196,7 +196,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void PercentSign ()
@@ -212,7 +212,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Disposed1 ()
@@ -226,7 +226,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ObjectDisposedException))]
@@ -240,7 +240,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ObjectDisposedException))]
@@ -254,7 +254,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ObjectDisposedException))]
@@ -268,7 +268,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #else
 		[ExpectedException (typeof (ObjectDisposedException))]
@@ -283,7 +283,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Disposed6 ()
@@ -299,7 +299,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Disposed7 ()

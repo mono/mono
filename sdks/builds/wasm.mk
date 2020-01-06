@@ -1,24 +1,10 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.39.2
+EMSCRIPTEN_VERSION=1.39.5
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
-
-MONO_ZLIB_DIR=$(TOP)/mono/zlib
-
-ZLIB_HEADERS = \
-	$(MONO_ZLIB_DIR)/crc32.h		\
-	$(MONO_ZLIB_DIR)/deflate.h  	\
-	$(MONO_ZLIB_DIR)/inffast.h  	\
-	$(MONO_ZLIB_DIR)/inffixed.h  	\
-	$(MONO_ZLIB_DIR)/inflate.h  	\
-	$(MONO_ZLIB_DIR)/inftrees.h  	\
-	$(MONO_ZLIB_DIR)/trees.h  	\
-	$(MONO_ZLIB_DIR)/zconf.h  	\
-	$(MONO_ZLIB_DIR)/zlib.h  	\
-	$(MONO_ZLIB_DIR)/zutil.h
 
 ifeq ($(UNAME),Darwin)
 WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.dylib
@@ -112,13 +98,9 @@ build-custom-wasm-$(1):
 setup-custom-wasm-$(1):
 	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)
 
-# We do not build the support library but we will use the zlib headers to activate
-# zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
 .PHONY: package-wasm-$(1)
 package-wasm-$(1):
 	source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && $(MAKE) -C $(TOP)/sdks/builds/wasm-$(1)-$(CONFIGURATION)/mono install
-	mkdir -p $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support
-	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-$(1)-$(CONFIGURATION)/include/support/
 
 .PHONY: clean-wasm-$(1)
 clean-wasm-$(1):
@@ -165,6 +147,19 @@ ifdef ENABLE_WASM_NETCORE
 $(eval $(call WasmRuntimeTemplate,runtime-netcore))
 endif
 
+WASM_CROSS_BASE_CONFIGURE_FLAGS= \
+	--disable-boehm \
+	--disable-btls \
+	--disable-mcs-build \
+	--disable-nls \
+	--disable-support-build \
+	--enable-maintainer-mode \
+	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
+	--with-cooperative-gc=no \
+	--enable-hybrid-suspend=no \
+	--with-cross-offsets=wasm32-unknown-none.h
+
 ##
 # Parameters
 #  $(1): target
@@ -178,24 +173,19 @@ define WasmCrossTemplate
 _wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$$(EMSCRIPTEN_SDK_DIR)/upstream/emscripten" --libclang="$$(WASM_LIBCLANG)"
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
-	--disable-boehm \
-	--disable-btls \
-	--disable-mcs-build \
-	--disable-nls \
-	--disable-support-build \
-	--enable-maintainer-mode \
-	--enable-minimal=appdomains,com,remoting \
-	--enable-icall-symbol-map \
-	--with-cooperative-gc=no \
-	--enable-hybrid-suspend=no \
-	--with-cross-offsets=wasm32-unknown-none.h
+	$(WASM_CROSS_BASE_CONFIGURE_FLAGS) \
+	$$(wasm_$(1)_CONFIGURE_FLAGS)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$(2)-unknown)),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
-# 64 bit cross compiler
+wasm_cross-netcore_CONFIGURE_FLAGS=--with-core=only
+
 $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
+ifdef ENABLE_WASM_NETCORE
+$(eval $(call WasmCrossTemplate,cross-netcore,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
+endif
 
 ##
 # Parameters
@@ -264,11 +254,11 @@ $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
 ifdef ENABLE_WASM_NETCORE
 
 build-wasm-bcl-netcore: build-wasm-runtime-netcore
-	cp wasm-runtime-netcore-release/netcore/config.make ../../netcore/config.make
+	in=wasm-runtime-netcore-release/netcore/config.make; out=../../netcore/config.make; if ! cmp -s $$in $$out ; then cp $$in $$out ; fi
 	make -C ../../netcore
 
 package-wasm-bcl-netcore: build-wasm-bcl-netcore
 	mkdir -p ../out/wasm-bcl/netcore
-	cp ../../netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
+	cp ../../netcore/System.Private.CoreLib/bin/wasm32/System.Private.CoreLib.{dll,pdb} ../out/wasm-bcl/netcore/
 
 endif

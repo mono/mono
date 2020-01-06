@@ -124,6 +124,7 @@
 #define g_mem_set_vtable monoeg_g_mem_set_vtable
 #define g_mem_get_vtable monoeg_g_mem_get_vtable
 #define g_mkdtemp monoeg_g_mkdtemp
+#define g_module_address monoeg_g_module_address
 #define g_module_build_path monoeg_g_module_build_path
 #define g_module_close monoeg_g_module_close
 #define g_module_error monoeg_g_module_error
@@ -235,6 +236,7 @@
 #define g_strndup monoeg_g_strndup
 #define g_strnfill monoeg_g_strnfill
 #define g_strnlen monoeg_g_strnlen
+#define g_str_from_file_region monoeg_g_str_from_file_region
 #define g_strreverse monoeg_g_strreverse
 #define g_strsplit monoeg_g_strsplit
 #define g_strsplit_set monoeg_g_strsplit_set

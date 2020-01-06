@@ -660,7 +660,7 @@ pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *request
 
        for (tmp = loaded_assemblies; tmp; tmp = tmp->next) {
                MonoAssembly *ass = (MonoAssembly *)tmp->data;
-               if (mono_assembly_names_equal (aname, &ass->aname))
+               if (mono_assembly_check_name_match (aname, &ass->aname))
 		       return ass;
        }
        return NULL;

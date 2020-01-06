@@ -68,6 +68,16 @@
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
 
+		<PropertyGroup Condition="'$(EnableMonoWasmDynamic)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\dynamic-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\dynamic-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<PropertyGroup Condition="'$(EnableMonoWasmDynamic)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)dynamic-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)dynamic-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
 		<ItemGroup>
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js" TargetPath="mono.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm" TargetPath="mono.wasm" />

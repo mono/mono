@@ -18,8 +18,10 @@
 
 #if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 600
 
+#include <llvm/ADT/SmallVector.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Host.h>
+#include <llvm/Support/Memory.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/IR/Mangler.h>
 #include "llvm/IR/LegacyPassNameParser.h"
@@ -82,6 +84,8 @@ public:
 								 StringRef SectionName) override;
 
 	bool finalizeMemory(std::string *ErrMsg = nullptr) override;
+private:
+	SmallVector<sys::MemoryBlock, 16> PendingCodeMem;
 };
 
 MonoJitMemoryManager::~MonoJitMemoryManager()
@@ -98,13 +102,10 @@ MonoJitMemoryManager::allocateDataSection(uintptr_t Size,
 	uint8_t *res;
 
 	// FIXME: Use a mempool
-	if (Alignment == 32) {
-		/* Used for SIMD */
-		res = (uint8_t*)malloc (Size + 32);
-		res += (GPOINTER_TO_UINT (res) % 32);
-	} else {
-		res = (uint8_t*)malloc (Size);
-	}
+	if (Alignment == 0)
+                Alignment = 16;
+	res = (uint8_t*)malloc (Size + Alignment);
+	res = (uint8_t*)ALIGN_PTR_TO(res, Alignment);
 	assert (res);
 	g_assert (GPOINTER_TO_UINT (res) % Alignment == 0);
 	memset (res, 0, Size);
@@ -117,12 +118,22 @@ MonoJitMemoryManager::allocateCodeSection(uintptr_t Size,
 										  unsigned SectionID,
 										  StringRef SectionName)
 {
-	return alloc_code_mem_cb (NULL, Size);
+	uint8_t *mem = alloc_code_mem_cb (NULL, Size);
+	PendingCodeMem.push_back (sys::MemoryBlock ((void *)mem, Size));
+	return mem;
 }
 
 bool
 MonoJitMemoryManager::finalizeMemory(std::string *ErrMsg)
 {
+	for (sys::MemoryBlock &Block : PendingCodeMem) {
+#if LLVM_API_VERSION >= 900
+		sys::Memory::InvalidateInstructionCache (Block.base (), Block.allocatedSize ());
+#else
+		sys::Memory::InvalidateInstructionCache (Block.base (), Block.size ());
+#endif
+	}
+	PendingCodeMem.clear ();
 	return false;
 }
 
@@ -283,12 +294,13 @@ public:
 		initializeScalarOpts(registry);
 		initializeInstCombine(registry);
 		initializeTarget(registry);
+		initializeLoopIdiomRecognizeLegacyPassPass(registry);
 		linkCoreCLRGC(); // Mono uses built-in "coreclr" GCStrategy
 
 		// FIXME: find optimal mono specific order of passes
 		// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
 		// the following order is based on a stripped version of "OPT -O2"
-		const char *default_opts = " -simplifycfg -sroa -lower-expect -instcombine -licm -simplifycfg -lcssa -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg -enable-implicit-null-checks";
+		const char *default_opts = " -simplifycfg -sroa -lower-expect -instcombine -loop-rotate -licm -simplifycfg -lcssa -loop-idiom -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg -enable-implicit-null-checks";
 		const char *opts = g_getenv ("MONO_LLVM_OPT");
 		if (opts == NULL)
 			opts = default_opts;

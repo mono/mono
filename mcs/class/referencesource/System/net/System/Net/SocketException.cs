@@ -23,9 +23,9 @@ namespace System.Net.Sockets {
     
 #if MONO
         [System.Runtime.CompilerServices.MethodImplAttribute (System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-        static extern int WSAGetLastError_internal ();
+        static extern int WSAGetLastError_icall ();
         
-        public SocketException () : base (WSAGetLastError_internal ())
+        public SocketException () : base (WSAGetLastError_icall ())
         {
         }
 

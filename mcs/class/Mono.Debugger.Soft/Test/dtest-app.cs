@@ -558,6 +558,10 @@ public class Tests : TestsBase, ITest2
 			runtime_invoke_hybrid_exceptions();
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "new_thread_hybrid_exception") {
+			new_thread_hybrid_exception();
+			return 0;
+		}
 		assembly_load ();
 		breakpoints ();
 		single_stepping ();
@@ -604,6 +608,7 @@ public class Tests : TestsBase, ITest2
 		if_property_stepping();
 		fixed_size_array();
 		test_new_exception_filter();
+		test_async_debug_generics();
 		return 3;
 	}
 
@@ -901,6 +906,17 @@ public class Tests : TestsBase, ITest2
 		}
 		catch (Exception e) {
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_async_debug_generics () {
+		ExecuteAsync_Broken<object>().Wait ();
+	}
+
+	async static Task<T> ExecuteAsync_Broken<T>()
+	{
+		await Task.Delay(2);
+		return default;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -2210,12 +2226,27 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void runtime_invoke_hybrid_exceptions () {
 		Type rtType = Type.GetType("RuntimeInvokeWithThrowClass");
-        ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
-        object rtObject = rtConstructor.Invoke(new object[] { });
-        MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
-        rtMethod.Invoke(rtObject, new object[] { });
+		ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
+		object rtObject = rtConstructor.Invoke(new object[] { });
+		MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
+		rtMethod.Invoke(rtObject, new object[] { });
 	}
-
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void new_thread_hybrid_exception() {
+		try
+           {
+               Thread thread = new Thread(new_thread_hybrid_exception2);
+               thread.Start();
+           }
+           catch (Exception sockEx)
+           {
+           }
+	}
+	public static void new_thread_hybrid_exception2()
+	{
+		throw new Exception("Error");
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {

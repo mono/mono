@@ -336,10 +336,13 @@ get_normalized_integral_array_element_type (MonoTypeEnum elementType)
 }
 
 MonoBoolean 
-ves_icall_System_Array_CanChangePrimitive (MonoReflectionTypeHandle ref_src_type, MonoReflectionTypeHandle ref_dst_type, MonoBoolean reliable, MonoError *error)
+ves_icall_System_Array_CanChangePrimitive (MonoReflectionType *volatile* ref_src_type_handle, MonoReflectionType *volatile* ref_dst_type_handle, MonoBoolean reliable)
 {
-	MonoType *src_type = MONO_HANDLE_GETVAL (ref_src_type, type);
-	MonoType *dst_type = MONO_HANDLE_GETVAL (ref_dst_type, type);
+	MonoReflectionType* const ref_src_type = *ref_src_type_handle;
+	MonoReflectionType* const ref_dst_type = *ref_dst_type_handle;
+
+	MonoType *src_type = ref_src_type->type;
+	MonoType *dst_type = ref_dst_type->type;
 
 	g_assert (mono_type_is_primitive (src_type));
 	g_assert (mono_type_is_primitive (dst_type));
@@ -838,7 +841,8 @@ ves_icall_System_Array_InternalCreate (MonoArray *volatile* result, MonoType* ty
 		goto exit;
 	}
 
-	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
+	MonoGenericClass *gklass;
+	gklass = mono_class_try_get_generic_class (klass);
 	if (is_generic_parameter (type) || mono_class_is_gtd (klass) || (gklass && gklass->context.class_inst->is_open)) {
 		mono_error_set_not_supported (error, NULL);
 		goto exit;
@@ -1917,27 +1921,30 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 }
 
 MonoType*
-ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
 {
 	return m_class_get_byval_arg (klass);
 }
 
 void
-ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array, MonoError *error)
+ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array)
 {
 	g_ptr_array_free (ptr_array, TRUE);
 }
 
 void
-ves_icall_Mono_SafeStringMarshal_GFree (void *c_str, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_GFree (void *c_str)
 {
 	g_free (c_str);
 }
 
 char*
-ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoStringHandle s, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *volatile* s)
 {
-	return mono_string_handle_to_utf8 (s, error);
+	ERROR_DECL (error);
+	char *result = mono_string_to_utf8_checked_internal (*s, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
 
 /* System.TypeCode */
@@ -6405,7 +6412,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 #endif
 
 void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct)
 {
 	mono_assembly_name_free_internal (aname);
 	if (free_struct)
@@ -6464,7 +6471,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		// FIXME: Push handles down into mini/mini-exceptions.c
 		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
 		MonoThreadSummary out;
+		mono_summarize_timeline_start ();
+		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
+		mono_summarize_timeline_phase_log (MonoSummaryUnmanagedStacks);
 		mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+		mono_summarize_timeline_phase_log (MonoSummaryManagedStacks);
 
 		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
 		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
@@ -6473,9 +6484,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_native_state_init (&writer);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
 		gboolean first_thread_added = TRUE;
 		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
 		char *output = mono_native_state_free (&writer, FALSE);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
 		result = mono_string_new_handle (mono_domain_get (), output, error);
 		g_free (output);
 		g_free (scratch);
@@ -8098,8 +8111,6 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
 
-#endif /* ENABLE_NETCORE */
-
 #if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 // FIXME? Names should start "mono"?
@@ -8160,6 +8171,7 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 }
 
 #endif
+#endif /* ENABLE_NETCORE */
 
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
@@ -8341,23 +8353,23 @@ ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *re
 #endif /* ENABLE_NETCORE */
 
 MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsAttached_internal (MonoError *error)
+ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
 {
 	return mono_is_debugger_attached ();
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsLogging (MonoError *error)
+ves_icall_System_Diagnostics_Debugger_IsLogging (void)
 {
 	return mono_get_runtime_callbacks ()->debug_log_is_enabled
 		&& mono_get_runtime_callbacks ()->debug_log_is_enabled ();
 }
 
 void
-ves_icall_System_Diagnostics_Debugger_Log (int level, MonoStringHandle category, MonoStringHandle message, MonoError *error)
+ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *volatile* category, MonoString *volatile* message)
 {
 	if (mono_get_runtime_callbacks ()->debug_log)
-		mono_get_runtime_callbacks ()->debug_log (level, category, message);
+		mono_get_runtime_callbacks ()->debug_log (level, *category, *message);
 }
 
 #ifndef HOST_WIN32
@@ -8579,8 +8591,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_Prelink (MonoReflectionMethodHa
 }
 
 void
+ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error);
+
+void
 ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error)
 {
+	g_assert_not_netcore ();
+
 	error_init (error);
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (type, type));
 	MonoMethod* m;

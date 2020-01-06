@@ -64,6 +64,7 @@ namespace Mono.Net.Security
 		}
 
 		SslStream sslStream;
+		readonly object sslStreamLock = new object ();
 
 		internal SslStream SslStream {
 			get { return sslStream; }
@@ -132,8 +133,7 @@ namespace Mono.Net.Security
 					status = WebExceptionStatus.SecureChannelFailure;
 
 				request.ServicePoint.UpdateClientCertificate (null);
-				sslStream.Dispose ();
-				sslStream = null;
+				CloseSslStream ();				
 				throw;
 			}
 
@@ -142,8 +142,7 @@ namespace Mono.Net.Security
 					await sslStream.WriteAsync (tunnel.Data, 0, tunnel.Data.Length, cancellationToken).ConfigureAwait (false);
 			} catch {
 				status = WebExceptionStatus.SendFailure;
-				sslStream.Dispose ();
-				sslStream = null;
+				CloseSslStream ();
 				throw;
 			}
 
@@ -155,9 +154,15 @@ namespace Mono.Net.Security
 
 		public void Dispose ()
 		{
-			if (sslStream != null) {
-				sslStream.Dispose ();
-				sslStream = null;
+			CloseSslStream ();
+		}
+
+		void CloseSslStream () {
+			lock (sslStreamLock) {
+				if (sslStream != null) {
+					sslStream.Dispose ();
+					sslStream = null;
+				}
 			}
 		}
 	}

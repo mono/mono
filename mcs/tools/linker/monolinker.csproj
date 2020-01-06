@@ -53,6 +53,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\AddBypassNGenStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BlacklistStep.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\BodySubstituterStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CleanStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ClearInitLocals.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\CodeRewriterStep.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RegenerateGuidStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RemoveFeaturesStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RemoveSecurityStep.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RemoveUnreachableBlocksStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ResolveFromAssemblyStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ResolveFromXApiStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ResolveFromXmlStep.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\DirectoryAssemblyResolver.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Driver.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\I18nAssemblies.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\IDependencyRecorder.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\ILogger.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\IXApiVisitor.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Inflater.cs" />
@@ -104,6 +107,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\TypePreserve.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\TypeReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\XApiReader.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\XmlDependencyRecorder.cs" />
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
