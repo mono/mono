@@ -175,7 +175,7 @@ namespace TestSuite {
 		public static async Task<object> ZipEnumerateEntriesModifiedTime ()
 		{
 			var requestTcs = new TaskCompletionSource<object> ();
-			var date = DateTimeOffset.Now;
+			var date = DateTimeOffset.UtcNow;
 			using (var memoryStream = await GetArchiveStreamAsync ()) {
 				using (var archive = new ZipArchive (memoryStream, ZipArchiveMode.Update, true)) {
 					var entry = archive.GetEntry ("foo.txt");

@@ -498,6 +498,25 @@ namespace MonoTests.Mono.Options
 		}
 
 		[Test]
+		public void NewLines ()
+		{
+			var p = new OptionSet () {
+				"What is interesting about this is that we are going to use a newli\r\nne that is windows style"
+			};
+
+			StringWriter expected = new StringWriter ();
+			expected.NewLine = "\r\n";
+			expected.WriteLine ("What is interesting about this is that we are going to use a newli");
+			expected.WriteLine ("ne that is windows style");
+
+			StringWriter actual = new StringWriter ();
+			actual.NewLine = "\r\n";
+			p.WriteOptionDescriptions (actual);
+
+			Assert.AreEqual (expected.ToString (), actual.ToString ());
+		}
+
+		[Test]
 		public void OptionBundling ()
 		{
 			OptionBundling (_ ("-abcf", "foo", "bar"));

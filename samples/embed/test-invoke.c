@@ -1,8 +1,12 @@
+#ifndef _TESTCASE_
 #include <mono/jit/jit.h>
+#endif
+
 #include <mono/metadata/object.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -15,9 +19,9 @@
  * We show how to create objects and invoke methods and set fields in them.
  * Compile with: 
  * 	gcc -Wall -o test-invoke test-invoke.c `pkg-config --cflags --libs mono-2` -lm
- * 	mcs invoke.cs
+ * 	mcs -out:test-embed-invoke-cs.exe invoke.cs
  * Run with:
- * 	./test-invoke invoke.exe
+ * 	./test-invoke
  */
 
 static void
@@ -316,18 +320,40 @@ static void main_function (MonoDomain *domain, const char *file, int argc, char 
 	create_object (domain, mono_assembly_get_image (assembly));
 }
 
+#ifdef _TESTCASE_
+#ifdef __cplusplus
+extern "C"
+#endif
+int
+test_mono_embed_invoke_main (void);
+
 int 
-main (int argc, char* argv[]) {
+test_mono_embed_invoke_main (void)
+{
+#else
+int
+main (void)
+{
+#endif
+
 	MonoDomain *domain;
+	int argc = 2;
+	char *argv[] = {
+						(char*)"test-embed-invoke.exe",
+						(char*)"test-embed-invoke-cs.exe",
+						NULL
+					};
 	const char *file;
 	int retval;
-	
-	if (argc < 2){
-		fprintf (stderr, "Please provide an assembly to load\n");
-		return 1;
-	}
 	file = argv [1];
-	/*
+	
+    /*
+	 * Load the default Mono configuration file, this is needed
+	 * if you are planning on using the dllmaps defined on the
+	 * system configuration
+	 */
+	mono_config_parse (NULL);
+    /*
 	 * mono_jit_init() creates a domain: each assembly is
 	 * loaded and run in a MonoDomain.
 	 */

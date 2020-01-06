@@ -1,4 +1,6 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
+
+if !ENABLE_MSVC_ONLY
 
 if HOST_WIN32
 win32_sources = \
@@ -89,55 +91,19 @@ if !ENABLE_ILGEN
 ilgen_libraries = libmono-ilgen.la
 endif
 
-support_sources=empty.c
-
-if ENABLE_MONOTOUCH
-support_sources += ../../support/zlib-helper.c
-else
-if ENABLE_MONODROID
-support_sources += \
-	../../support/nl.c \
-	../../support/zlib-helper.c
-endif
-endif
-
-ZLIB_SOURCES = \
-	../../support/adler32.c \
-	../../support/crc32.c \
-	../../support/crc32.h \
-	../../support/deflate.c \
-	../../support/deflate.h \
-	../../support/gzguts.h	\
-	../../support/infback.c \
-	../../support/inffast.c \
-	../../support/inffast.h \
-	../../support/inffixed.h \
-	../../support/inflate.c \
-	../../support/inflate.h \
-	../../support/inftrees.c \
-	../../support/inftrees.h \
-	../../support/trees.c \
-	../../support/trees.h \
-	../../support/zconf.h \
-	../../support/zlib.h \
-	../../support/zutil.c \
-	../../support/zutil.h
-
+BUNDLE_ZLIB_PATH=$(top_builddir)/mono/zlib/libz.la
 
 if HAVE_STATIC_ZLIB
-Z_SOURCE = 
-Z_LIBS = $(STATIC_ZLIB_PATH)
+Z_LIBS=$(STATIC_ZLIB_PATH)
 else
 if HAVE_SYS_ZLIB
-Z_SOURCE = 
-Z_LIBS= -lz
+Z_LIBS=-lz
 else
-Z_SOURCE = $(ZLIB_SOURCES)
-Z_LIBS=
+Z_LIBS=$(BUNDLE_ZLIB_PATH)
 endif
 endif
 
-noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries)
+noinst_LTLIBRARIES = libmonoruntime-config.la $(support_libraries) $(boehm_libraries) $(sgen_libraries)
 
 lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
@@ -164,9 +130,13 @@ libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" 
 #
 # Support is a separate library because it is not valid C++.
 #
-libmonoruntime_support_la_SOURCES = $(support_sources) $(Z_SOURCE)
+if !ENABLE_NETCORE
+support_libraries = libmonoruntime-support.la
+
+libmonoruntime_support_la_SOURCES = support.c
 libmonoruntime_support_la_LDFLAGS = $(Z_LIBS)
 libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @ZLIB_CFLAGS@
+endif
 
 #
 # This library contains the icall tables if the runtime was configured with --disable-icall-tables
@@ -375,7 +345,6 @@ common_sources = \
 	threads-types.h		\
 	threadpool.c	\
 	threadpool.h	\
-	threadpool-netcore.c	\
 	threadpool-worker.h	\
 	threadpool-io.c	\
 	threadpool-io.h	\
@@ -419,8 +388,8 @@ common_sources = \
 	fdhandle.c	\
 	callspec.h	\
 	callspec.c	\
-	abi.c
-
+	abi.c	\
+	native-library.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -446,19 +415,25 @@ sgen_sources = \
 	sgen-mono.h		\
 	sgen-client-mono.h
 
+endif # !ENABLE_MSVC_ONLY
+
 # Per-library to workaround CoreFX/native until/unless https://github.com/dotnet/corefx/pull/31342.
 #CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
+if !ENABLE_MSVC_ONLY
+
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) @CXX_ADD_CFLAGS@
-libmonoruntime_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
+libmonoruntime_la_LIBADD = libmonoruntime-config.la $(support_libraries)
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(sgen_sources)
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
-libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
+libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la $(support_libraries)
+
+endif # !ENABLE_MSVC_ONLY
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
@@ -494,6 +469,22 @@ libmonoruntimeinclude_HEADERS = \
 	tokentype.h		\
 	verify.h		
 
+if !ENABLE_MSVC_ONLY
+
 EXTRA_DIST = $(null_sources) \
 		external-only.c \
 		threadpool-io-poll.c threadpool-io-epoll.c threadpool-io-kqueue.c
+
+endif # !ENABLE_MSVC_ONLY
+
+if ENABLE_MSVC_ONLY
+
+all-local:
+
+	make -C $(top_srcdir)/msvc libmonoruntime
+
+clean-local:
+
+	make -C $(top_srcdir)/msvc clean-libmonoruntime
+
+endif # ENABLE_MSVC_ONLY

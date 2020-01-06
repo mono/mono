@@ -12,9 +12,7 @@
  */
 
 #include <config.h>
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #if HAVE_SCHED_SETAFFINITY
 #include <sched.h>
 #endif
@@ -1249,7 +1247,7 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	mono_thread_create_checked (mono_domain_get (), (gpointer)compile_all_methods_thread_main, &args, error);
 	mono_error_assert_ok (error);
 
-	mono_thread_manage ();
+	mono_thread_manage_internal ();
 }
 
 /**
@@ -2364,9 +2362,9 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
-				mono_loader_set_strict_strong_names (TRUE);
+				mono_loader_set_strict_assembly_name_check (TRUE);
 			else if (strcmp (arg, "legacy") == 0)
-				mono_loader_set_strict_strong_names (FALSE);
+				mono_loader_set_strict_assembly_name_check (FALSE);
 			else
 				fprintf (stderr, "Warning: unknown argument to --assembly-loader. Should be \"strict\" or \"legacy\"\n");
 		} else if (strncmp (argv [i], MONO_HANDLERS_ARGUMENT, MONO_HANDLERS_ARGUMENT_LEN) == 0) {
@@ -2622,7 +2620,7 @@ mono_main (int argc, char* argv[])
 		main_args.opts = opt;
 		main_args.aot_options = aot_options;
 		main_thread_handler (&main_args);
-		mono_thread_manage ();
+		mono_thread_manage_internal ();
 
 		mini_cleanup (domain);
 
@@ -2754,7 +2752,9 @@ mono_main (int argc, char* argv[])
 MonoDomain * 
 mono_jit_init (const char *file)
 {
-	return mini_init (file, NULL);
+	MonoDomain *ret = mini_init (file, NULL);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
 }
 
 /**
@@ -2780,7 +2780,16 @@ mono_jit_init (const char *file)
 MonoDomain * 
 mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
-	return mini_init (domain_name, runtime_version);
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
+}
+
+MonoDomain * 
+mono_jit_init_version_for_test_only (const char *domain_name, const char *runtime_version)
+{
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	return ret;
 }
 
 /**
@@ -2789,11 +2798,16 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
-	MONO_ENTER_GC_UNSAFE;
-	mono_thread_manage ();
+	MONO_STACKDATA (dummy);
+	(void) mono_threads_enter_gc_unsafe_region_unbalanced_internal (&dummy);
+
+	// after mini_cleanup everything is cleaned up so MONO_EXIT_GC_UNSAFE
+	// can't work and doesn't make sense.
+
+	mono_thread_manage_internal ();
 
 	mini_cleanup (domain);
-	MONO_EXIT_GC_UNSAFE;
+
 }
 
 void

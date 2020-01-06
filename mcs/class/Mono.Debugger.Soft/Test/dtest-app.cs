@@ -350,6 +350,17 @@ class TestIfaces : ITest
 	}
 }
 
+public class RuntimeInvokeWithThrowClass
+{
+    public RuntimeInvokeWithThrowClass()
+    {
+    }
+    public void RuntimeInvokeThrowMethod()
+    {
+        throw new Exception("thays");
+    }
+}
+
 public sealed class DebuggerTaskScheduler : TaskScheduler, IDisposable
 {
 	private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
@@ -507,6 +518,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception_wrapper ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-perform-wait-callback") {
+			unhandled_exception_perform_wait_callback ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
 			unhandled_exception_endinvoke ();
 			return 0;
@@ -537,6 +552,14 @@ public class Tests : TestsBase, ITest2
 		}
 		if (args.Length > 0 && args [0] == "step-out-void-async") {
 			run_step_out_void_async();
+			return 0;
+		}
+		if (args.Length > 0 && args [0] == "runtime_invoke_hybrid_exceptions") {
+			runtime_invoke_hybrid_exceptions();
+			return 0;
+		}
+		if (args.Length > 0 && args [0] == "new_thread_hybrid_exception") {
+			new_thread_hybrid_exception();
 			return 0;
 		}
 		assembly_load ();
@@ -584,6 +607,8 @@ public class Tests : TestsBase, ITest2
 		inspect_enumerator_in_generic_struct();
 		if_property_stepping();
 		fixed_size_array();
+		test_new_exception_filter();
+		test_async_debug_generics();
 		return 3;
 	}
 
@@ -592,6 +617,11 @@ public class Tests : TestsBase, ITest2
 		public string OneLineProperty {
 			get { return oneLineProperty; }
 			set { oneLineProperty = value; }
+		}
+	}
+
+	public class MyException : Exception {
+		public MyException(string message) : base(message) {
 		}
 	}
 
@@ -825,6 +855,68 @@ public class Tests : TestsBase, ITest2
 		var n = new NodeTestFixedArray();
 		n.Buffer = new int4(1, 2, 3, 4);
 		n.Buffer2 = new char4('a', 'b', 'c', 'd');
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_new_exception_filter () {
+		test_new_exception_filter1();
+		test_new_exception_filter2();
+		test_new_exception_filter3();
+		test_new_exception_filter4();
+	}
+
+
+	public static void test_new_exception_filter1 () {
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter2 () {
+		try {
+			throw new MyException("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter3 () {
+		try {
+			throw new ArgumentException();
+		}
+		catch (Exception e) {
+		}
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public static void test_new_exception_filter4 () {
+		try {
+			throw new ArgumentException();
+		}
+		catch (Exception e) {
+		}
+		try {
+			throw new Exception("excp");
+		}
+		catch (Exception e) {
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_async_debug_generics () {
+		ExecuteAsync_Broken<object>().Wait ();
+	}
+
+	async static Task<T> ExecuteAsync_Broken<T>()
+	{
+		await Task.Delay(2);
+		return default;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1593,6 +1685,24 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_perform_wait_callback () {
+		try
+		{
+			var results = ResolveAsync().GetAwaiter().GetResult();
+		}
+		catch (SocketException sockEx)
+		{
+			//Console.WriteLine("correctly handled");
+		}
+	}
+
+	public static async Task<List<string>> ResolveAsync()
+	{
+		var addresses = await System.Net.Dns.GetHostAddressesAsync("foo.bar.baz");
+		return new List<string>(addresses.Select(addr => addr.ToString()));
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_endinvoke () {
 			Action action = new Action (() => 
 			{
@@ -2111,6 +2221,31 @@ public class Tests : TestsBase, ITest2
 	static BlittableStruct ref_return_struct = new BlittableStruct () { i = 1, d = 2.0 };
 	public static ref BlittableStruct get_ref_struct() {
 		return ref ref_return_struct;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void runtime_invoke_hybrid_exceptions () {
+		Type rtType = Type.GetType("RuntimeInvokeWithThrowClass");
+		ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
+		object rtObject = rtConstructor.Invoke(new object[] { });
+		MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
+		rtMethod.Invoke(rtObject, new object[] { });
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void new_thread_hybrid_exception() {
+		try
+           {
+               Thread thread = new Thread(new_thread_hybrid_exception2);
+               thread.Start();
+           }
+           catch (Exception sockEx)
+           {
+           }
+	}
+	public static void new_thread_hybrid_exception2()
+	{
+		throw new Exception("Error");
 	}
 }
 

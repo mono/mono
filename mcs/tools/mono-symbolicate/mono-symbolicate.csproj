@@ -203,6 +203,7 @@
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbFile.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbFileHeader.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbFunction.cs" />
+    <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbInfo.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbLine.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbLines.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\PdbReader.cs" />

@@ -46,15 +46,24 @@ stages:
               assetManifestOS: linux
               assetManifestPlatform: x64
               installDependencies: true
-            x64_LLVM:
+              llvm: false
+            x64 LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
               assetManifestPlatform: x64_LLVM
               installDependencies: true
               llvm: true
+            x64 Interpreter:
+              poolname: Hosted Ubuntu 1604
+              assetManifestOS: linux
+              assetManifestPlatform: x64_Interpreter
+              installDependencies: true
+              interpreter: true
             ARM64:
               assetManifestOS: linux
               assetManifestPlatform: arm64
+              installDependencies: false
+              llvm: false
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
                 poolname: Xamarin-ARM64
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -68,9 +77,9 @@ stages:
           displayName: 'Clean up working directory'
 
         - bash: |
-            git submodule update --init -- external/llvm
+            git submodule update --init -- external/llvm-project
           condition: eq(variables['llvm'], 'true')
-          displayName: 'Checkout external/llvm'
+          displayName: 'Checkout external/llvm-project'
 
         - bash: |
             sudo apt update
@@ -86,19 +95,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig)
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -109,10 +117,17 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            if [ $(llvm) = true ]; then
+              make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+            elif [ $(interpreter) = true ]; then
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib --interpreter
+            else
+              ./netcore/build.sh --ci --test --skipnative --skipmscorlib
+            fi
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
-          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
+          condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'))
 
         - task: PublishTestResults@2
           inputs:
@@ -135,6 +150,7 @@ stages:
               poolname: Hosted macOS
               assetManifestOS: osx
               assetManifestPlatform: x64
+              llvm: false
             #TODO: download pre-built LLVM binaries, currently it has to build llvm from sources (>1h)
             #x64_LLVM:
             #  poolname: Hosted macOS
@@ -150,9 +166,9 @@ stages:
           displayName: 'Clean up working directory'
 
         - bash: |
-            git submodule update --init -- external/llvm
+            git submodule update --init -- external/llvm-project
           condition: eq(variables['llvm'], 'true')
-          displayName: 'Checkout external/llvm'
+          displayName: 'Checkout external/llvm-project'
 
         - bash: |
             brew install autoconf automake libtool gnu-sed
@@ -166,19 +182,18 @@ stages:
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 
         - bash: |
-            cd netcore
             if [ $(llvm) = true ]; then
-              ./build.sh -c $(_BuildConfig) --llvm
+              ./netcore/build.sh --ci -c $(_BuildConfig) --llvm
             else
-              ./build.sh -c $(_BuildConfig)
+              ./netcore/build.sh --ci -c $(_BuildConfig)
             fi
           displayName: 'Build (Make)'
 
         - bash: |
             if [ $(llvm) = true ]; then
-              make -C netcore nupkg-llvm
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib --llvm
             else
-              make -C netcore nupkg
+              ./netcore/build.sh --ci --pack --skipnative --skipmscorlib
             fi
             mkdir -p ./artifacts/log/$(_BuildConfig)
             mkdir -p ./artifacts/SymStore/$(_BuildConfig)
@@ -189,7 +204,7 @@ stages:
           displayName: 'Build nupkg'
 
         - bash: |
-            make -C netcore run-tests-corefx USE_TIMEOUT=1
+            ./netcore/build.sh --ci --test --skipnative --skipmscorlib
           displayName: 'Download and Run CoreFX Tests'
           timeoutInMinutes: 90
           condition: and(succeeded(), eq(variables['System.TeamProject'], 'public'), ne(variables['llvm'], 'true'))
@@ -243,11 +258,14 @@ stages:
 
         - script: |
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
-            CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
+            CALL msvc\run-msbuild.bat build x86_64 release sgen "/p:PlatformToolset=v140"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl CORLIB_BUILD_FLAGS='-c $(_BuildConfig)'"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             MKDIR mono\mini\.libs\
             COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
             %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
+            IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
             MKDIR artifacts\log\$(_BuildConfig)\
             MKDIR artifacts\SymStore\$(_BuildConfig)\
             MKDIR artifacts\packages\$(_BuildConfig)\Shipping\

@@ -85,6 +85,7 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 #include "llvmonly-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #define BRANCH_COST 10
 #define CALL_COST 10
@@ -2277,6 +2278,7 @@ emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee
 	mono_emit_jit_icall (cfg, mono_throw_bad_image, NULL);
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -2309,7 +2311,7 @@ mini_emit_storing_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *valu
 	 * Add a release memory barrier so the object contents are flushed
 	 * to memory before storing the reference into another object.
 	 */
-	if (mini_debug_options.clr_memory_model)
+	if (!mini_debug_options.weak_memory_model)
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
 	EMIT_NEW_STORE_MEMBASE (cfg, store, OP_STORE_MEMBASE_REG, ptr->dreg, 0, value->dreg);
@@ -3530,6 +3532,8 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, target->dreg, 0);
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 		}
+		if (!mini_debug_options.weak_memory_model)
+			mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, MONO_STRUCT_OFFSET (MonoDelegate, target), target->dreg);
 		if (cfg->gen_write_barriers) {
 			dreg = alloc_preg (cfg);
@@ -4187,7 +4191,7 @@ mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboole
 {
 	if (safety_checks && mini_class_is_reference (klass) &&
 		!(MONO_INS_IS_PCONST_NULL (sp [2]))) {
-		MonoClass *obj_array = mono_array_class_get_cached (mono_defaults.object_class, 1);
+		MonoClass *obj_array = mono_array_class_get_cached (mono_defaults.object_class);
 		MonoMethod *helper = mono_marshal_get_virtual_stelemref (obj_array);
 		MonoInst *iargs [3];
 
@@ -4228,6 +4232,8 @@ mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboole
 			EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), array_reg, offset, sp [2]->dreg);
 		} else {
 			MonoInst *addr = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1], safety_checks);
+			if (!mini_debug_options.weak_memory_model && mini_class_is_reference (klass))
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 			EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), addr->dreg, 0, sp [2]->dreg);
 			if (mini_class_is_reference (klass))
 				mini_emit_write_barrier (cfg, addr, sp [2]);
@@ -4257,7 +4263,7 @@ mini_redirect_call (MonoCompile *cfg, MonoMethod *method,
 {
 	if (method->klass == mono_defaults.string_class) {
 		/* managed string allocation support */
-		if (strcmp (method->name, "InternalAllocateStr") == 0 && !(cfg->opt & MONO_OPT_SHARED)) {
+		if (strcmp (method->name, "FastAllocateString") == 0 && !(cfg->opt & MONO_OPT_SHARED)) {
 			MonoInst *iargs [2];
 			MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, method->klass, cfg->error);
 			MonoMethod *managed_alloc = NULL;
@@ -6000,6 +6006,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	gboolean emitted_funccall_seq_point = FALSE;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
+	cfg->current_method = method;
 
 	image = m_class_get_image (method->klass);
 
@@ -6043,6 +6050,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	if (cfg->prof_coverage) {
 		if (cfg->compile_aot)
 			g_error ("Coverage profiling is not supported with AOT.");
+
+		INLINE_FAILURE ("coverage profiling");
 
 		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 	}
@@ -6127,8 +6136,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	cfg->cil_offset_to_bb = (MonoBasicBlock **)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * header->code_size);
 	cfg->cil_offset_to_bb_len = header->code_size;
-
-	cfg->current_method = method;
 
 	if (cfg->verbose_level > 2)
 		printf ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -7236,6 +7243,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
 
+#ifndef ENABLE_NETCORE
 			if ((cfg->opt & MONO_OPT_INTRINS) && (ins = mini_emit_inst_for_sharable_method (cfg, cmethod, fsig, sp))) {
 				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 					mini_type_to_eval_stack_type ((cfg), fsig->ret, ins);
@@ -7246,6 +7254,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					mono_tailcall_print ("missed tailcall intrins_sharable %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
+#endif
 
 			/*
 			 * Implement a workaround for the inherent races involved in locking:
@@ -7746,6 +7755,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
+					if (!mini_debug_options.weak_memory_model && val->type == STACK_OBJ)
+						mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, fsig->params [fsig->param_count - 1], addr->dreg, 0, val->dreg);
 					if (cfg->gen_write_barriers && val->type == STACK_OBJ && !MONO_INS_IS_PCONST_NULL (val))
 						mini_emit_write_barrier (cfg, addr, val);
@@ -8242,6 +8253,8 @@ calli_end:
 
 			if (il_op == MONO_CEE_STIND_R4 && sp [1]->type == STACK_R8)
 				sp [1] = convert_value (cfg, m_class_get_byval_arg (mono_defaults.single_class), sp [1]);
+			if (!mini_debug_options.weak_memory_model && il_op == MONO_CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER)
+				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 			NEW_STORE_MEMBASE (cfg, ins, stind_to_store_membase (il_op), sp [0]->dreg, 0, sp [1]->dreg);
 			ins->flags |= ins_flag;
 			ins_flag = 0;
@@ -8927,6 +8940,36 @@ calli_end:
 				}
 			}
 
+#ifdef ENABLE_NETCORE
+			// Optimize
+			// 
+			//    box
+			//    ldnull
+			//    ceq (or cgt.un)
+			//    
+			// to just
+			// 
+			//    ldc.i4.0 (or 1)
+			guchar* ldnull_ip;
+			if ((ldnull_ip = il_read_op (next_ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
+				gboolean is_eq = FALSE, is_neq = FALSE;
+				if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
+					is_eq = TRUE;
+				else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
+					is_neq = TRUE;
+
+				if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
+					!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
+					next_ip = ip;
+					il_op = (MonoOpcodeEnum) (is_eq ? CEE_LDC_I4_0 : CEE_LDC_I4_1);
+					EMIT_NEW_ICONST (cfg, ins, is_eq ? 0 : 1);
+					ins->type = STACK_I4;
+					*sp++ = ins;
+					break;
+				}
+			}
+#endif
+
 			gboolean is_true;
 
 			// FIXME: LLVM can't handle the inconsistent bb linking
@@ -9082,6 +9125,7 @@ calli_end:
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE (method, field);
 			mono_class_init_internal (klass);
+			mono_class_setup_fields (klass);
 
 			/* if the class is Critical then transparent code cannot access it's fields */
 			if (!is_instance && mono_security_core_clr_enabled ())
@@ -9128,6 +9172,8 @@ calli_end:
 
 			/* INSTANCE CASE */
 
+			if (is_instance)
+				g_assert (field->offset);
 			foffset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject): field->offset;
 			if (il_op == MONO_CEE_STFLD) {
 				sp [1] = convert_value (cfg, field->type, sp [1]);
@@ -9484,9 +9530,13 @@ calli_end:
 
 			/* Generate IR to do the actual load/store operation */
 
-			if ((il_op == MONO_CEE_STFLD || il_op == MONO_CEE_STSFLD) && (ins_flag & MONO_INST_VOLATILE)) {
-				/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
-				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+			if ((il_op == MONO_CEE_STFLD || il_op == MONO_CEE_STSFLD)) {
+				if (ins_flag & MONO_INST_VOLATILE) {
+					/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
+					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+				} else if (!mini_debug_options.weak_memory_model && mini_type_is_reference (ftype)) {
+					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+				}
 			}
 
 			if (il_op == MONO_CEE_LDSFLDA) {
@@ -10687,6 +10737,13 @@ mono_ldptr:
 
 			*sp++ = ins;
 			break;
+		case MONO_CEE_MONO_GET_SP: {
+			/* Used by COOP only, so this is good enough */
+			MonoInst *var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
+			EMIT_NEW_VARLOADA (cfg, ins, var, NULL);
+			*sp++ = ins;
+			break;
+		}
 
 		case MONO_CEE_ARGLIST: {
 			/* somewhat similar to LDTOKEN */
@@ -10929,7 +10986,7 @@ mono_ldptr:
 			MONO_ADD_INS (cfg->cbb, ins);
 
 			cfg->flags |= MONO_CFG_HAS_ALLOCA;
-			if (init_locals)
+			if (header->init_locals)
 				ins->flags |= MONO_INST_INIT;
 
 			MONO_START_BB (cfg, end_bb);
@@ -12506,6 +12563,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 							mono_bblock_insert_before_ins (bb, ins, load_ins);
 							use_ins = load_ins;
 						}
+						if (cfg->verbose_level > 2)
+							mono_print_ins_index (0, use_ins);
 					}
 
 					if (var->dreg < orig_next_vreg) {

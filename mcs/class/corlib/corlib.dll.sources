@@ -1631,6 +1631,11 @@ corefx/AesGcm.cs
 corefx/IncrementingEventCounter.cs
 corefx/IncrementingPollingCounter.cs
 corefx/PollingCounter.cs
+corefx/NullableAttributes.cs
+corefx/ArrayBufferWriter.cs
+corefx/SequenceReader.cs
+corefx/SequenceReader.Search.cs
+corefx/SequenceReaderExtensions.Binary.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs

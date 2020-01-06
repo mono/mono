@@ -64,6 +64,7 @@
 #include "support-s390x.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 /*========================= End of Includes ========================*/
 
@@ -268,7 +269,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {

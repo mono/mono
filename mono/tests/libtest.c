@@ -2593,11 +2593,17 @@ LIBTEST_API void STDCALL
 mono_safe_handle_ref (void **handle)
 {
 	if (*handle != 0){
-		*handle = (void *) 0xbad;
+		*handle = (void *) 0x800d;
 		return;
 	}
 
-	*handle = (void *) 0x800d;
+	*handle = (void *) 0xbad;
+}
+
+LIBTEST_API void* STDCALL
+mono_safe_handle_ref_nomod (void **handle)
+{
+	return *handle;
 }
 
 LIBTEST_API double STDCALL
@@ -3792,7 +3798,9 @@ static gpointer
 lookup_mono_symbol (const char *symbol_name)
 {
 	gpointer symbol = NULL;
-	const gboolean success = g_module_symbol (g_module_open (NULL, G_MODULE_BIND_LAZY), symbol_name, &symbol);
+	GModule *mod = g_module_open (NULL, G_MODULE_BIND_LAZY);
+	g_assert (mod != NULL);
+	const gboolean success = g_module_symbol (mod, symbol_name, &symbol);
 	g_assertf (success, "%s", symbol_name);
 	return success ? symbol : NULL;
 }
@@ -3800,7 +3808,12 @@ lookup_mono_symbol (const char *symbol_name)
 LIBTEST_API gpointer STDCALL
 mono_test_marshal_lookup_symbol (const char *symbol_name)
 {
+#ifndef HOST_WIN32
+	return dlsym (RTLD_DEFAULT, symbol_name);
+#else
+	// This isn't really proper, but it should work
 	return lookup_mono_symbol (symbol_name);
+#endif
 }
 
 
@@ -4585,7 +4598,7 @@ mono_test_managed_Winx64_struct5_in(managed_struct5_delegate func)
 	winx64_struct5 val;
 	val.a = 5;
 	val.b = 0x10;
-	val.c = 0x99;
+	val.c = (char)0x99;
 	return func (val);
 }
 
@@ -7748,9 +7761,6 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 typedef void (*VoidVoidCallback) (void);
 typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
 
-static jmp_buf test_jmp_buf;
-static guint32 test_gchandle;
-
 typedef long long MonoObject;
 typedef MonoObject MonoException;
 typedef int32_t mono_bool;
@@ -7788,6 +7798,10 @@ mono_test_init_symbols (void)
 	sym_inited = 1;
 }
 
+#ifndef TARGET_WASM
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
 
 static void
 mono_test_longjmp_callback (guint32 gchandle)
@@ -7810,6 +7824,8 @@ mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handl
 		*out_handle = test_gchandle;
 	}
 }
+
+#endif
 
 LIBTEST_API void STDCALL
 mono_test_marshal_bstr (void *ptr)
@@ -7864,6 +7880,76 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 	// Return true if we can't get INotImplemented
 	return pUnk == NULL && hr == S_OK;
 }
+
+typedef struct ccw_qi_shared_data {
+	MonoComObject *pUnk;
+	int i;
+} ccw_qi_shared_data;
+
+static void*
+ccw_qi_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	void *pp;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->QueryInterface (pUnk, &IID_ITest, &pp);
+
+	shared->i = (hr == S_OK) ? 0 : 43;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
+static void*
+ccw_itest_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->SByteIn (pUnk, -100);
+	shared->i = (hr == S_OK) ? 0 : 12;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_itest_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_itest_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
 
 LIBTEST_API void STDCALL
 mono_test_MerpCrashSnprintf (void)

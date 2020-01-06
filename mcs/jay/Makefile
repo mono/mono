@@ -46,8 +46,17 @@ dist-local: dist-default
 
 test-local run-test-local run-test-ondotnet-local doc-update-local:
 
+ifndef ENABLE_MSVC_ONLY
+
 jay: $(sources:.c=.o)
 	$(CCOMPILE) $(LDFLAGS) -o $@ $^
 
 %.o: %.c
 	$(CCOMPILE) $(JAY_CFLAGS) -c -o $@ $^
+
+else # !ENABLE_MSVC_ONLY
+
+jay:
+	make -C $(topdir)/../msvc jay
+
+endif # !ENABLE_MSVC_ONLY

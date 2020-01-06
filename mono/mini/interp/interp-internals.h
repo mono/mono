@@ -22,7 +22,9 @@
 #define MINT_TYPE_P  9
 #define MINT_TYPE_VT 10
 
-#define BOX_NOT_CLEAR_VT_SP 0x4000
+#define INLINED_METHOD_FLAG 0xffff
+#define TRACING_FLAG 0x1
+#define PROFILING_FLAG 0x2
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -39,9 +41,11 @@ enum {
 };
 
 enum {
+	INTERP_OPT_NONE = 0,
 	INTERP_OPT_INLINE = 1,
 	INTERP_OPT_CPROP = 2,
-	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
+	INTERP_OPT_SUPER_INSTRUCTIONS = 4,
+	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS
 };
 
 #if SIZEOF_VOID_P == 4
@@ -167,7 +171,32 @@ typedef struct _InterpMethod
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
 	MonoProfilerCallInstrumentationFlags prof_flags;
+#ifdef ENABLE_EXPERIMENT_TIERED
+	MiniTieredCounter tiered_counter;
+#endif
 } InterpMethod;
+
+typedef struct _StackFragment StackFragment;
+struct _StackFragment {
+	guint8 *pos, *end;
+	struct _StackFragment *next;
+	double data [1];
+};
+
+typedef struct {
+	StackFragment *first, *last, *current;
+	/* For GC sync */
+	int inited;
+} FrameStack;
+
+/* State of the interpreter main loop */
+typedef struct {
+	stackval *sp;
+	unsigned char *vt_sp;
+	const unsigned short  *ip;
+	GSList *finally_ips;
+	gpointer clause_args;
+} InterpState;
 
 struct _InterpFrame {
 	InterpFrame *parent; /* parent */
@@ -175,8 +204,15 @@ struct _InterpFrame {
 	stackval       *retval; /* parent */
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
+	/* An address on the native stack associated with the frame, used during EH */
+	gpointer       native_stack_addr;
+	/* Stack fragments this frame was allocated from */
+	StackFragment *iframe_frag, *data_frag;
 	/* exception info */
 	const unsigned short  *ip;
+	/* State saved before calls */
+	/* This is valid if state.ip != NULL */
+	InterpState state;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
@@ -192,15 +228,25 @@ typedef struct {
 	MonoJitExceptionInfo *handler_ei;
 	/* Exception that is being thrown. Set with rest of resume state */
 	guint32 exc_gchandle;
+	/* Stack of InterpFrames */
+	FrameStack iframe_stack;
+	/* Stack of frame data */
+	FrameStack data_stack;
 } ThreadContext;
 
 typedef struct {
 	gint64 transform_time;
+	gint64 methods_transformed;
 	gint64 cprop_time;
+	gint64 super_instructions_time;
 	gint32 stloc_nps;
 	gint32 movlocs;
 	gint32 copy_propagations;
+	gint32 constant_folds;
 	gint32 killed_instructions;
+	gint32 emitted_instructions;
+	gint32 super_instructions;
+	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
 } MonoInterpStats;

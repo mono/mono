@@ -15,7 +15,7 @@
 #ifndef __MONO_EE_H__
 #define __MONO_EE_H__
 
-#define MONO_EE_API_VERSION 0xd
+#define MONO_EE_API_VERSION 0xe
 
 typedef struct _MonoInterpStackIter MonoInterpStackIter;
 
@@ -31,6 +31,7 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (void, to_native_trampoline, (gpointer addr, gpointer ccontext)) \
 	MONO_EE_CALLBACK (gpointer, create_method_pointer, (MonoMethod *method, gboolean compile, MonoError *error)) \
 	MONO_EE_CALLBACK (MonoFtnDesc*, create_method_pointer_llvmonly, (MonoMethod *method, gboolean unbox, MonoError *error)) \
+	MONO_EE_CALLBACK (void, free_method, (MonoDomain *domain, MonoMethod *method)) \
 	MONO_EE_CALLBACK (MonoObject*, runtime_invoke, (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)) \
 	MONO_EE_CALLBACK (void, init_delegate, (MonoDelegate *del, MonoError *error)) \
 	MONO_EE_CALLBACK (void, delegate_ctor, (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer addr, MonoError *error)) \
@@ -50,6 +51,7 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (gpointer, frame_get_local, (MonoInterpFrameHandle frame, int pos)) \
 	MONO_EE_CALLBACK (gpointer, frame_get_this, (MonoInterpFrameHandle frame)) \
 	MONO_EE_CALLBACK (gpointer, frame_get_res, (MonoInterpFrameHandle frame)) \
+	MONO_EE_CALLBACK (gpointer, frame_get_native_stack_addr, (MonoInterpFrameHandle frame)) \
 	MONO_EE_CALLBACK (void, frame_arg_to_data, (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer data)) \
 	MONO_EE_CALLBACK (void, data_to_frame_arg, (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gconstpointer data)) \
 	MONO_EE_CALLBACK (gpointer, frame_arg_to_storage, (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index)) \
@@ -57,7 +59,9 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (MonoInterpFrameHandle, frame_get_parent, (MonoInterpFrameHandle frame)) \
 	MONO_EE_CALLBACK (void, start_single_stepping, (void)) \
 	MONO_EE_CALLBACK (void, stop_single_stepping, (void)) \
+	MONO_EE_CALLBACK (void, free_context, (gpointer)) \
 	MONO_EE_CALLBACK (void, cleanup, (void)) \
+	MONO_EE_CALLBACK (void, mark_stack, (gpointer thread_info, GcScanFunc func, gpointer gc_data, gboolean precise)) \
 
 typedef struct _MonoEECallbacks {
 

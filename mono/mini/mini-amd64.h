@@ -12,10 +12,7 @@
 
 #ifdef HOST_WIN32
 #include <windows.h>
-/* use SIG* defines if possible */
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #if !defined(_MSC_VER)
 /* sigcontext surrogate */
@@ -26,7 +23,7 @@ struct sigcontext {
 	guint64 edx;
 	guint64 ebp;
 	guint64 esp;
-    guint64 esi;
+	guint64 esi;
 	guint64 edi;
 	guint64 eip;
 };
@@ -523,8 +520,8 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);
 
-int
-mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL int
+mono_amd64_get_tls_gs_offset (void);
 
 #if defined(TARGET_WIN32) && !defined(DISABLE_JIT)
 

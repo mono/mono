@@ -566,11 +566,13 @@ namespace System.Windows.Forms
 		internal void OnExpandItem (GridEntry item)
 		{
 			property_grid_view.ExpandItem (item);
+			OnExpandedItemChanged (EventArgs.Empty);
 		}
 
 		internal void OnCollapseItem (GridEntry item)
 		{
 			property_grid_view.CollapseItem (item);
+			OnExpandedItemChanged (EventArgs.Empty);
 		}
 
 		internal DialogResult ShowError (string text)
@@ -1081,7 +1083,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-		
+
 		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) 
 		{
 			PropertyTabChangedEventHandler eh = (PropertyTabChangedEventHandler)(Events [PropertyTabChangedEvent]);
@@ -1119,6 +1121,13 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 		}
 
+		protected void OnExpandedItemChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [ExpandedItemChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		protected override bool ProcessDialogKey (Keys keyData) {
 			return base.ProcessDialogKey (keyData);
 		}
@@ -1140,6 +1149,7 @@ namespace System.Windows.Forms
 		static object PropertyValueChangedEvent = new object ();
 		static object SelectedGridItemChangedEvent = new object ();
 		static object SelectedObjectsChangedEvent = new object ();
+		static object ExpandedItemChangedEvent = new object ();
 
 		public event EventHandler PropertySortChanged {
 			add { Events.AddHandler (PropertySortChangedEvent, value); }
@@ -1164,6 +1174,12 @@ namespace System.Windows.Forms
 		public event EventHandler SelectedObjectsChanged {
 			add { Events.AddHandler (SelectedObjectsChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectedObjectsChangedEvent, value); }
+		}
+
+		// UIA Framework Note: Used to track changes of expanded state of grid items
+		internal event EventHandler ExpandedItemChanged {
+			add { Events.AddHandler (ExpandedItemChangedEvent, value); }
+			remove { Events.RemoveHandler (ExpandedItemChangedEvent, value); }
 		}
 		
 		[Browsable(false)]

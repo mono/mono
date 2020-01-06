@@ -44,7 +44,7 @@ CSC_LOCATION = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(SERVER_CSC_LOCAT
 USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
-CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) --gc-params=nursery-size=64m --clr-memory-model
+CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) --gc-params=nursery-size=64m
 CCOMPILE = $(CC) $(USE_CFLAGS)
 BOOT_COMPILE = $(Q_MCS) $(BOOTSTRAP_MCS) $(USE_MCS_FLAGS)
 INSTALL = $(SHELL) $(topdir)/../mono/install-sh

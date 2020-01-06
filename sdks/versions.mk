@@ -23,7 +23,7 @@ XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
 
 # min versions of the targets
 MACOS_VERSION_MIN?=10.9
-IOS_VERSION_MIN?=6.0
+IOS_VERSION_MIN?=7.0
 TVOS_VERSION_MIN?=9.0
 WATCHOS_VERSION_MIN?=2.0
 WATCHOS64_32_VERSION_MIN?=5.1

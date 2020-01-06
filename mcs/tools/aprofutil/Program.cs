@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Mono.Options;
+using System.Linq;
 using Mono.Profiler.Aot;
 
 using static System.Console;
@@ -20,8 +21,14 @@ namespace aotprofiletool {
 		static bool Verbose;
 
 		static Regex FilterMethod;
+		static Regex SkipMethod;
 		static Regex FilterModule;
+		static Regex SkipModule;
 		static Regex FilterType;
+		static Regex SkipType;
+
+		static int SkipCount = 0;
+		static int TakeCount = int.MaxValue;
 
 		static string Output;
 
@@ -51,14 +58,29 @@ namespace aotprofiletool {
 					"Set adb socket forwarding for Android",
 				  v => AdbForward = true },
 				{ "filter-method=",
-					"Filter by method with regex {VALUE}",
+					"Include by method with regex {VALUE}",
 				  v => FilterMethod = new Regex (v) },
+				{ "skip-method=",
+					"Exclude by method with regex {VALUE}",
+				  v => SkipMethod = new Regex (v) },
 				{ "filter-module=",
-					"Filter by module with regex {VALUE}",
+					"Include by module with regex {VALUE}",
 				  v => FilterModule = new Regex (v) },
+				{ "skip-module=",
+					"Exclude by module with regex {VALUE}",
+				  v => SkipModule = new Regex (v) },
 				{ "filter-type=",
-					"Filter by type with regex {VALUE}",
+					"Include by type with regex {VALUE}",
 				  v => FilterType = new Regex (v) },
+				{ "skip-type=",
+					"Exclude by type with regex {VALUE}",
+				  v => SkipType = new Regex (v) },
+				{ "take-count=",
+					"Take {VALUE} methods that match",
+				  v => TakeCount = int.Parse (v) },
+				{ "skip-count=",
+					"Skip the first {VALUE} matching methods",
+				  v => SkipCount = int.Parse (v) },
 				{ "m|methods",
 					"Show methods in the profile",
 				  v => Methods = true },
@@ -182,12 +204,10 @@ namespace aotprofiletool {
 			ICollection<ModuleRecord> modules = new List<ModuleRecord> (pd.Modules);
 
 			if (FilterMethod != null || FilterType != null || FilterModule != null) {
-				methods = new List<MethodRecord> ();
 				types = new HashSet<TypeRecord> ();
 				modules = new HashSet<ModuleRecord> ();
 
-				foreach (var method in pd.Methods) {
-
+				methods = pd.Methods.Where (method => {
 					var type = method.Type;
 					var module = type.Module;
 
@@ -195,24 +215,51 @@ namespace aotprofiletool {
 						var match = FilterModule.Match (module.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
+					}
+
+					if (SkipModule != null) {
+						var skip = SkipModule.Match (module.ToString ());
+
+						if (skip.Success)
+							return false;
 					}
 
 					if (FilterType != null) {
 						var match = FilterType.Match (method.Type.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
+					}
+
+					if (SkipType != null) {
+						var skip = SkipType.Match (method.Type.ToString ());
+
+						if (skip.Success)
+							return false;
 					}
 
 					if (FilterMethod != null) {
 						var match = FilterMethod.Match (method.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
 					}
 
-					methods.Add (method);
+					if (SkipMethod != null)	{
+						var skip = SkipMethod.Match (method.ToString ());
+
+						if (skip.Success)
+							return false;
+					}
+
+					return true;
+				}).Skip (SkipCount).Take (TakeCount).ToList ();
+
+				foreach (var method in methods) {
+					var type = method.Type;
+					var module = type.Module;
+
 					types.Add (type);
 					modules.Add (module);
 				}

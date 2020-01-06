@@ -1862,6 +1862,7 @@
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="corefx\AesCcm.cs" />
     <Compile Include="corefx\AesGcm.cs" />
+    <Compile Include="corefx\ArrayBufferWriter.cs" />
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
@@ -1879,6 +1880,7 @@
     <Compile Include="corefx\IncrementingEventCounter.cs" />
     <Compile Include="corefx\IncrementingPollingCounter.cs" />
     <Compile Include="corefx\MonoLinqHelper.cs" />
+    <Compile Include="corefx\NullableAttributes.cs" />
     <Compile Include="corefx\PbeEncryptionAlgorithm.cs" />
     <Compile Include="corefx\PbeParameters.cs" />
     <Compile Include="corefx\PollingCounter.cs" />
@@ -1887,6 +1889,9 @@
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
+    <Compile Include="corefx\SequenceReader.Search.cs" />
+    <Compile Include="corefx\SequenceReader.cs" />
+    <Compile Include="corefx\SequenceReaderExtensions.Binary.cs" />
     <Compile Include="corefx\Stream.cs" />
     <Compile Include="corefx\SwitchExpressionException.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
@@ -1942,6 +1947,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -2469,6 +2475,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -2553,6 +2560,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -2808,6 +2816,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -3379,6 +3388,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -3635,6 +3645,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -3891,6 +3902,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -4141,6 +4153,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -4392,6 +4405,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -4643,6 +4657,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -5176,6 +5191,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -5431,6 +5447,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
@@ -5686,6 +5703,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.LChflags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />

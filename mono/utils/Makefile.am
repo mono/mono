@@ -1,4 +1,6 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
+
+if !ENABLE_MSVC_ONLY
 
 noinst_LTLIBRARIES = \
 	libmonomath.la \
@@ -190,6 +192,7 @@ monoutils_sources = \
 	mono-utility-thread.c	\
 	mono-utility-thread.h	\
 	mono-tls.h	\
+	mono-tls-inline.h	\
 	mono-tls.c	\
 	mono-utils-debug.c \
 	mono-utils-debug.h \
@@ -313,11 +316,19 @@ endif
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
 libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS) @CXX_ADD_CFLAGS@
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
+
+endif # !ENABLE_MSVC_ONLY
+
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
+
+if !ENABLE_MSVC_ONLY
+
 libmonoutils_la_LIBADD = mono-math-c.lo
 
 libmonomath_la_SOURCES = mono-math-c.c
 libmonomath_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+
+endif # !ENABLE_MSVC_ONLY
 
 # These are public headers.
 # They should not use glib.h, G_BEGIN_DECLS, guint, etc.
@@ -340,3 +351,15 @@ SUBDIRS = jemalloc
 endif
 
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
+if ENABLE_MSVC_ONLY
+
+all-local:
+
+	make -C $(top_srcdir)/msvc libmonoutils
+
+clean-local:
+
+	make -C $(top_srcdir)/msvc clean-libmonoutils
+
+endif # ENABLE_MSVC_ONLY

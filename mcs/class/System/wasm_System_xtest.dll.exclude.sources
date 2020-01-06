@@ -10,3 +10,4 @@
 ../../../external/corefx/src/System.CodeDom/tests/*.cs
 
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/*.cs
+System/RemoteExecutorTests.cs

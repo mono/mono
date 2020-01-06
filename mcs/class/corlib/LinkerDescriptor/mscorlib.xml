@@ -395,7 +395,7 @@
 		<!-- domain.c: mono_defaults.string_class -->
 		<type fullname="System.String" preserve="fields">
 			<!-- method-to-ir.c: mini_redirect_call -->
-			<method name="InternalAllocateStr" />
+			<method name="FastAllocateString" />
 			<!-- method-to-it.c: mini_emit_initobj -->
 			<method name="memset" />
 			<!-- mini-generic-sharing.c: class_type_info 
@@ -645,7 +645,6 @@
 		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields" feature="sre">
-			<method name="Mono_GetGuid" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" feature="sre" />
@@ -842,9 +841,6 @@
 		directly.
 		-->
 		<type fullname="Mono.Runtime" preserve="nothing" />
-
-		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
-		<type fullname="Mono.RuntimeStructs/MonoError" />
 
 		<type fullname="System.Threading.WasmRuntime"/>
 

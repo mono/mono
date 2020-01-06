@@ -10,6 +10,10 @@
  */
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <glib.h>
 #include <mono/metadata/threadpool-io.h>
 
@@ -26,6 +30,7 @@
 #include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/threadpool.h>
+#include <mono/metadata/icall-decl.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-lazy-init.h>
@@ -739,3 +744,7 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 }
 
 #endif
+
+#endif /* !ENABLE_NETCORE */
+
+MONO_EMPTY_SOURCE_FILE (threadpool_io);

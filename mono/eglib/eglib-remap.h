@@ -68,6 +68,7 @@
 #define g_hash_table_foreach_steal monoeg_g_hash_table_foreach_steal
 #define g_hash_table_get_keys monoeg_g_hash_table_get_keys
 #define g_hash_table_get_values monoeg_g_hash_table_get_values
+#define g_hash_table_contains monoeg_g_hash_table_contains
 #define g_hash_table_insert_replace monoeg_g_hash_table_insert_replace
 #define g_hash_table_lookup monoeg_g_hash_table_lookup
 #define g_hash_table_lookup_extended monoeg_g_hash_table_lookup_extended
@@ -123,6 +124,7 @@
 #define g_mem_set_vtable monoeg_g_mem_set_vtable
 #define g_mem_get_vtable monoeg_g_mem_get_vtable
 #define g_mkdtemp monoeg_g_mkdtemp
+#define g_module_address monoeg_g_module_address
 #define g_module_build_path monoeg_g_module_build_path
 #define g_module_close monoeg_g_module_close
 #define g_module_error monoeg_g_module_error
@@ -234,6 +236,7 @@
 #define g_strndup monoeg_g_strndup
 #define g_strnfill monoeg_g_strnfill
 #define g_strnlen monoeg_g_strnlen
+#define g_str_from_file_region monoeg_g_str_from_file_region
 #define g_strreverse monoeg_g_strreverse
 #define g_strsplit monoeg_g_strsplit
 #define g_strsplit_set monoeg_g_strsplit_set

@@ -101,6 +101,16 @@ void sgen_client_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
 	sgen_drain_gray_stack (ctx);
 }
 
+void
+sgen_foreach_toggleref_root (void (*callback)(MonoObject*, gpointer), gpointer data)
+{
+	int i;
+	for (i = 0; i < toggleref_array_size; ++i) {
+		if (toggleref_array [i].strong_ref)
+			callback (toggleref_array [i].strong_ref, data);
+	}
+}
+
 void sgen_client_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
 {
 	CopyOrMarkObjectFunc copy_func = ctx.ops->copy_or_mark_object;
@@ -203,13 +213,14 @@ mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (
 static MonoToggleRefStatus
 test_toggleref_callback (MonoObject *obj)
 {
-	static MonoClassField *mono_toggleref_test_field;
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
-	if (!mono_toggleref_test_field) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, mono_toggleref_test_field)
+
 		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, mono_toggleref_test_field)
 
 	/* In coop mode, important to not call a helper that will pin obj! */
 	mono_field_get_value_internal (obj, mono_toggleref_test_field, &status);

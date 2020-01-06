@@ -5,7 +5,8 @@
   "main": "karma.conf.js",
   "scripts": {
     "test": "karma start --single-run --browsers NoSandBoxHeadless karma.conf.js",
-    "test:keep-alive": "karma start --browsers ChromeHeadless karma.conf.js"
+    "test:keep-alive": "karma start --browsers ChromeHeadless karma.conf.js",
+    "testsafari": "karma start --single-run --browsers SafariNative karma.conf.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "karma-junit-reporter": "^1.2.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
+    "karma-safarinative-launcher": "^1.1.0",
     "karma-websocket-server": "^1.0.0",
     "mocha": "^5.2.0",
     "puppeteer": "^1.11.0"

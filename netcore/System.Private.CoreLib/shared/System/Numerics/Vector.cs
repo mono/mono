@@ -77,7 +77,9 @@ namespace System.Numerics
             [Intrinsic]
             get => s_zero;
         }
-        private static readonly Vector<T> s_zero = new Vector<T>();
+#pragma warning disable 0649 // never assigned to
+        private static readonly Vector<T> s_zero;
+#pragma warning restore 0649
 
         /// <summary>
         /// Returns a vector containing all ones.
@@ -480,7 +482,7 @@ namespace System.Numerics
         /// </summary>
         /// <param name="obj">The Object to compare against.</param>
         /// <returns>True if the Object is equal to this vector; False otherwise.</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override readonly bool Equals(object? obj)
         {
             if (!(obj is Vector<T>))
@@ -630,7 +632,7 @@ namespace System.Numerics
         /// <returns>The hash code.</returns>
         public override readonly int GetHashCode()
         {
-            HashCode hashCode = new HashCode();
+            HashCode hashCode = default;
 
             if (typeof(T) == typeof(byte) ||
                 typeof(T) == typeof(sbyte) ||
@@ -858,7 +860,7 @@ namespace System.Numerics
                 }
                 else
                 {
-                    Vector<T> sum = new Vector<T>();
+                    Vector<T> sum = default;
                     if (typeof(T) == typeof(byte))
                     {
                         sum.register.byte_0 = (byte)(left.register.byte_0 + right.register.byte_0);
@@ -1070,7 +1072,7 @@ namespace System.Numerics
                 }
                 else
                 {
-                    Vector<T> difference = new Vector<T>();
+                    Vector<T> difference = default;
                     if (typeof(T) == typeof(byte))
                     {
                         difference.register.byte_0 = (byte)(left.register.byte_0 - right.register.byte_0);
@@ -1283,7 +1285,7 @@ namespace System.Numerics
                 }
                 else
                 {
-                    Vector<T> product = new Vector<T>();
+                    Vector<T> product = default;
                     if (typeof(T) == typeof(byte))
                     {
                         product.register.byte_0 = (byte)(left.register.byte_0 * right.register.byte_0);
@@ -1391,7 +1393,7 @@ namespace System.Numerics
         /// <param name="value">The source vector.</param>
         /// <param name="factor">The scalar value.</param>
         /// <returns>The scaled vector.</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector<T> operator *(Vector<T> value, T factor) =>
             new Vector<T>(factor) * value;
 
@@ -1401,7 +1403,7 @@ namespace System.Numerics
         /// <param name="factor">The scalar value.</param>
         /// <param name="value">The source vector.</param>
         /// <returns>The scaled vector.</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector<T> operator *(T factor, Vector<T> value) =>
             new Vector<T>(factor) * value;
 
@@ -1516,7 +1518,7 @@ namespace System.Numerics
                 }
                 else
                 {
-                    Vector<T> quotient = new Vector<T>();
+                    Vector<T> quotient = default;
                     if (typeof(T) == typeof(byte))
                     {
                         quotient.register.byte_0 = (byte)(left.register.byte_0 / right.register.byte_0);
@@ -1636,7 +1638,7 @@ namespace System.Numerics
         [Intrinsic]
         public static unsafe Vector<T> operator &(Vector<T> left, Vector<T> right)
         {
-            Vector<T> result = new Vector<T>();
+            Vector<T> result = default;
             unchecked
             {
                 if (Vector.IsHardwareAccelerated)
@@ -1667,7 +1669,7 @@ namespace System.Numerics
         [Intrinsic]
         public static unsafe Vector<T> operator |(Vector<T> left, Vector<T> right)
         {
-            Vector<T> result = new Vector<T>();
+            Vector<T> result = default;
             unchecked
             {
                 if (Vector.IsHardwareAccelerated)
@@ -1698,7 +1700,7 @@ namespace System.Numerics
         [Intrinsic]
         public static unsafe Vector<T> operator ^(Vector<T> left, Vector<T> right)
         {
-            Vector<T> result = new Vector<T>();
+            Vector<T> result = default;
             unchecked
             {
                 if (Vector.IsHardwareAccelerated)
@@ -1725,7 +1727,7 @@ namespace System.Numerics
         /// </summary>
         /// <param name="value">The source vector.</param>
         /// <returns>The one's complement vector.</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector<T> operator ~(Vector<T> value) =>
             s_allOnes ^ value;
         #endregion Bitwise Operators
@@ -1738,7 +1740,7 @@ namespace System.Numerics
         /// <param name="right">The first vector to compare.</param>
         /// <returns>True if all elements are equal; False otherwise.</returns>
         [Intrinsic]
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Vector<T> left, Vector<T> right) =>
             left.Equals(right);
 
@@ -1749,7 +1751,7 @@ namespace System.Numerics
         /// <param name="right">The second vector to compare.</param>
         /// <returns>True if left and right are not equal; False otherwise.</returns>
         [Intrinsic]
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Vector<T> left, Vector<T> right) => !(left == right);
         #endregion Logical Operators
 
@@ -1852,7 +1854,7 @@ namespace System.Numerics
 
         #region Internal Comparison Methods
         [Intrinsic]
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector<T> Equals(Vector<T> left, Vector<T> right)
         {
             if (Vector.IsHardwareAccelerated)
@@ -1954,7 +1956,7 @@ namespace System.Numerics
             }
             else
             {
-                Register register = new Register();
+                Register register = default;
                 if (typeof(T) == typeof(byte))
                 {
                     register.byte_0 = left.register.byte_0 == right.register.byte_0 ? ConstantHelper.GetByteWithAllBitsSet() : (byte)0;
@@ -2069,7 +2071,7 @@ namespace System.Numerics
         }
 
         [Intrinsic]
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector<T> LessThan(Vector<T> left, Vector<T> right)
         {
             if (Vector.IsHardwareAccelerated)
@@ -2171,7 +2173,7 @@ namespace System.Numerics
             }
             else
             {
-                Register register = new Register();
+                Register register = default;
                 if (typeof(T) == typeof(byte))
                 {
                     register.byte_0 = left.register.byte_0 < right.register.byte_0 ? ConstantHelper.GetByteWithAllBitsSet() : (byte)0;
@@ -2286,7 +2288,7 @@ namespace System.Numerics
         }
 
         [Intrinsic]
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector<T> GreaterThan(Vector<T> left, Vector<T> right)
         {
             if (Vector.IsHardwareAccelerated)
@@ -2388,7 +2390,7 @@ namespace System.Numerics
             }
             else
             {
-                Register register = new Register();
+                Register register = default;
                 if (typeof(T) == typeof(byte))
                 {
                     register.byte_0 = left.register.byte_0 > right.register.byte_0 ? ConstantHelper.GetByteWithAllBitsSet() : (byte)0;
@@ -2773,7 +2775,7 @@ namespace System.Numerics
             }
             else
             {
-                Vector<T> vec = new Vector<T>();
+                Vector<T> vec = default;
                 if (typeof(T) == typeof(byte))
                 {
                     vec.register.byte_0 = left.register.byte_0 < right.register.byte_0 ? left.register.byte_0 : right.register.byte_0;
@@ -2989,7 +2991,7 @@ namespace System.Numerics
             }
             else
             {
-                Vector<T> vec = new Vector<T>();
+                Vector<T> vec = default;
                 if (typeof(T) == typeof(byte))
                 {
                     vec.register.byte_0 = left.register.byte_0 > right.register.byte_0 ? left.register.byte_0 : right.register.byte_0;
@@ -3457,7 +3459,7 @@ namespace System.Numerics
         #endregion Internal Math Methods
 
         #region Helper Methods
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool ScalarEquals(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3506,7 +3508,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool ScalarLessThan(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3555,7 +3557,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool ScalarGreaterThan(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3604,7 +3606,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T ScalarAdd(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3653,7 +3655,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T ScalarSubtract(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3702,7 +3704,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T ScalarMultiply(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3751,7 +3753,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T ScalarDivide(T left, T right)
         {
             if (typeof(T) == typeof(byte))
@@ -3800,7 +3802,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetOneValue()
         {
             if (typeof(T) == typeof(byte))
@@ -3859,7 +3861,7 @@ namespace System.Numerics
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetAllBitsSetValue()
         {
             if (typeof(T) == typeof(byte))

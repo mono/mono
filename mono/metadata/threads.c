@@ -59,14 +59,13 @@
 #include <mono/utils/mono-state.h>
 #include <mono/metadata/w32subset.h>
 #include <mono/metadata/mono-config.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
 
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #if defined(HOST_WIN32)
 #include <objbase.h>
@@ -623,14 +622,14 @@ get_context_static_data (MonoAppContext *ctx, guint32 offset)
 static MonoThread**
 get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *thread)
 {
-	static MonoClassField *current_thread_field = NULL;
-
 	guint32 offset;
 
-	if (!current_thread_field) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, current_thread_field)
+
 		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, current_thread_field)
 
 	ERROR_DECL (thread_vt_error);
 	mono_class_vtable_checked (domain, mono_defaults.thread_class, thread_vt_error);
@@ -1233,15 +1232,17 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 		start_func (start_func_arg);
 	} else {
 #ifdef ENABLE_NETCORE
-		static MonoMethod *cb;
-
 		/* Call a callback in the RuntimeThread class */
 		g_assert (start_delegate == NULL);
-		if (!cb) {
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, cb)
+
 			cb = mono_class_get_method_from_name_checked (internal->obj.vtable->klass, "StartCallback", 0, 0, error);
 			g_assert (cb);
 			mono_error_assert_ok (error);
-		}
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, cb)
+
 		mono_runtime_invoke_checked (cb, internal, NULL, error);
 #else
 		void *args [1];
@@ -1359,9 +1360,11 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	mono_g_hash_table_insert_internal (threads_starting_up, thread, thread);
 	mono_threads_unlock ();
 
+#ifndef ENABLE_NETCORE
 	internal->threadpool_thread = flags & MONO_THREAD_CREATE_FLAGS_THREADPOOL;
 	if (internal->threadpool_thread)
 		mono_thread_set_state (internal, ThreadState_Background);
+#endif
 
 	internal->debugger_thread = flags & MONO_THREAD_CREATE_FLAGS_DEBUGGER;
 
@@ -1550,6 +1553,34 @@ mono_thread_attach (MonoDomain *domain)
 }
 
 /**
+ * mono_threads_attach_tools_thread:
+ *
+ * Attach the current thread as a tool thread. DON'T USE THIS FUNCTION WITHOUT READING ALL DISCLAIMERS.
+ *
+ * A tools thread is a very special kind of thread that needs access to core
+ * runtime facilities but should not be counted as a regular thread for high
+ * order facilities such as executing managed code or accessing the managed
+ * heap.
+ *
+ * This is intended only for low-level utilities than need to be able to use
+ * some low-level runtime facilities when doing things like resolving
+ * backtraces in their background processing thread.
+ *
+ * Note in particular that the thread is not fully attached - it does not have
+ * a "current domain" because it cannot run managed code or interact with
+ * managed objects.  However it can act on some metadata, and use our low-level
+ * locks and the coop thread state machine (ie GC Safe and GC Unsafe
+ * transitions make sense).
+ */
+void
+mono_threads_attach_tools_thread (void)
+{
+	MonoThreadInfo *info = mono_thread_info_attach ();
+	g_assert (info);
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
+}
+
+/**
  * mono_thread_detach:
  */
 void
@@ -1558,6 +1589,8 @@ mono_thread_detach (MonoThread *thread)
 	if (thread)
 		mono_thread_detach_internal (thread->internal_thread);
 }
+
+
 
 /**
  * mono_thread_detach_if_exiting:
@@ -1756,8 +1789,8 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	mono_thread_name_cleanup (&this_obj->name);
 }
 
-void
-ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+static void
+mono_sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
 {
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
@@ -1780,24 +1813,41 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
-		SETUP_ICALL_FRAME;
+		if (allow_interruption) {
+			SETUP_ICALL_FRAME;
 
-		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+			MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-		const gboolean interrupt = mono_thread_execute_interruption (&exc);
+			const gboolean interrupt = mono_thread_execute_interruption (&exc);
 
-		if (interrupt)
-			mono_set_pending_exception_handle (exc);
+			if (interrupt)
+				mono_set_pending_exception_handle (exc);
 
-		CLEAR_ICALL_FRAME;
+			CLEAR_ICALL_FRAME;
 
-		if (interrupt)
-			return;
+			if (interrupt)
+				return;
+		}
+
 		if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
 			continue;
 		return;
 	}
 }
+
+#ifdef ENABLE_NETCORE
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoBoolean allow_interruption, MonoError *error)
+{
+	return mono_sleep_internal (ms, allow_interruption, error);
+}
+#else
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
+{
+	return mono_sleep_internal (ms, TRUE, error);
+}
+#endif
 
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
@@ -2451,12 +2501,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volat
 	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
-void
-ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile* res)
-{
-	ves_icall_System_Threading_Interlocked_CompareExchange_Object (location, value, comparand, res);
-}
-
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
 {
 	return mono_atomic_cas_ptr(location, value, comparand);
@@ -2512,18 +2556,6 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 	}
 #endif
 	return mono_atomic_cas_i64 (location, value, comparand);
-}
-
-void
-ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res)
-{
-	// Coop-equivalency here via pointers to pointers.
-	// value and res are to managed frames, location ought to be (or member or global) but it cannot be guaranteed.
-	//
-	// This is not entirely convincing due to lack of volatile in the caller.
-	//
-	MONO_CHECK_NULL (location, );
-	ves_icall_System_Threading_Interlocked_Exchange_Object (location, value, res);
 }
 
 gint32 
@@ -3662,11 +3694,13 @@ mono_threads_set_shutting_down (void)
 }
 
 /**
- * mono_thread_manage:
+ * mono_thread_manage_internal:
  */
 void
-mono_thread_manage (void)
+mono_thread_manage_internal (void)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	struct wait_data wait_data;
 	struct wait_data *wait = &wait_data;
 
@@ -3749,6 +3783,7 @@ mono_thread_manage (void)
 	mono_thread_info_yield ();
 }
 
+#ifndef ENABLE_NETCORE
 static void
 collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 {
@@ -3880,6 +3915,7 @@ void mono_thread_suspend_all_other_threads (void)
 		}
 	}
 }
+#endif
 
 typedef struct {
 	MonoInternalThread *thread;
@@ -5655,7 +5691,11 @@ mono_thread_is_foreign (MonoThread *thread)
 static void
 threads_native_thread_join_lock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	/*
+	 * Have to cast to a pointer-sized integer first, as we can't narrow
+	 * from a pointer if pthread_t is an integer smaller than a pointer.
+	 */
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	if (thread != pthread_self ()) {
 		MONO_ENTER_GC_SAFE;
 		/* This shouldn't block */
@@ -5668,7 +5708,7 @@ threads_native_thread_join_lock (gpointer tid, gpointer value)
 static void
 threads_native_thread_join_nolock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	MONO_ENTER_GC_SAFE;
 	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
@@ -6364,7 +6404,6 @@ summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current,
 static void
 summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx)
 {
-#ifdef HAVE_SIGNAL_H
 	sigset_t sigset, old_sigset;
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGTERM);
@@ -6383,7 +6422,6 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 		g_error ("pthread_kill () is not supported by this platform");
 	#endif
 	}
-#endif
 }
 
 // Returns true when there are shared global references to "this_thread"
@@ -6597,7 +6635,14 @@ mono_threads_summarize_init (void)
 gboolean
 mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gchar *working_mem, size_t provided_size)
 {
-	return mono_threads_summarize_execute_internal (ctx, out, hashes, silent, working_mem, provided_size, FALSE);
+	gboolean result;
+	gboolean already_async = mono_thread_info_is_async_context ();
+	if (!already_async)
+		mono_thread_info_set_is_async_context (TRUE);
+	result = mono_threads_summarize_execute_internal (ctx, out, hashes, silent, working_mem, provided_size, FALSE);
+	if (!already_async)
+		mono_thread_info_set_is_async_context (FALSE);
+	return result;
 }
 
 gboolean 
@@ -6675,6 +6720,11 @@ ves_icall_System_Threading_Thread_StartInternal (MonoThreadObjectHandle thread_h
 	gboolean res;
 
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p)", __func__, internal));
+
+#ifdef DISABLE_THREADS
+	mono_error_set_not_supported (error, NULL);
+	return;
+#endif
 
 	LOCK_THREAD (internal);
 

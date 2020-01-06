@@ -84,54 +84,69 @@
 	} 							\
 } while (0)
 
+MonoClass *
+mono_class_create_array (MonoClass *element_class, uint32_t rank);
+
+MonoArrayHandle
+mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error);
+
+MonoArray*
+mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *error);
+
 /* 
- * Macros which cache the results of lookups locally.
- * These should be used instead of the original versions, if the __GNUC__
- * restriction is acceptable.
+ * Macros which cache.
+ * These should be used instead of the original versions.
  */
 
-#ifdef __GNUC__
+static inline MonoClass*
+mono_array_class_get_cached_function (MonoClass *eclass, MonoClass **aclass)
+{
+	MonoClass *a = *aclass;
+	if (a)
+		return a;
+	a = mono_class_create_array (eclass, 1);
+	g_assert (a);
+	if (a)
+		*aclass = a;
+	return *aclass;
+}
 
-/* name should be a compile-time constant */
-#define mono_class_get_field_from_name_cached(klass,name) ({ \
-			static MonoClassField *tmp_field; \
-			if (!tmp_field) { \
-				tmp_field = mono_class_get_field_from_name_full ((klass), (name), NULL); \
-				g_assert (tmp_field); \
-			}; \
-			tmp_field; })
-/* eclass should be a run-time constant */
-#define mono_array_class_get_cached(eclass,rank) ({	\
-			static MonoClass *tmp_klass; \
-			if (!tmp_klass) { \
-				tmp_klass = mono_class_create_array ((eclass), (rank));	\
-				g_assert (tmp_klass); \
-			}; \
-			tmp_klass; })
-/* eclass should be a run-time constant */
-#define mono_array_new_cached(domain, eclass, size, error) ({	\
-	MonoVTable *__vtable = mono_class_vtable_checked ((domain), mono_array_class_get_cached ((eclass), 1), (error)); \
-	MonoArray *__arr = NULL;					\
-	if (is_ok ((error)))						\
-		__arr = mono_array_new_specific_checked (__vtable, (size), (error)); \
-	__arr; })
+// eclass should be a run-time constant
+// If you get an error using this macro, you need to manually instantiate the MonoClass *foo ## _array cache.
+// See for example object_class_array.
+#define mono_array_class_get_cached(eclass) (mono_array_class_get_cached_function ((eclass), &(eclass ## _array)))
 
-/* eclass should be a run-time constant */
-#define mono_array_new_cached_handle(domain, eclass, size, error) ({	\
-	MonoVTable *__vtable = mono_class_vtable_checked ((domain), mono_array_class_get_cached ((eclass), 1), (error)); \
-	MonoArrayHandle __arr = NULL_HANDLE_ARRAY;			\
-	if (is_ok ((error)))						\
-		__arr = mono_array_new_specific_handle (__vtable, (size), (error)); \
-	__arr; })
+static inline MonoArray*
+mono_array_new_cached_function (MonoDomain *domain, MonoClass *aclass, int size, MonoError *error)
+{
+	MonoVTable *vtable = mono_class_vtable_checked (domain, aclass, error);
+	MonoArray *arr = NULL;
+	if (is_ok (error))
+		arr = mono_array_new_specific_checked (vtable, size, error);
+	return arr;
+}
 
-#else
+// eclass should be a run-time constant
+// If you get an error using this macro, you need to manually instantiate the MonoClass *foo ## _array cache.
+// See for example object_class_array.
+#define mono_array_new_cached(domain, eclass, size, error) \
+	mono_array_new_cached_function ((domain), mono_array_class_get_cached (eclass), (size), (error))
 
-#define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
-#define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
-#define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
-#define mono_array_new_cached_handle(domain, eclass, size, error) (mono_array_new_handle ((domain), (eclass), (size), (error)))
+static inline MonoArrayHandle
+mono_array_new_cached_handle_function (MonoDomain *domain, MonoClass *aclass, int size, MonoError *error)
+{
+	MonoVTable *vtable = mono_class_vtable_checked (domain, aclass, error);
+	MonoArrayHandle arr = NULL_HANDLE_ARRAY;
+	if (is_ok (error))
+		arr = mono_array_new_specific_handle (vtable, size, error);
+	return arr;
+}
 
-#endif
+// eclass should be a run-time constant
+// If you get an error using this macro, you need to manually instantiate the MonoClass *foo ## _array cache.
+// See for example object_class_array.
+#define mono_array_new_cached_handle(domain, eclass, size, error) \
+	mono_array_new_cached_handle_function ((domain), mono_array_class_get_cached (eclass), (size), (error))
 
 #ifdef MONO_BIG_ARRAYS
 typedef uint64_t mono_array_size_t;
@@ -423,14 +438,6 @@ struct _MonoReflectionType {
 /* Safely access System.Type from native code */
 TYPED_HANDLE_DECL (MonoReflectionType);
 
-/* This corresponds to System.RuntimeType */
-typedef struct {
-	MonoReflectionType type;
-	MonoObject *type_info;
-} MonoReflectionMonoType;
-
-TYPED_HANDLE_DECL (MonoReflectionMonoType);
-
 typedef struct {
 	MonoObject  object;
 	MonoReflectionType *class_to_proxy;	
@@ -566,15 +573,11 @@ void
 mono_gstring_append_thread_name (GString*, MonoInternalThread*);
 
 
-#ifdef ENABLE_NETCORE
 /*
- * There is only one thread object, MonoInternalThread is aliased to MonoThread,
+ * NETCORE: There is only one thread object,
  * thread->internal_thread points to itself.
  */
-struct _MonoThread {
-#else
 struct _MonoInternalThread {
-#endif
 	// FIXME: Mechanize keeping this in sync with managed.
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
@@ -617,7 +620,7 @@ struct _MonoInternalThread {
 	gsize thread_state;
 
 #ifdef ENABLE_NETCORE
-	struct _MonoThread *internal_thread;
+	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 #else
@@ -630,9 +633,7 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
-#ifdef ENABLE_NETCORE
-#define _MonoInternalThread _MonoThread
-#else
+#ifndef ENABLE_NETCORE
 struct _MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
@@ -818,7 +819,7 @@ typedef struct {
 	gpointer (*get_imt_trampoline) (MonoVTable *vtable, int imt_slot_index);
 	gboolean (*imt_entry_inited) (MonoVTable *vtable, int imt_slot_index);
 	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
-	void     (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
+	void     (*debug_log) (int level, MonoString *category, MonoString *message);
 	gboolean (*debug_log_is_enabled) (void);
 	void     (*init_delegate) (MonoDelegateHandle delegate, MonoError *error);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
@@ -1115,16 +1116,6 @@ typedef struct {
 	guint32 attrs;
 	MonoArray *other_methods;
 } MonoEventInfo;
-
-typedef struct {
-	MonoString *name;
-	MonoString *name_space;
-	MonoReflectionType *etype;
-	MonoReflectionType *nested_in;
-	MonoReflectionAssembly *assembly;
-	guint32 rank;
-	MonoBoolean isprimitive;
-} MonoTypeInfo;
 
 typedef struct {
 	MonoObject *member;
@@ -1787,12 +1778,6 @@ mono_array_new_checked (MonoDomain *domain, MonoClass *eclass, uintptr_t n, Mono
 MonoArray*
 mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
 
-MonoArray*
-mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *error);
-
-MonoArrayHandle
-mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error);
-
 ICALL_EXPORT
 MonoArray*
 ves_icall_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
@@ -2283,6 +2268,7 @@ mono_string_hash_internal (MonoString *s);
 int
 mono_object_hash_internal (MonoObject* obj);
 
+ICALL_EXTERN_C
 void
 mono_value_copy_internal (void* dest, const void* src, MonoClass *klass);
 
@@ -2367,6 +2353,7 @@ mono_gchandle_new_internal (MonoObject *obj, mono_bool pinned);
 uint32_t
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
 
+ICALL_EXTERN_C
 MonoObject*
 mono_gchandle_get_target_internal (uint32_t gchandle);
 
@@ -2408,6 +2395,7 @@ mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value);
 void
 mono_gc_wbarrier_generic_store_atomic_internal (void *ptr, MonoObject *value);
 
+ICALL_EXTERN_C
 void
 mono_gc_wbarrier_generic_nostore_internal (void* ptr);
 

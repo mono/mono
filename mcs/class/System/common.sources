@@ -32,8 +32,6 @@ System.IO/InternalBufferOverflowException.cs
 System.IO/InvalidDataException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/NotifyFilters.cs
-System.IO/RenamedEventArgs.cs
-System.IO/RenamedEventHandler.cs
 System.IO/WatcherChangeTypes.cs
 
 System.Net/BasicClient.cs
@@ -874,6 +872,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventHandler.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventHandler.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs

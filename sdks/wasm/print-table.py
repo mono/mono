@@ -6,7 +6,7 @@
 
 import sys
 
-prefix=" (elem (get_global $tableBase) "
+prefix=" (elem (i32.const 1) "
 
 if len(sys.argv) < 2:
     print "Usage: python print-table.py <path to mono.wast>"

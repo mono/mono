@@ -1306,13 +1306,13 @@ namespace System.Windows.Forms {
 			
 			if (widthOnly) {
 				page.TabBounds = new Rectangle (xpos, 0, width, 0);
-				page.Row = row_count;
 				if (xpos + width > row_width && multiline) {
 					xpos = 0;
 					row_count++;
 				} else if (xpos + width > row_width) {
 					show_slider = true;	
 				}
+				page.Row = row_count;
 				if (i == selected_index && show_slider) {
 					for (int j = i-1; j >= 0; j--) {
 						if (TabPages [j].TabBounds.Left < xpos + width - row_width) {
@@ -1715,31 +1715,32 @@ namespace System.Windows.Forms {
 
 			public override void Remove (Control value)
 			{
-				bool change_index = false;
+				bool invalid_selected_index = false;
 				
 				TabPage page = value as TabPage;
+				int next_selected_index = -1;
 				if (page != null && owner.Controls.Contains (page)) {
 					int index = owner.IndexForTabPage (page);
-					if (index < owner.SelectedIndex || owner.SelectedIndex == Count - 1)
-						change_index = true;
+
+					if (owner.SelectedIndex < index || owner.SelectedIndex == 0)
+						next_selected_index = owner.SelectedIndex;
+					else
+						next_selected_index = owner.SelectedIndex - 1;
+
+					owner.selected_index = -1; // Invalidate internal selected Index
+					invalid_selected_index = true;
 				}
-				
+
 				base.Remove (value);
-				
+
 				// We don't want to raise SelectedIndexChanged until after we
 				// have removed from the collection, so TabCount will be
 				// correct for the user.
-				if (change_index && Count > 0) {
-					// Clear the selected index internally, to avoid trying to access the previous
-					// selected tab when setting the new one - this is what .net seems to do
-					int prev_selected_index = owner.SelectedIndex;
-					owner.selected_index = -1;
-
-					owner.SelectedIndex = --prev_selected_index;
-					owner.Invalidate ();
-				} else if (change_index) {
-					owner.selected_index = -1;
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				if (invalid_selected_index) {
+					if (Count > 0)
+						owner.SelectedIndex = next_selected_index;
+					else // Count == 0
+						owner.OnSelectedIndexChanged (EventArgs.Empty);
 					owner.Invalidate ();
 				} else
 					owner.Redraw ();
