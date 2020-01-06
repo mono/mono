@@ -92,7 +92,194 @@ namespace System
 		public IntPtr pdispVal;
 
 		[FieldOffset(8)]
+		public IntPtr parray;
+
+		[FieldOffset(8)]
 		public BRECORD bRecord;
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct SAFEARRAYBOUND {
+			public UInt32 cElements;
+			public UInt32 lLbound;
+		};
+
+		[DllImport ("oleaut32.dll", EntryPoint = "SafeArrayCreate")]
+		static extern IntPtr _SafeArrayCreate(
+			VarEnum vt,
+			UInt32 cDims,
+			SAFEARRAYBOUND[] rgsabound);
+
+		[DllImport ("oleaut32.dll", EntryPoint = "SafeArrayDestroy")]
+		static extern int _SafeArrayDestroy(
+			IntPtr psa);
+
+		bool do_array(object obj) {
+			Type elem_type = obj.GetType().GetElementType();
+			Array arr = (Array)obj;
+			VarEnum elem_vt;
+			int sz;
+
+			if (elem_type == typeof(sbyte))
+			{
+				elem_vt = VarEnum.VT_I1;
+				sz = 1;
+			}
+			else if (elem_type == typeof(byte))
+			{
+				elem_vt = VarEnum.VT_UI1;
+				sz = 1;
+			}
+			else if (elem_type == typeof(short))
+			{
+				elem_vt = VarEnum.VT_I2;
+				sz = 2;
+			}
+			else if (elem_type == typeof(ushort))
+			{
+				elem_vt = VarEnum.VT_UI2;
+				sz = 2;
+			}
+			else if (elem_type == typeof(int))
+			{
+				elem_vt = VarEnum.VT_I4;
+				sz = 4;
+			}
+			else if (elem_type == typeof(uint))
+			{
+				elem_vt = VarEnum.VT_UI4;
+				sz = 4;
+			}
+			else if (elem_type == typeof(long))
+			{
+				elem_vt = VarEnum.VT_I8;
+				sz = 8;
+			}
+			else if (elem_type == typeof(ulong))
+			{
+				elem_vt = VarEnum.VT_UI8;
+				sz = 8;
+			}
+			else if (elem_type == typeof(float))
+			{
+				elem_vt = VarEnum.VT_R4;
+				sz = 4;
+			}
+			else if (elem_type == typeof(double))
+			{
+				elem_vt = VarEnum.VT_R8;
+				sz = 8;
+			}
+			else
+				return false;
+
+			SAFEARRAYBOUND[] bounds = new SAFEARRAYBOUND[arr.Rank];
+
+			int num_bytes = 0;
+
+			for (int i = 0; i < arr.Rank; ++i)
+			{
+				num_bytes += arr.GetLength(i);
+				bounds[i].cElements = (uint)arr.GetLength(i);
+				bounds[i].lLbound = (uint)arr.GetLowerBound(i);
+			}
+
+			num_bytes *= sz;
+
+			vt = (short)(VarEnum.VT_ARRAY | elem_vt);
+			parray = _SafeArrayCreate(elem_vt, (uint)arr.Rank, bounds);
+
+			IntPtr pvData;
+			if (sizeof(IntPtr) == 4)
+				pvData = Marshal.ReadIntPtr(parray, 12); /* offset of SAFEARRAY.pvData */
+			else if (sizeof(IntPtr) == 8)
+				pvData = Marshal.ReadIntPtr(parray, 16); /* offset of SAFEARRAY.pvData */
+			else
+			{
+				/* unsupported architecture */
+				_SafeArrayDestroy(parray);
+				return false;
+			}
+
+			GCHandle pinned = GCHandle.Alloc(arr);
+
+			if (arr.Rank == 1)
+			{
+				/* fast path for single-dimension arrays */
+				IntPtr src = Marshal.UnsafeAddrOfPinnedArrayElement(arr, 0);
+				for (int i = 0; i < num_bytes; ++i)
+				{
+					Marshal.WriteByte(pvData, i, Marshal.ReadByte(src, i));
+				}
+			}
+			else
+			{
+				/* multidimensional SAFEARRAY data is stored right-most index first */
+				IntPtr src = Marshal.UnsafeAddrOfPinnedArrayElement(arr, 0);
+
+				int[] idxs = new int[arr.Rank];
+				int in_ofs = 0;
+				int out_ofs = 0;
+				int stride = 1;
+				for (int i = 0; i < arr.Rank - 1; ++i)
+					stride *= arr.GetLength(i);
+				stride *= sz;
+
+				while (true)
+				{
+					switch (sz){
+					case 1:
+						Marshal.WriteByte(pvData, out_ofs, Marshal.ReadByte(src, in_ofs));
+						break;
+
+					case 2:
+						Marshal.WriteInt16(pvData, out_ofs, Marshal.ReadInt16(src, in_ofs));
+						break;
+
+					case 4:
+						Marshal.WriteInt32(pvData, out_ofs, Marshal.ReadInt32(src, in_ofs));
+						break;
+
+					case 8:
+						Marshal.WriteInt64(pvData, out_ofs, Marshal.ReadInt64(src, in_ofs));
+						break;
+					}
+
+					in_ofs += sz;
+					out_ofs += stride;
+
+					int r = arr.Rank - 1;
+					while (r >= 0 && idxs[r] == arr.GetLength(r) - 1)
+					{
+						idxs[r] = 0;
+						out_ofs = 0;
+						--r;
+					}
+
+					if (r < 0)
+						/* done */
+						break;
+
+					idxs[r]++;
+
+					if (out_ofs == 0)
+					{
+						/* recalc start offset */
+						/* TODO: can we combine this with the index increment loop above? */
+						int dim_size = 1;
+						for (r = 0; r < arr.Rank; ++r)
+						{
+							out_ofs += dim_size * idxs[r];
+							dim_size *= arr.GetLength(r);
+						}
+						out_ofs *= sz;
+					}
+				}
+			}
+
+			pinned.Free();
+
+			return true;
+		}
 
 		public void SetValue(object obj) {
 			vt = (short)VarEnum.VT_EMPTY;
@@ -103,7 +290,11 @@ namespace System
 			if (t.IsEnum)
 				t = Enum.GetUnderlyingType (t);
 
-			if (t == typeof(sbyte))
+			if (t.IsArray && do_array(obj))
+			{
+				/* noop */
+			}
+			else if (t == typeof(sbyte))
 			{
 				vt = (short)VarEnum.VT_I1;
 				cVal = (sbyte)obj;
@@ -323,6 +514,9 @@ namespace System
 		{
 			if ((VarEnum)vt == VarEnum.VT_BSTR) {
 				Marshal.FreeBSTR (bstrVal);
+			}
+			else if ((vt & (short)VarEnum.VT_ARRAY) != 0) {
+				_SafeArrayDestroy (parray);
 			}
 #if !DISABLE_COM
 			else if ((VarEnum)vt == VarEnum.VT_DISPATCH || (VarEnum)vt == VarEnum.VT_UNKNOWN) {
