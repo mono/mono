@@ -30,7 +30,7 @@ if ! pkg info > /dev/null; then
 fi
 
 ## Jan 7 2020 - work around image having mangled perl defaults
-if ! pkg info perl5.26; then
+if pkg info perl5.26; then
   pkg remove -y perl5.26
 fi
 if ! pkg info perl5-5.30; then
