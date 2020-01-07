@@ -1356,6 +1356,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("NotWorking")] // https://github.com/mono/mono/issues/18364
 		public void SetValueDirect ()
 		{
 			TestFields fields = new TestFields { MaxValue = 1234, str = "A" };
@@ -1365,6 +1366,8 @@ namespace MonoTests.System.Reflection
 			info.SetValueDirect (reference, 4096);
 			Assert.AreEqual (4096, fields.MaxValue);
 
+			// if we replace `fields.GetType ()` with `typeof (TestFields)` it won't work in AOT mode
+			// and mono now does it as an optimization (see https://github.com/mono/mono/pull/18293)
 			info = fields.GetType ().GetField ("str");
 			reference = __makeref(fields);
 			info.SetValueDirect (reference, "B");
