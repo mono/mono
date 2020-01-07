@@ -41,6 +41,7 @@ namespace System.Windows.Forms.RTF {
 
 		// Major.Destinan
 		FontTbl,
+		FontName,
 		FontAltName,
 		EmbeddedFont,
 		FontFile,

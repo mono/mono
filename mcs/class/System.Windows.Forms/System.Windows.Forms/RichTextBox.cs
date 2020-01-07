@@ -60,7 +60,6 @@ namespace System.Windows.Forms {
 		private bool		fire_contents_resized;
 		private Size		existing_contents_size;
 
-		private RTF.TextMap rtf_text_map;
 		private int rtf_skip_count;
 		private int		rtf_cursor_x;
 		private int		rtf_cursor_y;
@@ -2088,6 +2087,8 @@ namespace System.Windows.Forms {
 			}
 
 			font = new Font (rtf_style.rtf_rtffont.Name, rtf_style.rtf_rtffont_size, rtf_style.rtf_rtfstyle);
+			if (font.Name != rtf_style.rtf_rtffont.Name && !string.IsNullOrEmpty(rtf_style.rtf_rtffont.AltName))
+				font = new Font (rtf_style.rtf_rtffont.AltName, rtf_style.rtf_rtffont_size, rtf_style.rtf_rtfstyle);
 
 			hanging_indent = -rtf_style.rtf_par_first_line_indent;
 			left_indent = rtf_style.rtf_par_line_left_indent - hanging_indent;
@@ -2203,9 +2204,6 @@ namespace System.Windows.Forms {
 			rtf_cursor_y = cursor_y;
 			rtf_chars = 0;
 			rtf.DefaultFont(this.Font.Name);
-
-			rtf_text_map = new RTF.TextMap();
-			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
 
 			document.SuspendRecalc ();
 

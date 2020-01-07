@@ -103,6 +103,7 @@
     <Compile Include="System.Windows.Forms.RTF\Charcode.cs" />
     <Compile Include="System.Windows.Forms.RTF\Charset.cs" />
     <Compile Include="System.Windows.Forms.RTF\CharsetFlags.cs" />
+    <Compile Include="System.Windows.Forms.RTF\CharsetToCodepage.cs" />
     <Compile Include="System.Windows.Forms.RTF\CharsetType.cs" />
     <Compile Include="System.Windows.Forms.RTF\ClassDelegate.cs" />
     <Compile Include="System.Windows.Forms.RTF\Color.cs" />

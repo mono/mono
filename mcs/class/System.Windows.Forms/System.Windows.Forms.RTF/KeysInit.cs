@@ -395,6 +395,7 @@ namespace System.Windows.Forms.RTF {
 					new KeyStruct(Major.NeXTGrAttr, Minor.NeXTGHeight, "height"),
 					new KeyStruct(Major.Destination, Minor.OptDest, "*"),
 					new KeyStruct(Major.Destination, Minor.FontTbl, "fonttbl"),
+					new KeyStruct(Major.Destination, Minor.FontName, "fname"),
 					new KeyStruct(Major.Destination, Minor.FontAltName, "falt"),
 					new KeyStruct(Major.Destination, Minor.EmbeddedFont, "fonteb"),
 					new KeyStruct(Major.Destination, Minor.FontFile, "fontfile"),

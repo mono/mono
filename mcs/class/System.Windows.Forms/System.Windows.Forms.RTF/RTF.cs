@@ -60,10 +60,7 @@ namespace System.Windows.Forms.RTF {
 
 		private char		prev_char;
 		private bool		bump_line;
-
-		private Font		font_list;
-
-		private Charset		cur_charset;
+		
 		private Stack		charset_stack;
 
 		private Style		styles;
@@ -101,10 +98,6 @@ namespace System.Windows.Forms.RTF {
 			line_pos = 0;
 			prev_char = unchecked((char)-1);
 			bump_line = false;
-			font_list = null;
-			charset_stack = null;
-
-			cur_charset = new Charset();
 
 			destination_callbacks = new DestinationCallback();
 			class_callbacks = new ClassCallback();
@@ -369,49 +362,52 @@ SkipCRLF:
 			GetToken2();
 
 			if (this.rtf_class == TokenClass.Text) {
-				this.minor = (Minor)this.cur_charset[(int)this.major];
-				if (encoding == null) {
+				if (encoding == null)
 					encoding = Encoding.GetEncoding (encoding_code_page);
-				}
 				encoded_text = new String (encoding.GetChars (new byte [] { (byte) this.major }));
-			}
-
-			if (this.cur_charset.Flags == CharsetFlags.None) {
-				return this.rtf_class;
-			}
-
-			if (CheckCMM (TokenClass.Control, Major.Unicode, Minor.UnicodeAnsiCodepage)) {
+			} else if (CheckCMM (TokenClass.Control, Major.Unicode, Minor.UnicodeAnsiCodepage)) {
 				encoding_code_page = param;
 
 				// fallback to the default one in case we have an invalid value
 				if (encoding_code_page < 0 || encoding_code_page > 65535)
 					encoding_code_page = DefaultEncodingCodePage;
-			}
 
-			if (((this.cur_charset.Flags & CharsetFlags.Read) != 0) && CheckCM(TokenClass.Control, Major.CharSet)) {
-				this.cur_charset.ReadMap();
-			} else if (((this.cur_charset.Flags & CharsetFlags.Switch) != 0) && CheckCMM(TokenClass.Control, Major.CharAttr, Minor.FontNum)) {
+				encoding = null;
+			} else if (CheckCMM(TokenClass.Control, Major.CharAttr, Minor.FontNum)) {
 				Font	fp;
 
-				fp = Font.GetFont(this.font_list, this.param);
+				fp = Font.GetFont(this.fonts, this.param);
 
 				if (fp != null) {
-					if (fp.Name.StartsWith("Symbol")) {
-						this.cur_charset.ID = CharsetType.Symbol;
+					if (fp.Codepage != 0) {
+						if (fp.Codepage != encoding_code_page) {
+							encoding_code_page = fp.Codepage;
+							encoding = null;
+						}
 					} else {
-						this.cur_charset.ID = CharsetType.General;
+						var cp = CharsetToCodepage.Translate(fp.Charset);
+						if (cp != 0 && cp != encoding_code_page) {
+							encoding_code_page = cp;
+							encoding = null;
+						}
 					}
-				} else if (((this.cur_charset.Flags & CharsetFlags.Switch) != 0) && (this.rtf_class == TokenClass.Group)) {
-					switch(this.major) {
-						case Major.BeginGroup: {
-							this.charset_stack.Push(this.cur_charset);
-							break;
-						}
+				}
+			} else if (this.rtf_class == TokenClass.Group) {
+				switch(this.major) {
+					case Major.BeginGroup: {
+						charset_stack.Push(encoding);
+						break;
+					}
 
-						case Major.EndGroup: {
-							this.cur_charset = (Charset)this.charset_stack.Pop();
-							break;
+					case Major.EndGroup: {
+						if (charset_stack.Count > 0) {
+							encoding = (Encoding)this.charset_stack.Pop();
+							encoding_code_page = encoding.CodePage;
+						} else {
+							encoding = null;
+							encoding_code_page = DefaultEncodingCodePage;
 						}
+						break;
 					}
 				}
 			}
@@ -677,8 +673,11 @@ SkipCRLF:
 
 				font = new Font(rtf);
 
-				while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup))) {
-					if (rtf.rtf_class == TokenClass.Control) {
+				int depth = 0;
+				string untaggedName = null;
+
+				while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && depth >= 0) {
+					if (rtf.rtf_class == TokenClass.Control) { 
 						switch(rtf.major) {
 							case Major.FontFamily: {
 								font.Family = (int)rtf.minor;
@@ -734,6 +733,26 @@ SkipCRLF:
 								break;
 							}
 
+							case Major.Destination: {
+								switch (rtf.minor) {
+									case Minor.FontName:
+										untaggedName = ReadFontName(rtf);
+										break;
+
+									case Minor.FontAltName:
+										font.AltName = ReadFontName(rtf);
+										break;
+
+									default: {
+										#if RTF_DEBUG
+											Console.WriteLine("Got unhandled Control.Destination.Minor: " + rtf.minor);
+										#endif
+										break;
+									}
+								}
+								break;
+							}
+
 							default: {
 								#if RTF_DEBUG
 									Console.WriteLine("ReadFontTbl: Unknown Control token " + rtf.major);
@@ -742,31 +761,24 @@ SkipCRLF:
 							}
 						}
 					} else if (rtf.CheckCM(TokenClass.Group, Major.BeginGroup)) {
-						rtf.SkipGroup();
-					} else if (rtf.rtf_class == TokenClass.Text) {
-						StringBuilder	sb;
-
-						sb = new StringBuilder();
-
-						while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup)) && (!rtf.CheckCM(TokenClass.Group, Major.BeginGroup))) {
-							sb.Append((char)rtf.major);
-							rtf.GetToken();
-						}
-
-						if (rtf.CheckCM(TokenClass.Group, Major.EndGroup)) {
-							rtf.UngetToken();
-						}
-
-						font.Name = sb.ToString();
-						continue;
+						depth++;
+					} else if (rtf.CheckCM(TokenClass.Group, Major.EndGroup)) {
+						depth--;
+					} else if (rtf.rtf_class == TokenClass.Text)
+                    {
+                        font.Name = ReadFontName(rtf);
+                        continue;
 #if RTF_DEBUG
 					} else {
 						Console.WriteLine("ReadFontTbl: Unknown token " + rtf.text_buffer);
 #endif
-					}
+                    }
 
-					rtf.GetToken();
+                    rtf.GetToken();
 				}
+
+				if (untaggedName != null)
+					font.Name = untaggedName;
 
 				if (old == 0) {
 					rtf.GetToken();
@@ -788,7 +800,28 @@ SkipCRLF:
 			rtf.RouteToken();
 		}
 
-		private void ReadColorTbl(RTF rtf) {
+        private static String ReadFontName(RTF rtf)
+        {
+            StringBuilder sb = new StringBuilder();
+
+			while (rtf.rtf_class != TokenClass.EOF && rtf.rtf_class != TokenClass.Text)
+				rtf.GetToken();
+
+            while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup)) && (!rtf.CheckCM(TokenClass.Group, Major.BeginGroup)))
+            {
+				sb.Append((char)rtf.major);
+				rtf.GetToken();
+            }
+
+            if (rtf.CheckCM(TokenClass.Group, Major.EndGroup))
+            {
+                rtf.UngetToken();
+            }
+
+            return sb.ToString();
+        }
+
+        private void ReadColorTbl(RTF rtf) {
 			Color	color;
 			int	num;
 
