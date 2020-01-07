@@ -5151,6 +5151,19 @@ public class DebuggerTests
 		vm.Exit (0);
 		vm = null;
 	}
+
+	[Test]
+	public void TestNewThreadHybridSuspendException () {
+		TearDown ();
+		Start (dtest_app_path, "new_thread_hybrid_exception", forceExit: true);
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
 	
 	[Test]
 	public void TestAsyncDebugGenerics () {

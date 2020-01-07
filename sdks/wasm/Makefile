@@ -432,13 +432,13 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
-build-aot-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
-	ninja -v -C obj/aot-sample
+build-aot-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --nobinding --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	ninja -v -C obj/aot-hello
 
-build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
-	ninja -v -C obj/aot-sample-profiled
+build-aot-hello-profiled: packager.exe hello.exe data.aotprofile
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-profiled --nobinding --builddir=obj/aot-hello-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-hello-profiled
 
 $(WASM_TESTS_BIN):
 	mkdir -p $@
@@ -459,11 +459,11 @@ build-zlib-interp-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-aot-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+build-zlib-aot-hello: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
-run-zlib-aot-sample: build-zlib-aot-sample
+run-zlib-aot-hello: build-zlib-aot-hello
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-mixed-sample: packager.exe hello.exe
@@ -479,23 +479,23 @@ hello.exe: hello.cs
 hello-io.exe: hello-io.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello-io.cs
 
-run-aot-sample: build-aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+run-aot-hello: build-aot-hello
+	(cd bin/aot-hello && $(SM) runtime.js --run hello.exe)
 
-run-aot-sample-profiled: build-aot-sample-profiled
-	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
+run-aot-hello-profiled: build-aot-hello-profiled
+	(cd bin/aot-hello-profiled && $(SM) runtime.js --run hello.exe)
 
-build-interp-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe
-	ninja -v -C obj/interp-sample
+build-interp-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-hello --nobinding --builddir=obj/interp-hello --template=runtime-tests.js hello.exe
+	ninja -v -C obj/interp-hello
 
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
 	(cd bin/io-sample && python $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
 
-run-interp-sample: build-interp-sample
-	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
+run-interp-hello: build-interp-hello
+	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
 
 threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
@@ -732,7 +732,7 @@ serve:
 canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
-check-aot: do-aot-sample
+check-aot: do-aot-hello
 
 clean-sdk:
 	$(RM) -r sdk/**/bin
