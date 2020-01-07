@@ -416,6 +416,11 @@ namespace System.Windows.Forms {
 				return 0;
 			}
 
+			if (vkey == 0) {
+				buffer = String.Empty;
+				return 0;
+			}
+
 			XEvent e = new XEvent ();
 			e.AnyEvent.type = XEventName.KeyPress;
 			e.KeyEvent.display = display;
@@ -440,6 +445,15 @@ namespace System.Windows.Forms {
 
 			e.KeyEvent.state |= AltGrMask;
 
+			if ((vkey >= (int) VirtualKeys.VK_NUMPAD0) && (vkey <= (int) VirtualKeys.VK_NUMPAD9))
+				e.KeyEvent.keycode = XKeysymToKeycode (display, vkey - (int) VirtualKeys.VK_NUMPAD0 + (int) KeypadKeys.XK_KP_0);
+
+			if (vkey == (int) VirtualKeys.VK_DECIMAL)
+				e.KeyEvent.keycode = XKeysymToKeycode (display, (int) KeypadKeys.XK_KP_Decimal);
+			
+			if (vkey == (int) VirtualKeys.VK_SEPARATOR)
+				e.KeyEvent.keycode = XKeysymToKeycode(display, (int) KeypadKeys.XK_KP_Separator);
+
 			for (int keyc = min_keycode; (keyc <= max_keycode) && (e.KeyEvent.keycode == 0); keyc++) {
 				// find keycode that could have generated this vkey
 				if ((keyc2vkey [keyc] & 0xFF) == vkey) {
@@ -451,15 +465,6 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
-
-			if ((vkey >= (int) VirtualKeys.VK_NUMPAD0) && (vkey <= (int) VirtualKeys.VK_NUMPAD9))
-				e.KeyEvent.keycode = XKeysymToKeycode (display, vkey - (int) VirtualKeys.VK_NUMPAD0 + (int) KeypadKeys.XK_KP_0);
-
-			if (vkey == (int) VirtualKeys.VK_DECIMAL)
-				e.KeyEvent.keycode = XKeysymToKeycode (display, (int) KeypadKeys.XK_KP_Decimal);
-			
-			if (vkey == (int) VirtualKeys.VK_SEPARATOR)
-				e.KeyEvent.keycode = XKeysymToKeycode(display, (int) KeypadKeys.XK_KP_Separator);
 
 			if (e.KeyEvent.keycode == 0 && vkey != (int) VirtualKeys.VK_NONAME) {
 				// And I couldn't find the keycode so i returned the vkey and was like whatever
