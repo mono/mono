@@ -29,6 +29,20 @@ if ! pkg info > /dev/null; then
   exit 1
 fi
 
+## Jan 7 2020 - work around image having mangled perl defaults
+if ! pkg remove -y perl5.26; then
+  if ! pkg info perl5-5.30; then
+    ## Force reinstall so it places /usr/local/bin/perl binary
+    if ! pkg install -f -y perl5-5.30; then
+      echo "[FATAL] Cannot install a working perl5"
+      exit 1
+    fi
+  fi
+  if [ ! -f /usr/local/bin/perl ]; then
+    ln -s /usr/local/bin/perl5.30 /usr/local/bin/perl
+  fi
+fi
+
 ## These packages are MUST have.
 if ! pkg install -y bash git gmake autoconf automake cmake libtool python27 python36 ca_root_nss; then
   ## Kill the attempt quickly if we definitely cannot build.
