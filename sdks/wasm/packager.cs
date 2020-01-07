@@ -707,13 +707,13 @@ class Driver {
 
 		string wasm_runtime_dir;
 		if (is_netcore)
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/netcore-release" : "builds/netcore-debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "netcore-release" : "netcore-debug");
 		else if (enable_threads)
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/threads-release" : "builds/threads-debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "threads-release" : "threads-debug");
 		else if (enable_dynamic_runtime)
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/dynamic-release" : "builds/dynamic-debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "dynamic-release" : "dynamic-debug");
 		else
-			wasm_runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "builds/release" : "builds/debug");
+			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "mono.js", "mono.wasm" };
 			if (enable_threads) {

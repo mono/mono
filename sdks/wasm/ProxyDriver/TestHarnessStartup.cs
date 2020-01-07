@@ -142,7 +142,8 @@ namespace WsProxy {
 
 			var devToolsUrl = options.DevToolsUrl;
 			var psi = new ProcessStartInfo ();
-			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://localhost:9300/{options.PagePath}";
+
+			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
 			psi.UseShellExecute = false;
 			psi.FileName = options.ChromePath;
 			psi.RedirectStandardError = true;

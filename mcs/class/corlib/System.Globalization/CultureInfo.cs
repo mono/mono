@@ -154,6 +154,9 @@ namespace System.Globalization
 			if (default_current_culture != null)
 				return default_current_culture;
 
+			if (GlobalizationMode.Invariant)
+				return InvariantCulture;
+
 			var locale_name = get_current_locale_name ();
 			CultureInfo ci = null;
 
