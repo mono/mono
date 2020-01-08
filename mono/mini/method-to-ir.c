@@ -10060,7 +10060,7 @@ field_access_end:
 					guint32 is_vt_token;
 					if ((is_vt_ip = il_read_call (next_ip + 5, end, &is_vt_token)) && ip_in_bb (cfg, cfg->cbb, is_vt_ip)) {
 						MonoMethod *is_vt_method = mini_get_method (cfg, method, is_vt_token, NULL, generic_context);
-						if (is_vt_method->klass == mono_defaults.systemtype_class && !mini_is_gsharedvt_klass (tclass) &&
+						if (is_vt_method->klass == mono_defaults.systemtype_class && !mini_is_gsharedvt_variable_klass (tclass) &&
 							!strcmp ("get_IsValueType", is_vt_method->name)) {
 							next_ip = is_vt_ip;
 							EMIT_NEW_ICONST (cfg, ins, m_class_is_valuetype (tclass) ? 1 : 0);
