@@ -324,6 +324,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\BidiCategory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CalendarAlgorithmType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CalendarWeekRule.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CharUnicodeInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CharUnicodeInfoData.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CultureNotFoundException.cs" />
@@ -5992,9 +5994,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6020,9 +6019,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6050,9 +6046,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6078,9 +6071,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6108,9 +6098,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6136,9 +6123,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6166,9 +6150,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6194,9 +6175,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6224,9 +6202,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6252,9 +6227,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6282,9 +6254,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6310,9 +6279,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6340,9 +6306,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6368,9 +6331,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6398,9 +6358,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6426,9 +6383,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -6456,9 +6410,6 @@
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
     </EmbeddedResource>
@@ -6484,9 +6435,6 @@
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/charinfo.nlp">
-      <LogicalName>charinfo.nlp</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
