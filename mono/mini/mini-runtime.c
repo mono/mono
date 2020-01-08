@@ -104,6 +104,7 @@
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
+static char *stats_method_name = NULL;
 
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
@@ -466,6 +467,27 @@ mono_tramp_info_free (MonoTrampInfo *info)
 	if (info->owns_uw_info)
 		g_free (info->uw_info);
 	g_free (info);
+}
+
+char *
+mono_stats_get_method_name (void)
+{
+	return stats_method_name;
+}
+
+void
+mono_stats_set_method_name (char *name)
+{
+	if (stats_method_name != NULL) {
+		g_free (stats_method_name);
+	}
+	stats_method_name = name;
+}
+
+void
+mono_stats_method_name_clean (void)
+{
+	g_free (stats_method_name);
 }
 
 static void
@@ -4749,6 +4771,7 @@ mini_cleanup (MonoDomain *domain)
 {
 	print_jit_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+	mono_stats_method_name_clean();
 }
 #else
 void
