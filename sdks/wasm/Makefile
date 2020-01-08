@@ -142,8 +142,8 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/mono.js
+builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/dotnet.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
@@ -154,7 +154,7 @@ builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -s USE_ZLIB=1 src/zlib-helper.c -c -o $$@
 
-build-native: builds/$(1)/mono.js
+build-native: builds/$(1)/dotnet.js
 
 endef
 
@@ -225,18 +225,18 @@ build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dl
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/hello-netcore
 
-bin/hello-netcore/mono.js: build-hello-netcore
+bin/hello-netcore/dotnet.js: build-hello-netcore
 
-run-hello-netcore: bin/hello-netcore/mono.js
+run-hello-netcore: bin/hello-netcore/dotnet.js
 	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
 
 build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
 	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
-bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
+bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
 
-run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
+run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
 	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
 # Path to <mono repo>/netcore/netcore/corefx/tests/extracted
@@ -251,16 +251,16 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
-bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
+bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
 	cd xunit-runner && dotnet build /nologo /v:q
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
-build-$(1): bin/$(2)/mono.js
+build-$(1): bin/$(2)/dotnet.js
 
-run-$(1): bin/$(2)/mono.js
+run-$(1): bin/$(2)/dotnet.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
 
 endef
@@ -387,13 +387,13 @@ xunit-runner.exe: xunit-runner/xunit-runner.cs
 # $(4) - command line arguments
 define XunitTestTemplate
 
-bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
+bin/$(2)/dotnet.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
 	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 	ninja -v -C obj/$(2)
 
-build-$(1): bin/$(2)/mono.js
+build-$(1): bin/$(2)/dotnet.js
 
-run-$(1): bin/$(2)/mono.js
+run-$(1): bin/$(2)/dotnet.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.exe $(3) $(4) `cat xunit-exclusions.rsp | grep -v '#'`)
 
 endef

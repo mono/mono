@@ -715,7 +715,7 @@ class Driver {
 		else
 			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
-			var interp_files = new List<string> { "mono.js", "mono.wasm" };
+			var interp_files = new List<string> { "dotnet.js", "dotnet.wasm" };
 			if (enable_threads) {
 				interp_files.Add ("mono.worker.js");
 			}
@@ -943,8 +943,8 @@ class Driver {
 				ninja.WriteLine ($"  flags = -s USE_ZLIB=1 -I{runtime_dir}/include/mono-2.0");
 			}
 		} else {
-			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
-			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
+			ninja.WriteLine ("build $appdir/dotnet.js: cpifdiff $wasm_runtime_dir/dotnet.js");
+			ninja.WriteLine ("build $appdir/dotnet.wasm: cpifdiff $wasm_runtime_dir/dotnet.wasm");
 			if (enable_threads) {
 				ninja.WriteLine ("build $appdir/mono.worker.js: cpifdiff $wasm_runtime_dir/mono.worker.js");
 			}
@@ -1075,9 +1075,9 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {extra_link_libs} {runtime_libs} | $tool_prefix/src/library_mono.js $tool_prefix/src/dotnet_support.js {wasm_core_support} $emsdk_env");
-			ninja.WriteLine ("  out_js=$appdir/mono.js");
-			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
+			ninja.WriteLine ($"build $appdir/dotnet.js $appdir/dotnet.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {extra_link_libs} {runtime_libs} | $tool_prefix/src/library_mono.js $tool_prefix/src/dotnet_support.js {wasm_core_support} $emsdk_env");
+			ninja.WriteLine ("  out_js=$appdir/dotnet.js");
+			ninja.WriteLine ("  out_wasm=$appdir/dotnet.wasm");
 		}
 		if (enable_linker) {
 			switch (linkMode) {

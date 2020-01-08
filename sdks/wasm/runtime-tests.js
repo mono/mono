@@ -132,7 +132,7 @@ if (typeof window == "undefined")
   load ("mono-config.js");
 
 var Module = { 
-	mainScriptUrlOrBlob: "mono.js",
+	mainScriptUrlOrBlob: "dotnet.js",
 
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
@@ -192,7 +192,7 @@ var Module = {
 };
 
 if (typeof window == "undefined")
-  load ("mono.js");
+  load ("dotnet.js");
 
 const IGNORE_PARAM_COUNT = -1;
 
