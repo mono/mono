@@ -1689,6 +1689,18 @@ mono_get_version_info (void)
 
 static gboolean enable_debugging;
 
+void
+handle_stats_name (char *arg)
+{
+	size_t method_name_len = strlen (arg);
+	if (method_name_len == 0) {
+		fprintf (stderr, "Missing method name in --stats command line option\n");
+		exit (1);
+	}
+	// 8 = strlen("--stats=")
+	mono_stats_set_method_name (g_strndup (&arg [8], method_name_len));
+}
+
 /**
  * mono_jit_parse_options:
  *
@@ -1745,6 +1757,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			mono_counters_enable (-1);
 			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
 			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			handle_stats_name (argv [i]);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -2190,6 +2204,8 @@ mono_main (int argc, char* argv[])
 			mono_counters_enable (-1);
 			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
 			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			handle_stats_name (argv [i]);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
