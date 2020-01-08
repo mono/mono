@@ -98,12 +98,13 @@ ifeq ($(UNAME),Darwin)
 endif
 .PHONY: jsup
 
-jsup:
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+jsup: .stamp-jsvu
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 
-.stamp-jsvu:
-	npm install
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+.stamp-jsvu: 
+	npm install npm@latest
+	node_modules/npm/bin/npm-cli.js install
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 	touch $@
 
 .PHONY: toolchain
