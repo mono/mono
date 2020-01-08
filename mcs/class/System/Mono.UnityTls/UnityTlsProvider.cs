@@ -82,7 +82,7 @@ namespace Mono.Unity
 					targetHost = targetHost.Substring (0, pos);
 			}
 
-			// convert cert to native
+			// convert cert to native or extract from unityTlsChainImpl.
 			var result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			UnityTls.unitytls_x509list* certificatesNative = null;
 			try

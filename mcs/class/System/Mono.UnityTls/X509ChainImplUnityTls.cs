@@ -81,6 +81,12 @@ namespace Mono.Unity
 				elements = null;
 			}
 		}
+
+		protected override void Dispose (bool disposing)
+		{
+			Reset();
+			base.Dispose (disposing);
+		}
 	}
 }
 
