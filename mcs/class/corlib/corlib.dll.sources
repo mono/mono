@@ -1086,11 +1086,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarWeekRule.cs
 ../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
-# TODO: make CoreFX's CharUnicodeInfo BE compatible
-#../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
-#../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfoData.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfoData.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
-#../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureNotFoundException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DaylightTime.cs
