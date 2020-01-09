@@ -98,12 +98,15 @@ ifeq ($(UNAME),Darwin)
 endif
 .PHONY: jsup
 
-jsup:
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
 
-.stamp-jsvu:
-	npm install
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+jsup: .stamp-jsvu
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+
+.stamp-jsvu: 
+	npm install npm@^6.13.4
+	node_modules/npm/bin/npm-cli.js install
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 	touch $@
 
 .PHONY: toolchain
@@ -413,18 +416,18 @@ $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
 	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
 	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
 	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
@@ -639,18 +642,18 @@ run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
 run-browser-tests: build-browser-test-suite
-	(cd $(BROWSER_TEST) && npm test)
+	(cd $(BROWSER_TEST) && $(NPM) test)
 
 build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
-	(cd $(BROWSER_TEST_THREADS) && npm test)
+	(cd $(BROWSER_TEST_THREADS) && $(NPM) test)
 
 run-browser-dynamic-tests: $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite
-	(cd $(BROWSER_TEST_DYNAMIC) && npm test)
+	(cd $(BROWSER_TEST_DYNAMIC) && $(NPM) test)
 
 run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
-	(cd $(BROWSER_TEST) && npm run testsafari)
+	(cd $(BROWSER_TEST) && $(NPM) run testsafari)
 
 clean: clean-browser-tests
 	$(RM) -r *.o
