@@ -469,21 +469,6 @@ mono_tramp_info_free (MonoTrampInfo *info)
 	g_free (info);
 }
 
-char *
-mono_stats_get_method_name (void)
-{
-	return stats_method_name;
-}
-
-void
-mono_stats_set_method_name (char *name)
-{
-	if (stats_method_name != NULL) {
-		g_free (stats_method_name);
-	}
-	stats_method_name = name;
-}
-
 static void
 register_trampoline_jit_info (MonoDomain *domain, MonoTrampInfo *info)
 {

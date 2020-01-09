@@ -1697,7 +1697,10 @@ set_stats_method_name (char *name)
 		fprintf (stderr, "Missing method name in --stats command line option\n");
 		exit (1);
 	}
-	mono_stats_set_method_name (g_strndup (name, method_name_len));
+	if (stats_method_name != NULL) {
+		g_free (stats_method_name);
+	}
+	stats_method_name = g_strndup (name, method_name_len);
 }
 
 /**
