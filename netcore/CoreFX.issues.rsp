@@ -35,14 +35,6 @@
 -nomethod System.Diagnostics.Tests.ProcessTests.ProcessStart_UseShellExecute_ExecuteOrder
 
 ####################################################################
-##  System.Diagnostics.TraceSource.Tests
-####################################################################
-
-# Object reference not set to an instance of an object on DefaultTraceListenerClassTests.MakeAssemblyGetEntryAssemblyReturnNull
-# https://github.com/mono/mono/issues/14905
--nomethod System.Diagnostics.TraceSourceTests.DefaultTraceListenerClassTests.EntryAssemblyName_Null_NotIncludedInTrace
-
-####################################################################
 ##  System.Diagnostics.Tracing.Tests
 ####################################################################
 
