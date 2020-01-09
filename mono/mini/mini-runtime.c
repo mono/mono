@@ -104,6 +104,7 @@
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
+
 char *stats_method_name = NULL;
 
 gboolean mono_compile_aot = FALSE;

@@ -1704,7 +1704,7 @@ set_stats_method_name (char *name)
 }
 
 static void
-mono_setup_counters (void)
+mono_enable_counters (void)
 {
 	mono_counters_enable (-1);
 	mono_atomic_store_bool (&mono_stats.enabled, TRUE);
@@ -1764,9 +1764,9 @@ mono_jit_parse_options (int argc, char * argv[])
 
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_setup_counters ();
+			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
-			mono_setup_counters ();
+			mono_enable_counters ();
 			set_stats_method_name (argv [i] + 8);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
@@ -2210,9 +2210,9 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_setup_counters ();
+			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
-			mono_setup_counters ();
+			mono_enable_counters ();
 			set_stats_method_name (argv [i] + 8);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
