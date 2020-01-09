@@ -424,11 +424,11 @@ MONO_API int         mono_regression_test_step      (int verbose_level, const ch
 
 char                *mono_stats_get_method_name     (void);
 void                 mono_stats_set_method_name     (char *name);
-void                 mono_stats_method_name_clean   (void);
-void                 handle_stats_name              (char *arg);
 
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (const MonoEECallbacks *cbs);
+
+extern char           *stats_method_name;
 
 extern const
 MonoEECallbacks*       mono_interp_callbacks_pointer;
