@@ -250,6 +250,7 @@
       <Compile Include="src\System\Runtime\InteropServices\CriticalHandle.Mono.cs" />
       <Compile Include="src\System\Runtime\InteropServices\GCHandle.Mono.cs" />
       <Compile Include="src\System\Runtime\InteropServices\Marshal.Mono.cs" />
+      <Compile Include="src\System\Runtime\InteropServices\MemoryMarshal.Mono.cs" />
       <Compile Include="src\System\Runtime\InteropServices\MarshalAsAttribute.Mono.cs" />
       <Compile Include="src\System\Runtime\InteropServices\NativeLibrary.Mono.cs" />
       <Compile Include="src\System\Runtime\InteropServices\SafeHandle.Mono.cs" />

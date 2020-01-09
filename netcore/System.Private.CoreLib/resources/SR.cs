@@ -1222,4 +1222,6 @@ partial class SR
 	public const string InvalidOperation_SpanOverlappedOperation = "This operation is invalid on overlapping buffers.";
 	public const string SetterHasNoParams = "Setter must have parameters.";
 	public const string NotSupported_Overlapped = "This API is not supported on this platform.";
+	public const string Argument_InvalidPredefinedCultureName = "Culture name '{0}' is not a predefined culture.";
 }
+
