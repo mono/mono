@@ -151,7 +151,7 @@ namespace ExceptionRewriter {
 				// Make temporary copy of the types and methods lists because we mutate them while iterating
 				foreach (var type in mod.GetTypes ())
 					foreach (var meth in type.Methods.ToArray ())
-						ExtractExceptionFilters (meth);
+						ProcessMethod (meth);
 			}
 		}
 
@@ -1221,7 +1221,7 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void ExtractExceptionFilters (MethodDefinition method) 
+		private void ProcessMethod (MethodDefinition method)
 		{
 			if (!method.HasBody)
 				return;
@@ -1244,8 +1244,18 @@ namespace ExceptionRewriter {
 			}
 
 			if (Options.Verbose)
-				Console.WriteLine ("Rewriting {0}", method.FullName);
+				Console.WriteLine ($"Rewriting {method.FullName}");
 
+			try {
+				ExtractExceptionFilters (method);
+			} catch (Exception exc) {
+				Console.Error.WriteLine ($"Error rewriting {method.FullName}:");
+				Console.Error.WriteLine (exc);
+			}
+		}
+
+		private void ExtractExceptionFilters (MethodDefinition method) 
+		{
 			// FIXME: Cecil currently throws inside the native PDB writer on methods we've modified
 			//  presumably because we need to manually update the debugging information after removing
 			//  instructions from the method body.
