@@ -618,27 +618,27 @@ static LLVMTypeRef
 primitive_type_to_llvm_type (MonoTypeEnum type)
 {
 	switch (type) {
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-			return LLVMInt8Type ();
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-			return LLVMInt16Type ();
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-			return LLVMInt32Type ();
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-			return LLVMInt64Type ();
-		case MONO_TYPE_R4:
-			return LLVMFloatType ();
-		case MONO_TYPE_R8:
-			return LLVMDoubleType ();
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-			return IntPtrType ();
-		default:
-			return NULL;
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return LLVMInt8Type ();
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return LLVMInt16Type ();
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return LLVMInt32Type ();
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return LLVMInt64Type ();
+	case MONO_TYPE_R4:
+		return LLVMFloatType ();
+	case MONO_TYPE_R8:
+		return LLVMDoubleType ();
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+		return IntPtrType ();
+	default:
+		return NULL;
 	}
 }
 
@@ -7574,9 +7574,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_OR: {
-			LLVMValueRef minus_one [2];
-			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
-			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildOr (builder, vec_lhs_i64, vec_rhs_i64, "");
@@ -7585,9 +7582,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_XOR: {
-			LLVMValueRef minus_one [2];
-			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
-			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildXor (builder, vec_lhs_i64, vec_rhs_i64, "");
@@ -7596,9 +7590,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_AND: {
-			LLVMValueRef minus_one [2];
-			minus_one [0] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
-			minus_one [1] = LLVMConstInt (LLVMInt64Type (), -1, FALSE);
 			LLVMValueRef vec_lhs_i64 = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_rhs_i64 = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
 			LLVMValueRef vec_and = LLVMBuildAnd (builder, vec_lhs_i64, vec_rhs_i64, "");
@@ -7629,7 +7620,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE2_SRLI: {
-			LLVMValueRef args [2] = { lhs, rhs };
+			LLVMValueRef args [] = { lhs, rhs };
 			values [ins->dreg] = convert (ctx, 
 				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSRLI_W), args, 2, dname), 
 				type_to_simd_type (ins->inst_c1));
