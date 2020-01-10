@@ -10,7 +10,7 @@ using Mono.Collections.Generic;
 namespace ExceptionRewriter {
 	public class RewriteOptions {
 		public bool EnableGenerics = false;
-		public bool Verbose = true;
+		public bool Verbose = false;
 		public bool ThrowOnError = true;
 		public bool EnableSymbols = false;
 		internal bool Overwrite;
@@ -404,7 +404,7 @@ namespace ExceptionRewriter {
 					return result;
 			}
 
-			throw new Exception ();
+			throw new Exception ("FilterTypeReference iterated 50 times without completing");
 		}
 
 		private T FilterMemberReference<T, U, V> (T mr, Dictionary<U, V> replacementTable)
@@ -435,7 +435,7 @@ namespace ExceptionRewriter {
 			where U : TypeReference
 			where V : TypeReference 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ("FilterPropertyReference not implemented");
 		}
 
 		private MemberReference FilterMethodReference<U, V> (MethodReference meth, Dictionary<U, V> replacementTable)
@@ -1018,7 +1018,7 @@ namespace ExceptionRewriter {
 
 			int i1 = insns.IndexOf (eh.FilterStart), i2 = insns.IndexOf (eh.HandlerStart);
 			if (i2 < 0)
-				throw new Exception ();
+				throw new Exception ($"Handler start instruction {eh.HandlerStart} not found in method body");
 			i2--;
 
 			var variableMapping = new Dictionary<object, object> {
@@ -1238,7 +1238,7 @@ namespace ExceptionRewriter {
 					if (Options.ThrowOnError)
 						throw new Exception (msg);
 
-					Console.WriteLine (msg);
+					Console.Error.WriteLine (msg);
 					return;
 				}
 			}
@@ -1251,6 +1251,9 @@ namespace ExceptionRewriter {
 			} catch (Exception exc) {
 				Console.Error.WriteLine ($"Error rewriting {method.FullName}:");
 				Console.Error.WriteLine (exc);
+
+				if (Options.ThrowOnError)
+					throw;
 			}
 		}
 
@@ -1378,7 +1381,7 @@ namespace ExceptionRewriter {
 
 				var newHandlerOffset = insns.IndexOf (eg.tryEnd);
 				if (newHandlerOffset < 0)
-					throw new Exception ();
+					throw new Exception ($"Handler end instruction {eg.tryEnd} not found in method body");
 
 				var handlerBody = new List<Instruction> {
 					newHandlerStart,
@@ -1495,7 +1498,7 @@ namespace ExceptionRewriter {
 
 					var handlerEndIndex = insns.IndexOf (handlerEnd);
 					if (handlerEndIndex < 0)
-						throw new Exception ();
+						throw new Exception ($"Handler end instruction not found in method body {handlerEnd}");
 
 					insns.Insert (handlerEndIndex + 1, newLeave);
 				}
@@ -1528,7 +1531,7 @@ namespace ExceptionRewriter {
 			var insns = method.Body.Instructions;
 			int i = insns.IndexOf (first), i2 = insns.IndexOf (last);
 			if ((i < 0) || (i2 < 0))
-				throw new ArgumentException ();
+				throw new ArgumentException ("First and/or last instruction(s) not found in method body");
 
 			for (; i <= i2; i++) {
 				var insn = insns[i];
@@ -1640,7 +1643,7 @@ namespace ExceptionRewriter {
 			object oldOperand, OpCode oldCode, object operand
 		) {
 			if (operand == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("operand");
 
 			OpCode code = oldCode;
 			if (

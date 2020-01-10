@@ -29,7 +29,7 @@ namespace ExceptionRewriter {
 
 					if (options.Verbose)
 						Console.WriteLine ($"{Path.GetFileName (src)} -> {Path.GetFullPath (dst)}...{Environment.NewLine}====");
-					else
+					else if (argv.Length > step)
 						Console.WriteLine ($"{Path.GetFileName (src)} -> {Path.GetFullPath (dst)}");
 
 					var assemblyResolver = new DefaultAssemblyResolver ();
@@ -93,9 +93,6 @@ namespace ExceptionRewriter {
 				case "--verbose":
 					options.Verbose = true;
 					break;
-				case "--quiet":
-					options.Verbose = false;
-					break;
 				case "--symbols":
 					options.EnableSymbols = true;
 					break;
@@ -114,8 +111,7 @@ or        exception-filter-rewriter [options] --overwrite file1 [file2] ...
 --symbols     Enable loading/saving debug information
 --generics    Enable rewriting filters for generics (currently broken)
 --no-generics Disable rewriting filters for generics (default)
---verbose     Output name of every rewritten method (default)
---quiet       Do not output anything");
+--verbose     Output name of every rewritten method");
 
 		}
 	}
