@@ -48,9 +48,9 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Assembly GetEntryAssemblyNative ();
 
-		static partial void GetEntryAssemblyInternal (ref Assembly assembly) 
+		private static Assembly? GetEntryAssemblyInternal ()
 		{
-			assembly = GetEntryAssemblyNative ();
+			return GetEntryAssemblyNative ();
 		}
 
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
