@@ -190,8 +190,6 @@ print(">>> External build deps = $externalBuildDeps\n");
 # abs_path ends up returning an empty string
 $externalBuildDeps = abs_path($externalBuildDeps) if (-d $externalBuildDeps);
 
-my $extraBuildTools = "$monoroot/../../mono-build-tools-extra/build";
-
 my $existingExternalMonoRoot = "$externalBuildDeps/MonoBleedingEdge";
 my $existingExternalMono = "";
 my $existingExternalMonoBinDir = "";
@@ -282,23 +280,6 @@ if ($build)
 	if ($isDesktopBuild)
 	{
 		push @configureparams, "--with-monotouch=no";
-	}
-
-	if (!(-d "$extraBuildTools"))
-	{
-		# Check out on the fly
-		print(">>> Checking out mono build tools extra to : $extraBuildTools\n");
-		my $repo = 'git@github.cds.internal.unity3d.com:unity/mono-build-tools-extra.git';
-		print(">>> Cloning $repo at $extraBuildTools\n");
-		my $checkoutResult = system("git", "clone", "--recurse-submodules", $repo, "$extraBuildTools");
-
-		if ($checkoutResult ne 0)
-		{
-			die("Failed to checkout mono build tools extra\n");
-		}
-
-		# Only clean up if the dir exists.   Otherwise abs_path will return empty string
-		$extraBuildTools = abs_path($extraBuildTools) if (-d $extraBuildTools);
 	}
 
 	if ($existingMonoRootPath eq "")
