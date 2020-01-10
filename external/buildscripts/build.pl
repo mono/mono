@@ -269,6 +269,9 @@ if ($build)
 	push @configureparams, "--disable-btls";  #this removes the dependency on cmake to build btls for now
 	push @configureparams, "--with-mcs-docs=no";
 	push @configureparams, "--prefix=$monoprefix";
+	push @configureparams, "--enable-no-threads-discovery=yes";
+	push @configureparams, "--enable-ignore-dynamic-loading=yes";
+	push @configureparams, "--enable-dont-register-main-static-data=yes";
 
 	if(!($disableMcs))
 	{
@@ -1246,6 +1249,8 @@ if ($build)
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
 		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
 		push @configureparams, "--enable-minimal=shared_perfcounters";
+		push @configureparams, "--disable-parallel-mark";
+		push @configureparams, "--enable-verify-defines";
 
 		print "\n";
 		print ">>> Setting environment:\n";
