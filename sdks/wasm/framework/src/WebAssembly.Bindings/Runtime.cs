@@ -391,45 +391,33 @@ namespace WebAssembly {
 
 		}
 
-
-		static MethodInfo gsjsc;
-		static void GenericSetupJSContinuation<T> (Task<T> task, JSObject cont_obj)
-		{
-			task.GetAwaiter ().OnCompleted ((Action)(() => {
-
-				if (task.Exception != null)
-					cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
-				else {
-					cont_obj.Invoke ((string)"resolve", task.Result);
-				}
-
-				cont_obj.Dispose ();
-				FreeObject (task);
-
-			}));
-		}
-
 		static void SetupJSContinuation (Task task, JSObject cont_obj)
 		{
-			if (task.GetType () == typeof (Task)) {
-				task.GetAwaiter ().OnCompleted ((Action)(() => {
+			if (task.IsCompleted)
+				Complete ();
+			else
+				task.GetAwaiter ().OnCompleted (Complete);
 
-					if (task.Exception != null)
-						cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
-					else
-						cont_obj.Invoke ((string)"resolve", (object [])null);
-
+			void Complete () {
+				try {
+					if (task.Exception == null) {
+						var resultProperty = task.GetType ().GetProperty("Result");
+						
+						if (resultProperty == null)
+							cont_obj.Invoke ("resolve", (object[])null);
+						else
+							cont_obj.Invoke ("resolve", resultProperty.GetValue(task));
+					} else {
+						cont_obj.Invoke ("reject", task.Exception.ToString ());
+					}
+				} catch (Exception e) {
+					cont_obj.Invoke ("reject", e.ToString ());
+				} finally {
 					cont_obj.Dispose ();
 					FreeObject (task);
-				}));
-			} else {
-				//FIXME this is horrible codegen, we can do better with per-method glue
-				if (gsjsc == null)
-					gsjsc = typeof (Runtime).GetMethod ("GenericSetupJSContinuation", BindingFlags.NonPublic | BindingFlags.Static);
-				gsjsc.MakeGenericMethod (task.GetType ().GetGenericArguments ()).Invoke (null, new object [] { task, cont_obj });
+				}
 			}
 		}
-
 
 		/// <summary>
 		///   Fetches a global object from the Javascript world, either from the current brower window or from the node.js global context.

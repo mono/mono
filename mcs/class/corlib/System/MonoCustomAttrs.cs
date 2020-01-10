@@ -67,7 +67,7 @@ namespace System
 		}
 	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, Type attributeType, bool pseudoAttrs);
+		internal static extern Attribute[] GetCustomAttributesInternal (ICustomAttributeProvider obj, Type attributeType, bool pseudoAttrs);
 
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
@@ -134,7 +134,7 @@ namespace System
 			if (!inheritedOnly) {
 				object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
 				if (pseudoAttrs != null) {
-					object[] res = new object [attrs.Length + pseudoAttrs.Length];
+					object[] res = new Attribute [attrs.Length + pseudoAttrs.Length];
 					System.Array.Copy (attrs, res, attrs.Length);
 					System.Array.Copy (pseudoAttrs, 0, res, attrs.Length, pseudoAttrs.Length);
 					return res;

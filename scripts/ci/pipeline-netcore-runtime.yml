@@ -50,13 +50,13 @@ stages:
             x64 LLVM:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64 LLVM
+              assetManifestPlatform: x64_LLVM
               installDependencies: true
               llvm: true
             x64 Interpreter:
               poolname: Hosted Ubuntu 1604
               assetManifestOS: linux
-              assetManifestPlatform: x64 Interpreter
+              assetManifestPlatform: x64_Interpreter
               installDependencies: true
               interpreter: true
             ARM64:

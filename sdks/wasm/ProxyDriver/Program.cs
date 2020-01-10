@@ -32,28 +32,28 @@ namespace WsProxy
 				{
 					config.AddCommandLine(args);
 				})
-				.UseDebugProxy ()
+				.UseUrls ("http://localhost:9300")
 				.Build ();
 
 			host.Run ();
 		}
 	}
 
-	public static class MonoProxyExtensions {
-		public static IWebHostBuilder UseDebugProxy (this IWebHostBuilder host) =>
-			host.UseUrls ("http://localhost:9300");
-	}
-
 	public class TestHarnessProxy {
 		static IWebHost host;
+		static Task hostTask;
+		static CancellationTokenSource cts = new CancellationTokenSource ();
+		static object proxyLock = new object ();
 
-		public static void Start (string chromePath, string appPath, string pagePath)
+		public static readonly Uri Endpoint = new Uri ("http://localhost:9400");
+
+		public static Task Start (string chromePath, string appPath, string pagePath)
 		{
-			lock (typeof (TestHarnessProxy)) {
+			lock (proxyLock) {
 				if (host != null)
-					return;
+					return hostTask;
 
-				var h = new WebHostBuilder()
+				host = new WebHostBuilder()
 					.UseSetting ("UseIISIntegration", false.ToString ())
 					.ConfigureServices (services => {
 						services.Configure<TestHarnessOptions> (options => {
@@ -65,16 +65,13 @@ namespace WsProxy
 					})
 					.UseKestrel ()
 					.UseStartup<TestHarnessStartup> ()
-					.UseDebugProxy ()
+					.UseUrls (Endpoint.ToString ())
 					.Build();
-
-				host = h;
-				Task.Run (() => { host.Run (); });
-
-				//FIXME implement this using socket polling so it's faster
-				Thread.Sleep (1000);
-				Console.WriteLine ("WebServer Ready!");
+				hostTask = host.StartAsync (cts.Token);
 			}
+
+			Console.WriteLine ("WebServer Ready!");
+			return hostTask;
 		}
 	}
 }

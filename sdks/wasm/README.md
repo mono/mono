@@ -11,38 +11,38 @@
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
                 |--- mono.js                - Mono WebAssembly implementations
-                |--- mono.wasm              - Mono WebAssembly implementations
-                |--- mono.wasm.map          - Mono WebAssembly implementations
+                |--- dotnet.wasm              - Mono WebAssembly implementations
+                |--- dotnet.wasm.map          - Mono WebAssembly implementations
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- release                - Release build of the runtime.
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-                |--- mono.js                - Mono WebAssembly implementations
-                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- dotnet.js                - Mono WebAssembly implementations
+                |--- dotnet.wasm              - Mono WebAssembly implementations
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- release-dynamic         - Release build of the runtime with dynamic linking enabled
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-                |--- mono.js                - Mono WebAssembly implementations
-                |--- mono.wasm              - Mono WebAssembly implementations
+                |--- dotnet.js                - Mono WebAssembly implementations
+                |--- dotnet.wasm              - Mono WebAssembly implementations
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- threads-debug          - Debug build that includes pthreads.
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-                |--- mono.js                - Mono WebAssembly implementations
-                |--- mono.wasm              - Mono WebAssembly implementations
-                |--- mono.wasm.map          - Mono WebAssembly implementations
-                |--- mono.js.mem            - Mono WebAssembly implementations
-                |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+                |--- dotnet.js                - Mono WebAssembly implementations
+                |--- dotnet.wasm              - Mono WebAssembly implementations
+                |--- dotnet.wasm.map          - Mono WebAssembly implementations
+                |--- dotnet.js.mem            - Mono WebAssembly implementations
+                |--- dotnet.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
             |--- threads-release        - Release build that includes pthreads.
                 |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
                 |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-                |--- mono.js                - Mono WebAssembly implementations
-                |--- mono.wasm              - Mono WebAssembly implementations
-                |--- mono.wasm.map          - Mono WebAssembly implementations
-                |--- mono.js.mem            - Mono WebAssembly implementations
-                |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+                |--- dotnet.js                - Mono WebAssembly implementations
+                |--- dotnet.wasm              - Mono WebAssembly implementations
+                |--- dotnet.wasm.map          - Mono WebAssembly implementations
+                |--- dotnet.js.mem            - Mono WebAssembly implementations
+                |--- dotnet.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
                 |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
     ```
@@ -207,20 +207,20 @@ During the main build two directories will be created:
         |--- threads-debug          - Debug build that includes pthreads.
             |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
             |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-            |--- mono.js                - Mono WebAssembly implementations
-            |--- mono.wasm              - Mono WebAssembly implementations
-            |--- mono.wasm.map          - Mono WebAssembly implementations
-            |--- mono.js.mem            - Mono WebAssembly implementations
-            |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+            |--- dotnet.js                - Mono WebAssembly implementations
+            |--- dotnet.wasm              - Mono WebAssembly implementations
+            |--- dotnet.wasm.map          - Mono WebAssembly implementations
+            |--- dotnet.js.mem            - Mono WebAssembly implementations
+            |--- dotnet.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
             |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
         |--- threads-release        - Release build that includes pthreads.
             |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
             |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-            |--- mono.js                - Mono WebAssembly implementations
-            |--- mono.wasm              - Mono WebAssembly implementations
-            |--- mono.wasm.map          - Mono WebAssembly implementations
-            |--- mono.js.mem            - Mono WebAssembly implementations
-            |--- mono.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
+            |--- dotnet.js                - Mono WebAssembly implementations
+            |--- dotnet.wasm              - Mono WebAssembly implementations
+            |--- dotnet.wasm.map          - Mono WebAssembly implementations
+            |--- dotnet.js.mem            - Mono WebAssembly implementations
+            |--- dotnet.worker.js         - pthreads worker.  File must be deployed with the rest of the generated code files.
             |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
 ```
@@ -249,10 +249,10 @@ During the main build one directory will be created:
         |--- release-dynamic        - Release build that includes dynamic linking support.
             |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
             |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
-            |--- mono.js                - Mono WebAssembly implementations
-            |--- mono.wasm              - Mono WebAssembly implementations
-            |--- mono.wasm.map          - Mono WebAssembly implementations
-            |--- mono.js.mem            - Mono WebAssembly implementations
+            |--- dotnet.js                - Mono WebAssembly implementations
+            |--- dotnet.wasm              - Mono WebAssembly implementations
+            |--- dotnet.wasm.map          - Mono WebAssembly implementations
+            |--- dotnet.js.mem            - Mono WebAssembly implementations
             |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
 
 ```

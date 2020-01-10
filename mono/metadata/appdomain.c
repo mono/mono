@@ -154,6 +154,7 @@ static MonoLoadFunc load_function = NULL;
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (assembly, "System.Reflection", "Assembly");
+static GENERATE_GET_CLASS_WITH_CACHE (app_context, "System", "AppContext");
 
 GENERATE_GET_CLASS_WITH_CACHE (appdomain, MONO_APPDOMAIN_CLASS_NAME_SPACE, MONO_APPDOMAIN_CLASS_NAME);
 GENERATE_GET_CLASS_WITH_CACHE (appdomain_setup, MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE, MONO_APPDOMAIN_SETUP_CLASS_NAME);
@@ -2188,7 +2189,9 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	char *shadow_dir;
 	gint32 copy_error;
 
+#ifndef ENABLE_NETCORE
 	set_domain_search_path (domain);
+#endif
 
 	if (!mono_is_shadow_copy_enabled (domain, dir_name)) {
 		g_free (dir_name);
@@ -2408,6 +2411,27 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
 	return result;
 }
 
+static char *
+get_app_context_base_directory (MonoError *error)
+{
+	MONO_STATIC_POINTER_INIT (MonoMethod, get_basedir)
+
+		ERROR_DECL (local_error);
+		MonoClass *app_context = mono_class_get_app_context_class ();
+		g_assert (app_context);
+		get_basedir = mono_class_get_method_from_name_checked (app_context, "get_BaseDirectory", -1, 0, local_error);
+		mono_error_assert_ok (local_error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_basedir)
+
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoStringHandle result = MONO_HANDLE_CAST (MonoString, mono_runtime_try_invoke_handle (get_basedir, NULL_HANDLE, NULL, error));
+	char *base_dir = mono_string_handle_to_utf8 (result, error);
+
+	HANDLE_FUNCTION_RETURN_VAL (base_dir);
+}
+
 /*
  * Try loading the assembly from ApplicationBase and PrivateBinPath 
  * and then from assemblies_path if any.
@@ -2429,21 +2453,35 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 	g_assert (domain == mono_domain_get ());
 #endif
 
+#ifndef ENABLE_NETCORE
 	set_domain_search_path (domain);
+#endif
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER)
-	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
-#endif
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, alc);
 	req.request.predicate = predicate;
 	req.request.predicate_ud = predicate_ud;
 
+#ifdef ENABLE_NETCORE
+	if (!mono_runtime_get_no_exec ()) {
+		char *search_path [2];
+		search_path [1] = NULL;
+
+		char *base_dir = get_app_context_base_directory (error);
+		search_path [0] = base_dir;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Domain %s (%p) ApplicationBase is %s\n", domain->friendly_name, domain, base_dir);
+
+		result = real_load (search_path, aname->culture, aname->name, &req);
+
+		g_free (base_dir);
+	}
+#else
 	if (domain->search_path && domain->search_path [0] != NULL) {
 		if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Domain %s search path is:", domain->friendly_name);
@@ -2455,6 +2493,7 @@ mono_domain_assembly_preload (MonoAssemblyLoadContext *alc,
 		}
 		result = real_load (domain->search_path, aname->culture, aname->name, &req);
 	}
+#endif
 
 	if (result == NULL && assemblies_path && assemblies_path [0] != NULL) {
 		result = real_load (assemblies_path, aname->culture, aname->name, &req);
@@ -2481,12 +2520,10 @@ mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyNa
 {
 	MonoAssemblyCandidatePredicate predicate = NULL;
 	void* predicate_ud = NULL;
-#if !defined(DISABLE_DESKTOP_LOADER)
-	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+	if (mono_loader_get_strict_assembly_name_check ()) {
 		predicate = &mono_assembly_candidate_predicate_sn_same_name;
 		predicate_ud = aname;
 	}
-#endif
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, asmctx, mono_domain_default_alc (mono_domain_get ()));
 	req.request.predicate = predicate;
@@ -2512,19 +2549,15 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	g_assert (aname != NULL);
 	GSList *tmp;
 	MonoAssembly *ass;
-	const gboolean strong_name = aname->public_key_token[0] != 0;
-	/* If it's not a strong name, any version that has the right simple
-	 * name is good enough to satisfy the request.  .NET Framework also
-	 * ignores case differences in this case. */
-	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
-		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
 #ifdef ENABLE_NETCORE
+	const MonoAssemblyNameEqFlags eq_flags = MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE;
+
 	mono_alc_assemblies_lock (alc);
 	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		g_assert (ass != NULL);
-		// TODO: Can dynamic assemblies match here for netcore? Also, this ignores case while exact_sn_match does not.
+		// FIXME: Can dynamic assemblies match here for netcore?
 		if (assembly_is_dynamic (ass) || !mono_assembly_names_equal_flags (aname, &ass->aname, eq_flags))
 			continue;
 
@@ -2534,6 +2567,14 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	mono_alc_assemblies_unlock (alc);
 #else
 	MonoDomain *domain = mono_alc_domain (alc);
+
+	const gboolean strong_name = aname->public_key_token[0] != 0;
+	/* If it's not a strong name, any version that has the right simple
+	 * name is good enough to satisfy the request.  .NET Framework also
+	 * ignores case differences in this case. */
+	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
+		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
+
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
@@ -2591,6 +2632,15 @@ ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle,
 	g_free (name);
 	if (!parsed)
 		goto fail;
+
+	MonoAssemblyCandidatePredicate predicate = NULL;
+	void* predicate_ud = NULL;
+	if (mono_loader_get_strict_assembly_name_check ()) {
+		predicate = &mono_assembly_candidate_predicate_sn_same_name;
+		predicate_ud = &aname;
+	}
+	req.request.predicate = predicate;
+	req.request.predicate_ud = predicate_ud;
 
 	ass = mono_assembly_request_byname (&aname, &req, &status);
 	if (!ass)

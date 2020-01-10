@@ -245,6 +245,8 @@ ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2*);
+ICALL_EXPORT void ves_icall_Mono_Interop_ComInteropProxy_AddProxy  (gpointer pUnk, MonoComInteropProxy *volatile* proxy_handle);
+ICALL_EXPORT void ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoComInteropProxy *volatile* proxy_handle);
 
 ICALL_EXPORT gpointer    ves_icall_System_Net_Sockets_Socket_Accept_icall (gsize, gint32*, MonoBoolean);
 ICALL_EXPORT gint32      ves_icall_System_Net_Sockets_Socket_Available_icall (gsize, gint32*);
@@ -260,5 +262,14 @@ ICALL_EXPORT gint32      ves_icall_System_Net_Sockets_Socket_Send_icall (gsize s
 ICALL_EXPORT gint32      ves_icall_System_Net_Sockets_Socket_Send_array_icall (gsize sock, WSABUF *buffers, gint32 count, gint32 flags, gint32 *werror, MonoBoolean blocking);
 ICALL_EXPORT void        ves_icall_System_Net_Sockets_Socket_Shutdown_icall (gsize sock, gint32 how, gint32 *werror);
 ICALL_EXPORT MonoBoolean ves_icall_System_Net_Sockets_Socket_SupportPortReuse_icall (MonoProtocolType proto);
+
+ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem		(int);
+ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize	(gsize);
+ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal		(gsize);
+ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem	(gpointer ptr, int size);
+ICALL_EXPORT gpointer   ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal		(gpointer, gsize);
+ICALL_EXPORT      char* ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi    (const gunichar2*, int);
+ICALL_EXPORT gunichar2*	ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni	(const gunichar2*, int);
+
 
 #endif // __MONO_METADATA_ICALL_DECL_H__

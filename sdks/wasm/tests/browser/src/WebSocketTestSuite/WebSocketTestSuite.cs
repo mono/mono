@@ -128,7 +128,7 @@ namespace TestSuite
             return state;
         }
 
-        public async Task<WebSocketState> RecieveHostCloseWebSocket(Uri server, string protocols)
+        public async Task<WebSocketState> ReceiveHostCloseWebSocket(Uri server, string protocols)
         {
             var cws = CreateWebSocket(server, protocols);
 

@@ -1099,6 +1099,8 @@ namespace System.Windows.Forms {
 							XplatUI.SetOwner(this.window.Handle, IntPtr.Zero);
 						}
 					}
+					// UIA Framework: Raises internal event
+					OnUIAOwnerChanged ();
 				}
 			}
 		}
@@ -3202,6 +3204,7 @@ namespace System.Windows.Forms {
 		static object UIAMenuChangedEvent = new object ();
 		static object UIATopMostChangedEvent = new object ();
 		static object UIAWindowStateChangedEvent = new object ();
+		static object UIAOwnerChangedEvent = new object ();
 
 		internal event EventHandler UIAMenuChanged {
 			add { Events.AddHandler (UIAMenuChangedEvent, value); }
@@ -3216,6 +3219,11 @@ namespace System.Windows.Forms {
 		internal event EventHandler UIAWindowStateChanged {
 			add { Events.AddHandler (UIAWindowStateChangedEvent, value); }
 			remove { Events.RemoveHandler (UIAWindowStateChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAOwnerChanged {
+			add { Events.AddHandler (UIAOwnerChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAOwnerChangedEvent, value); }
 		}
 
 		internal void OnUIAMenuChanged (EventArgs e)
@@ -3235,6 +3243,13 @@ namespace System.Windows.Forms {
 		internal void OnUIAWindowStateChanged ()
 		{
 			EventHandler eh = (EventHandler) Events [UIAWindowStateChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAOwnerChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAOwnerChangedEvent];
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
