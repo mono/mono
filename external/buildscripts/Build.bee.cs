@@ -82,6 +82,11 @@ namespace BuildProgram
 				new Tuple<string, string>(
 					"MacBuildEnvironment/9df1e3b3b120_2fc8e616a2e5dfb7907fc42d9576b427e692223c266dc3bc305de4bf03714e30.7z",
 					"testing"));
+
+			Artifacts.Add("mono-build-tools-extra",
+				new Tuple<string, string>(
+					"mono-build-tools-extra/70f9c4060363d11b3e69f000c8ff2c9ac8112bc2_e66148037ab6371658815c726e27e7ee7bdfdd705fb734708d07cbdfe7d8141e.7z",
+					"testing"));
 		}
 
 		private static void RegisterLinuxArtifacts()
