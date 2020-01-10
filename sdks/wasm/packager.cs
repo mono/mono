@@ -908,7 +908,7 @@ class Driver {
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
 		ninja.WriteLine ("rule filter-rewriter");
-		ninja.WriteLine ("  command = mono $tools_dir/exception-filter-rewriter.exe --no-generics --warn $in $out");
+		ninja.WriteLine ("  command = mono --debug $tools_dir/exception-filter-rewriter.exe --no-generics --warn $in $out");
 		ninja.WriteLine ("  description = [FILTER-REWRITER]");
 
 		// Targets
