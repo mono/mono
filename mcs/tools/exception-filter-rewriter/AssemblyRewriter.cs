@@ -145,14 +145,18 @@ namespace ExceptionRewriter {
 			return ImportCorlibType (module, "System.Runtime.ExceptionServices", "ExceptionDispatchInfo");
 		}
 
-		public void Rewrite () 
+		public int Rewrite () 
 		{
+			int errorCount = 0;
+
 			foreach (var mod in Assembly.Modules) {
 				// Make temporary copy of the types and methods lists because we mutate them while iterating
 				foreach (var type in mod.GetTypes ())
 					foreach (var meth in type.Methods.ToArray ())
-						ProcessMethod (meth);
+						errorCount += ProcessMethod (meth);
 			}
+
+			return errorCount;
 		}
 
 		private Instruction[] MakeDefault (
@@ -1221,16 +1225,16 @@ namespace ExceptionRewriter {
 			}
 		}
 
-		private void ProcessMethod (MethodDefinition method)
+		private int ProcessMethod (MethodDefinition method)
 		{
 			if (!method.HasBody)
-				return;
+				return 0;
 
 			if (method.Body.ExceptionHandlers.Count == 0)
-				return;
+				return 0;
 
 			if (!method.Body.ExceptionHandlers.Any (eh => eh.FilterStart != null))
-				return;
+				return 0;
 
 			if (!Options.EnableGenerics) {
 				if (method.HasGenericParameters || method.DeclaringType.HasGenericParameters) {
@@ -1239,7 +1243,7 @@ namespace ExceptionRewriter {
 						throw new Exception (msg);
 
 					Console.Error.WriteLine (msg);
-					return;
+					return 1;
 				}
 			}
 
@@ -1248,12 +1252,15 @@ namespace ExceptionRewriter {
 
 			try {
 				ExtractExceptionFilters (method);
+				return 0;
 			} catch (Exception exc) {
 				Console.Error.WriteLine ($"Error rewriting {method.FullName}:");
 				Console.Error.WriteLine (exc);
 
 				if (Options.ThrowOnError)
 					throw;
+				else
+					return 1;
 			}
 		}
 

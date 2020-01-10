@@ -23,6 +23,8 @@ namespace ExceptionRewriter {
 					return 1;
 				}
 
+				int exitCode = 0;
+
 				for (int i = 0; i < argv.Length; i += step) {
 					var src = argv[i];
 					var dst = options.Overwrite ? src : argv[i + 1];
@@ -43,24 +45,30 @@ namespace ExceptionRewriter {
 						SymbolReaderProvider = new DefaultSymbolReaderProvider (throwIfNoSymbol: false)
 					})) {
 						var arw = new AssemblyRewriter (def, options);
-						arw.Rewrite ();
+						int errorCount = arw.Rewrite ();
 
-						var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
+						if (errorCount > 0) {
+							Console.Error.WriteLine ($"Not saving due to error(s): {dst}");
+							exitCode += 1;
+						} else {
+							var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
 
-						def.Write (dst + ".tmp", new WriterParameters {
-							WriteSymbols = shouldWriteSymbols
-						});
+							def.Write (dst + ".tmp", new WriterParameters {
+								WriteSymbols = shouldWriteSymbols
+							});
+
+							File.Copy (dst + ".tmp", dst, true);
+							if (File.Exists (dst + ".pdb")) {
+								File.Copy (dst + ".pdb", dst.Replace (".exe", ".pdb"), true);
+								File.Delete (dst + ".pdb");
+							}
+							File.Delete (dst + ".tmp");
+						}
 					}
 
-					File.Copy (dst + ".tmp", dst, true);
-					if (File.Exists (dst + ".pdb")) {
-						File.Copy (dst + ".pdb", dst.Replace (".exe", ".pdb"), true);
-						File.Delete (dst + ".pdb");
-					}
-					File.Delete (dst + ".tmp");
 				}
 
-				return 0;
+				return exitCode;
 			} finally {
 				if (Debugger.IsAttached) {
 					Console.WriteLine ("Press enter to exit");
