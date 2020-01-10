@@ -46,18 +46,12 @@ namespace System.Reflection
 		public static extern Assembly GetCallingAssembly ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Assembly GetEntryAssemblyInternal ();
+		internal static extern Assembly GetEntryAssemblyNative ();
 
-		public static Assembly GetEntryAssembly()
+		static partial void GetEntryAssemblyInternal (ref Assembly assembly) 
 		{
-			if (s_forceNullEntryPoint)
-				return null;
-
-			return GetEntryAssemblyInternal ();
+			assembly = GetEntryAssemblyNative ();
 		}
-
-		// internal test hook
-		private static bool s_forceNullEntryPoint = false;
 
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly Load (string assemblyString)
