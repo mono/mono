@@ -1099,7 +1099,6 @@ class Driver {
 			if (enable_aot)
 				// Only used by the AOT compiler
 				linker_args += "--explicit-reflection ";
-			linker_args += "--used-attrs-only true ";
 			linker_args += "--substitutions linker-subs.xml ";
 			linker_infiles += "| linker-subs.xml";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
