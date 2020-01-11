@@ -508,11 +508,13 @@ namespace ExceptionRewriter {
 			CopyGenericParameters (method.DeclaringType, closureTypeDefinition, functionGpMapping);
 			CopyGenericParameters (method, closureTypeDefinition, functionGpMapping);
 
-			var thisType = new GenericInstanceType (method.DeclaringType);
+			var isGeneric = method.DeclaringType.HasGenericParameters || method.HasGenericParameters;
+			var thisGenType = new GenericInstanceType (method.DeclaringType);
+			var thisType = isGeneric ? thisGenType : (TypeReference)method.DeclaringType;
 			var genClosureTypeReference = new GenericInstanceType (closureTypeDefinition);
 
 			foreach (var p in method.DeclaringType.GenericParameters) {
-				thisType.GenericArguments.Add (functionGpMapping[p]);
+				thisGenType.GenericArguments.Add (functionGpMapping[p]);
 				genClosureTypeReference.GenericArguments.Add (functionGpMapping[p]);
 			}
 
@@ -1278,7 +1280,7 @@ namespace ExceptionRewriter {
 			TypeDefinition closureTypeDefinition;
 			TypeReference closureTypeReference;
 
-			var fakeThis = 
+			var fakeThis = method.IsStatic
 				? null
 				: new ParameterDefinition ("__this", ParameterAttributes.None, method.DeclaringType);
 
