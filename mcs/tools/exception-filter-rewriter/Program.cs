@@ -87,10 +87,10 @@ namespace ExceptionRewriter {
 					options.Overwrite = true;
 					break;
 				case "--abort":
-					options.ThrowOnError = true;
+					options.AbortOnError = true;
 					break;
 				case "--warn":
-					options.ThrowOnError = false;
+					options.AbortOnError = false;
 					break;
 				case "--generics":
 					options.EnableGenerics = true;
