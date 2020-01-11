@@ -12,7 +12,8 @@ namespace WebAssembly {
 	public sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string InvokeJS (string str, out int exceptional_result);
-
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object CompileFunction (string str, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object [] _params, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -58,6 +59,20 @@ namespace WebAssembly {
 			if (exception != 0)
 				throw new JSException (res);
 			return res;
+		}
+
+		/// <summary>
+		/// Compiles a JavaScript function from the function data passed.
+		/// The code snippet is not a function definition. Instead it must create and return a function instance.
+		/// </summary>
+		/// <returns>A <see cref="T:WebAssembly.Core.Function"/> class</returns>
+		/// <param name="str">String.</param>
+		public static WebAssembly.Core.Function CompileFunction (string snippet)
+		{
+			var res = CompileFunction (snippet, out int exception);
+			if (exception != 0)
+				throw new JSException (res.ToString());
+			return res as WebAssembly.Core.Function;
 		}
 
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject> ();
@@ -348,6 +363,8 @@ namespace WebAssembly {
 				default:
 					if (t == typeof(IntPtr)) { 
  						res += "i";
+					} else if (t == typeof (Uri)) {
+						res += "u";
 					} else {
  						if (t.IsValueType)
  							throw new Exception("Can't handle VT arguments");
@@ -374,45 +391,33 @@ namespace WebAssembly {
 
 		}
 
-
-		static MethodInfo gsjsc;
-		static void GenericSetupJSContinuation<T> (Task<T> task, JSObject cont_obj)
-		{
-			task.GetAwaiter ().OnCompleted ((Action)(() => {
-
-				if (task.Exception != null)
-					cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
-				else {
-					cont_obj.Invoke ((string)"resolve", task.Result);
-				}
-
-				cont_obj.Dispose ();
-				FreeObject (task);
-
-			}));
-		}
-
 		static void SetupJSContinuation (Task task, JSObject cont_obj)
 		{
-			if (task.GetType () == typeof (Task)) {
-				task.GetAwaiter ().OnCompleted ((Action)(() => {
+			if (task.IsCompleted)
+				Complete ();
+			else
+				task.GetAwaiter ().OnCompleted (Complete);
 
-					if (task.Exception != null)
-						cont_obj.Invoke ((string)"reject", task.Exception.ToString ());
-					else
-						cont_obj.Invoke ((string)"resolve", (object [])null);
-
+			void Complete () {
+				try {
+					if (task.Exception == null) {
+						var resultProperty = task.GetType ().GetProperty("Result");
+						
+						if (resultProperty == null)
+							cont_obj.Invoke ("resolve", (object[])null);
+						else
+							cont_obj.Invoke ("resolve", resultProperty.GetValue(task));
+					} else {
+						cont_obj.Invoke ("reject", task.Exception.ToString ());
+					}
+				} catch (Exception e) {
+					cont_obj.Invoke ("reject", e.ToString ());
+				} finally {
 					cont_obj.Dispose ();
 					FreeObject (task);
-				}));
-			} else {
-				//FIXME this is horrible codegen, we can do better with per-method glue
-				if (gsjsc == null)
-					gsjsc = typeof (Runtime).GetMethod ("GenericSetupJSContinuation", BindingFlags.NonPublic | BindingFlags.Static);
-				gsjsc.MakeGenericMethod (task.GetType ().GetGenericArguments ()).Invoke (null, new object [] { task, cont_obj });
+				}
 			}
 		}
-
 
 		/// <summary>
 		///   Fetches a global object from the Javascript world, either from the current brower window or from the node.js global context.
@@ -477,6 +482,10 @@ namespace WebAssembly {
 		{
 			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
 			return unixTime.DateTime;
+		}
+		static Uri CreateUri (string uri)
+		{
+			return new Uri(uri);
 		}
 
 		// This is simple right now and will include FlagsAttribute later.

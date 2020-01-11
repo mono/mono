@@ -1,5 +1,6 @@
 ../../test-helpers/Configuration.Certificates.cs
 ../../test-helpers/Configuration.Http.cs
+../../test-helpers/NetworkStreamHelper.cs
 ../corefx/Interop.VersionInfo.cs
 ../corefx/PlatformDetection.cs
 

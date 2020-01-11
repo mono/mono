@@ -107,6 +107,35 @@ namespace System.ComponentModel {
         ///      add attributes directly as metadata. 
         /// </devdoc> 
         private static Hashtable IntrinsicTypeConverters {
+    #if MONO
+            // TODO: typeof (BooleanConverter) would work better
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.BooleanConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.ByteConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.SByteConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.CharConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.DoubleConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.StringConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.Int32Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.Int16Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.Int64Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.SingleConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.UInt16Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.UInt32Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.UInt16Converter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.TypeConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.CultureInfoConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.DateTimeConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.DateTimeOffsetConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.DecimalConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.TimeSpanConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.GuidConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.ArrayConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor()", "System.ComponentModel.CollectionConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor(System.Type)", "System.ComponentModel.EnumConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor(System.Type)", "System.ComponentModel.ReferenceConverter")]
+            [System.Runtime.CompilerServices.PreserveDependency (".ctor(System.Type)", "System.ComponentModel.NullableConverter")]
+    #endif
+
             get {
                 // It is not worth taking a lock for this -- worst case of a collision
                 // would build two tables, one that garbage collects very quickly.

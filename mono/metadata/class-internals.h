@@ -14,6 +14,8 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
+#include "mono/utils/mono-error-internals.h"
+#include "mono/utils/mono-memory-model.h"
 
 #define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
@@ -333,7 +335,9 @@ typedef gpointer MonoRuntimeGenericContext;
 
 typedef enum {
 	/* array or string */
-	MONO_VT_FLAG_ARRAY_OR_STRING = (1 << 0)
+	MONO_VT_FLAG_ARRAY_OR_STRING = (1 << 0),
+	MONO_VT_FLAG_HAS_REFERENCES = (1 << 1),
+	MONO_VT_FLAG_ARRAY_IS_PRIMITIVE = (1 << 2),
 } MonoVTableFlags;
 
 /* the interface_offsets array is stored in memory before this struct */
@@ -798,8 +802,8 @@ mono_class_is_open_constructed_type (MonoType *t);
 void
 mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod ***overrides, gint32 *num_overrides, MonoGenericContext *generic_context, MonoError *error);
 
-MonoMethod*
-mono_class_get_cctor (MonoClass *klass) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoMethod*
+mono_class_get_cctor (MonoClass *klass);
 
 MonoMethod*
 mono_class_get_finalizer (MonoClass *klass);
@@ -847,10 +851,34 @@ MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
 MONO_PROFILER_API MonoMethodSignature*
-mono_method_signature_checked (MonoMethod *m, MonoError *err);
+mono_method_signature_checked_slow (MonoMethod *m, MonoError *err);
 
 MONO_PROFILER_API MonoMethodSignature*
-mono_method_signature_internal (MonoMethod *m);
+mono_method_signature_internal_slow (MonoMethod *m);
+
+/**
+ * mono_method_signature_checked:
+ *
+ * Return the signature of the method M. On failure, returns NULL, and ERR is set.
+ */
+static inline MonoMethodSignature*
+mono_method_signature_checked (MonoMethod *m, MonoError *error)
+{
+	error_init (error);
+	MonoMethodSignature* sig = m->signature;
+	return sig ? sig : mono_method_signature_checked_slow (m, error);
+}
+
+/**
+ * mono_method_signature_internal:
+ * \returns the signature of the method \p m. On failure, returns NULL.
+ */
+static inline MonoMethodSignature*
+mono_method_signature_internal (MonoMethod *m)
+{
+	MonoMethodSignature* sig = m->signature;
+	return sig ? sig : mono_method_signature_internal_slow (m);
+}
 
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
@@ -901,6 +929,7 @@ mono_generic_param_get_base_type (MonoClass *klass);
 typedef struct {
 	MonoImage *corlib;
 	MonoClass *object_class;
+	MonoClass *object_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *byte_class;
 	MonoClass *void_class;
 	MonoClass *boolean_class;
@@ -927,6 +956,7 @@ typedef struct {
 	MonoClass *methodhandle_class;
 	MonoClass *systemtype_class;
 	MonoClass *runtimetype_class;
+	MonoClass *runtimetype_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *exception_class;
 	MonoClass *threadabortexception_class;
 	MonoClass *thread_class;
@@ -949,10 +979,13 @@ typedef struct {
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *attribute_class;
+	MonoClass *attribute_class_array; // used via token pasting in mono_array_class_get_cached
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
 	MonoClass *generic_ienumerator_class;
+#ifndef ENABLE_NETCORE
 	MonoMethod *threadpool_perform_wait_callback_method;
+#endif
 } MonoDefaults;
 
 #ifdef DISABLE_REMOTING
@@ -972,6 +1005,10 @@ MonoClass* mono_class_get_##shortname##_class (void);
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_try_get_##shortname##_class (void);
 
+// GENERATE_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name whenever
+// its cache is null. i.e. potentially repeatedly, though it is expected to succeed
+// the first time.
+//
 #define GENERATE_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
 mono_class_get_##shortname##_class (void)	\
@@ -980,12 +1017,18 @@ mono_class_get_##shortname##_class (void)	\
 	MonoClass *klass = tmp_class;	\
 	if (!klass) {	\
 		klass = mono_class_load_from_name (mono_defaults.corlib, name_space, name);	\
-		mono_memory_barrier ();	\
+		mono_memory_barrier ();	/* FIXME excessive? */ \
 		tmp_class = klass;	\
 	}	\
 	return klass;	\
 }
 
+// GENERATE_TRY_GET_CLASS_WITH_CACHE attempts mono_class_load_from_name approximately
+// only once. i.e. if it fails, it will return null and not retry.
+// In a race it might try a few times, but not indefinitely.
+//
+// FIXME This maybe has excessive volatile/barriers.
+//
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
 mono_class_try_get_##shortname##_class (void)	\
@@ -1027,6 +1070,7 @@ GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(handleref)
 
 #ifdef ENABLE_NETCORE
 GENERATE_GET_CLASS_WITH_CACHE_DECL (assembly_load_context)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (native_library)
 #endif
 
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
@@ -1038,11 +1082,11 @@ mono_loader_init           (void);
 void
 mono_loader_cleanup        (void);
 
-void
-mono_loader_lock           (void) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL void
+mono_loader_lock           (void);
 
-void
-mono_loader_unlock         (void) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL void
+mono_loader_unlock         (void);
 
 void
 mono_loader_lock_track_ownership (gboolean track);
@@ -1102,6 +1146,9 @@ mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_
 
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
+
+char*
+mono_identifier_escape_type_name_chars (const char* identifier);
 
 char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
@@ -1284,8 +1331,8 @@ mono_get_image_for_generic_param (MonoGenericParam *param);
 char *
 mono_make_generic_name_string (MonoImage *image, int num);
 
-MonoClass *
-mono_class_load_from_name (MonoImage *image, const char* name_space, const char *name) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoClass *
+mono_class_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
 MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
@@ -1297,8 +1344,8 @@ gboolean
 mono_class_has_failure (const MonoClass *klass);
 
 /* Kind specific accessors */
-MonoGenericClass*
-mono_class_get_generic_class (MonoClass *klass) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoGenericClass*
+mono_class_get_generic_class (MonoClass *klass);
 
 MonoGenericClass*
 mono_class_try_get_generic_class (MonoClass *klass);
@@ -1462,8 +1509,50 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
 
-MonoType*
-mono_class_enum_basetype_internal (MonoClass *klass) MONO_LLVM_INTERNAL;
+MONO_LLVM_INTERNAL MonoType*
+mono_class_enum_basetype_internal (MonoClass *klass);
+
+gboolean
+mono_method_is_constructor (MonoMethod *method);
+
+gboolean
+mono_class_has_default_constructor (MonoClass *klass, gboolean public_only);
+
+// There are many ways to do on-demand initialization.
+//   Some allow multiple concurrent initializations. Some do not.
+//   Some allow multiple concurrent writes to the global. Some do not.
+//
+// Booleans or names capturing these factors would be desirable.
+//	RacyInit?
+//
+// This form allows both such races, on the understanding that,
+// even if the initialization occurs multiple times, every result is equivalent,
+// and the goal is not to initialize no more than once, but for the steady state
+// to stop rerunning the initialization.
+//
+// It may be desirable to replace this with mono_lazy_initialize, etc.
+//
+// These macros cannot be wrapped in do/while as they inject "name" into invoking scope.
+//
+#define MONO_STATIC_POINTER_INIT(type, name)					\
+	static type *static_ ## name;						\
+	type *name; 								\
+	name = static_ ## name;							\
+	if (!name) {								\
+		/* Custom code here to initialize name */
+#define MONO_STATIC_POINTER_INIT_END(type, name)				\
+		if (name) {							\
+			/* Success, commit to static. */			\
+			mono_atomic_store_seq (&static_ ## name, name);		\
+		}								\
+	}									\
+
+static inline gboolean
+m_field_get_offset (MonoClassField *field)
+{
+	g_assert (m_class_is_fields_inited (field->parent));
+	return field->offset;
+}
 
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"

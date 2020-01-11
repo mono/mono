@@ -9,13 +9,14 @@ module.exports = function(config) {
         },
         files: [
             {pattern: './publish/netstandard2.0/http-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/netstandard2.0/http-spec-with-prom-lib.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/core-bindings-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/issues-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/netstandard2.0/zip-spec.js',watched:true,served:true,included:true},
-            {pattern: './publish/netstandard2.0/mono.wasm', included: false, served: true, type: 'wasm'},
-            {pattern: './publish/netstandard2.0/mono.worker.js', included: false, served: true, type: 'wasm'},
-            {pattern: './publish/netstandard2.0/mono.js.mem', included: false, served: true, type: 'wasm'},
-            {pattern: './publish/netstandard2.0/mono.js', included: false, served: true},
+            {pattern: './publish/netstandard2.0/dotnet.wasm', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/dotnet.worker.js', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/dotnet.js.mem', included: false, served: true, type: 'wasm'},
+            {pattern: './publish/netstandard2.0/dotnet.js', included: false, served: true},
             {pattern: './publish/netstandard2.0/mono-config.js', included: false, served: true},
             {pattern: './publish/netstandard2.0/runtime.js', included: false, served: true},
             {pattern: './publish/netstandard2.0/managed/*.dll', included: false, served: true},
@@ -39,7 +40,7 @@ module.exports = function(config) {
         //load karma-jasmine-dom and karma-jasmine
         frameworks: ['jasmine-dom','jasmine','mocha', 'chai', 'websocket-server'],
         //load karma-chrome-launcher
-        browsers: ['ChromeHeadless', 'NoSandBoxHeadless'],
+        browsers: ['ChromeHeadless', 'NoSandBoxHeadless', 'SafariNative'],
         customLaunchers: {
             NoSandBoxHeadless: {
                 base: 'ChromeHeadless',
@@ -56,6 +57,7 @@ module.exports = function(config) {
                     //indicate 'index.html' file that will be loaded in the browser
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
                     {src:'./publish/netstandard2.0/http-spec.html', tag:'httpspec'},
+                    {src:'./publish/netstandard2.0/http-spec-with-prom-lib.html', tag:'httpspecwithpromlib'},
                     {src:'./publish/netstandard2.0/core-bindings-spec.html', tag:'corebindingsspec'},
                     {src:'./publish/netstandard2.0/issues-spec.html', tag:'issuesspec'},
                     {src:'./publish/netstandard2.0/zip-spec.html', tag:'zipspec'}

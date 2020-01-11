@@ -76,18 +76,18 @@ partial_sharing_supported (void)
 static int
 type_check_context_used (MonoType *type, gboolean recursive)
 {
-	switch (mono_type_get_type (type)) {
+	switch (mono_type_get_type_internal (type)) {
 	case MONO_TYPE_VAR:
 		return MONO_GENERIC_CONTEXT_USED_CLASS;
 	case MONO_TYPE_MVAR:
 		return MONO_GENERIC_CONTEXT_USED_METHOD;
 	case MONO_TYPE_SZARRAY:
-		return mono_class_check_context_used (mono_type_get_class (type));
+		return mono_class_check_context_used (mono_type_get_class_internal (type));
 	case MONO_TYPE_ARRAY:
 		return mono_class_check_context_used (mono_type_get_array_type (type)->eklass);
 	case MONO_TYPE_CLASS:
 		if (recursive)
-			return mono_class_check_context_used (mono_type_get_class (type));
+			return mono_class_check_context_used (mono_type_get_class_internal (type));
 		else
 			return 0;
 	case MONO_TYPE_GENERICINST:
@@ -905,6 +905,7 @@ class_get_rgctx_template_oti (MonoClass *klass, int type_argc, guint32 slot, gbo
 	}
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -2254,6 +2255,21 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	case MONO_RGCTX_INFO_FIELD_OFFSET: {
 		MonoClassField *field = (MonoClassField *)data;
 
+		if (mono_class_field_is_special_static (field)) {
+			gpointer addr;
+
+			mono_class_vtable_checked (domain, klass, error);
+			mono_error_assert_ok (error);
+
+			/* Return the TLS offset */
+			g_assert (domain->special_static_fields);
+			mono_domain_lock (domain);
+			addr = g_hash_table_lookup (domain->special_static_fields, field);
+			mono_domain_unlock (domain);
+			g_assert (addr);
+			return (guint8*)addr + 1;
+		}
+
 		/* The value is offset by 1 */
 		if (m_class_is_valuetype (field->parent) && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 			return GUINT_TO_POINTER (field->offset - MONO_ABI_SIZEOF (MonoObject) + 1);
@@ -2895,8 +2911,12 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			}
 			break;
 		}
-		if (!rgctx [offset + 0])
-			rgctx [offset + 0] = alloc_rgctx_array (domain, i + 1, is_mrgctx);
+		if (!rgctx [offset + 0]) {
+			gpointer *array = alloc_rgctx_array (domain, i + 1, is_mrgctx);
+			/* Make sure that this array is zeroed if other threads access it */
+			mono_memory_write_barrier ();
+			rgctx [offset + 0] = array;
+		}
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
 		size = mono_class_rgctx_get_array_size (i + 1, is_mrgctx);
@@ -2923,10 +2943,13 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
-	if (rgctx [rgctx_index])
+	if (rgctx [rgctx_index]) {
 		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
-	else
+	} else {
+		/* Make sure other threads see the contents of info */
+		mono_memory_write_barrier ();
 		rgctx [rgctx_index] = info;
+	}
 
 	mono_domain_unlock (domain);
 
@@ -2957,6 +2980,8 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 	rgctx = class_vtable->runtime_generic_context;
 	if (!rgctx) {
 		rgctx = alloc_rgctx_array (domain, 0, FALSE);
+		/* Make sure that this array is zeroed if other threads access it */
+		mono_memory_write_barrier ();
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
 	}

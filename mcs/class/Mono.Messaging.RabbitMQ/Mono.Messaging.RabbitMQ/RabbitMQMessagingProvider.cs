@@ -43,31 +43,14 @@ namespace Mono.Messaging.RabbitMQ {
 	public class RabbitMQMessagingProvider : IMessagingProvider {
 		
 		private int txCounter = 0;
-		private readonly uint localIp;
+		private readonly Guid localId;
 		private readonly MessagingContextPool contextPool;
 		
 		public RabbitMQMessagingProvider ()
 		{
-			localIp = GetLocalIP ();
+			localId = Guid.NewGuid ();
 			contextPool = new MessagingContextPool (new MessageFactory (this),
 													CreateConnection);
-		}
-		
-		private static uint GetLocalIP ()
-		{
-			String strHostName = Dns.GetHostName ();
-			IPHostEntry ipEntry = Dns.GetHostByName (strHostName);
-			foreach (IPAddress ip in ipEntry.AddressList) {
-				if (AddressFamily.InterNetwork == ip.AddressFamily) {
-					byte[] addr = ip.GetAddressBytes ();
-					uint localIP = 0;
-					for (int i = 0; i < 4 && i < addr.Length; i++) {
-						localIP += (uint) (addr[i] << 8 * (3 - i));
-					}
-					return localIP;
-				}
-			}
-			return 0;
 		}
 		
 		public IMessage CreateMessage ()
@@ -78,7 +61,7 @@ namespace Mono.Messaging.RabbitMQ {
 		public IMessageQueueTransaction CreateMessageQueueTransaction ()
 		{
 			Interlocked.Increment (ref txCounter);
-			string txId = localIp.ToString () + txCounter.ToString ();
+			string txId = localId.ToString () + "_" + txCounter.ToString ();
 			
 			return new RabbitMQMessageQueueTransaction (txId, contextPool);
 		}

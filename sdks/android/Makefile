@@ -74,6 +74,7 @@ app/assets/asm app/src/main/jniLibs/armeabi-v7a app/src/main/jniLibs/arm64-v8a a
 MONO_LIBS= \
 	libmonosgen-2.0.so \
 	libMonoPosixHelper.so \
+	libmono-btls-shared.so \
 	libmono-native.so
 
 $(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(TOP)/sdks/out/android-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a

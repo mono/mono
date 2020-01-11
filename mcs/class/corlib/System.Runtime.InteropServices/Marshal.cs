@@ -1936,9 +1936,8 @@ namespace System.Runtime.InteropServices
 			return GetFunctionPointerForDelegateInternal ((Delegate)(object)d);
 		}
 
-		internal static void SetLastWin32Error (int error)
-		{
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void SetLastWin32Error (int error);
 
 #if NETCORE
 		internal static IntPtr AllocBSTR (int length)

@@ -198,7 +198,8 @@ static MonoType*
 cattr_type_from_name (char *n, MonoImage *image, gboolean is_enum, MonoError *error)
 {
 	ERROR_DECL (inner_error);
-	MonoType *t = mono_reflection_type_from_name_checked (n, image, inner_error);
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (mono_domain_get ());
+	MonoType *t = mono_reflection_type_from_name_checked (n, alc, image, inner_error);
 	if (!t) {
 		mono_error_set_type_load_name (error, g_strdup(n), NULL,
 					       "Could not load %s %s while decoding custom attribute: %s",
@@ -616,17 +617,18 @@ load_cattr_value_boxed (MonoDomain *domain, MonoImage *image, MonoType *t, const
 static MonoObject*
 create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 {
-	static MonoMethod *ctor;
 	MonoObject *retval;
 	void *params [2], *unboxed;
 
 	error_init (error);
 
-	if (!ctor) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
+
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
-	}
-	
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
+
 	params [0] = mono_type_get_object_checked (mono_domain_get (), t, error);
 	return_val_if_nok (error, NULL);
 
@@ -644,16 +646,17 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 static MonoObject*
 create_cattr_named_arg (void *minfo, MonoObject *typedarg, MonoError *error)
 {
-	static MonoMethod *ctor;
 	MonoObject *retval;
 	void *unboxed, *params [2];
 
 	error_init (error);
 
-	if (!ctor) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, ctor)
+
 		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2, 0, error);
 		mono_error_assert_ok (error);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, ctor)
 
 	params [0] = minfo;
 	params [1] = typedarg;
@@ -2293,8 +2296,6 @@ mono_reflection_get_custom_attrs_data_checked (MonoObjectHandle obj, MonoError *
 {
 	MonoArrayHandle result = MONO_HANDLE_NEW (MonoArray, NULL);
 	MonoCustomAttrInfo *cinfo;
-
-	error_init (error);
 
 	cinfo = mono_reflection_get_custom_attrs_info_checked (obj, error);
 	goto_if_nok (error, leave);

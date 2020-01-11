@@ -307,7 +307,14 @@ namespace Mono.Debugger.Soft
 		public bool Subclasses {
 			get; set;
 		}
+		public bool NotFilteredFeature {
+			get; set;
+		}
+		public bool EverythingElse {
+			get; set;
+		}
 	}
+
 
 	class AssemblyModifier : Modifier {
 		public long[] Assemblies {
@@ -429,7 +436,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 53;
+		internal const int MINOR_VERSION = 54;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1311,6 +1318,8 @@ namespace Mono.Debugger.Soft
 		protected abstract int TransportSend (byte[] buf, int buf_offset, int len);
 		protected abstract void TransportSetTimeouts (int send_timeout, int receive_timeout);
 		protected abstract void TransportClose ();
+		// Shutdown breaks all communication, resuming blocking waits
+		protected abstract void TransportShutdown ();
 
 		internal VersionInfo Version;
 		
@@ -1427,6 +1436,7 @@ namespace Mono.Debugger.Soft
 
 		internal void Close () {
 			closed = true;
+			TransportShutdown ();
 		}
 
 		internal bool IsClosed {
@@ -2632,6 +2642,10 @@ namespace Mono.Debugger.Soft
 						} else if (!em.Subclasses) {
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 						}
+						if (Version.MajorVersion > 2 || Version.MinorVersion >= 54) {
+							w.WriteBool (em.NotFilteredFeature);
+							w.WriteBool (em.EverythingElse);
+						}
 					} else if (mod is AssemblyModifier) {
 						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);
 						var amod = (mod as AssemblyModifier);
@@ -2853,6 +2867,11 @@ namespace Mono.Debugger.Soft
 		protected override void TransportClose ()
 		{
 			socket.Close ();
+		}
+
+		protected override void TransportShutdown ()
+		{
+			socket.Shutdown (SocketShutdown.Both);
 		}
 	}
 

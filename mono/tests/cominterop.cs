@@ -270,6 +270,12 @@ public class Tests
 	public static extern int mono_test_cominterop_ccw_queryinterface ([MarshalAs (UnmanagedType.Interface)] IOtherTest itest);
 
 	[DllImport("libtest")]
+	public static extern int mono_test_cominterop_ccw_queryinterface_foreign_thread ([MarshalAs (UnmanagedType.Interface)] ITest itest);
+
+	[DllImport ("libtest")]
+	public static extern int mono_test_cominterop_ccw_itest_foreign_thread ([MarshalAs (UnmanagedType.Interface)] ITest itest);
+
+	[DllImport("libtest")]
 	public static extern int mono_test_marshal_safearray_out_1dim_vt_bstr_empty ([MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]out Array array);
 
 	[DllImport("libtest")]
@@ -598,6 +604,7 @@ public class Tests
 			if (mono_test_cominterop_ccw_queryinterface (otherTest) != 0)
 				return 202;
 
+
 			if (mono_test_marshal_retval_ccw_itest(test, true) != 0)
 				return 203;
 
@@ -607,6 +614,19 @@ public class Tests
 
 			if (mono_test_default_interface_ccw(test) != 0)
 				return 205;
+
+			if (mono_test_cominterop_ccw_queryinterface_foreign_thread (test) != 0)
+				return 206;
+
+			{
+				ManagedTest mt = new ManagedTest ();
+				if (mono_test_cominterop_ccw_itest_foreign_thread (test) != 0)
+					return 207;
+				if (mt.Status != 0) {
+					Console.Error.WriteLine ("after mono_test_cominterop_ccw_itest_foreign_thread Status = {0}", mt.Status);
+					return 208;
+				}
+			}
 
 			#endregion // COM Callable Wrapper Tests
 
@@ -882,6 +902,8 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void ArrayIn2 ([In] object[] array);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void ArrayIn3 (object[] array);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		[return: MarshalAs (UnmanagedType.Interface)]
 		TestDefaultInterfaceClass1 GetDefInterface1();
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
@@ -947,6 +969,8 @@ public class Tests
 		int ArrayIn ([In, MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] object[] array);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int ArrayIn2 ([In] object[] array);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int ArrayIn3 (object[] array);
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -994,6 +1018,8 @@ public class Tests
 		public virtual extern void ArrayIn ([In, MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] object[] array);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		public virtual extern void ArrayIn2 ([In] object[] array);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		public virtual extern void ArrayIn3 (object[] array);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		public virtual extern TestDefaultInterfaceClass1 GetDefInterface1();
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
@@ -1181,6 +1207,11 @@ public class Tests
 		{
 			return ArrayIn(array);
 		}
+
+		public int ArrayIn3(object[] array)
+		{
+			return ArrayIn(array);
+		}
 	}
 
 	public class ManagedTest : ITest
@@ -1306,6 +1337,11 @@ public class Tests
 		}
 
 		public void ArrayIn2(object[] array)
+		{
+			ArrayIn(array);
+		}
+
+		public void ArrayIn3(object[] array)
 		{
 			ArrayIn(array);
 		}

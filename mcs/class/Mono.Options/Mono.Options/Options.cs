@@ -218,9 +218,13 @@ namespace Mono.Options
 				int start = 0, end;
 				do {
 					end = GetLineEnd (start, width, self);
-					char c = self [end-1];
+					// endCorrection is 1 if the line end is '\n', and might be 2 if the line end is '\r\n'.
+					int endCorrection = 1;
+					if (end >= 2 && self.Substring (end - 2, 2).Equals ("\r\n"))
+						endCorrection = 2;
+					char c = self [end - endCorrection];
 					if (char.IsWhiteSpace (c))
-						--end;
+						end -= endCorrection;
 					bool needContinuation = end != self.Length && !IsEolChar (c);
 					string continuation = "";
 					if (needContinuation) {
@@ -231,7 +235,7 @@ namespace Mono.Options
 					yield return line;
 					start = end;
 					if (char.IsWhiteSpace (c))
-						++start;
+						start += endCorrection;
 					width = GetNextWidth (ewidths, width, ref hw);
 				} while (start < self.Length);
 			}
@@ -262,6 +266,8 @@ namespace Mono.Options
 			int end = System.Math.Min (start + length, description.Length);
 			int sep = -1;
 			for (int i = start; i < end; ++i) {
+				if (i + 2 <= description.Length && description.Substring (i, 2).Equals ("\r\n"))
+					return i+2;
 				if (description [i] == '\n')
 					return i+1;
 				if (IsEolChar (description [i]))

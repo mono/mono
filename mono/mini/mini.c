@@ -2867,14 +2867,16 @@ insert_safepoints (MonoCompile *cfg)
 
 	g_assert (mini_safepoints_enabled ());
 
+#ifndef MONO_LLVM_LOADED
 	if (COMPILE_LLVM (cfg)) {
-		if (!cfg->llvm_only && cfg->compile_aot) {
+		if (!cfg->llvm_only) {
 			/* We rely on LLVM's safepoints insertion capabilities. */
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
 			return;
 		}
 	}
+#endif
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
@@ -3047,6 +3049,20 @@ init_backend (MonoBackend *backend)
 #endif
 }
 
+static gboolean
+is_simd_supported (MonoCompile *cfg)
+{
+	// FIXME: Clean this up
+#ifdef TARGET_WASM
+	if ((mini_get_cpu_features (cfg) & MONO_CPU_WASM_SIMD) == 0)
+		return FALSE;
+#else
+	if (cfg->llvm_only)
+		return FALSE;
+#endif
+	return TRUE;
+}
+
 /*
  * mini_method_compile:
  * @method: the method to compile
@@ -3171,11 +3187,13 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/* coop requires loop detection to happen */
 	if (mini_safepoints_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
-	if (cfg->backend->explicit_null_checks) {
+	cfg->disable_llvm_implicit_null_checks = mini_debug_options.llvm_disable_implicit_null_checks;
+	if (cfg->backend->explicit_null_checks || mini_debug_options.explicit_null_checks) {
 		/* some platforms have null pages, so we can't SIGSEGV */
 		cfg->explicit_null_checks = TRUE;
+		cfg->disable_llvm_implicit_null_checks = TRUE;
 	} else {
-		cfg->explicit_null_checks = mini_debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
+		cfg->explicit_null_checks = flags & JIT_FLAG_EXPLICIT_NULL_CHECKS;
 	}
 	cfg->soft_breakpoints = mini_debug_options.soft_breakpoints;
 	cfg->check_pinvoke_callconv = mini_debug_options.check_pinvoke_callconv;
@@ -3188,11 +3206,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->compile_aot)
 		cfg->method_index = aot_method_index;
 
+	if (cfg->compile_llvm)
+		cfg->explicit_null_checks = TRUE;
+
 	/*
 	if (!mono_debug_count ())
 		cfg->opt &= ~MONO_OPT_FLOAT32;
 	*/
-	if (cfg->llvm_only)
+	if (!is_simd_supported (cfg))
 		cfg->opt &= ~MONO_OPT_SIMD;
 	cfg->r4fp = (cfg->opt & MONO_OPT_FLOAT32) ? 1 : 0;
 	cfg->r4_stack_type = cfg->r4fp ? STACK_R4 : STACK_R8;
@@ -4300,4 +4321,23 @@ mono_target_pagesize (void)
 	 * for those cases.
 	 */
 	return 4 * 1024;
+}
+
+MonoCPUFeatures
+mini_get_cpu_features (MonoCompile* cfg)
+{
+	MonoCPUFeatures features = (MonoCPUFeatures)0;
+#if !defined(MONO_CROSS_COMPILE)
+	if (!cfg->compile_aot || cfg->use_current_cpu) {
+		// detect current CPU features if we are in JIT mode or AOT with use_current_cpu flag.
+#if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED)
+		features = mono_llvm_get_cpu_features (); // llvm has a nice built-in API to detect features
+#elif defined(TARGET_AMD64)
+		features = mono_arch_get_cpu_features ();
+#endif
+	}
+#endif
+
+	// apply parameters passed via -mattr
+	return (features | mono_cpu_features_enabled) & ~mono_cpu_features_disabled;
 }

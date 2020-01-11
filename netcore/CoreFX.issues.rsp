@@ -19,30 +19,12 @@
 -nomethod Microsoft.VisualBasic.Tests.InteractionTests.GetSetting
 
 ####################################################################
-##  System.CodeDom.Tests
-####################################################################
-
-# TODO: Hangs
--noclass System.CodeDom.Compiler.Tests.ExecutorTests
-
-####################################################################
 ##  System.Collections.Specialized.Tests
 ####################################################################
 
 # TODO: Wrong exception
 # https://github.com/mono/mono/issues/14858
 -nomethod System.Collections.Specialized.Tests.NameValueCollectionCtorTests.Ctor_NegativeCapacity_ThrowsArgumentOutOfRangeException
-
-####################################################################
-##  System.Diagnostics.Process.Tests
-####################################################################
-
-# test process hangs
--nomethod System.Diagnostics.Tests.ProcessTests.Kill_EntireProcessTree_True_CalledOnTreeContainingCallingProcess_ThrowsInvalidOperationException
-
-# times out waiting for remote process. Would it require system wide dotnet?
-# https://github.com/mono/mono/issues/14903
--nomethod System.Diagnostics.Tests.ProcessTests.ProcessStart_UseShellExecute_ExecuteOrder
 
 ####################################################################
 ##  System.Diagnostics.TraceSource.Tests
@@ -61,6 +43,13 @@
 -nomethod BasicEventSourceTests.TestsManifestNegative.Test_GenerateManifest_InvalidEventSources
 
 ####################################################################
+##  System.Drawing.Common.Tests
+####################################################################
+
+# System.ArgumentException Arg_ObjObjEx
+-nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
+
+####################################################################
 ##  System.Dynamic.Runtime.Tests
 ####################################################################
 
@@ -71,9 +60,6 @@
 ####################################################################
 ##  System.IO.Tests
 ####################################################################
-
-# TODO: Hangs
--nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
 
 # flaky test (The process cannot access the file ...)
 -nomethod System.IO.Tests.*.CopyFileWithData_MemberData
@@ -176,10 +162,6 @@
 # https://github.com/mono/mono/issues/15005
 -nomethod *PlatformHandler*
 
-# TODO: Hangs
-# https://github.com/mono/mono/issues/15006
--nomethod *ExpectedDiagnosticSourceActivityLogging*
-
 # Works, but may trigger UI!
 # NOTE: KEEPING THIS HERE BUT COMMENTED OUT - in the event the UI is shown (wasn't for me)
 #-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_DangerousAcceptAllCertificatesValidator_Test.SetDelegate_ConnectionSucceeds
@@ -190,10 +172,6 @@
 ####################################################################
 ##  System.Net.Sockets.Tests
 ####################################################################
-
-# TODO: Hangs and fails.
-# https://github.com/mono/mono/issues/15010
--nomethod System.Net.Sockets.Tests.CreateSocket.CtorAndAccept_SocketNotKeptAliveViaInheritance
 
 # flaky test
 -nomethod System.Net.Sockets.Tests.SocketOptionNameTest.MulticastInterface_Set_AnyInterface_Succeeds
@@ -378,6 +356,11 @@
 # https://github.com/mono/mono/issues/15069
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
 
+# relies on specific exception message
+-nomethod System.Reflection.Tests.AssemblyTests.LoadFile_ValidPEBadIL_ThrowsBadImageFormatExceptionWithPath
+-nomethod System.Reflection.Tests.AssemblyTests.LoadFile_PartiallyQualifiedPath_ThrowsArgumentException
+-nomethod System.Reflection.Tests.AssemblyTests.LoadFile_NoSuchPath_ThrowsFileNotFoundException
+
 ####################################################################
 ##  System.Runtime.InteropServices.Tests
 ####################################################################
@@ -464,30 +447,6 @@
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_InvalidLengthByValArrayInStruct_ThrowsArgumentException
 
 ####################################################################
-##  System.Runtime.Numerics.Tests
-####################################################################
-
-# Expected vs Actual are pretty different
-# https://github.com/mono/mono/issues/15106
--nomethod System.Numerics.Tests.ComplexTests.Sin_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15107
--nomethod System.Numerics.Tests.ComplexTests.Sinh_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15108
--nomethod System.Numerics.Tests.ComplexTests.Cos_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15109
--nomethod System.Numerics.Tests.ComplexTests.Cosh_Advanced
-
-# Same as above
-# https://github.com/mono/mono/issues/15110
--nomethod System.Numerics.Tests.ComplexTests.Exp
-
-####################################################################
 ##  System.Runtime.Serialization.Formatters.Tests
 ####################################################################
 
@@ -510,8 +469,6 @@
 # Object reference not set to an instance of an object error
 # https://github.com/mono/mono/issues/15115
 -nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.ValidateAgainstBlobs
--nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.RoundtripManyObjectsInOneStream
--nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.ValidateBasicObjectsRoundtrip
 
 ####################################################################
 ##  System.Runtime.Tests
@@ -543,21 +500,11 @@
 # https://github.com/mono/mono/issues/15152
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
 
-# GC.GetTotalAllocatedBytes is not implemented
--nomethod System.Tests.GCTests.GetTotalAllocatedBytes
-
-# GC.GetAllocatedBytesForCurrentThread is not implemented
--nomethod System.Tests.GCTests.GetAllocatedBytesForCurrentThread
-
 # GCSettings.LatencyMode is not implemented
 -nomethod System.Tests.GCTests.LatencyRoundtrips
 
 # GC.GetGCMemoryInfo is not implemented
--nomethod System.Tests.GCTests.GetGCMemoryInfo
-
-# Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
-# https://github.com/mono/mono/issues/15153
--nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
+-nomethod System.Tests.GCExtendedTests.GetGCMemoryInfo
 
 # flaky test, System.ArgumentNullException : Key cannot be null. Parameter name: key
 -nomethod System.Tests.GetEnvironmentVariable.EnvironmentVariablesAreHashtable
@@ -565,11 +512,6 @@
 ####################################################################
 ##  System.Threading.Tests
 ####################################################################
-
-# Monitor.LockContentionCount is not implemented
-# Implementation https://github.com/mono/mono/issues/15155
-# https://github.com/mono/mono/issues/15156
--nomethod System.Threading.Tests.MonitorTests.Enter_HasToWait_LockContentionCountTest
 
 # Process hangs and test fails with [ERROR] FATAL UNHANDLED EXCEPTION: System.Threading.WaitHandleCannotBeOpenedException: No handle of the given name exists.
 # https://github.com/mono/mono/issues/15157
@@ -635,15 +577,6 @@
 -nonamespace Tests.Integration
 
 ####################################################################
-##  System.Composition.TypedParts.Tests
-####################################################################
-
-# Missing assembly Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-# https://github.com/mono/mono/issues/15170
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssemblies_Assemblies_ThrowsCompositionFailedExceptionOnCreation
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssembly_Assembly_ThrowsCompositionFailedExceptionOnCreation
-
-####################################################################
 ##  System.Data.Common.Tests
 ####################################################################
 
@@ -677,18 +610,6 @@
 # Assert IsNotNull failure
 # https://github.com/mono/mono/issues/15180
 -nomethod System.Data.Common.Tests.DbConnectionTests.ProviderFactoryTest
-
-####################################################################
-##  System.Data.SqlClient.Tests
-####################################################################
-
-# Hangs and then fails... All async tests display the same failure
-# https://github.com/mono/mono/issues/15181
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteReaderAsyncTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteNonQueryAsyncErrorTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncErrorTest
--nomethod System.Data.SqlClient.Tests.DiagnosticTest.ExecuteScalarAsyncTest
 
 ####################################################################
 ##  System.Diagnostics.StackTrace.Tests
@@ -750,14 +671,6 @@
 -nomethod System.Reflection.Tests.MetadataLoadContextTests.RelocatableAssembly
 
 ####################################################################
-##  System.Runtime.Loader.DefaultContext.Tests
-####################################################################
-
-# Expected FileNotFoundException, got none
-# https://github.com/mono/mono/issues/15195
--nomethod System.Runtime.Loader.Tests.DefaultLoadContextTests.LoadInDefaultContext
-
-####################################################################
 ##  System.Runtime.Loader.RefEmitLoadContext.Tests
 ####################################################################
 
@@ -798,25 +711,27 @@
 ##  System.Runtime.Extensions.Tests
 ####################################################################
 
-# GC.GetGCMemoryInfo is not implemented
-# https://github.com/mono/mono/issues/15236
--nomethod System.Tests.AppDomainTests.MonitoringIsEnabled
-
 # Mono expands generic Types in stacktraces unlike the .NET Core (sounds more like a feature: https://gist.github.com/EgorBo/3abb37d2ff4fc904bc7472c62498f933)
 # https://github.com/mono/mono/issues/15315
 -nomethod System.Tests.EnvironmentStackTrace.StackTraceTest
 
 # These events are not wired up in mono
 # https://github.com/mono/mono/issues/16246
--nomethod System.Tests.AppDomainTests.TypeResolve
 -nomethod System.Tests.AppDomainTests.ResourceResolve
--nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
 -nomethod System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
--nomethod System.Tests.AppDomainTests.AssemblyResolveInvalidAssemblyName
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
+
+####################################################################
+##  System.Runtime.Handles.Tests
+####################################################################
+
+# NRE in SafeHandle.Dispose
+# https://github.com/mono/mono/issues/17224
+-noclass SafeWaitHandleExtensions_4000_Tests
+-noclass SafeWaitHandle_4000_Tests
 
 ####################################################################
 ##  System.Reflection.TypeExtensions.Tests
@@ -884,6 +799,11 @@
 -nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.PublicConstructor_Theory
 -nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.Unsupported_FixedAddressValueType
 
+# relies on specific exception message
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadFromAssemblyPath_PartiallyQualifiedPath_ThrowsArgumentException
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadFromNativeImagePath_PartiallyQualifiedPath_ThrowsArgumentException
+-nomethod System.Runtime.Loader.Tests.AssemblyLoadContextTest.LoadFromNativeImagePath_PartiallyQualifiedPath_ThrowsArgumentException2
+
 ####################################################################
 ##  System.Reflection.MetadataLoadContext.Tests
 ####################################################################
@@ -942,13 +862,6 @@
 -nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 
 ####################################################################
-##  System.Net.Requests.Tests
-####################################################################
-
-# hangs:
--nomethod System.Net.Tests.HttpWebRequestTest.HttpWebRequest_SetHostHeader_ContainsPortNumber
-
-####################################################################
 ##  System.Security.Cryptography.X509Certificates.Tests
 ####################################################################
 
@@ -980,9 +893,6 @@
 # Flaky test (FileSystemWatcher)
 -nomethod System.IO.Tests.Directory_NotifyFilter_Tests.FileSystemWatcher_Directory_NotifyFilter_LastWriteTime
 
-# Flaky test
--nomethod System.Security.Cryptography.Rsa.Tests.RSAKeyFileTests.ReadEncryptedRsa16384
-
 ####################################################################
 ##  System.Security.Cryptography.Encoding.Tests
 ####################################################################
@@ -992,18 +902,5 @@
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByValue_Ctor
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.Oid_StringString_NullFriendlyName
 -nomethod System.Security.Cryptography.Encoding.Tests.OidTests.LookupOidByFriendlyName_Ctor
-
-
-# corefx tests need to be updated
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt16
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt32
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeDouble
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeByte
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSByte
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt64
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt16
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeInt64
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeSingle
--nomethod System.Numerics.Tests.GenericVectorTests.GetHashCodeUInt32
 
 -nomethod System.Tests.StringComparerTests.CreateCultureOptions_InvalidArguments_Throws

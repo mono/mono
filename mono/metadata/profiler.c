@@ -428,17 +428,14 @@ MonoProfilerCoverageInfo *
 mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 {
 	if (!mono_profiler_state.code_coverage)
-		return FALSE;
-
-	if (method->wrapper_type)
-		return FALSE;
+		return NULL;
 
 	if (!mono_profiler_coverage_instrumentation_enabled (method))
 		return NULL;
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_malloc0 (sizeof (MonoProfilerCoverageInfo) + SIZEOF_VOID_P * 2 * entries);
+	MonoProfilerCoverageInfo *info = g_malloc0 (sizeof (MonoProfilerCoverageInfo) + sizeof (MonoProfilerCoverageInfoEntry) * entries);
 
 	info->entries = entries;
 

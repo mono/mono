@@ -516,12 +516,12 @@ static const gint16 tableidx [] = {
 #undef TABLEDEF
 };
 
-/* If TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
+/* On legacy, if TRUE (but also see DISABLE_DESKTOP_LOADER #define), Mono will check
  * that the public key token, culture and version of a candidate assembly matches
- * the requested strong name.  If FALSE, as long as the name matches, the candidate
- * will be allowed.
+ * the requested strong name. On netcore, it will check the culture and version.
+ * If FALSE, as long as the name matches, the candidate will be allowed.
  */
-static gboolean check_strong_names_strictly = FALSE;
+static gboolean check_assembly_names_strictly = FALSE;
 
 // Amount initially reserved in each imageset's mempool.
 // FIXME: This number is arbitrary, a more practical number should be found
@@ -1078,9 +1078,29 @@ mono_metadata_user_string (MonoImage *meta, guint32 index)
 const char *
 mono_metadata_blob_heap (MonoImage *meta, guint32 index)
 {
+	/* Some tools can produce assemblies with a size 0 Blob stream. If a
+	 * blob value is optional, if the index == 0 and heap_blob.size == 0
+	 * assertion is hit, consider updating caller to use
+	 * mono_metadata_blob_heap_null_ok and handling a null return value. */
+	g_assert (!(index == 0 && meta->heap_blob.size == 0));
 	g_assert (index < meta->heap_blob.size);
-	g_return_val_if_fail (index < meta->heap_blob.size, "");/*FIXME shouldn't we return NULL and check for index == 0?*/
 	return meta->heap_blob.data + index;
+}
+
+/**
+ * mono_metadata_blob_heap_null_ok:
+ * \param meta metadata context
+ * \param index index into the blob.
+ * \return an in-memory pointer to the \p index in the Blob heap.
+ * If the Blob heap is empty or missing and index is 0 returns NULL, instead of asserting.
+ */
+const char *
+mono_metadata_blob_heap_null_ok (MonoImage *meta, guint32 index)
+{
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
+	else
+		return mono_metadata_blob_heap (meta, index);
 }
 
 /**
@@ -1089,11 +1109,14 @@ mono_metadata_blob_heap (MonoImage *meta, guint32 index)
  * \param index index into the blob.
  * \param error set on error
  * \returns an in-memory pointer to the \p index in the Blob heap.  On failure sets \p error and returns NULL;
+ * If the Blob heap is empty or missing and \p index is 0 returns NULL, without setting error.
  *
  */
 const char *
 mono_metadata_blob_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
 {
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
 	if (G_UNLIKELY (!(index < meta->heap_blob.size))) {
 		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "blob heap index %u out of bounds %u", index, meta->heap_blob.size);
 		return NULL;
@@ -6754,7 +6777,8 @@ handle_enum:
 			*conv = MONO_MARSHAL_CONV_DEL_FTN;
 			return MONO_NATIVE_FUNC;
 		}
-		if (mono_class_try_get_safehandle_class () && type->data.klass == mono_class_try_get_safehandle_class ()){
+		if (mono_class_try_get_safehandle_class () && type->data.klass != NULL &&
+			mono_class_is_subclass_of_internal (type->data.klass,  mono_class_try_get_safehandle_class (), FALSE)){
 			*conv = MONO_MARSHAL_CONV_SAFEHANDLE;
 			return MONO_NATIVE_INT;
 		}
@@ -7172,8 +7196,8 @@ mono_bool
 mono_type_is_byref (MonoType *type)
 {
 	mono_bool result;
-	MONO_ENTER_GC_UNSAFE;
-	result = type->byref;
+	MONO_ENTER_GC_UNSAFE; // FIXME slow
+	result = mono_type_is_byref_internal (type);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -7187,7 +7211,7 @@ mono_type_is_byref (MonoType *type)
 int
 mono_type_get_type (MonoType *type)
 {
-	return type->type;
+	return mono_type_get_type_internal (type);
 }
 
 /**
@@ -7200,8 +7224,7 @@ mono_type_get_type (MonoType *type)
 MonoMethodSignature*
 mono_type_get_signature (MonoType *type)
 {
-	g_assert (type->type == MONO_TYPE_FNPTR);
-	return type->data.method;
+	return mono_type_get_signature_internal (type);
 }
 
 /**
@@ -7216,7 +7239,7 @@ MonoClass*
 mono_type_get_class (MonoType *type)
 {
 	/* FIXME: review the runtime users before adding the assert here */
-	return type->data.klass;
+	return mono_type_get_class_internal (type);
 }
 
 /**
@@ -7230,7 +7253,7 @@ mono_type_get_class (MonoType *type)
 MonoArrayType*
 mono_type_get_array_type (MonoType *type)
 {
-	return type->data.array;
+	return mono_type_get_array_type_internal (type);
 }
 
 /**
@@ -7563,15 +7586,19 @@ mono_find_image_set_owner (void *ptr)
 }
 
 void
-mono_loader_set_strict_strong_names (gboolean enabled)
+mono_loader_set_strict_assembly_name_check (gboolean enabled)
 {
-	check_strong_names_strictly = enabled;
+	check_assembly_names_strictly = enabled;
 }
 
 gboolean
-mono_loader_get_strict_strong_names (void)
+mono_loader_get_strict_assembly_name_check (void)
 {
-	return check_strong_names_strictly;
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
+	return check_assembly_names_strictly;
+#else
+	return FALSE;
+#endif
 }
 
 

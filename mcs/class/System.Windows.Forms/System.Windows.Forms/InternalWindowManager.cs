@@ -433,6 +433,8 @@ namespace System.Windows.Forms {
 			get {
 				if (!Form.ShowIcon)
 					return false;
+				if (!Form.ControlBox)
+					return false;
 				if (!HasBorders)
 					return false;
 				if (IsMinimized)

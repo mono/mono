@@ -1650,15 +1650,16 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 static MonoReflectionTypeHandle
 mono_reflection_type_get_underlying_system_type (MonoReflectionTypeHandle t, MonoError *error)
 {
-	static MonoMethod *method_get_underlying_system_type = NULL;
 	HANDLE_FUNCTION_ENTER ();
 
 	error_init (error);
 
-	if (!method_get_underlying_system_type) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, method_get_underlying_system_type)
+
 		method_get_underlying_system_type = mono_class_get_method_from_name_checked (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0, 0, error);
 		mono_error_assert_ok (error);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method_get_underlying_system_type)
 
 	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 
@@ -2168,7 +2169,7 @@ handle_enum:
 			simple_type = mono_class_enum_basetype_internal (type->data.klass)->type;
 			goto handle_enum;
 		} else {
-			g_warning ("generic valutype %s not handled in custom attr value decoding", type->data.klass->name);
+			g_warning ("generic valuetype %s not handled in custom attr value decoding", type->data.klass->name);
 		}
 		break;
 	case MONO_TYPE_STRING: {
@@ -2913,6 +2914,7 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 {
 	error_init (error);
 	
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (domain);
 	MonoReflectionMarshalAsAttributeHandle minfo = MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, mono_object_new_handle (domain, mono_class_get_marshal_as_attribute_class (), error));
 	goto_if_nok (error, fail);
 	guint32 utype;
@@ -2936,7 +2938,7 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 
 	case MONO_NATIVE_CUSTOM:
 		if (spec->data.custom_data.custom_name) {
-			MonoType *mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, klass->image, error);
+			MonoType *mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, alc, klass->image, error);
 			goto_if_nok (error, fail);
 
 			if (mtype) {
@@ -4263,6 +4265,7 @@ ensure_complete_type (MonoClass *klass, MonoError *error)
 	error_init (error);
 
 	if (image_is_dynamic (klass->image) && !klass->wastypebuilder && mono_class_has_ref_info (klass)) {
+#ifndef ENABLE_NETCORE
 		MonoReflectionTypeBuilderHandle tb = mono_class_get_ref_info (klass);
 
 		mono_domain_try_type_resolve_typebuilder (mono_domain_get (), tb, error);
@@ -4270,6 +4273,10 @@ ensure_complete_type (MonoClass *klass, MonoError *error)
 
 		// Asserting here could break a lot of code
 		//g_assert (klass->wastypebuilder);
+#else
+		// TODO: make this work on netcore when working on SRE.TypeBuilder
+		g_assert_not_reached ();
+#endif
 	}
 
 	if (mono_class_is_ginst (klass)) {
@@ -4366,13 +4373,18 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		if (klass->wastypebuilder) {
 			/* Already created */
 			result = klass;
-		}
-		else {
+		} else {
+#ifndef ENABLE_NETCORE
 			mono_domain_try_type_resolve_typebuilder (mono_domain_get (), tb, error);
 			goto_if_nok (error, return_null);
 			result = type->data.klass;
 			g_assert (result);
+#else
+			// TODO: make this work on netcore when working on SRE.TypeBuilder
+			g_assert_not_reached();
+#endif
 		}
+
 		*handle_class = mono_defaults.typehandle_class;
 	} else if (strcmp (oklass->name, "SignatureHelper") == 0) {
 		MonoReflectionSigHelper *helper = (MonoReflectionSigHelper*)obj;

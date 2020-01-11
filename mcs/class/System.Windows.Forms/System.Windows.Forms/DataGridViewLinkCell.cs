@@ -56,6 +56,7 @@ namespace System.Windows.Forms
 			clone.linkBehavior = this.linkBehavior;
 			clone.visited_link_color = this.visited_link_color;
 			clone.trackVisitedState = this.trackVisitedState;
+			clone.useColumnTextForLinkValue = this.useColumnTextForLinkValue;
 			
 			return clone;
 		}

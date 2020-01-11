@@ -209,11 +209,13 @@ public class ServicePointTest
 
 		Assert.AreSame (host0, host1, "HostEntry should result in the same IPHostEntry object.");
 
+#if !WASM
 		Thread.Sleep (dnsRefreshTimeout * 2);
 		host2 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
 
 		Assert.AreNotSame(host0, host2, "HostEntry should result in a new IPHostEntry " +
 				"object when DnsRefreshTimeout is reached.");
+#endif
 	}
 
 // Debug code not used now, but could be useful later

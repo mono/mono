@@ -899,6 +899,40 @@ namespace MonoTests.System.Reflection.Emit
 			
 		}
 
+		[Test]
+		public void MethodInfoGetParametersCrash () {
+			// Regression test for https://github.com/mono/mono/issues/16570
+			//
+			// MethodInfo.GetParameters() called on a dynamic assembly would attempt to copy the custom_name and cookie, which could be junk depending
+			// on how the union is being used.
+			var aName = new AssemblyName("TestAssembly");
+			var testAssembly = AppDomain.CurrentDomain.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndSave);
+			var testModule = testAssembly.DefineDynamicModule(aName.Name, aName.Name + ".dll");
+
+			var typeBuilder = testModule.DefineType("TestType");
+
+			var ctorBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+			var ctorIl = ctorBuilder.GetILGenerator();
+			ctorIl.Emit(OpCodes.Ret);
+
+			var methodBuilder = typeBuilder.DefineMethod("TestMethod", MethodAttributes.Public, typeof(void), new[] { typeof(int[]) });
+			methodBuilder.DefineParameter(0, ParameterAttributes.Retval, null);
+			var paramBuilder = methodBuilder.DefineParameter(1, ParameterAttributes.None, null);
+
+			var attrCtor = typeof(MarshalAsAttribute).GetConstructor(new[] { typeof(UnmanagedType) });
+			object[] ctorArgs = { UnmanagedType.LPArray };
+			var attr = new CustomAttributeBuilder(attrCtor, ctorArgs);
+			paramBuilder.SetCustomAttribute(attr);
+
+			var methodIl = methodBuilder.GetILGenerator();
+			methodIl.Emit(OpCodes.Ret);
+
+			var createdType = typeBuilder.CreateType();
+
+			var methodInfo = createdType.GetMethod("TestMethod", BindingFlags.Instance | BindingFlags.Public);
+			methodInfo.GetParameters();
+		}
 	}
 }
 

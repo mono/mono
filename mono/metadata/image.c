@@ -685,14 +685,6 @@ load_modules (MonoImage *image)
 MonoImage*
 mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 {
-	MonoTableInfo *t;
-	MonoTableInfo *file_table;
-	int i;
-	char *base_dir;
-	gboolean refonly = image->ref_only;
-	GList *list_iter, *valid_modules = NULL;
-	MonoImageOpenStatus status;
-
 	error_init (error);
 
 	if ((image->module_count == 0) || (idx > image->module_count || idx <= 0))
@@ -704,6 +696,13 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	/* SRE still uses image->modules, but they are not loaded from files, so the rest of this function is dead code for netcore */
 	g_assert_not_reached ();
 #else
+	MonoTableInfo *t;
+	MonoTableInfo *file_table;
+	int i;
+	char *base_dir;
+	gboolean refonly = image->ref_only;
+	GList *list_iter, *valid_modules = NULL;
+	MonoImageOpenStatus status;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading module %d of %s (%s)", idx, image->assembly ? image->assembly->aname.name : "some assembly", image->name);
 
@@ -2442,8 +2441,9 @@ mono_image_close_except_pools (MonoImage *image)
 	if (image->mvar_gparam_cache)
 		mono_conc_hashtable_destroy (image->mvar_gparam_cache);
 	free_hash (image->wrapper_param_names);
+#ifndef ENABLE_NETCORE
 	free_hash (image->pinvoke_scopes);
-	free_hash (image->pinvoke_scope_filenames);
+#endif
 	free_hash (image->native_func_wrapper_cache);
 	mono_conc_hashtable_destroy (image->typespec_cache);
 	free_hash (image->weak_field_indexes);

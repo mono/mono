@@ -16,7 +16,7 @@ wasm_invoke_vi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0]);
+	func ((int)(gssize)margs->iargs [0]);
 
 }
 
@@ -25,7 +25,7 @@ wasm_invoke_vii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1]);
 
 }
 
@@ -34,7 +34,7 @@ wasm_invoke_viii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 
 }
 
@@ -43,7 +43,7 @@ wasm_invoke_viiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3]);
 
 }
 
@@ -52,7 +52,7 @@ wasm_invoke_viiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 
 }
 
@@ -61,7 +61,7 @@ wasm_invoke_viiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5]);
 
 }
 
@@ -70,7 +70,7 @@ wasm_invoke_viiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6]);
 
 }
 
@@ -79,7 +79,7 @@ wasm_invoke_viiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7]);
 
 }
 
@@ -88,7 +88,7 @@ wasm_invoke_viiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8]);
 
 }
 
@@ -97,7 +97,7 @@ wasm_invoke_viiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9]);
 
 }
 
@@ -106,7 +106,7 @@ wasm_invoke_viiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10]);
 
 }
 
@@ -115,7 +115,7 @@ wasm_invoke_viiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10], (int)(gssize)margs->iargs [11]);
 
 }
 
@@ -124,7 +124,7 @@ wasm_invoke_viiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11, int arg_12);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11], (int)margs->iargs [12]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10], (int)(gssize)margs->iargs [11], (int)(gssize)margs->iargs [12]);
 
 }
 
@@ -133,7 +133,7 @@ wasm_invoke_viiiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11, int arg_12, int arg_13);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11], (int)margs->iargs [12], (int)margs->iargs [13]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10], (int)(gssize)margs->iargs [11], (int)(gssize)margs->iargs [12], (int)(gssize)margs->iargs [13]);
 
 }
 
@@ -152,7 +152,7 @@ wasm_invoke_ii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0]);
+	int res = func ((int)(gssize)margs->iargs [0]);
 	*(int*)margs->retval = res;
 
 }
@@ -162,7 +162,7 @@ wasm_invoke_iii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -172,7 +172,7 @@ wasm_invoke_iiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -182,7 +182,7 @@ wasm_invoke_iiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
 }
@@ -192,7 +192,7 @@ wasm_invoke_iiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 	*(int*)margs->retval = res;
 
 }
@@ -202,7 +202,7 @@ wasm_invoke_iiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5]);
 	*(int*)margs->retval = res;
 
 }
@@ -212,7 +212,7 @@ wasm_invoke_iiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6]);
 	*(int*)margs->retval = res;
 
 }
@@ -222,7 +222,7 @@ wasm_invoke_iiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7]);
 	*(int*)margs->retval = res;
 
 }
@@ -232,7 +232,7 @@ wasm_invoke_iiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8]);
 	*(int*)margs->retval = res;
 
 }
@@ -242,7 +242,7 @@ wasm_invoke_iiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9]);
 	*(int*)margs->retval = res;
 
 }
@@ -252,7 +252,7 @@ wasm_invoke_iiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10]);
 	*(int*)margs->retval = res;
 
 }
@@ -262,7 +262,7 @@ wasm_invoke_iiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10], (int)(gssize)margs->iargs [11]);
 	*(int*)margs->retval = res;
 
 }
@@ -272,7 +272,7 @@ wasm_invoke_iiiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11, int arg_12);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11], (int)margs->iargs [12]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7], (int)(gssize)margs->iargs [8], (int)(gssize)margs->iargs [9], (int)(gssize)margs->iargs [10], (int)(gssize)margs->iargs [11], (int)(gssize)margs->iargs [12]);
 	*(int*)margs->retval = res;
 
 }
@@ -282,7 +282,27 @@ wasm_invoke_iiliiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_if (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(float arg_0);
+	T func = (T)target_func;
+	int res = func (*(float*)&margs->fargs [FIDX (0)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_id (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(double arg_0);
+	T func = (T)target_func;
+	int res = func (margs->fargs [FIDX (0)]);
 	*(int*)margs->retval = res;
 
 }
@@ -292,7 +312,7 @@ wasm_invoke_iif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
 	*(int*)margs->retval = res;
 
 }
@@ -302,7 +322,7 @@ wasm_invoke_iifi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, int arg_2);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -312,7 +332,7 @@ wasm_invoke_iiff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 	*(int*)margs->retval = res;
 
 }
@@ -322,7 +342,7 @@ wasm_invoke_iffii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(float arg_0, float arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [0], (int)margs->iargs [1]);
+	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -332,7 +352,7 @@ wasm_invoke_iifii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -342,7 +362,7 @@ wasm_invoke_iiffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -352,7 +372,7 @@ wasm_invoke_iifff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)]);
 	*(int*)margs->retval = res;
 
 }
@@ -362,7 +382,7 @@ wasm_invoke_iifffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], (int)margs->iargs [1]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -372,7 +392,7 @@ wasm_invoke_iiffii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -382,7 +402,7 @@ wasm_invoke_iifiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, int arg_2, int arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
 }
@@ -392,7 +412,7 @@ wasm_invoke_iiffffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [1]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)(gssize)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
 }
@@ -402,7 +422,7 @@ wasm_invoke_iiffffii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, int arg_5, int arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -412,7 +432,7 @@ wasm_invoke_iiif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)]);
 	*(int*)margs->retval = res;
 
 }
@@ -422,7 +442,7 @@ wasm_invoke_iiifi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -432,7 +452,7 @@ wasm_invoke_iiifii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2], (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
 }
@@ -442,7 +462,7 @@ wasm_invoke_iiifiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 	*(int*)margs->retval = res;
 
 }
@@ -452,7 +472,7 @@ wasm_invoke_iiiif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)]);
 	*(int*)margs->retval = res;
 
 }
@@ -462,7 +482,7 @@ wasm_invoke_iiiifi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
 }
@@ -472,7 +492,7 @@ wasm_invoke_iiiifii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3], (int)margs->iargs [4]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 	*(int*)margs->retval = res;
 
 }
@@ -482,7 +502,7 @@ wasm_invoke_iiiifiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4, int arg_5, int arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5]);
 	*(int*)margs->retval = res;
 
 }
@@ -492,7 +512,7 @@ wasm_invoke_iiiffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
 	*(int*)margs->retval = res;
 
 }
@@ -502,7 +522,7 @@ wasm_invoke_iiifffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)]);
 	*(int*)margs->retval = res;
 
 }
@@ -512,7 +532,7 @@ wasm_invoke_iiffffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
 	*(int*)margs->retval = res;
 
 }
@@ -522,7 +542,7 @@ wasm_invoke_iiiffffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
 	*(int*)margs->retval = res;
 
 }
@@ -532,7 +552,7 @@ wasm_invoke_iiiiiiif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, float arg_6);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)]);
 	*(int*)margs->retval = res;
 
 }
@@ -542,7 +562,7 @@ wasm_invoke_iiiiiiiff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, float arg_6, float arg_7);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 	*(int*)margs->retval = res;
 
 }
@@ -552,7 +572,7 @@ wasm_invoke_iiffffffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
 	*(int*)margs->retval = res;
 
 }
@@ -562,7 +582,7 @@ wasm_invoke_iiiffffffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8, float arg_9);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
 	*(int*)margs->retval = res;
 
 }
@@ -572,7 +592,7 @@ wasm_invoke_iiiiiifii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, float arg_5, int arg_6, int arg_7);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [5], (int)margs->iargs [6]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], *(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6]);
 	*(int*)margs->retval = res;
 
 }
@@ -582,7 +602,7 @@ wasm_invoke_iiiffffffffiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8, float arg_9, int arg_10, int arg_11, int arg_12);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 	*(int*)margs->retval = res;
 
 }
@@ -592,7 +612,7 @@ wasm_invoke_iiiiiffffiiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, float arg_4, float arg_5, float arg_6, float arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+	int res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], (int)(gssize)margs->iargs [6], (int)(gssize)margs->iargs [7]);
 	*(int*)margs->retval = res;
 
 }
@@ -602,7 +622,7 @@ wasm_invoke_iffffffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(float arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, int arg_6);
 	T func = (T)target_func;
-	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], (int)margs->iargs [0]);
+	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], (int)(gssize)margs->iargs [0]);
 	*(int*)margs->retval = res;
 
 }
@@ -612,7 +632,7 @@ wasm_invoke_iiffiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3, int arg_4, int arg_5);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2], (int)(gssize)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
 }
@@ -622,7 +642,17 @@ wasm_invoke_ili (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(gint64 arg_0, int arg_1);
 	T func = (T)target_func;
-	int res = func (get_long_arg (margs, 0), (int)margs->iargs [2]);
+	int res = func (get_long_arg (margs, 0), (int)(gssize)margs->iargs [2]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iilli (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), (int)(gssize)margs->iargs [5]);
 	*(int*)margs->retval = res;
 
 }
@@ -652,7 +682,7 @@ wasm_invoke_li (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(int arg_0);
 	T func = (T)target_func;
-	gint64 res = func ((int)margs->iargs [0]);
+	gint64 res = func ((int)(gssize)margs->iargs [0]);
 	*(gint64*)margs->retval = res;
 
 }
@@ -662,7 +692,17 @@ wasm_invoke_lil (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(int arg_0, gint64 arg_1);
 	T func = (T)target_func;
-	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1));
+	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1));
+	*(gint64*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_lili (void *target_func, InterpMethodArguments *margs)
+{
+	typedef gint64 (*T)(int arg_0, gint64 arg_1, int arg_2);
+	T func = (T)target_func;
+	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3]);
 	*(gint64*)margs->retval = res;
 
 }
@@ -672,7 +712,7 @@ wasm_invoke_lilii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3], (int)margs->iargs [4]);
+	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4]);
 	*(gint64*)margs->retval = res;
 
 }
@@ -692,7 +732,7 @@ wasm_invoke_ddi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef double (*T)(double arg_0, int arg_1);
 	T func = (T)target_func;
-	double res = func (margs->fargs [FIDX (0)], (int)margs->iargs [0]);
+	double res = func (margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [0]);
 	*(double*)margs->retval = res;
 
 }
@@ -708,11 +748,21 @@ wasm_invoke_ddd (void *target_func, InterpMethodArguments *margs)
 }
 
 static void
+wasm_invoke_dddd (void *target_func, InterpMethodArguments *margs)
+{
+	typedef double (*T)(double arg_0, double arg_1, double arg_2);
+	T func = (T)target_func;
+	double res = func (margs->fargs [FIDX (0)], margs->fargs [FIDX (1)], margs->fargs [FIDX (2)]);
+	*(double*)margs->retval = res;
+
+}
+
+static void
 wasm_invoke_vif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
 
 }
 
@@ -721,7 +771,7 @@ wasm_invoke_viff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1, float arg_2);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 
 }
 
@@ -730,7 +780,7 @@ wasm_invoke_viffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
 
 }
 
@@ -739,7 +789,7 @@ wasm_invoke_vifffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)]);
 
 }
 
@@ -748,7 +798,7 @@ wasm_invoke_viffffff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
 
 }
 
@@ -757,7 +807,7 @@ wasm_invoke_vifffffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, int arg_6);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], (int)margs->iargs [1]);
+	func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], (int)(gssize)margs->iargs [1]);
 
 }
 
@@ -766,7 +816,7 @@ wasm_invoke_viiffi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, int arg_1, float arg_2, float arg_3, int arg_4);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [2]);
+	func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)(gssize)margs->iargs [2]);
 
 }
 
@@ -776,6 +826,16 @@ wasm_invoke_ff (void *target_func, InterpMethodArguments *margs)
 	typedef float (*T)(float arg_0);
 	T func = (T)target_func;
 	float res = func (*(float*)&margs->fargs [FIDX (0)]);
+	*(float*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_ffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef float (*T)(float arg_0, int arg_1);
+	T func = (T)target_func;
+	float res = func (*(float*)&margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [0]);
 	*(float*)margs->retval = res;
 
 }
@@ -791,11 +851,21 @@ wasm_invoke_fff (void *target_func, InterpMethodArguments *margs)
 }
 
 static void
+wasm_invoke_ffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef float (*T)(float arg_0, float arg_1, float arg_2);
+	T func = (T)target_func;
+	float res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)]);
+	*(float*)margs->retval = res;
+
+}
+
+static void
 wasm_invoke_di (void *target_func, InterpMethodArguments *margs)
 {
 	typedef double (*T)(int arg_0);
 	T func = (T)target_func;
-	double res = func ((int)margs->iargs [0]);
+	double res = func ((int)(gssize)margs->iargs [0]);
 	*(double*)margs->retval = res;
 
 }
@@ -805,7 +875,7 @@ wasm_invoke_fi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef float (*T)(int arg_0);
 	T func = (T)target_func;
-	float res = func ((int)margs->iargs [0]);
+	float res = func ((int)(gssize)margs->iargs [0]);
 	*(float*)margs->retval = res;
 
 }
@@ -815,7 +885,7 @@ wasm_invoke_iil (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, gint64 arg_1);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1));
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1));
 	*(int*)margs->retval = res;
 
 }
@@ -825,7 +895,17 @@ wasm_invoke_iili (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3]);
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiliiil (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3, int arg_4, gint64 arg_5);
+	T func = (T)target_func;
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), (int)(gssize)margs->iargs [3], (int)(gssize)margs->iargs [4], (int)(gssize)margs->iargs [5], get_long_arg (margs, 6));
 	*(int*)margs->retval = res;
 
 }
@@ -835,7 +915,7 @@ wasm_invoke_iillli (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(int arg_0, gint64 arg_1, gint64 arg_2, gint64 arg_3, int arg_4);
 	T func = (T)target_func;
-	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), get_long_arg (margs, 5), (int)margs->iargs [7]);
+	int res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), get_long_arg (margs, 5), (int)(gssize)margs->iargs [7]);
 	*(int*)margs->retval = res;
 
 }
@@ -845,7 +925,7 @@ wasm_invoke_idiii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef int (*T)(double arg_0, int arg_1, int arg_2, int arg_3);
 	T func = (T)target_func;
-	int res = func (margs->fargs [FIDX (0)], (int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
+	int res = func (margs->fargs [FIDX (0)], (int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1], (int)(gssize)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -855,7 +935,7 @@ wasm_invoke_lii (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(int arg_0, int arg_1);
 	T func = (T)target_func;
-	gint64 res = func ((int)margs->iargs [0], (int)margs->iargs [1]);
+	gint64 res = func ((int)(gssize)margs->iargs [0], (int)(gssize)margs->iargs [1]);
 	*(gint64*)margs->retval = res;
 
 }
@@ -865,7 +945,7 @@ wasm_invoke_vid (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, double arg_1);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], margs->fargs [FIDX (0)]);
+	func ((int)(gssize)margs->iargs [0], margs->fargs [FIDX (0)]);
 
 }
 
@@ -874,7 +954,7 @@ wasm_invoke_villi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), (int)margs->iargs [5]);
+	func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), (int)(gssize)margs->iargs [5]);
 
 }
 
@@ -883,7 +963,7 @@ wasm_invoke_did (void *target_func, InterpMethodArguments *margs)
 {
 	typedef double (*T)(int arg_0, double arg_1);
 	T func = (T)target_func;
-	double res = func ((int)margs->iargs [0], margs->fargs [FIDX (0)]);
+	double res = func ((int)(gssize)margs->iargs [0], margs->fargs [FIDX (0)]);
 	*(double*)margs->retval = res;
 
 }
@@ -893,7 +973,7 @@ wasm_invoke_didd (void *target_func, InterpMethodArguments *margs)
 {
 	typedef double (*T)(int arg_0, double arg_1, double arg_2);
 	T func = (T)target_func;
-	double res = func ((int)margs->iargs [0], margs->fargs [FIDX (0)], margs->fargs [FIDX (1)]);
+	double res = func ((int)(gssize)margs->iargs [0], margs->fargs [FIDX (0)], margs->fargs [FIDX (1)]);
 	*(double*)margs->retval = res;
 
 }
@@ -903,7 +983,7 @@ wasm_invoke_fif (void *target_func, InterpMethodArguments *margs)
 {
 	typedef float (*T)(int arg_0, float arg_1);
 	T func = (T)target_func;
-	float res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
+	float res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
 	*(float*)margs->retval = res;
 
 }
@@ -913,7 +993,7 @@ wasm_invoke_fiff (void *target_func, InterpMethodArguments *margs)
 {
 	typedef float (*T)(int arg_0, float arg_1, float arg_2);
 	T func = (T)target_func;
-	float res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	float res = func ((int)(gssize)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 	*(float*)margs->retval = res;
 
 }
@@ -923,7 +1003,7 @@ wasm_invoke_lill (void *target_func, InterpMethodArguments *margs)
 {
 	typedef gint64 (*T)(int arg_0, gint64 arg_1, gint64 arg_2);
 	T func = (T)target_func;
-	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3));
+	gint64 res = func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3));
 	*(gint64*)margs->retval = res;
 
 }
@@ -933,7 +1013,7 @@ wasm_invoke_vil (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, gint64 arg_1);
 	T func = (T)target_func;
-	func ((int)margs->iargs [0], get_long_arg (margs, 1));
+	func ((int)(gssize)margs->iargs [0], get_long_arg (margs, 1));
 
 }
 
@@ -1471,6 +1551,13 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 									return;
 								}
 							}
+							else if (cookie[6] == 'L') {
+								if (cookie[7] == '\0') {
+									// found: IILIIIL depth 12
+									wasm_invoke_iiliiil (target_func, margs);
+									return;
+								}
+							}
 						}
 					}
 					else if (cookie[4] == '\0') {
@@ -1487,6 +1574,13 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 								wasm_invoke_iillli (target_func, margs);
 								return;
 							}
+						}
+					}
+					else if (cookie[4] == 'I') {
+						if (cookie[5] == '\0') {
+							// found: IILLI depth 11
+							wasm_invoke_iilli (target_func, margs);
+							return;
 						}
 					}
 				}
@@ -1529,6 +1623,11 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 					}
 				}
 			}
+			else if (cookie[2] == '\0') {
+				// found: IF depth 6
+				wasm_invoke_if (target_func, margs);
+				return;
+			}
 		}
 		else if (cookie[1] == 'D') {
 			if (cookie[2] == 'I') {
@@ -1541,6 +1640,11 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 						}
 					}
 				}
+			}
+			else if (cookie[2] == '\0') {
+				// found: ID depth 7
+				wasm_invoke_id (target_func, margs);
+				return;
 			}
 		}
 		else if (cookie[1] == 'L') {
@@ -1568,6 +1672,11 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 							wasm_invoke_lilii (target_func, margs);
 							return;
 						}
+					}
+					else if (cookie[4] == '\0') {
+						// found: LILI depth 8
+						wasm_invoke_lili (target_func, margs);
+						return;
 					}
 				}
 				else if (cookie[3] == 'L') {
@@ -1610,30 +1719,16 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		}
 	}
 	else if (cookie[0] == 'D') {
-		if (cookie[1] == 'I') {
+		if (cookie[1] == 'D') {
 			if (cookie[2] == 'D') {
 				if (cookie[3] == 'D') {
 					if (cookie[4] == '\0') {
-						// found: DIDD depth 8
-						wasm_invoke_didd (target_func, margs);
+						// found: DDDD depth 8
+						wasm_invoke_dddd (target_func, margs);
 						return;
 					}
 				}
 				else if (cookie[3] == '\0') {
-					// found: DID depth 8
-					wasm_invoke_did (target_func, margs);
-					return;
-				}
-			}
-			else if (cookie[2] == '\0') {
-				// found: DI depth 7
-				wasm_invoke_di (target_func, margs);
-				return;
-			}
-		}
-		else if (cookie[1] == 'D') {
-			if (cookie[2] == 'D') {
-				if (cookie[3] == '\0') {
 					// found: DDD depth 8
 					wasm_invoke_ddd (target_func, margs);
 					return;
@@ -1641,51 +1736,86 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 			}
 			else if (cookie[2] == 'I') {
 				if (cookie[3] == '\0') {
-					// found: DDI depth 9
+					// found: DDI depth 8
 					wasm_invoke_ddi (target_func, margs);
 					return;
 				}
 			}
 			else if (cookie[2] == '\0') {
-				// found: DD depth 9
+				// found: DD depth 8
 				wasm_invoke_dd (target_func, margs);
+				return;
+			}
+		}
+		else if (cookie[1] == 'I') {
+			if (cookie[2] == 'D') {
+				if (cookie[3] == 'D') {
+					if (cookie[4] == '\0') {
+						// found: DIDD depth 9
+						wasm_invoke_didd (target_func, margs);
+						return;
+					}
+				}
+				else if (cookie[3] == '\0') {
+					// found: DID depth 9
+					wasm_invoke_did (target_func, margs);
+					return;
+				}
+			}
+			else if (cookie[2] == '\0') {
+				// found: DI depth 8
+				wasm_invoke_di (target_func, margs);
 				return;
 			}
 		}
 	}
 	else if (cookie[0] == 'F') {
-		if (cookie[1] == 'I') {
+		if (cookie[1] == 'F') {
 			if (cookie[2] == 'F') {
 				if (cookie[3] == 'F') {
 					if (cookie[4] == '\0') {
-						// found: FIFF depth 9
-						wasm_invoke_fiff (target_func, margs);
+						// found: FFFF depth 9
+						wasm_invoke_ffff (target_func, margs);
 						return;
 					}
 				}
 				else if (cookie[3] == '\0') {
-					// found: FIF depth 9
-					wasm_invoke_fif (target_func, margs);
+					// found: FFF depth 9
+					wasm_invoke_fff (target_func, margs);
 					return;
 				}
 			}
-			else if (cookie[2] == '\0') {
-				// found: FI depth 8
-				wasm_invoke_fi (target_func, margs);
-				return;
-			}
-		}
-		else if (cookie[1] == 'F') {
-			if (cookie[2] == 'F') {
+			else if (cookie[2] == 'I') {
 				if (cookie[3] == '\0') {
-					// found: FFF depth 9
-					wasm_invoke_fff (target_func, margs);
+					// found: FFI depth 9
+					wasm_invoke_ffi (target_func, margs);
 					return;
 				}
 			}
 			else if (cookie[2] == '\0') {
 				// found: FF depth 9
 				wasm_invoke_ff (target_func, margs);
+				return;
+			}
+		}
+		else if (cookie[1] == 'I') {
+			if (cookie[2] == 'F') {
+				if (cookie[3] == 'F') {
+					if (cookie[4] == '\0') {
+						// found: FIFF depth 10
+						wasm_invoke_fiff (target_func, margs);
+						return;
+					}
+				}
+				else if (cookie[3] == '\0') {
+					// found: FIF depth 10
+					wasm_invoke_fif (target_func, margs);
+					return;
+				}
+			}
+			else if (cookie[2] == '\0') {
+				// found: FI depth 9
+				wasm_invoke_fi (target_func, margs);
 				return;
 			}
 		}

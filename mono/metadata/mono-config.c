@@ -15,6 +15,7 @@
 
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/loader.h"
+#include "mono/metadata/loader-internals.h"
 #include "mono/metadata/mono-config.h"
 #include "mono/metadata/mono-config-internals.h"
 #include "mono/metadata/metadata-internals.h"
@@ -288,6 +289,7 @@ arch_matches (const char* arch, const char *value)
 	return found;
 }
 
+#ifndef DISABLE_DLLMAP
 typedef struct {
 	char *dll;
 	char *target;
@@ -342,7 +344,7 @@ dllmap_start (gpointer user_data,
 				info->ignore = TRUE;
 		}
 		if (!info->ignore)
-			mono_dllmap_insert (info->assembly, info->dll, NULL, info->target, NULL);
+			mono_dllmap_insert_internal (info->assembly, info->dll, NULL, info->target, NULL);
 	} else if (strcmp (element_name, "dllentry") == 0) {
 		const char *name = NULL, *target = NULL, *dll = NULL;
 		int ignore = FALSE;
@@ -363,7 +365,7 @@ dllmap_start (gpointer user_data,
 		if (!dll)
 			dll = info->dll;
 		if (!info->ignore && !ignore)
-			mono_dllmap_insert (info->assembly, info->dll, name, dll, target);
+			mono_dllmap_insert_internal (info->assembly, info->dll, name, dll, target);
 	}
 }
 
@@ -386,6 +388,7 @@ dllmap_handler = {
 	NULL, /* end */
 	dllmap_finish
 };
+#endif
 
 static void
 legacyUEP_start (gpointer user_data, 
@@ -468,7 +471,9 @@ mono_config_init (void)
 {
 	inited = 1;
 	config_handlers = g_hash_table_new (g_str_hash, g_str_equal);
+#ifndef DISABLE_DLLMAP
 	g_hash_table_insert (config_handlers, (gpointer) dllmap_handler.element_name, (gpointer) &dllmap_handler);
+#endif
 	g_hash_table_insert (config_handlers, (gpointer) legacyUEP_handler.element_name, (gpointer) &legacyUEP_handler);
 	g_hash_table_insert (config_handlers, (gpointer) aot_cache_handler.element_name, (gpointer) &aot_cache_handler);
 }
@@ -613,7 +618,7 @@ mono_config_for_assembly_internal (MonoImage *assembly)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoConfigParseState state = {NULL};
-	int got_it = 0, i;
+	int i;
 	char *aname, *cfg, *cfg_name;
 	const char *bundled_config;
 	
@@ -629,6 +634,8 @@ mono_config_for_assembly_internal (MonoImage *assembly)
 	mono_config_parse_file_with_context (&state, cfg_name);
 	g_free (cfg_name);
 
+#ifndef DISABLE_CFGDIR_CONFIG
+	int got_it = 0;
 	cfg_name = g_strdup_printf ("%s.config", mono_image_get_name (assembly));
 	const char *cfg_dir = mono_get_config_dir ();
 	if (!cfg_dir) {
@@ -652,6 +659,7 @@ mono_config_for_assembly_internal (MonoImage *assembly)
 			break;
 	}
 	g_free (cfg_name);
+#endif
 }
 
 /**

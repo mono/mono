@@ -50,6 +50,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready();
 			//all sources are sent before runtime ready is sent, nothing to check
 			await insp.Ready ();
 			Assert.True (scripts.ContainsValue ("dotnet://debugger-test.dll/debugger-test.cs"));
@@ -64,6 +65,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 5,
@@ -92,6 +94,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 5,
@@ -114,6 +117,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 5,
@@ -174,6 +178,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 5,
@@ -226,6 +231,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 5,
@@ -272,6 +278,7 @@ namespace DebuggerTests
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
+			await Ready();
 			await insp.Ready (async (cli, token) => {
 				var bp1_req = JObject.FromObject(new {
 					lineNumber = 4,

@@ -10,6 +10,10 @@
  */
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <glib.h>
 #include <mono/metadata/threadpool-io.h>
 
@@ -26,6 +30,7 @@
 #include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/threadpool.h>
+#include <mono/metadata/icall-decl.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-lazy-init.h>
@@ -599,6 +604,7 @@ mono_threadpool_io_cleanup (void)
 	mono_lazy_cleanup (&io_status, cleanup);
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error)
 {
@@ -643,6 +649,7 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_ha
 
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
+#endif
 
 void
 ves_icall_System_IOSelector_Remove (gpointer handle)
@@ -737,3 +744,7 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 }
 
 #endif
+
+#endif /* !ENABLE_NETCORE */
+
+MONO_EMPTY_SOURCE_FILE (threadpool_io);

@@ -837,10 +837,10 @@ namespace System.Windows.Forms {
 			*/
 
 			if (!vscrollbar.Visible) {
-				vscrollbar.Value = 0;
+				vscrollbar.Value = vscrollbar.Minimum;
 			}
 			if (!hscrollbar.Visible) {
-				hscrollbar.Value = 0;
+				hscrollbar.Value = hscrollbar.Minimum;
 			}
 
 			/* Manually setting the size of the thumb should be done before

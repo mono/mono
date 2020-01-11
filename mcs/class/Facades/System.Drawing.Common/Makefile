@@ -13,7 +13,7 @@ KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
+LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS) -d:FEATURE_TYPECONVERTER
 
 ifneq (,$(filter build net_4_x, $(PROFILE)))
 $(error This profile shouldn't build System.Drawing.Common.dll, it already has System.Drawing.dll)

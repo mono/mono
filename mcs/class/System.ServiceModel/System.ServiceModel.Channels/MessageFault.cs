@@ -40,8 +40,9 @@ namespace System.ServiceModel.Channels
 		public static MessageFault CreateFault (Message message, int maxBufferSize)
 		{
 			try {
-				if (message.Version.Envelope == EnvelopeVersion.Soap11)
-					return CreateFault11 (message, maxBufferSize);
+				if (message.Version.Envelope == EnvelopeVersion.Soap11) {
+					return CreateFault11 (message, maxBufferSize);					
+				}
 				else // common to None and SOAP12
 					return CreateFault12 (message, maxBufferSize);
 			} catch (XmlException ex) {
@@ -55,14 +56,14 @@ namespace System.ServiceModel.Channels
 			FaultReason fr = null;
 			string actor = null;
 			XmlDictionaryReader r = message.GetReaderAtBodyContents ();
+			
 			r.ReadStartElement ("Fault", message.Version.Envelope.Namespace);
+			fc = ReadFaultCode11 (r, maxBufferSize);
+
 			r.MoveToContent ();
 
 			while (r.NodeType != XmlNodeType.EndElement) {
-				switch (r.LocalName) {
-				case "faultcode":
-					fc = ReadFaultCode11 (r);
-					break;
+				switch (r.LocalName) {				
 				case "faultstring":
 					fr = new FaultReason (r.ReadElementContentAsString());
 					break;
@@ -128,26 +129,27 @@ namespace System.ServiceModel.Channels
 			return new SimpleMessageFault (fc, fr, false, null, null, null, node);
 		}
 
-		static FaultCode ReadFaultCode11 (XmlDictionaryReader r)
+		// In reference source for soap 1.1, the fault code value is not strictly enforced as per the
+		// Namespaces in XML spec.
+		//
+		// Additionally, the fault sub code is not looked for:
+		//
+		// See: https://referencesource.microsoft.com/#System.ServiceModel/System/ServiceModel/Channels/MessageFault.cs,f23a5298fd999b2d
+		//
+		static FaultCode ReadFaultCode11 (XmlDictionaryReader reader, int maxBufferSize)
 		{
-			FaultCode subcode = null;
-			XmlQualifiedName value = XmlQualifiedName.Empty;
+			FaultCode code;
+			string ns;
+			string name;
 
-			if (r.IsEmptyElement)
-				throw new ArgumentException ("Fault Code is mandatory in SOAP fault message.");
+			reader.ReadStartElement ("faultcode", "");
+			
+			XmlUtil.ReadContentAsQName (reader, out name, out ns);
+			code = new FaultCode (name, ns);
 
-			r.ReadStartElement ("faultcode");
-			r.MoveToContent ();
-			while (r.NodeType != XmlNodeType.EndElement) {
-				if (r.NodeType == XmlNodeType.Element)
-					subcode = ReadFaultCode11 (r);
-				else
-					value = (XmlQualifiedName) r.ReadContentAs (typeof (XmlQualifiedName), r as IXmlNamespaceResolver);
-				r.MoveToContent ();
-			}
-			r.ReadEndElement ();
-
-			return new FaultCode (value.Name, value.Namespace, subcode);
+			reader.ReadEndElement ();
+			
+			return code;
 		}
 
 		static FaultCode ReadFaultCode12 (XmlDictionaryReader r, string ns)

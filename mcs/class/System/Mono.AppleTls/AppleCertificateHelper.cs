@@ -14,9 +14,11 @@ extern alias MonoSecurity;
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Net.Security;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
+using MNS = Mono.Net.Security;
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
 #else
@@ -116,12 +118,12 @@ namespace Mono.AppleTls
 		}
 
 		public static bool InvokeSystemCertificateValidator (
-			ICertificateValidator2 validator, string targetHost, bool serverMode,
+			MNS.ChainValidationHelper validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates,
-			ref MonoSslPolicyErrors errors, ref int status11)
+			ref SslPolicyErrors errors, ref int status11)
 		{
 			if (certificates == null) {
-				errors |= MonoSslPolicyErrors.RemoteCertificateNotAvailable;
+				errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
 				return false;
 			}
 
@@ -150,7 +152,7 @@ namespace Mono.AppleTls
 				if (result == SecTrustResult.Unspecified || result == SecTrustResult.Proceed)
 					return true;
 
-				errors |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
+				errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				return false;
 			}
 		}

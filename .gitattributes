@@ -10,6 +10,7 @@ mkinstalldirs	crlf=input
 *.sources	crlf=input
 .gitattributes	crlf=input
 *akefile*	crlf=input
+m4/mono-output.m4	crlf=input
 
 # ensure native line endings on checkout
 *.c	crlf

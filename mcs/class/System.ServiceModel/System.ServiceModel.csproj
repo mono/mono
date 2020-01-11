@@ -117,6 +117,7 @@
     <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedCollection.cs" />
     <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedKeyedCollection.cs" />
     <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedReadOnlyCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\XmlUtil.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.CodeGeneration\CodeAdd.cs" />
     <Compile Include="Mono.CodeGeneration\CodeAnd.cs" />
