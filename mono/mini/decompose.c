@@ -1588,6 +1588,8 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 					break;
 				case OP_STRLEN:
 					if (ins->prev && ins->prev->opcode == OP_I8CONST) {
+						// Optimize String.get_length for ldstr, e.g.:
+						// "hello".Length => 5
 						mono_domain_lock(cfg->domain);
 						MonoGHashTable* table = cfg->domain->ldstr_table;
 						MonoString* str = (MonoString*)mono_g_hash_table_lookup(table, GUINT_TO_POINTER(ins->prev->data.i8const));
