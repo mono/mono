@@ -1213,7 +1213,7 @@ namespace System.Windows.Forms {
 			if (xic != IntPtr.Zero && have_Xutf8LookupString && xevent.type == XEventName.KeyPress) {
 				do {
 					try {
-						res = Xutf8LookupString (xic, ref xevent, lookup_byte_buffer, 100, out keysym_res,  out status);
+						res = Xutf8LookupString (xic, ref xevent, lookup_byte_buffer, lookup_byte_buffer.Length, out keysym_res,  out status);
 					} catch (EntryPointNotFoundException) {
 						have_Xutf8LookupString = false;
 
