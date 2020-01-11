@@ -1278,11 +1278,13 @@ namespace ExceptionRewriter {
 			TypeDefinition closureTypeDefinition;
 			TypeReference closureTypeReference;
 
-			var fakeThis = new ParameterDefinition ("__this", ParameterAttributes.None, method.DeclaringType);
+			var fakeThis = 
+				? null
+				: new ParameterDefinition ("__this", ParameterAttributes.None, method.DeclaringType);
 
 			var filterReferencedVariables = new HashSet<VariableReference> ();
 			var filterReferencedArguments = new HashSet<ParameterReference> ();
-			CollectReferencedLocals (method, method.IsStatic ? null : fakeThis, filterReferencedVariables, filterReferencedArguments);
+			CollectReferencedLocals (method, fakeThis, filterReferencedVariables, filterReferencedArguments);
 
 			var closure = ConvertToClosure (
 				method, fakeThis, filterReferencedVariables, filterReferencedArguments, 
@@ -1352,6 +1354,8 @@ namespace ExceptionRewriter {
 						};
 
 						var oldIndex = insns.IndexOf (h.Handler.TryStart);
+						if (oldIndex < 0)
+							throw new Exception($"Handler trystart not found in method body: {h.Handler.TryStart}");
 						var nop = Instruction.Create (OpCodes.Nop);
 						insns[oldIndex] = nop;
 						Patch (method, h.Handler.TryStart, insns[oldIndex]);
@@ -1580,22 +1584,22 @@ namespace ExceptionRewriter {
 
 				if (opInsn != null) {
 					if (insns.IndexOf (opInsn) < 0)
-						throw new Exception ($"Branch target {i.Operand} of opcode {i} is missing");
+						throw new Exception ($"Branch target {i.Operand} of opcode {i} is missing for method {method.FullName}");
 					else if (oldMethod != null && oldMethod.Body.Instructions.IndexOf (opInsn) >= 0)
-						throw new Exception ($"Branch target {i.Operand} of opcode {i} is present in old method");
+						throw new Exception ($"Branch target {i.Operand} of opcode {i} is present in old method for method {method.FullName}");
 				} else if (opArg != null) {
 					if ((opArg.Name == "__this") && method.HasThis) {
 						// HACK: method.Body.ThisParameter is unreliable for confusing reasons, and isn't
 						//  present in .Parameters so just ignore the check here
-					} else if (method.Parameters.IndexOf (opArg) < 0)
-						throw new Exception ($"Parameter {opArg.Name} for opcode {i} is missing");
-					else if (oldMethod != null && oldMethod.Parameters.IndexOf (opArg) >= 0)
-						throw new Exception ($"Parameter {opArg.Name} for opcode {i} is present in old method");
+					} else if (method.Parameters.IndexOf (opArg) < 0) {
+						throw new Exception ($"Parameter {opArg.Name} for opcode {i} is missing for method {method.FullName}");
+					} else if (oldMethod != null && oldMethod.Parameters.IndexOf (opArg) >= 0)
+						throw new Exception ($"Parameter {opArg.Name} for opcode {i} is present in old method for method {method.FullName}");
 				} else if (opVar != null) {
 					if (method.Body.Variables.IndexOf (opVar) < 0)
-						throw new Exception ($"Local {opVar} for opcode {i} is missing");
+						throw new Exception ($"Local {opVar} for opcode {i} is missing for method {method.FullName}");
 					else if (oldMethod != null && oldMethod.Body.Variables.IndexOf (opVar) >= 0)
-						throw new Exception ($"Local {opVar} for opcode {i} is present in old method");
+						throw new Exception ($"Local {opVar} for opcode {i} is present in old method for method {method.FullName}");
 				}
 			}
 
@@ -1605,12 +1609,12 @@ namespace ExceptionRewriter {
 			if (verify)
 			foreach (var p in method.Parameters)
 				if (p.Index != method.Parameters.IndexOf (p))
-					throw new Exception ("parameter index mismatch");
+					throw new Exception ($"parameter index mismatch for method {method.FullName}");
 
 			if (verify)
 			foreach (var v in method.Body.Variables)
 				if (v.Index != method.Body.Variables.IndexOf (v))
-					throw new Exception ("variable index mismatch");
+					throw new Exception ($"variable index mismatch for method {method.FullName}");
 		}
 
 		private bool TryRemapInstruction (
