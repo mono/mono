@@ -26,52 +26,53 @@
 
 
 namespace System.Windows.Forms.RTF {
-    internal static class CharsetToCodepage {
-        public static int Translate(CharsetType charset) {
-            switch (charset) {
-                case CharsetType.ANSI:
-                case CharsetType.General:
-                case CharsetType.Arabic_Traditional:
-                case CharsetType.Arabic_user:
-                case CharsetType.Hebrew_user:
-                case CharsetType.Mac: // Technically wrong, because "mac" should actually be quite a few with their own code pages...
-                default:
-                    return 1252;
-                case CharsetType.Symbol:
-                    return 42;
-		        case CharsetType.Shift_Jis:
-                    return 932;
-		        case CharsetType.Hangul:
-                    return 949;
-		        case CharsetType.Johab:
-                    return 1361;
-		        case CharsetType.GB2312:
-                    return 936;
-		        case CharsetType.Big5:
-                    return 950;
-		        case CharsetType.Greek:
-                    return 1253;
-		        case CharsetType.Turkish:
-                    return 1254;
-		        case CharsetType.Vietnamese:
-                    return 1258;
-		        case CharsetType.Hebrew:
-                    return 1255;
-		        case CharsetType.Arabic:
-                    return 1256;
-		        case CharsetType.Baltic:
-                    return 1257;
-		        case CharsetType.Russian:
-                    return 1251;
-		        case CharsetType.Thai:
-                    return 874;
-		        case CharsetType.Eastern_European:
-                    return 1250;
-		        case CharsetType.PC_437:
-                    return 437;
-		        case CharsetType.OEM:
-                    return 850;
-            }
-        }
-    }
+	internal static class CharsetToCodepage {
+		public static int Translate(CharsetType charset)
+		{
+			switch (charset) {
+				case CharsetType.ANSI:
+				case CharsetType.General:
+				case CharsetType.Arabic_Traditional:
+				case CharsetType.Arabic_user:
+				case CharsetType.Hebrew_user:
+				case CharsetType.Mac: // Technically wrong, because "mac" should actually be quite a few with their own code pages...
+				default:
+					return 1252;
+				case CharsetType.Symbol:
+					return 42;
+				case CharsetType.Shift_Jis:
+					return 932;
+				case CharsetType.Hangul:
+					return 949;
+				case CharsetType.Johab:
+					return 1361;
+				case CharsetType.GB2312:
+					return 936;
+				case CharsetType.Big5:
+					return 950;
+				case CharsetType.Greek:
+					return 1253;
+				case CharsetType.Turkish:
+					return 1254;
+				case CharsetType.Vietnamese:
+					return 1258;
+				case CharsetType.Hebrew:
+					return 1255;
+				case CharsetType.Arabic:
+					return 1256;
+				case CharsetType.Baltic:
+					return 1257;
+				case CharsetType.Russian:
+					return 1251;
+				case CharsetType.Thai:
+					return 874;
+				case CharsetType.Eastern_European:
+					return 1250;
+				case CharsetType.PC_437:
+					return 437;
+				case CharsetType.OEM:
+					return 850;
+			}
+		}
+	}
 }

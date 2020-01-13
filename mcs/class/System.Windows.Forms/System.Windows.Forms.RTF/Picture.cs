@@ -128,7 +128,7 @@ namespace System.Windows.Forms.RTF {
 		{
 			if (image == null)
 				image = ToImage ();
-			dc.DrawImage(image, x, y, Width, Height);
+			dc.DrawImage (image, x, y, Width, Height);
 		}
 
 		public Image ToImage ()

@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//	Karl Scowen		<contact@scowencomputers.co.nz>
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -94,10 +94,10 @@ namespace System.Windows.Forms
 			line_no = LineNo;
 			this.ending = ending;
 			tab_stops = new TabStopCollection();
-			
+
 			widths = new float[space + 1];
 
-			
+
 			tags = new LineTag(this, 1);
 			tags.Font = font;
 			tags.Color = color;
@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 					   TabStopCollection tab_stops, bool visible, LineEnding ending) : this(document, ending)
 		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
-			
+
 			text = new StringBuilder (Text, space);
 			line_no = LineNo;
 			this.ending = ending;
@@ -140,10 +140,10 @@ namespace System.Windows.Forms
 			this.tab_stops = tab_stops;
 			this.line_spacing = line_spacing;
 			this.line_spacing_multiple = line_spacing_multiple;
-			
+
 			widths = new float[space + 1];
-			
-			
+
+
 			tags = new LineTag(this, 1);
 			tags.Font = font;
 			tags.Color = color;
@@ -368,7 +368,6 @@ namespace System.Windows.Forms
 				left = count;
 
 				left -= tag.Start + tag.Length - pos - 1;
-				//tag = tag.Next;
 				
 				// Update the start of each tag
 				while ((tag.Next != null) && (left > 0)) {
@@ -635,14 +634,14 @@ namespace System.Windows.Forms
 			}
 
 			if (first_in_para)
-				widths[0] = indent;
+				widths [0] = indent;
 			else
-				widths[0] = indent + hanging_indent;
-			
-			if (widths[0] < 0)
-				widths[0] = 0; // Don't allow a negative indent to take the line to a negative position.
-			
-			widths[0] += document.left_margin;
+				widths [0] = indent + hanging_indent;
+
+			if (widths [0] < 0)
+				widths [0] = 0; // Don't allow a negative indent to take the line to a negative position.
+
+			widths [0] += document.left_margin;
 
 			this.recalc = false;
 			retval = false;
@@ -650,24 +649,23 @@ namespace System.Windows.Forms
 
 			wrap_pos = 0;
 			prev_wrap_pos = 0;
-			
+
 			handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
 
 			while (pos < len) {
-
 				while (tag.Length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					//tag.Ascent = 0;
 					tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 					tag = tag.Next;
 					if (tag.Length != 0 && tag.FontToDisplay != currentFont) {
-						CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+						CheckKerning (g, currentFont, currentFontStart, pos - currentFontStart);
 						currentFont = tag.FontToDisplay;
 						currentFontStart = pos;
 						handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
 					}
 				}
 
-				c = text[pos];
+				c = text [pos];
 
 				// kerning is a problem.  The original code in this method assumed that the
 				// width of a string equals the sum of the widths of its characters.  This is
@@ -686,19 +684,18 @@ namespace System.Windows.Forms
 					// in the else branch.
 					// It doesn't measure /t characters either, we need to add it manually with add_width.
 					size = TextBoxTextRenderer.MeasureText (g, text.ToString (currentFontStart, pos + 1 - currentFontStart), currentFont);
-					newWidth = widths[currentFontStart] + size.Width;
+					newWidth = widths [currentFontStart] + size.Width;
 				}
 				else if (c != '\t') {
-					size = tag.SizeOfPosition(g, pos);
 					size = tag.SizeOfPosition (g, pos);
 					w = size.Width;
 					newWidth = widths[pos] + w;
 				} else {
-					CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+					CheckKerning (g, currentFont, currentFontStart, pos - currentFontStart);
 					currentFontStart = pos + 1; // Don't try handling the tab along with kerned text.
-					
+
 					if (lastTab != null) {
-						ProcessLastTab(lastTab, lastTabPos, pos);
+						ProcessLastTab (lastTab, lastTabPos, pos);
 						lastTab = null;
 					}
 
@@ -706,18 +703,18 @@ namespace System.Windows.Forms
 					w = -1;
 					for (int i = 0; i < tab_stops.Count; i++) {
 						if (tab_stops [i].Position > l) {
-							lastTab = tab_stops[i];
+							lastTab = tab_stops [i];
 							lastTabPos = pos;
-							w = lastTab.GetInitialWidth(this, pos);
+							w = lastTab.GetInitialWidth (this, pos);
 							break;
 						}
 					}
 
 					if (w < 0) {
-						w = tag.SizeOfPosition(g, pos).Width;
+						w = tag.SizeOfPosition (g, pos).Width;
 					}
-					
-					newWidth = widths[pos] + w;
+
+					newWidth = widths [pos] + w;
 				}
 
 				if (doc.Wrap) {
@@ -732,19 +729,20 @@ namespace System.Windows.Forms
 						}
 					}
 
-					if ((newWidth) > (doc.viewport_width - this.right_indent)) {
+					if (newWidth > (doc.viewport_width - this.right_indent)) {
 						LineTag split_tag = null;
 						if (wrap_pos > 0) {
 							// Make sure to set the last width of the line before wrapping
-							widths[pos + 1] = newWidth;
+							widths [pos + 1] = newWidth;
 
-							if (Char.IsWhiteSpace(c)) {
+							if (Char.IsWhiteSpace (c)) {
 								if (wrap_pos > pos) {
-									while (wrap_pos < text.Length && Char.IsWhiteSpace(text[wrap_pos]) && text[wrap_pos] != '\t') {
+									while (wrap_pos < text.Length && Char.IsWhiteSpace (text [wrap_pos]) && text [wrap_pos] != '\t') {
 										wrap_pos++;
 									}
 									pos++;
-									wrapped = true; // don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
+									wrapped = true;
+									// don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
 								}
 							} else  {
 								if (wrap_pos > pos && pos > 0) {
@@ -759,22 +757,23 @@ namespace System.Windows.Forms
 							// No suitable wrap position was found so break right in the middle of a word
 
 							// Make sure to set the last width of the line before wrapping
-							widths[pos + 1] = newWidth;
+							widths [pos + 1] = newWidth;
 
 							split_tag = tag;
 						} // Else don't wrap -- pos == 0, so we'd infinite loop adding blank lines before this.
 
 						if (split_tag != null) {
 							if (lastTab != null) {
-								ProcessLastTab(lastTab, lastTabPos, pos);
+								ProcessLastTab (lastTab, lastTabPos, pos);
 								lastTab = null;
 							}
 
 							while (pos < split_tag.Start)
 								split_tag = split_tag.Previous;
-							// We have to pass Split the correct tag, and that can change if pos is set somewhere before the tag change (e.g. by wrap_pos).
+							// We have to pass Split the correct tag, and that can change if pos
+							// is set somewhere before the tag change (e.g. by wrap_pos).
 
-							doc.Split(this, split_tag, pos);
+							doc.Split (this, split_tag, pos);
 							ending = LineEnding.Wrap;
 							len = this.text.Length;
 
@@ -794,18 +793,21 @@ namespace System.Windows.Forms
 						line = doc.GetLine (this.line_no + 1);
 						do {
 							if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None) &&
-							    (widths[pos] < (doc.viewport_width - this.right_indent) || line.text.Length == 0)) { // Only do this if the line isn't already full, or the next line is empty.
+								(widths[pos] < (doc.viewport_width - this.right_indent) || line.text.Length == 0)) {
 								// Pull the two lines together
+								// Only do this if the line isn't already full, or the next line is empty.
 								var h = this.height; // Back up h, because Combine sets it to zero.
 								doc.Combine (this, line);
 								this.height = h; // And restore it. There's no point starting at the start again.
-								tag = FindTag (pos - 1); // Document.Combine() called Line.Streamline(), so this is necessary in case tag points to one of the tags that got removed.
+								// Document.Combine() called Line.Streamline(), so it is possible tag points a tag that got removed.
+								tag = FindTag (pos - 1); // So make sure we've got the correct tag.
 								len = this.text.Length;
 								line = doc.GetLine (this.line_no + 1);
 								retval = true;
 							}
 						} while ((ending == LineEnding.Wrap || ending == LineEnding.None) && line != null && line.text.Length == 0);
-						// If the next line is empty, do it again (if possible). The amount of room on this line doesn't matter when there's no text being added...
+						// If the next line is empty, do it again (if possible).
+						// The amount of room on this line doesn't matter when there's no text being added...
 					}
 				}
 
@@ -848,7 +850,7 @@ namespace System.Windows.Forms
 					tag = tag.Next;
 					if (tag != null) {
 						if (tag.Length != 0 && tag.FontToDisplay != currentFont) {
-							CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+							CheckKerning (g, currentFont, currentFontStart, pos - currentFontStart);
 							currentFont = tag.FontToDisplay;
 							currentFontStart = pos;
 							handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
@@ -860,11 +862,11 @@ namespace System.Windows.Forms
 			}
 
 			if (pos != currentFontStart) {
-				CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+				CheckKerning (g, currentFont, currentFontStart, pos - currentFontStart);
 			}
 
 			if (lastTab != null) {
-				ProcessLastTab(lastTab, lastTabPos, pos);
+				ProcessLastTab (lastTab, lastTabPos, pos);
 				lastTab = null;
 			}
 
@@ -883,23 +885,25 @@ namespace System.Windows.Forms
 			this.height = (int)(this.LineSpacing + this.TotalParagraphSpacing);
 
 			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent ||
-				Math.Abs(prev_spacing_before - this.SpacingBefore) > document.dpi / 1440f)
+				Math.Abs (prev_spacing_before - this.SpacingBefore) > document.Dpi / 1440f)
 				retval = true;
 
 			return retval;
 		}
 
-		private void ProcessLastTab(TabStop tab, int tab_pos, int pos) {
+		private void ProcessLastTab (TabStop tab, int tab_pos, int pos)
+		{
 			float prevTabRight = widths[tab_pos + 1];
-			float tabRight = tab.CalculateRight(this, tab_pos);
+			float tabRight = tab.CalculateRight (this, tab_pos);
 			float change = tabRight - prevTabRight;
 
 			for (int i = tab_pos + 1; i <= pos; i++) {
 				widths[i] += change;
 			}
 		}
-		
-		private void CheckKerning(Graphics g, Font font, int start, int length) {
+
+		private void CheckKerning (Graphics g, Font font, int start, int length)
+		{
 			if (length > 1) {
 				if (!kerning_fonts.ContainsKey (font.GetHashCode ())) {
 					// Check whether kerning takes place for this string and font.
@@ -961,39 +965,41 @@ namespace System.Windows.Forms
 			return ret;
 		}
 
-		internal void CalculateAlignment() {
-            var alignmentWidth = document.ViewPortWidth - document.left_margin - document.right_margin;
-			var alignmentLineWidth = GetAlignmentLineWidth();
+		internal void CalculateAlignment ()
+		{
+			var alignmentWidth = document.ViewPortWidth - document.left_margin - document.right_margin;
+			var alignmentLineWidth = GetAlignmentLineWidth ();
 
-            switch (alignment) {
+			switch (alignment) {
 			case HorizontalAlignment.Left:
 				align_shift = 0;
 				break;
 			case HorizontalAlignment.Center:
-                    align_shift = (alignmentWidth - alignmentLineWidth) / 2;
+				align_shift = (alignmentWidth - alignmentLineWidth) / 2;
 				break;
 			case HorizontalAlignment.Right:
-                    align_shift = alignmentWidth - alignmentLineWidth;
+				align_shift = alignmentWidth - alignmentLineWidth;
 				break;
 			}
 
-			align_shift = Math.Max(align_shift, 0); // Don't allow negative shifts.
+			align_shift = Math.Max (align_shift, 0); // Don't allow negative shifts.
 		}
 
-		private int GetAlignmentLineWidth() {
+		private int GetAlignmentLineWidth ()
+		{
 			int last = text.Length - 1;
 			if (last < 0)
 				return 0;
-			
-			char c = text[last];
-			while (last > 0 && Char.IsWhiteSpace(c) && c != '\t' && c != '\u00A0') {
-				c = text[--last];
+
+			char c = text [last];
+			while (last > 0 && Char.IsWhiteSpace (c) && c != '\t' && c != '\u00A0') {
+				c = text [--last];
 			}
 			// widths[0] has both the left margin and the left indents.
 			// Remove the margin (it is part of the viewport) and add the right indents (part of the line width, for alignment purposes).
-			return (int)(widths[last + 1] - document.left_margin + Math.Max(right_indent, 0));
+			return (int)(widths [last + 1] - document.left_margin + Math.Max (right_indent, 0));
 		}
-		
+
 		internal void Streamline (int lines)
 		{
 			LineTag current;

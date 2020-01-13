@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//	Karl Scowen		<contact@scowencomputers.co.nz>
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -123,7 +123,7 @@ namespace System.Windows.Forms
 				if (TextPosition != TextPositioning.Normal) {
 					if (small_font == null)
 						small_font = new Font (font.FontFamily, font.Size * 0.583F, font.Style);
-				
+
 					if (IsLink)
 						return new Font (small_font, font.Style | FontStyle.Underline);
 					else
@@ -144,9 +144,9 @@ namespace System.Windows.Forms
 	
 					height = Font.Height;
 					XplatUI.GetFontMetrics (Hwnd.GraphicsContext, Font, out ascent, out descent);
-					float scale_factor = font.GetHeight() / font.FontFamily.GetLineSpacing(font.Style);
-					ascent = (int) Math.Ceiling(ascent * scale_factor);
-					descent = (int) Math.Ceiling(descent * scale_factor);
+					float scale_factor = font.GetHeight () / font.FontFamily.GetLineSpacing (font.Style);
+					ascent = (int) Math.Ceiling (ascent * scale_factor);
+					descent = (int) Math.Ceiling (descent * scale_factor);
 					line.recalc = true;
 				}
 			}
@@ -552,7 +552,7 @@ namespace System.Windows.Forms
 
 			// Break the tag if needed -- we don't need to break for the start if we're starting at its start.
 			if (start_tag.Start != formatStart)
-				tag = start_tag.Break(formatStart);
+				tag = start_tag.Break (formatStart);
 			else
 				tag = start_tag;
 
@@ -630,7 +630,7 @@ namespace System.Windows.Forms
 					high = mid;
 			}
 
-			char_mid = (line.widths[high] + line.widths[low]) / 2;
+			char_mid = (line.widths [high] + line.widths [low]) / 2;
 
 			if (x >= char_mid)
 				return high;
@@ -703,12 +703,12 @@ namespace System.Windows.Forms
 				TabStopCollection stops = line.tab_stops;
 				float tabPos;
 				for (int i = 0; i < stops.Count; i++) {
-					tabPos = stops[i].Position;
+					tabPos = stops [i].Position;
 					if (tabPos >= left) {
 						if (tabPos <= line.document.viewport_width - line.RightIndent)
 							break; // Can't use tabs that are past the end of the line.
-						
-						right = stops [i].CalculateRight(line, pos);
+
+						right = stops [i].CalculateRight (line, pos);
 						break;
 					}
 				}
@@ -722,7 +722,7 @@ namespace System.Windows.Forms
 			case 13:
 				return TextBoxTextRenderer.MeasureText (dc, "\u000D", FontToDisplay);
 			}
-			
+
 			return TextBoxTextRenderer.MeasureText (dc, text, FontToDisplay);
 		}
 

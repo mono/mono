@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -116,7 +117,7 @@ namespace System.Windows.Forms
 			current_link = null;
 			show_caret_w_selection = (this is TextBox);
 			document = new Document(this);
-			document.SizeChanged += new EventHandler<Document.SizeChangedEventArgs>(document_SizeChanged);
+			document.SizeChanged += new EventHandler<Document.SizeChangedEventArgs> (document_SizeChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = false;
 			click_last = DateTime.Now;
@@ -297,7 +298,7 @@ namespace System.Windows.Forms
 				if (value == actual_border_style)
 					return;
 
-				Invalidate();
+				Invalidate ();
 
 				actual_border_style = value;
 				document.UpdateMargins ();
@@ -618,7 +619,7 @@ namespace System.Windows.Forms
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine (i);
 					if (i == document.Lines)
-						sb.Append(line.TextWithoutEnding());
+						sb.Append(line.TextWithoutEnding ());
 					else
 						sb.Append(line.text.ToString ());
 				}
@@ -2048,7 +2049,7 @@ namespace System.Windows.Forms
 		internal bool CalculateScrollBars ()
 		{
 			var old_canvas_width = canvas_width;
-			
+
 			SizeControls ();
 
 			if (document.Width > document.ViewPortWidth) {
@@ -2119,9 +2120,9 @@ namespace System.Windows.Forms
 
 		private void document_SizeChanged (object sender, Document.SizeChangedEventArgs e)
 		{
-			var canvas_width_changed = CalculateScrollBars();
+			var canvas_width_changed = CalculateScrollBars ();
 			if (e.HeightChanged && canvas_width_changed)
-				CalculateDocument(); // Viewport has changed due to the document change, update the document.
+				CalculateDocument (); // Viewport has changed due to the document change, update the document.
 			// TODO: technically the opposite situation could happen too, where a document width change causes a change in canvas height.
 		}
 
@@ -2335,15 +2336,15 @@ namespace System.Windows.Forms
 
 			// Check if we moved out of view to the right
 			if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
-                int newVal;
+				int newVal;
 				if (Multiline) {
 					newVal = pos.X - document.ViewPortWidth + 1;
 				} else {
 					newVal = pos.X - document.ViewPortWidth * 2 / 3 + 1;
 				}
-                if (newVal <= hscroll.Maximum - document.ViewPortWidth + 1) {
+				if (newVal <= hscroll.Maximum - document.ViewPortWidth + 1) {
 					if (newVal >= 0) {
-                        hscroll.SafeValueSet (newVal);
+						hscroll.SafeValueSet (newVal);
 					} else {
 						hscroll.Value = 0;
 					}

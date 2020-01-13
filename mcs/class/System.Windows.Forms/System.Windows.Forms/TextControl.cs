@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//	Karl Scowen		<contact@scowencomputers.co.nz>
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -415,7 +415,7 @@ namespace System.Windows.Forms {
 
 		internal int Length {
 			get {
-				var lastLine = GetLine(lines);
+				var lastLine = GetLine (lines);
 				return char_count - LineEndingLength (lastLine.ending);
 			}
 		}
@@ -699,13 +699,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void IncrementLines(int line_no) {
-			/*int	current;
-
-			current = this.lines;
-			while (current >= line_no) {
-				GetLine(current).line_no++;
-				current--;
-			}*/
 			foreach (var line in TransverseLines(this.lines, line_no)) {
 				line.line_no++;
 			}
@@ -1405,8 +1398,9 @@ namespace System.Windows.Forms {
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
-		void SetCaretPos() {
-			XplatUI.SetCaretPos(owner.Handle,
+		void SetCaretPos ()
+		{
+			XplatUI.SetCaretPos (owner.Handle,
 				(int)Math.Min(offset_x + caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x,
 					viewport_width - caret.tag.Line.right_indent - caret_width), // Limit X, because whitespace can be outside this.
 				(int)(offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
@@ -1491,13 +1485,11 @@ namespace System.Windows.Forms {
 					goto case CaretDirection.CharBack;
 				case CaretDirection.CharBack: {
 					if (caret.pos > 0) {
-						caret.pos--; // folded into the if below
+						caret.pos--;
 						
-						//if (--caret.pos > 0) {
 						if (caret.tag.Start > caret.pos && caret.tag.Previous != null) {
 							caret.tag = caret.tag.Previous;
 						}
-						//}
 					} else {
 						if (caret.line.line_no > 1 && !nowrap) {
 							caret.line = GetLine(caret.line.line_no - 1);
@@ -1736,8 +1728,10 @@ namespace System.Windows.Forms {
 
 				LineTag tag = line.tags;
 				while (tag != null) {
-					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}' position='{5}' charoffset='{6}' x='{7}' width='{8}' height='{11}' ascent='{9}' descent='{10}'>",
-						tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color, tag.TextPosition, tag.CharOffset, tag.X, tag.Width, tag.Ascent, tag.Descent, tag.MaxHeight());
+					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}' position='{5}' " +
+						"charoffset='{6}' x='{7}' width='{8}' height='{11}' ascent='{9}' descent='{10}'>",
+						tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color, tag.TextPosition,
+						tag.CharOffset, tag.X, tag.Width, tag.Ascent, tag.Descent, tag.MaxHeight());
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.Next;
@@ -1853,8 +1847,8 @@ namespace System.Windows.Forms {
 					} else if (multiline) {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
-								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, line_y - line.SpacingBefore,
-						        line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], line.height);
+							offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, line_y - line.SpacingBefore,
+							line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], line.height);
 					}
 				}
 
@@ -1904,7 +1898,7 @@ namespace System.Windows.Forms {
 						}
 
 						if (current_backcolor != Color.Empty && current_backcolor != owner.BackColor) {
-							g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (current_backcolor), 
+							g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (current_backcolor),
 							    offset_x + line.widths [old_tag_pos - 1] + line.X - viewport_x,
 							    line_y - line.SpacingBefore,
 							    line.widths [Math.Min (tag.Start + tag.Length, tag_pos) - 1] - line.widths [old_tag_pos - 1],
@@ -2611,8 +2605,8 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
 		                   TextPositioning text_position, float char_offset, float left_indent, float hanging_indent,
-						   float right_indent, float spacing_before, float spacing_after, float line_spacing,
-						   bool line_spacing_multiple, TabStopCollection tab_stops, bool visible, LineEnding ending)
+		                   float right_indent, float spacing_before, float spacing_after, float line_spacing,
+		                   bool line_spacing_multiple, TabStopCollection tab_stops, bool visible, LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -2625,7 +2619,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentNullException("Text", "Cannot insert NULL line");
 				}
 			}
-			
+
 			CharCount += Text.Length;
 
 			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position, char_offset, left_indent,
@@ -3531,7 +3525,8 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		internal IEnumerable<Line> TransverseLines(int start, int end) {
+		internal IEnumerable<Line> TransverseLines (int start, int end)
+		{
 			Line l, c, r, prev = null;
 			bool r2l = start > end;
 			int number;
@@ -3859,7 +3854,7 @@ namespace System.Windows.Forms {
 					new_width = (int)Math.Ceiling(line.widths[line.text.Length]);
 				}
 
-				line.CalculateAlignment();
+				line.CalculateAlignment ();
 
 				if (multiline)
 					offset += line.height;
@@ -3884,10 +3879,10 @@ namespace System.Windows.Forms {
 			}
 
 			if (height_changed || width_changed) {
-				SizeChanged?.Invoke(this, new SizeChangedEventArgs(height_changed));
+				SizeChanged?.Invoke (this, new SizeChangedEventArgs(height_changed));
 			}
 
-			RecalculateAlignments();
+			RecalculateAlignments ();
 
 			// scan for links and tell us if its all
 			// changed, so we can update everything
@@ -4206,7 +4201,8 @@ namespace System.Windows.Forms {
 		internal class SizeChangedEventArgs : EventArgs {
 			public bool HeightChanged { get; }
 
-			public SizeChangedEventArgs(bool HeightChanged) {
+			public SizeChangedEventArgs (bool HeightChanged)
+			{
 				this.HeightChanged = HeightChanged;
 			}
 		}
@@ -4295,9 +4291,9 @@ namespace System.Windows.Forms {
 		{
 			Draw (dc, color, xoff, y, start, end);
 			if (measureText && Visible) {
-				measuredText = new Rectangle(Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
+				measuredText = new Rectangle (Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
 			} else {
-				measuredText = new Rectangle();
+				measuredText = new Rectangle ();
 			}
 		}
 

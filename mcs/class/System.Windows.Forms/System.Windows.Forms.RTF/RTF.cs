@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
+//  Karl Scowen		<contact@scowencomputers.co.nz>
 //
 
 // COMPLETE
@@ -60,7 +61,6 @@ namespace System.Windows.Forms.RTF {
 
 		private char		prev_char;
 		private bool		bump_line;
-		
 		private Stack		charset_stack;
 
 		private Style		styles;
@@ -385,7 +385,7 @@ SkipCRLF:
 							encoding = null;
 						}
 					} else {
-						var cp = CharsetToCodepage.Translate(fp.Charset);
+						var cp = CharsetToCodepage.Translate (fp.Charset);
 						if (cp != 0 && cp != encoding_code_page) {
 							encoding_code_page = cp;
 							encoding = null;
@@ -677,7 +677,7 @@ SkipCRLF:
 				string untaggedName = null;
 
 				while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && depth >= 0) {
-					if (rtf.rtf_class == TokenClass.Control) { 
+					if (rtf.rtf_class == TokenClass.Control) {
 						switch(rtf.major) {
 							case Major.FontFamily: {
 								font.Family = (int)rtf.minor;
@@ -736,16 +736,16 @@ SkipCRLF:
 							case Major.Destination: {
 								switch (rtf.minor) {
 									case Minor.FontName:
-										untaggedName = ReadFontName(rtf);
+										untaggedName = ReadFontName (rtf);
 										break;
 
 									case Minor.FontAltName:
-										font.AltName = ReadFontName(rtf);
+										font.AltName = ReadFontName (rtf);
 										break;
 
 									default: {
 										#if RTF_DEBUG
-											Console.WriteLine("Got unhandled Control.Destination.Minor: " + rtf.minor);
+											Console.WriteLine ("Got unhandled Control.Destination.Minor: " + rtf.minor);
 										#endif
 										break;
 									}
@@ -765,16 +765,16 @@ SkipCRLF:
 					} else if (rtf.CheckCM(TokenClass.Group, Major.EndGroup)) {
 						depth--;
 					} else if (rtf.rtf_class == TokenClass.Text)
-                    {
-                        font.Name = ReadFontName(rtf);
-                        continue;
+					{
+						font.Name = ReadFontName (rtf);
+						continue;
 #if RTF_DEBUG
 					} else {
 						Console.WriteLine("ReadFontTbl: Unknown token " + rtf.text_buffer);
 #endif
-                    }
+					}
 
-                    rtf.GetToken();
+					rtf.GetToken();
 				}
 
 				if (untaggedName != null)
@@ -800,28 +800,27 @@ SkipCRLF:
 			rtf.RouteToken();
 		}
 
-        private static String ReadFontName(RTF rtf)
-        {
-            StringBuilder sb = new StringBuilder();
+		private static String ReadFontName(RTF rtf)
+		{
+			StringBuilder sb = new StringBuilder ();
 
 			while (rtf.rtf_class != TokenClass.EOF && rtf.rtf_class != TokenClass.Text)
-				rtf.GetToken();
+				rtf.GetToken ();
 
-            while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup)) && (!rtf.CheckCM(TokenClass.Group, Major.BeginGroup)))
-            {
-				sb.Append((char)rtf.major);
-				rtf.GetToken();
-            }
+			while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM (TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup)) &&
+				(!rtf.CheckCM (TokenClass.Group, Major.BeginGroup))) {
+				sb.Append ((char)rtf.major);
+				rtf.GetToken ();
+			}
 
-            if (rtf.CheckCM(TokenClass.Group, Major.EndGroup))
-            {
-                rtf.UngetToken();
-            }
+			if (rtf.CheckCM (TokenClass.Group, Major.EndGroup)) {
+				rtf.UngetToken();
+			}
 
-            return sb.ToString();
-        }
+			return sb.ToString ();
+		}
 
-        private void ReadColorTbl(RTF rtf) {
+		private void ReadColorTbl(RTF rtf) {
 			Color	color;
 			int	num;
 
@@ -1088,10 +1087,10 @@ SkipCRLF:
 		private void ReadObjGroup (RTF rtf)
 		{
 			int level;
-			
+
 			level = 1;
-			
-			while (GetToken() != TokenClass.EOF && this.minor != Minor.ObjResult) {
+
+			while (GetToken () != TokenClass.EOF && this.minor != Minor.ObjResult) {
 				if (rtf_class == TokenClass.Group) {
 					if (this.major == Major.BeginGroup) {
 						level++;
@@ -1114,4 +1113,4 @@ SkipCRLF:
 		}
 		#endregion	// Default Delegates
 	}
-}
+	}
