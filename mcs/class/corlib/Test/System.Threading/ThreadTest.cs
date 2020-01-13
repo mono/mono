@@ -1313,6 +1313,9 @@ namespace MonoTests.System.Threading
 			Thread.VolatileWrite (ref v3, double.MaxValue);
 			Assert.AreEqual (v3, double.MaxValue);
 
+			object o = "ABC";
+			Assert.AreEqual ("ABC", Thread.VolatileRead (ref o));
+
 			float v4 = 1;
 			Thread.VolatileWrite (ref v4, float.MaxValue);
 			Assert.AreEqual (v4, float.MaxValue);
