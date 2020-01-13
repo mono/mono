@@ -106,6 +106,7 @@ static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
 
 char *stats_method_name = NULL;
+MonoStatsDumpPoint mono_stats_dump_point;
 
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
@@ -4745,10 +4746,28 @@ print_jit_stats (void)
 	}
 }
 
+void print_stats_header (MonoStatsDumpPoint program_point) {
+	printf ("--------------------------------------------------------------------------------\n");
+	switch (program_point) {
+		case MONO_STATS_DUMP_STARTUP:
+			if (!stats_method_name) {
+				fprintf (stderr, "Attempting to dump stats for invalid method\n");
+				exit (1);
+			}
+			printf ("> Dumping stats for method: %s\n", stats_method_name);
+			break;
+		case MONO_STATS_DUMP_SHUTDOWN:
+			printf ("> Dumping stats at shutdown\n");
+			break;
+	}
+	printf ("--------------------------------------------------------------------------------\n");
+}
+
 #ifdef DISABLE_CLEANUP
 void
 mini_cleanup (MonoDomain *domain)
 {
+	print_stats_header (MONO_STATS_DUMP_SHUTDOWN);
 	print_jit_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
@@ -4773,6 +4792,7 @@ mini_cleanup (MonoDomain *domain)
 	mono_domain_finalize (domain, 2000);
 #endif
 
+	print_stats_header (MONO_STATS_DUMP_SHUTDOWN);
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
 

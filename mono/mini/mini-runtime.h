@@ -382,6 +382,13 @@ extern GSList *mono_interp_only_classes;
 extern char *sdb_options;
 extern char *stats_method_name;
 
+typedef enum {
+	MONO_STATS_DUMP_STARTUP,
+	MONO_STATS_DUMP_SHUTDOWN,
+} MonoStatsDumpPoint;
+
+void print_stats_header (MonoStatsDumpPoint program_point);
+
 /*
 This struct describes what execution engine feature to use.
 This subsume, and will eventually sunset, mono_aot_only / mono_llvm_only and friends.
