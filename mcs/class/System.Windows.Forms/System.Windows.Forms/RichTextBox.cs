@@ -2230,13 +2230,12 @@ namespace System.Windows.Forms {
 			if (rtf_section_stack != null)
 				rtf_section_stack.Clear();
 
-			CalculateScrollBars();
 			if (IsHandleCreated) {
+				CalculateScrollBars ();
 				using (var graphics = CreateGraphics())
 					document.RecalculateDocument(graphics, cursor_y, document.Lines, false);
 				document.ResumeRecalc (true);
-			//document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
-			document.InvalidateLinesAfter(document.GetLine(cursor_y));
+				document.InvalidateLinesAfter(document.GetLine(cursor_y));
 			} else {
 				document.ResumeRecalc (false);
 			}
