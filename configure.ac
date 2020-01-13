@@ -4741,17 +4741,31 @@ esac
 
 case "$TARGET" in
 *32* | ARM | X86 | POWERPC | MIPS | SPARC | WASM | ARM6432)
-    AC_DEFINE([MONO_HOST32], [1], [Target is 32bit])
-    AC_DEFINE([MONO_HOST64], [0], [Target is not 64bits])
+    AC_DEFINE([MONO_TARGET32], [1], [Target is 32bit])
+    AC_DEFINE([MONO_TARGET64], [0], [Target is not 64bits])
     target_sizeof_void_p=4
     ;;
 *64* | S390X)
-    AC_DEFINE([MONO_HOST32], [0], [Target is not 32bit])
-    AC_DEFINE([MONO_HOST64], [1], [Target is 64bits])
+    AC_DEFINE([MONO_TARGET32], [0], [Target is not 32bit])
+    AC_DEFINE([MONO_TARGET64], [1], [Target is 64bits])
     target_sizeof_void_p=8
     ;;
 *)
-    AC_MSG_ERROR([unknown target])
+    AC_MSG_ERROR([Unable to determine if target is 32bit or 64bit.])
+    ;;
+esac
+
+case "$HOST" in
+*32* | ARM | X86 | POWERPC | MIPS | SPARC | WASM | ARM6432)
+    AC_DEFINE([MONO_HOST32], [1], [Host is 32bit])
+    AC_DEFINE([MONO_HOST64], [0], [Host is not 64bits])
+    ;;
+*64* | S390X)
+    AC_DEFINE([MONO_HOST32], [0], [Host is not 32bit])
+    AC_DEFINE([MONO_HOST64], [1], [Host is 64bits])
+    ;;
+*)
+    AC_MSG_ERROR([Unable to determine if host is 32bit or 64bit.])
     ;;
 esac
 
