@@ -387,7 +387,7 @@ typedef enum {
 	MONO_STATS_DUMP_SHUTDOWN,
 } MonoStatsDumpPoint;
 
-void print_stats_header (MonoStatsDumpPoint program_point);
+static void print_stats_header (MonoStatsDumpPoint program_point);
 
 /*
 This struct describes what execution engine feature to use.

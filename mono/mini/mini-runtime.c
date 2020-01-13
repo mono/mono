@@ -4746,7 +4746,7 @@ print_jit_stats (void)
 	}
 }
 
-void print_stats_header (MonoStatsDumpPoint program_point) {
+static void print_stats_header (MonoStatsDumpPoint program_point) {
 	printf ("--------------------------------------------------------------------------------\n");
 	switch (program_point) {
 		case MONO_STATS_DUMP_STARTUP:
