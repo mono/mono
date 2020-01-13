@@ -106,7 +106,6 @@ static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
 
 char *stats_method_name = NULL;
-MonoStatsDumpPoint mono_stats_dump_point;
 
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
