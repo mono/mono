@@ -20,8 +20,10 @@ m4/mono-output.m4	crlf=input
 *.sln		crlf
 *.*proj*	crlf
 
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
 # don't do anything to line-endings.  Let CRLFs/LFs go into the repo, and CRLF/LFs on checkout
-*.bat		-crlf
 *.xml 		-crlf
 
 # CRLF Handling
