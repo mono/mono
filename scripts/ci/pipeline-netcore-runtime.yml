@@ -120,6 +120,11 @@ stages:
             if [ $(llvm) = true ]; then
               make -C netcore run-tests-corefx-System.Runtime.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
               make -C netcore run-tests-corefx-System.Runtime.Extensions.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Runtime.Numerics.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Numerics.Vectors.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Memory.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-corefx-System.Buffers.Tests USE_TIMEOUT=1 XUNIT_MONO_ENV_OPTIONS="--llvm"
+              make -C netcore run-tests-mono MONO_ENV_OPTIONS="--llvm"
             elif [ $(interpreter) = true ]; then
               ./netcore/build.sh --ci --test --skipnative --skipmscorlib --interpreter
             else
