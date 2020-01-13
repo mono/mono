@@ -135,6 +135,9 @@ namespace System.Windows.Forms {
 		// Last window containing the pointer
 		static IntPtr		LastPointerWindow;	// The last window containing the pointer
 
+		// Shape extension
+		bool? hasShapeExtension;
+
 		// Our atoms
 		static IntPtr WM_PROTOCOLS;
 		static IntPtr WM_DELETE_WINDOW;
@@ -1482,7 +1485,7 @@ namespace System.Windows.Forms {
 		}
 
 		int NextTimeout (ArrayList timers, DateTime now) {
-			int timeout = 0; 
+			int timeout = int.MaxValue; 
 
 			foreach (Timer timer in timers) {
 				int next = (int) (timer.Expires - now).TotalMilliseconds;
@@ -5562,6 +5565,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool HasShapeExtension {
+			get {
+				if (!hasShapeExtension.HasValue) {
+					try {
+						hasShapeExtension = XShapeQueryExtension(DisplayHandle, out _, out _);
+					} catch {
+						hasShapeExtension = false;
+					}
+				}
+				
+				return hasShapeExtension.Value;
+			}
+		}
+
+		internal override bool UserClipWontExposeParent {
+			get {
+				return !HasShapeExtension;
+			}
+		}
+
 		internal override void SetClipRegion(IntPtr handle, Region region)
 		{
 			Hwnd	hwnd;
@@ -5571,7 +5594,33 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			hwnd.UserClip = region;
+			if (hwnd.UserClip != region) {
+				hwnd.UserClip = region;
+
+				if (!HasShapeExtension)
+					return;
+
+				XRectangle[] rects = null;;
+				if (region == null) {
+					rects = new XRectangle[1];
+					rects[0].X = 0;
+					rects[0].Y = 0;
+					rects[0].Width = (ushort)hwnd.Width;
+					rects[0].Height = (ushort)hwnd.Height;
+				} else {
+					RectangleF[] scans;
+					using (var m = new Matrix())
+						scans = region.GetRegionScans(m);
+					rects = new XRectangle[scans.Length];
+					for (int i = 0; i < scans.Length; i++) {
+						rects[i].X = (short) Math.Clamp(scans[i].X, short.MinValue, short.MaxValue);
+						rects[i].Y = (short) Math.Clamp(scans[i].Y, short.MinValue, short.MaxValue);
+						rects[i].Width = (ushort) Math.Clamp(scans[i].Width, ushort.MinValue, ushort.MaxValue);
+						rects[i].Height = (ushort) Math.Clamp(scans[i].Height, ushort.MinValue, ushort.MaxValue);
+					}
+				}
+				XShapeCombineRectangles(DisplayHandle, hwnd.WholeWindow, XShapeKind.ShapeBounding, 0, 0, rects, rects.Length, XShapeOperation.ShapeSet, XOrdering.Unsorted);
+			}
 		}
 
 		internal override void SetCursor(IntPtr handle, IntPtr cursor)
@@ -7242,6 +7291,22 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Shape extension imports
+		[DllImport("libXext", EntryPoint="XShapeQueryExtension")]
+		internal extern static bool _XShapeQueryExtension(IntPtr display, out int event_base, out int error_base);
+		internal static bool XShapeQueryExtension(IntPtr display, out int event_base, out int error_base) {
+			DebugHelper.TraceWriteLine (nameof(XShapeQueryExtension));
+			return _XShapeQueryExtension(display, out event_base, out error_base);
+		}
+
+		[DllImport("libXext", EntryPoint="XShapeCombineRectangles")]
+		internal extern static void _XShapeCombineRectangles(IntPtr display, IntPtr window, XShapeKind dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, XShapeOperation op, XOrdering ordering);
+		internal static void XShapeCombineRectangles(IntPtr display, IntPtr window, int dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, int op, int ordering) {
+			DebugHelper.TraceWriteLine (nameof(XShapeCombineRectangles));
+			_XShapeCombineRectangles(display, window, dest_kind, x_off, y_off, rectangles, n_rects, op, ordering);
+		}
+#endregion
+
 #region Xinerama imports
 		[DllImport ("libXinerama", EntryPoint="XineramaQueryScreens")]
 		extern static IntPtr _XineramaQueryScreens (IntPtr display, out int number);
@@ -7640,6 +7705,13 @@ namespace System.Windows.Forms {
 		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
 #endregion
 
+#region Shape extension imports
+		[DllImport("libXext")]
+		internal extern static bool XShapeQueryExtension(IntPtr display, out int event_base, out int error_base);
+
+		[DllImport("libXext")]
+		internal extern static void XShapeCombineRectangles(IntPtr display, IntPtr window, XShapeKind dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, XShapeOperation op, XOrdering ordering);
+#endregion
 
 #region Xinerama imports
 		[DllImport ("libXinerama")]
