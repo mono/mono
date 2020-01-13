@@ -217,7 +217,7 @@ namespace System.Windows.Forms
 				if (line_spacing < 0) {
 					return -line_spacing;
 				} else if (line_spacing_multiple) {
-					return line_spacing * textHeight * 6f / document.dpi;
+					return line_spacing * textHeight * 6f / document.Dpi;
 				} else {
 					return Math.Max(line_spacing, textHeight);
 				}

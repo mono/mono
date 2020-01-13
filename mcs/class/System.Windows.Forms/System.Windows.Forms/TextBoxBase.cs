@@ -166,8 +166,6 @@ namespace System.Windows.Forms
 
 			Cursor = Cursors.IBeam;
 
-			using (Graphics g = CreateGraphics())
-				document.dpi = (g.DpiX + g.DpiY) / 2;
 			requested_height = Height;
 
 			can_cache_preferred_size = true;

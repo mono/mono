@@ -1883,7 +1883,7 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.TabPos:
-					float tabPos = ((float)rtf.Param / 1440.0F) * document.dpi;
+					float tabPos = ((float)rtf.Param / 1440.0F) * document.Dpi;
 					if (rtf_style.rtf_par_next_tab_stop != null) {
 						rtf_style.rtf_par_next_tab_stop.Position = tabPos;
 						rtf_style.rtf_par_tab_stops.Add (rtf_style.rtf_par_next_tab_stop);
@@ -1894,15 +1894,15 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.LeftIndent:
-					rtf_style.rtf_par_line_left_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_line_left_indent = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.FirstIndent:
-					rtf_style.rtf_par_first_line_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_first_line_indent = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.RightIndent:
-					rtf_style.rtf_par_line_right_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_line_right_indent = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.QuadCenter:
@@ -1926,15 +1926,15 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.SpaceAfter:
-					rtf_style.rtf_par_spacing_after = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_spacing_after = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.SpaceBefore:
-					rtf_style.rtf_par_spacing_before = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_spacing_before = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.SpaceBetween:
-					rtf_style.rtf_par_line_spacing = ((float) rtf.Param / 1440.0F) * document.dpi;
+					rtf_style.rtf_par_line_spacing = ((float) rtf.Param / 1440.0F) * document.Dpi;
 					break;
 
 				case RTF.Minor.SpaceMultiply:
@@ -2437,8 +2437,8 @@ namespace System.Windows.Forms {
 				} else if (tab is RightTabStop) {
 					sb.Append ("\\tqr");
 				}
-				sb.Append("\\tx");
-				sb.Append(Int(tab.Position / document.dpi * 1440f));
+				sb.Append ("\\tx");
+				sb.Append (Int (tab.Position / document.Dpi * 1440f));
 			}
 		}
 
@@ -2542,7 +2542,7 @@ namespace System.Windows.Forms {
 			int		length;
 			float 	ppt; // pixels per twip
 
-			ppt = document.dpi / 1440f; // 1 twip = 1/20 point, 1 point = 1/72 inch, thus 1440 twips = 1 inch.
+			ppt = document.Dpi / 1440f; // 1 twip = 1/20 point, 1 point = 1/72 inch, thus 1440 twips = 1 inch.
 			emit_defaults = false;
 
 			sb = new StringBuilder();
@@ -2819,10 +2819,10 @@ namespace System.Windows.Forms {
 						char_offset = tag.CharOffset;
 						if (char_offset >= 0) {
 							sb.Append("\\up");
-							sb.Append(Int((char_offset / document.dpi) * 144));
+							sb.Append(Int((char_offset / document.Dpi) * 144));
 						} else {
 							sb.Append("\\dn");
-							sb.Append(-Int((char_offset / document.dpi) * 144));
+							sb.Append(-Int((char_offset / document.Dpi) * 144));
 						}
 					}
 

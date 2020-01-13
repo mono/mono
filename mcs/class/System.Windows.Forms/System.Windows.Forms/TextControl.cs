@@ -316,6 +316,15 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Internal Properties
+
+		internal float Dpi {
+			get {
+				if (dpi > 0)
+					return dpi;
+				return TextRenderer.GetDpi ().Height;
+			}
+		}
+
 		internal Line Root {
 			get {
 				return document;
@@ -3898,8 +3907,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
-			using (var graphics = owner.CreateGraphics())
+			using (var graphics = owner.CreateGraphics()) {
 				RecalculateDocument(graphics);
+				dpi = (graphics.DpiX + graphics.DpiY) / 2;
+			}
 			AlignCaret();
 		}
 
