@@ -157,6 +157,24 @@ GSList *mono_interp_only_classes;
 
 static void register_icalls (void);
 
+static void
+print_stats_header (MonoStatsPrintPoint print_point) {
+	printf ("\n--------------------------------------------------------------------------------\n");
+	switch (print_point) {
+		case MONO_PRINT_STATS_STARTUP:
+			printf ("Printing stats on startup\n");
+			break;
+		case MONO_PRINT_STATS_SHUTDOWN:
+			printf ("Printing stats on shutdown\n");
+			break;
+	}
+	if (stats_method_name)
+		printf ("Displaying stats for method: %s\n", stats_method_name);
+	else
+		printf ("Displaying all stats\n");
+	printf ("--------------------------------------------------------------------------------\n\n");
+}
+
 gboolean
 mono_running_on_valgrind (void)
 {
@@ -4701,6 +4719,7 @@ static void
 print_jit_stats (void)
 {
 	if (mono_jit_stats.enabled) {
+		print_stats_header (MONO_PRINT_STATS_SHUTDOWN);
 		g_print ("Mono Jit statistics\n");
 		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio / 100.0,
 				 mono_jit_stats.max_ratio_method);
@@ -4745,28 +4764,10 @@ print_jit_stats (void)
 	}
 }
 
-static void print_stats_header (MonoStatsDumpPoint program_point) {
-	printf ("--------------------------------------------------------------------------------\n");
-	switch (program_point) {
-		case MONO_STATS_DUMP_STARTUP:
-			if (!stats_method_name) {
-				fprintf (stderr, "Attempting to dump stats for invalid method\n");
-				exit (1);
-			}
-			printf ("> Dumping stats for method: %s\n", stats_method_name);
-			break;
-		case MONO_STATS_DUMP_SHUTDOWN:
-			printf ("> Dumping stats at shutdown\n");
-			break;
-	}
-	printf ("--------------------------------------------------------------------------------\n");
-}
-
 #ifdef DISABLE_CLEANUP
 void
 mini_cleanup (MonoDomain *domain)
 {
-	print_stats_header (MONO_STATS_DUMP_SHUTDOWN);
 	print_jit_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
@@ -4791,7 +4792,6 @@ mini_cleanup (MonoDomain *domain)
 	mono_domain_finalize (domain, 2000);
 #endif
 
-	print_stats_header (MONO_STATS_DUMP_SHUTDOWN);
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
 

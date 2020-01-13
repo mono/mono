@@ -383,11 +383,11 @@ extern char *sdb_options;
 extern char *stats_method_name;
 
 typedef enum {
-	MONO_STATS_DUMP_STARTUP,
-	MONO_STATS_DUMP_SHUTDOWN,
-} MonoStatsDumpPoint;
+	MONO_PRINT_STATS_STARTUP,
+	MONO_PRINT_STATS_SHUTDOWN
+} MonoStatsPrintPoint;
 
-static void print_stats_header (MonoStatsDumpPoint program_point);
+static void print_stats_header (MonoStatsPrintPoint print_point);
 
 /*
 This struct describes what execution engine feature to use.
