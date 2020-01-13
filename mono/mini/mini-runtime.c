@@ -159,20 +159,20 @@ static void register_icalls (void);
 
 static void
 print_stats_header (MonoStatsPrintPoint print_point) {
-	printf ("\n--------------------------------------------------------------------------------\n");
+	g_printf ("\n--------------------------------------------------------------------------------\n");
 	switch (print_point) {
 		case MONO_PRINT_STATS_STARTUP:
-			printf ("Printing stats on startup\n");
+			g_printf ("Printing stats on startup\n");
 			break;
 		case MONO_PRINT_STATS_SHUTDOWN:
-			printf ("Printing stats on shutdown\n");
+			g_printf ("Printing stats on shutdown\n");
 			break;
 	}
 	if (stats_method_name)
-		printf ("Displaying stats for method: %s\n", stats_method_name);
+		g_printf ("Displaying stats for method: %s\n", stats_method_name);
 	else
-		printf ("Displaying all stats\n");
-	printf ("--------------------------------------------------------------------------------\n\n");
+		g_printf ("Displaying all stats\n");
+	g_printf ("--------------------------------------------------------------------------------\n\n");
 }
 
 gboolean
