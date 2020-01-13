@@ -3,7 +3,7 @@
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 export TEST_WITH_INTERPRETER=1
 
-if [[ ${CI_TAGS} == *'win-'* ]]
+if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'cxx'* ]]
 then ${TESTCMD} --label=interpreter-whitebox --skip;
 else ${TESTCMD} --label=interpreter-whitebox --timeout=10m make -C mono/mini interp-whitebox;
 fi
