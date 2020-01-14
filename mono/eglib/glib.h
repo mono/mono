@@ -1454,21 +1454,6 @@ mono_get_current_directory (gunichar2 **pstr, guint32 *plength);
 
 G_END_DECLS // FIXME: There is more extern C than there should be.
 
-// FIXME? Include config.h always?
-#if !defined (MONO_HOST32) && !defined (MONO_HOST64)
-#if _WIN64 || __ILP64__ || __WORDSIZE == 8 || __x86_64__ || __aarch64__|| __powerpc64__ || __arch64__ || __sparc64__ || __s390x__ || __mips == 64
-#define MONO_HOST32 0
-#define MONO_HOST64 1
-#elif _WIN32 || __ILP32__ || __WORDSIZE == 4
-#define MONO_HOST32 1
-#define MONO_HOST64 0
-#else
-//#error unknown mono32/64
-#define MONO_HOST32 1
-#define MONO_HOST64 0
-#endif
-#endif
-
 static inline
 void
 mono_qsort (void* base, size_t num, size_t size, int (*compare)(const void*, const void*))
