@@ -1128,7 +1128,7 @@ mono_arm_get_thumb_plt_entry (guint8 *code)
 
 	g_assert ((t1 >> 11) == 0x1e);
 
-	s = (t1 >> 10) & 0x1;
+	s = (t1 >> 10) & 0x1 ? 1 : 0;
 	imm10 = (t1 >> 0) & 0x3ff;
 	j1 = (t2 >> 13) & 0x1;
 	j2 = (t2 >> 11) & 0x1;
@@ -1137,10 +1137,10 @@ mono_arm_get_thumb_plt_entry (guint8 *code)
 	i1 = (s ^ j1) ? 0 : 1;
 	i2 = (s ^ j2) ? 0 : 1;
 
-	imm32 = (imm11 << 1) | (imm10 << 12) | (i2 << 22) | (i1 << 23);
+	imm32 = (imm11 << 1) | (imm10 << 12) | (i2 << 22) | (i1 << 23) | (s << 24);
 	if (s)
-		/* Sign extend from 24 bits to 32 bits */
-		imm32 = ((gint32)imm32 << 8) >> 8;
+		/* Sign extend from 25 bits to 32 bits */
+		imm32 = ((gint32)imm32 << 7) >> 7;
 
 	target = code + imm32;
 
