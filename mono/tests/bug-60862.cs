@@ -16,12 +16,12 @@ namespace StackOverflowTest
 			t.Join ();
 			if (fault) {
 				if (ex == null) {
-					Console.WriteLine ("fault occured, but no exception object available");
+					Console.WriteLine ("fault occurred, but no exception object available");
 					return 1;
 				} else {
-					bool is_stackoverlfow = ex is StackOverflowException;
-					Console.WriteLine ("fault occured: ex = " + is_stackoverlfow);
-					return is_stackoverlfow ? 0 : 3;
+					bool is_stackoverflow = ex is StackOverflowException;
+					Console.WriteLine ("fault occurred: ex = " + is_stackoverflow);
+					return is_stackoverflow ? 0 : 3;
 				}
 			}
 			Console.WriteLine("no fault");

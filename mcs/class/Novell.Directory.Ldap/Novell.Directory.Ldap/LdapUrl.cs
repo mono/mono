@@ -358,7 +358,7 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Decodes a URL-encoded string.
 		/// 
-		/// Any occurences of %HH are decoded to the hex value represented.
+		/// Any occurrences of %HH are decoded to the hex value represented.
 		/// However, this method does NOT decode "+" into " ".
 		/// 
 		/// </summary>

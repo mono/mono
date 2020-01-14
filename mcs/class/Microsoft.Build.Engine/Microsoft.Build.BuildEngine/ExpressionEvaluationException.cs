@@ -33,7 +33,7 @@ namespace Microsoft.Build.BuildEngine {
 	internal class ExpressionEvaluationException : Exception {
 
 		public ExpressionEvaluationException ()
-			: base ("Exception occured when evaluating the expression.")
+			: base ("Exception occurred when evaluating the expression.")
 		{
 		}
 

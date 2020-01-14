@@ -3817,7 +3817,7 @@ namespace System.Net {
             HttpProcessingResult httpResult = HttpProcessingResult.Continue;
 
             //
-            // Preserve the very first web exception occured if it was fatal
+            // Preserve the very first web exception occurred if it was fatal
             //
             WebException webException = HaveResponse ? _ReadAResult.Result as WebException : null;
             WebException newWebException = E as WebException;

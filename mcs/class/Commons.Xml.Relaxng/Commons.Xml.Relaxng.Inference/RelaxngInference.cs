@@ -81,11 +81,11 @@ namespace Commons.Xml.Relaxng.Inference
 	{
 		public static RelaxngGrammar Process (XmlReader xmlReader, 
 			RelaxngGrammar grammar,
-			bool laxOccurence,
+			bool laxOccurrence,
 			bool laxTypeInference)
 		{
 			RngInference impl = new RngInference (xmlReader,
-				grammar, laxOccurence, laxTypeInference);
+				grammar, laxOccurrence, laxTypeInference);
 			impl.Run ();
 			return impl.grammar;
 		}
@@ -158,7 +158,7 @@ namespace Commons.Xml.Relaxng.Inference
 
 		XmlReader source;
 		RelaxngGrammar grammar;
-		bool laxOccurence;
+		bool laxOccurrence;
 		bool laxTypeInference;
 
 		Hashtable elements = new Hashtable ();
@@ -167,12 +167,12 @@ namespace Commons.Xml.Relaxng.Inference
 
 		private RngInference (XmlReader xmlReader, 
 			RelaxngGrammar grammar, 
-			bool laxOccurence, 
+			bool laxOccurrence, 
 			bool laxTypeInference)
 		{
 			this.source = xmlReader;
 			this.grammar = grammar;
-			this.laxOccurence = laxOccurence;
+			this.laxOccurrence = laxOccurrence;
 			this.laxTypeInference = laxTypeInference;
 			nsmgr = new XmlNamespaceManager (source.NameTable);
 
@@ -367,7 +367,7 @@ namespace Commons.Xml.Relaxng.Inference
 				p = a;
 			}
 			// optional
-			if (laxOccurence ||
+			if (laxOccurrence ||
 				(!isNewTypeDefinition && !mergedRequired)) {
 				RelaxngOptional opt = new RelaxngOptional ();
 				opt.Patterns.Add (p);
@@ -811,7 +811,7 @@ namespace Commons.Xml.Relaxng.Inference
 			RelaxngElement ct, RelaxngGroup s)
 		{
 			RelaxngSingleContentPattern scp =
-				laxOccurence ?
+				laxOccurrence ?
 				(RelaxngSingleContentPattern)
 				new RelaxngZeroOrMore () :
 				new RelaxngOneOrMore ();

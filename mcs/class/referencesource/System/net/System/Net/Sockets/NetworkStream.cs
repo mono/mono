@@ -519,7 +519,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_readfailure, exception.Message), exception);
@@ -596,7 +596,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -760,7 +760,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_readfailure, exception.Message), exception);
@@ -805,7 +805,7 @@ namespace System.Net.Sockets {
                 if (NclUtilities.IsFatal(exception)) throw;
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_readfailure, exception.Message), exception);
@@ -864,7 +864,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_readfailure, exception.Message), exception);
@@ -948,7 +948,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -999,7 +999,7 @@ namespace System.Net.Sockets {
     	            }
     
                     //
-                    // some sort of error occured on the socket call,
+                    // some sort of error occurred on the socket call,
                     // set the SocketException as InnerException and throw
                     //
                     throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -1048,7 +1048,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -1093,7 +1093,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -1149,7 +1149,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -1203,7 +1203,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);
@@ -1238,7 +1238,7 @@ namespace System.Net.Sockets {
 	            }
 
                 //
-                // some sort of error occured on the socket call,
+                // some sort of error occurred on the socket call,
                 // set the SocketException as InnerException and throw
                 //
                 throw new IOException(SR.GetString(SR.net_io_writefailure, exception.Message), exception);

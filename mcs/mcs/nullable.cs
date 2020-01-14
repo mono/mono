@@ -173,7 +173,7 @@ namespace Mono.CSharp.Nullable
 			call.InstanceExpression = this;
 
 			//
-			// Using GetGetValueOrDefault is prefered because JIT can possibly
+			// Using GetGetValueOrDefault is preferred because JIT can possibly
 			// inline it whereas Value property contains a throw which is very
 			// unlikely to be inlined
 			//

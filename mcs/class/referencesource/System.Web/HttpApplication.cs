@@ -4173,7 +4173,7 @@ namespace System.Web {
 
                                 if (needToFinishRequest || context.CurrentModuleEventIndex == currentModuleLastEventIndex) {
 
-                                    // if an error occured or someone completed the request, set the status to FinishRequest
+                                    // if an error occurred or someone completed the request, set the status to FinishRequest
                                     status = needToFinishRequest ? RequestNotificationStatus.FinishRequest : RequestNotificationStatus.Continue;
 
                                     // async case

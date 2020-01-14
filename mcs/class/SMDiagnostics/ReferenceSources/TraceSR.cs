@@ -4,7 +4,7 @@ static partial class TraceSR
 {
 	public const string ThrowingException = "throwing exception.";
 	public const string StringNullOrEmpty = "Argument string is null or empty.";
-	public const string GenericCallbackException = "Callback exception has occured.";
+	public const string GenericCallbackException = "Callback exception has occurred.";
 	public const string TraceHandledException = "Trace handled exception.";
 	public const string TraceCodeTraceTruncatedQuotaExceeded = "TraceTruncatedQuotaExceeded";
 	public const string TraceCodeAppDomainUnload = "AppDomainUnload";

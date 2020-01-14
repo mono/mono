@@ -98,7 +98,7 @@ public class Program
 	static void ShowHelp (OptionSet p)
 	{
 		Console.WriteLine ("Usage: cil-stringreplacer [options] assembly");
-		Console.WriteLine ("Rewrites all occurences of string keys with their values from string resource file");
+		Console.WriteLine ("Rewrites all occurrences of string keys with their values from string resource file");
 		Console.WriteLine ();
 		Console.WriteLine ("Options:");
 		p.WriteOptionDescriptions (Console.Out);

@@ -66,8 +66,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by e, into w.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by e, into w.
         ///    </para>
         /// </devdoc>
         [PermissionSet(SecurityAction.LinkDemand, Name="FullTrust")]
@@ -76,8 +76,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by e, into w.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by e, into w.
         ///    </para>
         /// </devdoc>
         [PermissionSet(SecurityAction.LinkDemand, Name="FullTrust")]
@@ -86,8 +86,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by e, into w.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by e, into w.
         ///    </para>
         /// </devdoc>
         [PermissionSet(SecurityAction.LinkDemand, Name="FullTrust")]
@@ -96,8 +96,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by e, into w.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by e, into w.
         ///    </para>
         /// </devdoc>
         [PermissionSet(SecurityAction.LinkDemand, Name="FullTrust")]

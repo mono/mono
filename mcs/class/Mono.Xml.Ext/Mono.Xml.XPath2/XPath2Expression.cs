@@ -1012,7 +1012,7 @@ namespace Mono.Xml.XPath2
 		protected AtomicTypeOperationExpr (ExprSingle expr, XmlTypeCode type, bool optional)
 		{
 			this.expr = expr;
-			this.targetType = SequenceType.Create (type, optional ? Occurence.Optional : Occurence.One);
+			this.targetType = SequenceType.Create (type, optional ? Occurrence.Optional : Occurrence.One);
 		}
 
 		ExprSingle expr;
@@ -1063,16 +1063,16 @@ namespace Mono.Xml.XPath2
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
 		{
-			bool occured = false;
-			bool onlyOnce = (TargetType.Occurence == Occurence.One || TargetType.Occurence == Occurence.Optional);
-			bool required = (TargetType.Occurence == Occurence.One || TargetType.Occurence == Occurence.OneOrMore);
+			bool occurred = false;
+			bool onlyOnce = (TargetType.Occurrence == Occurrence.One || TargetType.Occurrence == Occurrence.Optional);
+			bool required = (TargetType.Occurrence == Occurrence.One || TargetType.Occurrence == Occurrence.OneOrMore);
 			foreach (XPathItem item in iter) {
-				if (occured && onlyOnce)
+				if (occurred && onlyOnce)
 					return false;
 				if (!TargetType.IsInstance (item))
 					return false;
 			}
-			return occured || !required;
+			return occurred || !required;
 		}
 
 		public override XPathSequence Evaluate (XPathSequence iter)
@@ -1137,16 +1137,16 @@ namespace Mono.Xml.XPath2
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
 		{
-			bool occured = false;
-			bool onlyOnce = (TargetType.Occurence == Occurence.One || TargetType.Occurence == Occurence.Optional);
-			bool required = (TargetType.Occurence == Occurence.One || TargetType.Occurence == Occurence.OneOrMore);
+			bool occurred = false;
+			bool onlyOnce = (TargetType.Occurrence == Occurrence.One || TargetType.Occurrence == Occurrence.Optional);
+			bool required = (TargetType.Occurrence == Occurrence.One || TargetType.Occurrence == Occurrence.OneOrMore);
 			foreach (XPathItem item in iter) {
-				if (occured && onlyOnce)
+				if (occurred && onlyOnce)
 					return false;
 				if (!TargetType.CanConvert (item))
 					return false;
 			}
-			return occured || !required;
+			return occurred || !required;
 		}
 #endregion
 	}
@@ -2264,7 +2264,7 @@ namespace Mono.Xml.XPath2
 			case XmlSchema.Namespace:
 				XmlSchemaType type = XmlSchemaType.GetBuiltInSimpleType (name);
 				if (type != null)
-					return new AtomicConstructorCall (ctx, SequenceType.Create (type, Occurence.One), args);
+					return new AtomicConstructorCall (ctx, SequenceType.Create (type, Occurrence.One), args);
 				type = XmlSchemaType.GetBuiltInComplexType (name);
 				if (type == null)
 					goto default;

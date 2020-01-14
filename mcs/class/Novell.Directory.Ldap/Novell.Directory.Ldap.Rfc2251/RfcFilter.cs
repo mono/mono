@@ -635,7 +635,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 			}
 			catch (System.InvalidCastException e)
 			{
-				throw new LdapLocalException("A call to addSubstring occured " + "without calling startSubstring", LdapException.FILTER_ERROR);
+				throw new LdapLocalException("A call to addSubstring occurred " + "without calling startSubstring", LdapException.FILTER_ERROR);
 			}
 			return ;
 		}

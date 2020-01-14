@@ -9,7 +9,7 @@ namespace System.Data.SqlClient
 {
 	partial class SqlException
 	{
-		private const string DEF_MESSAGE = "SQL Exception has occured.";
+		private const string DEF_MESSAGE = "SQL Exception has occurred.";
 
 		public override string Message {
 			get {

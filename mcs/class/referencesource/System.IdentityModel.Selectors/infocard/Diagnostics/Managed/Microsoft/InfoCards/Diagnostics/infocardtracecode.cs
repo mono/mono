@@ -13,7 +13,7 @@ namespace Microsoft.InfoCards.Diagnostics
     //
     // IDT.TraceCritical( InfoCardTraceCode.ServiceInformation, "service started" );
     // where the infocard.txt resource file contains the line
-    // ServiceInformation   The following occured: %s
+    // ServiceInformation   The following occurred: %s
     //
     internal enum InfoCardTraceCode : int
     {

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace System.IdentityModel.Tokens
 {
     /// <summary>
-    /// This indicates an error has occured while processing an encrypted security token
+    /// This indicates an error has occurred while processing an encrypted security token
     /// </summary>
     [Serializable]
     public class EncryptedTokenDecryptionFailedException : SecurityTokenException

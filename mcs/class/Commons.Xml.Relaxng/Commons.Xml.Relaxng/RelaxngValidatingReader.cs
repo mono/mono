@@ -431,7 +431,7 @@ namespace Commons.Xml.Relaxng
 
 						vState = memo.StartAttDeriv (vState, reader.LocalName, attrNS);
 						if (vState == RdpNotAllowed.Instance) {
-							vState = HandleError (String.Format ("Invalid attribute occurence found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false, savedState, p => p);
+							vState = HandleError (String.Format ("Invalid attribute occurrence found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false, savedState, p => p);
 							continue; // the following steps are ignored.
 						}
 						prevState = vState;
@@ -499,7 +499,7 @@ namespace Commons.Xml.Relaxng
 		// James Clark's derivative algorithm.
 		// http://www.thaiopensource.com/relaxng/derivative.html
 		// For invalid start tag, we just recover from it by using
-		// xs:any-like pattern for unexpected node occurence.
+		// xs:any-like pattern for unexpected node occurrence.
 
 		RdpPattern MakeGroupHeadOptional (RdpPattern p)
 		{

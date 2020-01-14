@@ -3787,7 +3787,7 @@ namespace System.Windows.Forms {
 			int	pos;
 			int	line_len;
 
-			// Search for occurence of any char in the chars array
+			// Search for occurrence of any char in the chars array
 			result = new Marker();
 
 			line = start.line;

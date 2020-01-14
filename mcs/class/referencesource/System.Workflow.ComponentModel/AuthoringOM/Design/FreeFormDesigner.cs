@@ -545,7 +545,7 @@ namespace System.Workflow.ComponentModel.Design
 
             //First check that if the drag drop is in progress and the drop operation has been initiated based on
             //A child designer then if the queried point is also on the drop initiated designer then we return freeform
-            //designer as the designer where hittest occured
+            //designer as the designer where hittest occurred
             ReadOnlyCollection<ActivityDesigner> containedDesigners = ContainedDesigners;
 
             WorkflowView workflowView = ParentView;

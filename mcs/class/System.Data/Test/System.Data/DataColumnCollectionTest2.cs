@@ -831,7 +831,7 @@ namespace MonoTests.System.Data
 			}
 		}
 
-		private bool eventOccured = false;
+		private bool eventOccurred = false;
 
 		[Test]
 		public void RemoveAt_Integer()
@@ -841,7 +841,7 @@ namespace MonoTests.System.Data
 			int originalColumnCount = dt.Columns.Count;
 			dt.Columns.RemoveAt(0);
 			Assert.AreEqual(originalColumnCount-1,dt.Columns.Count,"dccrai#1"); 
-			Assert.AreEqual(true,eventOccured,"dccrai#2");
+			Assert.AreEqual(true,eventOccurred,"dccrai#2");
 
 			try
 			{
@@ -893,7 +893,7 @@ namespace MonoTests.System.Data
 
 		private void Columns_CollectionChanged1(object sender, CollectionChangeEventArgs e)
 		{
-			eventOccured = true;
+			eventOccurred = true;
 		}
 	}
 }

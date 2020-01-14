@@ -969,7 +969,7 @@ namespace System.Workflow.Runtime
                     Activity activity = FindExecutorToHandleException();
 
                     this.Scheduler.CanRun = true;
-                    this.ExceptionOccured(e, activity, null);
+                    this.ExceptionOccurred(e, activity, null);
                 }
                 else
                 {
@@ -2554,7 +2554,7 @@ namespace System.Workflow.Runtime
 
         #region Exception Management
 
-        internal void ExceptionOccured(Exception exp, Activity currentActivity, string originalActivityId)
+        internal void ExceptionOccurred(Exception exp, Activity currentActivity, string originalActivityId)
         {
             Debug.Assert(exp != null, "null exp");
             Debug.Assert(currentActivity != null, "null currentActivity");
@@ -2576,7 +2576,7 @@ namespace System.Workflow.Runtime
             Guid parentContextGuid = Guid.Empty;
             if (null != currentActivity.Parent)
                 parentContextGuid = ((ActivityExecutionContextInfo)ContextActivityUtils.ContextActivity(currentActivity.Parent).GetValue(Activity.ActivityExecutionContextInfoProperty)).ContextGuid;
-            this.FireExceptionOccured(exp, currentActivity.QualifiedName, originalActivityId, contextGuid, parentContextGuid);
+            this.FireExceptionOccurred(exp, currentActivity.QualifiedName, originalActivityId, contextGuid, parentContextGuid);
 
             // notify the activity.
             //
@@ -2618,7 +2618,7 @@ namespace System.Workflow.Runtime
             FireUserTrackPoint(activity, key, args);
         }
 
-        internal void FireExceptionOccured(Exception e, string currentActivityPath, string originalActivityPath, Guid contextGuid, Guid parentContextGuid)
+        internal void FireExceptionOccurred(Exception e, string currentActivityPath, string originalActivityPath, Guid contextGuid, Guid parentContextGuid)
         {
             FireWorkflowException(e, currentActivityPath, originalActivityPath, contextGuid, parentContextGuid);
         }
@@ -2950,7 +2950,7 @@ namespace System.Workflow.Runtime
         {
             if (!ServiceEnvironment.IsInServiceThread(this.InstanceId))
                 throw new InvalidOperationException(ExecutionStringManager.MustUseRuntimeThread);
-            this.ExceptionOccured(e, activity, responsibleActivity);
+            this.ExceptionOccurred(e, activity, responsibleActivity);
         }
         void IWorkflowCoreRuntime.RegisterContextActivity(Activity activity)
         {

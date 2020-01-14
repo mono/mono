@@ -540,7 +540,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
 
         /// <summary>
         /// Returns true if the given two ends are similar - the relationship type that this ends belongs to is the same
-        /// and the entity set refered by the ends are same and they have the same role name
+        /// and the entity set referred by the ends are same and they have the same role name
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>

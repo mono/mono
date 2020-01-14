@@ -38,7 +38,7 @@ namespace Microsoft.Build.Framework {
 		string helpKeyword;
 
 		public LoggerException ()
-			: base ("Logger exception has occured.")
+			: base ("Logger exception has occurred.")
 		{
 		}
 

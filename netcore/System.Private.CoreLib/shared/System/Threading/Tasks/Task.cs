@@ -2169,7 +2169,7 @@ namespace System.Threading.Tasks
         {
             Debug.Assert(props != null);
 
-            // In rare occurences during AppDomainUnload() processing, it is possible for this method to be called
+            // In rare occurrences during AppDomainUnload() processing, it is possible for this method to be called
             // simultaneously on the same task from two different contexts.  This can result in m_exceptionalChildren
             // being nulled out while it is being processed, which could lead to a NullReferenceException.  To
             // protect ourselves, we'll cache m_exceptionalChildren in a local variable.
@@ -2945,7 +2945,7 @@ namespace System.Threading.Tasks
 
                     // Even though this task can't have any children, we should be ready for handling any continuations that
                     // may be attached to it (although currently
-                    // So we need to remeber whether we actually did the flip, so we can do clean up (finish continuations etc)
+                    // So we need to remember whether we actually did the flip, so we can do clean up (finish continuations etc)
                     mustCleanup = AtomicStateUpdate(TASK_STATE_CANCELED, TASK_STATE_DELEGATE_INVOKED | TASK_STATE_CANCELED);
 
                     // PS: This is slightly different from the regular cancellation codepath

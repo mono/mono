@@ -379,7 +379,7 @@ namespace System {
                     else { // file://remote
                         trim = 5;
                         // Create valid UNC path by changing
-                        // all occurences of '/' to '\\' in path
+                        // all occurrences of '/' to '\\' in path
                         System.Text.StringBuilder winPathBuilder =
                             new System.Text.StringBuilder(len);
                         for (int i = 0; i < len; i++) {

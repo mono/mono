@@ -94,7 +94,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Opens a Zip file with the given name for reading.
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// IOException if a i/o error occured.
+		/// IOException if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the file doesn't contain a valid zip archive.
@@ -107,7 +107,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Opens a Zip file reading the given FileStream
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// IOException if a i/o error occured.
+		/// IOException if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the file doesn't contain a valid zip archive.
@@ -123,7 +123,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Opens a Zip file reading the given Stream
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// IOException if a i/o error occured.
+		/// IOException if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the file doesn't contain a valid zip archive.
@@ -140,7 +140,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Read an unsigned short in little endian byte order.
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		/// <exception name="System.IO.EndOfStreamException">
 		/// if the file ends prematurely
@@ -154,7 +154,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Read an int in little endian byte order.
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		/// <exception name="System.IO.EndOfStreamException">
 		/// if the file ends prematurely
@@ -169,7 +169,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// array.  This is called exactly once by the constructors.
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the central directory is malformed
@@ -273,7 +273,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// called.
 		/// </summary>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		public void Close()
 		{
@@ -331,7 +331,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the start offset of the (compressed) data.
 		/// </returns>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the local header doesn't match the central directory header
@@ -381,7 +381,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the input stream.
 		/// </returns>
 		/// <exception name="System.IO.IOException">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// if the Zip archive is malformed.

@@ -4205,7 +4205,7 @@ attaches
 attaching
 attachment
 attachments
-attaché
+attachï¿½
 attack
 attackable
 attacked
@@ -5041,7 +5041,7 @@ bakeries
 bakers
 Bakersfield
 bakery
-baker´s
+bakerï¿½s
 bakes
 bakeshop
 Bakhtiari
@@ -8360,7 +8360,7 @@ bribery
 bribes
 bribing
 bric-a-brac
-bric-á-brac
+bric-ï¿½-brac
 Brice
 brick
 brick-clay
@@ -9213,7 +9213,7 @@ butcher's
 butchered
 butchers
 butchery
-butcher´s
+butcherï¿½s
 butler
 butlers
 butt
@@ -9449,8 +9449,8 @@ caesurae
 cafeteria
 caffeine
 caftan
-café
-cafés
+cafï¿½
+cafï¿½s
 cage
 caged
 cager
@@ -9871,7 +9871,7 @@ canvasses
 canvassing
 canyon
 canyons
-can´t
+canï¿½t
 caoutchouc
 cap
 cap-a-pie
@@ -11397,8 +11397,8 @@ childlessness
 childlike
 childproof
 children
-children´s
-child´s
+childrenï¿½s
+childï¿½s
 Chilean
 Chiles
 chili
@@ -12170,7 +12170,7 @@ clew
 cliche
 cliched
 cliches
-cliché
+clichï¿½
 click
 clicked
 clicker
@@ -13233,7 +13233,7 @@ communicator
 communicators
 communion
 communique
-communiqué
+communiquï¿½
 communism
 communist
 communistic
@@ -13724,7 +13724,7 @@ confection
 confectioner
 confectioner's
 confectionery
-confectioner´s
+confectionerï¿½s
 confederacy
 confederate
 confederates
@@ -14104,7 +14104,7 @@ consolidator
 consoling
 consolingly
 consols
-consommé
+consommï¿½
 consonance
 consonant
 consonantal
@@ -14998,7 +14998,7 @@ coughing
 coughs
 could
 couldn't
-couldn´t
+couldnï¿½t
 coulee
 coulisse
 coulomb
@@ -15128,7 +15128,7 @@ coupling
 couplings
 coupon
 coupons
-coupé
+coupï¿½
 courage
 courageous
 courageously
@@ -15911,7 +15911,7 @@ crystallized
 crystallizes
 crystallizing
 crystals
-créche
+crï¿½che
 Cs
 CST
 CT
@@ -20169,7 +20169,7 @@ dressing-table
 dressings
 dressmaker
 dressmakers
-dressmaker´s
+dressmakerï¿½s
 dressmaking
 dressy
 drew
@@ -20333,7 +20333,7 @@ druthers
 dry
 dry-clean
 dry-cleaner
-dry-cleaner´s
+dry-cleanerï¿½s
 dry-cleaning
 dry-eyed
 dry-nurse
@@ -24469,8 +24469,8 @@ fez
 FHA
 fiance
 fiancee
-fiancé
-fiancée
+fiancï¿½
+fiancï¿½e
 fiasco
 fiat
 fib
@@ -25322,7 +25322,7 @@ floridness
 florin
 florist
 florist's
-florist´s
+floristï¿½s
 floss
 flossed
 flosses
@@ -26720,7 +26720,7 @@ furor
 furore
 furred
 furrier
-furrier´s
+furrierï¿½s
 furriness
 furring
 furrow
@@ -28595,7 +28595,7 @@ greenfly
 greengage
 greengrocer
 greengrocer's
-greengrocer´s
+greengrocerï¿½s
 greenhorn
 greenhouse
 greenhouses
@@ -28753,7 +28753,7 @@ grocer's
 groceries
 grocers
 grocery
-grocer´s
+grocerï¿½s
 grog
 groggily
 grogginess
@@ -29227,7 +29227,7 @@ habituate
 habituation
 habitude
 habitue
-habitué
+habituï¿½
 hacienda
 hack
 hack-saw
@@ -35503,7 +35503,7 @@ Jewell
 jeweller
 jeweller's
 jewellery
-jeweller´s
+jewellerï¿½s
 jewelries
 jewelry
 jewels
@@ -36751,7 +36751,7 @@ lade
 laden
 ladies
 ladies-in-waiting
-ladies´
+ladiesï¿½
 ladify
 lading
 ladle
@@ -39705,7 +39705,7 @@ many
 many-sided
 many-to-one
 manycoloured
-man´s
+manï¿½s
 Mao
 Maoism
 Maoist
@@ -40566,7 +40566,7 @@ meltingly
 melts
 Melville
 Melvin
-melée
+melï¿½e
 member
 members
 membership
@@ -40677,7 +40677,7 @@ mentors
 menu
 menus
 Menzies
-men´s
+menï¿½s
 meow
 Mephistopheles
 mephitic
@@ -42924,7 +42924,7 @@ muster
 mustily
 mustiness
 mustn't
-mustn´t
+mustnï¿½t
 musts
 musty
 mutability
@@ -44208,7 +44208,7 @@ nonobligatory
 nonobservance
 nonobservant
 nonoccupational
-nonoccurence
+nonoccurrence
 nonofficial
 nonogenarian
 nonoperational
@@ -44727,7 +44727,7 @@ nymphs
 Nyquist
 NYSE
 NZ
-née
+nï¿½e
 o
 o'
 O'Brien
@@ -47461,7 +47461,7 @@ Patti
 patties
 Patton
 patty
-Paté
+Patï¿½
 paucity
 Paul
 Paula
@@ -49883,7 +49883,7 @@ populism
 populist
 populous
 populousness
-popálenina
+popï¿½lenina
 porcelain
 porch
 porches
@@ -51293,7 +51293,7 @@ prolegomenon
 proletarian
 proletariat
 proletary
-prole¾enina
+proleï¿½enina
 proliferate
 proliferated
 proliferates
@@ -51615,7 +51615,7 @@ protrusion
 protrusions
 protuberance
 protuberant
-protégé
+protï¿½gï¿½
 proud
 prouder
 proudest
@@ -52134,7 +52134,7 @@ purvey
 purveyance
 purveyor
 purview
-purée
+purï¿½e
 pus
 Pusan
 Pusey
@@ -56540,8 +56540,8 @@ royalties
 royalty
 Royce
 Rozelle
-rozli¹ovat
-rozli¹ování
+rozliï¿½ovat
+rozliï¿½ovï¿½nï¿½
 RP
 RR
 RSFSR
@@ -56795,7 +56795,7 @@ Rydberg
 Ryder
 rye
 rye-grass
-résumé
+rï¿½sumï¿½
 S&L
 s-mail
 s.n.
@@ -60287,7 +60287,7 @@ sissified
 sissy
 sister
 sister-in-law
-sister-in-åaw
+sister-in-ï¿½aw
 sisterhood
 sisterliness
 sisterly
@@ -65595,7 +65595,7 @@ tailor-made
 tailored
 tailoring
 tailors
-tailor´s
+tailorï¿½s
 tailpipe
 tails
 tailspin
@@ -67456,7 +67456,7 @@ tobacco-pipe
 tobacco-pouch
 tobacconist
 tobacconist's
-tobacconist´s
+tobacconistï¿½s
 Tobago
 toboggan
 tobogganer
@@ -67466,7 +67466,7 @@ Tocqueville
 tocsin
 today
 todays
-today´s
+todayï¿½s
 Todd
 toddle
 toddler
@@ -67571,7 +67571,7 @@ tomographic
 tomography
 tomorrow
 tomorrows
-tomorrow´s
+tomorrowï¿½s
 Tompkins
 tomtit
 ton
@@ -72192,7 +72192,7 @@ virulently
 virus
 viruses
 vis-a-vis
-vis-á-vis
+vis-ï¿½-vis
 visa
 visage
 Visakhapatnam
@@ -74860,7 +74860,7 @@ yeshivah
 yeshivoth
 yesterday
 yesterdays
-yesterday´s
+yesterdayï¿½s
 yesteryear
 yet
 yeti

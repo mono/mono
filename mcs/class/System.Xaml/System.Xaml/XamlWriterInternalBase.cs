@@ -93,7 +93,7 @@ namespace System.Xaml
 
 			public XamlMember Member;
 			public object Value;
-			public AllowedMemberLocations OccuredAs = AllowedMemberLocations.None;
+			public AllowedMemberLocations OccurredAs = AllowedMemberLocations.None;
 		}
 
 		public void CloseAll ()

@@ -1973,7 +1973,7 @@ namespace NZlib.Compression {
 		
 		public bool IsFull()
 		{
-			return last_lit + 16 >= BUFSIZE; // HACK: This was == 'last_lit == BUFSIZE', but errors occured with DeflateFast
+			return last_lit + 16 >= BUFSIZE; // HACK: This was == 'last_lit == BUFSIZE', but errors occurred with DeflateFast
 		}
 		
 		public bool TallyLit(int lit)

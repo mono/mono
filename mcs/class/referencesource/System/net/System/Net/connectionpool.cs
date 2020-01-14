@@ -21,7 +21,7 @@ namespace System.Net {
 
     /// <devdoc>
     /// <para>
-    ///     Impliments basic ConnectionPooling by pooling PooledStreams
+    ///     Implements basic ConnectionPooling by pooling PooledStreams
     /// </para>
     /// </devdoc>
     internal class ConnectionPool {
@@ -59,7 +59,7 @@ namespace System.Net {
         private WaitHandle[]             m_WaitHandles;
 
         private Exception                m_ResError;
-        private volatile bool            m_ErrorOccured;
+        private volatile bool            m_ErrorOccurred;
 
         private TimerThread.Timer        m_ErrorTimer;
 
@@ -252,7 +252,7 @@ namespace System.Net {
         ///    <para>An Error occurred usually due to an abort</para>
         /// </summary>
         private bool ErrorOccurred {
-            get { return m_ErrorOccured; }
+            get { return m_ErrorOccurred; }
         }
 
         private static void CleanupCallbackWrapper(TimerThread.Timer timer, int timeNoticed, object context)
@@ -326,7 +326,7 @@ namespace System.Net {
         {
             // Called when the cleanup-timer ticks over.
             //
-            // This is the automatic prunning method.  Every period, we will perform a two-step
+            // This is the automatic pruning method.  Every period, we will perform a two-step
             // process.  First, for the objects above MinPool, we will obtain the semaphore for
             // the object and then destroy it if it was on the old stack.  We will continue this
             // until we either reach MinPool size, or we are unable to obtain a free object, or
@@ -334,7 +334,7 @@ namespace System.Net {
             // objects on the new stack to the old stack.  So, every period the objects on the
             // old stack are destroyed and the objects on the new stack are pushed to the old
             // stack.  All objects that are currently out and in use are not on either stack.
-            // With this logic, a object is prunned if unused for at least one period but not
+            // With this logic, a object is pruned if unused for at least one period but not
             // more than two periods.
 
             // Destroy free objects above MinPool size from old stack.
@@ -458,7 +458,7 @@ namespace System.Net {
             TimerThread.Timer timer = m_ErrorTimer;
             if (timer != null && timer.Cancel())
             {
-                m_ErrorOccured = false;
+                m_ErrorOccurred = false;
                 ErrorEvent.Reset();
                 m_ErrorTimer = null;
                 m_ResError = null;
@@ -586,7 +586,7 @@ namespace System.Net {
                         WebExceptionStatus.RequestCanceled);
             }
             ErrorEvent.Set();
-            m_ErrorOccured = true;
+            m_ErrorOccurred = true;
             m_ErrorTimer = s_CancelErrorQueue.CreateTimer(s_CancelErrorCallback, this);
         }
 

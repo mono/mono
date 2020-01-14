@@ -280,7 +280,7 @@ namespace MonoTests.System.Data.Utils
 		}
 
 		/// <summary>End TestCase
-		/// <param name="ex">Exception object if exception occured during the TestCase, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the TestCase, null if not</param>
 		/// </summary>
 		protected void EndCase(Exception ex)
 		{
@@ -291,7 +291,7 @@ namespace MonoTests.System.Data.Utils
 			}
 			else
 			{
-				//if Exception occured during the test - log the error and faile the TestCase.
+				//if Exception occurred during the test - log the error and fail the TestCase.
 				if(ex != null)
 				{
 					_testCase.Success=false;
@@ -319,11 +319,11 @@ namespace MonoTests.System.Data.Utils
 
 
 		/// <summary>End Test
-		/// <param name="ex">Exception object if exception occured during the Test, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the Test, null if not</param>
 		/// </summary>
 		public void EndTest(Exception ex)
 		{
-			//if all test cases succeeded but an exception occured - set exit code to -1
+			//if all test cases succeeded but an exception occurred - set exit code to -1
 			//if we wont set it to -1, the exit code will be 0 !!!
 			if (UniqueId.FailureCounter == 0 && ex != null) 
 			{
@@ -335,10 +335,10 @@ namespace MonoTests.System.Data.Utils
 				Environment.ExitCode = UniqueId.FailureCounter;
 			}
 
-			//if exception occured - log error
+			//if exception occurred - log error
 			if(ex != null)
 			{
-				Log(string.Format("Unexpected Exception accured in Test [{0}] - {1} \n {2}" , this._testName, ex.Message ,ex.StackTrace));
+				Log(string.Format("Unexpected Exception occurred in Test [{0}] - {1} \n {2}" , this._testName, ex.Message ,ex.StackTrace));
 			}
 			if(this._logOnSuccess)
 			{

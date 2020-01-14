@@ -77,7 +77,7 @@ namespace Novell.Directory.Ldap.Controls
 			}
 			
 		}
-		/// <summary>  Returns the type of change that occured
+		/// <summary>  Returns the type of change that occurred
 		/// 
 		/// </summary>
 		/// <returns>  returns one of the following values indicating the type of

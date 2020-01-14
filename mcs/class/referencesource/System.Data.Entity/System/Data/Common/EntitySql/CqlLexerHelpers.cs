@@ -291,7 +291,7 @@ namespace System.Data.Common.EntitySql
             that may be defined in the query or in the model (such as Key in Customer.Key). 
             Although it adds usability for common cases, it does not solve the general problem:
             select c.id as Key from Customers as c -- works
-            select Key from (select c.id from Customers as c) as Key -- does not work for the first occurence of Key
+            select Key from (select c.id from Customers as c) as Key -- does not work for the first occurrence of Key
                                                                      -- it is mapped to a keyword which results in 
                                                                      -- invalid syntax
             select [Key] from (select c.id from Customers as c) as Key -- works again

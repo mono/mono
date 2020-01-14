@@ -475,7 +475,7 @@ namespace System.Windows.Forms {
 			set { base.Padding = value; }
 		}
 
-		// the prefered height to draw this control using current font
+		// the preferred height to draw this control using current font
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int PreferredHeight {

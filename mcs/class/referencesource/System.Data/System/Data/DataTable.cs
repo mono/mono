@@ -3928,10 +3928,10 @@ namespace System.Data {
             // if the newRecord is changing, the propertychanged event should be allowed to triggered for ListChangedType.Changed or .Moved
             // unless the specific condition is known that no data has changed, like DataRow.SetModified()
             if (!suppressEnsurePropertyChanged && !row.HasPropertyChanged && (row.newRecord != proposedRecord)
-                && (-1 != proposedRecord) // explictly not fixing Dev10 Bug 692044: DataRowView.PropertyChanged are not raised on DataTable.Delete when mixing current and original records in RowStateFilter
-                && (-1 != row.newRecord)) // explictly not fixing parts of Dev10 Bug 697909: when mixing current and original records in RowStateFilter
+                && (-1 != proposedRecord) // explicitly not fixing Dev10 Bug 692044: DataRowView.PropertyChanged are not raised on DataTable.Delete when mixing current and original records in RowStateFilter
+                && (-1 != row.newRecord)) // explicitly not fixing parts of Dev10 Bug 697909: when mixing current and original records in RowStateFilter
             {
-                // DataRow will believe multiple edits occured and
+                // DataRow will believe multiple edits occurred and
                 // DataView.ListChanged event w/ ListChangedType.ItemChanged will raise DataRowView.PropertyChanged event and
                 // PropertyChangedEventArgs.PropertyName will now be empty string so
                 // WPF will refresh the entire row
@@ -3942,10 +3942,10 @@ namespace System.Data {
                 // Check whether we need to update indexes
                 if (LiveIndexes.Count != 0) {
 
-                    // Dev10 bug #463087: DataTable internal index is currupted: '5'
+                    // Dev10 bug #463087: DataTable internal index is corrupted: '5'
                     if ((-1 == currentRecord) && (-1 != proposedRecord) && (-1 != row.oldRecord) && (proposedRecord != row.oldRecord)) {
                         // the transition from DataRowState.Deleted -> DataRowState.Modified
-                        // with same orginal record but new current record
+                        // with same original record but new current record
                         // needs to raise an ItemChanged or ItemMoved instead of ItemAdded in the ListChanged event.
                         // for indexes/views listening for both DataViewRowState.Deleted | DataViewRowState.ModifiedCurrent
                         currentRecord = row.oldRecord;
@@ -4043,7 +4043,7 @@ namespace System.Data {
                 // Check whether we need to update indexes
                 if (LiveIndexes.Count != 0) {
 
-                    // Dev10 bug #463087: DataTable internal index is currupted: '5'
+                    // Dev10 bug #463087: DataTable internal index is corrupted: '5'
                     if ((-1 == originalRecord) && (-1 != proposedRecord) && (-1 != row.newRecord) && (proposedRecord != row.newRecord)) {
                         // the transition from DataRowState.Added -> DataRowState.Modified
                         // with same current record but new original record
@@ -4608,7 +4608,7 @@ namespace System.Data {
                 case LoadOption.Upsert:
                     switch(dataRow.RowState) {
                         case DataRowState.Unchanged:
-                            // let see if the incomming value has the same values as existing row, so compare records
+                            // let see if the incoming value has the same values as existing row, so compare records
                             foreach(DataColumn dc in dataRow.Table.Columns) {
                                 if (0 != dc.Compare(dataRow.newRecord, recordNo)) {
                                     action = DataRowAction.Change;

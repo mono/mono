@@ -116,7 +116,7 @@ namespace System.Web.DynamicData
 		void CheckRegistrationError ()
 		{
 			if (registration_exception != null)
-				throw new InvalidOperationException ("An error occured during context model registration", registration_exception);
+				throw new InvalidOperationException ("An error occurred during context model registration", registration_exception);
 		}
 		
 		public string GetActionPath (string tableName, string action, object row)

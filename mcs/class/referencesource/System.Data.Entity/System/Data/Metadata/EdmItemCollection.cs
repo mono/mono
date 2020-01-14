@@ -429,7 +429,7 @@ namespace System.Data.Metadata.Edm
         /// Guarantees type match of declaration and generated parameters.
         /// Guarantees return type match.
         /// Throws internal error for functions without definition.
-        /// Passes thru exceptions occured during definition generation.
+        /// Passes thru exceptions occurred during definition generation.
         /// </summary>
         internal DbLambda GetGeneratedFunctionDefinition(EdmFunction function)
         {
@@ -449,7 +449,7 @@ namespace System.Data.Metadata.Edm
         /// Guarantees type match of declaration and generated parameters.
         /// Guarantees return type match.
         /// Throws internal error for functions without definition.
-        /// Passes thru exceptions occured during definition generation.
+        /// Passes thru exceptions occurred during definition generation.
         /// </summary>
         internal DbLambda GenerateFunctionDefinition(EdmFunction function)
         {

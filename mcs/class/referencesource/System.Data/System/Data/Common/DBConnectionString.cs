@@ -42,7 +42,7 @@ namespace System.Data.Common {
         // a linked list of key/value and their length in _encryptedUsersConnectionString
         readonly private NameValuePair _keychain;
 
-        // track the existance of "password" or "pwd" in the connection string
+        // track the existence of "password" or "pwd" in the connection string
         // not used for anything anymore but must keep it set correct for V1.1 serialization
         readonly private bool          _hasPassword;
 

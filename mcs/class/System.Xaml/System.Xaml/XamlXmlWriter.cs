@@ -229,7 +229,7 @@ namespace System.Xaml
 			} else if (inside_attribute_object) {
 				// do nothing. It didn't open this attribute.
 			} else {
-				switch (CurrentMemberState.OccuredAs) {
+				switch (CurrentMemberState.OccurredAs) {
 				case AllowedMemberLocations.Attribute:
 					w.WriteEndAttribute ();
 					break;
@@ -300,7 +300,7 @@ namespace System.Xaml
 		void WritePendingStartMember (XamlNodeType nodeType)
 		{
 			var cm = CurrentMemberState;
-			if (cm == null || cm.OccuredAs != AllowedMemberLocations.Any)
+			if (cm == null || cm.OccurredAs != AllowedMemberLocations.Any)
 				return;
 
 			var state = object_states.Peek ();
@@ -358,7 +358,7 @@ namespace System.Xaml
 					OnWriteStartMemberElement (state.Type, member);
 					break;
 				default: // otherwise - pending output
-					CurrentMemberState.OccuredAs = AllowedMemberLocations.Any; // differentiate from .None
+					CurrentMemberState.OccurredAs = AllowedMemberLocations.Any; // differentiate from .None
 					break;
 				}
 			}
@@ -414,7 +414,7 @@ namespace System.Xaml
 
 		void OnWriteStartMemberElement (XamlType xt, XamlMember xm)
 		{
-			CurrentMemberState.OccuredAs = AllowedMemberLocations.MemberElement;
+			CurrentMemberState.OccurredAs = AllowedMemberLocations.MemberElement;
 			string prefix = GetPrefix (xm.PreferredXamlNamespace);
 			string name = xm.IsDirective ? xm.Name : String.Concat (xt.GetInternalXmlName (), ".", xm.Name);
 			WritePendingNamespaces ();
@@ -423,7 +423,7 @@ namespace System.Xaml
 		
 		void OnWriteStartMemberAttribute (XamlType xt, XamlMember xm)
 		{
-			CurrentMemberState.OccuredAs = AllowedMemberLocations.Attribute;
+			CurrentMemberState.OccurredAs = AllowedMemberLocations.Attribute;
 			string name = xm.GetInternalXmlName ();
 			if (xt.PreferredXamlNamespace == xm.PreferredXamlNamespace &&
 			    !(xm is XamlDirective)) // e.g. x:Key inside x:Int should not be written as Key.
@@ -437,7 +437,7 @@ namespace System.Xaml
 		void OnWriteStartMemberContent (XamlType xt, XamlMember member)
 		{
 			// FIXME: well, it is sorta nasty, would be better to define different enum.
-			CurrentMemberState.OccuredAs = (AllowedMemberLocations) 0xFF;
+			CurrentMemberState.OccurredAs = (AllowedMemberLocations) 0xFF;
 		}
 
 		protected override void OnWriteValue (object value)

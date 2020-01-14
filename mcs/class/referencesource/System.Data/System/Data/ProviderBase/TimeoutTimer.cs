@@ -138,7 +138,7 @@ internal class TimeoutTimer
 
     // Returns milliseconds remaining trimmed to zero for none remaining
     //  and long.MaxValue for infinite
-    // This method should be prefered for internal calculations that are not
+    // This method should be preferred for internal calculations that are not
     //  yet common enough to code into the TimeoutTimer class itself.
     internal long MillisecondsRemaining
     {

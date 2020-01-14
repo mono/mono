@@ -1990,7 +1990,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			// 7.1.1 and 7.1.2
 			if (attribute || oneOrMoreGroup || oneOrMoreInterleave || list || dataExcept)
-				throw new RelaxngException ("Not allowed attribute occurence was specified in the pattern.");
+				throw new RelaxngException ("Not allowed attribute occurrence was specified in the pattern.");
 
 			// latter part of 7.3
 			if (!oneOrMore && NameClass.HasInfiniteName)
@@ -2134,7 +2134,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				return;
 			constraintsChecked = true;
 			if (attribute || list || dataExcept)
-				throw new RelaxngException ("Not allowed element occurence was specified in the pattern.");
+				throw new RelaxngException ("Not allowed element occurrence was specified in the pattern.");
 			this.Children.CheckConstraints (false, false, false, oneOrMoreInterleave, false, false);
 		}
 

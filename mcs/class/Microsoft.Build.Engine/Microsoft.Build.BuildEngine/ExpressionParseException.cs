@@ -33,7 +33,7 @@ namespace Microsoft.Build.BuildEngine {
 	internal class ExpressionParseException : Exception {
 	
 		public ExpressionParseException ()
-			: base ("Exception occured when parsing an expression.")
+			: base ("Exception occurred when parsing an expression.")
 		{
 		}
 

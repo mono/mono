@@ -598,7 +598,7 @@ namespace System.Data.SqlTypes
             //-----------------------------------------------------------------
 
             // normalize the provided path
-            //   * compress path to remove any occurences of '.' or '..'
+            //   * compress path to remove any occurrences of '.' or '..'
             //   * trim whitespace from the beginning and end of the path
             //   * ensure that the path starts with '\\'
             //   * ensure that the path does not start with '\\.\'

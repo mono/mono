@@ -289,7 +289,7 @@
         <ReturnType>Cairo.Status</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>No error has occured.</summary>
+        <summary>No error has occurred.</summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

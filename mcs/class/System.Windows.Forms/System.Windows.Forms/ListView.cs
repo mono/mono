@@ -1617,7 +1617,7 @@ namespace System.Windows.Forms
 			if (loc.X < 0 || loc.Y < 0)
 				return 0;
 
-			// Adjustment to put in the next position refered by 'loc'
+			// Adjustment to put in the next position referred by 'loc'
 			loc.X -= item_size.Width / 2;
 			if (loc.X < 0)
 				loc.X = 0;

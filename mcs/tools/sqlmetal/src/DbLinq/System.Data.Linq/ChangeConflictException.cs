@@ -34,7 +34,7 @@ namespace System.Data.Linq
 	public class ChangeConflictException : Exception
 	{
 		public ChangeConflictException ()
-			: this ("Change conflict occured")
+			: this ("Change conflict occurred")
 		{
 		}
 

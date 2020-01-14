@@ -232,7 +232,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the entry.
 		/// </param>
 		/// <exception cref="System.IO.IOException">
-		/// if an I/O error occured.
+		/// if an I/O error occurred.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// if stream was finished
@@ -362,7 +362,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Closes the current entry.
 		/// </summary>
 		/// <exception cref="System.IO.IOException">
-		/// if an I/O error occured.
+		/// if an I/O error occurred.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// if no entry is active.
@@ -434,7 +434,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Writes the given buffer to the current entry.
 		/// </summary>
 		/// <exception cref="System.IO.IOException">
-		/// if an I/O error occured.
+		/// if an I/O error occurred.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// if no entry is active.
@@ -470,7 +470,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// end of the zip file and flush the stream.
 		/// </summary>
 		/// <exception cref="System.IO.IOException">
-		/// if an I/O error occured.
+		/// if an I/O error occurred.
 		/// </exception>
 		public override void Finish()
 		{
@@ -486,7 +486,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			int sizeEntries = 0;
 			
 			foreach (ZipEntry entry in entries) {
-				// TODO : check the appnote file for compilance with the central directory standard
+				// TODO : check the appnote file for compliance with the central directory standard
 				CompressionMethod method = entry.CompressionMethod;
 				WriteLeInt(ZipConstants.CENSIG); 
 				WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);

@@ -280,7 +280,7 @@ namespace MonoTests.System.Data.Utils
 		}
 
 		/// <summary>End TestCase
-		/// <param name="ex">Exception object if exception occured during the TestCase, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the TestCase, null if not</param>
 		/// </summary>
 		protected void EndCase(Exception ex)
 		{
@@ -291,7 +291,7 @@ namespace MonoTests.System.Data.Utils
 			}
 			else
 			{
-				//if Exception occured during the test - log the error and faile the TestCase.
+				//if Exception occurred during the test - log the error and fail the TestCase.
 				if(ex != null)
 				{
 					_testCase.Success=false;
@@ -319,11 +319,11 @@ namespace MonoTests.System.Data.Utils
 
 
 		/// <summary>End Test
-		/// <param name="ex">Exception object if exception occured during the Test, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the Test, null if not</param>
 		/// </summary>
 		public void EndTest(Exception ex)
 		{
-			//if all test cases succeeded but an exception occured - set exit code to -1
+			//if all test cases succeeded but an exception occurred - set exit code to -1
 			//if we wont set it to -1, the exit code will be 0 !!!
 			if (UniqueId.FailureCounter == 0 && ex != null) 
 			{
@@ -335,10 +335,10 @@ namespace MonoTests.System.Data.Utils
 				Environment.ExitCode = UniqueId.FailureCounter;
 			}
 
-			//if exception occured - log error
+			//if exception occurred - log error
 			if(ex != null)
 			{
-				Log(string.Format("Unexpected Exception accured in Test [{0}] - {1} \n {2}" , this._testName, ex.Message ,ex.StackTrace));
+				Log(string.Format("Unexpected Exception occurred in Test [{0}] - {1} \n {2}" , this._testName, ex.Message ,ex.StackTrace));
 			}
 			if(this._logOnSuccess)
 			{
@@ -366,7 +366,7 @@ namespace MonoTests.System.Data.Utils
 		{
 			if(this._testCase.Success == false)
 			{
-				Log(string.Format("TeseCase \"{0}\" Error: [Failed while comparing(" + ObjectData + ")] ", _testCase.ToString() ));
+				Log(string.Format("TestCase \"{0}\" Error: [Failed while comparing(" + ObjectData + ")] ", _testCase.ToString() ));
 			}
 			else
 				if(this._logOnSuccess == true)
@@ -399,7 +399,7 @@ namespace MonoTests.System.Data.Utils
 	internal class UniqueId
 	{
 		//holds the unique name of the test case
-		//this name must be recieved from the test case itself
+		//this name must be received from the test case itself
 		//when calling BeginCase.
 		//example: BeginCase("MyName")
 		private string _caseName;
@@ -417,7 +417,7 @@ namespace MonoTests.System.Data.Utils
 			}
 		}
 		
-		//indicate if the Compare method has been invoked AND containes compare objects message (ToString)
+		//indicate if the Compare method has been invoked AND contains compare objects message (ToString)
 		private bool _CompareInvoked;
 		internal bool CompareInvoked
 		{
@@ -461,7 +461,7 @@ namespace MonoTests.System.Data.Utils
 		}
 
 
-		//Ctor, Recieve the name for the test case
+		//Ctor, Receive the name for the test case
 		//generate a unique number and apply it to the test case
 		internal UniqueId(string Name)
 		{

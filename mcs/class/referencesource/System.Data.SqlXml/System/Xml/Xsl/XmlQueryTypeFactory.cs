@@ -544,7 +544,7 @@ namespace System.Xml.Xsl {
             }
 
             //-----------------------------------------------
-            // ItemType, OccurenceIndicator Properties
+            // ItemType, OccurrenceIndicator Properties
             //-----------------------------------------------
 
             /// <summary>
@@ -793,7 +793,7 @@ namespace System.Xml.Xsl {
             }
 
             //-----------------------------------------------
-            // ItemType, OccurenceIndicator Properties
+            // ItemType, OccurrenceIndicator Properties
             //-----------------------------------------------
 
             /// <summary>
@@ -982,7 +982,7 @@ namespace System.Xml.Xsl {
             }
 
             //-----------------------------------------------
-            // ItemType, OccurenceIndicator Properties
+            // ItemType, OccurrenceIndicator Properties
             //-----------------------------------------------
 
             /// <summary>

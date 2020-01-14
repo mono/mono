@@ -40,11 +40,11 @@ namespace Mono.Xml.XPath2
 {
 	public class SequenceType
 	{
-		static SequenceType singleItem = new SequenceType (ItemType.AnyItem, Occurence.One);
-		static SequenceType singleAnyAtomic = new SequenceType (ItemType.AnyAtomicType, Occurence.One);
+		static SequenceType singleItem = new SequenceType (ItemType.AnyItem, Occurrence.One);
+		static SequenceType singleAnyAtomic = new SequenceType (ItemType.AnyAtomicType, Occurrence.One);
 
 		internal static SequenceType AnyType {
-			get { return Create (InternalPool.XsAnyType, Occurence.ZeroOrMore); }
+			get { return Create (InternalPool.XsAnyType, Occurrence.ZeroOrMore); }
 		}
 		internal static SequenceType SingleItem {
 			get { return singleItem; }
@@ -54,69 +54,69 @@ namespace Mono.Xml.XPath2
 		}
 
 		internal static SequenceType Node {
-			get { return Create (XmlTypeCode.Node, Occurence.One); }
+			get { return Create (XmlTypeCode.Node, Occurrence.One); }
 		}
 		internal static SequenceType Document {
-			get { return Create (XmlTypeCode.Document, Occurence.One); }
+			get { return Create (XmlTypeCode.Document, Occurrence.One); }
 		}
 		internal static SequenceType Element {
-			get { return Create (XmlTypeCode.Element, Occurence.One); }
+			get { return Create (XmlTypeCode.Element, Occurrence.One); }
 		}
 		internal static SequenceType Attribute {
-			get { return Create (XmlTypeCode.Attribute, Occurence.One); }
+			get { return Create (XmlTypeCode.Attribute, Occurrence.One); }
 		}
 		internal static SequenceType Namespace {
-			get { return Create (XmlTypeCode.Namespace, Occurence.One); }
+			get { return Create (XmlTypeCode.Namespace, Occurrence.One); }
 		}
 		internal static SequenceType Text {
-			get { return Create (XmlTypeCode.Text, Occurence.One); }
+			get { return Create (XmlTypeCode.Text, Occurrence.One); }
 		}
 		internal static SequenceType XmlPI {
-			get { return Create (XmlTypeCode.ProcessingInstruction, Occurence.One); }
+			get { return Create (XmlTypeCode.ProcessingInstruction, Occurrence.One); }
 		}
 		internal static SequenceType Comment {
-			get { return Create (XmlTypeCode.Comment, Occurence.One); }
+			get { return Create (XmlTypeCode.Comment, Occurrence.One); }
 		}
 
 		internal static SequenceType AtomicString {
-			get { return Create (InternalPool.XsString, Occurence.One); }
+			get { return Create (InternalPool.XsString, Occurrence.One); }
 		}
 		internal static SequenceType Boolean {
-			get { return Create (InternalPool.XsBoolean, Occurence.One); }
+			get { return Create (InternalPool.XsBoolean, Occurrence.One); }
 		}
 		internal static SequenceType Decimal {
-			get { return Create (InternalPool.XsDecimal, Occurence.One); }
+			get { return Create (InternalPool.XsDecimal, Occurrence.One); }
 		}
 		internal static SequenceType Integer {
-			get { return Create (InternalPool.XsInteger, Occurence.One); }
+			get { return Create (InternalPool.XsInteger, Occurrence.One); }
 		}
 		internal static SequenceType Int {
-			get { return Create (InternalPool.XsInt, Occurence.One); }
+			get { return Create (InternalPool.XsInt, Occurrence.One); }
 		}
 		internal static SequenceType Short {
-			get { return Create (InternalPool.XsShort, Occurence.One); }
+			get { return Create (InternalPool.XsShort, Occurrence.One); }
 		}
 		internal static SequenceType UnsignedInt {
-			get { return Create (InternalPool.XsUnsignedInt, Occurence.One); }
+			get { return Create (InternalPool.XsUnsignedInt, Occurrence.One); }
 		}
 		internal static SequenceType UnsignedShort {
-			get { return Create (InternalPool.XsUnsignedShort, Occurence.One); }
+			get { return Create (InternalPool.XsUnsignedShort, Occurrence.One); }
 		}
 		internal static SequenceType Double {
-			get { return Create (InternalPool.XsDouble, Occurence.One); }
+			get { return Create (InternalPool.XsDouble, Occurrence.One); }
 		}
 		internal static SequenceType Single {
-			get { return Create (InternalPool.XsFloat, Occurence.One); }
+			get { return Create (InternalPool.XsFloat, Occurrence.One); }
 		}
 		internal static SequenceType DateTime {
-			get { return Create (InternalPool.XsDateTime, Occurence.One); }
+			get { return Create (InternalPool.XsDateTime, Occurrence.One); }
 		}
 		internal static SequenceType QName {
-			get { return Create (InternalPool.XsQName, Occurence.One); }
+			get { return Create (InternalPool.XsQName, Occurrence.One); }
 		}
 
 		internal static SequenceType IntegerList {
-			get { return Create (XmlTypeCode.Integer, Occurence.ZeroOrMore); }
+			get { return Create (XmlTypeCode.Integer, Occurrence.ZeroOrMore); }
 		}
 
 
@@ -126,9 +126,9 @@ namespace Mono.Xml.XPath2
 		{
 			// typed Array
 			if (cliType.IsArray)
-				return Create (InternalPool.XmlTypeCodeFromRuntimeType (cliType.GetElementType (), true), Occurence.ZeroOrMore);
+				return Create (InternalPool.XmlTypeCodeFromRuntimeType (cliType.GetElementType (), true), Occurrence.ZeroOrMore);
 //			if (cliType.GetInterface ("System.Collections.IEnumerable") != null)
-//				return Create (XmlTypeCode.Item, Occurence.ZeroOrMore);
+//				return Create (XmlTypeCode.Item, Occurrence.ZeroOrMore);
 			if (cliType == typeof (XmlQualifiedName))
 				return QName;
 			if (cliType == typeof (XPathNavigator) || cliType.IsSubclassOf (typeof (XPathNavigator)))
@@ -138,10 +138,10 @@ namespace Mono.Xml.XPath2
 			if (cliType == typeof (XPathItem))
 				return SingleItem;
 			// FIXME: handle Nullable type
-			return Create (InternalPool.XmlTypeCodeFromRuntimeType (cliType, true), Occurence.One);
+			return Create (InternalPool.XmlTypeCodeFromRuntimeType (cliType, true), Occurrence.One);
 		}
 
-		internal static SequenceType Create (XmlTypeCode typeCode, Occurence occurence)
+		internal static SequenceType Create (XmlTypeCode typeCode, Occurrence occurrence)
 		{
 			switch (typeCode) {
 			case XmlTypeCode.Item:
@@ -154,20 +154,20 @@ namespace Mono.Xml.XPath2
 			case XmlTypeCode.Comment:
 			case XmlTypeCode.Namespace:
 			case XmlTypeCode.Text:
-				return new SequenceType (new ItemType (typeCode), occurence);
+				return new SequenceType (new ItemType (typeCode), occurrence);
 			default:
-				return Create (XmlSchemaType.GetBuiltInSimpleType (typeCode), occurence);
+				return Create (XmlSchemaType.GetBuiltInSimpleType (typeCode), occurrence);
 			}
 		}
 
-		internal static SequenceType Create (XmlSchemaType schemaType, Occurence occurence)
+		internal static SequenceType Create (XmlSchemaType schemaType, Occurrence occurrence)
 		{
 			switch (schemaType.QualifiedName.Namespace) {
 			case XmlSchema.Namespace:
 			case InternalPool.XdtNamespace:
 				break;
 			default:
-				return new SequenceType (schemaType, occurence);
+				return new SequenceType (schemaType, occurrence);
 			}
 
 			Hashtable cacheForType = standardTypes [schemaType] as Hashtable;
@@ -175,12 +175,12 @@ namespace Mono.Xml.XPath2
 				cacheForType = new Hashtable ();
 				standardTypes [schemaType] = cacheForType;
 			} else {
-				SequenceType type = cacheForType [occurence] as SequenceType;
+				SequenceType type = cacheForType [occurrence] as SequenceType;
 				if (type != null)
 					return type;
 			}
-			SequenceType t = new SequenceType (schemaType, occurence);
-			cacheForType [occurence] = t;
+			SequenceType t = new SequenceType (schemaType, occurrence);
+			cacheForType [occurrence] = t;
 			return t;
 		}
 
@@ -218,22 +218,22 @@ namespace Mono.Xml.XPath2
 
 		// Instance members
 
-		private SequenceType (XmlSchemaType schemaType, Occurence occurence)
+		private SequenceType (XmlSchemaType schemaType, Occurrence occurrence)
 		{
 			this.schemaType = schemaType;
 			this.itemType = ItemType.AnyItem;
-			this.occurence = occurence;
+			this.occurrence = occurrence;
 		}
 
-		internal SequenceType (ItemType itemType, Occurence occurence)
+		internal SequenceType (ItemType itemType, Occurrence occurrence)
 		{
 			this.schemaType = InternalPool.XsAnyType;
 			this.itemType = itemType;
-			this.occurence = occurence;
+			this.occurrence = occurrence;
 		}
 
 		XmlSchemaType schemaType;
-		Occurence occurence;
+		Occurrence occurrence;
 		ItemType itemType;
 
 		public XmlSchemaType SchemaType {
@@ -244,8 +244,8 @@ namespace Mono.Xml.XPath2
 			get { return itemType; }
 		}
 
-		public Occurence Occurence {
-			get { return occurence; }
+		public Occurrence Occurrence {
+			get { return occurrence; }
 		}
 
 		internal bool Matches (XPathSequence iter)
@@ -263,16 +263,16 @@ namespace Mono.Xml.XPath2
 
 		internal bool CanConvert (XPathSequence iter)
 		{
-			bool occured = false;
-			bool onlyOnce = (occurence == Occurence.One || occurence == Occurence.Optional);
-			bool required = (occurence == Occurence.One || occurence == Occurence.OneOrMore);
+			bool occurred = false;
+			bool onlyOnce = (occurrence == Occurrence.One || occurrence == Occurrence.Optional);
+			bool required = (occurrence == Occurrence.One || occurrence == Occurrence.OneOrMore);
 			foreach (XPathItem item in iter) {
-				if (occured && onlyOnce)
+				if (occurred && onlyOnce)
 					return false;
 				if (!CanConvert (item))
 					return false;
 			}
-			return occured || !required;
+			return occurred || !required;
 		}
 
 		public bool CanConvert (XPathItem item)
@@ -293,9 +293,9 @@ namespace Mono.Xml.XPath2
 		public object ToRuntimeType (XPathSequence seq)
 		{
 			// FIXME: handle ZeroOrMore|OneOrMore
-			switch (occurence) {
-			case Occurence.One:
-			case Occurence.Optional:
+			switch (occurrence) {
+			case Occurrence.One:
+			case Occurrence.Optional:
 				if (!seq.MoveNext ())
 					return null;
 				XPathItem item = seq.Current;
@@ -311,7 +311,7 @@ namespace Mono.Xml.XPath2
 		}
 	}
 
-	public enum Occurence
+	public enum Occurrence
 	{
 		One,
 		Optional,

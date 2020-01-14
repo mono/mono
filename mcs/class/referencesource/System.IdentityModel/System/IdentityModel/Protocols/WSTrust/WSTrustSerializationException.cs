@@ -9,7 +9,7 @@ namespace System.IdentityModel.Protocols.WSTrust
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// This indicates an error has occured while serializing/deserializing
+    /// This indicates an error has occurred while serializing/deserializing
     /// a WS-Trust message.
     /// </summary>
     [Serializable]

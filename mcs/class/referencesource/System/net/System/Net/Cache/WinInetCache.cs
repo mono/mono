@@ -252,7 +252,7 @@ using System.Globalization;
                             }
                         }
                     }
-                    //some error has occured
+                    //some error has occurred
                     break;
                 }
             }
@@ -289,7 +289,7 @@ using System.Globalization;
                                 continue;
                             }
                         }
-                        //some error has occured
+                        //some error has occurred
                         break;
                     }
 

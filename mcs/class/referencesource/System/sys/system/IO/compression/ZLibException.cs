@@ -36,10 +36,10 @@ internal class ZLibException : IOException, ISerializable {
     /// This is the preferred constructor to use.
     /// The other constructors are provided for compliance to Fx design guidelines.
     /// </summary>
-    /// <param name="message">A (localised) human readable error description.</param>
-    /// <param name="zlibErrorContext">A description of the context within zlib where the error occured (e.g. the function name).</param>
-    /// <param name="zlibErrorCode">The error code returned by a ZLib function that casued this exception.</param>
-    /// <param name="zlibErrorMessage">The string provided by ZLib as error information (unloicalised).</param>
+    /// <param name="message">A (localized) human readable error description.</param>
+    /// <param name="zlibErrorContext">A description of the context within zlib where the error occurred (e.g. the function name).</param>
+    /// <param name="zlibErrorCode">The error code returned by a ZLib function that caused this exception.</param>
+    /// <param name="zlibErrorMessage">The string provided by ZLib as error information (unlocalized).</param>
     public ZLibException(string message, string zlibErrorContext, int zlibErrorCode, string zlibErrorMessage) :
         base(message) {
         Init(zlibErrorContext, (ZErrorCode) zlibErrorCode, zlibErrorMessage);

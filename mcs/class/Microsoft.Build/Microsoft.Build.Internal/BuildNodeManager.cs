@@ -85,7 +85,7 @@ namespace Microsoft.Build.Internal
 					break;
 				} catch (Exception ex) {
 					// FIXME: I guess INodeLogger should be used instead.
-					Console.Error.WriteLine ("Uncaught build node exception occured");
+					Console.Error.WriteLine ("Uncaught build node exception occurred");
 					Console.Error.WriteLine (ex);
 				}
 			}
@@ -202,7 +202,7 @@ namespace Microsoft.Build.Internal
 					result = Build.InternalExecute ();
 				} catch (Exception ex) {
 					// FIXME: I guess INodeLogger should be used instead.
-					Console.Error.WriteLine ("Uncaught build node exception occured");
+					Console.Error.WriteLine ("Uncaught build node exception occurred");
 					Console.Error.WriteLine (ex);
 					result = null;
 				} finally {

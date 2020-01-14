@@ -57,7 +57,7 @@
         </remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
-          <para>Notifies the caller that an event occured during the conversion of an assembly.</para>
+          <para>Notifies the caller that an event occurred during the conversion of an assembly.</para>
         </summary>
         <param name="eventKind">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.InteropServices.ExporterEventKind" /> value indicating the type of event. </param>

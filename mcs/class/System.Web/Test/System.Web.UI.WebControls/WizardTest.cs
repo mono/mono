@@ -1164,7 +1164,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			wizard.WizardSteps.Add (step3);
 			wizard.ActiveStepIndex = 0;
 			wizard.MoveTo (step3);
-			// LAMESPEC: history updated when SaveControlState occured
+			// LAMESPEC: history updated when SaveControlState occurred
 			Assert.AreEqual (0, ((ArrayList) wizard.GetHistory ()).Count, "ControlState#1");
 			object o = wizard.PokerSaveControlState ();
 			wizard.PokerLoadControlState (o);

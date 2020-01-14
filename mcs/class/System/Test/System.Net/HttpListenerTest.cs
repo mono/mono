@@ -621,7 +621,7 @@ namespace MonoTests.System.Net {
 #endif
 		public void HttpClientIsDisconnectedCheckForWriteException()
 		{
-			AutoResetEvent exceptionOccuredEvent = new AutoResetEvent (false);
+			AutoResetEvent exceptionOccurredEvent = new AutoResetEvent (false);
 			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri,
 				initializer: (v) => v.IgnoreWriteExceptions = false);
 			listener.BeginGetContext (result =>
@@ -636,7 +636,7 @@ namespace MonoTests.System.Net {
 						while (true) 
 							outputStream.Write (bytes, 0, bytes.Length);
 					} catch {
-						exceptionOccuredEvent.Set ();
+						exceptionOccurredEvent.Set ();
 					}
 				}
 			}, null);
@@ -657,7 +657,7 @@ namespace MonoTests.System.Net {
 				}
 			});
 
-			Assert.IsTrue (exceptionOccuredEvent.WaitOne (15 * 1000), "#02");
+			Assert.IsTrue (exceptionOccurredEvent.WaitOne (15 * 1000), "#02");
 		}
 	}
 }

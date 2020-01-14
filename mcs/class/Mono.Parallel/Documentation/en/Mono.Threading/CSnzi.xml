@@ -40,7 +40,7 @@
       <Parameters />
       <Docs>
         <summary>Increment the state of the CSnzi object.</summary>
-        <returns>Returns the internal node where the increment action occured. Returns null if CSnzi is closed.</returns>
+        <returns>Returns the internal node where the increment action occurred. Returns null if CSnzi is closed.</returns>
         <remarks>To undo an Arrive, you must call <see cref="M:Mono.Threading.CSnzi.Depart()" /> using the returned node object as an argument.</remarks>
       </Docs>
     </Member>

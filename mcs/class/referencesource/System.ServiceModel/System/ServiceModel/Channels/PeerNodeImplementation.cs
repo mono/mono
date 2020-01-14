@@ -656,7 +656,7 @@ namespace System.ServiceModel.Channels
                 abortedHandler = Aborted;
             }
 
-            // Notify anyone who is interested that abort has occured 
+            // Notify anyone who is interested that abort has occurred 
             if (!graceful && abortedHandler != null)
             {
                 try
@@ -854,7 +854,7 @@ namespace System.ServiceModel.Channels
         // called when the maintainer has completed the connection attempt (successful or not)
         void OnConnectionAttemptCompleted(Exception e)
         {
-            // store the exception if one occured when trying to connect, so that it can be rethrown from Open
+            // store the exception if one occurred when trying to connect, so that it can be rethrown from Open
 
             Fx.Assert(openException == null, "OnConnectionAttemptCompleted twice");
             openException = e;

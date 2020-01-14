@@ -60,7 +60,7 @@ using System;
 namespace RabbitMQ.Client
 {
     ///<summary>Single entry object in the shutdown report that encapsulates
-    ///description of the error which occured during shutdown</summary>
+    ///description of the error which occurred during shutdown</summary>
     public class ShutdownReportEntry
     {
         public string m_description;
@@ -75,7 +75,7 @@ namespace RabbitMQ.Client
         ///<summary>Description provided in the error</summary>
         public string Description { get { return m_description; } }
         
-        ///<summary>Exception object that occured during shutdown, or null
+        ///<summary>Exception object that occurred during shutdown, or null
         ///if unspecified</summary>
         public Exception Exception { get { return m_ex; } }
         

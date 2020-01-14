@@ -103,7 +103,7 @@
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
-        <value>Returns the type of change that occured.</value>
+        <value>Returns the type of change that occurred.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

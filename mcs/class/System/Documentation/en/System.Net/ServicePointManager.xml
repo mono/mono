@@ -555,7 +555,7 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
         <remarks>This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
 			This API is only available in Mono and Xamarin products.</remarks>
         <example>
-          <para>The following example let the server accept AES128 (prefered cipher) or AES256 (allowed cipher) but no other cipher suite.</para>
+          <para>The following example let the server accept AES128 (preferred cipher) or AES256 (allowed cipher) but no other cipher suite.</para>
           <code lang="C#">ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType
 p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
             string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";

@@ -36,7 +36,7 @@ namespace Mono.XBuild.CommandLine {
 		int errorCode;
 		
 		public CommandLineException ()
-			: base ("Unknown command line exception has occured.")
+			: base ("Unknown command line exception has occurred.")
 		{
 		}
 		

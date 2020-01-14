@@ -57,7 +57,7 @@ namespace Mono.Security.Cryptography {
 		/// Returns values for P and G that are hard coded in this library. Contrary to what your intuition may tell you,
 		/// using these hard coded values is perfectly safe.
 		/// The values of the P and G parameters are taken from 'The OAKLEY Key Determination Protocol' [RFC2412].
-		/// This is the prefered key generation method, because it is very fast and very safe.
+		/// This is the preferred key generation method, because it is very fast and very safe.
 		/// Because this method uses fixed values for the P and G parameters, not all bit sizes are supported.
 		/// The current implementation supports bit sizes of 768, 1024 and 1536.
 		/// </summary>

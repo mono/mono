@@ -521,7 +521,7 @@ namespace System.Data.Objects.Internal
             // If a navigation expression defines this collection and its navigation information was used to
             // short-circuit relationship span rewrites, then enclose the entire rewritten expression in a
             // Lambda binding that brings the source Ref of the navigation operation into scope. This ref is
-            // refered to by VariableReferenceExpressions in the original navigation expression as well as any
+            // referred to by VariableReferenceExpressions in the original navigation expression as well as any
             // short-circuited relationship span columns in the rewritten expression.
             if (navInfo != null && navInfo.InUse)
             {

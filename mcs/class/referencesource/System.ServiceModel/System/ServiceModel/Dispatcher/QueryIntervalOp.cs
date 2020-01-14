@@ -858,7 +858,7 @@ namespace System.ServiceModel.Dispatcher
             Fx.Assert(null != interval, "");
             Fx.Assert(null != this.intervals, "");
 
-            // First, delete all occurences of interval in the tree. Note: we do a reference equals
+            // First, delete all occurrences of interval in the tree. Note: we do a reference equals
             this.RemoveIntervalFromTree(interval);
             // Remove interval from interval collection
             this.intervals.Remove(interval);

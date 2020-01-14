@@ -733,7 +733,7 @@ namespace RabbitMQ.Client.Impl
                 }
 
             } else
-                LogCloseError("Hard Protocol Exception occured "
+                LogCloseError("Hard Protocol Exception occurred "
                               + "while closing the connection", hpe);
                 
             return false;            

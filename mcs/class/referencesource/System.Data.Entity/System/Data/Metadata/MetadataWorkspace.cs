@@ -169,7 +169,7 @@ namespace System.Data.Metadata.Edm
         /// Get item collection for the space. The ItemCollection is in read only mode as it is
         /// part of the workspace.
         /// </summary>
-        /// <param name="dataSpace">The dataspace for the item colelction that should be returned</param>
+        /// <param name="dataSpace">The dataspace for the item collection that should be returned</param>
         /// <returns>The item collection for the given space</returns>
         /// <exception cref="System.ArgumentNullException">if space argument is null</exception>
         /// <exception cref="System.InvalidOperationException">If ItemCollection has not been registered for the space passed in</exception>
@@ -393,7 +393,7 @@ namespace System.Data.Metadata.Edm
         /// loaded, but the callingAssembly and its referenced assemblies are loaded.
         /// </summary>
         /// <param name="type">The type's assembly is loaded into the OSpace ItemCollection</param>
-        /// <param name="callingAssembly">The assembly and its referenced assemblies to load when type is insuffiecent</param>
+        /// <param name="callingAssembly">The assembly and its referenced assemblies to load when type is insufficient</param>
         internal void ImplicitLoadAssemblyForType(Type type, Assembly callingAssembly)
         {
             // this exists separately from LoadFromAssembly so that we can handle generics, like IEnumerable<Product>
@@ -423,7 +423,7 @@ namespace System.Data.Metadata.Edm
                           MetadataAssemblyHelper.GetNonSystemReferencedAssemblies(callingAssembly).Any(a => ObjectItemAttributeAssemblyLoader.IsSchemaAttributePresent(a))))
                     {
                         // cache the knowledge that we found an attribute
-                        // because it can be expesive to figure out
+                        // because it can be expensive to figure out
                         _foundAssemblyWithAttribute = true;
                         objItemCollection.ImplicitLoadAllReferencedAssemblies(callingAssembly, (EdmItemCollection)edmItemCollection);
                     }
@@ -1203,7 +1203,7 @@ namespace System.Data.Metadata.Edm
         /// Guarantees type match of declaration and generated parameters.
         /// Guarantees return type match.
         /// Throws internal error for functions without definition.
-        /// Passes thru exception occured during definition generation.
+        /// Passes thru exception occurred during definition generation.
         /// </summary>
         internal DbLambda GetGeneratedFunctionDefinition(EdmFunction function)
         {

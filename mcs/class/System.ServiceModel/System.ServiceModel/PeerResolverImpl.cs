@@ -32,7 +32,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.ServiceModel
 {
-	// FIXME: implement. However, for now we don't have any prefered
+	// FIXME: implement. However, for now we don't have any preferred
 	// P2P API like Pnrp that Microsoft uses.
 	internal class PeerResolverImpl : PeerResolver
 	{

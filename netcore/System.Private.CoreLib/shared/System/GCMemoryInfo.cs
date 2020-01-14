@@ -7,7 +7,7 @@ namespace System
     public readonly struct GCMemoryInfo
     {
         /// <summary>
-        /// High memory load threshold when the last GC occured
+        /// High memory load threshold when the last GC occurred
         /// </summary>
         public long HighMemoryLoadThresholdBytes { get; }
 

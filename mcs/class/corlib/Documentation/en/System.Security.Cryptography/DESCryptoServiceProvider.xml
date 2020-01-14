@@ -45,11 +45,11 @@
       <Docs>
         <remarks>
           <para>
-In general you should not use this constructor directly - unless you require a special service from the class that isn't available from the <see cref="T:System.Security.Cryptography.DES" /> base class. The prefered way to create a DES instance is to use <see cref="T:System.Security.Cryptography.DES" />.<see cref="M:System.Security.Cryptography.DES.Create" /> (). This will allow the system owners to replace the DES implementation if required (e.g. buggy implementation or hardware acceleration).
+In general you should not use this constructor directly - unless you require a special service from the class that isn't available from the <see cref="T:System.Security.Cryptography.DES" /> base class. The preferred way to create a DES instance is to use <see cref="T:System.Security.Cryptography.DES" />.<see cref="M:System.Security.Cryptography.DES.Create" /> (). This will allow the system owners to replace the DES implementation if required (e.g. buggy implementation or hardware acceleration).
 </para>
           <example>
             <code lang="C#">
-// prefered
+// preferred
 DES des = DES.Create ();
 
 // not recommended

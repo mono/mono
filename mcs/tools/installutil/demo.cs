@@ -14,7 +14,7 @@ class MyInstall : Installer {
 	private void MyInstaller_Committed(object sender, InstallEventArgs e)
 	{
 		Console.WriteLine("");
-		Console.WriteLine("Committed Event occured.");
+		Console.WriteLine("Committed Event occurred.");
 		Console.WriteLine("");
 	}
 	

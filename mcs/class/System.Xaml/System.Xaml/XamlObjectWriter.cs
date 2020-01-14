@@ -279,7 +279,7 @@ namespace System.Xaml
 				} catch (XamlObjectWriterException) {
 					throw;
 				} catch (Exception ex) {
-					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
+					throw new XamlObjectWriterException ("An error occurred on getting provided value", ex);
 				}
 			}
 			

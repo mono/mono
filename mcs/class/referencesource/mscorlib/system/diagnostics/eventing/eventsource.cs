@@ -253,7 +253,7 @@ namespace System.Diagnostics.Tracing
         public Guid Guid { get { return m_guid; } }
 
         /// <summary>
-        /// Returns true if the eventSource has been enabled at all. This is the prefered test
+        /// Returns true if the eventSource has been enabled at all. This is the preferred test
         /// to be performed before a relatively expensive EventSource operation.
         /// </summary>
         [SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "This does not need to be correct when racing with other threads")]

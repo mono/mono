@@ -125,7 +125,7 @@ namespace System.Data.OleDb.Test
 				test.TestTransaction ();
 				test.Close ();
 			} catch (Exception e) {
-				Console.WriteLine ("An error has occured: {0}", e.ToString ());
+				Console.WriteLine ("An error has occurred: {0}", e.ToString ());
 			}
 		}
 	}

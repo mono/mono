@@ -22,7 +22,7 @@ namespace System.ServiceModel.Description
         internal delegate void PolicyWarningHandler(XmlElement contextAssertion, string warningMessage);
         
         // Consider, Microsoft, make this public?
-        internal event PolicyWarningHandler PolicyWarningOccured;
+        internal event PolicyWarningHandler PolicyWarningOccurred;
 
         internal IEnumerable<IEnumerable<XmlElement>> NormalizePolicy(IEnumerable<XmlElement> policyAssertions)
         {
@@ -64,9 +64,9 @@ namespace System.ServiceModel.Description
                 {
                     if (nodesRead == this.metadataImporter.Quotas.MaxPolicyNodes)
                     {
-                        // add wirning once
+                        // add warning once
                         string warningMsg = SR.GetString(SR.ExceededMaxPolicyComplexity, node.Name, PolicyHelper.GetFragmentIdentifier((XmlElement)node));
-                        metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
+                        metadataImporter.PolicyWarningOccurred.Invoke(contextAssertion, warningMsg);
                         nodesRead++;
                     }
                     return EmptyEmpty;
@@ -90,7 +90,7 @@ namespace System.ServiceModel.Description
                         break;
                     case PolicyHelper.NodeType.UnrecognizedWSPolicy:
                         string warningMsg = SR.GetString(SR.UnrecognizedPolicyElementInNamespace, node.Name, node.NamespaceURI);
-                        metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
+                        metadataImporter.PolicyWarningOccurred.Invoke(contextAssertion, warningMsg);
                         break;
                     //consider Microsoft, add more error handling here. default?
                 }
@@ -103,13 +103,13 @@ namespace System.ServiceModel.Description
                 if (idRef == null)
                 {
                     string warningMsg = SR.GetString(SR.PolicyReferenceMissingURI, MetadataStrings.WSPolicy.Attributes.URI);
-                    metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
+                    metadataImporter.PolicyWarningOccurred.Invoke(contextAssertion, warningMsg);
                     return EmptyEmpty;
                 }
                 else if (idRef == string.Empty)
                 {
                     string warningMsg = SR.GetString(SR.PolicyReferenceInvalidId);
-                    metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
+                    metadataImporter.PolicyWarningOccurred.Invoke(contextAssertion, warningMsg);
                     return EmptyEmpty;
                 }
 
@@ -117,7 +117,7 @@ namespace System.ServiceModel.Description
                 if (policy == null)
                 {
                     string warningMsg = SR.GetString(SR.UnableToFindPolicyWithId, idRef);
-                    metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
+                    metadataImporter.PolicyWarningOccurred.Invoke(contextAssertion, warningMsg);
                     return EmptyEmpty;
                 }
 
@@ -204,7 +204,7 @@ namespace System.ServiceModel.Description
                 if (++yieldsHit > maxYields)
                 {
                     string warningMsg = SR.GetString(SR.ExceededMaxPolicySize);
-                    metadataImporter.PolicyWarningOccured.Invoke(null, warningMsg);
+                    metadataImporter.PolicyWarningOccurred.Invoke(null, warningMsg);
                     return true;
                 }
                 else

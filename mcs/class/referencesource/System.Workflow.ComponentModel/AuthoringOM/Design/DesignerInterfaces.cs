@@ -699,7 +699,7 @@ namespace System.Workflow.ComponentModel.Design
         /// Constructor for ConnectorHitTestInfo
         /// </summary>
         /// <param name="structuredCompositeActivityDesigner">Designer associated with the HitTestInfo</param>
-        /// <param name="flags">Flags where HitTest occured</param>
+        /// <param name="flags">Flags where HitTest occurred</param>
         /// <param name="connector">Index of the connector which was hit</param>
         public ConnectorHitTestInfo(CompositeActivityDesigner compositeActivityDesigner, HitTestLocations flags, int connector)
             : base(compositeActivityDesigner, flags)

@@ -1230,25 +1230,25 @@ namespace MonoTests.System.Threading
 			t2.ApartmentState = ApartmentState.STA;
 			Assert.AreEqual (ApartmentState.MTA, t2.ApartmentState, "Thread2 Set Twice");
 
-			bool exception_occured = false;
+			bool exception_occurred = false;
 			try {
 				t3.ApartmentState = ApartmentState.Unknown;
 			}
 			catch (Exception) {
-				exception_occured = true;
+				exception_occurred = true;
 			}
 			Assert.AreEqual (ApartmentState.Unknown, t3.ApartmentState, "Thread3 Set Invalid");
-			Assert.IsFalse (exception_occured, "Thread3 Set Invalid Exception Occured");
+			Assert.IsFalse (exception_occurred, "Thread3 Set Invalid Exception Occurred");
 
 			t1.Start ();
-			exception_occured = false;
+			exception_occurred = false;
 			try {
 				t1.ApartmentState = ApartmentState.STA;
 			}
 			catch (Exception) {
-				exception_occured = true;
+				exception_occurred = true;
 			}
-			Assert.IsTrue (exception_occured, "Thread1 Started Invalid Exception Occured");
+			Assert.IsTrue (exception_occurred, "Thread1 Started Invalid Exception Occurred");
 		}
 
 		[Test]

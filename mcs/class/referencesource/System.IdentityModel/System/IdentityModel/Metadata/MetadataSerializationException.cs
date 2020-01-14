@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace System.IdentityModel.Metadata
 {
     /// <summary>
-    /// This indicates an error has occured while serializing/deserializing Saml
+    /// This indicates an error has occurred while serializing/deserializing Saml
     /// metadata.
     /// </summary>
     [Serializable]

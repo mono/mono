@@ -72,7 +72,7 @@ namespace System.Net.NetworkInformation {
                 }
             }
         /// <include file='doc\NetworkInterface.uex' path='docs/doc[@for="IPMulticastAddressInformation.PreferredLifetime"]/*' />
-        /// <summary>Specifies the prefered lifetime of the address in seconds.</summary>
+        /// <summary>Specifies the preferred lifetime of the address in seconds.</summary>
 
         public override long AddressPreferredLifetime{
             get {
@@ -82,7 +82,7 @@ namespace System.Net.NetworkInformation {
         /// <include file='doc\NetworkInterface.uex' path='docs/doc[@for="IPMulticastAddressInformation.PreferredLifetime"]/*' />
 
         /// <include file='doc\NetworkInterface.uex' path='docs/doc[@for="IPMulticastAddressInformation.DhcpLeaseLifetime"]/*' />
-        /// <summary>Specifies the prefered lifetime of the address in seconds.</summary>
+        /// <summary>Specifies the preferred lifetime of the address in seconds.</summary>
         public override long DhcpLeaseLifetime{
             get {
                 return 0;

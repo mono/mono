@@ -42,9 +42,9 @@ public class RegexMatchTimeoutException : TimeoutException, ISerializable {
     /// This is the preferred constructor to use.
     /// The other constructors are provided for compliance to Fx design guidelines.
     /// </summary>
-    /// <param name="regexInput">Matching timeout occured during mathing within the specified input.</param>
-    /// <param name="regexPattern">Matching timeout occured during mathing to the specified pattern.</param>
-    /// <param name="matchTimeout">Matching timeout occured becasue matching took longer than the specified timeout.</param>
+    /// <param name="regexInput">Matching timeout occurred during mathing within the specified input.</param>
+    /// <param name="regexPattern">Matching timeout occurred during mathing to the specified pattern.</param>
+    /// <param name="matchTimeout">Matching timeout occurred because matching took longer than the specified timeout.</param>
     public RegexMatchTimeoutException(string regexInput, string regexPattern, TimeSpan matchTimeout) :
         base(SR.GetString(SR.RegexMatchTimeoutException_Occurred)) {
         Init(regexInput, regexPattern, matchTimeout);

@@ -219,7 +219,7 @@ namespace System.Workflow.Runtime.Hosting
                         {
                             if (ci.IsExpired)
                             {
-                                WorkflowTrace.Host.TraceEvent(TraceEventType.Information, 0, "Timeout occured for timer for instance {0}", ci.State);
+                                WorkflowTrace.Host.TraceEvent(TraceEventType.Information, 0, "Timeout occurred for timer for instance {0}", ci.State);
                                 timerQueue.Dequeue();
                                 fire = true;
                             }

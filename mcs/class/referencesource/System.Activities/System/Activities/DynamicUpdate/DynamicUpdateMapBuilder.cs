@@ -1167,13 +1167,13 @@ namespace System.Activities.DynamicUpdate
                 if (ActivityComparer.HasPrivateMemberOtherThanArgumentsChanged(this, updatedActivity, originalActivity, this.parent == null, out argumentChangesMap) || 
                     (argumentChangesMap != null && this.userProvidedMap != null))
                 {
-                    // either of the following two must have occured here.
+                    // either of the following two must have occurred here.
                     // A.
                     // members in the private IdSpace(or nested IdSpaces) must have changed.
                     // addition/removal/rearrangement of arguments and their expressions in the private IdSpace are not considered as change.
                     //
                     // B.
-                    // addition/removal/rearrangement of arguments or their expressions in the private IdSpace occured and no other members in the private IdSpace(or nested IdSpaces) changed except their id shift.
+                    // addition/removal/rearrangement of arguments or their expressions in the private IdSpace occurred and no other members in the private IdSpace(or nested IdSpaces) changed except their id shift.
                     // Due to the id shift caused by argument change, an implementation map("argumentChangesMap") was created.
                     // In addition to "argumentChangesMap", there is also a user provided map.  This blocks DU.
 

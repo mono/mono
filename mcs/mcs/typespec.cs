@@ -1420,7 +1420,7 @@ namespace Mono.CSharp
 				//
 				// object and dynamic are considered equivalent there is an identity conversion
 				// between object and dynamic, and between constructed types that are the same
-				// when replacing all occurences of dynamic with object.
+				// when replacing all occurrences of dynamic with object.
 				//
 				if (a.BuiltinType == BuiltinTypeSpec.Type.Dynamic || b.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					return b.BuiltinType == BuiltinTypeSpec.Type.Object || a.BuiltinType == BuiltinTypeSpec.Type.Object;

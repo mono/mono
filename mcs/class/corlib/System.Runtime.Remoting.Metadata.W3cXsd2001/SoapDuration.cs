@@ -81,7 +81,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 					continue;
 				}
 				bool isIntegerValue = true;
-				int dotOccurence = 0;
+				int dotOccurrence = 0;
 				for (; i < value.Length; i++) 
 				{
 					if (!Char.IsDigit (value [i]))
@@ -90,10 +90,10 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 						if (value[i] == '.') 
 						{
 							isIntegerValue = false;
-							dotOccurence++;
+							dotOccurrence++;
 							//if there is more than one dot in the number 
 							//than its an error
-							if (dotOccurence > 1 )
+							if (dotOccurrence > 1 )
 							{
 								error = true;
 								break;

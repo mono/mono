@@ -36,7 +36,7 @@ namespace System.Management
 	public class ManagementException : SystemException
 	{
 		public ManagementException ()
-			: this ("system management error has occured")
+			: this ("system management error has occurred")
 		{
 		}
 

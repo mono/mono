@@ -1531,7 +1531,7 @@ namespace System.Data.Objects
             }
             catch (Exception)
             {
-                // when the connection is unable to enlist properly or another error occured, be sure to release this connection
+                // when the connection is unable to enlist properly or another error occurred, be sure to release this connection
                 ReleaseConnection();
                 throw;
             }

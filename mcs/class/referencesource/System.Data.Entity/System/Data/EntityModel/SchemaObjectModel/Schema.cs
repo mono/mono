@@ -304,7 +304,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
             if (reader != null && !IsValidateableXmlNamespace(reader.NamespaceURI, reader.NodeType == XmlNodeType.Attribute))
             {
                 //For V1 Schemas, we never returned errors for elements in custom namespaces.
-                //But the behavior is not totally correct since the error might have occured inside a known namespace
+                //But the behavior is not totally correct since the error might have occurred inside a known namespace
                 //even though the element that the reader pointing to is in a custom namespace. But if we fix that, it would
                 //cause lot of breaking changes for V1 customers since we can not change the xsd for them.
                 //For attributes, we can ignore the errors always since attributes are unordered and custom attributes should always be allowed.
@@ -431,7 +431,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
         }
 
         /// <summary>
-        /// Vaidate the schema.
+        /// Validate the schema.
         /// </summary>
         /// <returns>list of errors</returns>
         internal override void Validate()

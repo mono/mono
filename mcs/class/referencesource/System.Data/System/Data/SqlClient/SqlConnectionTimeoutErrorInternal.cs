@@ -212,7 +212,7 @@ namespace System.Data.SqlClient
             // In all other cases, it will default to the original error message.
             if ((currentPhase != SqlConnectionTimeoutErrorPhase.Undefined) && (currentPhase != SqlConnectionTimeoutErrorPhase.Complete))
             {
-                // NOTE: In case of a failover scenario, add a string that this failure occured as part of the primary or secondary server
+                // NOTE: In case of a failover scenario, add a string that this failure occurred as part of the primary or secondary server
                 if (isFailoverScenario)
                 {
                     errorBuilder.Append("  ");

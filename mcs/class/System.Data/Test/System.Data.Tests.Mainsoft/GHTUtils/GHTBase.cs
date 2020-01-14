@@ -286,7 +286,7 @@ namespace GHTUtils.Base
 		}
 
 		/// <summary>End TestCase
-		/// <param name="ex">Exception object if exception occured during the TestCase, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the TestCase, null if not</param>
 		/// </summary>
 		protected void EndCase(Exception ex)
 		{
@@ -297,7 +297,7 @@ namespace GHTUtils.Base
 			}
 			else
 			{
-				// if Exception occured during the test - log the error and faile the TestCase.
+				// if Exception occurred during the test - log the error and fail the TestCase.
 				if(ex != null)
 				{
 					_testCase.Success=false;
@@ -325,7 +325,7 @@ namespace GHTUtils.Base
 
 
 		/// <summary>End Test
-		/// <param name="ex">Exception object if exception occured during the Test, null if not</param>
+		/// <param name="ex">Exception object if exception occurred during the Test, null if not</param>
 		/// </summary>
 		public void EndTest(Exception ex)
 		{

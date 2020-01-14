@@ -466,7 +466,7 @@ namespace System.Security.Cryptography {
 
                 // Do the signature verification.  A TRUE result means that the signature was valid.  A FALSE
                 // result either means an invalid signature or some other error, so we need to check the last
-                // error to see which occured.
+                // error to see which occurred.
                 if (UnsafeNativeMethods.CryptVerifySignature(hashHandle,
                                                                 signatureValue,
                                                                 signatureValue.Length,
@@ -499,7 +499,7 @@ namespace System.Security.Cryptography {
     ///      * handle            - handle resulting from attaching to the CSP
     ///       
     ///    We need to keep all three pieces of state, since we need to teardown in a specific order. If
-    ///    these pieces of state were in seperate SafeHandles we could not guarantee their order of
+    ///    these pieces of state were in separate SafeHandles we could not guarantee their order of
     ///    finalization.
     /// </summary>
     [SecurityCritical]
@@ -564,14 +564,14 @@ namespace System.Security.Cryptography {
     ///     key is freed is the memory associated with the key blob.
     ///    
     ///     However, in order for a SafeCspKeyHandle to marshal as a CSSM_KEY_PTR, as one would expect, the
-    ///     handle value on the Mac is actually a pointer to the CSSM_KEY.  We maintain a seperate m_data
+    ///     handle value on the Mac is actually a pointer to the CSSM_KEY.  We maintain a separate m_data
     ///     pointer which is the buffer holding the actual key data.
     ///     
-    ///     Both of these details add a further invarient that on the Mac a SafeCspKeyHandle may never be an
+    ///     Both of these details add a further invariant that on the Mac a SafeCspKeyHandle may never be an
     ///     [out] parameter from an API.  This is because we always expect that we control the memory buffer
     ///     that the CSSM_KEY resides in and that we don't have to call CSSM_FreeKey on the data.
     ///     
-    ///     Keeping this in a SafeHandle rather than just marshaling the key structure direclty buys us a
+    ///     Keeping this in a SafeHandle rather than just marshaling the key structure directly buys us a
     ///     level of abstraction, in that if we ever do need to work with keys that require a CSSM_FreeKey
     ///     call, we can continue to use the same key handle object.  It also means that keys are represented
     ///     by the same type on both Windows and Mac, so that consumers of the CapiNative layer don't have

@@ -841,38 +841,38 @@ FunctionBody // returns EnclosedExpr or null
 	;
 
 SequenceType // returns SequenceType 
-	: ItemType OptionalOccurenceIndicator
+	: ItemType OptionalOccurrenceIndicator
 	{
-		$$ = new SequenceType ((ItemType) $1, (Occurence) $2);
+		$$ = new SequenceType ((ItemType) $1, (Occurrence) $2);
 	}
 	| EMPTY OPEN_PAREN CLOSE_PAREN {
 		tokenizer.State = ParseState.Operator;
 	  }
 	{
-		$$ = SequenceType.Create (XmlTypeCode.None, Occurence.One);
+		$$ = SequenceType.Create (XmlTypeCode.None, Occurrence.One);
 	}
 	;
 
-OptionalOccurenceIndicator // returns Occurence 
+OptionalOccurrenceIndicator // returns Occurrence 
 	: // empty
 	{
-		$$ = Occurence.One;
+		$$ = Occurrence.One;
 	}
-	| OccurenceIndicator
+	| OccurrenceIndicator
 	;
 
-OccurenceIndicator // returns Occurence 
+OccurrenceIndicator // returns Occurrence 
 	: QUESTION
 	{
-		$$ = Occurence.Optional;
+		$$ = Occurrence.Optional;
 	}
 	| ASTERISK
 	{
-		$$ = Occurence.ZeroOrMore;
+		$$ = Occurrence.ZeroOrMore;
 	}
 	| PLUS
 	{
-		$$ = Occurence.OneOrMore;
+		$$ = Occurrence.OneOrMore;
 	}
 	;
 
@@ -1671,7 +1671,7 @@ ExtensionExpr
 	: PragmaList OPEN_CURLY OptionalExpr CLOSE_CURLY
 	{
 		if (!isXQueryMode)
-			throw new XmlQueryCompileException ("XPath2 does not suport extension expression.");
+			throw new XmlQueryCompileException ("XPath2 does not support extension expression.");
 		throw new NotImplementedException ();
 	}
 	;
@@ -1938,14 +1938,14 @@ AtomicType // returns XmlTypeCode
 
 ItemType // returns ItemType
 	: AtomicType {
-		tokenizer.State = ParseState.OccurenceIndicator;
+		tokenizer.State = ParseState.OccurrenceIndicator;
 	  }
 	{
 		$$ = new ItemType ((XmlTypeCode) $1);
 	}
 	| KindTest
 	| ITEM OPEN_PAREN CLOSE_PAREN {
-		tokenizer.State = ParseState.OccurenceIndicator;
+		tokenizer.State = ParseState.OccurrenceIndicator;
 	  }
 	{
 		$$ = new ItemType (XmlTypeCode.Item);
@@ -1965,9 +1965,9 @@ KindTest // returns KindTest
 PITest
 	: PROCESSING_INSTRUCTION OPEN_PAREN {
 		// LAMESPEC: push state is described as Operator, but should 
-		// be OccurenceIndicator (as any KindTest could be followed by
+		// be OccurrenceIndicator (as any KindTest could be followed by
 		// '?' '+' or '*')
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTestForPI;
 	  } PITestContent CLOSE_PAREN {
 		tokenizer.PopState ();
@@ -1994,7 +1994,7 @@ PITestContent // returns KindTest
 
 CommentTest
 	: COMMENT OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } CLOSE_PAREN {
 	  	tokenizer.PopState ();
@@ -2006,7 +2006,7 @@ CommentTest
 
 TextTest
 	: TEXT OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } CLOSE_PAREN {
 	  	tokenizer.PopState ();
@@ -2018,7 +2018,7 @@ TextTest
 
 AnyKindTest
 	: NODE OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } CLOSE_PAREN {
 	  	tokenizer.PopState ();
@@ -2030,7 +2030,7 @@ AnyKindTest
 
 DocumentTest // returns DocumentTest
 	: DOCUMENT_NODE OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } DocumentTestContent CLOSE_PAREN {
 	  	tokenizer.PopState ();
@@ -2053,7 +2053,7 @@ DocumentTestContent // returns DocumentTest
 
 ElementTest // returns ElementTest
 	: ELEMENT OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } ElementTestContent CLOSE_PAREN {
 		tokenizer.PopState ();
@@ -2091,7 +2091,7 @@ OptionalQuestion // returns bool
 
 AttributeTest // returns AttributeTest
 	: ATTRIBUTE OPEN_PAREN {
-		tokenizer.PushState (ParseState.OccurenceIndicator);
+		tokenizer.PushState (ParseState.OccurrenceIndicator);
 		tokenizer.State = ParseState.KindTest;
 	  } AttributeTestContent CLOSE_PAREN {
 		tokenizer.PopState ();
@@ -2633,7 +2633,7 @@ QName // returns XmlQualifiedName. Note that this state is just a wrapper for st
 			tokenizer.State = ParseState.Operator;
 			break;
 		case ParseState.ItemType:
-			tokenizer.State = ParseState.OccurenceIndicator;
+			tokenizer.State = ParseState.OccurrenceIndicator;
 			break;
 		case ParseState.KindTest:
 		case ParseState.SchemaContextStep:

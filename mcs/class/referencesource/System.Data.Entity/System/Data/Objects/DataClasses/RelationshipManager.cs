@@ -253,7 +253,7 @@ namespace System.Data.Objects.DataClasses
                     }
                     finally
                     {
-                        // An error occured so we need to put the previous relatedEnd back into the RelationshipManager
+                        // An error occurred so we need to put the previous relatedEnd back into the RelationshipManager
                         if (doCleanup && relatedEnd != null)
                         {
                             Debug.Assert(_relationships != null, "Expected _relationships to be non-null.");

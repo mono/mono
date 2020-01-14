@@ -39,7 +39,7 @@
 **       consistently replace Hashtable with Dictionary plus full locks to 
 **       reduce complexity.
 **    d. Most of serialization is dead code in silverlight. Instead of updating
-**       those Hashtable occurences in serialization, we carved out references 
+**       those Hashtable occurrences in serialization, we carved out references 
 **       to serialization such that this code doesn't need to build in 
 **       silverlight. 
 ===========================================================*/
@@ -117,7 +117,7 @@ namespace System.Collections.Generic {
 
         protected Dictionary(SerializationInfo info, StreamingContext context) {
             //We can't do anything with the keys and values until the entire graph has been deserialized
-            //and we have a resonable estimate that GetHashCode is not going to fail.  For the time being,
+            //and we have a reasonable estimate that GetHashCode is not going to fail.  For the time being,
             //we'll just cache this.  The graph is not valid until OnDeserialization has been called.
             HashHelpers.SerializationInfoTable.Add(this, info);
         }

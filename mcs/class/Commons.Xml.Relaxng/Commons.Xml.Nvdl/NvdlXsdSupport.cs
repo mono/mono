@@ -59,7 +59,7 @@ namespace Commons.Xml.Nvdl
 		public override bool HandleError (Exception ex, XmlReader reader, string nvdlLocation)
 		{
 			if (ex is XmlSchemaException)
-				throw new NvdlInstanceValidationException (String.Format ("XML schema validation error occured as a part of NVDL validation."), ex, this, nvdlLocation);
+				throw new NvdlInstanceValidationException (String.Format ("XML schema validation error occurred as a part of NVDL validation."), ex, this, nvdlLocation);
 			return false;
 		}
 	}

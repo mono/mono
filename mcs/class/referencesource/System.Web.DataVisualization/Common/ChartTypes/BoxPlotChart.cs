@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -1589,7 +1589,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
                     Chart control = boxPlotSeries.Chart;
 					if(control != null)
 					{
-						// Get linked series and check existance
+						// Get linked series and check existence
 						if(control.Series.IndexOf(linkedSeriesName) == -1)
 						{
 							throw(new InvalidOperationException(SR.ExceptionCustomAttributeSeriesNameNotFound("BoxPlotSeries", linkedSeriesName) ));

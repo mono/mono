@@ -639,7 +639,7 @@ namespace System.ServiceModel.Dispatcher
 					if (eh.HandleError (ex))
 						return true; // error is handled appropriately.
 
-				Logger.Error ("An error occured, to be handled", ex);
+				Logger.Error ("An error occurred, to be handled", ex);
 
 				foreach (var eh in owner.ErrorHandlers)
 					eh.ProvideFault (ex, owner.MessageVersion, ref res);

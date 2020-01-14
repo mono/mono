@@ -292,7 +292,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The Computer on which this event entry occured.")</AttributeName>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The Computer on which this event entry occurred.")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>

@@ -447,7 +447,7 @@ namespace System.ServiceModel.Dispatcher
 			
 			void WriteRawContents (XmlDictionaryWriter writer)
 			{
-				throw new NotSupportedException ("Some unsupported sequence of writing operation occured. It is likely a missing feature.");
+				throw new NotSupportedException ("Some unsupported sequence of writing operation occurred. It is likely a missing feature.");
 			}
 			
 			void WriteJsonBodyContents (XmlDictionaryWriter writer)

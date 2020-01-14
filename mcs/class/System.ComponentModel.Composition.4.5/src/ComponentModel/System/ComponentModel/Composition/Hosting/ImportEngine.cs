@@ -59,7 +59,7 @@ namespace System.ComponentModel.Composition.Hosting
 
         /// <summary>
         ///     Previews all the required imports for the given <see cref="ComposablePart"/> to 
-        ///     ensure they can all be satisified. The preview does not actually set the imports
+        ///     ensure they can all be satisfied. The preview does not actually set the imports
         ///     only ensures that they exist in the source provider. If the preview succeeds then
         ///     the <see cref="ImportEngine"/> also enforces that changes to exports in the source
         ///     provider will not break any of the required imports. If this enforcement needs to be
@@ -73,7 +73,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <exception cref="CompositionException">
         ///     An error occurred during previewing and <paramref name="atomicComposition"/> is null. 
         ///     <see cref="CompositionException.Errors"/> will contain a collection of errors that occurred.
-        ///     The pre-existing composition is in an unknown state, depending on the errors that occured.
+        ///     The pre-existing composition is in an unknown state, depending on the errors that occurred.
         /// </exception>
         /// <exception cref="ChangeRejectedException">
         ///     An error occurred during the previewing and <paramref name="atomicComposition"/> is not null.
@@ -400,7 +400,7 @@ namespace System.ComponentModel.Composition.Hosting
                     }
                 }
 
-                // if an error occured while doing a state transition 
+                // if an error occurred while doing a state transition 
                 if (!result.Succeeded)
                 {
                     // revert to the previous state and return the error

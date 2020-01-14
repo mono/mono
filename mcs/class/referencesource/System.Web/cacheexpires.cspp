@@ -215,7 +215,7 @@ namespace System.Web.Caching {
         bool                    _blockReduce;           // block calls to Reduce() while in FlushExpiredItems
 
         // Minimum expiration date of the items in this bucket.
-        // Note that it is only a heursitic - if an item that is
+        // Note that it is only a heuristic - if an item that is
         // the minimum is removed, the minimum will not be updated.
         // The minimum is reset when the bucket is flushed.
         DateTime                _utcMinExpires;         
@@ -225,7 +225,7 @@ namespace System.Web.Caching {
         // flush expired items when we are trimming items from the cache.
         int[]                   _counts;
 
-        // The last time a flush occured, at which time we recalculate the counts.
+        // The last time a flush occurred, at which time we recalculate the counts.
         DateTime                _utcLastCountReset;
 
         internal ExpiresBucket(CacheExpires cacheExpires, byte bucket, DateTime utcNow) {

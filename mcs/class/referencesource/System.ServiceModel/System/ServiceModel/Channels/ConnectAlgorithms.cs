@@ -192,7 +192,7 @@ namespace System.ServiceModel.Channels
                     }
                     else
                     {
-                        //A timeout occured no connections progressed, try some more connections
+                        //A timeout occurred no connections progressed, try some more connections
                         //This may result in more than wantedConnectionCount connections if the timeout connections were 
                         // merely being slow
                         pendingConnectedNeighbor.Clear();

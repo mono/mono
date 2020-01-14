@@ -1893,7 +1893,7 @@ namespace System.Net {
 
             This method completes the async call created from BeginRead,
             it attempts to determine how many bytes were actually read,
-            and if any errors occured.
+            and if any errors occurred.
 
             Input:
                 asyncResult - created by BeginRead
@@ -2015,7 +2015,7 @@ namespace System.Net {
 
             This method completes the async call created from BeginRead,
             it attempts to determine how many bytes were actually read,
-            and if any errors occured.
+            and if any errors occurred.
 
             Input:
                 asyncResult - created by BeginRead

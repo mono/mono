@@ -1931,7 +1931,7 @@ ArgumentOutOfRange=value must be >= {0} and <= {1}.
 ;InvalidPropagationToken=The OLE Transactions propagation token received in the message could not be used to unmarshal a transaction. It may be invalid or corrupt.
 ;InvalidWsatExtendedInfo=The WS-AtomicTransaction extended information included in the OLE Transactions propagation token was invalid or corrupt.
 ;TMCommunicationError=An error occurred communicating with the distributed transaction manager.
-;UnmarshalTransactionFaulted=The WS-AtomicTransaction protocol service could not unmarshal the flowed transaction. The following exception occured: {0}
+;UnmarshalTransactionFaulted=The WS-AtomicTransaction protocol service could not unmarshal the flowed transaction. The following exception occurred: {0}
 ;InvalidRegistrationHeaderTransactionId=The transaction identifier element in the registration header is invalid
 ;InvalidRegistrationHeaderIdentifier=The context identifier element in the registration header is invalid.
 ;InvalidRegistrationHeaderTokenId=The token identifier element in the registration header is invalid.
@@ -2360,7 +2360,7 @@ ArgumentOutOfRange=value must be >= {0} and <= {1}.
 ;
 InternalException=An error occurred within Windows Communication Foundation. Applications should not attempt to handle this error.
 CrossDomainError=An error occurred while trying to make a request to URI '{0}'. This could be due to attempting to access a service in a cross-domain way without a proper cross-domain policy in place, or a policy that is unsuitable for SOAP services. You may need to contact the owner of the service to publish a cross-domain policy file and to ensure it allows SOAP-related HTTP headers to be sent. This error may also be caused by using internal types in the web service proxy without using the InternalsVisibleToAttribute attribute. Please see the inner exception for more details.
-MissingReferenceToExtensionsDll=An exception occured when initializing duplex channels. Please ensure your application .xap package contains the assembly System.ServiceModel.Extensions.dll.
+MissingReferenceToExtensionsDll=An exception occurred when initializing duplex channels. Please ensure your application .xap package contains the assembly System.ServiceModel.Extensions.dll.
 
 ; Copy from Configuration error message
 ConfigUnrecognizedElement=Unrecognized element '{0}' in service reference configuration. Note that only a subset of the Windows Communication Foundation configuration functionality is available in Silverlight.

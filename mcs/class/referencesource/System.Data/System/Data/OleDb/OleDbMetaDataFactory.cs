@@ -61,7 +61,7 @@ namespace System.Data.OleDb{
                  new SchemaRowsetName(OleDbMetaDataCollectionNames.Tables,OleDbSchemaGuid.Tables),
                  new SchemaRowsetName(OleDbMetaDataCollectionNames.Views,OleDbSchemaGuid.Views)};
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable metaDataCollectionsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.MetaDataCollections];
             if (metaDataCollectionsTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.MetaDataCollections);
@@ -70,7 +70,7 @@ namespace System.Data.OleDb{
             // copy the table filtering out any rows that don't apply to the current version of the provider
             metaDataCollectionsTable = CloneAndFilterCollection(DbMetaDataCollectionNames.MetaDataCollections, null);
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable restrictionsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.Restrictions];
             if (restrictionsTable != null){
                 // copy the table filtering out any rows that don't apply to the current version of the provider
@@ -333,13 +333,13 @@ namespace System.Data.OleDb{
 
         private DataTable GetDataTypesTable(OleDbConnection connection){
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable dataTypesTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.DataTypes];
             if (dataTypesTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.DataTypes);
             }
 
-            // copy the table filtering out any rows that don't apply to tho current version of the prrovider
+            // copy the table filtering out any rows that don't apply to tho current version of the provider
             dataTypesTable = CloneAndFilterCollection(DbMetaDataCollectionNames.DataTypes, null);
 
             DataTable providerTypesTable = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Provider_Types,null);
@@ -453,7 +453,7 @@ namespace System.Data.OleDb{
 
         private DataTable GetReservedWordsTable(OleDbConnectionInternal internalConnection){
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable reservedWordsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.ReservedWords];
             if (null == reservedWordsTable){
                     throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.ReservedWords);

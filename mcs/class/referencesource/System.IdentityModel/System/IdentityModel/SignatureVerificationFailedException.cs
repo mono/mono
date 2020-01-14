@@ -8,7 +8,7 @@ namespace System.IdentityModel
     using System.Runtime.Serialization;
     
     /// <summary>
-    /// This indicates an error has occured while processing a signature
+    /// This indicates an error has occurred while processing a signature
     /// </summary>
     [Serializable]
     public class SignatureVerificationFailedException : SecurityTokenException

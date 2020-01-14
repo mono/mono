@@ -112,7 +112,7 @@ namespace System.Diagnostics
 			get { return eventID; }
 		}
 
-		[MonitoringDescription ("Sequence numer of this event entry.")]
+		[MonitoringDescription ("Sequence number of this event entry.")]
 		public int Index {
 			get { return index; }
 		}
@@ -123,7 +123,7 @@ namespace System.Diagnostics
 			get { return instanceId; }
 		}
 
-		[MonitoringDescription ("The Computer on which this event entry occured.")]
+		[MonitoringDescription ("The Computer on which this event entry occurred.")]
 		public string MachineName {
 			get { return machineName; }
 		}

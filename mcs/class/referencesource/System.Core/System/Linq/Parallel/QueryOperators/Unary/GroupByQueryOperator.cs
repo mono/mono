@@ -181,7 +181,7 @@ namespace System.Linq.Parallel
         {
             // We just open our child operator. Do not propagate the preferStriping value, but instead explicitly
             // set it to false. Regardless of whether the parent prefers striping or range partitioning, the output
-            // will be hash-partititioned.
+            // will be hash-partitioned.
             QueryResults<TSource> childResults = Child.Open(settings, false);
             return new UnaryQueryOperatorResults(childResults, this, settings, false);
         }

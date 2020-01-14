@@ -862,7 +862,7 @@ namespace System.Net {
                         AddAllPrefixes();
                     }
                     catch (HttpListenerException) {
-                        // If an error occured while adding prefixes, free all resources allocated by previous steps.
+                        // If an error occurred while adding prefixes, free all resources allocated by previous steps.
                         DetachRequestQueueFromUrlGroup();
                         ClearDigestCache();
                         throw;

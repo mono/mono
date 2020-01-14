@@ -146,7 +146,7 @@ namespace System.Linq.Parallel
             Contract.Assert(mergeOptions != null);
 
             // Top-level pre-emptive cancellation test.
-            // This handles situations where cancellation has occured before execution commences
+            // This handles situations where cancellation has occurred before execution commences
             // The handling for in-execution occurs in QueryTaskGroupState.QueryEnd()
             
             if(querySettings.CancellationState.MergedCancellationToken.IsCancellationRequested)

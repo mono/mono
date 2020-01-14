@@ -923,10 +923,10 @@ namespace System {
         }
 #endif
         // Creates an array of strings by splitting this string at each
-        // occurence of a separator.  The separator is searched for, and if found,
-        // the substring preceding the occurence is stored as the first element in
+        // occurrence of a separator.  The separator is searched for, and if found,
+        // the substring preceding the occurrence is stored as the first element in
         // the array of strings.  We then continue in this manner by searching
-        // the substring that follows the occurence.  On the other hand, if the separator
+        // the substring that follows the occurrence.  On the other hand, if the separator
         // is not found, the array of strings will contain this instance as its only element.
         // If the separator is null
         // whitespace (i.e., Character.IsWhitespace) is used as the separator.
@@ -937,12 +937,12 @@ namespace System {
         }
 
         // Creates an array of strings by splitting this string at each
-        // occurence of a separator.  The separator is searched for, and if found,
-        // the substring preceding the occurence is stored as the first element in
+        // occurrence of a separator.  The separator is searched for, and if found,
+        // the substring preceding the occurrence is stored as the first element in
         // the array of strings.  We then continue in this manner by searching
-        // the substring that follows the occurence.  On the other hand, if the separator
+        // the substring that follows the occurrence.  On the other hand, if the separator
         // is not found, the array of strings will contain this instance as its only element.
-        // If the spearator is the empty string (i.e., String.Empty), then
+        // If the separator is the empty string (i.e., String.Empty), then
         // whitespace (i.e., Character.IsWhitespace) is used as the separator.
         // If there are more than count different strings, the last n-(count-1)
         // elements are concatenated and added as the last String.
@@ -2247,7 +2247,7 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int IndexOf(char value, int startIndex, int count);
 #endif
-        // Returns the index of the first occurance of any character in value in the current instance.
+        // Returns the index of the first occurrence of any character in value in the current instance.
         // The search starts at startIndex and runs to endIndex-1. [startIndex,endIndex).
         //
         [Pure]        
@@ -2267,7 +2267,7 @@ namespace System {
         public extern int IndexOfAny(char [] anyOf, int startIndex, int count);
 #endif
         
-        // Determines the position within this string of the first occurence of the specified
+        // Determines the position within this string of the first occurrence of the specified
         // string, according to the specified search criteria.  The search begins at
         // the first character of this string, it is case-sensitive and ordinal (code-point)
         // comparison is used.
@@ -2277,7 +2277,7 @@ namespace System {
             return IndexOf(value, StringComparison.CurrentCulture);
         }
 
-        // Determines the position within this string of the first occurence of the specified
+        // Determines the position within this string of the first occurrence of the specified
         // string, according to the specified search criteria.  The search begins at
         // startIndex, it is case-sensitive and ordinal (code-point) comparison is used.
         //
@@ -2286,7 +2286,7 @@ namespace System {
             return IndexOf(value, startIndex, StringComparison.CurrentCulture);
         }
 
-        // Determines the position within this string of the first occurence of the specified
+        // Determines the position within this string of the first occurrence of the specified
         // string, according to the specified search criteria.  The search begins at
         // startIndex, ends at endIndex and ordinal (code-point) comparison is used.
         //

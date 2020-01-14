@@ -3431,7 +3431,7 @@ namespace System.Net.Sockets {
                throw new InvalidOperationException(SR.GetString(SR.net_io_invalidendcall, "EndDisconnect"));
              }
 
-             //wait for completion if it hasn't occured
+             //wait for completion if it hasn't occurred
              castedAsyncResult.InternalWaitForCompletion();
              castedAsyncResult.EndCalled = true;
 
@@ -7402,7 +7402,7 @@ namespace System.Net.Sockets {
 
         //
         // UpdateStatusAfterSocketError(socketException) - updates the status of a connected socket
-        // on which a failure occured. it'll go to winsock and check if the connection
+        // on which a failure occurred. it'll go to winsock and check if the connection
         // is still open and if it needs to update our internal state.
         //
         internal void UpdateStatusAfterSocketError(SocketException socketException){

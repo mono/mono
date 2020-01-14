@@ -375,7 +375,7 @@ namespace System.Xml.Serialization {
             if (!memberTypeDesc.HasDefaultSupport) {
                 if (comments != null && defaultValue is string) {
                     DropDefaultAttribute(accessor, comments, memberTypeDesc.FullName);
-                    // do not generate intializers for the user prefered types if they do not have default capability
+                    // do not generate initializers for the user preferred types if they do not have default capability
                     AddWarningComment(comments, Res.GetString(Res.XmlDropAttributeValue, attributeName, mapping.TypeName, defaultValue.ToString()));
                 }
                 return;
@@ -383,7 +383,7 @@ namespace System.Xml.Serialization {
             if (memberTypeDesc.IsArrayLike && accessor is ElementAccessor) {
                 if (comments != null && defaultValue is string) {
                     DropDefaultAttribute(accessor, comments, memberTypeDesc.FullName);
-                    // do not generate intializers for array-like types
+                    // do not generate initializers for array-like types
                     AddWarningComment(comments, Res.GetString(Res.XmlDropArrayAttributeValue, attributeName, defaultValue.ToString(), ((ElementAccessor)accessor).Name));
                 }
                 return;
@@ -423,7 +423,7 @@ namespace System.Xml.Serialization {
             PrimitiveMapping pm = (PrimitiveMapping)mapping;
 
             if (comments != null && !pm.TypeDesc.HasDefaultSupport && pm.TypeDesc.IsMappedType) {
-                // do not generate intializers for the user prefered types if they do not have default capability
+                // do not generate initializers for the user preferred types if they do not have default capability
                 DropDefaultAttribute(accessor, comments, pm.TypeDesc.FullName);
                 return;
             }

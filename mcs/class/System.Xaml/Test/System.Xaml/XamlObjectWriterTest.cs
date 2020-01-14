@@ -1354,7 +1354,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XamlDuplicateMemberException))] // for two occurence of Event1 ...
+		[ExpectedException (typeof (XamlDuplicateMemberException))] // for two occurrence of Event1 ...
 		public void Write_EventStore2 ()
 		{
 			using (var xr = GetReader ("EventStore2.xml")) {

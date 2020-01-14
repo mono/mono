@@ -183,7 +183,7 @@ namespace System.Web.Configuration {
             profiles attributes:
                 The scope of the following attributes is per application domain.
 
-                minInstances="[number]" - It is the minimum number of occurences of each event before it's fired.
+                minInstances="[number]" - It is the minimum number of occurrences of each event before it's fired.
                                           E.g. a value of 5 means that ASP.NET will not fire the event until the 5th
                                           instance of the event is raised. A value of 0 is invalid. Default is 1.
 

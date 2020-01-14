@@ -42,7 +42,7 @@
 ** reallocated) to the unamanged routines you marshal your handle to
 ** (and the effects of closing such a handle while those calls are in
 ** progress). The runtime cannot protect you from undefined program
-** behvior that might result from such scenarios. You have been warned.
+** behavior that might result from such scenarios. You have been warned.
 **
 ** 
 ===========================================================*/
@@ -277,7 +277,7 @@ public abstract class CriticalHandle : CriticalFinalizerObject, IDisposable
     // that no jit allocations etc. will occur, but don't allocate memory unless
     // you can deal with the failure and still free the handle).
     // The boolean returned should be true for success and false if a
-    // catastrophic error occured and you wish to trigger a diagnostic for
+    // catastrophic error occurred and you wish to trigger a diagnostic for
     // debugging purposes (the SafeHandleCriticalFailure MDA).
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     protected abstract bool ReleaseHandle();

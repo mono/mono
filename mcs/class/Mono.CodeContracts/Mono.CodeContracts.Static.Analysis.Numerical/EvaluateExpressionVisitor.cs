@@ -41,14 +41,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         ConstToIntervalEvaluator
                                 <IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> constToIntv;
 
-                readonly VariableOccurences occurences;
+                readonly VariableOccurrences occurrences;
 
-                public Sequence<TVar> DuplicatedOccurences { get { return occurences.Duplicated; } }
+                public Sequence<TVar> DuplicatedOccurrences { get { return occurrences.Duplicated; } }
 
                 public EvaluateExpressionVisitor (IExpressionDecoder<TVar, TExpr> decoder)
                         : base (decoder)
                 {
-                        occurences = new VariableOccurences (decoder);
+                        occurrences = new VariableOccurrences (decoder);
                         constToIntv =
                                 new ConstToIntervalEvaluator
                                         <IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> (
@@ -129,7 +129,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public override TInterval VisitUnknown (TExpr expr, Counter<TEnv> data)
                 {
-                        occurences.Add (expr);
+                        occurrences.Add (expr);
 
                         return Default (data);
                 }
@@ -143,7 +143,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 TInterval DefaultBinary (TExpr left, TExpr right, Counter<TEnv> data, BinaryEvaluator binop)
                 {
-                        occurences.Add (left, right);
+                        occurrences.Add (left, right);
 
                         var incremented = data.Incremented ();
                         var leftIntv = Visit (left, incremented);
@@ -154,7 +154,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 TInterval DefaultComparisons (TExpr left, TExpr right, Counter<TEnv> data)
                 {
-                        occurences.Add (left, right);
+                        occurrences.Add (left, right);
 
                         return Default (data);
                 }
@@ -171,17 +171,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         }
                 }
 
-                class VariableOccurences {
-                        readonly Dictionary<TVar, int> occurences;
+                class VariableOccurrences {
+                        readonly Dictionary<TVar, int> occurrences;
 
                         readonly IExpressionDecoder<TVar, TExpr> decoder;
 
                         Sequence<TVar> duplicated;
 
-                        public VariableOccurences (IExpressionDecoder<TVar, TExpr> decoder)
+                        public VariableOccurrences (IExpressionDecoder<TVar, TExpr> decoder)
                         {
                                 this.decoder = decoder;
-                                occurences = new Dictionary<TVar, int> ();
+                                occurrences = new Dictionary<TVar, int> ();
                                 duplicated = Sequence<TVar>.Empty;
                         }
 
@@ -190,12 +190,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         void Add (TVar var)
                         {
                                 int cnt;
-                                if (!occurences.TryGetValue (var, out cnt))
+                                if (!occurrences.TryGetValue (var, out cnt))
                                         cnt = 0;
 
-                                occurences[var] = cnt + 1;
+                                occurrences[var] = cnt + 1;
 
-                                if (cnt == 1) // if already was occurence
+                                if (cnt == 1) // if already was occurrence
                                         duplicated = duplicated.Cons (var);
                         }
 
@@ -212,7 +212,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                         public override string ToString ()
                         {
-                                return occurences.ToString ();
+                                return occurrences.ToString ();
                         }
                 }
                 }

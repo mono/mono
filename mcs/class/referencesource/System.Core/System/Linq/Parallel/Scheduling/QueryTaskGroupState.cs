@@ -132,7 +132,7 @@ namespace System.Linq.Parallel
                         }
                     }
 
-                    // if all the exceptions were OCE(externalToken), then we will propogate only a single OCE(externalToken) below
+                    // if all the exceptions were OCE(externalToken), then we will propagate only a single OCE(externalToken) below
                     // otherwise, we flatten the aggregate (because the WaitAll above already aggregated) and rethrow.
                     if (!allOCEsOnTrackedExternalCancellationToken)
                         throw flattenedAE;  // Case #1
@@ -144,7 +144,7 @@ namespace System.Linq.Parallel
 
                 if (m_cancellationState.MergedCancellationToken.IsCancellationRequested)
                 {
-                    // cancellation has occured but no user-delegate exceptions were detected 
+                    // cancellation has occurred but no user-delegate exceptions were detected 
 
                     // NOTE: it is important that we see other state variables correctly here, and that
                     // read-reordering hasn't played havoc. 

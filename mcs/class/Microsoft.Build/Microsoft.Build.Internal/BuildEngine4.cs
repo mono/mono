@@ -141,7 +141,7 @@ namespace Microsoft.Build.Internal
 				}
 			} catch (Exception ex) {
 				args.Result.OverallResult = BuildResultCode.Failure;
-				LogErrorEvent (new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occured during a build", null, null));
+				LogErrorEvent (new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occurred during a build", null, null));
 				LogMessageEvent (new BuildMessageEventArgs ("Exception details: " + ex, null, null, MessageImportance.Low));
 				throw; // BuildSubmission re-catches this.
 			} finally {

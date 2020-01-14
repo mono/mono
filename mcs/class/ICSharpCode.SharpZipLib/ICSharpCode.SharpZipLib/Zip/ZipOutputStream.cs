@@ -216,7 +216,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the entry.
 		/// </param>
 		/// <exception cref="System.IO.IOException">
-		/// if an I/O error occured.
+		/// if an I/O error occurred.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// if stream was finished

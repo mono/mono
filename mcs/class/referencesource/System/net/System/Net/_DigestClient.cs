@@ -154,13 +154,13 @@ namespace System.Net {
         }
 
         internal static bool CheckQOP(HttpDigestChallenge challenge) {
-            // our internal implementatoin only support "auth" QualityOfProtection.
+            // our internal implementation only support "auth" QualityOfProtection.
             // if it's not what the server wants we'll have to throw:
             // the case in which the server sends no qop directive we default to "auth"
             if (challenge.QopPresent) {
                 int index = 0;
                 while (index>=0) {
-                    // find the next occurence of "auth"
+                    // find the next occurrence of "auth"
                     index = challenge.QualityOfProtection.IndexOf(HttpDigest.SupportedQuality, index);
                     if (index<0) {
                         return false;
@@ -312,7 +312,7 @@ namespace System.Net {
             Uri remoteUri = httpWebRequest.GetRemoteResourceUri();
             if (httpWebRequest.CurrentMethod.ConnectRequest) {
                 uriParts = UriComponents.HostAndPort;
-                // Use the orriginal request Uri, not the proxy Uri
+                // Use the original request Uri, not the proxy Uri
                 remoteUri = httpWebRequest.RequestUri;
             }
             else {
@@ -485,7 +485,7 @@ namespace System.Net {
 
             // now make sure there's nothing at the end of the challenge that is not part of the digest challenge
             // this would happen if I have a Digest challenge followed by another challenge like ",NTLM,Negotiate"
-            // use this DCR when avaialble to do this without parsing:
+            // use this DCR when available to do this without parsing:
             // 762116   2   WDigest should ignore directives that do not have a value
             int startingPoint = 0;
             int start = startingPoint;
@@ -554,7 +554,7 @@ namespace System.Net {
             this.Method = httpWebRequest.CurrentMethod.Name;
 
             if (httpWebRequest.CurrentMethod.ConnectRequest) {
-                // Use the orriginal request Uri, not the proxy Uri
+                // Use the original request Uri, not the proxy Uri
                 this.Uri = httpWebRequest.RequestUri.GetParts(UriComponents.HostAndPort, UriFormat.UriEscaped);
             }
             else {
@@ -794,7 +794,7 @@ namespace System.Net {
             int start, offset, index;
             string name, value;
 
-            // forst time parse looking for a charset="utf-8" directive
+            // first time parse looking for a charset="utf-8" directive
             // not too bad, IIS 6.0, by default, sends this as the first directive.
             // if the server does not send this we'll end up parsing twice.
             start = startingPoint;

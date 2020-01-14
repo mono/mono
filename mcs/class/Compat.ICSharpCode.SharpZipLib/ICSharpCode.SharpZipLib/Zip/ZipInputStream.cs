@@ -375,7 +375,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the byte or -1 on EOF.
 		/// </returns>
 		/// <exception name="System.IO.IOException">
-		/// IOException if a i/o error occured.
+		/// IOException if a i/o error occurred.
 		/// </exception>
 		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
 		/// ZipException if the deflated stream is corrupted.
@@ -396,7 +396,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the number of bytes read (may be smaller, even before EOF), or -1 on EOF.
 		/// </returns>
 		/// <exception name="Exception">
-		/// IOException if a i/o error occured.
+		/// IOException if a i/o error occurred.
 		/// ZipException if the deflated stream is corrupted.
 		/// </exception>
 		public override int Read(byte[] b, int off, int len)
@@ -476,7 +476,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Closes the zip file.
 		/// </summary>
 		/// <exception name="Exception">
-		/// if a i/o error occured.
+		/// if a i/o error occurred.
 		/// </exception>
 		public override void Close()
 		{

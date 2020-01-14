@@ -211,7 +211,7 @@ namespace System.Workflow.Runtime
                             if (exp != null)
                             {
                                 // 
-                                this.RootWorkflowExecutor.ExceptionOccured(exp, itemActivity == null ? contextActivity : itemActivity, null);
+                                this.RootWorkflowExecutor.ExceptionOccurred(exp, itemActivity == null ? contextActivity : itemActivity, null);
                                 exp = null;
                             }
                         }

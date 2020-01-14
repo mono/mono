@@ -185,16 +185,16 @@ namespace System.Data.EntityModel.SchemaObjectModel
         // unused 95,
         /// <summary>The value for the Action attribute is invalid or not allowed in the current context</summary>
         InvalidAction = 96,
-        /// <summary>An error occured processing the On&lt;Operation&gt;  elements</summary>
+        /// <summary>An error occurred processing the On&lt;Operation&gt;  elements</summary>
         InvalidOperation = 97,
         // unused 98,
         /// <summary>Ends were given for the Property element of a EntityContainer that is not a RelationshipSet</summary>
         InvalidContainerTypeForEnd = 99,
-        /// <summary>The extent name used in the EntittyContainerType End does not match the name of any of the EntityContainerProperties in the containing EntityContainer</summary>
+        /// <summary>The extent name used in the EntityContainerType End does not match the name of any of the EntityContainerProperties in the containing EntityContainer</summary>
         InvalidEndEntitySet = 100,
         /// <summary>An end element was not given, and cannot be inferred because too many EntityContainerEntitySet elements that are good possibilities.</summary>
         AmbiguousEntityContainerEnd = 101,
-        /// <summary>An end element was not given, and cannot be infered because there is no EntityContainerEntitySets that are the correct type to be used as an EntitySet.</summary>
+        /// <summary>An end element was not given, and cannot be inferred because there is no EntityContainerEntitySets that are the correct type to be used as an EntitySet.</summary>
         MissingExtentEntityContainerEnd = 102,
         // unused 103,
         // unused 104,
@@ -212,7 +212,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
         InvalidPropertyInRelationshipConstraint = 111,
         /// <summary> Type mismatch between ToProperty and FromProperty in the relationship constraint</summary>
         TypeMismatchRelationshipConstaint = 112,
-        /// <summary> Invalid multiplicty in FromRole in the relationship constraint</summary>
+        /// <summary> Invalid multiplicity in FromRole in the relationship constraint</summary>
         InvalidMultiplicityInRoleInRelationshipConstraint = 113,
         /// <summary> The number of properties in the FromProperty and ToProperty in the relationship constraint must be identical</summary>
         MismatchNumberOfPropertiesInRelationshipConstraint = 114,
@@ -243,7 +243,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
         EntityKeyMustBeScalar = 128,
         /// <summary> Binary and spatial type properties which are part of entity key are currently not supported </summary>
         EntityKeyTypeCurrentlyNotSupported = 129,
-        /// <summary>The primitive type kind does not have a prefered mapping</summary>
+        /// <summary>The primitive type kind does not have a preferred mapping</summary>
         NoPreferredMappingForPrimitiveTypeKind = 130,
         /// <summary>More than one PreferredMapping for a PrimitiveTypeKind</summary>
         TooManyPreferredMappingsForPrimitiveTypeKind = 131,
@@ -270,10 +270,10 @@ namespace System.Data.EntityModel.SchemaObjectModel
         SystemNamespace = 141,
         /// <summary>Empty DefiningQuery text</summary>
         EmptyDefiningQuery = 142,
-        /// <summary>Schema, Table and DefiningQuery are all specified, and are mutualy exlusive</summary>
+        /// <summary>Schema, Table and DefiningQuery are all specified, and are mutually exclusive</summary>
         TableAndSchemaAreMutuallyExclusiveWithDefiningQuery = 143,
         // unused 144,
-        /// <summary>Conurency can't change for any sub types of an EntitySet type.</summary>
+        /// <summary>Concurency can't change for any sub types of an EntitySet type.</summary>
         ConcurrencyRedefinedOnSubTypeOfEntitySetType = 145,
         /// <summary>Function import return type must be either empty, a collection of entities, or a singleton scalar.</summary>
         FunctionImportUnsupportedReturnType = 146,

@@ -68,10 +68,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         var evaluator = new EvaluateExpressionVisitor<IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> (Decoder);
                         var interval = evaluator.Visit (expr, new Counter<IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric>> (this));
 
-                        if (evaluator.DuplicatedOccurences.Length () >= 1) {
+                        if (evaluator.DuplicatedOccurrences.Length () >= 1) {
                                 var noDuplicates = true;
                                 TInterval result = null;
-                                foreach (var var in evaluator.DuplicatedOccurences.AsEnumerable ()) {
+                                foreach (var var in evaluator.DuplicatedOccurrences.AsEnumerable ()) {
                                         TInterval intv;
                                         if (TryGetValue (var, out intv) && intv.IsFinite &&
                                             Context.IsGreaterEqualThanZero (intv.LowerBound)) {

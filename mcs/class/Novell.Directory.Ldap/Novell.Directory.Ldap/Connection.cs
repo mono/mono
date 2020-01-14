@@ -385,7 +385,7 @@ namespace Novell.Directory.Ldap
 		private static System.Object nameLock; // protect connNum
 		private static int connNum = 0;
 		
-		// These attributes can be retreived using the getProperty
+		// These attributes can be retrieved using the getProperty
 		// method in LdapConnection.  Future releases might require
 		// these to be local variables that can be modified using
 		// the setProperty method.
@@ -479,7 +479,7 @@ namespace Novell.Directory.Ldap
 				{
 					if (writeSemaphoreOwner == 0)
 					{
-						// we have acquired the semahpore
+						// we have acquired the semaphore
 						writeSemaphoreOwner = id;
 						break;
 					}
@@ -487,7 +487,7 @@ namespace Novell.Directory.Ldap
 					{
 						if (writeSemaphoreOwner == id)
 						{
-							// we already own the semahpore
+							// we already own the semaphore
 							break;
 						}
 						try
@@ -981,12 +981,12 @@ namespace Novell.Directory.Ldap
 				* different error message.  We could have checked this a little
 				* earlier in the method but that would be an expensive check each
 				* time we send out a message.  Since this shutdown request is
-				* going to be an infrequent occurence we check for it only when
+				* going to be an infrequent occurrence we check for it only when
 				* we get an IOException.  shutdown() will do the cleanup.
 				*/
 				if (clientActive)
 				{
-					// We beliefe the connection was alive
+					// We believe the connection was alive
 					if (unsolSvrShutDnNotification)
 					{
 						// got server shutdown
@@ -1179,7 +1179,7 @@ namespace Novell.Directory.Ldap
 			return ;
 		}
 		
-		/// <summary> Indicates if the conenction is using TLS protection
+		/// <summary> Indicates if the connection is using TLS protection
 		///
 		/// Return true if using TLS protection
 		/// </summary>
@@ -1475,7 +1475,7 @@ namespace Novell.Directory.Ldap
 					*  3) We receive a Server Shutdown notification.
 					*      - Indicated by messageID equal to 0.
 					*      - call Shutdown.
-					*  4) Another error occured
+					*  4) Another error occurred
 					*      - Indicated by an IOException AND notify is not NULL
 					*      - call Shutdown.
 					*/
@@ -1515,11 +1515,11 @@ namespace Novell.Directory.Ldap
 		}
 		
 		/// <summary>Inner class defined so that we can spawn off each unsolicited
-		/// listener as a seperate thread.  We did not want to call the
+		/// listener as a separate thread.  We did not want to call the
 		/// unsolicited listener method directly as this would have tied up our
 		/// deamon listener thread in the applications unsolicited listener method.
 		/// Since we do not know what the application unsolicited listener
-		/// might be doing and how long it will take to process the uncoslicited
+		/// might be doing and how long it will take to process the unsolicited
 		/// notification.  We use this class to spawn off the unsolicited
 		/// notification as a separate thread
 		/// </summary>
@@ -1589,7 +1589,7 @@ namespace Novell.Directory.Ldap
 				
 				// Spawn a new thread for each listener to go process the message
 				// The reason we create a new thread rather than just call the
-				// the messageReceived method directly is beacuse we do not know
+				// the messageReceived method directly is because we do not know
 				// what kind of processing the notification listener class will
 				// do.  We do not want our deamon thread to block waiting for
 				// the notification listener method to return.

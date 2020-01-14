@@ -44,7 +44,7 @@ namespace Microsoft.Build.BuildEngine {
 		string	projectFile;
 		
 		public InvalidProjectFileException ()
-			: base ("Invalid project file exception has occured")
+			: base ("Invalid project file exception has occurred")
 		{
 		}
 

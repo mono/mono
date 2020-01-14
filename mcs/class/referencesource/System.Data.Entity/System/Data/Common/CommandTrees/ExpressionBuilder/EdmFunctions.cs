@@ -239,7 +239,7 @@ namespace System.Data.Common.CommandTrees.ExpressionBuilder
         /// specified arguments, which must each have a string result type. The result type of the expression is
         /// Boolean.
         /// </summary>
-        /// <param name="searchedString">An expression that specifies the string to search for any occurence of <paramref name="searchedForString"/>.</param>
+        /// <param name="searchedString">An expression that specifies the string to search for any occurrence of <paramref name="searchedForString"/>.</param>
         /// <param name="searchedForString">An expression that specifies the string to search for in <paramref name="searchedString"/>.</param>
         /// <returns>A new DbFunctionExpression that returns a Boolean value indicating whether or not <paramref name="searchedForString"/> occurs within <paramref name="searchedString"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="searchedString"/> or <paramref name="searchedForString"/>is null.</exception>
@@ -326,7 +326,7 @@ namespace System.Data.Common.CommandTrees.ExpressionBuilder
         /// <param name="stringArgument">An expression that specifies the string in which to perform the replacement operation</param>
         /// <param name="toReplace">An expression that specifies the string to replace</param>
         /// <param name="replacement">An expression that specifies the replacement string</param>
-        /// <returns>A new DbFunctionExpression than returns a new string based on <paramref name="stringArgument"/> where every occurence of <paramref name="toReplace"/> is replaced by <paramref name="replacement"/>.</returns>
+        /// <returns>A new DbFunctionExpression than returns a new string based on <paramref name="stringArgument"/> where every occurrence of <paramref name="toReplace"/> is replaced by <paramref name="replacement"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="stringArgument"/>, <paramref name="toReplace"/> or <paramref name="replacement"/> is null.</exception>
         /// <exception cref="ArgumentException">No overload of the canonical 'Length' function accepts arguments with the result types of <paramref name="stringArgument"/>, <paramref name="toReplace"/> and <paramref name="replacement"/>.</exception>
         public static DbFunctionExpression Replace(this DbExpression stringArgument, DbExpression toReplace, DbExpression replacement)

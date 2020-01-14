@@ -176,7 +176,7 @@ namespace System.Data.Metadata.Edm
         }
 
         /// <summary>
-        /// Gets the LineNumber that the error occured on.
+        /// Gets the LineNumber that the error occurred on.
         /// </summary>
         public int Line
         {
@@ -187,7 +187,7 @@ namespace System.Data.Metadata.Edm
         }
 
         /// <summary>
-        /// Gets the column that the error occured in.
+        /// Gets the column that the error occurred in.
         /// </summary>
         public int Column
         {
@@ -220,7 +220,7 @@ namespace System.Data.Metadata.Edm
         }
 
         /// <summary>
-        /// Gets the stack trace of when the error occured.
+        /// Gets the stack trace of when the error occurred.
         /// </summary>
         /// <value></value>
         public string StackTrace

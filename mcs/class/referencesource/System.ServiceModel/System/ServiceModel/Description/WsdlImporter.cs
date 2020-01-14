@@ -1997,7 +1997,7 @@ namespace System.ServiceModel.Description
             {
                 this.importer = importer;
                 this.policyDictionary = new WsdlPolicyDictionary(importer);
-                importer.PolicyWarningOccured += this.LogPolicyNormalizationWarning;
+                importer.PolicyWarningOccurred += this.LogPolicyNormalizationWarning;
             }
 
             IEnumerable<IEnumerable<XmlElement>> GetPolicyAlternatives(WsdlNS.NamedItem item, WsdlNS.ServiceDescription wsdl)

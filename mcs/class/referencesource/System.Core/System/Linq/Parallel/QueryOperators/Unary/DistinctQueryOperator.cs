@@ -49,7 +49,7 @@ namespace System.Linq.Parallel
         {
             // We just open our child operator.  Do not propagate the preferStriping value, but 
             // instead explicitly set it to false. Regardless of whether the parent prefers striping or range
-            // partitioning, the output will be hash-partititioned.
+            // partitioning, the output will be hash-partitioned.
             QueryResults<TInputOutput> childResults = Child.Open(settings, false);
             return new UnaryQueryOperatorResults(childResults, this, settings, false);
         }
@@ -247,7 +247,7 @@ namespace System.Linq.Parallel
 
                         Wrapper<TInputOutput> wrappedElem = new Wrapper<TInputOutput>(elem.First);
 
-                        // If this is the first occurence of this element, or the order key is lower than all keys we saw previously,
+                        // If this is the first occurrence of this element, or the order key is lower than all keys we saw previously,
                         // update the order key for this element.
                         if (!m_hashLookup.TryGetValue(wrappedElem, out oldEntry) || m_keyComparer.Compare(orderKey, oldEntry) < 0)
                         {

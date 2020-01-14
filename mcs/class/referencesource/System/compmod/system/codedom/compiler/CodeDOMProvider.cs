@@ -217,8 +217,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by statement, into writer.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by statement, into writer.
         ///    </para>
         /// </devdoc>
         public virtual void GenerateCodeFromStatement(CodeStatement statement, TextWriter writer, CodeGeneratorOptions options) {
@@ -227,8 +227,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by codeNamespace, into writer.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by codeNamespace, into writer.
         ///    </para>
         /// </devdoc>
         public virtual void GenerateCodeFromNamespace(CodeNamespace codeNamespace, TextWriter writer, CodeGeneratorOptions options) {
@@ -237,8 +237,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by compileUnit, into writer.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by compileUnit, into writer.
         ///    </para>
         /// </devdoc>
         public virtual void GenerateCodeFromCompileUnit(CodeCompileUnit compileUnit, TextWriter writer, CodeGeneratorOptions options) {
@@ -247,8 +247,8 @@ namespace System.CodeDom.Compiler {
 
         /// <devdoc>
         ///    <para>
-        ///       Outputs the language specific representaion of the CodeDom tree
-        ///       refered to by codeType, into writer.
+        ///       Outputs the language specific representation of the CodeDom tree
+        ///       referred to by codeType, into writer.
         ///    </para>
         /// </devdoc>
         public virtual void GenerateCodeFromType(CodeTypeDeclaration codeType, TextWriter writer, CodeGeneratorOptions options) {

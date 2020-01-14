@@ -521,7 +521,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             // A InstanceKey is the IUnknown * or static type instance
             //
             // Couple of things to note:
-            // 1. We need to use IUnknown* because we want to be able to unscribe to the event for another RCW
+            // 1. We need to use IUnknown* because we want to be able to unsubscribe to the event for another RCW
             // based on the same COM object. For example:
             //    m_canvas.GetAt(0).Event += Func;
             //    m_canvas.GetAt(0).Event -= Func;  // GetAt(0) might create a new RCW
@@ -837,8 +837,8 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             /// </summary>
             internal class MyReaderWriterLock
             {
-                // Lock specifiation for myLock:  This lock protects exactly the local fields associted
-                // instance of MyReaderWriterLock.  It does NOT protect the memory associted with the
+                // Lock specification for myLock:  This lock protects exactly the local fields associated
+                // instance of MyReaderWriterLock.  It does NOT protect the memory associated with the
                 // the events that hang off this lock (eg writeEvent, readEvent upgradeEvent).
                 int myLock;
 
@@ -851,8 +851,8 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 uint numReadWaiters;         // maximum number of threads that can be doing a WaitOne on the readEvent
 
                 // conditions we wait on. 
-                EventWaitHandle writeEvent;    // threads waiting to aquire a write lock go here.
-                EventWaitHandle readEvent;     // threads waiting to aquire a read lock go here (will be released in bulk)
+                EventWaitHandle writeEvent;    // threads waiting to acquire a write lock go here.
+                EventWaitHandle readEvent;     // threads waiting to acquire a read lock go here (will be released in bulk)
 
                 internal MyReaderWriterLock()
                 {
@@ -1133,7 +1133,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         private static Guid s_iidIErrorInfo = new Guid(0x1CF2B120, 0x547D, 0x101B, 0x8E, 0x65, 0x08, 0x00, 0x2B, 0x2B, 0xD1, 0x19);
         
         /// <summary>
-        /// Report that an exception has occured which went user unhandled.  This allows the global error handler
+        /// Report that an exception has occurred which went user unhandled.  This allows the global error handler
         /// for the application to be invoked to process the error.
         /// </summary>
         /// <returns>true if the error was reported, false if not (ie running on Win8)</returns>
@@ -1269,7 +1269,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // and getting back a RCW for such WinRT factory would usually get back a RCW from 
         // another apartment, even if the interface pointe returned from GetActivationFactory
         // is a raw pointer. As a result, user would randomly get back RCWs for activation
-        // factories from other apartments and make transiton to those apartments and cause
+        // factories from other apartments and make transition to those apartments and cause
         // deadlocks and create objects in incorrect apartments
         //
         [SecurityCritical]

@@ -1178,7 +1178,7 @@ SQL_Timeout_PreLogin_ConsumeHandshake=Connection Timeout Expired.  The timeout p
 SQL_Timeout_Login_Begin=Connection Timeout Expired.  The timeout period elapsed at the start of the login phase.  This could be because of insufficient time provided for connection timeout.
 SQL_Timeout_Login_ProcessConnectionAuth=Connection Timeout Expired.  The timeout period elapsed while attempting to authenticate the login.  This could be because the server failed to authenticate the user or the server was unable to respond back in time.
 SQL_Timeout_PostLogin=Connection Timeout Expired.  The timeout period elapsed during the post-login phase.  The connection could have timed out while waiting for server to complete the login process and respond; Or it could have timed out while attempting to create multiple active connections.
-SQL_Timeout_FailoverInfo=This failure occured while attempting to connect to the {0} server.
+SQL_Timeout_FailoverInfo=This failure occurred while attempting to connect to the {0} server.
 SQL_Timeout_RoutingDestinationInfo=This failure occurred while attempting to connect to the routing destination. The duration spent while attempting to connect to the original server was - [Pre-Login] initialization={0}; handshake={1}; [Login] initialization={2}; authentication={3}; [Post-Login] complete={4};  
 SQL_Duration_PreLogin_Begin=The duration spent while attempting to connect to this server was - [Pre-Login] initialization={0};
 SQL_Duration_PreLoginHandshake=The duration spent while attempting to connect to this server was - [Pre-Login] initialization={0}; handshake={1}; 
@@ -1726,7 +1726,7 @@ Snix_Execute=A transport-level error has occurred when sending the request to th
 Snix_Read=A transport-level error has occurred when receiving results from the server.
 Snix_Close=A transport-level error has occurred during connection clean-up.
 Snix_SendRows=A transport-level error has occurred while sending information to the server.
-Snix_ProcessSspi=A transport-level error has occured during SSPI handshake.
+Snix_ProcessSspi=A transport-level error has occurred during SSPI handshake.
 
 ; LocalDB error messages
 LocalDB_CreateFailed=Local Database Runtime: Cannot create named instance.

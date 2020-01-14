@@ -36,7 +36,7 @@ namespace System.Deployment.Internal.Isolation.Manifest {
                 if (reference.CommandLine_File != null && reference.CommandLine_File.Length > 0) {
                     fileName = reference.CommandLine_File;
                 } else {
-                    // Locate the dependent assembly that is being refered to. Well-formed manifests should have an identity.
+                    // Locate the dependent assembly that is being referred to. Well-formed manifests should have an identity.
                     IAssemblyReferenceEntry refEntry = null;
                     object assemblyObj = null;
                     if (reference.Identity != null) {

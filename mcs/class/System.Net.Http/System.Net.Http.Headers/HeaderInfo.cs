@@ -149,7 +149,7 @@ namespace System.Net.Http.Headers
 		}
 
 		//
-		// Headers with #rule for defining lists of elements or *rule for defining occurences of elements
+		// Headers with #rule for defining lists of elements or *rule for defining occurrences of elements
 		//
 		public static HeaderInfo CreateMulti<T> (string name, TryParseListDelegate<T> elementParser, HttpHeaderKind headerKind, int minimalCount = 1, string separator = ", ") where T : class
 		{

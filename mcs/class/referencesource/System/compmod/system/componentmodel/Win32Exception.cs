@@ -35,7 +35,7 @@ namespace System.ComponentModel {
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.ComponentModel.Win32Exception'/> class with the last Win32 error 
-        ///    that occured.</para>
+        ///    that occurred.</para>
         /// </devdoc>
         [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         public Win32Exception() : this(Marshal.GetLastWin32Error()) {

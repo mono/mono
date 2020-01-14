@@ -215,7 +215,7 @@ namespace System.ServiceModel.Channels
 
         //  size:   sending => the size of the data being sent
         //          Receiving => the max message size we can receive
-        //  remoteEndPoint: remote endpoint reported when error occured
+        //  remoteEndPoint: remote endpoint reported when error occurred
         static Exception ConvertNetworkError(SocketException socketException, int size, TransferDirection direction, int timeToLive)
         {
             Exception result = null;

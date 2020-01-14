@@ -42,7 +42,7 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         /// <summary>
-        /// If any error occured during subscription, this will be non-null.
+        /// If any error occurred during subscription, this will be non-null.
         /// After a notification containing an exception, no more notifications will
         /// be made for this subscription.
         /// </summary>
