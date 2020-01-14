@@ -1218,7 +1218,7 @@ socket_transport_accept (int socket_fd)
 	return conn_fd;
 }
 static void 
-create_file_to_communicate_port (int sfd)
+create_file_to_communicate_port (int sfd, MonoError* error)
 {
 	struct sockaddr_in sin;
 	socklen_t len = sizeof(sin);
@@ -1226,12 +1226,24 @@ create_file_to_communicate_port (int sfd)
 		char* file_name = g_strdup_printf ("debugger_attach.%d", getpid());
 		char* full_path = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
 		FILE* tmp = fopen (full_path, "w");
-		if (tmp != NULL) {
+		if (tmp) {
 			fprintf (tmp, "%d", ntohs(sin.sin_port));
 			fclose (tmp);
 		}
+		else {
+			char *s = g_strdup_printf ("debugger-agent: Unable to file: %s\n", full_path);
+			g_printerr (s);
+			mono_error_set_error (error, MONO_ERROR_GENERIC, "%s", s);
+			g_free (s);
+		}
 		g_free (file_name);
 		g_free (full_path);
+	}
+	else {
+		char *s = g_strdup_printf ("debugger-agent: Unable to get available port number\n");
+		g_printerr (s);
+		mono_error_set_error (error, MONO_ERROR_GENERIC, "%s", s);
+		g_free (s);
 	}
 }
 
@@ -1262,6 +1274,7 @@ socket_transport_send (void *data, int len)
 static void
 socket_transport_connect (const char *address)
 {
+	ERROR_DECL (error);
 	MonoAddressInfo *result;
 	MonoAddressEntry *rp;
 	int sfd = -1, s, res;
@@ -1344,8 +1357,11 @@ socket_transport_connect (const char *address)
 				if (res == -1)
 					continue;
 
-				if (agent_config.attach) 
-					create_file_to_communicate_port (sfd);
+				if (agent_config.attach)  {
+					create_file_to_communicate_port (sfd, error);
+					if (!is_ok (error))
+						g_printerr ("debugger-agent: Unable to attach to sdb\n");
+				}
 
 				res = listen (sfd, 16);
 				if (res == -1)
@@ -2747,7 +2763,6 @@ typedef struct {
 	DebuggerTlsData *tls;
 	gboolean valid_info;
 } InterruptData;
-
 
 static void
 create_tls_for_thread_attached_on_debugger (gpointer user_data)

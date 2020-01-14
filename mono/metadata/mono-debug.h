@@ -10,7 +10,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/appdomain.h>
-#include <mono/metadata/loader-internals.h>
+
 
 MONO_BEGIN_DECLS
 
@@ -228,7 +228,7 @@ MONO_API int             mono_debugger_insert_breakpoint           (const char *
 MONO_API void mono_set_is_debugger_attached (mono_bool attached);
 MONO_API mono_bool mono_is_debugger_attached (void);
 
-void mono_add_assembly (MonoAssemblyLoadContext *alc, MonoAssembly *assembly);
+void mono_add_assembly (void* alc, MonoAssembly *assembly);
 
 MONO_END_DECLS
 
