@@ -2522,7 +2522,7 @@ emit_rgctx_fetch_inline (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEnt
 	MonoInst *call;
 
 	// FIXME: No fastpath since the slot is not a compile time constant
-	MonoInst *args [ ] = { rgctx };
+	MonoInst *args [2] = { rgctx };
 	EMIT_NEW_AOTCONST (cfg, args [1], MONO_PATCH_INFO_RGCTX_SLOT_INDEX, entry);
 	if (entry->in_mrgctx)
 		call = mono_emit_jit_icall (cfg, mono_fill_method_rgctx, args);
