@@ -382,13 +382,6 @@ extern GSList *mono_interp_only_classes;
 extern char *sdb_options;
 extern char *stats_method_name;
 
-typedef enum {
-	MONO_PRINT_STATS_STARTUP,
-	MONO_PRINT_STATS_SHUTDOWN
-} MonoStatsPrintPoint;
-
-static void print_stats_header (MonoStatsPrintPoint print_point);
-
 /*
 This struct describes what execution engine feature to use.
 This subsume, and will eventually sunset, mono_aot_only / mono_llvm_only and friends.

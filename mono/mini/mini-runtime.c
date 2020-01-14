@@ -157,24 +157,6 @@ GSList *mono_interp_only_classes;
 
 static void register_icalls (void);
 
-static void
-print_stats_header (MonoStatsPrintPoint print_point) {
-	g_printf ("\n--------------------------------------------------------------------------------\n");
-	switch (print_point) {
-		case MONO_PRINT_STATS_STARTUP:
-			g_printf ("Printing stats on startup\n");
-			break;
-		case MONO_PRINT_STATS_SHUTDOWN:
-			g_printf ("Printing stats on shutdown\n");
-			break;
-	}
-	if (stats_method_name)
-		g_printf ("Displaying stats for method: %s\n", stats_method_name);
-	else
-		g_printf ("Displaying all stats\n");
-	g_printf ("--------------------------------------------------------------------------------\n\n");
-}
-
 gboolean
 mono_running_on_valgrind (void)
 {
@@ -4719,7 +4701,6 @@ static void
 print_jit_stats (void)
 {
 	if (mono_jit_stats.enabled) {
-		print_stats_header (MONO_PRINT_STATS_SHUTDOWN);
 		g_print ("Mono Jit statistics\n");
 		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio / 100.0,
 				 mono_jit_stats.max_ratio_method);
@@ -4768,6 +4749,7 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
+	g_printf ("Printing stats at shutdown\n");
 	print_jit_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
@@ -4775,6 +4757,7 @@ mini_cleanup (MonoDomain *domain)
 void
 mini_cleanup (MonoDomain *domain)
 {
+	g_printf ("Printing stats at shutdown\n");
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
