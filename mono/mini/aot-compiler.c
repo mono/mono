@@ -79,6 +79,7 @@ try_get_method_nofail (MonoClass *klass, const char *method_name, int param_coun
 	return result;
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
 {
@@ -1136,12 +1137,15 @@ arch_init (MonoAotCompile *acfg)
 	if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "darwin")) {
 		g_string_append (acfg->llc_args, "-mattr=+v6");
 	} else {
-		if (!(acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "thumb")))
+		if (!acfg->aot_opts.mtriple) {
 			g_string_append (acfg->llc_args, " -march=arm");
+		} else {
+			/* arch will be defined via mtriple, e.g. armv7s-ios or thumb. */
 
-		if (acfg->aot_opts.mtriple && strstr (acfg->aot_opts.mtriple, "ios")) {
-			g_string_append (acfg->llc_args, " -mattr=+v7");
-			g_string_append (acfg->llc_args, " -exception-model=dwarf -disable-fp-elim");
+			if (strstr (acfg->aot_opts.mtriple, "ios")) {
+				g_string_append (acfg->llc_args, " -mattr=+v7");
+				g_string_append (acfg->llc_args, " -exception-model=dwarf -disable-fp-elim");
+			}
 		}
 
 #if defined(ARM_FPU_VFP_HARD)
@@ -8000,6 +8004,9 @@ parse_cpu_features (const gchar *attr)
 	
 #elif defined(TARGET_ARM64)
 	// TODO: neon, sha1, sha2, asimd, etc...
+#elif defined(TARGET_WASM)
+	if (!strcmp (attr + prefix, "simd"))
+		feature = MONO_CPU_WASM_SIMD;
 #endif
 
 	if (enabled)
@@ -9808,11 +9815,13 @@ emit_llvm_file (MonoAotCompile *acfg)
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	} else {
-		opts = g_strdup ("-O2 -disable-tail-calls -place-safepoints -spp-all-backedges");
+		opts = g_strdup ("-disable-tail-calls -place-safepoints -spp-all-backedges");
 	}
 
 	if (acfg->aot_opts.llvm_opts) {
-		opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
+		opts = g_strdup_printf ("%s %s", acfg->aot_opts.llvm_opts, opts);
+	} else if (!acfg->aot_opts.llvm_only) {
+		opts = g_strdup_printf ("-O2 %s", opts);
 	}
 
 	if (acfg->aot_opts.use_current_cpu) {
@@ -13144,10 +13153,10 @@ mono_dedup_log_stats (MonoAotCompile *acfg)
 		}
 	}
 
-	aot_printf (acfg, "Dedup Pass: Size Saved From Deduped Wrappers:\t%d methods, %zu bytes\n", wrappers_saved, wrappers_size_saved);
-	aot_printf (acfg, "Dedup Pass: Size Saved From Inflated Methods:\t%d methods, %zu bytes\n", instances_saved, inflated_size_saved);
+	aot_printf (acfg, "Dedup Pass: Size Saved From Deduped Wrappers:\t%d methods, %" G_GSIZE_FORMAT "u bytes\n", wrappers_saved, wrappers_size_saved);
+	aot_printf (acfg, "Dedup Pass: Size Saved From Inflated Methods:\t%d methods, %" G_GSIZE_FORMAT "u bytes\n", instances_saved, inflated_size_saved);
 	if (acfg->dedup_emit_mode)
-		aot_printf (acfg, "Dedup Pass: Size of Moved But Not Deduped (only 1 copy) Methods:\t%d methods, %zu bytes\n", copied, copied_singles);
+		aot_printf (acfg, "Dedup Pass: Size of Moved But Not Deduped (only 1 copy) Methods:\t%d methods, %" G_GSIZE_FORMAT "u bytes\n", copied, copied_singles);
 
 	g_hash_table_destroy (acfg->dedup_stats);
 	acfg->dedup_stats = NULL;

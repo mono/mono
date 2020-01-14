@@ -47,11 +47,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 			handlerInit ();
 		}
 
-		private static WasmHttpMessageHandler GetHttpMessageHandler ()
-		{
-			return new WasmHttpMessageHandler ();
-		}
-
 		private void handlerInit ()
 		{
 			window = (JSObject)WebAssembly.Runtime.GetGlobalObject ("window");
@@ -60,7 +55,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 		protected override async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			var tcs = new TaskCompletionSource<HttpResponseMessage> ();
+			// There is a race condition on Safari as a result of using TaskCompletionSource that
+			// causes a stack exceeded error being thrown.  More information can be found here:
+			// https://devblogs.microsoft.com/premier-developer/the-danger-of-taskcompletionsourcet-class/
+			var tcs = new TaskCompletionSource<HttpResponseMessage> (TaskCreationOptions.RunContinuationsAsynchronously);
 			using (cancellationToken.Register (() => tcs.TrySetCanceled ())) {
 #pragma warning disable 4014
 				doFetch (tcs, request, cancellationToken).ConfigureAwait (false);
@@ -151,8 +149,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				requestObject.Dispose ();
 
-				var response = (Task<object>)fetch.Invoke ("apply", window, args);
+				var response = fetch.Invoke ("apply", window, args) as Task<object>;
 				args.Dispose ();
+				if (response == null)
+					throw new Exception("Internal error marshalling the response Promise from `fetch`.");
 
 				var t = await response;
 

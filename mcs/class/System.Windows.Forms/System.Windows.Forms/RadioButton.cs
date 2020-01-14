@@ -326,8 +326,6 @@ namespace System.Windows.Forms {
 				if (!Checked) {
 					Checked = true;
 				}
-			} else {
-				Checked = !Checked;
 			}
 			
 			base.OnClick (e);

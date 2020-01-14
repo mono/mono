@@ -241,6 +241,13 @@ namespace System.Globalization {
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal NumberFormatInfo(CultureData cultureData)
         {
+#if MONO
+            if (GlobalizationMode.Invariant) {
+                this.m_isInvariant = true;
+                return;
+            }
+#endif
+
             if (cultureData != null)
             {
                 // We directly use fields here since these data is coming from data table or Win32, so we

@@ -102,13 +102,10 @@ MonoJitMemoryManager::allocateDataSection(uintptr_t Size,
 	uint8_t *res;
 
 	// FIXME: Use a mempool
-	if (Alignment == 32) {
-		/* Used for SIMD */
-		res = (uint8_t*)malloc (Size + 32);
-		res += (GPOINTER_TO_UINT (res) % 32);
-	} else {
-		res = (uint8_t*)malloc (Size);
-	}
+	if (Alignment == 0)
+                Alignment = 16;
+	res = (uint8_t*)malloc (Size + Alignment);
+	res = (uint8_t*)ALIGN_PTR_TO(res, Alignment);
 	assert (res);
 	g_assert (GPOINTER_TO_UINT (res) % Alignment == 0);
 	memset (res, 0, Size);
@@ -297,12 +294,13 @@ public:
 		initializeScalarOpts(registry);
 		initializeInstCombine(registry);
 		initializeTarget(registry);
+		initializeLoopIdiomRecognizeLegacyPassPass(registry);
 		linkCoreCLRGC(); // Mono uses built-in "coreclr" GCStrategy
 
 		// FIXME: find optimal mono specific order of passes
 		// see https://llvm.org/docs/Frontend/PerformanceTips.html#pass-ordering
 		// the following order is based on a stripped version of "OPT -O2"
-		const char *default_opts = " -simplifycfg -sroa -lower-expect -instcombine -licm -simplifycfg -lcssa -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg -enable-implicit-null-checks";
+		const char *default_opts = " -simplifycfg -sroa -lower-expect -instcombine -loop-rotate -licm -simplifycfg -lcssa -loop-idiom -indvars -loop-deletion -gvn -memcpyopt -sccp -bdce -instcombine -dse -simplifycfg -enable-implicit-null-checks";
 		const char *opts = g_getenv ("MONO_LLVM_OPT");
 		if (opts == NULL)
 			opts = default_opts;

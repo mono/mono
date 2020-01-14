@@ -135,6 +135,9 @@ void
 mono_llvm_set_call_noalias_ret (LLVMValueRef wrapped_calli);
 
 void
+mono_llvm_set_alignment_ret (LLVMValueRef val, int alignment);
+
+void
 mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind);
 
 void
@@ -150,6 +153,9 @@ G_EXTERN_C _Unwind_Reason_Code mono_debug_personality (int a, _Unwind_Action b,
 
 void*
 mono_llvm_create_di_builder (LLVMModuleRef module);
+
+gboolean
+mono_llvm_can_be_gep (LLVMValueRef base, LLVMValueRef* actual_base, LLVMValueRef* actual_offset);
 
 void*
 mono_llvm_di_create_function (void *di_builder, void *cu, LLVMValueRef func, const char *name, const char *mangled_name, const char *dir, const char *file, int line);

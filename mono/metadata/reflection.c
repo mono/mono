@@ -914,15 +914,16 @@ static MonoObjectHandle
 mono_get_reflection_missing_object (MonoDomain *domain)
 {
 	ERROR_DECL (error);
-	static MonoClassField *missing_value_field = NULL;
-	
-	if (!missing_value_field) {
-		MonoClass *missing_klass;
-		missing_klass = mono_class_get_missing_class ();
+
+	MONO_STATIC_POINTER_INIT (MonoClassField, missing_value_field)
+
+		MonoClass *missing_klass = mono_class_get_missing_class ();
 		mono_class_init_internal (missing_klass);
 		missing_value_field = mono_class_get_field_from_name_full (missing_klass, "Value", NULL);
 		g_assert (missing_value_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, missing_value_field)
+
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, missing_value_field, NULL, error));
 	mono_error_assert_ok (error);
@@ -932,16 +933,16 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 static MonoObjectHandle
 get_dbnull_object (MonoDomain *domain, MonoError *error)
 {
-	static MonoClassField *dbnull_value_field = NULL;
-
 	error_init (error);
 
-	if (!dbnull_value_field) {
-		MonoClass *dbnull_klass;
-		dbnull_klass = mono_class_get_dbnull_class ();
+	MONO_STATIC_POINTER_INIT (MonoClassField, dbnull_value_field)
+
+		MonoClass *dbnull_klass = mono_class_get_dbnull_class ();
 		dbnull_value_field = mono_class_get_field_from_name_full (dbnull_klass, "Value", NULL);
 		g_assert (dbnull_value_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, dbnull_value_field)
+
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
 	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, error));
 	return obj;
@@ -1944,7 +1945,7 @@ _mono_reflection_get_type_from_info (MonoAssemblyLoadContext *alc, MonoTypeNameP
 
 	if (info->assembly.name) {
 		MonoAssembly *assembly = mono_assembly_loaded_internal (alc, &info->assembly, FALSE);
-		if (!assembly && image && image->assembly && mono_assembly_names_equal (&info->assembly, &image->assembly->aname))
+		if (!assembly && image && image->assembly && mono_assembly_check_name_match (&info->assembly, &image->assembly->aname))
 			/* 
 			 * This could happen in the AOT compiler case when the search hook is not
 			 * installed.
@@ -2234,6 +2235,7 @@ mono_reflection_get_type_with_rootimage (MonoAssemblyLoadContext *alc, MonoImage
 
 	MonoType *type;
 	MonoReflectionAssemblyHandle reflection_assembly;
+	MonoDomain *domain = mono_alc_domain (alc);
 	GString *fullName = NULL;
 	GList *mod;
 
@@ -2247,7 +2249,7 @@ mono_reflection_get_type_with_rootimage (MonoAssemblyLoadContext *alc, MonoImage
 
 	if (type)
 		goto exit;
-	if (!mono_domain_has_type_resolve (mono_domain_get ()))
+	if (!mono_domain_has_type_resolve (domain))
 		goto return_null;
 
 	if (type_resolve) {
@@ -2268,7 +2270,8 @@ mono_reflection_get_type_with_rootimage (MonoAssemblyLoadContext *alc, MonoImage
 	MonoStringHandle name_handle;
 	name_handle = mono_string_new_handle (mono_domain_get (), fullName->str, error);
 	goto_if_nok (error, return_null);
-	reflection_assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), name_handle, error);
+
+	reflection_assembly = mono_domain_try_type_resolve_name (domain, image->assembly, name_handle, error);
 	goto_if_nok (error, return_null);
 
 	if (MONO_HANDLE_BOOL (reflection_assembly)) {

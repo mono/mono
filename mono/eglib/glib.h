@@ -247,13 +247,11 @@ typedef guint32 gunichar;
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
 #endif
 
-#ifndef ALIGN_TO
-#define ALIGN_TO(val,align) ((((gssize)val) + ((align) - 1)) & ~((align) - 1))
-#endif
+#define ALIGN_TO(val,align) ((((gssize)val) + (gssize)((align) - 1)) & (~((gssize)(align - 1))))
 
-#ifndef ALIGN_PTR_TO
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
-#endif
+#define ALIGN_DOWN_TO(val,align) (((gssize)val) & (~((gssize)(align - 1))))
+
+#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (gssize)(align - 1)) & (~((gssize)(align - 1))))
 
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
@@ -379,6 +377,7 @@ gchar       *g_strchomp       (gchar *str);
 void         g_strdown        (gchar *string);
 gchar       *g_strnfill       (gsize length, gchar fill_char);
 gsize        g_strnlen        (const char*, gsize);
+char        *g_str_from_file_region (int fd, guint64 offset, gsize size);
 
 void	     g_strdelimit     (char *string, char delimiter, char new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
@@ -948,6 +947,14 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #endif
 
 #define  g_assert_not_reached() G_STMT_START { mono_assertion_message_unreachable (__FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+
+#if ENABLE_NETCORE
+#define g_assert_netcore()     /* nothing */
+#define g_assert_not_netcore() g_assert (!"This function should only be called on mono-notnetcore.")
+#else
+#define g_assert_netcore()     g_assert (!"This function should only be called on mono-netcore.")
+#define g_assert_not_netcore() /* nothing */
+#endif
 
 /* f is format -- like printf and scanf
  * Where you might have said:

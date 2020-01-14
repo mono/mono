@@ -699,16 +699,6 @@ mono_test_marshal_delegate_struct (DelegateStruct ds)
 	return res;
 }
 
-LIBTEST_API int STDCALL  
-mono_test_marshal_struct (simplestruct ss)
-{
-	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
-	    !strcmp (ss.d, "TEST"))
-		return 0;
-
-	return 1;
-}
-
 LIBTEST_API int STDCALL 
 mono_test_marshal_byref_struct (simplestruct *ss, int a, int b, int c, char *d)
 {
@@ -951,6 +941,16 @@ is_utf16_equals (gunichar2 *s1, const char *s2)
 	g_free (s);
 
 	return res == 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_struct (simplestruct ss)
+{
+	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
+	    !strcmp (ss.d, "TEST") && is_utf16_equals (ss.d2, "OK"))
+		return 0;
+
+	return 1;
 }
 
 LIBTEST_API int STDCALL 
@@ -3798,7 +3798,9 @@ static gpointer
 lookup_mono_symbol (const char *symbol_name)
 {
 	gpointer symbol = NULL;
-	const gboolean success = g_module_symbol (g_module_open (NULL, G_MODULE_BIND_LAZY), symbol_name, &symbol);
+	GModule *mod = g_module_open (NULL, G_MODULE_BIND_LAZY);
+	g_assert (mod != NULL);
+	const gboolean success = g_module_symbol (mod, symbol_name, &symbol);
 	g_assertf (success, "%s", symbol_name);
 	return success ? symbol : NULL;
 }
@@ -3806,7 +3808,12 @@ lookup_mono_symbol (const char *symbol_name)
 LIBTEST_API gpointer STDCALL
 mono_test_marshal_lookup_symbol (const char *symbol_name)
 {
+#ifndef HOST_WIN32
+	return dlsym (RTLD_DEFAULT, symbol_name);
+#else
+	// This isn't really proper, but it should work
 	return lookup_mono_symbol (symbol_name);
+#endif
 }
 
 
@@ -7873,6 +7880,76 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 	// Return true if we can't get INotImplemented
 	return pUnk == NULL && hr == S_OK;
 }
+
+typedef struct ccw_qi_shared_data {
+	MonoComObject *pUnk;
+	int i;
+} ccw_qi_shared_data;
+
+static void*
+ccw_qi_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	void *pp;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->QueryInterface (pUnk, &IID_ITest, &pp);
+
+	shared->i = (hr == S_OK) ? 0 : 43;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
+static void*
+ccw_itest_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->SByteIn (pUnk, -100);
+	shared->i = (hr == S_OK) ? 0 : 12;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_itest_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_itest_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
 
 LIBTEST_API void STDCALL
 mono_test_MerpCrashSnprintf (void)

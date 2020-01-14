@@ -622,14 +622,14 @@ get_context_static_data (MonoAppContext *ctx, guint32 offset)
 static MonoThread**
 get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *thread)
 {
-	static MonoClassField *current_thread_field = NULL;
-
 	guint32 offset;
 
-	if (!current_thread_field) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, current_thread_field)
+
 		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField, current_thread_field)
 
 	ERROR_DECL (thread_vt_error);
 	mono_class_vtable_checked (domain, mono_defaults.thread_class, thread_vt_error);
@@ -1232,15 +1232,17 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 		start_func (start_func_arg);
 	} else {
 #ifdef ENABLE_NETCORE
-		static MonoMethod *cb;
-
 		/* Call a callback in the RuntimeThread class */
 		g_assert (start_delegate == NULL);
-		if (!cb) {
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, cb)
+
 			cb = mono_class_get_method_from_name_checked (internal->obj.vtable->klass, "StartCallback", 0, 0, error);
 			g_assert (cb);
 			mono_error_assert_ok (error);
-		}
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, cb)
+
 		mono_runtime_invoke_checked (cb, internal, NULL, error);
 #else
 		void *args [1];
@@ -1551,6 +1553,34 @@ mono_thread_attach (MonoDomain *domain)
 }
 
 /**
+ * mono_threads_attach_tools_thread:
+ *
+ * Attach the current thread as a tool thread. DON'T USE THIS FUNCTION WITHOUT READING ALL DISCLAIMERS.
+ *
+ * A tools thread is a very special kind of thread that needs access to core
+ * runtime facilities but should not be counted as a regular thread for high
+ * order facilities such as executing managed code or accessing the managed
+ * heap.
+ *
+ * This is intended only for low-level utilities than need to be able to use
+ * some low-level runtime facilities when doing things like resolving
+ * backtraces in their background processing thread.
+ *
+ * Note in particular that the thread is not fully attached - it does not have
+ * a "current domain" because it cannot run managed code or interact with
+ * managed objects.  However it can act on some metadata, and use our low-level
+ * locks and the coop thread state machine (ie GC Safe and GC Unsafe
+ * transitions make sense).
+ */
+void
+mono_threads_attach_tools_thread (void)
+{
+	MonoThreadInfo *info = mono_thread_info_attach ();
+	g_assert (info);
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
+}
+
+/**
  * mono_thread_detach:
  */
 void
@@ -1559,6 +1589,8 @@ mono_thread_detach (MonoThread *thread)
 	if (thread)
 		mono_thread_detach_internal (thread->internal_thread);
 }
+
+
 
 /**
  * mono_thread_detach_if_exiting:
@@ -1719,11 +1751,7 @@ void
 mono_thread_name_cleanup (MonoThreadName* name)
 {
 	MonoThreadName const old_name = *name;
-	// Do not reset generation.
-	name->chars = 0;
-	name->length = 0;
-	name->free = 0;
-	//memset (name, 0, sizeof (*name));
+	memset (name, 0, sizeof (*name));
 	if (old_name.free)
 		g_free (old_name.chars);
 }
@@ -1815,12 +1843,12 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
 	return mono_sleep_internal (ms, TRUE, error);
 }
-#endif
 
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
 {
 }
+#endif
 
 #ifndef ENABLE_NETCORE
 gint32
@@ -1907,16 +1935,24 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 //  - name16 only used on Windows.
 //  - name8 is either constant, or g_free'able -- this function always takes ownership and never copies.
 //
-gsize
+void
 mono_thread_set_name (MonoInternalThread *this_obj,
 		      const char* name8, size_t name8_length, const gunichar2* name16,
 		      MonoSetThreadNameFlags flags, MonoError *error)
 {
-	MonoNativeThreadId tid = 0;
+	// A special case for the threadpool worker.
+	// It sets the name repeatedly, in case it has changed, per-spec,
+	// and if not done carefully, this can be a performance problem.
+	//
+	// This is racy but ok. The name will always be valid (or absent).
+	// In an unusual race, the name might briefly not revert to what the spec requires.
+	//
+	if ((flags & MonoSetThreadNameFlag_RepeatedlyButOptimized) && name8 == this_obj->name.chars) {
+		// Length is presumed to match.
+		return;
+	}
 
-	// A counter to optimize redundant sets.
-	// It is not exactly thread safe but no use of it could be.
-	gsize name_generation;
+	MonoNativeThreadId tid = 0;
 
 	const gboolean constant = !!(flags & MonoSetThreadNameFlag_Constant);
 
@@ -1925,8 +1961,6 @@ mono_thread_set_name (MonoInternalThread *this_obj,
 #endif
 
 	LOCK_THREAD (this_obj);
-
-	name_generation = this_obj->name.generation;
 
 	if (flags & MonoSetThreadNameFlag_Reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
@@ -1938,10 +1972,8 @@ mono_thread_set_name (MonoInternalThread *this_obj,
 
 		if (!constant)
 			g_free ((char*)name8);
-		return name_generation;
+		return;
 	}
-
-	name_generation = ++this_obj->name.generation;
 
 	mono_thread_name_cleanup (&this_obj->name);
 
@@ -1966,9 +1998,6 @@ mono_thread_set_name (MonoInternalThread *this_obj,
 	mono_thread_set_name_windows (this_obj->native_handle, name16);
 
 	mono_free (0); // FIXME keep mono-publib.c in use and its functions exported
-
-	return name_generation;
-
 }
 
 void 
@@ -3357,6 +3386,8 @@ thread_detach (MonoThreadInfo *info)
 	g_assert (internal);
 
 	mono_thread_detach_internal (internal);
+
+	mono_gc_thread_detach (info);
 }
 
 static void
@@ -5659,7 +5690,11 @@ mono_thread_is_foreign (MonoThread *thread)
 static void
 threads_native_thread_join_lock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	/*
+	 * Have to cast to a pointer-sized integer first, as we can't narrow
+	 * from a pointer if pthread_t is an integer smaller than a pointer.
+	 */
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	if (thread != pthread_self ()) {
 		MONO_ENTER_GC_SAFE;
 		/* This shouldn't block */
@@ -5672,7 +5707,7 @@ threads_native_thread_join_lock (gpointer tid, gpointer value)
 static void
 threads_native_thread_join_nolock (gpointer tid, gpointer value)
 {
-	pthread_t thread = (pthread_t)tid;
+	pthread_t thread = (pthread_t)(intptr_t)tid;
 	MONO_ENTER_GC_SAFE;
 	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
@@ -6289,7 +6324,7 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 		state->supervisor_pid = pid;
 	else {
 		char pid_str[20]; // pid is a uint64_t, 20 digits max in decimal form
-		sprintf (pid_str, "%llu", (uint64_t)state->pid);
+		sprintf (pid_str, "%" PRIu64, (uint64_t)state->pid);
 		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
 		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
 		g_async_safe_printf ("Could not exec mono-hang-watchdog, expected on path '%s' (errno %d)\n", hang_watchdog_path, errno);
@@ -6381,7 +6416,7 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 		pthread_kill (state->thread_array [i], SIGTERM);
 
 		if (!state->silent)
-			g_async_safe_printf("Pkilling 0x%zx from 0x%zx\n", MONO_NATIVE_THREAD_ID_TO_UINT (state->thread_array [i]), MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Pkilling 0x%" G_GSIZE_FORMAT "x from 0x%" G_GSIZE_FORMAT "x\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (state->thread_array [i]), (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	#else
 		g_error ("pthread_kill () is not supported by this platform");
 	#endif
@@ -6557,21 +6592,21 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 		// Store a reference to our stack memory into global state
 		gboolean success = summarizer_post_dump (&state, this_thread, current_idx);
 		if (!success && !state.silent)
-			g_async_safe_printf("Thread 0x%zx reported itself.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Thread 0x%" G_GSIZE_FORMAT "x reported itself.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	} else if (!state.silent) {
-		g_async_safe_printf("Thread 0x%zx couldn't report itself.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+		g_async_safe_printf("Thread 0x%" G_GSIZE_FORMAT "x couldn't report itself.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	}
 
 	// From summarizer, wait and dump.
 	if (this_thread_controls) {
 		if (!state.silent)
-			g_async_safe_printf("Entering thread summarizer pause from 0x%zx\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Entering thread summarizer pause from 0x%" G_GSIZE_FORMAT "x\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Wait up to 2 seconds for all of the other threads to catch up
 		summary_timedwait (&state, 2);
 
 		if (!state.silent)
-			g_async_safe_printf("Finished thread summarizer pause from 0x%zx.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Finished thread summarizer pause from 0x%" G_GSIZE_FORMAT "x.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Dump and cleanup all the stack memory
 		summarizer_state_term (&state, out, working_mem, provided_size, this_thread);
@@ -6685,6 +6720,11 @@ ves_icall_System_Threading_Thread_StartInternal (MonoThreadObjectHandle thread_h
 
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p)", __func__, internal));
 
+#ifdef DISABLE_THREADS
+	mono_error_set_not_supported (error, NULL);
+	return;
+#endif
+
 	LOCK_THREAD (internal);
 
 	if ((internal->state & ThreadState_Unstarted) == 0) {
@@ -6727,6 +6767,13 @@ ves_icall_System_Threading_Thread_GetCurrentOSThreadId (MonoError *error)
 {
 	return mono_native_thread_os_id_get ();
 }
+
+gint32
+ves_icall_System_Threading_Thread_GetCurrentProcessorNumber (MonoError *error)
+{
+	return mono_native_thread_processor_id_get ();
+}
+
 #endif
 
 static

@@ -77,6 +77,7 @@
 #include <mono/utils/networking.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-logger-internals.h>
 #include "debugger-state-machine.h"
 #include "debugger-agent.h"
 #include "mini.h"
@@ -1293,11 +1294,20 @@ socket_transport_connect (const char *address)
 	listen_fd = -1;
 
 	if (host) {
+		int hints[] = {
+			MONO_HINT_IPV4 | MONO_HINT_NUMERIC_HOST,
+			MONO_HINT_IPV6 | MONO_HINT_NUMERIC_HOST,
+			MONO_HINT_UNSPECIFIED
+		};
 
 		mono_network_init ();
 
-		/* Obtain address(es) matching host/port */
-		s = mono_get_address_info (host, port, MONO_HINT_UNSPECIFIED, &result);
+		for (int i = 0; i < sizeof(hints) / sizeof(int); i++) {
+			/* Obtain address(es) matching host/port */
+			s = mono_get_address_info (host, port, hints[i], &result);
+			if (s == 0)
+				break;
+		}
 		if (s != 0) {
 			g_printerr ("debugger-agent: Unable to resolve %s:%d: %d\n", host, port, s); // FIXME add portable error conversion functions
 			exit (1);
@@ -2587,13 +2597,6 @@ save_thread_context (MonoContext *ctx)
 		mono_thread_state_init_from_current (&tls->context);
 }
 
-/* Number of threads suspended */
-/* 
- * If this is equal to the size of thread_to_tls, the runtime is considered
- * suspended.
- */
-static gint32 threads_suspend_count;
-
 static MonoCoopMutex suspend_mutex;
 
 /* Cond variable used to wait for suspend_count becoming 0 */
@@ -2828,11 +2831,13 @@ debugger_interrupt_critical (MonoThreadInfo *info, gpointer user_data)
 	MonoJitInfo *ji;
 
 	data->valid_info = TRUE;
-	ji = mono_jit_info_table_find_internal (
-			(MonoDomain *)mono_thread_info_get_suspend_state (info)->unwind_data [MONO_UNWIND_DATA_DOMAIN],
-			MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx),
-			TRUE,
-			TRUE);
+	MonoDomain *domain = (MonoDomain *) mono_thread_info_get_suspend_state (info)->unwind_data [MONO_UNWIND_DATA_DOMAIN];
+	if (!domain) {
+		/* not attached */
+		ji = NULL;
+	} else {
+		ji = mono_jit_info_table_find_internal ( domain, MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx), TRUE, TRUE);
+	}
 
 	/* This is signal safe */
 	thread_interrupt (data->tls, info, ji);
@@ -3161,8 +3166,6 @@ suspend_current (void)
 
 		tls->suspended = FALSE;
 		tls->really_suspended = FALSE;
-
-		threads_suspend_count --;
 
 		mono_coop_mutex_unlock (&suspend_mutex);
 
@@ -3697,21 +3700,24 @@ dbg_path_get_basename (const char *filename)
 static void
 init_jit_info_dbg_attrs (MonoJitInfo *ji)
 {
-	static MonoClass *hidden_klass, *step_through_klass, *non_user_klass;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *ainfo;
 
 	if (ji->dbg_attrs_inited)
 		return;
 
-	if (!hidden_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, hidden_klass)
 		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, hidden_klass)
 
-	if (!step_through_klass)
+
+	MONO_STATIC_POINTER_INIT (MonoClass, step_through_klass)
 		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, step_through_klass)
 
-	if (!non_user_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, non_user_klass)
 		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
+	MONO_STATIC_POINTER_INIT_END (MonoClass, non_user_klass)
 
 	ainfo = mono_custom_attrs_from_method_checked (jinfo_get_method (ji), error);
 	mono_error_cleanup (error); /* FIXME don't swallow the error? */
@@ -5366,6 +5372,12 @@ static void
 debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
 									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
 {
+	if (catch_ctx == NULL && catch_frame == NULL && mini_debug_options.suspend_on_unhandled && mono_object_class (exc) != mono_defaults.threadabortexception_class) {
+		mono_runtime_printf_err ("Unhandled exception, suspending...");
+		while (1)
+			;
+	}
+	
 	int i, j, suspend_policy;
 	GSList *events;
 	MonoJitInfo *ji, *catch_ji;
@@ -7086,7 +7098,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	}
 	case CMD_VM_ALL_THREADS: {
 		// FIXME: Domains
-		gboolean remove_gc_finalizing;
+		gboolean remove_gc_finalizing = FALSE;
 		mono_loader_lock ();
 		int count = mono_g_hash_table_size (tid_to_thread_obj);
 		mono_g_hash_table_foreach (tid_to_thread_obj, count_thread_check_gc_finalizer, &remove_gc_finalizing);

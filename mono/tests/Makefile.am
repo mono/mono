@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 SUBDIRS = gc-descriptors . testing_gac assembly-load-reference llvmonly-mixed fullaot-mixed
 
@@ -384,6 +384,7 @@ TESTS_CS_SRC=		\
 	reflection.cs		\
 	interface.cs		\
 	interface-2.cs		\
+	dim-generic.cs		\
 	iface.cs		\
 	iface2.cs		\
 	iface3.cs		\
@@ -420,6 +421,8 @@ TESTS_CS_SRC=		\
 	delegate14.cs		\
 	delegate15.cs		\
 	delegate16.cs		\
+	delegate17.cs		\
+	delegate18.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -719,6 +722,7 @@ TESTS_CS_SRC=		\
 	bug-10837.cs	\
 	bug-gh-9507.cs	\
 	async-generic-enum.cs \
+	null-blob-main.cs \
 	last-error.cs
 
 # some tests fail to compile on mcs
@@ -2795,11 +2799,17 @@ safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-
 	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
 	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
 
+EXTRA_DIST += event-il.il
+
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
 
+EXTRA_DIST += module-cctor.il
+
 module-cctor-loader.2.exe$(PLATFORM_AOT_SUFFIX): module-cctor.exe$(PLATFORM_AOT_SUFFIX)
 module-cctor-loader.2.exe: module-cctor.exe
+
+EXTRA_DIST += TestingReferenceAssembly.cs TestingReferenceReferenceAssembly.cs
 
 reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX) TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
@@ -3081,6 +3091,8 @@ TESTS_UNHANDLED_EXCEPTION_255_SRC =	\
 	threadpool-exceptions2.cs	\
 	threadpool-exceptions5.cs
 
+EXTRA_DIST += $(TESTS_UNHANDLED_EXCEPTION_1_SRC) $(TESTS_UNHANDLED_EXCEPTION_255_SRC)
+
 TESTS_UNHANDLED_EXCEPTION_1=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_1_SRC:.cs=.exe))
 TESTS_UNHANDLED_EXCEPTION_255=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_255_SRC:.cs=.exe))
 
@@ -3156,6 +3168,8 @@ TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-3.cs	\
 		process-leak.cs
 
+EXTRA_DIST += $(TESTS_STRESS_PROCESS_SRC)
+
 TESTS_STRESS_PROCESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_PROCESS_SRC:.cs=.exe))
 
 if FULL_AOT_TESTS
@@ -3175,7 +3189,7 @@ coreclr-gcstress:
 # Tests for the Mono lldb plugin
 EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
-	python test_lldb.py $(JITTEST_PROG)
+	$(PYTHON) test_lldb.py $(JITTEST_PROG)
 
 if !ENABLE_MSVC_ONLY
 
@@ -3266,6 +3280,16 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 EXTRA_DIST += internalsvisibleto-runtimetest.cs internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
 
 EXTRA_DIST += weakattribute.cs
+
+EXTRA_DIST += null-blob-null-blob-assm.il null-blob-ref.il null-blob-tgt.cs
+
+null-blob-tgt.dll: null-blob-tgt.cs
+	$(MCS) -target:library -out:$@ $<
+
+null-blob-main.exe: null-blob-main.cs null-blob-tgt.dll null-blob-ref.dll null-blob-null-blob-assm.dll
+	$(MCS) -target:exe -out:$@ $<
+
+null-blob-main.exe$(PLATFORM_AOT_SUFFIX): null-blob-tgt.dll$(PLATFORM_AOT_SUFFIX) null-blob-ref.dll$(PLATFORM_AOT_SUFFIX) null-blob-null-blob-assm.dll$(PLATFORM_AOT_SUFFIX)
 
 # Contains copies of types which don't exist in the desktop profile so tests can use them
 Mono.Runtime.Testing.dll: weakattribute.cs

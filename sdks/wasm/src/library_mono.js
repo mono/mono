@@ -8,7 +8,7 @@ var MonoSupportLib = {
 		mono_wasm_ignore_pdb_load_errors: true,
 		pump_message: function () {
 			if (!this.mono_background_exec)
-				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
+				this.mono_background_exec = Module.cwrap ("mono_background_exec", null);
 			while (MONO.timeout_queue.length > 0) {
 				--MONO.pump_count;
 				MONO.timeout_queue.shift()();
@@ -26,9 +26,9 @@ var MonoSupportLib = {
 
 		mono_wasm_get_call_stack: function() {
 			if (!this.mono_wasm_current_bp_id)
-				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number', [ ]);
+				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number');
 			if (!this.mono_wasm_enum_frames)
-				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", 'void', [ ]);
+				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", null);
 
 			var bp_id = this.mono_wasm_current_bp_id ();
 			this.active_frames = [];
@@ -44,7 +44,7 @@ var MonoSupportLib = {
 
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
-				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", 'void', [ 'number', 'number', 'number']);
+				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
 
 			this.var_info = [];
 			var numBytes = var_list.length * Int32Array.BYTES_PER_ELEMENT;
@@ -63,28 +63,28 @@ var MonoSupportLib = {
 
 		mono_wasm_get_object_properties: function(objId) {
 			if (!this.mono_wasm_get_object_properties_info)
-				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", 'void', [ 'number' ]);
+				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", null, [ 'number' ]);
 
 			this.var_info = [];
 			console.log (">> mono_wasm_get_object_properties " + objId);
 			this.mono_wasm_get_object_properties_info (objId);
 
 			var res = this.var_info;
-			this.var_info = []
+			this.var_info = [];
 
 			return res;
 		},
 
 		mono_wasm_get_array_values: function(objId) {
 			if (!this.mono_wasm_get_array_values_info)
-				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", 'void', [ 'number' ]);
+				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", null, [ 'number' ]);
 
 			this.var_info = [];
 			console.log (">> mono_wasm_get_array_values " + objId);
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = this.var_info;
-			this.var_info = []
+			this.var_info = [];
 
 			return res;
 		},
@@ -92,7 +92,7 @@ var MonoSupportLib = {
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
-				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'void', [ 'number']);
+				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", null, [ 'number']);
 
 			this.mono_wasm_setup_single_step (kind);
 		},
@@ -121,13 +121,13 @@ var MonoSupportLib = {
 		// Should be called before mono_load_runtime_and_bcl () in most cases 
 		mono_wasm_setenv: function (name, value) {
 			if (!this.wasm_setenv)
-				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', null, ['string', 'string']);
 			this.wasm_setenv (name, value);
 		},
 
 		mono_wasm_set_runtime_options: function (options) {
 			if (!this.wasm_parse_runtime_options)
-				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', 'void', ['number', 'number']);
+				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', null, ['number', 'number']);
 			var argv = Module._malloc (options.length * 4);
 			var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string']);
 			aindex = 0;
@@ -155,7 +155,7 @@ var MonoSupportLib = {
 			if (!('send_to' in options))
 				options.send_to = 'WebAssembly.Runtime::DumpAotProfileData';
 			var arg = "aot:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
-			Module.ccall ('mono_wasm_load_profiler_aot', 'void', ['string'], [arg]);
+			Module.ccall ('mono_wasm_load_profiler_aot', null, ['string'], [arg]);
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
@@ -236,7 +236,7 @@ var MonoSupportLib = {
 								print ("MONO_WASM: Stacktrace: \n");
 								print (err.stack);
 
-								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+								var wasm_exit = Module.cwrap ('mono_wasm_exit', null, ['number']);
 								wasm_exit (1);
 							}
 						} else {
@@ -255,8 +255,9 @@ var MonoSupportLib = {
 		},
 		
 		mono_wasm_clear_all_breakpoints: function() {
-			if (this.mono_clear_bps)
-				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
+			if (!this.mono_clear_bps)
+				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', null);
+
 			this.mono_clear_bps ();
 		},
 		
@@ -375,7 +376,7 @@ var MonoSupportLib = {
 
 	mono_set_timeout: function (timeout, id) {
 		if (!this.mono_set_timeout_exec)
-			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", 'void', [ 'number' ]);
+			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", null, [ 'number' ]);
 		if (ENVIRONMENT_IS_WEB) {
 			window.setTimeout (function () {
 				this.mono_set_timeout_exec (id);

@@ -2217,6 +2217,38 @@ public class Tests
 		var s = new AStruct () { a = 1, b = 2 };
 		return iface.foo<AStruct> (s);
 	}
+
+	interface IFaceOpenDel {
+		object AMethod<T> ();
+	}
+
+	class ClassOpenDel : IFaceOpenDel {
+		public Nullable<int> field;
+
+		public Nullable<int> getField () {
+			return field;
+		}
+
+		public object AMethod<T> () {
+			var d = (Func<ClassOpenDel, T>)Delegate.CreateDelegate (typeof (Func<ClassOpenDel, T>), typeof (ClassOpenDel).GetMethod ("getField"));
+			return d (this);
+		}
+	}
+
+	// Open instance delegate returning a gsharedvt value
+	public static int test_0_open_delegate () {
+		IFaceOpenDel iface = new ClassOpenDel () { field = 42 };
+		var res = (Nullable<int>)iface.AMethod<Nullable<int>> ();
+		return res == 42 ? 0 : 1;
+	}
+
+#if !__MonoCS__
+	public static int test_0_gsharedvt_out_dim () {
+		var c = new Outer<object>();
+		c.prop = new H ();
+		return (c.Foo () == "abcd") ? 0 : 1;
+	}
+#endif
 }
 
 // #13191
@@ -2262,6 +2294,29 @@ internal struct SparseArrayBuilder<T>
 
 	public ArrayBuilder<Marker> Markers => _markers;
 }
+
+// #18276
+#if !__MonoCS__
+public class Outer<Q> {
+	public interface ID {
+		string Foo () {
+			return null;
+		}
+	}
+
+	public ID prop;
+
+	public string Foo () {
+		return prop?.Foo();
+	}
+}
+
+public class H : Outer<object>.ID {
+	string Outer<object>.ID.Foo () {
+		return "abcd";
+	}
+}
+#endif
 
 #if !__MOBILE__
 public class GSharedTests : Tests {

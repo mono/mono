@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 ## Set the C++ linker based on configure settings, see comment in configure.ac
 ## about why we need to do this.
@@ -23,8 +23,8 @@ if SUPPORT_NULLGC
 libgc_libs=
 libgc_static_libs=
 else
-libgc_libs=$(monodir)/libgc/libmonogc.la
-libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
+libgc_libs=$(monodir)/external/bdwgc/libgc.la
+libgc_static_libs=$(monodir)/external/bdwgc/libgc-static.la
 endif
 
 glib_libs = $(monodir)/mono/eglib/libeglib.la
@@ -74,7 +74,7 @@ TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/
 INTERP_RUNTIME = $(MINI_RUNTIME) --interpreter
 RUNTIME_AOTCHECK = MONO_PATH="$(CLASS)$(PLATFORM_PATH_SEPARATOR)." $(RUNTIME_EXECUTABLE)
 
-MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:7.2 -nostdlib -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
+MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:8.0 -nostdlib -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 if !ENABLE_MSVC_ONLY
@@ -779,6 +779,20 @@ libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS) @CXX_ADD_CFLAGS@
 libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
 
+noinst_LIBRARIES += libmaintest.a
+
+libmaintest_a_SOURCES = interp/whitebox.c
+libmaintest_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+
+WHITEBOX_ASSEMBLY=interp/whitebox-snippets.exe
+test_mono_interp_whitebox_SOURCES =
+test_mono_interp_whitebox_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
+test_mono_interp_whitebox_LDADD = interp/libmaintest_a-whitebox.$(OBJEXT) libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs)
+test_mono_interp_whitebox_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+test_mono_interp_whitebox_DEPENDENCIES = $(WHITEBOX_ASSEMBLY)
+
+check_PROGRAMS = test-mono-interp-whitebox
+
 endif # !ENABLE_MSVC_ONLY
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
@@ -825,7 +839,7 @@ MemoryIntrinsics.dll: MemoryIntrinsics.il
 
 GENMDESC_OPTS=
 
-GENMDESC_PRG=python $(srcdir)/genmdesc.py $(target_define) $(srcdir)
+GENMDESC_PRG=$(PYTHON) $(srcdir)/genmdesc.py $(target_define) $(srcdir)
 
 cpu-wasm.h: mini-ops.h cpu-wasm.md $(srcdir)/genmdesc.py
 	$(GENMDESC_PRG) cpu-wasm.h wasm_desc $(srcdir)/cpu-wasm.md
@@ -899,6 +913,9 @@ rcheck: mono $(regtests)
 
 richeck: mono $(regtests)
 	$(INTERP_RUNTIME) --regression $(regtests)
+
+interp-whitebox: test-mono-interp-whitebox
+	MONO_PATH=$(CLASS) ./$< $(WHITEBOX_ASSEMBLY)
 
 mixedcheck: mono mixed.exe
 	$(MINI_RUNTIME) --interp=jit=JitClass mixed.exe
@@ -1088,6 +1105,10 @@ EXTRA_DIST = TestDriver.cs \
 	test_op_il_seq_point_headerfooter.sh	\
 	Makefile.am.in
 
+if ENABLE_NETCORE
+version.h: Makefile
+	echo "#define FULL_VERSION \"netcore\"" > version.h
+else
 version.h: Makefile
 	if test -e $(top_srcdir)/.git; then \
 		(cd $(top_srcdir); \
@@ -1107,6 +1128,7 @@ version.h: Makefile
 			echo "#define FULL_VERSION \"$$MONO_BRANCH/$$MONO_BUILD_REVISION\""; \
 		fi \
 	fi > version.h
+endif
 
 # Utility target for patching libtool to speed up linking
 patch-libtool:

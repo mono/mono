@@ -267,7 +267,7 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 	public void DefaultWebProxy ()

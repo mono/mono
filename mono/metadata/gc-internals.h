@@ -268,6 +268,10 @@ typedef struct {
 	 * tracking the provenances of objects.
 	 */
 	gpointer (*get_provenance_func) (void);
+	/*
+	 * Same as thread_mark_func, mark the intepreter frames.
+	 */
+	void (*interp_mark_func) (gpointer thread_info, GcScanFunc func, gpointer gc_data, gboolean precise);
 } MonoGCCallbacks;
 
 /* Set the callback functions callable by the GC */
@@ -398,6 +402,9 @@ gboolean mono_gc_is_critical_method (MonoMethod *method);
 
 G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
+
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
+void mono_gc_thread_detach (THREAD_INFO_TYPE *info);
 
 G_EXTERN_C // due to THREAD_INFO_TYPE varying
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);

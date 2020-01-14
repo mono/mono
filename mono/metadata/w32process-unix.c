@@ -937,6 +937,7 @@ mono_w32process_module_get_filename (gpointer handle, gpointer module, gunichar2
 		return FALSE;
 
 	proc_path = mono_unicode_from_external (path, &bytes);
+
 	if (proc_path == NULL) {
 		g_free (path);
 		return FALSE;
@@ -3191,7 +3192,7 @@ big_up_string_block (gconstpointer data_ptr, version_data *block)
 		g_free (big_value);
 
 		big_value = g_convert ((gchar *)data_ptr,
-				       unicode_chars (data_ptr) * 2,
+				       unicode_chars ((const gunichar2*)data_ptr) * 2,
 				       "UTF-16BE", "UTF-16LE", NULL, NULL,
 				       NULL);
 		if (big_value == NULL) {
@@ -3199,7 +3200,7 @@ big_up_string_block (gconstpointer data_ptr, version_data *block)
 			return(NULL);
 		}
 		memcpy ((gpointer)data_ptr, big_value,
-			unicode_chars (data_ptr) * 2);
+			unicode_chars ((const gunichar2*)data_ptr) * sizeof(gunichar2));
 		g_free (big_value);
 
 		data_ptr = ((gunichar2 *)data_ptr) + block->value_len;

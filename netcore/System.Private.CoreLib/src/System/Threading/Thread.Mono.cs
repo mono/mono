@@ -22,8 +22,7 @@ namespace System.Threading
 		IntPtr native_handle; // used only on Win32
 		/* accessed only from unmanaged code */
 		private IntPtr name;
-		private IntPtr name_generation;
-		private int name_free;
+		private int name_free; // bool
 		private int name_length;
 		private ThreadState state;
 		private object abort_exc;
@@ -164,10 +163,17 @@ namespace System.Threading
 			// no-op
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int GetCurrentProcessorNumber ();		
+
 		public static int GetCurrentProcessorId ()
 		{
-			// TODO: Implement correctly
-			return Environment.CurrentManagedThreadId;
+			int id = GetCurrentProcessorNumber ();
+
+			if (id < 0)
+				id = Environment.CurrentManagedThreadId;
+
+			return id;
 		}
 
 		public void Interrupt ()
@@ -320,8 +326,10 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void SleepInternal (int millisecondsTimeout, bool allowInterruption);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void SpinWait_nop ();
+		[Intrinsic]
+		static void SpinWait_nop ()
+		{
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static Thread CreateInternal ();
