@@ -4749,7 +4749,8 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
-	g_printf ("Printing stats at shutdown\n");
+	if (mono_jit_stats.enabled)
+		g_printf ("Printing stats at shutdown\n");
 	print_jit_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
@@ -4757,7 +4758,8 @@ mini_cleanup (MonoDomain *domain)
 void
 mini_cleanup (MonoDomain *domain)
 {
-	g_printf ("Printing stats at shutdown\n");
+	if (mono_jit_stats.enabled)
+		g_printf ("Printing stats at shutdown\n");
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
