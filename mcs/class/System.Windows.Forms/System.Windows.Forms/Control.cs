@@ -2267,6 +2267,9 @@ namespace System.Windows.Forms
 					return false;
 				}
 
+				if (!is_visible || !is_enabled)
+					return false;
+
 				parent = this;
 				while (parent != null) {
 					if (!parent.is_visible || !parent.is_enabled) {
@@ -4838,6 +4841,8 @@ namespace System.Windows.Forms
 					XplatUI.SetVisible (Handle, is_visible, true);
 					if (!is_visible) {
 						if (parent != null && parent.IsHandleCreated) {
+							if (InternalContainsFocus)
+								parent.SelectNextControl(this, true, true, true, true);
 							parent.Invalidate (bounds);
 							parent.Update ();
 						} else {
@@ -5377,6 +5382,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonUp (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			MouseEventArgs me;
 
 			me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
@@ -5395,6 +5406,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonDown (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 

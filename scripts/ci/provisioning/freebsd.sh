@@ -41,6 +41,12 @@ for pn in gettext-runtime gettext-tools cairo libdrm mesa-dri mesa-libs openjdk8
   pkg install -y $pn || true
 done
 
+## Jan 7 2020 - work around image having mangled perl defaults
+if [ ! -f /usr/local/bin/perl ]; then
+  ## Force reinstall so it places /usr/local/bin/perl binary
+  pkg install -f -y perl5
+fi
+
 # for compatibility with the mono build scripts, ideally shouldn't be necessary
 ln -s /usr/local/bin/bash /bin/bash
 ## Do not remove, instead rename; otherwise it's impossible to support ports infrastructure testing

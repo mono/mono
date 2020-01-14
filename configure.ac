@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=97b07b51-46d8-4084-b48e-77aa5c192654
+MONO_CORLIB_VERSION=8AF7738D-0093-49BA-8C4B-C96C913FCE0F
 
 #
 # Put a quoted #define in config.h.
@@ -609,6 +609,7 @@ AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
+AM_PATH_PYTHON
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -5152,8 +5153,12 @@ AC_SEARCH_LIBS(dlopen, dl)
 #
 export_link_flags=--export-dynamic
 case $host_os in
-	mingw*|cygwin*)
+mingw*|cygwin*)
 	export_link_flags=--export-all-symbols
+	;;
+*-*-darwin*)
+	export_link_flags=--export_dynamic
+	;;
 esac
 AX_APPEND_LINK_FLAGS([-Wl,$export_link_flags -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
@@ -6061,8 +6066,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -6277,9 +6282,11 @@ else
 	fi
 
 	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
 fi
 
 AC_SUBST(MONO_SUBDIRS)
+AC_SUBST(MONO_NOINST_SUBDIRS)
 
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])

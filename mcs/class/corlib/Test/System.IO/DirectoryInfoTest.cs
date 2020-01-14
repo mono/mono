@@ -250,7 +250,7 @@ namespace MonoTests.System.IO
 				DirectoryInfo info = new DirectoryInfo (path);
 				Assert.IsFalse (info.Exists, "#1");
 				info.Create ();
-				Assert.IsFalse (info.Exists, "#2");
+				Assert.IsTrue (info.Exists, "#2");
 				info = new DirectoryInfo (path);
 				Assert.IsTrue (info.Exists, "#3");
 			} finally {

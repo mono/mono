@@ -151,13 +151,6 @@ namespace WebAssembly.Net.WebSockets {
 		/// <param name="cancellationToken">Cancellation token.</param>
 		public Task ConnectAsync (Uri uri, CancellationToken cancellationToken)
 		{
-			if (uri == null) {
-				throw new ArgumentNullException (nameof (uri));
-			}
-			if (!uri.IsAbsoluteUri) {
-				throw new ArgumentException ("Uri is not absolute", nameof (uri));
-			}
-
 			// Check that we have not started already
 			int priorState = Interlocked.CompareExchange (ref state, connecting, created);
 			if (priorState == disposed) {

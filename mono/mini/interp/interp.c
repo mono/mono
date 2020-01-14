@@ -893,7 +893,11 @@ stackval_from_data (MonoType *type, stackval *result, const void *data, gboolean
 		return;
 	case MONO_TYPE_GENERICINST: {
 		if (mono_type_generic_inst_is_valuetype (type)) {
-			mono_value_copy_internal (result->data.vt, data, mono_class_from_mono_type_internal (type));
+			MonoClass *klass = mono_class_from_mono_type_internal (type);
+			if (pinvoke)
+				memcpy (result->data.vt, data, mono_class_native_size (klass, NULL));
+			else
+				mono_value_copy_internal (result->data.vt, data, klass);
 			return;
 		}
 		stackval_from_data (m_class_get_byval_arg (type->data.generic_class->container_class), result, data, pinvoke);
@@ -996,7 +1000,11 @@ stackval_to_data (MonoType *type, stackval *val, void *data, gboolean pinvoke)
 		MonoClass *container_class = type->data.generic_class->container_class;
 
 		if (m_class_is_valuetype (container_class) && !m_class_is_enumtype (container_class)) {
-			mono_value_copy_internal (data, val->data.vt, mono_class_from_mono_type_internal (type));
+			MonoClass *klass = mono_class_from_mono_type_internal (type);
+			if (pinvoke)
+				memcpy (data, val->data.vt, mono_class_native_size (klass, NULL));
+			else
+				mono_value_copy_internal (data, val->data.vt, klass);
 			return;
 		}
 		stackval_to_data (m_class_get_byval_arg (type->data.generic_class->container_class), val, data, pinvoke);
@@ -1548,7 +1556,9 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 	CallContext ccontext;
+	MONO_ENTER_GC_UNSAFE;
 	mono_arch_set_native_call_context_args (&ccontext, frame, sig);
+	MONO_EXIT_GC_UNSAFE;
 	args = &ccontext;
 #else
 	InterpMethodArguments *margs = build_args_from_sig (sig, frame);
@@ -1562,8 +1572,11 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 	interp_pop_lmf (&ext);
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
-	if (!context->has_resume_state)
+	if (!context->has_resume_state) {
+		MONO_ENTER_GC_UNSAFE;
 		mono_arch_get_native_call_context_ret (&ccontext, frame, sig);
+		MONO_EXIT_GC_UNSAFE;
+	}
 
 	if (ccontext.stack != NULL)
 		g_free (ccontext.stack);
@@ -3783,7 +3796,7 @@ main_loop:
 				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
 				alloc_stack_data (context, child_frame, imethod->alloca_size);
 #if DEBUG_INTERP
-				debug_enter (child_frame, out_tracing);
+				debug_enter (child_frame, &tracing);
 #endif
 			}
 
@@ -3987,7 +4000,7 @@ main_loop:
 				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
 				alloc_stack_data (context, child_frame, imethod->alloca_size);
 #if DEBUG_INTERP
-				debug_enter (child_frame, out_tracing);
+				debug_enter (child_frame, &tracing);
 #endif
 			}
 
@@ -5752,13 +5765,13 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I8_UN_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT64)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT64 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.l = (gint64)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I8_UN_R4)
-			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXINT64)
+			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXINT64 || isnan (sp [-1].data.f_r4))
 				goto overflow_label;
 			sp [-1].data.l = (gint64)sp [-1].data.f_r4;
 			++ip;
@@ -6052,13 +6065,13 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I4_R4)
-			if (sp [-1].data.f_r4 < G_MININT32 || sp [-1].data.f_r4 > G_MAXINT32)
+			if (sp [-1].data.f_r4 < G_MININT32 || sp [-1].data.f_r4 > G_MAXINT32 || isnan (sp [-1].data.f_r4))
 				goto overflow_label;
 			sp [-1].data.i = (gint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I4_R8)
-			if (sp [-1].data.f < G_MININT32 || sp [-1].data.f > G_MAXINT32)
+			if (sp [-1].data.f < G_MININT32 || sp [-1].data.f > G_MAXINT32 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (gint32) sp [-1].data.f;
 			++ip;
@@ -6075,13 +6088,13 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U4_R4)
-			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXUINT32)
+			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXUINT32 || isnan (sp [-1].data.f_r4))
 				goto overflow_label;
 			sp [-1].data.i = (guint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U4_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT32)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT32 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (guint32) sp [-1].data.f;
 			++ip;
@@ -6109,13 +6122,13 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I2_R8)
-			if (sp [-1].data.f < G_MININT16 || sp [-1].data.f > G_MAXINT16)
+			if (sp [-1].data.f < G_MININT16 || sp [-1].data.f > G_MAXINT16 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (gint16) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I2_UN_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT16)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT16 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (gint16) sp [-1].data.f;
 			++ip;
@@ -6132,7 +6145,7 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U2_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT16)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT16 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (guint16) sp [-1].data.f;
 			++ip;
@@ -6160,13 +6173,13 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I1_R8)
-			if (sp [-1].data.f < G_MININT8 || sp [-1].data.f > G_MAXINT8)
+			if (sp [-1].data.f < G_MININT8 || sp [-1].data.f > G_MAXINT8 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (gint8) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I1_UN_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT8)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT8 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (gint8) sp [-1].data.f;
 			++ip;
@@ -6183,7 +6196,7 @@ main_loop:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U1_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT8)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT8 || isnan (sp [-1].data.f))
 				goto overflow_label;
 			sp [-1].data.i = (guint8) sp [-1].data.f;
 			++ip;
@@ -7503,6 +7516,28 @@ interp_print_op_count (void)
 	}
 }
 #endif
+
+static void
+interp_set_optimizations (guint32 opts)
+{
+	mono_interp_opt = opts;
+}
+
+static void
+invalidate_transform (gpointer imethod_)
+{
+	InterpMethod *imethod = (InterpMethod *) imethod_;
+	imethod->transformed = FALSE;
+}
+
+static void
+interp_invalidate_transformed (MonoDomain *domain)
+{
+	MonoJitDomainInfo *info = domain_jit_info (domain);
+	mono_domain_jit_code_hash_lock (domain);
+	mono_internal_hash_table_apply (&info->interp_code_hash, invalidate_transform);
+	mono_domain_jit_code_hash_unlock (domain);
+}
 
 static void
 interp_cleanup (void)

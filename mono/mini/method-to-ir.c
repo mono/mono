@@ -2278,6 +2278,7 @@ emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee
 	mono_emit_jit_icall (cfg, mono_throw_bad_image, NULL);
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -7631,16 +7632,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						g_assert (imt_arg);
-						/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
-						vtable_arg = NULL;
 					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
 						/* This can happen when we call a fully instantiated iface method */
 						g_assert (will_have_imt_arg);
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						g_assert (imt_arg);
-						vtable_arg = NULL;
 					}
+					/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
+					vtable_arg = NULL;
 				}
 
 				if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && (!strcmp (cmethod->name, "Invoke")))
@@ -8939,6 +8939,33 @@ calli_end:
 				}
 			}
 
+			// Optimize
+			// 
+			//   box 
+			//   call object::GetType()
+			//
+			guint32 gettype_token;
+			if ((ip = il_read_call(next_ip, end, &gettype_token)) && ip_in_bb (cfg, cfg->cbb, ip)) {
+				MonoMethod* gettype_method = mini_get_method (cfg, method, gettype_token, NULL, generic_context);
+				if (!strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
+					mono_class_init_internal(klass);
+					if (mono_class_get_checked (m_class_get_image (klass), m_class_get_type_token (klass), error) == klass) {
+						if (cfg->compile_aot) {
+							EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, m_class_get_image (klass), m_class_get_type_token (klass), generic_context);
+						} else {
+							MonoType *klass_type = m_class_get_byval_arg (klass);
+							MonoReflectionType* reflection_type = mono_type_get_object_checked (cfg->domain, klass_type, cfg->error);
+							EMIT_NEW_PCONST (cfg, ins, reflection_type);
+						}
+						ins->type = STACK_OBJ;
+						ins->klass = mono_defaults.systemtype_class;
+						*sp++ = ins;					
+						next_ip = ip;
+						break;
+					}
+				}
+			}
+
 #ifdef ENABLE_NETCORE
 			// Optimize
 			// 
@@ -9385,7 +9412,8 @@ calli_end:
 				thread_ins = NULL;
 
 			/* Generate IR to compute the field address */
-			if (is_special_static && ((gsize)addr & 0x80000000) == 0 && thread_ins && !(cfg->opt & MONO_OPT_SHARED) && !context_used) {
+			if (is_special_static && ((gsize)addr & 0x80000000) == 0 && thread_ins && !(cfg->opt & MONO_OPT_SHARED) &&
+				!(context_used && cfg->gsharedvt && mini_is_gsharedvt_klass (klass))) {
 				/*
 				 * Fast access to TLS data
 				 * Inline version of get_thread_static_data () in
@@ -9394,17 +9422,20 @@ calli_end:
 				guint32 offset;
 				int idx, static_data_reg, array_reg, dreg;
 
-				if (context_used && cfg->gsharedvt && mini_is_gsharedvt_klass (klass))
-					GSHAREDVT_FAILURE (il_op);
-
 				static_data_reg = alloc_ireg (cfg);
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, static_data_reg, thread_ins->dreg, MONO_STRUCT_OFFSET (MonoInternalThread, static_data));
 
-				if (cfg->compile_aot) {
+				if (cfg->compile_aot || context_used) {
 					int offset_reg, offset2_reg, idx_reg;
 
 					/* For TLS variables, this will return the TLS offset */
-					EMIT_NEW_SFLDACONST (cfg, ins, field);
+					if (context_used) {
+						MonoInst *addr_ins = emit_get_rgctx_field (cfg, context_used, field, MONO_RGCTX_INFO_FIELD_OFFSET);
+						/* The value is offset by 1 */
+						EMIT_NEW_BIALU_IMM (cfg, ins, OP_PSUB_IMM, addr_ins->dreg, addr_ins->dreg, 1);
+					} else {
+						EMIT_NEW_SFLDACONST (cfg, ins, field);
+					}
 					offset_reg = ins->dreg;
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, offset_reg, offset_reg, 0x7fffffff);
 					idx_reg = alloc_ireg (cfg);
@@ -10054,6 +10085,24 @@ field_access_end:
 					MonoClass *tclass = mono_class_from_mono_type_internal ((MonoType *)handle);
 
 					mono_class_init_internal (tclass);
+
+					// Optimize to true/false if next instruction is `call instance bool Type::get_IsValueType()`
+					guchar *is_vt_ip;
+					guint32 is_vt_token;
+					if ((is_vt_ip = il_read_call (next_ip + 5, end, &is_vt_token)) && ip_in_bb (cfg, cfg->cbb, is_vt_ip)) {
+						MonoMethod *is_vt_method = mini_get_method (cfg, method, is_vt_token, NULL, generic_context);
+						if (is_vt_method->klass == mono_defaults.systemtype_class &&
+							!mini_is_gsharedvt_variable_klass (tclass) &&
+							!mono_class_is_open_constructed_type (m_class_get_byval_arg (tclass)) &&
+							!strcmp ("get_IsValueType", is_vt_method->name)) {
+							next_ip = is_vt_ip;
+							EMIT_NEW_ICONST (cfg, ins, m_class_is_valuetype (tclass) ? 1 : 0);
+							ins->type = STACK_I4;
+							*sp++ = ins;
+							break;
+						}
+					}
+
 					if (context_used) {
 						ins = mini_emit_get_rgctx_klass (cfg, context_used,
 							tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);

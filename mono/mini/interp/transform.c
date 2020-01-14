@@ -56,17 +56,19 @@ typedef struct
 
 #define STACK_VALUE_NONE 0
 #define STACK_VALUE_LOCAL 1
-#define STACK_VALUE_I4 2
-#define STACK_VALUE_I8 3
+#define STACK_VALUE_ARG 2
+#define STACK_VALUE_I4 3
+#define STACK_VALUE_I8 4
 
 // StackValue contains data to construct an InterpInst that is equivalent with the contents
-// of the stack slot / local.
+// of the stack slot / local / argument.
 typedef struct {
-	// Indicates the type of the stored information. It can be a local or a constant
+	// Indicates the type of the stored information. It can be a local, argument or a constant
 	int type;
 	// Holds the local index or the actual constant value
 	union {
 		int local;
+		int arg;
 		gint32 i;
 		gint64 l;
 	};
@@ -75,7 +77,7 @@ typedef struct {
 typedef struct
 {
 	// This indicates what is currently stored in this stack slot. This can be a constant
-	// or the copy of a local.
+	// or the copy of a local / argument.
 	StackValue val;
 	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
 	// of the stack slot, because we can't clear the instruction that set it.
@@ -1696,7 +1698,15 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 #endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Runtime.CompilerServices") && !strcmp (klass_name, "RuntimeHelpers")) {
 #ifdef ENABLE_NETCORE
-		if (!strcmp (tm, "IsBitwiseEquatable")) {
+		if (!strcmp (tm, "get_OffsetToStringData")) {
+			g_assert (csignature->param_count == 0);
+			int offset = MONO_STRUCT_OFFSET (MonoString, chars);
+			interp_add_ins (td, MINT_LDC_I4);
+			WRITE32_INS (td->last_ins, 0, &offset);
+			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I4);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (tm, "IsBitwiseEquatable")) {
 			g_assert (csignature->param_count == 0);
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
@@ -1735,6 +1745,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
 		// We must intrinsify this method on interp so we don't return a pointer to native code entering interpreter
 		*op = MINT_LDFTN_DYNAMIC;
+	} else if (in_corlib && target_method->klass == mono_defaults.systemtype_class && !strcmp (target_method->name, "op_Equality")) {
+		*op = MINT_CEQ_P;
 	} else if (in_corlib && target_method->klass == mono_defaults.object_class) {
 		if (!strcmp (tm, "InternalGetHashCode"))
 			*op = MINT_INTRINS_GET_HASHCODE;
@@ -6656,6 +6668,18 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 	}
 }
 
+// The value of argument has changed. This means the contents of the stack where the
+// argument was loaded, no longer contain the value of the argument. Clear them.
+static void
+clear_stack_content_info_for_argument (StackContentInfo *start, StackContentInfo *end, int argument)
+{
+	StackContentInfo *si;
+	for (si = start; si < end; si++) {
+		if (si->val.type == STACK_VALUE_ARG && si->val.arg == argument)
+			si->val.type = STACK_VALUE_NONE;
+	}
+}
+
 // The value of local has changed. This means we can no longer assume that any other local
 // is a copy of this local.
 static void
@@ -6829,7 +6853,7 @@ cfold_failed:
 	case opcode: \
 		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
 		result.type = STACK_VALUE_I4; \
-		result.field = (cast_type) sp [0].val.field relop (cast_type) sp [1].val.field; \
+		result.i = (cast_type) sp [0].val.field relop (cast_type) sp [1].val.field; \
 		break;
 
 
@@ -7001,7 +7025,7 @@ retry:
 			int loaded_local = ins->data [0];
 			local_ref_count [loaded_local]++;
 			InterpInst *prev_ins = interp_prev_ins (ins);
-			if (MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
+			if (prev_ins && MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
 				int mt = prev_ins->opcode - MINT_STLOC_I1;
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
@@ -7114,7 +7138,7 @@ retry:
 				} else {
 					locals [dest_local].type = STACK_VALUE_NONE;
 				}
-			} else if (sp->val.type == STACK_VALUE_NONE) {
+			} else if (sp->val.type == STACK_VALUE_NONE || sp->val.type == STACK_VALUE_ARG) {
 				locals [dest_local].type = STACK_VALUE_NONE;
 			} else {
 				g_assert (sp->val.type == STACK_VALUE_I4 || sp->val.type == STACK_VALUE_I8);
@@ -7183,6 +7207,15 @@ retry:
 			// propagated instruction, so we remove the top of stack dependency
 			sp [-1].ins = NULL;
 			sp++;
+		} else if (MINT_IS_LDARG (ins->opcode)) {
+			sp->ins = ins;
+			sp->val.type = STACK_VALUE_ARG;
+			sp->val.arg = ins->opcode == MINT_LDARG_P0 ? 0 : ins->data [0];
+			sp++;
+		} else if (MINT_IS_STARG (ins->opcode)) {
+			int dest_arg = ins->data [0];
+			sp--;
+			clear_stack_content_info_for_argument (stack, sp, dest_arg);
 		} else if (ins->opcode >= MINT_BOX && ins->opcode <= MINT_BOX_NULLABLE) {
 			int offset = ins->data [1];
 			// Clear the stack slot that is boxed
@@ -7241,30 +7274,29 @@ retry:
 			ins = interp_fold_binop (td, sp, ins);
 			sp--;
 		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_P && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
-			if (sp [-2].ins) {
-				InterpInst *obj_ins = sp [-2].ins;
-				if (obj_ins->opcode == MINT_LDLOC_O) {
-					int loc_index = obj_ins->data [0];
+			StackContentInfo *src = &sp [-2];
+			if (src->ins) {
+				if (src->val.type == STACK_VALUE_LOCAL) {
+					int loc_index = src->val.local;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
 					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
 					ins->data [0] = loc_index;
 					ins->data [1] = fld_offset;
+					local_ref_count [loc_index]++;
 					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, obj_ins);
+					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
-				} else if (obj_ins->opcode == MINT_LDARG_O || obj_ins->opcode == MINT_LDARG_P0) {
-					int arg_index = 0;
+				} else if (src->val.type == STACK_VALUE_ARG) {
+					int arg_index = src->val.arg;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
-					if (obj_ins->opcode == MINT_LDARG_O)
-						arg_index = obj_ins->data [0];
 					ins = interp_insert_ins (td, ins, MINT_STARGFLD_I1 + mt);
 					ins->data [0] = arg_index;
 					ins->data [1] = fld_offset;
 					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, obj_ins);
+					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
 				}

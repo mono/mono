@@ -27,22 +27,6 @@
 -nomethod System.Collections.Specialized.Tests.NameValueCollectionCtorTests.Ctor_NegativeCapacity_ThrowsArgumentOutOfRangeException
 
 ####################################################################
-##  System.Diagnostics.Process.Tests
-####################################################################
-
-# times out waiting for remote process. Would it require system wide dotnet?
-# https://github.com/mono/mono/issues/14903
--nomethod System.Diagnostics.Tests.ProcessTests.ProcessStart_UseShellExecute_ExecuteOrder
-
-####################################################################
-##  System.Diagnostics.TraceSource.Tests
-####################################################################
-
-# Object reference not set to an instance of an object on DefaultTraceListenerClassTests.MakeAssemblyGetEntryAssemblyReturnNull
-# https://github.com/mono/mono/issues/14905
--nomethod System.Diagnostics.TraceSourceTests.DefaultTraceListenerClassTests.EntryAssemblyName_Null_NotIncludedInTrace
-
-####################################################################
 ##  System.Diagnostics.Tracing.Tests
 ####################################################################
 
@@ -477,8 +461,6 @@
 # Object reference not set to an instance of an object error
 # https://github.com/mono/mono/issues/15115
 -nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.ValidateAgainstBlobs
--nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.RoundtripManyObjectsInOneStream
--nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.ValidateBasicObjectsRoundtrip
 
 ####################################################################
 ##  System.Runtime.Tests
@@ -587,15 +569,6 @@
 -nonamespace Tests.Integration
 
 ####################################################################
-##  System.Composition.TypedParts.Tests
-####################################################################
-
-# Missing assembly Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-# https://github.com/mono/mono/issues/15170
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssemblies_Assemblies_ThrowsCompositionFailedExceptionOnCreation
--nomethod System.Composition.Hosting.Tests.ContainerConfigurationTests.WithAssembly_Assembly_ThrowsCompositionFailedExceptionOnCreation
-
-####################################################################
 ##  System.Data.Common.Tests
 ####################################################################
 
@@ -690,14 +663,6 @@
 -nomethod System.Reflection.Tests.MetadataLoadContextTests.RelocatableAssembly
 
 ####################################################################
-##  System.Runtime.Loader.DefaultContext.Tests
-####################################################################
-
-# Expected FileNotFoundException, got none
-# https://github.com/mono/mono/issues/15195
--nomethod System.Runtime.Loader.Tests.DefaultLoadContextTests.LoadInDefaultContext
-
-####################################################################
 ##  System.Runtime.Loader.RefEmitLoadContext.Tests
 ####################################################################
 
@@ -738,22 +703,15 @@
 ##  System.Runtime.Extensions.Tests
 ####################################################################
 
-# GC.GetGCMemoryInfo is not implemented
-# https://github.com/mono/mono/issues/15236
--nomethod System.Tests.AppDomainTests.MonitoringIsEnabled
-
 # Mono expands generic Types in stacktraces unlike the .NET Core (sounds more like a feature: https://gist.github.com/EgorBo/3abb37d2ff4fc904bc7472c62498f933)
 # https://github.com/mono/mono/issues/15315
 -nomethod System.Tests.EnvironmentStackTrace.StackTraceTest
 
 # These events are not wired up in mono
 # https://github.com/mono/mono/issues/16246
--nomethod System.Tests.AppDomainTests.TypeResolve
 -nomethod System.Tests.AppDomainTests.ResourceResolve
--nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
 -nomethod System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
--nomethod System.Tests.AppDomainTests.AssemblyResolveInvalidAssemblyName
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
