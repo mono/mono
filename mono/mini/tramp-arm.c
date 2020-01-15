@@ -1128,7 +1128,7 @@ mono_arm_get_thumb_plt_entry (guint8 *code)
 
 	g_assert ((t1 >> 11) == 0x1e);
 
-	s = (t1 >> 10) & 0x1 ? 1 : 0;
+	s = (t1 >> 10) & 0x1;
 	imm10 = (t1 >> 0) & 0x3ff;
 	j1 = (t2 >> 13) & 0x1;
 	j2 = (t2 >> 11) & 0x1;
