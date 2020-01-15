@@ -177,5 +177,6 @@
 -nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneOrBothUseDefault_Ok
 -nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
 
-# OOM
--nomethod System.Buffers.Text.Tests.Base64EncoderUnitTests.BasicEncodingWithFinalBlockFalse
+# Allocates a large memory block which gets pinned
+-nomethod System.Tests.BitConverterTests.ToString_ByteArrayTooLong_Throws
+-nomethod System.Collections.Tests.HashtableTests.Ctor_Int_Int_GenerateNewPrime
