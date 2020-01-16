@@ -4697,7 +4697,7 @@ MonoJitStats mono_jit_stats = {0};
  * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
  */
 MONO_NO_SANITIZE_THREAD
-static void
+void
 print_jit_stats (void)
 {
 	if (mono_jit_stats.enabled) {
@@ -4737,12 +4737,16 @@ print_jit_stats (void)
 		g_print ("JIT info table inserts: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_insert_count);
 		g_print ("JIT info table removes: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_remove_count);
 		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
-
-		g_free (mono_jit_stats.max_ratio_method);
-		mono_jit_stats.max_ratio_method = NULL;
-		g_free (mono_jit_stats.biggest_method);
-		mono_jit_stats.biggest_method = NULL;
 	}
+}
+
+static void
+free_mono_method_stats (void)
+{
+	g_free (mono_jit_stats.max_ratio_method);
+	mono_jit_stats.max_ratio_method = NULL;
+	g_free (mono_jit_stats.biggest_method);
+	mono_jit_stats.biggest_method = NULL;
 }
 
 #ifdef DISABLE_CLEANUP
@@ -4752,6 +4756,7 @@ mini_cleanup (MonoDomain *domain)
 	if (mono_stats.enabled)
 		g_printf ("Printing stats at shutdown\n");
 	print_jit_stats ();
+	free_mono_method_stats ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 #else
@@ -4779,6 +4784,7 @@ mini_cleanup (MonoDomain *domain)
 
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
+	free_mono_method_stats ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
