@@ -669,15 +669,10 @@ namespace System.Windows.Forms {
 					window_manager.UpdateBorderStyle (value);
 				}
 
-				Size current_client_size = ClientSize;
-				UpdateStyles();
+				UpdateFormStyles();
 				
-				if (this.IsHandleCreated) {
-					this.Size = InternalSizeFromClientSize (current_client_size);
+				if (this.IsHandleCreated)
 					XplatUI.InvalidateNC (this.Handle);
-				} else if (is_clientsize_set) {
-					this.Size = InternalSizeFromClientSize (current_client_size);
-				}
 			}
 		}
 
