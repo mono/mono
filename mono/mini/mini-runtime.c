@@ -4698,7 +4698,7 @@ MonoJitStats mono_jit_stats = {0};
  */
 MONO_NO_SANITIZE_THREAD
 void
-print_jit_stats (void)
+mono_print_jit_stats (void)
 {
 	if (mono_jit_stats.enabled) {
 		g_print ("Mono Jit statistics\n");
@@ -4741,7 +4741,7 @@ print_jit_stats (void)
 }
 
 static void
-free_mono_method_stats (void)
+jit_stats_cleanup (void)
 {
 	g_free (mono_jit_stats.max_ratio_method);
 	mono_jit_stats.max_ratio_method = NULL;
@@ -4755,8 +4755,8 @@ mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
 		g_printf ("Printing stats at shutdown\n");
-	print_jit_stats ();
-	free_mono_method_stats ();
+	mono_print_jit_stats ();
+	jit_stats_cleanup ();
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 #else
@@ -4783,8 +4783,8 @@ mini_cleanup (MonoDomain *domain)
 #endif
 
 	/* This accesses metadata so needs to be called before runtime shutdown */
-	print_jit_stats ();
-	free_mono_method_stats ();
+	mono_print_jit_stats ();
+	jit_stats_cleanup ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);

@@ -423,7 +423,7 @@ MONO_API void        mono_parse_env_options         (int *ref_argc, char **ref_a
 MONO_API char       *mono_parse_options_from        (const char *options, int *ref_argc, char **ref_argv []);
 MONO_API int         mono_regression_test_step      (int verbose_level, const char *image, const char *method_name);
 
-void                   print_jit_stats               (void);
+void                   mono_print_jit_stats          (void);
 
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (const MonoEECallbacks *cbs);
