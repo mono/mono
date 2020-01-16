@@ -37,7 +37,6 @@ system(
 	"--skipmonomake=$skipMonoMake",
 	"--artifact=1",
 	"--artifactscommon=1",
-	"--buildusandboo=1",
 	"--forcedefaultbuilddeps=1",
 	"--stevedorebuilddeps=$stevedoreBuildDeps",
 	"--shortprefix=$shortPrefix") eq 0 or die ("Failed building mono\n");
