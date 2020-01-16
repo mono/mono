@@ -3039,7 +3039,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 				 */
 				MonoMethod *wrapper;
 
-				wrapper = mono_marshal_get_array_accessor_wrapper (method);
+				wrapper = mono_marshal_get_direct_call_wrapper (method);
 				invoke = mono_marshal_get_runtime_invoke (wrapper, FALSE);
 				callee = wrapper;
 			} else {

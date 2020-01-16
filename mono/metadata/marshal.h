@@ -120,7 +120,7 @@ typedef enum {
 	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
 	WRAPPER_SUBTYPE_GSHAREDVT_IN,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
-	WRAPPER_SUBTYPE_ARRAY_ACCESSOR,
+	WRAPPER_SUBTYPE_DIRECT_CALL,
 	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
 	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER,
 	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
@@ -180,7 +180,7 @@ typedef struct {
 
 typedef struct {
 	MonoMethod *method;
-} ArrayAccessorWrapperInfo;
+} DirectCallWrapperInfo;
 
 typedef struct {
 	MonoClass *klass;
@@ -264,8 +264,8 @@ typedef struct {
 		GenericArrayHelperWrapperInfo generic_array_helper;
 		/* ICALL_WRAPPER */
 		ICallWrapperInfo icall;
-		/* ARRAY_ACCESSOR */
-		ArrayAccessorWrapperInfo array_accessor;
+		/* DIRECT_CALL */
+		DirectCallWrapperInfo direct_call;
 		/* PROXY_ISINST etc. */
 		ProxyWrapperInfo proxy;
 		/* ALLOC */
@@ -332,7 +332,7 @@ typedef struct {
 	void (*emit_delegate_invoke_internal) (MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodSignature *invoke_sig, gboolean static_method_with_first_arg_bound, gboolean callvirt, gboolean closed_over_null, MonoMethod *method, MonoMethod *target_method, MonoClass *target_class, MonoGenericContext *ctx, MonoGenericContainer *container);
 	void (*emit_synchronized_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoGenericContext *ctx, MonoGenericContainer *container, MonoMethod *enter_method, MonoMethod *exit_method, MonoMethod *gettypefromhandle_method);
 	void (*emit_unbox_wrapper) (MonoMethodBuilder *mb, MonoMethod *method);
-	void (*emit_array_accessor_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx);
+	void (*emit_direct_call_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx);
 	void (*emit_generic_array_helper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
 	void (*emit_thunk_invoke_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
 	void (*emit_create_string_hack) (MonoMethodBuilder *mb, MonoMethodSignature *csig, MonoMethod *res);
@@ -502,7 +502,7 @@ MonoMethod*
 mono_marshal_get_array_address (int rank, int elem_size);
 
 MonoMethod *
-mono_marshal_get_array_accessor_wrapper (MonoMethod *method);
+mono_marshal_get_direct_call_wrapper (MonoMethod *method);
 
 MonoMethod *
 mono_marshal_get_generic_array_helper (MonoClass *klass, const gchar *name, MonoMethod *method);

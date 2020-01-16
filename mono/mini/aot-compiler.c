@@ -3639,8 +3639,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_klass_ref (acfg, method->klass, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
 				encode_method_ref (acfg, info->d.synchronized_inner.method, p, &p);
-			else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
-				encode_method_ref (acfg, info->d.array_accessor.method, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_DIRECT_CALL)
+				encode_method_ref (acfg, info->d.direct_call.method, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
 				encode_signature (acfg, info->d.interp_in.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
@@ -4823,14 +4823,14 @@ add_wrappers (MonoAotCompile *acfg)
 
 			m = get_method_nofail (klass, "Get", -1, 0);
 			g_assert (m);
-			wrapper = mono_marshal_get_array_accessor_wrapper (m);
+			wrapper = mono_marshal_get_direct_call_wrapper (m);
 			add_extra_method (acfg, wrapper);
 			if (!acfg->aot_opts.llvm_only)
 				add_extra_method (acfg, get_runtime_invoke (acfg, wrapper, FALSE));
 
 			m = get_method_nofail (klass, "Set", -1, 0);
 			g_assert (m);
-			wrapper = mono_marshal_get_array_accessor_wrapper (m);
+			wrapper = mono_marshal_get_direct_call_wrapper (m);
 			add_extra_method (acfg, wrapper);
 			if (!acfg->aot_opts.llvm_only)
 				add_extra_method (acfg, get_runtime_invoke (acfg, wrapper, FALSE));
@@ -5717,19 +5717,19 @@ add_generic_instances (MonoAotCompile *acfg)
 			m = get_method_nofail (obj_array_class, "Get", i, 0);
 			g_assert (m);
 
-			m = mono_marshal_get_array_accessor_wrapper (m);
+			m = mono_marshal_get_direct_call_wrapper (m);
 			add_extra_method (acfg, m);
 
 			m = get_method_nofail (obj_array_class, "Address", i, 0);
 			g_assert (m);
 
-			m = mono_marshal_get_array_accessor_wrapper (m);
+			m = mono_marshal_get_direct_call_wrapper (m);
 			add_extra_method (acfg, m);
 
 			m = get_method_nofail (obj_array_class, "Set", i + 1, 0);
 			g_assert (m);
 
-			m = mono_marshal_get_array_accessor_wrapper (m);
+			m = mono_marshal_get_direct_call_wrapper (m);
 			add_extra_method (acfg, m);
 		}
 	}
@@ -9258,8 +9258,8 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_GSHAREDVT_OUT:
 		label = "gshared_out";
 		break;
-	case WRAPPER_SUBTYPE_ARRAY_ACCESSOR:
-		label = "array_acc";
+	case WRAPPER_SUBTYPE_DIRECT_CALL:
+		label = "direct_call";
 		break;
 	case WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER:
 		label = "generic_arry_help";
@@ -9417,8 +9417,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			success = success && append_mangled_klass (s, method->klass);
 		else if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
 			success = success && append_mangled_method (s, info->d.synchronized_inner.method);
-		else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
-			success = success && append_mangled_method (s, info->d.array_accessor.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_DIRECT_CALL)
+			success = success && append_mangled_method (s, info->d.direct_call.method);
 		else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
 			append_mangled_signature (s, info->d.interp_in.sig);
 		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {

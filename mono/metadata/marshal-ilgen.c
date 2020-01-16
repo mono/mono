@@ -4218,7 +4218,7 @@ emit_unbox_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method)
 }
 
 static void
-emit_array_accessor_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx)
+emit_direct_call_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx)
 {
 	MonoGenericContainer *container = NULL;
 	/* Call the method */
@@ -6678,7 +6678,7 @@ mono_marshal_ilgen_init (void)
 	cb.emit_delegate_invoke_internal = emit_delegate_invoke_internal_ilgen;
 	cb.emit_synchronized_wrapper = emit_synchronized_wrapper_ilgen;
 	cb.emit_unbox_wrapper = emit_unbox_wrapper_ilgen;
-	cb.emit_array_accessor_wrapper = emit_array_accessor_wrapper_ilgen;
+	cb.emit_direct_call_wrapper = emit_direct_call_wrapper_ilgen;
 	cb.emit_generic_array_helper = emit_generic_array_helper_ilgen;
 	cb.emit_thunk_invoke_wrapper = emit_thunk_invoke_wrapper_ilgen;
 	cb.emit_create_string_hack = emit_create_string_hack_ilgen;

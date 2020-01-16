@@ -507,7 +507,7 @@ struct _MonoImage {
 	 * indexed by MonoMethod pointers 
 	 */
 	GHashTable *wrapper_param_names;
-	GHashTable *array_accessor_cache;
+	GHashTable *direct_call_wrapper_cache;
 
 	/*
 	 * indexed by MonoClass pointers

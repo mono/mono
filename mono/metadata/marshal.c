@@ -4943,7 +4943,7 @@ mono_marshal_get_array_address (int rank, int elem_size)
 
 #ifndef ENABLE_ILGEN
 static void
-emit_array_accessor_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx)
+emit_direct_call_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx)
 {
 }
 #endif
@@ -4951,10 +4951,11 @@ emit_array_accessor_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethod *method, 
 /*
  * mono_marshal_get_array_accessor_wrapper:
  *
- *   Return a wrapper which just calls METHOD, which should be an Array Get/Set/Address method.
+ *   Return a wrapper which just calls METHOD. Used for Get/Set/Address array methods
+ *   or for resolving jit calls when doing interp virtual calls .
  */
 MonoMethod *
-mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
+mono_marshal_get_direct_call_wrapper (MonoMethod *method)
 {
 	MonoMethodSignature *sig;
 	MonoMethodBuilder *mb;
@@ -4976,7 +4977,7 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 		cache = NULL;
 		g_assert_not_reached ();
 	} else {
-		cache = get_cache (&get_method_image (method)->array_accessor_cache, mono_aligned_addr_hash, NULL);
+		cache = get_cache (&get_method_image (method)->direct_call_wrapper_cache, mono_aligned_addr_hash, NULL);
 		if ((res = mono_marshal_find_in_cache (cache, method)))
 			return res;
 	}
@@ -4986,10 +4987,10 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_OTHER);
 
-	get_marshal_cb ()->emit_array_accessor_wrapper (mb, method, sig, ctx);
+	get_marshal_cb ()->emit_direct_call_wrapper (mb, method, sig, ctx);
 
-	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_ARRAY_ACCESSOR);
-	info->d.array_accessor.method = method;
+	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_DIRECT_CALL);
+	info->d.direct_call.method = method;
 
 	if (ctx) {
 		MonoMethod *def;
@@ -6620,7 +6621,7 @@ install_noilgen (void)
 	cb.emit_delegate_invoke_internal = emit_delegate_invoke_internal_noilgen;
 	cb.emit_synchronized_wrapper = emit_synchronized_wrapper_noilgen;
 	cb.emit_unbox_wrapper = emit_unbox_wrapper_noilgen;
-	cb.emit_array_accessor_wrapper = emit_array_accessor_wrapper_noilgen;
+	cb.emit_direct_call_wrapper = emit_direct_call_wrapper_noilgen;
 	cb.emit_generic_array_helper = emit_generic_array_helper_noilgen;
 	cb.emit_thunk_invoke_wrapper = emit_thunk_invoke_wrapper_noilgen;
 	cb.emit_create_string_hack = emit_create_string_hack_noilgen;

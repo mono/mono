@@ -1079,11 +1079,11 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				if (!m)
 					return FALSE;
 				ref->method = mono_marshal_get_synchronized_inner_wrapper (m);
-			} else if (subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR) {
+			} else if (subtype == WRAPPER_SUBTYPE_DIRECT_CALL) {
 				MonoMethod *m = decode_resolve_method_ref (module, p, &p, error);
 				if (!m)
 					return FALSE;
-				ref->method = mono_marshal_get_array_accessor_wrapper (m);
+				ref->method = mono_marshal_get_direct_call_wrapper (m);
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN) {
 				ref->method = mono_marshal_get_gsharedvt_in_wrapper ();
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT) {
@@ -4826,8 +4826,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_OTHER) {
 			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
-			if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR) {
-				MonoMethod *array_method = info->d.array_accessor.method;
+			if (info->subtype == WRAPPER_SUBTYPE_DIRECT_CALL) {
+				MonoMethod *array_method = info->d.direct_call.method;
 				if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (m_class_get_element_class (array_method->klass)))) {
 					int rank;
 
@@ -4842,7 +4842,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 					mono_error_assert_ok (error);
 					g_assert (m);
 
-					m = mono_marshal_get_array_accessor_wrapper (m);
+					m = mono_marshal_get_direct_call_wrapper (m);
 					if (m != method) {
 						code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
 						mono_error_cleanup (inner_error);
