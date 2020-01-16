@@ -700,6 +700,15 @@ get_virtual_method (InterpMethod *imethod, MonoVTable *vtable)
 		virtual_method = mono_marshal_get_synchronized_wrapper (virtual_method);
 	}
 
+	/*
+	 * We can't directly call managed code from here, but we can call a wrapper
+	 * which will do a direct call to the destination method. That direct call
+	 * will be detected as a jit call candidate and optimized.
+	 */
+	MonoMethodSignature *sig = mono_method_signature_internal (virtual_method);
+	if (mono_interp_jit_call_supported (virtual_method, sig))
+		virtual_method = mono_marshal_get_direct_call_wrapper (virtual_method);
+
 	ERROR_DECL (error);
 	InterpMethod *virtual_imethod = mono_interp_get_imethod (domain, virtual_method, error);
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */

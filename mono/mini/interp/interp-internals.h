@@ -261,6 +261,9 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 void
 mono_interp_print_code (InterpMethod *imethod);
 
+gboolean
+mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig);
+
 static inline int
 mint_type(MonoType *type_)
 {
