@@ -298,7 +298,7 @@ namespace System.Threading
 
 		static Thread InitializeCurrentThread () {
 			Thread thread = null;
-			InitializeCurrentThread (ref thread);
+			InitializeCurrentThread_icall (ref thread);
 			return thread;
 		}
 
