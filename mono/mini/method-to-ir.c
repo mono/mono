@@ -8986,6 +8986,42 @@ calli_end:
 					break;
 				}
 			}
+			// Optimize
+			// 
+			//    box
+			//    isinst [Type]
+			//    brfalse/brtrue
+			//    
+			// to
+			// 
+			//    ldc.i4.0 (or 1)
+			//    brfalse/brtrue
+			//
+			guint32 isinst_tk = 0;
+			if ((ip = il_read_op_and_token (next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &isinst_tk)) &&
+				ip_in_bb (cfg, cfg->cbb, ip)) {
+				MonoClass *isinst_class = mini_get_class (method, isinst_tk, generic_context);
+				if (!mono_class_is_nullable (klass) && !mono_class_is_nullable (isinst_class) &&
+					!mini_is_gsharedvt_variable_klass (klass) && !mini_is_gsharedvt_variable_klass (isinst_class) &&
+					!mono_class_is_open_constructed_type (m_class_get_byval_arg (klass)) &&
+					!mono_class_is_open_constructed_type (m_class_get_byval_arg (isinst_class))) {
+
+					// push 0 or 1 if next instruction is brtrue/brfalse
+					guchar* br_ip = NULL;
+					if ((br_ip = il_read_brtrue (ip, end, &target)) || (br_ip = il_read_brtrue_s (ip, end, &target)) ||
+						(br_ip = il_read_brfalse (ip, end, &target)) || (br_ip = il_read_brfalse_s (ip, end, &target))) {
+
+						gboolean isinst = mono_class_is_assignable_from_internal (isinst_class, klass);
+						next_ip = ip;
+						il_op = (MonoOpcodeEnum) (isinst ? CEE_LDC_I4_1 : CEE_LDC_I4_0);
+						EMIT_NEW_ICONST (cfg, ins, isinst ? 1 : 0);
+						ins->type = STACK_I4;
+						*sp++ = ins;
+						break;
+					}
+					// TODO: Optimize `box + isinst + ldnull + cgt.un`
+				}
+			}
 #endif
 
 			gboolean is_true;
