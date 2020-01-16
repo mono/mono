@@ -22,14 +22,16 @@ get_thread_state (int thread_state)
 	return state.state;
 }
 
-#ifdef THREADS_STATE_MACHINE_DEBUG_ENABLED
+#if defined (THREADS_STATE_MACHINE_DEBUG_ENABLED) || defined (ENABLE_CHECKED_BUILD_THREAD)
 static int
 get_thread_suspend_count (int thread_state)
 {
 	const MonoThreadStateMachine state = {thread_state};
 	return state.suspend_count;
 }
+#endif
 
+#ifdef THREADS_STATE_MACHINE_DEBUG_ENABLED
 static gboolean
 get_thread_no_safepoints (int thread_state)
 {
