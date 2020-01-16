@@ -22,6 +22,7 @@ get_thread_state (int thread_state)
 	return state.state;
 }
 
+#ifdef THREADS_STATE_MACHINE_DEBUG_ENABLED
 static int
 get_thread_suspend_count (int thread_state)
 {
@@ -35,6 +36,7 @@ get_thread_no_safepoints (int thread_state)
 	const MonoThreadStateMachine state = {thread_state};
 	return state.no_safepoints;
 }
+#endif
 
 static MonoThreadStateMachine
 build_thread_state (int thread_state, int suspend_count, gboolean no_safepoints)
