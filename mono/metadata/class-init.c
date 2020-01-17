@@ -1266,7 +1266,15 @@ make_generic_param_class (MonoGenericParam *param)
 	 * This makes sure the the value size of this class is equal to the size of the types the gparam is
 	 * constrained to, the JIT depends on this.
 	 */
-	klass->instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_type_stack_size_internal (m_class_get_byval_arg (klass), NULL, TRUE);
+	if (param->gshared_constraint) {
+		MonoClass *constraint_class = mono_class_from_mono_type_internal (param->gshared_constraint);
+		guint32 align;
+		mono_class_init_sizes (constraint_class);
+		klass->instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_class_value_size (constraint_class, &align);
+		klass->min_align = align;
+	} else {
+		klass->instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_type_stack_size_internal (m_class_get_byval_arg (klass), NULL, TRUE);
+	}
 	mono_memory_barrier ();
 	klass->size_inited = 1;
 
@@ -3904,11 +3912,21 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	}
 
 	MonoType *klass_byval_arg = m_class_get_byval_arg (klass);
-	if (klass_byval_arg->type == MONO_TYPE_VAR || klass_byval_arg->type == MONO_TYPE_MVAR)
-		instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_type_stack_size_internal (klass_byval_arg, NULL, TRUE);
-	else if (klass_byval_arg->type == MONO_TYPE_PTR)
+	if (klass_byval_arg->type == MONO_TYPE_VAR || klass_byval_arg->type == MONO_TYPE_MVAR) {
+		MonoGenericParam *gparam = klass_byval_arg->data.generic_param;
+		if (gparam->gshared_constraint) {
+			MonoClass *constraint_class = mono_class_from_mono_type_internal (gparam->gshared_constraint);
+			guint32 align;
+			mono_class_init_sizes (constraint_class);
+			instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_class_value_size (constraint_class, &align);
+			min_align = align;
+			has_references = constraint_class->has_references;
+		} else {
+			instance_size = MONO_ABI_SIZEOF (MonoObject) + mono_type_stack_size_internal (klass_byval_arg, NULL, TRUE);
+		}
+	} else if (klass_byval_arg->type == MONO_TYPE_PTR) {
 		instance_size = MONO_ABI_SIZEOF (MonoObject) + MONO_ABI_SIZEOF (gpointer);
-
+	}
 	if (klass_byval_arg->type == MONO_TYPE_SZARRAY || klass_byval_arg->type == MONO_TYPE_ARRAY)
 		element_size = mono_class_array_element_size (klass->element_class);
 
