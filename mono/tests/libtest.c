@@ -8008,6 +8008,58 @@ mono_test_MerpCrashUnhandledExceptionHook (void)
 	g_assert_not_reached ();
 }
 
+
+static void
+call_managed2 (gpointer arg)
+{
+	SimpleDelegate del = (SimpleDelegate)arg;
+	sleep(10);
+	call_managed_res = del (42);
+	sleep(20);
+	call_managed_res = del (42);
+}
+
+
+static void
+call_managed3 (gpointer arg)
+{
+	SimpleDelegate del = (SimpleDelegate)arg;
+	sleep(20);
+	call_managed_res = del (42);
+}
+
+static void
+call_managed4 (gpointer arg)
+{
+	SimpleDelegate del = (SimpleDelegate)arg;
+	sleep(40);
+	call_managed_res = del (42);
+}
+
+
+LIBTEST_API int STDCALL 
+mono_test_calling_native_function (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t, t1, t2;
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed2, (gpointer)del);
+	res = pthread_create (&t1, NULL, (gpointer (*)(gpointer))call_managed3, (gpointer)del);
+	res = pthread_create (&t2, NULL, (gpointer (*)(gpointer))call_managed4, (gpointer)del);
+
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	pthread_join (t1, NULL);
+	pthread_join (t2, NULL);
+
+	return call_managed_res;
+#endif
+}
+
+
+
 #ifdef __cplusplus
 } // extern C
 #endif
