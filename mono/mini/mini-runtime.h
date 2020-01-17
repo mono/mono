@@ -380,6 +380,7 @@ extern GList* mono_aot_paths;
 extern MonoDebugOptions mini_debug_options;
 extern GSList *mono_interp_only_classes;
 extern char *sdb_options;
+extern MonoMethodDesc *mono_stats_method_desc;
 
 /*
 This struct describes what execution engine feature to use.

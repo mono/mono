@@ -1697,7 +1697,7 @@ mono_enable_counters (void)
 	mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
 }
 
-static MonoMethodDesc*
+static MonoMethodDesc *
 parse_qualified_method_name (char *method_name)
 {
 	MonoMethodDesc *result = mono_method_desc_new (method_name, TRUE);
@@ -1764,7 +1764,7 @@ mono_jit_parse_options (int argc, char * argv[])
 			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
 			mono_enable_counters ();
-			mono_stats_method_desc = parse_qualified_method_name(argv [i] + 8);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -2210,7 +2210,7 @@ mono_main (int argc, char* argv[])
 			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
 			mono_enable_counters ();
-			mono_stats_method_desc = parse_qualified_method_name(argv [i] + 8);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();

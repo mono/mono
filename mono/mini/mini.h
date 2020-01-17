@@ -348,7 +348,6 @@ typedef struct MonoBasicBlock MonoBasicBlock;
 typedef struct MonoSpillInfo MonoSpillInfo;
 
 extern MonoCallSpec *mono_jit_trace_calls;
-extern MonoMethodDesc *mono_stats_method_desc;
 extern MonoMethodDesc *mono_inject_async_exc_method;
 extern int mono_inject_async_exc_pos;
 extern MonoMethodDesc *mono_break_at_bb_method;
