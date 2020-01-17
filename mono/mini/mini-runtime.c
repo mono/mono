@@ -4740,11 +4740,12 @@ mono_runtime_print_stats (void)
 		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
 
 		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+        g_print ("\n");
 	}
 }
 
 static void
-runtime_cleanup_stats (void)
+jit_stats_cleanup (void)
 {
 	g_free (mono_jit_stats.max_ratio_method);
 	mono_jit_stats.max_ratio_method = NULL;
@@ -4759,7 +4760,7 @@ mini_cleanup (MonoDomain *domain)
 	if (mono_stats.enabled)
 		g_printf ("Printing stats at shutdown\n");
 	mono_runtime_print_stats ();
-	runtime_cleanup_stats ();
+	jit_stats_cleanup ();
 }
 #else
 void
@@ -4786,7 +4787,7 @@ mini_cleanup (MonoDomain *domain)
 
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	mono_runtime_print_stats ();
-	runtime_cleanup_stats ();
+	jit_stats_cleanup ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
