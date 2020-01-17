@@ -4898,6 +4898,8 @@ debugger_agent_single_step_from_context (MonoContext *ctx)
 
 	g_assert (tls);
 
+	tls->terminated = FALSE;
+
 	/* Have to save/restore the restore_ctx as we can be called recursively during invokes etc. */
 	memcpy (&orig_restore_state, &tls->restore_state, sizeof (MonoThreadUnwindState));
 	mono_thread_state_init_from_monoctx (&tls->restore_state, ctx);
