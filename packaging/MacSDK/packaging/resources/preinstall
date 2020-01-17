@@ -6,7 +6,7 @@ PREVIOUS_INSTALL=/Library/Frameworks/Mono.framework/Versions/@@MONO_VERSION@@
 # to make sure we're starting from a clean slate
 if [ -d "$PREVIOUS_INSTALL" ]; then
     # Kill any running VBCSCompiler processes
-    pgrep -f "^${PREVIOUS_INSTALL}/bin/mono[^/]*${PREVIOUS_INSTALL}/lib/mono/msbuild/[^/]*/bin/Roslyn/VBCSCompiler.exe" | xargs kill -9
+    pgrep -lf "^${PREVIOUS_INSTALL}/bin/mono[^/]*${PREVIOUS_INSTALL}/lib/mono/msbuild/[^/]*/bin/Roslyn/VBCSCompiler.exe" | awk '{$1=""; system($0 " -shutdown")}'
 
     rm -rf "$PREVIOUS_INSTALL"
 fi
