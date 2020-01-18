@@ -3908,8 +3908,8 @@ namespace System.Windows.Forms {
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
 			using (var graphics = owner.CreateGraphics()) {
-				RecalculateDocument(graphics);
 				dpi = (graphics.DpiX + graphics.DpiY) / 2;
+				RecalculateDocument(graphics);
 			}
 			AlignCaret();
 		}
