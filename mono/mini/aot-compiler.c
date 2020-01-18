@@ -9330,6 +9330,9 @@ sanitize_mangled_string (const char *input)
 		case ':':
 			g_string_append (s, "_colon_");
 			break;
+		case '|':
+			g_string_append (s, "_verbar_");
+			break;
 		default:
 			g_string_append_c (s, c);
 		}
