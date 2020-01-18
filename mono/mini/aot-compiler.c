@@ -12189,29 +12189,28 @@ compile_asm (MonoAotCompile *acfg)
 	g_assert (objfile != NULL);
 	command = g_strdup_printf ("\"%s%s\" %s %s /OUT:%s %s %s", tool_prefix, LD_NAME,
 			acfg->aot_opts.nodebug ? LD_OPTIONS : LD_DEBUG_OPTIONS, ld_flags, wrap_path (tmp_outfile_name), wrap_path (objfile), wrap_path (llvm_ofile));
-#elif defined(LD_NAME)
-	command = g_strdup_printf ("%s%s %s -o %s %s %s %s", tool_prefix, LD_NAME, LD_OPTIONS,
-		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-		wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+#else
+	GString *str;
+
+	str = g_string_new ("");
+#if defined(LD_NAME)
+	g_string_append_printf (str, "%s%s %s", tool_prefix, LD_NAME, LD_OPTIONS);
 #else
 	// Default (linux)
-	if (acfg->aot_opts.tool_prefix) {
+	if (acfg->aot_opts.tool_prefix)
 		/* Cross compiling */
-		command = g_strdup_printf ("\"%sld\" %s -shared -o %s %s %s %s", tool_prefix, LD_OPTIONS,
-								   wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-								   wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
-	} else {
-		char *args = g_strdup_printf ("%s -shared -o %s %s %s %s", LD_OPTIONS,
-									  wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-									  wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+		g_string_append_printf (str, "\"%sld\" %s", tool_prefix, LD_OPTIONS);
+	else if (acfg->aot_opts.llvm_only)
+		g_string_append_printf (str, "%s", acfg->aot_opts.clangxx);
+	else
+		g_string_append_printf (str, "\"%sld\"", tool_prefix);
+	g_string_append_printf (str, " -shared");
+#endif
+	g_string_append_printf (str, " -o %s %s %s %s",
+							wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
+							wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
 
-		if (acfg->aot_opts.llvm_only) {
-			command = g_strdup_printf ("%s %s", acfg->aot_opts.clangxx, args);
-		} else {
-			command = g_strdup_printf ("\"%sld\" %s", tool_prefix, args);
-		}
-		g_free (args);
-	}
+	command = g_string_free (str, FALSE);
 #endif
 	aot_printf (acfg, "Executing the native linker: %s\n", command);
 	if (execute_system (command) != 0) {
