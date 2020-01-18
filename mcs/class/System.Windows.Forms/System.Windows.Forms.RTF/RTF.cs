@@ -98,6 +98,7 @@ namespace System.Windows.Forms.RTF {
 			line_pos = 0;
 			prev_char = unchecked((char)-1);
 			bump_line = false;
+			charset_stack = new Stack();
 
 			destination_callbacks = new DestinationCallback();
 			class_callbacks = new ClassCallback();
@@ -402,7 +403,7 @@ SkipCRLF:
 					case Major.EndGroup: {
 						if (charset_stack.Count > 0) {
 							encoding = (Encoding)this.charset_stack.Pop();
-							encoding_code_page = encoding.CodePage;
+							encoding_code_page = encoding?.CodePage ?? DefaultEncodingCodePage;
 						} else {
 							encoding = null;
 							encoding_code_page = DefaultEncodingCodePage;
