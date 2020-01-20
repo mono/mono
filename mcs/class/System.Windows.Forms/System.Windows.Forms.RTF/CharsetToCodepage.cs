@@ -30,13 +30,14 @@ namespace System.Windows.Forms.RTF {
 		public static int Translate(CharsetType charset)
 		{
 			switch (charset) {
-				case CharsetType.ANSI:
 				case CharsetType.General:
 				case CharsetType.Arabic_Traditional:
 				case CharsetType.Arabic_user:
 				case CharsetType.Hebrew_user:
 				case CharsetType.Mac: // Technically wrong, because "mac" should actually be quite a few with their own code pages...
 				default:
+					return System.Text.Encoding.Default.CodePage;
+				case CharsetType.ANSI:
 					return 1252;
 				case CharsetType.Symbol:
 					return 42;
