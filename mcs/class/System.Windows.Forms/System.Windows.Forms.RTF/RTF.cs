@@ -396,18 +396,18 @@ SkipCRLF:
 			} else if (this.rtf_class == TokenClass.Group) {
 				switch(this.major) {
 					case Major.BeginGroup: {
-						charset_stack.Push(encoding);
+						charset_stack.Push(encoding_code_page);
 						break;
 					}
 
 					case Major.EndGroup: {
 						if (charset_stack.Count > 0) {
-							encoding = (Encoding)this.charset_stack.Pop();
-							encoding_code_page = encoding?.CodePage ?? DefaultEncodingCodePage;
+							encoding_code_page = (int)this.charset_stack.Pop();
 						} else {
-							encoding = null;
 							encoding_code_page = DefaultEncodingCodePage;
 						}
+						if (encoding != null && encoding.CodePage != encoding_code_page)
+							encoding = null;
 						break;
 					}
 				}
