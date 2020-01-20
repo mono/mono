@@ -6026,8 +6026,6 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 	MonoThreadInfo *info;
 	gboolean external = FALSE;
 
-	orig = mono_domain_get ();
-
 	if (!domain) {
 		/* Happens when called from AOTed code which is only used in the root domain. */
 		domain = mono_get_root_domain ();
@@ -6047,6 +6045,8 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 		// #678164
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
 	}
+
+	orig = mono_domain_get ();
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		if (external) {
