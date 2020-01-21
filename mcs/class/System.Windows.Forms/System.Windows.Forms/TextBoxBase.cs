@@ -1821,6 +1821,7 @@ namespace System.Windows.Forms
 				}
 
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
+				document.DisplayCaret ();
 
 				if (dbliclick) {
 					switch (click_mode) {
