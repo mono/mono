@@ -95,6 +95,8 @@ typedef struct {
 	LLVMValueRef unbox_tramp_indexes;
 	LLVMValueRef unbox_trampolines;
 	LLVMValueRef gc_poll_cold_wrapper;
+	LLVMValueRef info_var;
+	LLVMTypeRef *info_var_eltypes;
 	int max_inited_idx, max_method_idx;
 	gboolean has_jitted_code;
 	gboolean static_link;
@@ -423,6 +425,7 @@ static LLVMValueRef get_intrins_from_module (LLVMModuleRef lmodule, int id);
 static void llvm_jit_finalize_method (EmitContext *ctx);
 static void mono_llvm_nonnull_state_update (EmitContext *ctx, LLVMValueRef lcall, MonoMethod *call_method, LLVMValueRef *args, int num_params);
 static void mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule *module);
+static void create_aot_info_var (MonoLLVMModule *module);
 
 static inline void
 set_failure (EmitContext *ctx, const char *message)
@@ -1783,6 +1786,24 @@ LLVMFunctionType3 (LLVMTypeRef ReturnType,
 }
 
 static G_GNUC_UNUSED LLVMTypeRef
+LLVMFunctionType4 (LLVMTypeRef ReturnType,
+				   LLVMTypeRef ParamType1,
+				   LLVMTypeRef ParamType2,
+				   LLVMTypeRef ParamType3,
+				   LLVMTypeRef ParamType4,
+				   int IsVarArg)
+{
+	LLVMTypeRef param_types [4];
+
+	param_types [0] = ParamType1;
+	param_types [1] = ParamType2;
+	param_types [2] = ParamType3;
+	param_types [3] = ParamType4;
+
+	return LLVMFunctionType (ReturnType, param_types, 4, IsVarArg);
+}
+
+static G_GNUC_UNUSED LLVMTypeRef
 LLVMFunctionType5 (LLVMTypeRef ReturnType,
 				   LLVMTypeRef ParamType1,
 				   LLVMTypeRef ParamType2,
@@ -3016,14 +3037,14 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	MonoJumpInfo *ji;
 	int got_offset;
 	const char *wrapper_name = mono_marshal_get_aot_init_wrapper_name (subtype);
-	char *name = g_strdup_printf ("%s%s", module->global_prefix, wrapper_name);
+	char *name = g_strdup_printf ("%s_%s", module->global_prefix, wrapper_name);
 	MonoJitICallId icall_id = MONO_JIT_ICALL_ZeroIsReserved;
 
 	switch (subtype) {
 	case AOT_INIT_METHOD:
 		icall_id = MONO_JIT_ICALL_mini_llvm_init_method;
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE));
-		sig = LLVMFunctionType2 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), FALSE);
+		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_MRGCTX:
 		icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_mrgctx; // Deliberate fall-through
@@ -3032,12 +3053,12 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 		if (!icall_id)
 			icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_vtable;
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE));
-		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
+		sig = LLVMFunctionType4 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_THIS:
 		icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_this;
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), ObjRefType (), FALSE));
-		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), ObjRefType (), FALSE);
+		sig = LLVMFunctionType4 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), ObjRefType (), FALSE);
 		break;
 	default:
 		g_assert_not_reached ();
@@ -3063,10 +3084,11 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
 	got_entry_addr = LLVMBuildGEP (builder, module->got_var, indexes, 2, "");
-	args [0] = LLVMBuildPtrToInt (builder, LLVMBuildLoad (builder, got_entry_addr, ""), IntPtrType (), "");
-	args [1] = LLVMGetParam (func, 0);
+	args [0] = LLVMBuildBitCast (builder, module->info_var, IntPtrType (), "");
+	args [1] = LLVMBuildPtrToInt (builder, LLVMBuildLoad (builder, got_entry_addr, ""), IntPtrType (), "");
+	args [2] = LLVMGetParam (func, 0);
 	if (subtype)
-		args [2] = LLVMGetParam (func, 1);
+		args [3] = LLVMGetParam (func, 1);
 
 	ji = g_new0 (MonoJumpInfo, 1);
 	ji->type = MONO_PATCH_INFO_JIT_ICALL_ID;
@@ -8477,7 +8499,7 @@ emit_method_inner (EmitContext *ctx)
 			ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
 
 			const char *init_name = mono_marshal_get_aot_init_wrapper_name (info->d.aot_init.subtype);
-			ctx->method_name = g_strdup_printf ("%s%s", ctx->module->global_prefix, init_name);
+			ctx->method_name = g_strdup_printf ("%s_%s", ctx->module->global_prefix, init_name);
 			ctx->cfg->asm_symbol = g_strdup (ctx->method_name);
 
 			if (!cfg->llvm_only && ctx->module->external_symbols) {
@@ -9977,6 +9999,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->inited_var = LLVMAddGlobal (aot_module.lmodule, inited_type, "mono_inited_tmp");
 	LLVMSetInitializer (module->inited_var, LLVMConstNull (inited_type));
 
+	create_aot_info_var (module);
 
 	emit_gc_safepoint_poll (module, module->lmodule, NULL);
 
@@ -10178,22 +10201,19 @@ AddJitGlobal (MonoLLVMModule *module, LLVMTypeRef type, const char *name)
 	g_free (s);
 	return v;
 }
+#define FILE_INFO_NFIELDS (2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 22 + 5)
 
 static void
-emit_aot_file_info (MonoLLVMModule *module)
+create_aot_info_var (MonoLLVMModule *module)
 {
 	LLVMTypeRef file_info_type;
-	LLVMTypeRef *eltypes, eltype;
+	LLVMTypeRef *eltypes;
 	LLVMValueRef info_var;
-	LLVMValueRef *fields;
 	int i, nfields, tindex;
-	MonoAotFileInfo *info;
 	LLVMModuleRef lmodule = module->lmodule;
 
-	info = &module->aot_info;
-
 	/* Create an LLVM type to represent MonoAotFileInfo */
-	nfields = 2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 22 + 5;
+	nfields = FILE_INFO_NFIELDS;
 	eltypes = g_new (LLVMTypeRef, nfields);
 	tindex = 0;
 	eltypes [tindex ++] = LLVMInt32Type ();
@@ -10214,6 +10234,26 @@ emit_aot_file_info (MonoLLVMModule *module)
 	LLVMStructSetBody (file_info_type, eltypes, nfields, FALSE);
 
 	info_var = LLVMAddGlobal (lmodule, file_info_type, "mono_aot_file_info");
+
+	module->info_var = info_var;
+	module->info_var_eltypes = eltypes;
+}
+
+static void
+emit_aot_file_info (MonoLLVMModule *module)
+{
+	LLVMTypeRef *eltypes, eltype;
+	LLVMValueRef info_var;
+	LLVMValueRef *fields;
+	int i, nfields, tindex;
+	MonoAotFileInfo *info;
+	LLVMModuleRef lmodule = module->lmodule;
+
+	info = &module->aot_info;
+	info_var = module->info_var;
+	eltypes = module->info_var_eltypes;
+	nfields = FILE_INFO_NFIELDS;
+
 	if (module->static_link) {
 		LLVMSetVisibility (info_var, LLVMHiddenVisibility);
 		LLVMSetLinkage (info_var, LLVMInternalLinkage);
@@ -10362,7 +10402,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	fields [tindex ++] = llvm_array_from_bytes (info->aotid, 16);
 	g_assert (tindex == nfields);
 
-	LLVMSetInitializer (info_var, LLVMConstNamedStruct (file_info_type, fields, nfields));
+	LLVMSetInitializer (info_var, LLVMConstNamedStruct (LLVMGetElementType (LLVMTypeOf (info_var)), fields, nfields));
 
 	if (module->static_link) {
 		char *s, *p;
