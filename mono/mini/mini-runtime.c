@@ -4693,12 +4693,13 @@ register_icalls (void)
 MonoJitStats mono_jit_stats = {0};
 
 /**
- * Counters of mono_stats and mono_jit_stats can be read without locking here.
+ * Counters of mono_stats and mono_jit_stats can be read without locking during shutdown.
+ * For all other contexts, assumes that the domain lock is held.
  * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
  */
 MONO_NO_SANITIZE_THREAD
-static void
-print_jit_stats (void)
+void
+mono_runtime_print_stats (void)
 {
 	if (mono_jit_stats.enabled) {
 		g_print ("Mono Jit statistics\n");
@@ -4738,11 +4739,18 @@ print_jit_stats (void)
 		g_print ("JIT info table removes: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_remove_count);
 		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
 
-		g_free (mono_jit_stats.max_ratio_method);
-		mono_jit_stats.max_ratio_method = NULL;
-		g_free (mono_jit_stats.biggest_method);
-		mono_jit_stats.biggest_method = NULL;
+		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+		g_print ("\n");
 	}
+}
+
+static void
+jit_stats_cleanup (void)
+{
+	g_free (mono_jit_stats.max_ratio_method);
+	mono_jit_stats.max_ratio_method = NULL;
+	g_free (mono_jit_stats.biggest_method);
+	mono_jit_stats.biggest_method = NULL;
 }
 
 #ifdef DISABLE_CLEANUP
@@ -4751,8 +4759,8 @@ mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
 		g_printf ("Printing stats at shutdown\n");
-	print_jit_stats ();
-	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+	mono_runtime_print_stats ();
+	jit_stats_cleanup ();
 }
 #else
 void
@@ -4778,7 +4786,8 @@ mini_cleanup (MonoDomain *domain)
 #endif
 
 	/* This accesses metadata so needs to be called before runtime shutdown */
-	print_jit_stats ();
+	mono_runtime_print_stats ();
+	jit_stats_cleanup ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
@@ -4833,8 +4842,6 @@ mini_cleanup (MonoDomain *domain)
 	mono_cleanup ();
 
 	mono_trace_cleanup ();
-
-	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);
