@@ -133,6 +133,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"Mono.Xml.Ext", 0},
 	{"Novell.Directory.Ldap", 0},
 	{"PEAPI", 0},
+	{"PresentationCore", 3},
+	{"PresentationFramework", 3},
 	{"System", 0},
 	FACADE_ASSEMBLY ("System.AppContext"),
 	FACADE_ASSEMBLY ("System.Buffers"),
