@@ -887,6 +887,8 @@ mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 		return FALSE;
 	if (method->string_ctor)
 		return FALSE;
+	if (method->wrapper_type != MONO_WRAPPER_NONE)
+		return FALSE;
 
 	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
 		ERROR_DECL (error);
