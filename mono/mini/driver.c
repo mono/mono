@@ -1704,8 +1704,6 @@ parse_qualified_method_name (char *method_name)
 		g_printf ("Couldn't parse empty method name.");
 		exit (1);
 	}
-	if (mono_stats_method_desc)
-		g_free (mono_stats_method_desc);
 	MonoMethodDesc *result = mono_method_desc_new (method_name, TRUE);
 	if (!result) {
 		g_printf ("Couldn't parse method name: %s\n", method_name);
@@ -1770,6 +1768,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
 			mono_enable_counters ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
 			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
@@ -2216,6 +2216,8 @@ mono_main (int argc, char* argv[])
 			mono_enable_counters ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
 			mono_enable_counters ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
 			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
