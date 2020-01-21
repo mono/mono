@@ -203,6 +203,7 @@ typedef struct MonoAotOptions {
 	char *gen_msym_dir_path;
 	gboolean direct_pinvoke;
 	gboolean direct_icalls;
+	gboolean direct_extern_calls;
 	gboolean no_direct_calls;
 	gboolean use_trampolines_page;
 	gboolean no_instances;
@@ -5800,6 +5801,60 @@ mono_aot_direct_icalls_enabled_for_method (MonoCompile *cfg, MonoMethod *method)
 }
 
 /*
+ * method_is_externally_callable:
+ *
+ *   Return whenever METHOD can be directly called from other AOT images
+ * without going through a PLT.
+ */
+static gboolean
+method_is_externally_callable (MonoAotCompile *acfg, MonoMethod *method)
+{
+	// FIXME: Unify
+	if (acfg->aot_opts.llvm_only) {
+		if (!acfg->aot_opts.static_link)
+			return FALSE;
+		if (method->wrapper_type == MONO_WRAPPER_ALLOC)
+			return TRUE;
+		if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
+			return TRUE;
+		if (method->string_ctor)
+			return FALSE;
+		if (method->wrapper_type)
+			return FALSE;
+		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
+			return FALSE;
+		/* Can't enable this as the callee might fail llvm compilation */
+		/*
+		  if (!method->is_inflated && (mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC))
+		  return TRUE;
+		*/
+		return FALSE;
+	} else {
+		if (!acfg->aot_opts.direct_extern_calls)
+			return FALSE;
+		if (!acfg->llvm || acfg->aot_opts.llvm_disable_self_init)
+			return FALSE;
+		if (acfg->aot_opts.soft_debug || acfg->aot_opts.no_direct_calls)
+			return FALSE;
+		if (method->wrapper_type == MONO_WRAPPER_ALLOC)
+			return FALSE;
+		if (method->string_ctor)
+			return FALSE;
+		if (method->wrapper_type)
+			return FALSE;
+		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
+			return FALSE;
+		if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
+			return FALSE;
+		if (method->is_inflated)
+			return FALSE;
+		if (!((mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC)))
+			return FALSE;
+		return TRUE;
+	}
+}
+
+/*
  * is_direct_callable:
  *
  *   Return whenever the method identified by JI is directly callable without 
@@ -5851,6 +5906,9 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 			if (direct_callable)
 				return TRUE;
 		}
+	} else if ((patch_info->type == MONO_PATCH_INFO_METHOD) && (m_class_get_image (patch_info->data.method->klass) != acfg->image)) {
+		/* Cross assembly calls */
+		return method_is_externally_callable (acfg, patch_info->data.method);
 	} else if ((patch_info->type == MONO_PATCH_INFO_ICALL_ADDR_CALL && patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 		if (acfg->aot_opts.direct_pinvoke)
 			return TRUE;
@@ -6132,13 +6190,28 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				 */
 				direct_call = FALSE;
 				external_call = FALSE;
-				if ((patch_info->type == MONO_PATCH_INFO_METHOD) && (m_class_get_image (patch_info->data.method->klass) == acfg->image)) {
-					if (!got_only && is_direct_callable (acfg, method, patch_info)) {
-						MonoCompile *callee_cfg = (MonoCompile *)g_hash_table_lookup (acfg->method_to_cfg, patch_info->data.method);
+				if (patch_info->type == MONO_PATCH_INFO_METHOD) {
+					MonoMethod *cmethod = patch_info->data.method;
+					if (cmethod->wrapper_type == MONO_WRAPPER_OTHER && mono_marshal_get_wrapper_info (cmethod)->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
+						WrapperInfo *info = mono_marshal_get_wrapper_info (cmethod);
+
+						/*
+						 * This is a call from a JITted method to the init wrapper emitted by LLVM.
+						 */
+						g_assert (acfg->aot_opts.llvm && acfg->aot_opts.direct_extern_calls);
+
+						const char *init_name = mono_marshal_get_aot_init_wrapper_name (info->d.aot_init.subtype);
+						char *symbol = g_strdup_printf ("%s%s_%s", acfg->user_symbol_prefix, acfg->global_prefix, init_name);
+
+						direct_call = TRUE;
+						direct_call_target = symbol;
+						patch_info->type = MONO_PATCH_INFO_NONE;
+					} else if ((m_class_get_image (patch_info->data.method->klass) == acfg->image) && !got_only && is_direct_callable (acfg, method, patch_info)) {
+						MonoCompile *callee_cfg = (MonoCompile *)g_hash_table_lookup (acfg->method_to_cfg, cmethod);
 
 						// Don't compile inflated methods if we're doing dedup
-						if (acfg->aot_opts.dedup && !mono_aot_can_dedup (patch_info->data.method)) {
-							char *name = mono_aot_get_mangled_method_name (patch_info->data.method);
+						if (acfg->aot_opts.dedup && !mono_aot_can_dedup (cmethod)) {
+							char *name = mono_aot_get_mangled_method_name (cmethod);
 							mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "DIRECT CALL: %s by %s", name, method ? mono_method_full_name (method, TRUE) : "");
 							g_free (name);
 
@@ -8091,6 +8164,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->direct_pinvoke = TRUE;
 		} else if (str_begins_with (arg, "direct-icalls")) {
 			opts->direct_icalls = TRUE;
+		} else if (str_begins_with (arg, "direct-extern-calls")) {
+			opts->direct_extern_calls = TRUE;
 		} else if (str_begins_with (arg, "no-direct-calls")) {
 			opts->no_direct_calls = TRUE;
 		} else if (str_begins_with (arg, "print-skipped")) {
@@ -8609,6 +8684,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_INTERP);
 	if (acfg->aot_opts.use_current_cpu)
 		flags = (JitFlags)(flags | JIT_FLAG_USE_CURRENT_CPU);
+	if (method_is_externally_callable (acfg, method))
+		flags = (JitFlags)(flags | JIT_FLAG_SELF_INIT);
 
 	jit_time_start = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
@@ -8839,6 +8916,16 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (cfg->llvm_only)
 		acfg->stats.llvm_count ++;
 
+	if (acfg->llvm && !cfg->compile_llvm && method_is_externally_callable (acfg, cfg->method)) {
+		/*
+		 * This is a JITted fallback method for a method which failed LLVM compilation, emit a global
+		 * symbol for it with the same name the LLVM method would get.
+		 */
+		char *name = mono_aot_get_mangled_method_name (cfg->method);
+		char *export_name = g_strdup_printf ("%s%s", acfg->user_symbol_prefix, name);
+		g_hash_table_insert (acfg->export_names, cfg->method, export_name);
+	}
+
 	/* 
 	 * FIXME: Instead of this mess, allocate the patches from the aot mempool.
 	 */
@@ -8962,6 +9049,12 @@ gboolean
 mono_aot_is_shared_got_offset (int offset)
 {
 	return offset < llvm_acfg->nshared_got_entries;
+}
+
+gboolean
+mono_aot_is_externally_callable (MonoMethod *cmethod)
+{
+	return method_is_externally_callable (llvm_acfg, cmethod);
 }
 
 char*
@@ -13032,7 +13125,6 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	 * Allocate the first few GOT entries to information which is needed frequently, or it is needed
 	 * during method initialization etc.
 	 */
-
 	ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
 	ji->type = MONO_PATCH_INFO_IMAGE;
 	ji->data.image = acfg->image;
@@ -13476,6 +13568,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	acfg->aot_opts.clangxx = g_strdup ("clang++");
 
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
+
+	if (acfg->aot_opts.direct_extern_calls && !(acfg->aot_opts.llvm && acfg->aot_opts.static_link)) {
+		fprintf (stderr, "The 'direct-extern-calls' option requires the 'llvm' and 'static' options.\n");
+		return 1;
+	}
 
 	// start dedup
 	MonoAotState *astate = NULL;
@@ -14133,6 +14230,12 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 gboolean
 mono_aot_is_shared_got_offset (int offset)
+{
+	return FALSE;
+}
+
+gboolean
+mono_aot_is_externally_callable (MonoMethod *cmethod)
 {
 	return FALSE;
 }

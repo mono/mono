@@ -1982,25 +1982,6 @@ typedef struct {
 	LLVMTypeRef type;
 } CallSite;
 
-static gboolean
-method_is_direct_callable (MonoMethod *method)
-{
-	if (method->wrapper_type == MONO_WRAPPER_ALLOC)
-		return TRUE;
-	if (method->string_ctor)
-		return FALSE;
-	if (method->wrapper_type)
-		return FALSE;
-	if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
-		return FALSE;
-	/* Can't enable this as the callee might fail llvm compilation */
-	/*
-	if (!method->is_inflated && (mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC))
-		return TRUE;
-	*/
-	return FALSE;
-}
-
 static LLVMValueRef
 get_callee_llvmonly (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gconstpointer data)
 {
@@ -2018,7 +1999,7 @@ get_callee_llvmonly (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType ty
 			}
 		} else if (type == MONO_PATCH_INFO_METHOD) {
 			MonoMethod *method = (MonoMethod*)data;
-			if (m_class_get_image (method->klass) != ctx->module->assembly->image && method_is_direct_callable (method))
+			if (m_class_get_image (method->klass) != ctx->module->assembly->image && mono_aot_is_externally_callable (method))
 				callee_name = mono_aot_get_mangled_method_name (method);
 		}
 	}
@@ -2127,6 +2108,49 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 
 	if (ctx->llvm_only)
 		return get_callee_llvmonly (ctx, llvm_sig, type, data);
+
+	callee_name = NULL;
+	/* Cross-assembly direct calls */
+	if (type == MONO_PATCH_INFO_METHOD) {
+		MonoMethod *cmethod = (MonoMethod*)data;
+
+		if (m_class_get_image (cmethod->klass) != ctx->module->assembly->image) {
+			MonoJumpInfo tmp_ji;
+
+			memset (&tmp_ji, 0, sizeof (MonoJumpInfo));
+			tmp_ji.type = type;
+			tmp_ji.data.target = data;
+			if (mono_aot_is_direct_callable (&tmp_ji)) {
+				/*
+				 * This will add a reference to cmethod's image so it will
+				 * be loaded when the current AOT image is loaded, so
+				 * the GOT slots used by the init method code are initialized.
+				 */
+				tmp_ji.type = MONO_PATCH_INFO_IMAGE;
+				tmp_ji.data.image = m_class_get_image (cmethod->klass);
+				ji = mono_aot_patch_info_dup (&tmp_ji);
+				mono_aot_get_got_offset (ji);
+
+				callee_name = mono_aot_get_mangled_method_name (cmethod);
+
+				callee = (LLVMValueRef)g_hash_table_lookup (ctx->module->direct_callables, callee_name);
+				if (!callee) {
+					callee = LLVMAddFunction (ctx->lmodule, callee_name, llvm_sig);
+
+					LLVMSetLinkage (callee, LLVMExternalLinkage);
+
+					g_hash_table_insert (ctx->module->direct_callables, (char*)callee_name, callee);
+				} else {
+					/* LLVMTypeRef's are uniqued */
+					if (LLVMGetElementType (LLVMTypeOf (callee)) != llvm_sig)
+						callee = LLVMConstBitCast (callee, LLVMPointerType (llvm_sig, 0));
+
+					g_free (callee_name);
+				}
+				return callee;
+			}
+		}
+	}
 
 	callee_name = mono_aot_get_plt_symbol (type, data);
 	if (!callee_name)
@@ -8303,14 +8327,6 @@ free_ctx (EmitContext *ctx)
 	g_free (ctx);
 }
 
-static gboolean
-is_externally_callable (EmitContext *ctx, MonoMethod *method)
-{
-	if (ctx->module->llvm_only && ctx->module->static_link && (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE || method_is_direct_callable (method)))
-		return TRUE;
-	return FALSE;
-}
-
 /*
  * mono_llvm_emit_method:
  *
@@ -8365,7 +8381,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
  	if (cfg->compile_aot) {
 		ctx->module = &aot_module;
 
-		if (is_externally_callable (ctx, cfg->method))
+		if (mono_aot_is_externally_callable (cfg->method))
 			method_name = mono_aot_get_mangled_method_name (cfg->method);
 		else
 			method_name = mono_aot_get_method_name (cfg);
@@ -8585,7 +8601,7 @@ emit_method_inner (EmitContext *ctx)
 		mono_llvm_add_func_attr_nv (method, "no-frame-pointer-elim", "true");
 
 	if (cfg->compile_aot) {
-		if (is_externally_callable (ctx, cfg->method)) {
+		if (mono_aot_is_externally_callable (cfg->method)) {
 			LLVMSetLinkage (method, LLVMExternalLinkage);
 		} else {
 			LLVMSetLinkage (method, LLVMInternalLinkage);
