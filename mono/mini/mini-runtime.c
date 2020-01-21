@@ -4698,7 +4698,7 @@ MonoJitStats mono_jit_stats = {0};
  */
 MONO_NO_SANITIZE_THREAD
 void
-mono_print_jit_stats (void)
+mono_runtime_print_stats (void)
 {
 	if (mono_jit_stats.enabled) {
 		g_print ("Mono Jit statistics\n");
@@ -4737,6 +4737,9 @@ mono_print_jit_stats (void)
 		g_print ("JIT info table inserts: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_insert_count);
 		g_print ("JIT info table removes: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_remove_count);
 		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
+
+		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+		g_print ("\n");
 	}
 }
 
@@ -4755,9 +4758,8 @@ mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
 		g_printf ("Printing stats at shutdown\n");
-	mono_print_jit_stats ();
+	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
-	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 #else
 void
@@ -4783,7 +4785,7 @@ mini_cleanup (MonoDomain *domain)
 #endif
 
 	/* This accesses metadata so needs to be called before runtime shutdown */
-	mono_print_jit_stats ();
+	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
 
 #ifndef MONO_CROSS_COMPILE
@@ -4839,8 +4841,6 @@ mini_cleanup (MonoDomain *domain)
 	mono_cleanup ();
 
 	mono_trace_cleanup ();
-
-	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);
