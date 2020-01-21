@@ -2251,16 +2251,16 @@ public class Tests
 #endif
 
 	class KvpList<T> {
-        public T[] array = new T[4];
-        int size = 0;
+		public T[] array = new T[4];
+		int size = 0;
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void MyAdd(T item) {
-            if (size < (uint)array.Length) {
-                array [size] = item;
-                size++;
-            }
-        }
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public void MyAdd(T item) {
+			if (size < (uint)array.Length) {
+				array [size] = item;
+				size++;
+			}
+		}
 	}
 
 	public static int test_0_regress_18455 () {
