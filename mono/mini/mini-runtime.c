@@ -105,6 +105,7 @@
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
 MonoMethodDesc *mono_stats_method_desc;
+static MonoCoopMutex stats_lock;
 
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
@@ -4344,6 +4345,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_create_icall_signatures ();
 
+	mono_coop_mutex_init (&stats_lock);
 	register_jit_stats ();
 
 #define JIT_CALLS_WORK
@@ -4691,9 +4693,22 @@ register_icalls (void)
 
 MonoJitStats mono_jit_stats = {0};
 
+void
+mono_stats_lock (void)
+{
+	mono_coop_mutex_lock (&stats_lock);
+}
+
+void
+mono_stats_unlock (void)
+{
+	mono_coop_mutex_unlock (&stats_lock);
+}
+
 /**
  * Counters of mono_stats and mono_jit_stats can be read without locking during shutdown.
- * For all other contexts, assumes that the domain lock is held.
+ * Mono stats are locked/unlocked in this function call.
+ * Use mono_stats_lock and mono_stats_unlock when reading/writing stats in other contexts.
  * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
  */
 MONO_NO_SANITIZE_THREAD
@@ -4701,6 +4716,7 @@ void
 mono_runtime_print_stats (void)
 {
 	if (mono_jit_stats.enabled) {
+		mono_stats_lock ();
 		g_print ("Mono Jit statistics\n");
 		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio / 100.0,
 				 mono_jit_stats.max_ratio_method);
@@ -4740,6 +4756,7 @@ mono_runtime_print_stats (void)
 
 		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 		g_print ("\n");
+		mono_stats_unlock ();
 	}
 }
 
@@ -4750,6 +4767,7 @@ jit_stats_cleanup (void)
 	mono_jit_stats.max_ratio_method = NULL;
 	g_free (mono_jit_stats.biggest_method);
 	mono_jit_stats.biggest_method = NULL;
+	mono_coop_mutex_destroy (&stats_lock);
 }
 
 #ifdef DISABLE_CLEANUP
