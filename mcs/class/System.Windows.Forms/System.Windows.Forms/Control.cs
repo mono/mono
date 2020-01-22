@@ -1246,7 +1246,7 @@ namespace System.Windows.Forms
 			} else {
 				if (!active_tracker.OnMouseDown (args)) {
 					Control control = GetRealChildAtPoint (Cursor.Position);
-					if (control != null) {
+					if (control != null && control.Visible && control.Enabled) {
 						Point pt = control.PointToClient (Cursor.Position);
 						XplatUI.SendMessage (control.Handle, 
 							(Msg)m.Msg, 
