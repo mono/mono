@@ -1576,11 +1576,13 @@ namespace Mono.CSharp
 			int d;
 			bool seen_digits = false;
 			bool digit_separator = false;
+			int prev = c;
+			var loc = Location;
 
-			if (c != -1){
+			if (prev != -1){
 				if (number_pos == MaxNumberLength)
 					Error_NumericConstantTooLong ();
-				number_builder [number_pos++] = (char) c;
+				number_builder [number_pos++] = (char) prev;
 			}
 
 			//
@@ -1592,7 +1594,7 @@ namespace Mono.CSharp
 					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = (char)d;
-					get_char ();
+					prev = get_char ();
 					seen_digits = true;
 					continue;
 				} else if (d == '_') {
@@ -1603,13 +1605,23 @@ namespace Mono.CSharp
 						digit_separator = true;
 					}
 
-					get_char();
+					if (prev == '.')
+						break;
+
+					if (prev == 'e' || prev == 'E')
+						Error_InvalidNumber ();
+
+					prev = get_char();
 					continue;
 				}
 
 				break;
 			}
 			
+			if (prev == '_') {
+				Error_InvalidNumber ();
+			}
+
 			return seen_digits;
 		}
 
@@ -1778,9 +1790,8 @@ namespace Mono.CSharp
 			int d;
 			ulong ul;
 			bool digit_separator = false;
-			int prev = 0;
-			
-			get_char ();
+			int prev = get_char ();
+
 			while ((d = peek_char ()) != -1){
 				if (is_hex (d)){
 					number_builder [number_pos++] = (char) d;
@@ -1791,6 +1802,9 @@ namespace Mono.CSharp
 				}
 
 				if (d == '_') {
+					if (prev == 'x' || prev == 'X')
+						Error_InvalidNumber ();
+
 					get_char ();
 
 					if (!digit_separator) {
@@ -1835,10 +1849,9 @@ namespace Mono.CSharp
 			int d;
 			ulong ul = 0;
 			bool digit_separator = false;
-			int prev = -1;
 			int digits = 0;
+			int prev = get_char ();
 
-			get_char ();
 			while ((d = peek_char ()) != -1){
 
 				if (d == '0' || d == '1') {
@@ -1857,6 +1870,9 @@ namespace Mono.CSharp
 				}
 
 				if (d == '_') {
+					if (prev == 'b' || prev == 'B')
+						Error_InvalidNumber ();
+
 					get_char ();
 
 					if (!digit_separator) {
@@ -1929,9 +1945,6 @@ namespace Mono.CSharp
 				decimal_digits (c);
 				c = peek_char ();
 			}
-
-			//TODO: Implement rejection of trailing digit separators
-
 
 			//
 			// We need to handle the case of
