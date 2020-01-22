@@ -104,8 +104,7 @@
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
-
-char *stats_method_name = NULL;
+MonoMethodDesc *mono_stats_method_desc;
 
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
