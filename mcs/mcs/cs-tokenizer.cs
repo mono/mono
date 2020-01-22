@@ -1575,7 +1575,8 @@ namespace Mono.CSharp
 		{
 			int d;
 			bool seen_digits = false;
-			
+			bool digit_separator = false;
+
 			if (c != -1){
 				if (number_pos == MaxNumberLength)
 					Error_NumericConstantTooLong ();
@@ -1595,6 +1596,13 @@ namespace Mono.CSharp
 					seen_digits = true;
 					continue;
 				} else if (d == '_') {
+					if (!digit_separator) {
+						if (context.Settings.Version < LanguageVersion.V_7)
+							Report.FeatureIsNotAvailable (context, Location, "digit separators");
+
+						digit_separator = true;
+					}
+
 					get_char();
 					continue;
 				}
@@ -1891,7 +1899,6 @@ namespace Mono.CSharp
 #endif
 			number_pos = 0;
 			var loc = Location;
-			bool digit_separator = false;
 
 			if (!dotLead){
 				if (c == '0'){
@@ -1923,12 +1930,6 @@ namespace Mono.CSharp
 				decimal_digits (c);
 				c = peek_char ();
 				if (c == '_') {
-					if (!digit_separator) {
-						if (context.Settings.Version < LanguageVersion.V_7)
-							Report.FeatureIsNotAvailable (context, Location, "digit separators");
-
-						digit_separator = true;
-					}
 
 					do {
 						get_char ();
@@ -1996,12 +1997,6 @@ namespace Mono.CSharp
 				c = peek_char ();
 
 				if (c == '_' && seen_digits) {
-					if (!digit_separator) {
-						if (context.Settings.Version < LanguageVersion.V_7)
-							Report.FeatureIsNotAvailable (context, Location, "digit separators");
-
-						digit_separator = true;
-					}
 
 					do {
 						get_char ();
