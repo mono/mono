@@ -4123,7 +4123,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		shared = NULL;
 	}
 
-	mono_domain_lock (target_domain);
+	mono_stats_lock ();
 
 	if (mono_stats_method_desc && mono_method_desc_full_match (mono_stats_method_desc, method)) {
 		g_printf ("Printing JIT stats at method: %s\n", mono_method_get_full_name (method));
@@ -4170,7 +4170,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 #ifndef DISABLE_JIT
 	mono_emit_jit_map (jinfo);
 #endif
-	mono_domain_unlock (target_domain);
+	mono_stats_unlock ();
 
 	if (!is_ok (error))
 		return NULL;

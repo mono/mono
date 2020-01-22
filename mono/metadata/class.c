@@ -52,6 +52,7 @@
 #include <mono/utils/bsearch.h>
 #include <mono/utils/checked-build.h>
 
+/* Use mono_stats_lock and mono_stats_unlock when reading/writing stats. */
 MonoStats mono_stats;
 
 /* Statistics */

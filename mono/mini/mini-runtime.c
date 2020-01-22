@@ -4707,8 +4707,7 @@ mono_stats_unlock (void)
 
 /**
  * Counters of mono_stats and mono_jit_stats can be read without locking during shutdown.
- * Mono stats are locked/unlocked in this function call.
- * Use mono_stats_lock and mono_stats_unlock when reading/writing stats in other contexts.
+ * For all other contexts, assumes that the stats lock is held.
  * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
  */
 MONO_NO_SANITIZE_THREAD
@@ -4716,7 +4715,6 @@ void
 mono_runtime_print_stats (void)
 {
 	if (mono_jit_stats.enabled) {
-		mono_stats_lock ();
 		g_print ("Mono Jit statistics\n");
 		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio / 100.0,
 				 mono_jit_stats.max_ratio_method);
@@ -4756,7 +4754,6 @@ mono_runtime_print_stats (void)
 
 		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 		g_print ("\n");
-		mono_stats_unlock ();
 	}
 }
 
