@@ -1594,6 +1594,9 @@ namespace Mono.CSharp
 					get_char ();
 					seen_digits = true;
 					continue;
+				} else if (d == '_') {
+					get_char();
+					continue;
 				}
 
 				break;
@@ -1919,7 +1922,6 @@ namespace Mono.CSharp
 			digits:
 				decimal_digits (c);
 				c = peek_char ();
-
 				if (c == '_') {
 					if (!digit_separator) {
 						if (context.Settings.Version < LanguageVersion.V_7)
