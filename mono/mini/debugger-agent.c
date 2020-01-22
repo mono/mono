@@ -9513,7 +9513,9 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	gint64 addr;
 	MonoClass* klass;
 	MonoDomain* domain = NULL;
-
+	gint exit_status;
+	int pid;
+	
 	switch (command) {
 	case CMD_POINTER_GET_VALUE:
 		addr = decode_long (p, &p, end);
@@ -9524,7 +9526,22 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (m_class_get_byval_arg (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
 
-		buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
+		pid = fork ();
+		if (pid == 0) {
+			mono_runtime_cleanup_handlers ();
+			buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
+			exit(1);
+		} else {
+			/* Parent */
+			waitpid (pid, &exit_status, 0);
+			if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0)) {
+				return ERR_INVALID_ARGUMENT;
+			}
+			else {
+				buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
+			}
+		}
+
 
 		break;
 	default:
