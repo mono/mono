@@ -88,6 +88,10 @@
 #include "mono/metadata/debug-mono-ppdb.h"
 #include "mono/metadata/custom-attrs-internals.h"
 
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>  /* for WIFEXITED, WEXITSTATUS */
+#endif
+
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
  * shutdown sequence.
