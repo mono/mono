@@ -1926,19 +1926,8 @@ namespace Mono.CSharp
 					}
 				}
 
-			digits:
 				decimal_digits (c);
 				c = peek_char ();
-				if (c == '_') {
-
-					do {
-						get_char ();
-						c = peek_char ();
-					} while (c == '_');
-
-					if (c >= '0' && c <= '9')
-						goto digits;
-				}
 			}
 
 			//TODO: Implement rejection of trailing digit separators
@@ -1992,21 +1981,8 @@ namespace Mono.CSharp
 					number_builder [number_pos++] = '+';
 				}
 
-			digits:
-				bool seen_digits = decimal_digits (c);
+				decimal_digits (c);
 				c = peek_char ();
-
-				if (c == '_' && seen_digits) {
-
-					do {
-						get_char ();
-						c = peek_char ();
-					} while (c == '_');
-
-					if (c >= '0' && c <= '9')
-						goto digits;
-				}
-
 			}
 
 			var type = real_type_suffix (c);
