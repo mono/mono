@@ -9534,16 +9534,14 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (pid == 0) {
 			mono_runtime_cleanup_handlers ();
 			buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
-			exit(1);
+			exit(0);
 		} else {
 			/* Parent */
 			waitpid (pid, &exit_status, 0);
-			if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0)) {
+			if (!WIFEXITED (exit_status))
 				return ERR_INVALID_ARGUMENT;
-			}
-			else {
+			else
 				buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
-			}
 		}
 
 
