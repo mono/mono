@@ -9551,7 +9551,9 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	gint64 addr;
 	MonoClass* klass;
 	MonoDomain* domain = NULL;
+	MonoType *type = NULL;
 	int align;
+	int size = 0;
 
 	switch (command) {
 	case CMD_POINTER_GET_VALUE:
@@ -9562,13 +9564,15 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 		if (m_class_get_byval_arg (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
-		MonoType *type =  m_class_get_byval_arg (m_class_get_element_class (klass));
-		int size = mono_type_size (type, &align);
+
+		type =  m_class_get_byval_arg (m_class_get_element_class (klass));
+		size = mono_type_size (type, &align);
 		
 		if (!valid_memory_address((gpointer)addr, size))
 			return ERR_INVALID_ARGUMENT;
 
 		buffer_add_value (buf, type, (gpointer)addr, domain);
+
 		break;
 	default:
 		return ERR_NOT_IMPLEMENTED;
@@ -10261,6 +10265,7 @@ mono_debugger_agent_init (void)
 	cbs.debug_log = debugger_agent_debug_log;
 	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
 	cbs.send_crash = mono_debugger_agent_send_crash;
+	
 	mini_install_dbg_callbacks (&cbs);
 }
 
