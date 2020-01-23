@@ -9546,7 +9546,6 @@ static gboolean valid_memory_address (gpointer addr, gint size)
 static ErrorCode
 pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
-	fflush(stdout);
 	ErrorCode err;
 	gint64 addr;
 	MonoClass* klass;
