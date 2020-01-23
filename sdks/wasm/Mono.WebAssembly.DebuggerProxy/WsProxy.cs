@@ -10,6 +10,13 @@ using System.Text;
 using System.Collections.Generic;
 
 namespace WsProxy {
+	public class SessionId {
+		public string sessionId;
+	}
+
+	public class MessageId : SessionId {
+		public int id;
+	}
 
 	public struct Result {
 		public JObject Value { get; private set; }
@@ -20,12 +27,14 @@ namespace WsProxy {
 
 		Result (JObject result, JObject error)
 		{
+			Console.WriteLine ($"result: {result}");
 			this.Value = result;
 			this.Error = error;
 		}
 
 		public static Result FromJson (JObject obj)
 		{
+			//Console.WriteLine ($"from result: {obj}");
 			return new Result (obj ["result"] as JObject, obj ["error"] as JObject);
 		}
 
@@ -39,15 +48,17 @@ namespace WsProxy {
 			return new Result (null, err);
 		}
 
-		public JObject ToJObject (int id) {
+		public JObject ToJObject (MessageId target) {
 			if (IsOk) {
 				return JObject.FromObject (new {
-					id = id,
+					target.id,
+					target.sessionId,
 					result = Value
 				});
 			} else {
 				return JObject.FromObject (new {
-					id = id,
+					target.id,
+					target.sessionId,
 					error = Error
 				});
 			}
@@ -71,7 +82,7 @@ namespace WsProxy {
 			pending.Add (bytes);
 			if (pending.Count == 1) {
 				if (current_send != null)
-					throw new Exception ("WTF, current_send MUST BE NULL IF THERE'S no pending send");
+					throw new Exception ("current_send MUST BE NULL IF THERE'S no pending send");
 				//Console.WriteLine ("sending {0} bytes", bytes.Length);
 				current_send = Ws.SendAsync (new ArraySegment<byte> (bytes), WebSocketMessageType.Text, true, token);
 				return current_send;
@@ -86,7 +97,7 @@ namespace WsProxy {
 
 			if (pending.Count > 0) {
 				if (current_send != null)
-					throw new Exception ("WTF, current_send MUST BE NULL IF THERE'S no pending send");
+					throw new Exception ("current_send MUST BE NULL IF THERE'S no pending send");
 				//Console.WriteLine ("sending more {0} bytes", pending[0].Length);
 				current_send = Ws.SendAsync (new ArraySegment<byte> (pending [0]), WebSocketMessageType.Text, true, token);
 				return current_send;
@@ -98,19 +109,19 @@ namespace WsProxy {
 	public class WsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
 		TaskCompletionSource<bool> client_initiated_close = new TaskCompletionSource<bool> ();
-		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
+		List<(MessageId, TaskCompletionSource<Result>)> pending_cmds = new List<(MessageId, TaskCompletionSource<Result>)> ();
 		ClientWebSocket browser;
 		WebSocket ide;
 		int next_cmd_id;
 		List<Task> pending_ops = new List<Task> ();
 		List<WsQueue> queues = new List<WsQueue> ();
 
-		protected virtual Task<bool> AcceptEvent (string method, JObject args, CancellationToken token)
+		protected virtual Task<bool> AcceptEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			return Task.FromResult (false);
 		}
 
-		protected virtual Task<bool> AcceptCommand (int id, string method, JObject args, CancellationToken token)
+		protected virtual Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			return Task.FromResult (false);
 		}
@@ -153,31 +164,34 @@ namespace WsProxy {
 
 		void Send (WebSocket to, JObject o, CancellationToken token)
 		{
-			var bytes = Encoding.UTF8.GetBytes (o.ToString ());		
+			var socketName = this.browser == to ? "Send-browser" : "Send-ide";
+			//Debug ($"{socketName}: {o}");
+			var bytes = Encoding.UTF8.GetBytes (o.ToString ());
 
 			var queue = GetQueueForSocket (to);
+
 			var task = queue.Send (bytes, token);
 			if (task != null)
 				pending_ops.Add (task);
 		}
 
-		async Task OnEvent (string method, JObject args, CancellationToken token)
+		async Task OnEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			try {
-				if (!await AcceptEvent (method, args, token)) {
+				if (!await AcceptEvent (sessionId, method, args, token)) {
 					//Console.WriteLine ("proxy browser: {0}::{1}",method, args);
-					SendEventInternal (method, args, token);
+					SendEvent (sessionId, method, args, token);
 				}
 			} catch (Exception e) {
 				side_exception.TrySetException (e);
 			}
 		}
 
-		async Task OnCommand (int id, string method, JObject args, CancellationToken token)
+		async Task OnCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			try {
 				if (!await AcceptCommand (id, method, args, token)) {
-					var res = await SendCommandInternal (method, args, token);
+					var res = await SendCommandInternal (id, method, args, token);
 					SendResponseInternal (id, res, token);
 				}
 			} catch (Exception e) {
@@ -185,10 +199,11 @@ namespace WsProxy {
 			}
 		}
 
-		void OnResponse (int id, Result result)
+		void OnResponse (MessageId id, Result result)
 		{
 			//Console.WriteLine ("got id {0} res {1}", id, result);
-			var idx = pending_cmds.FindIndex (e => e.Item1 == id);
+			// Fixme
+			var idx = pending_cmds.FindIndex (e => e.Item1.id == id.id && e.Item1.sessionId == id.sessionId);
 			var item = pending_cmds [idx];
 			pending_cmds.RemoveAt (idx);
 
@@ -197,68 +212,74 @@ namespace WsProxy {
 
 		void ProcessBrowserMessage (string msg, CancellationToken token)
 		{
-			// Debug ($"browser: {msg}");
+			Debug ($"browser: {msg}");
 			var res = JObject.Parse (msg);
 
 			if (res ["id"] == null)
-				pending_ops.Add (OnEvent (res ["method"].Value<string> (), res ["params"] as JObject, token));
+				pending_ops.Add (OnEvent (new SessionId { sessionId = res ["sessionId"]?.Value<string> () }, res ["method"].Value<string> (), res ["params"] as JObject, token));
 			else
-				OnResponse (res ["id"].Value<int> (), Result.FromJson (res));
+				OnResponse (new MessageId { id = res ["id"].Value<int> (), sessionId = res ["sessionId"]?.Value<string> () }, Result.FromJson (res));
 		}
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
 		{
+			Debug ($"ide: {msg}");
 			if (!string.IsNullOrEmpty (msg)) {
 				var res = JObject.Parse (msg);
-				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
+				pending_ops.Add (OnCommand (new MessageId { id = res ["id"].Value<int> (), sessionId = res ["sessionId"]?.Value<string> () }, res ["method"].Value<string> (), res ["params"] as JObject, token));
 			}
 		}
 
-		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
+		internal async Task<Result> SendCommand (SessionId id, string method, JObject args, CancellationToken token) {
 			// Debug ($"sending command {method}: {args}");
-			return await SendCommandInternal (method, args, token);
+			return await SendCommandInternal (id, method, args, token);
 		}
 
-		Task<Result> SendCommandInternal (string method, JObject args, CancellationToken token)
+		Task<Result> SendCommandInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			int id = ++next_cmd_id;
 
 			var o = JObject.FromObject (new {
-				id = id,
-				method = method,
+				sessionId.sessionId,
+				id,
+				method,
 				@params = args
 			});
 			var tcs = new TaskCompletionSource<Result> ();
-			//Console.WriteLine ("add cmd id {0}", id);
-			pending_cmds.Add ((id, tcs));
+
+
+			var msgId = new MessageId { id = id, sessionId = sessionId.sessionId };
+			//Debug ($"add cmd id {sessionId}-{id}");
+			pending_cmds.Add ((msgId , tcs));
 
 			Send (this.browser, o, token);
 			return tcs.Task;
 		}
 
-		public void SendEvent (string method, JObject args, CancellationToken token)
+		public void SendEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			//Debug ($"sending event {method}: {args}");
-			SendEventInternal (method, args, token);
+			SendEventInternal (sessionId, method, args, token);
 		}
 
-		void SendEventInternal (string method, JObject args, CancellationToken token)
+		void SendEventInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			var o = JObject.FromObject (new {
-				method = method,
+				sessionId.sessionId,
+				method,
 				@params = args
 			});
 
 			Send (this.ide, o, token);
 		}
 
-		internal void SendResponse (int id, Result result, CancellationToken token)
+		internal void SendResponse (MessageId id, Result result, CancellationToken token)
 		{
 			//Debug ($"sending response: {id}: {result.ToJObject (id)}");
 			SendResponseInternal (id, result, token);
 		}
 
-		void SendResponseInternal (int id, Result result, CancellationToken token)
+		void SendResponseInternal (MessageId id, Result result, CancellationToken token)
 		{
 			JObject o = result.ToJObject (id);
 

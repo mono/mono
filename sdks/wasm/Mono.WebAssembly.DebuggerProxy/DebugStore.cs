@@ -29,7 +29,7 @@ namespace WsProxy {
 			var url = args? ["url"]?.Value<string> ();
 			if (url == null) {
 				var urlRegex = args?["urlRegex"].Value<string>();
-				var sourceFile = store.GetFileByUrlRegex (urlRegex);
+				var sourceFile = store?.GetFileByUrlRegex (urlRegex);
 
 				url = sourceFile?.DotNetUrl;
 			}
@@ -528,22 +528,13 @@ namespace WsProxy {
 		}
 
 		public IEnumerable<SourceFile> AllSources ()
-		{
-			foreach (var a in assemblies) {
-				foreach (var s in a.Sources)
-					yield return s;
-			}
-		}
+			=> assemblies.SelectMany (a => a.Sources);
 
 		public SourceFile GetFileById (SourceId id)
-		{
-			return AllSources ().FirstOrDefault (f => f.SourceId.Equals (id));
-		}
+			=> AllSources ().FirstOrDefault (f => f.SourceId.Equals (id));
 
 		public AssemblyInfo GetAssemblyByName (string name)
-		{
-			return assemblies.FirstOrDefault (a => a.Name.Equals (name, StringComparison.InvariantCultureIgnoreCase));
-		}
+			=> assemblies.FirstOrDefault (a => a.Name.Equals (name, StringComparison.InvariantCultureIgnoreCase));
 
 		/*	
 		V8 uses zero based indexing for both line and column.
