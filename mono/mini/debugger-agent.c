@@ -108,6 +108,8 @@
 
 #include <mono/utils/mono-os-mutex.h>
 
+#include <fcntl.h>
+
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
 typedef struct {
@@ -606,6 +608,10 @@ static MonoNativeThreadId debugger_thread_id;
 static MonoThreadHandle *debugger_thread_handle;
 
 static int log_level;
+
+static int file_check_valid_memory = -1;
+
+static char* filename_check_valid_memory;
 
 static gboolean embedding;
 
@@ -1108,6 +1114,10 @@ mono_debugger_agent_cleanup (void)
 	ids_cleanup ();
 
 	mono_de_cleanup ();
+
+	remove (filename_check_valid_memory);
+	g_free (filename_check_valid_memory);
+	close (file_check_valid_memory);
 }
 
 /*
@@ -9509,17 +9519,40 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	return ERR_NONE;
 }
+static void create_file_to_check_memory_address (void) 
+{
+	if (file_check_valid_memory > 0)
+		return;
+	char *file_name = g_strdup_printf ("debugger_check_valid_memory.%d", getpid());
+	filename_check_valid_memory = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
+	file_check_valid_memory = open(filename_check_valid_memory, O_CREAT | O_WRONLY | O_APPEND, S_IWUSR);
+	g_free (file_name);
+}
+
+static gboolean valid_memory_address (gpointer addr, gint size)
+{
+	gboolean ret = TRUE;
+	create_file_to_check_memory_address ();
+	if(file_check_valid_memory < 0) {
+       return TRUE;
+	}
+	write (file_check_valid_memory,  (gpointer)addr, 1);
+	if (errno == EFAULT) {
+		ret = FALSE;
+	}
+	return ret;
+}
 
 static ErrorCode
 pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
+	fflush(stdout);
 	ErrorCode err;
 	gint64 addr;
 	MonoClass* klass;
 	MonoDomain* domain = NULL;
-	gint exit_status;
-	int pid;
-	
+	int align;
+
 	switch (command) {
 	case CMD_POINTER_GET_VALUE:
 		addr = decode_long (p, &p, end);
@@ -9529,27 +9562,17 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 		if (m_class_get_byval_arg (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
+		MonoType *type =  m_class_get_byval_arg (m_class_get_element_class (klass));
+		int size = mono_type_size (type, &align);
+		
+		if (!valid_memory_address((gpointer)addr, size))
+			return ERR_INVALID_ARGUMENT;
 
-		pid = fork ();
-		if (pid == 0) {
-			mono_runtime_cleanup_handlers ();
-			buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
-			exit(0);
-		} else {
-			/* Parent */
-			waitpid (pid, &exit_status, 0);
-			if (!WIFEXITED (exit_status))
-				return ERR_INVALID_ARGUMENT;
-			else
-				buffer_add_value (buf, m_class_get_byval_arg (m_class_get_element_class (klass)), (gpointer)addr, domain);
-		}
-
-
+		buffer_add_value (buf, type, (gpointer)addr, domain);
 		break;
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
-
 	return ERR_NONE;
 }
 
@@ -10238,7 +10261,6 @@ mono_debugger_agent_init (void)
 	cbs.debug_log = debugger_agent_debug_log;
 	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
 	cbs.send_crash = mono_debugger_agent_send_crash;
-
 	mini_install_dbg_callbacks (&cbs);
 }
 

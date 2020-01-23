@@ -5188,7 +5188,6 @@ public class DebuggerTests
 		var pointerValue = frame.GetValue(param) as PointerValue;
 		Assert.AreEqual("Int32*", pointerValue.Type.Name);
 
-		AssertValue(1, pointerValue.Value);
 
 		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, 200);
 
