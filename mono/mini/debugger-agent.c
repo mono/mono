@@ -9519,7 +9519,9 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	return ERR_NONE;
 }
-static void create_file_to_check_memory_address (void) 
+
+static void 
+create_file_to_check_memory_address (void) 
 {
 	if (file_check_valid_memory > 0)
 		return;
@@ -9529,7 +9531,8 @@ static void create_file_to_check_memory_address (void)
 	g_free (file_name);
 }
 
-static gboolean valid_memory_address (gpointer addr, gint size)
+static gboolean 
+valid_memory_address (gpointer addr, gint size)
 {
 	gboolean ret = TRUE;
 	create_file_to_check_memory_address ();
