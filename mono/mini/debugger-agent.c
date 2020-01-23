@@ -1115,9 +1115,11 @@ mono_debugger_agent_cleanup (void)
 
 	mono_de_cleanup ();
 
-	remove (filename_check_valid_memory);
-	g_free (filename_check_valid_memory);
-	close (file_check_valid_memory);
+	if (file_check_valid_memory != -1) {
+		remove (filename_check_valid_memory);
+		g_free (filename_check_valid_memory);
+		close (file_check_valid_memory);
+	}
 }
 
 /*
@@ -9523,7 +9525,7 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 static void 
 create_file_to_check_memory_address (void) 
 {
-	if (file_check_valid_memory > 0)
+	if (file_check_valid_memory != -1)
 		return;
 	char *file_name = g_strdup_printf ("debugger_check_valid_memory.%d", getpid());
 	filename_check_valid_memory = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
