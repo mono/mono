@@ -1675,10 +1675,10 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandl
 }
 #endif
 
-MonoThreadObjectHandle
-ves_icall_System_Threading_Thread_GetCurrentThread (MonoError *error)
+void
+ves_icall_System_Threading_Thread_GetCurrentThread (MonoThread *volatile* thread)
 {
-	return MONO_HANDLE_NEW (MonoThreadObject, mono_thread_current ());
+	*thread = mono_thread_current ();
 }
 
 static MonoInternalThread*
@@ -2070,7 +2070,7 @@ byte_array_to_domain (MonoArrayHandle arr, MonoDomain *domain, MonoError *error)
 
 	// Capture arrays into common representation for repetitious code.
 	// These two variables could also be an array of size 2 and
-	// repitition implemented with a loop.
+	// repetition implemented with a loop.
 	struct {
 		MonoArrayHandle handle;
 		gpointer p;
@@ -6324,7 +6324,7 @@ summarizer_supervisor_start (SummarizerSupervisorState *state)
 		state->supervisor_pid = pid;
 	else {
 		char pid_str[20]; // pid is a uint64_t, 20 digits max in decimal form
-		sprintf (pid_str, "%llu", (uint64_t)state->pid);
+		sprintf (pid_str, "%" PRIu64, (uint64_t)state->pid);
 		const char *const args[] = { hang_watchdog_path, pid_str, NULL };
 		execve (args[0], (char * const*)args, NULL); // run 'mono-hang-watchdog [pid]'
 		g_async_safe_printf ("Could not exec mono-hang-watchdog, expected on path '%s' (errno %d)\n", hang_watchdog_path, errno);
@@ -6416,7 +6416,7 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 		pthread_kill (state->thread_array [i], SIGTERM);
 
 		if (!state->silent)
-			g_async_safe_printf("Pkilling 0x%zx from 0x%zx\n", MONO_NATIVE_THREAD_ID_TO_UINT (state->thread_array [i]), MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Pkilling 0x%" G_GSIZE_FORMAT "x from 0x%" G_GSIZE_FORMAT "x\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (state->thread_array [i]), (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	#else
 		g_error ("pthread_kill () is not supported by this platform");
 	#endif
@@ -6592,21 +6592,21 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 		// Store a reference to our stack memory into global state
 		gboolean success = summarizer_post_dump (&state, this_thread, current_idx);
 		if (!success && !state.silent)
-			g_async_safe_printf("Thread 0x%zx reported itself.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Thread 0x%" G_GSIZE_FORMAT "x reported itself.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	} else if (!state.silent) {
-		g_async_safe_printf("Thread 0x%zx couldn't report itself.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+		g_async_safe_printf("Thread 0x%" G_GSIZE_FORMAT "x couldn't report itself.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 	}
 
 	// From summarizer, wait and dump.
 	if (this_thread_controls) {
 		if (!state.silent)
-			g_async_safe_printf("Entering thread summarizer pause from 0x%zx\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Entering thread summarizer pause from 0x%" G_GSIZE_FORMAT "x\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Wait up to 2 seconds for all of the other threads to catch up
 		summary_timedwait (&state, 2);
 
 		if (!state.silent)
-			g_async_safe_printf("Finished thread summarizer pause from 0x%zx.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
+			g_async_safe_printf("Finished thread summarizer pause from 0x%" G_GSIZE_FORMAT "x.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Dump and cleanup all the stack memory
 		summarizer_state_term (&state, out, working_mem, provided_size, this_thread);
@@ -6766,6 +6766,12 @@ guint64
 ves_icall_System_Threading_Thread_GetCurrentOSThreadId (MonoError *error)
 {
 	return mono_native_thread_os_id_get ();
+}
+
+gint32
+ves_icall_System_Threading_Thread_GetCurrentProcessorNumber (MonoError *error)
+{
+	return mono_native_thread_processor_id_get ();
 }
 
 #endif

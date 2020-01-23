@@ -163,10 +163,17 @@ namespace System.Threading
 			// no-op
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int GetCurrentProcessorNumber ();		
+
 		public static int GetCurrentProcessorId ()
 		{
-			// TODO: Implement correctly
-			return Environment.CurrentManagedThreadId;
+			int id = GetCurrentProcessorNumber ();
+
+			if (id < 0)
+				id = Environment.CurrentManagedThreadId;
+
+			return id;
 		}
 
 		public void Interrupt ()
@@ -287,7 +294,14 @@ namespace System.Threading
 		extern static void InitInternal (Thread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static Thread InitializeCurrentThread ();
+		private extern static void InitializeCurrentThread_icall (ref Thread thread);
+
+		[MethodImpl (MethodImplOptions.NoInlining)]
+		static Thread InitializeCurrentThread () {
+			Thread thread = null;
+			InitializeCurrentThread_icall (ref thread);
+			return thread;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void FreeInternal ();

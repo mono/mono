@@ -306,7 +306,13 @@ namespace System.Threading {
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static Thread GetCurrentThread ();
+		private extern static void GetCurrentThread_icall (ref Thread thread);
+
+		private static Thread GetCurrentThread () {
+			Thread thread = null;
+			GetCurrentThread_icall (ref thread);
+			return thread;
+		}
 
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]

@@ -154,7 +154,9 @@ static MonoLoadFunc load_function = NULL;
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (assembly, "System.Reflection", "Assembly");
+#ifdef ENABLE_NETCORE
 static GENERATE_GET_CLASS_WITH_CACHE (app_context, "System", "AppContext");
+#endif
 
 GENERATE_GET_CLASS_WITH_CACHE (appdomain, MONO_APPDOMAIN_CLASS_NAME_SPACE, MONO_APPDOMAIN_CLASS_NAME);
 GENERATE_GET_CLASS_WITH_CACHE (appdomain_setup, MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE, MONO_APPDOMAIN_SETUP_CLASS_NAME);
@@ -2411,6 +2413,7 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, const M
 	return result;
 }
 
+#ifdef ENABLE_NETCORE
 static char *
 get_app_context_base_directory (MonoError *error)
 {
@@ -2431,6 +2434,7 @@ get_app_context_base_directory (MonoError *error)
 
 	HANDLE_FUNCTION_RETURN_VAL (base_dir);
 }
+#endif
 
 /*
  * Try loading the assembly from ApplicationBase and PrivateBinPath 
@@ -2859,7 +2863,8 @@ mono_alc_load_raw_bytes (MonoAssemblyLoadContext *alc, guint8 *assembly_data, gu
 
 	MonoAssembly* redirected_asm = NULL;
 	MonoImageOpenStatus new_status = MONO_IMAGE_OK;
-	if ((redirected_asm = mono_assembly_binding_applies_to_image (alc, image, &new_status))) {
+	// http://blogs.microsoft.co.il/sasha/2010/06/09/assemblyreflectiononlyload-ignores-assembly-binding-redirects/
+	if (!refonly && (redirected_asm = mono_assembly_binding_applies_to_image (alc, image, &new_status))) {
 		mono_image_close (image);
 		image = redirected_asm->image;
 		mono_image_addref (image); /* so that mono_image close, below, has something to do */

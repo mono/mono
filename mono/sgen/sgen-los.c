@@ -304,8 +304,15 @@ get_los_section_memory (size_t size)
 		return randomize_los_object_start (free_chunks, obj_size, size, LOS_CHUNK_SIZE);
 	}
 
-	if (!sgen_memgov_try_alloc_space (LOS_SECTION_SIZE, SPACE_LOS))
-		return NULL;
+	if (!sgen_memgov_try_alloc_space (LOS_SECTION_SIZE, SPACE_LOS)) {
+		/*
+		 * We failed to allocate a section due to exceeding max_heap_size.
+		 * Trigger a major collection and try again.
+		 */
+		sgen_ensure_free_space (LOS_SECTION_SIZE, GENERATION_OLD);
+		if (!sgen_memgov_try_alloc_space (LOS_SECTION_SIZE, SPACE_LOS))
+			return NULL;
+	}
 
 	section = (LOSSection *)sgen_alloc_os_memory_aligned (LOS_SECTION_SIZE, LOS_SECTION_SIZE, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), NULL, MONO_MEM_ACCOUNT_SGEN_LOS);
 
@@ -472,7 +479,7 @@ sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
 	sgen_array_list_add (&sgen_los_object_array_list, LOS_OBJECT_TAG (obj), 0, FALSE);
 	sgen_los_memory_usage += size;
 	los_num_objects++;
-	SGEN_LOG (4, "Allocated large object %p, vtable: %p (%s), size: %zd", obj->data, vtable, sgen_client_vtable_get_name (vtable), size);
+	SGEN_LOG (4, "Allocated large object %p, vtable: %p (%s), size: %" G_GSIZE_FORMAT "d", obj->data, vtable, sgen_client_vtable_get_name (vtable), size);
 	sgen_binary_protocol_alloc (obj->data, vtable, size, sgen_client_get_provenance ());
 
 #ifdef LOS_CONSISTENCY_CHECK
@@ -652,7 +659,7 @@ mono_sgen_los_describe_pointer (char *ptr)
 		if ((char*)obj->data == ptr) {
 			SGEN_LOG (0, "%s (size %d pin %d)\n", los_kind, (int)size, pinned ? 1 : 0);
 		} else {
-			SGEN_LOG (0, "%s (interior-ptr offset %zd size %d pin %d)",
+			SGEN_LOG (0, "%s (interior-ptr offset %" G_GSIZE_FORMAT "d size %d pin %d)",
 					los_kind, ptr - (char*)obj->data, (int)size, pinned ? 1 : 0);
 		}
 
