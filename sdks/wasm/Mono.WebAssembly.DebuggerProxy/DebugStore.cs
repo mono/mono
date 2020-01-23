@@ -9,6 +9,7 @@ using System.Net.Http;
 using Mono.Cecil.Pdb;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace WsProxy {
 	internal class BreakPointRequest {
@@ -492,37 +493,47 @@ namespace WsProxy {
 
 	internal class DebugStore {
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
+		HttpClient client = new HttpClient ();
 
-		public DebugStore (string [] loaded_files)
+		class DebugItem {
+			public string Url { get; set; }
+			public Task<byte[][]> Data { get; set; }
+		}
+
+		public async Task Load (string [] loaded_files)
 		{
-			bool MatchPdb (string asm, string pdb)
-			{
-				return Path.ChangeExtension (asm, "pdb") == pdb;
-			}
+			static bool MatchPdb (string asm, string pdb)
+				=> Path.ChangeExtension (asm, "pdb") == pdb;
 
 			var asm_files = new List<string> ();
 			var pdb_files = new List<string> ();
-			foreach (var f in loaded_files) {
-				var file_name = f;
+			foreach (var file_name in loaded_files) {
 				if (file_name.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
 					pdb_files.Add (file_name);
 				else
 					asm_files.Add (file_name);
 			}
 
-			//FIXME make this parallel
-			foreach (var p in asm_files) {
+			List<DebugItem> steps = new List<DebugItem> ();
+			foreach (var url in asm_files) {
 				try {
-					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (p, n));
-					HttpClient h = new HttpClient ();
-					var assembly_bytes = h.GetByteArrayAsync (p).Result;
-					byte [] pdb_bytes = null;
-					if (pdb != null)
-						pdb_bytes = h.GetByteArrayAsync (pdb).Result;
-
-					this.assemblies.Add (new AssemblyInfo (assembly_bytes, pdb_bytes));
+					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (url, n));
+					steps.Add (
+						new DebugItem {
+								Url = url,
+								Data = Task.WhenAll (client.GetByteArrayAsync (url), pdb != null ? client.GetByteArrayAsync (pdb) : Task.FromResult<byte []> (null))
+						});
 				} catch (Exception e) {
-					Console.WriteLine ($"Failed to read {p} ({e.Message})");
+					Console.WriteLine ($"Failed to read {url} ({e.Message})");
+				}
+			}
+
+			foreach (var step in steps) {
+				try {
+					var bytes = await step.Data;
+					assemblies.Add (new AssemblyInfo (bytes[0], bytes[1]));
+				} catch (Exception e) {
+					Console.WriteLine ($"Failed to Load {step.Url} ({e.Message})");
 				}
 			}
 		}

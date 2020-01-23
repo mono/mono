@@ -596,7 +596,8 @@ namespace WsProxy {
 			var the_value = loaded_pdbs.Value? ["result"]? ["value"];
 			var the_pdbs = the_value?.ToObject<string[]> ();
 
-			store = new DebugStore (the_pdbs);
+			store = new DebugStore ();
+			await store.Load(the_pdbs);
 		}
 
 		async Task RuntimeReady (SessionId sessionId, CancellationToken token)
