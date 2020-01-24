@@ -9540,7 +9540,7 @@ valid_memory_address (gpointer addr, gint size)
 	gboolean ret = TRUE;
 	create_file_to_check_memory_address ();
 	if(file_check_valid_memory < 0) {
-       return TRUE;
+		return TRUE;
 	}
 	write (file_check_valid_memory,  (gpointer)addr, 1);
 	if (errno == EFAULT) {
