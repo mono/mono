@@ -4465,8 +4465,14 @@ case "$host" in
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
+			# mono#18554 - be more robust in testing for -mminimal-toc
+			AC_MSG_NOTICE([Checking for -mminimal-toc])
 			if ! (echo $CC | grep -q -- 'clang'); then
-				CFLAGS="$CFLAGS -mminimal-toc"
+				AX_CHECK_COMPILE_FLAG(
+					[-mminimal-toc],
+					[CFLAGS="$CFLAGS -mminimal-toc"],
+					[CFLAGS="$CFLAGS"]
+				)
 			fi
 		else
 			TARGET=POWERPC;
@@ -4479,6 +4485,10 @@ case "$host" in
 			BTLS_PLATFORM=powerpc
 			;;
 		  linux*)
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=powerpc
+			;;
+		| freebsd*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
