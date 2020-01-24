@@ -30,7 +30,7 @@ if ! pkg info > /dev/null; then
 fi
 
 ## These packages are MUST have.
-if ! pkg install -y bash git gmake autoconf automake cmake libtool python27 python36 ca_root_nss; then
+if ! pkg install -y bash git gmake autoconf automake cmake libtool python36 ca_root_nss; then
   ## Kill the attempt quickly if we definitely cannot build.
   echo "[FATAL] Error installing critical packages. Aborting because building is impossible."
   exit 1
@@ -49,6 +49,16 @@ fi
 
 # for compatibility with the mono build scripts, ideally shouldn't be necessary
 ln -s /usr/local/bin/bash /bin/bash
+# fix for gen-descriptor-tests.py
+if ! $(env python3) ; then
+  if [ -f /usr/local/bin/python3.7 ]; then
+    ln -s /usr/local/bin/python3.7 /usr/local/bin/python3
+  elif [ -f /usr/local/bin/python3.6 ]; then
+    ln -s /usr/local/bin/python3.6 /usr/local/bin/python3
+  else
+    echo "[NOTICE] Some tests will fail due to calling python3 explicitly."
+  fi
+fi
 ## Do not remove, instead rename; otherwise it's impossible to support ports infrastructure testing
 mv /usr/bin/make /usr/bin/bsdmake && ln -s /usr/local/bin/gmake /usr/bin/make
 
