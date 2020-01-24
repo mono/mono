@@ -9582,6 +9582,7 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
+
 	return ERR_NONE;
 }
 
