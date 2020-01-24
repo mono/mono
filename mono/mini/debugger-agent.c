@@ -10270,7 +10270,7 @@ mono_debugger_agent_init (void)
 	cbs.debug_log = debugger_agent_debug_log;
 	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
 	cbs.send_crash = mono_debugger_agent_send_crash;
-	
+
 	mini_install_dbg_callbacks (&cbs);
 }
 
