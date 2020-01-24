@@ -105,6 +105,7 @@
 #include <mono/utils/mono-os-mutex.h>
 
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
