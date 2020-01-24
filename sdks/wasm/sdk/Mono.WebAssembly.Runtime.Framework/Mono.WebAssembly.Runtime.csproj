@@ -33,6 +33,7 @@
   <ItemGroup>
     <Content Include="..\..\..\wasm\runtime.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
     <Content Include="..\..\..\wasm\runtime-tests.js" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\wasm\src\corebindings.c" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
     <Content Include="..\..\..\wasm\src\driver.c" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
     <Content Include="..\..\..\wasm\src\zlib-helper.c" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
     <Content Include="..\..\..\wasm\src\pinvoke-tables-default.h" PackagePath="mono-wasm-runtime\src\%(Filename)%(Extension)" />
