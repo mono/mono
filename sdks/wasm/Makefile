@@ -193,6 +193,10 @@ bcl:
 
 ifdef ENABLE_WASM_NETCORE
 
+ifeq ($(DOTNET_REPO_DIR),)
+$(error "Set the DOTNET_REPO_DIR variable for the netcore build to a checkout of the dotnet/runtime repo.")
+endif
+
 #NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
 NETCOREAPP_VERSION := 5.0.0-alpha.1.19559.6
@@ -436,7 +440,7 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	touch $@
 
 build-aot-hello: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --nobinding --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-hello
 
 build-aot-hello-profiled: packager.exe hello.exe data.aotprofile

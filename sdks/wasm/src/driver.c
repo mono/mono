@@ -125,11 +125,12 @@ wasm_logger (const char *log_domain, const char *log_level, const char *message,
 			   console.log (err.stack);
 			   );
 
-		fprintf (stderr, "%s", message);
+		fprintf (stderr, "%s\n", message);
+		fflush (stderr);
 
 		abort ();
 	} else {
-		fprintf (stdout, "%s\n", message);
+		fprintf (stdout, "L: %s\n", message);
 	}
 }
 
