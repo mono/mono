@@ -45,6 +45,7 @@
 #include <process.h>
 #endif
 #include <ws2tcpip.h>
+#include <windows.h>
 #endif
 
 #ifdef HOST_ANDROID
@@ -9547,19 +9548,18 @@ valid_memory_address (gpointer addr, gint size)
 	if (errno == EFAULT) {
 		ret = FALSE;
 	}
-	return ret;
 #else
 	int i = 0;
 	gboolean ret = FALSE;
 	__try {
-		for (int i = 0; i < size; i++)
+		for (i = 0; i < size; i++)
 			*((volatile char*)addr+i);
 		ret = TRUE;
 	} __except(1) {
 		return ret;
 	}
-	return ret;
 #endif	
+	return ret;
 }
 
 static ErrorCode
