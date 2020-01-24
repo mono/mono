@@ -4466,14 +4466,23 @@ case "$host" in
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
 			# mono#18554 - be more robust in testing for -mminimal-toc
-			AC_MSG_NOTICE([Checking for -mminimal-toc])
+			AC_MSG_NOTICE([Checking PowerPC ABI])
 			if ! (echo $CC | grep -q -- 'clang'); then
-				AX_CHECK_COMPILE_FLAG(
-					[-mminimal-toc],
-					[CFLAGS="$CFLAGS -mminimal-toc"],
-					[CFLAGS="$CFLAGS"]
-				)
+				if ! (echo | cc -dM -E - | awk '/_CALL_ELF/ {print $NF}'); then
+					AX_CHECK_COMPILE_FLAG(
+						[-mminimal-toc],
+						[CFLAGS="$CFLAGS -mminimal-toc"],
+						[CFLAGS="$CFLAGS"]
+					)
+					AC_DEFINE([POWERPC_ELF], 1, [PowerPC ELFv1])
+				else
+					# Do not set -mminimal-toc on ELFv2 systems
+					AC_DEFINE([POWERPC_ELFV2], 1, [PowerPC ELFv2])
+					CFLAGS="$CFLAGS"
+				fi
 			fi
+			# Ensure we do not erroneously set -mminimal-toc on ELFv2
+			if 
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
@@ -4488,7 +4497,7 @@ case "$host" in
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
-		| freebsd*)
+		  freebsd*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
