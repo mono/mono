@@ -914,6 +914,37 @@ assert_printer_callback (void)
 	mono_dump_native_crash_info ("SIGABRT", NULL, NULL);
 }
 
+#if !defined (HOST_WIN32)
+/**
+ * fork_crash_safe:
+ *
+ * Version of \c fork that is safe to call from an async context such as a
+ * signal handler even if the process crashed inside libc.
+ *
+ * Returns 0 to the child process, >0 to the parent process or <0 on error.
+ */
+static pid_t
+fork_crash_safe (void)
+{
+	pid_t pid;
+	/*
+	 * glibc fork acquires some locks, so if the crash happened inside malloc/free,
+	 * it will deadlock. Call the syscall directly instead.
+	 */
+#if defined(HOST_ANDROID)
+	/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
+	g_assert_not_reached ();
+#elif !defined(HOST_DARWIN) && defined(SYS_fork)
+	pid = (pid_t) syscall (SYS_fork);
+#elif HAVE_FORK
+	pid = (pid_t) fork ();
+#else
+	g_assert_not_reached ();
+#endif
+	return pid;
+}
+#endif
+
 static void
 dump_native_stacktrace (const char *signal, MonoContext *mctx)
 {
@@ -956,10 +987,7 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 	}
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
-	if (!mini_debug_options.no_gdb_backtrace) {
-		/* From g_spawn_command_line_sync () in eglib */
-		pid_t pid;
-		int status;
+	if (1) {
 		pid_t crashed_pid = getpid ();
 
 #ifndef DISABLE_CRASH_REPORTING
@@ -1025,23 +1053,18 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 		}
 #endif // DISABLE_CRASH_REPORTING
 
-		/*
-		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
-		* it will deadlock. Call the syscall directly instead.
-		*/
-#if defined(HOST_ANDROID)
-		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
-		g_assert_not_reached ();
-#elif !defined(HOST_DARWIN) && defined(SYS_fork)
-		pid = (pid_t) syscall (SYS_fork);
-#elif HAVE_FORK
-		pid = (pid_t) fork ();
-#else
-		g_assert_not_reached ();
+		pid_t pid = crashed_pid; /* init to some >0 value */
+		gboolean need_to_fork = !mini_debug_options.no_gdb_backtrace;
+
+#if defined (TARGET_OSX) && !defined (DISABLE_CRASH_REPORTING)
+		need_to_fork |= mono_merp_enabled ();
 #endif
 
+		if (need_to_fork)
+			pid = fork_crash_safe ();
+
 #if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
-		if (pid > 0) {
+		if (need_to_fork && pid > 0) {
 			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
 			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
 			// distributions set the scope to 1 which allows attaching only to direct children of
@@ -1052,6 +1075,7 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 		if (!double_faulted && mono_merp_enabled ()) {
+			/* FIXME: why are we running mono_merp_invoke in the forked process? */
 			if (pid == 0) {
 				if (output) {
 					gboolean merp_upload_success = mono_merp_invoke (crashed_pid, signal, output, &hashes);
@@ -1071,7 +1095,7 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 		}
 #endif
 
-		if (pid == 0) {
+		if (!mini_debug_options.no_gdb_backtrace && pid == 0) {
 			dup2 (STDERR_FILENO, STDOUT_FILENO);
 
 			g_async_safe_printf ("\n=================================================================\n");
@@ -1079,7 +1103,8 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 			g_async_safe_printf ("=================================================================\n");
 			mono_gdb_render_native_backtraces (crashed_pid);
 			_exit (1);
-		} else if (pid > 0) {
+		} else if (need_to_fork && pid > 0) {
+			int status;
 			waitpid (pid, &status, 0);
 		} else {
 			// If we can't fork, do as little as possible before exiting
