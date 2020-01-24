@@ -9537,6 +9537,7 @@ create_file_to_check_memory_address (void)
 static gboolean 
 valid_memory_address (gpointer addr, gint size)
 {
+#ifndef HOST_WIN32
 	gboolean ret = TRUE;
 	create_file_to_check_memory_address ();
 	if(file_check_valid_memory < 0) {
@@ -9547,6 +9548,18 @@ valid_memory_address (gpointer addr, gint size)
 		ret = FALSE;
 	}
 	return ret;
+#else
+	int i = 0;
+	gboolean ret = FALSE;
+	__try {
+		for (int i = 0; i < size; i++)
+			*((volatile char*)addr+i);
+		ret = TRUE;
+	} __except(1) {
+		return ret;
+	}
+	return ret;
+#endif	
 }
 
 static ErrorCode
