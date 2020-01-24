@@ -107,6 +107,10 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#ifndef S_IWUSR
+	#define S_IWUSR S_IWRITE
+#endif
+
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
 typedef struct {
