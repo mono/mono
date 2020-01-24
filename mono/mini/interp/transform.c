@@ -7715,7 +7715,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 
 	mono_domain_lock (domain);
 	if (mono_stats_method_desc && mono_method_desc_full_match (mono_stats_method_desc, imethod->method)) {
-		g_printf ("Printing stats at method: %s\n", mono_method_get_full_name (imethod->method));
+		g_print ("Printing stats at method: %s\n", mono_method_get_full_name (imethod->method));
 		mono_runtime_print_stats ();
 	}
 	if (!g_hash_table_lookup (domain_jit_info (domain)->seq_points, imethod->method))
