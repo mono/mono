@@ -4757,7 +4757,7 @@ void
 mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
-		g_printf ("Printing stats at shutdown\n");
+		g_print ("Printing stats at shutdown\n");
 	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
 }
@@ -4766,7 +4766,7 @@ void
 mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
-		g_printf ("Printing stats at shutdown\n");
+		g_print ("Printing stats at shutdown\n");
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
