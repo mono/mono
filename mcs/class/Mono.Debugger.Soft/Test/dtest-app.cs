@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Collections;
+using System.Runtime.InteropServices;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -609,6 +610,7 @@ public class Tests : TestsBase, ITest2
 		fixed_size_array();
 		test_new_exception_filter();
 		test_async_debug_generics();
+		test_mixed_debug();
 		return 3;
 	}
 
@@ -2232,6 +2234,27 @@ public class Tests : TestsBase, ITest2
 		rtMethod.Invoke(rtObject, new object[] { });
 	}
 	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_mixed_debug () {
+		calling_native_function();
+	}
+
+	public delegate int SimpleDelegate (int i);
+
+	[DllImport ("libtest", EntryPoint="mono_test_calling_native_function")]
+	public static extern int mono_test_calling_native_function (SimpleDelegate d);
+
+	public static void call_managed () {
+		int i = 0;
+	}
+	public static int calling_native_function () {
+		int res = mono_test_calling_native_function (delegate (int i) {
+				call_managed();
+				return 0;
+			});
+		return res;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void new_thread_hybrid_exception() {
 		try

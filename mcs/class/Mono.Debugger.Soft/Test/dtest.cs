@@ -5174,6 +5174,27 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 	}
+
+	[Test]
+	public void TestMixedDebug () {
+		Event e = run_until ("test_mixed_debug");
+		ReusableBreakpoint breakpoint = new ReusableBreakpoint (this, "call_managed");
+		breakpoint.Continue ();
+		e = breakpoint.lastEvent;
+		var line = e.Thread.GetFrames () [0].Location.LineNumber;
+		var req = create_step (e);
+		e = step_out_or_breakpoint ();
+		line = e.Thread.GetFrames () [0].Location.LineNumber;
+		e = step_over_or_breakpoint ();
+		line = e.Thread.GetFrames () [0].Location.LineNumber;
+		e = step_over_or_breakpoint ();
+		line = e.Thread.GetFrames () [0].Location.LineNumber;
+		e = step_over_or_breakpoint ();
+		line = e.Thread.GetFrames () [0].Location.LineNumber;
+		e = step_over_or_breakpoint ();
+		line = e.Thread.GetFrames () [0].Location.LineNumber;
+		e = step_over_or_breakpoint ();
+	}
 	
 #endif
 } // class DebuggerTests
