@@ -333,7 +333,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         fi
 
         echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
-        echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
+        #echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
 
         export aot_test_suites="System.Core"
         export mixed_test_suites="System.Core"
