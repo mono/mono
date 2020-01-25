@@ -4481,8 +4481,6 @@ case "$host" in
 					CFLAGS="$CFLAGS"
 				fi
 			fi
-			# Ensure we do not erroneously set -mminimal-toc on ELFv2
-			if 
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
