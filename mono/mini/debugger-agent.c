@@ -9538,7 +9538,7 @@ create_file_to_check_memory_address (void)
 static gboolean 
 valid_memory_address (gpointer addr, gint size)
 {
-#ifndef HOST_WIN32
+#ifndef _MSC_VER
 	gboolean ret = TRUE;
 	create_file_to_check_memory_address ();
 	if(file_check_valid_memory < 0) {
