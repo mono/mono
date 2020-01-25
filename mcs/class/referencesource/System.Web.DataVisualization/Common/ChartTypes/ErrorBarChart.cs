@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -1823,7 +1823,7 @@ using System.Collections.Generic;
 			Chart control = errorBarSeries.Chart;
 			if(control != null)
 			{
-				// Get linked series and check existance
+				// Get linked series and check existence
 				if(control.Series.IndexOf(linkedSeriesName) == -1)
 				{
                     throw (new InvalidOperationException(SR.ExceptionDataSeriesNameNotFound(linkedSeriesName)));
@@ -1834,7 +1834,7 @@ using System.Collections.Generic;
 				errorBarSeries.XAxisType = linkedSeries.XAxisType;
 				errorBarSeries.YAxisType = linkedSeries.YAxisType;
 
-				// Get cennter values from the linked series
+				// Get center values from the linked series
 				errorBarSeries.Points.Clear();
 				foreach(DataPoint point in linkedSeries.Points)
 				{

@@ -242,7 +242,7 @@ namespace HtmlAgilityPack
         }
 
         /// <summary>
-        /// Checks for existance of attribute with given name
+        /// Checks for existence of attribute with given name
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

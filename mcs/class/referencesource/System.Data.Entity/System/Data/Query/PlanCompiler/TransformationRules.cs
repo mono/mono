@@ -1017,7 +1017,7 @@ namespace System.Data.Query.PlanCompiler
         ///     WHEN W1 THEN T1 
         ///     WHEN W2 THEN T2 ... 
         ///     ELSE (CASE 
-        ///             WHEN WN1 THEN TN1, … 
+        ///             WHEN WN1 THEN TN1, ï¿½ 
         ///             ELSE E) 
         ///             
         /// Is transformed into 
@@ -2189,7 +2189,7 @@ namespace System.Data.Query.PlanCompiler
             NodeInfo nodeInfo = context.Command.GetNodeInfo(n);
 
             // We cannot eliminate this node because it can break other rules, 
-            // e.g. ProcessApplyOverAnything which relies on existance of external refs to substitute
+            // e.g. ProcessApplyOverAnything which relies on existence of external refs to substitute
             // CrossApply(x, y) => CrossJoin(x, y). See SQLBU #481719.
             if (!nodeInfo.ExternalReferences.IsEmpty)
             {
