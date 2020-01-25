@@ -1096,7 +1096,7 @@ namespace System.Data.Query.PlanCompiler
 
             // Make sure that the terminal character of the pattern is a '%' character. Also
             // ensure that this character does not occur anywhere else. And finally, ensure
-            // that the pattern is almost one character longer than the string itself
+            // that the pattern is at most one character longer than the string itself
             int wildCardIndex = pattern.IndexOf('%');
             if ((wildCardIndex == -1) ||
                 (wildCardIndex != pattern.Length - 1) ||
