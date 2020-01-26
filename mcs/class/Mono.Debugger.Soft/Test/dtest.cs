@@ -5174,6 +5174,32 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 	}
+
+	[Test]
+	public void InvalidPointer_GetValue () {
+		vm.Detach ();
+		Start (dtest_app_path, "pointer_arguments2");
+		Event e = run_until ("pointer_arguments2");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, 200);
+
+		try {
+			var val = pointerValue2.Value;
+		}
+		catch (ArgumentException ex) {
+			Assert.IsInstanceOfType (typeof (ArgumentException), ex);
+		}
+	}
+
+
 	
 #endif
 } // class DebuggerTests
