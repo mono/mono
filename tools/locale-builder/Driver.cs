@@ -295,7 +295,7 @@ namespace Mono.Tools.LocaleBuilder
 				"es_US", "es_CU", "bs_Cyrl", "bs_Latn", "sr_Cyrl", "sr_Latn", "az_Cyrl", "zh", "nn", "bs", "az_Latn", "uz_Cyrl", "mn_Cyrl", "zh_Hant",
 				"zh_CHT", "nb", "sr", "tg_Cyrl", "uz_Latn", "pa_Arab", "tzm_Latn", "ha_Latn",
 				"hsb", "tk", "fy", "lb", "ug", "hsb_DE", "ms_MY", "kk_KZ", "ky_KG", "tk_TM", "mn_MN", "fy_NL", "lb_LU", "ug_CN", "gsw_FR", "ca_ES_valencia",
-				"dsb_DE", "se_SE", "ms_BN", "smn_FI", "en_MY", "smn", "dsb"
+				"dsb_DE", "se_SE", "ms_BN", "smn_FI", "en_MY", "smn", "dsb", "tt", "tt_RU"
 			};
 
 			var lcdids = GetXmlDocument ("lcids.xml");
