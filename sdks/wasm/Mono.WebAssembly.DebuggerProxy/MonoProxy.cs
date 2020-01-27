@@ -223,7 +223,7 @@ namespace WsProxy {
 			Info ("RUNTIME READY, PARTY TIME");
 			await RuntimeReady (token);
 			await SendCommand ("Debugger.resume", new JObject (), token);
-			SendEvent ("Mono.runtimeReady", new JObject (), token);			
+			SendEvent ("Mono.runtimeReady", new JObject (), token);
 		}
 
 		async Task OnBreakPointHit (JObject args, CancellationToken token)
@@ -461,7 +461,7 @@ namespace WsProxy {
 				{
 					result = var_list
 				});
-			} catch (Exception e) {
+			} catch {
 				Debug ($"failed to parse {res.Value}");
 			}
 			SendResponse(msg_id, Result.Ok(o), token);
@@ -534,7 +534,7 @@ namespace WsProxy {
 				});
 				SendResponse (msg_id, Result.Ok (o), token);
 			}
-			catch (Exception exc) {
+			catch {
 				SendResponse (msg_id, res, token);
 			}
 		}
