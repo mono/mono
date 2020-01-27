@@ -5846,6 +5846,8 @@ method_is_externally_callable (MonoAotCompile *acfg, MonoMethod *method)
 			return FALSE;
 		if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 			return FALSE;
+		if (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME)
+			return FALSE;
 		if (method->is_inflated)
 			return FALSE;
 		if (!((mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC)))
