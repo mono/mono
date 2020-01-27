@@ -717,7 +717,7 @@ class Driver {
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "dotnet.js", "dotnet.wasm" };
 			if (enable_threads) {
-				interp_files.Add ("mono.worker.js");
+				interp_files.Add ("dotnet.worker.js");
 			}
 			foreach (var fname in interp_files) {
 				File.Delete (Path.Combine (out_prefix, fname));
