@@ -118,6 +118,7 @@
 #include "icall-decl.h"
 #include "mono/utils/mono-threads-coop.h"
 #include "mono/metadata/icall-signatures.h"
+#include "mono/utils/mono-signal-handler.h"
 
 //#define MONO_DEBUG_ICALLARRAY
 
