@@ -1701,12 +1701,12 @@ static MonoMethodDesc *
 parse_qualified_method_name (char *method_name)
 {
 	if (strlen (method_name) == 0) {
-		g_print ("Couldn't parse empty method name.");
+		g_printerr ("Couldn't parse empty method name.");
 		exit (1);
 	}
 	MonoMethodDesc *result = mono_method_desc_new (method_name, TRUE);
 	if (!result) {
-		g_print ("Couldn't parse method name: %s\n", method_name);
+		g_printerr ("Couldn't parse method name: %s\n", method_name);
 		exit (1);
 	}
 	return result;
