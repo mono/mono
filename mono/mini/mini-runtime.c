@@ -4738,7 +4738,7 @@ mono_runtime_print_stats (void)
 		g_print ("JIT info table removes: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_remove_count);
 		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
 
-		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
+		mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, NULL);
 		g_print ("\n");
 	}
 }
@@ -4757,7 +4757,7 @@ void
 mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
-		g_print ("Printing stats at shutdown\n");
+		g_printf ("Printing stats at shutdown\n");
 	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
 }
@@ -4766,7 +4766,7 @@ void
 mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
-		g_print ("Printing stats at shutdown\n");
+		g_printf ("Printing stats at shutdown\n");
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
