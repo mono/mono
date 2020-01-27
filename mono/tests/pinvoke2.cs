@@ -1074,6 +1074,9 @@ public unsafe class Tests {
 		catch (ArgumentException) {
 		}
 
+		if (mono_test_asany (new IntPtr(5), 5) != 0)
+			return 7;
+
 		return 0;
 	}
 
