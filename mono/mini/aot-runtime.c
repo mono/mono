@@ -2426,6 +2426,10 @@ load_aot_module (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer 
 
 	init_amodule_got (amodule, TRUE);
 
+	if (info->flags & MONO_AOT_FILE_FLAG_WITH_LLVM)
+		/* Directly called methods might make calls through the PLT */
+		init_plt (amodule);
+
 	if (amodule->jit_code_start)
 		mono_jit_info_add_aot_module (assembly->image, amodule->jit_code_start, amodule->jit_code_end);
 	if (amodule->llvm_code_start)
