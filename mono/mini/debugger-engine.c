@@ -1294,10 +1294,10 @@ mono_de_ss_start (SingleStepReq *ss_req, SingleStepArgs *ss_args)
 			mono_loader_lock ();
 			locked = TRUE;
 
-			/* Need parent frames */
+			/* Need parent frames */			
 			rt_callbacks.ss_calculate_framecount (tls, ss_args->ctx, FALSE, &frames, &nframes);
 		}
-
+		
 		MonoDebugMethodAsyncInfo* asyncMethod = mono_debug_lookup_method_async_debug_info (method);
 
 		/* Need to stop in catch clauses as well */
@@ -1489,8 +1489,12 @@ mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, S
 
 	// FIXME: Multiple requests
 	if (the_ss_req) {
-		DEBUG_PRINTF (0, "Received a single step request while the previous one was still active.\n");
-		return DE_ERR_NOT_IMPLEMENTED;
+		err = rt_callbacks.handle_multiple_ss_requests ();
+
+		if (err == DE_ERR_NOT_IMPLEMENTED) {
+			DEBUG_PRINTF (0, "Received a single step request while the previous one was still active.\n");		
+			return DE_ERR_NOT_IMPLEMENTED;
+		}
 	}
 
 	DEBUG_PRINTF (1, "[dbg] Starting single step of thread %p (depth=%s).\n", thread, ss_depth_to_string (depth));

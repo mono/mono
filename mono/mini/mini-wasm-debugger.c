@@ -238,7 +238,7 @@ process_breakpoint_events (void *_evts, MonoMethod *method, MonoContext *ctx, in
 {
 	BpEvents *evts = (BpEvents*)_evts;
 	if (evts) {
-		if (evts->is_ss)
+		if (evts->is_ss)		
 			mono_de_cancel_ss ();
 		mono_wasm_fire_bp ();
 		g_free (evts);
@@ -291,6 +291,12 @@ ss_args_destroy (SingleStepArgs *ss_args)
 	//nothing to do	
 }
 
+static int
+handle_multiple_ss_requests (void) {
+	mono_de_cancel_ss ();
+	return 1;
+}
+
 void
 mono_wasm_debugger_init (void)
 {
@@ -313,6 +319,7 @@ mono_wasm_debugger_init (void)
 		.process_breakpoint_events = process_breakpoint_events,
 		.ss_create_init_args = ss_create_init_args,
 		.ss_args_destroy = ss_args_destroy,
+		.handle_multiple_ss_requests = handle_multiple_ss_requests,
 	};
 
 	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
@@ -468,7 +475,7 @@ mono_wasm_single_step_hit (void)
 void
 mono_wasm_breakpoint_hit (void)
 {
-	mono_de_process_breakpoint (NULL, FALSE);
+	mono_de_process_breakpoint (NULL, FALSE);	
 	// mono_wasm_fire_bp ();
 }
 
