@@ -1406,8 +1406,7 @@ namespace System.Windows.Forms
 			if (background_image == null) {
 				if (!tbstyle_flat) {
 					Rectangle paintRect = pevent.ClipRectangle;
-					Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
-					pevent.Graphics.FillRectangle(pen, paintRect);
+					pevent.Graphics.FillRectangle(BackColorBrush, paintRect);
 				}
 				return;
 			}
@@ -1417,8 +1416,8 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g) {
 			Rectangle drawing_rectangle = new Rectangle ();
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
-				
+			g.FillRectangle (BackColorBrush, ClientRectangle);
+			
 			switch (backgroundimage_layout)
 			{
 			case ImageLayout.Tile:
@@ -3468,6 +3467,8 @@ namespace System.Windows.Forms
 				return show_keyboard_cues;
 			}
 		}
+
+		protected SolidBrush BackColorBrush => ThemeEngine.Current.ResPool.GetSolidBrush (BackColor);
 
 		#endregion	// Protected Instance Properties
 
