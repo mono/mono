@@ -1294,10 +1294,10 @@ mono_de_ss_start (SingleStepReq *ss_req, SingleStepArgs *ss_args)
 			mono_loader_lock ();
 			locked = TRUE;
 
-			/* Need parent frames */			
+			/* Need parent frames */
 			rt_callbacks.ss_calculate_framecount (tls, ss_args->ctx, FALSE, &frames, &nframes);
 		}
-		
+
 		MonoDebugMethodAsyncInfo* asyncMethod = mono_debug_lookup_method_async_debug_info (method);
 
 		/* Need to stop in catch clauses as well */

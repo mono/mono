@@ -238,7 +238,7 @@ process_breakpoint_events (void *_evts, MonoMethod *method, MonoContext *ctx, in
 {
 	BpEvents *evts = (BpEvents*)_evts;
 	if (evts) {
-		if (evts->is_ss)		
+		if (evts->is_ss)
 			mono_de_cancel_ss ();
 		mono_wasm_fire_bp ();
 		g_free (evts);
@@ -475,7 +475,7 @@ mono_wasm_single_step_hit (void)
 void
 mono_wasm_breakpoint_hit (void)
 {
-	mono_de_process_breakpoint (NULL, FALSE);	
+	mono_de_process_breakpoint (NULL, FALSE);
 	// mono_wasm_fire_bp ();
 }
 
