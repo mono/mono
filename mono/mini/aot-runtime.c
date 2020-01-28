@@ -2359,7 +2359,7 @@ load_aot_module (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer 
 	amodule->trampolines [MONO_AOT_TRAMP_FTNPTR_ARG] = (guint8 *)info->ftnptr_arg_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_UNBOX_ARBITRARY] = (guint8 *)info->unbox_arbitrary_trampolines;
 
-	if (mono_is_corlib_image (assembly->image))
+	if (mono_is_corlib_image (assembly->image) || !strcmp (assembly->aname.name, "mscorlib") || !strcmp (assembly->aname.name, "System.Private.CoreLib"))
 		mscorlib_aot_module = amodule;
 
 	/* Compute method addresses */
