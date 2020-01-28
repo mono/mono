@@ -3054,8 +3054,8 @@ static LLVMValueRef
 emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
 	LLVMModuleRef lmodule = module->lmodule;
-	LLVMValueRef func, indexes [2], got_entry_addr, args [16], callee;
-	LLVMBasicBlockRef entry_bb;
+	LLVMValueRef func, indexes [2], got_entry_addr, args [16], callee, inited_var, cmp;
+	LLVMBasicBlockRef entry_bb, inited_bb, notinited_bb;
 	LLVMBuilderRef builder;
 	LLVMTypeRef sig;
 	MonoJumpInfo *ji;
@@ -3096,8 +3096,23 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	set_cold_cconv (func);
 
 	entry_bb = LLVMAppendBasicBlock (func, "ENTRY");
+
 	builder = LLVMCreateBuilder ();
 	LLVMPositionBuilderAtEnd (builder, entry_bb);
+
+	/* Check for is_inited here as well, since this can be called from JITted code which might not check it */
+	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	indexes [1] = LLVMGetParam (func, 0);
+	inited_var = LLVMBuildLoad (builder, LLVMBuildGEP (builder, module->inited_var, indexes, 2, ""), "is_inited");
+
+	cmp = LLVMBuildICmp (builder, LLVMIntEQ, inited_var, LLVMConstInt (LLVMTypeOf (inited_var), 0, FALSE), "");
+
+	inited_bb = LLVMAppendBasicBlock (func, "INITED");
+	notinited_bb = LLVMAppendBasicBlock (func, "NOT_INITED");
+
+	LLVMBuildCondBr (builder, cmp, notinited_bb, inited_bb);
+
+	LLVMPositionBuilderAtEnd (builder, notinited_bb);
 
 	/* get_aotconst */
 	ji = g_new0 (MonoJumpInfo, 1);
@@ -3132,6 +3147,9 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	indexes [1] = LLVMGetParam (func, 0);
 	LLVMBuildStore (builder, LLVMConstInt (LLVMInt8Type (), 1, FALSE), LLVMBuildGEP (builder, module->inited_var, indexes, 2, ""));
 
+	LLVMBuildBr (builder, inited_bb);
+
+	LLVMPositionBuilderAtEnd (builder, inited_bb);
 	LLVMBuildRetVoid (builder);
 
 	LLVMVerifyFunction(func, LLVMAbortProcessAction);
