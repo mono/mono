@@ -35,27 +35,23 @@ namespace System.Windows.Forms
 	[DefaultEvent ("Opening")]
 	public class ContextMenuStrip : ToolStripDropDownMenu
 	{
-		Control source_control;
-		internal Control container;
+		internal Control AssociatedControl;
 
 		#region Public Construtors
 		public ContextMenuStrip () : base ()
 		{
-			source_control = null;
 		}
 		
-		public ContextMenuStrip (IContainer container) : base ()
+		public ContextMenuStrip (IContainer container) : this ()
 		{
-			source_control = null;
+			// TODO: handle `container` argument
 		}
 		#endregion
 
 		#region Public Properties
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Control SourceControl {
-			get { return this.source_control; }
-		}
+		public Control SourceControl { get; protected set; }
 		#endregion
 
 		#region Protected Methods
@@ -70,11 +66,12 @@ namespace System.Windows.Forms
 			if (visible)
 				XplatUI.SetTopmost (this.Handle, true);
 		}
-		#endregion
 
-		internal void SetSourceControl (Control source_control)
+		protected override void SetOwnerControl (Control control)
 		{
-			container = this.source_control = source_control;
+			base.SetOwnerControl (control);
+			SourceControl = control;
 		}
+		#endregion
 	}
 }
