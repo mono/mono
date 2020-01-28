@@ -297,5 +297,27 @@ namespace MonoTests.System {
 				Assert.AreEqual (0xAABB0000, b, "#2");
 			}
 		}
+
+		[Test] // https://github.com/mono/mono/issues/18516
+		public unsafe void MemoryCopy_Overlapped ()
+		{
+			byte [] buffer = new byte [5];
+			for (int i = 0; i < buffer.Length; i++)
+				buffer [i] = (byte)i;
+
+			int bytesToCopy = buffer.Length - 1;
+			fixed (byte* pBuffer = buffer)
+				Buffer.MemoryCopy (pBuffer, pBuffer + 1, buffer.Length - 1, bytesToCopy);
+
+			bool failed = false;
+			for (int i = 0; i < buffer.Length; i++)
+			{
+				byte expectedByte = (byte)(i == 0 ? 0 : i - 1);
+				if (buffer [i] != expectedByte)
+					failed = true;
+			}
+
+			Assert.IsFalse (failed);
+		}
 	}
 }
