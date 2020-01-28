@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	public class SessionId {
 		public string sessionId;
 	}
@@ -65,13 +65,13 @@ namespace WsProxy {
 		}
 	}
 
-	class WsQueue {
+	class DevToolsQueue {
 		Task current_send;
 		List<byte []> pending;
 
 		public WebSocket Ws { get; private set; }
 		public Task CurrentSend { get { return current_send; } }
-		public WsQueue (WebSocket sock)
+		public DevToolsQueue (WebSocket sock)
 		{
 			this.Ws = sock;
 			pending = new List<byte []> ();
@@ -106,7 +106,7 @@ namespace WsProxy {
 		}
 	}
 
-	public class WsProxy {
+	public class DevToolsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
 		TaskCompletionSource<bool> client_initiated_close = new TaskCompletionSource<bool> ();
 		List<(MessageId, TaskCompletionSource<Result>)> pending_cmds = new List<(MessageId, TaskCompletionSource<Result>)> ();
@@ -114,7 +114,7 @@ namespace WsProxy {
 		WebSocket ide;
 		int next_cmd_id;
 		List<Task> pending_ops = new List<Task> ();
-		List<WsQueue> queues = new List<WsQueue> ();
+		List<DevToolsQueue> queues = new List<DevToolsQueue> ();
 
 		protected virtual Task<bool> AcceptEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
@@ -153,12 +153,12 @@ namespace WsProxy {
 			}
 		}
 
-		WsQueue GetQueueForSocket (WebSocket ws)
+		DevToolsQueue GetQueueForSocket (WebSocket ws)
 		{
 			return queues.FirstOrDefault (q => q.Ws == ws);
 		}
 
-		WsQueue GetQueueForTask (Task task) {
+		DevToolsQueue GetQueueForTask (Task task) {
 			return queues.FirstOrDefault (q => q.CurrentSend == task);
 		}
 
@@ -180,7 +180,7 @@ namespace WsProxy {
 			try {
 				if (!await AcceptEvent (sessionId, method, args, token)) {
 					//Console.WriteLine ("proxy browser: {0}::{1}",method, args);
-					SendEvent (sessionId, method, args, token);
+					SendEventInternal (sessionId, method, args, token);
 				}
 			} catch (Exception e) {
 				side_exception.TrySetException (e);
@@ -292,11 +292,11 @@ namespace WsProxy {
 			Debug ($"WsProxy Starting on {browserUri}");
 			using (this.ide = ideSocket) {
 				Debug ($"WsProxy: IDE waiting for connection on {browserUri}");
-				queues.Add (new WsQueue (this.ide));
+				queues.Add (new DevToolsQueue (this.ide));
 				using (this.browser = new ClientWebSocket ()) {
 					this.browser.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 					await this.browser.ConnectAsync (browserUri, CancellationToken.None);
-					queues.Add (new WsQueue (this.browser));
+					queues.Add (new DevToolsQueue (this.browser));
 
 					Debug ($"WsProxy: Client connected on {browserUri}");
 					var x = new CancellationTokenSource ();

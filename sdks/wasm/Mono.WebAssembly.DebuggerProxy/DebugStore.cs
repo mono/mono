@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	internal class BreakPointRequest {
 		public string Assembly { get; private set; }
 		public string File { get; private set; }

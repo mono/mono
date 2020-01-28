@@ -8,7 +8,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Net;
 
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 
 	internal class MonoCommands {
 		public const string GET_CALL_STACK = "MONO.mono_wasm_get_call_stack()";
@@ -71,7 +71,7 @@ namespace WsProxy {
 		Over
 	}
 
-	public class MonoProxy : WsProxy {
+	public class MonoProxy : DevToolsProxy {
 		DebugStore store;
 		List<Breakpoint> breakpoints = new List<Breakpoint> ();
 		List<Frame> current_callstack;
