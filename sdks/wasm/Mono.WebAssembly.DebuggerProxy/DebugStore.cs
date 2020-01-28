@@ -9,6 +9,7 @@ using System.Net.Http;
 using Mono.Cecil.Pdb;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace WsProxy {
 	internal class BreakPointRequest {
@@ -493,9 +494,15 @@ namespace WsProxy {
 	}
 
 	internal class DebugStore {
+		MonoProxy proxy;
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 
-		public DebugStore (string [] loaded_files)
+		public DebugStore (MonoProxy proxy)
+		{
+			this.proxy = proxy;
+		}
+
+		internal void Initialize (string[] loaded_files, CancellationToken token)
 		{
 			bool MatchPdb (string asm, string pdb)
 			{
@@ -525,6 +532,14 @@ namespace WsProxy {
 					this.assemblies.Add (new AssemblyInfo (assembly_bytes, pdb_bytes));
 				} catch (Exception e) {
 					Console.WriteLine ($"Failed to read {p} ({e.Message})");
+					var o = JObject.FromObject (new {
+						entry = new {
+							source = "other",
+							level = "warning",
+							text = $"Failed to read {p} ({e.Message})"
+						}
+					});
+					proxy.SendEvent ("Log.entryAdded", o, token);
 				}
 			}
 		}

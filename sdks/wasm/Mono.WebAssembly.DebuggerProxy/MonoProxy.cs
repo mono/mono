@@ -578,7 +578,8 @@ namespace WsProxy {
 			var loaded_pdbs = await SendCommand ("Runtime.evaluate", o, token);
 			var the_value = loaded_pdbs.Value? ["result"]? ["value"];
 			var the_pdbs = the_value?.ToObject<string[]> ();
-			this.store = new DebugStore (the_pdbs);
+			this.store = new DebugStore (this);
+			this.store.Initialize (the_pdbs, token);
 
 			foreach (var s in store.AllSources ()) {
 				var ok = JObject.FromObject (new {
