@@ -2425,7 +2425,7 @@ namespace System.Windows.Forms
 				if (this.context_menu_strip != value) {
 					this.context_menu_strip = value;
 					if (value != null)
-						value.container = this;
+						value.AssociatedControl = this;
 					OnContextMenuStripChanged (EventArgs.Empty);
 				}
 			}
@@ -5498,22 +5498,21 @@ namespace System.Windows.Forms
 				return;
 			}
 
-				// If there isn't a regular context menu, show the Strip version
-				if (context_menu == null && context_menu_strip != null) {
-					Point pt;
+			// If there isn't a regular context menu, show the Strip version
+			if (context_menu == null && context_menu_strip != null) {
+				Point pt;
 
-					pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
-					
-					if (pt.X == -1 || pt.Y == -1) { 
-						pt.X = (this.Width / 2) + this.Left; 
-						pt.Y = (this.Height /2) + this.Top; 
-						pt = this.PointToScreen (pt);
-					}
-					
-					context_menu_strip.SetSourceControl (this);
-					context_menu_strip.Show (this, PointToClient (pt));
-					return;
+				pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
+				
+				if (pt.X == -1 || pt.Y == -1) { 
+					pt.X = (this.Width / 2) + this.Left; 
+					pt.Y = (this.Height /2) + this.Top; 
+					pt = this.PointToScreen (pt);
 				}
+				
+				context_menu_strip.Show (this, PointToClient (pt));
+				return;
+			}
 			DefWndProc(ref m);
 		}
 
@@ -6499,7 +6498,6 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value);}
 		}
-
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(true)]

@@ -23,7 +23,9 @@ namespace WsProxy {
 
 		public static BreakPointRequest Parse (JObject args, DebugStore store)
 		{
-			if (args == null)
+			// Events can potentially come out of order, so DebugStore may not be initialized
+			// The BP being set in these cases are JS ones, which we can safely ignore
+			if (args == null || store == null)
 				return null;
 
 			var url = args? ["url"]?.Value<string> ();
