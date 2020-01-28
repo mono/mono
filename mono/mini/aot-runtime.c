@@ -5445,7 +5445,7 @@ get_mscorlib_aot_module (void)
 	MonoAotModule *amodule;
 
 	image = mono_defaults.corlib;
-	if (image)
+	if (image && image->aot_module)
 		amodule = image->aot_module;
 	else
 		amodule = mscorlib_aot_module;
