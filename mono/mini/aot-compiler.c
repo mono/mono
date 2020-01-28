@@ -5823,11 +5823,12 @@ method_is_externally_callable (MonoAotCompile *acfg, MonoMethod *method)
 			return FALSE;
 		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
 			return FALSE;
+		if (method->is_inflated)
+			return FALSE;
+		if (!((mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC)))
+			return FALSE;
 		/* Can't enable this as the callee might fail llvm compilation */
-		/*
-		  if (!method->is_inflated && (mono_class_get_flags (method->klass) & TYPE_ATTRIBUTE_PUBLIC) && (method->flags & METHOD_ATTRIBUTE_PUBLIC))
-		  return TRUE;
-		*/
+		//return TRUE;
 		return FALSE;
 	} else {
 		if (!acfg->aot_opts.direct_extern_calls)
