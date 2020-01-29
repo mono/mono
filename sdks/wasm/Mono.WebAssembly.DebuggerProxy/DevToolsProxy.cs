@@ -144,12 +144,10 @@ namespace WebAssembly.Net.Debugging {
 					return null;
 				}
 
-				if (result.EndOfMessage) {
-					mem.Write (buff, 0, result.Count);
+				mem.Write (buff, 0, result.Count);
+
+				if (result.EndOfMessage)
 					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-				} else {
-					mem.Write (buff, 0, result.Count);
-				}
 			}
 		}
 
