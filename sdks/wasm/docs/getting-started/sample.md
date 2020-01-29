@@ -78,7 +78,7 @@ To test the application launch the provided webserver:
 ```
 
 cd publish
-python server.py
+python3 server.py
 
 ```
 
@@ -86,7 +86,7 @@ After executing you will see the port displayed (default: 8000):
 
 ```
 publish$ python server.py
-('python 2 serving at port', 8000)
+('python 3 serving at port', 8000)
 ```
 
 From a browser got to `http://localhost:8000/sample.html` or `http://127.0.0.1:8000/sample.html` depending on the browser.  

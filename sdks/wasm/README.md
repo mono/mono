@@ -101,28 +101,36 @@
 * The makefile targets are in sdks/builds/wasm.mk.
 * The build outputs are emitted to sdks/out/.
 
+## Requirements
+
+WebAssembly builds require Ninja in addition to the standard Mono dependencies. On MacOS, this can be installed with `brew install ninja`.
+
+```ulimit -n 2048```
+
+This raises the process limit high enough for the runtime to successfully build.
+
 ## Building mono components
 
-```make -C sdks/builds provision-wasm```
+```make -j -C sdks/builds provision-wasm```
 
 This will download and setup emscripten.
 
-``` make -C sdks/wasm runtime```
+``` make -j -C sdks/wasm runtime```
 
 This will build the wasm device runtime.
 
-``` make -C sdks/wasm bcl```
+``` make -j -C sdks/wasm bcl```
 
 This will build the wasm specific version of the BCL.
 
-``` make -C sdks/wasm cross```
+``` make -j -C sdks/wasm cross```
 
 This will build the AOT cross compiler. Its only needed if you intend
 to use AOT.
 
 ## Building wasm components
 
-``` make -C sdks/wasm```
+``` make -j -C sdks/wasm```
 
 This will build the actual wasm libraries etc.
 
@@ -190,13 +198,13 @@ Read usage information about the utility see [WebAssembly packager.exe](./docs/p
 To build the runtime with pthreads support use the following make target:
 
 ``` bash
-make -C sdks/wasm runtime-threads
+make -j -C sdks/wasm runtime-threads
 ```
 
 -- or --
 
 ```bash
-make -C sdks/builds package-wasm-runtime-threads
+make -j -C sdks/builds package-wasm-runtime-threads
 ```
 
 During the main build two directories will be created:
@@ -232,13 +240,13 @@ _Note:_ The **`mono.worker.js`** and **`mono.js.mem`** files  must be deployed w
 To build the runtime with WebAssembly dynamic linking support use the following make target:
 
 ``` bash
-make -C sdks/wasm runtime-dynamic
+make -j -C sdks/wasm runtime-dynamic
 ```
 
 -- or --
 
 ```bash
-make -C sdks/builds package-wasm-runtime-dynamic
+make -j -C sdks/builds package-wasm-runtime-dynamic
 ```
 
 During the main build one directory will be created:
@@ -264,7 +272,7 @@ AOT support is enabled by passing --aot to the packager.
 This depends on building the cross compiler which can be done using:
 
 ``` bash
-make -C sdks/wasm cross
+make -j -C sdks/wasm cross
 ```
 
 If you don't have jsvu installed, run `make toolchain` from `sdks/wasm`. It requires a recent version of node installed in your system.
@@ -274,8 +282,8 @@ Run `make run-aot-sample` to run an aot-ed hello world sample.
 To build and run AOT test suites:
 
 ``` bash
-make -C sdks/wasm build-aot-<suite name>
-make -C sdks/wasm check-aot-<suite name>
+make -j -C sdks/wasm build-aot-<suite name>
+make -j -C sdks/wasm check-aot-<suite name>
 ```
 
 ## AOT Bindings sample
@@ -283,7 +291,7 @@ make -C sdks/wasm check-aot-<suite name>
 To build the `sample` that uses bindings and http.
 
 ``` bash
-make -C sdks/wasm build-aot-bindings-sample
+make -j -C sdks/wasm build-aot-bindings-sample
 ```
 
 This will build the `sample` in the `wasm/bin/aot-bindings-sample` ready to be served for browser consumption.
