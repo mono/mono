@@ -147,7 +147,7 @@ ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
 
 ifdef TEST_SPLIT_ASSEMBLIES
-test_assemblies += $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll)
+test_assemblies += $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll) $(test_lib_output:.dll=.part3.dll)
 endif
 
 check: run-test
@@ -288,7 +288,15 @@ $(test_lib_output:.dll=.part1.dll): $(test_lib_output) $(test_response).part1
 $(test_lib_output:.dll=.part2.dll): $(test_lib_output) $(test_response).part2
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part2
 
-tests_CLEAN_FILES += $(test_response).part1 $(test_response).part2
+$(test_lib_output:.dll=.part3.dll): $(test_lib_output) $(test_response).part3
+ifneq ($(wildcard $(test_response).part3),)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part3
+endif
+
+# part3 is optional so we need this empty target to silence make if it doesn't exist
+$(test_response).part3: ;
+
+tests_CLEAN_FILES += $(test_response).part1 $(test_response).part2 $(test_response).part3
 endif
 
 $(test_response): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(topdir)/build/tests.make $(depsdir)/.stamp
@@ -296,7 +304,7 @@ $(test_response): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildc
 
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
-	@sed 's,^,$(test_lib_output) $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll): ,' $< >$@
+	@sed 's,^,$(test_lib_output) $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll) $(test_lib_output:.dll=.part3.dll): ,' $< >$@
 
 -include $(test_makefrag)
 
@@ -339,7 +347,7 @@ endif
 xtest_assemblies += $(xtest_lib_output)
 
 ifdef XTEST_SPLIT_ASSEMBLIES
-xtest_assemblies += $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll)
+xtest_assemblies += $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll) $(xtest_lib_output:.dll=.part3.dll)
 endif
 
 
@@ -377,7 +385,15 @@ $(xtest_lib_output:.dll=.part1.dll): $(xtest_lib_output) $(xtest_response).part1
 $(xtest_lib_output:.dll=.part2.dll): $(xtest_lib_output) $(xtest_response).part2
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part2 $(xunit_src)
 
-xtests_CLEAN_FILES += $(xtest_response).part1 $(xtest_response).part2
+$(xtest_lib_output:.dll=.part3.dll): $(xtest_lib_output) $(xtest_response).part3
+ifneq ($(wildcard $(xtest_response).part3),)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part3 $(xunit_src)
+endif
+
+# part3 is optional so we need this empty target to silence make if it doesn't exist
+$(xtest_response).part3: ;
+
+xtests_CLEAN_FILES += $(xtest_response).part1 $(xtest_response).part2 $(xtest_response).part3
 endif
 
 # This handles .excludes/.sources pairs, as well as resolving the
@@ -385,9 +401,9 @@ endif
 $(xtest_response): $(xtest_sourcefile_base) $(wildcard *_xtest.dll.sources) $(wildcard *_xtest.dll.exclude.sources) $(topdir)/build/tests.make $(depsdir)/.stamp
 	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
-$(xtest_makefrag): $(xtest_response) $(xtest_response_parts)
+$(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
-	@sed 's,^,$(xtest_lib_output) $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll): ,' $< >$@
+	@sed 's,^,$(xtest_lib_output) $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll) $(xtest_lib_output:.dll=.part3.dll): ,' $< >$@
 
 -include $(xtest_makefrag)
 
