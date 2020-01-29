@@ -76,7 +76,6 @@ namespace WebAssembly.Net.Debugging {
 		}
 	}
 
-
 	internal class VarInfo {
 		public VarInfo (VariableDebugInformation v)
 		{
@@ -89,9 +88,9 @@ namespace WebAssembly.Net.Debugging {
 			this.Name = p.Name;
 			this.Index = (p.Index + 1) * -1;
 		}
+
 		public string Name { get; private set; }
 		public int Index { get; private set; }
-
 
 		public override string ToString ()
 		{
@@ -101,18 +100,14 @@ namespace WebAssembly.Net.Debugging {
 
 
 	internal class CliLocation {
-
-		private MethodInfo method;
-		private int offset;
-
 		public CliLocation (MethodInfo method, int offset)
 		{
-			this.method = method;
-			this.offset = offset;
+			Method = method;
+			Offset = offset;
 		}
 
-		public MethodInfo Method { get => method; }
-		public int Offset { get => offset; }
+		public MethodInfo Method { get; private set; }
+		public int Offset { get; private set; }
 	}
 
 
@@ -286,7 +281,6 @@ namespace WebAssembly.Net.Debugging {
 				.Where (v => !v.IsDebuggerHidden)
 				.Select (v => new VarInfo (v)));
 
-
 			return res.ToArray ();
 		}
 	}
@@ -298,20 +292,21 @@ namespace WebAssembly.Net.Debugging {
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
 		readonly List<SourceFile> sources = new List<SourceFile>();
+		internal string Url { get; private set; }
 
-		public AssemblyInfo (byte[] assembly, byte[] pdb)
+		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
 		{
 			lock (typeof (AssemblyInfo)) {
 				this.id = ++next_id;
 			}
 
 			try {
+				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-				if (pdb != null) {
-					rp.ReadSymbols = true;
-					rp.SymbolReaderProvider = new PortablePdbReaderProvider ();
+				rp.ReadSymbols = true;
+				rp.SymbolReaderProvider = new PdbReaderProvider ();
+				if (pdb != null)
 					rp.SymbolStream = new MemoryStream (pdb);
-				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
 				rp.InMemory = true;
@@ -319,13 +314,16 @@ namespace WebAssembly.Net.Debugging {
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			} catch (BadImageFormatException ex) {
 				Console.WriteLine ($"Failed to read assembly as portable PDB: {ex.Message}");
+			} catch (ArgumentNullException) {
+				if (pdb != null)
+					throw;
 			}
 
 			if (this.image == null) {
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
 				if (pdb != null) {
 					rp.ReadSymbols = true;
-					rp.SymbolReaderProvider = new NativePdbReaderProvider ();
+					rp.SymbolReaderProvider = new PdbReaderProvider ();
 					rp.SymbolStream = new MemoryStream (pdb);
 				}
 
@@ -544,7 +542,7 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var step in steps) {
 				try {
 					var bytes = await step.Data;
-					assemblies.Add (new AssemblyInfo (bytes[0], bytes[1]));
+					assemblies.Add (new AssemblyInfo (step.Url, bytes[0], bytes[1]));
 				} catch (Exception e) {
 					Console.WriteLine ($"Failed to Load {step.Url} ({e.Message})");
 				}
