@@ -9,8 +9,8 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace WsProxy {
-	public class InspectorClient : WsClient {
+namespace WebAssembly.Net.Debugging {
+	public class InspectorClient : DevToolsClient {
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		Func<string, JObject, CancellationToken, Task> onEvent;
 		int next_cmd_id;
@@ -59,7 +59,7 @@ namespace WsProxy {
 			pending_cmds.Add ((id, tcs));
 
 			var str = o.ToString ();
-			System.Console.WriteLine ($"Command: id: {id} method: {method} params: {args}");
+			//Log ("protocol", $"SendCommand: id: {id} method: {method} params: {args}");
 
 			var bytes = Encoding.UTF8.GetBytes (str);
 			Send (bytes, token);

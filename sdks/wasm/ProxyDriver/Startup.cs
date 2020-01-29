@@ -8,13 +8,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
-using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Net;
 
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	internal class Startup {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -71,6 +69,15 @@ namespace WsProxy {
 		{
 			var devToolsHost = options.DevToolsUrl;
 			app.UseRouter (router => {
+				router.MapGet ("/", Copy);
+				router.MapGet ("/favicon.ico", Copy);
+				router.MapGet ("json", RewriteArray);
+				router.MapGet ("json/list", RewriteArray);
+				router.MapGet ("json/version", RewriteSingle);
+				router.MapGet ("json/new", RewriteSingle);
+				router.MapGet ("devtools/page/{pageId}", ConnectProxy);
+				router.MapGet ("devtools/browser/{pageId}", ConnectProxy);
+
 				string GetEndpoint (HttpContext context)
 				{
 					var request = context.Request;
@@ -106,33 +113,28 @@ namespace WsProxy {
 					await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
 				}
 
-				router.MapGet ("/", Copy);
-				router.MapGet ("/favicon.ico", Copy);
-				router.MapGet ("json", RewriteArray);
-				router.MapGet ("json/list", RewriteArray);
-				router.MapGet ("json/version", RewriteSingle);
-				router.MapGet ("json/new", RewriteSingle);
-				router.MapGet ("devtools/page/{pageId}", async context => {
-						if (!context.WebSockets.IsWebSocketRequest) {
-							context.Response.StatusCode = 400;
-							return;
-						}
+				async Task ConnectProxy (HttpContext context)
+				{
+					if (!context.WebSockets.IsWebSocketRequest) {
+						context.Response.StatusCode = 400;
+						return;
+					}
 
-						var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString()}");
-						try {
-							var proxy = new MonoProxy ();
-							var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
+					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
+					try {
+						var proxy = new MonoProxy ();
+						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
-							await proxy.Run (endpoint, ideSocket);
-						} catch (Exception e) {
-							Console.WriteLine ("got exception {0}", e);
-						}
-					});
-				});
+						await proxy.Run (endpoint, ideSocket);
+					} catch (Exception e) {
+						Console.WriteLine ("got exception {0}", e);
+					}
+				}
+			});
 			return app;
 		}
 
-		private static async Task<T> ProxyGetJsonAsync<T> (string url)
+		static async Task<T> ProxyGetJsonAsync<T> (string url)
 		{
 			using (var httpClient = new HttpClient ()) {
 				var response = await httpClient.GetAsync (url);

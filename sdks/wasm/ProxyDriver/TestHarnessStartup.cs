@@ -14,10 +14,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
-using WsProxy;
 
-
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
 		public TestHarnessStartup (IConfiguration configuration)
 		{
@@ -119,6 +117,7 @@ namespace WsProxy {
 				proc.Close ();
 			}
 		}
+
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure (IApplicationBuilder app, IOptionsMonitor<TestHarnessOptions> optionsAccessor, IWebHostEnvironment env)
 		{

@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-using WsProxy;
+using WebAssembly.Net.Debugging;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -133,7 +133,7 @@ namespace DebuggerTests
 		}
 
 		public DebuggerTestBase (string driver = "debugger-driver.html") {
-			startTask = WsProxy.TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
+			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
 		}
 
 		public Task Ready ()

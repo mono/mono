@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WsProxy
+namespace WebAssembly.Net.Debugging
 {
 	public class ProxyOptions {
 		public Uri DevToolsUrl { get; set; } = new Uri ("http://localhost:9222");
