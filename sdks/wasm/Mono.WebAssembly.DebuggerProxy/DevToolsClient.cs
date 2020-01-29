@@ -130,5 +130,10 @@ namespace WebAssembly.Net.Debugging {
 
 			return false;
 		}
+
+		protected virtual void Log (string priority, string msg)
+		{
+			// 
+		}
 	}
-} 
+}

@@ -163,7 +163,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.setBreakpointByUrl": {
-					Info ($"BP req {args}");
+					Log ("info", $"BP req {args}");
 					var bp_req = BreakPointRequest.Parse (args, store);
 					if (bp_req != null) {
 						await SetBreakPoint (id, bp_req, token);
@@ -236,7 +236,7 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task OnRuntimeReady (SessionId sessionId, CancellationToken token)
 		{
-			Info ("RUNTIME READY, PARTY TIME");
+			Log ("info", "RUNTIME READY, PARTY TIME");
 			await RuntimeReady (sessionId, token);
 			await SendCommand (sessionId, "Debugger.resume", new JObject (), token);
 			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
@@ -271,9 +271,9 @@ namespace WebAssembly.Net.Debugging {
 				return;
 			}
 
-			Debug ($"call stack (err is {res.Error} value is:\n{res.Value}");
+			Log ("verbose", $"call stack (err is {res.Error} value is:\n{res.Value}");
 			var bp_id = res_value? ["breakpoint_id"]?.Value<int> ();
-			Debug ($"We just hit bp {bp_id}");
+			Log ("verbose", $"We just hit bp {bp_id}");
 			if (!bp_id.HasValue) {
 				//Give up and send the original call stack
 				SendEvent (sessionId, "Debugger.paused", args, token);
@@ -299,14 +299,14 @@ namespace WebAssembly.Net.Debugging {
 
 						var asm = store.GetAssemblyByName (assembly_name);
 						if (asm == null) {
-							Info ($"Unable to find assembly: {assembly_name}");
+							Log ("info",$"Unable to find assembly: {assembly_name}");
 							continue;
 						}
 
 						var method = asm.GetMethodByToken (method_token);
 
 						if (method == null) {
-							Info ($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+							Log ("info", $"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
 							continue;
 						}
 
@@ -320,8 +320,8 @@ namespace WebAssembly.Net.Debugging {
 							continue;
 						}
 
-						Info ($"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
-						Info ($"\tmethod {method.Name} location: {location}");
+						Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
+						Log ("info", $"\tmethod {method.Name} location: {location}");
 						frames.Add (new Frame (method, location, frame_id));
 
 						callFrames.Add (JObject.FromObject (new {
@@ -373,7 +373,7 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task OnDefaultContext (MessageId ctx_id, JObject aux_data, CancellationToken token)
 		{
-			Debug ("Default context created, clearing state and sending events");
+			Log ("verbose", "Default context created, clearing state and sending events");
 
 			//reset all bps
 			foreach (var b in this.breakpoints){
@@ -391,12 +391,12 @@ namespace WebAssembly.Net.Debugging {
 			this.ctx_id = ctx_id.id;
 			this.aux_ctx_data = aux_data;
 
-			Debug ("checking if the runtime is ready");
+			Log ("verbose", "checking if the runtime is ready");
 			var res = await SendCommand (ctx_id, "Runtime.evaluate", o, token);
 			var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
-			//Debug ($"\t{is_ready}");
+			//Log ("verbose", $"\t{is_ready}");
 			if (is_ready.HasValue && is_ready.Value == true) {
-				Debug ("RUNTIME LOOK READY. GO TIME!");
+				Log ("verbose", "RUNTIME LOOK READY. GO TIME!");
 				await OnRuntimeReady (ctx_id, token);
 			}
 		}
@@ -479,11 +479,10 @@ namespace WebAssembly.Net.Debugging {
 					result = var_list
 				});
 			} catch (Exception e) {
-				Debug ($"failed to parse {res.Value} - {e.Message}");
+				Log ("verbose", $"failed to parse {res.Value} - {e.Message}");
 			}
 			SendResponse(msg_id, Result.Ok(o), token);
 		}
-
 
 		async Task GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)
 		{
@@ -551,7 +550,7 @@ namespace WebAssembly.Net.Debugging {
 				});
 				SendResponse (msg_id, Result.Ok (o), token);
 			} catch (Exception exception) {
-				Debug ($"Error resolving scope properties {exception.Message}");
+				Log ("verbose", $"Error resolving scope properties {exception.Message}");
 				SendResponse (msg_id, res, token);
 			}
 		}
@@ -576,7 +575,7 @@ namespace WebAssembly.Net.Debugging {
 			if (ret_code.HasValue) {
 				bp.RemoteId = ret_code.Value;
 				bp.State = BreakPointState.Active;
-				//Debug ($"BP local id {bp.LocalId} enabled with remote id {bp.RemoteId}");
+				//Log ("verbose", $"BP local id {bp.LocalId} enabled with remote id {bp.RemoteId}");
 			}
 
 			return res;
@@ -614,7 +613,7 @@ namespace WebAssembly.Net.Debugging {
 					executionContextAuxData = this.aux_ctx_data,
 					dotNetUrl = s.DotNetUrl,
 				});
-				//Debug ($"\tsending {s.Url}");
+				//Log ("verbose", $"\tsending {s.Url}");
 				SendEvent (sessionId, "Debugger.scriptParsed", ok, token);
 			}
 
@@ -628,7 +627,7 @@ namespace WebAssembly.Net.Debugging {
 
 			var clear_result = await SendCommand (sessionId, "Runtime.evaluate", o, token);
 			if (clear_result.IsErr) {
-				Debug ($"Failed to clear breakpoints due to {clear_result}");
+				Log ("verbose", $"Failed to clear breakpoints due to {clear_result}");
 			}
 
 
@@ -643,7 +642,7 @@ namespace WebAssembly.Net.Debugging {
 				//if we fail we just buble that to the IDE (and let it panic over it)
 				if (!ret_code.HasValue) {
 					//FIXME figure out how to inform the IDE of that.
-					Info ($"FAILED TO ENABLE BP {bp.LocalId}");
+					Log ("info", $"FAILED TO ENABLE BP {bp.LocalId}");
 					bp.State = BreakPointState.Disabled;
 				}
 			}
@@ -658,7 +657,7 @@ namespace WebAssembly.Net.Debugging {
 
 			var bp = breakpoints.FirstOrDefault (b => b.LocalId == the_id);
 			if (bp == null) {
-				Info ($"Could not find dotnet bp with id {the_id}");
+				Log ("info", $"Could not find dotnet bp with id {the_id}");
 				return false;
 			}
 
@@ -694,10 +693,10 @@ namespace WebAssembly.Net.Debugging {
 		async Task SetBreakPoint (MessageId msg_id, BreakPointRequest req, CancellationToken token)
 		{
 			var bp_loc = store?.FindBestBreakpoint (req);
-			Info ($"BP request for '{req}' runtime ready {runtime_ready} location '{bp_loc}'");
+			Log ("info", $"BP request for '{req}' runtime ready {runtime_ready} location '{bp_loc}'");
 			if (bp_loc == null) {
 
-				Info ($"Could not resolve breakpoint request: {req}");
+				Log ("info", $"Could not resolve breakpoint request: {req}");
 				SendResponse (msg_id, Result.Err(JObject.FromObject (new {
 					code = (int)MonoErrorCodes.BpNotFound,
 					message = $"C# Breakpoint at {req} not found."

@@ -27,14 +27,13 @@ namespace WebAssembly.Net.Debugging {
 
 		Result (JObject result, JObject error)
 		{
-			Console.WriteLine ($"result: {result}");
 			this.Value = result;
 			this.Error = error;
 		}
 
 		public static Result FromJson (JObject obj)
 		{
-			//Console.WriteLine ($"from result: {obj}");
+			//Log ("protocol", $"from result: {obj}");
 			return new Result (obj ["result"] as JObject, obj ["error"] as JObject);
 		}
 
@@ -133,7 +132,7 @@ namespace WebAssembly.Net.Debugging {
 			while (true) {
 
 				if (socket.State != WebSocketState.Open) {
-					Console.WriteLine ($"WSProxy: Socket is no longer open.");
+					Log ("error", $"DevToolsProxy: Socket is no longer open.");
 					client_initiated_close.TrySetResult (true);
 					return null;
 				}
@@ -156,14 +155,15 @@ namespace WebAssembly.Net.Debugging {
 			return queues.FirstOrDefault (q => q.Ws == ws);
 		}
 
-		DevToolsQueue GetQueueForTask (Task task) {
+		DevToolsQueue GetQueueForTask (Task task)
+		{
 			return queues.FirstOrDefault (q => q.CurrentSend == task);
 		}
 
 		void Send (WebSocket to, JObject o, CancellationToken token)
 		{
-			var socketName = this.browser == to ? "Send-browser" : "Send-ide";
-			//Debug ($"{socketName}: {o}");
+			var sender = browser == to ? "Send-browser" : "Send-ide";
+			Log ("protocol", $"{sender}: {o}");
 			var bytes = Encoding.UTF8.GetBytes (o.ToString ());
 
 			var queue = GetQueueForSocket (to);
@@ -210,7 +210,7 @@ namespace WebAssembly.Net.Debugging {
 
 		void ProcessBrowserMessage (string msg, CancellationToken token)
 		{
-			Debug ($"browser: {msg}");
+			Log ("protocol", $"browser: {msg}");
 			var res = JObject.Parse (msg);
 
 			if (res ["id"] == null)
@@ -221,7 +221,7 @@ namespace WebAssembly.Net.Debugging {
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
 		{
-			Debug ($"ide: {msg}");
+			Log ("protocol", $"ide: {msg}");
 			if (!string.IsNullOrEmpty (msg)) {
 				var res = JObject.Parse (msg);
 				pending_ops.Add (OnCommand (new MessageId { id = res ["id"].Value<int> (), sessionId = res ["sessionId"]?.Value<string> () }, res ["method"].Value<string> (), res ["params"] as JObject, token));
@@ -229,7 +229,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		internal async Task<Result> SendCommand (SessionId id, string method, JObject args, CancellationToken token) {
-			// Debug ($"sending command {method}: {args}");
+			//Log ("verbose", $"sending command {method}: {args}");
 			return await SendCommandInternal (id, method, args, token);
 		}
 
@@ -247,7 +247,7 @@ namespace WebAssembly.Net.Debugging {
 
 
 			var msgId = new MessageId { id = id, sessionId = sessionId.sessionId };
-			//Debug ($"add cmd id {sessionId}-{id}");
+			//Log ("verbose", $"add cmd id {sessionId}-{id}");
 			pending_cmds.Add ((msgId , tcs));
 
 			Send (this.browser, o, token);
@@ -256,7 +256,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public void SendEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
-			//Debug ($"sending event {method}: {args}");
+			//Log ("verbose", $"sending event {method}: {args}");
 			SendEventInternal (sessionId, method, args, token);
 		}
 
@@ -273,7 +273,7 @@ namespace WebAssembly.Net.Debugging {
 
 		internal void SendResponse (MessageId id, Result result, CancellationToken token)
 		{
-			//Debug ($"sending response: {id}: {result.ToJObject (id)}");
+			//Log ("verbose", $"sending response: {id}: {result.ToJObject (id)}");
 			SendResponseInternal (id, result, token);
 		}
 
@@ -287,16 +287,16 @@ namespace WebAssembly.Net.Debugging {
 		// , HttpContext context)
 		public async Task Run (Uri browserUri, WebSocket ideSocket)
 		{
-			Debug ($"WsProxy Starting on {browserUri}");
+			Log ("info", $"DevToolsProxy: Starting on {browserUri}");
 			using (this.ide = ideSocket) {
-				Debug ($"WsProxy: IDE waiting for connection on {browserUri}");
+				Log ("verbose", $"DevToolsProxy: IDE waiting for connection on {browserUri}");
 				queues.Add (new DevToolsQueue (this.ide));
 				using (this.browser = new ClientWebSocket ()) {
 					this.browser.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 					await this.browser.ConnectAsync (browserUri, CancellationToken.None);
 					queues.Add (new DevToolsQueue (this.browser));
 
-					Debug ($"WsProxy: Client connected on {browserUri}");
+					Log ("verbose", $"DevToolsProxy: Client connected on {browserUri}");
 					var x = new CancellationTokenSource ();
 
 					pending_ops.Add (ReadOne (browser, x.Token));
@@ -325,7 +325,7 @@ namespace WebAssembly.Net.Debugging {
 								throw new Exception ("side task must always complete with an exception, what's going on???");
 							} else if (task == pending_ops [3]) {
 								var res = ((Task<bool>)task).Result;
-								Debug ($"WsProxy: Client initiated close from {browserUri}");
+								Log ("verbose", $"DevToolsProxy: Client initiated close from {browserUri}");
 								x.Cancel ();
 							} else {
 								//must be a background task
@@ -339,7 +339,7 @@ namespace WebAssembly.Net.Debugging {
 							}
 						}
 					} catch (Exception e) {
-						Debug ($"WsProxy::Run: Exception {e}");
+						Log ("error", $"DevToolsProxy::Run: Exception {e}");
 						//throw;
 					} finally {
 						if (!x.IsCancellationRequested)
@@ -349,14 +349,22 @@ namespace WebAssembly.Net.Debugging {
 			}
 		}
 
-		protected void Debug (string msg)
+		protected void Log (string priority, string msg)
 		{
-			Console.WriteLine (msg);
-		}
-
-		protected void Info (string msg)
-		{
-			Console.WriteLine (msg);
+			switch (priority) {
+			case "protocol":
+				Console.WriteLine (msg);
+				break;
+			case "verbose":
+				Console.WriteLine (msg);
+				break;
+			case "info":
+			case "warning":
+			case "error":
+			default:
+				Console.WriteLine (msg);
+				break;
+			}
 		}
 	}
 }
