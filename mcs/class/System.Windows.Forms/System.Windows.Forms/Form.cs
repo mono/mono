@@ -201,7 +201,11 @@ namespace System.Windows.Forms {
 
 		internal override void UpdateWindowText ()
 		{
+			var old_clientsize = ClientSize;
+
 			if (!IsHandleCreated) {
+				if (is_clientsize_set)
+					ClientSize = old_clientsize;
 				return;
 			}
 			
@@ -213,6 +217,9 @@ namespace System.Windows.Forms {
 			}
 			
 			XplatUI.Text (Handle, Text.Replace (Environment.NewLine, string.Empty));
+
+			if (ClientSize != old_clientsize)
+				ClientSize = old_clientsize;
 		}
 		
 		internal void SelectActiveControl ()
@@ -236,7 +243,7 @@ namespace System.Windows.Forms {
 
 				this.is_visible = visible;
 			} else {
-				Select (ActiveControl);
+				SendControlFocus (ActiveControl);
 			}
 		}
 		
@@ -596,7 +603,7 @@ namespace System.Windows.Forms {
 			set {
 				if (control_box != value) {
 					control_box = value;
-					UpdateStyles();
+					UpdateFormStyles();
 				}
 			}
 		}
@@ -662,15 +669,10 @@ namespace System.Windows.Forms {
 					window_manager.UpdateBorderStyle (value);
 				}
 
-				Size current_client_size = ClientSize;
-				UpdateStyles();
+				UpdateFormStyles();
 				
-				if (this.IsHandleCreated) {
-					this.Size = InternalSizeFromClientSize (current_client_size);
+				if (this.IsHandleCreated)
 					XplatUI.InvalidateNC (this.Handle);
-				} else if (is_clientsize_set) {
-					this.Size = InternalSizeFromClientSize (current_client_size);
-				}
 			}
 		}
 
@@ -1124,7 +1126,7 @@ namespace System.Windows.Forms {
 			set {
 				if (this.show_icon != value ) {
 					this.show_icon = value;
-					UpdateStyles ();
+					UpdateFormStyles ();
 					
 					if (IsHandleCreated) {
 						XplatUI.SetIcon (this.Handle, value == true ? this.Icon : null);
@@ -2197,7 +2199,7 @@ namespace System.Windows.Forms {
 				if (keyData == Keys.Enter) {
 					IntPtr window = XplatUI.GetFocus ();
 					Control c = Control.FromHandle (window);
-					if (c is Button && c.FindForm () == this) {
+					if (c is Button && c.Visible && c.Enabled && c.FindForm () == this) {
 						((Button)c).PerformClick ();
 						return true;
 					}
@@ -2892,6 +2894,13 @@ namespace System.Windows.Forms {
 			}
 			
 			is_loaded = true;
+		}
+
+		private void UpdateFormStyles() {
+			var old_clientsize = ClientSize;
+			UpdateStyles();
+			if ((!IsHandleCreated && is_clientsize_set) || ClientSize != old_clientsize)
+				ClientSize = old_clientsize;
 		}
 
 		private void UpdateMinMax()

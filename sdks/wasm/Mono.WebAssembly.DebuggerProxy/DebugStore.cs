@@ -10,6 +10,7 @@ using Mono.Cecil.Pdb;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace WebAssembly.Net.Debugging {
 	internal class BreakPointRequest {
@@ -24,7 +25,9 @@ namespace WebAssembly.Net.Debugging {
 
 		public static BreakPointRequest Parse (JObject args, DebugStore store)
 		{
-			if (args == null)
+			// Events can potentially come out of order, so DebugStore may not be initialized
+			// The BP being set in these cases are JS ones, which we can safely ignore
+			if (args == null || store == null)
 				return null;
 
 			var url = args? ["url"]?.Value<string> ();
@@ -492,6 +495,7 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class DebugStore {
+		MonoProxy proxy;
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 		HttpClient client = new HttpClient ();
 
@@ -500,7 +504,7 @@ namespace WebAssembly.Net.Debugging {
 			public Task<byte[][]> Data { get; set; }
 		}
 
-		public async Task Load (string [] loaded_files)
+		public async Task Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
 		{
 			static bool MatchPdb (string asm, string pdb)
 				=> Path.ChangeExtension (asm, "pdb") == pdb;
@@ -525,6 +529,15 @@ namespace WebAssembly.Net.Debugging {
 						});
 				} catch (Exception e) {
 					Console.WriteLine ($"Failed to read {url} ({e.Message})");
+					var o = JObject.FromObject (new {
+						entry = new {
+							source = "other",
+							level = "warning",
+							text = $"Failed to read {url} ({e.Message})"
+						}
+					});
+					proxy.SendEvent (sessionId, "Log.entryAdded", o, token);
+
 				}
 			}
 
@@ -547,7 +560,7 @@ namespace WebAssembly.Net.Debugging {
 		public AssemblyInfo GetAssemblyByName (string name)
 			=> assemblies.FirstOrDefault (a => a.Name.Equals (name, StringComparison.InvariantCultureIgnoreCase));
 
-		/*	
+		/*
 		V8 uses zero based indexing for both line and column.
 		PPDBs uses one based indexing for both line and column.
 		*/
@@ -600,7 +613,7 @@ namespace WebAssembly.Net.Debugging {
 		PPDBs uses one based indexing for both line and column.
 		*/
 		static bool Match (SequencePoint sp, int line, int column)
-		{ 
+		{
 			var bp = (line: line + 1, column: column + 1);
 
 			if (sp.StartLine > bp.line || sp.EndLine < bp.line)

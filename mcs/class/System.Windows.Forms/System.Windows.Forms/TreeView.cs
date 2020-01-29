@@ -1419,7 +1419,7 @@ namespace System.Windows.Forms {
 
 		private void Draw (Rectangle clip, Graphics dc)
 		{
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
+			dc.FillRectangle (BackColorBrush, clip);
 
 			if (dash == null)
 				CreateDashPen ();
@@ -1670,7 +1670,6 @@ namespace System.Windows.Forms {
 		{
 			if (!full_row_select || show_lines)
 				DrawSelectionAndFocus(node, dc, node.Bounds);
-
 			
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
@@ -1691,7 +1690,7 @@ namespace System.Windows.Forms {
 			int middle = y + (ActualItemHeight / 2);
 
 			if (full_row_select && !show_lines) {
-				Rectangle r = new Rectangle (1, y, ViewportRectangle.Width - 2, ActualItemHeight);
+				var r = new Rectangle (1, y, ViewportRectangle.Width - 2, ActualItemHeight);
 				DrawSelectionAndFocus (node, dc, r);
 			}
 
@@ -1716,26 +1715,25 @@ namespace System.Windows.Forms {
 			}
 
 			if (draw_mode != TreeViewDrawMode.Normal) {
-				dc.FillRectangle (Brushes.White, node.Bounds);
-				TreeNodeStates tree_node_state = TreeNodeStates.Default;;
+				dc.FillRectangle (BackColorBrush, node.Bounds);
+
+				var tree_node_state = TreeNodeStates.Default;;
 				if (node.IsSelected)
 					tree_node_state = TreeNodeStates.Selected;
 				if (node.Checked)
 					tree_node_state |= TreeNodeStates.Checked;
 				if (node == focused_node)
 					tree_node_state |= TreeNodeStates.Focused;
-				Rectangle node_bounds = node.Bounds;
-				if (draw_mode == TreeViewDrawMode.OwnerDrawText) {
-					node_bounds.X += 3;
-					node_bounds.Y += 1;
-				} else {
+				
+				var node_bounds = node.Bounds;
+				if (draw_mode != TreeViewDrawMode.OwnerDrawText) {
 					node_bounds.X = 0;
 					node_bounds.Width = Width;
 				}
 
-				DrawTreeNodeEventArgs e = new DrawTreeNodeEventArgs (dc, node, node_bounds, tree_node_state);
+				var e = new DrawTreeNodeEventArgs (dc, node, node_bounds, tree_node_state);
 
-				OnDrawNode (e);				
+				OnDrawNode (e);
 				if (!e.DrawDefault)
 					return;
 			}
