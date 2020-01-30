@@ -2,7 +2,7 @@ node_modules
 package-lock.json
 .stamp*
 *.wasm
-mono.js
+dotnet.js
 Mono.Cecil*
 emsdk_env.sh
 builds/threads-debug

@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=3bf09a16-d684-401b-ae3c-2015596b0194
+MONO_CORLIB_VERSION=1A5E0066-58DC-428A-B21C-0AD6CDAE2789
 
 #
 # Put a quoted #define in config.h.
@@ -679,7 +679,7 @@ AC_PROG_LD_GNU
 AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h copyfile.h gnu/lib-names.h)
 AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
 
-# zlib/configure checks for unistd.h existance and defines HAVE_UNISTD_H on the compiler
+# zlib/configure checks for unistd.h existence and defines HAVE_UNISTD_H on the compiler
 # command line (not config.h) if it is present.
 AC_CHECK_HEADER(unistd.h,
     [HAVE_UNISTD_H=1
@@ -2950,13 +2950,6 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(shm_open)
 
 	dnl ********************************
-	dnl ***  Checks for gettext lib  ***
-	dnl ********************************
-	# This is needed for some hackery for AIX;
-	# Mono itself doesn't use it, but DllMap includes it
-	AC_SEARCH_LIBS([gettext], [intl])
-
-	dnl ********************************
 	dnl *** Checks for timezone stuff **
 	dnl ********************************
 	AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -4474,8 +4467,21 @@ case "$host" in
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
+			# mono#18554 - be more robust in testing for -mminimal-toc
+			AC_MSG_NOTICE([Checking PowerPC ABI])
 			if ! (echo $CC | grep -q -- 'clang'); then
-				CFLAGS="$CFLAGS -mminimal-toc"
+				if ! (echo | cc -dM -E - | awk '/_CALL_ELF/ {print $NF}'); then
+					AX_CHECK_COMPILE_FLAG(
+						[-mminimal-toc],
+						[CFLAGS="$CFLAGS -mminimal-toc"],
+						[CFLAGS="$CFLAGS"]
+					)
+					AC_DEFINE([POWERPC_ELF], 1, [PowerPC ELFv1])
+				else
+					# Do not set -mminimal-toc on ELFv2 systems
+					AC_DEFINE([POWERPC_ELFV2], 1, [PowerPC ELFv2])
+					CFLAGS="$CFLAGS"
+				fi
 			fi
 		else
 			TARGET=POWERPC;
@@ -4488,6 +4494,10 @@ case "$host" in
 			BTLS_PLATFORM=powerpc
 			;;
 		  linux*)
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=powerpc
+			;;
+		  freebsd*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
@@ -5026,21 +5036,23 @@ case "$host" in
         SQLITE3="libsqlite3.so"
 	;;
     *-*-*linux*)
-	AC_PATH_X
-	dlsearch_path=`(libtool --config ; echo eval echo \\$sys_lib_dlsearch_path_spec) | sh`
-	AC_MSG_CHECKING(for the soname of libX11.so)
-	for i in $x_libraries $dlsearch_path; do
-		for r in 4 5 6; do
-			if test -f $i/libX11.so.$r; then
-				X11=libX11.so.$r
-				AC_MSG_RESULT($X11)
-			fi
+	if test "x$with_core" != "xonly"; then
+		AC_PATH_X
+		dlsearch_path=`(libtool --config ; echo eval echo \\$sys_lib_dlsearch_path_spec) | sh`
+		AC_MSG_CHECKING(for the soname of libX11.so)
+		for i in $x_libraries $dlsearch_path; do
+			for r in 4 5 6; do
+				if test -f $i/libX11.so.$r; then
+					X11=libX11.so.$r
+					AC_MSG_RESULT($X11)
+				fi
+			done
 		done
-	done
-	
-	if test "x$X11" = "xlibX11.so"; then
-		AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
-		X11=libX11.so.6
+		
+		if test "x$X11" = "xlibX11.so"; then
+			AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
+			X11=libX11.so.6
+		fi
 	fi
 	;;
 esac
@@ -6284,9 +6296,11 @@ else
 	fi
 
 	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
 fi
 
 AC_SUBST(MONO_SUBDIRS)
+AC_SUBST(MONO_NOINST_SUBDIRS)
 
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])

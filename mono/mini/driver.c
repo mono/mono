@@ -281,15 +281,16 @@ mono_parse_default_optimizations (const char* p)
 char*
 mono_opt_descr (guint32 flags) {
 	GString *str = g_string_new ("");
-	int i, need_comma;
+	int i;
+	gboolean need_comma;
 
-	need_comma = 0;
+	need_comma = FALSE;
 	for (i = 0; i < G_N_ELEMENTS (opt_names); ++i) {
 		if (flags & (1 << i) && optflag_get_name (i)) {
 			if (need_comma)
 				g_string_append_c (str, ',');
 			g_string_append (str, optflag_get_name (i));
-			need_comma = 1;
+			need_comma = TRUE;
 		}
 	}
 	return g_string_free (str, FALSE);
@@ -326,6 +327,51 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_CMOV,
        DEFAULT_OPTIMIZATIONS, 
 };
+
+static const guint32
+interp_opt_sets [] = {
+	INTERP_OPT_NONE,
+	INTERP_OPT_INLINE,
+	INTERP_OPT_CPROP,
+	INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_INLINE | INTERP_OPT_CPROP,
+	INTERP_OPT_INLINE | INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS,
+};
+
+static const char* const
+interp_opflags_names [] = {
+	"inline",
+	"cprop",
+	"super-insn"
+};
+
+static const char*
+interp_optflag_get_name (guint32 i)
+{
+	g_assert (i < G_N_ELEMENTS (interp_opflags_names));
+	return interp_opflags_names [i];
+}
+
+static char*
+interp_opt_descr (guint32 flags)
+{
+	GString *str = g_string_new ("");
+	int i;
+	gboolean need_comma;
+
+	need_comma = FALSE;
+	for (i = 0; i < G_N_ELEMENTS (interp_opflags_names); ++i) {
+		if (flags & (1 << i) && interp_optflag_get_name (i)) {
+			if (need_comma)
+				g_string_append_c (str, ',');
+			g_string_append (str, interp_optflag_get_name (i));
+			need_comma = TRUE;
+		}
+	}
+	return g_string_free (str, FALSE);
+}
 
 typedef int (*TestMethod) (void);
 
@@ -686,7 +732,7 @@ mini_regression_list (int verbose, int count, char *images [])
 }
 
 static void
-interp_regression_step (MonoImage *image, int verbose, int *total_run, int *total, GTimer *timer, MonoDomain *domain)
+interp_regression_step (MonoImage *image, int verbose, int *total_run, int *total, const guint32 *opt_flags, GTimer *timer, MonoDomain *domain)
 {
 	int result, expected, failed, cfailed, run;
 	double elapsed, transform_time;
@@ -694,9 +740,19 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	MonoObject *result_obj;
 	int local_skip_index = 0;
 
-	g_print ("Test run: image=%s\n", mono_image_get_filename (image));
+	const char *n = NULL;
+	if (opt_flags) {
+		mini_get_interp_callbacks ()->set_optimizations (*opt_flags);
+		n = interp_opt_descr (*opt_flags);
+	} else {
+		n = mono_interp_opts_string;
+	}
+	g_print ("Test run: image=%s, opts=%s\n", mono_image_get_filename (image), n);
+
 	cfailed = failed = run = 0;
 	transform_time = elapsed = 0.0;
+
+	mini_get_interp_callbacks ()->invalidate_transformed (domain);
 
 	g_timer_start (timer);
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
@@ -724,7 +780,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				cfailed++;
 				g_print ("Test '%s' execution failed.\n", method->name);
 			} else if (exc != NULL) {
-				g_print ("Exception in Test '%s' occured:\n", method->name);
+				g_print ("Exception in Test '%s' occurred:\n", method->name);
 				mono_object_describe (exc);
 				run++;
 				failed++;
@@ -777,7 +833,14 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 
 	total = 0;
 	*total_run = 0;
-	interp_regression_step (image, verbose, total_run, &total, timer, domain);
+
+	if (mono_interp_opts_string) {
+		/* explicit option requested*/
+		interp_regression_step (image, verbose, total_run, &total, NULL, timer, domain);
+	} else {
+		for (int opt = 0; opt < G_N_ELEMENTS (interp_opt_sets); ++opt)
+			interp_regression_step (image, verbose, total_run, &total, &interp_opt_sets [opt], timer, domain);
+	}
 
 	g_timer_destroy (timer);
 	return total;
@@ -2367,9 +2430,9 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
-				mono_loader_set_strict_strong_names (TRUE);
+				mono_loader_set_strict_assembly_name_check (TRUE);
 			else if (strcmp (arg, "legacy") == 0)
-				mono_loader_set_strict_strong_names (FALSE);
+				mono_loader_set_strict_assembly_name_check (FALSE);
 			else
 				fprintf (stderr, "Warning: unknown argument to --assembly-loader. Should be \"strict\" or \"legacy\"\n");
 		} else if (strncmp (argv [i], MONO_HANDLERS_ARGUMENT, MONO_HANDLERS_ARGUMENT_LEN) == 0) {

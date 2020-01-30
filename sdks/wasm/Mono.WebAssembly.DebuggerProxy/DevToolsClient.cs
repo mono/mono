@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 using System.Net.WebSockets;
 using System.Threading;
@@ -9,25 +7,24 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace WsProxy {
-	public class WsClient: IDisposable {
+namespace WebAssembly.Net.Debugging {
+	public class DevToolsClient: IDisposable {
 		ClientWebSocket socket;
 		List<Task> pending_ops = new List<Task> ();
 		TaskCompletionSource<bool> side_exit = new TaskCompletionSource<bool> ();
 		List<byte []> pending_writes = new List<byte []> ();
 		Task current_write;
 
-		public WsClient () {
+		public DevToolsClient () {
 		}
 
-		~WsClient() {
+		~DevToolsClient() {
 			Dispose(false);
 		}
 
 		public void Dispose() {
 			Dispose(true);
 		}
-
 
 		public async Task Close (CancellationToken cancellationToken)
 		{
@@ -133,5 +130,10 @@ namespace WsProxy {
 
 			return false;
 		}
+
+		protected virtual void Log (string priority, string msg)
+		{
+			// 
+		}
 	}
-} 
+}

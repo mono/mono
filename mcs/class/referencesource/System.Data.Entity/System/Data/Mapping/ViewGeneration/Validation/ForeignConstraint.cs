@@ -379,7 +379,7 @@ namespace System.Data.Mapping.ViewGeneration.Validation
                     //We need to check to see if the dependent properties that were mapped from S side are present as
                     //dependant properties of this ref constraint on the Edm side. We need to do the same for principal side but
                     //we can not enforce equality since the order of the properties participating in the constraint on the S side and
-                    //C side could be different. This is OK as long as they are mapped appropriately. We also can not use Existance as a sufficient
+                    //C side could be different. This is OK as long as they are mapped appropriately. We also can not use Existence as a sufficient
                     //condition since it will allow invalid mapping where FK columns could have been flipped when mapping to the Edm side. So
                     //we make sure that the index of the properties in the principal and dependant are same on the Edm side even if they are in
                     //different order for ref constraints for Edm and store side.

@@ -60,7 +60,7 @@ namespace System.Data.Odbc{
                 new SchemaFunctionName(OdbcMetaDataCollectionNames.Tables,ODBC32.SQL_API.SQLTABLES),
                 new SchemaFunctionName(OdbcMetaDataCollectionNames.Views,ODBC32.SQL_API.SQLTABLES)};
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable metaDataCollectionsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.MetaDataCollections];
             if (metaDataCollectionsTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.MetaDataCollections);
@@ -69,7 +69,7 @@ namespace System.Data.Odbc{
             // copy the table filtering out any rows that don't apply to the current version of the provider
             metaDataCollectionsTable = CloneAndFilterCollection(DbMetaDataCollectionNames.MetaDataCollections, null);
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable restrictionsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.Restrictions];
             if (restrictionsTable != null){
                 // copy the table filtering out any rows that don't apply to the current version of the provider
@@ -747,7 +747,7 @@ namespace System.Data.Odbc{
 
             
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable dataTypesTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.DataTypes];
             if (dataTypesTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.DataTypes);
@@ -927,13 +927,13 @@ namespace System.Data.Odbc{
                throw ADP.TooManyRestrictions(DbMetaDataCollectionNames.ReservedWords);
             }
 
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable reservedWordsTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.ReservedWords];
             if (reservedWordsTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.ReservedWords);
             }
 
-            // copy the table filtering out any rows that don't apply to tho current version of the prrovider
+            // copy the table filtering out any rows that don't apply to tho current version of the provider
             reservedWordsTable = CloneAndFilterCollection(DbMetaDataCollectionNames.ReservedWords, null);
 
             DataColumn reservedWordColumn = reservedWordsTable.Columns[DbMetaDataColumnNames.ReservedWord];

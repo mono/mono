@@ -55,8 +55,7 @@ namespace System.Threading {
 		IntPtr native_handle; // used only on Win32
 		/* accessed only from unmanaged code */
 		private IntPtr name_chars;
-		private IntPtr name_generation;
-		private int name_free;
+		private int name_free; // bool
 		private int name_length;
 		private ThreadState state;
 		private object abort_exc;
@@ -307,7 +306,13 @@ namespace System.Threading {
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static Thread GetCurrentThread ();
+		private extern static void GetCurrentThread_icall (ref Thread thread);
+
+		private static Thread GetCurrentThread () {
+			Thread thread = null;
+			GetCurrentThread_icall (ref thread);
+			return thread;
+		}
 
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]

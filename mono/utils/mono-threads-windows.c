@@ -272,7 +272,6 @@ mono_win32_abort_blocking_io_call (MonoThreadInfo *info)
 gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
-	DWORD id = mono_thread_info_get_tid (info);
 	HANDLE handle;
 	DWORD result;
 
@@ -410,6 +409,14 @@ guint64
 mono_native_thread_os_id_get (void)
 {
 	return (guint64)GetCurrentThreadId ();
+}
+
+gint32
+mono_native_thread_processor_id_get (void)
+{
+	PROCESSOR_NUMBER proc_num;
+	GetCurrentProcessorNumberEx (&proc_num);
+	return ((proc_num.Group << 6) | proc_num.Number);
 }
 
 gboolean

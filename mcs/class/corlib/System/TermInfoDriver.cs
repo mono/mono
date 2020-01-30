@@ -195,76 +195,81 @@ namespace System {
 			lock (initLock){
 				if (inited)
 					return;
-				inited = true;
 				
-				/* This should not happen any more, since it is checked for in Console */
-				if (!ConsoleDriver.IsConsole)
-					throw new IOException ("Not a tty.");
-				
-				ConsoleDriver.SetEcho (false);
-				
-				string endString = null;
-				keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
-				keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
-				if (keypadXmit != null) {
-					WriteConsole (keypadXmit); // Needed to get the arrows working
-					if (keypadLocal != null)
-						endString += keypadLocal;
-				}
-				
-				origPair = reader.Get (TermInfoStrings.OrigPair);
-				origColors = reader.Get (TermInfoStrings.OrigColors);
-				setfgcolor = reader.Get (TermInfoStrings.SetAForeground);
-				setbgcolor = reader.Get (TermInfoStrings.SetABackground);
-				maxColors = reader.Get (TermInfoNumbers.MaxColors);
-				maxColors = Math.Max (Math.Min (maxColors, 16), 1);
-				
-				string resetColors = (origColors == null) ? origPair : origColors;
-				if (resetColors != null)
-					endString += resetColors;
-				
-				unsafe {
-					if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size)){
-						control_characters = new byte [17];
-						native_terminal_size = null;
-						//throw new IOException ("Error initializing terminal.");
+				try {
+					/* This should not happen any more, since it is checked for in Console */
+					if (!ConsoleDriver.IsConsole)
+						throw new IOException ("Not a tty.");
+					
+					ConsoleDriver.SetEcho (false);
+					
+					string endString = null;
+					keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
+					keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
+					if (keypadXmit != null) {
+						WriteConsole (keypadXmit); // Needed to get the arrows working
+						if (keypadLocal != null)
+							endString += keypadLocal;
 					}
+					
+					origPair = reader.Get (TermInfoStrings.OrigPair);
+					origColors = reader.Get (TermInfoStrings.OrigColors);
+					setfgcolor = reader.Get (TermInfoStrings.SetAForeground);
+					setbgcolor = reader.Get (TermInfoStrings.SetABackground);
+					maxColors = reader.Get (TermInfoNumbers.MaxColors);
+					maxColors = Math.Max (Math.Min (maxColors, 16), 1);
+					
+					string resetColors = (origColors == null) ? origPair : origColors;
+					if (resetColors != null)
+						endString += resetColors;
+					
+					unsafe {
+						if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size)){
+							control_characters = new byte [17];
+							native_terminal_size = null;
+							//throw new IOException ("Error initializing terminal.");
+						}
+					}
+					
+					stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
+					clear = reader.Get (TermInfoStrings.ClearScreen);
+					bell = reader.Get (TermInfoStrings.Bell);
+					if (clear == null) {
+						clear = reader.Get (TermInfoStrings.CursorHome);
+						clear += reader.Get (TermInfoStrings.ClrEos);
+					}
+					
+					csrVisible = reader.Get (TermInfoStrings.CursorNormal);
+					if (csrVisible == null)
+						csrVisible = reader.Get (TermInfoStrings.CursorVisible);
+					
+					csrInvisible = reader.Get (TermInfoStrings.CursorInvisible);
+					if (term == "cygwin" || term == "linux" || (term != null && term.StartsWith ("xterm")) ||
+						term == "rxvt" || term == "dtterm") {
+						titleFormat = "\x1b]0;{0}\x7"; // icon + window title
+					} else if (term == "iris-ansi") {
+						titleFormat = "\x1bP1.y{0}\x1b\\"; // not tested
+					} else if (term == "sun-cmd") {
+						titleFormat = "\x1b]l{0}\x1b\\"; // not tested
+					}
+					
+					cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
+					
+					GetCursorPosition ();
+	#if DEBUG
+					logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
+					logger.Flush ();
+	#endif
+					if (noGetPosition) {
+						WriteConsole (clear);
+						cursorLeft = 0;
+						cursorTop = 0;
+					}
+
+				} finally {
+					inited = true;
 				}
-				
-				stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
-				clear = reader.Get (TermInfoStrings.ClearScreen);
-				bell = reader.Get (TermInfoStrings.Bell);
-				if (clear == null) {
-					clear = reader.Get (TermInfoStrings.CursorHome);
-					clear += reader.Get (TermInfoStrings.ClrEos);
-				}
-				
-				csrVisible = reader.Get (TermInfoStrings.CursorNormal);
-				if (csrVisible == null)
-					csrVisible = reader.Get (TermInfoStrings.CursorVisible);
-				
-				csrInvisible = reader.Get (TermInfoStrings.CursorInvisible);
-				if (term == "cygwin" || term == "linux" || (term != null && term.StartsWith ("xterm")) ||
-				    term == "rxvt" || term == "dtterm") {
-					titleFormat = "\x1b]0;{0}\x7"; // icon + window title
-				} else if (term == "iris-ansi") {
-					titleFormat = "\x1bP1.y{0}\x1b\\"; // not tested
-				} else if (term == "sun-cmd") {
-					titleFormat = "\x1b]l{0}\x1b\\"; // not tested
-				}
-				
-				cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
-				
-				GetCursorPosition ();
-#if DEBUG
-				logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
-				logger.Flush ();
-#endif
-				if (noGetPosition) {
-					WriteConsole (clear);
-					cursorLeft = 0;
-					cursorTop = 0;
-				}
+
 			}
 		}
 

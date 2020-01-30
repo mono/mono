@@ -40,14 +40,6 @@ enum {
 	VAL_OBJ     = 3 + VAL_POINTER
 };
 
-enum {
-	INTERP_OPT_NONE = 0,
-	INTERP_OPT_INLINE = 1,
-	INTERP_OPT_CPROP = 2,
-	INTERP_OPT_SUPER_INSTRUCTIONS = 4,
-	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS
-};
-
 #if SIZEOF_VOID_P == 4
 typedef guint32 mono_u;
 typedef gint32  mono_i;
@@ -131,6 +123,13 @@ typedef struct _InterpFrame InterpFrame;
 typedef void (*MonoFuncV) (void);
 typedef void (*MonoPIFunc) (void *callme, void *margs);
 
+
+typedef enum {
+	IMETHOD_CODE_INTERP,
+	IMETHOD_CODE_COMPILED,
+	IMETHOD_CODE_UNKNOWN
+} InterpMethodCodeType;
+
 /* 
  * Structure representing a method transformed for the interpreter 
  * This is domain specific
@@ -171,6 +170,7 @@ typedef struct _InterpMethod
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
 	MonoProfilerCallInstrumentationFlags prof_flags;
+	InterpMethodCodeType code_type;
 #ifdef ENABLE_EXPERIMENT_TIERED
 	MiniTieredCounter tiered_counter;
 #endif
@@ -268,6 +268,9 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 
 void
 mono_interp_print_code (InterpMethod *imethod);
+
+gboolean
+mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig);
 
 static inline int
 mint_type(MonoType *type_)

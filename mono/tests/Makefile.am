@@ -287,6 +287,7 @@ TESTS_CS_SRC=		\
 	assembly-loadfile-bindingredirect.cs	\
 	assembly-loadfrom-bindingredirect.cs	\
 	assembly-loadfrom-simplename.cs	\
+	assembly-refonly-load-bytes-bindingredirect.cs \
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -722,6 +723,7 @@ TESTS_CS_SRC=		\
 	bug-10837.cs	\
 	bug-gh-9507.cs	\
 	async-generic-enum.cs \
+	null-blob-main.cs \
 	last-error.cs
 
 # some tests fail to compile on mcs
@@ -2996,8 +2998,11 @@ assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll asse
 
 assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
 
-EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+assembly-refonly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-refonly-load-bytes-bindingredirect.exe.config
 
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+EXTRA_DIST += assembly-refonly-load-bytes-bindingredirect.exe.config
 
 assembly-load-dir1/LibSimpleName.dll: assembly-load-dir1/LibSimpleName.cs
 	$(MKDIR_P) $(dir $@)
@@ -3188,7 +3193,7 @@ coreclr-gcstress:
 # Tests for the Mono lldb plugin
 EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
-	python test_lldb.py $(JITTEST_PROG)
+	$(PYTHON) test_lldb.py $(JITTEST_PROG)
 
 if !ENABLE_MSVC_ONLY
 
@@ -3279,6 +3284,16 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 EXTRA_DIST += internalsvisibleto-runtimetest.cs internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
 
 EXTRA_DIST += weakattribute.cs
+
+EXTRA_DIST += null-blob-null-blob-assm.il null-blob-ref.il null-blob-tgt.cs
+
+null-blob-tgt.dll: null-blob-tgt.cs
+	$(MCS) -target:library -out:$@ $<
+
+null-blob-main.exe: null-blob-main.cs null-blob-tgt.dll null-blob-ref.dll null-blob-null-blob-assm.dll
+	$(MCS) -target:exe -out:$@ $<
+
+null-blob-main.exe$(PLATFORM_AOT_SUFFIX): null-blob-tgt.dll$(PLATFORM_AOT_SUFFIX) null-blob-ref.dll$(PLATFORM_AOT_SUFFIX) null-blob-null-blob-assm.dll$(PLATFORM_AOT_SUFFIX)
 
 # Contains copies of types which don't exist in the desktop profile so tests can use them
 Mono.Runtime.Testing.dll: weakattribute.cs

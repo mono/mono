@@ -409,6 +409,17 @@ mono_llvm_set_call_noalias_ret (LLVMValueRef wrapped_calli)
 		dyn_cast<InvokeInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NoAlias);
 }
 
+void
+mono_llvm_set_alignment_ret (LLVMValueRef call, int alignment)
+{
+	Instruction *ins = unwrap<Instruction> (call);
+	auto &ctx = ins->getContext ();
+	if (isa<CallInst> (ins))
+		dyn_cast<CallInst>(ins)->addAttribute (AttributeList::ReturnIndex, Attribute::getWithAlignment(ctx, alignment));
+	else
+		dyn_cast<InvokeInst>(ins)->addAttribute (AttributeList::ReturnIndex, Attribute::getWithAlignment(ctx, alignment));
+}
+
 static Attribute::AttrKind
 convert_attr (AttrKind kind)
 {
@@ -441,6 +452,14 @@ void
 mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind)
 {
 	unwrap<Function> (func)->addAttribute (AttributeList::FunctionIndex, convert_attr (kind));
+}
+
+void
+mono_llvm_add_func_attr_nv (LLVMValueRef func, const char *attr_name, const char *attr_value)
+{
+	AttrBuilder NewAttrs;
+	NewAttrs.addAttribute (attr_name, attr_value);
+	unwrap<Function> (func)->addAttributes (AttributeList::FunctionIndex, NewAttrs);
 }
 
 void

@@ -18,7 +18,6 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/seq-points-data.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/reflection-internals.h>
@@ -31,180 +30,11 @@
 #include "mintops.h"
 #include "interp-internals.h"
 #include "interp.h"
-
-#define INTERP_INST_FLAG_SEQ_POINT_NONEMPTY_STACK 1
-#define INTERP_INST_FLAG_SEQ_POINT_METHOD_ENTRY 2
-#define INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT 4
-#define INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL 8
-#define INTERP_INST_FLAG_RECORD_CALL_PATCH 16
-
-#define INTERP_LOCAL_FLAG_INDIRECT 1
-#define INTERP_LOCAL_FLAG_DEAD 2
+#include "transform.h"
 
 MonoInterpStats mono_interp_stats;
 
 #define DEBUG 0
-
-typedef struct InterpInst InterpInst;
-
-typedef struct
-{
-	MonoClass *klass;
-	unsigned char type;
-	unsigned char flags;
-} StackInfo;
-
-#define STACK_VALUE_NONE 0
-#define STACK_VALUE_LOCAL 1
-#define STACK_VALUE_ARG 2
-#define STACK_VALUE_I4 3
-#define STACK_VALUE_I8 4
-
-// StackValue contains data to construct an InterpInst that is equivalent with the contents
-// of the stack slot / local / argument.
-typedef struct {
-	// Indicates the type of the stored information. It can be a local, argument or a constant
-	int type;
-	// Holds the local index or the actual constant value
-	union {
-		int local;
-		int arg;
-		gint32 i;
-		gint64 l;
-	};
-} StackValue;
-
-typedef struct
-{
-	// This indicates what is currently stored in this stack slot. This can be a constant
-	// or the copy of a local / argument.
-	StackValue val;
-	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
-	// of the stack slot, because we can't clear the instruction that set it.
-	InterpInst *ins;
-} StackContentInfo;
-
-struct InterpInst {
-	guint16 opcode;
-	InterpInst *next, *prev;
-	// If this is -1, this instruction is not logically associated with an IL offset, it is
-	// part of the IL instruction associated with the previous interp instruction.
-	int il_offset;
-	guint32 flags;
-	guint16 data [MONO_ZERO_LEN_ARRAY];
-};
-
-typedef struct {
-	guint8 *ip;
-	GSList *preds;
-	GSList *seq_points;
-	SeqPoint *last_seq_point;
-
-	// This will hold a list of last sequence points of incoming basic blocks
-	SeqPoint **pred_seq_points;
-	guint num_pred_seq_points;
-} InterpBasicBlock;
-
-typedef enum {
-	RELOC_SHORT_BRANCH,
-	RELOC_LONG_BRANCH,
-	RELOC_SWITCH
-} RelocType;
-
-typedef struct {
-	RelocType type;
-	/* In the interpreter IR */
-	int offset;
-	/* In the IL code */
-	int target;
-} Reloc;
-
-typedef struct {
-	MonoType *type;
-	int mt;
-	int flags;
-	int offset;
-} InterpLocal;
-
-typedef struct
-{
-	MonoMethod *method;
-	MonoMethod *inlined_method;
-	MonoMethodHeader *header;
-	InterpMethod *rtm;
-	const unsigned char *il_code;
-	const unsigned char *ip;
-	const unsigned char *in_start;
-	InterpInst *last_ins, *first_ins;
-	int code_size;
-	int *in_offsets;
-	int current_il_offset;
-	StackInfo **stack_state;
-	int *stack_height;
-	int *vt_stack_size;
-	unsigned char *is_bb_start;
-	unsigned short *new_code;
-	unsigned short *new_code_end;
-	unsigned int max_code_size;
-	StackInfo *stack;
-	StackInfo *sp;
-	unsigned int max_stack_height;
-	unsigned int stack_capacity;
-	unsigned int vt_sp;
-	unsigned int max_vt_sp;
-	unsigned int total_locals_size;
-	InterpLocal *locals;
-	unsigned int locals_size;
-	unsigned int locals_capacity;
-	int n_data_items;
-	int max_data_items;
-	void **data_items;
-	GHashTable *data_hash;
-#ifdef ENABLE_EXPERIMENT_TIERED
-	GHashTable *patchsite_hash;
-#endif
-	int *clause_indexes;
-	gboolean gen_sdb_seq_points;
-	GPtrArray *seq_points;
-	InterpBasicBlock **offset_to_bb;
-	InterpBasicBlock *entry_bb;
-	MonoMemPool     *mempool;
-	GList *basic_blocks;
-	GPtrArray *relocs;
-	gboolean verbose_level;
-	GArray *line_numbers;
-} TransformData;
-
-#define STACK_TYPE_I4 0
-#define STACK_TYPE_I8 1
-#define STACK_TYPE_R4 2
-#define STACK_TYPE_R8 3
-#define STACK_TYPE_O  4
-#define STACK_TYPE_VT 5
-#define STACK_TYPE_MP 6
-#define STACK_TYPE_F  7
-
-static const char *stack_type_string [] = { "I4", "I8", "R4", "R8", "O ", "VT", "MP", "F " };
-
-#if SIZEOF_VOID_P == 8
-#define STACK_TYPE_I STACK_TYPE_I8
-#else
-#define STACK_TYPE_I STACK_TYPE_I4
-#endif
-
-static int stack_type [] = {
-	STACK_TYPE_I4, /*I1*/
-	STACK_TYPE_I4, /*U1*/
-	STACK_TYPE_I4, /*I2*/
-	STACK_TYPE_I4, /*U2*/
-	STACK_TYPE_I4, /*I4*/
-	STACK_TYPE_I8, /*I8*/
-	STACK_TYPE_R4, /*R4*/
-	STACK_TYPE_R8, /*R8*/
-	STACK_TYPE_O,  /*O*/
-	STACK_TYPE_MP, /*P*/
-	STACK_TYPE_VT
-};
 
 #if SIZEOF_VOID_P == 8
 #define MINT_NEG_P MINT_NEG_I8
@@ -332,6 +162,22 @@ static const MagicIntrinsic int_cmpop[] = {
 	{ "op_GreaterThanOrEqual", {MINT_CGE_P, MINT_CGE_UN_P, MINT_CGE_FP}},
 	{ "op_LessThan", {MINT_CLT_P, MINT_CLT_UN_P, MINT_CLT_FP}},
 	{ "op_LessThanOrEqual", {MINT_CLE_P, MINT_CLE_UN_P, MINT_CLE_FP}}
+};
+
+static const char *stack_type_string [] = { "I4", "I8", "R4", "R8", "O ", "VT", "MP", "F " };
+
+static int stack_type [] = {
+	STACK_TYPE_I4, /*I1*/
+	STACK_TYPE_I4, /*U1*/
+	STACK_TYPE_I4, /*I2*/
+	STACK_TYPE_I4, /*U2*/
+	STACK_TYPE_I4, /*I4*/
+	STACK_TYPE_I8, /*I8*/
+	STACK_TYPE_R4, /*R4*/
+	STACK_TYPE_R8, /*R8*/
+	STACK_TYPE_O,  /*O*/
+	STACK_TYPE_MP, /*P*/
+	STACK_TYPE_VT
 };
 
 static gboolean generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error);
@@ -870,8 +716,8 @@ get_data_item_index (TransformData *td, void *ptr)
 	return index;
 }
 
-static gboolean
-jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
+gboolean
+mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 {
 	GSList *l;
 
@@ -886,6 +732,8 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (method->is_inflated)
 		return FALSE;
 	if (method->string_ctor)
+		return FALSE;
+	if (method->wrapper_type != MONO_WRAPPER_NONE)
 		return FALSE;
 
 	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
@@ -1052,6 +900,21 @@ mono_interp_print_code (InterpMethod *imethod)
 
 	start = (guint8*) jinfo->code_start;
 	dump_mint_code ((const guint16*)start, (const guint16*)(start + jinfo->code_size));
+}
+
+/* For debug use */
+void
+mono_interp_print_td_code (TransformData *td)
+{
+	InterpInst *ins = td->first_ins;
+
+	char *name = mono_method_full_name (td->method, TRUE);
+	g_print ("IR for \"%s\"\n", name);
+	g_free (name);
+	while (ins) {
+		dump_interp_inst_newline (ins);
+		ins = ins->next;
+	}
 }
 
 
@@ -1698,7 +1561,15 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 #endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Runtime.CompilerServices") && !strcmp (klass_name, "RuntimeHelpers")) {
 #ifdef ENABLE_NETCORE
-		if (!strcmp (tm, "IsBitwiseEquatable")) {
+		if (!strcmp (tm, "get_OffsetToStringData")) {
+			g_assert (csignature->param_count == 0);
+			int offset = MONO_STRUCT_OFFSET (MonoString, chars);
+			interp_add_ins (td, MINT_LDC_I4);
+			WRITE32_INS (td->last_ins, 0, &offset);
+			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I4);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (tm, "IsBitwiseEquatable")) {
 			g_assert (csignature->param_count == 0);
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
@@ -1737,6 +1608,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
 		// We must intrinsify this method on interp so we don't return a pointer to native code entering interpreter
 		*op = MINT_LDFTN_DYNAMIC;
+	} else if (in_corlib && target_method->klass == mono_defaults.systemtype_class && !strcmp (target_method->name, "op_Equality")) {
+		*op = MINT_CEQ_P;
 	} else if (in_corlib && target_method->klass == mono_defaults.object_class) {
 		if (!strcmp (tm, "InternalGetHashCode"))
 			*op = MINT_INTRINS_GET_HASHCODE;
@@ -2505,7 +2378,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			td->last_ins->data [1] = get_data_item_index (td, mono_method_signature_internal (target_method));
 		}
 #endif
-	} else if (!calli && !is_virtual && jit_call_supported (target_method, csignature)) {
+	} else if (!calli && !is_virtual && mono_interp_jit_call_supported (target_method, csignature)) {
 		interp_add_ins (td, MINT_JIT_CALL);
 		td->last_ins->data [0] = get_data_item_index (td, (void *)mono_interp_get_imethod (domain, target_method, error));
 		mono_error_assert_ok (error);
@@ -2975,6 +2848,12 @@ interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMet
 	imethod->locals_size = offset;
 	g_assert (imethod->locals_size < 65536);
 	td->total_locals_size = offset;
+}
+
+void
+mono_test_interp_method_compute_offsets (TransformData *td, InterpMethod *imethod, MonoMethodSignature *signature, MonoMethodHeader *header)
+{
+	interp_method_compute_offsets (td, imethod, signature, header);
 }
 
 /* Return false is failure to init basic blocks due to being in inline method */
@@ -7015,7 +6894,7 @@ retry:
 			int loaded_local = ins->data [0];
 			local_ref_count [loaded_local]++;
 			InterpInst *prev_ins = interp_prev_ins (ins);
-			if (MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
+			if (prev_ins && MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
 				int mt = prev_ins->opcode - MINT_STLOC_I1;
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
@@ -7318,6 +7197,12 @@ retry:
 	g_free (local_ref_count);
 }
 
+void
+mono_test_interp_cprop (TransformData *td)
+{
+	interp_cprop (td);
+}
+
 static void
 interp_super_instructions (TransformData *td)
 {
@@ -7571,6 +7456,12 @@ exit:
 	g_ptr_array_free (td->seq_points, TRUE);
 	g_array_free (td->line_numbers, TRUE);
 	mono_mempool_destroy (td->mempool);
+}
+
+gboolean
+mono_test_interp_generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
+{
+	return generate_code (td, method, header, generic_context, error);
 }
 
 static mono_mutex_t calc_section;

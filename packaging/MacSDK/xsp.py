@@ -1,8 +1,8 @@
 class XspPackage (GitHubTarballPackage):
 
     def __init__(self):
-        GitHubTarballPackage.__init__(self, 'mono', 'xsp', '4.4',
-                                      'c98e068f5647fb06ff2fbef7cd5f1b35417362b1',
+        GitHubTarballPackage.__init__(self, 'mono', 'xsp', '4.7',
+                                      '72b24c04c9246dc1005a3cd1a37398777613880d',
                                       configure='./autogen.sh --prefix="%{package_prefix}"')
 
     def install(self):

@@ -176,3 +176,6 @@
 -nomethod System.Net.Security.Tests.ApmSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
 -nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneOrBothUseDefault_Ok
 -nomethod System.Net.Security.Tests.AsyncSslStreamSystemDefaultTest.ClientAndServer_OneUsesDefault_OtherUsesLowerProtocol_Fails
+
+# OOM
+-nomethod System.Buffers.Text.Tests.Base64EncoderUnitTests.BasicEncodingWithFinalBlockFalse

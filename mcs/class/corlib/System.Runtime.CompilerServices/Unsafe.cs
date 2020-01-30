@@ -82,6 +82,11 @@ namespace System.Runtime.CompilerServices
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static ref T AsRef<T> (in T source)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		public static System.IntPtr ByteOffset<T> (ref T origin, ref T target)
 		{

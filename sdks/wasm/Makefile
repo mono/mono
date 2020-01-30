@@ -98,12 +98,15 @@ ifeq ($(UNAME),Darwin)
 endif
 .PHONY: jsup
 
-jsup:
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
 
-.stamp-jsvu:
-	npm install
-	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
+jsup: .stamp-jsvu
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+
+.stamp-jsvu: 
+	npm install npm@^6.13.4
+	node_modules/npm/bin/npm-cli.js install
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 	touch $@
 
 .PHONY: toolchain
@@ -142,8 +145,8 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/mono.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
-	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/mono.js
+builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
+	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/dotnet.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
@@ -154,7 +157,7 @@ builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
 builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(3) -Oz -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -s USE_ZLIB=1 src/zlib-helper.c -c -o $$@
 
-build-native: builds/$(1)/mono.js
+build-native: builds/$(1)/dotnet.js
 
 endef
 
@@ -189,6 +192,10 @@ bcl:
 #
 
 ifdef ENABLE_WASM_NETCORE
+
+ifeq ($(DOTNET_REPO_DIR),)
+$(error "Set the DOTNET_REPO_DIR variable for the netcore build to a checkout of the dotnet/runtime repo.")
+endif
 
 #NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
 NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
@@ -225,18 +232,18 @@ build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dl
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/hello-netcore
 
-bin/hello-netcore/mono.js: build-hello-netcore
+bin/hello-netcore/dotnet.js: build-hello-netcore
 
-run-hello-netcore: bin/hello-netcore/mono.js
+run-hello-netcore: bin/hello-netcore/dotnet.js
 	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
 
 build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
 	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
-bin/aot-hello-netcore/mono.js: build-aot-hello-netcore
+bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
 
-run-aot-hello-netcore: bin/aot-hello-netcore/mono.js
+run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
 	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
 # Path to <mono repo>/netcore/netcore/corefx/tests/extracted
@@ -251,16 +258,16 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
-bin/$(2)/mono.js: packager.exe runtime-tests.js corefx-exclusions.rsp
+bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
 	cd xunit-runner && dotnet build /nologo /v:q
 	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
 	ninja -v -C obj/$(2)
 #	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
-build-$(1): bin/$(2)/mono.js
+build-$(1): bin/$(2)/dotnet.js
 
-run-$(1): bin/$(2)/mono.js
+run-$(1): bin/$(2)/dotnet.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
 
 endef
@@ -387,13 +394,13 @@ xunit-runner.exe: xunit-runner/xunit-runner.cs
 # $(4) - command line arguments
 define XunitTestTemplate
 
-bin/$(2)/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
+bin/$(2)/dotnet.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework xunit-runner.exe runtime-tests.js xunit-exclusions.rsp
 	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 	ninja -v -C obj/$(2)
 
-build-$(1): bin/$(2)/mono.js
+build-$(1): bin/$(2)/dotnet.js
 
-run-$(1): bin/$(2)/mono.js
+run-$(1): bin/$(2)/dotnet.js
 	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.exe $(3) $(4) `cat xunit-exclusions.rsp | grep -v '#'`)
 
 endef
@@ -413,18 +420,18 @@ $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
 	$(DOTNET_BUILD) tests/browser/src -v normal
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
 	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
 	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
 	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
-	(cd $(BROWSER_TEST) && npm install)
+	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
 .stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
@@ -432,13 +439,13 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
-build-aot-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
-	ninja -v -C obj/aot-sample
+build-aot-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	ninja -v -C obj/aot-hello
 
-build-aot-sample-profiled: packager.exe hello.exe data.aotprofile
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample-profiled --nobinding --builddir=obj/aot-sample-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
-	ninja -v -C obj/aot-sample-profiled
+build-aot-hello-profiled: packager.exe hello.exe data.aotprofile
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-profiled --nobinding --builddir=obj/aot-hello-profiled --aot --template=runtime-tests.js --pinvoke-libs=libfoo --aot-profile=data.aotprofile --aot-interp hello.exe
+	ninja -v -C obj/aot-hello-profiled
 
 $(WASM_TESTS_BIN):
 	mkdir -p $@
@@ -459,11 +466,11 @@ build-zlib-interp-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 run-zlib-interp-sample: build-zlib-interp-sample
 	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
-build-zlib-aot-sample: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
+build-zlib-aot-hello: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-zlib-sample --nobinding --builddir=obj/aot-zlib-sample --aot --template=runtime-tests.js $(WASM_TESTS_BIN)/zlibtest.exe  --zlib
 	ninja -v -C obj/aot-zlib-sample
 
-run-zlib-aot-sample: build-zlib-aot-sample
+run-zlib-aot-hello: build-zlib-aot-hello
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 build-mixed-sample: packager.exe hello.exe
@@ -479,23 +486,23 @@ hello.exe: hello.cs
 hello-io.exe: hello-io.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello-io.cs
 
-run-aot-sample: build-aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+run-aot-hello: build-aot-hello
+	(cd bin/aot-hello && $(SM) runtime.js --run hello.exe)
 
-run-aot-sample-profiled: build-aot-sample-profiled
-	(cd bin/aot-sample-profiled && $(SM) runtime.js --run hello.exe)
+run-aot-hello-profiled: build-aot-hello-profiled
+	(cd bin/aot-hello-profiled && $(SM) runtime.js --run hello.exe)
 
-build-interp-sample: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe
-	ninja -v -C obj/interp-sample
+build-interp-hello: packager.exe hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-hello --nobinding --builddir=obj/interp-hello --template=runtime-tests.js hello.exe
+	ninja -v -C obj/interp-hello
 
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
-	(cd bin/io-sample && python $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
+	(cd bin/io-sample && $(PYTHON) $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
 
-run-interp-sample: build-interp-sample
-	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
+run-interp-hello: build-interp-hello
+	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
 
 threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
@@ -592,6 +599,8 @@ run-aot-all: build-aot-all
 
 build-debug-sample: .stamp-build-debug-sample
 
+rebuild-debug-sample: clean-debug-sample build-debug-sample
+
 build-debugger-test-app: .stamp-build-debugger-test-app
 build-managed: build-debug-sample build-test-suite
 
@@ -639,18 +648,18 @@ run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
 
 run-browser-tests: build-browser-test-suite
-	(cd $(BROWSER_TEST) && npm test)
+	(cd $(BROWSER_TEST) && $(NPM) test)
 
 build-browser-test-suite: $(BROWSER_TEST)/.stamp-browser-test-suite
 
 run-browser-threads-tests: $(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite
-	(cd $(BROWSER_TEST_THREADS) && npm test)
+	(cd $(BROWSER_TEST_THREADS) && $(NPM) test)
 
 run-browser-dynamic-tests: $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite
-	(cd $(BROWSER_TEST_DYNAMIC) && npm test)
+	(cd $(BROWSER_TEST_DYNAMIC) && $(NPM) test)
 
 run-browser-safari-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
-	(cd $(BROWSER_TEST) && npm run testsafari)
+	(cd $(BROWSER_TEST) && $(NPM) run testsafari)
 
 clean: clean-browser-tests
 	$(RM) -r *.o
@@ -727,12 +736,16 @@ package: build build-sdk build-dbg-proxy
 	rm -rf tmp
 
 serve:
-	python server.py
+	$(PYTHON) server.py
 
 canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
-check-aot: do-aot-sample
+check-aot: do-aot-hello
+
+clean-debug-sample:
+	$(RM) .stamp-build-debug-sample
+	$(RM) .stamp-build-debugger-test-app
 
 clean-sdk:
 	$(RM) -r sdk/**/bin

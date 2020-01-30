@@ -4908,19 +4908,21 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	goto_if_nok (error, return_null);
 	g_assert (method);
 
-	MonoBoolean is_terminating;
-	is_terminating = TRUE;
-	gpointer args [2];
-	args [0] = MONO_HANDLE_RAW (exc); // FIXMEcoop
-	args [1] = &is_terminating;
+	{
+		MonoBoolean is_terminating = TRUE;
 
-	MonoObjectHandle obj;
-	obj = mono_object_new_handle (mono_domain_get (), klass, error);
-	goto_if_nok (error, return_null);
+		gpointer args [ ] = {
+			MONO_HANDLE_RAW (exc), // FIXMEcoop (ok as long as handles are pinning)
+			&is_terminating
+		};
 
-	mono_runtime_invoke_handle_void (method, obj, args, error);
-	goto_if_nok (error, return_null);
-	return obj;
+		MonoObjectHandle obj = mono_object_new_handle (mono_domain_get (), klass, error);
+		goto_if_nok (error, return_null);
+
+		mono_runtime_invoke_handle_void (method, obj, args, error);
+		goto_if_nok (error, return_null);
+		return obj;
+	}
 
 return_null:
 	return MONO_HANDLE_NEW (MonoObject, NULL);
@@ -5618,7 +5620,7 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 		if (!obj) {
 			obj = mono_object_new_checked (mono_domain_get (), method->klass, error);
-			mono_error_assert_ok (error);
+			return_val_if_nok (error, NULL);
 			g_assert (obj); /*maybe we should raise a TLE instead?*/
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (obj)) {
@@ -6480,7 +6482,7 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 		o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, len);
 
 	if (G_UNLIKELY (!o)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %zd bytes", (gsize) byte_len);
+		mono_error_set_out_of_memory (error, "Could not allocate %" G_GSIZE_FORMAT "d bytes", (gsize) byte_len);
 		return NULL;
 	}
 
@@ -6593,7 +6595,7 @@ mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *err
 	o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, n);
 
 	if (G_UNLIKELY (!o)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %zd bytes", (gsize) byte_len);
+		mono_error_set_out_of_memory (error, "Could not allocate %" G_GSIZE_FORMAT "d bytes", (gsize) byte_len);
 		return NULL;
 	}
 
@@ -9142,9 +9144,7 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 	
 	/* MonoType *type = m_class_get_byval_arg (klass); */
 
-	gpointer args[2];
-	args [0] = &klass;
-	args [1] = &field;
+	gpointer args [ ] = { &klass, &field };
 
 	return mono_runtime_invoke_checked (tp_load, this_obj, args, error);
 }
@@ -9257,10 +9257,7 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 
 	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_store)
 
-	gpointer args[3];
-	args [0] = &klass;
-	args [1] = &field;
-	args [2] = arg;
+	gpointer args [ ] = { &klass, &field, arg };
 
 	mono_runtime_invoke_checked (tp_store, this_obj, args, error);
 	return is_ok (error);

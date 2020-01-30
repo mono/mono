@@ -982,8 +982,6 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 		ctor = m;
 	}
 
-	void *args [16];
-
 	MonoReflectionTypeHandle rt;
 	rt = mono_type_get_object_handle (domain, sig_param, error);
 	goto_if_nok (error, leave);
@@ -1036,17 +1034,21 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	}
 
 	/* internal RuntimeParameterInfo (string name, Type type, int position, int attrs, object defaultValue, MemberInfo member, MarshalAsAttribute marshalAs) */
-	args [0] = MONO_HANDLE_RAW (name_str);
-	args [1] = MONO_HANDLE_RAW (rt);
-	args [2] = &idx;
-	int attrs;
-	attrs = sig_param->attrs;
-	args [3] = &attrs;
-	args [4] = MONO_HANDLE_RAW (def_value);
-	args [5] = MONO_HANDLE_RAW (member);
-	args [6] = MONO_HANDLE_RAW (mobj);
+	{
+		int attrs = sig_param->attrs;
 
-	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
+		void *args [ ] = {
+			MONO_HANDLE_RAW (name_str),
+			MONO_HANDLE_RAW (rt),
+			&idx,
+			&attrs,
+			MONO_HANDLE_RAW (def_value),
+			MONO_HANDLE_RAW (member),
+			MONO_HANDLE_RAW (mobj)
+		};
+
+		mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
+	}
 	goto_if_nok (error, leave);
 
 	MONO_HANDLE_ARRAY_SETREF (dest, idx, param);
@@ -1945,7 +1947,7 @@ _mono_reflection_get_type_from_info (MonoAssemblyLoadContext *alc, MonoTypeNameP
 
 	if (info->assembly.name) {
 		MonoAssembly *assembly = mono_assembly_loaded_internal (alc, &info->assembly, FALSE);
-		if (!assembly && image && image->assembly && mono_assembly_names_equal (&info->assembly, &image->assembly->aname))
+		if (!assembly && image && image->assembly && mono_assembly_check_name_match (&info->assembly, &image->assembly->aname))
 			/* 
 			 * This could happen in the AOT compiler case when the search hook is not
 			 * installed.
