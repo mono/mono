@@ -599,6 +599,8 @@ run-aot-all: build-aot-all
 
 build-debug-sample: .stamp-build-debug-sample
 
+rebuild-debug-sample: clean-debug-sample build-debug-sample
+
 build-debugger-test-app: .stamp-build-debugger-test-app
 build-managed: build-debug-sample build-test-suite
 
@@ -740,6 +742,10 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-hello
+
+clean-debug-sample:
+	$(RM) .stamp-build-debug-sample
+	$(RM) .stamp-build-debugger-test-app
 
 clean-sdk:
 	$(RM) -r sdk/**/bin
