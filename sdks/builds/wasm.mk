@@ -65,7 +65,8 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-icall-tables \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
-	$(if $(ENABLE_CXX),--enable-cxx)
+	$(if $(ENABLE_CXX),--enable-cxx) \
+	--enable-checked-build=private_types
 
 # $(1) - target
 define WasmRuntimeTemplate
