@@ -1753,7 +1753,7 @@ mono_get_version_info (void)
 static gboolean enable_debugging;
 
 static void
-mono_enable_counters (void)
+enable_runtime_stats (void)
 {
 	mono_counters_enable (-1);
 	mono_atomic_store_bool (&mono_stats.enabled, TRUE);
@@ -1828,9 +1828,9 @@ mono_jit_parse_options (int argc, char * argv[])
 
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_enable_counters ();
+			enable_runtime_stats ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
-			mono_enable_counters ();
+			enable_runtime_stats ();
 			if (mono_stats_method_desc)
 				g_free (mono_stats_method_desc);
 			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
@@ -2276,9 +2276,9 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_enable_counters ();
+			enable_runtime_stats ();
 		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
-			mono_enable_counters ();
+			enable_runtime_stats ();
 			if (mono_stats_method_desc)
 				g_free (mono_stats_method_desc);
 			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
