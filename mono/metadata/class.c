@@ -5168,9 +5168,8 @@ mono_class_init (MonoClass *klass)
 	locked = TRUE;
 
 	if (klass->inited || mono_class_has_failure (klass)) {
-		mono_loader_unlock ();
 		/* Somebody might have gotten in before us */
-		return !mono_class_has_failure (klass);
+		goto leave;
 	}
 
 	UnlockedIncrement (&mono_stats.initialized_class_count);
