@@ -825,7 +825,7 @@ class Driver {
 			strip_cmd = " && $wasm_strip $out_wasm";
 		if (enable_simd) {
 			aot_args += "mattr=simd,";
-			emcc_flags = "-s SIMD=1 ";
+			emcc_flags += "-s SIMD=1 ";
 		}
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
