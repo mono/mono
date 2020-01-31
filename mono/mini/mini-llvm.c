@@ -2139,7 +2139,7 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 
 					LLVMSetLinkage (callee, LLVMExternalLinkage);
 
-					g_hash_table_insert (ctx->module->direct_callables, (char*)callee_name, callee);
+					g_hash_table_insert (ctx->module->direct_callables, callee_name, callee);
 				} else {
 					/* LLVMTypeRef's are uniqued */
 					if (LLVMGetElementType (LLVMTypeOf (callee)) != llvm_sig)
