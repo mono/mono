@@ -366,9 +366,11 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
-.stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
+debug_sample/dotnet.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
 	$(PACKAGER) --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
-	touch $@	
+	touch $@
+
+build-debug-sample: debug_sample/dotnet.js
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
@@ -596,8 +598,6 @@ build-aot-all: build
 
 run-aot-all: build-aot-all
 	for suite in $(AOT_TEST_SUITES); do $(MAKE) run-aot-$$suite || exit 1; done
-
-build-debug-sample: .stamp-build-debug-sample
 
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
