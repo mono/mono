@@ -665,7 +665,7 @@ clean: clean-browser-tests
 	$(RM) -r *.o
 	$(RM) -r ./obj
 	$(RM) -r ./bin
-	$(RM) -r .stamp-build-debug-sample
+	$(RM) -r debug_sample/dotnet.js
 	$(RM) -r .stamp-build-test-suite
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
@@ -744,7 +744,7 @@ canary:
 check-aot: do-aot-hello
 
 clean-debug-sample:
-	$(RM) .stamp-build-debug-sample
+	$(RM) debug_sample/dotnet.js
 	$(RM) .stamp-build-debugger-test-app
 
 clean-sdk:
