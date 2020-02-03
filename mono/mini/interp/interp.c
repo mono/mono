@@ -292,14 +292,6 @@ static gboolean interp_init_done = FALSE;
 static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
 
 static MONO_NEVER_INLINE void
-interp_exec_method_newobj_fast (InterpFrame *frame, ThreadContext *context, MonoError *error)
-// This function makes WebAsssembly stacks clearer, so you can see which recursion
-// is occuring, in the absence of line numbers in the debugger.
-{
-	interp_exec_method_full (frame, context, NULL, error);
-}
-
-static MONO_NEVER_INLINE void
 interp_exec_method_newobj_vtst_fast (InterpFrame *frame, ThreadContext *context, MonoError *error)
 // This function makes WebAsssembly stacks clearer, so you can see which recursion
 // is occuring, in the absence of line numbers in the debugger.
@@ -5123,9 +5115,10 @@ call:;
 
 			param_count = ip [2];
 
-			if (param_count) {
+			// Make room for two copies of o -- this parameter and return value.
+			if (param_count || !is_inlined) {
 				sp -= param_count;
-				memmove (sp + 1 + is_inlined, sp, param_count * sizeof (stackval));
+				memmove (sp + 2, sp, param_count * sizeof (stackval));
 			}
 
 			OBJREF (o) = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
@@ -5134,24 +5127,21 @@ call:;
 				goto throw_error_label;
 			}
 
+			// Store o next to and before the parameters on the stack so GC will see it,
+			// and where it is needed when the call returns.
 			sp [0].data.o = o;
+			sp [1].data.o = o;
+			ip += 4;
 			if (is_inlined) {
-				sp [1].data.o = o;
 				sp += param_count + 2;
 			} else {
-				InterpMethod *ctor_method = (InterpMethod*) frame->imethod->data_items [imethod_index];
-				frame->ip = ip;
-
-				child_frame = alloc_frame (context, &vtable, frame, ctor_method, sp, NULL);
-
-				// FIXME Remove recursion.
-				interp_exec_method_newobj_fast (child_frame, context, error);
-
-				CHECK_RESUME_STATE (context);
-				sp [0].data.o = o;
-				sp++;
+				cmethod = (InterpMethod*)frame->imethod->data_items [imethod_index];
+				frame->ip = ip - 4;
+				is_void = TRUE;
+				retval = NULL;
+				++sp; // Point sp at this, after return value.
+				goto call;
 			}
-			ip += 4;
 
 			MINT_IN_BREAK;
 		}
