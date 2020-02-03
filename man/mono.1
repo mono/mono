@@ -860,9 +860,11 @@ Instruct the runtime on the number of times that the method specified
 by --compile (or all the methods if --compile-all is used) to be
 compiled.  This is used for testing the code generator performance. 
 .TP 
-\fB--stats\fR
+\fB--stats=[method]\fR
 Displays information about the work done by the runtime during the
-execution of an application. 
+execution of an application. If a method (namespace.name:methodname)
+is specified, it will display that information when the method is
+first run in addition to the end of program execution.
 .TP
 \fB--wapi=hps|semdel\fR
 Perform maintenance of the process shared data.
