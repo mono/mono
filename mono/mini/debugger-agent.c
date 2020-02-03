@@ -7889,6 +7889,12 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				g_free (name);
 				return ERR_INVALID_ARGUMENT;
 			}
+		} else if ((t->type == MONO_TYPE_GENERICINST) && 
+					mono_metadata_generic_class_is_valuetype (t->data.generic_class) &&
+					t->data.generic_class->container_class->enumtype){
+			err = decode_vtype (t, domain, addr, buf, &buf, limit);
+			if (err != ERR_NONE)
+				return err;
 		} else {
 			NOT_IMPLEMENTED;
 		}
