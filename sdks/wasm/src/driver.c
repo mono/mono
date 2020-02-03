@@ -42,6 +42,7 @@ void mono_aot_register_module (void **aot_info);
 char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
+int32_t mini_parse_debug_option (const char *option);
 
 static MonoClass* datetime_class;
 static MonoClass* datetimeoffset_class;
@@ -341,6 +342,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #ifdef ENABLE_NETCORE
 	monoeg_g_setenv ("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1", 0);
 #endif
+
+	mini_parse_debug_option ("top-runtime-invoke-unhandled");
 
 	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
 
