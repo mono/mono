@@ -84,7 +84,7 @@
 #endif
 
 /* Arguments that are passed when invoking only a finally/filter clause from the frame */
-typedef struct {
+struct FrameClauseArgs {
 	/* Where we start the frame execution from */
 	const guint16 *start_with_ip;
 	/*
@@ -98,7 +98,7 @@ typedef struct {
 	/* Exception that we are filtering */
 	MonoException *filter_exception;
 	InterpFrame *base_frame;
-} FrameClauseArgs;
+};
 
 /*
  * This code synchronizes with interp_mark_stack () using compiler memory barriers.
@@ -3483,6 +3483,8 @@ method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing,
 	frame->state.ip = ip;  \
 	frame->state.sp = sp; \
 	frame->state.vt_sp = vt_sp; \
+	frame->state.o = o; \
+	frame->state.opcode = opcode; \
 	frame->state.finally_ips = finally_ips; \
 	frame->state.clause_args = clause_args; \
 	} while (0)
@@ -3491,6 +3493,8 @@ method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing,
 #define LOAD_INTERP_STATE(frame) do { \
 	ip = frame->state.ip; \
 	sp = frame->state.sp; \
+	o = frame->state.o; \
+	opcode = frame->state.opcode; \
 	vt_sp = frame->state.vt_sp; \
 	finally_ips = frame->state.finally_ips; \
 	clause_args = (FrameClauseArgs*)frame->state.clause_args;			\
@@ -3523,9 +3527,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	unsigned char *locals = NULL;
 	GSList *finally_ips = NULL;
 
-	// These pass between multiple forms of call.
 	InterpMethod *cmethod;
 	stackval *retval;
+	guint16 opcode;
+	MonoObject *o; // See the comment about GC safety.
 
 	InterpFrame *child_frame;
 #if DEBUG_INTERP
@@ -3592,7 +3597,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	 * but it may be useful for debug
 	 */
 	while (1) {
-		MintOpcode opcode;
 main_loop:
 		/* g_assert (sp >= frame->stack); */
 		/* g_assert(vt_sp - vtalloc <= frame->imethod->vt_stack_size); */
@@ -5087,7 +5091,6 @@ call:;
 		MINT_IN_CASE(MINT_NEWOBJ_FAST) {
 			MonoVTable *vtable = (MonoVTable*) frame->imethod->data_items [ip [3]];
 			INIT_VTABLE (vtable);
-			MonoObject *o; // See the comment about GC safety.
 			guint16 param_count;
 			guint16 imethod_index = ip [1];
 
@@ -5111,14 +5114,11 @@ call:;
 				sp [1].data.o = o;
 				sp += param_count + 2;
 			} else {
-				InterpMethod *ctor_method = (InterpMethod*) frame->imethod->data_items [imethod_index];
+				cmethod = (InterpMethod*)frame->imethod->data_items [imethod_index];
 				frame->ip = ip;
-
-				child_frame = alloc_frame (context, &vtable, frame, ctor_method, sp, NULL);
-				interp_exec_method_newobj_fast (child_frame, context, error);
-				CHECK_RESUME_STATE (context);
-				sp [0].data.o = o;
-				sp++;
+				retval = NULL;
+				opcode = MINT_NEWOBJ_FAST;
+				goto call;
 			}
 			ip += 4;
 
@@ -7139,6 +7139,10 @@ exit_frame:
 		if (retval) {
 			*sp = *retval;
 			sp ++;
+		} else if (opcode == MINT_NEWOBJ_FAST) {
+			sp [0].data.o = o;
+			sp++;
+			ip += 4;
 		}
 		goto main_loop;
 	}
@@ -7502,6 +7506,7 @@ interp_mark_stack (gpointer thread_data, GcScanFunc func, gpointer gc_data, gboo
 		if (frag == context->data_stack.current)
 			break;
 	}
+	// FIXME iframe_stack.o needs to be tracked
 }
 
 #if COUNT_OPS
