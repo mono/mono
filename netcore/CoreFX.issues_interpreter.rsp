@@ -44,6 +44,3 @@
 -nomethod System.IO.Compression.BrotliStreamUnitTests.WrapStreamReturningBadReadValues
 -nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.*
 -nomethod System.Net.Sockets.Tests.SendReceiveSyncForceNonBlocking.TcpReceiveSendGetsCanceledByDispose
-
-# https://github.com/mono/mono/issues/18063 [interpreter] EqualityComparer<TEnum?>.Default.Equals doesn't work correctly
--nomethod System.Collections.Generic.Tests.EqualityComparerTests.NullableEquals*
