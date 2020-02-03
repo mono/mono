@@ -3498,6 +3498,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	unsigned char *locals = NULL;
 	GSList *finally_ips = NULL;
 
+	// These pass between multiple forms of call.
+	InterpMethod *cmethod;
+	stackval *retval;
+
 	InterpFrame *child_frame;
 #if DEBUG_INTERP
 	gint tracing = global_tracing;
@@ -3913,70 +3917,64 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
-			stackval *retval;
-			int num_varargs = 0;
 			MonoMethodSignature *csig;
+
+			cmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
+
+			/* The real signature for vararg calls */
+			csig = (MonoMethodSignature*) frame->imethod->data_items [ip [2]];
 
 			frame->ip = ip;
 
-			retval = sp;
-			child_frame = alloc_frame (context, &retval, frame, (InterpMethod*)frame->imethod->data_items [ip [1]], NULL, retval);
-			/* The real signature for vararg calls */
-			csig = (MonoMethodSignature*) frame->imethod->data_items [ip [2]];
+			retval = (csig->ret->type == MONO_TYPE_VOID) ? NULL : sp;
+
 			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
-			num_varargs = csig->param_count - csig->sentinelpos;
 			vt_sp = copy_varargs_vtstack (csig, sp, vt_sp);
 
 			ip += 3;
 			sp->data.p = vt_sp;
-			child_frame->retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis + num_varargs;
+			// FIXME This seems excessive: frame and csig param_count.
+			sp -= child_frame->imethod->param_count + child_frame->imethod->hasthis + csig->param_count - csig->sentinelpos;
 
-			child_frame->stack_args = sp;
-			interp_exec_method (child_frame, context, error);
-			CHECK_RESUME_STATE (context);
-			if (csig->ret->type != MONO_TYPE_VOID) {
-				*sp = *retval;
-				sp++;
-			}
-			MINT_IN_BREAK;
+			goto call;
 		}
 		MINT_IN_CASE(MINT_VCALL)
 		MINT_IN_CASE(MINT_CALL)
 		MINT_IN_CASE(MINT_CALLVIRT)
 		MINT_IN_CASE(MINT_VCALLVIRT) {
-			stackval *retval;
-			gboolean is_void = *ip == MINT_VCALL || *ip == MINT_VCALLVIRT;
-			gboolean is_virtual = *ip == MINT_CALLVIRT || *ip == MINT_VCALLVIRT;
-			gpointer native_stack_addr = frame->native_stack_addr ? (gpointer)((guint8*)frame->native_stack_addr - 1) : (gpointer)&retval;
-			InterpMethod *imethod;
+			{
+				gboolean is_void = *ip == MINT_VCALL || *ip == MINT_VCALLVIRT;
+				gboolean is_virtual = *ip == MINT_CALLVIRT || *ip == MINT_VCALLVIRT;
 
-			imethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-			sp->data.p = vt_sp;
-			retval = is_void ? NULL : sp;
+				cmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
+				sp->data.p = vt_sp;
+				retval = is_void ? NULL : sp;
 
-			/* decrement by the actual number of args */
-			sp -= ip [2];
+				/* decrement by the actual number of args */
+				sp -= ip [2];
 
-			if (is_virtual) {
-				MonoObject *this_arg = (MonoObject*)sp->data.p;
+				if (is_virtual) {
+					MonoObject *this_arg = (MonoObject*)sp->data.p;
 
-				imethod = get_virtual_method (imethod, this_arg->vtable);
-				if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (imethod->method->klass)) {
-					/* unbox */
-					gpointer unboxed = mono_object_unbox_internal (this_arg);
-					sp [0].data.p = unboxed;
+					cmethod = get_virtual_method (cmethod, this_arg->vtable);
+					if (m_class_is_valuetype (this_arg->vtable->klass) && m_class_is_valuetype (cmethod->method->klass)) {
+						/* unbox */
+						gpointer unboxed = mono_object_unbox_internal (this_arg);
+						sp [0].data.p = unboxed;
+					}
 				}
-			}
 
-			frame->ip = ip;
+				frame->ip = ip;
 #ifdef ENABLE_EXPERIMENT_TIERED
-			ip += 5;
+				ip += 5;
 #else
-			ip += 3;
+				ip += 3;
 #endif
+			}
+call:;
+			gpointer native_stack_addr = frame->native_stack_addr ? (gpointer)((guint8*)frame->native_stack_addr - 1) : &native_stack_addr;
 
 			/*
 			 * Make a non-recursive call by loading the new interpreter state based on child frame,
@@ -3984,11 +3982,11 @@ main_loop:
 			 */
 			SAVE_INTERP_STATE (frame);
 
-			if (G_UNLIKELY (!imethod->transformed)) {
+			if (G_UNLIKELY (!cmethod->transformed)) {
 				MonoException *ex;
 				gboolean tracing;
 
-				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
+				child_frame = alloc_frame (context, native_stack_addr, frame, cmethod, sp, retval);
 				method_entry (context, child_frame, &tracing, &ex);
 				if (G_UNLIKELY (ex)) {
 					frame = child_frame;
@@ -3997,8 +3995,8 @@ main_loop:
 					EXCEPTION_CHECKPOINT;
 				}
 			} else {
-				child_frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
-				alloc_stack_data (context, child_frame, imethod->alloca_size);
+				child_frame = alloc_frame (context, native_stack_addr, frame, cmethod, sp, retval);
+				alloc_stack_data (context, child_frame, cmethod->alloca_size);
 #if DEBUG_INTERP
 				debug_enter (child_frame, &tracing);
 #endif
