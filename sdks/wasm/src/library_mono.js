@@ -295,64 +295,59 @@ var MonoSupportLib = {
 
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "string",
-					value: Module.UTF8ToString (var_value),
-				}
-			});
-		}
+			MONO.mono_wasm_add_null_var ("string");
+			return;
+		} 
+
+		MONO.var_info.push({
+			value: {
+				type: "string",
+				value: Module.UTF8ToString (var_value),
+			}
+		});
+	},
+
+	mono_wasm_add_null_var: function(className)
+	{
+		MONO.var_info.push ({value: {
+			type: "object",
+			className: Module.UTF8ToString (className),
+			description: Module.UTF8ToString (className),
+			subtype: "null"
+		}});
 	},
 
 	mono_wasm_add_obj_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:object:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				className: Module.UTF8ToString (className),
+				description: Module.UTF8ToString (className),
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_array_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:array:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				subtype: "array",
+				className: Module.UTF8ToString (className),
+				description: Module.UTF8ToString (className),
+				objectId: "dotnet:array:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_frame: function(il, method, name) {

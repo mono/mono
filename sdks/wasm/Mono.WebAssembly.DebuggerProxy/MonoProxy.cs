@@ -148,7 +148,8 @@ namespace WebAssembly.Net.Debugging {
 					break;
 				}
 			case "Debugger.enabled": {
-					await LoadStore (new SessionId { sessionId = args? ["sessionId"]?.Value<string> () }, token);
+					if (store == null)
+						await LoadStore (new SessionId { sessionId = args? ["sessionId"]?.Value<string> () }, token);
 					break;
 				}
 			}
@@ -193,7 +194,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.setBreakpointByUrl": {
-					Log ("info", $"BP req {args}");
+					Log ("verbose", $"BP req {args}");
 					var bp_req = BreakPointRequest.Parse (args, store);
 					if (bp_req != null) {
 						await SetBreakPoint (id, bp_req, token);
