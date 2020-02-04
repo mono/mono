@@ -11,10 +11,12 @@
 ../../../external/linker/src/linker/Linker/IDependencyRecorder.cs
 ../../../external/linker/src/linker/Linker/I18nAssemblies.cs
 ../../../external/linker/src/linker/Linker/ILogger.cs
+../../../external/linker/src/linker/Linker/IReflectionPatternRecorder.cs
 ../../../external/linker/src/linker/Linker/IXApiVisitor.cs
 ../../../external/linker/src/linker/Linker/KnownMembers.cs
 ../../../external/linker/src/linker/Linker/LinkContext.cs
 ../../../external/linker/src/linker/Linker/LoadException.cs
+../../../external/linker/src/linker/Linker/LoggingReflectionPatternRecorder.cs
 ../../../external/linker/src/linker/Linker/MarkException.cs
 ../../../external/linker/src/linker/Linker/MarkingHelpers.cs
 ../../../external/linker/src/linker/Linker/MethodAction.cs
