@@ -6292,6 +6292,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		mono_save_args (cfg, sig, inline_args);
 	}
 
+	/*
+	 * Methods with AggressiveInline flag could be inlined even if the class has a cctor.
+	 */
+	if (cfg->method != method && cfg->compile_aot && (method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && mono_class_needs_cctor_run (method->klass, method))
+		emit_class_init (cfg, method->klass);
+
 	if (cfg->method == method && cfg->self_init && cfg->compile_aot && !COMPILE_LLVM (cfg)) {
 		MonoMethod *wrapper;
 		MonoInst *args [2];
