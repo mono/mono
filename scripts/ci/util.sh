@@ -7,7 +7,7 @@ function report_github_status {
     if [ -z "${ghprbActualCommit}" ]; then echo "Not a pull request. Skipping GitHub manual status report."; return 1; fi;
     if [ -z "${GITHUB_STATUS_AUTH_TOKEN}" ]; then echo "No auth token specified. Skipping GitHub manual status report."; return 1; fi;
 
-    wget -qO- --header "Content-Type: application/json" --post-data "{\"state\": \"$1\", \"context\":\"$2\", \"description\": \"$3\", \"target_url\": \"$4\"}" "https://api.github.com/repos/mono/mono/statuses/${ghprbActualCommit}?access_token=${GITHUB_STATUS_AUTH_TOKEN}"
+    wget -qO- --header "Content-Type: application/json" --header "Authorization: token ${GITHUB_STATUS_AUTH_TOKEN}" --post-data "{\"state\": \"$1\", \"context\":\"$2\", \"description\": \"$3\", \"target_url\": \"$4\"}" "https://api.github.com/repos/mono/mono/statuses/${ghprbActualCommit}"
 }
 
 function helix_set_env_vars {
