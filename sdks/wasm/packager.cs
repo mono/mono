@@ -646,13 +646,6 @@ class Driver {
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
-		// the linker does not consider these core by default
-		var wasm_core_assemblies = new Dictionary<string, bool> ();
-		if (add_binding) {		
-			wasm_core_assemblies [BINDINGS_ASM_NAME] = true;
-			wasm_core_assemblies [HTTP_ASM_NAME] = true;
-			wasm_core_assemblies [WEBSOCKETS_ASM_NAME] = true;
-		}
 		// wasm core bindings module
 		var wasm_core_bindings = string.Empty;
 		if (add_binding) {
@@ -841,6 +834,7 @@ class Driver {
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
 		ninja.WriteLine ($"bcl_facades_dir = {bcl_facades_prefix}");
+		ninja.WriteLine ($"framework_dir = {framework_prefix}");
 		ninja.WriteLine ($"tools_dir = {bcl_tools_prefix}");
 		ninja.WriteLine ($"emsdk_env = $builddir/emsdk_env.sh");
 		if (add_binding) {
@@ -1115,17 +1109,10 @@ class Driver {
 				}
 			}
 
-			// the linker does not consider these core by default
-			foreach (var assembly in wasm_core_assemblies.Keys) {
-				linker_args += $"-p {coremode} {assembly} ";
-			}
 			if (linker_verbose) {
 				linker_args += "--verbose ";
 			}
-			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode} ";
-			foreach (var assembly in wasm_core_assemblies.Keys) {
-				linker_args += $"-r {assembly} ";
-			}
+			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -d $framework_dir -c {coremode} -u {usermode} ";
 
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
 			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
