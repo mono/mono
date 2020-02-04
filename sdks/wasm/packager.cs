@@ -686,16 +686,16 @@ class Driver {
 		AssemblyData dedup_asm = null;
 
 		if (enable_dedup) {
-			dedup_asm = new AssemblyData () { name = "aot-dummy",
-					filename = "aot-dummy.dll",
-					bc_path = "$builddir/aot-dummy.dll.bc",
-					o_path = "$builddir/aot-dummy.dll.o",
-					app_path = "$appdir/$deploy_prefix/aot-dummy.dll",
-					linkout_path = "$builddir/linker-out/aot-dummy.dll",
+			dedup_asm = new AssemblyData () { name = "aot-instances",
+					filename = "aot-instances.dll",
+					bc_path = "$builddir/aot-instances.dll.bc",
+					o_path = "$builddir/aot-instances.dll.o",
+					app_path = "$appdir/$deploy_prefix/aot-instances.dll",
+					linkout_path = "$builddir/linker-out/aot-instances.dll",
 					aot = true
 					};
 			assemblies.Add (dedup_asm);
-			file_list.Add ("aot-dummy.dll");
+			file_list.Add ("aot-instances.dll");
 		}
 
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\"").Distinct());
@@ -889,8 +889,8 @@ class Driver {
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; else touch $$f; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
-		ninja.WriteLine ("rule aot-dummy");
-		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /deterministic /out:$out /target:library aot-dummy.cs");
+		ninja.WriteLine ("rule aot-instances-dll");
+		ninja.WriteLine ("  command = echo > aot-instances.cs; csc /deterministic /out:$out /target:library aot-instances.cs");
 		ninja.WriteLine ("rule gen-runtime-icall-table");
 		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
 		ninja.WriteLine ("rule gen-icall-table");
@@ -1036,8 +1036,8 @@ class Driver {
 		if (enable_dedup) {
 			/*
 			 * Run the aot compiler in dedup mode:
-			 * mono --aot=<args>,dedup-include=aot-dummy.dll <assemblies> aot-dummy.dll
-			 * This will process all assemblies and emit all instances into the aot image of aot-dummy.dll
+			 * mono --aot=<args>,dedup-include=aot-instances.dll <assemblies> aot-instances.dll
+			 * This will process all assemblies and emit all instances into the aot image of aot-instances.dll
 			 */
 			var a = dedup_asm;
 			/*
@@ -1050,7 +1050,7 @@ class Driver {
 			ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
 			ninja.WriteLine ($"  mono_path=$builddir/aot-in:{aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
-			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
+			ninja.WriteLine ($"build {a.linkout_path}: aot-instances-dll");
 			// The dedup image might not have changed
 			ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
 			ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path} | $emsdk_env");
