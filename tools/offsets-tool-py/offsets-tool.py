@@ -62,6 +62,7 @@ class OffsetsTool:
 		parser.add_argument ('--targetdir', dest='target_path', help='path to mono tree configured for target', required=True)
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
+		parser.add_argument ('--include-prefix=', dest='include_prefix', help='prefix path to include directory of target')
 		parser.add_argument ('--netcore', dest='netcore', help='target runs with netcore', action='store_true')
 		args = parser.parse_args ()
 
@@ -90,9 +91,28 @@ class OffsetsTool:
 		elif "arm-linux-gnueabihf" == args.abi:
 			self.target = Target ("TARGET_ARM", None, ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + LINUX_DEFINES)
 			self.target_args += ["--target=arm---gnueabihf"]
-			self.target_args += ["-I", "/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/"]
-			self.target_args += ["-I", "/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/"]
 			self.target_args += ["-I", args.sysroot + "/include"]
+
+			if args.include_prefix:
+				if not os.path.isdir (args.include_prefix):
+					print ("provided path via --include-prefix (\"" + args.include_prefix + "\") doesn't exist.", file=sys.stderr)
+					sys.exit (1)
+				self.target_args += ["-I", args.include_prefix + "/include"]
+				self.target_args += ["-I", args.include_prefix + "/include-fixed"]
+			else:
+				found = False
+				for i in range (11, 5, -1):
+					prefix = "/usr/lib/gcc-cross/" + args.abi +  "/" + str (i)
+					if not os.path.isdir (prefix):
+						continue
+					found = True
+					self.target_args += ["-I", prefix + "/include"]
+					self.target_args += ["-I", prefix + "/include-fixed"]
+					break
+
+				if not found:
+					print ("could not find a valid include path for target, provide one via --include-prefix=<path>.", file=sys.stderr)
+					sys.exit (1)
 
 		# iOS
 		elif "arm-apple-darwin10" == args.abi:
