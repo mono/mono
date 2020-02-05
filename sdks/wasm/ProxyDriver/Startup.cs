@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Linq;
+using System.Text.Json;
 
 namespace WebAssembly.Net.Debugging {
 	internal class Startup {
@@ -102,7 +102,7 @@ namespace WebAssembly.Net.Debugging {
 					var version = await ProxyGetJsonAsync<Dictionary<string, string>> (GetEndpoint (context));
 					context.Response.ContentType = "application/json";
 					await context.Response.WriteAsync (
-						JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
+						JsonSerializer.Serialize (mapFunc (version, context, devToolsHost)));
 				}
 
 				async Task RewriteArray (HttpContext context)
@@ -110,7 +110,7 @@ namespace WebAssembly.Net.Debugging {
 					var tabs = await ProxyGetJsonAsync<Dictionary<string, string> []> (GetEndpoint (context));
 					var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray ();
 					context.Response.ContentType = "application/json";
-					await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
+					await context.Response.WriteAsync (JsonSerializer.Serialize (alteredTabs));
 				}
 
 				async Task ConnectProxy (HttpContext context)
@@ -138,8 +138,7 @@ namespace WebAssembly.Net.Debugging {
 		{
 			using (var httpClient = new HttpClient ()) {
 				var response = await httpClient.GetAsync (url);
-				var jsonResponse = await response.Content.ReadAsStringAsync ();
-				return JsonConvert.DeserializeObject<T> (jsonResponse);
+				return await JsonSerializer.DeserializeAsync<T> (await response.Content.ReadAsStreamAsync ());
 			}
 		}
 	}
