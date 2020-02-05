@@ -9,6 +9,7 @@ import clang.cindex
 
 IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
 ANDROID_DEFINES = ["HOST_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"]
+LINUX_DEFINES = ["HOST_LINUX", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
 
 class Target:
 	def __init__(self, arch, platform, others):
@@ -61,6 +62,7 @@ class OffsetsTool:
 		parser.add_argument ('--targetdir', dest='target_path', help='path to mono tree configured for target', required=True)
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
+		parser.add_argument ('--netcore', dest='netcore', help='target runs with netcore', action='store_true')
 		args = parser.parse_args ()
 
 		if not args.libclang or not os.path.isfile (args.libclang):
@@ -83,6 +85,14 @@ class OffsetsTool:
 			self.sys_includes = [args.emscripten_path + "/system/include", args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
+
+		# Linux
+		elif "arm-linux-gnueabihf" == args.abi:
+			self.target = Target ("TARGET_ARM", None, ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + LINUX_DEFINES)
+			self.target_args += ["--target=arm---gnueabihf"]
+			self.target_args += ["-I", "/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/"]
+			self.target_args += ["-I", "/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/"]
+			self.target_args += ["-I", args.sysroot + "/include"]
 
 		# iOS
 		elif "arm-apple-darwin10" == args.abi:
@@ -137,6 +147,9 @@ class OffsetsTool:
 		if not self.target:
 			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
 			sys.exit (1)
+
+		if args.netcore:
+			self.target_args += ["-DENABLE_NETCORE"]
 
 		self.args = args
 
