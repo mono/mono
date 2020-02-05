@@ -349,6 +349,21 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_func_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.mono_wasm_add_null_var (className);
+			return;
+		}
+
+		MONO.var_info.push({
+			value: {
+				type: "function",
+				description: Module.UTF8ToString (className),
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
+	},
+
 	mono_wasm_add_frame: function(il, method, name) {
 		MONO.active_frames.push( {
 			il_pos: il,
