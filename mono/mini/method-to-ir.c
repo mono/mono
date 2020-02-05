@@ -6383,12 +6383,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		*/
 	}
 
-	/*
-	 * Methods with AggressiveInline flag could be inlined even if the class has a cctor.
-	 */
-	if (cfg->method != method && cfg->compile_aot && (method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && mono_class_needs_cctor_run (method->klass, method))
-		emit_class_init (cfg, method->klass);
-
 	if (mono_security_core_clr_enabled ()) {
 		/* check if this is native code, e.g. an icall or a p/invoke */
 		if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
@@ -6520,6 +6514,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_slist_free (class_inits);
 				class_inits = NULL;
 			}
+		}
+
+		/*
+		 * Methods with AggressiveInline flag could be inlined even if the class has a cctor.
+		 * This might create a branch so emit it in the first code bblock instead of into initlocals_bb.
+		 */
+		if (ip - header->code == 0 && cfg->method != method && cfg->compile_aot && (method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && mono_class_needs_cctor_run (method->klass, method)) {
+			emit_class_init (cfg, method->klass);
 		}
 
 		if (skip_dead_blocks) {
