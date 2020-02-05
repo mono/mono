@@ -60,7 +60,7 @@ namespace WebAssembly.Net.Debugging
 							options.ChromePath = chromePath;
 							options.AppPath = appPath;
 							options.PagePath = pagePath;
-							options.DevToolsUrl = new Uri ("http://localhost:9333");
+							options.DevToolsUrl = new Uri ("http://localhost:0");
 						});
 					})
 					.UseKestrel ()
