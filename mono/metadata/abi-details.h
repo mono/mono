@@ -54,6 +54,7 @@ enum {
 
 #ifdef USED_CROSS_COMPILER_OFFSETS
 #define MONO_STRUCT_OFFSET(struct,field) MONO_OFFSET_ ## struct ## _ ## field
+#define MONO_STRUCT_OFFSET_CONSTANT(struct,field) MONO_STRUCT_OFFSET(struct,field)
 #define MONO_STRUCT_SIZE(struct) MONO_SIZEOF_ ## struct
 #else
 /* This macro is expanding to something that uses the comma operator in C [0].
@@ -65,6 +66,7 @@ enum {
  * [0] https://en.wikipedia.org/wiki/Comma_operator
  */
 #define MONO_STRUCT_OFFSET(struct,field) (MONO_OFFSET_ ## struct ## _ ## field == -1, G_STRUCT_OFFSET (struct,field))
+#define MONO_STRUCT_OFFSET_CONSTANT(struct,field) G_STRUCT_OFFSET (struct,field)
 #define MONO_STRUCT_SIZE(struct) (MONO_SIZEOF_ ## struct == -1, (int)sizeof(struct))
 #endif
 
