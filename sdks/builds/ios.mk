@@ -518,9 +518,9 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/ios/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/ios/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
 	cp $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Info.plist
@@ -535,9 +535,9 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
 	cp $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Info.plist
@@ -610,20 +610,20 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib                                                                                                                        $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
 
 	### libs for simulators ###
 	mkdir -p $(ios_LIBS_DIR)/ios-sim/
@@ -672,20 +672,20 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
 
 $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file to avoid rsyncing everything on each build (slows down iterating)
 	mkdir -p $(ios_SOURCES_DIR)
