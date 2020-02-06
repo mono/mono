@@ -28,7 +28,7 @@ usage()
 }
 
 cleanall=false
-cxx=false
+cxx=true
 configuration='Release'
 force_reconfigure=false
 test=false
@@ -91,9 +91,9 @@ if [[ "$force_reconfigure" == "true" || ! -f .configured ]]; then
     echo "ENABLE_WINDOWS=1" >> ../Make.config
   fi
   
-  if [ "$cxx" == "true" ]; then
+  #if [ "$cxx" == "true" ]; then
     echo "ENABLE_CXX=1" >> ../Make.config
-  fi
+  #fi
   
   if [ "$thread" == "true" ]; then
     echo "ENABLE_WASM_THREADS=1" >> ../Make.config
