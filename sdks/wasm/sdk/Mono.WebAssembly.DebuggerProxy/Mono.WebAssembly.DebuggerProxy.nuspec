@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Mono.WebAssembly.DebuggerProxy</id>
+    <version>0.2.2</version>
+    <authors>Martin Baulig</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Experimental Preview</description>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Mono.Cecil" version="0.11.1" />
+        <dependency id="Newtonsoft.Json" version="12.0.3" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="../../Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/*.dll" target="lib/netstandard2.1" />
+  </files>
+</package>
