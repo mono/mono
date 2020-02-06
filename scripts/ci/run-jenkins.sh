@@ -137,10 +137,10 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -O- https://download.mono-project.com/test/new-certs.tgz | tar zx -C ~/.config/.mono/
 fi
 
-if [[ ${CI_TAGS} == *'cxx'* ]]; then
+#if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
-fi
+#fi
 
 if [[ ${CI_TAGS} == *'microbench'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-profile4_x=yes"
@@ -198,9 +198,9 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
 
         echo "ENABLE_IOS=1" > sdks/Make.config
-        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+        #if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
-        fi
+        #fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
@@ -254,9 +254,9 @@ then
     export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
     echo "ENABLE_MAC=1" > sdks/Make.config
-    if [[ ${CI_TAGS} == *'cxx'* ]]; then
+    #if [[ ${CI_TAGS} == *'cxx'* ]]; then
         echo "ENABLE_CXX=1" >> sdks/Make.config
-    fi
+    #fi
     if [[ ${CI_TAGS} == *'debug'* ]]; then
         echo "CONFIGURATION=debug" >> sdks/Make.config
     fi
@@ -272,9 +272,9 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "ENABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+        #if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
-        fi
+        #fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
@@ -325,9 +325,9 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
         fi
 
-        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+        #if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
-        fi
+        #fi
         if [[ ${CI_TAGS} == *'debug'* ]]; then
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
