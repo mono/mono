@@ -85,7 +85,7 @@ namespace BuildProgram
 
 			Artifacts.Add("mono-build-tools-extra",
 				new Tuple<string, string>(
-					"mono-build-tools-extra/70f9c4060363d11b3e69f000c8ff2c9ac8112bc2_e66148037ab6371658815c726e27e7ee7bdfdd705fb734708d07cbdfe7d8141e.7z",
+					"mono-build-tools-extra/9de3c42ef81ec4f79b53e7db32d390227d8c43c4_fa9931c37b7a4ca636eb9e0e48252c4cb591caaa9b77c41b75795037868c1256.7z",
 					"testing"));
 		}
 
