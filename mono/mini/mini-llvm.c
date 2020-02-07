@@ -7594,7 +7594,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE_LOADU: {
-			LLVMValueRef dst_ptr = convert (ctx, lhs, LLVMPointerType (primitive_type_to_llvm_type (inst_c1_type ins)), 0));
+			LLVMValueRef dst_ptr = convert (ctx, lhs, LLVMPointerType (primitive_type_to_llvm_type (inst_c1_type (ins)), 0));
 			LLVMValueRef dst_vec = LLVMBuildBitCast (builder, dst_ptr, LLVMPointerType (type_to_simd_type (ins->inst_c1), 0), "");
 			values [ins->dreg] = mono_llvm_build_aligned_load (builder, dst_vec, "", FALSE, ins->inst_c0); // inst_c0 is alignment
 			break;
