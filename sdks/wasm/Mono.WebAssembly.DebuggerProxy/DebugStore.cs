@@ -294,21 +294,24 @@ namespace WebAssembly.Net.Debugging {
 		readonly List<SourceFile> sources = new List<SourceFile>();
 		internal string Url { get; private set; }
 
-		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
+		public AssemblyInfo (string url, byte[] assembly, byte[] pdb, IAssemblyResolver resolver)
 		{
 			lock (typeof (AssemblyInfo)) {
 				this.id = ++next_id;
 			}
 
+			Url = url;
+
 			try {
-				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-				rp.ReadSymbols = true;
-				rp.SymbolReaderProvider = new PdbReaderProvider ();
-				if (pdb != null)
+				if (pdb != null) {
+					rp.ReadSymbols = true;
+					rp.SymbolReaderProvider = new PdbReaderProvider ();
 					rp.SymbolStream = new MemoryStream (pdb);
+				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
+				rp.AssemblyResolver = resolver;
 				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
@@ -328,6 +331,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
+				rp.AssemblyResolver = resolver;
 				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
@@ -439,6 +443,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public int Id => id;
 		public string Name => image.Name;
+		public AssemblyDefinition Assembly => image.Assembly;
 
 		public SourceFile GetDocById (int document)
 		{
@@ -493,60 +498,13 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class DebugStore {
-		MonoProxy proxy;
-		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
+		IList<AssemblyInfo> assemblies;
 		HttpClient client = new HttpClient ();
 
-		class DebugItem {
-			public string Url { get; set; }
-			public Task<byte[][]> Data { get; set; }
-		}
-
-		public async Task Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
+		public async Task Load (MonoProxy proxy, SessionId sessionId, string[] loaded_files, CancellationToken token)
 		{
-			static bool MatchPdb (string asm, string pdb)
-				=> Path.ChangeExtension (asm, "pdb") == pdb;
-
-			var asm_files = new List<string> ();
-			var pdb_files = new List<string> ();
-			foreach (var file_name in loaded_files) {
-				if (file_name.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
-					pdb_files.Add (file_name);
-				else
-					asm_files.Add (file_name);
-			}
-
-			List<DebugItem> steps = new List<DebugItem> ();
-			foreach (var url in asm_files) {
-				try {
-					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (url, n));
-					steps.Add (
-						new DebugItem {
-								Url = url,
-								Data = Task.WhenAll (client.GetByteArrayAsync (url), pdb != null ? client.GetByteArrayAsync (pdb) : Task.FromResult<byte []> (null))
-						});
-				} catch (Exception e) {
-					Console.WriteLine ($"Failed to read {url} ({e.Message})");
-					var o = JObject.FromObject (new {
-						entry = new {
-							source = "other",
-							level = "warning",
-							text = $"Failed to read {url} ({e.Message})"
-						}
-					});
-					proxy.SendEvent (sessionId, "Log.entryAdded", o, token);
-
-				}
-			}
-
-			foreach (var step in steps) {
-				try {
-					var bytes = await step.Data;
-					assemblies.Add (new AssemblyInfo (step.Url, bytes[0], bytes[1]));
-				} catch (Exception e) {
-					Console.WriteLine ($"Failed to Load {step.Url} ({e.Message})");
-				}
-			}
+			var resolver = new DebugStoreLoader (proxy, sessionId, loaded_files, token);
+			assemblies = await resolver.Load ().ConfigureAwait (false);
 		}
 
 		public IEnumerable<SourceFile> AllSources ()
