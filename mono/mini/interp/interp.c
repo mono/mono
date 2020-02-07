@@ -3435,15 +3435,18 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 }
 #endif
 
-static MONO_ALWAYS_INLINE void
+static MONO_ALWAYS_INLINE gboolean
 method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing, MonoException **out_ex)
 {
+	gboolean slow = FALSE;
+
 #if DEBUG_INTERP
 	debug_enter (frame, out_tracing);
 #endif
 
 	*out_ex = NULL;
 	if (!G_UNLIKELY (frame->imethod->transformed)) {
+		slow = TRUE;
 #if DEBUG_INTERP
 		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
@@ -3454,11 +3457,12 @@ method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing,
 		MonoException *ex = do_transform_method (frame, context);
 		if (ex) {
 			*out_ex = ex;
-			return;
+			return slow;
 		}
 	}
 
 	alloc_stack_data (context, frame, frame->imethod->alloca_size);
+	return slow;
 }
 
 /* Save the state of the interpeter main loop into FRAME */
@@ -3528,15 +3532,18 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	debug_enter (frame, &tracing);
 #endif
 
+	MonoException *ex;
+
+	// FIXME Use method_entry here. But it assumes clause_args == NULL.
+
 	if (!frame->imethod->transformed) {
 #if DEBUG_INTERP
 		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
-
 		frame->ip = NULL;
-		MonoException *ex = do_transform_method (frame, context);
+		ex = do_transform_method (frame, context);
 		if (ex)
 			THROW_EX (ex, NULL);
 		EXCEPTION_CHECKPOINT;
@@ -3795,14 +3802,13 @@ main_loop:
 
 			frame = alloc_frame (context, native_stack_addr, frame, imethod, sp, retval);
 
-			MonoException *ex;
 			gboolean tracing;
 
-			method_entry (context, frame, &tracing, &ex);
-
-			if (G_UNLIKELY (ex))
-				THROW_EX (ex, NULL);
-			EXCEPTION_CHECKPOINT;
+			if (method_entry (context, frame, &tracing, &ex)) {
+				if (G_UNLIKELY (ex))
+					THROW_EX (ex, NULL);
+				EXCEPTION_CHECKPOINT;
+			}
 
 			clause_args = NULL;
 			INIT_INTERP_STATE (frame, clause_args);
@@ -3909,13 +3915,13 @@ main_loop:
 				// FIXME &retval looks wrong
 				frame = alloc_frame (context, &retval, frame, imethod, sp, retval);
 
-				MonoException *ex;
 				gboolean tracing;
 
-				method_entry (context, frame, &tracing, &ex);
-				if (G_UNLIKELY (ex))
-					THROW_EX (ex, NULL);
-				EXCEPTION_CHECKPOINT;
+				if (method_entry (context, frame, &tracing, &ex)) {
+					if (G_UNLIKELY (ex))
+						THROW_EX (ex, NULL);
+					EXCEPTION_CHECKPOINT;
+				}
 
 				clause_args = NULL;
 				INIT_INTERP_STATE (frame, clause_args);
@@ -4008,14 +4014,13 @@ call:;
 
 			frame = alloc_frame (context, native_stack_addr, frame, cmethod, sp, retval);
 
-			MonoException *ex;
 			gboolean tracing;
 
-			method_entry (context, frame, &tracing, &ex);
-
-			if (G_UNLIKELY (ex))
-				THROW_EX (ex, NULL);
-			EXCEPTION_CHECKPOINT;
+			if (method_entry (context, frame, &tracing, &ex)) {
+				if (G_UNLIKELY (ex))
+					THROW_EX (ex, NULL);
+				EXCEPTION_CHECKPOINT;
+			}
 
 			clause_args = NULL;
 			INIT_INTERP_STATE (frame, clause_args);
