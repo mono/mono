@@ -160,7 +160,7 @@ DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
 DECL_OFFSET(MonoJitTlsData, lmf)
 DECL_OFFSET(MonoJitTlsData, class_cast_from)
 DECL_OFFSET(MonoJitTlsData, class_cast_to)
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#ifdef TARGET_WIN32
 DECL_OFFSET(MonoJitTlsData, stack_restore_ctx)
 #endif
 
