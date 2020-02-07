@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.WebSockets"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.WebAssembly.Runtime.Aot", "Mono.WebAssembly.Runtime.Aot\Mono.WebAssembly.Runtime.Aot.csproj", "{084796C5-519C-4D19-ADB4-51CC73562CA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.WebAssembly.DebuggerProxy", "Mono.WebAssembly.DebuggerProxy\Mono.WebAssembly.DebuggerProxy.csproj", "{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -148,6 +150,18 @@ Global
 		{084796C5-519C-4D19-ADB4-51CC73562CA8}.Release|x64.Build.0 = Release|Any CPU
 		{084796C5-519C-4D19-ADB4-51CC73562CA8}.Release|x86.ActiveCfg = Release|Any CPU
 		{084796C5-519C-4D19-ADB4-51CC73562CA8}.Release|x86.Build.0 = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|x64.Build.0 = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Debug|x86.Build.0 = Debug|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|x64.ActiveCfg = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|x64.Build.0 = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|x86.ActiveCfg = Release|Any CPU
+		{710DC04E-B165-4139-B3EC-D3B9A4CDA88F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
