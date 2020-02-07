@@ -292,7 +292,10 @@ namespace WebAssembly.Net.Debugging {
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
 		readonly List<SourceFile> sources = new List<SourceFile>();
-		internal string Url { get; private set; }
+		internal string Url { get; }
+		internal string BaseName { get; }
+		readonly byte[] assembly, pdb;
+		int resolved;
 
 		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
 		{
@@ -300,15 +303,27 @@ namespace WebAssembly.Net.Debugging {
 				this.id = ++next_id;
 			}
 
+			Url = url;
+			BaseName = Path.GetFileNameWithoutExtension (Url);
+			this.assembly = assembly;
+			this.pdb = pdb;
+		}
+
+		public void Resolve (IAssemblyResolver resolver)
+		{
+			if (Interlocked.CompareExchange (ref resolved, 1, 0) != 0)
+				return;
+
 			try {
-				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-				rp.ReadSymbols = true;
-				rp.SymbolReaderProvider = new PdbReaderProvider ();
-				if (pdb != null)
+				if (pdb != null) {
+					rp.ReadSymbols = true;
+					rp.SymbolReaderProvider = new PdbReaderProvider ();
 					rp.SymbolStream = new MemoryStream (pdb);
+				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
+				rp.AssemblyResolver = resolver;
 				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
@@ -328,6 +343,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
+				rp.AssemblyResolver = resolver;
 				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
@@ -439,6 +455,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public int Id => id;
 		public string Name => image.Name;
+		public AssemblyDefinition Assembly => image.Assembly;
 
 		public SourceFile GetDocById (int document)
 		{
@@ -493,59 +510,81 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class DebugStore {
-		MonoProxy proxy;
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 		HttpClient client = new HttpClient ();
 
-		class DebugItem {
-			public string Url { get; set; }
-			public Task<byte[][]> Data { get; set; }
-		}
-
-		public async Task Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
+		public async Task Load (MonoProxy proxy, SessionId sessionId, string [] loaded_files, CancellationToken token)
 		{
 			static bool MatchPdb (string asm, string pdb)
 				=> Path.ChangeExtension (asm, "pdb") == pdb;
 
+			void SendError (string file, Exception error)
+			{
+				Console.WriteLine ($"Failed to read {file} ({error.Message})");
+				var o = JObject.FromObject (new {
+					entry = new {
+						source = "other",
+						level = "warning",
+						text = $"Failed to read {file} ({error.Message})"
+					}
+				});
+				proxy.SendEvent (sessionId, "Log.entryAdded", o, token);
+			}
+
 			var asm_files = new List<string> ();
 			var pdb_files = new List<string> ();
-			foreach (var file_name in loaded_files) {
+			foreach (var f in loaded_files) {
+				var file_name = f;
 				if (file_name.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
 					pdb_files.Add (file_name);
 				else
 					asm_files.Add (file_name);
 			}
 
-			List<DebugItem> steps = new List<DebugItem> ();
-			foreach (var url in asm_files) {
+			async Task<byte[]> DownloadFile (string file)
+			{
 				try {
-					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (url, n));
-					steps.Add (
-						new DebugItem {
-								Url = url,
-								Data = Task.WhenAll (client.GetByteArrayAsync (url), pdb != null ? client.GetByteArrayAsync (pdb) : Task.FromResult<byte []> (null))
-						});
+					return await client.GetByteArrayAsync (file).ConfigureAwait (false);
 				} catch (Exception e) {
-					Console.WriteLine ($"Failed to read {url} ({e.Message})");
-					var o = JObject.FromObject (new {
-						entry = new {
-							source = "other",
-							level = "warning",
-							text = $"Failed to read {url} ({e.Message})"
-						}
-					});
-					proxy.SendEvent (sessionId, "Log.entryAdded", o, token);
-
+					SendError (file, e);
+					return null;
 				}
 			}
 
-			foreach (var step in steps) {
+			var assembly_tasks = new Task<byte[]>[asm_files.Count];
+			var pdb_tasks = new Task<byte[]>[asm_files.Count];
+
+			for (int i = 0; i < asm_files.Count; i++) {
 				try {
-					var bytes = await step.Data;
-					assemblies.Add (new AssemblyInfo (step.Url, bytes[0], bytes[1]));
+					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (asm_files [i], n));
+					assembly_tasks[i] = DownloadFile (asm_files [i]);
+					if (pdb != null)
+						pdb_tasks[i] = DownloadFile (pdb);
 				} catch (Exception e) {
-					Console.WriteLine ($"Failed to Load {step.Url} ({e.Message})");
+					SendError (asm_files [i], e);
 				}
+			}
+
+			try {
+				await Task.WhenAll (assembly_tasks);
+			} catch (Exception e) {
+				SendError ("This should not happend", e);
+				throw;
+			}
+
+			for (int i = 0; i < asm_files.Count; i++) {
+				if (assembly_tasks[i].Status != TaskStatus.RanToCompletion)
+					continue;
+				byte[] pdb = null;
+				if (pdb_tasks[i]?.Status == TaskStatus.RanToCompletion)
+					pdb = pdb_tasks[i].Result;
+				assemblies.Add (new AssemblyInfo (asm_files [i], assembly_tasks[i].Result, pdb));
+			}
+
+			var resolver = new DebugStoreAssemblyResolver (assemblies);
+
+			foreach (var asm in assemblies) {
+				asm.Resolve (resolver);
 			}
 		}
 
@@ -660,5 +699,55 @@ namespace WebAssembly.Net.Debugging {
 
 		public SourceFile GetFileByUrl (string url)
 			=> AllSources ().FirstOrDefault (file => file.Url.ToString() == url);
+	}
+
+	class DebugStoreAssemblyResolver : BaseAssemblyResolver
+	{
+		readonly IDictionary<string, AssemblyDefinition> cache;
+		readonly IList<AssemblyInfo> assemblies;
+
+		public DebugStoreAssemblyResolver (IList<AssemblyInfo> assemblies)
+		{
+			this.assemblies = assemblies;
+			cache = new Dictionary<string, AssemblyDefinition> (StringComparer.Ordinal);
+		}
+
+		public override AssemblyDefinition Resolve (AssemblyNameReference name)
+		{
+			AssemblyDefinition assembly;
+			if (cache.TryGetValue (name.FullName, out assembly))
+				return assembly;
+
+			var info = assemblies.FirstOrDefault (a => name.Name == a.BaseName);
+			if (info == null)
+				throw new AssemblyResolutionException (name);
+			info.Resolve (this);
+
+			cache [name.FullName] = info.Assembly;
+
+			return info.Assembly;
+		}
+
+		protected void RegisterAssembly (AssemblyDefinition assembly)
+		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+
+			var name = assembly.Name.FullName;
+			if (cache.ContainsKey (name))
+				return;
+
+			cache [name] = assembly;
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			foreach (var assembly in cache.Values)
+				assembly.Dispose ();
+
+			cache.Clear ();
+
+			base.Dispose (disposing);
+		}
 	}
 }
