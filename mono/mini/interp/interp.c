@@ -3452,7 +3452,6 @@ method_entry (ThreadContext *context, InterpFrame *frame, gboolean *out_tracing,
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
-
 		frame->ip = NULL;
 		MonoException *ex = do_transform_method (frame, context);
 		if (ex) {
@@ -3805,7 +3804,7 @@ main_loop:
 			gboolean tracing;
 
 			if (method_entry (context, frame, &tracing, &ex)) {
-				if (G_UNLIKELY (ex))
+				if (ex)
 					THROW_EX (ex, NULL);
 				EXCEPTION_CHECKPOINT;
 			}
@@ -3918,7 +3917,7 @@ main_loop:
 				gboolean tracing;
 
 				if (method_entry (context, frame, &tracing, &ex)) {
-					if (G_UNLIKELY (ex))
+					if (ex)
 						THROW_EX (ex, NULL);
 					EXCEPTION_CHECKPOINT;
 				}
@@ -4017,7 +4016,7 @@ call:;
 			gboolean tracing;
 
 			if (method_entry (context, frame, &tracing, &ex)) {
-				if (G_UNLIKELY (ex))
+				if (ex)
 					THROW_EX (ex, NULL);
 				EXCEPTION_CHECKPOINT;
 			}
