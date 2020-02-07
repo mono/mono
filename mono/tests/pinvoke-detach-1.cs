@@ -58,16 +58,11 @@ public class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_attach_invoke_block_foreign_thread")]
 	public static extern bool mono_test_attach_invoke_block_foreign_thread (string assm_name, string name_space, string class_name, string method_name);
 
-	// FIXME: Re-enable when https://github.com/mono/mono/pull/18656 is merged
-	// This test will prevent the runtime from shutting down because the detached
-	// thread will not respond to the runtime aborting it.
-#if false
 	public static int test_0_attach_invoke_block_foreign_thread ()
 	{
 		bool skipped = mono_test_attach_invoke_block_foreign_thread (typeof (Tests).Assembly.Location, "", "Tests", "MethodInvokedFromNative2");
 		return 0; // really we succeed if the app can shut down without hanging
 	}
-#endif
 
 
 }
