@@ -1532,7 +1532,8 @@ mono_thread_attach_external_native_thread (MonoDomain *domain, gboolean backgrou
 	if (background)
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_is_blocking_transition_enabled () &&
+	    mono_thread_is_gc_unsafe_mode ()) {
 		/* mono_jit_thread_attach and mono_thread_attach are external-only and
 		 * not called by the runtime on any of our own threads.  So if we get
 		 * here, the thread is running native code - leave it in GC Safe mode
@@ -1545,21 +1546,22 @@ mono_thread_attach_external_native_thread (MonoDomain *domain, gboolean backgrou
 	return thread;
 }
 
+static MonoThread*
+thread_attach_gc_unsafe (MonoDomain *domain);
+
 /**
  * mono_thread_internal_attach:
  *
  * Attach the current thread to the runtime.  The thread was created on behalf
  * of the runtime and the runtime is responsible for it.
  *
- * COOP: The thread is left in GC Unsafe mode
+ * COOP: If the thread info is already attached, GC thread state is unchanged,
+ * otherwise the thread info is attached in GC Unsafe mode.
  */
 MonoThread *
 mono_thread_internal_attach (MonoDomain *domain)
 {
-	MonoInternalThread *internal;
-	MonoThread *thread;
 	MonoThreadInfo *info;
-	MonoNativeThreadId tid;
 
 	if (mono_thread_internal_current_is_attached ()) {
 		if (domain != mono_domain_get ())
@@ -1571,10 +1573,29 @@ mono_thread_internal_attach (MonoDomain *domain)
 	info = mono_thread_info_attach ();
 	g_assert (info);
 
-	tid=mono_native_thread_id_get ();
-
 	if (mono_runtime_get_no_exec ())
 		return NULL;
+
+	/* if the thread is external and it was previously attached
+	 * and then detached, it will be in GC Safe mode by the time
+	 * we get here.  So go into GC Unsafe while we create the
+	 * managed thread objects.
+	 */
+	MonoThread *thread;
+	MONO_ENTER_GC_UNSAFE;
+	thread = thread_attach_gc_unsafe (domain);
+	MONO_EXIT_GC_UNSAFE;
+	return thread;
+}
+
+static MonoThread*
+thread_attach_gc_unsafe (MonoDomain *domain)
+{
+	MonoInternalThread *internal;
+	MonoThread *thread;
+	MonoNativeThreadId tid;
+
+	tid=mono_native_thread_id_get ();
 
 	internal = create_internal_thread_object ();
 
@@ -1589,7 +1610,7 @@ mono_thread_internal_attach (MonoDomain *domain)
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %" G_GSIZE_FORMAT " (handle %p)", __func__, tid, internal->handle));
 
 	if (mono_thread_attach_cb)
-		mono_thread_attach_cb (MONO_NATIVE_THREAD_ID_TO_UINT (tid), info->stack_end);
+		mono_thread_attach_cb (MONO_NATIVE_THREAD_ID_TO_UINT (tid), mono_thread_info_current ()->stack_end);
 
 	fire_attach_profiler_events (tid);
 
