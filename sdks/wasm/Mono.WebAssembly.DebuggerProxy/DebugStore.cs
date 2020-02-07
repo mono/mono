@@ -13,17 +13,17 @@ using System.Threading.Tasks;
 using System.Threading;
 
 namespace WebAssembly.Net.Debugging {
-	internal class BreakPointRequest {
+	internal class BreakpointRequest {
 		public string Assembly { get; private set; }
 		public string File { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
 		public override string ToString () {
-			return $"BreakPointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
+			return $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 		}
 
-		public static BreakPointRequest Parse (JObject args, DebugStore store)
+		public static BreakpointRequest Parse (JObject args, DebugStore store)
 		{
 			// Events can potentially come out of order, so DebugStore may not be initialized
 			// The BP being set in these cases are JS ones, which we can safely ignore
@@ -55,7 +55,7 @@ namespace WebAssembly.Net.Debugging {
 			if (line == null || column == null)
 				return null;
 
-			return new BreakPointRequest () {
+			return new BreakpointRequest () {
 				Assembly = parts.Assembly,
 				File = parts.DocumentPath,
 				Line = line.Value,
@@ -527,15 +527,6 @@ namespace WebAssembly.Net.Debugging {
 						});
 				} catch (Exception e) {
 					Console.WriteLine ($"Failed to read {url} ({e.Message})");
-					var o = JObject.FromObject (new {
-						entry = new {
-							source = "other",
-							level = "warning",
-							text = $"Failed to read {url} ({e.Message})"
-						}
-					});
-					proxy.SendEvent (sessionId, "Log.entryAdded", o, token);
-
 				}
 			}
 
@@ -630,7 +621,7 @@ namespace WebAssembly.Net.Debugging {
 			return true;
 		}
 
-		public SourceLocation FindBestBreakpoint (BreakPointRequest req)
+		public SourceLocation FindBestBreakpoint (BreakpointRequest req)
 		{
 			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
 			var src = asm?.Sources?.FirstOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));

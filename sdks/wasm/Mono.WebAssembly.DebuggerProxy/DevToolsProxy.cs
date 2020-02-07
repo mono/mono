@@ -96,7 +96,7 @@ namespace WebAssembly.Net.Debugging {
 			if (pending.Count > 0) {
 				if (current_send != null)
 					throw new Exception ("current_send MUST BE NULL IF THERE'S no pending send");
-				//Console.WriteLine ("sending more {0} bytes", pending[0].Length);
+
 				current_send = Ws.SendAsync (new ArraySegment<byte> (pending [0]), WebSocketMessageType.Text, true, token);
 				return current_send;
 			}

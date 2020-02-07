@@ -76,9 +76,19 @@ namespace WebAssembly.Net.Debugging {
 		public SourceLocation Location { get; private set; }
 		public int LocalId { get; private set; }
 		public int RemoteId { get; set; }
-		public BreakPointState State { get; set; }
+		public BreakpointState State { get; set; }
+		public string StackId => $"dotnet:{LocalId}";
 
-		public Breakpoint (SourceLocation loc, int localId, BreakPointState state)
+		public static bool TryParseId (string stackId, out int id)
+		{
+			id = -1;
+			if (stackId?.StartsWith ("dotnet:") != true)
+				return false;
+
+			return int.TryParse (stackId.Substring ("dotnet:".Length), out id);
+		}
+
+		public Breakpoint (SourceLocation loc, int localId, BreakpointState state)
 		{
 			this.Location = loc;
 			this.LocalId = localId;
@@ -86,7 +96,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 	}
 
-	enum BreakPointState {
+	enum BreakpointState {
 		Active,
 		Disabled,
 		Pending
@@ -98,16 +108,42 @@ namespace WebAssembly.Net.Debugging {
 		Over
 	}
 
+	internal class ExecutionContext {
+		public bool RuntimeReady { get; set; }
+		public int Id { get; set; }
+		public object AuxData { get; set; }
+
+		public List<Frame> CallStack { get; set; }
+		public int LocalBreakpointId { get; set; }
+
+		internal DebugStore store;
+		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
+
+		public DebugStore Store {
+			get {
+				if (store == null || !Source.Task.IsCompleted)
+					return null;
+
+				return store;
+			}
+		}
+	}
+
 	public class MonoProxy : DevToolsProxy {
-		DebugStore store;
 		List<Breakpoint> breakpoints = new List<Breakpoint> ();
-		List<Frame> current_callstack;
-		bool runtime_ready;
 		int local_breakpoint_id;
-		int ctx_id;
-		JObject aux_ctx_data;
+		Dictionary<string, ExecutionContext> contexts = new Dictionary<string, ExecutionContext> ();
 
 		public MonoProxy () { }
+
+		ExecutionContext GetContext (SessionId sessionId)
+		{
+			var id = sessionId?.sessionId ?? "default";
+			if (contexts.TryGetValue (id, out var context))
+				return context;
+
+			throw new ArgumentException ($"Invalid Session: \"{id}\"", nameof (sessionId));
+		}
 
 		internal Task<Result> SendMonoCommand (SessionId id, MonoCommands cmd, CancellationToken token)
 			=> SendCommand (id, "Runtime.evaluate", JObject.FromObject (cmd), token);
@@ -116,40 +152,47 @@ namespace WebAssembly.Net.Debugging {
 		{
 			switch (method) {
 			case "Runtime.executionContextCreated": {
+					SendEvent (sessionId, method, args, token);
 					var ctx = args? ["context"];
 					var aux_data = ctx? ["auxData"] as JObject;
+					var id = ctx ["id"].Value<int> ();
 					if (aux_data != null) {
 						var is_default = aux_data ["isDefault"]?.Value<bool> ();
 						if (is_default == true) {
-							var id = new MessageId { id = ctx ["id"].Value<int> (), sessionId = sessionId.sessionId };
-							await OnDefaultContext (id, aux_data, token);
+							await OnDefaultContext (sessionId, new ExecutionContext { Id = id, AuxData = aux_data }, token);
 						}
 					}
-					break;
+					return true;
+					//break;
 				}
 			case "Debugger.paused": {
 					//TODO figure out how to stich out more frames and, in particular what happens when real wasm is on the stack
 					var top_func = args? ["callFrames"]? [0]? ["functionName"]?.Value<string> ();
+
 					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp") {
-						await OnBreakpointHit (sessionId, args, token);
-						return true;
+						return await OnBreakpointHit (sessionId, args, token);
 					}
 					if (top_func == MonoConstants.RUNTIME_IS_READY) {
-						await OnRuntimeReady (new SessionId { sessionId = sessionId.sessionId }, token);
+						await OnRuntimeReady (sessionId, token);
 						return true;
 					}
 					break;
 				}
+
 			case "Debugger.scriptParsed":{
-					if (args?["url"]?.Value<string> ()?.StartsWith ("wasm://") == true) {
-						// Console.WriteLine ("ignoring wasm event");
-						return true;
+					var url = args? ["url"]?.Value<string> () ?? "";
+
+					switch (url) {
+					case var _ when url.EndsWith ("dotnet.js"): {
+							break;
+						}
+					case var _ when url == "":
+					case var _ when url.StartsWith ("wasm://"): {
+							Log ("info", $"ignoring wasm: Debugger.scriptParsed {url}");
+							return true;
+						}
 					}
-					break;
-				}
-			case "Debugger.enabled": {
-					if (store == null)
-						await LoadStore (new SessionId { sessionId = args? ["sessionId"]?.Value<string> () }, token);
+					Log ("info", $"proxying Debugger.scriptParsed ({sessionId.sessionId}) {url} {args}");
 					break;
 				}
 			}
@@ -160,12 +203,7 @@ namespace WebAssembly.Net.Debugging {
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			switch (method) {
-			case "Target.attachToTarget": {
-					break;
-				}
-			case "Target.attachToBrowserTarget": {
-					break;
-				}
+
 			case "Debugger.getScriptSource": {
 					var script_id = args? ["scriptId"]?.Value<string> ();
 					if (script_id.StartsWith ("dotnet://", StringComparison.InvariantCultureIgnoreCase)) {
@@ -195,7 +233,7 @@ namespace WebAssembly.Net.Debugging {
 
 			case "Debugger.setBreakpointByUrl": {
 					Log ("verbose", $"BP req {args}");
-					var bp_req = BreakPointRequest.Parse (args, store);
+					var bp_req = BreakpointRequest.Parse (args, GetContext (id).Store);
 					if (bp_req != null) {
 						await SetBreakPoint (id, bp_req, token);
 						return true;
@@ -208,32 +246,20 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.resume": {
-					await OnResume (token);
+					await OnResume (id, token);
 					break;
 				}
 
 			case "Debugger.stepInto": {
-					if (this.current_callstack != null) {
-						await Step (id, StepKind.Into, token);
-						return true;
-					}
-					break;
+					return await Step (id, StepKind.Into, token);
 				}
 
 			case "Debugger.stepOut": {
-					if (this.current_callstack != null) {
-						await Step (id, StepKind.Out, token);
-						return true;
-					}
-					break;
+					return await Step (id, StepKind.Out, token);
 				}
 
 			case "Debugger.stepOver": {
-					if (this.current_callstack != null) {
-						await Step (id, StepKind.Over, token);
-						return true;
-					}
-					break;
+					return await Step (id, StepKind.Over, token);
 				}
 
 			case "Runtime.getProperties": {
@@ -267,31 +293,30 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task OnRuntimeReady (SessionId sessionId, CancellationToken token)
 		{
-			Log ("info", "RUNTIME READY, PARTY TIME");
+			Log ("info", "Runtime ready");
 			await RuntimeReady (sessionId, token);
 			await SendCommand (sessionId, "Debugger.resume", new JObject (), token);
 			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
 		}
 
 		//static int frame_id=0;
-		async Task OnBreakpointHit (SessionId sessionId, JObject args, CancellationToken token)
+		async Task<bool> OnBreakpointHit (SessionId sessionId, JObject args, CancellationToken token)
 		{
 			//FIXME we should send release objects every now and then? Or intercept those we inject and deal in the runtime
 			var res = await SendMonoCommand (sessionId, MonoCommands.GetCallStack(), token);
 			var orig_callframes = args? ["callFrames"]?.Values<JObject> ();
+			var context = GetContext (sessionId);
 
 			if (res.IsErr) {
 				//Give up and send the original call stack
-				SendEvent (sessionId, "Debugger.paused", args, token);
-				return;
+				return false;
 			}
 
 			//step one, figure out where did we hit
 			var res_value = res.Value? ["result"]? ["value"];
 			if (res_value == null || res_value is JValue) {
 				//Give up and send the original call stack
-				SendEvent (sessionId, "Debugger.paused", args, token);
-				return;
+				return false;
 			}
 
 			Log ("verbose", $"call stack (err is {res.Error} value is:\n{res.Value}");
@@ -299,11 +324,11 @@ namespace WebAssembly.Net.Debugging {
 			Log ("verbose", $"We just hit bp {bp_id}");
 			if (!bp_id.HasValue) {
 				//Give up and send the original call stack
-				SendEvent (sessionId, "Debugger.paused", args, token);
-				return;
+				return false;
 			}
 			var bp = this.breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
 
+			var store = context.Store;
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
 			var callFrames = new List<JObject> ();
@@ -372,7 +397,7 @@ namespace WebAssembly.Net.Debugging {
 						}));
 
 						++frame_id;
-						this.current_callstack = frames;
+						context.CallStack = frames;
 
 					}
 				} else if (!(function_name.StartsWith ("wasm-function", StringComparison.InvariantCulture)
@@ -383,55 +408,60 @@ namespace WebAssembly.Net.Debugging {
 
 			var bp_list = new string [bp == null ? 0 : 1];
 			if (bp != null)
-				bp_list [0] = $"dotnet:{bp.LocalId}";
+				bp_list [0] = bp.StackId;
 
 			var o = JObject.FromObject (new {
-				callFrames = callFrames,
+				callFrames,
 				reason = "other", //other means breakpoint
 				hitBreakpoints = bp_list,
 			});
 
 			SendEvent (sessionId, "Debugger.paused", o, token);
+			return true;
 		}
 
-		async Task OnDefaultContext (MessageId ctx_id, JObject aux_data, CancellationToken token)
+		async Task OnDefaultContext (SessionId sessionId, ExecutionContext context, CancellationToken token)
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
 
+			contexts[sessionId.sessionId ?? "default"] = context;
 			//reset all bps
 			foreach (var b in this.breakpoints){
-				b.State = BreakPointState.Pending;
+				b.State = BreakpointState.Pending;
 			}
-			this.runtime_ready = false;
-			this.ctx_id = ctx_id.id;
-			this.aux_ctx_data = aux_data;
 
-			Log ("verbose", "checking if the runtime is ready");
-			var res = await SendMonoCommand (ctx_id, MonoCommands.IsRuntimeReady (), token);
+			Log ("info", "checking if the runtime is ready");
+			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
 			var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
 			//Log ("verbose", $"\t{is_ready}");
 			if (is_ready.HasValue && is_ready.Value == true) {
-				Log ("verbose", "RUNTIME LOOK READY. GO TIME!");
-				await OnRuntimeReady (ctx_id, token);
+				Log ("info", "RUNTIME LOOK READY. GO TIME!");
+				await RuntimeReady (sessionId, token);
+				SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
 			}
 		}
 
-		async Task OnResume (CancellationToken token)
+		async Task OnResume (MessageId msd_id, CancellationToken token)
 		{
 			//discard frames
-			this.current_callstack = null;
+			GetContext (msd_id).CallStack = null;
 			await Task.CompletedTask;
 		}
 
-		async Task Step (MessageId msg_id, StepKind kind, CancellationToken token)
+		async Task<bool> Step (MessageId msg_id, StepKind kind, CancellationToken token)
 		{
+			var context = GetContext (msg_id);
+			if (context.CallStack == null)
+				return false;
+
 			var res = await SendMonoCommand (msg_id, MonoCommands.StartSingleStepping (kind), token);
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 
-			this.current_callstack = null;
+			context.CallStack = null;
 
 			await SendCommand (msg_id, "Debugger.resume", new JObject (), token);
+			return true;
 		}
 
 		static string FormatFieldName (string name)
@@ -490,10 +520,10 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)
 		{
-			try {
-				var scope = this.current_callstack.FirstOrDefault (s => s.Id == scope_id);
-				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 
+			try {
+				var scope = GetContext (msg_id).CallStack.FirstOrDefault (s => s.Id == scope_id);
+				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 
 				var var_ids = vars.Select (v => v.Index).ToArray ();
 				var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
@@ -561,38 +591,56 @@ namespace WebAssembly.Net.Debugging {
 
 			if (ret_code.HasValue) {
 				bp.RemoteId = ret_code.Value;
-				bp.State = BreakPointState.Active;
+				bp.State = BreakpointState.Active;
 				//Log ("verbose", $"BP local id {bp.LocalId} enabled with remote id {bp.RemoteId}");
 			}
 
 			return res;
 		}
 
-		async Task LoadStore (SessionId sessionId, CancellationToken token)
+		async Task<DebugStore> LoadStore (SessionId sessionId, CancellationToken token)
 		{
-			var loaded_pdbs = await SendMonoCommand (sessionId, MonoCommands.GetLoadedFiles(), token);
-			var the_value = loaded_pdbs.Value? ["result"]? ["value"];
-			var the_pdbs = the_value?.ToObject<string[]> ();
+			var context = GetContext (sessionId);
 
-			store = new DebugStore ();
-			await store.Load(sessionId, the_pdbs, token);
+			if (Interlocked.CompareExchange (ref context.store, new DebugStore (), null) != null) {
+				return await context.Source.Task;
+			}
+
+			try {
+				var loaded_pdbs = await SendMonoCommand (sessionId, MonoCommands.GetLoadedFiles(), token);
+				var the_value = loaded_pdbs.Value? ["result"]? ["value"];
+				var the_pdbs = the_value?.ToObject<string[]> ();
+
+				await context.store.Load(sessionId, the_pdbs, token);
+			} catch (Exception e) {
+				context.Source.SetException (e);
+			}
+
+			if (!context.Source.Task.IsCompleted)
+				context.Source.SetResult (context.store);
+			return await context.Source.Task;
 		}
 
 		async Task RuntimeReady (SessionId sessionId, CancellationToken token)
 		{
-			if (store == null)
-				await LoadStore (sessionId, token);
+			
+			var context = GetContext (sessionId);
+			if (context.RuntimeReady)
+				return;
 
+			context.RuntimeReady = true;
+			var store = await LoadStore (sessionId, token);
+			
 			foreach (var s in store.AllSources ()) {
 				var ok = JObject.FromObject (new {
 					scriptId = s.SourceId.ToString (),
 					url = s.Url,
-					executionContextId = this.ctx_id,
+					executionContextId = context.Id,
+					executionContextAuxData = context.AuxData,
 					hash = s.DocHashCode,
-					executionContextAuxData = this.aux_ctx_data,
 					dotNetUrl = s.DotNetUrl,
 				});
-				//Log ("verbose", $"\tsending {s.Url}");
+				Log ("info", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
 				SendEvent (sessionId, "Debugger.scriptParsed", ok, token);
 			}
 
@@ -601,10 +649,8 @@ namespace WebAssembly.Net.Debugging {
 				Log ("verbose", $"Failed to clear breakpoints due to {clear_result}");
 			}
 
-			runtime_ready = true;
-
 			foreach (var bp in breakpoints) {
-				if (bp.State != BreakPointState.Pending)
+				if (bp.State != BreakpointState.Pending)
 					continue;
 				var res = await EnableBreakPoint (sessionId, bp, token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
@@ -613,17 +659,16 @@ namespace WebAssembly.Net.Debugging {
 				if (!ret_code.HasValue) {
 					//FIXME figure out how to inform the IDE of that.
 					Log ("info", $"FAILED TO ENABLE BP {bp.LocalId}");
-					bp.State = BreakPointState.Disabled;
+					bp.State = BreakpointState.Disabled;
 				}
 			}
 		}
 
 		async Task<bool> RemoveBreakpoint(MessageId msg_id, JObject args, CancellationToken token) {
 			var bpid = args? ["breakpointId"]?.Value<string> ();
-			if (bpid?.StartsWith ("dotnet:") != true)
-				return false;
 
-			var the_id = int.Parse (bpid.Substring ("dotnet:".Length));
+			if (!Breakpoint.TryParseId (bpid, out var the_id))
+				return false;
 
 			var bp = breakpoints.FirstOrDefault (b => b.LocalId == the_id);
 			if (bp == null) {
@@ -633,29 +678,30 @@ namespace WebAssembly.Net.Debugging {
 
 			breakpoints.Remove (bp);
 			//FIXME verify result (and log?)
-			var res = await RemoveBreakPoint (msg_id, bp, token);
+			var res = await RemoveBreakpoint (msg_id, bp, token);
 
 			return true;
 		}
 
 
-		async Task<Result> RemoveBreakPoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
+		async Task<Result> RemoveBreakpoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
 		{
 			var res = await SendMonoCommand (sessionId, MonoCommands.RemoveBreakpoint (bp.RemoteId), token);
 			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
 			if (ret_code.HasValue) {
 				bp.RemoteId = -1;
-				bp.State = BreakPointState.Disabled;
+				bp.State = BreakpointState.Disabled;
 			}
 
 			return res;
 		}
 
-		async Task SetBreakPoint (MessageId msg_id, BreakPointRequest req, CancellationToken token)
+		async Task SetBreakPoint (MessageId msg_id, BreakpointRequest req, CancellationToken token)
 		{
-			var bp_loc = store?.FindBestBreakpoint (req);
-			Log ("info", $"BP request for '{req}' runtime ready {runtime_ready} location '{bp_loc}'");
+			var context = GetContext (msg_id);
+			var bp_loc = context.Store.FindBestBreakpoint (req);
+			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{bp_loc}'");
 			if (bp_loc == null) {
 
 				Log ("info", $"Could not resolve breakpoint request: {req}");
@@ -667,10 +713,10 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			Breakpoint bp = null;
-			if (!runtime_ready) {
-				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakPointState.Pending);
+			if (!context.RuntimeReady) {
+				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakpointState.Pending);
 			} else {
-				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakPointState.Disabled);
+				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakpointState.Disabled);
 
 				var res = await EnableBreakPoint (msg_id, bp, token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
@@ -702,7 +748,7 @@ namespace WebAssembly.Net.Debugging {
 
 		bool GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
 		{
-			var bps = store.FindPossibleBreakpoints (start, end);
+			var bps = GetContext (msg_id).Store.FindPossibleBreakpoints (start, end);
 			if (bps == null)
 				return false;
 
@@ -730,7 +776,7 @@ namespace WebAssembly.Net.Debugging {
 		async Task OnGetScriptSource (MessageId msg_id, string script_id, CancellationToken token)
 		{
 			var id = new SourceId (script_id);
-			var src_file = store.GetFileById (id);
+			var src_file = GetContext (msg_id).Store.GetFileById (id);
 
 			var res = new StringWriter ();
 			//res.WriteLine ($"//{id}");
