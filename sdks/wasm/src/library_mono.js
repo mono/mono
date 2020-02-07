@@ -261,6 +261,15 @@ var MonoSupportLib = {
 			this.mono_clear_bps ();
 		},
 		
+		mono_wasm_add_null_var: function(className)
+		{
+			MONO.var_info.push ({value: {
+				type: "object",
+				className: Module.UTF8ToString (className),
+				description: Module.UTF8ToString (className),
+				subtype: "null"
+			}});
+		},
 	},
 
 	mono_wasm_add_bool_var: function(var_value) {
@@ -305,16 +314,6 @@ var MonoSupportLib = {
 				value: Module.UTF8ToString (var_value),
 			}
 		});
-	},
-
-	mono_wasm_add_null_var: function(className)
-	{
-		MONO.var_info.push ({value: {
-			type: "object",
-			className: Module.UTF8ToString (className),
-			description: Module.UTF8ToString (className),
-			subtype: "null"
-		}});
 	},
 
 	mono_wasm_add_obj_var: function(className, objectId) {
