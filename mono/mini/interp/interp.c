@@ -3800,10 +3800,9 @@ main_loop:
 
 			method_entry (context, frame, &tracing, &ex);
 
-			if (G_UNLIKELY (ex)) {
+			if (G_UNLIKELY (ex))
 				THROW_EX (ex, NULL);
-				EXCEPTION_CHECKPOINT;
-			}
+			EXCEPTION_CHECKPOINT;
 
 			clause_args = NULL;
 			INIT_INTERP_STATE (frame, clause_args);
@@ -3914,10 +3913,9 @@ main_loop:
 				gboolean tracing;
 
 				method_entry (context, frame, &tracing, &ex);
-				if (G_UNLIKELY (ex)) {
+				if (G_UNLIKELY (ex))
 					THROW_EX (ex, NULL);
-					EXCEPTION_CHECKPOINT;
-				}
+				EXCEPTION_CHECKPOINT;
 
 				clause_args = NULL;
 				INIT_INTERP_STATE (frame, clause_args);
@@ -4015,10 +4013,9 @@ call:;
 
 			method_entry (context, frame, &tracing, &ex);
 
-			if (G_UNLIKELY (ex)) {
+			if (G_UNLIKELY (ex))
 				THROW_EX (ex, NULL);
-				EXCEPTION_CHECKPOINT;
-			}
+			EXCEPTION_CHECKPOINT;
 
 			clause_args = NULL;
 			INIT_INTERP_STATE (frame, clause_args);
