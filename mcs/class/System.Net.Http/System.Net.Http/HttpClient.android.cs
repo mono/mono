@@ -8,21 +8,25 @@ namespace System.Net.Http {
 
 		static HttpMessageHandler CreateDefaultHandler ()
 		{
-			Type type = Type.GetType("Android.Runtime.AndroidEnvironment, Mono.Android");
-			if (type == null)
-				return GetFallback ("Invalid Mono.Android assembly? Cannot find Android.Runtime.AndroidEnvironment");
+			string envvar = Environment.GetEnvironmentVariable ("XA_HTTP_CLIENT_HANDLER_TYPE")?.Trim ();
+			if (envvar == "System.Net.Http.MonoWebRequestHandler")
+				return new HttpMessageHandler (new MonoWebRequestHandler ());
 
-			MethodInfo method = type.GetMethod ("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
-			if (method == null)
-				return GetFallback ("Your Xamarin.Android version does not support obtaining of the custom HttpClientHandler");
+			if (string.IsNullOrEmpty (envvar))
+				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty")
 
-			object ret = method.Invoke (null, null);
-			if (ret == null)
-				return GetFallback ("Xamarin.Android returned no custom HttpClientHandler");
+			Type handlerType = Type.GetType (envvar, false);
+			if (handlerType == null && !envvar.Contains (", "))
+			{
+				// if assembly was not specified - look for it in Mono.Android too 
+				// (e.g. AndroidHttpHandler is there)
+				handlerType = Type.GetType (envvar + ", Mono.Android", false);
+			}
 
-			var handler = ret as HttpMessageHandler;
+			object handlerObj = Activator.CreateInstance (handlerType);
+			var handler = handlerObj as HttpMessageHandler;
 			if (handler == null)
-				return GetFallback ($"{ret?.GetType()} is not a valid HttpMessageHandler");
+				return GetFallback ($"{ret?.GetType ()} is not a valid HttpMessageHandler");
 			return handler;
 		}
 
