@@ -23,6 +23,9 @@ namespace System.Net.Http {
 				handlerType = Type.GetType (envvar + ", Mono.Android", false);
 			}
 
+			if (handlerType == null)
+				return GetFallback ($"'{envvar}' type was not found")
+
 			object handlerObj = Activator.CreateInstance (handlerType);
 			var handler = handlerObj as HttpMessageHandler;
 			if (handler == null)
