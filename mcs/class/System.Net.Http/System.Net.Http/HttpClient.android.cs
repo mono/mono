@@ -10,10 +10,10 @@ namespace System.Net.Http {
 		{
 			string envvar = Environment.GetEnvironmentVariable ("XA_HTTP_CLIENT_HANDLER_TYPE")?.Trim ();
 			if (envvar == "System.Net.Http.MonoWebRequestHandler")
-				return new HttpMessageHandler (new MonoWebRequestHandler ());
+				return new HttpClientHandler (new MonoWebRequestHandler ());
 
 			if (string.IsNullOrEmpty (envvar))
-				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty")
+				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty");
 
 			Type handlerType = Type.GetType (envvar, false);
 			if (handlerType == null && !envvar.Contains (", "))
@@ -24,12 +24,12 @@ namespace System.Net.Http {
 			}
 
 			if (handlerType == null)
-				return GetFallback ($"'{envvar}' type was not found")
+				return GetFallback ($"'{envvar}' type was not found");
 
 			object handlerObj = Activator.CreateInstance (handlerType);
 			var handler = handlerObj as HttpMessageHandler;
 			if (handler == null)
-				return GetFallback ($"{ret?.GetType ()} is not a valid HttpMessageHandler");
+				return GetFallback ($"{handlerObj?.GetType ()} is not a valid HttpMessageHandler");
 			return handler;
 		}
 
