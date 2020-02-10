@@ -139,8 +139,6 @@ llvm/usr/
 sdks/builds/llvm-*/
 sdks/builds/android-*/
 mcs/build/compiler-server.log
-tools/offsets-tool-py/offtool/
-tools/offsets-tool-py/clang/__pycache__
 
 ##############################################################################
 # Arcade output directories
