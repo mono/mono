@@ -17,10 +17,10 @@ namespace System.Net.Http.Tests
 		{
 			BindingFlags bflasgs = BindingFlags.Instance | BindingFlags.NonPublic;
 			FieldInfo handlerField = typeof (HttpMessageInvoker).GetField("_handler", bflasgs);
-			Assert.NotNull (handlerField)
+			Assert.NotNull (handlerField);
 			object handler = handlerField.GetValue (httpClient);
 			FieldInfo innerHandlerField = handler.GetType ().GetField ("_delegatingHandler", bflasgs);
-			Assert.NotNull (handlerField)
+			Assert.NotNull (handlerField);
 			object innerHandler = innerHandlerField.GetValue (handler);
 			return innerHandler.GetType ();
 		}
@@ -47,7 +47,7 @@ namespace System.Net.Http.Tests
 
 			var handler4 = new HttpClientHandler ();
 			var httpClient4 = new HttpClient (handler4);
-			Assert.Equal ("MonoWebRequestHandler", GetInnerHandlerType httpClient4).Name);
+			Assert.Equal ("MonoWebRequestHandler", GetInnerHandlerType (httpClient4).Name);
 
 			// "System.Net.Http.MonoWebRequestHandler, System.Net.Http"
 			Environment.SetEnvironmentVariable (xaHandlerKey, "System.Net.Http.MonoWebRequestHandler, System.Net.Http");
