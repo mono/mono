@@ -5,6 +5,7 @@
 using System;
 using System.Text;
 using System.Net.Http;
+using System.Reflection;
 
 using Xunit;
 using Xunit.Abstractions;
