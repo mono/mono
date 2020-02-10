@@ -5,7 +5,7 @@ namespace System.Net.Http
 		static IMonoHttpClientHandler CreateDefaultHandler ()
 		{
 			string envvar = Environment.GetEnvironmentVariable ("XA_HTTP_CLIENT_HANDLER_TYPE")?.Trim ();
-			if (envvar == "System.Net.Http.MonoWebRequestHandler")
+			if (envvar?.StartsWith("System.Net.Http.MonoWebRequestHandler", StringComparison.InvariantCulture))
 				return new MonoWebRequestHandler ();
 			// Ignore other types of handlers here (e.g. AndroidHttpHandler) to keep the old behavior
 			// and always create SocketsHttpHandler for code like this if MonoWebRequestHandler was not specified:
