@@ -13,6 +13,9 @@ namespace System.Net.Http {
 			if (string.IsNullOrEmpty (envvar))
 				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty");
 
+			if (envvar?.StartsWith("System.Net.Http.MonoWebRequestHandler", StringComparison.InvariantCulture) == true)
+				return new HttpClientHandler (new MonoWebRequestHandler ());
+
 			Type handlerType = Type.GetType (envvar, false);
 			if (handlerType == null && !envvar.Contains (", "))
 			{
@@ -26,11 +29,8 @@ namespace System.Net.Http {
 
 			object handlerObj = Activator.CreateInstance (handlerType);
 
-			if (handlerObj is MonoWebRequestHandler mwrh)
-				return new HttpClientHandler (mwrh);
-
-			if (handlerObj is HttpMessageHandler hmh)
-				return hmh;
+			if (handlerObj is HttpMessageHandler msgHandler)
+				return msgHandler;
 
 			return GetFallback ($"{handlerObj?.GetType ()} is not a valid HttpMessageHandler or MonoWebRequestHandler");
 		}
