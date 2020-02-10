@@ -74,7 +74,7 @@ if [ -d ${FW_CURRENT} ]; then
     mkdir -p pango
     pango-querymodules > pango/pango.modules 2>> "${LOG_DIR}/postinstall-pango-querymodules.log" || true
     pango-querymodules --update-cache >> "${LOG_DIR}/postinstall-pango-querymodules.log" 2>&1 || true
-    fc-cache >> "${LOG_DIR}/postinstall-fc-cache.log" 2>&1 || true
+    fc-cache -v >> "${LOG_DIR}/postinstall-fc-cache.log" 2>&1 || true
 
     cd ${FW_CURRENT}/lib/gtk-2.0/2.10.0
     gtk-query-immodules-2.0 > immodules.cache 2>> "${LOG_DIR}/gtk-query-immodules-2.0.log" || true
