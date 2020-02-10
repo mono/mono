@@ -120,8 +120,15 @@ namespace System.Reflection.Emit
 			return attrs;
 		}
 
+		TypeBuilder ()
+		{
+			// Use this delegate to avoid a linker dependency between RuntimeType and SRE code when SRE is not used
+			if (RuntimeType.MakeTypeBuilderInstantiation == null)
+				RuntimeType.MakeTypeBuilderInstantiation = System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType;
+		}
+
 		[PreserveDependency ("DoTypeBuilderResolve", "System.AppDomain")]
-		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
+		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx) : this ()
 		{
 			this.parent = null;
 			this.attrs = attr;
@@ -133,7 +140,7 @@ namespace System.Reflection.Emit
 			pmodule = mb;
 		}
 
-		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
+		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type) : this ()
 		{
 			int sep_index;
 			this.parent = ResolveUserType (parent);
