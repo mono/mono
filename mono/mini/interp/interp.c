@@ -162,7 +162,11 @@ frame_stack_alloc_ovf (FrameStack *stack, int size, StackFragment **out_frag)
 		current = stack->current = current->next;
 		current->pos = (guint8*)&current->data;
 	} else {
-		free_frag (current->next);
+		StackFragment *tmp = current->next;
+		/* avoid linking to be freed fragments, so the GC can't trip over it */
+		current->next = NULL;
+		free_frag (tmp);
+
 		current = add_frag (stack, size);
 	}
 	g_assert (current->pos + size <= current->end);
