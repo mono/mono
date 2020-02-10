@@ -165,6 +165,7 @@ frame_stack_alloc_ovf (FrameStack *stack, int size, StackFragment **out_frag)
 		StackFragment *tmp = current->next;
 		/* avoid linking to be freed fragments, so the GC can't trip over it */
 		current->next = NULL;
+		mono_compiler_barrier ();
 		free_frag (tmp);
 
 		current = add_frag (stack, size);
