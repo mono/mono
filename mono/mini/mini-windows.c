@@ -14,6 +14,7 @@
 #include <config.h>
 #include <signal.h>
 #include <math.h>
+#include <stddef.h>
 #include <conio.h>
 #include <assert.h>
 
