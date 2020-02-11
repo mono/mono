@@ -104,8 +104,8 @@ jsup: .stamp-jsvu
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 
 .stamp-jsvu: 
-	npm install npm@^6.13.4
-	node_modules/npm/bin/npm-cli.js install
+	n 13.6.0
+	npm install
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
 	touch $@
 
