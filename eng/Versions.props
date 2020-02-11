@@ -9,6 +9,6 @@
     <!-- core-setup -->
     <MicrosoftNETCoreAppVersion>5.0.0-alpha.1.19564.1</MicrosoftNETCoreAppVersion>
     <!-- roslyn -->
-    <MicrosoftNetCompilersVersion>3.3.1-beta4-19476-06</MicrosoftNetCompilersVersion>
+    <MicrosoftNetCompilersVersion>3.5.0-beta1-19606-04</MicrosoftNetCompilersVersion>
   </PropertyGroup>
 </Project>

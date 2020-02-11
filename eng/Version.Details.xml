@@ -9,9 +9,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>c77948d92a2f950140f09384f057cb893ec3955a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers" Version="3.3.1-beta4-19476-06">
+    <Dependency Name="Microsoft.Net.Compilers" Version="3.5.0-beta1-19606-04">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>39d545dc14bc4d5a546e5e2f58d1ebaca72fcd61</Sha>
+      <Sha>c1a3db42197033d8af5e7ec76fce3461ef8f648d</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
