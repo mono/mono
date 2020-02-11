@@ -111,26 +111,26 @@ This raises the process limit high enough for the runtime to successfully build.
 
 ## Building mono components
 
-```make -j -C sdks/builds provision-wasm```
+```make -C sdks/builds provision-wasm```
 
 This will download and setup emscripten.
 
-``` make -j -C sdks/wasm runtime```
+``` make -C sdks/wasm runtime```
 
 This will build the wasm device runtime.
 
-``` make -j -C sdks/wasm bcl```
+``` make -C sdks/wasm bcl```
 
 This will build the wasm specific version of the BCL.
 
-``` make -j -C sdks/wasm cross```
+``` make -C sdks/wasm cross```
 
 This will build the AOT cross compiler. Its only needed if you intend
 to use AOT.
 
 ## Building wasm components
 
-``` make -j -C sdks/wasm```
+``` make -C sdks/wasm```
 
 This will build the actual wasm libraries etc.
 
