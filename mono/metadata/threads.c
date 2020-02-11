@@ -1656,6 +1656,13 @@ mono_thread_detach (MonoThread *thread)
 		return;
 	MONO_ENTER_GC_UNSAFE;
 	mono_thread_detach_internal (thread->internal_thread);
+
+	// Not really a background change, but break the wait in a
+	// thread calling mono_thread_manage_internal in case it is
+	// waiting for this thread.
+	MONO_ENTER_GC_SAFE;
+	mono_os_event_set (&background_change_event);
+	MONO_EXIT_GC_SAFE;
 	MONO_EXIT_GC_UNSAFE;
 }
 
