@@ -3470,7 +3470,7 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 		mono_domain_unlock (vt->domain);
 		dest = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
     } else if (field->offset == -2) {
-        dest = mono_field_get_data (field);
+        dest = (void*)mono_field_get_data (field);
 	} else {
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
@@ -3891,7 +3891,7 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 		gpointer addr = g_hash_table_lookup (vt->domain->special_static_fields, field);
 		src = mono_get_special_static_data_for_thread (thread, GPOINTER_TO_UINT (addr));
 	} else if (field->offset == -2) {
-	    src = mono_field_get_data (field);
+	    src = (void*)mono_field_get_data (field);
 	} else {
 		src = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}

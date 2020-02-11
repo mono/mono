@@ -76,9 +76,9 @@ mono_class_get_flags (MonoClass *klass)
 		/* all arrays are marked serializable and sealed, bug #42779 */
 		return TYPE_ATTRIBUTE_CLASS | TYPE_ATTRIBUTE_SERIALIZABLE | TYPE_ATTRIBUTE_SEALED | TYPE_ATTRIBUTE_PUBLIC;
 	case MONO_CLASS_POINTER:
-		if (m_classpointer_get_klass (klass) == klass)
+		if (m_classpointer_get_klass ((MonoClassPointer*)klass) == klass)
 			return TYPE_ATTRIBUTE_CLASS;
-		return TYPE_ATTRIBUTE_CLASS | (mono_class_get_flags (m_classpointer_get_klass (klass)) & TYPE_ATTRIBUTE_VISIBILITY_MASK);
+		return TYPE_ATTRIBUTE_CLASS | (mono_class_get_flags (m_classpointer_get_klass ((MonoClassPointer*)klass)) & TYPE_ATTRIBUTE_VISIBILITY_MASK);
 	}
 	g_assert_not_reached ();
 }
