@@ -1214,7 +1214,7 @@ if ($build)
 
 		$ENV{'CC'} = "$macSdkPath/../usr/bin/clang";
 		$ENV{'CXX'} = "$macSdkPath/../usr/bin/clang++";
-		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-D_XOPEN_SOURCE -I$macBuildEnvDir/builds/usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath";
+		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-I$macBuildEnvDir/builds/usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath";
 		$ENV{'CXXFLAGS'} = $ENV{CFLAGS};
 		$ENV{'CPPFLAGS'} = $ENV{CFLAGS};
 
