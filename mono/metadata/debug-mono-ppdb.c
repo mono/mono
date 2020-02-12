@@ -29,8 +29,6 @@
 #include <mono/utils/bsearch.h>
 #include <mono/utils/mono-logger-internals.h>
 
-#define DEBUG_PRINTF(...) do { { fprintf (stdout, __VA_ARGS__); } } while (0)
-
 #if HOST_WIN32 || HOST_WASM
 #include "../zlib/zlib.h"
 #elif HAVE_SYS_ZLIB
