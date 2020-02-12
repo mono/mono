@@ -4517,7 +4517,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 								break;
 							}
 						}
-						// If inlining failed restore the stack.
+						// If inlining failed, restore the stack.
 						// At runtime, interp.c newobj_fast uses an extra stack element
 						// after the parameters to store `o` across the non-recursive call
 						// where GC will see it.
