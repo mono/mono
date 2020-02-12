@@ -101,12 +101,12 @@ endif
 NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
 
 jsup: .stamp-jsvu
-	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 
 .stamp-jsvu: 
 	npm install npm@^6.13.4
 	node_modules/npm/bin/npm-cli.js install
-	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 	touch $@
 
 .PHONY: toolchain
@@ -615,15 +615,11 @@ build: build-native build-managed build-debugger-test-app
 gen-pinvoke-tables:
 	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > src/pinvoke-tables-default.h
 
-CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 RUN_V8=$(D8) --stack-trace-limit=1000 --expose_wasm
-
-run-ch-%: toolchain build-test-suite
-	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
 	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- --enable-gc $*)
@@ -639,7 +635,6 @@ run-chrome-%: build-test-suite
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
-	$(MAKE) -C . run-ch-$*
 	$(MAKE) -C . run-v8-$*
 	$(MAKE) -C . run-sm-$*
 	$(MAKE) -C . run-jsc-$*
