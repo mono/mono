@@ -21,6 +21,12 @@ APK_DIR=apk
 DEBUGGER_RUNNER_EXE = app/assets/asm/dtest-app.exe
 DEBUGGER_RUNNER_PDB = app/assets/asm/dtest-app.pdb
 
+ifeq ($(ENABLE_INTERPRETER),1)
+SDK_OUT_PREFIX := $(TOP)/sdks/out/android-interpreter
+else
+SDK_OUT_PREFIX := $(TOP)/sdks/out/android
+endif
+
 CHECKS=$(subst mscorlib,corlib,$(patsubst $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_%_test.dll,%,$(wildcard $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_*_test.dll)))
 
 .PHONY: all
@@ -77,22 +83,22 @@ MONO_LIBS= \
 	libmono-btls-shared.so \
 	libmono-native.so
 
-$(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(TOP)/sdks/out/android-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a
+$(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(SDK_OUT_PREFIX)-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS)): app/src/main/jniLibs/arm64-v8a/%: $(TOP)/sdks/out/android-arm64-v8a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/arm64-v8a
+$(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS)): app/src/main/jniLibs/arm64-v8a/%: $(SDK_OUT_PREFIX)-arm64-v8a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/arm64-v8a
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS)): app/src/main/jniLibs/x86/%: $(TOP)/sdks/out/android-x86-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86
+$(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS)): app/src/main/jniLibs/x86/%: $(SDK_OUT_PREFIX)-x86-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS)): app/src/main/jniLibs/x86_64/%: $(TOP)/sdks/out/android-x86_64-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86_64
+$(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS)): app/src/main/jniLibs/x86_64/%: $(SDK_OUT_PREFIX)-x86_64-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86_64
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS))
