@@ -77,22 +77,22 @@ MONO_LIBS= \
 	libmono-btls-shared.so \
 	libmono-native.so
 
-$(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(TOP)/sdks/out/android-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a
+$(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS)): app/src/main/jniLibs/armeabi-v7a/%: $(TOP)/sdks/out/android$(INTERPRETER)-armeabi-v7a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/armeabi-v7a
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/armeabi-v7a/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS)): app/src/main/jniLibs/arm64-v8a/%: $(TOP)/sdks/out/android-arm64-v8a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/arm64-v8a
+$(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS)): app/src/main/jniLibs/arm64-v8a/%: $(TOP)/sdks/out/android$(INTERPRETER)-arm64-v8a-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/arm64-v8a
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/arm64-v8a/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS)): app/src/main/jniLibs/x86/%: $(TOP)/sdks/out/android-x86-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86
+$(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS)): app/src/main/jniLibs/x86/%: $(TOP)/sdks/out/android$(INTERPRETER)-x86-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/x86/%,$(MONO_LIBS))
 
-$(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS)): app/src/main/jniLibs/x86_64/%: $(TOP)/sdks/out/android-x86_64-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86_64
+$(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS)): app/src/main/jniLibs/x86_64/%: $(TOP)/sdks/out/android$(INTERPRETER)-x86_64-$(CONFIGURATION)/lib/% | app/src/main/jniLibs/x86_64
 	cp $< $@
 
 .stamp-package: $(patsubst %,app/src/main/jniLibs/x86_64/%,$(MONO_LIBS))
