@@ -29,7 +29,9 @@
 #include <mono/utils/bsearch.h>
 #include <mono/utils/mono-logger-internals.h>
 
-#if HOST_WIN32
+#define DEBUG_PRINTF(...) do { { fprintf (stdout, __VA_ARGS__); } } while (0)
+
+#if HOST_WIN32 || HOST_WASM
 #include "../zlib/zlib.h"
 #elif HAVE_SYS_ZLIB
 #include <zlib.h>
@@ -173,7 +175,7 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 	}
 
 // Temporarily disabled to unblock Roslyn
-#if HOST_WIN32 //|| HAVE_SYS_ZLIB
+#if HOST_WIN32 || HOST_WASM
 	if (ppdb_data) {
 		/* Embedded PPDB data */
 		/* ppdb_size is the uncompressed size */
