@@ -10,7 +10,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mono/mono.jit"
+    "url": "https://github.com/mono/mono.git"
   },
   "dependencies": {
     "jsvu": "git+https://github.com/GoogleChromeLabs/jsvu.git",
