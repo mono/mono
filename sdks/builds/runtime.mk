@@ -29,8 +29,6 @@
 #  _$(1)-$(2)_PATH
 define RuntimeTemplate
 
-_runtime_$(1)$(5)-$(2)_CONFIGURATION=$$(CONFIGURATION)
-
 _runtime_$(1)$(5)-$(2)_BITNESS=$$(if $$(or $$(findstring i686,$(3)),$$(findstring i386,$(3))),-m32,$$(if $$(findstring x86_64,$(3)),-m64))
 
 _runtime_$(1)$(5)-$(2)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)$(5)-$(2)_CFLAGS) $$($(1)$(5)-$(2)_CFLAGS) $$(_runtime_$(1)$(5)-$(2)_BITNESS)
@@ -64,37 +62,37 @@ _runtime_$(1)$(5)-$(2)_CONFIGURE_ENVIRONMENT = \
 
 _runtime_$(1)$(5)-$(2)_CONFIGURE_FLAGS= \
 	$$(if $(3),--host=$(3)) \
-	--cache-file=$$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION) \
+	--cache-file=$$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION).config.cache \
+	--prefix=$$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(CONFIGURATION) \
 	$$(if $$(ENABLE_CXX),--enable-cxx) \
 	$$(_cross-runtime_$(1)$(5)-$(2)_CONFIGURE_FLAGS) \
 	$$(_$(1)$(5)-$(2)_CONFIGURE_FLAGS) \
 	$$($(1)$(5)-$(2)_CONFIGURE_FLAGS)
 
-.stamp-$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)-configure: $$(TOP)/configure .stamp-$(1)$(5)-$(2)-toolchain
-	mkdir -p $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)
-	$(if $$(_$(1)$(5)-$(2)_PATH),PATH="$$$$PATH:$$(_$(1)$(5)-$(2)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION) $$(abspath $$<) $$(_runtime_$(1)$(5)-$(2)_AC_VARS) $$(_runtime_$(1)$(5)-$(2)_CONFIGURE_ENVIRONMENT) $$(_runtime_$(1)$(5)-$(2)_CONFIGURE_FLAGS)
+.stamp-$(1)$(5)-$(2)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-$(1)$(5)-$(2)-toolchain
+	mkdir -p $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION)
+	$(if $$(_$(1)$(5)-$(2)_PATH),PATH="$$$$PATH:$$(_$(1)$(5)-$(2)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION) $$(abspath $$<) $$(_runtime_$(1)$(5)-$(2)_AC_VARS) $$(_runtime_$(1)$(5)-$(2)_CONFIGURE_ENVIRONMENT) $$(_runtime_$(1)$(5)-$(2)_CONFIGURE_FLAGS)
 	touch $$@
 
-.stamp-$(1)$(5)-$(2)-configure: .stamp-$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)-configure
+.stamp-$(1)$(5)-$(2)-configure: .stamp-$(1)$(5)-$(2)-$$(CONFIGURATION)-configure
 	touch $$@
 
 .PHONY: build-custom-$(1)$(5)-$(2)
 build-custom-$(1)$(5)-$(2):
-	$$(MAKE) -C $(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)
+	$$(MAKE) -C $(1)$(5)-$(2)-$$(CONFIGURATION)
 
 .PHONY: setup-custom-$(1)$(5)-$(2)
 setup-custom-$(1)$(5)-$(2):
-	mkdir -p $$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)
+	mkdir -p $$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(CONFIGURATION)
 
 .PHONY: package-$(1)$(5)-$(2)
 package-$(1)$(5)-$(2):
-	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)/mono install
-	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)/support install
+	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION)/mono install
+	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION)/support install
 
 .PHONY: clean-$(1)$(5)-$(2)
 clean-$(1)$(5)-$(2):
-	rm -rf .stamp-$(1)$(5)-$(2)-toolchain .stamp-$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1)$(5)-$(2) $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION) $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)
+	rm -rf .stamp-$(1)$(5)-$(2)-toolchain .stamp-$(1)$(5)-$(2)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1)$(5)-$(2) $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)$(5)-$(2)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)$(5)-$(2)-$$(CONFIGURATION)
 
 $$(eval $$(call TargetTemplate,$(1)$(5),$(2)))
 
@@ -111,7 +109,7 @@ package-$(1): package-$(1)$(5)-$(2) $$(ADDITIONAL_PACKAGE_DEPS)
 archive-$(1): package-$(1)
 
 ifneq ($(4),yes)
-$(1)_ARCHIVE += $(1)$(5)-$(2)-$$(_runtime_$(1)$(5)-$(2)_CONFIGURATION)
+$(1)_ARCHIVE += $(1)$(5)-$(2)-$$(CONFIGURATION)
 endif
 
 endef
