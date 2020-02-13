@@ -71,3 +71,10 @@ Currently, the LLVM 'noinline' flag has no corresponding wasm flag, so
 the wasm optimizer will inline functions which are marked noinline. This
 causes problems for the mono interpreter because the inlined functions
 increase the stack size for the main interpreter function.
+
+# Process wide memory barrier
+
+This is useful to reduce synchronization overhead in various parallel
+systems including synchronization with the GC. Its the same as
+membarrier (MEMBARRIER_CMD_PRIVATE_EXPEDITED) on linux and
+FlushProcessWriteBuffers on windows.
