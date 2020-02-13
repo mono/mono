@@ -39,7 +39,7 @@
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME "MonoDomainSetup"
 #endif
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -704,6 +704,6 @@ mono_domain_ambient_alc (MonoDomain *domain)
 	return mono_domain_default_alc (domain);
 }
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */
