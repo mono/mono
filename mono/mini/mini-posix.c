@@ -456,8 +456,6 @@ mono_runtime_posix_install_handlers (void)
 		add_signal_handler (SIGUSR2, sigusr2_signal_handler, SA_RESTART);
 		sigaddset (&signal_set, SIGUSR2);
 	}
-	add_signal_handler (SIGTRAP, mono_crashing_signal_handler, 0);
-	sigaddset (&signal_set, SIGTRAP);
 	add_signal_handler (SIGSYS, mono_crashing_signal_handler, 0);
 	sigaddset (&signal_set, SIGSYS);
 
