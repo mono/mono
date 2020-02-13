@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 typedef void* MonoEERef;
 
 void
-mono_llvm_jit_init ();
+mono_llvm_jit_init (void);
 
 void
 mono_llvm_jit_set_tls_cfg (MonoCompile *cfg);
