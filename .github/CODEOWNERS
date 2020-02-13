@@ -116,6 +116,8 @@
 
 /mono/sgen @BrzVlad @lambdageek
 
+/mono/tools/offsets-tool @lewurm @rolfbjarne
+
 /mono/utils @vargaz @lewurm @lambdageek
 /mono/utils/atomic* @lewurm @vargaz
 /mono/utils/mono-hwcap* @lewurm @vargaz
@@ -156,6 +158,5 @@
 /tools @lambdageek @vargaz
 /tools/locale-builder @marek-safar @egorbo
 /tools/nuget-hash-extractor @marek-safar @radical @akoeplinger
-/tools/offsets-tool @lewurm @rolfbjarne
 /tools/pedump @lambdageek @lewurm
 /tools/sgen @brzvlad @vargaz @naricc
