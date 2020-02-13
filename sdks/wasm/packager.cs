@@ -829,7 +829,7 @@ class Driver {
 		}
 		if (!use_release_runtime)
 			// -s ASSERTIONS=2 is very slow
-			emcc_flags += "-s ASSERTIONS=1";
+			emcc_flags += "-s ASSERTIONS=1 ";
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
