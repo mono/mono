@@ -14,7 +14,12 @@ namespace System.Net.Http {
 				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty");
 
 			if (envvar?.StartsWith("System.Net.Http.MonoWebRequestHandler", StringComparison.InvariantCulture) == true)
-				return new HttpClientHandler (new MonoWebRequestHandler ());
+			{
+				var monoWrh = HttpClientHandler.CreateMonoWebRequestHandler ();
+				if (monoWrh != null)
+					return new HttpClientHandler (monoWrh);
+				return GetFallback ($"{envvar} was not found");
+			}
 
 			Type handlerType = Type.GetType (envvar, false);
 			if (handlerType == null && !envvar.Contains (", "))
