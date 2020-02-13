@@ -11,22 +11,24 @@ namespace System.ComponentModel
 #if !MOBILE
 		[DllImport ("Kernel32", CharSet = CharSet.Unicode)]
 		static extern int FormatMessage(int dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId,
-			[Out] StringBuilder lpBuffer, int nSize, IntPtr[] arguments);
+			[Out] char[] lpBuffer, int nSize, IntPtr[] arguments);
+
+		const int MAX_MESSAGE_LENGTH = 256;
 #endif
 
 		internal static string GetErrorMessage (int error)
 		{
 #if !MOBILE
 			if (Environment.IsRunningOnWindows) {
-				StringBuilder sb = new StringBuilder (256);
+				char[] messageArray = new char[MAX_MESSAGE_LENGTH];
 
 				int result = FormatMessage (0x1200 /* FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM */,
-					IntPtr.Zero, (uint)error, 0, sb, sb.Capacity, null);
+					IntPtr.Zero, (uint)error, 0, messageArray, MAX_MESSAGE_LENGTH, null);
 
 				if (result == 0)
 					return "Error looking up error string";
 
-				return sb.ToString ();
+				return new string(messageArray);
 			}
 #endif
 
