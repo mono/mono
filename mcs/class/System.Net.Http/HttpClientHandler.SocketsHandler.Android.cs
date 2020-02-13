@@ -9,9 +9,9 @@ namespace System.Net.Http
 			string envvar = Environment.GetEnvironmentVariable ("XA_HTTP_CLIENT_HANDLER_TYPE")?.Trim ();
 			if (envvar?.StartsWith("System.Net.Http.MonoWebRequestHandler", StringComparison.InvariantCulture) == true)
 			{
-				IMonoHttpClientHandler legacyHandler = CreateMonoWebRequestHandler ();
-				if (legacyHandler != null)
-					return legacyHandler;
+				Type monoWrhType = Type.GetType (envvar, false);
+				if (monoWrhType != null)
+					return (IMonoHttpClientHandler) Activator.CreateInstance (monoWrhType);
 				else
 					Console.WriteLine ($"{envvar} type was not found.");
 			}
@@ -24,17 +24,6 @@ namespace System.Net.Http
 			//
 			// AndroidHttpHandler is used only when we use the parameterless ctor of HttpClient
 			return new SocketsHttpHandler (); 
-		}
-
-		internal static IMonoHttpClientHandler CreateMonoWebRequestHandler ()
-		{
-			Type monoWrhType = Type.GetType ("System.Net.Http.MonoWebRequestHandler", false);
-			if (monoWrhType != null)
-			{
-				var bflags = BindingFlags.NonPublic | BindingFlags.Instance;
-				return (IMonoHttpClientHandler) Activator.CreateInstance (monoWrhType, bflags, null, null, null);
-			}
-			return null;
 		}
 	}
 }
