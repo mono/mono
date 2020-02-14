@@ -4269,9 +4269,8 @@ mini_init (const char *filename, const char *runtime_version)
 			fprintf (stderr, "Mono Warning: llvm support could not be loaded.\n");
 		}
 	}
-	if (mono_use_llvm) {
+	if (mono_use_llvm)
 		mono_llvm_init (!mono_compile_aot);
-	}
 #endif
 
 	mono_trampolines_init ();
