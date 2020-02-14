@@ -70,7 +70,7 @@ namespace System.Net.Http
 		TimeSpan? timeout;
 		bool disposed;
 
-		internal MonoWebRequestHandler ()
+		public MonoWebRequestHandler ()
 		{
 			allowAutoRedirect = true;
 			maxAutomaticRedirections = 50;
