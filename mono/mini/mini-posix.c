@@ -502,6 +502,7 @@ mono_runtime_cleanup_handlers (void)
 	remove_signal_handler (SIGBUS);
 	if (mono_jit_trace_calls != NULL)
 		remove_signal_handler (SIGUSR2);
+	remove_signal_handler (SIGSYS);
 
 	remove_signal_handler (SIGABRT);
 
