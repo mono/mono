@@ -11,7 +11,7 @@ namespace System.Net.Http {
 			string envvar = Environment.GetEnvironmentVariable ("XA_HTTP_CLIENT_HANDLER_TYPE")?.Trim ();
 
 			if (string.IsNullOrEmpty (envvar))
-				return GetFallback ($"XA_HTTP_CLIENT_HANDLER_TYPE is empty");
+				return new HttpClientHandler ();
 
 			if (envvar?.StartsWith ("System.Net.Http.MonoWebRequestHandler", StringComparison.InvariantCulture) == true)
 			{
@@ -19,7 +19,7 @@ namespace System.Net.Http {
 				if (monoWrhType != null)
 					return new HttpClientHandler ((IMonoHttpClientHandler) Activator.CreateInstance (monoWrhType));
 
-				return GetFallback ($"{envvar} was not found");
+				return new HttpClientHandler ();
 			}
 
 			Type handlerType = Type.GetType (envvar, false);
@@ -31,19 +31,11 @@ namespace System.Net.Http {
 			}
 
 			if (handlerType == null)
-				return GetFallback ($"'{envvar}' type was not found");
+				return new HttpClientHandler ();
 
-			object handlerObj = Activator.CreateInstance (handlerType);
-
-			if (handlerObj is HttpMessageHandler msgHandler)
+			if (Activator.CreateInstance (handlerType) is HttpMessageHandler msgHandler)
 				return msgHandler;
 
-			return GetFallback ($"{handlerObj?.GetType ()} is not a valid HttpMessageHandler or MonoWebRequestHandler");
-		}
-
-		static HttpMessageHandler GetFallback (string message)
-		{
-			Console.WriteLine (message + ". Defaulting to System.Net.Http.HttpClientHandler");
 			return new HttpClientHandler ();
 		}
 	}
