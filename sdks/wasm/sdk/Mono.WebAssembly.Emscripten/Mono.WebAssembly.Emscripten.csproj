@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <NuspecFile>Mono.WebAssembly.Emscripten.nuspec</NuspecFile>
+    <WasmPackager_Emscripten_Version>1.39.7</WasmPackager_Emscripten_Version>
+    <NoWarn>NU5128</NoWarn>
+  </PropertyGroup>
+
+</Project>

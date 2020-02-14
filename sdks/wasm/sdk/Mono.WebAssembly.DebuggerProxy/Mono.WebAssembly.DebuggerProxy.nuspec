@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Mono.WebAssembly.DebuggerProxy</id>
-    <version>0.2.2</version>
+    <version>0.2.2-martin-20200214.1</version>
     <authors>Martin Baulig</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Experimental Preview</description>
