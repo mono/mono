@@ -12,8 +12,6 @@ namespace System.Net.Http
 				Type monoWrhType = Type.GetType (envvar, false);
 				if (monoWrhType != null)
 					return (IMonoHttpClientHandler) Activator.CreateInstance (monoWrhType);
-				else
-					Console.WriteLine ($"{envvar} type was not found.");
 			}
 
 			// Ignore other types of handlers here (e.g. AndroidHttpHandler) to keep the old behavior
