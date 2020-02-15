@@ -30,7 +30,6 @@ MONO_LLVM_INTERNAL void mono_llvm_emit_aot_data            (const char *symbol, 
 MONO_LLVM_INTERNAL void mono_llvm_check_method_supported   (MonoCompile *cfg);
 MONO_LLVM_INTERNAL void mono_llvm_free_domain_info         (MonoDomain *domain);
 MONO_API void mono_personality              (void);
-int      mono_llvm_load                     (const char* bpath);
 MONO_LLVM_INTERNAL void     mono_llvm_create_vars (MonoCompile *cfg);
 MONO_LLVM_INTERNAL void     mono_llvm_fixup_aot_module         (void);
 
