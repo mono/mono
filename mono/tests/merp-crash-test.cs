@@ -49,6 +49,7 @@ class C
 			StresserIndex = Crashers.Count - 1;
 
 			Crashers.Add(new Crasher ("MerpCrashMalloc", MerpCrashMalloc));
+			Crashers.Add(new Crasher ("MerpCrashFailFast", MerpCrashFailFast, ValidateFailFastMsg));
 
 			Crashers.Add(new Crasher ("MerpCrashNullFp", MerpCrashNullFp));
 			Crashers.Add(new Crasher ("MerpCrashExceptionHook", MerpCrashUnhandledExceptionHook));
@@ -70,6 +71,21 @@ class C
 		MerpCrashManaged ()
 		{
 			unsafe { Console.WriteLine("{0}", *(int*) -1); }
+		}
+
+		const string failfastMsg = "abcd efgh";
+
+		public static void
+		MerpCrashFailFast ()
+		{
+			Environment.FailFast (failfastMsg);
+		}
+
+		public static void ValidateFailFastMsg (object json)
+		{
+			string s = jsonGetKeys (json, "payload", "failfast_message") as string;
+			if (s != failfastMsg)
+				throw new ValidationException (String.Format ("incorrect fail fast message (expected: {0}, got: {1})", failfastMsg, s));
 		}
 
 		[DllImport("libtest")]
