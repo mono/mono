@@ -4539,8 +4539,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					} else {
 						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
 							interp_add_ins (td, MINT_NEWOBJ_VTST_FAST);
-						else
+						else {
+							// Increase maximum stack and then restore.
+							move_stack (td, (td->sp - td->stack) - csignature->param_count, 1);
+							move_stack (td, (td->sp - td->stack) - csignature->param_count, -1);
 							interp_add_ins (td, MINT_NEWOBJ_VT_FAST);
+						}
 
 						td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 						td->last_ins->data [1] = csignature->param_count;
