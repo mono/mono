@@ -2383,11 +2383,8 @@ mono_main (int argc, char* argv[])
 			if (!parse_debug_options (argv [i] + 8))
 				return 1;
 #ifdef ENABLE_NETCORE
-			MonoDebugOptions *opt = mini_get_debug_options ();
-
-			if (!opt->enabled) {
+			if (!mini_get_debug_options ()->enabled)
 				enable_debugging = FALSE;
-			}
 #endif
  		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
