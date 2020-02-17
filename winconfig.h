@@ -21,7 +21,6 @@
 /* End configure ENABLE_DEFINES picked up from cygconfig.h or other external source, if available */
 
 /* Windows MSVC builds defaults to preemptive suspend. Disable ENABLE_HYBRID_SUSPEND defines. */
-/* #undef never needs an ifdef guard, it works unconditionally without warning. */
 #undef ENABLE_HYBRID_SUSPEND
 
 /* No ENABLE_DEFINES below this point */
