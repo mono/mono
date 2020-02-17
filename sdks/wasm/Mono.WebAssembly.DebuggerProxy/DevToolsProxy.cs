@@ -38,14 +38,13 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		public static Result Ok (JObject ok)
-		{
-			return new Result (ok, null);
-		}
+			=> new Result (ok, null);
 
 		public static Result Err (JObject err)
-		{
-			return new Result (null, err);
-		}
+			=> new Result (null, err);
+
+		public static Result Exception (Exception e)
+			=> new Result (null, JObject.FromObject (new { message = e.Message }));
 
 		public JObject ToJObject (MessageId target) {
 			if (IsOk) {
@@ -353,10 +352,10 @@ namespace WebAssembly.Net.Debugging {
 		{
 			switch (priority) {
 			case "protocol":
-				Console.WriteLine (msg);
+				//Console.WriteLine (msg);
 				break;
 			case "verbose":
-				Console.WriteLine (msg);
+				//Console.WriteLine (msg);
 				break;
 			case "info":
 			case "warning":

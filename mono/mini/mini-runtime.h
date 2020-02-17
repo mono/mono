@@ -262,6 +262,10 @@ typedef struct MonoDebugOptions {
 	 * embedding.
 	 */
 	gboolean top_runtime_invoke_unhandled;
+
+#ifdef ENABLE_NETCORE
+	gboolean enabled;
+#endif
 } MonoDebugOptions;
 
 /*
@@ -512,7 +516,7 @@ gboolean mono_jit_map_is_enabled (void);
 #else
 #define mono_enable_jit_map()
 #define mono_emit_jit_map(ji)
-#define mono_emit_jit_tramp(s,z,d)
+#define mono_emit_jit_tramp(s,z,d) do { } while (0) /* non-empty to avoid warning */
 #define mono_jit_map_is_enabled() (0)
 #endif
 
@@ -571,7 +575,7 @@ mono_is_addr_implicit_null_check (void *addr);
 #endif
 
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigfpe_signal_handler) ;
-void MONO_SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler) ;
+void MONO_SIG_HANDLER_SIGNATURE (mono_crashing_signal_handler) ;
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler);
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigint_signal_handler) ;
 gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
