@@ -28,7 +28,7 @@ $(test_output_dir):
 build-dtest: $(test_output_dir)/dtest-app.exe $(test_output_dir)/dtest-excfilter.exe
 
 $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_dir)
-	$(ILASM) -out:$@ /exe /debug:embedded Test/dtest-excfilter.il
+	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Runtime.CompilerServices.Unsafe.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
