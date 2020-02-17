@@ -42,7 +42,6 @@ typedef struct {
 	short compare_op;
 } MagicTypeInfo;
 
-
 #if TARGET_SIZEOF_VOID_P == 8
 #define OP_PT_ADD OP_LADD
 #define OP_PT_SUB OP_LSUB
@@ -175,7 +174,7 @@ emit_widen (MonoCompile *cfg, const MagicTypeInfo *info, int sreg)
 		MONO_INST_NEW (cfg, ins, info->conv_4_to_8);
 	ins->sreg1 = sreg;
 	ins->type = info->big_stack_type;
-	ins->dreg = alloc_dreg (cfg, info->big_stack_type); 
+	ins->dreg = alloc_dreg (cfg, info->big_stack_type);
 	MONO_ADD_INS (cfg->cbb, ins);
 	return mono_decompose_opcode (cfg, ins);
 }
