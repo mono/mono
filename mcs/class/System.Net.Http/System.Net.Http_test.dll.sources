@@ -12,6 +12,7 @@ System.Net.Http/MultipartContentTest.cs
 System.Net.Http/MultipartFormDataContentTest.cs
 System.Net.Http/StreamContentTest.cs
 System.Net.Http/StringContentTest.cs
+System.Net.Http/HttpClientHandlerTests.Android.cs
 System.Net.Http.Headers/AuthenticationHeaderValueTest.cs
 System.Net.Http.Headers/CacheControlHeaderValueTest.cs
 System.Net.Http.Headers/ContentDispositionHeaderValueTest.cs
