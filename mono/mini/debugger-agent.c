@@ -5698,11 +5698,11 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 	 * resume.
 	 */
 	if (ss_events)
-		process_event (EVENT_KIND_STEP, method, 0, ctx, ss_events, suspend_policy);
+		process_event (EVENT_KIND_STEP, method, sp.il_offset, ctx, ss_events, suspend_policy);
 	if (bp_events)
-		process_event (kind, method, 0, ctx, bp_events, suspend_policy);
+		process_event (kind, method, sp.il_offset, ctx, bp_events, suspend_policy);
 	if (enter_leave_events)
-		process_event (kind, method, 0, ctx, enter_leave_events, suspend_policy);
+		process_event (kind, method, sp.il_offset, ctx, enter_leave_events, suspend_policy);
 }
 #endif // !RUNTIME_IL2CPP
 
