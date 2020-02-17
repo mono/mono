@@ -172,8 +172,6 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 		return NULL;
 	}
 
-// Temporarily disabled to unblock Roslyn
-
 #if HOST_WIN32 || HAVE_SYS_ZLIB
 	if (ppdb_data) {
 		/* Embedded PPDB data */
