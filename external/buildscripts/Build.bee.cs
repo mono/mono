@@ -59,7 +59,7 @@ namespace BuildProgram
 
 			Artifacts.Add("reference-assemblies",
 				new Tuple<string, string>(
-					"reference-assemblies/9df1e3b3b120_bbb4750c6bf0a1784bec7d7c04b8ef5881f31f6212136e014694f3864a388886.7z",
+					"reference-assemblies/1.0_fc1889ab066ec621a44e51c666d750590b0496d8284b4420e1119c26ce0c7462.7z",
 					"testing"));
 		}
 

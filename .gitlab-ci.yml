@@ -169,31 +169,6 @@ build_win_x86:
   after_script:
     - C:\Users\builduser\post_build_script.bat
 
-build_win_bare_minimum:
-  stage: build
-  tags:
-    - bokken-job
-  variables:
-    BOKKEN_VM: build_win_bare_minimum
-    BOKKEN_JOB: |
-      resources:
-        - name: build_win_bare_minimum
-          image: platform-foundation/windows-mono-bokken:latest
-          flavor: b1.xlarge
-          type: Unity::VM
-  script:
-  - git submodule update --init --recursive
-  - perl external/buildscripts/build_unityscript_bareminimum_win.pl
-  - powershell mkdir -p incomingbuilds/bareminimum
-  - powershell cp -r builds/* incomingbuilds/bareminimum/
-  artifacts:
-    paths:
-    - incomingbuilds/bareminimum
-    expire_in: 1 week
-# Important! Do not remove this after_script!!
-  after_script:
-    - C:\Users\builduser\post_build_script.bat
-
 build_linux_x64:
   stage: build
   tags:

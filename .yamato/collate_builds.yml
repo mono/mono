@@ -12,7 +12,6 @@ dependencies:
   - .yamato/build_osx_classlibs.yml
   - .yamato/build_osx_runtime.yml
   - .yamato/build_win.yml
-  - .yamato/build_win_bare_minimum.yml
   - .yamato/build_win_x86.yml
   
 commands:
