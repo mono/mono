@@ -342,6 +342,47 @@ namespace DebuggerTests
 		}
 
 		[Fact]
+		public async Task RuntimeGetPropertiesWithInvalidScopeIdTest () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				var bp_req = JObject.FromObject(new {
+					lineNumber = 41,
+					columnNumber = 2,
+					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
+				});
+
+				var bp_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp_req, token);
+				Assert.True (bp_res.IsOk);
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
+				});
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsOk);
+				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+
+				//make sure we're on the right bp
+				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				var top_frame = pause_location ["callFrames"][0];
+
+				var scope = top_frame ["scopeChain"][0];
+				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+
+				// Try to get an invalid scope!
+				var get_prop_req = JObject.FromObject(new {
+					objectId = "dotnet:scope:23490871",
+				});
+
+				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				Assert.True (frame_props.IsErr);
+			});
+		}
+
+		[Fact]
 		public async Task TrivalStepping () {
 			var insp = new Inspector ();
 			//Collect events

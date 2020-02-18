@@ -490,20 +490,20 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)
 		{
-			var scope = this.current_callstack.FirstOrDefault (s => s.Id == scope_id);
-			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
-
-
-			var var_ids = vars.Select (v => v.Index).ToArray ();
-			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
-
-			//if we fail we just buble that to the IDE (and let it panic over it)
-			if (res.IsErr) {
-				SendResponse (msg_id, res, token);
-				return;
-			}
-
 			try {
+				var scope = this.current_callstack.FirstOrDefault (s => s.Id == scope_id);
+				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
+
+
+				var var_ids = vars.Select (v => v.Index).ToArray ();
+				var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
+
+				//if we fail we just buble that to the IDE (and let it panic over it)
+				if (res.IsErr) {
+					SendResponse (msg_id, res, token);
+					return;
+				}
+
 				var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 
 				var var_list = new List<JObject> ();
