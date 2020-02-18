@@ -537,6 +537,23 @@ move_stack (TransformData *td, int start, int amount)
 		memmove (td->stack + start + amount, td->stack + start, to_move * sizeof (StackInfo));
 }
 
+static void
+increase_max_stack_height (TransformData *td, int amount)
+{
+	g_assert (td->sp >= td->stack);
+
+	if (amount <= 0)
+		return;
+
+	const int sp_height = td->sp - td->stack + amount;
+
+	if (sp_height > td->max_stack_height)
+		td->max_stack_height = sp_height;
+
+	if (sp_height > td->stack_capacity)
+		REALLOC_STACK (td, sp_height);
+}
+
 #define PUSH_VT(td, size) \
 	do { \
 		(td)->vt_sp += ALIGN_TO ((size), MINT_VT_ALIGNMENT); \
@@ -4540,9 +4557,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
 							interp_add_ins (td, MINT_NEWOBJ_VTST_FAST);
 						else {
-							// Increase maximum stack and then restore.
-							move_stack (td, (td->sp - td->stack) - csignature->param_count, 1);
-							move_stack (td, (td->sp - td->stack) - csignature->param_count, -1);
+							// Runtime inserts extra stack to hold return value, before call.
+							increase_max_stack_height (td, 1);
 							interp_add_ins (td, MINT_NEWOBJ_VT_FAST);
 						}
 
