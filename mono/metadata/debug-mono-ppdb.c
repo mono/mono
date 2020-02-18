@@ -435,7 +435,7 @@ mono_ppdb_lookup_location (MonoDebugMethodInfo *minfo, uint32_t offset)
 	}
 
 	location = g_new0 (MonoDebugSourceLocation, 1);
-	if (docname != NULL && docname[0] != 0)
+	if (docname && docname [0])
 		location->source_file = docname;
 	location->row = start_line;
 	location->column = start_col;
