@@ -44,3 +44,6 @@
 -nomethod System.IO.Compression.BrotliStreamUnitTests.WrapStreamReturningBadReadValues
 -nomethod System.Runtime.Serialization.Formatters.Tests.BinaryFormatterTests.*
 -nomethod System.Net.Sockets.Tests.SendReceiveSyncForceNonBlocking.TcpReceiveSendGetsCanceledByDispose
+
+# flaky test, likely fixed in dotnet/runtime: https://github.com/mono/mono/issues/18695
+-nomethod System.Net.NetworkInformation.Tests.NetworkInterfaceBasicTest.BasicTest_AccessInstanceProperties_NoExceptions_Linux
