@@ -4546,7 +4546,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						// Set the method to be executed as part of newobj instruction
 						newobj_fast->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 					} else {
-						// Runtime inserts extra stack to hold return value, before call.
+						// Runtime (interp_exec_method_full in interp.c) inserts extra stack to hold return value, before call.
 						simulate_runtime_stack_increase (td, 1);
 
 						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
