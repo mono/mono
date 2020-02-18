@@ -15,7 +15,6 @@
 
 # crashes on Interpreter
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.dynamicType.statements.checked005.checked005.Test.DynamicCSharpRunTest
--nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedNullableFloatToSByteTest
 -nomethod System.Dynamic.Tests.BinaryOperationTests.ModuloDouble
 -nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler*
 -nomethod System.Net.Tests.HttpRequestStreamTests.Read_LargeLengthAsynchronous_Success
@@ -24,7 +23,6 @@
 -nomethod System.Net.Tests.AuthorizationTest.MutuallyAuthenticated_Values_ExpectEqualValues
 -nomethod System.Text.Json.Tests.JsonEncodedTextTests.ReplacementCharacterUTF8
 -noclass System.Net.Tests.HttpWebRequestTest
--nonamespace System.Linq.Expressions.Tests
 -nonamespace System.Runtime.InteropServices.Tests
 -nonamespace System.Net.Tests
 -nonamespace System.Net.Http.Functional.Tests
