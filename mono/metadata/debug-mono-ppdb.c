@@ -172,7 +172,7 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 		return NULL;
 	}
 
-#if HOST_WIN32 || HAVE_SYS_ZLIB
+#if HOST_WIN32 || HOST_WASM || HAVE_SYS_ZLIB
 	if (ppdb_data) {
 		/* Embedded PPDB data */
 		/* ppdb_size is the uncompressed size */
