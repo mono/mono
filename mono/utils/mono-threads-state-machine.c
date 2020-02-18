@@ -889,7 +889,8 @@ Set the no_safepoints flag on an executing GC Unsafe thread.
 The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
 Thus the thread will not be (cooperatively) interrupted while the bit is set.
 
-We don't allow nesting no_safepoints regions, so the flag must be initially unset.
+If nesting_ok is false, we don't allow nesting no_safepoints regions, so the flag must be initially unset,
+otherwise we return a result that indicates whether we performed the transition or not.
 
 Since a suspend initiator may at any time request that a thread should suspend,
 ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
@@ -897,8 +898,8 @@ ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
 thread to poll and retry the transition since if we enter here in the
 ASYNC_SUSPEND_REQUESTED state).
  */
-void
-mono_threads_transition_begin_no_safepoints (MonoThreadInfo *info, const char *func)
+static MonoNoSafepointsNestedResult
+mono_threads_transition_begin_no_safepoints_internal (MonoThreadInfo *info, const char *func, gboolean nesting_ok)
 {
 	int raw_state, cur_state, suspend_count;
 	gboolean no_safepoints;
@@ -908,13 +909,16 @@ retry_state_change:
 	switch (cur_state) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-		/* Maybe revisit this.  But for now, don't allow nesting. */
-		if (no_safepoints)
-			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE with BEGIN_NO_SAFEPOINTS.  Can't nest no safepointing regions");
+		if (no_safepoints) {
+			if (!nesting_ok)
+				mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE with BEGIN_NO_SAFEPOINTS.  Can't nest no safepointing regions");
+			else
+				return NoSafepointsNestedIgnored;
+		}
 		if (thread_state_cas (&info->thread_state, build_thread_state (cur_state, suspend_count, TRUE), raw_state) != raw_state)
 			goto retry_state_change;
 		trace_state_change_with_func ("BEGIN_NO_SAFEPOINTS", info, raw_state, cur_state, TRUE, 0, func);
-		return;
+		return NoSafepointsNestedOk;
 /*
 STATE_STARTING:
 STATE_DETACHED:
@@ -929,6 +933,35 @@ STATE_BLOCKING_SUSPEND_REQUESTED:
 	default:
 		mono_fatal_with_history ("Cannot transition thread %p from %s with BEGIN_NO_SAFEPOINTS", mono_thread_info_get_tid (info), state_name (cur_state));
 	}
+}
+
+/*
+Set the no_safepoints flag on an executing GC Unsafe thread.
+The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
+Thus the thread will not be (cooperatively) interrupted while the bit is set.
+
+We don't allow nesting no_safepoints regions, so the flag must be initially unset.
+ */
+void
+mono_threads_transition_begin_no_safepoints (MonoThreadInfo *info, const char *func)
+{
+	(void)mono_threads_transition_begin_no_safepoints_internal (info, func, FALSE);
+}
+
+/*
+Set the no_safepoints flag on an executing GC Unsafe thread.
+The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
+Thus the thread will not be (cooperatively) interrupted while the bit is set.
+
+We allow nesting calls to begin_no_safepoints_nested - if the flag is already
+set, the return value will be NoSafepointsNestedIgnored.  The return value
+should direct whether mono_threads_transition_end_no_safepoints will need to be
+called.
+ */
+MonoNoSafepointsNestedResult
+mono_threads_transition_begin_no_safepoints_nested (MonoThreadInfo *info, const char *func)
+{
+	return mono_threads_transition_begin_no_safepoints_internal (info, func, TRUE);
 }
 
 /*
