@@ -4562,6 +4562,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						}
 					}
 				} else {
+					// Runtime (interp_exec_method_full in interp.c) inserts extra stack to hold return value, before call.
+					simulate_runtime_stack_increase (td, 1);
 					interp_add_ins (td, MINT_NEWOBJ);
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
