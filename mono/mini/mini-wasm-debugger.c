@@ -598,17 +598,6 @@ typedef struct {
 	int variable;
 } FrameDescData;
 
-static char*
-stringify_type (MonoType * type)
-{
-	char *res;
-	GString *str = g_string_new ("");
-	mono_type_get_desc (str, type, TRUE);
-	res = str->str;
-	g_string_free (str, FALSE);
-	return res;
-}
-
 static gboolean describe_value(MonoType * type, gpointer addr)
 {
 	ERROR_DECL (error);
@@ -669,14 +658,14 @@ static gboolean describe_value(MonoType * type, gpointer addr)
 			MonoObject *obj = *(MonoObject**)addr;
 			MonoClass *klass = type->data.klass;
 
-			char *class_name = stringify_type (type);
+			char *class_name = mono_type_full_name (type);
 
 			if (type->type == MONO_TYPE_SZARRAY || type->type == MONO_TYPE_ARRAY) {
-				mono_wasm_add_array_var (class_name, get_object_id(obj));
+				mono_wasm_add_array_var (class_name, get_object_id (obj));
 			} else if (m_class_is_delegate (klass)) {
-				mono_wasm_add_func_var (class_name, get_object_id(obj));
+				mono_wasm_add_func_var (class_name, get_object_id (obj));
 			} else {
-				mono_wasm_add_obj_var (class_name, get_object_id(obj));
+				mono_wasm_add_obj_var (class_name, get_object_id (obj));
 			}
 			g_free (class_name);
 			break;
