@@ -4215,6 +4215,10 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+if test "x$enable_loadedllvm" = "xyes"; then
+   AC_MSG_WARN("Loadable LLVM is no longer supported.")
+fi
+
 enable_llvm_msvc_only="no"
 if test "x$enable_llvm" = "xyes"; then
 	if test "x$host_win32" = "xyes"; then
@@ -4228,10 +4232,6 @@ if test "x$enable_llvm" = "xyes"; then
 				AC_MSG_ERROR("LLVM for host=Windows and target=Windows is only supported for x64 builds.")
 				;;
 			esac
-		fi
-		if test "x$enable_loadedllvm" = "xyes"; then
-			AC_MSG_WARN("Loadable LLVM currently not supported on Windows. Disabling feature.")
-			enable_loadedllvm=no
 		fi
 	fi
 fi
@@ -7023,7 +7023,7 @@ echo "
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
+	LLVM Back End: $enable_llvm (built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
 	Spectre:       $spectre_mitigation_status
 	Mono.Native:   $mono_native_text
 
