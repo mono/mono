@@ -4217,6 +4217,7 @@ fi
 
 if test "x$enable_loadedllvm" = "xyes"; then
    AC_MSG_WARN("Loadable LLVM is no longer supported.")
+   enable_llvm=yes
 fi
 
 enable_llvm_msvc_only="no"
