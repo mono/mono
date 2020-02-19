@@ -253,21 +253,21 @@ namespace DebuggerTests
 					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
 				}),
 				test_fn: (locals) => {
-					CheckObject (locals, "fn_func", "System.Func`2<Math, bool>");
-					CheckObject (locals, "fn_func_null", "System.Func`2<Math, bool>", subtype: "null");
-					CheckArray (locals, "fn_func_arr", "System.Func`2<Math, bool>[]");
-					CheckFunction (locals, "fn_del", "Math/IsMathNull");
-					CheckObject (locals, "fn_del_null", "Math/IsMathNull", subtype: "null");
-					CheckArray (locals, "fn_del_arr", "Math/IsMathNull[]");
+					CheckObject (locals, "fn_func", "System.Func<Math, bool>");
+					CheckObject (locals, "fn_func_null", "System.Func<Math, bool>", subtype: "null");
+					CheckArray (locals, "fn_func_arr", "System.Func<Math, bool>[]");
+					CheckFunction (locals, "fn_del", "Math.IsMathNull");
+					CheckObject (locals, "fn_del_null", "Math.IsMathNull", subtype: "null");
+					CheckArray (locals, "fn_del_arr", "Math.IsMathNull[]");
 
 					// Unused locals
-					CheckObject (locals, "fn_func_unused", "System.Func`2<Math, bool>", subtype: "null");
-					CheckObject (locals, "fn_func_null_unused", "System.Func`2<Math, bool>", subtype: "null");
-					CheckObject (locals, "fn_func_arr_unused", "System.Func`2<Math, bool>[]", subtype: "null");
+					CheckObject (locals, "fn_func_unused", "System.Func<Math, bool>", subtype: "null");
+					CheckObject (locals, "fn_func_null_unused", "System.Func<Math, bool>", subtype: "null");
+					CheckObject (locals, "fn_func_arr_unused", "System.Func<Math, bool>[]", subtype: "null");
 
-					CheckObject (locals, "fn_del_unused", "Math/IsMathNull", subtype: "null");
-					CheckObject (locals, "fn_del_null_unused", "Math/IsMathNull", subtype: "null");
-					CheckObject (locals, "fn_del_arr_unused", "Math/IsMathNull[]", subtype: "null");
+					CheckObject (locals, "fn_del_unused", "Math.IsMathNull", subtype: "null");
+					CheckObject (locals, "fn_del_null_unused", "Math.IsMathNull", subtype: "null");
+					CheckObject (locals, "fn_del_arr_unused", "Math.IsMathNull[]", subtype: "null");
 				}
 			);
 
@@ -283,18 +283,18 @@ namespace DebuggerTests
 					expression = "window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
 				}),
 				test_fn: (locals) => {
-					CheckObject (locals, "list", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>");
-					CheckObject (locals, "list_null", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>", subtype: "null");
+					CheckObject (locals, "list", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
+					CheckObject (locals, "list_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
 
-					CheckArray (locals, "list_arr", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>[]");
-					CheckObject (locals, "list_arr_null", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>[]", subtype: "null");
+					CheckArray (locals, "list_arr", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]");
+					CheckObject (locals, "list_arr_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
 
 					// Unused locals
-					CheckObject (locals, "list_unused", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>", subtype: "null");
-					CheckObject (locals, "list_null_unused", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>", subtype: "null");
+					CheckObject (locals, "list_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
+					CheckObject (locals, "list_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
 
-					CheckObject (locals, "list_arr_unused", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>[]", subtype: "null");
-					CheckObject (locals, "list_arr_null_unused", "System.Collections.Generic.Dictionary`2<Math[], Math/IsMathNull>[]", subtype: "null");
+					CheckObject (locals, "list_arr_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
+					CheckObject (locals, "list_arr_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
 				}
 			);
 
@@ -333,6 +333,8 @@ namespace DebuggerTests
 				});
 
 				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				if (frame_props.IsErr)
+					Console.WriteLine ($"frame_props: {frame_props.Error.ToString ()}");
 				Assert.True (frame_props.IsOk);
 
 				var locals = frame_props.Value ["result"];
