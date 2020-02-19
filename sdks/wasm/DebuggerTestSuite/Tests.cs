@@ -31,6 +31,8 @@ namespace DebuggerTests
 					dbgUrl = arrStr[0] + "/" + arrStr[1] + "/" + arrStr[2] + "/" + arrStr[arrStr.Length - 1];
 					dicScriptsIdToUrl[script_id] = dbgUrl;
 					dicFileToUrl[dbgUrl] = args["url"]?.Value<string>();
+				} else if (!String.IsNullOrEmpty (url)) {
+					dicFileToUrl[new Uri (url).AbsolutePath] = url;
 				}
 				await Task.FromResult (0);
 			});
@@ -158,6 +160,39 @@ namespace DebuggerTests
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, scope["startLocation"]);
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 9, 1, scripts, scope["endLocation"]);
 			});
+		}
+
+		[Fact]
+		public async Task ExceptionThrownInJSOutOfBand () {
+			var insp = new Inspector ();
+
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				var bp1_req = JObject.FromObject(new {
+					lineNumber = 27,
+					columnNumber = 2,
+					url = dicFileToUrl["/debugger-driver.html"],
+				});
+
+				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
+				Assert.True (bp1_res.IsOk);
+
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_bad_js_test(); }, 1);",
+				});
+
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				// Response here will be the id for the timer from JS!
+				Assert.True (eval_res.IsOk);
+
+				var ex = await Assert.ThrowsAsync<ArgumentException> (async () => await insp.WaitFor("Runtime.exceptionThrown"));
+				var ex_json = JObject.Parse (ex.Message);
+				Assert.Equal (dicFileToUrl["/debugger-driver.html"], ex_json ["exceptionDetails"]? ["url"]? .Value<string> ());
+			});
+
 		}
 
 		void CheckNumber (JToken locals, string name, int value) {

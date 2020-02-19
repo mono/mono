@@ -42,6 +42,12 @@ namespace DebuggerTests
 			eventListeners[evtName] = cb;
 		}
 
+		void FailAllWaitersWithException (JObject exception)
+		{
+			foreach (var tcs in notifications.Values)
+				tcs.SetException (new ArgumentException (exception.ToString ()));
+		}
+
 		async Task OnMessage(string method, JObject args, CancellationToken token)
 		{
 			//System.Console.WriteLine("OnMessage " + method + args);
@@ -58,6 +64,8 @@ namespace DebuggerTests
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
+			else if (String.Compare (method, "Runtime.exceptionThrown") == 0)
+				FailAllWaitersWithException (args);
 		}
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
