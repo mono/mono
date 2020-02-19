@@ -18,7 +18,6 @@ typedef enum {
 	LLVM_MODULE_FLAG_INTERP = (1 << 4)
 } LLVMModuleFlags;
 
-/* KEEP THIS IN SYNCH WITH mini-llvm-loaded.c */
 MONO_LLVM_INTERNAL void mono_llvm_init                     (gboolean enable_jit);
 MONO_LLVM_INTERNAL void mono_llvm_cleanup                  (void);
 MONO_LLVM_INTERNAL void mono_llvm_emit_method              (MonoCompile *cfg);
