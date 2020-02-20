@@ -110,6 +110,7 @@ namespace WebAssembly.Net.Debugging {
 
 	internal class ExecutionContext {
 		int breakpointIndex = -1;
+		public List<Breakpoint> Breakpoints { get; } = new List<Breakpoint> ();
 
 		public bool RuntimeReady { get; set; }
 		public int Id { get; set; }
@@ -134,7 +135,6 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	public class MonoProxy : DevToolsProxy {
-		List<Breakpoint> breakpoints = new List<Breakpoint> ();
 		Dictionary<string, ExecutionContext> contexts = new Dictionary<string, ExecutionContext> ();
 
 		public MonoProxy () { }
@@ -168,6 +168,7 @@ namespace WebAssembly.Net.Debugging {
 					return true;
 					//break;
 				}
+
 			case "Debugger.paused": {
 					//TODO figure out how to stich out more frames and, in particular what happens when real wasm is on the stack
 					var top_func = args? ["callFrames"]? [0]? ["functionName"]?.Value<string> ();
@@ -208,12 +209,8 @@ namespace WebAssembly.Net.Debugging {
 			switch (method) {
 
 			case "Debugger.getScriptSource": {
-					var script_id = args? ["scriptId"]?.Value<string> ();
-					if (script_id.StartsWith ("dotnet://", StringComparison.InvariantCultureIgnoreCase)) {
-						await OnGetScriptSource (id, script_id, token);
-						return true;
-					}
-					break;
+					var script = args? ["scriptId"]?.Value<string> ();
+					return await OnGetScriptSource (id, script, token);
 				}
 
 			case "Runtime.compileScript": {
@@ -235,7 +232,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.setBreakpointByUrl": {
-					Log ("verbose", $"BP req {args}");
+					Log ("info", $"BP req {args}");
 					var bp_req = BreakpointRequest.Parse (args, GetContext (id).Store);
 					if (bp_req != null) {
 						await SetBreakPoint (id, bp_req, token);
@@ -329,12 +326,12 @@ namespace WebAssembly.Net.Debugging {
 				//Give up and send the original call stack
 				return false;
 			}
-			var bp = this.breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
+			var bp = context.Breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
 
 			var store = context.Store;
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
-			var callFrames = new List<JObject> ();
+			var callFrames = new List<object> ();
 			foreach (var frame in orig_callframes) {
 				var function_name = frame ["functionName"]?.Value<string> ();
 				var url = frame ["url"]?.Value<string> ();
@@ -375,12 +372,12 @@ namespace WebAssembly.Net.Debugging {
 						Log ("info", $"\tmethod {method.Name} location: {location}");
 						frames.Add (new Frame (method, location, frame_id));
 
-						callFrames.Add (JObject.FromObject (new {
+						callFrames.Add (new {
 							functionName = method.Name,
 							callFrameId = $"dotnet:scope:{frame_id}",
-							functionLocation = method.StartLocation.ToJObject (),
+							functionLocation = method.StartLocation.AsLocation (),
 
-							location = location.ToJObject (),
+							location = location.AsLocation (),
 
 							url = store.ToUrl (location),
 
@@ -394,10 +391,10 @@ namespace WebAssembly.Net.Debugging {
 										objectId = $"dotnet:scope:{frame_id}",
 									},
 									name = method.Name,
-									startLocation = method.StartLocation.ToJObject (),
-									endLocation = method.EndLocation.ToJObject (),
+									startLocation = method.StartLocation.AsLocation (),
+									endLocation = method.EndLocation.AsLocation (),
 								}}
-						}));
+						});
 
 						++frame_id;
 						context.CallStack = frames;
@@ -429,7 +426,7 @@ namespace WebAssembly.Net.Debugging {
 
 			contexts[sessionId.sessionId ?? "default"] = context;
 			//reset all bps
-			foreach (var b in this.breakpoints){
+			foreach (var b in context.Breakpoints){
 				b.State = BreakpointState.Pending;
 			}
 
@@ -539,20 +536,23 @@ namespace WebAssembly.Net.Debugging {
 
 				var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 
-				var var_list = new List<JObject> ();
+				if(values == null)
+					SendResponse (msg_id, Result.OkFromObject (new {result = Array.Empty<object> ()}), token);
+
+				var var_list = new List<object> ();
 				int i = 0;
 				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
 				// results in a "Memory access out of bounds", causing 'values' to be null,
 				// so skip returning variable values in that case.
-				while (values != null && i < vars.Length && i < values.Length) {
+				while (i < vars.Length && i < values.Length) {
 					var value = values [i] ["value"];
 					if (((string)value ["description"]) == null)
 						value ["description"] = value ["value"]?.ToString ();
 
-					var_list.Add (JObject.FromObject (new {
+					var_list.Add (new {
 						name = vars [i].Name,
 						value
-					}));
+					});
 					i++;
 				}
 				//Async methods are special in the way that local variables can be lifted to generated class fields
@@ -567,16 +567,14 @@ namespace WebAssembly.Net.Debugging {
 					if (((string)value ["description"]) == null)
 						value ["description"] = value ["value"]?.ToString ();
 
-					var_list.Add (JObject.FromObject (new {
+					var_list.Add (new {
 						name,
 						value
-					}));
+					});
 					i = i + 2;
 				}
-				var o = JObject.FromObject (new {
-					result = var_list
-				});
-				SendResponse (msg_id, Result.Ok (o), token);
+
+				SendResponse (msg_id, Result.OkFromObject (new { result = var_list }), token);
 			} catch (Exception exception) {
 				Log ("verbose", $"Error resolving scope properties {exception.Message}");
 				SendResponse (msg_id, Result.Exception (exception), token);
@@ -644,7 +642,7 @@ namespace WebAssembly.Net.Debugging {
 				Log ("verbose", $"Failed to clear breakpoints due to {clear_result}");
 			}
 
-			foreach (var bp in breakpoints) {
+			foreach (var bp in context.Breakpoints) {
 				if (bp.State != BreakpointState.Pending)
 					continue;
 				var res = await EnableBreakPoint (sessionId, bp, token);
@@ -665,13 +663,14 @@ namespace WebAssembly.Net.Debugging {
 			if (!Breakpoint.TryParseId (bpid, out var the_id))
 				return false;
 
-			var bp = breakpoints.FirstOrDefault (b => b.LocalId == the_id);
+			var context = GetContext (msg_id);
+			var bp = context.Breakpoints.FirstOrDefault (b => b.LocalId == the_id);
 			if (bp == null) {
 				Log ("info", $"Could not find dotnet bp with id {the_id}");
 				return false;
 			}
 
-			breakpoints.Remove (bp);
+			context.Breakpoints.Remove (bp);
 			//FIXME verify result (and log?)
 			var res = await RemoveBreakpoint (msg_id, bp, token);
 
@@ -699,7 +698,7 @@ namespace WebAssembly.Net.Debugging {
 			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{bp_loc}'");
 			if (bp_loc == null) {
 
-				Log ("info", $"Could not resolve breakpoint request: {req}");
+				Log ("verbose", $"Could not resolve breakpoint request: {req}");
 				SendResponse (msg_id, Result.Err(JObject.FromObject (new {
 					code = (int)MonoErrorCodes.BpNotFound,
 					message = $"C# Breakpoint at {req} not found."
@@ -723,22 +722,20 @@ namespace WebAssembly.Net.Debugging {
 				}
 			}
 
-			var locations = new List<JObject> ();
+			context.Breakpoints.Add (bp);
 
-			locations.Add (JObject.FromObject (new {
-				scriptId = bp_loc.Id.ToString (),
-				lineNumber = bp_loc.Line,
-				columnNumber = bp_loc.Column
-			}));
+			var ok = new {
+				breakpointId = bp.StackId,
+				locations = new [] {
+					new {
+						scriptId = bp_loc.Id.ToString (),
+						lineNumber = bp_loc.Line,
+						columnNumber = bp_loc.Column
+					}
+				},
+			};
 
-			breakpoints.Add (bp);
-
-			var ok = JObject.FromObject (new {
-				breakpointId = $"dotnet:{bp.LocalId}",
-				locations = locations,
-			});
-
-			SendResponse (msg_id, Result.Ok (ok), token);
+			SendResponse (msg_id, Result.OkFromObject (ok), token);
 		}
 
 		bool GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
@@ -747,82 +744,57 @@ namespace WebAssembly.Net.Debugging {
 			if (bps == null)
 				return false;
 
-			var loc = new List<JObject> ();
-			foreach (var b in bps) {
-				loc.Add (b.ToJObject ());
-			}
-
-			var o = JObject.FromObject (new {
-				locations = loc
-			});
-
-			SendResponse (msg_id, Result.Ok (o), token);
-
+			SendResponse (msg_id, Result.OkFromObject (new { locations = bps.Select (b => b.AsLocation ()) }), token);
 			return true;
 		}
 
 		void OnCompileDotnetScript (MessageId msg_id, CancellationToken token)
 		{
-			var o = JObject.FromObject (new { });
-
-			SendResponse (msg_id, Result.Ok (o), token);
+			SendResponse (msg_id, Result.OkFromObject (new { }), token);
 		}
 
-		async Task OnGetScriptSource (MessageId msg_id, string script_id, CancellationToken token)
+		async Task<bool> OnGetScriptSource (MessageId msg_id, string script_id, CancellationToken token)
 		{
-			var id = new SourceId (script_id);
-			var src_file = GetContext (msg_id).Store.GetFileById (id);
+			if (!SourceId.TryParse (script_id, out var id))
+				return false;
 
+			var src_file = GetContext (msg_id).Store.GetFileById (id);
 			var res = new StringWriter ();
-			//res.WriteLine ($"//{id}");
 
 			try {
 				var uri = new Uri (src_file.Url);
+				string source = $"// Unable to find document {src_file.SourceUri}";
+
 				if (uri.IsFile && File.Exists(uri.LocalPath)) {
 					using (var f = new StreamReader (File.Open (uri.LocalPath, FileMode.Open))) {
 						await res.WriteAsync (await f.ReadToEndAsync ());
 					}
 
-					var o = JObject.FromObject (new {
-						scriptSource = res.ToString ()
-					});
-
-					SendResponse (msg_id, Result.Ok (o), token);
+					source = res.ToString ();
 				} else if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
 					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
 						await res.WriteAsync (await f.ReadToEndAsync ());
 					}
 
-					var o = JObject.FromObject (new {
-						scriptSource = res.ToString ()
-					});
-
-					SendResponse (msg_id, Result.Ok (o), token);
+					source = res.ToString ();
 				} else if(src_file.SourceLinkUri != null) {
 					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
 					await res.WriteAsync (doc);
 
-					var o = JObject.FromObject (new {
-						scriptSource = res.ToString ()
-					});
+					source = res.ToString ();
+				} 
 
-					SendResponse (msg_id, Result.Ok (o), token);
-				} else {
-					var o = JObject.FromObject (new {
-						scriptSource = $"// Unable to find document {src_file.SourceUri}"
-					});
-
-					SendResponse (msg_id, Result.Ok (o), token);
-				}
+				SendResponse (msg_id, Result.OkFromObject (new { scriptSource = source }), token);
 			} catch (Exception e) {
-				var o = JObject.FromObject (new {
+				var o = new {
 					scriptSource = $"// Unable to read document ({e.Message})\n" +
 								$"Local path: {src_file?.SourceUri}\n" +
 								$"SourceLink path: {src_file?.SourceLinkUri}\n"
-				});
+				};
 
-				SendResponse (msg_id, Result.Ok (o), token);
+				SendResponse (msg_id, Result.OkFromObject (o), token);
 			}
+			return true;
 		}
 	}
 }

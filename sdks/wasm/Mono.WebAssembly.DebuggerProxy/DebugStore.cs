@@ -147,7 +147,9 @@ namespace WebAssembly.Net.Debugging {
 			if (obj == null)
 				return null;
 
-			var id = SourceId.TryParse (obj ["scriptId"]?.Value<string> ());
+			if (!SourceId.TryParse (obj ["scriptId"]?.Value<string> (), out var id))
+				return null;
+
 			var line = obj ["lineNumber"]?.Value<int> ();
 			var column = obj ["columnNumber"]?.Value<int> ();
 			if (id == null || line == null || column == null)
@@ -156,18 +158,17 @@ namespace WebAssembly.Net.Debugging {
 			return new SourceLocation (id, line.Value, column.Value);
 		}
 
-		internal JObject ToJObject ()
-		{
-			return JObject.FromObject (new {
+		internal object AsLocation ()
+			=> new {
 				scriptId = id.ToString (),
 				lineNumber = line,
 				columnNumber = column
-			});
-		}
-
+			};
 	}
 
 	internal class SourceId {
+		const string Scheme = "dotnet://";
+
 		readonly int assembly, document;
 
 		public int Assembly => assembly;
@@ -179,25 +180,27 @@ namespace WebAssembly.Net.Debugging {
 			this.document = document;
 		}
 
-
 		public SourceId (string id)
 		{
-			id = id.Substring ("dotnet://".Length);
+			id = id.Substring (Scheme.Length);
 			var sp = id.Split ('_');
 			this.assembly = int.Parse (sp [0]);
 			this.document = int.Parse (sp [1]);
 		}
 
-		public static SourceId TryParse (string id)
+		public static bool TryParse (string id, out SourceId script)
 		{
-			if (!id.StartsWith ("dotnet://", StringComparison.InvariantCulture))
-				return null;
-			return new SourceId (id);
+			script = null;
+			if (!id.StartsWith (Scheme, StringComparison.InvariantCulture))
+				return false;
 
+			script = new SourceId (id);
+			return true;
 		}
+
 		public override string ToString ()
 		{
-			return $"dotnet://{assembly}_{document}";
+			return $"{Scheme}{assembly}_{document}";
 		}
 
 		public override bool Equals (object obj)

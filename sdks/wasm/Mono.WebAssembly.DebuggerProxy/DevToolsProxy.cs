@@ -40,6 +40,9 @@ namespace WebAssembly.Net.Debugging {
 		public static Result Ok (JObject ok)
 			=> new Result (ok, null);
 
+		public static Result OkFromObject (object ok)
+			=> Ok (JObject.FromObject(ok));
+
 		public static Result Err (JObject err)
 			=> new Result (null, err);
 
@@ -243,7 +246,6 @@ namespace WebAssembly.Net.Debugging {
 				@params = args
 			});
 			var tcs = new TaskCompletionSource<Result> ();
-
 
 			var msgId = new MessageId { id = id, sessionId = sessionId.sessionId };
 			//Log ("verbose", $"add cmd id {sessionId}-{id}");
