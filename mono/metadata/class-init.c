@@ -2537,6 +2537,8 @@ apply_override (MonoClass *klass, MonoClass *override_class, MonoMethod **vtable
 	}
 
 	dslot += mono_class_interface_offset (klass, decl->klass);
+	if (vtable [dslot] && vtable [dslot]->klass && MONO_CLASS_IS_INTERFACE_INTERNAL (override->klass) && !MONO_CLASS_IS_INTERFACE_INTERNAL (vtable [dslot]->klass))
+		return TRUE;
 	vtable [dslot] = override;
 	if (!MONO_CLASS_IS_INTERFACE_INTERNAL (override->klass)) {
 		/*
