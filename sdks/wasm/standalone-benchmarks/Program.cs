@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 
 class Program {
-    static void Main (string[] args) {
+    static void Main () {
         const int iterations = Benchmark.IterationCount, 
             warming_iterations = Benchmark.WarmingIterationCount;
     
