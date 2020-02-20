@@ -412,3 +412,76 @@ g_set_printerr_handler (GPrintFunc func)
 	return old;
 }
 
+#if _WIN32
+
+#include <windows.h>
+#include <assert.h>
+
+char mono_debug_print_memory [64 * 1024 * 1024];
+volatile long mono_debug_print_memory_position;
+volatile long mono_debug_print_memory_resets;
+volatile gboolean mono_debug_print_memory_enabled = TRUE;
+
+void
+mono_debug_print_to_memory_va (const char *format, va_list args)
+{
+#if 1
+	static volatile decltype(&_vsnprintf) pvsnprintf;
+
+	if (!pvsnprintf)
+	{
+		auto ntdll = LoadLibraryW (L"ntdll.dll");
+		(void*&)pvsnprintf = (void*)GetProcAddress (ntdll, "_vsnprintf");
+		assert(pvsnprintf);
+	}
+
+#if 1
+	if (!mono_debug_print_memory_enabled)
+		return;
+
+#if 0
+	const long length = _vscprintf (format, args) + 1;
+
+#else
+
+	char buffer [1024];
+	const long length = 1 + pvsnprintf (buffer, sizeof (buffer), format, args);
+
+#endif
+
+	if (length < 2 || length > sizeof (mono_debug_print_memory))
+		return;
+
+	while (TRUE)
+	{
+		const long position = InterlockedExchangeAdd (&mono_debug_print_memory_position, length);
+		const long end = position + length;
+
+		if (position > sizeof (mono_debug_print_memory) ||
+			end < 0 || // overflow in extreme race
+			end > sizeof (mono_debug_print_memory)) {
+			InterlockedIncrement (&mono_debug_print_memory_resets);
+			InterlockedExchangeAdd (&mono_debug_print_memory_position, 0);
+			continue;
+		}
+
+		//vsprintf (&mono_debug_print_memory [position], format, args);
+		memcpy (&mono_debug_print_memory [position], buffer, length);
+		return;
+	}
+#endif
+#endif
+}
+
+#endif
+
+void
+mono_debug_print_to_memory (const char *format, ...)
+{
+#if _WIN32
+	va_list args;
+	va_start (args, format);
+	mono_debug_print_to_memory_va (format, args);
+	va_end (args);
+#endif
+}
