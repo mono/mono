@@ -7,11 +7,19 @@
 		var App = {
 			init: function () {
 				this.int_add = Module.mono_bind_static_method ("[debugger-test] Math:IntAdd");
+				this.delegates_test = Module.mono_bind_static_method ("[debugger-test] Math:DelegatesTest");
+				this.generic_types_test = Module.mono_bind_static_method ("[debugger-test] Math:GenericTypesTest");
 				console.log ("ready");
 			},
 		};
 		function invoke_add () {
 			return App.int_add (10, 20);
+		}
+		function invoke_delegates_test () {
+			return App.delegates_test ();
+		}
+		function invoke_generic_types_test () {
+			return App.generic_types_test ();
 		}
       </script>
       <script type="text/javascript" src="mono-config.js"></script>

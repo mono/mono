@@ -261,6 +261,23 @@ var MonoSupportLib = {
 			this.mono_clear_bps ();
 		},
 		
+		mono_wasm_add_null_var: function(className)
+		{
+			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			MONO.var_info.push ({value: {
+				type: "object",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				subtype: "null"
+			}});
+		},
+
+		_mono_csharp_fixup_class_name: function(className)
+		{
+			// Fix up generic names like Foo`2<int, string> to Foo<int, string>
+			// and nested class names like Foo/Bar to Foo.Bar
+			return className.replace('/', '.').replace(/`\d+/, '');
+		},
 	},
 
 	mono_wasm_add_bool_var: function(var_value) {
@@ -307,27 +324,18 @@ var MonoSupportLib = {
 		});
 	},
 
-	mono_wasm_add_null_var: function(className)
-	{
-		MONO.var_info.push ({value: {
-			type: "object",
-			className: Module.UTF8ToString (className),
-			description: Module.UTF8ToString (className),
-			subtype: "null"
-		}});
-	},
-
 	mono_wasm_add_obj_var: function(className, objectId) {
 		if (objectId == 0) {
 			MONO.mono_wasm_add_null_var (className);
 			return;
 		}
 
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 		MONO.var_info.push({
 			value: {
 				type: "object",
-				className: Module.UTF8ToString (className),
-				description: Module.UTF8ToString (className),
+				className: fixed_class_name,
+				description: fixed_class_name,
 				objectId: "dotnet:object:"+ objectId,
 			}
 		});
@@ -339,13 +347,30 @@ var MonoSupportLib = {
 			return;
 		}
 
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 		MONO.var_info.push({
 			value: {
 				type: "object",
 				subtype: "array",
-				className: Module.UTF8ToString (className),
-				description: Module.UTF8ToString (className),
+				className: fixed_class_name,
+				description: fixed_class_name,
 				objectId: "dotnet:array:"+ objectId,
+			}
+		});
+	},
+
+	mono_wasm_add_func_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.mono_wasm_add_null_var (className);
+			return;
+		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "function",
+				description: fixed_class_name,
+				objectId: "dotnet:object:"+ objectId,
 			}
 		});
 	},

@@ -172,27 +172,146 @@ namespace DebuggerTests
 			Assert.True(false, $"Could not find variable '{name}'");
 		}
 
+		void CheckObject (JToken locals, string name, string class_name, string subtype=null) {
+			Console.WriteLine ($"** Locals: {locals.ToString ()}");
+			Console.WriteLine ($"\tChecking {name}");
+			foreach (var l in locals) {
+				if (name != l["name"]?.Value<string> ())
+					continue;
+
+				var val = l["value"];
+				Assert.Equal ("object", val ["type"]?.Value<string> ());
+				Assert.Equal (class_name, val ["className"]?.Value<string> ());
+				Assert.Equal (subtype, val ["subtype"]?.Value<string> ());
+				return;
+			}
+			Assert.True(false, $"Could not find variable '{name}'");
+		}
+
+		void CheckArray (JToken locals, string name, string class_name) {
+			Console.WriteLine ($"** Locals: {locals.ToString ()}");
+			Console.WriteLine ($"\tChecking {name}");
+			foreach (var l in locals) {
+				if (name != l["name"]?.Value<string> ())
+					continue;
+
+				var val = l["value"];
+				Assert.Equal ("object", val ["type"]?.Value<string> ());
+				Assert.Equal ("array", val ["subtype"]?.Value<string> ());
+				Assert.Equal (class_name, val ["className"]?.Value<string> ());
+
+				//FIXME: elements?
+				return;
+			}
+			Assert.True(false, $"Could not find variable '{name}'");
+		}
+
+		void CheckFunction (JToken locals, string name, string description, string subtype=null) {
+			Console.WriteLine ($"** Locals: {locals.ToString ()}");
+			foreach (var l in locals) {
+				if (name != l["name"]?.Value<string> ())
+					continue;
+
+				var val = l["value"];
+				Assert.Equal ("function", val ["type"]?.Value<string> ());
+				Assert.Equal (description, val ["description"]?.Value<string> ());
+				Assert.Equal (subtype, val ["subtype"]?.Value<string> ());
+				return;
+			}
+			Assert.True(false, $"Could not find variable '{name}'");
+		}
+
 		[Fact]
-		public async Task InspectLocalsAtBreakpointSite () {
+		public async Task InspectLocalsAtBreakpointSite () =>
+			await CheckInspectLocalsAtBreakpointSite (
+				bp_req_fn: () => JObject.FromObject(new {
+					lineNumber = 5,
+					columnNumber = 2,
+					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
+				}),
+				eval_req_fn: () => JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
+				}),
+				test_fn: (locals) => {
+					CheckNumber (locals, "a", 10);
+					CheckNumber (locals, "b", 20);
+					CheckNumber (locals, "c", 30);
+					CheckNumber (locals, "d", 0);
+					CheckNumber (locals, "e", 0);
+				}
+			);
+
+		[Fact]
+		public async Task InspectLocalsWithDelegatesAtBreakpointSite () =>
+			await CheckInspectLocalsAtBreakpointSite (
+				bp_req_fn: () => JObject.FromObject(new {
+					lineNumber = 41,
+					columnNumber = 2,
+					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
+				}),
+				eval_req_fn: () => JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
+				}),
+				test_fn: (locals) => {
+					CheckObject (locals, "fn_func", "System.Func<Math, bool>");
+					CheckObject (locals, "fn_func_null", "System.Func<Math, bool>", subtype: "null");
+					CheckArray (locals, "fn_func_arr", "System.Func<Math, bool>[]");
+					CheckFunction (locals, "fn_del", "Math.IsMathNull");
+					CheckObject (locals, "fn_del_null", "Math.IsMathNull", subtype: "null");
+					CheckArray (locals, "fn_del_arr", "Math.IsMathNull[]");
+
+					// Unused locals
+					CheckObject (locals, "fn_func_unused", "System.Func<Math, bool>", subtype: "null");
+					CheckObject (locals, "fn_func_null_unused", "System.Func<Math, bool>", subtype: "null");
+					CheckObject (locals, "fn_func_arr_unused", "System.Func<Math, bool>[]", subtype: "null");
+
+					CheckObject (locals, "fn_del_unused", "Math.IsMathNull", subtype: "null");
+					CheckObject (locals, "fn_del_null_unused", "Math.IsMathNull", subtype: "null");
+					CheckObject (locals, "fn_del_arr_unused", "Math.IsMathNull[]", subtype: "null");
+				}
+			);
+
+		[Fact]
+		public async Task InspectLocalsWithGenericTypesAtBreakpointSite () =>
+			await CheckInspectLocalsAtBreakpointSite (
+				bp_req_fn: () => JObject.FromObject(new {
+					lineNumber = 62,
+					columnNumber = 2,
+					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
+				}),
+				eval_req_fn: () => JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
+				}),
+				test_fn: (locals) => {
+					CheckObject (locals, "list", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
+					CheckObject (locals, "list_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
+
+					CheckArray (locals, "list_arr", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]");
+					CheckObject (locals, "list_arr_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
+
+					// Unused locals
+					CheckObject (locals, "list_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
+					CheckObject (locals, "list_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
+
+					CheckObject (locals, "list_arr_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
+					CheckObject (locals, "list_arr_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", subtype: "null");
+				}
+			);
+
+		async Task CheckInspectLocalsAtBreakpointSite (Func<JObject> bp_req_fn, Func<JObject> eval_req_fn, Action<JToken> test_fn) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 5,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				var bp_req = bp_req_fn ();
 				System.Console.WriteLine("InspectLocalsAtBreakpointSite-1");
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
+				var bp_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp_req, token);
 				System.Console.WriteLine("InspectLocalsAtBreakpointSite-2");
-				Assert.True (bp1_res.IsOk);
+				Assert.True (bp_res.IsOk);
 				System.Console.WriteLine("InspectLocalsAtBreakpointSite-3");
-				var eval_req = JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
-				});
+				var eval_req = eval_req_fn ();
 				System.Console.WriteLine("InspectLocalsAtBreakpointSite-4");
 				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
 				System.Console.WriteLine("InspectLocalsAtBreakpointSite-5");
@@ -214,14 +333,54 @@ namespace DebuggerTests
 				});
 
 				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				if (frame_props.IsErr)
+					Console.WriteLine ($"frame_props: {frame_props.Error.ToString ()}");
 				Assert.True (frame_props.IsOk);
 
 				var locals = frame_props.Value ["result"];
-				CheckNumber (locals, "a", 10);
-				CheckNumber (locals, "b", 20);
-				CheckNumber (locals, "c", 30);
-				CheckNumber (locals, "d", 0);
-				CheckNumber (locals, "e", 0);
+				if (test_fn != null)
+					test_fn (locals);
+			});
+		}
+
+		[Fact]
+		public async Task RuntimeGetPropertiesWithInvalidScopeIdTest () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				var bp_req = JObject.FromObject(new {
+					lineNumber = 41,
+					columnNumber = 2,
+					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
+				});
+
+				var bp_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp_req, token);
+				Assert.True (bp_res.IsOk);
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
+				});
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsOk);
+				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+
+				//make sure we're on the right bp
+				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				var top_frame = pause_location ["callFrames"][0];
+
+				var scope = top_frame ["scopeChain"][0];
+				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+
+				// Try to get an invalid scope!
+				var get_prop_req = JObject.FromObject(new {
+					objectId = "dotnet:scope:23490871",
+				});
+
+				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				Assert.True (frame_props.IsErr);
 			});
 		}
 
