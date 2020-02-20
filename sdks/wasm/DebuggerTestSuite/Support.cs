@@ -112,6 +112,7 @@ namespace DebuggerTests
 		static string[] PROBE_LIST = {
 			"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 			"/usr/bin/chromium",
 			"/usr/bin/chromium-browser",
 		};

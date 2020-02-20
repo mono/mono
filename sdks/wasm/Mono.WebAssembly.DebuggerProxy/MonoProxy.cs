@@ -623,25 +623,17 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task RuntimeReady (SessionId sessionId, CancellationToken token)
 		{
-			
 			var context = GetContext (sessionId);
 			if (context.RuntimeReady)
 				return;
 
 			context.RuntimeReady = true;
 			var store = await LoadStore (sessionId, token);
-			
+
 			foreach (var s in store.AllSources ()) {
-				var ok = JObject.FromObject (new {
-					scriptId = s.SourceId.ToString (),
-					url = s.Url,
-					executionContextId = context.Id,
-					executionContextAuxData = context.AuxData,
-					hash = s.DocHashCode,
-					dotNetUrl = s.DotNetUrl,
-				});
-				Log ("info", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
-				SendEvent (sessionId, "Debugger.scriptParsed", ok, token);
+				var scriptSource = JObject.FromObject (s.ToScriptSource (context.Id, context.AuxData));
+				Log ("verbose", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
+				SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
 			}
 
 			var clear_result = await SendMonoCommand (sessionId, MonoCommands.ClearAllBreakpoints (), token);

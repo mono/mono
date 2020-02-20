@@ -68,7 +68,7 @@ namespace WebAssembly.Net.Debugging {
 			if (Uri.TryCreate (url, UriKind.Absolute, out var docUri) && docUri.Scheme == "dotnet") {
 				return (
 					docUri.Host,
-					docUri.PathAndQuery.Substring (1)
+					docUri.PathAndQuery
 				);
 			} else {
 				return (null, null);
@@ -473,27 +473,54 @@ namespace WebAssembly.Net.Debugging {
 			} else {
 				this.Url = DotNetUrl;
 			}
-
 		}
 
 		internal void AddMethod (MethodInfo mi)
 		{
 			this.methods.Add (mi);
 		}
+
 		public string DebuggerFileName { get; }
 		public string Url { get; }
 		public string AssemblyName => assembly.Name;
-		public string DotNetUrl => $"dotnet://{assembly.Name}/{DebuggerFileName}";
-		public string DocHashCode => "abcdee" + id;
+		public string DotNetUrl => $"dotnet://{assembly.Name}{DebuggerFileName}";
+
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
 		public Uri SourceLinkUri { get; }
 		public Uri SourceUri { get; }
 
 		public IEnumerable<MethodInfo> Methods => this.methods;
+		public byte[] EmbeddedSource => doc.EmbeddedSource;
+
+		public (int startLine, int startColumn, int endLine, int endColumn) GetExtents ()
+		{
+			var start = methods.OrderBy (m => m.StartLocation.Line).ThenBy (m => m.StartLocation.Column).First ();
+			var end = methods.OrderByDescending (m => m.EndLocation.Line).ThenByDescending (m => m.EndLocation.Column).First ();
+			return (start.StartLocation.Line, start.StartLocation.Column, end.EndLocation.Line, end.EndLocation.Column);
+		}
+
+		public async Task<byte[]> LoadSource ()
+		{
+			if (EmbeddedSource.Length > 0)
+				return await Task.FromResult (EmbeddedSource);
+
+			return null;
+		}
+
+		public object ToScriptSource (int executionContextId, object executionContextAuxData)
+		{
+			return new {
+				scriptId = SourceId.ToString (),
+				url = Url,
+				executionContextId,
+				executionContextAuxData,
+				//hash = "abcdee" + id,
+				dotNetUrl = DotNetUrl,
+			};
+		}
 	}
 
 	internal class DebugStore {
-		MonoProxy proxy;
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 		HttpClient client = new HttpClient ();
 
