@@ -470,7 +470,6 @@ public class DebuggerTests
 			
 			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
 			if (!File.Exists (pdbPath)) {
-				Assert.IsFalse (assemblyMirror.HasPdb);
 				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
 				continue;
 			}
