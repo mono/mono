@@ -163,6 +163,25 @@ namespace DebuggerTests
 		}
 
 		[Fact]
+		public async Task ExceptionThrownInJS () {
+			var insp = new Inspector ();
+
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				var eval_req = JObject.FromObject(new {
+					expression = "invoke_bad_js_test();"
+				});
+
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsErr);
+				Assert.Equal ("Uncaught", eval_res.Error ["exceptionDetails"]? ["text"]? .Value<string> ());
+			});
+		}
+
+		[Fact]
 		public async Task ExceptionThrownInJSOutOfBand () {
 			var insp = new Inspector ();
 
