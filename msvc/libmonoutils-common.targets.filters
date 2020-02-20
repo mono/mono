@@ -484,6 +484,15 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-state.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flags.h">
+      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flags.c">
+      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flag-definitions.h">
+      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup Label="libmonoutilsinclude_headers">
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-logger.h">

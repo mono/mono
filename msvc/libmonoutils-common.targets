@@ -201,6 +201,9 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\unlocked.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-state.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-state.h" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flags.h" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flags.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flag-definitions.h" />
   </ItemGroup>
   <ItemGroup Label="libmonoutilsinclude_headers">
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-logger.h" />
