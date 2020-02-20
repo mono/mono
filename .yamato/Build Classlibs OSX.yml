@@ -1,4 +1,4 @@
-name: build_osx_classlibs
+name: Build Classlibs OSX
 
 agent:
   type: Unity::VM::osx
@@ -6,7 +6,7 @@ agent:
   flavor: m1.mac
 
 commands:
-  - .yamato/build_osx_classlibs.sh
+  - .yamato/scripts/build_osx_classlibs.sh
 
 
 artifacts: 
