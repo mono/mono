@@ -1657,7 +1657,7 @@ mini_usage (void)
 		"    --aot-path=PATH        List of additional directories to search for AOT images.\n"
 	  );
 
-	printf ("\nOptions:\n");
+	g_print ("\nOptions:\n");
 	mono_flags_print_usage ();
 }
 
@@ -2160,7 +2160,7 @@ mono_main (int argc, char* argv[])
 
 	mono_flags_parse_options ((const char**)argv, argc, &argc, error);
 	if (!is_ok (error)) {
-		fprintf (stderr, "%s", mono_error_get_message (error));
+		g_printerr ("%s", mono_error_get_message (error));
 		mono_error_cleanup (error);
 		return 1;
 	}

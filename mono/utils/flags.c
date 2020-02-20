@@ -28,13 +28,14 @@ typedef struct {
 	MonoFlagType flag_type;
 	gpointer addr;
 	const char *cmd_name;
+	int cmd_name_len;
 } FlagData;
 
 static FlagData flag_meta[] = {
 #define DEFINE_FLAG_FULL(flag_type, ctype, c_name, cmd_name, def_value, comment) \
-	{ flag_type, &mono_##c_name, cmd_name },
+	{ flag_type, &mono_##c_name, cmd_name, sizeof (cmd_name) - 1 },
 #define DEFINE_FLAG_READONLY(flag_type, ctype, c_name, cmd_name, def_value, comment) \
-	{ flag_type, NULL, cmd_name },
+	{ flag_type, NULL, cmd_name, sizeof (cmd_name) - 1 },
 #include "flag-definitions.h"
 };
 
@@ -116,12 +117,15 @@ mono_flags_parse_options (const char **argv, int argc, int *out_argc, MonoError 
 		}
 
 		/* Compute flag name */
-		char *flagname = g_strdup (arg);
+		char *arg_copy = g_strdup (arg);
+		char *flagname = arg_copy;
 		int len = strlen (arg);
 		int equals_sign_index = -1;
+		/* Handle no- prefix */
 		if (flagname [0] == 'n' && flagname [1] == 'o' && flagname [2] == '-') {
 			flagname += 3;
 		} else {
+			/* Handle option=value */
 			for (int i = 0; i < len; ++i) {
 				if (flagname [i] == '=') {
 					equals_sign_index = i;
@@ -132,6 +136,8 @@ mono_flags_parse_options (const char **argv, int argc, int *out_argc, MonoError 
 		}
 
 		FlagData *flag = (FlagData*)g_hash_table_lookup (flag_hash, flagname);
+		g_free (arg_copy);
+
 		if (!flag) {
 			aindex ++;
 			continue;
@@ -141,15 +147,14 @@ mono_flags_parse_options (const char **argv, int argc, int *out_argc, MonoError 
 		case MONO_FLAG_BOOL:
 		case MONO_FLAG_BOOL_READONLY: {
 			gboolean negate = FALSE;
-			if (!strcmp (flag->cmd_name, arg)) {
-			} else if (arg [0] == 'n' && arg [1] == 'o' && arg [2] == '-' &&
-					   !strcmp (flag->cmd_name, arg + 3)) {
+			if (len == flag->cmd_name_len) {
+			} else if (arg [0] == 'n' && arg [1] == 'o' && arg [2] == '-' && len == flag->cmd_name_len + 3) {
 				negate = TRUE;
 			} else {
 				break;
 			}
 			if (flag->flag_type == MONO_FLAG_BOOL_READONLY) {
-				mono_error_set_error (error, 1, "Unable to set option '%s' as it's read only.\n", arg);
+				mono_error_set_error (error, 1, "Unable to set option '%s' as it's read-only.\n", arg);
 				break;
 			}
 			*(gboolean*)flag->addr = negate ? FALSE : TRUE;
@@ -160,11 +165,10 @@ mono_flags_parse_options (const char **argv, int argc, int *out_argc, MonoError 
 		case MONO_FLAG_STRING: {
 			const char *value = NULL;
 
-			int flen = strlen (flag->cmd_name);
-			if (len == flen) {
+			if (len == flag->cmd_name_len) {
 				// --option value
 				if (aindex + 1 == argc) {
-					mono_error_set_error (error, 1, "Missing value for option '%s'.\n", flagname);
+					mono_error_set_error (error, 1, "Missing value for option '%s'.\n", flag->cmd_name);
 					break;
 				}
 				value = argv [aindex + 1];
@@ -185,7 +189,7 @@ mono_flags_parse_options (const char **argv, int argc, int *out_argc, MonoError 
 				char *endp;
 				long v = strtol (value, &endp, 10);
 				if (!value [0] || *endp) {
-					mono_error_set_error (error, 1, "Invalid value for option '%s': '%s'.\n", flagname, value);
+					mono_error_set_error (error, 1, "Invalid value for option '%s': '%s'.\n", flag->cmd_name, value);
 					break;
 				}
 				*(int*)flag->addr = (int)v;
