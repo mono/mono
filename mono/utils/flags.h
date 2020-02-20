@@ -7,6 +7,7 @@
 #ifndef __MONO_UTILS_FLAGS_H__
 #define __MONO_UTILS_FLAGS_H__
 
+#include <config.h>
 #include <glib.h>
 
 #include "mono/utils/mono-error.h"
