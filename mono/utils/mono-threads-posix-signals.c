@@ -183,7 +183,7 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	current->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], context);
 
 	if (!current->suspend_can_continue)
-		THREADS_SUSPEND_DEBUG ("\tThread is starting or detaching, failed to capture state %p\n", mono_thread_info_get_tid (current));
+		THREADS_SUSPEND_DEBUG ("\tThread is starting or detaching, failed to capture state %p\n", (gpointer)mono_thread_info_get_tid (current));
 
 	/*
 	Block the restart signal.

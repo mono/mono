@@ -94,7 +94,7 @@ static int suspend_posts, resume_posts, abort_posts, waits_done, pending_ops;
 void
 mono_threads_notify_initiator_of_abort (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-ABORT] %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-ABORT] %p\n", (gpointer)mono_thread_info_get_tid (info));
 	mono_atomic_inc_i32 (&abort_posts);
 	mono_os_sem_post (&suspend_semaphore);
 }
@@ -102,7 +102,7 @@ mono_threads_notify_initiator_of_abort (MonoThreadInfo* info)
 void
 mono_threads_notify_initiator_of_suspend (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-SUSPEND] %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-SUSPEND] %p\n", (gpointer)mono_thread_info_get_tid (info));
 	// check that the thread is really in a valid suspended state.
 	g_assert (mono_thread_info_get_suspend_state (info) != NULL);
 	mono_atomic_inc_i32 (&suspend_posts);
@@ -112,7 +112,7 @@ mono_threads_notify_initiator_of_suspend (MonoThreadInfo* info)
 void
 mono_threads_notify_initiator_of_resume (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-RESUME] %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-RESUME] %p\n", (gpointer)mono_thread_info_get_tid (info));
 	mono_atomic_inc_i32 (&resume_posts);
 	mono_os_sem_post (&suspend_semaphore);
 }
@@ -220,7 +220,7 @@ resume_async_suspended (MonoThreadInfo *info)
 static void
 resume_self_suspended (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("**BEGIN self-resume %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("**BEGIN self-resume %p\n", (gpointer)mono_thread_info_get_tid (info));
 	mono_os_sem_post (&info->resume_semaphore);
 }
 
@@ -228,7 +228,7 @@ void
 mono_thread_info_wait_for_resume (MonoThreadInfo* info)
 {
 	int res;
-	THREADS_SUSPEND_DEBUG ("**WAIT self-resume %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("**WAIT self-resume %p\n", (gpointer)mono_thread_info_get_tid (info));
 	res = mono_os_sem_wait (&info->resume_semaphore, MONO_SEM_FLAGS_NONE);
 	g_assert (res != -1);
 }
@@ -236,14 +236,14 @@ mono_thread_info_wait_for_resume (MonoThreadInfo* info)
 static void
 resume_blocking_suspended (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("**BEGIN blocking-resume %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("**BEGIN blocking-resume %p\n", (gpointer)mono_thread_info_get_tid (info));
 	mono_os_sem_post (&info->resume_semaphore);
 }
 
 void
 mono_threads_add_to_pending_operation_set (MonoThreadInfo* info)
 {
-	THREADS_SUSPEND_DEBUG ("added %p to pending suspend\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("added %p to pending suspend\n", (gpointer)mono_thread_info_get_tid (info));
 	++pending_suspends;
 	mono_atomic_inc_i32 (&pending_ops);
 }
@@ -254,8 +254,8 @@ mono_threads_begin_global_suspend (void)
 	size_t ps = pending_suspends;
 	if (G_UNLIKELY (ps != 0))
 		g_error ("pending_suspends = %d, but must be 0", ps);
-	THREADS_SUSPEND_DEBUG ("------ BEGIN GLOBAL OP sp %d rp %d ap %d wd %d po %d (sp + rp + ap == wd) (wd == po)\n", suspend_posts, resume_posts,
-		abort_posts, waits_done, pending_ops);
+	THREADS_SUSPEND_DEBUG ("------ BEGIN GLOBAL OP sp %d rp %d ap %d wd %d po %d (sp + rp + ap == wd) (wd == po)\n", (gpointer)suspend_posts, (gpointer)resume_posts,
+		(gpointer)abort_posts, (gpointer)waits_done, (gpointer)pending_ops);
 	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
 	mono_threads_coop_begin_global_suspend ();
 }
@@ -266,8 +266,8 @@ mono_threads_end_global_suspend (void)
 	size_t ps = pending_suspends;
 	if (G_UNLIKELY (ps != 0))
 		g_error ("pending_suspends = %d, but must be 0", ps);
-	THREADS_SUSPEND_DEBUG ("------ END GLOBAL OP sp %d rp %d ap %d wd %d po %d\n", suspend_posts, resume_posts,
-		abort_posts, waits_done, pending_ops);
+	THREADS_SUSPEND_DEBUG ("------ END GLOBAL OP sp %d rp %d ap %d wd %d po %d\n", (gpointer)suspend_posts, (gpointer)resume_posts,
+		(gpointer)abort_posts, (gpointer)waits_done, (gpointer)pending_ops);
 	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
 	mono_threads_coop_end_global_suspend ();
 }
@@ -308,7 +308,7 @@ mono_threads_wait_pending_operations (void)
 	int c = pending_suspends;
 
 	/* Wait threads to park */
-	THREADS_SUSPEND_DEBUG ("[INITIATOR-WAIT-COUNT] %d\n", c);
+	THREADS_SUSPEND_DEBUG ("[INITIATOR-WAIT-COUNT] %d\n", (gpointer)c);
 	if (pending_suspends) {
 		MonoStopwatch suspension_time;
 		mono_stopwatch_start (&suspension_time);
@@ -325,7 +325,7 @@ mono_threads_wait_pending_operations (void)
 			g_error ("suspend_thread suspend took %d ms, which is more than the allowed %d ms", (int)mono_stopwatch_elapsed_ms (&suspension_time), sleepAbortDuration);
 		}
 		mono_stopwatch_stop (&suspension_time);
-		THREADS_SUSPEND_DEBUG ("Suspending %d threads took %d ms.\n", (int)pending_suspends, (int)mono_stopwatch_elapsed_ms (&suspension_time));
+		THREADS_SUSPEND_DEBUG ("Suspending %d threads took %d ms.\n", (gpointer)(int)pending_suspends, (gpointer)(int)mono_stopwatch_elapsed_ms (&suspension_time));
 
 	}
 
@@ -476,7 +476,7 @@ register_thread (MonoThreadInfo *info)
 
 	mono_threads_suspend_register (info);
 
-	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
+	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, (gpointer)mono_thread_info_get_tid (info), (gpointer)info->small_id);
 
 	if (threads_callbacks.thread_attach) {
 		if (!threads_callbacks.thread_attach (info)) {
@@ -1342,7 +1342,7 @@ mono_thread_info_safe_suspend_and_run (MonoNativeThreadId id, gboolean interrupt
 	MonoThreadInfo *info = NULL;
 	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 
-	THREADS_SUSPEND_DEBUG ("SUSPENDING tid %p (%s)\n", (void*)id, interrupt_kernel ? "int" : "");
+	THREADS_SUSPEND_DEBUG ("SUSPENDING tid %p (%s)\n", (void*)id, interrupt_kernel ? (gpointer)"int" : (gpointer)"");
 	/*FIXME: unify this with self-suspend*/
 	g_assert (id != mono_native_thread_id_get ());
 
@@ -1351,13 +1351,13 @@ mono_thread_info_safe_suspend_and_run (MonoNativeThreadId id, gboolean interrupt
 	mono_threads_begin_global_suspend ();
 
 	info = suspend_sync_nolock (id, interrupt_kernel);
-	THREADS_SUSPEND_DEBUG ("SUSPENDING tid %p (%s): info %p\n", (void*)id, interrupt_kernel ? "int" : "", info);
+	THREADS_SUSPEND_DEBUG ("SUSPENDING tid %p (%s): info %p\n", (void*)id, interrupt_kernel ? (gpointer)"int" : (gpointer)"", info);
 	if (!info)
 		goto done;
 
 	switch (result = callback (info, user_data)) {
 	case MonoResumeThread:
-		THREADS_SUSPEND_DEBUG ("CALLBACK tid %p (%s): MonoResumeThread\n", (void*)id, interrupt_kernel ? "int" : "");
+		THREADS_SUSPEND_DEBUG ("CALLBACK tid %p (%s): MonoResumeThread\n", (void*)id, interrupt_kernel ? (gpointer)"int" : (gpointer)"");
 		mono_hazard_pointer_set (hp, 1, info);
 		mono_thread_info_core_resume (info);
 		mono_threads_wait_pending_operations ();
@@ -1370,7 +1370,7 @@ mono_thread_info_safe_suspend_and_run (MonoNativeThreadId id, gboolean interrupt
 #endif
 		break;
 	case KeepSuspended:
-		THREADS_SUSPEND_DEBUG ("CALLBACK tid %p (%s): KeepSuspended\n", (void*)id, interrupt_kernel ? "int" : "");
+		THREADS_SUSPEND_DEBUG ("CALLBACK tid %p (%s): KeepSuspended\n", (void*)id, interrupt_kernel ? (gpointer)"int" : (gpointer)"");
 		g_assert (!mono_threads_are_safepoints_enabled ());
 		break;
 	default:

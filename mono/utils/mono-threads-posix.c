@@ -168,7 +168,7 @@ mono_thread_info_get_system_max_stack_size (void)
 int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
-	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", signum, info, mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", (gpointer)signum, info, (gpointer)mono_thread_info_get_tid (info));
 
 	int result;
 
@@ -363,7 +363,7 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		/* We raced with self suspend and lost so suspend can continue. */
 		g_assert (mono_threads_is_hybrid_suspension_enabled ());
 		info->suspend_can_continue = TRUE;
-		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (info));
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (gpointer)mono_thread_info_get_tid (info));
 		return TRUE;
 	}
 	return FALSE;

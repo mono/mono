@@ -263,7 +263,7 @@ sgen_unified_suspend_stop_world (void)
 	g_assert (!mono_thread_info_will_not_safepoint (mono_thread_info_current ()));
 
 	mono_threads_begin_global_suspend ();
-	THREADS_STW_DEBUG ("[GC-STW-BEGIN][%p] *** BEGIN SUSPEND *** \n", mono_thread_info_get_tid (mono_thread_info_current ()));
+	THREADS_STW_DEBUG ("[GC-STW-BEGIN][%p] *** BEGIN SUSPEND *** \n", (gpointer)mono_thread_info_get_tid (mono_thread_info_current ()));
 
 	for (MonoThreadSuspendPhase phase = MONO_THREAD_SUSPEND_PHASE_INITIAL; phase < MONO_THREAD_SUSPEND_PHASE_COUNT; phase++) {
 		gboolean need_next_phase = FALSE;
@@ -281,7 +281,7 @@ sgen_unified_suspend_stop_world (void)
 
 			int reason;
 			if (!sgen_is_thread_in_current_stw (info, &reason)) {
-				THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] IGNORE thread %p skip %s reason %d\n", (int)phase, mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false", reason);
+				THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] IGNORE thread %p skip %s reason %d\n", (gpointer)(gsize)(int)phase, (gpointer)mono_thread_info_get_tid (info), info->client_info.skip ? (gpointer)"true" : (gpointer)"false", (gpointer)reason);
 				continue;
 			}
 
@@ -299,7 +299,7 @@ sgen_unified_suspend_stop_world (void)
 				g_assert_not_reached ();
 			}
 
-			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] SUSPEND thread %p skip %s\n", (int)phase, mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
+			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] SUSPEND thread %p skip %s\n", (gpointer)(gsize)(int)phase, (gpointer)mono_thread_info_get_tid (info), info->client_info.skip ? (gpointer)"true" : (gpointer)"false");
 		} FOREACH_THREAD_END;
 
 		mono_thread_info_current ()->client_info.suspend_done = TRUE;
@@ -317,7 +317,7 @@ sgen_unified_suspend_stop_world (void)
 
 			int reason = 0;
 			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE RESUME thread %p not been processed done %d current %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info, NULL), reason);
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE RESUME thread %p not been processed done %d current %d reason %d\n", (gpointer)mono_thread_info_get_tid (info), (gpointer)info->client_info.suspend_done, (gpointer)!sgen_is_thread_in_current_stw (info, NULL), (gpointer)reason);
 				continue;
 			}
 
@@ -330,7 +330,7 @@ sgen_unified_suspend_stop_world (void)
 			if (!mono_thread_info_in_critical_location (info)) {
 				info->client_info.suspend_done = TRUE;
 
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] DONE thread %p deemed fully suspended\n", mono_thread_info_get_tid (info));
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] DONE thread %p deemed fully suspended\n", (gpointer)mono_thread_info_get_tid (info));
 				continue;
 			}
 
@@ -342,7 +342,7 @@ sgen_unified_suspend_stop_world (void)
 			if (!info->client_info.skip)
 				restart_counter += 1;
 
-			THREADS_STW_DEBUG ("[GC-STW-RESTART] RESTART thread %p skip %s\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
+			THREADS_STW_DEBUG ("[GC-STW-RESTART] RESTART thread %p skip %s\n", (gpointer)mono_thread_info_get_tid (info), (gpointer)info->client_info.skip ? (gpointer)"true" : (gpointer)"false");
 		} FOREACH_THREAD_END
 
 		mono_threads_wait_pending_operations ();
@@ -361,12 +361,12 @@ sgen_unified_suspend_stop_world (void)
 		FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 			int reason = 0;
 			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not been processed done %d current %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info, NULL), reason);
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not been processed done %d current %d reason %d\n", (gpointer)mono_thread_info_get_tid (info), (gpointer)info->client_info.suspend_done, (gpointer)!sgen_is_thread_in_current_stw (info, NULL), (gpointer)reason);
 				continue;
 			}
 
 			if (!mono_thread_info_is_running (info)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not running\n", mono_thread_info_get_tid (info));
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not running\n", (gpointer)mono_thread_info_get_tid (info));
 				continue;
 			}
 
@@ -383,7 +383,7 @@ sgen_unified_suspend_stop_world (void)
 				g_assert_not_reached ();
 			}
 
-			THREADS_STW_DEBUG ("[GC-STW-RESTART] SUSPEND thread %p skip %s\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
+			THREADS_STW_DEBUG ("[GC-STW-RESTART] SUSPEND thread %p skip %s\n", (gpointer)mono_thread_info_get_tid (info), info->client_info.skip ? (gpointer)"true" : (gpointer)"false");
 		} FOREACH_THREAD_END
 
 		mono_threads_wait_pending_operations ();
@@ -396,7 +396,7 @@ sgen_unified_suspend_stop_world (void)
 		if (!sgen_is_thread_in_current_stw (info, &reason)) {
 			g_assert (!info->client_info.suspend_done || info == mono_thread_info_current ());
 
-			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is NOT suspended, reason %d\n", mono_thread_info_get_tid (info), reason);
+			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is NOT suspended, reason %d\n", (gpointer)mono_thread_info_get_tid (info), (gpointer)reason);
 			continue;
 		}
 
@@ -422,7 +422,7 @@ sgen_unified_suspend_stop_world (void)
 		sgen_binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), stopped_ip);
 
 		THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended, stopped_ip = %p, stack = %p -> %p\n",
-			mono_thread_info_get_tid (info), stopped_ip, info->client_info.stack_start, info->client_info.stack_start ? info->client_info.info.stack_end : NULL);
+			(gpointer)mono_thread_info_get_tid (info), (gpointer)stopped_ip, (gpointer)info->client_info.stack_start, info->client_info.stack_start ? (gpointer)info->client_info.info.stack_end : (gpointer)NULL);
 	} FOREACH_THREAD_END
 }
 
@@ -434,11 +434,11 @@ sgen_unified_suspend_restart_world (void)
 		int reason = 0;
 		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			g_assert (mono_thread_info_begin_resume (info));
-			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] RESUME thread %p\n", mono_thread_info_get_tid (info));
+			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] RESUME thread %p\n", (gpointer)mono_thread_info_get_tid (info));
 
 			sgen_binary_protocol_thread_restart ((gpointer) mono_thread_info_get_tid (info));
 		} else {
-			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p, reason %d\n", mono_thread_info_get_tid (info), reason);
+			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p, reason %d\n", (gpointer)mono_thread_info_get_tid (info), (gpointer)reason);
 		}
 	} FOREACH_THREAD_END
 

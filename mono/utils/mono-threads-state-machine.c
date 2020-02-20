@@ -140,15 +140,15 @@ trace_state_change_with_func (const char *transition, MonoThreadInfo *info, int 
 {
 	check_thread_state (info);
 	THREADS_STATE_MACHINE_DEBUG ("[%s][%p] %s %s -> %s %s (%d -> %d) %s\n",
-		transition,
-		mono_thread_info_get_tid (info),
-		state_name (get_thread_state (cur_raw_state)),
-		(get_thread_no_safepoints (cur_raw_state) ? "X" : "."),
-		state_name (next_state),
-		(next_no_safepoints ? "X" : "."),
-		get_thread_suspend_count (cur_raw_state),
-		get_thread_suspend_count (cur_raw_state) + suspend_count_delta,
-		func);
+		(gpointer)transition,
+		(gpointer)mono_thread_info_get_tid (info),
+		(gpointer)state_name (get_thread_state (cur_raw_state)),
+		(gpointer)(get_thread_no_safepoints (cur_raw_state) ? "X" : "."),
+		(gpointer)state_name (next_state),
+		(gpointer)(next_no_safepoints ? "X" : "."),
+		(gpointer)get_thread_suspend_count (cur_raw_state),
+		(gpointer)(get_thread_suspend_count (cur_raw_state) + suspend_count_delta),
+		(gpointer)func);
 
 	CHECKED_BUILD_THREAD_TRANSITION (transition, info, get_thread_state (cur_raw_state), get_thread_suspend_count (cur_raw_state), next_state, suspend_count_delta);
 }
@@ -158,15 +158,15 @@ trace_state_change_sigsafe (const char *transition, MonoThreadInfo *info, int cu
 {
 	check_thread_state (info);
 	THREADS_STATE_MACHINE_DEBUG ("[%s][%p] %s %s -> %s %s (%d -> %d) %s\n",
-		transition,
-		mono_thread_info_get_tid (info),
-		state_name (get_thread_state (cur_raw_state)),
-		(get_thread_no_safepoints (cur_raw_state) ? "X" : "."),
-		state_name (next_state),
-		(next_no_safepoints ? "X" : "."),
-		get_thread_suspend_count (cur_raw_state),
-		get_thread_suspend_count (cur_raw_state) + suspend_count_delta,
-		func);
+		(gpointer)transition,
+		(gpointer)mono_thread_info_get_tid (info),
+		(gpointer)state_name (get_thread_state (cur_raw_state)),
+		(gpointer)(get_thread_no_safepoints (cur_raw_state) ? "X" : "."),
+		(gpointer)state_name (next_state),
+		(gpointer)(next_no_safepoints ? "X" : "."),
+		(gpointer)get_thread_suspend_count (cur_raw_state),
+		(gpointer)(get_thread_suspend_count (cur_raw_state) + suspend_count_delta),
+		(gpointer)func);
 
 	CHECKED_BUILD_THREAD_TRANSITION_NOBT (transition, info, get_thread_state (cur_raw_state), get_thread_suspend_count (cur_raw_state), next_state, suspend_count_delta);
 }

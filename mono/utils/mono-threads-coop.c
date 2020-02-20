@@ -128,7 +128,7 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 	if (!info)
 		return;
 
-	THREADS_SUSPEND_DEBUG ("FINISH SELF SUSPEND OF %p\n", mono_thread_info_get_tid (info));
+	THREADS_SUSPEND_DEBUG ("FINISH SELF SUSPEND OF %p\n", (gpointer)mono_thread_info_get_tid (info));
 
 	/* Fast fail if no_safepoints is set */
 	g_assert (!info->thread_state.no_safepoints);

@@ -417,71 +417,57 @@ g_set_printerr_handler (GPrintFunc func)
 #include <windows.h>
 #include <assert.h>
 
-char mono_debug_print_memory [64 * 1024 * 1024];
+char* mono_debug_print_memory [64 * 1024 * 1024];
 volatile long mono_debug_print_memory_position;
-volatile long mono_debug_print_memory_resets;
-volatile gboolean mono_debug_print_memory_enabled = TRUE;
 
 void
-mono_debug_print_to_memory_va (const char *format, va_list args)
+THREADS_DEBUG (const char* a, gpointer b, gpointer c, gpointer d)
 {
-#if 1
-	static volatile decltype(&_vsnprintf) pvsnprintf;
+	unsigned long position = InterlockedExchangeAdd(&mono_debug_print_memory_position, 4);
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)a;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)b;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)c;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)d;
+}
 
-	if (!pvsnprintf)
-	{
-		auto ntdll = LoadLibraryW (L"ntdll.dll");
-		(void*&)pvsnprintf = (void*)GetProcAddress (ntdll, "_vsnprintf");
-		assert(pvsnprintf);
-	}
+void
+THREADS_SUSPEND_DEBUG (const char* a, gpointer b, gpointer c, gpointer d, gpointer e, gpointer f)
+{
+	unsigned long position = InterlockedExchangeAdd(&mono_debug_print_memory_position, 6);
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)a;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)b;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)c;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)d;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)e;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)f;
+}
 
-#if 1
-	if (!mono_debug_print_memory_enabled)
-		return;
+void
+THREADS_STW_DEBUG (const char* a, gpointer b, gpointer c, gpointer d, gpointer e)
+{
+	unsigned long position = InterlockedExchangeAdd(&mono_debug_print_memory_position, 5);
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)a;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)b;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)c;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)d;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)e;
+}
 
-#if 0
-	const long length = _vscprintf (format, args) + 1;
-
-#else
-
-	char buffer [1024];
-	const long length = 1 + pvsnprintf (buffer, sizeof (buffer), format, args);
-
-#endif
-
-	if (length < 2 || length > sizeof (mono_debug_print_memory))
-		return;
-
-	while (TRUE)
-	{
-		const long position = InterlockedExchangeAdd (&mono_debug_print_memory_position, length);
-		const long end = position + length;
-
-		if (position > sizeof (mono_debug_print_memory) ||
-			end < 0 || // overflow in extreme race
-			end > sizeof (mono_debug_print_memory)) {
-			InterlockedIncrement (&mono_debug_print_memory_resets);
-			InterlockedExchangeAdd (&mono_debug_print_memory_position, 0);
-			continue;
-		}
-
-		//vsprintf (&mono_debug_print_memory [position], format, args);
-		memcpy (&mono_debug_print_memory [position], buffer, length);
-		return;
-	}
-#endif
-#endif
+void
+THREADS_STATE_MACHINE_DEBUG (const char* a, gpointer b, gpointer c, gpointer d, gpointer e,
+			     gpointer f, gpointer g, gpointer h, gpointer i, gpointer j)
+{
+	unsigned long position = InterlockedExchangeAdd(&mono_debug_print_memory_position, 10);
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)a;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)b;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)c;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)d;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)e;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)f;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)g;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)h;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)i;
+	mono_debug_print_memory [position++ % _countof (mono_debug_print_memory)] = (char*)j;
 }
 
 #endif
-
-void
-mono_debug_print_to_memory (const char *format, ...)
-{
-#if _WIN32
-	va_list args;
-	va_start (args, format);
-	mono_debug_print_to_memory_va (format, args);
-	va_end (args);
-#endif
-}
