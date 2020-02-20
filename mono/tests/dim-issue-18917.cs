@@ -23,7 +23,7 @@ public class FinalClass : AbstractClass
 
 public class Test
 {
-    public static void Main(string[] args)
+    public static int test_0_dim_18917()
     {
         var var0 = new FinalClass();
         var var4 = (Test.IInterface2)var0;
