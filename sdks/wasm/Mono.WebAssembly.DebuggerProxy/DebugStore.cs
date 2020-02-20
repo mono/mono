@@ -296,9 +296,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
 		{
-			lock (typeof (AssemblyInfo)) {
-				this.id = ++next_id;
-			}
+			this.id = Interlocked.Increment (ref next_id);
 
 			try {
 				Url = url;

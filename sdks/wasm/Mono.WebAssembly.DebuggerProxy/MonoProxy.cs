@@ -109,12 +109,16 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class ExecutionContext {
+		int breakpointIndex = -1;
+
 		public bool RuntimeReady { get; set; }
 		public int Id { get; set; }
 		public object AuxData { get; set; }
 
 		public List<Frame> CallStack { get; set; }
-		public int LocalBreakpointId { get; set; }
+
+		public int NextBreakpointId ()
+			=> Interlocked.Increment (ref breakpointIndex);
 
 		internal DebugStore store;
 		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
@@ -131,7 +135,6 @@ namespace WebAssembly.Net.Debugging {
 
 	public class MonoProxy : DevToolsProxy {
 		List<Breakpoint> breakpoints = new List<Breakpoint> ();
-		int local_breakpoint_id;
 		Dictionary<string, ExecutionContext> contexts = new Dictionary<string, ExecutionContext> ();
 
 		public MonoProxy () { }
@@ -706,9 +709,9 @@ namespace WebAssembly.Net.Debugging {
 
 			Breakpoint bp = null;
 			if (!context.RuntimeReady) {
-				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakpointState.Pending);
+				bp = new Breakpoint (bp_loc, context.NextBreakpointId (), BreakpointState.Pending);
 			} else {
-				bp = new Breakpoint (bp_loc, local_breakpoint_id++, BreakpointState.Disabled);
+				bp = new Breakpoint (bp_loc, context.NextBreakpointId (), BreakpointState.Disabled);
 
 				var res = await EnableBreakPoint (msg_id, bp, token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
