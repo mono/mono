@@ -4168,6 +4168,97 @@ get_thread_dump (MonoThreadInfo *info, gpointer ud)
 	return MonoResumeThread;
 }
 
+typedef struct QuickDumpUserData {
+	char *bufp;
+	char *maxp;
+	const MonoUnityCallstackOptions *opts;
+	size_t prefix_len;
+} QuickDumpUserData;
+
+static void
+append_quick (QuickDumpUserData *ud, const char *str)
+{
+	int len = (int)strlen (str);
+	int remain = (int)(ud->maxp - ud->bufp);
+	int copylen = len;
+	if (copylen > remain)
+		copylen = remain;
+	memcpy (ud->bufp, str, copylen);
+	ud->bufp += copylen;
+}
+
+static mono_bool
+collect_frame_text (MonoMethod *method, int32_t native_offset, int32_t il_offset, mono_bool managed, void *data)
+{
+	QuickDumpUserData *ud = (QuickDumpUserData *)data;
+
+	if (managed && method) {
+		char *method_name = mono_method_full_name (method, TRUE);
+		append_quick (ud, method_name);
+		g_free (method_name);
+
+		gboolean skip_lines = FALSE;
+
+		for (int fi = 0, fcount = ud->opts->filter_count; !skip_lines && fi < fcount; ++fi) {
+			const MonoUnityCallstackFilter *f = &ud->opts->line_filters[fi];
+
+			if (0 == strcmp (method->klass->name, f->class_name)) {
+				if (0 == strcmp (method->klass->name_space, f->name_space)) {
+					skip_lines = !f->method_name || 0 == strcmp (method->name, f->method_name);
+				}
+			}
+		}
+
+		if (!skip_lines) {
+			MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
+			if (minfo) {
+
+				MonoDebugSourceLocation *src_loc = mono_debug_method_lookup_location (minfo, il_offset);
+
+				if (src_loc && src_loc->source_file) {
+					char buf[512];
+					strncpy (buf, src_loc->source_file, sizeof buf);
+					buf[(sizeof buf) - 1] = '\0';
+
+					for (char *p = buf; *p; ++p) {
+						if (*p == '\\')
+							*p = '/';
+					}
+
+					const char *output_ptr = buf;
+					size_t slen = strlen (buf);
+					if (slen > ud->prefix_len) {
+						if (0 == memcmp (buf, ud->opts->path_prefix_filter, ud->prefix_len))
+							output_ptr += ud->prefix_len;
+					}
+
+					append_quick (ud, " (at ");
+					append_quick (ud, output_ptr);
+					append_quick (ud, ":");
+					char num_buf[32];
+					snprintf (num_buf, sizeof num_buf, "%d", src_loc->row);
+					append_quick (ud, num_buf);
+					append_quick (ud, ")");
+				}
+				mono_debug_free_source_location (src_loc);
+			}
+		}
+		append_quick (ud, "\n");
+	}
+
+	return ud->bufp == ud->maxp;
+}
+
+MONO_API int
+mono_unity_managed_callstack (unsigned char *buffer, int bufferSize, const MonoUnityCallstackOptions *opts)
+{
+	QuickDumpUserData ud = {(char *)buffer, (char *)buffer + bufferSize - 1, opts, strlen (opts->path_prefix_filter)};
+
+	mono_stack_walk (collect_frame_text, &ud);
+
+	return (int)(ud.bufp - (char *)buffer);
+}
+
 typedef struct {
 	int nthreads, max_threads;
 

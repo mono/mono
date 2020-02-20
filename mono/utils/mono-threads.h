@@ -890,4 +890,19 @@ mono_win32_abort_blocking_io_call (THREAD_INFO_TYPE *info);
 
 #endif
 
+typedef struct _MonoUnityCallstackFilter {
+	const char *name_space;
+	const char *class_name;
+	const char *method_name;
+} MonoUnityCallstackFilter;
+
+typedef struct _MonoUnityCallstackOptions {
+	const char *path_prefix_filter;
+	int filter_count;
+	const MonoUnityCallstackFilter *line_filters;
+} MonoUnityCallstackOptions;
+
+MONO_API int
+mono_unity_managed_callstack (unsigned char* buffer, int bufferSize, const MonoUnityCallstackOptions *opts);
+
 #endif /* __MONO_THREADS_H__ */
