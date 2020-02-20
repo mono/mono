@@ -5637,13 +5637,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* Preserve the parameter registers while we fix up the lmf	 */
 		/*---------------------------------------------------------------*/
 		s390_stmg  (code, s390_r2, s390_r6, s390_r13,
-			    MONO_STRUCT_OFFSET(MonoLMF, pregs[0]));
+			    MONO_STRUCT_OFFSET(MonoLMF, pregs));
 
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs[0]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs[1]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs[2]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs[3]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs[4]), SLOT_NOREF);
+		for (i = 0; i < 5; i++)
+			mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, pregs) + i * sizeof(gulong), SLOT_NOREF);
 
 		/*---------------------------------------------------------------*/
 		/* On return from this call r2 have the address of the &lmf	 */
@@ -5698,23 +5695,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* Save general and floating point registers			 */	
 		/*---------------------------------------------------------------*/	
 		s390_stmg  (code, s390_r2, s390_r12, s390_r13, 				
-			    MONO_STRUCT_OFFSET(MonoLMF, gregs[2]));			
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[0]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[1]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[2]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[3]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[4]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[5]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[6]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[7]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[8]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[9]), SLOT_NOREF);
-		mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs[10]), SLOT_NOREF);
+			    MONO_STRUCT_OFFSET(MonoLMF, gregs) + 2 * sizeof(gulong));	
+		for (i = 0; i < 11; i++)
+			mini_gc_set_slot_type_from_fp (cfg, lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, gregs) + i * sizeof(gulong), SLOT_NOREF);
 
-		fpOffset = lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, fregs[0]);
+		fpOffset = lmfOffset + MONO_STRUCT_OFFSET (MonoLMF, fregs);
 		for (i = 0; i < 16; i++) {						
 			s390_std  (code, i, 0, s390_r13, 				
-				   MONO_STRUCT_OFFSET(MonoLMF, fregs[i]));			
+				   MONO_STRUCT_OFFSET(MonoLMF, fregs) + i * sizeof(gulong));
 			mini_gc_set_slot_type_from_fp (cfg, fpOffset, SLOT_NOREF);
 			fpOffset += sizeof(double);
 		}									
@@ -5723,7 +5711,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* Restore the parameter registers now that we've set up the lmf */
 		/*---------------------------------------------------------------*/
 		s390_lmg   (code, s390_r2, s390_r6, s390_r13, 				
-			    MONO_STRUCT_OFFSET(MonoLMF, pregs[0]));			
+			    MONO_STRUCT_OFFSET(MonoLMF, pregs));	
 	}
 
 	if (cfg->method->save_lmf)
