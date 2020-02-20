@@ -232,7 +232,10 @@ monoutils_sources = \
 	refcount.h	\
 	w32api.h	\
 	unlocked.h	\
-	ward.h
+	ward.h \
+	flags.h \
+	flag-definitions.h \
+	flags.c
 
 arch_sources = 
 
