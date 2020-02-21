@@ -575,7 +575,7 @@ namespace WebAssembly.Net.Debugging {
 			var the_pdbs = the_value?.ToObject<string[]> ();
 
 			store = new DebugStore ();
-			await store.Load(sessionId, the_pdbs, token);
+			await store.Load (this, sessionId, the_pdbs, token);
 		}
 
 		async Task RuntimeReady (SessionId sessionId, CancellationToken token)
