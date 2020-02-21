@@ -53,9 +53,9 @@ namespace DebuggerTests
 			await Ready();
 			//all sources are sent before runtime ready is sent, nothing to check
 			await insp.Ready ();
-			Assert.True (scripts.ContainsValue ("dotnet://debugger-test.dll/debugger-test.cs"));
-			Assert.True (scripts.ContainsValue ("dotnet://debugger-test.dll/debugger-test2.cs"));
-			Assert.True (scripts.ContainsValue ("dotnet://Simple.Dependency.dll/dependency.cs"));
+			Assert.Contains ("dotnet://debugger-test.dll/debugger-test.cs", scripts.Values);
+			Assert.Contains ("dotnet://debugger-test.dll/debugger-test2.cs", scripts.Values);
+			Assert.Contains ("dotnet://Simple.Dependency.dll/dependency.cs", scripts.Values);
 		}
 
 		[Fact]
@@ -143,7 +143,7 @@ namespace DebuggerTests
 				var top_frame = pause_location ["callFrames"][0];
 
 				Assert.Equal ("IntAdd", top_frame ["functionName"].Value<string>());
-				Assert.True (top_frame ["url"].Value<string> ().Contains("debugger-test.cs"));
+				Assert.Contains ("debugger-test.cs", top_frame ["url"].Value<string> ());
 
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, scripts, top_frame["location"]);
