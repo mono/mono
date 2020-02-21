@@ -1,3 +1,7 @@
-/.vs
+.vs
 obj
 bin
+
+!./wasm
+./wasm/*
+!./wasm/BLANK

@@ -1,5 +1,5 @@
 if (process.argv.length != 4) {
-  console.log("usage: node node-main.js assemblyName packagerOutputDirectory");
+  console.log("usage: node test-runner.js assemblyName packagerOutputDirectory");
   process.exit(1);
 }
 
