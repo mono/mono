@@ -4550,34 +4550,21 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						// extra stack to hold this and return value, before call.
 						simulate_runtime_stack_increase (td, 2);
 
-						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
-							interp_add_ins (td, MINT_NEWOBJ_VTST_FAST);
-						else
-							interp_add_ins (td, MINT_NEWOBJ_VT_FAST);
+						const gboolean vt = mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT;
+
+						interp_add_ins (td, vt ? MINT_NEWOBJ_VTST_FAST : MINT_NEWOBJ_VT_FAST);
 
 						td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 						td->last_ins->data [1] = csignature->param_count;
-
-						if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
+						if (vt)
 							td->last_ins->data [2] = mono_class_value_size (klass, NULL);
-						}
 					}
 				} else {
 					// Runtime (interp_exec_method_full in interp.c) inserts
 					// extra stack to hold this and return value, before call.
 					simulate_runtime_stack_increase (td, 2);
-
-					if (m_class_is_valuetype (klass)) {
-						MonoType *t = m_class_get_byval_arg (klass);
-						if (!m_class_is_enumtype (klass) && (t->type == MONO_TYPE_VALUETYPE || (t->type == MONO_TYPE_GENERICINST && mono_type_generic_inst_is_valuetype (t))))
-							interp_add_ins (td, MINT_NEWOBJ_VT);
-						else
-							interp_add_ins (td, MINT_NEWOBJ_ENUM);
-					} else if (klass != mono_defaults.string_class) {
-						interp_add_ins (td, MINT_NEWOBJ);
-					} else {
-						interp_add_ins (td, MINT_NEWOBJ_STRING);
-					}
+					g_assert (!m_class_is_valuetype (klass));
+					interp_add_ins (td, (klass == mono_defaults.string_class) ? MINT_NEWOBJ_STRING : MINT_NEWOBJ);
 					td->last_ins->data [0] = get_data_item_index (td, mono_interp_get_imethod (domain, m, error));
 				}
 				goto_if_nok (error, exit);
@@ -6369,9 +6356,7 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 			*push = 1;
 			break;
 		case MINT_NEWOBJ:
-		case MINT_NEWOBJ_ENUM:
-		case MINT_NEWOBJ_STRING:
-		case MINT_NEWOBJ_VT: {
+		case MINT_NEWOBJ_STRING: {
 			InterpMethod *imethod = (InterpMethod*) td->data_items [ins->data [0]];
 			*pop = imethod->param_count;
 			*push = 1;

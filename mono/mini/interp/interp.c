@@ -4993,7 +4993,6 @@ call_newobj:
 			retval = NULL;
 			goto call;
 
-// FIXME Make a function?
 #define NEWOBJ_COMMON do {												\
 			frame->ip = ip;											\
 															\
@@ -5025,12 +5024,6 @@ call_newobj:
 			 */												\
 		} while (0)												\
 
-		MINT_IN_CASE(MINT_NEWOBJ_ENUM)
-			NEWOBJ_COMMON;
-			memset (sp, 0, sizeof (*sp));
-			sp [1].data.p = &sp [0].data; // first parameter is return value
-			goto call_newobj;
-
 		MINT_IN_CASE(MINT_NEWOBJ_STRING)
 			NEWOBJ_COMMON;
 			retval = sp;
@@ -5038,12 +5031,6 @@ call_newobj:
 			sp->data.p = NULL; // first parameter
 			is_void = TRUE;
 			goto call;
-
-		MINT_IN_CASE(MINT_NEWOBJ_VT)
-			NEWOBJ_COMMON;
-			sp [0].data.p = vt_sp; // return value
-			sp [1].data.p = vt_sp; // first parameter
-			goto call_newobj;
 
 		MINT_IN_CASE(MINT_NEWOBJ) {
 			NEWOBJ_COMMON;
