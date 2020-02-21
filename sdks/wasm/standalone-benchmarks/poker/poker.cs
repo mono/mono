@@ -388,8 +388,8 @@ public class PlayerExpectation
 
 
 public partial class Benchmark {
-    public const int WarmingIterationCount = 50;
-    public const int IterationCount = 300;
+    public const int WarmingIterationCount = 3;
+    public const int IterationCount = 10;
     public const int InnerIterationCount = 1;
 
     public List<Player> _players = new List<Player> {
