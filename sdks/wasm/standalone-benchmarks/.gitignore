@@ -2,6 +2,5 @@
 obj
 bin
 
-!./wasm
-./wasm/*
+wasm
 !./wasm/BLANK

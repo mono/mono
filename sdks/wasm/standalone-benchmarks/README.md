@@ -10,7 +10,7 @@ All commands should be run from within the standalone-benchmarks directory.
 ```dotnet run --project benchmarkname``` to build & run a benchmark using .NET Core. 
 
 ## node.js
-Use ```./run-benchmark.wasm benchmarkname``` to automatically build, package and run the benchmark, or manually:
+Use ```./run-benchmark-wasm.sh benchmarkname``` to automatically build, package and run the benchmark, or manually:
 ```dotnet build benchmarkname``` to build the debug-mode assembly for the benchmark, then:
 ```mono ../packager.exe --out=wasm/benchmarkname benchmarkname/bin/Debug/netcoreapp2.1/benchmarkname.dll``` to generate the WASM output, then finally:
 ```node test-runner.js benchmarkname wasm/benchmarkname``` to run the benchmark.
