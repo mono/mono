@@ -40,6 +40,9 @@ namespace WebAssembly.Net.Debugging {
 		public static Result Ok (JObject ok)
 			=> new Result (ok, null);
 
+		public static Result OkFromObject (object ok)
+			=> Ok (JObject.FromObject(ok));
+
 		public static Result Err (JObject err)
 			=> new Result (null, err);
 
@@ -96,7 +99,7 @@ namespace WebAssembly.Net.Debugging {
 			if (pending.Count > 0) {
 				if (current_send != null)
 					throw new Exception ("current_send MUST BE NULL IF THERE'S no pending send");
-				//Console.WriteLine ("sending more {0} bytes", pending[0].Length);
+
 				current_send = Ws.SendAsync (new ArraySegment<byte> (pending [0]), WebSocketMessageType.Text, true, token);
 				return current_send;
 			}
@@ -234,7 +237,7 @@ namespace WebAssembly.Net.Debugging {
 
 		Task<Result> SendCommandInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
-			int id = ++next_cmd_id;
+			int id = Interlocked.Increment (ref next_cmd_id);
 
 			var o = JObject.FromObject (new {
 				sessionId.sessionId,
@@ -243,7 +246,6 @@ namespace WebAssembly.Net.Debugging {
 				@params = args
 			});
 			var tcs = new TaskCompletionSource<Result> ();
-
 
 			var msgId = new MessageId { id = id, sessionId = sessionId.sessionId };
 			//Log ("verbose", $"add cmd id {sessionId}-{id}");
