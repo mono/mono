@@ -1,16 +1,37 @@
+#
+# To update to a newer llvm revision, wait until its built on CI, then
+# update this version to the version assigned by CI to the build.
+#
+# NOTE: This might be different than the version in external/llvm-project
+#
+LLVM_PKG_VERSION = 6.0.1-alpha.1.20166.1
+LLVM_NUGET_BASE = https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer
+
+UNAME=$(shell uname)
+
+ifeq ($(UNAME),Linux)
+LLVM_ARCH=linux-x64
+endif
+
+ifeq ($(UNAME),Darwin)
+LLVM_ARCH=osx.10.12-x64
+endif
 
 ##
 # Parameters
 #  $(1): version
 #  $(2): target
 #  $(3): src
+#  $(4): nuget arch
 define LLVMProvisionTemplate
-_$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
-_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
-_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+_$(1)-$(2)_SDK_NUPKG_URL = $(LLVM_NUGET_BASE)/runtime.$(4).microsoft.netcore.runtime.mono.llvm.sdk/$(LLVM_PKG_VERSION)/runtime.$(4).microsoft.netcore.runtime.mono.llvm.sdk.$(LLVM_PKG_VERSION).nupkg
+_$(1)-$(2)_TOOLS_NUPKG_URL = $(LLVM_NUGET_BASE)/runtime.$(4).microsoft.netcore.runtime.mono.llvm.tools/$(LLVM_PKG_VERSION)/runtime.$(4).microsoft.netcore.runtime.mono.llvm.tools.$(LLVM_PKG_VERSION).nupkg
 
 $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
-	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
+	curl --location --silent --show-error $$(_$(1)-$(2)_SDK_NUPKG_URL) | tar -xvzf - -C $$(dir $$@)
+	curl --location --silent --show-error $$(_$(1)-$(2)_TOOLS_NUPKG_URL) | tar -xvzf - -C $$(dir $$@)
+	mv $$(TOP)/sdks/out/$(1)-$(2)/tools/$(4)/* $$(TOP)/sdks/out/$(1)-$(2)/
+	chmod a+x $$(TOP)/sdks/out/$(1)-$(2)/bin/*
 	touch $$@
 
 .PHONY: download-$(1)-$(2)
@@ -26,10 +47,11 @@ archive-$(1)-$(2): package-$(1)-$(2)
 	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm-project/llvm))
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm-project/llvm))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm-project/llvm,$(LLVM_ARCH)))
+# The mxe packages are built on osx
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm-project/llvm,osx.10.12-x64-mxe))
 ifeq ($(UNAME),Windows)
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm-project/llvm))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm-project/llvm,win-x64))
 endif
 
 ##
