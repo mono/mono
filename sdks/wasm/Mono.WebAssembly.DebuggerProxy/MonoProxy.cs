@@ -82,7 +82,7 @@ namespace WebAssembly.Net.Debugging {
 		public static bool TryParseId (string stackId, out int id)
 		{
 			id = -1;
-			if (stackId?.StartsWith ("dotnet:") != true)
+			if (stackId?.StartsWith ("dotnet:", StringComparison.Ordinal) != true)
 				return false;
 
 			return int.TryParse (stackId.Substring ("dotnet:".Length), out id);
@@ -187,11 +187,8 @@ namespace WebAssembly.Net.Debugging {
 					var url = args? ["url"]?.Value<string> () ?? "";
 
 					switch (url) {
-					case var _ when url.EndsWith ("dotnet.js"): {
-							break;
-						}
 					case var _ when url == "":
-					case var _ when url.StartsWith ("wasm://"): {
+					case var _ when url.StartsWith ("wasm://", StringComparison.Ordinal): {
 							Log ("info", $"ignoring wasm: Debugger.scriptParsed {url}");
 							return true;
 						}
@@ -215,7 +212,7 @@ namespace WebAssembly.Net.Debugging {
 
 			case "Runtime.compileScript": {
 					var exp = args? ["expression"]?.Value<string> ();
-					if (exp.StartsWith ("//dotnet:", StringComparison.InvariantCultureIgnoreCase)) {
+					if (exp.StartsWith ("//dotnet:", StringComparison.Ordinal)) {
 						OnCompileDotnetScript (id, token);
 						return true;
 					}
@@ -264,7 +261,7 @@ namespace WebAssembly.Net.Debugging {
 
 			case "Runtime.getProperties": {
 					var objId = args? ["objectId"]?.Value<string> ();
-					if (objId.StartsWith ("dotnet:")) {
+					if (objId.StartsWith ("dotnet:", StringComparison.Ordinal)) {
 						var parts = objId.Split (new char [] { ':' });
 						if (parts.Length < 3)
 							return true;
@@ -400,8 +397,8 @@ namespace WebAssembly.Net.Debugging {
 						context.CallStack = frames;
 
 					}
-				} else if (!(function_name.StartsWith ("wasm-function", StringComparison.InvariantCulture)
-					|| url.StartsWith ("wasm://wasm/", StringComparison.InvariantCulture))) {
+				} else if (!(function_name.StartsWith ("wasm-function", StringComparison.Ordinal)
+					|| url.StartsWith ("wasm://wasm/", StringComparison.Ordinal))) {
 					callFrames.Add (frame);
 				}
 			}
@@ -466,10 +463,10 @@ namespace WebAssembly.Net.Debugging {
 
 		static string FormatFieldName (string name)
 		{
-			if (name.Contains("k__BackingField")) {
-				return name.Replace("k__BackingField", "")
-					.Replace("<", "")
-					.Replace(">", "");
+			if (name.Contains("k__BackingField", StringComparison.Ordinal)) {
+				return name.Replace("k__BackingField", "", StringComparison.Ordinal)
+					.Replace("<", "", StringComparison.Ordinal)
+					.Replace(">", "", StringComparison.Ordinal);
 			}
 			return name;
 		}

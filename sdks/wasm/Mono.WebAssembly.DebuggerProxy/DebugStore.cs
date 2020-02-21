@@ -38,7 +38,7 @@ namespace WebAssembly.Net.Debugging {
 				url = sourceFile?.DotNetUrl;
 			}
 
-			if (url != null && !url.StartsWith ("dotnet://", StringComparison.InvariantCulture)) {
+			if (url != null && !url.StartsWith ("dotnet://", StringComparison.Ordinal)) {
 				var sourceFile = store.GetFileByUrl (url);
 				url = sourceFile?.DotNetUrl;
 			}
@@ -191,7 +191,7 @@ namespace WebAssembly.Net.Debugging {
 		public static bool TryParse (string id, out SourceId script)
 		{
 			script = null;
-			if (!id.StartsWith (Scheme, StringComparison.InvariantCulture))
+			if (!id.StartsWith (Scheme, StringComparison.Ordinal))
 				return false;
 
 			script = new SourceId (id);
@@ -361,7 +361,7 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var m in image.GetTypes().SelectMany(t => t.Methods)) {
 				Document first_doc = null;
 				foreach (var sp in m.DebugInformation.SequencePoints) {
-					if (first_doc == null && !sp.Document.Url.EndsWith (".g.cs")) {
+					if (first_doc == null && !sp.Document.Url.EndsWith (".g.cs", StringComparison.OrdinalIgnoreCase)) {
 						first_doc = sp.Document;
 					}
 					//  else if (first_doc != sp.Document) {
