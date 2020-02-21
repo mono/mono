@@ -15,6 +15,11 @@
  * BOOL - gboolean
  * INT - int
  * STRING - (malloc-ed) char*
+ *
+ * Flags can be set on the command line using:
+ * --[no-]-flag (bool)
+ * --flag=value (int/string)
+ * --flag value (int/string)
  */
 
 /*
@@ -29,7 +34,6 @@
 #ifndef DEFINE_FLAG_READONLY
 #define DEFINE_FLAG_READONLY(flag_type, ctype, c_name, cmd_name, def_value, comment) DEFINE_FLAG_FULL(flag_type, ctype, c_name, cmd_name, def_value, comment)
 #endif
-
 
 /* Types of flags */
 #define DEFINE_BOOL(name, cmd_name, def_value, comment) DEFINE_FLAG_FULL(MONO_FLAG_BOOL, gboolean, name, cmd_name, def_value, comment)
