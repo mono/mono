@@ -191,7 +191,7 @@ namespace WebAssembly.Net.Debugging {
 		public static bool TryParse (string id, out SourceId script)
 		{
 			script = null;
-			if (!id.StartsWith (Scheme, StringComparison.Ordinal))
+			if (id == null || !id.StartsWith (Scheme, StringComparison.Ordinal))
 				return false;
 
 			script = new SourceId (id);
