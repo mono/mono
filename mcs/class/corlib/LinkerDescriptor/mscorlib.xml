@@ -541,8 +541,6 @@
 		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
 
-		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
-		
 		<type fullname="System.Reflection.EventInfo" preserve="fields">
 			<method name="AddEventFrame" />
 			<method name="StaticAddEventAdapterFrame" />
@@ -655,10 +653,6 @@
 			<method name="SetCharSet" feature="sre" />
 			<!-- reflection.c mono_reflection_call_is_assignable_to () -->
 			<method name="IsAssignableTo" feature="sre" />
-		</type>
-		<type fullname="System.Reflection.Emit.UnmanagedMarshal" preserve="fields" feature="sre" >
-			<method name="DefineCustom" feature="sre" />
-			<method name="DefineLPArrayInternal" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ArrayType" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.ByRefType" preserve="fields" feature="sre" />

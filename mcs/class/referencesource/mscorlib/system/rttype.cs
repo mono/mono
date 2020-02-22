@@ -4298,6 +4298,10 @@ namespace System
             return types;
         }
 
+        // Points to System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType
+        // Initialized when a TypeBuilder is created to avoid link-time SRE dependencies in this file
+        internal static Func<Type, Type[], Type> MakeTypeBuilderInstantiation;
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override Type MakeGenericType(Type[] instantiation)
         {
@@ -4338,7 +4342,7 @@ namespace System
 #pragma warning disable 162
                     if (!RuntimeFeature.IsDynamicCodeSupported)
                         throw new PlatformNotSupportedException();
-                    return MakeTypeBuilderInstantiation(instantiation);
+                    return MakeTypeBuilderInstantiation(this, instantiation);
 #pragma warning restore 162
 #endif
                 }
@@ -4368,13 +4372,6 @@ namespace System
 #endif
             return ret;
         }
-
-#if !NETCORE
-        Type MakeTypeBuilderInstantiation(Type[] instantiation)
-        {
-            return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
-        }
-#endif
 
         public override bool IsGenericTypeDefinition
         {
