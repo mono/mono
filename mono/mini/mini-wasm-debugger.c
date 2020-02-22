@@ -886,15 +886,19 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_get_var_info (int scope, int* pos, int len)
 {
 	FrameDescData data;
-	data.cur_frame = 0;
 	data.target_frame = scope;
 	for (int i = 0; i < len; i++)
 	{
 		DEBUG_PRINTF (2, "getting var %d of scope %d - %d\n", pos[i], scope, len);
+		data.cur_frame = 0;
 		data.variable = pos[i];
 		mono_walk_stack_with_ctx (describe_variable, NULL, MONO_UNWIND_NONE, &data);
 	}
+
+	data.cur_frame = 0;
 	mono_walk_stack_with_ctx (describe_async_method_locals, NULL, MONO_UNWIND_NONE, &data);
+
+	data.cur_frame = 0;
 	mono_walk_stack_with_ctx (describe_this, NULL, MONO_UNWIND_NONE, &data);
 }
 
