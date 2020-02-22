@@ -664,7 +664,7 @@ namespace DebuggerTests
 						CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "j", 24);
 						CheckString (locals, "foo_str", "foo");
-						//CheckObject (locals, "this", "Math.NestedInMath");
+						CheckObject (locals, "this", "Math.NestedInMath");
 					}
 				);
 
@@ -676,7 +676,7 @@ namespace DebuggerTests
 						// FIXME: Failing test CheckString (locals_m1, "text", "Hello");
 						CheckNumber (locals_m1, "new_i", 0);
 						CheckNumber (locals_m1, "k", 0);
-						//CheckObject (locals_m1, "nim", "Math.NestedInMath");
+						CheckObject (locals_m1, "nim", "Math.NestedInMath");
 					}
 				);
 
@@ -689,7 +689,7 @@ namespace DebuggerTests
 						CheckString (locals, "text", "Hello");
 						// FIXME: Failing test CheckNumber (locals, "new_i", 24);
 						CheckNumber (locals, "k", 19);
-						//CheckObject (locals, "nim", "Math.NestedInMath");
+						CheckObject (locals, "nim", "Math.NestedInMath");
 					}
 				);
 
@@ -726,7 +726,7 @@ namespace DebuggerTests
 						// FIXME: failing test CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "new_i", 22);
 						CheckNumber (locals, "k", 34);
-						//CheckObject (locals, "nim", "Math.NestedInMath");
+						CheckObject (locals, "nim", "Math.NestedInMath");
 					}
 				);
 			});
@@ -755,7 +755,7 @@ namespace DebuggerTests
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
-						//CheckObject (locals, "nim", "Math.NestedInMath");
+						CheckObject (locals, "nim", "Math.NestedInMath");
 						CheckNumber (locals, "i", 0);
 						CheckNumber (locals, "k", 0);
 						CheckNumber (locals, "new_i", 0);
@@ -767,7 +767,7 @@ namespace DebuggerTests
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
-						//CheckObject (locals, "nim", "Math.NestedInMath");
+						CheckObject (locals, "nim", "Math.NestedInMath");
 						// FIXME: Failing test CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "k", 0);
 						CheckNumber (locals, "new_i", 0);
@@ -784,7 +784,7 @@ namespace DebuggerTests
 						CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "j", 15);
 						CheckString (locals, "foo_str", "foo");
-						//CheckObject (locals, "this", "Math.NestedInMath");
+						CheckObject (locals, "this", "Math.NestedInMath");
 					}
 				);
 
@@ -793,7 +793,7 @@ namespace DebuggerTests
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
-						//CheckObject (locals, "nim", "Math.NestedInMath");
+						CheckObject (locals, "nim", "Math.NestedInMath");
 						// FIXME: Failing test CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "k", 0);
 						CheckNumber (locals, "new_i", 24);

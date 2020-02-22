@@ -819,16 +819,11 @@ describe_this (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	if (mono_method_signature_internal (method)->hasthis) {
 		addr = mini_get_interp_callbacks ()->frame_get_this (frame);
 		MonoObject *obj = *(MonoObject**)addr;
+		char *class_name = mono_class_full_name (obj->vtable->klass);
+
 		mono_wasm_add_properties_var("this");
-		GString *class_name;
-		class_name = g_string_new ("");
-		if (*(m_class_get_name_space (obj->vtable->klass))) {
-			g_string_append (class_name, m_class_get_name_space (obj->vtable->klass));
-			g_string_append_c (class_name, '.');
-		}
-		g_string_append (class_name, m_class_get_name (obj->vtable->klass));
-		mono_wasm_add_obj_var (class_name->str, get_object_id(obj));
-		g_string_free(class_name, FALSE);
+		mono_wasm_add_obj_var (class_name, get_object_id(obj));
+		g_free (class_name);
 	}
 	return TRUE;
 }
