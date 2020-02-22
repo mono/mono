@@ -233,9 +233,9 @@ monoutils_sources = \
 	w32api.h	\
 	unlocked.h	\
 	ward.h \
-	flags.h \
-	flag-definitions.h \
-	flags.c
+	options.h \
+	options-def.h \
+	options.c
 
 arch_sources = 
 

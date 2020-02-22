@@ -1,5 +1,5 @@
 /**
- * \file Runtime flags
+ * \file Runtime options
  *
  * Copyright 2020 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -12,17 +12,17 @@
 
 #include "mono/utils/mono-error.h"
 
-/* Declare list of flags */
+/* Declare list of options */
 MONO_BEGIN_DECLS
-#define DEFINE_FLAG_FULL(flag_type, ctype, c_name, cmd_name, def_value, comment) \
+#define DEFINE_OPTION_FULL(flag_type, ctype, c_name, cmd_name, def_value, comment) \
 	MONO_API_DATA ctype mono_##c_name;
-#define DEFINE_FLAG_READONLY(flag_type, ctype, c_name, cmd_name, def_value, comment) \
+#define DEFINE_OPTION_READONLY(flag_type, ctype, c_name, cmd_name, def_value, comment) \
 	static const ctype mono_##c_name = def_value;
-#include "flag-definitions.h"
+#include "options-def.h"
 MONO_END_DECLS
 
-void mono_flags_print_usage (void);
+void mono_options_print_usage (void);
 
-void mono_flags_parse_options (const char **args, int argc, int *out_argc, MonoError *error);
+void mono_options_parse_options (const char **args, int argc, int *out_argc, MonoError *error);
 
 #endif

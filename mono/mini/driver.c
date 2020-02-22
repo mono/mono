@@ -52,7 +52,7 @@
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-hwcap.h"
 #include "mono/utils/mono-logger-internals.h"
-#include "mono/utils/flags.h"
+#include "mono/utils/options.h"
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
 #include "mono/metadata/custom-attrs-internals.h"
@@ -1658,7 +1658,7 @@ mini_usage (void)
 	  );
 
 	g_print ("\nOptions:\n");
-	mono_flags_print_usage ();
+	mono_options_print_usage ();
 }
 
 static void
@@ -2158,7 +2158,7 @@ mono_main (int argc, char* argv[])
 	enable_debugging = TRUE;
 #endif
 
-	mono_flags_parse_options ((const char**)argv, argc, &argc, error);
+	mono_options_parse_options ((const char**)argv, argc, &argc, error);
 	if (!is_ok (error)) {
 		g_printerr ("%s", mono_error_get_message (error));
 		mono_error_cleanup (error);
