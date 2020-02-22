@@ -463,7 +463,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\checked-build.c">
       <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\flags.c">
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\options.c">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\checked-build.h">
@@ -487,10 +487,10 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-state.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flags.h">
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\options.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClInclude Include="$(MonoSourceLocation)\mono\utils\flag-definitions.h">
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\options-def.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
   </ItemGroup>
