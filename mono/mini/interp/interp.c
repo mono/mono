@@ -234,7 +234,6 @@ reinit_frame (InterpFrame *frame, InterpFrame *parent, InterpMethod *imethod, st
 	frame->stack = NULL;
 	frame->ip = NULL;
 	frame->state.ip = NULL;
-	// Leave next_free alone.
 }
 
 /*
@@ -271,10 +270,6 @@ pop_frame (ThreadContext *context, InterpFrame *frame)
 {
 	if (frame->stack)
 		frame_stack_pop (&context->data_stack, frame->data_frag, frame->stack);
-
-	InterpFrame* const parent = frame->parent;
-	if (parent)
-		parent->next_free = frame;
 }
 
 /*
@@ -3841,8 +3836,11 @@ call:;
 			// FIXME: Add stack overflow checks
 			{
 				InterpFrame *child_frame = frame->next_free;
-				if (!child_frame)
+				if (!child_frame) {
 					child_frame = g_newa0 (InterpFrame, 1);
+					// Not free currently, but will be when allocation attempted.
+					frame->next_free = child_frame;
+				}
 				reinit_frame (child_frame, frame, cmethod, sp, retval);
 				frame = child_frame;
 			}
