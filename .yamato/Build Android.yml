@@ -1,4 +1,4 @@
-name: build_android
+name: Build Android
 
 agent:
   type: Unity::VM::osx
@@ -6,7 +6,7 @@ agent:
   flavor: m1.mac
 
 commands:
-  - .yamato/build_android.sh
+  - .yamato/scripts/build_android.sh
 
 artifacts: 
   android:
