@@ -724,11 +724,7 @@ namespace WebAssembly.Net.Debugging {
 			var ok = new {
 				breakpointId = bp.StackId,
 				locations = new [] {
-					new {
-						scriptId = bp_loc.Id.ToString (),
-						lineNumber = bp_loc.Line,
-						columnNumber = bp_loc.Column
-					}
+					bp_loc.AsLocation ()
 				},
 			};
 
