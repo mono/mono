@@ -9,10 +9,14 @@ public class Math { //Only append content to this class as the test suite depend
 		return e;
 	}
 
-	public static int UseComplex () {
+	public static int UseComplex (int a, int b) {
 		var complex = new Simple.Complex (10, "xx");
-		var res = complex.DoStuff ();
-		return res;
+		int c = a + b; 
+		int d = c + b;
+		int e = d + a;
+		int f = 0;
+		e += complex.DoStuff ();
+		return e;
 	}
 
 	delegate bool IsMathNull (Math m);
@@ -63,4 +67,38 @@ public class Math { //Only append content to this class as the test suite depend
 	}
 
 	static bool IsMathNullDelegateTarget (Math m) => m == null;
+
+	public static void OuterMethod ()
+	{
+		Console.WriteLine ($"OuterMethod called");
+		var nim = new Math.NestedInMath ();
+		var i = 5;
+		var text = "Hello";
+		var new_i = nim.InnerMethod (i);
+		Console.WriteLine ($"i: {i}");
+		Console.WriteLine ($"-- InnerMethod returned: {new_i}, nim: {nim}, text: {text}");
+		int k = 19;
+		new_i = InnerMethod2 ("test string", new_i, out k);
+		Console.WriteLine ($"-- InnerMethod2 returned: {new_i}, and k: {k}");
+	}
+
+	static int InnerMethod2 (string s, int i, out int k)
+	{
+		k = i + 10;
+		Console.WriteLine ($"s: {s}, i: {i}, k: {k}");
+		return i - 2;
+	}
+
+	class NestedInMath
+	{
+		public int InnerMethod (int i)
+		{
+			int j = i + 10;
+			string foo_str = "foo";
+			Console.WriteLine ($"i: {i} and j: {j}, foo_str: {foo_str}");
+			j += 9;
+			Console.WriteLine ($"i: {i} and j: {j}");
+			return j;
+		}
+	}
 }
