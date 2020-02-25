@@ -25,7 +25,14 @@ context.clearInterval = clearInterval;
 
 context.App = {
   init: function () {
-    context.Module.mono_call_assembly_entry_point(assemblyName, []);
+    console.log("Sleeping to allow time for tiered JIT...");
+    setTimeout(function () {
+      var f = context.Module.cwrap ('mono_wasm_enable_on_demand_gc', 'void', []);
+      f ();
+      console.log("Running benchmark...");
+      context.Module.mono_call_assembly_entry_point (assemblyName, []);
+      console.log("Benchmark complete.");
+    }, 5000);
   }
 };
 context.global = context;

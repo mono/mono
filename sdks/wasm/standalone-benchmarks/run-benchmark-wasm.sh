@@ -5,4 +5,4 @@ set -u
 
 dotnet build $1
 mono ../packager.exe --out=wasm/$1 $1/bin/Debug/netcoreapp2.1/$1.dll
-node test-runner.js $1 wasm/$1 | grep \>\>\>
+node test-runner.js $1 wasm/$1
