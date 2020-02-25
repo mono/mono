@@ -22,6 +22,7 @@
 static RESULT
 test_spawn_sync (void)
 {
+#if HAVE_G_SPAWN
 	gchar *out;
 	gchar *err;
 	gint status = -1;
@@ -38,12 +39,14 @@ test_spawn_sync (void)
 
 	g_free (out);
 	g_free (err);
+#endif
 	return OK;
 }
 
 static RESULT
 test_spawn_async (void)
 {
+#if HAVE_G_SPAWN
 	/*
 gboolean
 g_spawn_async_with_pipes (const gchar *working_directory,
@@ -73,7 +76,7 @@ g_spawn_async_with_pipes (const gchar *working_directory,
 
 	while (read (stdout_fd, buffer, 512) > 0);
 	close (stdout_fd);
-
+#endif
 	return OK;
 }
 
