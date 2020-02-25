@@ -15,9 +15,9 @@ using System.Runtime.Intrinsics.X86;
 
 public partial class Benchmark
 {
-    public const int WarmingIterationCount = 300;
-    public const int IterationCount = 3000;
-    public const int InnerIterationCount = 200;
+    public const int WarmingIterationCount = 3;
+    public const int IterationCount = 10;
+    public const int InnerIterationCount = 100;
 
     // These must be a multiple of the largest available vector of doubles.
     const int inputVectorSize = 1024;
@@ -55,6 +55,7 @@ public partial class Benchmark
     }
 
     private static double[] BilinearInterpol(double[] x,
+                                             double[] z,
                                              double[] A,
                                              double minXA,
                                              double maxXA,
@@ -63,8 +64,6 @@ public partial class Benchmark
                                              double maxXB,
                                              double weightB)
     {
-        double[] z = new double[outputVectorSize];
-
         var weightA = 1.0 - weightB;
 
         var deltaA = (maxXA - minXA) / (double)(A.Length - 1);
@@ -300,8 +299,10 @@ public partial class Benchmark
 
     public double[] runIteration()
     {
+        var output = new double[outputVectorSize];
+
         for (int i = 0; i < InnerIterationCount; i++)
-            output = BilinearInterpol(input, A, minXA, maxXA, B, minXB, maxXB, weightB);
+            BilinearInterpol(input, output, A, minXA, maxXA, B, minXB, maxXB, weightB);
 
         return output;
     }
