@@ -14,6 +14,7 @@ OUT_DIR=$(realpath wasm/$1)
 AOT_OUT_DIR=$(realpath wasm-aot/$1)
 MONO_SDK_DIR=$(realpath ../../out)
 EMSCRIPTEN_SDK_DIR=$(realpath ../../builds/toolchains/emsdk)
+TEMPLATE_PATH=$(realpath ../runtime.js)
 
 echo \# Building benchmark $1...
 rm -f $LOGFILE
@@ -30,10 +31,10 @@ echo \# Mono \(full AOT\) | tee -a $LOGFILE
 mono --aot=full $SRC_DIR/$1.dll &>>$LOGFILE
 mono $SRC_DIR/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
 echo \# WebAssembly \(interpreter, node.js\) | tee -a $LOGFILE
-mono $PACKAGER --out=$OUT_DIR $SRC_DIR/$1.dll &>>$LOGFILE
+mono --debug $PACKAGER --out=$OUT_DIR $SRC_DIR/$1.dll --template=$TEMPLATE_PATH &>>$LOGFILE
 node test-runner.js $1 wasm/$1 2>&1 | tee -a $LOGFILE | grep \>\>\>
 echo \# WebAssembly \(AOT, node.js\) | tee -a $LOGFILE
-mono $PACKAGER --linker --aot --builddir=$AOT_OUT_DIR/obj --appdir=$AOT_OUT_DIR $SRC_DIR/$1.dll --mono-sdkdir=$MONO_SDK_DIR --emscripten-sdkdir=$EMSCRIPTEN_SDK_DIR
-ninja -v -C $AOT_OUT_DIR/obj
-node test-runner.js $1 wasm-aot/$1 2>&1 | tee -a $LOGFILE | grep \>\>\>
+mono --debug $PACKAGER --linker --aot --builddir=$AOT_OUT_DIR/obj --appdir=$AOT_OUT_DIR $SRC_DIR/$1.dll --mono-sdkdir=$MONO_SDK_DIR --emscripten-sdkdir=$EMSCRIPTEN_SDK_DIR --template=$TEMPLATE_PATH
+ninja -v -C $AOT_OUT_DIR/obj &>>$LOGFILE
+node test-runner.js $1 $AOT_OUT_DIR 2>&1 | tee -a $LOGFILE | grep \>\>\>
 echo \# Test run complete. Check $LOGFILE for any errors.
