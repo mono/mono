@@ -36,6 +36,10 @@
 #include "external-only.h"
 #include "icall-decl.h"
 
+#if _MSC_VER
+#pragma warning(disable:4457) // variable shadow
+#endif
+
 /*
  * Pull the list of opcodes
  */
