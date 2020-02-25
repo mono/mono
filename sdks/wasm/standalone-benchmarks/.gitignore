@@ -1,6 +1,6 @@
 .vs
 obj
 bin
-
+*.log
 wasm
 !./wasm/BLANK
