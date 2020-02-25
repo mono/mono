@@ -451,6 +451,9 @@ namespace WebAssembly.Net.Debugging {
 			if (context.CallStack == null)
 				return false;
 
+			if (context.CallStack.Count <= 1 && kind == StepKind.Out)
+				return false;
+
 			var res = await SendMonoCommand (msg_id, MonoCommands.StartSingleStepping (kind), token);
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
