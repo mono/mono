@@ -3,14 +3,15 @@ set -e
 set -x
 set -u
 
-SRCDIR=$(realpath $1/bin/Debug/netcoreapp2.1)
-OUTDIR=$(realpath wasm-aot/$1)
+PACKAGER=$(realpath ../packager.exe)
+SRC_DIR=$(realpath $1/bin/Debug/netcoreapp2.1)
+AOT_OUT_DIR=$(realpath wasm-aot/$1)
+MONO_SDK_DIR=$(realpath ../../out)
 EMSCRIPTEN_SDK_DIR=$(realpath ../../builds/toolchains/emsdk)
 
 dotnet build $1
 pushd ..
-mono packager.exe --linker --aot --builddir=$OUTDIR/obj --appdir=$OUTDIR $SRCDIR/$1.dll --emscripten-sdkdir=$EMSCRIPTEN_SDK_DIR
-pwd
-ninja -v -C $OUTDIR/obj
+mono $PACKAGER --linker --aot --builddir=$AOT_OUT_DIR/obj --appdir=$AOT_OUT_DIR $SRC_DIR/$1.dll --mono-sdkdir=$MONO_SDK_DIR --emscripten-sdkdir=$EMSCRIPTEN_SDK_DIR
 popd
-node test-runner.js $1 wasm-aot/$1
+ninja -v -C $AOT_OUT_DIR/obj
+node test-runner.js $1 $AOT_OUT_DIR

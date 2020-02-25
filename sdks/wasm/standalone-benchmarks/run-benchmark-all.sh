@@ -8,29 +8,32 @@ set -u
 # Grep ^\>\>\> is used to only print result messages from the benchmark.
 
 LOGFILE=$(realpath run-benchmark-all.$1.log)
-SRCDIR=$(realpath $1/bin/Debug/netcoreapp2.1)
-OUTDIR=$(realpath wasm-aot/$1)
+PACKAGER=$(realpath ../packager.exe)
+SRC_DIR=$(realpath $1/bin/Debug/netcoreapp2.1)
+OUT_DIR=$(realpath wasm/$1)
+AOT_OUT_DIR=$(realpath wasm-aot/$1)
+MONO_SDK_DIR=$(realpath ../../out)
 EMSCRIPTEN_SDK_DIR=$(realpath ../../builds/toolchains/emsdk)
-
 
 echo \# Building benchmark $1...
 rm -f $LOGFILE
 dotnet build $1 &>>$LOGFILE
-rm -f SRCDIR/*.so
+rm -f SRC_DIR/*.so
 echo \# Running benchmark $1... | tee -a $LOGFILE
 echo \# .NET Core | tee -a $LOGFILE
 dotnet run --project=$1 | tee -a $LOGFILE | grep ^\>\>\>
 echo \# Mono \(JIT\) | tee -a $LOGFILE
-mono $1/bin/Debug/netcoreapp2.1/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
+mono $SRC_DIR/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
 echo \# Mono \(interpreter\) | tee -a $LOGFILE
-mono --interpreter --interp=interp-only $1/bin/Debug/netcoreapp2.1/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
+mono --interpreter --interp=interp-only $SRC_DIR/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
 echo \# Mono \(full AOT\) | tee -a $LOGFILE
-mono --aot=full $1/bin/Debug/netcoreapp2.1/$1.dll &>>$LOGFILE
-mono $1/bin/Debug/netcoreapp2.1/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
+mono --aot=full $SRC_DIR/$1.dll &>>$LOGFILE
+mono $SRC_DIR/$1.dll 2>&1 | tee -a $LOGFILE | grep ^\>\>\>
 echo \# WebAssembly \(interpreter, node.js\) | tee -a $LOGFILE
-mono ../packager.exe --out=wasm/$1 $1/bin/Debug/netcoreapp2.1/$1.dll &>>$LOGFILE
+mono $PACKAGER --out=$OUT_DIR $SRC_DIR/$1.dll &>>$LOGFILE
 node test-runner.js $1 wasm/$1 2>&1 | tee -a $LOGFILE | grep \>\>\>
 echo \# WebAssembly \(AOT, node.js\) | tee -a $LOGFILE
-mono ../packager.exe --out=wasm/$1 $1/bin/Debug/netcoreapp2.1/$1.dll &>>$LOGFILE
-node test-runner.js $1 wasm/$1 2>&1 | tee -a $LOGFILE | grep \>\>\>
+mono $PACKAGER --linker --aot --builddir=$AOT_OUT_DIR/obj --appdir=$AOT_OUT_DIR $SRC_DIR/$1.dll --mono-sdkdir=$MONO_SDK_DIR --emscripten-sdkdir=$EMSCRIPTEN_SDK_DIR
+ninja -v -C $AOT_OUT_DIR/obj
+node test-runner.js $1 wasm-aot/$1 2>&1 | tee -a $LOGFILE | grep \>\>\>
 echo \# Test run complete. Check $LOGFILE for any errors.

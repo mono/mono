@@ -44,10 +44,14 @@ var contextOptions = {};
 vm.createContext(context, contextOptions);
 
 function loadAndRun (filename) {
-  var absoluteRoot = path.normalize(path.join(process.cwd(), root));
+  var virtualFilename, virtualDirname, absoluteRoot;
+  if ((root[0] === "/") || (root[1] === ":"))
+    absoluteRoot = root;
+  else
+    absoluteRoot = path.normalize(path.join(process.cwd(), root));
 
-  var virtualFilename = path.join(absoluteRoot, filename);
-  var virtualDirname = path.dirname(virtualFilename);
+  virtualFilename = path.join(absoluteRoot, filename);
+  virtualDirname = path.dirname(virtualFilename);
 
   var runOptions = {};
   var text = fs.readFileSync(virtualFilename);
