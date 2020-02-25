@@ -25,6 +25,9 @@ context.clearInterval = clearInterval;
 
 context.App = {
   init: function () {
+    console.log("Priming interpreter...");
+    var wu = context.Module.mono_bind_static_method ("[" + assemblyName + "] Program:WakeUp");
+    wu();
     console.log("Sleeping to allow time for tiered JIT...");
     setTimeout(function () {
       var f = context.Module.cwrap ('mono_wasm_enable_on_demand_gc', 'void', []);
