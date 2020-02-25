@@ -62,7 +62,7 @@ class Driver {
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
-	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";
+	const string HTTP_ASM_NAME = "System.Net.Http.WebAssemblyHttpHandler";
 	const string WEBSOCKETS_ASM_NAME = "WebAssembly.Net.WebSockets";
 	const string BINDINGS_MODULE = "corebindings.o";
 	const string BINDINGS_MODULE_SUPPORT = "$tool_prefix/src/binding_support.js";
@@ -252,7 +252,7 @@ class Driver {
 		foreach (var prefix in bcl_prefixes)
 			resolver.AddSearchDirectory (prefix);
 		resolver.AddSearchDirectory(bcl_facades_prefix);
-		resolver.AddSearchDirectory(framework_prefix);		
+		resolver.AddSearchDirectory(framework_prefix);
 		rp.AssemblyResolver = resolver;
 
 		rp.InMemory = true;
@@ -341,7 +341,7 @@ class Driver {
 	{
 		Default,
 		Always,
-		IfNewer		
+		IfNewer
 	}
 
 	enum ExecMode {
@@ -353,7 +353,7 @@ class Driver {
 	enum LinkMode
 	{
 		SdkOnly,
-		All		
+		All
 	}
 
 	class WasmOptions {
@@ -740,7 +740,7 @@ class Driver {
 			}
 
 			foreach(var asset in assets) {
-				CopyFile (asset, 
+				CopyFile (asset,
 						Path.Combine (out_prefix, Path.GetFileName (asset)), copyType, "Asset: ");
 			}
 		}
@@ -1178,7 +1178,7 @@ class Driver {
 				{
 					var srcInfo = new FileInfo (sourceFileName);
 					var dstInfo = new FileInfo (destFileName);
-					
+
 					if (srcInfo.LastWriteTime.Ticks > dstInfo.LastWriteTime.Ticks || srcInfo.Length > dstInfo.Length)
 						File.Copy(sourceFileName, destFileName, true);
 					else
