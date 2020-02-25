@@ -122,7 +122,7 @@ namespace WebAssembly.Net.Debugging {
 
 					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
 					try {
-						var proxy = new MonoProxy ();
+						var proxy = new DebuggerProxy ();
 						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
 						await proxy.Run (endpoint, ideSocket);

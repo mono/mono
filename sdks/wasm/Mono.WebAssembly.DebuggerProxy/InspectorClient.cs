@@ -8,12 +8,15 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace WebAssembly.Net.Debugging {
 	internal class InspectorClient : DevToolsClient {
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		Func<string, JObject, CancellationToken, Task> onEvent;
 		int next_cmd_id;
+
+		public InspectorClient (ILogger logger) : base(logger) {}
 
 		Task HandleMessage (string msg, CancellationToken token)
 		{

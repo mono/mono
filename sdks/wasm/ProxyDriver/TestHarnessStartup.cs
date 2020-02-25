@@ -101,7 +101,7 @@ namespace WebAssembly.Net.Debugging {
 
 				Console.WriteLine ($"lauching proxy for {con_str}");
 
-				var proxy = new MonoProxy ();
+				var proxy = new DebuggerProxy ();
 				var browserUri = new Uri (con_str);
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
