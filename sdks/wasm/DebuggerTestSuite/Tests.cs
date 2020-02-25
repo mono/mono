@@ -578,17 +578,10 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var dep_cs_loc = "dotnet://Simple.Dependency.dll/dependency.cs";
-
 				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 24,
-					columnNumber = 2,
-					url = dicFileToUrl[dep_cs_loc]
-				});
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				var dep_cs_loc = "dotnet://Simple.Dependency.dll/dependency.cs";
+				await SetBreakpoint (dep_cs_loc, 24, 2, ctx);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
@@ -644,16 +637,9 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 100,
-					columnNumber = 3,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
-
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+				await SetBreakpoint (debugger_test_loc, 100, 3, ctx);
 
 				// Will stop in InnerMethod
 				var wait_res = await EvaluateAndCheck (
@@ -741,14 +727,8 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 75,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 75, 2, ctx);
 
 				await EvaluateAndCheck ("window.setTimeout(function() { invoke_outer_method(); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 75, 2, "OuterMethod", ctx,
@@ -881,6 +861,18 @@ namespace DebuggerTests
 				Console.WriteLine ($"Failed trying to check locals: {locals.ToString ()}");
 				throw;
 			}
+		}
+
+		async Task SetBreakpoint (string url_key, int line, int column, DebugTestContext ctx)
+		{
+			var bp1_req = JObject.FromObject(new {
+				lineNumber = line,
+				columnNumber = column,
+				url = dicFileToUrl[url_key],
+			});
+
+			var bp1_res = await ctx.cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
+			Assert.True (bp1_res.IsOk);
 		}
 
 		//TODO add tests covering basic stepping behavior as step in/out/over
