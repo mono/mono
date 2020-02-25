@@ -7,7 +7,7 @@ class Program {
         const int iterations = Benchmark.IterationCount, 
             warming_iterations = Benchmark.WarmingIterationCount;
     
-        Console.WriteLine("Initializing...");
+        Console.WriteLine(">>> Initializing...");
 
         var b = new Benchmark();
         var timings = new TimeSpan[iterations];
@@ -17,7 +17,7 @@ class Program {
 
         b.reset();
 
-        Console.WriteLine($"Running {iterations} times...");
+        Console.WriteLine($">>> Running {iterations} times...");
 
         var sw = new Stopwatch();
         for (int i = 0; i < iterations; i++) {
@@ -26,13 +26,13 @@ class Program {
             timings[i] = sw.Elapsed;
         }
 
-        Console.WriteLine($"Elapsed {timings.Sum(t => t.TotalMilliseconds)}ms");
-        Console.WriteLine($"ms/iter avg = {timings.Average(t => t.TotalMilliseconds)}");
-        Console.WriteLine($"min = {timings.Min(t => t.TotalMilliseconds)}");
-        Console.WriteLine($"max = {timings.Max(t => t.TotalMilliseconds)}");
+        Console.WriteLine($">>> Elapsed {timings.Sum(t => t.TotalMilliseconds)}ms");
+        Console.WriteLine($">>> ms/iter avg = {timings.Average(t => t.TotalMilliseconds)}");
+        Console.WriteLine($">>> min = {timings.Min(t => t.TotalMilliseconds)}");
+        Console.WriteLine($">>> max = {timings.Max(t => t.TotalMilliseconds)}");
 
         if (Debugger.IsAttached) {
-            Console.WriteLine("Press enter to exit.");
+            Console.WriteLine(">>> Press enter to exit.");
             Console.ReadLine();
         }
     }
