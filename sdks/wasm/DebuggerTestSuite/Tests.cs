@@ -787,17 +787,13 @@ namespace DebuggerTests
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
 			for (int i = 0; i < times - 1; i ++) {
-				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", ctx);
+				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", null, -1, -1, null, ctx);
 			}
 
 			// Check for method/line etc only at the last step
 			return await SendCommandAndCheck (
-						null, $"Debugger.step{kind.ToString ()}", ctx,
-						wait_for_event_fn: async (pause_location) => {
-							await CheckLocalsOnFrame (pause_location ["callFrames"][0], script_loc, line, column, function_name, ctx);
-							if (wait_for_event_fn != null)
-								await wait_for_event_fn (pause_location);
-						},
+						null, $"Debugger.step{kind.ToString ()}", script_loc, line, column, function_name, ctx,
+						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 		}
 
@@ -805,16 +801,12 @@ namespace DebuggerTests
 								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null)
 			=> await SendCommandAndCheck (
 						JObject.FromObject (new { expression = expression }),
-						"Runtime.evaluate", ctx,
-						wait_for_event_fn: async (pause_location) => {
-							await CheckLocalsOnFrame (pause_location ["callFrames"][0], script_loc, line, column, function_name, ctx);
-							if (wait_for_event_fn != null)
-								await wait_for_event_fn (pause_location);
-						},
+						"Runtime.evaluate", script_loc, line, column, function_name, ctx,
+						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 
-		async Task<JObject> SendCommandAndCheck (JObject args, string method, DebugTestContext ctx, Func<JObject, Task> wait_for_event_fn = null,
-								Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
+		async Task<JObject> SendCommandAndCheck (JObject args, string method, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
+								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
 		{
 			var res = await ctx.cli.SendCommand (method, args, ctx.token);
 			if (!res.IsOk) {
@@ -823,6 +815,9 @@ namespace DebuggerTests
 			}
 
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
+
+			if (script_loc != null)
+				CheckLocation (script_loc, line, column, ctx.scripts, wait_res ["callFrames"][0]["location"]);
 
 			if (wait_for_event_fn != null)
 				await wait_for_event_fn (wait_res);
