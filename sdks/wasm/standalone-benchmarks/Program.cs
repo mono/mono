@@ -7,6 +7,8 @@ class Program {
         const int iterations = Benchmark.IterationCount, 
             warming_iterations = Benchmark.WarmingIterationCount;
     
+        WakeUp ();
+
         Console.WriteLine ($">>> Warming with {warming_iterations} iterations...");
 
         var b = new Benchmark ();

@@ -4,3 +4,5 @@ bin
 *.log
 wasm
 !./wasm/BLANK
+wasm-aot
+!./wasm-aot/BLANK
