@@ -704,6 +704,46 @@ namespace DebuggerTests
 			});
 		}
 
+		[Fact]
+		public async Task InspectLocalsInAsyncMethods () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, 108, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 118, 3, ctx);
+
+				// Will stop in Asyncmethod0
+				var wait_res = await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_async_method_with_await(); }, 1);",
+					debugger_test_loc, 108, 3, "MoveNext", ctx, //FIXME:
+					locals_fn: (locals) => {
+						Assert.Equal (4, locals.Count());
+						CheckString (locals, "s", "string from js");
+						CheckNumber (locals, "i", 42);
+						CheckString (locals, "local0", "value0");
+						CheckObject (locals, "this", "Math.NestedInMath");
+					}
+				);
+
+				// TODO: previous frames have async machinery details, so no point checking that right now
+
+				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 118, 3, "AsyncMethodNoReturn", ctx,
+					locals_fn: (locals) => {
+						Assert.Equal (2, locals.Count());
+						CheckString (locals, "str", "AsyncMethodNoReturn's local");
+						CheckObject (locals, "this", "Math.NestedInMath");
+					}
+				);
+				// TODO: Check `this` properties
+			});
+		}
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
