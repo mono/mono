@@ -68,7 +68,7 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
-WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
+WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/System.Net.Http.WebAssemblyHttpHandler.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
@@ -766,9 +766,9 @@ package: build build-sdk build-dbg-proxy
 	cp framework/WebAssembly.Bindings.dll tmp/framework
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
 	cp framework/WebAssembly.Bindings.xml tmp/framework
-	cp framework/WebAssembly.Net.Http.dll tmp/framework
-	cp framework/WebAssembly.Net.Http.pdb tmp/framework
-	cp framework/WebAssembly.Net.Http.xml tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.dll tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.pdb tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.xml tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.dll tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.pdb tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.xml tmp/framework

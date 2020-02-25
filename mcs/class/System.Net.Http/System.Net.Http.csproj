@@ -1407,9 +1407,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.Http.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.WebAssemblyHttpHandler.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.Http.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Net.Http.WebAssemblyHttpHandler.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

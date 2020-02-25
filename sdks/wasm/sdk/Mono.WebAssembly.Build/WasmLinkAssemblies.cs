@@ -111,7 +111,7 @@ namespace Mono.WebAssembly.Build
 			return base.ValidateParameters ();
 		}
 
-		static List<string> bindingNames = new List<string> {"WebAssembly.Bindings","WebAssembly.Net.Http","WebAssembly.Net.WebSockets"};
+		static List<string> bindingNames = new List<string> {"WebAssembly.Bindings","System.Net.Http.WebAssemblyHttpHandler","WebAssembly.Net.WebSockets"};
 		protected override string GenerateCommandLineCommands ()
 		{
 
@@ -256,7 +256,7 @@ namespace Mono.WebAssembly.Build
 			if (!File.Exists(toolsPath))
 				toolsPath = Path.GetFullPath(Path.Combine (GetParentDirectoryOf(dir,6), "out", "wasm-bcl", "wasm_tools", "monolinker.exe"));
 			return toolsPath;
-		} 
+		}
 
 		static string GetParentDirectoryOf (string path, int up)
 		{
