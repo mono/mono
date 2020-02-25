@@ -10,8 +10,10 @@ All commands should be run from within the standalone-benchmarks directory.
 ```dotnet run --project benchmarkname``` to build & run a benchmark using .NET Core. 
 
 ## Mono
+Use ```./run-benchmark-mono.sh benchmarkname``` to automatically build, package and run the benchmark, or manually:
 ```dotnet build benchmarkname``` to build the debug-mode assembly for the benchmark, then:
 ```mono benchmarkname/bin/Debug/netcoreapp2.1/benchmarkname.dll``` to run the benchmark in Mono.
+Use ```./run-benchmark-mono-aot.sh benchmarkname``` to run using full AOT and use ```./run-benchmark-mono-interpreter.sh benchmarkname``` to run in interpreter-only mode.
 
 ## node.js
 Use ```./run-benchmark-wasm.sh benchmarkname``` to automatically build, package and run the benchmark, or manually:
