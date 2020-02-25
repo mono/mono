@@ -7,6 +7,7 @@ using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace WebAssembly.Net.Debugging {
 
@@ -51,7 +52,7 @@ namespace WebAssembly.Net.Debugging {
 			=> new MonoCommands ($"MONO.mono_wasm_remove_breakpoint({breakpointId})");
 	}
 
-	public enum MonoErrorCodes {
+	internal enum MonoErrorCodes {
 		BpNotFound = 100000,
 	}
 
@@ -134,10 +135,10 @@ namespace WebAssembly.Net.Debugging {
 		}
 	}
 
-	public class MonoProxy : DevToolsProxy {
+	internal class MonoProxy : DevToolsProxy {
 		Dictionary<string, ExecutionContext> contexts = new Dictionary<string, ExecutionContext> ();
 
-		public MonoProxy () { }
+		public MonoProxy (ILoggerFactory loggerFactory) : base(loggerFactory) { }
 
 		ExecutionContext GetContext (SessionId sessionId)
 		{
@@ -775,7 +776,7 @@ namespace WebAssembly.Net.Debugging {
 					await res.WriteAsync (doc);
 
 					source = res.ToString ();
-				} 
+				}
 
 				SendResponse (msg_id, Result.OkFromObject (new { scriptSource = source }), token);
 			} catch (Exception e) {

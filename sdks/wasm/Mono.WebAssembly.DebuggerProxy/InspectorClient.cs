@@ -10,7 +10,7 @@ using System.Text;
 using System.Collections.Generic;
 
 namespace WebAssembly.Net.Debugging {
-	public class InspectorClient : DevToolsClient {
+	internal class InspectorClient : DevToolsClient {
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		Func<string, JObject, CancellationToken, Task> onEvent;
 		int next_cmd_id;
