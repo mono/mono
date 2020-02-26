@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
 using WebAssembly.Net.Debugging;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -72,7 +73,9 @@ namespace DebuggerTests
 			using (var cts = new CancellationTokenSource ()) {
 				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
-				using (var client = new InspectorClient ()) {
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
 					await client.Connect (uri, OnMessage, async token => {
 						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),

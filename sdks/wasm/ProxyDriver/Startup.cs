@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,7 +123,9 @@ namespace WebAssembly.Net.Debugging {
 
 					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
 					try {
-						var proxy = new MonoProxy ();
+						using var loggerFactory = LoggerFactory.Create(
+							builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+						var proxy = new DebuggerProxy (loggerFactory);
 						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
 						await proxy.Run (endpoint, ideSocket);

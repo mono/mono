@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
@@ -101,7 +102,9 @@ namespace WebAssembly.Net.Debugging {
 
 				Console.WriteLine ($"lauching proxy for {con_str}");
 
-				var proxy = new MonoProxy ();
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				var proxy = new DebuggerProxy (loggerFactory);
 				var browserUri = new Uri (con_str);
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
