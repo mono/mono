@@ -495,6 +495,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public IEnumerable<MethodInfo> Methods => this.methods;
 		public byte[] EmbeddedSource => doc.EmbeddedSource;
+		public string DocUrl => doc.Url;
 
 		public (int startLine, int startColumn, int endLine, int endColumn) GetExtents ()
 		{
@@ -681,7 +682,7 @@ namespace WebAssembly.Net.Debugging {
 		public SourceFile GetFileByUrlRegex (string urlRegex)
 		{
 			var regex = new Regex (urlRegex);
-			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.Url.ToString()));
+			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.Url.ToString()) || regex.IsMatch (file.DocUrl));
 		}
 
 		public SourceFile GetFileByUrl (string url)
