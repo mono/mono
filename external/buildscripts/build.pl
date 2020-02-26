@@ -1148,13 +1148,11 @@ if ($build)
 				
 				if($ENV{YAMATO_PROJECT_ID})
 				{
-					print(">>> YAMATO_PROJECT_ID is set. Running on Yamato\n");
 					system('sudo', 'cp', "$monoroot/.yamato/config/LinuxBuildEnvironment-20170609.conf", '/etc/schroot/chroot.d/') eq 0 or die ("failed to copy conf file\n");
 					system('sudo', 'cat', '/etc/schroot/chroot.d/LinuxBuildEnvironment-20170609.conf') eq 0 or die ("failed to list contents on /etc/schroot/chroot.d\n");					
 				}
 				else
 				{
-					print(">>> YAMATO_PROJECT_ID is not set. Running outside Yamato\n");
 					system("sed 's,^directory=.*,directory=$depsSdkFinal/$schroot,' \"$depsSdkFinal/$schroot.conf\" | sudo tee /etc/schroot/chroot.d/$schroot.conf") eq 0 or die ("failed to deploy Linux SDK\n");
 				}	
 			}
