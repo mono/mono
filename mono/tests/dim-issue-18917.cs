@@ -26,7 +26,7 @@ public class Test
     public static int test_0_dim_18917()
     {
         var var0 = new FinalClass();
-        var var4 = (Test.IInterface2)var0;
+        var var4 = (IInterface2)var0;
         var var5 = var4.getRet();
         return var5;
 
