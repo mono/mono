@@ -380,7 +380,6 @@ class Driver {
 		string sdkdir = null;
 		string emscripten_sdkdir = null;
 		var aot_assemblies = "";
-		out_prefix = Environment.CurrentDirectory;
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
@@ -499,6 +498,11 @@ class Driver {
 			return 1;
 		}
 
+		if (out_prefix == null) {
+			Console.Error.WriteLine ("The --appdir= argument is required.");
+			return 1;
+		}
+
 		enable_debug = opts.Debug;
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
@@ -521,8 +525,10 @@ class Driver {
 			link_icalls = true;
 		if (!enable_linker || !enable_aot)
 			enable_dedup = false;
-		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0 || preload_files.Count > 0 || embed_files.Count > 0)
+		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0 || native_libs.Count > 0 || preload_files.Count > 0 || embed_files.Count > 0) {
 			build_wasm = true;
+			emit_ninja = true;
+		}
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
 		if (ee_mode != ExecMode.Aot)
@@ -727,6 +733,11 @@ class Driver {
 
 		if (!emit_ninja)
 			return 0;
+
+		if (builddir == null) {
+			Console.Error.WriteLine ("The --builddir argument is required.");
+			return 1;
+		}
 
 		var filenames = new Dictionary<string, string> ();
 		foreach (var a in assemblies) {
