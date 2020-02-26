@@ -100,5 +100,30 @@ public class Math { //Only append content to this class as the test suite depend
 			Console.WriteLine ($"i: {i} and j: {j}");
 			return j;
 		}
+
+		Math m = new Math ();
+		public async System.Threading.Tasks.Task<bool> AsyncMethod0 (string s, int i)
+		{
+			string local0 = "value0";
+			await System.Threading.Tasks.Task.Delay (1);
+			Console.WriteLine ($"* time for the second await, local0: {local0}");
+			await AsyncMethodNoReturn ();
+			return true;
+		}
+
+		public async System.Threading.Tasks.Task AsyncMethodNoReturn ()
+		{
+			string str = "AsyncMethodNoReturn's local";
+			Console.WriteLine ($"* field m: {m}");
+			await System.Threading.Tasks.Task.Delay (1);
+			Console.WriteLine ($"str: {str}");
+		}
+
+		public static async System.Threading.Tasks.Task<bool> AsyncTest (string s, int i)
+		{
+			return await new NestedInMath().AsyncMethod0 (s, i);
+		}
+
 	}
+
 }

@@ -16,6 +16,7 @@ namespace DebuggerTests
 {
 
 	public class SourceList : DebuggerTestBase {
+		DebugTestContext ctx;
 		Dictionary<string, string> dicScriptsIdToUrl;
 		Dictionary<string, string> dicFileToUrl;
 		Dictionary<string, string> SubscribeToScripts (Inspector insp) {
@@ -72,14 +73,10 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 5,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+
 				Assert.Equal ("dotnet:0", bp1_res.Value ["breakpointId"]);
 				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
 			
@@ -124,44 +121,41 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 5,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
 				var eval_req = JObject.FromObject(new {
 					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
 				});
 
-				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				Assert.True (eval_res.IsOk);
+				await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_add(); }, 1);",
+					"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
+					"IntAdd", ctx,
+					wait_for_event_fn: (pause_location) => {
+						Assert.Equal ("other", pause_location ["reason"]?.Value<string> ());
+						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
-				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+						var top_frame = pause_location ["callFrames"][0];
+						Assert.Equal ("IntAdd", top_frame ["functionName"].Value<string>());
+						Assert.Contains ("debugger-test.cs", top_frame ["url"].Value<string> ());
 
-				Assert.Equal ("other", pause_location ["reason"]?.Value<string> ());
-				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+						CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
 
-				var top_frame = pause_location ["callFrames"][0];
+						//now check the scope
+						var scope = top_frame ["scopeChain"][0];
+						Assert.Equal ("local", scope ["type"]);
+						Assert.Equal ("IntAdd", scope ["name"]);
 
-				Assert.Equal ("IntAdd", top_frame ["functionName"].Value<string>());
-				Assert.Contains ("debugger-test.cs", top_frame ["url"].Value<string> ());
+						Assert.Equal ("object", scope ["object"]["type"]);
+						Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+						CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, scope["startLocation"]);
+						CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 9, 1, scripts, scope["endLocation"]);
+						return Task.CompletedTask;
+					}
+				);
 
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, scripts, top_frame["location"]);
-
-				//now check the scope
-				var scope = top_frame ["scopeChain"][0];
-				Assert.Equal ("local", scope ["type"]);
-				Assert.Equal ("IntAdd", scope ["name"]);
-
-				Assert.Equal ("object", scope ["object"]["type"]);
-				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, scope["startLocation"]);
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 9, 1, scripts, scope["endLocation"]);
 			});
 		}
 
@@ -193,14 +187,9 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 27,
-					columnNumber = 2,
-					url = dicFileToUrl["/debugger-driver.html"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint ("/debugger-driver.html", 27, 2, ctx);
 
 				var eval_req = JObject.FromObject(new {
 					expression = "window.setTimeout(function() { invoke_bad_js_test(); }, 1);",
@@ -293,14 +282,8 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				bp_req_fn: () => JObject.FromObject(new {
-					lineNumber = 5,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				}),
-				eval_req_fn: () => JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
-				}),
+				"dotnet://debugger-test.dll/debugger-test.cs", 5, 2, "x",
+				"window.setTimeout(function() { invoke_add(); }, 1);",
 				test_fn: (locals) => {
 					CheckNumber (locals, "a", 10);
 					CheckNumber (locals, "b", 20);
@@ -313,14 +296,8 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsWithDelegatesAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				bp_req_fn: () => JObject.FromObject(new {
-					lineNumber = 41,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				}),
-				eval_req_fn: () => JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
-				}),
+				"dotnet://debugger-test.dll/debugger-test.cs", 41, 2, "x",
+				"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
 				test_fn: (locals) => {
 					CheckObject (locals, "fn_func", "System.Func<Math, bool>");
 					CheckObject (locals, "fn_func_null", "System.Func<Math, bool>", subtype: "null");
@@ -343,14 +320,8 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsWithGenericTypesAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				bp_req_fn: () => JObject.FromObject(new {
-					lineNumber = 62,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				}),
-				eval_req_fn: () => JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
-				}),
+				"dotnet://debugger-test.dll/debugger-test.cs", 62, 2, "x",
+				"window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
 				test_fn: (locals) => {
 					CheckObject (locals, "list", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
 					CheckObject (locals, "list_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", subtype: "null");
@@ -367,48 +338,35 @@ namespace DebuggerTests
 				}
 			);
 
-		async Task CheckInspectLocalsAtBreakpointSite (Func<JObject> bp_req_fn, Func<JObject> eval_req_fn, Action<JToken> test_fn) {
+		async Task CheckInspectLocalsAtBreakpointSite (string url_key, int line, int column, string function_name, string eval_expression, Action<JToken> test_fn) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp_req = bp_req_fn ();
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-1");
-				var bp_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp_req, token);
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-2");
-				Assert.True (bp_res.IsOk);
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-3");
-				var eval_req = eval_req_fn ();
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-4");
-				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-5");
-				Assert.True (eval_res.IsOk);
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-6");
-				var pause_location = await insp.WaitFor(Inspector.PAUSE);
-				System.Console.WriteLine("InspectLocalsAtBreakpointSite-7");
-				//make sure we're on the right bp
-				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+				var ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var top_frame = pause_location ["callFrames"][0];
+				await SetBreakpoint (url_key, line, column, ctx);
 
-				var scope = top_frame ["scopeChain"][0];
-				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+				await EvaluateAndCheck (
+					eval_expression, url_key, line, column,
+					function_name, ctx,
+					wait_for_event_fn: (pause_location) => {
+						//make sure we're on the right bp
+						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
-				//ok, what's on that scope?
-				var get_prop_req = JObject.FromObject(new {
-					objectId = "dotnet:scope:0",
-				});
+						var top_frame = pause_location ["callFrames"][0];
 
-				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-				if (frame_props.IsErr)
-					Console.WriteLine ($"frame_props: {frame_props.Error.ToString ()}");
-				Assert.True (frame_props.IsOk);
-
-				var locals = frame_props.Value ["result"];
-				if (test_fn != null)
-					test_fn (locals);
+						var scope = top_frame ["scopeChain"][0];
+						Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+						return Task.CompletedTask;
+					},
+					locals_fn: (locals) => {
+						if (test_fn != null)
+							test_fn (locals);
+					}
+				);
 			});
 		}
 
@@ -420,36 +378,32 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp_req = JObject.FromObject(new {
-					lineNumber = 41,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				var ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp_req, token);
-				Assert.True (bp_res.IsOk);
-				var eval_req = JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_delegates_test (); }, 1);",
-				});
-				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				Assert.True (eval_res.IsOk);
-				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 41, 2, ctx);
 
-				//make sure we're on the right bp
-				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+				await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
+					"dotnet://debugger-test.dll/debugger-test.cs", 41, 2,
+					"IntAdd", ctx,
+					wait_for_event_fn: async (pause_location) => {
+						//make sure we're on the right bp
+						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
-				var top_frame = pause_location ["callFrames"][0];
+						var top_frame = pause_location ["callFrames"][0];
 
-				var scope = top_frame ["scopeChain"][0];
-				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+						var scope = top_frame ["scopeChain"][0];
+						Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
 
-				// Try to get an invalid scope!
-				var get_prop_req = JObject.FromObject(new {
-					objectId = "dotnet:scope:23490871",
-				});
+						// Try to get an invalid scope!
+						var get_prop_req = JObject.FromObject(new {
+							objectId = "dotnet:scope:23490871",
+						});
 
-				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-				Assert.True (frame_props.IsErr);
+						var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+						Assert.True (frame_props.IsErr);
+					}
+				);
 			});
 		}
 
@@ -461,42 +415,31 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 5,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
-				var eval_req = JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
-				});
+				await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_add(); }, 1);",
+					"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
+					"IntAdd", ctx,
+					wait_for_event_fn: (pause_location) => {
+						//make sure we're on the right bp
+						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
-				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				Assert.True (eval_res.IsOk);
+						var top_frame = pause_location ["callFrames"][0];
+						CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
+						return Task.CompletedTask;
+					}
+				);
 
-				var pause_location = await insp.WaitFor(Inspector.PAUSE);
-				//make sure we're on the right bp
-				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
-				var top_frame = pause_location ["callFrames"][0];
-				System.Console.WriteLine("TrivalStepping1");
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
-				System.Console.WriteLine("TrivalStepping2");
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, scripts, top_frame["location"]);
-				System.Console.WriteLine("TrivalStepping3");
-				var step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
-				Assert.True (step_res.IsOk);
-				System.Console.WriteLine("TrivalStepping4");
-				var pause_location2 = await insp.WaitFor(Inspector.PAUSE);
-				System.Console.WriteLine("TrivalStepping5");
-				var top_frame2 = pause_location2 ["callFrames"][0];
-				System.Console.WriteLine("TrivalStepping6");
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame2["functionLocation"]);
-				System.Console.WriteLine("TrivalStepping7");
-				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 6, 2, scripts, top_frame2["location"]); //it moved one line!
-				System.Console.WriteLine("TrivalStepping8");
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 6, 2, "IntAdd", ctx,
+						wait_for_event_fn: (pause_location) => {
+							var top_frame = pause_location ["callFrames"][0];
+							CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
+							return Task.CompletedTask;
+						}
+				);
 			});
 		}
 
@@ -508,65 +451,43 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 4,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+				await SetBreakpoint (debugger_test_loc, 4, 2, ctx);
 
-				var eval_req = JObject.FromObject(new {
-					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
-				});
+				await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_add(); }, 1);",
+					debugger_test_loc, 4, 2, "IntAdd", ctx,
+					locals_fn: (locals) => {
+						CheckNumber (locals, "a", 10);
+						CheckNumber (locals, "b", 20);
+						CheckNumber (locals, "c", 0);
+						CheckNumber (locals, "d", 0);
+						CheckNumber (locals, "e", 0);
+					}
+				);
 
-				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				Assert.True (eval_res.IsOk);
-
-				var pause_location = await insp.WaitFor(Inspector.PAUSE);
-
-				//ok, what's on that scope?
-				var get_prop_req = JObject.FromObject(new {
-					objectId = "dotnet:scope:0",
-				});
-
-				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-				Assert.True (frame_props.IsOk);
-				var locals = frame_props.Value ["result"];
-				CheckNumber (locals, "a", 10);
-				CheckNumber (locals, "b", 20);
-				CheckNumber (locals, "c", 0);
-				CheckNumber (locals, "d", 0);
-				CheckNumber (locals, "e", 0);
+				await StepAndCheck (StepKind.Over, debugger_test_loc, 5, 2, "IntAdd", ctx,
+					locals_fn: (locals) => {
+						CheckNumber (locals, "a", 10);
+						CheckNumber (locals, "b", 20);
+						CheckNumber (locals, "c", 30);
+						CheckNumber (locals, "d", 0);
+						CheckNumber (locals, "e", 0);
+					}
+				);
 
 				//step and get locals
-				var step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
-				Assert.True (step_res.IsOk);
-				pause_location = await insp.WaitFor(Inspector.PAUSE);
-				frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-				Assert.True (frame_props.IsOk);
-
-				locals = frame_props.Value ["result"];
-				CheckNumber (locals, "a", 10);
-				CheckNumber (locals, "b", 20);
-				CheckNumber (locals, "c", 30);
-				CheckNumber (locals, "d", 0);
-				CheckNumber (locals, "e", 0);
-
-				//step and get locals
-				step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
-				Assert.True (step_res.IsOk);
-				pause_location = await insp.WaitFor(Inspector.PAUSE);
-				frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-				Assert.True (frame_props.IsOk);
-
-				locals = frame_props.Value ["result"];
-				CheckNumber (locals, "a", 10);
-				CheckNumber (locals, "b", 20);
-				CheckNumber (locals, "c", 30);
-				CheckNumber (locals, "d", 50);
-				CheckNumber (locals, "e", 0);
+				await StepAndCheck (StepKind.Over, debugger_test_loc, 6, 2, "IntAdd", ctx,
+					locals_fn: (locals) => {
+						CheckNumber (locals, "a", 10);
+						CheckNumber (locals, "b", 20);
+						CheckNumber (locals, "c", 30);
+						CheckNumber (locals, "d", 50);
+						CheckNumber (locals, "e", 0);
+					}
+				);
 			});
 		}
 
@@ -578,17 +499,10 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
 				var dep_cs_loc = "dotnet://Simple.Dependency.dll/dependency.cs";
-
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 24,
-					columnNumber = 2,
-					url = dicFileToUrl[dep_cs_loc]
-				});
-
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint (dep_cs_loc, 24, 2, ctx);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
@@ -643,17 +557,10 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 100,
-					columnNumber = 3,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
-
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+				await SetBreakpoint (debugger_test_loc, 100, 3, ctx);
 
 				// Will stop in InnerMethod
 				var wait_res = await EvaluateAndCheck (
@@ -740,15 +647,9 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
-				var bp1_req = JObject.FromObject(new {
-					lineNumber = 75,
-					columnNumber = 2,
-					url = dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"],
-				});
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
-				Assert.True (bp1_res.IsOk);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 75, 2, ctx);
 
 				await EvaluateAndCheck ("window.setTimeout(function() { invoke_outer_method(); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 75, 2, "OuterMethod", ctx,
@@ -803,21 +704,57 @@ namespace DebuggerTests
 			});
 		}
 
+		[Fact]
+		public async Task InspectLocalsInAsyncMethods () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, 108, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 118, 3, ctx);
+
+				// Will stop in Asyncmethod0
+				var wait_res = await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_async_method_with_await(); }, 1);",
+					debugger_test_loc, 108, 3, "MoveNext", ctx, //FIXME:
+					locals_fn: (locals) => {
+						Assert.Equal (4, locals.Count());
+						CheckString (locals, "s", "string from js");
+						CheckNumber (locals, "i", 42);
+						CheckString (locals, "local0", "value0");
+						CheckObject (locals, "this", "Math.NestedInMath");
+					}
+				);
+
+				// TODO: previous frames have async machinery details, so no point checking that right now
+
+				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 118, 3, "AsyncMethodNoReturn", ctx,
+					locals_fn: (locals) => {
+						Assert.Equal (2, locals.Count());
+						CheckString (locals, "str", "AsyncMethodNoReturn's local");
+						CheckObject (locals, "this", "Math.NestedInMath");
+					}
+				);
+				// TODO: Check `this` properties
+			});
+		}
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
 			for (int i = 0; i < times - 1; i ++) {
-				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", ctx);
+				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", null, -1, -1, null, ctx);
 			}
 
 			// Check for method/line etc only at the last step
 			return await SendCommandAndCheck (
-						null, $"Debugger.step{kind.ToString ()}", ctx,
-						wait_for_event_fn: async (pause_location) => {
-							await CheckLocalsOnFrame (pause_location ["callFrames"][0], script_loc, line, column, function_name, ctx);
-							if (wait_for_event_fn != null)
-								await wait_for_event_fn (pause_location);
-						},
+						null, $"Debugger.step{kind.ToString ()}", script_loc, line, column, function_name, ctx,
+						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 		}
 
@@ -825,16 +762,12 @@ namespace DebuggerTests
 								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null)
 			=> await SendCommandAndCheck (
 						JObject.FromObject (new { expression = expression }),
-						"Runtime.evaluate", ctx,
-						wait_for_event_fn: async (pause_location) => {
-							await CheckLocalsOnFrame (pause_location ["callFrames"][0], script_loc, line, column, function_name, ctx);
-							if (wait_for_event_fn != null)
-								await wait_for_event_fn (pause_location);
-						},
+						"Runtime.evaluate", script_loc, line, column, function_name, ctx,
+						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 
-		async Task<JObject> SendCommandAndCheck (JObject args, string method, DebugTestContext ctx, Func<JObject, Task> wait_for_event_fn = null,
-								Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
+		async Task<JObject> SendCommandAndCheck (JObject args, string method, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
+								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
 		{
 			var res = await ctx.cli.SendCommand (method, args, ctx.token);
 			if (!res.IsOk) {
@@ -843,6 +776,9 @@ namespace DebuggerTests
 			}
 
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
+
+			if (script_loc != null)
+				CheckLocation (script_loc, line, column, ctx.scripts, wait_res ["callFrames"][0]["location"]);
 
 			if (wait_for_event_fn != null)
 				await wait_for_event_fn (wait_res);
@@ -881,6 +817,20 @@ namespace DebuggerTests
 				Console.WriteLine ($"Failed trying to check locals: {locals.ToString ()}");
 				throw;
 			}
+		}
+
+		async Task<Result> SetBreakpoint (string url_key, int line, int column, DebugTestContext ctx, bool expect_ok=true)
+		{
+			var bp1_req = JObject.FromObject(new {
+				lineNumber = line,
+				columnNumber = column,
+				url = dicFileToUrl[url_key],
+			});
+
+			var bp1_res = await ctx.cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
+			Assert.True (expect_ok ? bp1_res.IsOk : bp1_res.IsErr);
+
+			return bp1_res;
 		}
 
 		//TODO add tests covering basic stepping behavior as step in/out/over

@@ -11,6 +11,7 @@
 				this.delegates_test = Module.mono_bind_static_method ("[debugger-test] Math:DelegatesTest");
 				this.generic_types_test = Module.mono_bind_static_method ("[debugger-test] Math:GenericTypesTest");
 				this.outer_method = Module.mono_bind_static_method ("[debugger-test] Math:OuterMethod");
+				this.async_method = Module.mono_bind_static_method ("[debugger-test] Math/NestedInMath:AsyncTest");
 				console.log ("ready");
 			},
 		};
@@ -34,6 +35,9 @@
 		function invoke_outer_method () {
 			console.log('invoke_outer_method called');
 			return App.outer_method ();
+		}
+		async function invoke_async_method_with_await () {
+			return await App.async_method ("string from js", 42);
 		}
       </script>
       <script type="text/javascript" src="mono-config.js"></script>
