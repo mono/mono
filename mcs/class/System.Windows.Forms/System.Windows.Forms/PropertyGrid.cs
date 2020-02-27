@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 			property_tabs = new PropertyTabCollection(this);
 
 			line_color = SystemColors.ScrollBar;
-			category_fore_color = line_color;
+			category_fore_color = SystemColors.ControlText;
 			commands_visible = false;
 			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
