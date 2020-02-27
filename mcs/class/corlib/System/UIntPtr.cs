@@ -53,12 +53,10 @@ namespace System
 	
 		public UIntPtr (ulong value)
 		{
-			if ((value > UInt32.MaxValue) && (UIntPtr.Size < 8)) {
-				throw new OverflowException (
-					Locale.GetText ("This isn't a 64bits machine."));
-			}
-
-			_pointer = (void*) value;
+			if (Size == 4)
+				_pointer = (void *)checked ((uint)value);
+			else
+				_pointer = (void *) value;
 		}
 		
 		public UIntPtr (uint value)

@@ -37,6 +37,14 @@ namespace MonoTests.System  {
 
 			long min32 = Int32.MinValue;
 			IntPtr p32min = new IntPtr (min32);
+
+			if (IntPtr.Size == 4)
+			{
+				Assert.Throws<OverflowException> (() => new IntPtr ((long)int.MaxValue + 1));
+				Assert.Throws<OverflowException> (() => new IntPtr ((long)int.MaxValue + 2));
+				Assert.Throws<OverflowException> (() => new IntPtr (long.MaxValue - 1));
+				Assert.Throws<OverflowException> (() => new IntPtr (long.MaxValue));
+			}
 		}
 
 		[Test]

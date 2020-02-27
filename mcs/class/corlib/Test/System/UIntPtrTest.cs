@@ -35,6 +35,14 @@ namespace MonoTests.System  {
 
 			ulong min32 = UInt32.MinValue;
 			UIntPtr p32min = new UIntPtr (min32);
+
+			if (IntPtr.Size == 4)
+			{
+				Assert.Throws<OverflowException> (() => new UIntPtr ((ulong)uint.MaxValue + 1));
+				Assert.Throws<OverflowException> (() => new UIntPtr ((ulong)uint.MaxValue + 2));
+				Assert.Throws<OverflowException> (() => new UIntPtr (ulong.MaxValue - 1));
+				Assert.Throws<OverflowException> (() => new UIntPtr (ulong.MaxValue));
+			}
 		}
 
 		[Test]
