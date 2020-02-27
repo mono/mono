@@ -716,7 +716,7 @@ namespace DebuggerTests
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 108, 3, ctx);
-				await SetBreakpoint (debugger_test_loc, 118, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 123, 3, ctx);
 
 				// Will stop in Asyncmethod0
 				var wait_res = await EvaluateAndCheck (
@@ -733,17 +733,46 @@ namespace DebuggerTests
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
 
-				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 118, 3, "AsyncMethodNoReturn", ctx,
+				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 123, 3, "AsyncMethodNoReturn", ctx,
 					locals_fn: (locals) => {
-						Assert.Equal (2, locals.Count());
+						Assert.Equal (4, locals.Count());
 						CheckString (locals, "str", "AsyncMethodNoReturn's local");
 						CheckObject (locals, "this", "Math.NestedInMath");
+						CheckObject (locals, "ss", "Math.SimpleStruct", subtype: "null");
+						CheckArray (locals, "ss_arr", "Math.SimpleStruct[]");
+						// TODO: struct fields
 					}
 				);
 				// TODO: Check `this` properties
 			});
 		}
 
+		[Fact]
+		public async Task InspectLocalsWithStructs () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, 139, 3, ctx);
+
+				var wait_res = await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_method_with_structs(); }, 1);",
+					debugger_test_loc, 139, 3, "MethodWithStructs", ctx,
+					locals_fn: (locals) => {
+						Assert.Equal (4, locals.Count());
+						CheckObject (locals, "m", "Math", subtype: "null");
+						CheckObject (locals, "ss", "Math.SimpleStruct", subtype: "null");
+						CheckObject (locals, "gs", "Math.GenericStruct<Math>", subtype: "null");
+						CheckArray (locals, "ss_arr", "Math.SimpleStruct[]");
+					}
+				);
+			});
+		}
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
