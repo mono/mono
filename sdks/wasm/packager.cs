@@ -370,6 +370,7 @@ class Driver {
 		public bool NativeStrip;
 		public bool Simd;
 		public bool EnableDynamicRuntime;
+		public bool LinkerExcludeDeserialization;
 	}
 
 	int Run (string[] args) {
@@ -430,7 +431,8 @@ class Driver {
 				EnableFS = false,
 				NativeStrip = true,
 				Simd = false,
-				EnableDynamicRuntime = false
+				EnableDynamicRuntime = false,
+				LinkerExcludeDeserialization = true
 			};
 
 		var p = new OptionSet () {
@@ -476,6 +478,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("dynamic-runtime", "enable dynamic runtime (support for Emscripten's dlopen)", opts.EnableDynamicRuntime, b => opts.EnableDynamicRuntime = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
+		AddFlag (p, new BoolFlag ("linker-exclude-deserialization", "Link out .NET deserialization support", opts.LinkerExcludeDeserialization, b => opts.LinkerExcludeDeserialization = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -883,7 +886,7 @@ class Driver {
 		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/src/library_mono.js --js-library $tool_prefix/src/dotnet_support.js {wasm_core_support_library} $in' {strip_cmd}");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw --exclude-feature deserialization $linker_args || exit 1; mono $tools_dir/wasm-tuner.exe --gen-empty-assemblies $out");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; mono $tools_dir/wasm-tuner.exe --gen-empty-assemblies $out");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-instances-dll");
 		ninja.WriteLine ("  command = echo > aot-instances.cs; csc /deterministic /out:$out /target:library aot-instances.cs");
@@ -1098,6 +1101,8 @@ class Driver {
 			linker_args += "--used-attrs-only true ";
 			linker_args += "--substitutions linker-subs.xml ";
 			linker_infiles += "| linker-subs.xml";
+			if (opts.LinkerExcludeDeserialization)
+				linker_args += "--exclude-feature deserialization ";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {
