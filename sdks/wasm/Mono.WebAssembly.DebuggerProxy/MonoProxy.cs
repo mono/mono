@@ -221,22 +221,36 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.getPossibleBreakpoints": {
+					var resp = await SendCommand (id, method, args, token);
+					if (resp.IsOk && resp.Value["locations"].HasValues) {
+						SendResponse (id, resp, token);
+						return true;
+					}
+
 					var start = SourceLocation.Parse (args? ["start"] as JObject);
 					//FIXME support variant where restrictToFunction=true and end is omitted
 					var end = SourceLocation.Parse (args? ["end"] as JObject);
-					if (start != null && end != null)
-						return GetPossibleBreakpoints (id, start, end, token);
-					break;
+					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
+							return true;
+
+					SendResponse (id, resp, token);
+					return true;
 				}
 
 			case "Debugger.setBreakpointByUrl": {
-					Log ("info", $"BP req {args}");
-					var bp_req = BreakpointRequest.Parse (args, GetContext (id).Store);
-					if (bp_req != null) {
-						await SetBreakPoint (id, bp_req, token);
+					var resp = await SendCommand (id, method, args, token);
+					if (resp.IsOk && resp.Value ["locations"].HasValues) {
+						SendResponse (id, resp, token);
 						return true;
 					}
-					break;
+
+					Log ("info", $"BP req {args}");
+					var bp_req = BreakpointRequest.Parse (args, GetContext (id).Store);
+					if (bp_req != null && await SetBreakpoint (id, bp_req, token))
+							return true;
+
+					SendResponse (id, resp, token);
+					return true;
 				}
 
 			case "Debugger.removeBreakpoint": {
@@ -579,7 +593,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 		}
 
-		async Task<Result> EnableBreakPoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
+		async Task<Result> EnableBreakpoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
 		{
 			var asm_name = bp.Location.CliLocation.Method.Assembly.Name;
 			var method_token = bp.Location.CliLocation.Method.Token;
@@ -643,7 +657,7 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var bp in context.Breakpoints) {
 				if (bp.State != BreakpointState.Pending)
 					continue;
-				var res = await EnableBreakPoint (sessionId, bp, token);
+				var res = await EnableBreakpoint (sessionId, bp, token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
 				//if we fail we just buble that to the IDE (and let it panic over it)
@@ -689,19 +703,14 @@ namespace WebAssembly.Net.Debugging {
 			return res;
 		}
 
-		async Task SetBreakPoint (MessageId msg_id, BreakpointRequest req, CancellationToken token)
+		async Task<bool> SetBreakpoint (MessageId msg_id, BreakpointRequest req, CancellationToken token)
 		{
 			var context = GetContext (msg_id);
 			var bp_loc = context.Store.FindBestBreakpoint (req);
 			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{bp_loc}'");
 			if (bp_loc == null) {
-
 				Log ("verbose", $"Could not resolve breakpoint request: {req}");
-				SendResponse (msg_id, Result.Err(JObject.FromObject (new {
-					code = (int)MonoErrorCodes.BpNotFound,
-					message = $"C# Breakpoint at {req} not found."
-				})), token);
-				return;
+				return false;
 			}
 
 			Breakpoint bp = null;
@@ -710,13 +719,12 @@ namespace WebAssembly.Net.Debugging {
 			} else {
 				bp = new Breakpoint (bp_loc, context.NextBreakpointId (), BreakpointState.Disabled);
 
-				var res = await EnableBreakPoint (msg_id, bp, token);
+				var res = await EnableBreakpoint (msg_id, bp, token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
 				//if we fail we just buble that to the IDE (and let it panic over it)
 				if (!ret_code.HasValue) {
-					SendResponse (msg_id, res, token);
-					return;
+					return false;
 				}
 			}
 
@@ -730,11 +738,12 @@ namespace WebAssembly.Net.Debugging {
 			};
 
 			SendResponse (msg_id, Result.OkFromObject (ok), token);
+			return true;
 		}
 
-		bool GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
+		async Task<bool> GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
 		{
-			var bps = GetContext (msg_id).Store.FindPossibleBreakpoints (start, end);
+			var bps = (await LoadStore (msg_id, token)).FindPossibleBreakpoints (start, end);
 			if (bps == null)
 				return false;
 
@@ -752,7 +761,7 @@ namespace WebAssembly.Net.Debugging {
 			if (!SourceId.TryParse (script_id, out var id))
 				return false;
 
-			var src_file = GetContext (msg_id).Store.GetFileById (id);
+			var src_file = (await LoadStore (msg_id, token)).GetFileById (id);
 			var res = new StringWriter ();
 
 			try {
