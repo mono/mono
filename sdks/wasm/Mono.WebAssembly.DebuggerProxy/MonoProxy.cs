@@ -157,11 +157,9 @@ namespace WebAssembly.Net.Debugging {
 			switch (method) {
 			case "Runtime.consoleAPICalled": {
 					var type = args["type"]?.ToString ();
-					if (type == "trace") {
-						var functionName = args? ["stackTrace"]? ["callFrames"]? [0]? ["functionName"]?.ToString ();
-						if (functionName == MonoConstants.RUNTIME_IS_READY)
+					if (type == "debug") {
+						if (args["args"]?[0]?["value"]?.ToString () == MonoConstants.RUNTIME_IS_READY && args["args"]?[1]?["value"]?.ToString () == "fe00e07a-5519-4dfe-b35a-f867dbaf2e28")
 							await RuntimeReady (sessionId, token);
-						//else if (args["args"]?[0]?["value"]?.ToString () == MonoConstants.RUNTIME_IS_READY)
 					}
 					break;
 				}
