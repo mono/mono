@@ -1483,7 +1483,7 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 MonoGCHandle
 mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection)
 {
-	return (MonoGCHandle)(size_t)alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection);
+	return MONO_GC_HANDLE_FROM_UINT (alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection));
 }
 
 /**
@@ -1499,7 +1499,7 @@ mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection
 MonoObject*
 mono_gchandle_get_target_internal (MonoGCHandle gch)
 {
-	guint32 gchandle = (guint32)(size_t)gch;
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1525,7 +1525,7 @@ mono_gchandle_get_target_internal (MonoGCHandle gch)
 void
 mono_gchandle_set_target (MonoGCHandle gch, MonoObject *obj)
 {
-	guint32 gchandle = (guint32)(size_t)gch;
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1572,7 +1572,7 @@ mono_gc_is_null (void)
 gboolean
 mono_gchandle_is_in_domain (MonoGCHandle gch, MonoDomain *domain)
 {
-	guint32 gchandle = (guint32)(size_t)gch;
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1611,7 +1611,7 @@ mono_gchandle_is_in_domain (MonoGCHandle gch, MonoDomain *domain)
 void
 mono_gchandle_free_internal (MonoGCHandle gch)
 {
-	guint32 gchandle = (guint32)(size_t)gch;
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	if (!gchandle)
 		return;
 

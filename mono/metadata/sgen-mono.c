@@ -2678,7 +2678,7 @@ sgen_client_metadata_for_object (GCObject *obj)
 MonoGCHandle
 mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 {
-	return (MonoGCHandle)(size_t)sgen_gchandle_new (obj, pinned);
+	return MONO_GC_HANDLE_FROM_UINT (sgen_gchandle_new (obj, pinned));
 }
 
 /**
@@ -2705,7 +2705,7 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 MonoGCHandle
 mono_gchandle_new_weakref_internal (GCObject *obj, gboolean track_resurrection)
 {
-	return (MonoGCHandle)(size_t)sgen_gchandle_new_weakref (obj, track_resurrection);
+	return MONO_GC_HANDLE_FROM_UINT (sgen_gchandle_new_weakref (obj, track_resurrection));
 }
 
 /**
@@ -2717,7 +2717,7 @@ mono_gchandle_new_weakref_internal (GCObject *obj, gboolean track_resurrection)
 gboolean
 mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain)
 {
-	MonoDomain *gchandle_domain = (MonoDomain *)sgen_gchandle_get_metadata ((guint32)(size_t)gchandle);
+	MonoDomain *gchandle_domain = (MonoDomain *)sgen_gchandle_get_metadata (MONO_GC_HANDLE_TO_UINT (gchandle));
 	return domain->domain_id == gchandle_domain->domain_id;
 }
 
@@ -2732,7 +2732,7 @@ mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain)
 void
 mono_gchandle_free_internal (MonoGCHandle gchandle)
 {
-	sgen_gchandle_free ((guint32)(size_t)gchandle);
+	sgen_gchandle_free (MONO_GC_HANDLE_TO_UINT (gchandle));
 }
 
 /**
@@ -2760,7 +2760,7 @@ mono_gchandle_free_domain (MonoDomain *unloading)
 MonoObject*
 mono_gchandle_get_target_internal (MonoGCHandle gchandle)
 {
-	return sgen_gchandle_get_target ((guint32)(size_t)gchandle);
+	return sgen_gchandle_get_target (MONO_GC_HANDLE_TO_UINT (gchandle));
 }
 
 static gpointer
@@ -2791,7 +2791,7 @@ sgen_null_links_for_domain (MonoDomain *domain)
 void
 mono_gchandle_set_target (MonoGCHandle gchandle, MonoObject *obj)
 {
-	sgen_gchandle_set_target ((gint32)(size_t)gchandle, obj);
+	sgen_gchandle_set_target (MONO_GC_HANDLE_TO_UINT (gchandle), obj);
 }
 
 void
