@@ -155,6 +155,14 @@ namespace WebAssembly.Net.Debugging {
 		protected override async Task<bool> AcceptEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			switch (method) {
+			case "Runtime.consoleAPICalled": {
+					var type = args["type"]?.ToString ();
+					if (type == "debug") {
+						if (args["args"]?[0]?["value"]?.ToString () == MonoConstants.RUNTIME_IS_READY && args["args"]?[1]?["value"]?.ToString () == "fe00e07a-5519-4dfe-b35a-f867dbaf2e28")
+							await RuntimeReady (sessionId, token);
+					}
+					break;
+				}
 			case "Runtime.executionContextCreated": {
 					SendEvent (sessionId, method, args, token);
 					var ctx = args? ["context"];
@@ -167,7 +175,6 @@ namespace WebAssembly.Net.Debugging {
 						}
 					}
 					return true;
-					//break;
 				}
 
 			case "Debugger.paused": {
@@ -176,10 +183,6 @@ namespace WebAssembly.Net.Debugging {
 
 					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp") {
 						return await OnBreakpointHit (sessionId, args, token);
-					}
-					if (top_func == MonoConstants.RUNTIME_IS_READY) {
-						await OnRuntimeReady (sessionId, token);
-						return true;
 					}
 					break;
 				}
@@ -301,14 +304,6 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			return false;
-		}
-
-		async Task OnRuntimeReady (SessionId sessionId, CancellationToken token)
-		{
-			Log ("info", "Runtime ready");
-			await RuntimeReady (sessionId, token);
-			await SendCommand (sessionId, "Debugger.resume", new JObject (), token);
-			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
 		}
 
 		//static int frame_id=0;
@@ -442,14 +437,12 @@ namespace WebAssembly.Net.Debugging {
 				b.State = BreakpointState.Pending;
 			}
 
-			Log ("info", "checking if the runtime is ready");
+			Log ("debug", "checking if the runtime is ready");
 			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
 			var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
-			//Log ("verbose", $"\t{is_ready}");
+
 			if (is_ready.HasValue && is_ready.Value == true) {
-				Log ("info", "RUNTIME LOOK READY. GO TIME!");
 				await RuntimeReady (sessionId, token);
-				SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
 			}
 		}
 
@@ -670,6 +663,7 @@ namespace WebAssembly.Net.Debugging {
 					bp.State = BreakpointState.Disabled;
 				}
 			}
+			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
 		}
 
 		async Task<bool> RemoveBreakpoint(MessageId msg_id, JObject args, CancellationToken token) {

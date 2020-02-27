@@ -98,9 +98,9 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_runtime_ready: function () {
-			console.log ("MONO-WASM: Runtime is ready.");
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+			// DO NOT REMOVE - magic debugger init function
+			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
