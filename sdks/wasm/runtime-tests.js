@@ -25,6 +25,7 @@ if (is_browser || typeof print === "undefined")
 if (typeof console === "undefined") {
 	var Console = function () {
 		this.log = function(msg){ print(msg) };
+		this.trace = function(msg) {};
 	};
 	console = new Console();
 }
