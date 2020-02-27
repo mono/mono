@@ -106,9 +106,9 @@ namespace DebuggerTests
 
 				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
 
-				Assert.False (bp1_res.IsOk);
-				Assert.True (bp1_res.IsErr);
-				Assert.Equal ((int)MonoErrorCodes.BpNotFound, bp1_res.Error ["code"]?.Value<int> ());
+				Assert.True (bp1_res.IsOk);
+				Assert.Empty (bp1_res.Value["locations"].Values<object>());
+				//Assert.Equal ((int)MonoErrorCodes.BpNotFound, bp1_res.Error ["code"]?.Value<int> ());
 			});
 		}
 
