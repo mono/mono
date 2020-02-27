@@ -57,7 +57,8 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class MonoConstants {
-		public const string RUNTIME_IS_READY = "mono_wasm_runtime_ready";
+		public const string RuntimeReadyMethodName = "mono_wasm_runtime_ready";
+		public const string DebuggerBindingMethodName = "mono_wasm_debugger_send";
 	}
 
 	class Frame {
@@ -155,6 +156,18 @@ namespace WebAssembly.Net.Debugging {
 		protected override async Task<bool> AcceptEvent (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			switch (method) {
+			case "Runtime.bindingCalled": {
+					var payload = args ["payload"]?.Value<string> ();
+					var name = args ["name"]?.Value<string> ();
+
+					if (name == MonoConstants.DebuggerBindingMethodName) {
+						if (payload == "ready") {
+							await RuntimeReady (sessionId, token);
+							return true;
+						}
+					}
+					break;
+				}
 			case "Runtime.executionContextCreated": {
 					SendEvent (sessionId, method, args, token);
 					var ctx = args? ["context"];
@@ -177,7 +190,7 @@ namespace WebAssembly.Net.Debugging {
 					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp") {
 						return await OnBreakpointHit (sessionId, args, token);
 					}
-					if (top_func == MonoConstants.RUNTIME_IS_READY) {
+					if (top_func == MonoConstants.RuntimeReadyMethodName) {
 						await OnRuntimeReady (sessionId, token);
 						return true;
 					}
@@ -422,6 +435,11 @@ namespace WebAssembly.Net.Debugging {
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
 
+			var binding = JObject.FromObject (new {
+				name = MonoConstants.DebuggerBindingMethodName,
+				executionContextId = context.Id
+			});
+			await SendCommand (sessionId, "Runtime.addBinding", binding, token);
 			contexts[sessionId.sessionId ?? "default"] = context;
 			//reset all bps
 			foreach (var b in context.Breakpoints){

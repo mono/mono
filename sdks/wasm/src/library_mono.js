@@ -97,10 +97,15 @@ var MonoSupportLib = {
 			this.mono_wasm_setup_single_step (kind);
 		},
 
-		mono_wasm_runtime_ready: function () {
+		mono_wasm_runtime_ready: function (enable_debugging) {
 			console.log ("MONO-WASM: Runtime is ready.");
+
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+
+			if (globalThis.mono_wasm_debugger_send)
+				globalThis.mono_wasm_debugger_send("ready");
+			else if (enable_debugging)
+				debugger;
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -242,7 +247,7 @@ var MonoSupportLib = {
 						} else {
 							load_runtime (vfs_prefix, enable_debugging);
 						}
-						MONO.mono_wasm_runtime_ready ();
+						MONO.mono_wasm_runtime_ready (enable_debugging);
 						loaded_cb ();
 					}
 				});
