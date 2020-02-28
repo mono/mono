@@ -556,7 +556,7 @@ namespace WebAssembly.Net.Debugging {
 			public Task<byte[][]> Data { get; set; }
 		}
 
-		public async Task Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
+		public async IAsyncEnumerable<SourceFile> Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
 		{
 			static bool MatchPdb (string asm, string pdb)
 				=> Path.ChangeExtension (asm, "pdb") == pdb;
@@ -585,12 +585,19 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			foreach (var step in steps) {
+				AssemblyInfo assembly = null;
 				try {
 					var bytes = await step.Data;
-					assemblies.Add (new AssemblyInfo (step.Url, bytes[0], bytes[1]));
+					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
 				} catch (Exception e) {
 					logger.LogDebug ($"Failed to Load {step.Url} ({e.Message})");
 				}
+				if (assembly == null)
+					continue;
+
+				assemblies.Add (assembly);
+				foreach (var source in assembly.Sources)
+					yield return source;
 			}
 		}
 

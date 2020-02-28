@@ -114,7 +114,7 @@ namespace WebAssembly.Net.Debugging {
 		public List<Breakpoint> Breakpoints { get; } = new List<Breakpoint> ();
 
 		public TaskCompletionSource<DebugStore> ready = null;
-		public bool RuntimeReady => ready.Task.IsCompleted;
+		public bool RuntimeReady => ready != null && ready.Task.IsCompleted;
 
 		public int Id { get; set; }
 		public object AuxData { get; set; }
@@ -345,10 +345,10 @@ namespace WebAssembly.Net.Debugging {
 				//Give up and send the original call stack
 				return false;
 			}
+
 			var bp = context.Breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
 
-			var store = await LoadStore (sessionId, token);
-			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
+			var src = bp == null ? null : (await LoadStore (sessionId, token)).GetFileById (bp.Location.Id);
 
 			var callFrames = new List<object> ();
 			foreach (var frame in orig_callframes) {
@@ -364,6 +364,7 @@ namespace WebAssembly.Net.Debugging {
 						var method_token = mono_frame ["method_token"].Value<int> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
+						var store = await LoadStore (sessionId, token);
 						var asm = store.GetAssemblyByName (assembly_name);
 						if (asm == null) {
 							Log ("info",$"Unable to find assembly: {assembly_name}");
@@ -632,7 +633,11 @@ namespace WebAssembly.Net.Debugging {
 				var the_value = loaded_pdbs.Value? ["result"]? ["value"];
 				var the_pdbs = the_value?.ToObject<string[]> ();
 
-				await context.store.Load(sessionId, the_pdbs, token);
+				await foreach (var source in context.store.Load(sessionId, the_pdbs, token).WithCancellation (token)) { 
+					var scriptSource = JObject.FromObject (source.ToScriptSource (context.Id, context.AuxData));
+					Log ("verbose", $"\tsending {source.Url} {context.Id} {sessionId.sessionId}");
+					SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
+				}
 			} catch (Exception e) {
 				context.Source.SetException (e);
 			}
@@ -654,12 +659,13 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var store = await LoadStore (sessionId, token);
-
+			/*
 			foreach (var s in store.AllSources ()) {
 				var scriptSource = JObject.FromObject (s.ToScriptSource (context.Id, context.AuxData));
 				Log ("verbose", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
 				SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
 			}
+			*/
 			context.ready.SetResult (store);
 			foreach (var bp in context.Breakpoints) {
 				if (bp.State != BreakpointState.Pending)
